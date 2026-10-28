@@ -137,6 +137,12 @@
     "session": {
       "type": "object",
       "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "description": "Stable supervisor-assigned session identity; return it in every event session_id."
+        },
         "resume_id": {
           "type": [
             "string",

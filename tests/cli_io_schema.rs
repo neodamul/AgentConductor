@@ -98,3 +98,18 @@ fn schema_errors_report_the_failing_pointer_and_constraint() {
             .any(|error| error.starts_with("/seq:") && error.contains("minimum"))
     );
 }
+
+#[test]
+fn input_accepts_a_bounded_supervisor_assigned_session_id() {
+    let input = serde_json::json!({
+        "schema":"acio.input/1",
+        "request_id":"r1",
+        "mode":"task",
+        "instruction":{"text":"work"},
+        "session":{"id":"session-1","resume_id":"session-1"}
+    });
+    assert_eq!(cli_io::validate("input", &input), Ok(()));
+    let mut invalid = input;
+    invalid["session"]["id"] = "".into();
+    assert!(cli_io::validate("input", &invalid).is_err());
+}

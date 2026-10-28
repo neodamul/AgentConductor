@@ -167,7 +167,8 @@ pub(super) async fn run_workers(
             }
             report.tasks[i].dependencies = dependency_context;
             if (profile.permission_mode == "native_callback"
-                || profile.cooperative == crate::plan::CooperativeMode::CheckpointV1)
+                || profile.cooperative == crate::plan::CooperativeMode::CheckpointV1
+                || profile.protocol == Some(crate::protocol::Protocol::Acio))
                 && report.tasks[i].session_id.is_none()
             {
                 report.tasks[i].session_id = Some(crate::native_guard::session_id()?);

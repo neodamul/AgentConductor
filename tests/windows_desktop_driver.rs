@@ -69,3 +69,19 @@ fn candidate_decision_driver_falls_back_to_owned_input_and_checks_state() {
             .contains("workflow::load(&run).unwrap().state == expected_state")
     );
 }
+
+#[test]
+fn approval_opens_review_changes_before_waiting_for_merge() {
+    let driver = include_str!("support/windows_candidate_review_script.rs");
+    let approve = driver
+        .find("Activate-Button 'Approve verified candidate'")
+        .unwrap();
+    let merge = approve
+        + driver[approve..]
+            .find("Wait-Button 'Merge approved candidate'")
+            .unwrap();
+    assert!(
+        driver[approve..merge].contains("Invoke-Button 'Review changes'"),
+        "approved candidate must open the review panel before the merge action is available"
+    );
+}

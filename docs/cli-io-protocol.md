@@ -41,7 +41,8 @@ when `invocation.input` is `file`; the document is the same either way. Schema: 
 | `task` | the kind of work and its conditions (§2.1): `type`, `effort`, `completion`, `stop_conditions`, `evidence`, `uncertainty`, `report`, `open_ended`, `variants` |
 | `conversation[]` | earlier turns, oldest first (at most 40 turns of 8 KiB); the last operator turn is the question |
 | `workspace` | `root`, `access` (`read_only` or `workspace_write`), `paths` the CLI may change; `ask` forces `read_only` |
-| `session.resume_id` | resume a prior session when the CLI declares `resume` |
+| `session.id` | stable supervisor-assigned identity; echo it as the event `session_id` |
+| `session.resume_id` | resume a prior session when the CLI declares `resume`; it equals `session.id` |
 | `model` | `id` and string `options` (for example `effort`) from the CLI's own catalog |
 | `limits` | `timeout_ms`, `max_event_bytes` (default 262144), `max_output_bytes` |
 | `response_schema` | optional JSON Schema that `result.data` must satisfy (typed planner or optimizer replies) |
@@ -156,8 +157,10 @@ after the document and only signals can cancel.
 Rules: control lines carry `seq` from 1 and the CLI answers each with an `ack` event (`applied`, `ignored`,
 `unsupported`). A tool request that gets no decision within `input.control.decision_timeout_ms` (default 120 s)
 is denied; a silent supervisor never grants anything. A control type the CLI did not declare is not sent; if it
-is sent anyway the CLI acks `unsupported`. `limits.timeout_ms` is enforced by the supervisor. Resuming uses
-`session.resume_id`, taken from the earlier `session` event. The supervisor's own guards (permission mode, scope,
+is sent anyway the CLI acks `unsupported`. `limits.timeout_ms` is enforced by the supervisor. The supervisor
+assigns `session.id` before launch and the CLI must echo that exact value in its `session` event. Resuming uses
+`session.resume_id`, which is the same stable id after a previous session was established. This keeps live
+approvals bound to the session the coordinator owns. The supervisor's own guards (permission mode, scope,
 read-only) stay in force whatever the CLI is told.
 
 ## 7. Discovery — `acio.describe/1`

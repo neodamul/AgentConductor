@@ -174,6 +174,7 @@ if ($env:AC_DECISION -eq 'reject') {
 } else {
   Activate-Button 'Approve verified candidate' 'Confirm approval of this verified diff and tests?'
   Activate-Button 'Confirm candidate decision' $null
+  Invoke-Button 'Review changes'
   Wait-Button 'Merge approved candidate'
   Activate-Button 'Merge approved candidate' 'Confirm integrating the exact approved candidate?'
   Activate-Button 'Confirm candidate decision' $null

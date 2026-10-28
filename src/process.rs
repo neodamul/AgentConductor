@@ -171,12 +171,13 @@ pub async fn run_controlled_outbound(
     handler: AsyncControlHandler,
     limit: Duration,
     outbound: tokio::sync::mpsc::UnboundedReceiver<Vec<u8>>,
+    paused: Option<std::sync::Arc<std::sync::atomic::AtomicBool>>,
 ) -> Result<ProcessResult, String> {
     runner::run_with_control(
         spec,
         stop_file,
         Some((handler, limit)),
-        None,
+        paused,
         Some(outbound),
     )
     .await

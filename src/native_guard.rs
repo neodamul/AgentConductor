@@ -87,6 +87,21 @@ pub struct Binding {
     pub approved: Option<crate::gates::Receipt>,
 }
 
+pub(crate) async fn decide_acio_tool(
+    dir: PathBuf,
+    task: String,
+    request: ToolRequest,
+    session: String,
+    stop: &std::path::Path,
+) -> Result<Option<ToolDecision>, String> {
+    let binding = Binding {
+        dir,
+        task,
+        approved: None,
+    };
+    coordinated_decision(&binding, &request, &session, stop).await
+}
+
 pub async fn run(
     mut spec: ProcessSpec,
     stop: PathBuf,

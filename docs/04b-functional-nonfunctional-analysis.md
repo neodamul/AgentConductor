@@ -675,3 +675,11 @@ Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 �
 ### FR-177 Launch workspace selection
 `launch_root` returns the first registry entry that is a saved, non-blank app-owned workspace, else the first saved non-blank workspace, else the default folder as a placeholder. A workspace is blank when it has no name, goal, project folder, plan or run; blank workspaces are left out of the menu and the saved list, the snapshot carries `workspace_blank`, the page opens a required "name your first workspace" dialog, and `create_workspace` moves a blank previous workspace to the recovery folder. The `agentconductor` launch command opens it. Deleting a workspace removes it from the registry, so it can no longer be chosen. The native probe window keeps its own launch rule (Codex track, GitHub #9).
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
+
+### FR-179 Live ACIO worker contract
+When AgentProfile.protocol is ACIO, the scheduler assigns the owned session ID before spawn; the worker validates a bounded ACIO input document, sends it as the first stdin line, and uses the existing process supervisor to decode and persist ordered JSONL events. The returned session ID must equal the supervisor-owned ID. A tool event that needs a decision creates an exact workspace/task/session-bound human approval request and pauses task timeout accounting; a missing or expired decision never grants access. Once established, the same session ID is supplied as resume_id. Profiles without the opt-in field keep their prior adapter.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.
+
+### NFR-77 ACIO execution preserves existing safety boundaries
+ACIO input remains schema-bounded; process timeout, cancellation, stdout/stderr capture, task ownership, and candidate review remain coordinator-owned. A protocol declaration is not an OS sandbox: filesystem containment is limited to the existing isolated workspace and its scoped task contract, and privileged tool execution requires the existing human decision ledger. Non-ACIO profiles remain backward compatible.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.

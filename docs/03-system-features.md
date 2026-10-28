@@ -667,3 +667,7 @@ Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → 
 ### SF-173 Launch opens the last used workspace
 The launch path chooses a workspace from the saved list (last used first) instead of always opening the default folder. With none, an unused placeholder opens, is hidden from every list, and the page asks for the first workspace name; creating it retires the placeholder.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
+
+### SF-175 Supervised ACIO worker execution
+For opted-in profiles, build and schema-check the ACIO task input, run it through the existing process supervisor, normalize live events and sessions, and pause for the existing exact human approval when an ACIO tool requests a decision. Keep non-ACIO profiles unchanged.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.

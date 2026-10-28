@@ -565,3 +565,7 @@ Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → 
 ### BG-140 Deleting a workspace is final for the operator
 A workspace the operator deleted does not come back after a restart or an update, and the list shows only workspaces the operator created or used.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
+
+### BG-142 Connect an in-house CLI without bypassing human control
+An ACIO-enabled CLI can take part in a real supervised task while the Rust coordinator owns session identity, task scope, event collection, and human decisions.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.

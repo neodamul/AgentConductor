@@ -1747,3 +1747,13 @@ Added the exact Windows package UI journey for reviewing a candidate SHA, the ac
 ## 2026-10-28 — Exact Windows package compile failure in candidate review
 
 Run `40683626949` checked out exact PR head `829e58ee`. Windows validation failed before package execution because `tests/windows_candidate_review.rs` treated `Repository::clean()` as a boolean twice; the method returns `Result<(), String>` and enforces the clean-state invariant itself. The two assertions now call `git.clean().unwrap()` directly. Focused local source-contract and layout checks pass 4/4; rustfmt, diff check, and the 300-line limit pass. Windows candidate review remains unverified and workflow 24 receives no credit until a new exact-head package run passes. AgentMemory: `mem_mvs2e2aa_e8bf2c3e0c6b`.
+
+## 2026-10-29 — Live ACIO worker integration — issue #9
+
+TDD wired only profiles that opt into protocol ACIO through the live Rust worker. A deterministic worker regression first failed because the old plain-text stdin path did not provide ACIO input and tool requests never reached the approval ledger. The worker now sends schema-validated structured task/workspace input with a host-owned session ID, consumes ordered events through the existing process observer, persists session/results, resumes only established sessions, and sends decision-required tools through the existing exact human approval ledger. An unanswered request remains pending and does not grant permission. A live session mismatch is rejected before any tool approval receipt can be created. Added the optional bounded session ID to the input schema and documented the assignment/echo contract. Focused ACIO tests passed 17/17; the full offline all-target suite passed 1,083 tests, 14 ignored, across 345 suites; warning-denied Clippy, rustfmt, diff checks, and the 300-line guard passed.
+
+This source integration earns no packaged UI acceptance credit. Packaged UI acceptance remains 22/25, shipped/default Rust UI remains 0/25, aggregate 22/50.
+
+## 2026-10-29 — Windows approval review transition — issue #9 / workflow 24
+
+Run 40736018268 on issue #221 exposed the existing #9 Windows candidate-review journey gap: after approval, the driver waited for the merge control without opening Review changes. A source-contract regression failed first, then passed after adding the missing UI step. This local test does not replace exact Windows packaged verification. CocoIndex is not installed in this environment; Graphify's local AST graph was refreshed to 10,948 nodes, 16,648 edges, and 806 communities.

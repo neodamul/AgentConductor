@@ -740,3 +740,7 @@ Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → 
 ### UC-176 Restart after deleting the default workspace
 The operator deletes the default workspace while another saved workspace exists. After the app restarts or updates, the last used saved workspace opens and the default workspace is not in the list. With no saved workspace at all (first run, or after the last one was deleted) the app asks for a workspace name before anything else; no workspace named "desktop" is shown.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
+
+### UC-178 Run a task with an ACIO-enabled CLI
+The coordinator assigns a task to a profile that declares protocol ACIO, sends structured input with its owned workspace scope and session ID, records validated progress/result events, and resumes the worker only after the operator decides a requested tool action. A profile without ACIO follows its existing CLI path.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.

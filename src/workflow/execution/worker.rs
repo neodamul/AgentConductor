@@ -1,4 +1,5 @@
 use super::*;
+mod acio;
 
 pub(crate) async fn worker(
     task: Task,
@@ -71,8 +72,15 @@ pub(crate) async fn worker(
         )?;
         let args = if guarded {crate::native_guard::args(&agent,resolved.model.as_deref(),report.session_id.as_deref().ok_or("owned session missing")?,report.session_established)?}else{crate::adapters::session_args_with_options(&agent, resolved.model.as_deref(), report.session_id.as_deref(), prompt_file.to_str().ok_or("non-UTF8 prompt path")?, &resolved.options)?};
         let args = if !report.cwd.join(".git").exists() && crate::folder::external_metadata(&report.cwd)?.is_some() {crate::adapters::direct_folder_args(agent.parser, args)?} else {args};
+        let input = if agent.protocol == Some(crate::protocol::Protocol::Acio) {
+            acio::input(&task, &report, &resolved, &report.cwd, &prompt, timeout)?
+        } else if agent.input_mode == InputMode::Stdin {
+            prompt.into_bytes()
+        } else {
+            vec![]
+        };
         let spec=ProcessSpec {executable:agent.executable.clone().into(),args,cwd:report.cwd.clone(),
-            input:if agent.input_mode==InputMode::Stdin {prompt.into_bytes()} else {vec![]},log_dir:report.artifacts.join("process"),
+            input,log_dir:report.artifacts.join("process"),
             timeout:Duration::from_secs(timeout),signal_grace:Duration::from_secs(5),environment};
         let run_dir=report.artifacts.parent().unwrap().to_path_buf();
         let live_spool=report.artifacts.join("process/stdout.jsonl");
@@ -85,7 +93,13 @@ pub(crate) async fn worker(
             report.pending_tool=outcome.pending;
             report.session_established|=outcome.established;
             outcome.process?
-        }else{crate::progress::observe_profile(process::run_until(spec,Some(stop_file.clone())),&live_spool,&live_db,&task.id,report.attempt as u64,&agent).await??};
+        } else if agent.protocol == Some(crate::protocol::Protocol::Acio) {
+            let outcome = acio::run(spec, &task, &report, &agent).await?;
+            report.pending_tool = outcome.pending;
+            outcome.process?
+        } else {
+            crate::progress::observe_profile(process::run_until(spec,Some(stop_file.clone())),&live_spool,&live_db,&task.id,report.attempt as u64,&agent).await??
+        };
         stopped=process.stopped;
         timed_out=process.timed_out;
         let mut file = fs::File::open(&process.stdout).map_err(|e|e.to_string())?;
@@ -103,10 +117,13 @@ pub(crate) async fn worker(
             };
             for event in batch {
                 if let Some(id)=&event.session_id {
-                    if guarded || agent.cooperative == crate::plan::CooperativeMode::CheckpointV1 {
+                    if guarded || agent.cooperative == crate::plan::CooperativeMode::CheckpointV1
+                        || agent.protocol == Some(crate::protocol::Protocol::Acio) {
                         if report.session_id.as_deref()!=Some(id.as_str()) {return Err("native result belongs to another session".into());}
                         report.session_established=true;
-                    } else {report.session_id=Some(id.clone());}
+                    } else {
+                        report.session_id=Some(id.clone());
+                    }
                 }
                 if event.kind==EventKind::Error {
                     let message=event.payload.to_string();
@@ -130,6 +147,9 @@ pub(crate) async fn worker(
             return Err(provider_error.unwrap_or_else(||format!("agent exit={:?}, termination_signal={:?}, timed_out={}; inspect retained logs",process.exit_code,process.termination_signal,process.timed_out)));
         }
         if let Some(error)=parse_error {return Err(error);}
+        if report.pending_tool.is_some() {
+            return Err("ACIO task paused because its tool request awaits human approval".into());
+        }
         if agent.cooperative == crate::plan::CooperativeMode::CheckpointV1 {
             let owner: process::Ownership = serde_json::from_slice(&fs::read(report.artifacts.join("process/owner.json")).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;
             owner.ensure_quiescent()?;

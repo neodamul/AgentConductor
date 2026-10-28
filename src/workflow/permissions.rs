@@ -185,7 +185,12 @@ pub fn tool_context(
         .filter(|id| !id.is_empty() && id.len() <= 256)
         .ok_or("native session identity is missing")?;
     let policy = crate::guard::Policy::new(&task.cwd, &report.plan.tasks[index].paths)?;
-    if policy.classify(&request.tool, &request.input)? != crate::guard::Disposition::Human {
+    let acio = request
+        .tool
+        .strip_prefix("acio:")
+        .is_some_and(|name| !name.trim().is_empty());
+    if !acio && policy.classify(&request.tool, &request.input)? != crate::guard::Disposition::Human
+    {
         return Err("context verification is only for supported human-gated tools".into());
     }
     let target = Repository::open(&report.repo)?;
@@ -205,32 +210,36 @@ pub fn tool_context(
         return Err("task workspace does not belong to the target repository".into());
     }
     // Inspect ignored sensitive targets without reading their contents or adding them to Git.
-    let file_identity = match policy.file_target(&request.tool, &request.input)? {
-        Some(path) => match fs::symlink_metadata(&path) {
-            Ok(metadata) => {
-                #[cfg(unix)]
-                {
-                    use std::os::unix::fs::MetadataExt;
-                    if !metadata.is_file() || metadata.nlink() != 1 {
-                        return Err("tool target identity is unsupported".into());
+    let file_identity = if acio {
+        serde_json::Value::Null
+    } else {
+        match policy.file_target(&request.tool, &request.input)? {
+            Some(path) => match fs::symlink_metadata(&path) {
+                Ok(metadata) => {
+                    #[cfg(unix)]
+                    {
+                        use std::os::unix::fs::MetadataExt;
+                        if !metadata.is_file() || metadata.nlink() != 1 {
+                            return Err("tool target identity is unsupported".into());
+                        }
+                        serde_json::json!({"dev":metadata.dev(),"ino":metadata.ino(),"len":metadata.len(),"mode":metadata.mode(),"uid":metadata.uid(),"gid":metadata.gid(),"mtime":metadata.mtime(),"mtime_ns":metadata.mtime_nsec(),"ctime":metadata.ctime(),"ctime_ns":metadata.ctime_nsec()})
                     }
-                    serde_json::json!({"dev":metadata.dev(),"ino":metadata.ino(),"len":metadata.len(),"mode":metadata.mode(),"uid":metadata.uid(),"gid":metadata.gid(),"mtime":metadata.mtime(),"mtime_ns":metadata.mtime_nsec(),"ctime":metadata.ctime(),"ctime_ns":metadata.ctime_nsec()})
-                }
-                #[cfg(windows)]
-                {
-                    let id = crate::guard::windows_identity(&path)?;
-                    if !metadata.is_file() || id.reparse || id.links != 1 {
-                        return Err("tool target identity is unsupported".into());
+                    #[cfg(windows)]
+                    {
+                        let id = crate::guard::windows_identity(&path)?;
+                        if !metadata.is_file() || id.reparse || id.links != 1 {
+                            return Err("tool target identity is unsupported".into());
+                        }
+                        serde_json::json!({"volume":id.volume,"index":id.index,"len":id.size,"attributes":id.attributes,"created":id.created,"written":id.written})
                     }
-                    serde_json::json!({"volume":id.volume,"index":id.index,"len":id.size,"attributes":id.attributes,"created":id.created,"written":id.written})
                 }
-            }
-            Err(e) if e.kind() == std::io::ErrorKind::NotFound && request.tool == "Write" => {
-                serde_json::json!({"missing":true})
-            }
-            Err(e) => return Err(format!("tool target cannot be inspected: {e}")),
-        },
-        None => serde_json::Value::Null,
+                Err(e) if e.kind() == std::io::ErrorKind::NotFound && request.tool == "Write" => {
+                    serde_json::json!({"missing":true})
+                }
+                Err(e) => return Err(format!("tool target cannot be inspected: {e}")),
+            },
+            None => serde_json::Value::Null,
+        }
     };
     let temporary = dir.join(format!(
         "tool-context-{}-{}.index",

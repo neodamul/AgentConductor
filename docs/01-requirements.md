@@ -731,3 +731,7 @@ Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → 
 ### R-185 A deleted default workspace stays deleted
 The application shall not show a default workspace the operator never created, and shall not bring one back after it was deleted. A workspace that has no name, goal, project, plan or run is only a placeholder: it is never listed, and while it is the only one the application asks the operator to name a workspace (the question cannot be skipped). At launch the application opens the most recently used saved workspace.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
+
+### R-187 ACIO profiles run through the supervised worker
+When an agent profile opts into protocol ACIO, the coordinator shall send the versioned structured task input over stdin, collect and validate its live JSONL events, retain the supervisor-owned session identity, and route any tool request that needs a decision through the existing human approval gate. Profiles without ACIO remain on their existing execution path.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, user, 2026-10-29.

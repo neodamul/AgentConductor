@@ -69,6 +69,7 @@ impl Control {
 pub struct Options {
     pub control: Option<Control>,
     pub stop_file: Option<std::path::PathBuf>,
+    pub paused: Option<Arc<std::sync::atomic::AtomicBool>>,
 }
 
 pub struct Run {
@@ -82,7 +83,12 @@ pub fn input_line(document: &Value) -> Vec<u8> {
     line
 }
 
-fn violation(message: &Value, expected: u64, finished: bool) -> Result<(), String> {
+fn violation(
+    message: &Value,
+    expected: u64,
+    finished: bool,
+    session: Option<&str>,
+) -> Result<(), String> {
     if let Err(errors) = crate::cli_io::validate("event", message) {
         return Err(format!("protocol violation: {}", errors[0]));
     }
@@ -95,6 +101,11 @@ fn violation(message: &Value, expected: u64, finished: bool) -> Result<(), Strin
     if finished {
         return Err("protocol violation: event after the result".into());
     }
+    if session.is_some_and(|id| message["session_id"] != id) {
+        return Err(
+            "protocol violation: event session_id does not match the assigned session".into(),
+        );
+    }
     Ok(())
 }
 
@@ -102,7 +113,7 @@ fn violation(message: &Value, expected: u64, finished: bool) -> Result<(), Strin
 pub async fn run<F, Fut>(spec: ProcessSpec, decide: F, options: Options) -> Result<Run, String>
 where
     F: Fn(ToolRequest) -> Fut + Send + Sync + 'static,
-    Fut: Future<Output = Decision> + Send + 'static,
+    Fut: Future<Output = Result<Decision, String>> + Send + 'static,
 {
     let first = spec.input.split(|b| *b == b'\n').next().unwrap_or(&[]);
     let input: Value =
@@ -114,6 +125,7 @@ where
             .as_u64()
             .unwrap_or(DEFAULT_DECISION_MS),
     );
+    let expected_session = input["session"]["id"].as_str().map(str::to_owned);
     let control = options.control.unwrap_or_default();
     let queue = control
         .receiver
@@ -125,7 +137,7 @@ where
     let sender = control.clone();
     let (mut expected, mut finished) = (1u64, false);
     let handler: crate::process::AsyncControlHandler = Box::new(move |message: Value| {
-        let verdict = violation(&message, expected, finished);
+        let verdict = violation(&message, expected, finished, expected_session.as_deref());
         expected += 1;
         let ends = message["type"] == "result";
         finished |= ends;
@@ -143,16 +155,14 @@ where
                     input: data["input"].clone(),
                 };
                 let call_id = request.call_id.clone();
-                let verdict = tokio::time::timeout(wait, decide(request)).await;
-                let (decision, reason) = match verdict {
-                    Ok(Decision::Allow) => ("allow", None),
-                    Ok(Decision::Deny) => ("deny", None),
-                    Err(_) => ("deny", Some("no decision in time")),
+                let decision = tokio::time::timeout(wait, decide(request))
+                    .await
+                    .map_err(|_| "no decision in time".to_string())??;
+                let decision = match decision {
+                    Decision::Allow => "allow",
+                    Decision::Deny => "deny",
                 };
-                let mut line = json!({"call_id":call_id,"decision":decision});
-                if let Some(reason) = reason {
-                    line["reason"] = reason.into();
-                }
+                let line = json!({"call_id":call_id,"decision":decision});
                 sender.send("tool_decision", line)?;
             }
             Ok(ControlReply {
@@ -167,6 +177,7 @@ where
         handler,
         wait + Duration::from_secs(5),
         queue,
+        options.paused,
     )
     .await?;
     Ok(Run { result })
