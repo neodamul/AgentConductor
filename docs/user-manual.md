@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.1.39 keeps a coordinator chat question on screen when a request times out and shows the answer when the coordinator finishes, names the request in the timeout notice, and records slow and chat requests in a bounded diagnostics log that the manual explains how to read (see Part 3). Public release packages keep the numeric version and reject local labels.
+The app version is beside the title. Version 0.1.40 adds the acio protocol for command-line agents: `agentconductor io schema|validate|describe|conformance`, a control channel with cancel, user messages and tool decisions, per-agent settings shipped as preset data, a task kind with its own effort for each plan task, and prompts assembled as material, task and answer format; see 2.9 Integrating a CLI. Public release packages keep the numeric version and reject local labels.
 
 ### 1.1a Application updates
 
