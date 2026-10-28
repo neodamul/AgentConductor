@@ -1,0 +1,1 @@
+{"schema": "acio.input/1", "request_id": "req-bad4", "mode": "ask", "instruction": {"text": "Classify."}, "workspace": {"root": "/work/shop", "access": "read_only"}, "task": {"type": "extract"}}

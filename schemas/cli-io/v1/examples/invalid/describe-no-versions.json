@@ -1,0 +1,1 @@
+{"schema":"acio.describe/1","name":"x","version":"1","acio":{"versions":[]},"capabilities":{"read_only":true,"streaming":false},"invocation":{"input":"stdin"}}

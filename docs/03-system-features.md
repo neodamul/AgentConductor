@@ -655,3 +655,7 @@ Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192.
 ### SF-170 Request diagnostics log and guide
 Every `chat` request and every request of one second or more is appended to a bounded `request-diagnostics.log`; the timeout notice shows the request kind; the manuals carry a decision table.
 Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193. GitHub #200, user, 2026-10-28.
+
+### SF-171 CLI I/O protocol (acio)
+Versioned JSON Schemas for the input document, the stdout event stream and the capability descriptor, with valid and invalid examples, exit-code rules, task types with per-model resolution, and a staged adoption path (declarative profile, wrapper, native). Design only in this step.
+Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.

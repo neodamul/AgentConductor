@@ -1,0 +1,1 @@
+{"schema": "acio.input/1", "request_id": "req-bad5", "mode": "ask", "instruction": {"text": "Summarize."}, "workspace": {"root": "/work/shop", "access": "read_only"}, "task": {"type": "summarize", "evidence": "cite_sources"}}

@@ -164,3 +164,6 @@ Enabling the lint first would fail on every existing site and block unrelated wo
 
 ### Driver DDR-37 Reuse the chat job instead of a new runtime
 The coordinator chat (DD-171) already runs a read-only coordinator as a bounded worker job and returns its artifact in the next snapshot. Reusing that path adds no process type, no new permission and no polling of its own; the bundled skill is only prompt text. Trace: QAS-174.
+
+### Driver DDR-38 JSON Lines over JSON-RPC for v1
+Bidirectional control is needed, but plain control lines with acks need no request/response framing, so a shell-level CLI can implement them; JSON-RPC would add id correlation and a transport for no extra capability here. A schema per message keeps both directions checkable. Not evaluated against every agent-client protocol in depth. Trace: QAS-181.

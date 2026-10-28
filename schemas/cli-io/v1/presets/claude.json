@@ -1,0 +1,118 @@
+{
+  "schema": "acio.agent/1",
+  "preset": "claude",
+  "capabilities": {
+    "read_only": true,
+    "workspace_write": true,
+    "streaming": true,
+    "resume": true,
+    "tools": true,
+    "response_schema": true,
+    "heartbeat_seconds": 30,
+    "languages": [
+      "ko",
+      "en"
+    ],
+    "task_types": [
+      "extract",
+      "summarize",
+      "analyze",
+      "code",
+      "agentic",
+      "creative"
+    ],
+    "control": {
+      "cancel": true,
+      "user_message": true,
+      "tool_decision": true
+    },
+    "task_defaults": {
+      "extract": {
+        "effort": "low"
+      },
+      "summarize": {
+        "effort": "medium"
+      },
+      "analyze": {
+        "effort": "medium"
+      },
+      "code": {
+        "effort": "high"
+      },
+      "agentic": {
+        "effort": "high"
+      },
+      "creative": {
+        "effort": "medium"
+      }
+    }
+  },
+  "invocation": {
+    "input": "stdin",
+    "args": [
+      "-p",
+      "--output-format",
+      "stream-json",
+      "--verbose"
+    ],
+    "control_args": [
+      "--input-format",
+      "stream-json"
+    ],
+    "full_access_args": [
+      "--permission-mode",
+      "bypassPermissions"
+    ],
+    "session": {
+      "model_args": [
+        "--model",
+        "{model}"
+      ],
+      "resume": {
+        "mode": "append",
+        "args": [
+          "--resume",
+          "{session_id}"
+        ]
+      }
+    },
+    "options": {
+      "effort": {
+        "args": [
+          "--effort",
+          "{value}"
+        ],
+        "values": [
+          "low",
+          "medium",
+          "high",
+          "xhigh",
+          "max"
+        ],
+        "default": "high"
+      }
+    },
+    "response_schema": {
+      "args": [
+        "--json-schema",
+        "{schema_json}"
+      ]
+    },
+    "control": {
+      "cancel": {
+        "mode": "control_line"
+      },
+      "user_message": {
+        "encoding": "stream_json_user"
+      },
+      "tool_decision": {
+        "encoding": "permission_prompt_tool",
+        "args": [
+          "--permission-prompts",
+          "host"
+        ],
+        "unless": "full_access"
+      }
+    }
+  }
+}

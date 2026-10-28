@@ -2190,3 +2190,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure. Not verified: a log from a real timeout; the cause of the 15 s delay is still unknown.
 - [ ] Verify (Windows): CI.
 - [ ] Complete: merge into `main`, then release v0.1.39.
+
+### CLI I/O protocol (acio) design — GitHub #205
+
+- [x] Plan: R-183 to DD-194 and DDR-38 added; `docs/cli-io-protocol.md` is the specification.
+- [x] Task: `schemas/cli-io/v1` input, event and describe schemas with the valid and invalid examples and a minimal CLI example; task types (`extract`, `summarize`, `analyze`, `code`, `agentic`, `creative`) with per-model resolution.
+- [x] Verify: every example is accepted or rejected as expected by a draft 2020-12 validator (run locally with python `jsonschema`; no Rust checker exists yet); the minimal CLI's output validates.
+- [x] Review: the user answered the open questions on 2026-10-28 (decisions in §14: bidirectional in v1, per-agent settings for in-house CLIs, coordinator sets `task.type`, roles table shows effort and fit).
+- [ ] Next: implementation phases 1 to 6 of the document, each as its own issue and PR.
