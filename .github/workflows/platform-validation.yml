@@ -81,7 +81,7 @@ jobs:
         run: |
           $package = "dist/agentconductor-x86_64-pc-windows-msvc-$($env:GITHUB_SHA.Substring(0, 12))/agentconductor.exe"
           $env:AGENTCONDUCTOR_DESKTOP_BINARY = (Resolve-Path $package).Path
-          cargo test --locked --test windows_desktop --test windows_schedule --test windows_briefing --test windows_signal_settings --test windows_tool_decision --test windows_candidate_review -- --include-ignored --nocapture
+          cargo test --locked --test windows_desktop --test windows_schedule --test windows_briefing --test windows_signal_settings --test windows_tool_decision --test windows_candidate_review --test windows_coordinator_chat -- --include-ignored --nocapture
       - name: Retain verified package and execution evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2, MIT

@@ -13,6 +13,7 @@ The coordinator invocation uses `coordinator::read_only_args`, which verifies th
 - `src/chat.rs`: 40-turn prompt/answer bounds and read-only coordinator request.
 - `src/coordinator.rs`: verified provider-specific read-only invocation.
 - `tests/chat_prompt.rs`, `tests/native_workspace_chat.rs`, `tests/native_workspace_chat_interaction.rs`, `tests/startup_chat.rs`, `tests/startup_chat_persistence.rs`: prompt, UI, dispatch, workspace-isolation, and persistence regressions.
+- `tests/windows_coordinator_chat.rs`, `tests/support/windows_chat_script.rs`, `tests/support/chat_agent.rs`: exact packaged Windows UI Automation coverage for persisted transcript reopen and reconnecting a chat worker after the first app process closes.
 
 Graphify refreshed the worktree graph to 9,673 nodes and 16,229 edges. A local path query linked `launch_chat()` and `chat_snapshot()` through their shared `Result` type; source and integration tests remain the authoritative evidence. The generated 21 MB graph output was removed after analysis. CocoIndex is unavailable because no `cocoindex` executable is installed in this environment.
 - `docs/user-manual.md`, `docs/user-manual.ko.md`: operator-facing limits and usage.

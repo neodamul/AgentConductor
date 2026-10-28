@@ -6282,3 +6282,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify: exact Windows package UI remains unverified.
 - [x] Complete implementation checkpoint: commit and push `d1519f46` on `codex/issue-189-native-coordinator-chat`; draft PR #192 targets `codex/issue-9-native-ui-parity`. Keep #189 open while cross-platform PR checks and package review remain pending.
 - [ ] Complete issue: review and merge PR #192 after checks, then close #189 only when all acceptance criteria are verified.
+
+### Verify coordinator chat in the exact Windows package — GitHub #189 / PR #192
+
+- [x] Plan: audit the existing `AGENTCONDUCTOR_DESKTOP_BINARY` and PowerShell UI Automation harness; source tests alone do not prove packaged transcript reopen or in-flight reconnect.
+- [x] Red: `windows_coordinator_chat_dispatch` failed because the package test and Windows workflow entry did not exist.
+- [x] Task: add a deterministic Rust coordinator fixture, package UI Automation driver, durable `startup.json` transcript oracle, and owner-file running-job oracle.
+- [x] Task: cover both completed transcript visibility after workspace reopen and an in-flight chat worker that finishes after the first UI process closes.
+- [x] Verify local: dispatch wiring, rustfmt and diff checks pass; the exact Windows package tests remain ignored outside Windows and require the package workflow.
+- [ ] Verify Windows: run `windows_coordinator_chat` with `AGENTCONDUCTOR_DESKTOP_BINARY` and require `CHAT_VISIBLE` plus persisted transcript evidence for both scenarios.
+- [ ] Complete: record the exact package artifact/run, update #189 and PR #192, then close the issue only after all acceptance criteria pass.
