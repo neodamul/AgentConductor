@@ -5,7 +5,7 @@
 - [x] Task: add `io schema|describe|validate|conformance`, the ACIO describe/runtime support, JSONL decoder mapping, and ordered stdin controls through the existing process runner. Keep old profile JSON compatible when `protocol` is absent.
 - [x] Focused Verify: conformance/runtime and profile/schema/source-layout regressions pass 38 tests across 7 suites; touched Rust files satisfy the 300-line limit; formatting and diff checks pass.
 - [x] Full Verify: `cargo test --all-targets --locked --offline --features test-fixtures --no-fail-fast` passes 1,077 tests, 14 ignored across 344 suites. The first run exposed one missing bilingual manual entry; after rendering both HTML manuals, `public_docs` passes 11/11 and the complete rerun exits 0. Warning-denied all-target Clippy, rustfmt, `git diff --check`, and the 300-line source/test guard pass.
-- [ ] Complete: commit/push this unit and update AgentMemory, LLM Wiki, issue #9, and PR #22 with the exact pushed revision. This source feature earns no packaged UI acceptance credit; the documented conformance limits and exact macOS/Windows package gates remain open.
+- [x] Complete: pushed commit `54a56c7fcaf4fae28e1dec2c968698173ab2132c`; updated AgentMemory (`mem_mvsdvpdh_3b4b6f96c302`), LLM Wiki, issue #9, and PR #22 with verification and scope. This source feature earns no packaged UI acceptance credit; the documented conformance limits and exact macOS/Windows package gates remain open.
 
 ### Drive Windows candidate approvals through observable state changes
 
