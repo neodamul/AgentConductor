@@ -119,6 +119,13 @@ fn picker_saving_without_repository_and_switching_workspaces() {
         now["config"]["goal"], "",
         "the second workspace has its own settings"
     );
+    // GitHub #226: an unnamed, unused workspace is a placeholder and is not listed; naming it makes it one.
+    let named = serde_json::json!({"profiles":plan.agents,"repository":"","goal":"","coordinator":"mock","workspace_mode":"shared","name":"Second"});
+    call(
+        &room,
+        serde_json::json!({"kind":"save","revision":now["revision"],"config":named}),
+    )
+    .unwrap();
     let listed = call(&room, serde_json::json!({"kind":"workspaces"})).unwrap();
     let recent: Vec<_> = listed["registered"]
         .as_array()

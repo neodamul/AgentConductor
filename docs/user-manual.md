@@ -42,7 +42,7 @@ Workspace does not start a new plan. Unsaved changes require a choice before nav
 
 **Delete** is available for the current workspace too. If planning is active,
 **Stop planning and delete** waits for its owned process and admitted metadata.
-Deleting the current workspace opens the most recently used remaining workspace; if none remains, the app creates an empty one. Active implementation requires **Stop run** first.
+Deleting the current workspace opens the most recently used remaining workspace; if none remains, the app creates an empty one. A deleted workspace, including the first (default) one, does not come back after a restart or an update: the app opens the most recently used saved workspace. With no workspace at all, the app asks you to name one before showing anything; there is no hidden "desktop" workspace. Active implementation requires **Stop run** first.
 Only saved app-owned workspace data can be removed; the project is preserved.
 Data moves to `~/.agentconductor/workspace-trash/<id>` for recovery.
 **Remove from recents** hides an entry without deleting it.
@@ -268,7 +268,7 @@ Run directories must be outside the repository, and the repository must start cl
 
 | Command | Purpose |
 |---|---|
-| `agentconductor` | Open the default desktop workspace. |
+| `agentconductor` | Open the most recently used saved workspace. With none saved, the app asks you to name the first one. |
 | `agentconductor ui-new <workspace-dir>` | Open a desktop workspace in a chosen directory. |
 | `agentconductor ui <run-dir>` | Open the Agent Room for an existing run (one window per run). |
 | `agentconductor profiles <profiles.json>` | Write provider profile templates to review. |
@@ -433,6 +433,8 @@ The page waits 15 seconds for each reply from the application. The toast names t
 | `done ... ok=false error="..."` | The request was refused or failed; this is not a timeout. | Read the reason. "startup operation still running" means the previous job has not finished. |
 
 Include the last 50 lines of both files, the request kind from the toast and the time of the toast when you report a timeout.
+
+**Page-side timeouts.** Whenever the page gives up on a reply it also writes `<unix milliseconds> client-timeout of=<kind> waited=<ms> hidden=<true|false>`. `waited` is what the page's own clock measured: about 15000 is a real 15-second wait with no reply; a much larger value, or `hidden=true`, means the page itself was suspended (window in the background, display or machine sleep) and the timeout says nothing about the request. A `client-timeout` with no slow `done` line for the same kind means the application was not slow: the reply never reached the page. The background refresh that keeps the screen current retries a missed reply quietly and shows the toast only after three misses in a row (about 45 seconds), so a toast for `snapshot` means three consecutive misses.
 
 ## Optional tool commands
 

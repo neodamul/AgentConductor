@@ -98,7 +98,7 @@
 <p><code>RUN</code>은 저장소 밖의 실행 디렉터리, <code>TASK</code>는 작업 ID, <code>AGENT</code>는 등록된 에이전트 ID입니다. 실행 전에 깨끗한 기준 소스를 준비하고 정확한 다이제스트를 검토하세요.</p>
 <h3>2.1 워크스페이스와 에이전트</h3>
 <div class="manual-table"><table><thead><tr><th>명령</th><th>기능</th></tr></thead><tbody>
-<tr><td><code>agentconductor</code></td><td>기본 워크스페이스를 엽니다.</td></tr>
+<tr><td><code>agentconductor</code></td><td>마지막으로 사용한 저장된 워크스페이스를 엽니다. 저장된 워크스페이스가 없으면 첫 워크스페이스의 이름을 묻습니다.</td></tr>
 <tr><td><code>agentconductor ui-new &lt;workspace-dir&gt;</code></td><td>지정한 워크스페이스를 엽니다.</td></tr>
 <tr><td><code>agentconductor ui &lt;run-dir&gt;</code></td><td>기존 실행의 Agent Room을 엽니다.</td></tr>
 <tr><td><code>agentconductor profiles &lt;profiles.json&gt;</code></td><td>검토할 CLI 프로필 템플릿을 씁니다.</td></tr>
@@ -207,6 +207,7 @@
 <tr><td><code>done ... ok=false error=&quot;...&quot;</code></td><td>요청이 거부되거나 실패했습니다. 시간 초과가 아닙니다.</td><td>이유를 읽습니다. &quot;startup operation still running&quot;은 이전 작업이 끝나지 않았다는 뜻입니다.</td></tr>
 </tbody></table></div>
 <p>시간 초과를 보고할 때는 두 파일의 마지막 50줄, 토스트의 요청 종류, 토스트 시각을 함께 보냅니다.</p>
+<p><strong>화면 쪽 시간 초과.</strong> 화면이 응답을 포기할 때마다 <code>&lt;유닉스 밀리초&gt; client-timeout of=&lt;종류&gt; waited=&lt;ms&gt; hidden=&lt;true|false&gt;</code> 줄도 기록됩니다. <code>waited</code>는 화면 자신의 시계로 잰 값입니다. 15000 안팎이면 실제로 15초 동안 응답이 없던 것이고, 훨씬 크거나 <code>hidden=true</code>이면 화면 자체가 멈춰 있었던 것(창이 백그라운드, 화면이나 PC 잠자기)이라 요청과 무관한 시간 초과입니다. 같은 종류의 느린 <code>done</code> 줄 없이 <code>client-timeout</code>만 있으면 응용 프로그램이 느린 것이 아니라 응답이 화면에 도착하지 않은 것입니다. 화면을 최신으로 유지하는 백그라운드 갱신은 응답을 놓치면 조용히 다시 시도하고, 연속 세 번 놓친 뒤(약 45초)에만 토스트를 보여 줍니다. 따라서 <code>snapshot</code> 토스트는 연속 세 번 실패했다는 뜻입니다.</p>
 <h2>선택 도구 명령</h2>
 <p>앱이 설치하지 않습니다. 슬래시 명령은 해당 에이전트 CLI, 나머지는 터미널에서 직접 실행합니다.</p>
 <ul>

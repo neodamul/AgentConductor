@@ -746,3 +746,7 @@ Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 �
 ### QAS-182 A suspended page does not report a stale poll timeout
 Given an automatic workspace or room snapshot with no user action, a timeout produces no toast; given the page becomes hidden before the request deadline, time spent hidden is excluded and returning to the page does not immediately fail the request; after the remaining visible interval expires, the timeout is reported through the normal non-background path. An explicit refresh still shows its timeout. Tests use a deterministic clock and verify both page pollers and bridge cleanup.
 Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → DDR-39 → DD-196. GitHub #221, user, 2026-10-28.
+
+### QAS-183 A deleted default workspace does not return
+Given the default workspace and a second saved workspace, when the default is deleted and the app launches again, then `launch_root` is the second workspace and no `desktop` folder exists. Given no saved workspace, the placeholder opens with `workspace_blank` true, is in neither list, and creating a first workspace removes it. A default folder that has a name or goal is real and stays listed. The page shows a first-workspace question that Escape and Cancel cannot dismiss. Tests use a temporary HOME.
+Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.

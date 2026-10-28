@@ -270,7 +270,7 @@ Cargo 빌드 캐시는 앱 캐시와 별개입니다.
 
 | 명령 | 기능 |
 |---|---|
-| `agentconductor` | 기본 워크스페이스를 엽니다. |
+| `agentconductor` | 마지막으로 사용한 저장된 워크스페이스를 엽니다. 저장된 워크스페이스가 없으면 첫 워크스페이스의 이름을 묻습니다. |
 | `agentconductor ui-new <workspace-dir>` | 지정한 워크스페이스를 엽니다. |
 | `agentconductor ui <run-dir>` | 기존 실행의 Agent Room을 엽니다. |
 | `agentconductor profiles <profiles.json>` | 검토할 CLI 프로필 템플릿을 씁니다. |
@@ -419,6 +419,8 @@ OpenCode 2.0.25, agentmemory 0.9.29입니다. 설치 버전은 다를 수 있으
 | `done ... ok=false error="..."` | 요청이 거부되거나 실패했습니다. 시간 초과가 아닙니다. | 이유를 읽습니다. "startup operation still running"은 이전 작업이 끝나지 않았다는 뜻입니다. |
 
 시간 초과를 보고할 때는 두 파일의 마지막 50줄, 토스트의 요청 종류, 토스트 시각을 함께 보냅니다.
+
+**화면 쪽 시간 초과.** 화면이 응답을 포기할 때마다 `<유닉스 밀리초> client-timeout of=<종류> waited=<ms> hidden=<true|false>` 줄도 기록됩니다. `waited`는 화면 자신의 시계로 잰 값입니다. 15000 안팎이면 실제로 15초 동안 응답이 없던 것이고, 훨씬 크거나 `hidden=true`이면 화면 자체가 멈춰 있었던 것(창이 백그라운드, 화면이나 PC 잠자기)이라 요청과 무관한 시간 초과입니다. 같은 종류의 느린 `done` 줄 없이 `client-timeout`만 있으면 응용 프로그램이 느린 것이 아니라 응답이 화면에 도착하지 않은 것입니다. 화면을 최신으로 유지하는 백그라운드 갱신은 응답을 놓치면 조용히 다시 시도하고, 연속 세 번 놓친 뒤(약 45초)에만 토스트를 보여 줍니다. 따라서 `snapshot` 토스트는 연속 세 번 실패했다는 뜻입니다.
 
 ## 선택 도구 명령
 
