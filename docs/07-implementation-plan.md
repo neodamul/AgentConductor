@@ -6252,6 +6252,29 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify exact package: push this head and require the Windows package to show the complete briefing without changing the run; then continue candidate-review approve/reject/merge assertions. Source tests are not packaged acceptance.
 - [ ] Complete: keep issue #9 at 22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate until exact package evidence passes.
 
+### Port deleted-default workspace launch behavior — GitHub #226
+
+- [x] Plan: trace both desktop launch entrypoints, first-run UI, workspace lists and `desktop::workspace()` callers; preserve non-launch data-root uses. R-185 → DD-197 covers saved-workspace selection and the blank placeholder.
+- [x] Red: the new first-run regression failed because snapshots did not identify blank workspaces.
+- [x] Task: filter blank workspaces from saved/recent menus, expose the blank state to the native UI, block first-run use behind a non-dismissible naming modal, and retire the placeholder after a named workspace is created.
+- [x] Verify locally: first-run modal, workspace launch, settings journey, and workspace-switching regressions pass; full locked/offline suite passes 1,019 tests with 14 ignored across 335 suites; fmt, native-feature warning-denied Clippy, source-layout, diff, and ≤300-line checks pass.
+- [x] Exact run `40749471886`: macOS validation and package passed; Windows validation passed; Windows package reached the desktop acceptance job but failed in `windows_signal_settings` because its clean profile opened the new first-workspace modal and the script searched for `Settings` before creating a workspace.
+- [x] Follow-up Red: run `40749471886` showed `windows_signal_settings` could not find `Settings` because the first-workspace naming modal correctly blocks normal navigation. A source-contract regression failed before adding setup ordering.
+- [x] Follow-up Task: preserve the product modal; create the first named workspace through the packaged binary before exercising normal settings navigation. Keep the SendKeys ban and guarded UIA/Unicode input for the desktop goal field.
+- [x] Follow-up Local Verify: 9 Windows UIA driver contracts and 2 source-layout tests pass via standalone `rustc`; `cargo fmt --all -- --check`, diff check, and 300-line limits pass. This does not exercise Windows UI Automation.
+- [ ] Verify: exact Windows package must pass signal settings, default desktop goal entry, briefing, candidate approval/merge/reject; macOS package must pass on the final pushed head.
+- [ ] Complete: update PR #230 and issue #226 with exact final evidence; keep both open until all platform/package checks pass.
+
+### Wait for first-run workspace registry persistence in the Windows package fixture — GitHub #226
+
+- [x] Plan: exact run `40783168410` passed both platform validations and the macOS package. Windows passed briefing, candidate review, default desktop, schedule, and package execution, then the signal-settings test read `workspaces.json` immediately after first-run save and observed `[]`.
+- [x] Red: add a deterministic delayed-registry regression. It failed before the helper accepted the expected workspace path and waited for persistence.
+- [x] Task: poll the registry for at most 10 seconds and require the exact managed workspace path. `Windows UIA workspace` produces `windows-uia-workspace`; do not infer the created workspace from a loose filename pattern.
+- [x] Local Verify after rebase: signal-settings dispatch and registry suites pass 16 tests; source layout passes 2 tests; formatting and diff checks pass. Changed Rust/test files are 35, 117, 159, 232, 261, and 58 lines, all below 300.
+- [x] Evidence: exact base run `40784206494` failed earlier at the port-field UIA `SetFocus` (`ElementNotEnabledException`), before reaching this registry assertion. Root #9 added the shared focus fallback in `28df8394`; PR #230 must carry that root base in its final package run.
+- [ ] Exact-package Verify: after rebase on `28df8394`, require the Windows signal preference file to contain `agentmemory` and port `7333` under the exact registered workspace path, and require both macOS and Windows package jobs to pass.
+- [ ] Complete: update PR #230, issue #226, AgentMemory and the LLM Wiki with final exact-head evidence; keep the PR draft and issue open until both package jobs pass.
+
 ### 2026-10-29 — Permit process-owned candidate confirmation outside main-window bounds — issue #9
 
 - [x] Plan: inspect run `40745298702` after its Windows briefing step passed with the new driver. Candidate approve and merge actions reached their expected states; the final `Confirm candidate decision` button was rejected because its UIA rectangle fell outside the main window rectangle.

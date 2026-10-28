@@ -1,0 +1,40 @@
+{
+  "scope": "Issue #226 Windows packaged signal-settings first-run workspace registry polling",
+  "base_head": "1decc2926b0e242d1e87eb7842a5f0a5687e12e4",
+  "fix_commit": "bbad7e1",
+  "workflow_runs": {
+    "40783168410": {
+      "macos_validation": "passed",
+      "windows_validation": "passed",
+      "macos_package": "passed",
+      "windows_package": "failed",
+      "failure": "The signal-settings test read workspaces.json immediately after first-run save and observed an empty list."
+    },
+    "40784206494": {
+      "macos_validation": "passed",
+      "windows_validation": "passed",
+      "macos_package": "passed",
+      "windows_package": "failed before registry assertion",
+      "failure": "The shared signal-settings driver raised ElementNotEnabledException while focusing the agentmemory port field. The #9 agent owns this shared UIA driver fix."
+    }
+  },
+  "red_green": {
+    "regression": "A delayed registry writer proves the helper waits for the exact first-run workspace path.",
+    "local_verification": {
+      "windows_signal_settings_dispatch": "15 passed",
+      "source_layout": "2 passed",
+      "cargo_fmt": "passed",
+      "git_diff_check": "passed",
+      "changed_file_lines": {
+        "tests/support/signal_workspace_registry.rs": 35,
+        "tests/windows_signal_settings.rs": 117,
+        "tests/windows_signal_settings_dispatch.rs": 264
+      }
+    }
+  },
+  "not_verified": [
+    "Exact Windows package execution of fix commit bbad7e1",
+    "Exact macOS and Windows package runs after rebase onto the final #9 head"
+  ],
+  "issue_state": "Keep issue #226 open and PR #230 draft/open until exact-head macOS and Windows package checks pass."
+}
