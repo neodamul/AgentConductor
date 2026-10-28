@@ -193,12 +193,12 @@
 - [x] Complete: retain exact-package evidence and update issue #9, AgentMemory, and LLM Wiki. Schedule dispatch is verified for this exact package, but no overall UI acceptance credit is added: candidate remains 22/25 and shipped Rust replacement 0/25.
 ### Rebind the Windows chat UIA tree after launcher transitions — issue #189 / 2026-10-28
 
-- [x] Plan: exact-head package run `40675510083` passed both platform validation jobs and exposed one first-launch chat-driver failure; the two recovery scenarios passed.
+- [x] Plan: exact-head package run `40675510083` passed both platform validation jobs and exposed one first-launch chat-driver failure; the two recovery scenarios passed. The corrective exact-head run is `40682687729` on `53c42854`.
 - [x] Red: `windows_coordinator_chat_dispatch::exact_package_chat_test_is_wired_into_the_windows_package_gate` first failed because the chat driver had no post-launch window rebind contract.
 - [x] Task: add a bounded `RefreshWindow()` lookup by the target PID and refresh the UIA window before launcher discovery, editor/send lookup, and transcript polling. Keep the product chat implementation unchanged because the failed run persisted no question or answer.
 - [x] Local Verify: the dispatch contract passes 1/1, warning-denied Clippy, rustfmt, `git diff --check`, and the 300-line source/test check pass.
-- [ ] Exact-package Verify: rerun the Windows package and require all three `windows_coordinator_chat` scenarios to pass. Run `40675510083` recorded 2/3: in-flight reconnect and late-answer recovery passed; initial persistence/reopen failed with `NO_CHAT_EDIT` and an empty persisted transcript.
-- [ ] Complete: retain the exact package artifact/evidence, update issue #189 and PR #192, and do not close the issue until all three scenarios pass.
+- [x] Exact-package Verify: Windows packaged release run `40682687729`, job `122808825933`, passed all three `windows_coordinator_chat` scenarios: persistence/reopen, in-flight reconnect, and late-answer recovery (3/3, 56.86s). macOS package job `122808825796` also passed. The Windows job later failed in unrelated `windows_tool_decision` with `NO_CONFIRMATION_BUTTON`; that failure does not invalidate the chat evidence.
+- [x] Complete: retain the Windows package SHA-256 `887011a5485dbd01a0098e382deb317d1c83bd778ec9a8a017af0c78eed2799b`, update issue #189/PR #192, and keep the issue open because the overall package job still has an unrelated #9 failure.
 
 ### Reconcile Rust UI acceptance ledger and remaining workflows — issue #9 / 2026-10-28
 
