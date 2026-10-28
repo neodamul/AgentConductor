@@ -636,4 +636,6 @@ Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → 
 `startup.html` and `room.html` have no `local-dot`, `local-label`, `startup-note` or the footer default-mode span; the keys `startup.local_existing_cli_login`, `startup.local_by_default`, `startup.one_application_independent_agent_sessions_your_approval_controls`, `startup.shared_by_default_worktrees_optional` and `room.local_cli_authentication` are gone from both catalogs. The workspace mode stays visible in its checkbox.
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
 
-
+### FR-169 Reconcile on failure
+`send` in `chat.js` calls `resync` on any rejection: it reloads `chat_history`; if the last turn is the operator text that was sent, the turn stays and `settle` adopts the running or completed job; otherwise the optimistic turn is removed and the text and error are shown. If the history cannot be read either, the optimistic turn is removed as before.
+Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192. GitHub #197, user, 2026-10-28.

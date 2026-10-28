@@ -95,6 +95,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-178 Guide and manual open from Settings | BG-133 | SF-166 | UC-169 | FR-165 | QAS-176 | — | DD-189 |
 | R-179 The coordinator chat behaves like a CLI session | BG-134 | SF-167 | UC-170 | FR-166, FR-167 | QAS-177 | — | DD-190 |
 | R-180 Screens show only information the operator can use | BG-135 | SF-168 | UC-171 | FR-168 | QAS-178 | — | DD-191 |
+| R-181 The chat keeps going when a reply is slow | BG-136 | SF-169 | UC-172 | FR-169 | QAS-179 | — | DD-192 |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features
 SF-13–17 that are not defined in the use-case/feature documents; their scope is covered

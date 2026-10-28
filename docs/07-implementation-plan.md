@@ -2172,3 +2172,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Complete: merge into `main`, then port to the Rust migration line with `Related to #190`.
 
 
+
+### Chat survives a request timeout — GitHub #197
+
+- [x] Plan: R-181 to DD-192 added.
+- [x] Red: `tests/chat_runtime.cjs` timeout cases failed with the question rolled back.
+- [x] Task: `resync` in `src/ui/chat.js` reloads the stored conversation after a failed send; `tests/chat_async.rs` drives a slow fake coordinator through the application (send returns at once, second send refused, late answer, follow-up carries history).
+- [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure. Not verified: a real window and a real coordinator; why a native reply takes more than 15 s is not found.
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge into `main`. The Rust line has no coordinator chat; Codex's native chat is #189.

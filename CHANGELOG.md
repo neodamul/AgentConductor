@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Coordinator chat: a request that timed out no longer removes your question or blocks the next one; the screen checks what the application received, keeps an accepted question, follows the running coordinator and shows its late answer (GitHub #197).
+
 ## v0.1.38
 
 - **Agent tools guide…** and **User manual** moved from the workspace menu into Settings, beside MCP servers and Clear cache.

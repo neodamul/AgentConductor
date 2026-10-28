@@ -1527,4 +1527,6 @@ Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → 
 The footer line is deleted, not turned into a live mode display, because the worktree checkbox already shows the current choice (user decision). The other labels were fixed text with no state behind them.
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
 
-
+### DD-192 Ask the application instead of guessing
+A timeout says nothing about whether the job started, so the page treats the stored conversation as the truth. The request limit is not raised: any limit can be exceeded and a longer wait only delays the same blind spot. Why a reply takes more than 15 seconds is not established.
+Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192. GitHub #197, user, 2026-10-28.
