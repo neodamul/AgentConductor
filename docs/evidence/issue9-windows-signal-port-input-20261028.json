@@ -13,8 +13,10 @@
     "test": "signal_port_waits_for_each_visible_character_before_sending_the_next",
     "result": "Failed against the old bulk-send driver because it had no per-character UI state synchronization."
   },
-  "change": "The test driver now selects the current text once, sends one digit, and waits for ValuePattern to equal the expected prefix before it sends the next digit. The existing durable signal-transport.json assertion remains the success oracle.",
+  "change": "The test driver selects the current text once, sends one digit, and waits for ValuePattern to equal the expected prefix before it sends the next digit. Exact-package run 40608159958 confirmed schedule persistence but exposed that PowerShell does not resolve the [ushort] alias used for each character. A source-contract regression now rejects [ushort] and requires [System.UInt16]; the driver uses that framework-qualified cast. The existing durable signal-transport.json assertion remains the success oracle.",
   "local_verification": {
+    "regression_red": "The updated dispatch contract failed before the cast fix because the source still contained [ushort].",
+    "focused_regression": "1 passed",
     "windows_signal_settings_dispatch": "10 passed",
     "source_layout": "2 passed",
     "cargo_fmt_check": "passed",
@@ -22,6 +24,10 @@
     "git_diff_check": "passed",
     "max_test_file_lines": 300
   },
-  "exact_windows_package_rerun": "pending",
+  "exact_windows_package_rerun": {
+    "run_id": 40608159958,
+    "result": "Schedule journey passed. Signal-settings UI automation failed before input because PowerShell could not find type [ushort]. The package artifact was retained; this is a test-driver failure, not evidence of settings persistence.",
+    "corrected_head_verification": "pending"
+  },
   "acceptance": "No workflow credit; candidate package acceptance remains 22/25 until the exact Windows tool-decision workflow also passes."
 }

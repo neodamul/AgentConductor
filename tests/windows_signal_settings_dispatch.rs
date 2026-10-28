@@ -102,7 +102,10 @@ fn signal_port_waits_for_each_visible_character_before_sending_the_next() {
     assert!(source.contains("public static void SelectAll()"));
     assert!(source.contains("[SignalSettingsMouse]::SelectAll()"));
     assert!(source.contains("foreach ($character in '7333'.ToCharArray())"));
-    let key = input_loop.find("::Key([ushort][char]$character)").unwrap();
+    assert!(!source.contains("[ushort]"));
+    let key = input_loop
+        .find("::Key([System.UInt16][char]$character)")
+        .unwrap();
     let expected = input_loop.find("$expectedValue += $character").unwrap();
     let observed = input_loop.find("$value -eq $expectedValue").unwrap();
     let failure = input_loop.find("PORT_CHARACTER_NOT_APPLIED").unwrap();

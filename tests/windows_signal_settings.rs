@@ -184,7 +184,7 @@ Assert-PortFieldFocused $port
 [SignalSettingsMouse]::SelectAll()
 $expectedValue = ''
 foreach ($character in '7333'.ToCharArray()) {
-  [SignalSettingsMouse]::Key([ushort][char]$character)
+  [SignalSettingsMouse]::Key([System.UInt16][char]$character)
   $expectedValue += $character
   $characterDeadline = (Get-Date).AddSeconds(2)
   $value = $null

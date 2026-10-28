@@ -13,8 +13,8 @@
 - [x] Plan: exact package run `40595627014` failed while entering `7333`: the UI Automation `ValuePattern` observed only `7` before the driver gave up. Earlier run `40594521592` passed, so a single passing package run is not sufficient evidence that the input is reliable.
 - [x] Red: `windows_signal_settings_dispatch::signal_port_waits_for_each_visible_character_before_sending_the_next` fails with the old driver because it sends the entire string before observing the field.
 - [x] Task: select the existing text once; send one digit at a time and wait until the field's `ValuePattern` equals the expected prefix before sending another digit. Preserve the exact value and durable-file checks as success oracles.
-- [x] Local Verify: focused dispatch suite passes 10/10; source-layout passes 2/2; rustfmt, warning-denied all-target Clippy, `git diff --check`, and the 300-line source/test limit pass. `tests/windows_signal_settings.rs` is 300 lines.
-- [ ] Exact-package Verify: rerun Windows on the pushed head and require all four digits, save/reopen, and durable `transport=agentmemory`, `port=7333` to pass.
+- [x] Local Verify: exact-package run `40608159958` confirmed schedule persistence, then failed before signal settings were saved because PowerShell could not resolve `[ushort]`. Added a source-contract regression that rejects the alias and requires `[System.UInt16]`; it failed before the fix. The dispatch suite passes 10/10 and source-layout passes 2/2; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the 300-line source/test limit pass. `tests/windows_signal_settings.rs` remains 300 lines.
+- [ ] Exact-package Verify: rerun Windows on the corrected pushed head and require all four digits, save/reopen, and durable `transport=agentmemory`, `port=7333` to pass.
 - [ ] Complete: retain the exact Windows artifact/evidence and update issue #9, AgentMemory, and LLM Wiki. This test-driver correction does not add UI acceptance; keep 22/25 until workflow 23 also passes.
 
 ### Fix Windows packaged tool-decision focus — issue #9 / 2026-10-28
