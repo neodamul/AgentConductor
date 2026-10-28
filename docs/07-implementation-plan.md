@@ -19,11 +19,11 @@
 
 ### Fix Windows packaged tool-decision focus — issue #9 / 2026-10-28
 
-- [x] Plan: exact-package run `40594521592` passed the Signal Settings save test but failed the tool-decision test at `CHECKED_POINTER_CLICK_FAILED`. The UI Automation tree exposes a separate modal window. The pointer helper combines a foreground-HWND equality check with same-process hit-testing, but the log does not isolate which guard rejected the click; allow a same-process modal foreground while retaining the target-process check.
+- [x] Plan: exact-package run `40594521592` failed at `CHECKED_POINTER_CLICK_FAILED`; run `40613250892` still failed after the same-process foreground change. Its complete UIA tree showed both Allow once and Deny enabled and visible, but no confirmation dialog. UIA Invoke produced no state transition, and the pointer helper still returned false. The old log collapsed foreground ownership, point-process, cursor-position, and foreground-retention failures, so the exact rejection cause remains unknown.
 - [x] Red: `windows_tool_decision_dispatch::checked_fallback_accepts_a_same_process_modal_foreground_window` fails against the exact-HWND check.
 - [x] Task: move the embedded driver into `tests/support/windows_tool_decision_script.rs` to keep each test source under 300 lines. Accept a foreground window only when its process ID matches the packaged app, and retain the same-process hit-test check at the target coordinates.
-- [x] Local Verify: focused dispatch and source-layout tests pass 3/3; warning-denied all-target Clippy, rustfmt, diff check, and the 300-line guard pass.
-- [ ] Exact-package Verify: rerun the Windows package and require refresh, allow, and deny receipt/effect assertions to pass in the exact binary.
+- [x] Local Verify: added a source-contract regression requiring the pointer fallback to report its rejecting guard; it failed before diagnostics were added. The dispatch and source-layout tests pass 4/4; warning-denied all-target Clippy, rustfmt, diff check, and the 300-line guard pass.
+- [ ] Exact-package Verify: rerun the Windows package with guard diagnostics, identify the failing condition from the exact artifact, then require refresh, allow, and deny receipt/effect assertions to pass in the exact binary.
 - [ ] Complete: archive the exact-package evidence and update issue #9 and AgentMemory. Workflow 23 remains uncredited; packaged acceptance stays **22/25** until the exact UI journey passes.
 
 ### Retry packaged Windows scheduling with a UIA Invoke fallback — issue #9 / 2026-10-28

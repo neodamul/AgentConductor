@@ -32,7 +32,7 @@ public static class ToolDecisionMouse {
   [StructLayout(LayoutKind.Sequential)] struct Point { public int x, y; }
   [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
   [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
-  [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
+  [DllImport("user32.dll", SetLastError=true)] static extern bool SetCursorPos(int x, int y);
   [DllImport("user32.dll")] static extern IntPtr WindowFromPoint(Point point);
   [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
   [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
@@ -46,21 +46,29 @@ public static class ToolDecisionMouse {
     GetWindowThreadProcessId(GetForegroundWindow(), out foregroundProcessId);
     return foregroundProcessId == expectedPid;
   }
+  static uint ForegroundProcessId() {
+    uint processId;
+    GetWindowThreadProcessId(GetForegroundWindow(), out processId);
+    return processId;
+  }
   static bool Focus(IntPtr window, uint expectedPid) {
     SetForegroundWindow(window);
     var deadline = DateTime.UtcNow.AddSeconds(3);
     while (DateTime.UtcNow < deadline && !ForegroundBelongsTo(expectedPid)) System.Threading.Thread.Sleep(50);
     return ForegroundBelongsTo(expectedPid);
   }
-  public static bool Click(IntPtr window, int x, int y, uint expectedPid) {
-    if (!Focus(window, expectedPid) || ProcessAt(x, y) != expectedPid || !SetCursorPos(x, y)) return false;
+  public static string Click(IntPtr window, int x, int y, uint expectedPid) {
+    if (!Focus(window, expectedPid)) return "FOREGROUND_NOT_OWNED: pid=" + ForegroundProcessId() + " hwnd=" + window;
+    var pointProcessId = ProcessAt(x, y);
+    if (pointProcessId != expectedPid) return "POINT_NOT_OWNED: pid=" + pointProcessId + " expected=" + expectedPid + " x=" + x + " y=" + y;
+    if (!SetCursorPos(x, y)) return "CURSOR_POSITION_FAILED: error=" + Marshal.GetLastWin32Error() + " x=" + x + " y=" + y;
     mouse_event(0x0001, 0, 0, 0, UIntPtr.Zero);
     System.Threading.Thread.Sleep(100);
-    if (!ForegroundBelongsTo(expectedPid)) return false;
+    if (!ForegroundBelongsTo(expectedPid)) return "FOREGROUND_CHANGED: pid=" + ForegroundProcessId() + " expected=" + expectedPid;
     mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero);
     System.Threading.Thread.Sleep(100);
     mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero);
-    return true;
+    return "";
   }
 }
 "@
@@ -76,9 +84,8 @@ function Activate($button, $expected, $visible) {
   $x = [int]($bounds.Left + $bounds.Width / 2)
   $y = [int]($bounds.Top + $bounds.Height / 2)
   $hwnd = [IntPtr]$window.Current.NativeWindowHandle
-  if (-not [ToolDecisionMouse]::Click($hwnd, $x, $y, [uint32]$targetPid)) {
-    throw 'CHECKED_POINTER_CLICK_FAILED'
-  }
+  $clickFailure = [ToolDecisionMouse]::Click($hwnd, $x, $y, [uint32]$targetPid)
+  if ($clickFailure) { throw "CHECKED_POINTER_CLICK_FAILED: $clickFailure" }
 }
 $id = $env:AC_TOOL_REQUEST_ID
 $action = $env:AC_TOOL_ACTION

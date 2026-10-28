@@ -9,12 +9,18 @@
     "ui_automation": "the decision modal was exposed as a separate Window node while the main window remained present"
   },
   "diagnosis": "The helper can fail on exact foreground-HWND equality, a different-process hit-test, or cursor positioning. The log does not isolate which guard rejected the click; the separate modal HWND makes the exact-HWND check a concrete hypothesis.",
+  "revalidation": {
+    "run_id": 40613250892,
+    "result": "The same-process foreground change did not fix the packaged journey. Both Allow once and Deny controls were enabled and onscreen; UIA Invoke produced no confirmation dialog, then the checked pointer helper failed.",
+    "root_cause": "Not yet identified: previous helper reported only CHECKED_POINTER_CLICK_FAILED without identifying the failed foreground, hit-test, cursor, or foreground-retention guard.",
+    "next": "Add per-guard diagnostics, rerun the exact Windows package, and fix the measured failure condition."
+  },
   "tdd": {
     "red": "tests/windows_tool_decision_dispatch.rs failed before the focus check changed",
     "green": "windows_tool_decision_dispatch and source_layout passed 3 tests; all-target warning-denied Clippy, rustfmt, git diff --check, and the 300-line guard passed"
   },
   "change": "The fallback accepts a foreground HWND owned by the packaged process and retains a same-process hit-test for the click target.",
-  "exact_package_revalidation": "pending",
+  "exact_package_revalidation": "pending diagnostic rerun",
   "workflow_23_credit": false,
   "candidate_packaged_ui_acceptance": "22/25"
 }
