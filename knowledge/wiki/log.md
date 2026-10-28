@@ -1,3 +1,7 @@
+# [2026-10-29] audit | ACIO worker integration gap — issue #9 / FR-171
+
+Graphify `explain` and source inspection confirmed that the new ACIO runtime is not wired into real task execution: `src/workflow/execution/worker.rs` still passes the assembled prompt to `process::run_until` and decodes the output after exit. A profile marked `protocol: acio` would therefore not receive an `acio.input/1` document and could not use its live control channel. Added the remaining plan checklist and documented the required TDD path: structured task input, persisted event/session behavior, cancellation/process ownership, and decision-required tools routed through the human approval ledger with no auto-allow. No implementation or UI acceptance is claimed in this audit. CocoIndex CLI is unavailable in the current environment. AgentMemory: `mem_mvseb26m_e3cae6f00030`.
+
 # [2026-10-29] plan/task/verify | Add Rust ACIO runtime and CLI conformance — issue #9
 
 Added the `io` CLI command family, ACIO describe/runtime and event decoding, plus ordered stdin control delivery through the existing split process runner. TDD exposed the absent protocol field and decoder mapping; a doc test caught the missing bilingual `io` command entries, and both Markdown/HTML manuals are now synchronized. Focused tests pass 38 across seven suites; full locked/offline verification passes 1,077 tests, 14 ignored, 344 suites; warning-denied Clippy, rustfmt, diff, and source/test layout pass. This does not increase packaged UI acceptance. AgentMemory: `mem_mvsdaubm_bb0d4f08eca7`.

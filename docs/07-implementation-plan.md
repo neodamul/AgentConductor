@@ -7,6 +7,14 @@
 - [x] Full Verify: `cargo test --all-targets --locked --offline --features test-fixtures --no-fail-fast` passes 1,077 tests, 14 ignored across 344 suites. The first run exposed one missing bilingual manual entry; after rendering both HTML manuals, `public_docs` passes 11/11 and the complete rerun exits 0. Warning-denied all-target Clippy, rustfmt, `git diff --check`, and the 300-line source/test guard pass.
 - [x] Complete: pushed commit `54a56c7fcaf4fae28e1dec2c968698173ab2132c`; updated AgentMemory (`mem_mvsdvpdh_3b4b6f96c302`), LLM Wiki, issue #9, and PR #22 with verification and scope. This source feature earns no packaged UI acceptance credit; the documented conformance limits and exact macOS/Windows package gates remain open.
 
+### Route opted-in ACIO profiles through the live worker — issue #9 / FR-171
+
+- [x] Plan: Graphify and source inspection confirm `workflow::execution::worker` still sends the plain-text prompt through `process::run_until`; it only uses `Decoder::for_profile` after process exit. The new `acio::run` and ordered control channel are not called by live workers. Preserve the existing provider path when `protocol` is absent.
+- [ ] Red: add a deterministic custom CLI worker regression that requires the first stdin line to be valid `acio.input/1`, emits a session and terminal result, and verifies normalized events and session persistence. Add decision-required tool fixtures before implementing any UI or authorization bridge.
+- [ ] Task: build the ACIO input from the resolved task/profile, owned workspace scope, model/options, session resume id and timeout; call `acio::run` only for `protocol: acio`; preserve raw stdout/stderr, process ownership and cancellation. Route `needs_decision` through the existing human approval ledger; never auto-allow it.
+- [ ] Verify: reject unsupported task inputs before spawn; verify approved and denied tool paths, malformed/out-of-order events, timeout and cancel; keep old profiles and provider adapters unchanged. Run focused tests, all-target locked/offline suite, warning-denied Clippy, rustfmt, and the 300-line guard.
+- [ ] Complete: update evidence and LLM Wiki, record the accepted runtime contract in AgentMemory, and update #9/PR #22 with the exact pushed head. This does not count as packaged UI workflow acceptance.
+
 ### Drive Windows candidate approvals through observable state changes
 
 - [x] Plan: exact packaged run `40697161465` passed macOS package and Windows validation, then failed the candidate-review journey at `Merge approved candidate`. The final UI Automation tree still showed `Confirm candidate decision` and `Waiting approval`; UIA invocation had not applied the approval.
