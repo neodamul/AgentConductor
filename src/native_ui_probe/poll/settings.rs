@@ -258,6 +258,8 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
         }
         Some(Pending::ChatStart) => probe.chat_started(snapshot),
         Some(Pending::ChatRefresh) => probe.chat_refreshed(snapshot),
+        Some(Pending::OptimizeStart) => probe.optimize_started(snapshot),
+        Some(Pending::OptimizeRefresh) => probe.optimize_refreshed(snapshot),
         _ => {}
     }
 }

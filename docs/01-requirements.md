@@ -705,3 +705,7 @@ Trace: R-175 → BG-130 → SF-163 → UC-166 → FR-161/NFR-71 → QAS-172 → 
 ### R-176 Tests do not mutate the process environment unsoundly
 Integration tests shall change environment variables only through one shared, serialized helper that restores the originals, so no test calls `std::env::set_var` or `remove_var` directly, and the undocumented-unsafe gate covers test targets as well as the library and binaries. Test behavior does not change. See the "Executable checks" section of [13-rust-review-policy.md](13-rust-review-policy.md).
 Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → DDR-36 → DD-187. GitHub #176, user, 2026-10-24.
+
+### R-177 The operator can improve a goal with the bundled prompt-optimizer skill
+The native workspace screen shall let the operator ask the selected coordinator to rewrite a goal with the bundled Apache-2.0 `prompt-optimizer` skill, inspect the proposal, changes and open questions, and explicitly choose whether to use it. The coordinator reads the project folder without modifying files. The proposed goal stays unsaved until the operator saves workspace settings.
+Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-174/QAS-175 → DDR-37 → DD-188. GitHub #180, user, 2026-10-27.

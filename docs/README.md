@@ -101,6 +101,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-174 Rust review policy from the Google Rust Style Guide | BG-129 | SF-162 | UC-165 | FR-160, NFR-70, C-06 | QAS-171 | DDR-34 | DD-185 |
 | R-175 Every unsafe operation states why it is sound | BG-130 | SF-163 | UC-166 | FR-161, NFR-71 | QAS-172 | DDR-35 | DD-186 |
 | R-176 Tests do not mutate the process environment unsoundly | BG-131 | SF-164 | UC-167 | FR-162, NFR-72 | QAS-173 | DDR-36 | DD-187 |
+| R-177 Improve a goal with the bundled prompt-optimizer skill | BG-132 | SF-165 | UC-168 | FR-163, FR-164, NFR-73 | QAS-174, QAS-175 | DDR-37 | DD-188 |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features
 SF-13–17 that are not defined in the use-case/feature documents; their scope is covered

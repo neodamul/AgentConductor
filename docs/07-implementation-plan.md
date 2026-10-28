@@ -6022,3 +6022,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Full-suite diagnostic: the combined all-target test command was interrupted after 942 passed / 14 ignored across 292 suites at 223.11 seconds, with no reported failures; it is not claimed as a complete pass. The last binary, `stop_resume`, passes separately (2/2).
 - [ ] Verify (Windows): compile and run `tests/windows_icons.rs` and the Windows availability-watcher branch on the Windows runner; no remote CI was triggered.
 - [x] Complete: port commit `30e0fdaa` is pushed to `codex/issue-9-native-ui-parity`, and #9 has the verification update. Exact Windows compilation remains part of final cross-platform verification.
+
+### Native Rust goal optimizer — GitHub #180 to issue #9
+
+- [x] Plan: port R-177 through DD-188 from main; use the existing coordinator worker slot and adapt the review dialog to the native eframe workspace screen.
+- [x] Red: optimizer module/import, startup request validation, and package-license assertions failed before the implementation existed.
+- [x] Task: bundle the pinned Apache-2.0 skill and license, add bounded read-only coordinator request/result handling, and expose a proposal review dialog with explicit accept/keep actions.
+- [x] Focused tests: optimizer, mocked CLI request, startup validation and release-package tests pass (9 tests); native UI state/request tests pass (2 tests).
+- [ ] Verify: run the full relevant offline regression set, rustfmt, all-target warning-denied Clippy, and source-layout/diff checks; confirm every changed Rust and test file is at most 300 lines.
+- [ ] Verify: inspect the native window and run against a real coordinator profile; neither UI screenshot verification nor a real coordinator call has been performed yet.
+- [ ] Complete: commit and push this as a separate draft PR related to #180 and #9; do not merge or close either issue.

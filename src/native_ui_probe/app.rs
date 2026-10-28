@@ -132,6 +132,18 @@ impl Probe {
             self.refresh_coordinator_chat();
         }
         if self.room_view.is_none()
+            && self.goal_optimizer.awaiting()
+            && self.pending.is_none()
+            && room::refresh_due(
+                ui.ctx(),
+                self.snapshot.as_ref(),
+                self.pending.is_some(),
+                &mut self.workspace_next_refresh,
+            )
+        {
+            self.refresh_goal_optimizer();
+        }
+        if self.room_view.is_none()
             && self
                 .snapshot
                 .as_ref()

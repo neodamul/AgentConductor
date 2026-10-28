@@ -19,6 +19,7 @@ impl Startup {
             Request::McpDiscover { server, .. } => self.launch_mcp(saved, Some(&server)),
             Request::McpPreview { .. } => self.launch_mcp(saved, None),
             Request::Chat { turns, .. } => self.launch_chat(saved, turns),
+            Request::OptimizeGoal { goal, .. } => self.launch_optimize(saved, goal),
             Request::McpApply {
                 preview_id,
                 selected,

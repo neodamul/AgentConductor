@@ -12,6 +12,7 @@ pub mod header;
 pub mod mcp;
 pub mod messenger;
 pub mod navigation;
+pub(super) mod optimizer;
 mod pending;
 mod permissions;
 pub mod plan_source;
@@ -48,6 +49,10 @@ pub use role_rules::show as show_role_rules;
 #[cfg(test)]
 #[path = "../../tests/native_ui_probe/workspace_actions.rs"]
 mod action_tests;
+
+#[cfg(test)]
+#[path = "../../tests/native_ui_probe/optimizer.rs"]
+mod optimizer_tests;
 
 pub(super) fn plan_configuration_available(snapshot: &Value) -> bool {
     let config = &snapshot["config"];
