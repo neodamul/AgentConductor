@@ -1,0 +1,9 @@
+# Task types and effort resolution
+
+`Task.task_type` is optional for backward compatibility. A missing type means `code`; supported values are `extract`, `summarize`, `analyze`, `code`, `agentic`, and `creative`. The planner schema accepts the field, the planner prompt requests it, and the native plan editor lets a reviewer change it. The task card shows the effective type.
+
+When the operator has not selected an `effort` option, the Rust worker uses the assigned profile's `agent_settings.capabilities.task_defaults[task_type]` value when present, then falls back to a built-in default: `extract` → low; `summarize`, `analyze`, and `creative` → medium; `code` and `agentic` → high. A profile-provided model default is applied only when it belongs to the observed CLI catalog. For model-specific option groups, no model selection means no effort is invented. If the selected model does not allow the requested value, choose the highest supported value not above it; if every supported value is higher, choose the lowest supported value. Preserve an `effort_unsupported` warning in either case. Explicit task options always win.
+
+The native task editor uses localized accessible labels for the type selector. Its review card shows the effective model and effort and warns when declared `models[].traits.best_for` does not include the task type. Task edits serialize the type with the reviewed task, and plan digests include it.
+
+This is a partial port of FR-172/FR-174. `agent_settings` is currently carried as profile JSON but does not yet have the `acio.agent/1` schema/import validation UI. The Rust branch also still needs verified `session.data.effective` persistence and the full input/event conformance protocol. Do not describe task-profile parity as complete until those paths and exact Windows/macOS package workflows pass.

@@ -7,7 +7,7 @@ pub use profile::{
     AgentProfile, CatalogOrigin, CooperativeMode, ExecutionOption, Fallback, JsonCondition,
     ModelCatalog, ModelDiscovery, QuotaCommand,
 };
-pub use task::{Task, WorkspaceMode};
+pub use task::{Task, TaskType, WorkspaceMode};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]

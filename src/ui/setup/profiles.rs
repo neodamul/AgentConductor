@@ -207,6 +207,7 @@ pub(crate) fn validate_profiles(profiles: &[AgentProfile]) -> Result<(), String>
                 model: None,
                 role: None,
                 execution_options: Default::default(),
+                task_type: None,
             })
             .collect(),
     };

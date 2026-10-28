@@ -83,3 +83,40 @@ fn saved_plan_points_to_the_exact_next_action_in_both_languages() {
         output.textures_delta.free.clear();
     }
 }
+
+#[test]
+fn task_review_shows_effective_model_effort_and_suitability_warning() {
+    let mut value = snapshot();
+    value["proposal"]["plan"]["agents"] = serde_json::json!([{
+        "id":"codex", "executable":"codex", "args":["--model", "{model}"],
+        "parser":"custom",
+        "catalog":{"models":["large"],"source":"cli","queried_at":1,"cli_version":"1"},
+        "execution_options":[{"name":"effort","args":["--effort","{value}"],"values":["low","medium","high"]}],
+        "agent_settings":{"capabilities":{
+            "task_defaults":{"agentic":{"model":"large","effort":"high"}},
+            "models":[{"id":"large","traits":{"best_for":["code"]}}]
+        }}
+    }]);
+    value["proposal"]["plan"]["tasks"] = serde_json::json!([task()]);
+    let mut draft = TaskDraft::from_snapshot(&value);
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        let _ = agentconductor::native_ui_probe::workspace::task_controls_in_language(
+            &value, &mut draft, false, false, "en", ui,
+        );
+    });
+    let labels: Vec<_> = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter_map(|(_, node)| node.label())
+        .collect();
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(labels.contains(&"Effective: large · high"));
+    assert!(labels.contains(&"Model large may not suit Agentic"));
+}

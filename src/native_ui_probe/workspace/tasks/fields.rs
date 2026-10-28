@@ -45,6 +45,48 @@ pub(super) fn model_picker(ui: &mut Ui, language: &str, task: &mut Value, agents
         ));
 }
 
+pub(super) fn task_type_picker(ui: &mut Ui, language: &str, task: &mut Value) {
+    const TYPES: [(&str, &str); 6] = [
+        ("extract", "startup.task_type_extract"),
+        ("summarize", "startup.task_type_summarize"),
+        ("analyze", "startup.task_type_analyze"),
+        ("code", "startup.task_type_code"),
+        ("agentic", "startup.task_type_agentic"),
+        ("creative", "startup.task_type_creative"),
+    ];
+    let text = |key| crate::ui::messages::in_language(language, key);
+    let id = task["id"].as_str().unwrap_or("");
+    let selected = task["task_type"].as_str().unwrap_or("code").to_owned();
+    ui.label(text("startup.task_type"));
+    let response = egui::ComboBox::from_id_salt(("task-type", id))
+        .selected_text(text(
+            TYPES
+                .iter()
+                .find(|(kind, _)| *kind == selected)
+                .map_or("startup.task_type_code", |(_, label)| label),
+        ))
+        .show_ui(ui, |ui| {
+            for (kind, label) in TYPES {
+                if ui.selectable_label(selected == kind, text(label)).clicked() {
+                    task["task_type"] = kind.into();
+                }
+            }
+        });
+    response.response.accessible_name(text("startup.task_type"));
+}
+
+pub(super) fn task_type_label(language: &str, kind: &str) -> &'static str {
+    let key = match kind {
+        "extract" => "startup.task_type_extract",
+        "summarize" => "startup.task_type_summarize",
+        "analyze" => "startup.task_type_analyze",
+        "agentic" => "startup.task_type_agentic",
+        "creative" => "startup.task_type_creative",
+        _ => "startup.task_type_code",
+    };
+    crate::ui::messages::in_language(language, key)
+}
+
 pub(super) fn execution_option_pickers(
     ui: &mut Ui,
     language: &str,

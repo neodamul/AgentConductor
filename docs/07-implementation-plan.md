@@ -8,8 +8,20 @@
 - [x] Follow-up Red: the Windows package run for PR #230 failed because `$window.SetFocus()` raised `Target element cannot receive focus`; the desktop UIA harness does not need to focus its top-level window.
 - [x] Follow-up Task: remove that redundant focus call and add a source-contract regression so future changes cannot reintroduce the unsupported UIA operation.
 - [x] Follow-up Local Verify: `windows_desktop_driver` and `source_layout` pass 6 tests across 2 suites; formatting and diff checks pass. Both touched test files remain below 300 lines.
-- [ ] Exact-package Verify: push the correction and require the exact Windows package to approve, merge, reject, and verify saved state/Git HEAD. Run `40697161465` does not pass workflow 24 and gives no acceptance credit.
+- [x] Candidate-review follow-up Red: exact run `40708854891` closed the approval dialog but failed waiting for the explanatory status banner in UI Automation; durable workflow state is already polled by the package test.
+- [x] Candidate-review follow-up Task/Local Verify: commit `75d6560e` treats dialog closure as input completion, waits for the explicit merge action after approval, and leaves terminal success/failure to the persisted workflow/Git assertions. Focused suites pass 6 tests; the complete local test-fixtures suite passes 1,047 tests (14 ignored); formatting, diff, and 300-line checks pass.
+- [x] Follow-up QAS: local full-suite verification exposed that QAS-149 omitted the timeout retry guarantee required by `tests/public_docs.rs`; add that sentence in isolated commit `16d0e96c`.
+- [ ] Exact-package Verify: run `40720725385` on `16d0e96c9652cf19602b87d441a2fc4d5cf2e1df` is queued. Require the packaged Windows journey to approve, merge, reject, and verify saved state/Git HEAD. Runs `40718862817`, `40713241383`, and `40708609143` use superseded heads and give no workflow 24 credit.
 - [ ] Complete: retain current-head macOS/Windows package evidence; update issue #9, PR #22, LLM Wiki, and AgentMemory. Keep acceptance at **22/25 packaged workflows**, **0/25 shipped Rust replacement**, **22/50 aggregate** until the exact Windows journey passes.
+
+### Port task types and bounded per-task effort — current-main FR-174 / GitHub #210
+
+- [x] Plan: preserve the current-main requirement chain R-183 → BG-138 → SF-171 → UC-174 → FR-172/FR-174 → QAS-181 → DDR-38 → DD-194/DD-195. Absence of `task_type` remains backward-compatible and means `code`.
+- [x] Red: `task_types` first failed to compile because `TaskType` did not exist; its planning-schema assertion then failed because the coordinator schema rejected the new optional field. The UI accessibility regression also failed until the task editor exposed the type.
+- [x] Task: add the optional task type to plans, ask the planner to choose it, resolve built-in effort against the selected profile's model-specific allowed values, apply the result to CLI arguments, and expose the choice in the native task editor and review card.
+- [x] Task: retain `agent_settings` on each profile; resolve an agent's task-specific model and effort only when the model is in its observed CLI catalog; warn when model traits exclude the task type; show the effective model, effort, and warnings in the editable native task review.
+- [x] Red/Local Verify: the default-resolution regression first rejected the unrecognized profile field, then failed because the resolver left the model unset. After implementation, task-profile, task-type, plan, native UI task-review, and source-layout suites pass 25 tests; formatting and 300-line checks pass. The accessibility test sees the effective model/effort and suitability warning.
+- [ ] Complete full FR-172 parity: validate/import `acio.agent/1` settings and model/effort values; verify `session.data.effective` persistence and the full CLI input/event conformance contract on macOS and Windows.
 
 ### Reconcile issue #9 with current main and complete Rust contract parity
 

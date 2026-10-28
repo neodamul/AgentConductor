@@ -39,6 +39,7 @@ impl Startup {
                     model: ruled.and_then(|r| r.model.clone()),
                     execution_options: Default::default(),
                     role: ruled.map(|_| (*role).to_string()),
+                    task_type: None,
                 }
             })
             .collect();

@@ -11,6 +11,7 @@
 - [CLI protocols](cli-protocols.md): headless commands, parsing, resume contracts.
 - [Custom CLI JSONL normalization](custom-cli-jsonl-normalization.md): profile-declared event names and session identifiers.
 - [Custom CLI profiles](custom-cli-profiles.md): declarative model catalogs, execution arguments, result events, JSONL mappings, and bounded normalized quota commands.
+- [Task types and effort resolution](task-type-effort-resolution.md): optional task categories, bounded model-specific effort defaults, and remaining FR-172 porting work.
 - [License review](license-review.md): preliminary internal-distribution review.
 - [Progress log](log.md): research and development records.
 - [Research observations](../raw/2026-10-09-research.md): dates, revisions, tools.

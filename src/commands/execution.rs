@@ -57,6 +57,7 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                     executable: invocation.executable,
                     args: invocation.args,
                     parser: provider,
+                    agent_settings: None,
                     input_mode: invocation.input,
                     environment: Default::default(),
                     catalog: None,

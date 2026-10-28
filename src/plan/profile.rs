@@ -8,6 +8,9 @@ pub struct AgentProfile {
     pub args: Vec<String>,
     #[serde(default)]
     pub parser: crate::protocol::Provider,
+    /// Optional agent capability metadata used to resolve task-specific model and effort defaults.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub agent_settings: Option<serde_json::Value>,
     #[serde(default)]
     pub input_mode: crate::adapters::InputMode,
     #[serde(default)]

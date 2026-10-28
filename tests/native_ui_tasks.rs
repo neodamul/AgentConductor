@@ -59,6 +59,7 @@ fn task() -> serde_json::Value {
         "id":"auth-tests",
         "agent":"codex",
         "model":null,
+        "task_type":"agentic",
         "prompt":"Add rotation tests\nDone when: replay is rejected",
         "paths":["tests/auth.rs"],
         "depends_on":[],
@@ -80,6 +81,7 @@ fn plan_edit_request_binds_revision_digest_tasks_and_mode() {
     assert_eq!(value["revision"], "workspace-rev-9");
     assert_eq!(value["tasks"][0]["id"], "auth-tests");
     assert_eq!(value["tasks"][0]["paths"][0], "tests/auth.rs");
+    assert_eq!(value["tasks"][0]["task_type"], "agentic");
     assert_eq!(value["workspace_mode"], "worktree");
 }
 
