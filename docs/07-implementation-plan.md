@@ -6283,6 +6283,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Complete implementation checkpoint: commit and push `d1519f46` on `codex/issue-189-native-coordinator-chat`; draft PR #192 targets `codex/issue-9-native-ui-parity`. Keep #189 open while cross-platform PR checks and package review remain pending.
 - [ ] Complete issue: review and merge PR #192 after checks, then close #189 only when all acceptance criteria are verified.
 
+### Final lifecycle fix exact-package rerun — GitHub #189 / PR #192 / 2026-10-28
+
+- [x] Task: commit and push `edecd77a`, classify chat workers as maintenance commands, and retain startup/owner diagnostics when Windows UI automation cannot find the chat editor.
+- [x] Local Verify: chat lifecycle/dispatch tests 2 passed; source/public-doc tests 13 passed; rustfmt, diff check, and warning-denied all-target Clippy passed. The changed source and test files remain below 300 lines.
+- [x] Plan and LLM Wiki record the previous exact Windows package failures and their evidence; do not mark the failed scenarios as passing.
+- [ ] Exact-head Verify: workflow [40644006383](https://github.com/neodamul/AgentConductor/actions/runs/40644006383) must pass macOS and Windows platform validation and both native packages. The Windows package must pass briefing, desktop, schedule, signal, tool-decision, and all three coordinator-chat scenarios.
+- [ ] Complete: keep PR #192 draft and issue #189 open until the exact package evidence passes; then review and merge through the issue-linked branch workflow.
+
 ### Verify coordinator chat in the exact Windows package — GitHub #189 / PR #192
 
 - [x] Plan: audit the existing `AGENTCONDUCTOR_DESKTOP_BINARY` and PowerShell UI Automation harness; source tests alone do not prove packaged transcript reopen or in-flight reconnect.
