@@ -12,8 +12,13 @@ fn goal_driver_uses_and_confirms_value_pattern_before_saving() {
 #[test]
 fn exact_package_includes_the_candidate_review_and_merge_journey() {
     let workflow = include_str!("../.github/workflows/platform-validation.yml");
+    let driver = include_str!("support/windows_candidate_review_script.rs");
     assert!(
         workflow.contains("--test windows_candidate_review"),
         "exact Windows package must run the candidate evidence, decision, and merge journey"
+    );
+    assert!(
+        driver.contains("Wait-Text '+implemented'"),
+        "exact Windows package must inspect candidate diff content, not only its filename"
     );
 }

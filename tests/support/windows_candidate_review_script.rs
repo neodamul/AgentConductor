@@ -60,6 +60,7 @@ function Wait-Text($value) {
 Invoke-Button 'Review candidate'
 Wait-Text $env:AC_CANDIDATE_SHA
 Wait-Text 'one.txt'
+Wait-Text '+implemented'
 Wait-Text 'exit code 0'
 Wait-Text 'integration tests passed'
 if ($env:AC_DECISION -eq 'reject') {
