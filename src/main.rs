@@ -110,6 +110,8 @@ mod quota_commands;
 
 #[path = "commands/chat.rs"]
 mod chat_commands;
+#[path = "commands/io.rs"]
+mod io_commands;
 #[path = "commands/manual.rs"]
 mod manual_commands;
 #[path = "commands/mcp.rs"]
@@ -118,6 +120,9 @@ mod mcp_commands;
 mod optimize_commands;
 
 fn execute_args(args: &[String]) -> Result<(), String> {
+    if let Some(result) = io_commands::execute(args) {
+        return result;
+    }
     if let Some(result) = manual_commands::execute(args) {
         return result;
     }

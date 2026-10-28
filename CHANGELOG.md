@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- `agentconductor io schema` prints the acio CLI I/O schemas (input, event, describe, control, agent settings) and `io validate` checks a document or a captured event stream against them, including the stream rules (GitHub #207).
+
 ## v0.1.39
 
 - Request diagnostics: the "Request timed out" notice names the request kind, and the application records every chat request and every request of one second or more in `~/.agentconductor/request-diagnostics.log` (kind, size, duration, failure reason; no content). The manuals explain how to read it (GitHub #200).

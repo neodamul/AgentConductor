@@ -377,6 +377,8 @@ one `{session_id}` argument. The engine supplies `AC_CHECKPOINT_RUN_DIR`,
 | Command | Purpose |
 |---|---|
 | `agentconductor normalize <claude\|codex\|opencode\|custom> <stdout.jsonl>` | Normalize a CLI's JSONL output into events. |
+| `agentconductor io schema <input\|event\|describe\|control\|agent>` | Print an acio schema (the CLI I/O protocol, `docs/cli-io-protocol.md`). |
+| `agentconductor io validate <kind> <file\|-> [--coordinator]` | Check a document (`input`, `describe`, `agent`, `control`, `event`) or a captured stream (`events`, `controls`) against the schemas and the stream rules. |
 
 ## Part 3 — Validation and troubleshooting
 
