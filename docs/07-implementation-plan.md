@@ -6342,3 +6342,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Local Verify: `chat_worker_lifecycle` 2 tests pass, warning-denied all-target Clippy passes, rustfmt and diff checks pass; touched source/test files remain below 300 lines.
 - [ ] Exact-package Verify: rerun the Windows package on the pushed fix and require reopen, in-flight reconnect, and late-answer recovery to pass.
 - [ ] Complete: keep #189/PR #192 open until the exact packaged binary proves all three scenarios.
+
+### Preserve the Windows no-console source contract — issue #189 / run 40649290231 / 2026-10-28
+
+- [x] Plan: classify the macOS validation failure as a stale source-contract assertion, not a product regression; retain `command` checks for Git/messenger and the dedicated background path for UI workers.
+- [x] Red: `tests/native_window_behavior.rs:31` expected `crate::subprocess::command(` in `src/ui/controller.rs`, but the worker-lifetime fix intentionally uses `background_command`.
+- [x] Task: update the contract to require `command` for Git/messenger, `background_command` for the UI controller, and no direct `std::process::Command::new` construction.
+- [x] Local Verify: native-window, lifecycle, and source-layout tests pass (6 total); rustfmt, diff check, warning-denied all-target Clippy, and the 300-line guard pass.
+- [ ] Exact-package Verify: rerun platform validation and the Windows packaged coordinator-chat scenarios on the new head.
