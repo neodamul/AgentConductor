@@ -57,6 +57,22 @@ const key = (q, init) => q('chat-input').handlers.keydown({ preventDefault() {},
   reply = new Error('another operation is running'); q('chat-input').value = 'Busy?'; key(q, { key: 'Enter' }); await tick();
   assert.equal(q('chat-input').value, 'Busy?');
   assert.equal(notices.at(-1)[0], 'another operation is running');
+  // GitHub #197: a request that times out may still have started the job; the page asks the native side before rolling back.
+  const savedHistory = stored; reply = new Error('timed out'); q('chat-input').value = 'Run the app';
+  stored = [...savedHistory, { role: 'operator', text: 'Run the app' }];
+  key(q, { key: 'Enter' }); await tick(); await tick();
+  assert.equal(ui.turns().at(-1).text, 'Run the app', 'a question the native side accepted stays in the conversation');
+  assert.equal(q('chat-input').value, '', 'and is not put back into the input');
+  current = { revision: 'rev', job: { id: 'job-7', kind: 'chat', state: 'running' }, chat: null };
+  ui.update();
+  assert.equal(q('chat-send').disabled, true, 'the running chat is followed after the timeout');
+  current = { revision: 'rev', job: { id: 'job-7', kind: 'chat', state: 'completed' }, chat: { job: 'job-7', answer: 'Started.' } };
+  ui.update();
+  assert.deepEqual(plain(ui.turns().at(-1)), { role: 'assistant', text: 'Started.' }, 'the late answer is shown');
+  stored = savedHistory; current = { revision: 'rev', job: null, chat: null };
+  reply = new Error('timed out'); q('chat-input').value = 'Never started'; key(q, { key: 'Enter' }); await tick(); await tick();
+  assert.equal(q('chat-input').value, 'Never started', 'a question the native side never saw is restored');
+  assert.ok(!ui.turns().some(t => t.text === 'Never started'));
   // A new conversation clears the screen and the stored history.
   q('chat-new').onclick(); await tick();
   assert.equal(calls.at(-1).kind, 'chat_reset');

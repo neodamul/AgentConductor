@@ -731,4 +731,6 @@ Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → 
 Given the embedded pages and both message catalogs, none of the removed element classes or keys appears, and every `data-i18n` id used by a page still exists in the catalogs.
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
 
-
+### QAS-179 A late reply is not lost
+Given a coordinator that answers after two seconds, the chat request returns before it finishes, a second question is refused meanwhile, the answer arrives in a later snapshot and the next prompt contains the earlier exchange; given a send that times out after the application accepted it, the question stays and the late answer is shown, and given a send the application never saw, the text is restored.
+Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192. GitHub #197, user, 2026-10-28.

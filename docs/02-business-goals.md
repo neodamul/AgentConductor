@@ -546,4 +546,6 @@ Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → 
 Every line on screen earns its place; fixed slogans that look like status hide the real status.
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
 
-
+### BG-136 No lost or stuck conversations
+A slow coordinator must never leave the operator unsure whether the question was sent, with a refused resend and a vanished answer.
+Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192. GitHub #197, user, 2026-10-28.
