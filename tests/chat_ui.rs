@@ -78,3 +78,15 @@ fn every_element_chat_js_looks_up_exists_with_the_start_prefix() {
     }
     assert!(seen >= 7, "chat.js looks up its panel elements");
 }
+
+#[test]
+fn the_chat_button_is_a_chatbot_icon_not_a_question_mark() {
+    // GitHub #229: the chat is a conversation now, so "?" (ask) no longer fits. An inline SVG keeps it
+    // theme-colored and independent of any font.
+    let html = include_str!("../src/ui/startup.html");
+    let button = &html[html.find("id=\"start-chat-button\"").unwrap()..];
+    let content = &button[button.find('>').unwrap() + 1..button.find("</button>").unwrap()];
+    assert!(content.starts_with("<svg"), "{content}");
+    assert!(content.contains("currentColor"), "{content}");
+    assert!(!content.contains('?'), "{content}");
+}

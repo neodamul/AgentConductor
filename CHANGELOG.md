@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The coordinator chat button in the title bar shows a chat-bubble robot icon instead of a "?" (GitHub #229).
+
 ## v0.1.40
 
 - Idle workspace and Agent Room polling no longer raise a timeout toast on their own; request deadlines pause while the page is hidden and resume after it returns (GitHub #221).

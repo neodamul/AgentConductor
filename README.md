@@ -17,7 +17,7 @@ tests the combined result and asks for your approval before merging. It runs on 
 - **Mix agents and custom CLIs** — Claude Code, Codex, OpenCode or company commands, described by workspace JSON profiles.
 - **You approve every important step** — the plan and the final merge; tool decisions are recorded.
 - **Live team view** — status lights, a live line per running task (tool, time since last output, process state), logs, diffs and tests.
-- **Steer while it runs** — send feedback, reassign agents or models (even for tasks not started yet), stop and resume, or ask the coordinator in a read-only chat (the **?** button), and recover from an out-of-scope failure through a reviewed plan change.
+- **Steer while it runs** — send feedback, reassign agents or models (even for tasks not started yet), stop and resume, or chat with the coordinator in a read-only chat (the chat-bubble button), and recover from an out-of-scope failure through a reviewed plan change.
 - **Imports and lessons** — Jira/Confluence goal sources through company MCP servers ([guide](docs/mcp-sources.md)); reviewed lessons are reused in later tasks.
 - **Local and private** — one native executable with SQLite inside; data stays local; checksum-verified updates from the Workspace menu. **agentmemory is optional.**
 
