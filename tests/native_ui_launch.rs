@@ -170,7 +170,7 @@ fn native_worker_starts_only_the_exact_approved_plan() {
     let prepare = serde_json::json!({"kind":"prepare","revision":saved["revision"]});
     room.dispatch(&serde_json::to_vec(&prepare).unwrap())
         .unwrap();
-    let deadline = std::time::Instant::now() + Duration::from_secs(15);
+    let plan_deadline = std::time::Instant::now() + Duration::from_secs(15);
     let ready = loop {
         let snapshot = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
         if snapshot["job"]["state"] != "running" {
@@ -179,7 +179,7 @@ fn native_worker_starts_only_the_exact_approved_plan() {
             break snapshot;
         }
         assert!(
-            std::time::Instant::now() < deadline,
+            std::time::Instant::now() < plan_deadline,
             "plan generation timed out"
         );
         std::thread::sleep(Duration::from_millis(20));
@@ -200,6 +200,11 @@ fn native_worker_starts_only_the_exact_approved_plan() {
         .unwrap()
         .unwrap();
     assert!(accepted["run"].as_str().is_some());
+    let execution_deadline = std::time::Instant::now() + Duration::from_secs(15);
+    assert!(
+        execution_deadline > plan_deadline,
+        "execution must have a fresh timeout after planning"
+    );
     loop {
         let snapshot = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
         if snapshot["job"]["kind"] == "start" && snapshot["job"]["state"] != "running" {
@@ -207,7 +212,7 @@ fn native_worker_starts_only_the_exact_approved_plan() {
             break;
         }
         assert!(
-            std::time::Instant::now() < deadline,
+            std::time::Instant::now() < execution_deadline,
             "execution did not start"
         );
         std::thread::sleep(Duration::from_millis(20));

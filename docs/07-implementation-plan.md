@@ -1,3 +1,12 @@
+### Give native plan and execution waits independent deadlines — issue #9 / 2026-10-29
+
+- [x] Plan: PR #228 macOS validation run `40782630380` failed `native_worker_starts_only_the_exact_approved_plan` at the execution-start timeout after 18.44 seconds.
+- [x] Red: inspect the same test on PR #228 and root head `98e744d6`; the test used one 15-second deadline for both plan generation and execution startup. The same test passed locally before the fix and in root run `40782361341`, confirming a load-sensitive harness issue rather than a deterministic product failure.
+- [x] Task: give planning and execution independent bounded 15-second deadlines; assert that execution gets a fresh deadline only after the start request is accepted.
+- [x] Local Verify: exact start journey 1/1, native UI launch suite 11/11, source layout 2/2, formatting, and diff checks pass.
+- [ ] Exact-package Verify: validate the updated test on macOS and Windows, then require both native-package jobs to execute the exact binaries.
+- [ ] Complete: update issue #9, PR #22, AgentMemory, LLM Wiki, and evidence with the exact current-head run. This test fix does not earn shipped UI acceptance by itself.
+
 ### Preserve tool-decision confirmation across unrelated snapshot updates — issue #9 / 2026-10-29
 
 - [x] Plan: Windows package run `40773869254` reached the refreshed pending receipt, but its approval confirmation disappeared across a run revision update before dispatch.

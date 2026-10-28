@@ -1,0 +1,18 @@
+{
+  "issue": 9,
+  "date": "2026-10-29",
+  "failing_run": "40782630380",
+  "failing_head": "4a1981cbd9ca7e2bc69f64468d5bbe038cabdd8d",
+  "failing_test": "native_worker_starts_only_the_exact_approved_plan",
+  "failure": "The opt-in macOS native UI suite timed out waiting for execution to start after 18.44 seconds.",
+  "diagnosis": "The integration test created one 15-second deadline before asynchronous plan generation and reused it after the start request was accepted. The deadline could expire during planning and make the execution check fail immediately. The test source is identical at the failing PR head and root head 98e744d6. It passed locally before the fix and passed in root run 40782361341, indicating timing-sensitive test harness behavior rather than deterministic production failure.",
+  "change": "Give plan generation and accepted execution separate bounded 15-second deadlines; assert the execution deadline is fresh.",
+  "red": "Exact PR #228 macOS validation run 40782630380 failed the named test at the shared-deadline assertion.",
+  "green": [
+    "Before change: exact local test on 98e744d6 passed 1/1 in 2.76 seconds.",
+    "After change: exact local test passed 1/1 in 2.42 seconds.",
+    "After change: native_ui_launch passed 11/11 in 2.24 seconds.",
+    "source_layout passed 2/2; cargo fmt --check and git diff --check passed."
+  ],
+  "exact_macOS_windows_package_run": "pending"
+}
