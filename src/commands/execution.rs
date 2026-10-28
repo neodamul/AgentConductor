@@ -73,6 +73,7 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                     session_id_pointer: None,
                     quota_command: None,
                     protocol: None,
+                    agent_settings: None,
                     permission_mode: if id == "codex" {
                         "native_sandbox".into()
                     } else {

@@ -121,6 +121,7 @@ pub fn defaults() -> Result<Config, String> {
             session_id_pointer: None,
             quota_command: None,
             protocol: None,
+            agent_settings: None,
         });
     }
     profiles.iter_mut().for_each(profiles::derive_permission);

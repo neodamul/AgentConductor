@@ -1,0 +1,408 @@
+{
+  "claude": {
+    "direct_folder_no_exec": [
+      "-p"
+    ],
+    "direct_folder_plain": [
+      "exec",
+      "-",
+      "--json"
+    ],
+    "direct_folder_with_skip": [
+      "exec",
+      "--skip-git-repo-check"
+    ],
+    "full_access_args": [
+      "-p",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--permission-mode",
+      "bypassPermissions"
+    ],
+    "invocation": {
+      "args": [
+        "-p",
+        "--output-format",
+        "stream-json",
+        "--verbose"
+      ],
+      "executable": "claude",
+      "input": "stdin"
+    },
+    "invocation_bad_session": {
+      "error": "invalid explicit session ID"
+    },
+    "invocation_resume": {
+      "args": [
+        "-p",
+        "--output-format",
+        "stream-json",
+        "--verbose",
+        "--resume",
+        "sess-1"
+      ],
+      "executable": "claude",
+      "input": "stdin"
+    },
+    "session_full_access_bad_model": {
+      "error": "model must belong to an observed CLI catalog"
+    },
+    "session_full_access_bad_session": {
+      "error": "invalid explicit session ID"
+    },
+    "session_full_access_both": [
+      "-p",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--permission-mode",
+      "bypassPermissions",
+      "--model",
+      "m1",
+      "--resume",
+      "sess-1"
+    ],
+    "session_full_access_model": [
+      "-p",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--permission-mode",
+      "bypassPermissions",
+      "--model",
+      "m1"
+    ],
+    "session_full_access_none": [
+      "-p",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--permission-mode",
+      "bypassPermissions"
+    ],
+    "session_full_access_session": [
+      "-p",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--permission-mode",
+      "bypassPermissions",
+      "--resume",
+      "sess-1"
+    ],
+    "session_initial_bad_model": {
+      "error": "model must belong to an observed CLI catalog"
+    },
+    "session_initial_bad_session": {
+      "error": "invalid explicit session ID"
+    },
+    "session_initial_both": [
+      "-p",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--model",
+      "m1",
+      "--resume",
+      "sess-1"
+    ],
+    "session_initial_model": [
+      "-p",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--model",
+      "m1"
+    ],
+    "session_initial_none": [
+      "-p",
+      "--output-format",
+      "stream-json",
+      "--verbose"
+    ],
+    "session_initial_session": [
+      "-p",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--resume",
+      "sess-1"
+    ]
+  },
+  "claude_ambiguous_session": {
+    "error": "ambiguous session selector in profile"
+  },
+  "claude_duplicate_model": {
+    "error": "duplicate model selector in profile"
+  },
+  "codex": {
+    "direct_folder_no_exec": {
+      "error": "Codex 폴더 실행에는 등록된 exec 명령이 필요합니다."
+    },
+    "direct_folder_plain": [
+      "exec",
+      "--skip-git-repo-check",
+      "-",
+      "--json"
+    ],
+    "direct_folder_with_skip": [
+      "exec",
+      "--skip-git-repo-check"
+    ],
+    "full_access_args": [
+      "exec",
+      "-",
+      "--json",
+      "--dangerously-bypass-approvals-and-sandbox"
+    ],
+    "invocation": {
+      "args": [
+        "exec",
+        "-",
+        "--json",
+        "--sandbox",
+        "workspace-write"
+      ],
+      "executable": "codex",
+      "input": "stdin"
+    },
+    "invocation_bad_session": {
+      "error": "invalid explicit session ID"
+    },
+    "invocation_resume": {
+      "args": [
+        "exec",
+        "resume",
+        "sess-1",
+        "-",
+        "--json"
+      ],
+      "executable": "codex",
+      "input": "stdin"
+    },
+    "session_full_access_bad_model": {
+      "error": "model must belong to an observed CLI catalog"
+    },
+    "session_full_access_bad_session": {
+      "error": "invalid explicit session ID"
+    },
+    "session_full_access_both": [
+      "exec",
+      "--dangerously-bypass-approvals-and-sandbox",
+      "resume",
+      "sess-1",
+      "-",
+      "--json",
+      "--model",
+      "m1"
+    ],
+    "session_full_access_model": [
+      "exec",
+      "-",
+      "--json",
+      "--dangerously-bypass-approvals-and-sandbox",
+      "--model",
+      "m1"
+    ],
+    "session_full_access_none": [
+      "exec",
+      "-",
+      "--json",
+      "--dangerously-bypass-approvals-and-sandbox"
+    ],
+    "session_full_access_session": [
+      "exec",
+      "--dangerously-bypass-approvals-and-sandbox",
+      "resume",
+      "sess-1",
+      "-",
+      "--json"
+    ],
+    "session_initial_bad_model": {
+      "error": "model must belong to an observed CLI catalog"
+    },
+    "session_initial_bad_session": {
+      "error": "invalid explicit session ID"
+    },
+    "session_initial_both": [
+      "exec",
+      "--sandbox",
+      "workspace-write",
+      "resume",
+      "sess-1",
+      "-",
+      "--json",
+      "--model",
+      "m1"
+    ],
+    "session_initial_model": [
+      "exec",
+      "-",
+      "--json",
+      "--sandbox",
+      "workspace-write",
+      "--model",
+      "m1"
+    ],
+    "session_initial_none": [
+      "exec",
+      "-",
+      "--json",
+      "--sandbox",
+      "workspace-write"
+    ],
+    "session_initial_session": [
+      "exec",
+      "--sandbox",
+      "workspace-write",
+      "resume",
+      "sess-1",
+      "-",
+      "--json"
+    ]
+  },
+  "codex_foreign_template_resume": {
+    "error": "Codex resume requires the verified initial argv template"
+  },
+  "custom": {
+    "direct_folder_no_exec": [
+      "-p"
+    ],
+    "direct_folder_plain": [
+      "exec",
+      "-",
+      "--json"
+    ],
+    "direct_folder_with_skip": [
+      "exec",
+      "--skip-git-repo-check"
+    ],
+    "full_access_args": null,
+    "invocation": {
+      "error": "custom agents require an explicitly registered CLI profile"
+    },
+    "invocation_bad_session": {
+      "error": "invalid explicit session ID"
+    },
+    "invocation_resume": {
+      "error": "custom agents require an explicitly registered CLI profile"
+    },
+    "session_initial_bad_model": {
+      "error": "model must belong to an observed CLI catalog"
+    },
+    "session_initial_bad_session": {
+      "error": "invalid explicit session ID"
+    },
+    "session_initial_both": [
+      "run",
+      "task file.md",
+      "m1"
+    ],
+    "session_initial_model": [
+      "run",
+      "task file.md",
+      "m1"
+    ],
+    "session_initial_none": [
+      "run",
+      "task file.md",
+      ""
+    ],
+    "session_initial_session": [
+      "run",
+      "task file.md",
+      ""
+    ]
+  },
+  "opencode": {
+    "direct_folder_no_exec": [
+      "-p"
+    ],
+    "direct_folder_plain": [
+      "exec",
+      "-",
+      "--json"
+    ],
+    "direct_folder_with_skip": [
+      "exec",
+      "--skip-git-repo-check"
+    ],
+    "full_access_args": null,
+    "invocation": {
+      "args": [
+        "run",
+        "--format",
+        "json",
+        "--file",
+        "task.txt",
+        "Follow the attached task scope and completion conditions"
+      ],
+      "executable": "opencode",
+      "input": "file"
+    },
+    "invocation_bad_session": {
+      "error": "invalid explicit session ID"
+    },
+    "invocation_resume": {
+      "args": [
+        "run",
+        "--format",
+        "json",
+        "--file",
+        "task.txt",
+        "Follow the attached task scope and completion conditions",
+        "--session",
+        "sess-1"
+      ],
+      "executable": "opencode",
+      "input": "file"
+    },
+    "session_initial_bad_model": {
+      "error": "model must belong to an observed CLI catalog"
+    },
+    "session_initial_bad_session": {
+      "error": "invalid explicit session ID"
+    },
+    "session_initial_both": [
+      "run",
+      "--format",
+      "json",
+      "--file",
+      "task file.md",
+      "Follow the attached task scope and completion conditions",
+      "--model",
+      "m1",
+      "--session",
+      "sess-1"
+    ],
+    "session_initial_model": [
+      "run",
+      "--format",
+      "json",
+      "--file",
+      "task file.md",
+      "Follow the attached task scope and completion conditions",
+      "--model",
+      "m1"
+    ],
+    "session_initial_none": [
+      "run",
+      "--format",
+      "json",
+      "--file",
+      "task file.md",
+      "Follow the attached task scope and completion conditions"
+    ],
+    "session_initial_session": [
+      "run",
+      "--format",
+      "json",
+      "--file",
+      "task file.md",
+      "Follow the attached task scope and completion conditions",
+      "--session",
+      "sess-1"
+    ]
+  }
+}

@@ -254,12 +254,23 @@ An in-house CLI has no preset: its owner fills the same fields in its agent sett
 
 | Field | What it replaces in code today |
 |---|---|
-| `invocation.args`, `control_args`, `full_access_args` | the per-provider argv templates and `full_access_args(Provider)` in `src/adapters.rs` |
-| `invocation.session.model_args`, `.resume` (`append` or `replace_argv`) | the `match profile.parser` branches that add `--resume`, `--session`, `exec … resume` |
+| `invocation.executable`, `input`, `args`, `control_args`, `full_access` (`append` or `replace_argv`) | the per-provider argv templates and `full_access_args(Provider)` in `src/adapters.rs` |
+| `invocation.session.model_args`, `.model_aliases`, `.selectors`, `.resume` (`append` or `replace_argv`, with `full_access_argv` and `bare_argv`) | the `match profile.parser` branches that add `--model`, `--resume`, `--session`, `exec … resume`, and their ambiguity checks |
+| `invocation.direct_folder` | `direct_folder_args` (Codex's `--skip-git-repo-check` for a folder that is not a Git repository) |
 | `invocation.options` (effort, …) | already settings as `execution_options` (`values`, `model_values`, `default`); same shape, now also carries Claude's five effort levels and Codex's `-c model_reasoning_effort` |
 | `invocation.response_schema` (`args` or `file_args`) | nothing yet; Claude `--json-schema`, Codex `--output-schema` |
 | `invocation.control` (`cancel`, `user_message`, `tool_decision` encodings) | nothing yet |
 | `capabilities` (`control`, `streaming`, `resume`, `heartbeat_seconds`, `task_types`, `models[].traits`, `task_defaults`) | nothing yet |
+
+**Overrides.** A profile carries `agent_settings`, a JSON merge patch over its preset (objects merge, arrays replace,
+`null` removes). The merged result must validate as `acio.agent/1`, otherwise the profile is refused with the reason.
+What defines the plain argv and full access (`invocation.executable`, `input`, `args`, `full_access`,
+`direct_folder`) is fixed by the preset and cannot be overridden: full access is an operator decision recorded
+per profile (DD-131), and the code that detects it compares a profile's argv with the preset. Session flags
+(`model_args`, `model_aliases`, `selectors`, `resume`) are consumed by `adapters::session_args` today; `options`,
+`response_schema`, `control` and `capabilities` are validated and stored, and consumed by the phases that use them.
+`adapters.rs` has no provider branches left; `tests/adapter_golden.rs` records the argument lists of all
+built-in CLIs and proves the move changed nothing.
 
 Event decoding (turning a CLI's own JSON into normalized events) stays code for `claude` and `codex` because it
 needs conditions a settings file cannot express; a new CLI never needs it, it prints `acio.event/1` or uses the

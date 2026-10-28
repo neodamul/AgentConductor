@@ -1,6 +1,7 @@
 {
   "schema": "acio.agent/1",
   "preset": "claude",
+  "label": "Claude",
   "capabilities": {
     "read_only": true,
     "workspace_write": true,
@@ -48,6 +49,7 @@
     }
   },
   "invocation": {
+    "executable": "claude",
     "input": "stdin",
     "args": [
       "-p",
@@ -59,14 +61,27 @@
       "--input-format",
       "stream-json"
     ],
-    "full_access_args": [
-      "--permission-mode",
-      "bypassPermissions"
-    ],
+    "full_access": {
+      "mode": "append",
+      "args": [
+        "--permission-mode",
+        "bypassPermissions"
+      ]
+    },
     "session": {
       "model_args": [
         "--model",
         "{model}"
+      ],
+      "model_aliases": [
+        "-m"
+      ],
+      "selectors": [
+        "--resume",
+        "--session",
+        "--continue",
+        "--last",
+        "-c"
       ],
       "resume": {
         "mode": "append",

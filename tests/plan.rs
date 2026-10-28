@@ -28,6 +28,7 @@ fn plan() -> Plan {
                 session_id_pointer: None,
                 quota_command: None,
                 protocol: None,
+                agent_settings: None,
             })
             .collect(),
         tasks: ["src/auth", "tests/auth", "docs/auth"]
