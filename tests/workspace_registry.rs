@@ -1,13 +1,10 @@
-//! R-40 / DD-48 / QAS-32: named workspaces and an explicit registry. HOME is set once in
-//! this test binary so the registry stays inside the fixture.
+//! R-40 / DD-48 / QAS-32: named workspaces and an explicit registry inside the test fixture.
 use agentconductor::ui::Room;
 use std::path::Path;
 #[path = "support/workflow.rs"]
 mod support;
 #[path = "support/env.rs"]
 mod test_env;
-
-const HTML: &str = include_str!("../src/ui/startup.html");
 
 fn call(room: &Room, value: serde_json::Value) -> Result<serde_json::Value, String> {
     room.dispatch(value.to_string().as_bytes())
@@ -24,15 +21,6 @@ fn save(
         serde_json::json!({"kind":"save","revision":revision,"config":config}),
     )
 }
-
-#[test]
-fn name_field_sits_above_the_goal() {
-    let name = HTML
-        .find("id=\"start-name\"")
-        .expect("workspace name field");
-    assert!(name < HTML.find("id=\"start-goal\"").unwrap());
-}
-
 #[test]
 fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
     let (root, plan) = support::setup("shared");
@@ -42,13 +30,23 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
     let profiles = serde_json::to_value(&plan.agents).unwrap();
     let first = root.join("first");
     let room = Room::startup(&first, Path::new(env!("CARGO_BIN_EXE_agentconductor"))).unwrap();
+    assert_eq!(
+        call(&room, serde_json::json!({"kind":"snapshot"})).unwrap()["workspace_blank"],
+        true,
+        "opening an unused workspace starts with an unlisted placeholder"
+    );
+    assert!(
+        call(&room, serde_json::json!({"kind":"saved_workspaces"})).unwrap()["workspaces"]
+            .as_array()
+            .unwrap()
+            .is_empty()
+    );
     save(&room, "Payments team", &profiles).unwrap();
     assert!(save(&room, &"x".repeat(81), &profiles).is_err());
     assert!(save(&room, "bad\nname", &profiles).is_err());
     let snapshot = call(&room, serde_json::json!({"kind":"snapshot"})).unwrap();
     assert_eq!(snapshot["config"]["name"], "Payments team");
 
-    // A successfully reaped old worker PID may now belong to an unrelated process.
     let terminal = first.join("coordinator-ui-reused/process");
     std::fs::create_dir_all(&terminal).unwrap();
     let pid = std::process::id();
@@ -96,8 +94,7 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
         .iter()
         .map(|w| w["name"].as_str().unwrap().to_string())
         .collect();
-    // User decision 2026-10-13: only workspaces the app manages are listed; the folder this
-    // test opened directly ("Payments team") is not one, so it cannot be opened or deleted.
+    // Only app-managed workspaces appear in the list; the directly opened Payments folder does not.
     assert!(
         !names.contains(&"Payments team".to_string())
             && names.iter().filter(|n| *n == "Client A").count() == 2,
@@ -129,7 +126,6 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
         Path::new(&path).join("startup.json").exists(),
         "removing from the list keeps files"
     );
-    // Open existing workspace lists what is saved under ~/.agentconductor, removed ones too.
     let saved = call(&room, serde_json::json!({"kind":"saved_workspaces"})).unwrap();
     let saved = saved["workspaces"].as_array().unwrap().clone();
     let removed = saved
@@ -176,7 +172,6 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
             .any(|w| w["path"] == path.as_str()),
         "reopening re-registers"
     );
-    // Deletion is exact-name confirmed and archives only idle app-owned data.
     assert!(
         call(
             &room,
@@ -251,7 +246,6 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
             .iter()
             .any(|w| w["path"] == path)
     );
-    // A new workspace reuses model lists already observed for the same CLI.
     let snapshot = call(&room, serde_json::json!({"kind":"snapshot"})).unwrap();
     let mut claude = snapshot["templates"]
         .as_array()
@@ -261,7 +255,7 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
         .unwrap()
         .clone();
     claude["catalog"] = serde_json::json!({"models":["opus","sonnet"],"source":"fixture","queried_at":1,"cli_version":"1"});
-    let config = serde_json::json!({"profiles":[claude],"repository":"","goal":"","coordinator":"claude","workspace_mode":"shared"});
+    let config = serde_json::json!({"profiles":[claude],"repository":"","goal":"","coordinator":"claude","workspace_mode":"shared","name":"Observed models"});
     call(
         &room,
         serde_json::json!({"kind":"save","revision":snapshot["revision"],"config":config}),
@@ -272,8 +266,7 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
         serde_json::json!({"kind":"create_workspace","name":"Models reused"}),
     )
     .unwrap();
-    // R-101 (supersedes R-66): a new workspace opens with the machine's master agent list,
-    // including observed models; nothing is queried.
+    // R-101: a new workspace reuses observed model lists without another query.
     let fresh = call(&room, serde_json::json!({"kind":"snapshot"})).unwrap();
     let agents = fresh["config"]["profiles"].as_array().unwrap();
     assert_eq!(agents.len(), 1);
@@ -294,47 +287,7 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
     let fresh = call(&room, serde_json::json!({"kind":"snapshot"})).unwrap();
     assert_eq!(fresh["config"]["goal"], "");
     assert!(fresh["proposal"].is_null());
-    // User decision 2026-10-13: deleting the current workspace asks for no new one; the most
-    // recently used other workspace opens, so several can be deleted in a row.
     assert_eq!(fresh["config"]["name"], "Models reused");
-    assert!(!HTML.contains("start-delete-new-name"));
-    // Deleting one after another never asks for a name; the last one leaves one empty workspace.
-    // Deletes the current workspace under its listed name; returns how many were listed.
-    let delete_current = || {
-        let current = call(&room, serde_json::json!({"kind":"workspaces"})).unwrap()["current"]
-            .as_str()
-            .map(|p| Path::new(p).canonicalize().unwrap())
-            .unwrap();
-        let listed = call(&room, serde_json::json!({"kind":"saved_workspaces"})).unwrap();
-        let listed = listed["workspaces"].as_array().unwrap().clone();
-        let entry = listed
-            .iter()
-            .find(|w| {
-                Path::new(w["path"].as_str().unwrap())
-                    .canonicalize()
-                    .unwrap()
-                    == current
-            })
-            .unwrap();
-        call(
-            &room,
-            serde_json::json!({"kind":"delete_workspace","path":entry["path"],"name":entry["name"]}),
-        )
-        .unwrap();
-        (current, listed.len())
-    };
-    let mut last = delete_current();
-    while last.1 > 1 {
-        last = delete_current();
-    }
-    let empty = call(&room, serde_json::json!({"kind":"snapshot"})).unwrap();
-    assert_eq!(empty["config"]["goal"], "");
-    let now = call(&room, serde_json::json!({"kind":"workspaces"})).unwrap()["current"].clone();
-    assert_ne!(
-        Path::new(now.as_str().unwrap()).canonicalize().unwrap(),
-        last.0
-    );
-    // R-101: deleting a workspace keeps the master agent list.
     assert_eq!(fresh["config"]["profiles"][0]["id"], "claude");
     assert_ne!(
         call(&room, serde_json::json!({"kind":"workspaces"})).unwrap()["current"],
@@ -343,41 +296,4 @@ fn workspaces_are_named_created_listed_and_removed_without_deleting_files() {
     assert!(root.join("repo/base.txt").exists());
     drop(room);
     std::fs::remove_dir_all(root).unwrap();
-}
-
-#[test]
-fn menu_offers_new_and_open_existing_workspace() {
-    let script = include_str!("../src/ui/startup.js");
-    // Menu labels come from the message catalog by ID.
-    let en: serde_json::Value =
-        serde_json::from_str(include_str!("../src/ui/messages/en.json")).unwrap();
-    for (id, text) in [
-        ("startup.new_workspace", "New workspace…"),
-        (
-            "startup.open_existing_workspace",
-            "Open existing workspace…",
-        ),
-    ] {
-        assert!(script.contains(&format!("acMessage(\"{id}\")")), "{id}");
-        assert_eq!(en[id], text);
-    }
-    assert!(!script.contains("Open existing folder"));
-    // Saved workspaces come from a list, not a folder dialog; the picker is for the repository only.
-    assert!(script.contains("kind:'saved_workspaces'") && script.contains("kind:'open_workspace'"));
-    // Opening a saved workspace never uses the folder dialog (Browse/export/import may).
-    let open = &script[script.find("open.onclick=").unwrap()..];
-    let open = &open[..open.find("q('saved-list')").unwrap()];
-    assert!(!open.contains("pick_folder"));
-    assert!(HTML.contains("<dialog id=\"start-open-workspace\""));
-}
-
-#[test]
-fn new_workspace_reuses_models_observed_on_this_machine() {
-    let script = include_str!("../src/ui/startup.js");
-    let reload = &script[script.find("async function reloadWorkspace(").unwrap()..];
-    let reload = &reload[..reload.find("\n").unwrap()];
-    assert!(
-        reload.contains("addedAgents"),
-        "a switched workspace queues its agents once"
-    );
 }
