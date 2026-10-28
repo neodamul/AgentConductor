@@ -2,10 +2,15 @@
 //! GitHub #115: the workspace screen's chat request validates before launching any job.
 use agentconductor::ui::Room;
 use serde_json::json;
+#[path = "support/env.rs"]
+mod env;
 
 #[test]
 fn chat_requests_are_validated_and_the_snapshot_carries_a_chat_slot() {
     let root = std::env::temp_dir().join(format!("ac-startup-chat-{}", std::process::id()));
+    // GitHub #222: the request diagnostics log lives under HOME; a test must not write to the real one.
+    let mut env = env::lock();
+    env.set("HOME", root.join("home"));
     let room = Room::startup(
         &root,
         std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
