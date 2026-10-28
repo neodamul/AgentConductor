@@ -1761,3 +1761,7 @@ Run 40736018268 on issue #221 exposed the existing #9 Windows candidate-review j
 ## 2026-10-29 — Bounded Windows briefing activation retry — issue #9
 
 Run `40741509631` failed in `windows_briefing` before candidate review: UIA Invoke returned `Unrecognized error`; the checked pointer fallback returned success but did not open the briefing or enter pending state. Added a red/green contract requiring observable state checks and a maximum of three attempts. Each retry reacquires the button and revalidates its bounds and same-process target; retries stop when the request is pending or the briefing menu appears. Local contract/layout tests pass 3/3, formatting, diff, and 300-line checks pass. The exact packaged Windows rerun remains required; acceptance stays 22/25, shipped Rust UI 0/25, aggregate 22/50.
+
+## 2026-10-29 — Candidate confirmation outside main-window bounds — issue #9
+
+Run `40745298702` reached the Windows candidate flow after briefing passed, then failed because the `Confirm candidate decision` button's UIA bounds fell outside the main-window rectangle. Added a red/green regression and removed that overly strict containment check. The driver still rejects empty/offscreen controls and checks foreground/point ownership against the exact app process before sending input. The focused candidate-driver, briefing-driver, and source-layout suites pass 9 tests, with formatting, diff, and 300-line checks clean. Exact packaged approve/merge/reject verification remains open; acceptance stays 22/25, 0/25 shipped Rust replacement, 22/50 aggregate.

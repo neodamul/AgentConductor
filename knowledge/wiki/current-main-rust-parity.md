@@ -1,5 +1,9 @@
 # Current-main behavior carried into the Rust UI branch
 
+## Candidate confirmation outside the main-window rectangle — issue #9 / 2026-10-29
+
+Run `40745298702` passed the briefing journey after the bounded retry update and reached the Windows candidate approve/merge flow. The final `Confirm candidate decision` control was rejected because its UIA bounds fell outside the primary app window rectangle. The driver now permits an enabled, visible confirmation control at those coordinates only if the foreground window and `WindowFromPoint` both belong to the expected AgentConductor process. Empty or offscreen controls still fail closed. Local candidate-driver, briefing-driver, and source-layout contracts pass 9 tests; exact packaged Windows confirmation and persisted Git/run assertions remain required. No issue #9 acceptance credit is added.
+
 ## Windows briefing activation follow-up — issue #9 / 2026-10-29
 
 Exact package run `40741509631` failed before the candidate-review journey: UIA Invoke on `Load read-only team briefing` returned `Unrecognized error`; a process-checked pointer click returned success but produced neither a read-only briefing menu nor a disabled/pending action, and the run stayed `Waiting approval`. PR #230's earlier head did not include a briefing fix; its newer base changes candidate-review activation only. The `windows_briefing` driver now waits for observable state and retries at most three times, reacquiring the button and rechecking its bounds and owning process each time. Retries stop when the request is pending or the menu appears. Local contract/layout tests pass 3/3, formatting, diff, and line-limit checks pass. This is test-driver hardening only; exact Windows package verification and candidate-review acceptance remain pending. Do not credit workflow 24. The exact failure and follow-up checklist are recorded in `docs/07-implementation-plan.md`.

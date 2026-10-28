@@ -120,10 +120,8 @@ function Activate-Button($name, $expected) {
   $script:window = Find-Window
   $button = Wait-Button $name
   $bounds = $button.Current.BoundingRectangle
-  $window = $script:window.Current.BoundingRectangle
-  if ($bounds.IsEmpty -or $button.Current.IsOffscreen -or $bounds.Left -lt $window.Left -or
-      $bounds.Top -lt $window.Top -or $bounds.Right -gt $window.Right -or $bounds.Bottom -gt $window.Bottom) {
-    Write-Output "BUTTON_OUTSIDE_WINDOW: $name"
+  if ($bounds.IsEmpty -or $button.Current.IsOffscreen) {
+    Write-Output "BUTTON_NOT_VISIBLE: $name; bounds=$bounds"
     exit 7
   }
   $x = [int]($bounds.Left + $bounds.Width / 2)

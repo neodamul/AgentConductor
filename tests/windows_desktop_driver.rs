@@ -71,6 +71,17 @@ fn candidate_decision_driver_falls_back_to_owned_input_and_checks_state() {
 }
 
 #[test]
+fn candidate_confirmation_accepts_owned_dialog_outside_primary_window_bounds() {
+    let driver = include_str!("support/windows_candidate_review_script.rs");
+    assert!(driver.contains("if ($bounds.IsEmpty -or $button.Current.IsOffscreen)"));
+    assert!(!driver.contains("$bounds.Left -lt $window.Left"));
+    assert!(driver.contains("POINT_NOT_OWNED"));
+    let owner_check = driver.find("ProcessId(WindowFromPoint").unwrap();
+    let pointer_down = driver.find("SendInput(1, new[] { down }, size)").unwrap();
+    assert!(owner_check < pointer_down);
+}
+
+#[test]
 fn approval_opens_review_changes_before_waiting_for_merge() {
     let driver = include_str!("support/windows_candidate_review_script.rs");
     let approve = driver

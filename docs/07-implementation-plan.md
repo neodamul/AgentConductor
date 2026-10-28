@@ -6175,3 +6175,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: `windows_briefing_dispatch` plus `source_layout` pass 3 tests; `cargo fmt --all -- --check`, `git diff --check`, and 300-line layout checks pass. The driver files are 218 and 34 lines.
 - [ ] Verify exact package: push this head and require the Windows package to show the complete briefing without changing the run; then continue candidate-review approve/reject/merge assertions. Source tests are not packaged acceptance.
 - [ ] Complete: keep issue #9 at 22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate until exact package evidence passes.
+
+### 2026-10-29 — Permit process-owned candidate confirmation outside main-window bounds — issue #9
+
+- [x] Plan: inspect run `40745298702` after its Windows briefing step passed with the new driver. Candidate approve and merge actions reached their expected states; the final `Confirm candidate decision` button was rejected because its UIA rectangle fell outside the main window rectangle.
+- [x] Red: add a regression requiring the candidate driver to accept a visible, enabled confirmation control outside the main-window bounds while retaining the same-process point guard; it fails against the prior main-window containment check.
+- [x] Task: reject empty/offscreen controls, then let `CandidateMouse.Click` enforce both foreground process and `WindowFromPoint` ownership before any input. Keep all approval and merge actions behind their existing human confirmation UI.
+- [x] Verify locally: candidate-driver, briefing-driver, and source-layout suites pass 9 tests; formatting, diff checks, and 300-line limits pass. The embedded PowerShell and its contract tests are 181 and 98 lines.
+- [ ] Verify exact package: require Windows to confirm approve, merge, and reject outcomes and persisted Git/run state; the source-level change does not count as package acceptance.
+- [ ] Complete: keep issue #9 at 22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate until exact package evidence passes.
