@@ -91,7 +91,22 @@ fn tool_actions_target_the_modal_and_refresh_dismisses_it_before_card_click() {
     assert!(source.contains("function Find-ModalButton($name)"));
     assert!(source.contains("Find-ModalButton $actionName"));
     assert!(source.contains("Find-ModalButton 'Decide later'"));
+    assert!(source.contains("$button = Find-CurrentButton $name"));
     assert!(source.contains("Activate $later 'Decide later' $false"));
+}
+
+#[test]
+fn activation_waits_for_a_fresh_enabled_control_before_ui_input() {
+    let source = include_str!("support/windows_tool_decision_script.rs");
+    let activation = source
+        .split("function Activate($button")
+        .nth(1)
+        .expect("activation helper must be explicit");
+
+    assert!(source.contains("function Find-CurrentButton($name)"));
+    assert!(source.contains("function Wait-EnabledButton($name)"));
+    assert!(source.contains("$button.Current.IsEnabled"));
+    assert!(activation.contains("Wait-EnabledButton $button.Current.Name"));
 }
 
 #[test]

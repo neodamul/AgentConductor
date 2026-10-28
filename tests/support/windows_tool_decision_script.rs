@@ -34,6 +34,22 @@ function Find-ModalButton($name) {
   }
   return $null
 }
+function Find-CurrentButton($name) {
+  $modalButton = Find-ModalButton $name
+  if ($modalButton) { return $modalButton }
+  return Find-Button $name
+}
+function Wait-EnabledButton($name) {
+  $until = (Get-Date).AddSeconds(20)
+  while ((Get-Date) -lt $until) {
+    $button = Find-CurrentButton $name
+    if ($button -and $button.Current.IsEnabled) { return $button }
+    Start-Sleep -Milliseconds 100
+  }
+  $button = Find-CurrentButton $name
+  $enabled = if ($button) { $button.Current.IsEnabled } else { 'missing' }
+  throw "ACTION_BUTTON_NOT_ENABLED: name=$name enabled=$enabled"
+}
 function Ensure-ButtonInsideWindow($name) {
   $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
   [ToolDecisionMouse]::Maximize($hwnd)
@@ -43,7 +59,7 @@ function Ensure-ButtonInsideWindow($name) {
     $script:window = $A::RootElement.FindAll($T::Children, $C) | Where-Object {
       $_.Current.ProcessId -eq $targetPid -and $_.Current.Name -like 'AgentConductor*'
     } | Select-Object -First 1
-    $button = Find-Button $name
+    $button = Find-CurrentButton $name
     if (-not $button) { throw "ACTION_BUTTON_DISAPPEARED: $name" }
     $bounds = $button.Current.BoundingRectangle
     $windowBounds = $script:window.Current.BoundingRectangle
@@ -123,6 +139,7 @@ public static class ToolDecisionMouse {
 }
 "@
 function Activate($button, $expected, $visible) {
+  $button = Wait-EnabledButton $button.Current.Name
   $invokeError = $null
   try { $button.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke() }
   catch { $invokeError = $_.Exception.Message }
