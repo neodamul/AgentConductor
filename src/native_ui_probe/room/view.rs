@@ -191,11 +191,6 @@ fn window_bar(
                 );
             }
         }
-        ui.label(
-            egui::RichText::new(text("room.local_cli_authentication"))
-                .small()
-                .weak(),
-        );
     });
     ui.horizontal(|ui| {
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {

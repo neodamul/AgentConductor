@@ -228,21 +228,6 @@ pub fn show(
                 }
             }
         });
-    ui.add_space(8.0);
-    ui.separator();
-    ui.label(
-        RichText::new(text(language, "startup.local_by_default"))
-            .small()
-            .strong(),
-    );
-    ui.label(
-        RichText::new(text(
-            language,
-            "startup.one_application_independent_agent_sessions_your_approval_controls",
-        ))
-        .small()
-        .color(ui.visuals().weak_text_color()),
-    );
     event
 }
 

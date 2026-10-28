@@ -148,7 +148,6 @@
   "room.load_diff_and_tests": "변경 사항 및 테스트 불러오기",
   "room.load_read_only_team_briefing": "읽기 전용 팀 브리핑 불러오기",
   "room.load_review_evidence": "변경 검토 근거 불러오기",
-  "room.local_cli_authentication": "로컬 · CLI 인증",
   "room.local_connection_unavailable": "로컬 연결을 사용할 수 없음",
   "room.local_workspace": "로컬 워크스페이스",
   "room.memory_report": "메모리 보고 ({value1}, {value2}): {value3}",

@@ -183,8 +183,6 @@
   "startup.let_listed_approvers_reply_allow_or_deny": "Let listed approvers reply allow or deny",
   "startup.loading_messenger_settings": "Loading messenger settings…",
   "startup.loading_models": "Loading models…",
-  "startup.local_by_default": "LOCAL BY DEFAULT",
-  "startup.local_existing_cli_login": "Local · existing CLI login",
   "startup.local_rust": "Local Rust",
   "startup.local_workspace": "Local workspace · ",
   "startup.macos": "macOS:",
