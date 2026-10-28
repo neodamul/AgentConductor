@@ -81,10 +81,18 @@
         "windows": {"job_id": 122774195967, "status": "passed"}
       },
       "package_jobs": {
-        "windows": {"job_id": 122786066237, "status": "in_progress"},
-        "macos": {"job_id": 122786066378, "status": "in_progress"}
+        "windows": {"job_id": 122786066237, "status": "failed", "artifact_id": 12813540926},
+        "macos": {"job_id": 122786066378, "status": "passed"}
       },
-      "status": "platform_validation_passed_package_in_progress"
+      "windows_package_tests": {
+        "briefing": "passed (1/1)",
+        "desktop": "passed (1/1)",
+        "schedule": "passed (3/3)",
+        "signal_settings": "passed (1/1)",
+        "tool_decision": "failed: UIA and checked pointer input did not reveal the refresh confirmation; tool controls became disabled while the room showed Running",
+        "candidate_review": "not present in tested head"
+      },
+      "status": "failed_windows_workflow_23_refresh_confirmation"
     }
   },
   "acceptance": {

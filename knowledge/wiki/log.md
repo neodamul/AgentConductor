@@ -1,3 +1,7 @@
+# [2026-10-28] verify | Exact Windows package recheck of tool-request refresh — issue #9 / workflow 23
+
+Run `40675926557` passed both platform-validation jobs and the exact macOS package. The Windows release package built and rendered its bilingual manual; briefing (1/1), desktop (1/1), schedule (3/3), and signal-settings (1/1) passed. `windows_tool_decision` failed: UI Automation Invoke showed no state change, checked pointer input did not open `Confirm tool decision`, and the app then exposed disabled tool controls while the Agent Room showed `Running`. Candidate-review workflow 24 was absent from this tested head. The packaged Windows artifact is `12813540926`. Workflow 23 remains uncredited at 22/25 until the driver/product transition is fixed and the exact package passes. AgentMemory: `mem_mvs1tvqj_3cca76988685`.
+
 # [2026-10-27] task/verify | Stabilize the packaged Windows Team Briefing input — issue #9
 
 Exact-head run `40455732953` passed both platform validation jobs and the macOS package. The Windows package failed in `windows_briefing` before the signal-settings test ran: UIA `InvokePattern.Invoke()` returned `Unrecognized error`, and the fallback click did not open the menu. The same briefing test passed in exact package run `40431084361`, showing an intermittent driver issue. Failure artifact `12713663734`, archive SHA-256 `b6fa9d9ada4cb9229293f822dc345d6fe19cc495a280cd8661b81d18cbe48a1c`; evidence: `docs/evidence/issue9-windows-briefing-404557-failure-20261027.json`.
