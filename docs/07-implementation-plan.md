@@ -2244,3 +2244,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify (Windows): CI.
 - [ ] Complete: merge into `main` after #216 (stacked).
 
+### acio 6/6: `io conformance` and the "Integrating a CLI" chapter — GitHub #212
+
+- [x] Plan: phase 6 of `docs/cli-io-protocol.md` §13 (FR-171, DD-194); checks describe, versions, a read-only ask run (stream rules, success, exit 0) and an invalid input (exit 2); `--task`, cancel and oversize-line checks are left out until a CLI declares them.
+- [x] Red: `tests/io_conformance.rs` failed to compile before `cli_io::conformance` existed.
+- [x] Task: `src/cli_io/conformance.rs` and `agentconductor io conformance <exe>`; manual chapter 2.9 (EN/KO) and the command table row; protocol doc §11; CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite, the Python and node tests.
+- [ ] Verify (Windows): CI (the conformance tests are Unix-only because they use shell scripts).
+- [ ] Complete: merge into `main` after #217 (stacked); then the v0.1.40 release.

@@ -380,6 +380,20 @@ one `{session_id}` argument. The engine supplies `AC_CHECKPOINT_RUN_DIR`,
 | `agentconductor io schema <input\|event\|describe\|control\|agent>` | Print an acio schema (the CLI I/O protocol, `docs/cli-io-protocol.md`). |
 | `agentconductor io describe <executable>` | Run `<executable> --acio-describe` and print the validated capability document of an acio CLI. |
 | `agentconductor io validate <kind> <file\|-> [--coordinator]` | Check a document (`input`, `describe`, `agent`, `control`, `event`) or a captured stream (`events`, `controls`) against the schemas and the stream rules. |
+| `agentconductor io conformance <executable>` | Run an acio CLI through the contract and print a pass/fail table (see 2.9). |
+
+### 2.9 Integrating a CLI
+
+Any command-line agent, including an in-house one, can speak the acio protocol instead of needing a mapping table in AgentConductor. The contract is in `docs/cli-io-protocol.md`; `examples/minimal-cli.sh` shows a conforming CLI in 25 lines.
+
+1. **Read the input.** The first stdin line is an `acio.input/1` document (`agentconductor io schema input` prints its schema). Anything else on stdin later is a control line (cancel, user message, tool decision).
+2. **Write events.** Print one `acio.event/1` JSON line per event on stdout (`seq` from 1, a `session` event first, a `result` event last). Diagnostics go to stderr only.
+3. **Describe yourself.** `<executable> --acio-describe` prints an `acio.describe/1` document: name, version, `acio.versions`, whether the CLI can run read-only, and which controls it honors.
+4. **Exit codes.** 0 on success, 2 for an input it rejects, 1 for a failed run (see the protocol for the full list).
+5. **Check it.** Run `agentconductor io conformance ./my-cli`. It describes the CLI, asks it a read-only question and validates the event stream, then feeds it an invalid input and expects exit code 2. A failed check prints why; the command exits with an error unless every check passes. Use `io validate events <file>` on a captured stream to find the first bad line.
+6. **Register it.** Add a custom agent profile with `protocol: acio` and the CLI's command line; `agentconductor io describe <executable>` prints the capability document to copy from. Per-agent differences (arguments, effort, response schema) belong in `agent_settings`, not in code.
+
+The conformance run uses a temporary read-only workspace root and never asks the CLI to change a file. It does not test cancellation or oversized lines yet.
 
 ## Part 3 — Validation and troubleshooting
 

@@ -206,7 +206,7 @@ uses `response_schema` and `result.data`; the supervisor validates the reply ins
 
 - `agentconductor io schema <input|event|describe|control>` prints a schema from the binary, so an agent without the repository has it.
 - `agentconductor io validate <input|events|describe|control> <file|->` checks a document or a captured stream, including the stream rules in §3, and prints the first violation with its line.
-- `agentconductor io conformance <exe> [--ask|--task]` feeds canned inputs to a CLI, validates what comes back and reports a pass/fail table (including cancel within the grace period and the oversize-line case).
+- `agentconductor io conformance <exe>` describes the CLI, asks it a read-only question (the stream must validate and end in a success with exit 0) and feeds it an invalid input (exit code 2 expected), then prints a pass/fail table. Not covered yet: `--task` runs, cancel within the grace period and the oversize-line case, which need a CLI that declares those controls.
 - A shared fixture set in `schemas/cli-io/v1/examples` used by Rust tests; the manual gets an "Integrating a CLI" chapter.
 
 ## 12. Alternatives considered

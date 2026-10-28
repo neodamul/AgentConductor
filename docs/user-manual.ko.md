@@ -358,12 +358,26 @@ Cargo 빌드 캐시는 앱 캐시와 별개입니다.
 | `agentconductor io schema <input\|event\|describe\|control\|agent>` | acio 스키마(CLI 입출력 규약, `docs/cli-io-protocol.md`)를 출력합니다. |
 | `agentconductor io describe <실행 파일>` | `<실행 파일> --acio-describe`를 실행하고 검증된 acio CLI 기능 문서를 출력합니다. |
 | `agentconductor io validate <종류> <파일\|-> [--coordinator]` | 문서(`input`, `describe`, `agent`, `control`, `event`)나 캡처한 스트림(`events`, `controls`)을 스키마와 스트림 규칙으로 검사합니다. |
+| `agentconductor io conformance <실행 파일>` | acio CLI를 규약에 맞게 실행해 통과/실패 표를 출력합니다(2.9 참고). |
 
 협력 CLI는 `cooperative: checkpoint_v1`과 정확한 `{session_id}` 인자를 사용합니다.
 `AC_CHECKPOINT_RUN_DIR`, `AC_CHECKPOINT_ADDRESS_FILE`, `AC_CHECKPOINT_EXECUTABLE`이 전달됩니다.
 handoff를 수락·완료하고 프로세스가 종료되면 검토된 대체 에이전트로 이어갑니다. pause는 중단합니다.
 학습 초안에는 context/failure/cause/response/evidence/confidence와 소스 path/sha256을 기록합니다.
 JSON 필드 이름과 CLI 인자는 번역하지 않습니다. 자세한 형식은 실행파일의 `--help`와 영어 프로토콜 문서를 확인하세요.
+
+### 2.9 CLI 연동하기
+
+사내 에이전트를 포함해 어떤 명령줄 에이전트든 AgentConductor에 매핑 표를 추가하지 않고 acio 프로토콜로 연동할 수 있습니다. 규약은 `docs/cli-io-protocol.md`에 있고, `examples/minimal-cli.sh`가 25줄짜리 적합한 CLI 예시입니다.
+
+1. **입력 읽기.** stdin 첫 줄은 `acio.input/1` 문서입니다(`agentconductor io schema input`으로 스키마 출력). 이후 stdin에 오는 줄은 제어 줄(취소, 사용자 메시지, 도구 결정)입니다.
+2. **이벤트 쓰기.** stdout에 이벤트마다 `acio.event/1` JSON 한 줄을 출력합니다(`seq`는 1부터, 첫 이벤트는 `session`, 마지막은 `result`). 진단 메시지는 stderr로만 보냅니다.
+3. **자기 소개.** `<실행 파일> --acio-describe`는 이름, 버전, `acio.versions`, 읽기 전용 실행 가능 여부, 지원하는 제어를 담은 `acio.describe/1` 문서를 출력합니다.
+4. **종료 코드.** 성공은 0, 거부한 입력은 2, 실패한 실행은 1입니다(전체 목록은 규약 참고).
+5. **검사.** `agentconductor io conformance ./my-cli`를 실행합니다. CLI의 describe를 확인하고, 읽기 전용 질문을 던져 이벤트 스트림을 검증한 뒤, 잘못된 입력을 주고 종료 코드 2를 기대합니다. 실패한 항목은 이유를 출력하고, 모든 항목이 통과하지 않으면 명령이 오류로 끝납니다. 캡처한 스트림은 `io validate events <파일>`로 첫 위반 줄을 찾을 수 있습니다.
+6. **등록.** `protocol: acio`와 CLI 명령줄로 사용자 지정 에이전트 프로필을 추가합니다. `agentconductor io describe <실행 파일>`이 복사할 기능 문서를 출력합니다. 에이전트별 차이(인자, effort, 응답 스키마)는 코드가 아니라 `agent_settings`에 둡니다.
+
+적합성 검사는 임시 읽기 전용 작업 폴더를 쓰며 CLI에게 파일 변경을 요청하지 않습니다. 취소와 초과 길이 줄은 아직 검사하지 않습니다.
 
 ## 3. 검증 범위와 문제 해결
 
