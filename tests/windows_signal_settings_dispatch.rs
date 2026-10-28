@@ -134,6 +134,23 @@ fn signal_port_reacquires_the_edit_control_after_each_keypress() {
 }
 
 #[test]
+fn signal_port_refocuses_the_edit_control_before_each_keypress() {
+    let source = include_str!("windows_signal_settings.rs");
+    let input_loop = source
+        .split("foreach ($character in '7333'.ToCharArray())")
+        .nth(1)
+        .unwrap_or_default()
+        .split("Click-ActionControl 'Local Rust'")
+        .next()
+        .unwrap_or_default();
+    let focus = input_loop.find("Assert-PortFieldFocused $port").unwrap();
+    let key = input_loop
+        .find("::Key([System.UInt16][char]$character)")
+        .unwrap();
+    assert!(focus < key);
+}
+
+#[test]
 fn signal_save_checks_durable_preference_before_visible_dialog_closure() {
     let source = include_str!("windows_signal_settings.rs");
     let save = source.find("Click-SaveAction").unwrap();

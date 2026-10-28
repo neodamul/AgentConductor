@@ -1,3 +1,12 @@
+### Preserve Windows signal-port focus during exact-package UI entry — issue #9 / 2026-10-29
+
+- [x] Plan: exact-head run `40759547238` passed macOS and Windows validation and the macOS package, but the packaged Windows suite failed while typing port `7333`; the UI Automation driver observed `73` as `7` after the second key.
+- [x] Red: add `signal_port_refocuses_the_edit_control_before_each_keypress`; it failed because the keyboard loop did not restore focus between characters.
+- [x] Task: reassert focus on the reacquired port edit before each real keyboard event. This changes only the Windows UI test driver, not application behavior.
+- [x] Local Verify: signal-settings source-contract suite passes 12 tests; `source_layout` passes 2 tests; rustfmt and diff checks pass. `windows_signal_settings.rs` is exactly 300 lines.
+- [ ] Exact-package Verify: push this correction and rerun macOS/Windows validation and exact-package UI automation. Do not credit #9 package acceptance until the packaged Windows signal, approval, and candidate-review journeys all pass.
+- [ ] Complete: update Issue #9, PR #22, AgentMemory, and the LLM Wiki with exact-head package evidence; retain acceptance at **22/25 packaged workflows**, **0/25 shipped Rust replacement**, **22/50 aggregate** until the required exact-package journeys pass.
+
 ### Add the Rust ACIO runtime and CLI conformance command — issue #9 / 2026-10-29
 
 - [x] Plan: port the existing `acio.agent/1` process contract into the Rust-only branch without replacing its split process runner or adding dependencies.
