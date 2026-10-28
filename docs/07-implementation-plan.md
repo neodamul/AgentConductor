@@ -2208,3 +2208,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify (Windows): CI.
 - [ ] Complete: merge after the design PR #206 (this branch is stacked on it).
 
+### acio 2/6: runtime, protocol setting, control channel — GitHub #208
+
+- [x] Plan: phase 2 of `docs/cli-io-protocol.md` §13; the setting is `protocol: acio` on a custom profile (not a new `Provider`, which would have touched 25 match sites).
+- [x] Red: `tests/acio_runtime.rs` did not compile before `src/acio.rs` existed.
+- [x] Task: `AgentProfile.protocol`, `Decoder` mapping, `acio::run` (event validation, decisions with a timeout that denies, ordered control queue, user message, cancel line), `process::run_controlled_outbound`, `acio::describe`, `io describe`, manual rows, CHANGELOG.
+- [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure.
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge into `main` after #213. Not yet connected: nothing in the UI or the workflow starts an acio run; that is phases 3 and 4.
+

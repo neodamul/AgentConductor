@@ -120,6 +120,7 @@ pub fn defaults() -> Result<Config, String> {
             event_types: Default::default(),
             session_id_pointer: None,
             quota_command: None,
+            protocol: None,
         });
     }
     profiles.iter_mut().for_each(profiles::derive_permission);

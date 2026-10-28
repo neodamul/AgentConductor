@@ -27,6 +27,7 @@ fn plan() -> Plan {
                 event_types: Default::default(),
                 session_id_pointer: None,
                 quota_command: None,
+                protocol: None,
             })
             .collect(),
         tasks: ["src/auth", "tests/auth", "docs/auth"]

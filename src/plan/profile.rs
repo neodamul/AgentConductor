@@ -8,6 +8,9 @@ pub struct AgentProfile {
     pub args: Vec<String>,
     #[serde(default)]
     pub parser: crate::protocol::Provider,
+    /// A wire protocol (acio) spoken by a custom CLI; it replaces the hand-written event mapping.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub protocol: Option<crate::protocol::Protocol>,
     #[serde(default)]
     pub input_mode: crate::adapters::InputMode,
     #[serde(default)]
@@ -185,6 +188,18 @@ impl AgentProfile {
     pub fn validate_custom_configuration(&self) -> Result<(), String> {
         let custom = self.parser == crate::protocol::Provider::Custom;
         let pointer = |value: &str| value.is_empty() || value.starts_with('/');
+        if self.protocol.is_some() {
+            if !custom {
+                return Err("the acio protocol requires a custom profile".into());
+            }
+            if !self.event_types.is_empty()
+                || self.session_id_pointer.is_some()
+                || self.result_pointer.is_some()
+                || self.error_condition.is_some()
+            {
+                return Err("the acio protocol defines its own event mapping; remove the custom event mappings".into());
+            }
+        }
         if !custom
             && (self.model_discovery.is_some()
                 || !self.execution_options.is_empty()

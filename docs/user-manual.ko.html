@@ -170,6 +170,7 @@
 <div class="manual-table"><table><thead><tr><th>명령</th><th>기능</th></tr></thead><tbody>
 <tr><td><code>agentconductor normalize &lt;claude|codex|opencode|custom&gt; &lt;stdout.jsonl&gt;</code></td><td>CLI JSONL을 표준 이벤트로 정규화합니다.</td></tr>
 <tr><td><code>agentconductor io schema &lt;input|event|describe|control|agent&gt;</code></td><td>acio 스키마(CLI 입출력 규약, <code>docs/cli-io-protocol.md</code>)를 출력합니다.</td></tr>
+<tr><td><code>agentconductor io describe &lt;실행 파일&gt;</code></td><td><code>&lt;실행 파일&gt; --acio-describe</code>를 실행하고 검증된 acio CLI 기능 문서를 출력합니다.</td></tr>
 <tr><td><code>agentconductor io validate &lt;종류&gt; &lt;파일|-&gt; [--coordinator]</code></td><td>문서(<code>input</code>, <code>describe</code>, <code>agent</code>, <code>control</code>, <code>event</code>)나 캡처한 스트림(<code>events</code>, <code>controls</code>)을 스키마와 스트림 규칙으로 검사합니다.</td></tr>
 </tbody></table></div>
 <p>협력 CLI는 <code>cooperative: checkpoint_v1</code>과 정확한 <code>{session_id}</code> 인자를 사용합니다. <code>AC_CHECKPOINT_RUN_DIR</code>, <code>AC_CHECKPOINT_ADDRESS_FILE</code>, <code>AC_CHECKPOINT_EXECUTABLE</code>이 전달됩니다. handoff를 수락·완료하고 프로세스가 종료되면 검토된 대체 에이전트로 이어갑니다. pause는 중단합니다. 학습 초안에는 context/failure/cause/response/evidence/confidence와 소스 path/sha256을 기록합니다. JSON 필드 이름과 CLI 인자는 번역하지 않습니다. 자세한 형식은 실행파일의 <code>--help</code>와 영어 프로토콜 문서를 확인하세요.</p>

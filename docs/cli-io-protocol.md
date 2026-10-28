@@ -107,7 +107,7 @@ JSON Lines: UTF-8, LF, one object per line, no ANSI, no banners. Common envelope
 | `error` | `code`, `category` (`auth/quota/capacity/input/tool/timeout/internal`), `message`, `retryable`; optional `retry_after_ms` | Error |
 | `heartbeat` | optional `activity` | Progress |
 | `ack` | `control_seq`, `status` (`applied/ignored/unsupported`); optional `message` (answers one control line) | Progress |
-| `result` | `status` (`success/failure/partial/cancelled`), `summary`; optional `data`, `artifacts`, `changed_paths` | Result |
+| `result` | `status` (`success/failure/partial/cancelled`), `summary`; optional `data`, `artifacts`, `changed_paths` | Result; `failure` and `cancelled` map to Error |
 | `x-<vendor>` | free object | Unknown (kept raw) |
 
 Stream rules (checked by the future validator, not by JSON Schema alone):
@@ -178,7 +178,7 @@ that does not answer is registered with the declarative profile as today. Schema
 
 ## 9. How this fits today's code
 
-- `protocol::Provider` gains `Acio`. `Decoder` for `Acio` needs no mapping tables: `type` → `EventKind` per the table above, `session_id` from the envelope, the whole line is the `payload`. Persisted `Event { seq, raw_offset, session_id, kind, payload }` is unchanged, so the planner, guard, room and replay keep working.
+- A custom profile gains the setting `protocol: acio` (`AgentProfile.protocol`; the parser stays `custom`, so none of the places that treat custom profiles as declarative change). The `Decoder` for it needs no mapping tables: `type` → `EventKind` per the table above, `session_id` from the envelope, the whole line is the `payload`. Persisted `Event { seq, raw_offset, session_id, kind, payload }` is unchanged, so the planner, guard, room and replay keep working.
 - `claude`, `codex`, `opencode` keep their adapters. Their normalized events are the same shape, so fixtures and the validator can be shared.
 - The declarative `custom` profile (pointers) stays for CLIs nobody can change.
 - `ExecutionOption` (`values`, `model_values`, `default`) already limits options per model; `traits.efforts` is the same fact declared by the CLI itself and feeds it. A plan task's `test_command` becomes `task.completion.verify`.
@@ -197,7 +197,7 @@ new has to be built for it. The protocol adds two optional upgrades the owner ca
 | Level | What the owner does | Result |
 |---|---|---|
 | 0 per-agent settings | nothing beyond today's profile | works as now: partial status, no streaming text, no exit-code meaning |
-| 1 `parser: acio` | the CLI prints `acio.event/1` lines (and may answer `--acio-describe`); the agent setting is `parser: acio` and its argv | full contract, richer data (usage, tools, typed `result.data`), no pointer mapping |
+| 1 `protocol: acio` | the CLI prints `acio.event/1` lines (and may answer `--acio-describe`); the agent setting is `protocol: acio` on a custom profile and its argv | full contract, richer data (usage, tools, typed `result.data`), no pointer mapping |
 
 `examples/minimal-cli.sh` shows a conforming CLI in 25 lines. An agent that returns structured plans or reviews
 uses `response_schema` and `result.data`; the supervisor validates the reply instead of scraping text.
@@ -223,7 +223,7 @@ uses `response_schema` and `result.data`; the supervisor validates the reply ins
 Decided on 2026-10-28: implement the final form directly, not a one-way first step. Each step is its own issue and PR.
 
 1. Core: the four schemas embedded in the binary, Rust types, a subset JSON Schema checker (no new dependency), stream rules, `agentconductor io schema|validate`, tests over the shared examples.
-2. Runtime: `Provider::Acio` decoder, `parser: acio` in agent settings, `--acio-describe` registration, the control channel in the process supervisor (stdin lines, acks, decision timeout, cancel).
+2. Runtime: the `protocol: acio` profile setting and its decoder, `--acio-describe` registration (`io describe`), the control channel in the process supervisor (stdin lines in queue order, decision timeout that denies, user message, cancel line).
 3. Agent settings instead of code: `acio.agent/1` merged from preset, describe and profile; the `claude` and `codex` presets as embedded data; the argument branches of `src/adapters.rs` moved into those settings; control, effort and response schema through templates (§14).
 4. Task types in plans: the coordinator sets `task.type` per task, resolution against `traits` and `task_defaults`, warnings, effective settings in the session event, the Agent roles table shows per-model effort and fit.
 5. Prompt assembly Document, Task, Format for chat, planner and optimizer.
