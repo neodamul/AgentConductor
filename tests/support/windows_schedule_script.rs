@@ -18,11 +18,15 @@ using System;
 using System.Runtime.InteropServices;
 public static class ScheduleWindow {
   [StructLayout(LayoutKind.Sequential)] struct Point { public int X, Y; }
+  [StructLayout(LayoutKind.Sequential)] struct MouseInput { public int X, Y; public uint Data, Flags, Time; public IntPtr ExtraInfo; }
+  [StructLayout(LayoutKind.Explicit)] struct InputPayload { [FieldOffset(0)] public MouseInput Mouse; }
+  [StructLayout(LayoutKind.Sequential)] struct Input { public uint Type; public InputPayload Payload; }
   [DllImport("user32.dll")] static extern bool ShowWindow(IntPtr window, int command);
   [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
   [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
   [DllImport("user32.dll")] static extern bool SetCursorPos(int x, int y);
   [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
+  [DllImport("user32.dll", SetLastError=true)] static extern uint SendInput(uint count, Input[] inputs, int size);
   [DllImport("user32.dll")] static extern void keybd_event(byte key, byte scan, uint flags, UIntPtr extra);
   [DllImport("user32.dll")] static extern IntPtr WindowFromPoint(Point point);
   [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
@@ -52,10 +56,12 @@ public static class ScheduleWindow {
     mouse_event(0x0001, 1, 0, 0, UIntPtr.Zero);
     System.Threading.Thread.Sleep(100);
     if (ProcessAt(x, y) != expectedPid) return false;
-    mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero);
+    var size = Marshal.SizeOf(typeof(Input));
+    var down = new Input { Payload = new InputPayload { Mouse = new MouseInput { Flags = 2 } } };
+    var up = new Input { Payload = new InputPayload { Mouse = new MouseInput { Flags = 4 } } };
+    if (SendInput(1, new[] { down }, size) != 1) return false;
     System.Threading.Thread.Sleep(80);
-    mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero);
-    return true;
+    return SendInput(1, new[] { up }, size) == 1;
   }
 }
 "@
@@ -222,5 +228,9 @@ if (-not $buttonFocused) {
 Start-Sleep -Milliseconds 750
 Write-Output "SCHEDULE_AFTER: enabled=$($schedule.Current.IsEnabled); keyboard_focus=$($schedule.Current.HasKeyboardFocus); offscreen=$($schedule.Current.IsOffscreen); window_focus=$($window.Current.HasKeyboardFocus)"
 $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 80 | ForEach-Object { Write-Output "POST_ACTION: $($_.Current.Name)" }
+if (-not (Test-ScheduleActionAccepted)) {
+  Write-Output "SCHEDULE_ACTION_NOT_ACCEPTED; enabled=$($schedule.Current.IsEnabled); point=$x,$y; bounds=$bounds"
+  exit 13
+}
 Write-Output 'SCHEDULE_ACTION_SUBMITTED'
 "#;

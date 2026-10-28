@@ -1,3 +1,12 @@
+### Require real Windows schedule-action dispatch — issue #9 / 2026-10-28
+
+- [x] Plan: exact Windows package run `40636799942`, job `122653747461`, built and launched successfully, and passed the briefing and default-workspace journeys. The schedule driver logged a foreground-checked pointer click, but the retry button remained enabled, the report stayed `manual_required`, and no `coordinator-ui-*` action record existed. This proves the UI event did not reach the controller; it is not a schedule persistence or timestamp parsing failure.
+- [x] Red: update `windows_schedule_dispatch` to require checked Win32 `SendInput` mouse-down/up and reject the success marker unless the action button becomes disabled; the source contract failed against the legacy `mouse_event` click and unconditional marker.
+- [x] Task: use the existing verified foreground and same-process checks before sending `SendInput`; treat the button's pending/disabled state and controller owner record as proof that UI dispatch occurred, then separately require durable `manual_schedule` state.
+- [x] Local Verify: `windows_schedule_dispatch`, `windows_schedule`, and `native_ui_task_scheduling` pass 13 tests; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the 300-line guard pass. The dispatch regression also verifies the controller owner record is required before persistence polling.
+- [ ] Exact-package Verify: rerun Windows exact-release UI journeys. Require the controller action owner record first, then persisted `manual_schedule=2099-01-01T09:00:00+09:00`; retain all later signal-settings and tool-decision checks.
+- [ ] Complete: save exact artifact/log evidence, update issue #9, AgentMemory, and LLM Wiki, then update candidate progress only if package acceptance passes. No acceptance credit is added; candidate remains 22/25 and shipped Rust replacement 0/25.
+
 ### Reconcile Rust UI acceptance ledger and remaining workflows — issue #9 / 2026-10-28
 
 - [x] Plan: separate the 25-row historical source inventory from two acceptance counters: candidate packaged UI (22/25 historical) and shipped Rust replacement (0/25). Full-denominator progress is **22/50 (44%)**; source inventory rows are not acceptance evidence.

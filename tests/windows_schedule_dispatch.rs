@@ -73,6 +73,11 @@ fn schedule_test_accepts_only_the_persisted_time_from_the_exact_package() {
     );
     assert!(support.contains("source == \"manual_schedule\""));
     assert!(source.contains("2099-01-01T09:00:00+09:00"));
+    let package = include_str!("windows_schedule.rs");
+    assert!(
+        package.find("wait_for_ui_action_dispatch").unwrap()
+            < package.find("wait_for_manual_schedule").unwrap()
+    );
 }
 
 #[test]
@@ -115,9 +120,12 @@ fn schedule_uses_control_focus_or_foreground_checked_pointer_input() {
     assert!(source.contains("SCHEDULE_CLICK_SENT; method=foreground-checked-pointer"));
     assert!(source.contains("SCHEDULE_CLICK_SENT; method=keyboard"));
     assert!(source.contains("SCHEDULE_KEYBOARD_TARGET_UNAVAILABLE"));
-    assert!(source.contains("mouse_event(0x0001, 1, 0"));
-    assert!(source.contains("mouse_event(0x0002, 0, 0"));
-    assert!(source.contains("mouse_event(0x0004, 0, 0"));
+    assert!(source.contains("SendInput(1, new[] { down }, size) != 1"));
+    assert!(source.contains("SendInput(1, new[] { up }, size) == 1"));
+    assert!(!source.contains("mouse_event(0x0002"));
+    assert!(!source.contains("mouse_event(0x0004"));
+    let accepted = source.find("SCHEDULE_ACTION_NOT_ACCEPTED").unwrap();
+    assert!(accepted < source.find("SCHEDULE_ACTION_SUBMITTED").unwrap());
 }
 
 #[test]

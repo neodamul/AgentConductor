@@ -77,6 +77,12 @@ fn drive_and_verify(app: &RunningApp, run: &Path) -> Result<(), String> {
             String::from_utf8_lossy(&driver.stderr)
         ));
     }
+    if !schedule_support::wait_for_ui_action_dispatch(run, Duration::from_secs(3))? {
+        return Err(format!(
+            "Schedule retry activation did not reach the UI action controller; ui={stdout}; {}",
+            schedule_diagnostics(run, &stdout)
+        ));
+    }
     let expected =
         availability::parse_time("2099-01-01T09:00:00+09:00").map_err(|error| error.to_string())?;
     if schedule_support::wait_for_manual_schedule(run, expected, Duration::from_secs(10))? {
@@ -131,6 +137,17 @@ fn schedule_failure_diagnostics_include_post_action_accessibility_output() {
     let missing_run = std::env::temp_dir().join(format!("missing-ac-run-{}", std::process::id()));
     let diagnostics = schedule_diagnostics(&missing_run, "POST_ACTION: Schedule retry");
     assert!(diagnostics.contains("POST_ACTION: Schedule retry"));
+}
+
+#[test]
+fn schedule_acceptance_requires_a_controller_action_owner_record() {
+    let root = std::env::temp_dir().join(format!("ac-schedule-dispatch-{}", std::process::id()));
+    let process = root.join("coordinator-ui-test/process");
+    std::fs::create_dir_all(&process).unwrap();
+    assert!(!schedule_support::wait_for_ui_action_dispatch(&root, Duration::ZERO).unwrap());
+    std::fs::write(process.join("owner.json"), "{}").unwrap();
+    assert!(schedule_support::wait_for_ui_action_dispatch(&root, Duration::ZERO).unwrap());
+    std::fs::remove_dir_all(root).unwrap();
 }
 
 fn wait_for_availability_watcher_exit(run: &Path) {
