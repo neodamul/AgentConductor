@@ -190,7 +190,20 @@
 <li><strong>Changed source/approval</strong>: plan or verify again. Ordinary-folder application has backups and a receipt; interrupted application is not replayed blindly.</li>
 <li><strong>MCP timeout</strong>: inspect the registered command/server and its bounded timeout; keep raw logs private.</li>
 <li><strong>Window already open</strong>: use or close the existing window rather than opening another.</li>
+<li><strong>Request timed out (kind)</strong>: see “Diagnosing &quot;Request timed out&quot;” below; the log is <code>~/.agentconductor/request-diagnostics.log</code>.</li>
 </ul>
+<h3>Diagnosing &quot;Request timed out&quot;</h3>
+<p>The page waits 15 seconds for each reply from the application. The toast names the request kind, for example <code>Request timed out (chat)</code>. A request only starts work: a coordinator answer that takes minutes is a running job, not a timed-out request.</p>
+<p><strong>Where to look.</strong> <code>~/.agentconductor/request-diagnostics.log</code> (Windows: <code>%USERPROFILE%\.agentconductor\request-diagnostics.log</code>); the previous log is <code>request-diagnostics.log.1</code>. Each file holds at most 256 KiB. Lines are <code>&lt;unix milliseconds&gt; start kind=&lt;kind&gt; bytes=&lt;n&gt;</code> and <code>&lt;unix milliseconds&gt; done kind=&lt;kind&gt; ms=&lt;n&gt; ok=&lt;true|false&gt; [error=&quot;&lt;reason&gt;&quot;]</code>. <code>start</code> is written only for <code>chat</code>; <code>done</code> is written for every <code>chat</code> request and for any request that took 1000 ms or more. Nothing is written for fast requests. Convert the toast time with <code>date -r &lt;seconds&gt;</code> (macOS) and compare it with the line times.</p>
+<p><strong>How to decide.</strong> Take the lines around the toast (30 seconds before it):</p>
+<div class="manual-table"><table><thead><tr><th>What the log shows</th><th>Meaning</th><th>Next step</th></tr></thead><tbody>
+<tr><td>No <code>start kind=chat</code> near the toast</td><td>The request never reached the application. The delay is in the window or its web view (hidden or throttled page, busy web view), not in the request handling.</td><td>Ask whether the window was in the background; try again in front. Report the operating system and web view version.</td></tr>
+<tr><td><code>start</code> without a later <code>done</code></td><td>The handler is still running or blocked.</td><td>Wait a minute and read the log again. If <code>done</code> never comes, collect the running processes of the application and its children and report them.</td></tr>
+<tr><td><code>done ... ok=true ms=</code> 15000 or more</td><td>The application answered, but too late.</td><td>Look at other <code>done</code> lines in the same period: a slow <code>snapshot</code>, <code>baseline_status</code> or <code>quota</code> holds the shared state and delays the others. That kind is the cause; report its <code>ms</code>.</td></tr>
+<tr><td><code>done ... ok=true ms=</code> under 15000, toast still shown</td><td>The reply was produced in time but reached the page late.</td><td>Treat it like the first row (window or web view).</td></tr>
+<tr><td><code>done ... ok=false error=&quot;...&quot;</code></td><td>The request was refused or failed; this is not a timeout.</td><td>Read the reason. &quot;startup operation still running&quot; means the previous job has not finished.</td></tr>
+</tbody></table></div>
+<p>Include the last 50 lines of both files, the request kind from the toast and the time of the toast when you report a timeout.</p>
 <h2>Optional tool commands</h2>
 <p>Run these yourself in the indicated agent CLI or a terminal; the app never installs them.</p>
 <ul>

@@ -1530,3 +1530,7 @@ Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191.
 ### DD-192 Ask the application instead of guessing
 A timeout says nothing about whether the job started, so the page treats the stored conversation as the truth. The request limit is not raised: any limit can be exceeded and a longer wait only delays the same blind spot. Why a reply takes more than 15 seconds is not established.
 Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192. GitHub #197, user, 2026-10-28.
+
+### DD-193 Log the kind and the time, never the content
+The log lives next to the machine-wide registry because requests are not tied to one workspace, records only kind, size, duration and the first 120 characters of an error, and is bounded to two files of 256 KiB. The guide is in the manual because the manual ships with the application, so an agent without the repository can use it.
+Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193. GitHub #200, user, 2026-10-28.

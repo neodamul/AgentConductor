@@ -2181,3 +2181,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure. Not verified: a real window and a real coordinator; why a native reply takes more than 15 s is not found.
 - [ ] Verify (Windows): CI.
 - [ ] Complete: merge into `main`. The Rust line has no coordinator chat; Codex's native chat is #189.
+
+### Request diagnostics log and guide — GitHub #200
+
+- [x] Plan: R-182 to DD-193 added.
+- [x] Red: `tests/request_diagnostics.rs` failed (no log existed).
+- [x] Task: `src/ui/diagnostics.rs`, `Room::dispatch` wrapper, request kind in the timeout notice, decision table in both manuals (HTML regenerated).
+- [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure. Not verified: a log from a real timeout; the cause of the 15 s delay is still unknown.
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge into `main`, then release v0.1.39.

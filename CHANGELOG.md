@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Request diagnostics: the "Request timed out" notice names the request kind, and the application records every chat request and every request of one second or more in `~/.agentconductor/request-diagnostics.log` (kind, size, duration, failure reason; no content). The manuals explain how to read it (GitHub #200).
+
 - Coordinator chat: a request that timed out no longer removes your question or blocks the next one; the screen checks what the application received, keeps an accepted question, follows the running coordinator and shows its late answer (GitHub #197).
 
 ## v0.1.38

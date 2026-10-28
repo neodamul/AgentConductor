@@ -2,6 +2,14 @@
 use super::*;
 impl Room {
     pub fn dispatch(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
+        let kind = diagnostics::kind(bytes);
+        diagnostics::start(&kind, bytes.len());
+        let started = std::time::Instant::now();
+        let result = self.route(bytes);
+        diagnostics::done(&kind, started.elapsed(), result.as_ref().err());
+        result
+    }
+    fn route(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
         if bytes.len() > 64 * 1024 {
             return Err(crate::ui::messages::text("native.native_request_exceeds_64_kib").into());
         }

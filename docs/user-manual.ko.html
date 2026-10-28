@@ -184,8 +184,21 @@
 <li>승인 근거 변경: 계획 또는 검증을 다시 합니다. 일반 폴더 변경 적용은 백업/영수증을 남기며 중단된 적용은 임의 재실행하지 않습니다.</li>
 <li>MCP 타임아웃: 등록한 명령·서버와 제한 시간을 확인합니다. 원본 로그는 비공개로 관리하세요.</li>
 <li>창이 이미 열림: 기존 창을 사용하거나 먼저 닫습니다.</li>
+<li>요청 시간 초과(종류): 아래 &quot;요청 시간이 초과됐습니다&quot; 진단을 보세요. 로그는 <code>~/.agentconductor/request-diagnostics.log</code>입니다.</li>
 </ul>
 <p>관련 문서: <a target="_blank" rel="noopener" href="mcp-sources.md">MCP 연결과 문서 가져오기</a>, <a target="_blank" rel="noopener" href="user-manual.html">영어 사용 설명서</a>.</p>
+<h3>&quot;요청 시간이 초과됐습니다&quot; 진단</h3>
+<p>화면은 응용 프로그램의 응답을 요청마다 15초 기다립니다. 토스트에는 요청 종류가 표시됩니다(예: <code>요청 시간이 초과됐습니다(chat)</code>). 요청은 작업을 시작하기만 합니다. 코디네이터 답이 몇 분 걸리는 것은 실행 중인 작업이지 시간 초과된 요청이 아닙니다.</p>
+<p><strong>어디를 보나.</strong> <code>~/.agentconductor/request-diagnostics.log</code>(Windows: <code>%USERPROFILE%\.agentconductor\request-diagnostics.log</code>), 이전 로그는 <code>request-diagnostics.log.1</code>입니다. 파일마다 최대 256 KiB입니다. 줄 형식은 <code>&lt;unix 밀리초&gt; start kind=&lt;종류&gt; bytes=&lt;n&gt;</code>과 <code>&lt;unix 밀리초&gt; done kind=&lt;종류&gt; ms=&lt;n&gt; ok=&lt;true|false&gt; [error=&quot;&lt;이유&gt;&quot;]</code>입니다. <code>start</code>는 <code>chat</code>에만 쓰고, <code>done</code>은 모든 <code>chat</code> 요청과 1000 ms 이상 걸린 요청에 씁니다. 빠른 요청은 기록하지 않습니다. 토스트가 뜬 시각은 <code>date -r &lt;초&gt;</code>(macOS)로 바꿔 줄의 시각과 비교합니다.</p>
+<p><strong>어떻게 판단하나.</strong> 토스트 시각 전 30초의 줄을 봅니다.</p>
+<div class="manual-table"><table><thead><tr><th>로그 내용</th><th>의미</th><th>다음 단계</th></tr></thead><tbody>
+<tr><td>토스트 근처에 <code>start kind=chat</code>이 없음</td><td>요청이 응용 프로그램에 도달하지 않았습니다. 요청 처리가 아니라 창이나 웹뷰에서 지연된 것입니다(숨김·절전된 페이지, 바쁜 웹뷰).</td><td>창이 백그라운드에 있었는지 묻고 앞에서 다시 시도합니다. 운영체제와 웹뷰 버전을 보고합니다.</td></tr>
+<tr><td><code>start</code>만 있고 이후 <code>done</code>이 없음</td><td>처리기가 아직 실행 중이거나 막혀 있습니다.</td><td>1분 뒤 로그를 다시 봅니다. <code>done</code>이 끝내 없으면 응용 프로그램과 하위 프로세스 목록을 모아 보고합니다.</td></tr>
+<tr><td><code>done ... ok=true ms=</code> 15000 이상</td><td>응용 프로그램이 답했지만 너무 늦었습니다.</td><td>같은 시간대의 다른 <code>done</code> 줄을 봅니다. 느린 <code>snapshot</code>, <code>baseline_status</code>, <code>quota</code>가 공유 상태를 쥐고 다른 요청을 늦춥니다. 그 종류가 원인이며 <code>ms</code>를 보고합니다.</td></tr>
+<tr><td><code>done ... ok=true ms=</code> 15000 미만인데 토스트가 뜸</td><td>응답은 제때 만들어졌지만 페이지에 늦게 닿았습니다.</td><td>첫 줄과 같이 창이나 웹뷰 문제로 봅니다.</td></tr>
+<tr><td><code>done ... ok=false error=&quot;...&quot;</code></td><td>요청이 거부되거나 실패했습니다. 시간 초과가 아닙니다.</td><td>이유를 읽습니다. &quot;startup operation still running&quot;은 이전 작업이 끝나지 않았다는 뜻입니다.</td></tr>
+</tbody></table></div>
+<p>시간 초과를 보고할 때는 두 파일의 마지막 50줄, 토스트의 요청 종류, 토스트 시각을 함께 보냅니다.</p>
 <h2>선택 도구 명령</h2>
 <p>앱이 설치하지 않습니다. 슬래시 명령은 해당 에이전트 CLI, 나머지는 터미널에서 직접 실행합니다.</p>
 <ul>
