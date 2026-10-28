@@ -14,6 +14,6 @@ The JavaScript UI owns a client timeout and can report a `client_timeout` event 
 
 ## Trace and verification
 
-Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/NFR-73 → QAS-174 → DDR-37 → DD-188.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198.
 
 Rust regression coverage checks visible initial snapshot failures, scheduled Agent Room polling, quiet stale task-detail replies, visible explicit refresh/action failures, and deadline rebasing after a late repaint. Changed Rust files stay at or below 300 lines. Exact macOS/Windows package verification is required before merging the Rust port into the migration branch.

@@ -6286,7 +6286,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: focused native UI integration tests, full locked/offline Rust suite (1015 passed, 14 ignored), warning-denied Clippy, rustfmt, source-layout, and diff checks pass locally.
 - [x] Follow-up review: add regression coverage showing stale/closed-room scheduled task-detail responses are silently discarded while explicit task-detail mismatches remain visible; split the handler into a testable bounded module.
 - [ ] Package: run exact macOS/Windows package validation on the Rust PR head before merging it into the migration branch.
-- [x] Design: add R-177 → BG-132 → SF-165 → UC-168 → FR-163/NFR-73 → QAS-174 → DDR-37 → DD-188 and Wiki page `native-ui-poll-timeouts.md`.
+- [x] Design: add native Rust trace R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198 and Wiki page `native-ui-poll-timeouts.md`, preserving newer main-line requirement identifiers.
 - [ ] Verify: refresh Graphify and record the current tool availability; CocoIndex is unavailable in this environment.
 - [ ] Complete: keep draft PR #228 targeting `codex/issue-9-native-ui-parity` and #221 open until exact-head platform/package CI and migration-branch integration pass.
 
@@ -6299,5 +6299,6 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify full: `rtk proxy cargo test --locked --offline --all-targets -- --nocapture` exits 0 on the synced branch; focused native probe tests pass 13/13, source layout passes 2/2, warning-denied Clippy including `clippy::undocumented_unsafe_blocks`, rustfmt check, and `git diff --check` pass. Changed Rust files remain below 300 lines.
 - [x] Knowledge: refreshed Graphify (9,799 nodes, 15,197 edges, 742 communities) and recorded that CocoIndex is unavailable.
 - [x] Exact-CI follow-up: run `40691748837` exposed a faulty success-reset fixture. The test injected two failures before polling an Agent Room with no active screen, so the expected background dispatch correctly failed. Reproduced locally, moved the reset assertion onto a successful Workspace refresh, and verified the scheduled no-active-screen failure is quiet at count one; focused 4/4, full all-target, Clippy, fmt and layout pass.
-- [ ] Verify package: run exact macOS/Windows validation and packaged-binary checks on the final PR head.
+- [x] Rebase: resolve documentation ID collisions against the current #9 requirements while retaining the complete #221 native behavior trace; rebase onto `86ea3c3ddccdb3f43d5ef9677127534997d8c634`.
+- [ ] Verify package: rerun exact macOS/Windows validation and packaged-binary checks on the rebased PR head. Prior run `40708854891` had macOS package success; Windows package failed in the upstream candidate-review journey after `Approve verified candidate` was reported confirmed but the confirmation dialog closed without the expected next state. Do not treat that package failure as a #221 poll regression.
 - [ ] Complete: keep PR #228 draft and #221 open until the verified Rust port is merged into the migration branch.
