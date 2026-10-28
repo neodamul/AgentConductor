@@ -6,7 +6,7 @@ use std::{
     fs,
     io::Read,
     path::{Path, PathBuf},
-    process::{Child, Command, Output, Stdio},
+    process::{Child, Command, Stdio},
     thread,
     time::{Duration, Instant},
 };
@@ -199,7 +199,7 @@ fn exact_windows_package_persists_chat_after_workspace_reopen() {
     drive(&mut app, question, "send");
     wait_for_transcript(&root, question);
     drop(app);
-    let reopened = launch(&root);
+    let mut reopened = launch(&root);
     drive(&mut reopened, question, "verify");
 }
 
@@ -229,7 +229,7 @@ fn exact_windows_package_reconnects_an_in_flight_chat_after_app_close() {
     }
     wait_for_running_chat(&root);
     drop(app);
-    let reopened = launch(&root);
+    let mut reopened = launch(&root);
     drive(&mut reopened, question, "verify");
     wait_for_transcript(&root, question);
 }
