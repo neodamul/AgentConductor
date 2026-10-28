@@ -6,6 +6,8 @@ use agentconductor::{
     protocol::Provider,
 };
 use serde_json::{Value, json};
+#[path = "support/env.rs"]
+mod env;
 
 const GOLDEN: &str = "tests/data/adapter_golden.json";
 
@@ -121,10 +123,18 @@ fn snapshot() -> Value {
 
 #[test]
 fn argument_building_for_the_known_clis_matches_the_golden_file() {
+    // One error text comes from the UI message catalog; a saved interface language must not leak into the golden file.
+    let home = std::env::temp_dir().join(format!("ac-golden-home-{}", std::process::id()));
+    std::fs::create_dir_all(&home).unwrap();
+    let mut env = env::lock();
+    env.set("HOME", &home);
+    env.set("USERPROFILE", &home);
     let now = snapshot();
     if std::env::var_os("AC_UPDATE_GOLDEN").is_some() {
         std::fs::write(GOLDEN, serde_json::to_string_pretty(&now).unwrap() + "\n").unwrap();
     }
     let golden: Value = serde_json::from_str(&std::fs::read_to_string(GOLDEN).unwrap()).unwrap();
     assert_eq!(now, golden);
+    drop(env);
+    let _ = std::fs::remove_dir_all(home);
 }

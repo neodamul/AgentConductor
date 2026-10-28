@@ -138,7 +138,7 @@
   },
   "codex": {
     "direct_folder_no_exec": {
-      "error": "Codex 폴더 실행에는 등록된 exec 명령이 필요합니다."
+      "error": "Codex folder execution requires the registered exec command."
     },
     "direct_folder_plain": [
       "exec",
