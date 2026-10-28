@@ -5,6 +5,9 @@
 - [x] Task: after UIA invocation, require the expected visible state. If the button/dialog remains unchanged, use `SendInput` only after foreground and `WindowFromPoint` ownership checks for the packaged process; verify the approved, rejected, and merged states before continuing.
 - [x] Exact-head validation diagnostic: run `40701439500` passed macOS validation but Windows failed `candidate_review_driver_rebinds_the_window_before_reading_controls` because its source assertion assumed LF line endings. The Windows checkout supplies CRLF through `include_str!`; the assertion now normalizes CRLF before matching.
 - [x] Local Verify: `windows_desktop_driver` and `source_layout` pass 6 tests across 2 suites; `cargo fmt --check` and `git diff --check` pass. The Rust test and embedded PowerShell driver are 60 and 178 lines. A regression assertion confirms mouse-up is sent before the post-click foreground failure path.
+- [x] Follow-up Red: the Windows package run for PR #230 failed because `$window.SetFocus()` raised `Target element cannot receive focus`; the desktop UIA harness does not need to focus its top-level window.
+- [x] Follow-up Task: remove that redundant focus call and add a source-contract regression so future changes cannot reintroduce the unsupported UIA operation.
+- [x] Follow-up Local Verify: `windows_desktop_driver` and `source_layout` pass 6 tests across 2 suites; formatting and diff checks pass. Both touched test files remain below 300 lines.
 - [ ] Exact-package Verify: push the correction and require the exact Windows package to approve, merge, reject, and verify saved state/Git HEAD. Run `40697161465` does not pass workflow 24 and gives no acceptance credit.
 - [ ] Complete: retain current-head macOS/Windows package evidence; update issue #9, PR #22, LLM Wiki, and AgentMemory. Keep acceptance at **22/25 packaged workflows**, **0/25 shipped Rust replacement**, **22/50 aggregate** until the exact Windows journey passes.
 

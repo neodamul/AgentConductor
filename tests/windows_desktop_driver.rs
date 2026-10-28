@@ -1,6 +1,10 @@
 #[test]
 fn goal_driver_uses_and_confirms_value_pattern_before_saving() {
     let source = include_str!("windows_desktop.rs");
+    assert!(
+        !source.contains("$window.SetFocus()"),
+        "desktop UI Automation must not focus a non-focusable top-level window"
+    );
     let set = source.find("$goalPattern.SetValue('Windows UIA goal')");
     let verify = source.find("while ($goalPattern.Current.Value");
     let save = source.find("$save.GetCurrentPattern(");
