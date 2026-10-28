@@ -19,13 +19,38 @@ function Buttons($name) {
     $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button'
   } | Select-Object -First 1
 }
+function EnabledButton($name) {
+  $window.FindAll($T::Descendants, $C) | Where-Object {
+    $_.Current.Name -eq $name -and
+    $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' -and
+    $_.Current.IsEnabled -and
+    -not $_.Current.IsOffscreen -and
+    -not $_.Current.BoundingRectangle.IsEmpty
+  } | Select-Object -First 1
+}
 function ChatEdit() {
   $edits = $window.FindAll($T::Descendants, $C) | Where-Object {
     $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit'
   }
-  $named = $edits | Where-Object { $_.Current.Name -like 'Ask about this workspace*' } | Select-Object -First 1
-  if ($named) { return $named }
-  return $edits | Select-Object -Last 1
+  return $edits | Where-Object {
+    $_.Current.Name -like 'Ask about this workspace*' -and
+    $_.Current.IsEnabled -and
+    -not $_.Current.IsOffscreen -and
+    -not $_.Current.BoundingRectangle.IsEmpty
+  } | Select-Object -First 1
+}
+function ChatControlDiagnostic($label) {
+  Write-Output "CHAT_CONTROL_DIAGNOSTIC:$label"
+  $window.FindAll($T::Descendants, $C) | Where-Object {
+    $_.Current.ControlType.ProgrammaticName -in @('ControlType.Button', 'ControlType.Edit') -and
+    ($_.Current.Name -eq 'Send' -or $_.Current.Name -like 'Ask about this workspace*')
+  } | ForEach-Object {
+    $value = ''
+    try {
+      $value = $_.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
+    } catch { }
+    Write-Output "$($_.Current.ControlType.ProgrammaticName) | $($_.Current.Name) | enabled=$($_.Current.IsEnabled) | offscreen=$($_.Current.IsOffscreen) | value=$value"
+  }
 }
 if ($env:AC_CHAT_MODE -in @('send', 'verify')) {
   $open = $null
@@ -35,21 +60,31 @@ if ($env:AC_CHAT_MODE -in @('send', 'verify')) {
   }
   if (-not $open) { Write-Output 'NO_CHAT_LAUNCHER'; exit 3 }
   $open.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+  Start-Sleep -Milliseconds 200
   if ($env:AC_CHAT_MODE -eq 'send') {
     $edit = $null
     while (-not $edit -and (Get-Date) -lt $deadline) {
       $edit = ChatEdit
       if (-not $edit) { Start-Sleep -Milliseconds 200 }
     }
-    if (-not $edit) { Write-Output 'NO_CHAT_EDIT'; exit 4 }
-    $edit.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue($env:AC_CHAT_QUESTION)
+    if (-not $edit) { ChatControlDiagnostic 'NO_CHAT_EDIT'; exit 4 }
+    $edit.SetFocus()
+    $editPattern = $edit.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+    $editPattern.SetValue($env:AC_CHAT_QUESTION)
+    $editDeadline = (Get-Date).AddSeconds(5)
+    while ($editPattern.Current.Value -ne $env:AC_CHAT_QUESTION -and (Get-Date) -lt $editDeadline) {
+      Start-Sleep -Milliseconds 100
+    }
+    if ($editPattern.Current.Value -ne $env:AC_CHAT_QUESTION) {
+      ChatControlDiagnostic 'CHAT_EDIT_VALUE_NOT_APPLIED'
+      exit 7
+    }
     $send = $null
     while (-not $send -and (Get-Date) -lt $deadline) {
-      $candidate = Buttons 'Send'
-      if ($candidate -and $candidate.Current.IsEnabled) { $send = $candidate }
+      $send = EnabledButton 'Send'
       if (-not $send) { Start-Sleep -Milliseconds 200 }
     }
-    if (-not $send) { Write-Output 'NO_CHAT_SEND'; exit 5 }
+    if (-not $send) { ChatControlDiagnostic 'NO_CHAT_SEND'; exit 5 }
     $send.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
     Write-Output 'CHAT_SENT'
     if ($env:AC_CHAT_WAIT -eq '0') { exit 0 }

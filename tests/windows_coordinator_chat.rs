@@ -206,7 +206,11 @@ fn exact_windows_package_reconnects_an_in_flight_chat_after_app_close() {
         .output()
         .unwrap();
     let report = String::from_utf8_lossy(&driver.stdout);
-    assert!(driver.status.success() && report.contains("CHAT_SENT"));
+    assert!(
+        driver.status.success() && report.contains("CHAT_SENT"),
+        "UI Automation send failed: stdout: {report}; stderr: {}",
+        String::from_utf8_lossy(&driver.stderr)
+    );
     wait_for_running_chat(&root);
     drop(app);
     let reopened = launch(&root);

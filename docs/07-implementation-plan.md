@@ -6294,4 +6294,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Complete: record the exact package artifact/run, update #189 and PR #192, then close the issue only after all acceptance criteria pass.
 - [x] Red from Actions run `40608162559`: both package scenarios failed at UIA `Send` because the driver invoked a present-but-disabled button (`ElementNotEnabledException`); the in-flight case therefore never emitted `CHAT_SENT`.
 - [x] Task: wait for a freshly discovered `Send` element whose `IsEnabled` is true before invoking it; this is a UIA synchronization fix and does not alter product behavior.
-- [ ] Verify: rerun the exact Windows package and require both chat scenarios to pass after the enabled-state wait.
+- [x] Red from Actions run `40613402175`: both scenarios still timed out; the driver reported `NO_CHAT_SEND` and the in-flight assertion discarded the same diagnostic, so the remaining failure was not distinguishable between an incorrect edit/control match and a genuinely disabled Send control.
+- [x] Task: require the named, visible, enabled chat editor; focus it; verify `ValuePattern.Current.Value`; select a visible enabled Send candidate from all same-name controls; and emit a bounded UIA diagnostic on failure. The in-flight assertion now preserves driver stdout/stderr.
+- [x] Verify local: `windows_coordinator_chat_dispatch` 1/1, focused Windows dispatch/layout/public-doc suites 20/20, warning-denied Clippy, rustfmt, diff check, and the 300-line check pass. Windows PowerShell/package execution is not available on macOS.
+- [ ] Verify: rerun the exact Windows package and require both chat scenarios to pass; use `CHAT_CONTROL_DIAGNOSTIC` if the packaged UI still exposes no usable Send control.

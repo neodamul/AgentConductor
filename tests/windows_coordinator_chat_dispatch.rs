@@ -7,5 +7,8 @@ fn exact_package_chat_test_is_wired_into_the_windows_package_gate() {
     assert!(package_test.contains("in-flight"));
     assert!(workflow.contains("--test windows_coordinator_chat"));
     let script = include_str!("support/windows_chat_script.rs");
-    assert!(script.contains("$candidate.Current.IsEnabled"));
+    assert!(script.contains("function EnabledButton($name)"));
+    assert!(script.contains("$edit.SetFocus()"));
+    assert!(script.contains("$editPattern.Current.Value -ne $env:AC_CHAT_QUESTION"));
+    assert!(script.contains("CHAT_CONTROL_DIAGNOSTIC"));
 }
