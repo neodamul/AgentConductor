@@ -171,11 +171,58 @@ fn wait_for_status(run: &Path, id: &str, expected: &str) {
         {
             return;
         }
-        assert!(
-            Instant::now() < deadline,
-            "tool receipt did not become {expected}"
-        );
+        if Instant::now() >= deadline {
+            panic!(
+                "tool receipt did not become {expected}: {}",
+                refresh_failure_diagnostics(run, id)
+            );
+        }
         std::thread::sleep(Duration::from_millis(100));
+    }
+}
+
+fn refresh_failure_diagnostics(run: &Path, id: &str) -> String {
+    let receipt = Ledger::open(&run.join("state.sqlite"))
+        .and_then(|ledger| ledger.receipt(id))
+        .map(|receipt| format!("receipt={receipt:?}"))
+        .unwrap_or_else(|error| format!("receipt read failed: {error}"));
+    let report = workflow::load(run)
+        .map(|report| {
+            serde_json::to_string(&report)
+                .unwrap_or_else(|error| format!("report serialization failed: {error}"))
+        })
+        .unwrap_or_else(|error| format!("report read failed: {error}"));
+    let mut actions = Vec::new();
+    if let Ok(entries) = fs::read_dir(run) {
+        for entry in entries.flatten().filter(|entry| {
+            entry
+                .file_name()
+                .to_string_lossy()
+                .starts_with("coordinator-ui-")
+        }) {
+            let process = entry.path().join("process");
+            let owner = diagnostic_file(&process.join("owner.json"));
+            let stdout = diagnostic_file(&process.join("stdout.log"));
+            let stderr = diagnostic_file(&process.join("stderr.log"));
+            actions.push(format!(
+                "{} owner={owner} stdout={stdout} stderr={stderr}",
+                entry.file_name().to_string_lossy()
+            ));
+        }
+    }
+    format!(
+        "{receipt}; report={report}; actions=[{}]",
+        actions.join(" | ")
+    )
+}
+
+fn diagnostic_file(path: &Path) -> String {
+    match fs::read(path) {
+        Ok(bytes) => {
+            let start = bytes.len().saturating_sub(4096);
+            String::from_utf8_lossy(&bytes[start..]).into_owned()
+        }
+        Err(error) => format!("unavailable: {error}"),
     }
 }
 

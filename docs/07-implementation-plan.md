@@ -8,6 +8,15 @@
 - [ ] Integration: after current package verification, reconcile PR #22 with current `main` while preserving the Rust migration intent, then rerun local tests and platform package verification.
 - [ ] Complete: update issue #9, evidence, LLM Wiki, and AgentMemory after each accepted workflow. Current full denominator remains **22/50 (44%)**.
 
+### Retain child-process evidence for packaged tool refresh failures — issue #9 / 2026-10-28
+
+- [x] Plan: exact Windows package run `40622684398` passed schedule, signal settings, and earlier package journeys, then timed out waiting for the original tool receipt to become `superseded`. The failure gives no evidence yet to distinguish a failed refresh child from a test polling race.
+- [x] Red/Green: add a regression requiring timeout output to include the receipt, `workflow::load(run)` report, and each `coordinator-ui-*` action's `owner.json`, `stdout.log`, and `stderr.log`. Keep the existing 10-second deadline unchanged until child state is observed.
+- [x] Task: append bounded child-process and workflow diagnostics to the exact-package timeout failure. The test fixture currently removes its temporary run on panic, so CI output must carry the evidence.
+- [x] Local Verify: `windows_tool_decision_dispatch` passes 4/4, rustfmt and `git diff --check` pass; both changed test files remain below 300 lines (`windows_tool_decision.rs` 243, dispatch 62).
+- [ ] Exact-package Verify: rerun the packaged Windows flow; use the retained owner/report/log diagnostics to identify whether `tool_refresh` fails, remains active, or succeeds after the current deadline. Do not credit workflow 23 until refreshed, consumed, denied receipts and mock effects all pass.
+- [ ] Complete: fix the measured product or test-lifecycle cause, rerun exact Windows package verification, then update issue #9, evidence, LLM Wiki, and AgentMemory. Candidate packaged acceptance remains 22/25; shipped Rust replacement remains 0/25.
+
 ### Serialize exact Windows signal-port input with observed UI state — issue #9 / 2026-10-28
 
 - [x] Plan: exact package run `40595627014` failed while entering `7333`: the UI Automation `ValuePattern` observed only `7` before the driver gave up. Earlier run `40594521592` passed, so a single passing package run is not sufficient evidence that the input is reliable.

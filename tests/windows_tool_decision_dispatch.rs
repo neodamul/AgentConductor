@@ -41,3 +41,22 @@ fn checked_fallback_brings_offscreen_actions_into_the_window_before_clicking() {
         .expect("scroll helper must stay separately auditable");
     assert!(scroll.contains("if (pointProcessId != expectedPid)"));
 }
+
+#[test]
+fn refresh_timeout_reports_receipt_report_and_controller_action_logs() {
+    let source = include_str!("windows_tool_decision.rs");
+
+    for evidence in [
+        "refresh_failure_diagnostics",
+        "owner.json",
+        "stdout.log",
+        "stderr.log",
+        "workflow::load(run)",
+        "ledger.receipt(id)",
+    ] {
+        assert!(
+            source.contains(evidence),
+            "missing timeout evidence: {evidence}"
+        );
+    }
+}

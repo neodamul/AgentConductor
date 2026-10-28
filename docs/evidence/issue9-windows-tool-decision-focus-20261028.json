@@ -30,7 +30,14 @@
     "root_cause": "The test driver trusted IsOffscreen=False without confirming that the action button's UIA rectangle was inside the app window, so it attempted a click outside the viewport.",
     "fix": "Maximize the app, bounded-scroll each action into the app window, verify rectangle containment, and retain foreground and WindowFromPoint process ownership checks for every scroll and click."
   },
-  "exact_package_revalidation": "pending rerun of the viewport-aware driver",
+  "refresh_timeout_run": {
+    "run_id": 40622684398,
+    "result": "The exact Windows package passed earlier interactions and reached refresh, but the original receipt did not become superseded within the existing 10-second test wait.",
+    "diagnosis": "Unknown. The test fixture removed its temporary run on panic, so the child action owner record, stdout/stderr, workflow report, and receipt state were not retained in CI output.",
+    "instrumentation": "Timeout failures now include the receipt, serialized workflow report, and bounded owner.json/stdout.log/stderr.log contents for coordinator-ui child actions. The timeout duration is unchanged.",
+    "local_verification": "windows_tool_decision_dispatch passed 4/4; rustfmt and git diff --check passed; changed test files are 243 and 62 lines."
+  },
+  "exact_package_revalidation": "pending rerun with refresh child-process diagnostics",
   "workflow_23_credit": false,
   "candidate_packaged_ui_acceptance": "22/25"
 }
