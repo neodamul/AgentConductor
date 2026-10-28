@@ -37,7 +37,7 @@
     "instrumentation": "Timeout failures now include the receipt, serialized workflow report, and bounded owner.json/stdout.log/stderr.log contents for coordinator-ui child actions. The timeout duration is unchanged.",
     "local_verification": "windows_tool_decision_dispatch and source_layout passed 7 tests; warning-denied all-target Clippy, rustfmt, and git diff --check passed. The Receipt summary is type-checked by a shared cross-platform test because this host has no installed Windows Rust target. Changed files are 244, 98, and 16 lines."
   },
-  "exact_package_revalidation": "pending rerun with refresh child-process diagnostics",
+  "exact_package_revalidation": "run 40627667365 validates prior head 3a037b61 and cannot validate the corrected Receipt formatter; rerun the exact Windows package on 61b5f722 after that run concludes",
   "workflow_23_credit": false,
   "candidate_packaged_ui_acceptance": "22/25"
 }
