@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+## v0.1.40
+
 - Idle workspace and Agent Room polling no longer raise a timeout toast on their own; request deadlines pause while the page is hidden and resume after it returns (GitHub #221).
 
 - `agentconductor io conformance <executable>` runs a CLI through the acio contract (self-description, a read-only question with a valid event stream, rejection of an invalid input) and prints a pass/fail table; both manuals gained an "Integrating a CLI" chapter (GitHub #212).

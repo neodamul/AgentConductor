@@ -9,7 +9,7 @@ tests the combined result and asks for your approval before merging. It runs on 
 ![Workspace](docs/assets/ui-workspace-current.png) ![Workspace in Korean](docs/assets/ui-workspace-korean-current.png) ![Dark workspace](docs/assets/ui-workspace-dark-current.png)
 ![Agent Room](docs/assets/ui-agent-room-current.png) ![Dark Agent Room in Korean](docs/assets/ui-agent-room-dark-current.png) ![Agent settings](docs/assets/ui-agent-settings-current.png)
 
-> **Version:** 0.1.39 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **⚙ Settings → User manual** opens the offline manual.
+> **Version:** 0.1.40 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **⚙ Settings → User manual** opens the offline manual.
 
 ## What it does
 
