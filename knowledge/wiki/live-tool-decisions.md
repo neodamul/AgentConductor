@@ -65,6 +65,10 @@ The Agent Room snapshot lists current-attempt live requests; each live request c
 
 The issue #9 Rust branch also rejects approval through a superseded request ID after workspace context changes. `replacing_a_request_with_changed_context_keeps_only_the_latest_one_active` verifies the old receipt is superseded, a fresh exact-context receipt remains pending, one matching request stays active, and the stale ID cannot be approved.
 
+## Windows packaged refresh retry — 2026-10-28
+
+Exact package run `40675926557` passed macOS packaging and Windows platform validation, but Windows workflow 23 failed when the live Agent Room snapshot temporarily disabled tool controls before the confirmation became visible. The package artifact is `12813540926`; the candidate-review test was not part of that tested source head. Commit `b8a95ee6` adds bounded activation retries that reacquire a fresh enabled control before each UIA or checked pointer attempt. `windows_tool_decision_dispatch` passes 10/10 locally and changed files remain below 300 lines. Do not credit workflow 23 until a new exact Windows package verifies refresh, allow, deny, receipt transitions, and mock effects. AgentMemory: `mem_mvs1z1ve_dfd428b84d7a`.
+
 The corresponding main-branch race was fixed under bug #32 in PR #34 (`c47abb5`), merged as `c16c3b0`. macOS and Windows validation and exact native-package jobs all passed in Actions run `39144325769`. The Rust branch keeps the equivalent atomic ledger reconciliation rather than duplicating the scheduler implementation; its focused worker, ledger and source-layout tests pass.
 
 

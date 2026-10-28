@@ -92,7 +92,17 @@
         "tool_decision": "failed: UIA and checked pointer input did not reveal the refresh confirmation; tool controls became disabled while the room showed Running",
         "candidate_review": "not present in tested head"
       },
-      "status": "failed_windows_workflow_23_refresh_confirmation"
+      "status": "failed_windows_workflow_23_refresh_confirmation",
+      "corrective_fix": {
+        "commit": "b8a95ee6",
+        "status": "local_only",
+        "local_regression": "windows_tool_decision_dispatch passed 10/10; fmt, diff, and 300-line checks passed",
+        "files": {
+          "tests/support/windows_tool_decision_script.rs": 230,
+          "tests/windows_tool_decision_dispatch.rs": 184
+        },
+        "exact_package_rerun": "pending"
+      }
     }
   },
   "acceptance": {
