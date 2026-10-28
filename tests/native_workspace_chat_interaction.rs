@@ -78,6 +78,23 @@ fn terminal_input_sends_on_enter_and_shift_enter_keeps_the_draft() {
 }
 
 #[test]
+fn chat_editor_has_a_stable_accessible_name_for_desktop_automation() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut state = State::default();
+    state.open();
+    let (output, _) = panel(&context, &mut state, Vec::new());
+    let update = output.platform_output.accesskit_update.unwrap();
+    let label = update
+        .nodes
+        .iter()
+        .map(|(_, node)| node)
+        .find(|node| node.role() == Role::MultilineTextInput)
+        .and_then(|node| node.label());
+    assert_eq!(label, Some("Ask about this workspace or its project…"));
+}
+
+#[test]
 fn enter_in_another_control_does_not_send_the_chat_draft() {
     let context = egui::Context::default();
     context.enable_accesskit();

@@ -47,7 +47,7 @@
     "run_id": 40613402175,
     "job": "native-package (windows-latest)",
     "failure": "Both coordinator-chat scenarios timed out without a usable Send control. The reopen scenario reported NO_CHAT_SEND; the in-flight assertion did not retain the driver report and only showed that CHAT_SENT was absent.",
-    "diagnosis_fix": "The driver now requires a named, visible, enabled chat editor, focuses it, verifies ValuePattern.Current.Value, selects an enabled visible Send candidate from all same-name controls, and retains bounded UIA diagnostics and stderr/stdout on failure.",
+    "diagnosis_fix": "Source inspection found that the chat TextEdit exposed only hint text and no stable UI Automation name, so the old fallback could edit another field and leave Send disabled. The UI now assigns the placeholder as an explicit accessible name. The driver also requires the named visible enabled editor, focuses it, verifies ValuePattern.Current.Value, selects an enabled visible Send candidate from all same-name controls, and retains bounded UIA diagnostics and stderr/stdout on failure.",
     "next_verification": "Rerun the exact packaged Windows tests and inspect CHAT_CONTROL_DIAGNOSTIC if Send remains unavailable."
   }
 }

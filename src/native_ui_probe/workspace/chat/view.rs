@@ -77,11 +77,13 @@ impl State {
         ui.separator();
         let mut editor_focused = false;
         ui.add_enabled_ui(!self.awaiting(), |ui| {
-            let response = ui.add(
-                egui::TextEdit::multiline(&mut self.draft)
-                    .desired_rows(3)
-                    .hint_text(text(language, "chat.placeholder")),
-            );
+            let response = ui
+                .add(
+                    egui::TextEdit::multiline(&mut self.draft)
+                        .desired_rows(3)
+                        .hint_text(text(language, "chat.placeholder")),
+                )
+                .accessible_name(text(language, "chat.placeholder"));
             editor_focused = response.has_focus();
         });
         self.editor_focused = editor_focused;
