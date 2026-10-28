@@ -40,7 +40,7 @@ impl Probe {
         } else {
             RequestWorker::new(room, context)?
         };
-        worker.send_initial_snapshot()?;
+        worker.send(super::worker::initial_snapshot(room_view))?;
         Ok(Self {
             motion,
             worker: Some(worker),
