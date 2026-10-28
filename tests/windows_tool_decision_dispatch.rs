@@ -1,3 +1,6 @@
+#[path = "support/windows_tool_decision_diagnostics.rs"]
+mod diagnostics;
+
 #[test]
 fn checked_fallback_accepts_a_same_process_modal_foreground_window() {
     let source = include_str!("support/windows_tool_decision_script.rs");
@@ -7,6 +10,36 @@ fn checked_fallback_accepts_a_same_process_modal_foreground_window() {
     );
     assert!(source.contains("foregroundProcessId == expectedPid"));
     assert!(!source.contains("GetForegroundWindow() != window"));
+}
+
+#[test]
+fn receipt_timeout_summary_formats_supported_receipt_fields() {
+    use agentconductor::gates::{Context, Receipt, ToolRequest};
+
+    let receipt = Receipt {
+        id: "sha".into(),
+        context: Context {
+            epoch: 1,
+            task: "task-1".into(),
+            session: "session".into(),
+            workspace: "workspace".into(),
+            plan_sha256: "plan".into(),
+            workspace_sha256: "tree".into(),
+        },
+        request: ToolRequest {
+            tool: "Write".into(),
+            input: serde_json::Value::Null,
+            reason: "test".into(),
+        },
+        status: "pending".into(),
+        created_at: 1,
+        expires_at: None,
+    };
+
+    let summary = diagnostics::receipt_summary(Ok(Some(receipt)));
+    assert!(summary.contains("id:sha"));
+    assert!(summary.contains("status:pending"));
+    assert!(summary.contains("task:task-1"));
 }
 
 #[test]
@@ -45,6 +78,7 @@ fn checked_fallback_brings_offscreen_actions_into_the_window_before_clicking() {
 #[test]
 fn refresh_timeout_reports_receipt_report_and_controller_action_logs() {
     let source = include_str!("windows_tool_decision.rs");
+    let receipt_formatter = include_str!("support/windows_tool_decision_diagnostics.rs");
 
     for evidence in [
         "refresh_failure_diagnostics",
@@ -59,4 +93,6 @@ fn refresh_timeout_reports_receipt_report_and_controller_action_logs() {
             "missing timeout evidence: {evidence}"
         );
     }
+    assert!(receipt_formatter.contains("receipt.status"));
+    assert!(!receipt_formatter.contains("receipt={receipt:?}"));
 }

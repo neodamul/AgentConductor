@@ -8,6 +8,8 @@ use std::{
     time::{Duration, Instant},
 };
 
+#[path = "support/windows_tool_decision_diagnostics.rs"]
+mod diagnostics;
 #[path = "support/windows_tool_decision_script.rs"]
 mod script;
 #[path = "support/workflow.rs"]
@@ -182,10 +184,9 @@ fn wait_for_status(run: &Path, id: &str, expected: &str) {
 }
 
 fn refresh_failure_diagnostics(run: &Path, id: &str) -> String {
-    let receipt = Ledger::open(&run.join("state.sqlite"))
-        .and_then(|ledger| ledger.receipt(id))
-        .map(|receipt| format!("receipt={receipt:?}"))
-        .unwrap_or_else(|error| format!("receipt read failed: {error}"));
+    let receipt = diagnostics::receipt_summary(
+        Ledger::open(&run.join("state.sqlite")).and_then(|ledger| ledger.receipt(id)),
+    );
     let report = workflow::load(run)
         .map(|report| {
             serde_json::to_string(&report)

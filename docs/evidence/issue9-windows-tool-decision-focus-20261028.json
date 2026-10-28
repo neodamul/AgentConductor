@@ -35,7 +35,7 @@
     "result": "The exact Windows package passed earlier interactions and reached refresh, but the original receipt did not become superseded within the existing 10-second test wait.",
     "diagnosis": "Unknown. The test fixture removed its temporary run on panic, so the child action owner record, stdout/stderr, workflow report, and receipt state were not retained in CI output.",
     "instrumentation": "Timeout failures now include the receipt, serialized workflow report, and bounded owner.json/stdout.log/stderr.log contents for coordinator-ui child actions. The timeout duration is unchanged.",
-    "local_verification": "windows_tool_decision_dispatch passed 4/4; rustfmt and git diff --check passed; changed test files are 243 and 62 lines."
+    "local_verification": "windows_tool_decision_dispatch and source_layout passed 7 tests; warning-denied all-target Clippy, rustfmt, and git diff --check passed. The Receipt summary is type-checked by a shared cross-platform test because this host has no installed Windows Rust target. Changed files are 244, 98, and 16 lines."
   },
   "exact_package_revalidation": "pending rerun with refresh child-process diagnostics",
   "workflow_23_credit": false,
