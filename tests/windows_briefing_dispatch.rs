@@ -36,9 +36,15 @@ fn briefing_driver_retries_with_a_real_click_when_invoke_has_no_effect() {
 #[test]
 fn briefing_driver_checks_state_after_each_delivered_pointer_click() {
     let source = include_str!("windows_briefing.rs");
-    let retry = source.find("for ($attempt = 1; $attempt -le 3; $attempt++)").unwrap();
-    let click = source.find("if (-not [BriefingMouse]::Click($hwnd").unwrap();
-    let verify = source.find("$activationState = Wait-BriefingChange").unwrap();
+    let retry = source
+        .find("for ($attempt = 1; $attempt -le 3; $attempt++)")
+        .unwrap();
+    let click = source
+        .find("if (-not [BriefingMouse]::Click($hwnd")
+        .unwrap();
+    let verify = source
+        .find("$activationState = Wait-BriefingChange")
+        .unwrap();
 
     assert!(retry < click && click < verify);
     assert!(source.contains("WINDOW_FOREGROUND_FAILED_BEFORE_BRIEFING_CLICK"));
