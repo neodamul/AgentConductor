@@ -91,6 +91,17 @@ fn tool_decision_is_bound_to_a_current_pending_receipt() {
         value["action"],
         serde_json::json!({"kind":"tool_approve","sha":id})
     );
+    snapshot["revision"] = "run-rev-2".into();
+    let packet = tool_action_request(&snapshot, &id, ToolAction::Approve).unwrap();
+    let value: serde_json::Value = serde_json::from_slice(&packet).unwrap();
+    assert_eq!(value["revision"], "run-rev-2");
+    snapshot["tool_requests"][0]["request"] = serde_json::Value::Null;
+    assert!(tool_action_request(&snapshot, &id, ToolAction::Approve).is_err());
+    snapshot["tool_requests"][0]["request"] =
+        serde_json::json!({"tool":"Bash","input":{"command":"make test"}});
+    snapshot["tool_requests"][0]["context"] = serde_json::Value::Null;
+    assert!(tool_action_request(&snapshot, &id, ToolAction::Approve).is_err());
+    snapshot["tool_requests"][0]["context"] = serde_json::json!({"task":"test-suite"});
     snapshot["tool_requests"][0]["status"] = "approved".into();
     let packet = tool_action_request(&snapshot, &id, ToolAction::Refresh).unwrap();
     let value: serde_json::Value = serde_json::from_slice(&packet).unwrap();
@@ -153,7 +164,12 @@ fn native_tool_panel_shows_receipt_and_drops_confirmation_when_stale() {
     assert!(has_task, "{text}");
     assert!(no_confirmation, "{buttons:?}");
 
-    state.confirming_tool = Some((id.clone(), ToolAction::Approve, "rev-1".into()));
+    let evidence = serde_json::to_string(&[
+        &snapshot["tool_requests"][0]["request"],
+        &snapshot["tool_requests"][0]["context"],
+    ])
+    .unwrap();
+    state.confirming_tool = Some((id.clone(), ToolAction::Approve, evidence));
     let mut output = context.run_ui(Default::default(), |ui| {
         room::show(&mut state, Some(&snapshot), false, None, "en", ui);
     });

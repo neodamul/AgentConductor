@@ -1,0 +1,19 @@
+{
+  "issue": 9,
+  "date": "2026-10-29",
+  "failure_run": "40773869254",
+  "failure_head": "92b81e697c0e8253fc57f93e47afdf97008e171e",
+  "failure": "The exact Windows package lost the tool-decision confirmation before an approval decision completed. The corresponding exact macOS package passed.",
+  "root_cause": "Native room confirmation state was invalidated whenever the overall snapshot revision changed, even when the same receipt remained pending with identical request and context evidence.",
+  "change": "Bind the confirmation to receipt ID, eligible status, and serialized request/context evidence. Unrelated revision changes preserve the prompt; removed, ineligible, or evidence-changed receipts clear it. Dispatch still builds against the latest snapshot revision and validates receipt status and evidence.",
+  "red": "approval_confirmation_survives_unrelated_revision_but_clears_for_stale_receipt failed before the fix because the revision mismatch cleared confirming_tool.",
+  "green": [
+    "cargo test --test native_ui_tool_dialog: 4 passed",
+    "cargo test --test native_ui_launch: 11 passed",
+    "cargo test --test source_layout: 2 passed",
+    "cargo fmt --check: passed",
+    "git diff --check: passed"
+  ],
+  "exact_windows_package_rerun": "pending",
+  "acceptance_credit": "none until exact Windows package refresh, approval, and rejection assertions pass"
+}
