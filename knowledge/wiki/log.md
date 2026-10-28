@@ -1757,3 +1757,7 @@ Commit 447afce112c44e37e2de0fbacb8ebb6bc73eb0fc was pushed to PR #22. AgentMemor
 ## 2026-10-29 — Windows approval review transition — issue #9 / workflow 24
 
 Run 40736018268 on issue #221 exposed the existing #9 Windows candidate-review journey gap: after approval, the driver waited for the merge control without opening Review changes. A source-contract regression failed first, then passed after adding the missing UI step. Commit 447afce112c44e37e2de0fbacb8ebb6bc73eb0fc fixes the transition, and docs head b512639face151dfbbe2e4e6192e2018af8b40a1 is pushed. Exact Windows packaged verification for that head is pending; do not credit workflow 24. CocoIndex is not installed in this environment; Graphify's local AST graph was refreshed to 10,948 nodes, 16,648 edges, and 806 communities.
+
+## 2026-10-29 — Bounded Windows briefing activation retry — issue #9
+
+Run `40741509631` failed in `windows_briefing` before candidate review: UIA Invoke returned `Unrecognized error`; the checked pointer fallback returned success but did not open the briefing or enter pending state. Added a red/green contract requiring observable state checks and a maximum of three attempts. Each retry reacquires the button and revalidates its bounds and same-process target; retries stop when the request is pending or the briefing menu appears. Local contract/layout tests pass 3/3, formatting, diff, and 300-line checks pass. The exact packaged Windows rerun remains required; acceptance stays 22/25, shipped Rust UI 0/25, aggregate 22/50.

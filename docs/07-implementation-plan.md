@@ -6165,3 +6165,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Port main #197 chat semantics: persist conversation history; distinguish accepted/unreceived sends; restore an unsent draft after failure; follow accepted late jobs; support new/reset conversation.
 - [ ] Port main #200 diagnostics: emit `diagnostics::start/done` around native Room dispatch/routing and add request-kind-specific timeout text/catalog entries.
 - [ ] Complete: #9 remains open; Windows package acceptance is not credited until the exact gate passes and the main-parity requirements above are implemented and verified.
+
+### 2026-10-29 — Bounded retry for Windows briefing activation — issue #9
+
+- [x] Plan: inspect exact package run `40741509631`, not just the candidate-review stage. Windows failed earlier in `windows_briefing`: UIA Invoke returned `Unrecognized error`, one checked same-process click produced no briefing menu or pending state, and the unchanged run remained `Waiting approval`.
+- [x] Scope: compare the failure with PR #230's newer base; the base delta changes the candidate-review driver only and does not fix briefing activation.
+- [x] Red: extend `windows_briefing_dispatch` to require an observable state check and at most three bounded retries; the new regression fails against the old one-click script.
+- [x] Task: after each UIA or pointer activation, poll for the read-only briefing menu or a disabled/removed load action. Retry only while the same-process button is still enabled and state is unchanged; re-read bounds and validate the target process for each pointer attempt.
+- [x] Verify locally: `windows_briefing_dispatch` plus `source_layout` pass 3 tests; `cargo fmt --all -- --check`, `git diff --check`, and 300-line layout checks pass. The driver files are 218 and 34 lines.
+- [ ] Verify exact package: push this head and require the Windows package to show the complete briefing without changing the run; then continue candidate-review approve/reject/merge assertions. Source tests are not packaged acceptance.
+- [ ] Complete: keep issue #9 at 22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate until exact package evidence passes.
