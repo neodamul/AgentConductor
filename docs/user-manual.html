@@ -175,7 +175,12 @@
 <h3>2.8 Diagnostics</h3>
 <div class="manual-table"><table><thead><tr><th>Command</th><th>Purpose</th></tr></thead><tbody>
 <tr><td><code>agentconductor normalize &lt;claude|codex|opencode|custom&gt; &lt;stdout.jsonl&gt;</code></td><td>Normalize a CLI&#x27;s JSONL output into events.</td></tr>
+<tr><td><code>agentconductor io schema &lt;kind&gt;</code></td><td>Print an ACIO JSON Schema (<code>input</code>, <code>event</code>, <code>describe</code>, <code>control</code> or <code>agent</code>).</td></tr>
+<tr><td><code>agentconductor io describe &lt;executable&gt;</code></td><td>Validate and print a custom CLI&#x27;s <code>--acio-describe</code> response.</td></tr>
+<tr><td><code>agentconductor io validate &lt;kind&gt; &lt;file|-&gt; [--coordinator]</code></td><td>Validate one ACIO JSON document or JSONL stream.</td></tr>
+<tr><td><code>agentconductor io conformance &lt;executable&gt;</code></td><td>Check ACIO description, a read-only response and invalid-input handling.</td></tr>
 </tbody></table></div>
+<p><code>io conformance</code> starts the selected executable using the current user&#x27;s OS permissions. Its read-only request and temporary workspace are protocol inputs, not an OS sandbox; only run it against a CLI you trust. It does not yet check task-mode runs, cancellation timing or oversized output.</p>
 <h2>Part 3 — Validation and troubleshooting</h2>
 <p>The packaged native executable is checked on macOS and Windows using deterministic offline workers, including Git/ordinary-folder projects, shared/worktree execution and refused unapproved integration. This does not establish acceptance of your company&#x27;s agent, Enterprise account or live messenger.</p>
 <p>Previously exercised CLI contracts: Claude Code 2.1.287; Codex 0.162.0 tasks/resume and 0.162.1 quota metadata; OpenCode 2.0.25; agentmemory server 0.9.29. Installed provider versions may differ. Unknown output stays unavailable or fails safely.</p>

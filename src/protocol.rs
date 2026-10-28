@@ -1,6 +1,12 @@
 use serde::Serialize;
 use serde_json::Value;
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum Protocol {
+    Acio,
+}
+
 #[derive(Clone, Copy, Default, Debug, PartialEq, Eq, Hash, Serialize, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Provider {
@@ -63,12 +69,34 @@ fn codex_reconnecting(payload: &Value) -> bool {
         || message.starts_with("Falling back from WebSocket to HTTP transport")
 }
 
+fn acio_kind(payload: &Value) -> EventKind {
+    match payload["type"].as_str().unwrap_or("") {
+        "session" => EventKind::Session,
+        "progress" | "message" | "heartbeat" | "ack" => EventKind::Progress,
+        "tool" => EventKind::Tool,
+        "usage" => EventKind::Usage,
+        "warning" => EventKind::Warning,
+        "error" => EventKind::Error,
+        "result"
+            if matches!(
+                payload["data"]["status"].as_str(),
+                Some("failure" | "cancelled")
+            ) =>
+        {
+            EventKind::Error
+        }
+        "result" => EventKind::Result,
+        _ => EventKind::Unknown,
+    }
+}
+
 pub struct Decoder {
     provider: Provider,
     event_types: std::collections::BTreeMap<String, EventKind>,
     session_id_pointer: Option<String>,
     result_pointer: Option<String>,
     error_condition: Option<crate::plan::JsonCondition>,
+    acio: bool,
     limit: usize,
     buffer: Vec<u8>,
     offset: u64,
@@ -84,6 +112,7 @@ impl Decoder {
             session_id_pointer: None,
             result_pointer: None,
             error_condition: None,
+            acio: false,
             limit,
             buffer: vec![],
             offset: 0,
@@ -94,6 +123,7 @@ impl Decoder {
 
     pub fn for_profile(profile: &crate::plan::AgentProfile, limit: usize) -> Self {
         let mut decoder = Self::new(profile.parser, limit);
+        decoder.acio = profile.protocol == Some(Protocol::Acio);
         if profile.parser == Provider::Custom {
             decoder.event_types.clone_from(&profile.event_types);
             decoder
@@ -146,22 +176,28 @@ impl Decoder {
         if !payload.is_object() {
             return Err(format!("event must be a JSON object at offset {start}"));
         }
-        let session = self.session_id_pointer.as_deref().map_or_else(
-            || match self.provider {
-                Provider::Codex => payload.get("thread_id"),
-                Provider::OpenCode => payload
-                    .get("sessionID")
-                    .or_else(|| payload.pointer("/part/sessionID")),
-                _ => payload.get("session_id"),
-            },
-            |pointer| {
-                if pointer.is_empty() {
-                    Some(&payload)
-                } else {
-                    payload.pointer(pointer)
-                }
-            },
-        );
+        let session = if self.acio {
+            payload
+                .get("session_id")
+                .or_else(|| payload.pointer("/data/session_id"))
+        } else {
+            self.session_id_pointer.as_deref().map_or_else(
+                || match self.provider {
+                    Provider::Codex => payload.get("thread_id"),
+                    Provider::OpenCode => payload
+                        .get("sessionID")
+                        .or_else(|| payload.pointer("/part/sessionID")),
+                    _ => payload.get("session_id"),
+                },
+                |pointer| {
+                    if pointer.is_empty() {
+                        Some(&payload)
+                    } else {
+                        payload.pointer(pointer)
+                    }
+                },
+            )
+        };
         if let Some(id) = session.and_then(Value::as_str) {
             self.session_id = Some(id.into());
         }
@@ -170,7 +206,9 @@ impl Decoder {
             && self.error_condition.as_ref().is_some_and(|condition| {
                 payload.pointer(&condition.pointer) == Some(&condition.equals)
             });
-        let kind = if configured_error {
+        let kind = if self.acio {
+            acio_kind(&payload)
+        } else if configured_error {
             EventKind::Error
         } else if self.provider == Provider::Custom
             && let Some(kind) = self.event_types.get(event_type)

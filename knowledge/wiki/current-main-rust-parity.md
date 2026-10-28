@@ -1,5 +1,9 @@
 # Current-main behavior carried into the Rust UI branch
 
+## Rust ACIO runtime and CLI conformance — 2026-10-29
+
+The Rust branch now exposes `io schema`, `io describe`, `io validate`, and `io conformance`; the last command checks a custom executable's ACIO description, read-only response stream, and invalid-input exit code. The optional `AgentProfile.protocol` field preserves older profile JSON when omitted. ACIO event types are normalized by the existing Rust decoder, and ordered `user_message`/`cancel` control lines share the split process runner's stdin channel. Focused verification passes 38 tests across seven suites; the complete locked/offline suite passes 1,077 tests with 14 ignored across 344 suites, warning-denied Clippy, rustfmt, diff, and source-layout checks all pass. The conformance command executes the chosen CLI with the user's OS permissions: its `read_only` request is not sandbox enforcement. Task-mode, cancellation timing, and oversized-output conformance remain unimplemented; this adds no packaged UI acceptance.
+
 ## Issue #9 current integration audit — 2026-10-28
 
 Current source branch: `codex/issue-9-native-ui-parity` at `c51998cb`. Current `main` is

@@ -122,7 +122,7 @@ pub async fn run_until(
     spec: ProcessSpec,
     stop_file: Option<PathBuf>,
 ) -> Result<ProcessResult, String> {
-    runner::run_with_control(spec, stop_file, None, None).await
+    runner::run_with_control(spec, stop_file, None, None, None).await
 }
 
 pub async fn run_controlled(
@@ -162,7 +162,24 @@ pub async fn run_controlled_async_within(
     limit: Duration,
     paused: Option<std::sync::Arc<std::sync::atomic::AtomicBool>>,
 ) -> Result<ProcessResult, String> {
-    runner::run_with_control(spec, stop_file, Some((handler, limit)), paused).await
+    runner::run_with_control(spec, stop_file, Some((handler, limit)), paused, None).await
+}
+
+pub async fn run_controlled_outbound(
+    spec: ProcessSpec,
+    stop_file: Option<PathBuf>,
+    handler: AsyncControlHandler,
+    limit: Duration,
+    outbound: tokio::sync::mpsc::UnboundedReceiver<Vec<u8>>,
+) -> Result<ProcessResult, String> {
+    runner::run_with_control(
+        spec,
+        stop_file,
+        Some((handler, limit)),
+        None,
+        Some(outbound),
+    )
+    .await
 }
 
 mod control;

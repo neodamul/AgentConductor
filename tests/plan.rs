@@ -12,6 +12,7 @@ fn plan() -> Plan {
                 executable: id.into(),
                 args: vec![],
                 parser: Default::default(),
+                protocol: None,
                 agent_settings: None,
                 input_mode: Default::default(),
                 environment: Default::default(),

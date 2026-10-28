@@ -102,6 +102,7 @@ pub fn defaults() -> Result<Config, String> {
                 .unwrap_or(invocation.executable),
             args: invocation.args,
             parser: provider,
+            protocol: None,
             agent_settings: None,
             input_mode: invocation.input,
             environment: Default::default(),

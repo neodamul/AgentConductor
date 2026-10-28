@@ -354,6 +354,12 @@ Cargo 빌드 캐시는 앱 캐시와 별개입니다.
 | 명령 | 기능 |
 |---|---|
 | `agentconductor normalize <claude\|codex\|opencode\|custom> <stdout.jsonl>` | CLI JSONL을 표준 이벤트로 정규화합니다. |
+| `agentconductor io schema <kind>` | ACIO JSON Schema(`input`, `event`, `describe`, `control`, `agent`)를 출력합니다. |
+| `agentconductor io describe <executable>` | 사용자 CLI의 `--acio-describe` 응답을 검증하고 출력합니다. |
+| `agentconductor io validate <kind> <file\|-> [--coordinator]` | ACIO JSON 문서 또는 JSONL 스트림을 검증합니다. |
+| `agentconductor io conformance <executable>` | ACIO 설명, 읽기 전용 응답, 잘못된 입력 처리를 검사합니다. |
+
+`io conformance`는 현재 사용자의 OS 권한으로 선택한 실행 파일을 실행합니다. 읽기 전용 요청과 임시 작업 경로는 프로토콜 입력일 뿐 OS 샌드박스가 아니므로 신뢰하는 CLI에만 사용하세요. 아직 작업 실행 모드, 취소 타이밍, 최대 크기 초과 출력을 검사하지 않습니다.
 
 협력 CLI는 `cooperative: checkpoint_v1`과 정확한 `{session_id}` 인자를 사용합니다.
 `AC_CHECKPOINT_RUN_DIR`, `AC_CHECKPOINT_ADDRESS_FILE`, `AC_CHECKPOINT_EXECUTABLE`이 전달됩니다.

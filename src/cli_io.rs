@@ -2,6 +2,7 @@
 //! checker validates documents against them without a JSON Schema dependency, and `stream` checks the rules
 //! over a whole captured stream.
 mod check;
+pub mod conformance;
 mod pattern;
 mod stream;
 mod timestamp;

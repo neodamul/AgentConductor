@@ -107,6 +107,8 @@ mod sessions_review;
 
 #[path = "commands/chat.rs"]
 mod chat_commands;
+#[path = "commands/io.rs"]
+mod io_commands;
 #[path = "commands/quota.rs"]
 mod quota_commands;
 
@@ -116,6 +118,9 @@ mod manual_commands;
 mod mcp_commands;
 
 fn execute_args(args: &[String]) -> Result<(), String> {
+    if let Some(result) = io_commands::execute(args) {
+        return result;
+    }
     if let Some(result) = manual_commands::execute(args) {
         return result;
     }

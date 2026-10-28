@@ -41,6 +41,13 @@ impl Plan {
             {
                 return Err("custom event mappings require a custom CLI profile".into());
             }
+            if agent.protocol.is_some()
+                && (!agent.event_types.is_empty()
+                    || agent.session_id_pointer.is_some()
+                    || !agent.quota_rules.is_empty())
+            {
+                return Err("the acio protocol defines its own event mapping; remove the custom event mappings".into());
+            }
             if agent.quota_rules.iter().any(|rule| {
                 agent
                     .event_types

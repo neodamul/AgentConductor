@@ -377,6 +377,12 @@ one `{session_id}` argument. The engine supplies `AC_CHECKPOINT_RUN_DIR`,
 | Command | Purpose |
 |---|---|
 | `agentconductor normalize <claude\|codex\|opencode\|custom> <stdout.jsonl>` | Normalize a CLI's JSONL output into events. |
+| `agentconductor io schema <kind>` | Print an ACIO JSON Schema (`input`, `event`, `describe`, `control` or `agent`). |
+| `agentconductor io describe <executable>` | Validate and print a custom CLI's `--acio-describe` response. |
+| `agentconductor io validate <kind> <file\|-> [--coordinator]` | Validate one ACIO JSON document or JSONL stream. |
+| `agentconductor io conformance <executable>` | Check ACIO description, a read-only response and invalid-input handling. |
+
+`io conformance` starts the selected executable using the current user's OS permissions. Its read-only request and temporary workspace are protocol inputs, not an OS sandbox; only run it against a CLI you trust. It does not yet check task-mode runs, cancellation timing or oversized output.
 
 ## Part 3 — Validation and troubleshooting
 

@@ -1,3 +1,4 @@
+pub mod acio;
 pub mod activity;
 pub mod adapters;
 pub mod agent_settings;

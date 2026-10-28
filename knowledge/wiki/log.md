@@ -1,3 +1,7 @@
+# [2026-10-29] plan/task/verify | Add Rust ACIO runtime and CLI conformance — issue #9
+
+Added the `io` CLI command family, ACIO describe/runtime and event decoding, plus ordered stdin control delivery through the existing split process runner. TDD exposed the absent protocol field and decoder mapping; a doc test caught the missing bilingual `io` command entries, and both Markdown/HTML manuals are now synchronized. Focused tests pass 38 across seven suites; full locked/offline verification passes 1,077 tests, 14 ignored, 344 suites; warning-denied Clippy, rustfmt, diff, and source/test layout pass. This does not increase packaged UI acceptance. AgentMemory: `mem_mvsdaubm_bb0d4f08eca7`.
+
 # [2026-10-28] task/verify | Retry Windows tool-decision activation across live snapshot updates — issue #9
 
 Run `40675926557` passed Windows platform validation and the exact macOS package, then failed workflow 23 in the Windows package: the Refresh UIA/pointer interaction did not expose the confirmation before the live snapshot disabled controls. Added a red/green driver contract and bounded activation retries that reacquire a fresh enabled control before each attempt. `windows_tool_decision_dispatch` passes 10/10; formatting, diff, and 300-line checks pass (230- and 184-line files). Commit `b8a95ee6` is local only. The exact Windows package rerun must verify refresh/allow/deny receipts and mock effects; workflow 23 remains uncredited at 22/25. AgentMemory: `mem_mvs1z1ve_dfd428b84d7a`.

@@ -1,3 +1,12 @@
+### Add the Rust ACIO runtime and CLI conformance command — issue #9 / 2026-10-29
+
+- [x] Plan: port the existing `acio.agent/1` process contract into the Rust-only branch without replacing its split process runner or adding dependencies.
+- [x] Red: conformance initially failed because the Rust branch lacked the command/module; ACIO runtime tests then exposed the missing optional profile protocol and decoder handling.
+- [x] Task: add `io schema|describe|validate|conformance`, the ACIO describe/runtime support, JSONL decoder mapping, and ordered stdin controls through the existing process runner. Keep old profile JSON compatible when `protocol` is absent.
+- [x] Focused Verify: conformance/runtime and profile/schema/source-layout regressions pass 38 tests across 7 suites; touched Rust files satisfy the 300-line limit; formatting and diff checks pass.
+- [x] Full Verify: `cargo test --all-targets --locked --offline --features test-fixtures --no-fail-fast` passes 1,077 tests, 14 ignored across 344 suites. The first run exposed one missing bilingual manual entry; after rendering both HTML manuals, `public_docs` passes 11/11 and the complete rerun exits 0. Warning-denied all-target Clippy, rustfmt, `git diff --check`, and the 300-line source/test guard pass.
+- [ ] Complete: commit/push this unit and update AgentMemory, LLM Wiki, issue #9, and PR #22 with the exact pushed revision. This source feature earns no packaged UI acceptance credit; the documented conformance limits and exact macOS/Windows package gates remain open.
+
 ### Drive Windows candidate approvals through observable state changes
 
 - [x] Plan: exact packaged run `40697161465` passed macOS package and Windows validation, then failed the candidate-review journey at `Merge approved candidate`. The final UI Automation tree still showed `Confirm candidate decision` and `Waiting approval`; UIA invocation had not applied the approval.
