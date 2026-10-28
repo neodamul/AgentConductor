@@ -245,6 +245,15 @@ fn signal_save_checks_durable_preference_before_visible_dialog_closure() {
 }
 
 #[test]
+fn signal_package_test_checks_the_workspace_created_by_first_run() {
+    let source = include_str!("windows_signal_settings.rs");
+    assert!(source.contains("workspace_registry::active_workspace(&home"));
+    assert!(source.contains(".join(\"windows-uia-workspace\")"));
+    assert!(source.contains(".env(\"AC_SIGNAL_WORKSPACE\", &active_workspace)"));
+    assert!(!source.contains(".env(\"AC_SIGNAL_WORKSPACE\", &workspace)"));
+}
+
+#[test]
 fn signal_dialog_failure_reports_visible_controls_and_saved_file_contents() {
     let source = include_str!("support/windows_signal_settings_script.rs");
     let test = include_str!("windows_signal_settings.rs");
