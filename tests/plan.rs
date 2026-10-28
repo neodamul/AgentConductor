@@ -38,6 +38,7 @@ fn plan() -> Plan {
                 model: None,
                 role: None,
                 execution_options: Default::default(),
+                task_type: None,
                 id: format!("task-{i}"),
                 agent: ["claude", "codex", "opencode"][i].into(),
                 prompt: "Implement the assigned scope".into(),

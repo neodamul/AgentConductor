@@ -1143,5 +1143,15 @@
   "room.judgment_request_completed": "Request to the coordinator: answered",
   "room.judgment_request_failed": "Request to the coordinator: failed",
   "room.coordinator_request_sent": "Request sent to the coordinator. Its answer appears in the judgments.",
-  "room.send_a_request_to_the_coordinator": "Ask the coordinator to investigate or finish coordination work"
+  "room.send_a_request_to_the_coordinator": "Ask the coordinator to investigate or finish coordination work",
+  "startup.task_profile": "{value1} · effort {value2}",
+  "startup.task_type_extract": "Classify or extract",
+  "startup.task_type_summarize": "Summarize",
+  "startup.task_type_analyze": "Analyze",
+  "startup.task_type_code": "Code",
+  "startup.task_type_agentic": "Long agent work",
+  "startup.task_type_creative": "Creative",
+  "startup.task_warning_effort_unsupported": "effort {value1} is not honored by the model, using {value2}",
+  "startup.task_warning_model_not_suited": "{value1} is not a good fit for: {value2}",
+  "startup.model_hint": "Effort: {value1} · Suits: {value2}"
 }

@@ -23,12 +23,27 @@ impl Startup {
                 let plan: Plan = read(&path)?;
                 let digest =
                     workflow::digest(&serde_json::to_vec(&plan).map_err(|e| e.to_string())?);
+                // GitHub #210: what each task will run with, so the review shows facts and not defaults.
+                let profiles: Vec<serde_json::Value> = plan
+                    .tasks
+                    .iter()
+                    .map(|task| {
+                        plan.agents
+                            .iter()
+                            .find(|agent| agent.id == task.agent)
+                            .and_then(|agent| crate::task_profile::resolve(agent, task).ok())
+                            .map_or(serde_json::Value::Null, |r| {
+                                serde_json::json!({"task_type":r.task_type,"model":r.model,"effort":r.options.get("effort"),"warnings":r.warnings})
+                            })
+                    })
+                    .collect();
                 let mut public = serde_json::to_value(plan).map_err(|e| e.to_string())?;
                 for agent in public["agents"].as_array_mut().unwrap() {
                     agent.as_object_mut().unwrap().remove("environment");
                 }
                 value["plan"] = public;
                 value["digest"] = digest.into();
+                value["task_profiles"] = profiles.into();
             }
             value
         } else {

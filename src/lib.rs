@@ -39,6 +39,7 @@ pub mod roles;
 pub mod slug_progress;
 pub mod slugs;
 pub mod state;
+pub mod task_profile;
 pub mod ui;
 pub mod workflow;
 

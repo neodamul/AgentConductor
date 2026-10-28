@@ -1143,5 +1143,15 @@
   "room.judgment_request_completed": "코디네이터 요청: 답변 완료",
   "room.judgment_request_failed": "코디네이터 요청: 실패",
   "room.coordinator_request_sent": "코디네이터에게 요청을 보냈습니다. 답변은 판단 목록에 표시됩니다.",
-  "room.send_a_request_to_the_coordinator": "코디네이터에게 조사하거나 조정 작업을 마무리하도록 요청하세요"
+  "room.send_a_request_to_the_coordinator": "코디네이터에게 조사하거나 조정 작업을 마무리하도록 요청하세요",
+  "startup.task_profile": "{value1} · 노력 수준 {value2}",
+  "startup.task_type_extract": "분류·추출",
+  "startup.task_type_summarize": "요약",
+  "startup.task_type_analyze": "분석",
+  "startup.task_type_code": "코드",
+  "startup.task_type_agentic": "장기 에이전트 작업",
+  "startup.task_type_creative": "창의적 생성",
+  "startup.task_warning_effort_unsupported": "노력 수준 {value1}은(는) 모델이 지원하지 않아 {value2}(으)로 실행",
+  "startup.task_warning_model_not_suited": "{value1}은(는) 다음 작업에 맞지 않음: {value2}",
+  "startup.model_hint": "노력 수준: {value1} · 적합: {value2}"
 }
