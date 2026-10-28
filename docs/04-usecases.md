@@ -731,4 +731,4 @@ Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193.
 
 ### UC-174 An owner connects an in-house agent CLI
 The owner reads the contract, makes the CLI print `--acio-describe`, validates a captured run with the checker and registers the CLI by path; the plan then gives classification tasks a fast model with examples and implementation tasks a high-effort model with completion tests.
-Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/NFR-74 → QAS-181 → DDR-38 → DD-194. GitHub #205, user, 2026-10-28.
+Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.

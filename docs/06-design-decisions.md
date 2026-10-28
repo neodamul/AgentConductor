@@ -1537,4 +1537,8 @@ Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193.
 
 ### DD-194 One-way JSON Lines with a capability document
 v1 is a process contract in its final, bidirectional form: one input document, an optional stdin control channel (`cancel`, `user_message`, `tool_decision`), a JSON Lines event stream, a coarse exit code and `--acio-describe`; each CLI declares which controls it honors and the Claude and Codex adapters map them to what those CLIs support. Task type is data in the input, so the same standard also drives prompt templates for the existing provider adapters. Full text: `docs/cli-io-protocol.md`.
-Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/NFR-74 → QAS-181 → DDR-38 → DD-194. GitHub #205, user, 2026-10-28.
+Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.
+
+### DD-195 Settings, not code, for what differs between agents
+The operator's instruction: per-agent traits are managed as settings. Presets for Claude and Codex are data files with the same shape the operator edits, so an in-house agent is configured exactly like a built-in one. Argument building and capability flags move out of `src/adapters.rs`; event decoding for Claude and Codex stays code (conditions beyond a settings file).
+Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.

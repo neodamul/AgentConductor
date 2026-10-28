@@ -97,7 +97,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-180 Screens show only information the operator can use | BG-135 | SF-168 | UC-171 | FR-168 | QAS-178 | — | DD-191 |
 | R-181 The chat keeps going when a reply is slow | BG-136 | SF-169 | UC-172 | FR-169 | QAS-179 | — | DD-192 |
 | R-182 Request timeouts can be traced | BG-137 | SF-170 | UC-173 | FR-170 | QAS-180 | — | DD-193 |
-| R-183 A standard, schema-based CLI interface | BG-138 | SF-171 | UC-174 | FR-171, FR-172, NFR-74 | QAS-181 | DDR-38 | DD-194 |
+| R-183 A standard, schema-based CLI interface | BG-138 | SF-171 | UC-174 | FR-171, FR-172, FR-173, NFR-74 | QAS-181 | DDR-38 | DD-194, DD-195 |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features
 SF-13–17 that are not defined in the use-case/feature documents; their scope is covered

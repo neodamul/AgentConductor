@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "urn:agentconductor:cli-io:1:describe",
-  "title": "acio.describe/1 - the one JSON document printed by `<cli> --acio-describe` (exit 0 within 5 seconds)",
+  "title": "acio.describe/1 - the one JSON document printed by `<cli> --acio-describe` (exit 0 within 5 seconds); capabilities and invocation have exactly the shape of acio.agent/1",
   "type": "object",
   "required": [
     "schema",
@@ -231,7 +231,221 @@
           "items": {
             "type": "string"
           },
-          "description": "Fixed arguments; `{task_file}` and `{model}` are the only placeholders."
+          "description": "Fixed arguments for a plain run. Placeholders: {model}, {session_id}, {task_file}."
+        },
+        "control_args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Arguments added when control.enabled is true (for example a streaming-input flag)."
+        },
+        "full_access_args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Arguments that give the CLI full access; used only when the operator's profile is full access."
+        },
+        "session": {
+          "type": "object",
+          "properties": {
+            "model_args": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Appended when a model is chosen; {model}."
+            },
+            "resume": {
+              "type": "object",
+              "required": [
+                "mode"
+              ],
+              "properties": {
+                "mode": {
+                  "enum": [
+                    "append",
+                    "replace_argv"
+                  ]
+                },
+                "args": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "argv": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "full_access_argv": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "additionalProperties": false,
+              "allOf": [
+                {
+                  "if": {
+                    "properties": {
+                      "mode": {
+                        "const": "append"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": [
+                      "args"
+                    ]
+                  }
+                },
+                {
+                  "if": {
+                    "properties": {
+                      "mode": {
+                        "const": "replace_argv"
+                      }
+                    }
+                  },
+                  "then": {
+                    "required": [
+                      "argv"
+                    ]
+                  }
+                }
+              ],
+              "description": "append: add args ({session_id}) to the argv. replace_argv: the whole argv for a resumed run (some CLIs take resume as a subcommand)."
+            }
+          },
+          "additionalProperties": false
+        },
+        "options": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "args"
+            ],
+            "properties": {
+              "args": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "values": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "default": {
+                "type": "string"
+              },
+              "model_values": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "additionalProperties": false
+          },
+          "description": "Named option groups such as effort; the same shape as execution_options. {value}."
+        },
+        "response_schema": {
+          "type": "object",
+          "properties": {
+            "args": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "{schema_json}: the schema inline."
+            },
+            "file_args": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "{schema_file}: a file the supervisor writes."
+            }
+          },
+          "additionalProperties": false,
+          "minProperties": 1
+        },
+        "control": {
+          "type": "object",
+          "properties": {
+            "cancel": {
+              "type": "object",
+              "required": [
+                "mode"
+              ],
+              "properties": {
+                "mode": {
+                  "enum": [
+                    "control_line",
+                    "signal"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            "user_message": {
+              "type": "object",
+              "required": [
+                "encoding"
+              ],
+              "properties": {
+                "encoding": {
+                  "enum": [
+                    "acio_control",
+                    "stream_json_user",
+                    "none"
+                  ]
+                }
+              },
+              "additionalProperties": false
+            },
+            "tool_decision": {
+              "type": "object",
+              "required": [
+                "encoding"
+              ],
+              "properties": {
+                "encoding": {
+                  "enum": [
+                    "acio_control",
+                    "permission_prompt_tool",
+                    "none"
+                  ]
+                },
+                "args": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "unless": {
+                  "enum": [
+                    "full_access"
+                  ],
+                  "description": "The capability is off when the profile has this property (the default profile is full access)."
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false

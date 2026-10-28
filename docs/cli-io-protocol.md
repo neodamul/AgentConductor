@@ -185,7 +185,7 @@ that does not answer is registered with the declarative profile as today. Schema
 - Today `chat::build_prompt` puts the rules first, then the manual, then the conversation, and mixes the output format into the rules. Moving to §2.2 puts the manual and the conversation first (Document), the rules and the current question next (Task) and the reply language plus the JSON shape last (Format); the planner and optimizer prompts need the same review. This is a phase 3 change with its own tests.
 - Task types are not tied to acio: a task profile derived from `task.type` also selects prompt templates and defaults for the `claude`, `codex` and `opencode` adapters, so existing CLIs get per-task conditions without implementing the protocol.
 - `InputMode::Stdin|File` already exists and carries the input document unchanged. `adapters::session_args` keeps building model and resume flags for the known providers; an `Acio` CLI declares its flags in `invocation.args`.
-- Per-CLI mapping: see the table in §14.
+- Agent characteristics are settings: see the end of §14.
 - Read-only is enforced by the supervisor (permission mode, guard) whatever `capabilities.read_only` claims; the capability only says the CLI will not try.
 
 ## 10. Adopting it for an in-house LLM agent CLI
@@ -224,7 +224,7 @@ Decided on 2026-10-28: implement the final form directly, not a one-way first st
 
 1. Core: the four schemas embedded in the binary, Rust types, a subset JSON Schema checker (no new dependency), stream rules, `agentconductor io schema|validate`, tests over the shared examples.
 2. Runtime: `Provider::Acio` decoder, `parser: acio` in agent settings, `--acio-describe` registration, the control channel in the process supervisor (stdin lines, acks, decision timeout, cancel).
-3. Adapters: Claude (stream-json input, `--effort`, `--json-schema`, permission prompts) and Codex (`--output-schema`, effort through `-c`, cancel only), see §9.
+3. Agent settings instead of code: `acio.agent/1` merged from preset, describe and profile; the `claude` and `codex` presets as embedded data; the argument branches of `src/adapters.rs` moved into those settings; control, effort and response schema through templates (§14).
 4. Task types in plans: the coordinator sets `task.type` per task, resolution against `traits` and `task_defaults`, warnings, effective settings in the session event, the Agent roles table shows per-model effort and fit.
 5. Prompt assembly Document, Task, Format for chat, planner and optimizer.
 6. `io conformance` and the manual chapter.
@@ -239,18 +239,34 @@ Decided on 2026-10-28: implement the final form directly, not a one-way first st
 6. The coordinator sets `task.type` per plan task; no operator control for now. A task without a type gets `code` for a writing worker, `analyze` for a reviewer or chat, `agentic` for a multi-step task.
 7. The Agent roles table shows, per model, the efforts it honors and the task types it suits.
 
-### Per-CLI mapping (decided by the implementer; both CLIs checked on this machine: Claude Code 2.1.308, Codex 0.165.0)
+8. Agent characteristics are settings, never code (decided 2026-10-28). Everything that differs between agent CLIs is data in the agent's settings: capabilities, control encodings, argument templates for model, resume, effort, response schema and full access, models with traits and task defaults. No Rust branch says "if the agent is Claude".
 
-| Contract | Claude Code (`claude -p --output-format stream-json`) | Codex (`codex exec --json`) |
-|---|---|---|
-| input document | rendered Document, Task, Format prompt as the first stream-json user message | rendered prompt on stdin (`-`) |
-| `user_message` | further stream-json user message (`--input-format stream-json`), declared `true` | not supported by `exec` (`app-server` is experimental): `false` |
-| `tool_decision` | `--permission-prompts host` with a prompt tool; only when the profile is not full access (the default profile bypasses prompts, DD-131): declared `true` only then | not supported: `false`; approvals stay with the sandbox flags |
-| `cancel` | control line, then the existing signals | signals only (no control line sent) |
-| `response_schema` | `--json-schema` | `--output-schema <file>` |
-| effort | `--effort` (`low`, `medium`, `high`, `xhigh`, `max`) | `-c model_reasoning_effort=…` through the profile's option group |
-| events | existing Claude decoder to the normalized events | existing Codex decoder to the normalized events |
-| resume | `--resume <id>` | `exec resume <id>` |
+### Agent characteristics as settings — `acio.agent/1`
 
-Codex gains `user_message` and `tool_decision` when `app-server` leaves the experimental stage; the capability flags let that happen without a protocol change.
+`schemas/cli-io/v1/agent.schema.json` is the shape of those settings. It is the same shape as the capability part
+of `acio.describe/1`, so a CLI's own `--acio-describe` can fill it. Sources, later overriding earlier:
 
+1. a **shipped preset** (`schemas/cli-io/v1/presets/claude.json`, `codex.json`; embedded in the binary as data files, not as match arms) selected by the profile's `preset` name;
+2. the CLI's `--acio-describe` document, when it answers;
+3. the **operator's profile settings** for that agent, edited in the agent dialog or the settings file.
+
+An in-house CLI has no preset: its owner fills the same fields in its agent settings (see `examples/valid/agent-inhouse.json`).
+
+| Field | What it replaces in code today |
+|---|---|
+| `invocation.args`, `control_args`, `full_access_args` | the per-provider argv templates and `full_access_args(Provider)` in `src/adapters.rs` |
+| `invocation.session.model_args`, `.resume` (`append` or `replace_argv`) | the `match profile.parser` branches that add `--resume`, `--session`, `exec … resume` |
+| `invocation.options` (effort, …) | already settings as `execution_options` (`values`, `model_values`, `default`); same shape, now also carries Claude's five effort levels and Codex's `-c model_reasoning_effort` |
+| `invocation.response_schema` (`args` or `file_args`) | nothing yet; Claude `--json-schema`, Codex `--output-schema` |
+| `invocation.control` (`cancel`, `user_message`, `tool_decision` encodings) | nothing yet |
+| `capabilities` (`control`, `streaming`, `resume`, `heartbeat_seconds`, `task_types`, `models[].traits`, `task_defaults`) | nothing yet |
+
+Event decoding (turning a CLI's own JSON into normalized events) stays code for `claude` and `codex` because it
+needs conditions a settings file cannot express; a new CLI never needs it, it prints `acio.event/1` or uses the
+declarative pointer mapping. The supervisor reads the merged settings: it renders arguments from templates,
+filters the control messages by `capabilities.control` and `unless: full_access`, and checks the response schema
+flags. The shipped presets record what was found on this machine (Claude Code 2.1.308, Codex 0.165.0): Claude
+takes stream-json input, five effort levels, `--json-schema` and `--permission-prompts host` (usable only when the
+profile is not full access, because the default profile bypasses prompts, DD-131); Codex `exec` is one-way, takes
+`--output-schema`, effort through `-c`, and is cancelled by signal; its two missing controls are one setting
+change when `app-server` leaves the experimental stage.
