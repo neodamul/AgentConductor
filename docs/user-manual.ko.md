@@ -368,7 +368,7 @@ JSON 필드 이름과 CLI 인자는 번역하지 않습니다. 자세한 형식�
 
 ### 2.9 CLI 연동하기
 
-사내 에이전트를 포함해 어떤 명령줄 에이전트든 AgentConductor에 매핑 표를 추가하지 않고 acio 프로토콜로 연동할 수 있습니다. 규약은 `docs/cli-io-protocol.md`에 있고, `examples/minimal-cli.sh`가 25줄짜리 적합한 CLI 예시입니다.
+고칠 수 없는 CLI는 여기서 할 일이 없습니다. 사용자 지정 에이전트로 등록만 하세요(명령줄, JSON을 출력한다면 결과와 세션 ID의 위치). AgentConductor는 모든 프롬프트를 같은 배치로 보냅니다. 자료를 담은 Document 블록, 지시와 규칙을 담은 Task 블록, 응답 형식을 담은 Format 블록입니다. 응답도 앱이 직접 확인합니다. 코디네이터 응답이 요청한 JSON이 아니면 이유를 붙여 한 번 더 요청하고, 그래도 안 되면 오류로 보고합니다. 아래 절차는 CLI 소유자가 직접 고칠 수 있고 스트리밍 텍스트, 사용량, 형식이 있는 결과 같은 더 풍부한 데이터를 원할 때만 필요합니다. 규약은 `docs/cli-io-protocol.md`에 있고, `schemas/cli-io/v1/examples/minimal-cli.sh`가 25줄짜리 적합한 CLI 예시입니다.
 
 1. **입력 읽기.** stdin 첫 줄은 `acio.input/1` 문서입니다(`agentconductor io schema input`으로 스키마 출력). 이후 stdin에 오는 줄은 제어 줄(취소, 사용자 메시지, 도구 결정)입니다.
 2. **이벤트 쓰기.** stdout에 이벤트마다 `acio.event/1` JSON 한 줄을 출력합니다(`seq`는 1부터, 첫 이벤트는 `session`, 마지막은 `result`). 진단 메시지는 stderr로만 보냅니다.

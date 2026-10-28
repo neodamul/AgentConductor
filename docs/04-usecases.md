@@ -740,3 +740,7 @@ Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → 
 ### UC-176 Restart after deleting the default workspace
 The operator deletes the default workspace while another saved workspace exists. After the app restarts or updates, the last used saved workspace opens and the default workspace is not in the list. With no saved workspace at all (first run, or after the last one was deleted) the app asks for a workspace name before anything else; no workspace named "desktop" is shown.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
+
+### UC-177 A reviewer or worker is asked in the standard form
+The operator runs a plan with an agent CLI that only reads a prompt and prints text. The worker receives the task, its rules and its evidence as Document, Task and Format; the reviewer receives the frozen evidence as Document, its instructions as Task and the JSON verdict shape as Format. A reviewer reply that is not valid JSON is asked for again once with the parse error, then reported.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.

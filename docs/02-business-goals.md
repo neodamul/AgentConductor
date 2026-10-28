@@ -565,3 +565,7 @@ Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → 
 ### BG-140 Deleting a workspace is final for the operator
 A workspace the operator deleted does not come back after a restart or an update, and the list shows only workspaces the operator created or used.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
+
+### BG-141 Fewer errors from the way agents are asked
+Agents that cannot be modified still answer predictably because the application, not the CLI, fixes the prompt layout and the reply shape.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.

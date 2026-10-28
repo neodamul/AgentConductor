@@ -750,3 +750,7 @@ Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → 
 ### QAS-183 A deleted default workspace does not return
 Given the default workspace and a second saved workspace, when the default is deleted and the app launches again, then `launch_root` is the second workspace and no `desktop` folder exists. Given no saved workspace, the placeholder opens with `workspace_blank` true, is in neither list, and creating a first workspace removes it. A default folder that has a name or goal is real and stays listed. The page shows a first-workspace question that Escape and Cancel cannot dismiss. Tests use a temporary HOME.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
+
+### QAS-184 Prompt blocks appear once, in order
+Given untrusted evidence containing a `# Format` line, the reviewer prompt has exactly one Document, one Task and one Format block in that order, and the evidence stays inside Document. The worker prompt keeps the `Owned paths:` and `Task:` lines and its rules in Task. A coordinator that first prints text without the requested JSON and then a valid object succeeds on the second attempt and the second prompt names the first error; two bad replies fail with the parse error.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
