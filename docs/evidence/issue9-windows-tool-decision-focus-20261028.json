@@ -19,8 +19,18 @@
     "red": "tests/windows_tool_decision_dispatch.rs failed before the focus check changed",
     "green": "windows_tool_decision_dispatch and source_layout passed 3 tests; all-target warning-denied Clippy, rustfmt, git diff --check, and the 300-line guard passed"
   },
-  "change": "The fallback accepts a foreground HWND owned by the packaged process and retains a same-process hit-test for the click target.",
-  "exact_package_revalidation": "pending diagnostic rerun",
+  "change": "The fallback maximizes the app, bounded-scrolls each action into the app window, verifies full UIA rectangle containment, and retains process-owned hit tests for scroll and click input.",
+  "diagnostic_run": {
+    "run_id": 40617964910,
+    "result": "Failed in the exact Windows package tool-decision journey after desktop, briefing, schedule, and signal-settings package tests passed.",
+    "guard": "POINT_NOT_OWNED",
+    "hit_process_id": 928,
+    "expected_app_process_id": 5380,
+    "screen_point": [394, 757],
+    "root_cause": "The test driver trusted IsOffscreen=False without confirming that the action button's UIA rectangle was inside the app window, so it attempted a click outside the viewport.",
+    "fix": "Maximize the app, bounded-scroll each action into the app window, verify rectangle containment, and retain foreground and WindowFromPoint process ownership checks for every scroll and click."
+  },
+  "exact_package_revalidation": "pending rerun of the viewport-aware driver",
   "workflow_23_credit": false,
   "candidate_packaged_ui_acceptance": "22/25"
 }

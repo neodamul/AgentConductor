@@ -16,9 +16,35 @@ while (-not $window -and (Get-Date) -lt $deadline) {
 }
 if (-not $window) { Write-Output 'NO_WINDOW'; exit 2 }
 function Find-Button($name) {
-  $window.FindAll($T::Descendants, $C) | Where-Object {
+  $script:window.FindAll($T::Descendants, $C) | Where-Object {
     $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button'
   } | Select-Object -First 1
+}
+function Ensure-ButtonInsideWindow($name) {
+  $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
+  [ToolDecisionMouse]::Maximize($hwnd)
+  if (-not [ToolDecisionMouse]::Focus($hwnd, [uint32]$targetPid)) { throw 'FOREGROUND_NOT_OWNED_BEFORE_SCROLL' }
+  Start-Sleep -Milliseconds 300
+  for ($attempt = 0; $attempt -lt 10; $attempt++) {
+    $script:window = $A::RootElement.FindAll($T::Children, $C) | Where-Object {
+      $_.Current.ProcessId -eq $targetPid -and $_.Current.Name -like 'AgentConductor*'
+    } | Select-Object -First 1
+    $button = Find-Button $name
+    if (-not $button) { throw "ACTION_BUTTON_DISAPPEARED: $name" }
+    $bounds = $button.Current.BoundingRectangle
+    $windowBounds = $script:window.Current.BoundingRectangle
+    if (-not $bounds.IsEmpty -and -not $button.Current.IsOffscreen -and
+        $bounds.Left -ge $windowBounds.Left -and $bounds.Top -ge $windowBounds.Top -and
+        $bounds.Right -le $windowBounds.Right -and $bounds.Bottom -le $windowBounds.Bottom) {
+      return $button
+    }
+    $x = [int][Math]::Max($windowBounds.Left + 20, [Math]::Min($bounds.Left + $bounds.Width / 2, $windowBounds.Right - 20))
+    $y = [int]($windowBounds.Bottom - 48)
+    $scrollFailure = [ToolDecisionMouse]::Scroll($x, $y, [uint32]$targetPid)
+    if ($scrollFailure) { throw "SCROLL_TO_ACTION_FAILED: $scrollFailure; button=$bounds; window=$windowBounds" }
+    Start-Sleep -Milliseconds 200
+  }
+  throw "BUTTON_OUTSIDE_WINDOW: $name; button=$bounds; window=$windowBounds; offscreen=$($button.Current.IsOffscreen)"
 }
 function Dump-Controls {
   $window.FindAll($T::Descendants, $C) | ForEach-Object {
@@ -30,6 +56,7 @@ using System;
 using System.Runtime.InteropServices;
 public static class ToolDecisionMouse {
   [StructLayout(LayoutKind.Sequential)] struct Point { public int x, y; }
+  [DllImport("user32.dll")] static extern bool ShowWindow(IntPtr window, int command);
   [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
   [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
   [DllImport("user32.dll", SetLastError=true)] static extern bool SetCursorPos(int x, int y);
@@ -41,6 +68,15 @@ public static class ToolDecisionMouse {
     GetWindowThreadProcessId(WindowFromPoint(new Point { x = x, y = y }), out processId);
     return processId;
   }
+  public static void Maximize(IntPtr window) { ShowWindow(window, 3); }
+  public static string Scroll(int x, int y, uint expectedPid) {
+    if (!ForegroundBelongsTo(expectedPid)) return "FOREGROUND_NOT_OWNED";
+    var pointProcessId = ProcessAt(x, y);
+    if (pointProcessId != expectedPid) return "POINT_NOT_OWNED: pid=" + pointProcessId + " expected=" + expectedPid + " x=" + x + " y=" + y;
+    if (!SetCursorPos(x, y)) return "CURSOR_POSITION_FAILED: error=" + Marshal.GetLastWin32Error();
+    mouse_event(0x0800, 0, 0, unchecked((uint)-360), UIntPtr.Zero);
+    return "";
+  }
   static bool ForegroundBelongsTo(uint expectedPid) {
     uint foregroundProcessId;
     GetWindowThreadProcessId(GetForegroundWindow(), out foregroundProcessId);
@@ -51,7 +87,7 @@ public static class ToolDecisionMouse {
     GetWindowThreadProcessId(GetForegroundWindow(), out processId);
     return processId;
   }
-  static bool Focus(IntPtr window, uint expectedPid) {
+  public static bool Focus(IntPtr window, uint expectedPid) {
     SetForegroundWindow(window);
     var deadline = DateTime.UtcNow.AddSeconds(3);
     while (DateTime.UtcNow < deadline && !ForegroundBelongsTo(expectedPid)) System.Threading.Thread.Sleep(50);
@@ -79,11 +115,11 @@ function Activate($button, $expected, $visible) {
     if (($null -ne (Find-Button $expected)) -eq $visible) { return }
     Start-Sleep -Milliseconds 100
   }
+  $button = Ensure-ButtonInsideWindow $button.Current.Name
   $bounds = $button.Current.BoundingRectangle
-  if ($button.Current.IsOffscreen -or $bounds.IsEmpty) { throw 'BUTTON_NOT_VISIBLE' }
   $x = [int]($bounds.Left + $bounds.Width / 2)
   $y = [int]($bounds.Top + $bounds.Height / 2)
-  $hwnd = [IntPtr]$window.Current.NativeWindowHandle
+  $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
   $clickFailure = [ToolDecisionMouse]::Click($hwnd, $x, $y, [uint32]$targetPid)
   if ($clickFailure) { throw "CHECKED_POINTER_CLICK_FAILED: $clickFailure" }
 }
