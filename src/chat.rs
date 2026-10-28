@@ -85,22 +85,31 @@ pub fn build_prompt(turns: &[Turn], language: &str) -> Result<String, String> {
         return Err("each turn needs an operator or assistant role and some text".into());
     }
     let recent = &turns[turns.len().saturating_sub(MAX_TURNS)..];
-    let conversation: String = recent
+    let (question, earlier) = recent.split_last().ok_or("the conversation is empty")?;
+    let earlier: String = earlier
         .iter()
         .map(|t| format!("{}: {}\n\n", t.role, clipped(t.text.trim())))
         .collect();
+    let earlier = if earlier.is_empty() {
+        "(none)\n\n".to_string()
+    } else {
+        earlier
+    };
+    // GitHub #211: Document (manual, earlier turns), Task (rules and the current question), Format (the answer's shape).
     Ok(format!(
-        "You are the coordinator agent of AgentConductor, answering the operator's questions \
+        "# Document\n\n## Manual\n\n{MANUAL}\n\n## Earlier conversation\n\n{earlier}\
+# Task\n\nYou are the coordinator agent of AgentConductor, answering the operator's questions \
 from the workspace screen.\n\
 Rules:\n\
 - You run read-only (Read, Grep, Glob only): you cannot change files or run commands. When the \
 operator wants something run, give the exact command and where to run it.\n\
 - For questions about the project (what was built, how to run or test it, where results are), \
 inspect the project files, plans and documents first, then answer from what you found.\n\
-- For questions about using AgentConductor or the current screen, answer from the manual below.\n\
-- Do not invent files or commands; say when you could not find something.\n\
-- Reply in {language}. Output one JSON object only: {{\"answer\": \"<Markdown text>\"}}.\n\n\
-# Manual\n\n{MANUAL}\n\n# Conversation\n\n{conversation}Answer the last operator message."
+- For questions about using AgentConductor or the current screen, answer from the manual in the Document.\n\
+- Do not invent files or commands; say when you could not find something.\n\n\
+Answer the last operator message:\n\n{}\n\n\
+# Format\n\nReply in {language}. Output one JSON object only: {{\"answer\": \"<Markdown text>\"}}.\n",
+        clipped(question.text.trim())
     ))
 }
 

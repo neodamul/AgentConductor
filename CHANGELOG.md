@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The prompts for the coordinator chat, Optimize prompt and plan generation are now assembled as Document (the material), Task (what to do and the current question) and Format (the shape of the answer), with the wording unchanged (GitHub #211).
+
 - Each plan task now has a kind chosen by the coordinator (classify or extract, summarize, analyze, code, long agent work, creative). The effort a task runs with follows your choice, then the agent's default for that kind, and is lowered with a warning when the model does not honor it; the review shows the kind and effort of every task and the roles table shows the efforts a model honors (GitHub #210).
 
 - What differs between the built-in agent CLIs (arguments, resume, model flags, full access, folder rules, capabilities) is now shipped preset data instead of code, and a profile can override session flags with `agent_settings`; the argument lists are unchanged (GitHub #209).

@@ -2235,3 +2235,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify (Windows): CI.
 - [ ] Complete: merge into `main` after #215 (stacked). Not changed: `execution_options` are still dropped when the page rebuilds a task on edit (existing behavior); the native UI (Codex #9 track) does not show task kinds.
 
+### acio 5/6: prompts assembled as Document, Task, Format — GitHub #211
+
+- [x] Plan: phase 5 of `docs/cli-io-protocol.md` §13 (FR-175); the user's order "Document - Task - Format".
+- [x] Red: `tests/prompt_order.rs` failed to compile before `planner::plan_prompt` existed and asserted the old order.
+- [x] Task: `chat::build_prompt`, `prompt_optimizer::build_prompt` and the planner prompt (now `src/planner/prompt.rs`, a pure function) rebuilt in the new order with their wording kept; CHANGELOG.
+- [x] Verify (macOS): the existing chat and optimizer prompt tests pass unchanged; fmt, clippy, the unsafe-comment gate, the Rust suite, the Python and node tests report no failure. Not verified: answer quality with a real coordinator (only the placement changed).
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge into `main` after #216 (stacked).
+
