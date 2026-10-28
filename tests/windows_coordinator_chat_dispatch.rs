@@ -18,4 +18,6 @@ fn exact_package_chat_test_is_wired_into_the_windows_package_gate() {
     assert!(script.contains("CHAT_DESKTOP_WINDOW:"));
     assert!(package_test.contains("Stdio::piped()"));
     assert!(package_test.contains("stderr_report"));
+    assert!(package_test.contains("fn send_without_wait(root: &Path"));
+    assert!(package_test.matches("diagnostic_state(root)").count() >= 2);
 }

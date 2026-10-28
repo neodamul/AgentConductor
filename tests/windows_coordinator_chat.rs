@@ -215,7 +215,7 @@ fn prepare_workspace(name: &str, delay_ms: Option<u64>) -> (TestDirectory, PathB
     (TestDirectory(root.clone()), root)
 }
 
-fn send_without_wait(app: &mut RunningApp, question: &str) {
+fn send_without_wait(root: &Path, app: &mut RunningApp, question: &str) {
     let driver = Command::new("powershell.exe")
         .env("AC_DESKTOP_PID", app.0.id().to_string())
         .env("AC_CHAT_MODE", "send")
@@ -230,8 +230,9 @@ fn send_without_wait(app: &mut RunningApp, question: &str) {
     if !(driver.status.success() && report.contains("CHAT_SENT")) {
         let child_stderr = app.stderr_report();
         panic!(
-            "UI Automation send failed: stdout: {report}; stderr: {}; child stderr: {child_stderr}",
-            String::from_utf8_lossy(&driver.stderr)
+            "UI Automation send failed: stdout: {report}; stderr: {}; child stderr: {child_stderr}; persisted state: {}",
+            String::from_utf8_lossy(&driver.stderr),
+            diagnostic_state(root)
         );
     }
 }
@@ -256,7 +257,7 @@ fn exact_windows_package_reconnects_an_in_flight_chat_after_app_close() {
     let (_cleanup, root) = prepare_workspace("resume", Some(5000));
     let question = "Resume this answer";
     let mut app = launch(&root);
-    send_without_wait(&mut app, question);
+    send_without_wait(&root, &mut app, question);
     wait_for_running_chat(&root);
     drop(app);
     let mut reopened = launch(&root);
@@ -270,7 +271,7 @@ fn exact_windows_package_recovers_a_late_answer_after_request_timeout() {
     let (_cleanup, root) = prepare_workspace("timeout", Some(5000));
     let question = "Answer after timeout";
     let mut app = launch(&root);
-    send_without_wait(&mut app, question);
+    send_without_wait(&root, &mut app, question);
     wait_for_running_chat(&root);
     drop(app);
     let mut reopened = launch(&root);

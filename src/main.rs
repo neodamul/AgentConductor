@@ -28,6 +28,7 @@ fn print_report(report: &workflow::Report) -> Result<(), String> {
 fn main() -> std::process::ExitCode {
     let args: Vec<_> = std::env::args().skip(1).collect();
     let maintenance = args.as_slice() == ["manual", "render"]
+        || args.first().map(String::as_str) == Some("chat")
         || args.first().map(String::as_str) == Some("bundle-macos")
         || args.first().map(String::as_str) == Some("archive-package")
         || args.first().map(String::as_str) == Some("validate-package")

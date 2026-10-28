@@ -6318,3 +6318,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Local Verify: commit `b2da0d8e` passes `cargo fmt --all`, `cargo test --locked --offline --test windows_briefing_dispatch --test source_layout -- --nocapture` (4 passed), `git diff --check`, and the 300-line check (`windows_briefing.rs` 200 lines; dispatch 38 lines).
 - [ ] Exact-package Verify: workflow dispatch [40637940299](https://github.com/neodamul/AgentConductor/actions/runs/40637940299) is currently platform validation only; require a package run that passes briefing before evaluating the persisted-reopen, in-flight reconnect, and late-answer chat cases.
 - [ ] Complete: do not merge or close #189 until the exact Windows package executes and passes all three coordinator-chat scenarios.
+### Exact Windows package coordinator-chat evidence — issue #189 / run 40637940299 / 2026-10-28
+
+- [x] Plan: retain the successful reopen/persistence journey and separate the two direct recovery failures from the earlier briefing-driver failure.
+- [x] Verify: Windows package job `122657181265` passed `exact_windows_package_persists_chat_after_workspace_reopen` and `windows_briefing`; `exact_windows_package_reconnects_an_in_flight_chat_after_app_close` failed with `CHAT_TRANSCRIPT_INCOMPLETE`, while `exact_windows_package_recovers_a_late_answer_after_request_timeout` failed before send with `CHAT_CONTROL_DIAGNOSTIC:NO_CHAT_EDIT`.
+- [x] Evidence: the in-flight failure retained `startup.json` with the operator turn only and a `chat` owner still in `phase=running`; this is not a transcript-selector failure. The late-answer failure is a separate Windows editor-discovery/input path and needs its own diagnostic capture.
+- [ ] Task: make the chat worker terminate promptly after writing its answer, add the missing late-answer UI-state diagnostics, and preserve the accepted-question/late-answer behavior without weakening the package assertions.
+- [ ] Verify: rerun local focused tests and the exact Windows package; require reopen, in-flight reconnect, and late-answer recovery to pass before closing #189 or PR #192.
