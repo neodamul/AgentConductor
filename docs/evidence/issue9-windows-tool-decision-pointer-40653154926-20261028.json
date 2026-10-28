@@ -1,0 +1,51 @@
+{
+  "run_id": 40653154926,
+  "tested_head_sha": "0beb30c08aad4b6832a226ec5ca360da958cf701",
+  "windows_validation_job_id": 122697776233,
+  "windows_package_job_id": 122707724872,
+  "windows_package_artifact_id": 12802722178,
+  "macos_validation_job_id": 122697775872,
+  "macos_package_job_id": 122707724823,
+  "macos_package_artifact_id": 12802335961,
+  "platform_validation": {
+    "macos": "passed",
+    "windows": "passed"
+  },
+  "package_results": {
+    "macos": "passed exact release build, bilingual manual render, and packaged release binary execution",
+    "windows": "release build, bilingual manual render, and exact packaged release binary execution passed; default desktop UI journey failed"
+  },
+  "passed_windows_journeys": [
+    "default desktop",
+    "team briefing",
+    "scheduled retry persisted to manual_schedule",
+    "signal transport save and port persistence",
+    "exact release binary execution"
+  ],
+  "failed_journey": "exact_windows_package_refreshes_approves_and_rejects_tool_requests",
+  "failure_location": "tests/windows_tool_decision.rs:239",
+  "observed_sequence": [
+    "Decide later overlay was confirmed no longer visible",
+    "Refresh UIA Invoke produced no state change",
+    "checked pointer helper reported click at (230,593)",
+    "Confirm tool decision did not appear"
+  ],
+  "final_observation": "The request remained Pending and the run remained Running; Allow once, Deny, and Refresh were enabled and visible in the UIA tree.",
+  "diagnosis": "This is distinct from run 40647252510, where a pending snapshot refresh disabled room controls. In this run controls were enabled; the checked pointer fallback's mouse_event down/up sequence did not produce the UI state transition. The product can_decide = !pending safety gate is correct and unchanged.",
+  "fix_under_test": "A red source-contract regression required SendInput down/up after foreground ownership and WindowFromPoint same-process checks. The helper still requires the expected confirmation state before reporting action success.",
+  "local_verification": {
+    "red": "checked_pointer_fallback_uses_sendinput_after_process_ownership_checks failed before the driver change because the click helper did not use SendInput",
+    "green": "cargo test --locked --test windows_tool_decision_dispatch --test windows_tool_decision --test source_layout --test public_docs: 22 passed across 4 suites",
+    "clippy": "cargo clippy --all-targets --features native-ui-probe -- -D warnings passed",
+    "format": "cargo fmt --check passed",
+    "diff_check": "git diff --check passed",
+    "line_limit": "tests/support/windows_tool_decision_script.rs 222 lines; tests/windows_tool_decision_dispatch.rs 171 lines; tests/windows_tool_decision.rs 244 lines",
+    "platform_limit": "Exact Windows UI execution is unavailable locally on the macOS host."
+  },
+  "acceptance": {
+    "candidate_packaged_ui": "22/25",
+    "shipped_rust_replacement": "0/25",
+    "credit_added": false
+  },
+  "next_step": "Push the focused driver fix, rerun the exact Windows package, and require Refresh confirmation, refreshed receipt, Allow, Deny, and persisted effects to pass."
+}

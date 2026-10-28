@@ -58,6 +58,27 @@ fn checked_pointer_failure_reports_the_guard_that_rejected_activation() {
 }
 
 #[test]
+fn checked_pointer_fallback_uses_sendinput_after_process_ownership_checks() {
+    let source = include_str!("support/windows_tool_decision_script.rs");
+    let click = source
+        .split("public static string Click(")
+        .nth(1)
+        .and_then(|tail| tail.split("}\n}").next())
+        .expect("checked pointer helper must remain easy to audit");
+
+    let ownership_check = click
+        .find("pointProcessId != expectedPid")
+        .expect("pointer ownership must be checked");
+    let down = click
+        .find("SendInput(1, new[] { down }, size)")
+        .expect("mouse-down must use SendInput");
+    let up = click
+        .find("SendInput(1, new[] { up }, size)")
+        .expect("mouse-up must use SendInput");
+    assert!(ownership_check < down && down < up);
+}
+
+#[test]
 fn checked_activation_journals_uia_and_pointer_results_before_waiting() {
     let source = include_str!("support/windows_tool_decision_script.rs");
 

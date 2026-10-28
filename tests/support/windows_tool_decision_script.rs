@@ -86,6 +86,9 @@ using System;
 using System.Runtime.InteropServices;
 public static class ToolDecisionMouse {
   [StructLayout(LayoutKind.Sequential)] struct Point { public int x, y; }
+  [StructLayout(LayoutKind.Sequential)] struct MouseInput { public int x, y; public uint data, flags, time; public IntPtr extraInfo; }
+  [StructLayout(LayoutKind.Explicit)] struct InputPayload { [FieldOffset(0)] public MouseInput mouse; }
+  [StructLayout(LayoutKind.Sequential)] struct Input { public uint type; public InputPayload payload; }
   [DllImport("user32.dll")] static extern bool ShowWindow(IntPtr window, int command);
   [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
   [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
@@ -93,6 +96,7 @@ public static class ToolDecisionMouse {
   [DllImport("user32.dll")] static extern IntPtr WindowFromPoint(Point point);
   [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
   [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
+  [DllImport("user32.dll", SetLastError=true)] static extern uint SendInput(uint count, Input[] inputs, int size);
   public static uint ProcessAt(int x, int y) {
     uint processId;
     GetWindowThreadProcessId(WindowFromPoint(new Point { x = x, y = y }), out processId);
@@ -127,13 +131,18 @@ public static class ToolDecisionMouse {
     if (!Focus(window, expectedPid)) return "FOREGROUND_NOT_OWNED: pid=" + ForegroundProcessId() + " hwnd=" + window;
     var pointProcessId = ProcessAt(x, y);
     if (pointProcessId != expectedPid) return "POINT_NOT_OWNED: pid=" + pointProcessId + " expected=" + expectedPid + " x=" + x + " y=" + y;
-    if (!SetCursorPos(x, y)) return "CURSOR_POSITION_FAILED: error=" + Marshal.GetLastWin32Error() + " x=" + x + " y=" + y;
-    mouse_event(0x0001, 0, 0, 0, UIntPtr.Zero);
+    if (!SetCursorPos(x - 1, y)) return "CURSOR_POSITION_FAILED: error=" + Marshal.GetLastWin32Error() + " x=" + x + " y=" + y;
+    mouse_event(0x0001, 1, 0, 0, UIntPtr.Zero);
     System.Threading.Thread.Sleep(100);
+    pointProcessId = ProcessAt(x, y);
+    if (pointProcessId != expectedPid) return "POINT_NOT_OWNED_AFTER_CURSOR_MOVE: pid=" + pointProcessId + " expected=" + expectedPid + " x=" + x + " y=" + y;
+    var size = Marshal.SizeOf(typeof(Input));
+    var down = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 2 } } };
+    var up = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 4 } } };
+    if (SendInput(1, new[] { down }, size) != 1) return "SEND_INPUT_DOWN_FAILED: error=" + Marshal.GetLastWin32Error();
+    System.Threading.Thread.Sleep(80);
     if (!ForegroundBelongsTo(expectedPid)) return "FOREGROUND_CHANGED: pid=" + ForegroundProcessId() + " expected=" + expectedPid;
-    mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero);
-    System.Threading.Thread.Sleep(100);
-    mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero);
+    if (SendInput(1, new[] { up }, size) != 1) return "SEND_INPUT_UP_FAILED: error=" + Marshal.GetLastWin32Error();
     return "";
   }
 }
