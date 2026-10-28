@@ -2,7 +2,8 @@ use serde_json::Value;
 
 pub(super) fn serialize(profile: &Value) -> String {
     serde_json::to_string_pretty(&serde_json::json!({
-        "catalog":profile["catalog"], "model_discovery":profile["model_discovery"],
+        "agent_settings":profile["agent_settings"], "catalog":profile["catalog"],
+        "model_discovery":profile["model_discovery"],
         "execution_options":profile["execution_options"], "result_pointer":profile["result_pointer"],
         "error_condition":profile["error_condition"], "quota_command":profile["quota_command"],
         "quota_rules":profile["quota_rules"].as_array().cloned().unwrap_or_default()
@@ -22,6 +23,7 @@ pub(super) fn apply(
         return Err("profile rules must be a JSON object".into());
     };
     for key in [
+        "agent_settings",
         "catalog",
         "model_discovery",
         "execution_options",

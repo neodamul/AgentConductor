@@ -1,6 +1,9 @@
 use agentconductor::native_ui_probe::workspace::profile_tools::{Event, metadata_request};
 use eframe::egui::{self, accesskit::Role};
 
+#[path = "native_ui_profiles/agent_settings.rs"]
+mod agent_settings;
+
 #[test]
 fn metadata_requests_bind_profile_and_current_revision() {
     let request = metadata_request(&Event::Quota("claude".into()), "revision-7");

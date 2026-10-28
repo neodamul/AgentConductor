@@ -21,6 +21,7 @@
 - [x] Task: add the optional task type to plans, ask the planner to choose it, resolve built-in effort against the selected profile's model-specific allowed values, apply the result to CLI arguments, and expose the choice in the native task editor and review card.
 - [x] Task: retain `agent_settings` on each profile; resolve an agent's task-specific model and effort only when the model is in its observed CLI catalog; warn when model traits exclude the task type; show the effective model, effort, and warnings in the editable native task review.
 - [x] Red/Local Verify: the default-resolution regression first rejected the unrecognized profile field, then failed because the resolver left the model unset. After implementation, task-profile, task-type, plan, native UI task-review, and source-layout suites pass 37 tests; formatting and 300-line checks pass. The accessibility test sees the effective model/effort and suitability warning.
+- [x] Follow-up Red/Green: the agent profile editor now round-trips `agent_settings` through its existing Profile rules JSON field; the focused profile-editor regression failed before the change and passes with all 11 profile tests plus the 2 source-layout tests.
 - [ ] Complete full FR-172 parity: validate/import `acio.agent/1` settings and model/effort values; verify `session.data.effective` persistence and the full CLI input/event conformance contract on macOS and Windows.
 
 ### Reconcile issue #9 with current main and complete Rust contract parity
