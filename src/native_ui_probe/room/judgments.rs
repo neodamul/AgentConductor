@@ -142,6 +142,17 @@ impl crate::native_ui_probe::Probe {
     }
 
     pub(in crate::native_ui_probe) fn refresh_room_details(&mut self) {
+        if self.snapshot.as_ref().is_some_and(|snapshot| {
+            snapshot["tool_requests"]
+                .as_array()
+                .is_some_and(|requests| {
+                    requests.iter().any(|request| {
+                        matches!(request["status"].as_str(), Some("pending" | "approved"))
+                    })
+                })
+        }) {
+            return;
+        }
         let changed = self
             .room_view
             .as_ref()

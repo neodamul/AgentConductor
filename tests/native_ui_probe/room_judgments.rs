@@ -99,3 +99,21 @@ fn coordinator_judgments_load_and_refresh_through_the_native_worker() {
     worker_support::close(room);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn pending_tool_requests_skip_background_room_detail_loading() {
+    let mut probe = Probe {
+        room_view: Some(crate::native_ui_probe::room::State::default()),
+        snapshot: Some(json!({
+            "tool_requests": [{"status": "pending"}],
+            "report": {"tasks": [{"id": "one"}]},
+            "decision_count": 0
+        })),
+        ..Probe::default()
+    };
+
+    probe.refresh_room_details();
+
+    assert!(probe.pending.is_none());
+    assert!(probe.error.is_none());
+}
