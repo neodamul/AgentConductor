@@ -651,3 +651,7 @@ Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191.
 ### SF-169 Resync after a failed send
 After a rejected or timed-out send the panel reloads the stored conversation, then either keeps the accepted question and follows the job, or restores the typed text with the error.
 Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192. GitHub #197, user, 2026-10-28.
+
+### SF-170 Request diagnostics log and guide
+Every `chat` request and every request of one second or more is appended to a bounded `request-diagnostics.log`; the timeout notice shows the request kind; the manuals carry a decision table.
+Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193. GitHub #200, user, 2026-10-28.

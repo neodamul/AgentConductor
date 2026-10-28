@@ -62,6 +62,10 @@ fn timeout_notice_points_to_the_existing_automatic_recovery() {
         let text = messages["startup.native_response_timed_out_refresh_before_retrying"]
             .as_str()
             .unwrap();
+        assert!(
+            text.contains("{value1}"),
+            "the timed-out request kind is shown (#200)"
+        );
         assert!(text.contains("automatically") || text.contains("자동 확인"));
         assert!(text.contains("reopen") || text.contains("다시 열어"));
         assert!(!text.contains("refresh before retrying") && !text.contains("새로고침하세요"));

@@ -734,3 +734,7 @@ Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191.
 ### QAS-179 A late reply is not lost
 Given a coordinator that answers after two seconds, the chat request returns before it finishes, a second question is refused meanwhile, the answer arrives in a later snapshot and the next prompt contains the earlier exchange; given a send that times out after the application accepted it, the question stays and the late answer is shown, and given a send the application never saw, the text is restored.
 Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192. GitHub #197, user, 2026-10-28.
+
+### QAS-180 The record exists and the guide ships
+Given a chat request, the log has a start and a done line (with the reason on failure); a fast snapshot leaves no line; a log above the limit restarts and keeps one previous file; both shipped manual pages contain the file name, the line formats and the decision table terms.
+Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193. GitHub #200, user, 2026-10-28.

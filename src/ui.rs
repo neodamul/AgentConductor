@@ -294,4 +294,5 @@ use controller::*;
 mod automatic;
 mod update;
 
+mod diagnostics;
 mod dispatch;

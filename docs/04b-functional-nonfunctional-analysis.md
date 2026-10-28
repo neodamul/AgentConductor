@@ -639,3 +639,7 @@ Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191.
 ### FR-169 Reconcile on failure
 `send` in `chat.js` calls `resync` on any rejection: it reloads `chat_history`; if the last turn is the operator text that was sent, the turn stays and `settle` adopts the running or completed job; otherwise the optimistic turn is removed and the text and error are shown. If the history cannot be read either, the optimistic turn is removed as before.
 Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192. GitHub #197, user, 2026-10-28.
+
+### FR-170 Log lines and guide
+`Room::dispatch` records `start kind=chat bytes=n` and `done kind=<kind> ms=<n> ok=<bool> [error="..."]` (all chat requests; others at 1000 ms or more) in `~/.agentconductor/request-diagnostics.log`, rotating to `.log.1` above 256 KiB; a write failure never changes the response. The page timeout message carries `{value1}` with the request kind. NFR: no content of the request is logged, only its kind and size.
+Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193. GitHub #200, user, 2026-10-28.

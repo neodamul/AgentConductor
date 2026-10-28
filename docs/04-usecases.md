@@ -724,3 +724,7 @@ Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191.
 ### UC-172 An operator asks something long
 The operator asks the coordinator to look into a large task; the reply takes minutes. The screen shows the question and the waiting time, a timeout notice does not remove the question, and the answer appears when the coordinator finishes.
 Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192. GitHub #197, user, 2026-10-28.
+
+### UC-173 An agent judges a timeout report
+An operator reports a timeout and attaches the log; an in-house agent with only the log and the manual decides whether the request never arrived, is still running, was answered late or failed.
+Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193. GitHub #200, user, 2026-10-28.

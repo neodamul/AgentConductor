@@ -397,6 +397,25 @@ Installed provider versions may differ. Unknown output stays unavailable or fail
 - **Changed source/approval**: plan or verify again. Ordinary-folder application has backups and a receipt; interrupted application is not replayed blindly.
 - **MCP timeout**: inspect the registered command/server and its bounded timeout; keep raw logs private.
 - **Window already open**: use or close the existing window rather than opening another.
+- **Request timed out (kind)**: see “Diagnosing "Request timed out"” below; the log is `~/.agentconductor/request-diagnostics.log`.
+
+### Diagnosing "Request timed out"
+
+The page waits 15 seconds for each reply from the application. The toast names the request kind, for example `Request timed out (chat)`. A request only starts work: a coordinator answer that takes minutes is a running job, not a timed-out request.
+
+**Where to look.** `~/.agentconductor/request-diagnostics.log` (Windows: `%USERPROFILE%\.agentconductor\request-diagnostics.log`); the previous log is `request-diagnostics.log.1`. Each file holds at most 256 KiB. Lines are `<unix milliseconds> start kind=<kind> bytes=<n>` and `<unix milliseconds> done kind=<kind> ms=<n> ok=<true|false> [error="<reason>"]`. `start` is written only for `chat`; `done` is written for every `chat` request and for any request that took 1000 ms or more. Nothing is written for fast requests. Convert the toast time with `date -r <seconds>` (macOS) and compare it with the line times.
+
+**How to decide.** Take the lines around the toast (30 seconds before it):
+
+| What the log shows | Meaning | Next step |
+|---|---|---|
+| No `start kind=chat` near the toast | The request never reached the application. The delay is in the window or its web view (hidden or throttled page, busy web view), not in the request handling. | Ask whether the window was in the background; try again in front. Report the operating system and web view version. |
+| `start` without a later `done` | The handler is still running or blocked. | Wait a minute and read the log again. If `done` never comes, collect the running processes of the application and its children and report them. |
+| `done ... ok=true ms=` 15000 or more | The application answered, but too late. | Look at other `done` lines in the same period: a slow `snapshot`, `baseline_status` or `quota` holds the shared state and delays the others. That kind is the cause; report its `ms`. |
+| `done ... ok=true ms=` under 15000, toast still shown | The reply was produced in time but reached the page late. | Treat it like the first row (window or web view). |
+| `done ... ok=false error="..."` | The request was refused or failed; this is not a timeout. | Read the reason. "startup operation still running" means the previous job has not finished. |
+
+Include the last 50 lines of both files, the request kind from the toast and the time of the toast when you report a timeout.
 
 ## Optional tool commands
 

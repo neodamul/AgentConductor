@@ -715,3 +715,7 @@ Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191.
 ### R-181 The chat keeps going when a reply is slow
 The coordinator chat shall stay a conversation when the page gives up waiting for a reply (the 15-second request limit) or a send fails: the question that the application accepted stays in the transcript, the screen follows the running coordinator and shows its answer when it completes, and only a question the application never received is taken back into the input. Amends R-179.
 Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192. GitHub #197, user, 2026-10-28.
+
+### R-182 Request timeouts can be traced
+The application shall record which page request was slow or failed, and the shipped manuals shall tell an agent how to read that record, so the cause of a "Request timed out" notice can be decided from evidence and not guessed. The notice names the request kind.
+Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193. GitHub #200, user, 2026-10-28.
