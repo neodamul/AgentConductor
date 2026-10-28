@@ -1,3 +1,12 @@
+### Use a verified keyboard fallback for packaged Windows tool decisions — issue #9 / 2026-10-29
+
+- [x] Plan: run `40766484837` validated both platforms and passed the macOS package. Its Windows package advanced past signal settings, then failed when the packaged tool-request `Refresh` button showed no confirmation after UIA Invoke or three foreground-checked pointer attempts.
+- [x] Red: add `activation_uses_a_process_checked_keyboard_fallback_before_pointer_input`; it failed because the tool-decision driver had no keyboard activation path.
+- [x] Task: after UIA Invoke, set focus on the exact enabled button, verify the focused element belongs to the packaged process and has the expected button name, then send Enter with `SendInput`; keep the ownership-checked pointer path as fallback.
+- [x] Local Verify: tool-decision driver contracts pass 11 tests; source layout passes 2 tests; formatting and diff checks pass. The embedded script remains 261 lines.
+- [ ] Exact-package Verify: push this correction and rerun Windows/macOS package workflows. Require the refresh, approve, and reject receipts/effect assertions and candidate-review journey to pass.
+- [ ] Complete: update Issue #9, PR #22, AgentMemory, and LLM Wiki with exact-head evidence; do not credit package acceptance until the Windows package suite passes.
+
 ### Preserve Windows signal-port focus during exact-package UI entry — issue #9 / 2026-10-29
 
 - [x] Plan: exact-head run `40759547238` passed macOS and Windows validation and the macOS package, but the packaged Windows suite failed while typing port `7333`; the UI Automation driver observed `73` as `7` after the second key.

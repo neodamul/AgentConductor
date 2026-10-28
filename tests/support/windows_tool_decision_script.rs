@@ -87,7 +87,8 @@ using System.Runtime.InteropServices;
 public static class ToolDecisionMouse {
   [StructLayout(LayoutKind.Sequential)] struct Point { public int x, y; }
   [StructLayout(LayoutKind.Sequential)] struct MouseInput { public int x, y; public uint data, flags, time; public IntPtr extraInfo; }
-  [StructLayout(LayoutKind.Explicit)] struct InputPayload { [FieldOffset(0)] public MouseInput mouse; }
+  [StructLayout(LayoutKind.Sequential)] struct KeyboardInput { public ushort virtualKey, scan; public uint flags, time; public IntPtr extraInfo; }
+  [StructLayout(LayoutKind.Explicit)] struct InputPayload { [FieldOffset(0)] public MouseInput mouse; [FieldOffset(0)] public KeyboardInput keyboard; }
   [StructLayout(LayoutKind.Sequential)] struct Input { public uint type; public InputPayload payload; }
   [DllImport("user32.dll")] static extern bool ShowWindow(IntPtr window, int command);
   [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
@@ -127,6 +128,15 @@ public static class ToolDecisionMouse {
     while (DateTime.UtcNow < deadline && !ForegroundBelongsTo(expectedPid)) System.Threading.Thread.Sleep(50);
     return ForegroundBelongsTo(expectedPid);
   }
+  public static string Key(ushort key) {
+    var size = Marshal.SizeOf(typeof(Input));
+    var down = new Input { type = 1, payload = new InputPayload { keyboard = new KeyboardInput { virtualKey = key } } };
+    var up = new Input { type = 1, payload = new InputPayload { keyboard = new KeyboardInput { virtualKey = key, flags = 2 } } };
+    if (SendInput(1, new[] { down }, size) != 1) return "SEND_INPUT_KEY_DOWN_FAILED: error=" + Marshal.GetLastWin32Error();
+    System.Threading.Thread.Sleep(50);
+    if (SendInput(1, new[] { up }, size) != 1) return "SEND_INPUT_KEY_UP_FAILED: error=" + Marshal.GetLastWin32Error();
+    return "";
+  }
   public static string Click(IntPtr window, int x, int y, uint expectedPid) {
     if (!Focus(window, expectedPid)) return "FOREGROUND_NOT_OWNED: pid=" + ForegroundProcessId() + " hwnd=" + window;
     var pointProcessId = ProcessAt(x, y);
@@ -164,6 +174,27 @@ function Activate($button, $expected, $visible) {
         Start-Sleep -Milliseconds 50
       }
       Write-Output "ACTION_INVOKE_NO_STATE_CHANGE: name=$name expected=$expected visible=$visible invokeError=$invokeError"
+      try {
+        $button = Find-CurrentButton $name
+        $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
+        if ([ToolDecisionMouse]::Focus($hwnd, [uint32]$targetPid)) { $button.SetFocus() }
+        $focused = $A::FocusedElement
+        if ($focused.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $focused.Current.Name -eq $name -and $focused.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' -and $focused.Current.IsEnabled) {
+          $keyFailure = [ToolDecisionMouse]::Key(0x0D)
+          if ($keyFailure) { throw $keyFailure }
+          $until = (Get-Date).AddMilliseconds(500)
+          while ((Get-Date) -lt $until) {
+            if (($null -ne (Find-Button $expected)) -eq $visible) {
+              Write-Output "ACTION_STATE_CONFIRMED_AFTER_KEYBOARD: expected=$expected visible=$visible"
+              return
+            }
+            Start-Sleep -Milliseconds 50
+          }
+          Write-Output "ACTION_KEYBOARD_NO_STATE_CHANGE: name=$name expected=$expected visible=$visible"
+        } else {
+          Write-Output "ACTION_KEYBOARD_TARGET_NOT_FOCUSED: name=$name focused=$($focused.Current.Name) pid=$($focused.Current.ProcessId)"
+        }
+      } catch { Write-Output "ACTION_KEYBOARD_FALLBACK_UNAVAILABLE: $_" }
     }
     $button = Ensure-ButtonInsideWindow $name
     $button = Wait-EnabledButton $name

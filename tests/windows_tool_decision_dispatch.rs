@@ -99,6 +99,25 @@ fn checked_activation_journals_uia_and_pointer_results_before_waiting() {
 }
 
 #[test]
+fn activation_uses_a_process_checked_keyboard_fallback_before_pointer_input() {
+    let source = include_str!("support/windows_tool_decision_script.rs");
+    let activation = source
+        .split("function Activate($button")
+        .nth(1)
+        .expect("activation helper must be explicit");
+
+    assert!(source.contains("public static string Key(ushort key)"));
+    let focus = activation.find("$button.SetFocus()").unwrap();
+    let focused = activation.find("$focused = $A::FocusedElement").unwrap();
+    let owner = activation
+        .find("$focused.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID")
+        .unwrap();
+    let key = activation.find("[ToolDecisionMouse]::Key(0x0D)").unwrap();
+    let pointer = activation.find("ACTION_POINTER_CLICKED").unwrap();
+    assert!(focus < focused && focused < owner && owner < key && key < pointer);
+}
+
+#[test]
 fn tool_actions_target_the_modal_and_refresh_dismisses_it_before_card_click() {
     let source = include_str!("support/windows_tool_decision_script.rs");
 
