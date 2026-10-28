@@ -6333,3 +6333,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Evidence: the in-flight failure retained `startup.json` with the operator turn only and a `chat` owner still in `phase=running`; this is not a transcript-selector failure. The late-answer failure is a separate Windows editor-discovery/input path and needs its own diagnostic capture.
 - [ ] Task: make the chat worker terminate promptly after writing its answer, add the missing late-answer UI-state diagnostics, and preserve the accepted-question/late-answer behavior without weakening the package assertions.
 - [ ] Verify: rerun local focused tests and the exact Windows package; require reopen, in-flight reconnect, and late-answer recovery to pass before closing #189 or PR #192.
+
+### Detach native UI workers from the desktop lifetime — issue #189 / run 40644006383 / 2026-10-28
+
+- [x] Plan: inspect the exact package result after the chat maintenance fix; preserve the three scenario assertions.
+- [x] Red: Windows package job `122676691469` still passed reopen but both in-flight reconnect and late-answer recovery ended with `CHAT_TRANSCRIPT_INCOMPLETE`; retained owner records stayed `phase=running` with no stderr.
+- [x] Task: add a source regression requiring UI workers to use a background command with `CREATE_BREAKAWAY_FROM_JOB`, `CREATE_NEW_PROCESS_GROUP`, and `CREATE_NO_WINDOW`, then route `Controller::launch_locked` through it so a worker is not tied to the desktop process/job lifetime.
+- [x] Local Verify: `chat_worker_lifecycle` 2 tests pass, warning-denied all-target Clippy passes, rustfmt and diff checks pass; touched source/test files remain below 300 lines.
+- [ ] Exact-package Verify: rerun the Windows package on the pushed fix and require reopen, in-flight reconnect, and late-answer recovery to pass.
+- [ ] Complete: keep #189/PR #192 open until the exact packaged binary proves all three scenarios.

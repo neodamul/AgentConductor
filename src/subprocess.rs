@@ -11,6 +11,24 @@ pub fn command(program: impl AsRef<OsStr>) -> Command {
     let _ = &mut command;
     command
 }
+
+/// Spawn a UI-owned worker independently of the desktop process lifetime.
+pub fn background_command(program: impl AsRef<OsStr>) -> Command {
+    let mut command = Command::new(program);
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        use windows_sys::Win32::System::Threading::{
+            CREATE_BREAKAWAY_FROM_JOB, CREATE_NEW_PROCESS_GROUP, CREATE_NO_WINDOW,
+        };
+        command.creation_flags(
+            CREATE_BREAKAWAY_FROM_JOB | CREATE_NEW_PROCESS_GROUP | CREATE_NO_WINDOW,
+        );
+    }
+    #[cfg(not(windows))]
+    let _ = &mut command;
+    command
+}
 /// Reuse a calling terminal for CLI commands; never allocate a new console.
 pub fn attach_parent_console() {
     #[cfg(windows)]

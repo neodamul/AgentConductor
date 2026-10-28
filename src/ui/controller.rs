@@ -175,7 +175,7 @@ impl Controller {
             .write(true)
             .open(logs.join("stderr.log"))
             .map_err(|e| e.to_string())?;
-        let mut command = crate::subprocess::command(&self.exe);
+        let mut command = crate::subprocess::background_command(&self.exe);
         command
             .args(args)
             .stdin(Stdio::null())
