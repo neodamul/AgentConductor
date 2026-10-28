@@ -105,6 +105,42 @@ fn a_completed_answer_is_persisted_once_across_repeated_snapshots() {
 }
 
 #[test]
+fn a_result_file_is_consumed_when_the_detached_chat_owner_is_still_running() {
+    let (root, startup) = fixture();
+    drop(startup);
+    let settings = root.join("startup.json");
+    let mut stored: Value = serde_json::from_slice(&fs::read(&settings).unwrap()).unwrap();
+    let id = "fixture-chat-running";
+    stored["chat_transcript"] = json!([{"role":"operator","text":"Question"}]);
+    stored["chat_result"] = json!(format!("chat-{id}.json"));
+    stored["job"] = json!({"id":id,"operation":"chat","started_ms":1});
+    fs::write(&settings, serde_json::to_vec(&stored).unwrap()).unwrap();
+    fs::create_dir_all(root.join("mcp")).unwrap();
+    fs::write(
+        root.join("mcp/chat-fixture-chat-running.json"),
+        br#"{"answer":"Answer after reopen"}"#,
+    )
+    .unwrap();
+    let process = root.join(format!("coordinator-ui-{id}/process"));
+    fs::create_dir_all(&process).unwrap();
+    fs::write(
+        process.join("owner.json"),
+        serde_json::to_vec(&json!({"coordinator_pid":i32::MAX,"pid":null,"process_group":null,"phase":"running","exit_code":null,"stopped":false,"timed_out":false})).unwrap(),
+    )
+    .unwrap();
+
+    let startup = Startup::open(&root, Path::new(env!("CARGO_BIN_EXE_agentconductor"))).unwrap();
+    let first = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    assert_eq!(first["chat"]["answer"], "Answer after reopen");
+    assert_eq!(first["job"]["state"], "completed");
+    assert_eq!(first["chat_transcript"].as_array().unwrap().len(), 2);
+    let second = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    assert!(second["job"].is_null());
+    drop(startup);
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
 fn completed_transcript_keeps_only_the_latest_forty_turns() {
     let (root, startup) = fixture();
     drop(startup);

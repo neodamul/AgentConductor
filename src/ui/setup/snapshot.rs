@@ -83,7 +83,12 @@ impl Startup {
         } else {
             serde_json::Value::Null
         };
-        let mut snapshot = serde_json::json!({"revision":self.revision(saved)?,"config":config,"proposal":proposal,"job":job,"quota_job":if metadata_job["kind"].as_str().is_some_and(|k|k.starts_with("quota:")){metadata_job.clone()}else{serde_json::Value::Null},"metadata_job":metadata_job,"metadata_queue":saved.metadata_queue,"root":self.broker.dir,"templates":templates,"custom_registry_invalid":registry_invalid,"run_available":run_available,"run_state":run_state,"agent_activity":agent_activity,"quotas":quotas,"quota_badges":quota_badges,"quota_refresh_due":quota_refresh_due,"slugs":self.slug_snapshot(saved),"plan_rules_global":crate::plan_rules::current(None),"language":language,"mcp_result":if mcp_result {self.mcp_result(saved,job)?}else{serde_json::Value::Null},"chat":chat,"chat_transcript":saved.chat_transcript,"imports":saved.imports,"source_notes":self.source_notes(saved)});
+        let mut visible_job = job.clone();
+        if chat["answer"].is_string() && visible_job["kind"] == "chat" {
+            visible_job["state"] = "completed".into();
+            visible_job["exit_code"] = 0.into();
+        }
+        let mut snapshot = serde_json::json!({"revision":self.revision(saved)?,"config":config,"proposal":proposal,"job":visible_job,"quota_job":if metadata_job["kind"].as_str().is_some_and(|k|k.starts_with("quota:")){metadata_job.clone()}else{serde_json::Value::Null},"metadata_job":metadata_job,"metadata_queue":saved.metadata_queue,"root":self.broker.dir,"templates":templates,"custom_registry_invalid":registry_invalid,"run_available":run_available,"run_state":run_state,"agent_activity":agent_activity,"quotas":quotas,"quota_badges":quota_badges,"quota_refresh_due":quota_refresh_due,"slugs":self.slug_snapshot(saved),"plan_rules_global":crate::plan_rules::current(None),"language":language,"mcp_result":if mcp_result {self.mcp_result(saved,job)?}else{serde_json::Value::Null},"chat":chat,"chat_transcript":saved.chat_transcript,"imports":saved.imports,"source_notes":self.source_notes(saved)});
         snapshot["revision"] = self.revision(saved)?.into();
         if snapshot["job"]["kind"] == "plan"
             && let Some(p) = &saved.proposal

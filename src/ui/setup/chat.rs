@@ -44,7 +44,7 @@ impl Startup {
         saved: &mut Saved,
         job: &serde_json::Value,
     ) -> Result<serde_json::Value, String> {
-        if job["kind"] != "chat" || job["state"] != "completed" {
+        if job["kind"] != "chat" {
             return Ok(serde_json::Value::Null);
         }
         let Some(name) = &saved.chat_result else {
@@ -62,6 +62,10 @@ impl Startup {
             });
             crate::chat::retain_recent(&mut saved.chat_transcript);
             saved.chat_result = None;
+            // A detached chat worker can write its answer after the first UI
+            // process closes. Consuming the durable result is the completion
+            // proof even when the old owner record still says `running`.
+            saved.job = None;
             self.store(saved)?;
             let _ = std::fs::remove_file(path);
             Ok(

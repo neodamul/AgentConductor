@@ -6374,3 +6374,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Local Verify: the new briefing dispatch regression is red before the driver change and green after it; focused Windows dispatch/lifecycle/native-window/source-layout tests pass (9 total), rustfmt, diff check, warning-denied Clippy, and the 300-line check pass (`windows_briefing.rs` 220 lines; dispatch 46 lines).
 - [ ] Exact-package Verify: push the driver-only fix and require `windows_briefing` plus all three coordinator-chat scenarios to pass in the Windows package before accepting #189.
 - [ ] Complete: keep #189 and PR #192 open; do not claim coordinator-chat package evidence until the prerequisite and chat cases pass.
+
+### Consume detached chat answers after UI reopen — issue #189 / run 40661926831 / 2026-10-28
+
+- [x] Plan: use the exact packaged result to distinguish a chat-runtime recovery gap from the preceding briefing-driver gate.
+- [x] Evidence: run [40661926831](https://github.com/neodamul/AgentConductor/actions/runs/40661926831) passed the briefing case and the completed transcript/reopen case, but the in-flight reconnect and late-answer cases showed `Coordinator could not answer` / `CHAT_TRANSCRIPT_INCOMPLETE`. Both retained `startup.json` with a durable `chat_result`, an operator-only transcript, and an owner record still in `phase=running`.
+- [x] Red: add a startup persistence regression with a result artifact present while the detached chat owner remains running; it failed to expose the answer because `chat_snapshot` required `job.state=completed`.
+- [x] Task: consume a valid durable chat result regardless of the stale owner phase, clear the stored job after consumption, and expose a completed chat job in that snapshot so the native panel reconnects and renders the late answer.
+- [x] Local Verify: startup persistence, startup chat, native workspace chat, and Windows dispatch suites pass (16 tests); rustfmt, diff check, warning-denied Clippy, and the 300-line check pass.
+- [ ] Exact-package Verify: rerun the packaged Windows binary and require all three coordinator-chat scenarios to pass on the product fix.
+- [ ] Complete: keep #189/PR #192 open until the exact packaged reconnect and timeout-recovery cases pass.
