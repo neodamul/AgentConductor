@@ -45,6 +45,10 @@ fn candidate_decision_driver_falls_back_to_owned_input_and_checks_state() {
     assert!(driver.contains("WindowFromPoint"));
     assert!(driver.contains("SendInput(1, new[] { down }, size)"));
     assert!(driver.contains("ACTION_STATE_CONFIRMED_AFTER_POINTER"));
+    assert!(driver.contains("Wait-Button 'Merge approved candidate'"));
+    assert!(driver.contains("if ($expected -and (Text-Content).Contains($expected))"));
+    assert!(!driver.contains("Wait-Text 'Rejected'"));
+    assert!(!driver.contains("Wait-Text 'Merged; this run is complete.'"));
     let release = driver.find("SendInput(1, new[] { up }, size)").unwrap();
     let focus_check = driver
         .find("if (!foregroundOwned) return \"FOREGROUND_CHANGED\";")
@@ -53,12 +57,15 @@ fn candidate_decision_driver_falls_back_to_owned_input_and_checks_state() {
         release < focus_check,
         "mouse-up must be sent before any post-click early return"
     );
-    assert!(driver.contains(
-        "Activate-Button 'Confirm candidate decision' 'The approved candidate is ready to merge.'"
-    ));
+    assert!(driver.contains("Activate-Button 'Confirm candidate decision' $null"));
+    assert_eq!(
+        driver
+            .matches("Activate-Button 'Confirm candidate decision' $null")
+            .count(),
+        3
+    );
     assert!(
-        driver.contains(
-            "Activate-Button 'Confirm candidate decision' 'Merged; this run is complete.'"
-        )
+        include_str!("windows_candidate_review.rs")
+            .contains("workflow::load(&run).unwrap().state == expected_state")
     );
 }

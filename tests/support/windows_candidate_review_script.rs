@@ -95,7 +95,7 @@ public static class CandidateMouse {
 function Wait-ExpectedState($name, $expected, $seconds) {
   $until = (Get-Date).AddSeconds($seconds)
   while ((Get-Date) -lt $until) {
-    if ((Text-Content).Contains($expected)) { return 'expected' }
+    if ($expected -and (Text-Content).Contains($expected)) { return 'expected' }
     if (-not (Find-Button $name)) { return 'button-closed' }
     Start-Sleep -Milliseconds 100
   }
@@ -107,7 +107,8 @@ function Activate-Button($name, $expected) {
   $state = Wait-ExpectedState $name $expected 2
   if ($state -eq 'expected') { Write-Output "ACTION_STATE_CONFIRMED_AFTER_UIA: $name"; return }
   if ($state -eq 'button-closed') {
-    if ((Text-Content).Contains($expected)) { Write-Output "ACTION_STATE_CONFIRMED_AFTER_UIA: $name"; return }
+    if ($expected -and (Text-Content).Contains($expected)) { Write-Output "ACTION_STATE_CONFIRMED_AFTER_UIA: $name"; return }
+    if (-not $expected) { Write-Output "ACTION_DIALOG_CLOSED_AFTER_UIA: $name"; return }
     $until = (Get-Date).AddSeconds(12)
     while ((Get-Date) -lt $until) {
       if ((Text-Content).Contains($expected)) { Write-Output "ACTION_STATE_CONFIRMED_AFTER_UIA: $name"; return }
@@ -130,7 +131,11 @@ function Activate-Button($name, $expected) {
   $failure = [CandidateMouse]::Click([IntPtr]$script:window.Current.NativeWindowHandle, $x, $y, [uint32]$env:AC_DESKTOP_PID)
   if ($failure) { Write-Output "CHECKED_POINTER_CLICK_FAILED: $failure"; exit 8 }
   $state = Wait-ExpectedState $name $expected 12
-  if ($state -eq 'expected' -or ((Text-Content).Contains($expected))) {
+  if (-not $expected -and $state -eq 'button-closed') {
+    Write-Output "ACTION_DIALOG_CLOSED_AFTER_POINTER: $name"
+    return
+  }
+  if ($expected -and ($state -eq 'expected' -or (Text-Content).Contains($expected))) {
     Write-Output "ACTION_STATE_CONFIRMED_AFTER_POINTER: $name"
     return
   }
@@ -165,14 +170,13 @@ if ($env:AC_DECISION -eq 'reject') {
   }
   if (-not $reason) { Write-Output 'REJECTION_REASON_MISSING'; exit 5 }
   $reason.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('Reviewed exact diff; reject fixture')
-  Activate-Button 'Confirm candidate decision' 'Rejected'
-  Wait-Text 'Rejected'
+  Activate-Button 'Confirm candidate decision' $null
 } else {
   Activate-Button 'Approve verified candidate' 'Confirm approval of this verified diff and tests?'
-  Activate-Button 'Confirm candidate decision' 'The approved candidate is ready to merge.'
+  Activate-Button 'Confirm candidate decision' $null
+  Wait-Button 'Merge approved candidate'
   Activate-Button 'Merge approved candidate' 'Confirm integrating the exact approved candidate?'
-  Activate-Button 'Confirm candidate decision' 'Merged; this run is complete.'
-  Wait-Text 'Merged; this run is complete.'
+  Activate-Button 'Confirm candidate decision' $null
 }
 Write-Output 'CANDIDATE_DECISION_VERIFIED'
 "#;
