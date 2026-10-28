@@ -44,3 +44,11 @@ fn briefing_driver_checks_state_after_each_delivered_pointer_click() {
     assert!(source.contains("WINDOW_FOREGROUND_FAILED_BEFORE_BRIEFING_CLICK"));
     assert!(source.contains("BRIEFING_ACTION_NO_STATE_CHANGE"));
 }
+
+#[test]
+fn briefing_driver_has_keyboard_fallback_after_pointer_delivery() {
+    let source = include_str!("windows_briefing.rs");
+    assert!(source.contains("$load.SetFocus()"));
+    assert!(source.contains("keybd_event"));
+    assert!(source.contains("BRIEFING_KEYBOARD_FALLBACK"));
+}

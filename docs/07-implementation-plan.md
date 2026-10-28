@@ -6365,3 +6365,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: preserve the raw error-5 boundary and replace the cfg(windows) explicit return with an expression.
 - [x] Local Verify: lifecycle, native-window, and source-layout tests pass (6 total); rustfmt, diff check, warning-denied all-target Clippy, and the 300-line guard pass.
 - [ ] Exact-package Verify: rerun platform validation and the Windows package on the corrected head.
+
+### Recover the packaged briefing gate before coordinator-chat verification — issue #189 / run 40656111666 / 2026-10-28
+
+- [x] Plan: treat the packaged `windows_briefing` failure as a prerequisite UI-driver problem; do not interpret it as chat evidence or change chat runtime behavior.
+- [x] Red: the exact Windows package reported `BRIEFING_UIA_INVOKE_FAILED` (`Invoke` returned `Unrecognized error`), then `BRIEFING_POINTER_ACCEPTED` without a menu and `NO_BRIEFING_RESULT`; the UI tree showed the same-process button visible and enabled.
+- [x] Task: add a keyboard activation fallback after the checked pointer path (`SetFocus` plus `keybd_event` Space) and a source-contract regression. This keeps the product unchanged and gives the packaged test a second input path when AccessKit UIA invocation is unavailable.
+- [x] Local Verify: the new briefing dispatch regression is red before the driver change and green after it; focused Windows dispatch/lifecycle/native-window/source-layout tests pass (9 total), rustfmt, diff check, warning-denied Clippy, and the 300-line check pass (`windows_briefing.rs` 220 lines; dispatch 46 lines).
+- [ ] Exact-package Verify: push the driver-only fix and require `windows_briefing` plus all three coordinator-chat scenarios to pass in the Windows package before accepting #189.
+- [ ] Complete: keep #189 and PR #192 open; do not claim coordinator-chat package evidence until the prerequisite and chat cases pass.
