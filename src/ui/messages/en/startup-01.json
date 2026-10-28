@@ -205,5 +205,15 @@
   "startup.model_query_failed_inspect_retained_metadata_logs": "Model query failed; inspect retained metadata logs",
   "startup.models": "Models",
   "startup.models_dee84b": "{value1} models",
-  "startup.models_loading": "Loading models…"
+  "startup.models_loading": "Loading models…",
+  "startup.optimize_goal": "Optimize goal",
+  "startup.optimizing_goal": "Optimizing goal…",
+  "startup.review_optimized_goal": "Review optimized goal",
+  "startup.optimized_goal_title": "Review optimized goal",
+  "startup.proposed_goal": "Proposed goal",
+  "startup.optimization_changes": "Suggested changes",
+  "startup.optimization_questions": "Questions to resolve",
+  "startup.optimization_credit": "Powered by the vendored prompt-optimizer skill.",
+  "startup.use_optimized_goal": "Use optimized goal",
+  "startup.keep_original_goal": "Keep original goal"
 }

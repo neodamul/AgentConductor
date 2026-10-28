@@ -718,3 +718,10 @@ Trace: R-175 → BG-130 → SF-163 → UC-166 → FR-161/NFR-71 → QAS-172 → 
 ### QAS-173 Test targets pass the unsafe gate
 Given the repository after the change, `cargo clippy --lib --bins --tests --locked --features native-ui-probe -- -D clippy::undocumented_unsafe_blocks` passes on macOS and Windows; `grep -rE 'env::(set_var|remove_var)' tests` finds calls only inside the helper; the full suite passes unchanged and a repeated run shows no new flakiness.
 Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → DDR-36 → DD-187. GitHub #176, user, 2026-10-24.
+
+### QAS-174 The coordinator returns a bounded read-only proposal
+Given a valid goal and a stub CLI coordinator, the generated prompt includes the bundled skill, references, goal and language. Valid JSON produces a bounded proposal; a missing `optimized` field, empty goal, overlong goal, missing coordinator, or missing project fails without changing the saved goal. No model API key is introduced.
+
+### QAS-175 The native UI preserves explicit acceptance and attribution
+Given a proposal, using it changes the unsaved goal field only; keeping the original leaves it unchanged. Both locales show proposal, changes and questions. The release package contains the upstream Apache-2.0 license and source attribution. Changed Rust/test files meet the 300-line limit.
+Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-174/QAS-175 → DDR-37 → DD-188. GitHub #180, 2026-10-27.

@@ -607,3 +607,13 @@ The helper offers `lock()`, `set` and `remove`, keeps the first original value o
 ### NFR-72 No behavior change
 Test assertions and the code under test stay as they are; only how variables are set changes. Each changed Rust file stays within its line limit (500 on `main`, 300 on the Rust line). The helper serializes mutating tests only: it cannot stop a non-mutating thread of the same binary from reading the environment, which is recorded as a documented limit.
 Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → DDR-36 → DD-187. GitHub #176, user, 2026-10-24.
+
+### FR-163 Build and validate one optimizer proposal
+The coordinator prompt embeds the pinned skill and its references, the operator's goal and interface language. It requests one JSON object containing `optimized`, `changes` and `questions`. The coordinator uses the existing registered CLI in read-only mode. Empty or over-8-KiB goals are rejected before launch; malformed replies fail without changing the goal.
+
+### FR-164 Present the proposal in the native workspace UI
+The workspace goal field offers **Optimize goal** when a saved coordinator and project are available and the shared worker is idle. A review dialog shows the bounded proposal, changes and questions. **Use optimized goal** changes the unsaved field; **Keep original goal** dismisses it. Both interface languages provide the new labels.
+
+### NFR-73 Bound work and preserve operator control
+The proposal is limited to 16 KiB, 12 change notes, and 8 questions of at most 400 characters; a coordinator call is limited to five minutes and occupies the existing single worker slot. The native UI never auto-saves, plans, or executes the proposal. The vendored skill and Apache-2.0 license are included in release packages. Changed Rust and test files must remain at or below 300 lines.
+Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-174/QAS-175 → DDR-37 → DD-188. GitHub #180, 2026-10-27.

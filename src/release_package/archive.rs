@@ -56,6 +56,12 @@ pub(super) fn write_package(plan: PackagePlan<'_>) -> Result<Value, String> {
     for file in ["README.md", "LICENSE", "Cargo.lock"] {
         copy_file(&root.join(file), &destination.join(file))?;
     }
+    for file in ["LICENSE", "SOURCE.md"] {
+        copy_file(
+            &root.join("third_party/prompt-optimizer").join(file),
+            &destination.join("licenses/prompt-optimizer").join(file),
+        )?;
+    }
 
     let mut components = Vec::new();
     let mut inventory = vec![

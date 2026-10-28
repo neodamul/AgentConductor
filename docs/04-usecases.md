@@ -714,3 +714,7 @@ Trace: R-175 → BG-130 → SF-163 → UC-166 → FR-161/NFR-71 → QAS-172 → 
 ### UC-167 A test needs a different HOME or tool override
 The author calls the helper instead of `set_var`; concurrent tests of the same binary wait; the originals return when the test ends; Clippy accepts the test target without a per-test exemption.
 Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → DDR-36 → DD-187. GitHub #176, user, 2026-10-24.
+
+### UC-168 An operator reviews a clearer goal
+The operator chooses **Optimize goal** beside the workspace goal. The selected coordinator inspects the project read-only and returns a bounded proposal. The native dialog displays the proposed goal, changes and questions; **Use optimized goal** updates only the editable field, while **Keep original goal** dismisses the proposal. Neither action saves workspace settings or starts planning. Missing coordinator or project configuration is reported while leaving the original goal unchanged.
+Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-174/QAS-175 → DDR-37 → DD-188. GitHub #180, 2026-10-27.

@@ -9,6 +9,14 @@ enum WorkerRequest {
     PickExecutable,
 }
 
+pub(super) fn initial_snapshot(room_view: bool) -> &'static [u8] {
+    if room_view {
+        br#"{"kind":"snapshot","icons":true}"#
+    } else {
+        br#"{"kind":"snapshot","icons":true,"optimize_result":true}"#
+    }
+}
+
 pub struct RequestWorker {
     requests: mpsc::SyncSender<WorkerRequest>,
     pub replies: mpsc::Receiver<Result<Value, String>>,

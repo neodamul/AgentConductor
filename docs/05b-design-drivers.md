@@ -166,3 +166,6 @@ Most mechanical rules are already default Clippy lints denied in CI, and the res
 
 ### Driver DDR-35 Gate only after the count is zero
 Enabling the lint first would fail on every existing site and block unrelated work; documenting first and gating last keeps each step small and verifiable. Trace: QAS-172.
+
+### Driver DDR-37 Reuse the coordinator worker and keep operator review
+Reuse the registered coordinator CLI, existing worker job slot and snapshot polling. A proposal is inert until the operator chooses to copy it into the editable goal field. Trace: QAS-174.

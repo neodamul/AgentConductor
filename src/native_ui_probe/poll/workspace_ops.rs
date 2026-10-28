@@ -19,6 +19,7 @@ impl Probe {
 }
 
 pub(super) fn load_workspace(probe: &mut Probe, snapshot: &Value) {
+    probe.goal_optimizer.restore(snapshot);
     probe.goal = snapshot["config"]["goal"]
         .as_str()
         .unwrap_or_default()
