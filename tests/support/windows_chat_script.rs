@@ -52,6 +52,13 @@ function ChatControlDiagnostic($label) {
     Write-Output "$($_.Current.ControlType.ProgrammaticName) | $($_.Current.Name) | enabled=$($_.Current.IsEnabled) | offscreen=$($_.Current.IsOffscreen) | value=$value"
   }
 }
+function ChatWindowDiagnostic($label) {
+  $bounds = $window.Current.BoundingRectangle
+  Write-Output "CHAT_WINDOW:$label | pid=$($window.Current.ProcessId) | hwnd=$($window.Current.NativeWindowHandle) | name=$($window.Current.Name) | enabled=$($window.Current.IsEnabled) | offscreen=$($window.Current.IsOffscreen) | bounds=$bounds"
+  $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.Name } | Select-Object -First 40 | ForEach-Object {
+    Write-Output "CHAT_DESKTOP_WINDOW: pid=$($_.Current.ProcessId) | hwnd=$($_.Current.NativeWindowHandle) | name=$($_.Current.Name) | enabled=$($_.Current.IsEnabled) | offscreen=$($_.Current.IsOffscreen) | bounds=$($_.Current.BoundingRectangle)"
+  }
+}
 if ($env:AC_CHAT_MODE -in @('send', 'verify')) {
   $open = $null
   while (-not $open -and (Get-Date) -lt $deadline) {
@@ -59,6 +66,7 @@ if ($env:AC_CHAT_MODE -in @('send', 'verify')) {
     if (-not $open) { Start-Sleep -Milliseconds 200 }
   }
   if (-not $open) {
+    ChatWindowDiagnostic 'NO_CHAT_LAUNCHER'
     ChatControlDiagnostic 'NO_CHAT_LAUNCHER'
     $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 40 | ForEach-Object {
       Write-Output "CHAT_CONTROL: $($_.Current.ControlType.ProgrammaticName) | $($_.Current.Name) | enabled=$($_.Current.IsEnabled)"

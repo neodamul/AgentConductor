@@ -4,8 +4,9 @@ use agentconductor::ui::setup::Startup;
 use serde_json::{Value, json};
 use std::{
     fs,
+    io::Read,
     path::{Path, PathBuf},
-    process::{Child, Command, Stdio},
+    process::{Child, Command, Output, Stdio},
     thread,
     time::{Duration, Instant},
 };
@@ -18,6 +19,17 @@ impl Drop for RunningApp {
     fn drop(&mut self) {
         let _ = self.0.kill();
         let _ = self.0.wait();
+    }
+}
+impl RunningApp {
+    fn stderr_report(&mut self) -> String {
+        let _ = self.0.kill();
+        let _ = self.0.wait();
+        let mut report = String::new();
+        if let Some(mut stderr) = self.0.stderr.take() {
+            let _ = stderr.read_to_string(&mut report);
+        }
+        report
     }
 }
 
@@ -78,13 +90,13 @@ fn launch(root: &Path) -> RunningApp {
             .args(["ui-new", root.to_str().unwrap()])
             .env("HOME", root.join("home"))
             .env("USERPROFILE", root.join("home"))
-            .stderr(Stdio::null())
+            .stderr(Stdio::piped())
             .spawn()
             .unwrap(),
     )
 }
 
-fn drive(app: &RunningApp, question: &str, mode: &str) -> String {
+fn drive(app: &mut RunningApp, question: &str, mode: &str) -> String {
     let driver = Command::new("powershell.exe")
         .env("AC_DESKTOP_PID", app.0.id().to_string())
         .env("AC_CHAT_MODE", mode)
@@ -95,12 +107,14 @@ fn drive(app: &RunningApp, question: &str, mode: &str) -> String {
         .output()
         .unwrap();
     let report = String::from_utf8_lossy(&driver.stdout).into_owned();
-    assert!(
-        driver.status.success() && report.contains("CHAT_VISIBLE"),
-        "UI Automation exited {}; stdout: {report}; stderr: {}",
-        driver.status,
-        String::from_utf8_lossy(&driver.stderr)
-    );
+    if !(driver.status.success() && report.contains("CHAT_VISIBLE")) {
+        let child_stderr = app.stderr_report();
+        panic!(
+            "UI Automation exited {}; stdout: {report}; stderr: {}; child stderr: {child_stderr}",
+            driver.status,
+            String::from_utf8_lossy(&driver.stderr)
+        );
+    }
     report
 }
 
@@ -181,12 +195,12 @@ fn prepare_workspace(name: &str, delay_ms: Option<u64>) -> (TestDirectory, PathB
 fn exact_windows_package_persists_chat_after_workspace_reopen() {
     let (_cleanup, root) = prepare_workspace("reopen", None);
     let question = "What was persisted?";
-    let app = launch(&root);
-    drive(&app, question, "send");
+    let mut app = launch(&root);
+    drive(&mut app, question, "send");
     wait_for_transcript(&root, question);
     drop(app);
     let reopened = launch(&root);
-    drive(&reopened, question, "verify");
+    drive(&mut reopened, question, "verify");
 }
 
 #[test]
@@ -195,7 +209,7 @@ fn exact_windows_package_reconnects_an_in_flight_chat_after_app_close() {
     // in-flight: the worker must outlive the first UI process and finish after reopen.
     let (_cleanup, root) = prepare_workspace("resume", Some(5000));
     let question = "Resume this answer";
-    let app = launch(&root);
+    let mut app = launch(&root);
     let driver = Command::new("powershell.exe")
         .env("AC_DESKTOP_PID", app.0.id().to_string())
         .env("AC_CHAT_MODE", "send")
@@ -206,14 +220,16 @@ fn exact_windows_package_reconnects_an_in_flight_chat_after_app_close() {
         .output()
         .unwrap();
     let report = String::from_utf8_lossy(&driver.stdout);
-    assert!(
-        driver.status.success() && report.contains("CHAT_SENT"),
-        "UI Automation send failed: stdout: {report}; stderr: {}",
-        String::from_utf8_lossy(&driver.stderr)
-    );
+    if !(driver.status.success() && report.contains("CHAT_SENT")) {
+        let child_stderr = app.stderr_report();
+        panic!(
+            "UI Automation send failed: stdout: {report}; stderr: {}; child stderr: {child_stderr}",
+            String::from_utf8_lossy(&driver.stderr)
+        );
+    }
     wait_for_running_chat(&root);
     drop(app);
     let reopened = launch(&root);
-    drive(&reopened, question, "verify");
+    drive(&mut reopened, question, "verify");
     wait_for_transcript(&root, question);
 }

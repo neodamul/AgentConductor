@@ -13,4 +13,8 @@ fn exact_package_chat_test_is_wired_into_the_windows_package_gate() {
     assert!(script.contains("$editPattern.Current.Value -ne $env:AC_CHAT_QUESTION"));
     assert!(script.contains("CHAT_CONTROL_DIAGNOSTIC"));
     assert!(script.contains("CHAT_CONTROL:"));
+    assert!(script.contains("CHAT_WINDOW:"));
+    assert!(script.contains("CHAT_DESKTOP_WINDOW:"));
+    assert!(package_test.contains("Stdio::piped()"));
+    assert!(package_test.contains("stderr_report"));
 }

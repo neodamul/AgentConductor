@@ -55,6 +55,6 @@
     "macos_job": 122594711994,
     "windows_result": "The persisted/reopen scenario passed. The in-flight scenario failed before sending with NO_CHAT_LAUNCHER while both coordinator scenarios were running concurrently in one test binary.",
     "macos_result": "Build, manual render, and package execution passed; artifact upload failed with ENOTFOUND.",
-    "follow_up": "Serialize the exact Windows UI test binary with --test-threads=1 and rerun. Preserve bounded CHAT_CONTROL launcher-tree diagnostics. Rerun macOS packaging after the workflow is terminal to retain its artifact."
+    "follow_up": "Serialize the exact Windows UI test binary with --test-threads=1 and rerun. Preserve bounded CHAT_WINDOW/CHAT_DESKTOP_WINDOW/CHAT_CONTROL launcher-tree diagnostics and packaged-process stderr. Rerun macOS packaging after the workflow is terminal to retain its artifact."
   }
 }
