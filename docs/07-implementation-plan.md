@@ -2198,3 +2198,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: every example is accepted or rejected as expected by a draft 2020-12 validator (run locally with python `jsonschema`; no Rust checker exists yet); the minimal CLI's output validates.
 - [x] Review: the user answered the open questions on 2026-10-28 (decisions in §14: bidirectional in v1, per-agent settings for in-house CLIs, coordinator sets `task.type`, roles table shows effort and fit).
 - [ ] Next: implementation phases 1 to 6 of the document, each as its own issue and PR.
+
+### acio 1/6: schemas in the binary, checker, io commands — GitHub #207
+
+- [x] Plan: R-183 to DD-195 (design PR #206); this step is phase 1 of `docs/cli-io-protocol.md` §13.
+- [x] Red: `tests/cli_io.rs` did not compile before `src/cli_io.rs` existed.
+- [x] Task: `src/cli_io.rs` (embedded schemas, `validate`), `src/cli_io/{check,pattern,timestamp,stream}.rs` (JSON Schema subset checker, regex subset, RFC 3339, stream rules), `src/commands/io.rs` (`io schema|validate`), manual command rows, CHANGELOG.
+- [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure.
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge after the design PR #206 (this branch is stacked on it).
+

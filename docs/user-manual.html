@@ -176,6 +176,8 @@
 <h3>2.8 Diagnostics</h3>
 <div class="manual-table"><table><thead><tr><th>Command</th><th>Purpose</th></tr></thead><tbody>
 <tr><td><code>agentconductor normalize &lt;claude|codex|opencode|custom&gt; &lt;stdout.jsonl&gt;</code></td><td>Normalize a CLI&#x27;s JSONL output into events.</td></tr>
+<tr><td><code>agentconductor io schema &lt;input|event|describe|control|agent&gt;</code></td><td>Print an acio schema (the CLI I/O protocol, <code>docs/cli-io-protocol.md</code>).</td></tr>
+<tr><td><code>agentconductor io validate &lt;kind&gt; &lt;file|-&gt; [--coordinator]</code></td><td>Check a document (<code>input</code>, <code>describe</code>, <code>agent</code>, <code>control</code>, <code>event</code>) or a captured stream (<code>events</code>, <code>controls</code>) against the schemas and the stream rules.</td></tr>
 </tbody></table></div>
 <h2>Part 3 — Validation and troubleshooting</h2>
 <p>The packaged native executable is checked on macOS and Windows using deterministic offline workers, including Git/ordinary-folder projects, shared/worktree execution and refused unapproved integration. This does not establish acceptance of your company&#x27;s agent, Enterprise account or live messenger.</p>
