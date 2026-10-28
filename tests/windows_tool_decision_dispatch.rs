@@ -127,7 +127,20 @@ fn activation_waits_for_a_fresh_enabled_control_before_ui_input() {
     assert!(source.contains("function Find-CurrentButton($name)"));
     assert!(source.contains("function Wait-EnabledButton($name)"));
     assert!(source.contains("$button.Current.IsEnabled"));
-    assert!(activation.contains("Wait-EnabledButton $button.Current.Name"));
+    assert!(activation.contains("Wait-EnabledButton $name"));
+}
+
+#[test]
+fn activation_retries_when_a_running_snapshot_races_the_confirmation_click() {
+    let source = include_str!("support/windows_tool_decision_script.rs");
+    let activation = source
+        .split("function Activate($button")
+        .nth(1)
+        .expect("activation helper must be explicit");
+    assert!(activation.contains("for ($attempt = 0; $attempt -lt 3; $attempt++)"));
+    assert!(activation.contains("ACTION_RETRYING_AFTER_NO_STATE_CHANGE"));
+    assert!(activation.contains("Wait-EnabledButton $name"));
+    assert!(activation.contains("Ensure-ButtonInsideWindow $name"));
 }
 
 #[test]

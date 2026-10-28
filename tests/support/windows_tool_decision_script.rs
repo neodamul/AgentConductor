@@ -148,34 +148,42 @@ public static class ToolDecisionMouse {
 }
 "@
 function Activate($button, $expected, $visible) {
-  $button = Wait-EnabledButton $button.Current.Name
+  $name = $button.Current.Name
   $invokeError = $null
-  try { $button.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke() }
-  catch { $invokeError = $_.Exception.Message }
-  $until = (Get-Date).AddSeconds(2)
-  while ((Get-Date) -lt $until) {
-    if (($null -ne (Find-Button $expected)) -eq $visible) {
-      Write-Output "ACTION_STATE_CONFIRMED_AFTER_UIA: expected=$expected visible=$visible"
-      return
+  for ($attempt = 0; $attempt -lt 3; $attempt++) {
+    $button = Wait-EnabledButton $name
+    if ($attempt -eq 0) {
+      try { $button.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke() }
+      catch { $invokeError = $_.Exception.Message }
+      $until = (Get-Date).AddMilliseconds(300)
+      while ((Get-Date) -lt $until) {
+        if (($null -ne (Find-Button $expected)) -eq $visible) {
+          Write-Output "ACTION_STATE_CONFIRMED_AFTER_UIA: expected=$expected visible=$visible"
+          return
+        }
+        Start-Sleep -Milliseconds 50
+      }
+      Write-Output "ACTION_INVOKE_NO_STATE_CHANGE: name=$name expected=$expected visible=$visible invokeError=$invokeError"
     }
-    Start-Sleep -Milliseconds 100
-  }
-  Write-Output "ACTION_INVOKE_NO_STATE_CHANGE: name=$($button.Current.Name) expected=$expected visible=$visible invokeError=$invokeError"
-  $button = Ensure-ButtonInsideWindow $button.Current.Name
-  $bounds = $button.Current.BoundingRectangle
-  $x = [int]($bounds.Left + $bounds.Width / 2)
-  $y = [int]($bounds.Top + $bounds.Height / 2)
-  $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
-  $clickFailure = [ToolDecisionMouse]::Click($hwnd, $x, $y, [uint32]$targetPid)
-  if ($clickFailure) { throw "CHECKED_POINTER_CLICK_FAILED: $clickFailure" }
-  Write-Output "ACTION_POINTER_CLICKED: name=$($button.Current.Name) x=$x y=$y"
-  $until = (Get-Date).AddSeconds(2)
-  while ((Get-Date) -lt $until) {
-    if (($null -ne (Find-Button $expected)) -eq $visible) {
-      Write-Output "ACTION_STATE_CONFIRMED_AFTER_POINTER: expected=$expected visible=$visible"
-      return
+    $button = Ensure-ButtonInsideWindow $name
+    $button = Wait-EnabledButton $name
+    if (($null -ne (Find-Button $expected)) -eq $visible) { return }
+    $bounds = $button.Current.BoundingRectangle
+    $x = [int]($bounds.Left + $bounds.Width / 2)
+    $y = [int]($bounds.Top + $bounds.Height / 2)
+    $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
+    $clickFailure = [ToolDecisionMouse]::Click($hwnd, $x, $y, [uint32]$targetPid)
+    if ($clickFailure) { throw "CHECKED_POINTER_CLICK_FAILED: $clickFailure" }
+    Write-Output "ACTION_POINTER_CLICKED: name=$name x=$x y=$y attempt=$attempt"
+    $until = (Get-Date).AddMilliseconds(500)
+    while ((Get-Date) -lt $until) {
+      if (($null -ne (Find-Button $expected)) -eq $visible) {
+        Write-Output "ACTION_STATE_CONFIRMED_AFTER_POINTER: expected=$expected visible=$visible"
+        return
+      }
+      Start-Sleep -Milliseconds 50
     }
-    Start-Sleep -Milliseconds 100
+    if ($attempt -lt 2) { Write-Output "ACTION_RETRYING_AFTER_NO_STATE_CHANGE: name=$name" }
   }
   throw "ACTION_STATE_NOT_VISIBLE_AFTER_POINTER: expected=$expected visible=$visible"
 }
