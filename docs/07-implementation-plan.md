@@ -6309,3 +6309,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify local: native chat/UI and Windows dispatch suites pass 13/13; warning-denied Clippy, rustfmt, diff, and 300-line checks pass.
 - [x] Task: add `exact_windows_package_recovers_a_late_answer_after_request_timeout`; the deterministic 5-second fixture keeps the accepted worker running after `AC_CHAT_WAIT=0`, then the reopened exact package must show the persisted late answer.
 - [ ] Verify Windows: exact packaged late-reply recovery remains coupled to the next Windows package run; no merge/close until both timeout and reopen evidence exists.
+
+### Diagnose the Windows briefing precondition before coordinator-chat verification — GitHub #189 / PR #192 / 2026-10-28
+
+- [x] Plan: keep the coordinator-chat product behavior unchanged and distinguish a Windows UI Automation driver failure from a chat persistence failure before interpreting package evidence.
+- [x] Red: exact package run [40633075185](https://github.com/neodamul/AgentConductor/actions/runs/40633075185) failed in `windows_briefing.rs:183` with `BRIEFING_UIA_INVOKE_FAILED` and `NO_BRIEFING_RESULT`; the coordinator-chat cases did not run.
+- [x] Task: add explicit driver markers for pointer rejection, pointer delivery, and immediate menu visibility after the UIA fallback; add a source-contract regression without weakening the product or package assertions.
+- [x] Local Verify: commit `b2da0d8e` passes `cargo fmt --all`, `cargo test --locked --offline --test windows_briefing_dispatch --test source_layout -- --nocapture` (4 passed), `git diff --check`, and the 300-line check (`windows_briefing.rs` 200 lines; dispatch 38 lines).
+- [ ] Exact-package Verify: workflow dispatch [40637940299](https://github.com/neodamul/AgentConductor/actions/runs/40637940299) is currently platform validation only; require a package run that passes briefing before evaluating the persisted-reopen, in-flight reconnect, and late-answer chat cases.
+- [ ] Complete: do not merge or close #189 until the exact Windows package executes and passes all three coordinator-chat scenarios.
