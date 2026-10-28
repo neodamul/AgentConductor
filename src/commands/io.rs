@@ -9,6 +9,9 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
         [io, command, executable] if io == "io" && command == "describe" => {
             Some(describe(executable))
         }
+        [io, command, executable] if io == "io" && command == "conformance" => {
+            Some(conformance(executable))
+        }
         [io, command, kind, source, rest @ ..] if io == "io" && command == "validate" => {
             Some(validate(kind, source, rest))
         }
@@ -56,4 +59,26 @@ fn describe(executable: &str) -> Result<(), String> {
     ))?;
     println!("{document}");
     Ok(())
+}
+
+/// Runs the conformance checks against `<executable>` and prints the table; any failure is an error.
+fn conformance(executable: &str) -> Result<(), String> {
+    use agentconductor::cli_io::conformance::{Options, run};
+    let runtime = tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .map_err(|e| e.to_string())?;
+    let report = runtime.block_on(run(
+        std::path::Path::new(executable),
+        &Options {
+            describe_timeout: std::time::Duration::from_secs(5),
+            run_timeout: std::time::Duration::from_secs(60),
+        },
+    ));
+    println!("{report}");
+    if report.passed() {
+        Ok(())
+    } else {
+        Err("conformance failed".into())
+    }
 }
