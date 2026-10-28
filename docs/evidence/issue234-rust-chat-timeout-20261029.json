@@ -1,0 +1,49 @@
+{
+  "issue": 234,
+  "branch": "codex/issue-234-chat-request-timeout",
+  "base": "86ea3c3ddccdb3f43d5ef9677127534997d8c634",
+  "red": {
+    "command": "cargo test --locked --offline --test startup_chat chat_submission_does_not_wait_for_repository_head -- --nocapture",
+    "result": "failed",
+    "evidence": "The 20-second Git wrapper delayed dispatch and the request returned a stale-revision error after 20.42 seconds."
+  },
+  "green": [
+    {
+      "command": "cargo test --locked --offline --test startup_chat -- --nocapture",
+      "result": "2 passed"
+    },
+    {
+      "command": "cargo test --locked --offline --test chat_prompt -- --nocapture",
+      "result": "5 passed"
+    },
+    {
+      "command": "cargo test --locked --offline --test source_layout -- --nocapture",
+      "result": "2 passed"
+    },
+    {
+      "command": "cargo test --locked --offline --test request_diagnostics -- --nocapture",
+      "result": "1 passed"
+    },
+    {
+      "command": "cargo test --locked --offline --test startup -- --nocapture",
+      "result": "3 passed"
+    },
+    {
+      "command": "cargo clippy --locked --offline --all-targets -- -D warnings",
+      "result": "no issues"
+    },
+    {
+      "command": "cargo fmt --all -- --check && git diff --check",
+      "result": "passed"
+    }
+  ],
+  "broad_check": {
+    "command": "cargo test --locked --offline --all-targets --no-fail-fast",
+    "result": "stopped after 818 passed and 14 ignored across 256 suites in 139.16 seconds; no failures were reported before stopping",
+    "complete": false
+  },
+  "remaining": [
+    "Exact packaged macOS and Windows verification",
+    "User request-diagnostics.log start kind=chat and done kind=chat ms=... lines"
+  ]
+}

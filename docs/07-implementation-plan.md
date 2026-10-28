@@ -6260,3 +6260,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: candidate-driver, briefing-driver, and source-layout suites pass 9 tests; formatting, diff checks, and 300-line limits pass. The embedded PowerShell and its contract tests are 181 and 98 lines.
 - [ ] Verify exact package: require Windows to confirm approve, merge, and reject outcomes and persisted Git/run state; the source-level change does not count as package acceptance.
 - [ ] Complete: keep issue #9 at 22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate until exact package evidence passes.
+
+### Rust coordinator chat request timeout — issue #234
+
+- [x] Plan: inspect the Rust `RequestWorker → Room::dispatch → Startup::dispatch → launch_chat` path and compare the unresolved report with the main-line request-diagnostics behavior.
+- [x] Red: `tests/startup_chat.rs::chat_submission_does_not_wait_for_repository_head` failed in 20.42 seconds because the chat dispatch reached the synchronous Git `rev-parse HEAD` path and returned a stale-revision error.
+- [x] Task: route non-mutating chat requests before metadata settlement and mutation revision checks; retain job/live-process gates, pass the request revision only to the accepted-job audit record, and add bounded native request diagnostics.
+- [x] Green: the focused startup-chat suite passes 2/2; the diagnostics unit regression passes 1/1. The 20-second Git wrapper no longer delays chat acceptance.
+- [ ] Verify: run the Rust source/layout/fmt/Clippy checks and exact packaged macOS/Windows request path. Obtain the affected user's `~/.agentconductor/request-diagnostics.log` `start kind=chat` and `done kind=chat ms=...` lines to distinguish native dispatch delay from an external coordinator delay.
+- [ ] Complete: keep issue #234 and its PR open until the cross-platform package evidence and user-side diagnostics are reviewed.

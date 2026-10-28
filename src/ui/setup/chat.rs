@@ -6,6 +6,7 @@ impl Startup {
         &self,
         saved: &mut Saved,
         turns: Vec<crate::chat::Turn>,
+        revision: String,
     ) -> Result<serde_json::Value, String> {
         clear_previous_chat_artifacts(&self.broker.dir)?;
         let language = if crate::ui::language::load() == "ko" {
@@ -23,10 +24,11 @@ impl Startup {
                 .map_err(|e| e.to_string())?,
         )?;
         saved.chat_result = Some(format!("chat-{id}.json"));
-        self.launch(
+        self.launch_with_revision(
             saved,
             "chat",
             vec!["chat".into(), self.broker.dir.to_string_lossy().into(), id],
+            revision,
         )
     }
 

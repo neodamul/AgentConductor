@@ -16,3 +16,22 @@ The coordinator invocation uses `coordinator::read_only_args`, which verifies th
 - `docs/user-manual.md`, `docs/user-manual.ko.md`: operator-facing limits and usage.
 
 Packaged macOS/Windows UI interaction remains unverified; this feature does not increase the accepted workflow count until the exact packages are reviewed.
+
+## Request-timeout handling (#234)
+
+The native Rust request worker keeps the UI responsive for coordinator chat by taking a
+read-only fast path. It checks the existing job and retained process ownership, then starts
+the chat worker without running the Git `HEAD` lookup used by mutation revision guards. The
+request revision is retained in the audit record, but chat does not mutate the reviewed
+workspace and therefore does not reject a send because a repository lookup is slow.
+
+`Room::dispatch` writes bounded timing evidence to
+`~/.agentconductor/request-diagnostics.log`: every chat request has `start` and `done` lines;
+other requests are recorded only when they take at least one second. A client timeout notice
+can be recorded without changing the request result. The log contains request kind, byte size,
+elapsed time, success, and a bounded error—not prompt contents—and rotates at 256 KiB.
+
+The focused regression uses a Git wrapper that sleeps for 20 seconds on `rev-parse HEAD`; the
+chat request must still be accepted in under two seconds. Exact packaged Windows/macOS
+behavior and the user's failing `start kind=chat` / `done kind=chat ms=...` evidence remain
+separate verification gates.

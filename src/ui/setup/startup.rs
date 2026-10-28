@@ -186,6 +186,16 @@ impl Startup {
         operation: &str,
         args: Vec<String>,
     ) -> Result<serde_json::Value, String> {
+        let revision = self.revision(s)?;
+        self.launch_with_revision(s, operation, args, revision)
+    }
+    pub(super) fn launch_with_revision(
+        &self,
+        s: &mut Saved,
+        operation: &str,
+        args: Vec<String>,
+        revision: String,
+    ) -> Result<serde_json::Value, String> {
         let mut slot = self
             .broker
             .job
@@ -196,7 +206,7 @@ impl Startup {
         }
         let result = self
             .broker
-            .launch_locked(operation, &args, &self.revision(s)?, &mut slot)?;
+            .launch_locked(operation, &args, &revision, &mut slot)?;
         s.job = Some(StoredJob {
             id: result["id"]
                 .as_str()

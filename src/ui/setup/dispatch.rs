@@ -15,6 +15,18 @@ impl Startup {
             .saved
             .lock()
             .map_err(|_| crate::ui::messages::text("native.startup_settings_poisoned"))?;
+        if let Request::Chat { revision, turns } = request {
+            // Chat is read-only. Do not make a conversational send wait for the Git HEAD
+            // lookup used by mutation revision guards; the revision is retained for audit.
+            let job = self.job(&saved)?;
+            if job["state"] == "running" {
+                return Err(
+                    crate::ui::messages::text("native.startup_operation_still_running").into(),
+                );
+            }
+            self.ensure_no_live_jobs()?;
+            return self.launch_chat(&mut saved, turns, revision);
+        }
         if matches!(request, Request::StopPlanning {}) {
             return self.stop_planning(&mut saved);
         }
