@@ -167,3 +167,6 @@ The coordinator chat (DD-171) already runs a read-only coordinator as a bounded 
 
 ### Driver DDR-38 JSON Lines over JSON-RPC for v1
 Bidirectional control is needed, but plain control lines with acks need no request/response framing, so a shell-level CLI can implement them; JSON-RPC would add id correlation and a transport for no extra capability here. A schema per message keeps both directions checkable. Not evaluated against every agent-client protocol in depth. Trace: QAS-181.
+
+### Driver DDR-39 Distinguish observation from operator action
+An automatic snapshot and an explicit user action share the request bridge but have different feedback requirements. Mark only scheduled and visibility-resume polls as background, and pause the same request deadline while the document is hidden instead of adding a second transport or retry policy. Trace: QAS-182.

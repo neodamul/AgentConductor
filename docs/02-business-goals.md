@@ -557,3 +557,7 @@ Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193.
 ### BG-138 Any agent CLI can join
 Adding an in-house or new agent CLI needs a documented contract and a checker, not a reading of our adapters.
 Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.
+
+### BG-139 Idle supervision does not alarm without operator action
+The application continues observing local state without telling the operator that an idle poll failed during page suspension or ordinary backgrounding.
+Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → DDR-39 → DD-196. GitHub #221, user, 2026-10-28.

@@ -5,10 +5,10 @@ const source=fs.readFileSync('src/ui/startup.js','utf8'),room=fs.readFileSync('s
 const notices=[];
 const context={notice:(text,error)=>notices.push({text,error}),acMessage:key=>key};
 vm.createContext(context);
-const a=source.indexOf('let pollFailures'),b=source.indexOf('/*poll-failed-end*/');
+const a=source.indexOf('let pollFailures'),b=source.indexOf('\n',a);
 assert(a>=0&&b>a,'startup.js defines pollFailed');
 vm.runInContext(source.slice(a,b),context);
-const fail=()=>vm.runInContext('pollFailed(Object.assign(new Error("Request timed out (snapshot)"),{transport:true}))',context);
+const fail=()=>vm.runInContext('pollFailed(Object.assign(new Error("Request timed out (snapshot)"),{transport:true}),true)',context);
 fail();fail();
 assert.equal(notices.length,0,'one or two missed polls are retried silently');
 fail();
@@ -17,14 +17,16 @@ assert.equal(notices[0].error,true);
 vm.runInContext('pollSucceeded()',context);
 fail();fail();
 assert.equal(notices.length,1,'a success starts the count again');
-vm.runInContext('pollFailed(new Error("a real error"))',context);
-assert.equal(notices.length,2,'an error that is not a missed reply shows at once');
-assert(room.includes('pollFailed(e)')&&room.includes('pollSucceeded()'),'the Agent Room poll follows the same rule');
+vm.runInContext('pollFailed(Object.assign(new Error("Request timed out (snapshot)"),{transport:true}),false)',context);
+assert.equal(notices.length,2,'an explicit refresh timeout is shown immediately');
+vm.runInContext('pollFailed(new Error("a real error"),true)',context);
+assert.equal(notices.length,3,'an error that is not a missed reply shows at once');
+assert(room.includes('pollFailed(e,background)')&&room.includes('pollSucceeded()'),'the Agent Room poll follows the same rule');
 
 (async()=>{
   const sent=[];
   const w={__acRequest:async text=>{const packet=JSON.parse(text);sent.push(packet);return packet.kind==='client_timeout'?'{}':new Promise(()=>{});}};
-  const ctx={window:w,acMessage:(key,args)=>key+(args?args.value1:''),document:{hidden:false},setTimeout,clearTimeout,Date,JSON,Error,Promise};
+  const ctx={window:w,acMessage:(key,args)=>key+(args?args.value1:''),document:{hidden:false,addEventListener(){},removeEventListener(){}},performance,setTimeout,clearTimeout,Date,JSON,Error,Promise};
   vm.createContext(ctx);
   const s=source.indexOf('async function request('),e=source.indexOf('\n',s);
   vm.runInContext(source.slice(s,e),ctx);

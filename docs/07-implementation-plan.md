@@ -2253,12 +2253,18 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify (Windows): CI (the conformance tests are Unix-only because they use shell scripts).
 - [ ] Complete: merge into `main` after #217 (stacked); then the v0.1.40 release.
 
-### Idle "Request timed out" toast — GitHub #221
+### #221 Quiet idle-poll timeouts and pause deadlines while hidden
 
-- [x] Plan: user report 2026-10-28 on another PC (after a coordinator chat, an update and deleting an unused workspace, with nothing running): the toast appears while idle. The log shows no slow native request, so the page timer fired; the cause is not yet known (suspended page, lost reply). Fix the symptom and make the cause observable: background polls retry quietly (toast on the third consecutive miss), and the page reports each timeout to the log.
-- [x] Red: `tests/poll_failure_runtime.cjs` and two tests in `tests/request_diagnostics.rs` failed before the change.
-- [x] Task: `pollFailed`/`pollSucceeded` in `src/ui/startup.js` and `src/ui/room.js`; `client_timeout` report from both `request` functions; `diagnostics::client_timeout`; manual "Page-side timeouts" paragraph (EN/KO); CHANGELOG.
-- [ ] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite, node tests. Not verified: the real cause on the reporting PC.
-- [ ] Verify (Windows): CI.
-- [ ] Complete: merge, then read the reporting PC's `client-timeout` lines to find the cause; keep #221 open until then.
+- [x] Plan: issue branch `221-idle-workspace-timeout-toast` from current `main`; trace R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → DDR-39 → DD-196.
+- [x] Red: `tests/idle_poll_timeout_runtime.cjs` and `tests/test_idle_poll_timeout.py` fail before the bridge pauses request deadlines while hidden.
+- [x] Task: mark scheduled and visibility-resume workspace/room polls as background; suppress only their timeout toasts; pause visible-time deadlines in both request bridges and restart materially late timer callbacks without retrying the request.
+- [x] Verify: deterministic timer regression covers startup and room deadlines, long hidden intervals, late timer restart, listener cleanup, background-poll silence, and visible errors on explicit refresh.
+- [x] Verify: the full Python suite passes 39 tests, focused Node regression passes, both UI scripts pass `node --check`, `git diff --check` passes, and Cargo `public_docs` + `source_layout` pass 4 tests.
+- [ ] Task: commit and push the issue branch; open draft PR with `Fixes #221`.
+- [ ] Complete: merge the verified issue PR into `main`, then port the behavior and native Rust regression coverage to the Rust migration branch.
 
+### #221 Follow-up diagnostics and quiet retries
+
+- [x] Task: report page-side timeout duration to the local diagnostics log, and show a transport timeout only after three consecutive misses on scheduled background polls. Explicit refresh and non-timeout errors remain visible immediately.
+- [x] Verify: `tests/poll_failure_runtime.cjs` covers retry threshold, reset after success, immediate non-timeout errors, and timeout diagnostics from both UI entrypoints.
+- [ ] Verify: rerun exact macOS and Windows CI/package checks after resolving the PR conflict.

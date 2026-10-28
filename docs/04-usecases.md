@@ -732,3 +732,7 @@ Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193.
 ### UC-174 An owner connects an in-house agent CLI
 The owner reads the contract, makes the CLI print `--acio-describe`, validates a captured run with the checker and registers the CLI by path; the plan then gives classification tasks a fast model with examples and implementation tasks a high-effort model with completion tests.
 Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.
+
+### UC-175 Continue observing after background or suspension
+With a workspace or Agent Room idle, snapshots continue at the configured cadence. If the page is hidden, the active timeout budget pauses. When it becomes visible, polling resumes without an immediate stale-timeout toast. A user-triggered refresh still reports a real timeout.
+Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → DDR-39 → DD-196. GitHub #221, user, 2026-10-28.

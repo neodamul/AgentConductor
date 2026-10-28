@@ -23,10 +23,10 @@ async function request(packet) {
   const bridge=window.webkit?.messageHandlers?.agentconductor??(window.__acRequest?{postMessage:window.__acRequest}:null);
   if(!bridge)throw Error(acMessage("startup.native_bridge_unavailable"));
   // A timed-out mutation remains accepted. Never automatically retry it.
-  let timer;const began=Date.now();
+  let timer,visibility,remaining=15000,started=0;const began=Date.now();
   // Agent Room requests are marked so the workspace page can stay open beside the room.
-  try {return JSON.parse(await Promise.race([bridge.postMessage(JSON.stringify({...packet,room:true})),new Promise((_,reject)=>{timer=setTimeout(()=>{/* GitHub #221: tell the native side we gave up (see startup.js). */try{Promise.resolve(bridge.postMessage(JSON.stringify({kind:'client_timeout',of:packet.kind,waited:Date.now()-began,hidden:document.hidden,room:true}))).catch(()=>{});}catch(_){}reject(Object.assign(Error(acMessage("startup.native_response_timed_out_refresh_before_retrying",{value1:packet.kind})),{transport:true}));},15000);})]));}
-  finally {clearTimeout(timer);}
+  try {return JSON.parse(await Promise.race([bridge.postMessage(JSON.stringify({...packet,room:true})),new Promise((_,reject)=>{const resume=()=>{if(timer||document.hidden)return;started=performance.now();const deadline=started+remaining,grace=3750;timer=setTimeout(()=>{timer=null;if(document.hidden||performance.now()-deadline>grace){remaining=15000;resume();return;}try{Promise.resolve(bridge.postMessage(JSON.stringify({kind:'client_timeout',of:packet.kind,waited:Date.now()-began,hidden:document.hidden,room:true}))).catch(()=>{});}catch(_){}reject(Object.assign(Error(acMessage("startup.native_response_timed_out_refresh_before_retrying",{value1:packet.kind})),{transport:true}));},remaining);};const pause=()=>{if(!timer)return;clearTimeout(timer);timer=null;remaining=Math.max(1,remaining-(performance.now()-started));};visibility=()=>document.hidden?pause():resume();document.addEventListener('visibilitychange',visibility);resume();})]));}
+  finally {clearTimeout(timer);if(visibility)document.removeEventListener('visibilitychange',visibility);}
 }
 
 function busy() { return snapshot?.job?.state==='running'; }
@@ -448,9 +448,8 @@ $('tool-dialog-allow').onclick=()=>decideTool('tool_approve');$('tool-dialog-den
 $('tool-dialog-later').onclick=()=>$('tool-dialog').close();
 $('tool-dialog').onclose=()=>{if(toolDialog)deferredTools.add(toolDialog.id);toolDialog=null;};
 function autoQuotaRefresh(){if(roomStopped||!snapshot||busy()||snapshot.report.state==='running')return;const agent=snapshot.report.plan.agents.find(a=>['claude','codex'].includes(a.parser)&&snapshot.quota_refresh_due?.[a.id]);if(agent)refreshQuota(agent.id);}
-// GitHub #221: a missed background poll is retried; only the third miss in a row is shown. Other errors show at once.
-let pollFailures=0;function pollFailed(e){if(!e.transport||++pollFailures>=3){AC_I18N.bind($('connection'),()=>(acMessage("room.local_connection_unavailable")));notice(e.message,true);}}function pollSucceeded(){pollFailures=0;}
-async function poll() {
+let pollFailures=0;function pollFailed(e,background){if(!e.transport||!background||++pollFailures>=3){AC_I18N.bind($('connection'),()=>(acMessage("room.local_connection_unavailable")));notice(e.message,true);}}function pollSucceeded(){pollFailures=0;}
+async function poll(background=false) {
   if(polling||roomStopped)return;polling=true;
   try{const kinds=JSON.stringify([...new Set((snapshot?.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());const next=await request({kind:'snapshot',quota_refresh_last:Object.fromEntries(quotaRefreshed),icons:!snapshot||kinds!==iconKinds});if(roomStopped)return;pollSucceeded();if(next.icons){iconCache=next.icons;iconKinds=JSON.stringify([...new Set((next.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());}const before=snapshot;snapshot=next;followProgress(before);const job=snapshot.job;
     if(job&&job.state!=='running'&&lastJob!==job.id&&job.kind!=='quota'){lastJob=job.id;
@@ -460,7 +459,7 @@ async function poll() {
       if(job.kind==='approve'&&review&&review.report.candidate?.commit===snapshot.report.candidate?.commit&&review.report.diff_hash===snapshot.report.diff_hash&&JSON.stringify(review.report.tests)===JSON.stringify(snapshot.report.tests))review.revision=snapshot.revision;
       for(const t of snapshot.report.tasks)if(t.feedback&&drafts.get(t.id)===t.feedback){drafts.delete(t.id);if(task()?.id===t.id&&!composing&&$('feedback').value===t.feedback)$('feedback').value='';}
     }}renderSnapshot();setTimeout(autoQuotaRefresh,0);await loadTask();
-  }catch(e){if(roomStopped)return;pollFailed(e);}finally{polling=false;}
+  }catch(e){if(roomStopped)return;pollFailed(e,background);}finally{polling=false;}
 }
 for(const el of document.querySelectorAll('[data-tab]'))el.onclick=()=>el.dataset.tab==='review'?loadReview():changeTab(el.dataset.tab);
 $('brief-team').onclick=briefTeam;$('quota-agent').onchange=()=>{quotaAgent=$('quota-agent').value;renderQuota(profile());};$('quota-refresh').onclick=()=>refreshQuota($('quota-agent').value);$('refresh').onclick=poll;$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('open-tools').onclick=()=>{deferredTools.clear();if(snapshot)syncToolDialog();if(!$('tool-dialog').open)$('tool-requests').scrollIntoView({behavior:'smooth',block:'center'});};
@@ -478,7 +477,7 @@ $('reject').onclick=async()=>{const revision=snapshot.revision;const reason=awai
 const roomShortcut=e=>{if((e.metaKey||e.ctrlKey)&&e.key==='Enter'&&!e.isComposing&&!composing&&!$('decision-dialog').open){e.preventDefault();if(!$('send-feedback').disabled)$('send-feedback').click();}};
 document.addEventListener('keydown',roomShortcut);
 // DD-71: 1 s while the run or an action is active, 5 s when idle, paused while hidden.
-let roomTimer=null,roomStopped=false;function roomSchedule(){clearTimeout(roomTimer);if(roomStopped||document.hidden)return;const fast=snapshot?.job?.state==='running'||['running','ready','waiting_availability'].includes(snapshot?.report?.state);roomTimer=setTimeout(async()=>{await poll();roomSchedule();},fast?1000:5000);}
-const roomVisibility=()=>{if(document.hidden)clearTimeout(roomTimer);else if(!roomStopped)poll().then(roomSchedule);};document.addEventListener('visibilitychange',roomVisibility);
+let roomTimer=null,roomStopped=false;function roomSchedule(){clearTimeout(roomTimer);if(roomStopped||document.hidden)return;const fast=snapshot?.job?.state==='running'||['running','ready','waiting_availability'].includes(snapshot?.report?.state);roomTimer=setTimeout(async()=>{await poll(true);roomSchedule();},fast?1000:5000);}
+const roomVisibility=()=>{if(document.hidden)clearTimeout(roomTimer);else if(!roomStopped)poll(true).then(roomSchedule);};document.addEventListener('visibilitychange',roomVisibility);
 const roomLanguage=()=>{if(!roomStopped&&snapshot){sessionStamp='';renderSnapshot();loadTask();if(review&&activeTab==='review')loadReview();}};document.addEventListener('ac-language-change',roomLanguage);
-poll().then(roomSchedule);window.stopRoom=()=>{roomStopped=true;clearTimeout(roomTimer);document.removeEventListener('visibilitychange',roomVisibility);document.removeEventListener('keydown',roomShortcut);document.removeEventListener('ac-language-change',roomLanguage);};
+poll(true).then(roomSchedule);window.stopRoom=()=>{roomStopped=true;clearTimeout(roomTimer);document.removeEventListener('visibilitychange',roomVisibility);document.removeEventListener('keydown',roomShortcut);document.removeEventListener('ac-language-change',roomLanguage);};

@@ -648,6 +648,10 @@ Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193.
 `input.schema.json`, `event.schema.json`, `describe.schema.json` and `control.schema.json` (draft 2020-12) under `schemas/cli-io/v1`; event envelope, eleven event types and `x-*` extensions; control lines `cancel`, `user_message` and `tool_decision` answered by `ack` events, with a decision timeout that denies; `seq` from 1, one terminal `result`, heartbeat, size limits; stderr is never control information; exit codes 0, 1, 2, 3, 69, 75, 124, 130 and 143 with the events taking precedence.
 Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.
 
+### FR-176 / NFR-75 Quiet automatic polling and suspension-aware deadlines
+Automatic snapshot polls in the workspace and Agent Room shall suppress timeout toasts while preserving visible connectivity status. Native request deadlines count active visible time, pause on `visibilitychange` to hidden, resume on visibility, and restart rather than fail immediately when the timeout callback is materially late. Operator-triggered refresh and action errors remain visible. Requests are never automatically retried.
+Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → DDR-39 → DD-196. GitHub #221, user, 2026-10-28.
+
 ### FR-172 Task types and per-model resolution
 `task.type` is one of `extract`, `summarize`, `analyze`, `code`, `agentic`, `creative`; the schema requires the fields each type needs. The effective model and effort are resolved from the operator's choice, the profile's execution options, the CLI's `task_defaults` and the built-in table, clamped to the model's `traits`, with `effort_unsupported` and `model_not_suited` warnings and the result echoed in `session.data.effective`. For every type the prompt is assembled as Document (materials, earlier turns), then Task (instruction, task conditions, current question), then Format (examples, response schema, report, language).
 Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.
