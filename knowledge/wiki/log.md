@@ -631,3 +631,7 @@ quota display amount now rounds finite numeric text to a whole number and leaves
 ## 2026-10-23 Feedback to the coordinator (#165)
 
 workflow::coordinator_request runs the recorded coordinator through the evidence review with the operator text, records queued, processing and completed or failed, and resumes only when it revised tasks; the coordinator-request broker command and Action::CoordinatorRequest (moved with Action into src/ui/controller/action.rs) carry it; the room enables the box in the coordinator view with a separate draft; the snapshot now names the recorded coordinator.
+
+## 2026-10-28 Quiet idle-poll timeouts (#221)
+
+Scheduled workspace and room polls are marked as background observation and suppress their own timeout toast. Shared page request deadlines pause while hidden, resume with remaining visible time, and restart when a callback is materially late after suspension. Explicit refreshes keep visible errors; no native request is automatically retried. Rust native parity and its regression test follow after the verified main issue branch is merged.

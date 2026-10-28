@@ -2252,3 +2252,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite, the Python and node tests.
 - [ ] Verify (Windows): CI (the conformance tests are Unix-only because they use shell scripts).
 - [ ] Complete: merge into `main` after #217 (stacked); then the v0.1.40 release.
+
+### #221 Quiet idle-poll timeouts and pause deadlines while hidden
+
+- [x] Plan: issue branch `221-idle-workspace-timeout-toast` from current `main`; trace R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → DDR-39 → DD-196.
+- [x] Red: `tests/idle_poll_timeout_runtime.cjs` and `tests/test_idle_poll_timeout.py` fail before the bridge pauses request deadlines while hidden.
+- [x] Task: mark scheduled and visibility-resume workspace/room polls as background; suppress only their timeout toasts; pause visible-time deadlines in both request bridges and restart materially late timer callbacks without retrying the request.
+- [x] Verify: deterministic timer regression covers startup and room deadlines, long hidden intervals, late timer restart, listener cleanup, background-poll silence, and visible errors on explicit refresh.
+- [x] Verify: the full Python suite passes 39 tests, focused Node regression passes, both UI scripts pass `node --check`, `git diff --check` passes, and Cargo `public_docs` + `source_layout` pass 4 tests.
+- [ ] Task: commit and push the issue branch; open draft PR with `Fixes #221`.
+- [ ] Complete: merge the verified issue PR into `main`, then port the behavior and native Rust regression coverage to the Rust migration branch.

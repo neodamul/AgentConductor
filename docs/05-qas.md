@@ -742,3 +742,7 @@ Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193.
 ### QAS-181 Examples are the contract
 Every file in `schemas/cli-io/v1/examples/valid` validates and every file in `examples/invalid` is rejected by its schema; the minimal CLI example produces a stream that validates; a `code` task without `verify`, an `extract` task without `response_schema` and a `summarize` task without materials are rejected; both shipped presets and the in-house example validate as `acio.agent/1`, and an unknown control encoding, a `replace_argv` resume without `argv` and an empty response-schema setting are rejected.
 Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.
+
+### QAS-182 A suspended page does not report a stale poll timeout
+Given an automatic workspace or room snapshot with no user action, a timeout produces no toast; given the page becomes hidden before the request deadline, time spent hidden is excluded and returning to the page does not immediately fail the request; after the remaining visible interval expires, the timeout is reported through the normal non-background path. An explicit refresh still shows its timeout. Tests use a deterministic clock and verify both page pollers and bridge cleanup.
+Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → DDR-39 → DD-196. GitHub #221, user, 2026-10-28.
