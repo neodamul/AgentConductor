@@ -5,6 +5,7 @@ fn exact_package_chat_test_is_wired_into_the_windows_package_gate() {
     assert!(package_test.contains("AGENTCONDUCTOR_DESKTOP_BINARY"));
     assert!(package_test.contains("chat_transcript"));
     assert!(package_test.contains("in-flight"));
+    assert!(package_test.contains("recovers_a_late_answer_after_request_timeout"));
     assert!(workflow.contains("--test windows_coordinator_chat"));
     assert!(workflow.contains("--test-threads=1"));
     let script = include_str!("support/windows_chat_script.rs");

@@ -190,6 +190,27 @@ fn prepare_workspace(name: &str, delay_ms: Option<u64>) -> (TestDirectory, PathB
     (TestDirectory(root.clone()), root)
 }
 
+fn send_without_wait(app: &mut RunningApp, question: &str) {
+    let driver = Command::new("powershell.exe")
+        .env("AC_DESKTOP_PID", app.0.id().to_string())
+        .env("AC_CHAT_MODE", "send")
+        // AC_CHAT_WAIT=0 models the UI request timeout boundary: the worker remains active.
+        .env("AC_CHAT_WAIT", "0")
+        .env("AC_CHAT_QUESTION", question)
+        .env("AC_CHAT_ANSWER", "PACKAGE_CHAT_ANSWER")
+        .args(["-NoProfile", "-NonInteractive", "-Command", script::SCRIPT])
+        .output()
+        .unwrap();
+    let report = String::from_utf8_lossy(&driver.stdout);
+    if !(driver.status.success() && report.contains("CHAT_SENT")) {
+        let child_stderr = app.stderr_report();
+        panic!(
+            "UI Automation send failed: stdout: {report}; stderr: {}; child stderr: {child_stderr}",
+            String::from_utf8_lossy(&driver.stderr)
+        );
+    }
+}
+
 #[test]
 #[ignore = "Runs only against the exact packaged binary."]
 fn exact_windows_package_persists_chat_after_workspace_reopen() {
@@ -210,23 +231,21 @@ fn exact_windows_package_reconnects_an_in_flight_chat_after_app_close() {
     let (_cleanup, root) = prepare_workspace("resume", Some(5000));
     let question = "Resume this answer";
     let mut app = launch(&root);
-    let driver = Command::new("powershell.exe")
-        .env("AC_DESKTOP_PID", app.0.id().to_string())
-        .env("AC_CHAT_MODE", "send")
-        .env("AC_CHAT_WAIT", "0")
-        .env("AC_CHAT_QUESTION", question)
-        .env("AC_CHAT_ANSWER", "PACKAGE_CHAT_ANSWER")
-        .args(["-NoProfile", "-NonInteractive", "-Command", script::SCRIPT])
-        .output()
-        .unwrap();
-    let report = String::from_utf8_lossy(&driver.stdout);
-    if !(driver.status.success() && report.contains("CHAT_SENT")) {
-        let child_stderr = app.stderr_report();
-        panic!(
-            "UI Automation send failed: stdout: {report}; stderr: {}; child stderr: {child_stderr}",
-            String::from_utf8_lossy(&driver.stderr)
-        );
-    }
+    send_without_wait(&mut app, question);
+    wait_for_running_chat(&root);
+    drop(app);
+    let mut reopened = launch(&root);
+    drive(&mut reopened, question, "verify");
+    wait_for_transcript(&root, question);
+}
+
+#[test]
+#[ignore = "Runs only against the exact packaged binary."]
+fn exact_windows_package_recovers_a_late_answer_after_request_timeout() {
+    let (_cleanup, root) = prepare_workspace("timeout", Some(5000));
+    let question = "Answer after timeout";
+    let mut app = launch(&root);
+    send_without_wait(&mut app, question);
     wait_for_running_chat(&root);
     drop(app);
     let mut reopened = launch(&root);

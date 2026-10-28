@@ -19,7 +19,8 @@
     "binary_source": "AGENTCONDUCTOR_DESKTOP_BINARY",
     "scenarios": [
       "persist transcript and show it after workspace reopen",
-      "reconnect a running chat worker after the first app process closes"
+      "reconnect a running chat worker after the first app process closes",
+      "recover a late answer after the UI request timeout boundary"
     ],
     "oracles": [
       "PowerShell UI Automation sees CHAT_VISIBLE, the operator question, and PACKAGE_CHAT_ANSWER",
@@ -66,6 +67,6 @@
       "only unaccepted requests restore the draft to the input"
     ],
     "local_regression": "native_workspace_chat, native_workspace_chat_interaction and windows_coordinator_chat_dispatch passed 13 tests; Clippy, rustfmt, diff and <=300-line checks passed",
-    "package_status": "exact Windows late-reply recovery remains unverified"
+    "package_status": "exact Windows late-reply recovery remains unverified; the next package run includes the timeout scenario"
   }
 }

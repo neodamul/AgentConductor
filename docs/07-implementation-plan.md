@@ -6307,4 +6307,5 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red/Green: add state regressions for a late start reply followed by a completed transcript and for restoring an unaccepted question; both pass after the recovery state is implemented.
 - [x] Task: retain the in-flight question until the native worker confirms acceptance, resync `running`/`completed` chat snapshots after `ChatStart` or `ChatRefresh` errors, and restore the draft only when no chat job was accepted.
 - [x] Verify local: native chat/UI and Windows dispatch suites pass 13/13; warning-denied Clippy, rustfmt, diff, and 300-line checks pass.
-- [ ] Verify Windows: exact packaged late-reply recovery remains coupled to the pending Windows package run; no merge/close until package evidence exists.
+- [x] Task: add `exact_windows_package_recovers_a_late_answer_after_request_timeout`; the deterministic 5-second fixture keeps the accepted worker running after `AC_CHAT_WAIT=0`, then the reopened exact package must show the persisted late answer.
+- [ ] Verify Windows: exact packaged late-reply recovery remains coupled to the next Windows package run; no merge/close until both timeout and reopen evidence exists.
