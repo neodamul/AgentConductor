@@ -2226,3 +2226,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify (Windows): CI.
 - [ ] Complete: merge into `main`. Not yet consumed: `options`, `response_schema`, `control` and `capabilities` settings (phases 4 and 5); Claude and Codex event decoding stays code.
 
+### acio 4/6: task types in plans, per-model resolution, review display — GitHub #210
+
+- [x] Plan: phase 4 of `docs/cli-io-protocol.md` §13 (FR-172 implemented as FR-174); decisions of 2026-10-28: the coordinator sets `task.type`, no operator control for now, the roles table shows efforts and fit.
+- [x] Red: `tests/task_types.rs` and `tests/task_profile_ui.rs` did not compile or failed before the code existed.
+- [x] Task: `plan::TaskType` and `Task.task_type`, planner schema and prompt, `src/task_profile.rs` (resolution and warnings), worker applies the result and records `task_profile`, snapshot `task_profiles`, page (task kind and effort, type kept on edit, model hint), messages EN/KO, manuals, CHANGELOG.
+- [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite, the Python and node tests report no failure.
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge into `main` after #215 (stacked). Not changed: `execution_options` are still dropped when the page rebuilds a task on edit (existing behavior); the native UI (Codex #9 track) does not show task kinds.
+

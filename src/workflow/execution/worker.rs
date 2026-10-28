@@ -58,7 +58,14 @@ pub(in crate::workflow) async fn worker(
         } else { prompt };
         fs::write(&prompt_file, &prompt).map_err(|e|e.to_string())?;
         let guarded=agent.permission_mode=="native_callback";
-        let args = if guarded {crate::native_guard::args(&agent,task.model.as_deref(),report.session_id.as_deref().ok_or("owned session missing")?,report.session_established)?}else{crate::adapters::session_args_with_options(&agent, task.model.as_deref(), report.session_id.as_deref(), prompt_file.to_str().ok_or("non-UTF8 prompt path")?, &task.execution_options)?};
+        // GitHub #210: model and effort follow the task type and what the model honors; the outcome is recorded as a fact.
+        let resolved = crate::task_profile::resolve(&agent, &task)?;
+        Store::open(report.artifacts.parent().unwrap().join("state.sqlite"))?.record(
+            "task_profile",
+            &serde_json::json!({"task":task.id,"resolved":resolved}),
+            &format!("Task {}: {:?} work, effort {}", task.id, resolved.task_type, resolved.options.get("effort").map_or("not set", String::as_str)),
+        )?;
+        let args = if guarded {crate::native_guard::args(&agent,resolved.model.as_deref(),report.session_id.as_deref().ok_or("owned session missing")?,report.session_established)?}else{crate::adapters::session_args_with_options(&agent, resolved.model.as_deref(), report.session_id.as_deref(), prompt_file.to_str().ok_or("non-UTF8 prompt path")?, &resolved.options)?};
         let args = if !report.cwd.join(".git").exists() && crate::folder::external_metadata(&report.cwd)?.is_some() {crate::adapters::direct_folder_args(agent.parser, args)?} else {args};
         let spec=ProcessSpec {executable:agent.executable.clone().into(),args,cwd:report.cwd.clone(),
             input:if agent.input_mode==InputMode::Stdin {prompt.into_bytes()} else {vec![]},log_dir:report.artifacts.join("process"),

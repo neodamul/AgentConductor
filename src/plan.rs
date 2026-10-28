@@ -25,6 +25,21 @@ pub struct Task {
     /// Operator-selected values for profile-declared argument groups.
     #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
     pub execution_options: std::collections::BTreeMap<String, String>,
+    /// GitHub #210: the kind of work, set by the coordinator; omitted when absent so older digests hold.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub task_type: Option<TaskType>,
+}
+
+/// The kinds of work a task can be; model, effort and prompt conditions are chosen per kind (docs/cli-io-protocol.md §2.1).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum TaskType {
+    Extract,
+    Summarize,
+    Analyze,
+    Code,
+    Agentic,
+    Creative,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

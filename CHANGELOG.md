@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Each plan task now has a kind chosen by the coordinator (classify or extract, summarize, analyze, code, long agent work, creative). The effort a task runs with follows your choice, then the agent's default for that kind, and is lowered with a warning when the model does not honor it; the review shows the kind and effort of every task and the roles table shows the efforts a model honors (GitHub #210).
+
 - What differs between the built-in agent CLIs (arguments, resume, model flags, full access, folder rules, capabilities) is now shipped preset data instead of code, and a profile can override session flags with `agent_settings`; the argument lists are unchanged (GitHub #209).
 
 - Agent profiles can set `protocol: acio` on a custom CLI: its events need no mapping tables, tool requests that need a decision wait for one (denied when none comes), the supervisor can send a user message and a cancel line while it runs, and `agentconductor io describe <exe>` registers a CLI from its `--acio-describe` document (GitHub #208).
