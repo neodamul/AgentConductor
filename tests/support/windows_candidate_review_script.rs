@@ -6,15 +6,22 @@ $A = [System.Windows.Automation.AutomationElement]
 $T = [System.Windows.Automation.TreeScope]
 $C = [System.Windows.Automation.Condition]::TrueCondition
 $deadline = (Get-Date).AddSeconds(60)
-$window = $null
-while (-not $window -and (Get-Date) -lt $deadline) {
-  $window = $A::RootElement.FindAll($T::Children, $C) | Where-Object {
+function Find-Window {
+  $A::RootElement.FindAll($T::Children, $C) | Where-Object {
     $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $_.Current.Name -like 'AgentConductor*'
   } | Select-Object -First 1
-  if (-not $window) { Start-Sleep -Milliseconds 250 }
 }
-if (-not $window) { Write-Output 'NO_WINDOW'; exit 2 }
-function Nodes { $window.FindAll($T::Descendants, $C) }
+$script:window = $null
+while (-not $script:window -and (Get-Date) -lt $deadline) {
+  $script:window = Find-Window
+  if (-not $script:window) { Start-Sleep -Milliseconds 250 }
+}
+if (-not $script:window) { Write-Output 'NO_WINDOW'; exit 2 }
+function Nodes {
+  $script:window = Find-Window
+  if (-not $script:window) { return }
+  $script:window.FindAll($T::Descendants, $C)
+}
 function Text-Content {
   $parts = @()
   foreach ($node in (Nodes)) {

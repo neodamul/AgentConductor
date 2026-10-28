@@ -1,0 +1,44 @@
+{
+  "issue": 9,
+  "workflow": 24,
+  "run": "https://github.com/neodamul/AgentConductor/actions/runs/40692521680",
+  "tested_head": "5a67a39fdf542b8d32481930c0ed17b61c0eb0be",
+  "platform_validation": {
+    "macos": "passed",
+    "windows": "passed"
+  },
+  "packaged_execution": {
+    "macos": "passed",
+    "windows": "failed",
+    "job_id": 122843130743,
+    "candidate_review": {
+      "result": "failed",
+      "failure": "TEXT_NOT_FOUND while waiting for the candidate SHA",
+      "observed_ui": [
+        "Waiting approval",
+        "Review candidate button present",
+        "candidate SHA and diff evidence absent from the captured UIA tree"
+      ]
+    }
+  },
+  "diagnosis": "The PowerShell driver retained the first AutomationElement window and searched its cached descendant tree after invoking Review candidate. The evidence-loading transition was therefore not observed by the driver.",
+  "change": "Find the top-level AgentConductor window again before every UIA descendant enumeration, including text and button lookups.",
+  "tdd": {
+    "red": "candidate_review_driver_rebinds_the_window_before_reading_controls failed before adding fresh-window lookup",
+    "green": "the regression passes after Nodes reacquires the window"
+  },
+  "local_verification": {
+    "command": "cargo test --locked --offline --test windows_desktop_driver --test source_layout; cargo fmt --all -- --check; git diff --check",
+    "result": "passed; 5 tests across 2 suites",
+    "line_counts": {
+      "tests/support/windows_candidate_review_script.rs": 110,
+      "tests/windows_desktop_driver.rs": 35
+    },
+    "line_limit": 300
+  },
+  "acceptance": {
+    "candidate_packaged_ui": "22/25; unchanged",
+    "shipped_rust_replacement": "0/25",
+    "next": "Run exact Windows packaged approval/merge and rejection journeys; do not credit workflow 24 until both persisted report state and Git repository assertions pass."
+  }
+}

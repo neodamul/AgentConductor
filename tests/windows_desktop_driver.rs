@@ -26,3 +26,10 @@ fn exact_package_includes_the_candidate_review_and_merge_journey() {
         "exact Windows package must read multiline diff text through UI Automation"
     );
 }
+
+#[test]
+fn candidate_review_driver_rebinds_the_window_before_reading_controls() {
+    let driver = include_str!("support/windows_candidate_review_script.rs");
+    assert!(driver.contains("function Find-Window"));
+    assert!(driver.contains("function Nodes {\n  $script:window = Find-Window"));
+}
