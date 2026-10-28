@@ -34,6 +34,10 @@ fn initial_snapshot_errors_stay_visible_and_scheduled_room_snapshots_are_backgro
     let mut probe = Probe::connect_view(room.clone(), egui::Context::default(), false).unwrap();
     assert!(matches!(probe.pending, Some(Pending::Refresh)));
     wait_for_reply(&mut probe);
+    probe.background_poll_failures = 2;
+    probe.refresh_workspace();
+    wait_for_reply(&mut probe);
+    assert_eq!(probe.background_poll_failures, 0);
     let mut initial_failure = Probe {
         pending: Some(Pending::Refresh),
         ..Probe::default()
@@ -58,6 +62,7 @@ fn initial_snapshot_errors_stay_visible_and_scheduled_room_snapshots_are_backgro
     assert!(matches!(probe.pending, Some(Pending::BackgroundRefresh)));
     wait_for_reply(&mut probe);
     assert!(probe.error.is_none());
+    assert_eq!(probe.background_poll_failures, 1);
     drop(probe);
     crate::native_ui_probe::worker_test_support::close(room);
     fs::remove_dir_all(root).unwrap();

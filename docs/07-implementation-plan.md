@@ -6288,4 +6288,16 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Package: run exact macOS/Windows package validation on the Rust PR head before merging it into the migration branch.
 - [x] Design: add R-177 → BG-132 → SF-165 → UC-168 → FR-163/NFR-73 → QAS-174 → DDR-37 → DD-188 and Wiki page `native-ui-poll-timeouts.md`.
 - [ ] Verify: refresh Graphify and record the current tool availability; CocoIndex is unavailable in this environment.
-- [ ] Complete: commit/push issue branch `codex/issue-221-rust-poll-timeout`, open draft PR targeting `codex/issue-9-native-ui-parity`, and keep #221 open until the Rust PR and exact package CI pass.
+- [ ] Complete: keep draft PR #228 targeting `codex/issue-9-native-ui-parity` and #221 open until exact-head platform/package CI and migration-branch integration pass.
+
+### Port main #225 scheduled-poll retry threshold to Rust — 2026-10-28
+
+- [x] Plan: compare merged main commits `2570dac8` and `d476b792` with PR #228; preserve the native no-request-deadline model and port only the scheduled snapshot retry threshold.
+- [x] Red: `scheduled_poll_failures_are_quiet_until_the_third_and_success_resets_the_count` failed because the native probe had no successful-poll reset state.
+- [x] Task: suppress the first two consecutive scheduled Agent Room snapshot errors, surface the third and later errors, and reset after any successful snapshot; explicit errors remain immediate.
+- [x] Verify focused: `cargo test --locked --offline --lib native_ui_probe::poll_timeout_tests` passes 4 tests; source layout passes 2; `cargo fmt --all -- --check` and `git diff --check` pass. Changed Rust files remain under 300 lines.
+- [x] Verify full: `rtk proxy cargo test --locked --offline --all-targets -- --nocapture` exits 0 on the synced branch; focused native probe tests pass 13/13, source layout passes 2/2, warning-denied Clippy including `clippy::undocumented_unsafe_blocks`, rustfmt check, and `git diff --check` pass. Changed Rust files remain below 300 lines.
+- [x] Knowledge: refreshed Graphify (9,799 nodes, 15,197 edges, 742 communities) and recorded that CocoIndex is unavailable.
+- [x] Exact-CI follow-up: run `40691748837` exposed a faulty success-reset fixture. The test injected two failures before polling an Agent Room with no active screen, so the expected background dispatch correctly failed. Reproduced locally, moved the reset assertion onto a successful Workspace refresh, and verified the scheduled no-active-screen failure is quiet at count one; focused 4/4, full all-target, Clippy, fmt and layout pass.
+- [ ] Verify package: run exact macOS/Windows validation and packaged-binary checks on the final PR head.
+- [ ] Complete: keep PR #228 draft and #221 open until the verified Rust port is merged into the migration branch.

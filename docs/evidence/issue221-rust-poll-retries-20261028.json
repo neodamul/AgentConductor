@@ -1,0 +1,40 @@
+{
+  "issue": 221,
+  "pull_request": 228,
+  "branch": "codex/issue-221-rust-poll-timeout",
+  "base_branch": "codex/issue-9-native-ui-parity",
+  "base_commit": "5a67a39f",
+  "javascript_source_commits": [
+    "2570dac8bcd0a0678dd5d4abf30029bd5a8eafe3",
+    "d476b7929f3ea024083434f2f09ade82f209d609"
+  ],
+  "behavior": {
+    "native_client_deadline": false,
+    "hidden_window_deadline_pause": "not applicable; the native worker has no page-side request deadline",
+    "scheduled_room_snapshot_failures": "first two consecutive failures stay quiet; third and later are visible until a successful snapshot resets the counter",
+    "initial_explicit_and_action_failures": "remain immediately visible",
+    "late_repaint": "at most one due snapshot is sent and the next monotonic deadline is rebased; no state-changing request is replayed",
+    "automatic_background_detail_and_coordinator_failures": "stay quiet",
+    "workspace_idle_poll": "none added"
+  },
+  "local_verification": {
+    "all_targets": "pass locally after correcting the test fixture: cargo test --locked --offline --all-targets -- --nocapture exited 0",
+    "native_probe": "pass locally: 13 tests",
+    "source_layout": "pass: 2 tests",
+    "clippy": "pass: cargo clippy --lib --bins --tests --locked --offline --features native-ui-probe -- -D warnings -D clippy::undocumented_unsafe_blocks",
+    "format": "pass: cargo fmt --all -- --check",
+    "diff_check": "pass: git diff --check",
+    "changed_rust_file_limit": "pass: all changed Rust files are below 300 lines"
+  },
+  "knowledge_tools": {
+    "graphify": "refreshed: 9799 nodes, 15197 edges, 742 communities",
+    "cocoindex": "unavailable: command is not installed"
+  },
+  "remote_validation": {
+    "failed_run": 40691748837,
+    "failure": "macOS lib test seeded two failures then issued a scheduled Agent Room refresh with no active screen; the Room correctly returned 'active screen unavailable', surfacing at the configured third-failure threshold",
+    "resolution": "moved success-reset assertion to a successful Workspace refresh and verified the scheduled no-active-screen error stays quiet at the first failure",
+    "local_retest": "focused native probe 13/13 and all-target suite pass; strict Clippy, fmt and source layout pass",
+    "new_exact_head_run": "pending after rebase to stable issue-9 head 5a67a39f"
+  }
+}
