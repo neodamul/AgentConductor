@@ -6350,3 +6350,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: update the contract to require `command` for Git/messenger, `background_command` for the UI controller, and no direct `std::process::Command::new` construction.
 - [x] Local Verify: native-window, lifecycle, and source-layout tests pass (6 total); rustfmt, diff check, warning-denied all-target Clippy, and the 300-line guard pass.
 - [ ] Exact-package Verify: rerun platform validation and the Windows packaged coordinator-chat scenarios on the new head.
+
+### Scope detached workers and recover denied breakaway creation — issue #189 / run 40651115200 / 2026-10-28
+
+- [x] Plan: inspect the complete Windows validation failure before accepting the detached-worker fix.
+- [x] Evidence: run `40651115200` failed 14 Windows targets with `Access is denied. (os error 5)` during temp/workspace cleanup, including `workspace_active` and `workspace_project_folder`; the failed targets also included MCP, metadata, native UI, planning, and startup suites. macOS validation passed.
+- [x] Red/Task: the unconditional `CREATE_BREAKAWAY_FROM_JOB` path was applied to every `Controller` operation, and Windows runners reject breakaway creation. Detached spawning is now selected only for `chat`; if Windows rejects breakaway with `PermissionDenied`, the chat worker retries with the existing no-console command path. Other UI operations retain their former subprocess semantics.
+- [x] Local Verify: lifecycle, native-window, and source-layout tests pass (6 total); rustfmt, diff check, warning-denied all-target Clippy, and the 300-line guard pass.
+- [ ] Exact-package Verify: rerun Windows platform validation and the packaged chat scenarios on the new head; require unrelated native targets to be green before package evidence is accepted.

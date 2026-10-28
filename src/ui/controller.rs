@@ -175,7 +175,13 @@ impl Controller {
             .write(true)
             .open(logs.join("stderr.log"))
             .map_err(|e| e.to_string())?;
-        let mut command = crate::subprocess::background_command(&self.exe);
+        let fallback_out = out.try_clone().map_err(|e| e.to_string())?;
+        let fallback_err = err.try_clone().map_err(|e| e.to_string())?;
+        let mut command = if label == "chat" {
+            crate::subprocess::background_command(&self.exe)
+        } else {
+            crate::subprocess::command(&self.exe)
+        };
         command
             .args(args)
             .stdin(Stdio::null())
@@ -190,6 +196,22 @@ impl Controller {
         record_owner(&logs, &owner)?;
         let child = match command.spawn() {
             Ok(child) => child,
+            Err(error)
+                if label == "chat" && error.kind() == std::io::ErrorKind::PermissionDenied =>
+            {
+                let mut fallback = crate::subprocess::command(&self.exe);
+                fallback
+                    .args(args)
+                    .stdin(Stdio::null())
+                    .stdout(Stdio::from(fallback_out))
+                    .stderr(Stdio::from(fallback_err));
+                #[cfg(unix)]
+                {
+                    use std::os::unix::process::CommandExt;
+                    fallback.process_group(0);
+                }
+                fallback.spawn().map_err(|e| e.to_string())?
+            }
             Err(e) => {
                 owner.phase = "not_spawned".into();
                 record_owner(&logs, &owner)?;

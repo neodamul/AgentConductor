@@ -26,6 +26,7 @@ fn windows_desktop_and_background_children_have_no_console_windows() {
     assert!(include_str!("../src/git.rs").contains("crate::subprocess::command("));
     assert!(include_str!("../src/messenger/send.rs").contains("crate::subprocess::command("));
     let controller = include_str!("../src/ui/controller.rs");
+    assert!(controller.contains("crate::subprocess::command("));
     assert!(controller.contains("crate::subprocess::background_command("));
     assert!(!controller.contains("std::process::Command::new("));
 }
