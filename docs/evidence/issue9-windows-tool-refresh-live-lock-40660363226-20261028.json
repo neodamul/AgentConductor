@@ -1,0 +1,65 @@
+{
+  "issue": 9,
+  "run_id": 40660363226,
+  "tested_head": "2fb4986bfa1c3d68026f75fbc67bd75464c60f8e",
+  "windows_package_job_id": 122733154534,
+  "macos_package_job_id": 122733154627,
+  "status": "windows_package_failed_tool_refresh_live_lock",
+  "platform_validation": {
+    "macos_job_id": 122721578810,
+    "macos": "passed",
+    "windows_job_id": 122721579327,
+    "windows": "passed"
+  },
+  "macos_exact_package": "passed",
+  "windows_exact_package": {
+    "build": "passed",
+    "release_binary_execution": "passed",
+    "briefing": "passed",
+    "workspace_save": "passed",
+    "schedule": "passed",
+    "signal_settings": "passed",
+    "tool_decision": "failed",
+    "failure": "tool receipt did not become superseded",
+    "coordinator_action": {
+      "owner": {
+        "coordinator_pid": 4320,
+        "pid": 6776,
+        "phase": "terminal",
+        "exit_code": 1,
+        "stopped": false,
+        "timed_out": false
+      },
+      "stderr": "agentconductor: lease is held: another owner holds the lock (...\\run\\coordinator.lock)",
+      "receipt_after_timeout": "pending",
+      "worker_report_state": "running"
+    }
+  },
+  "root_cause": "The active agent-room worker holds coordinator.lock. ToolRefresh fell through to a separate ui-action process, whose normal tool_refresh path requires the same lease and exited without changing the receipt.",
+  "fix": "Atomically enqueue a bounded refresh request and have the current coordinator process it while holding its existing lease. The coordinator advances and persists approval_epoch, re-verifies the workspace, and atomically supersedes the old receipt while creating a new pending receipt. Stale queue requests are rejected and epoch changes are rolled back when the old decision already changed.",
+  "local_tests": {
+    "suites": [
+      "live_tool_refresh",
+      "gates",
+      "windows_tool_decision_dispatch",
+      "native_ui_launch",
+      "source_layout",
+      "public_docs"
+    ],
+    "passed": 44,
+    "failed": 0
+  },
+  "full_locked_offline_all_targets": {
+    "passed": 1016,
+    "ignored": 14,
+    "suites": 334,
+    "exit_code": 0
+  },
+  "touched_source_and_test_file_line_limit": 300,
+  "exact_package_rerun": "pending",
+  "acceptance": {
+    "candidate_packaged_ui": "22/25",
+    "shipped_rust_replacement": "0/25",
+    "full_denominator": "22/50 (44%)"
+  }
+}

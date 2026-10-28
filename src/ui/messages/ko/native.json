@@ -8,6 +8,7 @@
   "native.agentconductor_agent_room": "AgentConductor · 에이전트 룸",
   "native.aliased_cache_retained": "별칭 캐시는 보존합니다",
   "native.another_ui_action_is_still_running": "다른 화면 작업이 진행 중입니다",
+  "native.tool_refresh_queued_for_active_coordinator": "실행 중인 조정자에게 도구 요청 갱신을 전달했습니다",
   "native.approve_the_exact_displayed_mcp_preview": "화면에 표시된 MCP 미리보기를 정확히 승인하세요",
   "native.approve_the_exact_reviewed_plan_digest": "검토한 계획의 정확한 해시를 승인하세요",
   "native.approvers_must_be_1_32_non_empty_ids": "승인자는 비어 있지 않은 ID 1~32개여야 합니다",

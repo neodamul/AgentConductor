@@ -123,6 +123,40 @@ fn no_implicit_approval_expiry_and_single_consumption_survive_reopen() {
 }
 
 #[test]
+fn refresh_atomically_supersedes_the_exact_receipt_and_creates_fresh_pending_permission() {
+    let (dir, mut ledger, context) = setup();
+    let old = ledger.request(&context, &request(), 100).unwrap();
+    let mut next_context = context.clone();
+    next_context.epoch += 1;
+
+    let fresh = ledger
+        .refresh(&old, &next_context, &request(), 101)
+        .unwrap();
+
+    assert_ne!(old, fresh);
+    assert_eq!(ledger.receipt(&old).unwrap().unwrap().status, "superseded");
+    let replacement = ledger.receipt(&fresh).unwrap().unwrap();
+    assert_eq!(replacement.status, "pending");
+    assert_eq!(replacement.context, next_context);
+    assert_eq!(ledger.requests().unwrap().len(), 2);
+    cleanup(dir);
+}
+
+#[test]
+fn refresh_rejects_a_decided_receipt_without_creating_a_replacement() {
+    let (dir, mut ledger, context) = setup();
+    let id = ledger.request(&context, &request(), 100).unwrap();
+    ledger.decide(&id, &id, false, &context, 101, 101).unwrap();
+    let mut next_context = context.clone();
+    next_context.epoch += 1;
+
+    assert!(ledger.refresh(&id, &next_context, &request(), 102).is_err());
+    assert_eq!(ledger.requests().unwrap().len(), 1);
+    assert_eq!(ledger.receipt(&id).unwrap().unwrap().status, "denied");
+    cleanup(dir);
+}
+
+#[test]
 fn changed_workspace_session_action_and_explicit_rejection_never_allow_execution() {
     let (dir, mut ledger, context) = setup();
     let id = ledger.request(&context, &request(), 100).unwrap();

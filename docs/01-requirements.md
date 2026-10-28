@@ -75,7 +75,7 @@ Agent/session lists show green, yellow or red status lights. Running sessions bl
 
 ### R-30 Live human tool decisions
 
-When a running worker requests a human-gated tool, it pauses before execution and waits for the operator's exact decision instead of terminating. Approval lets the same attempt run the identical input once; rejection refuses only that call and the worker continues. Decisions are possible from the native UI and CLI while the run is active. Stops, expiry and unanswered requests fall back to the stopped/waiting state with retained evidence. A resumed attempt must not require re-approving a regenerated variant of an already decided request.
+When a running worker requests a human-gated tool, it pauses before execution and waits for the operator's exact decision instead of terminating. Approval lets the same attempt run the identical input once; rejection refuses only that call and the worker continues. Decisions are possible from the native UI and CLI while the run is active. Stops, expiry and unanswered requests fall back to the stopped/waiting state with retained evidence. A normal resume preserves a decision for the same regenerated request when its exact identity and binding still match; it does not ask for approval again only because the CLI reconstructed that request. The explicit Refresh action is different: it revokes the exact old receipt, creates a fresh pending receipt through the coordinator holding the run lease, and requires the operator to review the replacement before execution.
 
 ### R-31 Planning with unverifiable company CLIs
 

@@ -1,5 +1,8 @@
 use super::*;
 
+mod live_refresh;
+pub use live_refresh::{apply_queued_tool_refresh, queue_live_tool_refresh};
+
 pub async fn tool_decide(dir: &Path, id: &str, allow: bool, lifetime: i64) -> Result<(), String> {
     if load(dir)?.state == "running" {
         return tool_decide_live(dir, id, allow, lifetime).await;
@@ -156,8 +159,7 @@ pub async fn tool_refresh(dir: &Path, id: &str) -> Result<String, String> {
         &std::env::current_exe().map_err(|e| e.to_string())?,
     )
     .await?;
-    let fresh = ledger.request(&context, &receipt.request, (now() / 1000) as i64)?;
-    ledger.supersede(id)?;
+    let fresh = ledger.refresh(id, &context, &receipt.request, (now() / 1000) as i64)?;
     report.tasks[index].tool_request = Some(fresh.clone());
     if report.state != "stopped" {
         report.tasks[index].status = "waiting_approval".into();

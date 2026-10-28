@@ -87,7 +87,7 @@ Before starting work and at configured safe checkpoints, a company CLI writes it
 
 ### UC-22 Decide a paused tool request
 
-A worker asks to run a command. Its row shows it waiting on a tool decision while the process stays alive. The operator reviews the exact input and approves (the same attempt runs it once and continues) or rejects (that call is refused and the worker chooses another step). If the operator stops the run or does not answer within the configured window, the request remains pending with evidence and the task waits as before. Trace: SF-25.
+A worker asks to run a command. Its row shows it waiting on a tool decision while the process stays alive. The operator reviews the exact input and approves (the same attempt runs it once and continues) or rejects (that call is refused and the worker chooses another step). The operator may explicitly refresh the request; the coordinator holding the run lease supersedes that exact receipt and creates a fresh pending receipt. No command runs from refresh alone, and the replacement must be reviewed. A normal resume does not require re-approval solely because the CLI regenerated an equivalent request whose identity and binding still match. If the operator stops the run or does not answer within the configured window, the request remains pending with evidence and the task waits as before. Trace: SF-25.
 
 ### UC-23 Plan with a company CLI
 

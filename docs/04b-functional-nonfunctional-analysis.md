@@ -27,7 +27,7 @@ in `05b-design-drivers.md`.
 | FR-14 | Provide the native desktop setup and Agent Room for all operator actions | UC-15, UC-22, UC-24 | SF-18, SF-27 |
 | FR-15 | Build, verify and publish macOS and Windows release artifacts | UC-17 | SF-20 |
 | FR-16 | Plan in a disposable tracked-files snapshot and verify the target is unchanged | UC-23 | SF-26 |
-| FR-17 | Hold a paused tool call for a live decision and decide it while the run is active | UC-22 | SF-25 |
+| FR-17 | Hold a paused tool call for a live decision while active; refresh only by coordinator-owned revocation and fresh pending receipt | UC-22 | SF-25 |
 | FR-18 | Accept input-method (Korean) composition in all native text fields | UC-24 | SF-27 |
 | FR-19 | Return from the workspace to the parent screen and discard unsaved edits after confirmation | UC-25 | SF-28 |
 | FR-20 | Show installed application icons for built-in agent kinds, letters for custom agents | UC-26 | SF-29 |
@@ -60,7 +60,7 @@ in `05b-design-drivers.md`.
 
 | ID | Attribute | Requirement | Source | QAS |
 |---|---|---|---|---|
-| NFR-01 | Security / safety | No merge, push, deployment, external transmission or secret access without an exact human decision; approvals bind exact inputs and context | R-07, R-08, R-30 | QAS-02, QAS-23 |
+| NFR-01 | Security / safety | No merge, push, deployment, external transmission or secret access without an exact human decision; approvals bind exact inputs and context; Refresh never authorizes execution and only the coordinator owning the run lease may rotate its receipt | R-07, R-08, R-30 | QAS-02, QAS-23 |
 | NFR-02 | Integrity | Planning and verification never change the target repository; scope escapes are detected | R-05, R-31 | QAS-06, QAS-24 |
 | NFR-03 | Recoverability | Supervisor crash, stop and restart preserve artifacts and never duplicate writers | R-09, R-18 | QAS-03, QAS-04, QAS-09 |
 | NFR-04 | Availability | Work continues when agentmemory or a paid account is unavailable | R-10, R-25, R-26 | QAS-07, QAS-19 |

@@ -191,9 +191,30 @@ pub(super) async fn run_workers(
             );
         }
         save(store, dir, &report)?;
-        match jobs.join_next().await {
+        let joined = tokio::select! {
+            biased;
+            result = jobs.join_next() => result,
+            _ = tokio::time::sleep(Duration::from_millis(250)), if !jobs.is_empty() => {
+                if crate::workflow::apply_queued_tool_refresh(
+                    dir,
+                    &mut report,
+                    store,
+                    &std::env::current_exe().map_err(|error| error.to_string())?,
+                ).await? {
+                    continue;
+                }
+                continue;
+            }
+        };
+        match joined {
             Some(result) => {
-                let (i, task) = result.map_err(|e| e.to_string())?;
+                let (i, mut task) = result.map_err(|e| e.to_string())?;
+                if report.tasks[i].approval_epoch > task.approval_epoch {
+                    task.approval_epoch = report.tasks[i].approval_epoch;
+                    if report.tasks[i].tool_request.is_some() {
+                        task.tool_request = report.tasks[i].tool_request.clone();
+                    }
+                }
                 if let Some(restriction) = &task.restriction {
                     let profile = report
                         .plan
