@@ -1,0 +1,42 @@
+{
+  "run_id": 40641796364,
+  "head_sha": "162baadee21d88b750b7b19a43db7133f834ce98",
+  "windows_package_job_id": 122669820640,
+  "macos_package_job_id": 122669820656,
+  "windows_package_artifact_id": 12797174108,
+  "result": "failed_windows_tool_decision_driver_navigation",
+  "passed_windows_journeys": [
+    "default desktop",
+    "read-only team briefing",
+    "scheduled retry persisted to manual_schedule",
+    "signal transport save and port persistence"
+  ],
+  "passed_platform_jobs": [
+    122661399375,
+    122661399811
+  ],
+  "macos_package": "passed exact release package execution",
+  "failed_journey": "exact_windows_package_refreshes_approves_and_rejects_tool_requests",
+  "failure_excerpt": [
+    "ACTION_INVOKE_NO_STATE_CHANGE: name=Refresh request tool request ... expected=Confirm tool decision visible=True invokeError=Unrecognized error",
+    "ACTION_POINTER_CLICKED: name=Refresh request tool request ...",
+    "ACTION_FAILED: ACTION_STATE_NOT_VISIBLE_AFTER_POINTER: expected=Confirm tool decision visible=True"
+  ],
+  "observed_state": "The pending request was still Pending and the tool-decision modal remained open with enabled Allow once, Deny, and Decide later controls.",
+  "root_cause": "The packaged driver selected the card-level Refresh control behind the auto-open pending-request modal. The click could not reach that underlying control, so the confirmation state did not appear. This is a driver navigation defect, not a product receipt or refresh handler defect.",
+  "fix": "Scope Allow/Deny action lookup to the active modal containing Decide later. For Refresh, dismiss the blocking modal through Decide later, then activate the card-level Refresh control. Preserve foreground, process ownership, modal state-transition, receipt, and mock-effect assertions.",
+  "local_verification": {
+    "red": "tool_actions_target_the_modal_and_refresh_dismisses_it_before_card_click failed before the script correction",
+    "green": "windows_tool_decision_dispatch, windows_tool_decision, and source_layout passed 9 tests",
+    "clippy": "cargo clippy --all-targets --features native-ui-probe -- -D warnings passed",
+    "format": "cargo fmt --check passed",
+    "diff_check": "git diff --check passed",
+    "line_limit": "changed source and test files are below 300 lines"
+  },
+  "acceptance": {
+    "candidate_packaged_ui": "22/25",
+    "shipped_rust_replacement": "0/25",
+    "credit_added": false
+  },
+  "next_step": "Rerun the exact Windows release package and require refresh, allow, and deny receipt/effect assertions to pass."
+}

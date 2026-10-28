@@ -78,6 +78,23 @@ fn checked_activation_journals_uia_and_pointer_results_before_waiting() {
 }
 
 #[test]
+fn tool_actions_target_the_modal_and_refresh_dismisses_it_before_card_click() {
+    let source = include_str!("support/windows_tool_decision_script.rs");
+
+    let dismiss = source
+        .find("if ($action -eq 'refresh') {")
+        .expect("refresh must close the blocking pending-request modal");
+    let action_search = source
+        .find("$button = Find-Button $actionName")
+        .expect("decision actions must choose the correct modal or card target");
+    assert!(dismiss < action_search);
+    assert!(source.contains("function Find-ModalButton($name)"));
+    assert!(source.contains("Find-ModalButton $actionName"));
+    assert!(source.contains("Find-ModalButton 'Decide later'"));
+    assert!(source.contains("Activate $later 'Decide later' $false"));
+}
+
+#[test]
 fn checked_fallback_brings_offscreen_actions_into_the_window_before_clicking() {
     let source = include_str!("support/windows_tool_decision_script.rs");
 

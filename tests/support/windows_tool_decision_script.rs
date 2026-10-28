@@ -20,6 +20,20 @@ function Find-Button($name) {
     $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button'
   } | Select-Object -First 1
 }
+function Find-ModalButton($name) {
+  foreach ($modal in $script:window.FindAll($T::Descendants, $C) | Where-Object {
+    $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Window'
+  }) {
+    $buttons = @($modal.FindAll($T::Descendants, $C) | Where-Object {
+      $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button'
+    })
+    if ($buttons | Where-Object { $_.Current.Name -eq 'Decide later' }) {
+      $target = $buttons | Where-Object { $_.Current.Name -eq $name } | Select-Object -First 1
+      if ($target) { return $target }
+    }
+  }
+  return $null
+}
 function Ensure-ButtonInsideWindow($name) {
   $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
   [ToolDecisionMouse]::Maximize($hwnd)
@@ -148,9 +162,19 @@ $verb = switch ($action) {
   default { Write-Output "INVALID_ACTION: $action"; exit 3 }
 }
 $actionName = "$verb tool request $id"
-$button = $null
-while (-not $button -and (Get-Date) -lt $deadline) {
+if ($action -eq 'refresh') {
+  $later = Find-ModalButton 'Decide later'
+  if ($later) { Activate $later 'Decide later' $false }
   $button = Find-Button $actionName
+} else {
+  $button = Find-ModalButton $actionName
+}
+while (-not $button -and (Get-Date) -lt $deadline) {
+  if ($action -eq 'refresh') {
+    $button = Find-Button $actionName
+  } else {
+    $button = Find-ModalButton $actionName
+  }
   if (-not $button) { Start-Sleep -Milliseconds 200 }
 }
 if (-not $button) { Write-Output "NO_ACTION_BUTTON: $actionName"; Dump-Controls; exit 4 }
