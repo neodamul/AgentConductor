@@ -6282,8 +6282,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: add regression coverage for visible initial snapshots and scheduled Agent Room background snapshots, visible explicit refresh/action errors, and overdue repaint rebasing. The initial build fails on the missing background-pending state and injectable due-time helper.
 - [x] Task: add a distinct `BackgroundRefresh` state only for scheduled Agent Room reads, quiet automatically refreshed detail/coordinator reads, and keep initial/explicit errors visible; no state-changing requests are replayed.
 - [x] Preserve low-resource behavior: do not add a generic idle Workspace retry or polling loop.
-- [x] Verify: focused native poll regressions pass (3); all changed Rust files are ≤300 lines.
-- [x] Verify: focused native UI integration tests, full locked/offline Rust suite (1014 passed, 14 ignored), warning-denied Clippy, rustfmt, source-layout, and diff checks pass locally.
+- [x] Verify: focused native poll regressions pass (4); all changed Rust files are ≤300 lines.
+- [x] Verify: focused native UI integration tests, full locked/offline Rust suite (1015 passed, 14 ignored), warning-denied Clippy, rustfmt, source-layout, and diff checks pass locally.
+- [x] Follow-up review: add regression coverage showing stale/closed-room scheduled task-detail responses are silently discarded while explicit task-detail mismatches remain visible; split the handler into a testable bounded module.
 - [ ] Package: run exact macOS/Windows package validation on the Rust PR head before merging it into the migration branch.
 - [x] Design: add R-177 → BG-132 → SF-165 → UC-168 → FR-163/NFR-73 → QAS-174 → DDR-37 → DD-188 and Wiki page `native-ui-poll-timeouts.md`.
 - [ ] Verify: refresh Graphify and record the current tool availability; CocoIndex is unavailable in this environment.

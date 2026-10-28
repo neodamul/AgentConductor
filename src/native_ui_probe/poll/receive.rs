@@ -208,20 +208,7 @@ impl Probe {
                     super::scope_recovery::read_reply(self, snapshot)
                 }
                 Some(Pending::TaskDetails | Pending::BackgroundTaskDetails) => {
-                    if let Some(view) = self.room_view.as_mut() {
-                        if snapshot["task"]["id"].as_str() == view.details_task.as_deref() {
-                            view.task_details = Some(snapshot);
-                            self.pending = None;
-                            self.error = None;
-                        } else {
-                            self.pending = None;
-                            self.error =
-                                Some("Task activity response did not match the selection".into());
-                        }
-                    } else {
-                        self.pending = None;
-                        self.error = Some("Agent Room is unavailable".into());
-                    }
+                    super::task_details::apply(self, snapshot)
                 }
                 Some(Pending::BackgroundRefresh | Pending::Refresh | Pending::PrepareRefresh)
                 | None => {

@@ -91,6 +91,42 @@ fn background_poll_errors_are_silent_but_explicit_errors_remain_visible() {
 }
 
 #[test]
+fn stale_background_task_details_are_discarded_quietly_but_explicit_mismatches_show_errors() {
+    let response = serde_json::json!({"task":{"id":"stale-task"}});
+    let mut stale = Probe {
+        pending: Some(Pending::BackgroundTaskDetails),
+        room_view: Some(crate::native_ui_probe::room::State::default()),
+        ..Probe::default()
+    };
+    stale.room_view.as_mut().unwrap().details_task = Some("current-task".into());
+    crate::native_ui_probe::poll::task_details::apply(&mut stale, response.clone());
+    assert!(stale.pending.is_none());
+    assert!(stale.error.is_none());
+    assert!(stale.room_view.unwrap().task_details.is_none());
+
+    let mut closed = Probe {
+        pending: Some(Pending::BackgroundTaskDetails),
+        ..Probe::default()
+    };
+    crate::native_ui_probe::poll::task_details::apply(&mut closed, response.clone());
+    assert!(closed.pending.is_none());
+    assert!(closed.error.is_none());
+
+    let mut explicit = Probe {
+        pending: Some(Pending::TaskDetails),
+        room_view: Some(crate::native_ui_probe::room::State::default()),
+        ..Probe::default()
+    };
+    explicit.room_view.as_mut().unwrap().details_task = Some("current-task".into());
+    crate::native_ui_probe::poll::task_details::apply(&mut explicit, response);
+    assert!(explicit.pending.is_none());
+    assert_eq!(
+        explicit.error.as_deref(),
+        Some("Task activity response did not match the selection")
+    );
+}
+
+#[test]
 fn late_refresh_callback_restarts_deadline_without_a_catch_up_burst() {
     let interval = Duration::from_secs(5);
     let first = Instant::now();
