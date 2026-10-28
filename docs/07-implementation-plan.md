@@ -2217,3 +2217,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify (Windows): CI.
 - [ ] Complete: merge into `main` after #213. Not yet connected: nothing in the UI or the workflow starts an acio run; that is phases 3 and 4.
 
+### acio 3/6: agent characteristics as settings — GitHub #209
+
+- [x] Plan: phase 3 of `docs/cli-io-protocol.md` §13; R-183 / FR-173 / DD-195.
+- [x] Red: `tests/adapter_golden.rs` recorded the argument lists of every built-in CLI from the old code first (`tests/data/adapter_golden.json`); `tests/agent_settings.rs` did not compile before `src/agent_settings.rs`.
+- [x] Task: `src/agent_settings.rs` (types, embedded presets for claude, codex, opencode, merge patch, `settings_for`), `src/adapters.rs` rebuilt on the presets (no provider branches), `AgentProfile.agent_settings`, agent schema extended (`executable`, `full_access`, `resume.bare_argv`, `model_aliases`, `selectors`, `direct_folder`, `label`), presets rewritten to match the old behavior exactly, CHANGELOG.
+- [x] Verify (macOS): the golden file and all existing adapter tests pass unchanged; fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure.
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge into `main`. Not yet consumed: `options`, `response_schema`, `control` and `capabilities` settings (phases 4 and 5); Claude and Codex event decoding stays code.
+

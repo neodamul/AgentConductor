@@ -240,13 +240,6 @@
           },
           "description": "Arguments added when control.enabled is true (for example a streaming-input flag)."
         },
-        "full_access_args": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Arguments that give the CLI full access; used only when the operator's profile is full access."
-        },
         "session": {
           "type": "object",
           "properties": {
@@ -286,6 +279,13 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "bare_argv": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "replace_argv only: the argv of a resumed run composed without the initial-only options (used by the plain invocation builder)."
                 }
               },
               "additionalProperties": false,
@@ -320,6 +320,20 @@
                 }
               ],
               "description": "append: add args ({session_id}) to the argv. replace_argv: the whole argv for a resumed run (some CLIs take resume as a subcommand)."
+            },
+            "model_aliases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Other spellings of the model flag that make a profile ambiguous (for example -m)."
+            },
+            "selectors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Session selector flags that make a profile ambiguous when a session is added."
             }
           },
           "additionalProperties": false
@@ -446,6 +460,101 @@
             }
           },
           "additionalProperties": false
+        },
+        "executable": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The command name a profile starts from when none is registered (for example codex)."
+        },
+        "full_access": {
+          "type": "object",
+          "required": [
+            "mode"
+          ],
+          "properties": {
+            "mode": {
+              "enum": [
+                "append",
+                "replace_argv"
+              ]
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "argv": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "mode": {
+                    "const": "append"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "args"
+                ]
+              }
+            },
+            {
+              "if": {
+                "properties": {
+                  "mode": {
+                    "const": "replace_argv"
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "argv"
+                ]
+              }
+            }
+          ],
+          "description": "How the arguments change when the operator's profile is full access: append args to the plain argv, or replace the whole argv."
+        },
+        "direct_folder": {
+          "type": "object",
+          "required": [
+            "after",
+            "args"
+          ],
+          "properties": {
+            "after": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The argument the extra arguments are inserted after."
+            },
+            "args": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "skip_if_present": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "missing_anchor_message": {
+              "type": "string",
+              "description": "UI message id used when the anchor argument is absent."
+            }
+          },
+          "additionalProperties": false,
+          "description": "Extra arguments for a project folder that is not a Git repository."
         }
       },
       "additionalProperties": false

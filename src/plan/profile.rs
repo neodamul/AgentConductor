@@ -11,6 +11,9 @@ pub struct AgentProfile {
     /// A wire protocol (acio) spoken by a custom CLI; it replaces the hand-written event mapping.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub protocol: Option<crate::protocol::Protocol>,
+    /// Per-agent overrides of the shipped preset, in the shape of `acio.agent/1` (GitHub #209).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub agent_settings: Option<serde_json::Value>,
     #[serde(default)]
     pub input_mode: crate::adapters::InputMode,
     #[serde(default)]
@@ -188,6 +191,9 @@ impl AgentProfile {
     pub fn validate_custom_configuration(&self) -> Result<(), String> {
         let custom = self.parser == crate::protocol::Provider::Custom;
         let pointer = |value: &str| value.is_empty() || value.starts_with('/');
+        if self.agent_settings.is_some() {
+            crate::agent_settings::settings_for(self.parser, self.agent_settings.as_ref())?;
+        }
         if self.protocol.is_some() {
             if !custom {
                 return Err("the acio protocol requires a custom profile".into());

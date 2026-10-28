@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- What differs between the built-in agent CLIs (arguments, resume, model flags, full access, folder rules, capabilities) is now shipped preset data instead of code, and a profile can override session flags with `agent_settings`; the argument lists are unchanged (GitHub #209).
+
 - Agent profiles can set `protocol: acio` on a custom CLI: its events need no mapping tables, tool requests that need a decision wait for one (denied when none comes), the supervisor can send a user message and a cancel line while it runs, and `agentconductor io describe <exe>` registers a CLI from its `--acio-describe` document (GitHub #208).
 
 - `agentconductor io schema` prints the acio CLI I/O schemas (input, event, describe, control, agent settings) and `io validate` checks a document or a captured event stream against them, including the stream rules (GitHub #207).

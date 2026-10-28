@@ -1,6 +1,7 @@
 pub mod acio;
 pub mod activity;
 pub mod adapters;
+pub mod agent_settings;
 pub mod archive;
 pub mod availability;
 pub mod claude_control;

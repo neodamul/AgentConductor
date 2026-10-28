@@ -1,6 +1,7 @@
 {
   "schema": "acio.agent/1",
   "preset": "codex",
+  "label": "Codex",
   "capabilities": {
     "read_only": true,
     "workspace_write": true,
@@ -48,21 +49,38 @@
     }
   },
   "invocation": {
+    "executable": "codex",
     "input": "stdin",
     "args": [
       "exec",
-      "--sandbox",
-      "workspace-write",
       "-",
-      "--json"
+      "--json",
+      "--sandbox",
+      "workspace-write"
     ],
-    "full_access_args": [
-      "--dangerously-bypass-approvals-and-sandbox"
-    ],
+    "full_access": {
+      "mode": "replace_argv",
+      "argv": [
+        "exec",
+        "-",
+        "--json",
+        "--dangerously-bypass-approvals-and-sandbox"
+      ]
+    },
     "session": {
       "model_args": [
         "--model",
         "{model}"
+      ],
+      "model_aliases": [
+        "-m"
+      ],
+      "selectors": [
+        "--resume",
+        "--session",
+        "--continue",
+        "--last",
+        "-c"
       ],
       "resume": {
         "mode": "replace_argv",
@@ -78,6 +96,13 @@
         "full_access_argv": [
           "exec",
           "--dangerously-bypass-approvals-and-sandbox",
+          "resume",
+          "{session_id}",
+          "-",
+          "--json"
+        ],
+        "bare_argv": [
+          "exec",
           "resume",
           "{session_id}",
           "-",
@@ -104,6 +129,16 @@
         "--output-schema",
         "{schema_file}"
       ]
+    },
+    "direct_folder": {
+      "after": "exec",
+      "args": [
+        "--skip-git-repo-check"
+      ],
+      "skip_if_present": [
+        "--skip-git-repo-check"
+      ],
+      "missing_anchor_message": "folder.codex_exec_required"
     },
     "control": {
       "cancel": {

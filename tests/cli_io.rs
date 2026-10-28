@@ -74,7 +74,7 @@ fn valid_examples_pass_and_invalid_examples_are_refused() {
 
 #[test]
 fn shipped_presets_are_valid_agent_settings() {
-    for name in ["claude", "codex"] {
+    for name in ["claude", "codex", "opencode"] {
         let doc = serde_json::from_str(
             &fs::read_to_string(format!("{DIR}/presets/{name}.json")).unwrap(),
         )
