@@ -12,7 +12,7 @@ in `05b-design-drivers.md`.
 | ID | Function | Use cases | Features |
 |---|---|---|---|
 | FR-01 | Register CLI profiles (argv, parser, input mode, sessions, capability) without collecting credentials | UC-01, UC-15 | SF-01, SF-18 |
-| FR-02 | Query, import and show the observation state of model catalogs | UC-11, UC-15 | SF-11 |
+| FR-02 | Query and import observed model catalogs | UC-11, UC-15 | SF-11 |
 | FR-03 | Generate a read-only plan (1–12 tasks, R-53) from a goal | UC-02, UC-15, UC-23 | SF-02, SF-18, SF-26 |
 | FR-04 | Validate plan schema, DAG, disjoint scopes and test argv; bind approval to its digest | UC-02, UC-15 | SF-02 |
 | FR-05 | Execute up to three tasks in parallel in a shared workspace or optional worktrees | UC-02 | SF-03 |
@@ -27,7 +27,7 @@ in `05b-design-drivers.md`.
 | FR-14 | Provide the native desktop setup and Agent Room for all operator actions | UC-15, UC-22, UC-24 | SF-18, SF-27 |
 | FR-15 | Build, verify and publish macOS and Windows release artifacts | UC-17 | SF-20 |
 | FR-16 | Plan in a disposable tracked-files snapshot and verify the target is unchanged | UC-23 | SF-26 |
-| FR-17 | Hold a paused tool call for a live decision while active; refresh only by coordinator-owned revocation and fresh pending receipt | UC-22 | SF-25 |
+| FR-17 | Hold a paused tool call for a live decision and decide it while the run is active | UC-22 | SF-25 |
 | FR-18 | Accept input-method (Korean) composition in all native text fields | UC-24 | SF-27 |
 | FR-19 | Return from the workspace to the parent screen and discard unsaved edits after confirmation | UC-25 | SF-28 |
 | FR-20 | Show installed application icons for built-in agent kinds, letters for custom agents | UC-26 | SF-29 |
@@ -60,7 +60,7 @@ in `05b-design-drivers.md`.
 
 | ID | Attribute | Requirement | Source | QAS |
 |---|---|---|---|---|
-| NFR-01 | Security / safety | No merge, push, deployment, external transmission or secret access without an exact human decision; approvals bind exact inputs and context; Refresh never authorizes execution and only the coordinator owning the run lease may rotate its receipt | R-07, R-08, R-30 | QAS-02, QAS-23 |
+| NFR-01 | Security / safety | No merge, push, deployment, external transmission or secret access without an exact human decision; approvals bind exact inputs and context | R-07, R-08, R-30 | QAS-02, QAS-23 |
 | NFR-02 | Integrity | Planning and verification never change the target repository; scope escapes are detected | R-05, R-31 | QAS-06, QAS-24 |
 | NFR-03 | Recoverability | Supervisor crash, stop and restart preserve artifacts and never duplicate writers | R-09, R-18 | QAS-03, QAS-04, QAS-09 |
 | NFR-04 | Availability | Work continues when agentmemory or a paid account is unavailable | R-10, R-25, R-26 | QAS-07, QAS-19 |
@@ -77,7 +77,6 @@ in `05b-design-drivers.md`.
 | NFR-16 | Discoverability | Every workspace setting is reachable from visible controls without typing paths or using the CLI | R-38, R-39 | QAS-30, QAS-31 |
 | NFR-18 | Shareability without leakage | Exported settings are deterministic, LF-terminated and free of secrets and machine-specific state | R-52 | QAS-44 |
 | NFR-19 | Consistency of work records | One source of truth (the tree); atomic moves; verifiable archives | R-57, R-58 | QAS-48, QAS-49 |
-| NFR-60 | Stable native overlay layout | Opening Review details or task editors, team briefing, advanced profile rules, MCP source-selection review or full source records, long-form help, workspace-action confirmations, execution consent, or update details must not move surrounding content | R-164 | QAS-161 |
 | NFR-17 (planned) | Confidentiality and integrity of remote channels | Outbound-only by default, secrets in the OS credential store, redaction before sending, signed and replay-protected inbound decisions | R-43 | QAS-35, QAS-36 |
 | NFR-13 | Operability | Human decisions do not force regenerated duplicate requests; waits are bounded | R-30 | QAS-23 |
 
@@ -104,7 +103,7 @@ in `05b-design-drivers.md`.
 
 FR-47: register OpenCode-shaped MCP server configuration and source bindings in workspace settings. FR-48: resolve explicit references, preview/import records and feed source-linked evidence into planning. NFR-22: read-only tool allowlists, local provenance, bounded results, no implicit external writes, redacted credentials and independently reviewed imported content. Trace: UC-51, UC-52.
 
-FR-49: manually and periodically refresh each supported agent independently; show pencil Edit, trash Remove and text-plus-reload Models actions with stable accessible names. NFR-23: metadata processes have bounded duration/output and owned process cleanup; scheduling serializes queries to limit host resources and skips active coordinator work. Trace: UC-53.
+FR-49: manually and periodically refresh each supported agent independently. NFR-23: metadata processes have bounded duration/output and owned process cleanup; scheduling serializes queries to limit host resources and skips active coordinator work. Trace: UC-53.
 
 NFR-05 refinement (R-65, QAS-58, DD-71): idle pages poll every 5 s, stop while hidden and omit icon payloads after the first load.
 
@@ -120,7 +119,7 @@ FR-52: provider change replaces all template-derived fields with a unique ID and
 
 ### FR-54 / NFR-27 Interface language
 
-FR-54: persist `language` (`en` default, `ko`), validate it, expose `set_language`, embed it in both pages (`<html lang>`), translate interface strings and dynamically rendered nodes, and leave textareas, inputs' values, logs and agent output unchanged. NFR-27: UTF-8 everywhere; no per-poll work when the language is English (observer disconnected); translation applies only to changed nodes; no new dependency; files under 300 lines. Trace: UC-58.
+FR-54: persist `language` (`en` default, `ko`), validate it, expose `set_language`, embed it in both pages (`<html lang>`), translate interface strings and dynamically rendered nodes, and leave textareas, inputs' values, logs and agent output unchanged. NFR-27: UTF-8 everywhere; no per-poll work when the language is English (observer disconnected); translation applies only to changed nodes; no new dependency; files under 500 lines. Trace: UC-58.
 
 FR-55 (R-71): fallback model options come from the fallback agent's catalog; a missing catalog is queued once through the existing discovery queue; the open dialog refreshes without moving focus. NFR-26 applies (no extra polling; one CLI metadata query).
 
@@ -345,7 +344,7 @@ Check each manual against executable help; require real linked screenshot files 
 Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.
 
 ### FR-111 The app updates itself from GitHub releases
-Every 10 minutes the app checks the latest GitHub release in the background. When a newer version exists, a downward-arrow update icon appears left of Settings; the icon and the workspace menu item Check for updates open the same dialog with the installed and latest versions. Update and restart downloads the archive for this platform, verifies it against the release SHA256SUMS, replaces the installed executable (or macOS app bundle) and restarts the app. It is refused while any run or app job is active, because restarting ends their agents. The source is the project repository by default and may be changed in Settings to `owner/name` or an HTTPS GitHub-compatible repository URL. Validate the repository before saving; never accept insecure schemes, embedded credentials, query strings, fragments, or extra path segments (#130).
+Every 10 minutes the app checks the latest GitHub release in the background. When a newer version exists, an update icon, a downward arrow, appears left of Settings; the icon and the workspace menu item Check for updates open the same dialog with the installed and latest versions. Update and restart downloads the archive for this platform, verifies it against the release SHA256SUMS, replaces the installed executable (or macOS app bundle) and restarts the app. It is refused while any run or app job is active, because restarting ends their agents. The update repository defaults to the project's GitHub repository. Settings can change it to a GitHub `owner/name` or an HTTPS repository URL on any GitHub-compatible host, such as an in-house GitHub Enterprise server; release notes, the archive and `SHA256SUMS` come from that repository's latest release, and only the repository is configured, not the download path (#130).
 Trace: R-126 -> BG-81 -> SF-113 -> UC-116 -> FR-111 -> QAS-122 -> DD-135. Source: user request, 2026-10-14.
 
 
@@ -421,12 +420,12 @@ Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 ### Workspace transfer menu — DD-152
 
-Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 300-line source bound without changing dispatch semantics.
+Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
 
 ### FR-129 Semantic and lazy manual display
 
-Generate tables/headings/code/links and embedded local PNGs. In the native viewer, size columns to the available width and measure wrapped cells so subsequent rows never overlap. Emit operating-system open requests only for allowlisted HTTP(S) links and keep executable schemes inert. Escape raw markup and reject image paths outside assets. Only en/ko are accepted by manual_document. No runtime parser dependency, web server or automatic network load; cache after first manual request.
+Generate tables/headings/code/links and embedded local PNGs. Escape raw markup and reject executable link schemes or image paths outside assets. Only en/ko are accepted by manual_document. No runtime parser dependency, web server or network load; cache after first manual request.
 Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.
 
 
@@ -465,21 +464,9 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 Replace project-authored JavaScript UI logic and Python release/manual/verification scripts with Rust implementations. Preserve the existing user workflows, keyboard/accessibility behavior, offline documentation, cross-platform package contents, and low-resource target. No interpreter for project-authored JavaScript or Python may be needed to run or build the release. External agent CLIs and operating-system runtimes are explicit integration boundaries.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 
-### FR-138 / NFR-50 Seed safe OpenCode MCP examples
-FR: When the saved server map is empty, initialize the native registration editor with commented local and remote OpenCode-style `mcp` examples, including command/URL, environment/header, `enabled`, and timeout fields. Preserve existing `goal_sources` values and explain that tool names must come from discovery.
-NFR: Examples must parse as JSONC while inactive and appear only when no server is registered. The local command is a non-installed placeholder; the remote URL uses the reserved `.invalid` domain; credentials are `{env:VARIABLE}` references. Saving the untouched sample adds no server, starts no child process or HTTP request, reads no environment secret, and adds no runtime dependency. Existing explicit-discovery, approval, and audit boundaries remain unchanged.
-Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17.
-
-
-### FR-143 / NFR-53 Enforce focused source and test files
-FR: The Rust layout check reports any authored source, test, script, example, style, markup, or embedded runtime-data file above 300 lines and rejects production test bodies. NFR: Responsibility-based splits preserve public paths, behavior, locale identifiers, and the single-executable distribution.
-
-
-### FR-144 / NFR-54 Retry native plan generation with truthful feedback
-
-FR: During `Prepare` and its result-refresh request, suppress the prior plan failure and show localized workspace-preparation feedback. When the latest plan snapshot is failed and no request is pending, show Retry plan generation on Review; dispatch `prepare` only when workspace settings are current and task edits are clean. NFR: A request timeout shows its current error, never claims the old job is still running, and never starts an automatic duplicate retry. Preserve the saved snapshot and logs until a fresh response arrives.
-Trace: R-159 → BG-114 → SF-146 → UC-149 → QAS-155 → DD-169. GitHub #36.
-Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168.
+### FR-137 Keep planning startup requests and recovery coherent
+Pass the configured bounded planning timeout through workspace save, baseline inspection, approved baseline actions, and automatic snapshots while planning is starting. Keep recurring snapshots active after a timeout. Localized timeout text must not refer to a manual refresh control that the screen does not provide.
+Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, 2026-10-19.
 
 ### FR-140 / NFR-52 Keep company labels local
 FR-138: read the validated optional suffix from `company-suffix.txt` for both application titlebars while preserving Cargo's numeric version for release/update comparison. NFR-50: refuse package assembly before archive creation when the suffix contains a non-whitespace value.
@@ -499,90 +486,106 @@ Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
 Run database connections use the same finite ten-second busy timeout. On transient contention, SQLite retries the blocked operation within that bound; if the bound expires, return the database error without discarding already committed state or silently replaying a non-idempotent write.
 Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56.
 
-### FR-145 Describe custom CLI model, argument, and result behavior
+### FR-143 Describe custom CLI model, argument, and result behavior
 Custom profiles shall retain manual model catalogs and run model discovery only when configured with direct argv and response JSON Pointers. Execution option groups shall support templates, allowed values, optional defaults, and per-model restrictions. Resolve them from profile defaults or per-task overrides, omit unresolved optional groups, preserve task values across session resume, and reject reassignment when the destination profile or selected model does not accept them. Extract result payloads by configured JSON Pointer and classify matching pointer/value conditions as errors before event normalization. Editing and workspace JSON export/import shall round-trip these declarations.
 
-### NFR-55 Keep CLI extensions local and provider-neutral
+### NFR-53 Keep CLI extensions local and provider-neutral
 Custom behavior shall run through the registered executable and its existing authentication, with no API key requirement, HTTP model service, shell interpolation, new provider enum variant, or provider-specific application branch. Unconfigured custom discovery shall not spawn a process. Existing built-in CLI behavior and older profiles without these fields shall remain compatible.
-Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145/NFR-55 → QAS-156 → DDR-20 → DD-170. GitHub #62.
+Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62.
 
-### FR-146 / NFR-56 Preserve Rust safety and update lifecycle behavior
-FR: compare task scopes case-insensitively on supported default filesystems; classify shell expansions and command-gluing forms conservatively; accept validated {env:NAME} references in remote MCP Bearer/Basic headers; parse quota reset zones with IANA/DST rules; remove downloaded update folders only after a successful install. NFR: preserve argv-only execution, bounded parsing, existing authentication, and failure evidence without introducing extra polling or services.
-Trace: R-161 → BG-116 → SF-148 → UC-151 → QAS-157 → DDR-21 → DD-171.
+### FR-144 Report activity, current tool, last output age, and process state
+For each running task the snapshot carries the last event kind and observation time, the current tool name and start time (Claude tool_use/tool_result, Codex command, MCP and file-change items, custom tool events), and the owned-process state. The page renders elapsed times from those timestamps once per second.
 
-### FR-147 / NFR-62 Expose task activity and constrain in-run changes
-FR: render only recorded current-tool, elapsed, last-output-age, and owned-process facts; accept feedback for a running task and queue agent/model changes for a pending task. Apply the queued edit before scheduling the task. NFR: never infer thinking, progress, or health from silence; reject edits to running or completed tasks and retain audit records.
-Trace: R-162 → BG-117 → SF-149 → UC-152 → QAS-158 → DDR-22 → DD-172.
+### NFR-54 Activity display costs no extra polling and never asserts a cause
+Reuse the existing snapshot poll and recorded task activity; add no new background loop or process probe beyond the existing per-poll owned-process check. Silence is reported as elapsed time only. Animation respects reduced-motion settings.
+Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
+
+### FR-146 Answer operator questions from project files and the manual
+Accept 1..8192-byte operator turns, send at most the 12 most recent turns, require the conversation to end with an operator turn, and return one bounded Markdown answer (32 KiB). Show failures as an error turn that is not sent back.
+
+### NFR-55 Keep the chat read-only and bounded
+The coordinator runs only through its verified read-only template, never changes files or runs commands, shares the single job slot (a running operation refuses a new question), and times out after five minutes. The page renders answers as plain text.
+Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
+### FR-145 Move the selection when the watched session stops running
+Only a selected session that was running and no longer is triggers the move; a session selected after it finished, and the integration entry, are never taken away. The first snapshot never moves the selection.
+Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
+
+### FR-147 Preview, approve and apply a scope change
+The preview validates the plan (overlap and unsafe-path rules), lists previous and new paths and test command, and classifies each quarantined file within the new scope as restore, already present or conflict. Apply requires the preview's digest, copies only restorable files (the recovery copies stay), records the change in the audit log, and revokes integration approval.
+
+### NFR-56 Never overwrite or silently widen
+A conflicting destination is never overwritten, feedback never edits owned paths, an unreviewed or changed proposal is refused, and no step edits internal state by hand.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.
 
 ### FR-148 Triage a failed task through the existing review
-When a run is failed, has a failed task, no task waiting for availability, and its error is not an out-of-scope change, the recorded coordinator reviews the frozen evidence (task status, error, stdout and stderr excerpts) and a revise verdict resets the task and its dependents and resumes the run. A blocked verdict or an unusable review leaves the failure for the operator. During a manual review of a quota wait, if the selected coordinator shares the restricted quota group, resolve only its configured fallback after `fallback_due` is true and the fallback profile is registered and unrestricted; record selected/effective IDs. Otherwise refuse before process creation with an actionable reason.
+When a run is failed, has a failed task, no task waiting for availability, and its error has no waiting task, the recorded coordinator reviews the frozen evidence (task status, error, stdout and stderr excerpts) and a revise verdict resets the task and its dependents and resumes the run. A blocked verdict or an unusable review leaves the failure for the operator.
 
 ### NFR-57 Bounded and fail-closed triage
-Triage uses the same three review rounds as integration repair, never runs without a recorded coordinator, never starts after a Stop, never changes owned paths, and never approves a tool request or a merge. Quota-aware review never launches a restricted coordinator, only follows its saved fallback chain after the existing policy deadline, and fails closed if no different unrestricted account is available.
+Triage uses the same three review rounds as integration repair, never runs without a recorded coordinator, never starts after a Stop, never changes owned paths, and never approves a tool request or a merge.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
 
-### FR-149 / NFR-59 — Stable workspace menu layout
-FR: Show workspace and Settings actions in popups anchored to their title-bar controls; keep workspace content at the same position when either opens; bound the workspace-menu height to the visible window and allow scrolling. NFR: Preserve keyboard and accessibility-tree reachability of every menu action without introducing a window, process, or poller.
-Trace: R-39 → BG-119 → SF-151 → UC-154 → QAS-160 → DD-174.
+### FR-149 Record, show and share step lessons
+A lesson has a task, a cause and a response, each clipped to 1 KiB; the same task and response are recorded once; the run keeps the newest 50; the prompt receives at most 4 KiB, newest first, for every task; the task detail lists them all; each lesson is one memory outbox entry.
 
-### FR-150 / NFR-60 — Stable native detail and help overlays
-FR: Present short Review analysis, phase details and task editors, Agent Room briefings, advanced agent-profile rules, and full MCP source records in anchored popups; present MCP source-selection review, the User manual and Agent tools guide in centered, scrollable windows. Keep surrounding controls at their existing positions, retain each content view, and uniquely identify repeated record controls. NFR: Keep all content and controls accessible, provide visible close controls for help windows, and preserve normal popup dismissal; add no process or polling work.
-Trace: R-164 → BG-120 → SF-152 → UC-155 → QAS-161 → DDR-26 → DD-175.
+### NFR-58 Evidence only and failure-tolerant
+Lessons never change scope, tool permission or merge approval; a failed agentmemory delivery never fails the step and the local record stays authoritative.
+Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → DDR-25 → DD-174. GitHub #138, user, 2026-10-22.
 
-### FR-151 / NFR-61 — Reviewed scope-failure recovery
-On an out-of-scope integration failure, show the error, offending paths, task-owned paths, and quarantined paths with original locations. Let the operator edit one task's paths and test command only through an existing plan validation boundary, then preview the exact changes, restore classifications, and digest. Require explicit approval bound to that digest. Restore only absent destinations, keep all quarantine copies, never overwrite conflicts, preserve previous attempts/logs/failure evidence, revoke candidate approval, and require explicit resume before reusing completed work and rerunning integration. Refuse direct resume while the scope failure remains and direct the operator to the recovery review. Feedback alone never changes ownership.
-
-### FR-152 / NFR-58 — Workspace coordinator chat
-- Accept only non-empty operator/assistant turns, at most 8 KiB each, and send only the latest 12; limit the answer to 32 KiB.
-- Require a registered coordinator with a verified read-only invocation. Use the existing authenticated CLI and single startup job slot; do not steer another running job or execute suggested shell commands.
-- Run asynchronously with a five-minute process timeout, show its status and failures, and return chat results only when explicitly requested by a snapshot.
-- Keep conversation state in window memory, store only local request/result artifacts for the active job, and do not add a service, API-key flow, or background polling loop.
-Trace: R-166 → BG-122 → SF-154 → UC-157 → QAS-163 → DDR-23 → DD-177.
-### FR-153 / NFR-63 — Bounded lessons shared as evidence
-FR: Record lessons from coordinator revisions, replaced test commands, and approved scope changes; de-duplicate by task and response, retain the newest 50, clip each field to 1 KiB, expose them in task details, include at most 4 KiB in later worker prompts, and queue each lesson through the existing memory outbox. NFR: Agentmemory delivery is best-effort; local run state remains authoritative. Lessons never modify scope or permissions and are never treated as higher-priority instructions.
-Trace: R-167 → BG-123 → SF-155 → UC-158 → QAS-164 → DDR-27 → DD-178.
-
-### FR-154 Fold, remember and open on a decision
+### FR-150 Fold, remember and open on a decision
 A decision is open when the run state is waiting_approval, waiting_tool_approval or blocked, a tool request is pending, or the failure is an out-of-scope change. A decision key (state plus candidate and pending tool request identities) opens the column once when it appears or changes; the toggle sets the remembered preference; when the key disappears the column follows the preference. While a decision is open the candidate review is the first section.
 
-### NFR-64 Quiet, accessible and failure-tolerant
+### NFR-59 Quiet, accessible and failure-tolerant
 The warning dot uses the existing warning token, blinks only while a decision is open and the column is folded, does not blink when reduced motion is requested, and has an accessible name; the toggle exposes aria-expanded; an unavailable local storage leaves the column open without errors.
-Trace: R-168 → BG-124 → SF-156 → UC-159 → FR-154/NFR-64 → QAS-165 → DDR-28 → DD-179. GitHub #146, user, 2026-10-22.
+Trace: R-165 → BG-120 → SF-152 → UC-155 → FR-150/NFR-59 → QAS-161 → DDR-26 → DD-175. GitHub #146, user, 2026-10-22.
 
-### FR-155 Gates, violation codes and amendments
-Violation codes: scope_overlap, scope_escape, test_unrunnable, tool_missing, timeout, plan_unsatisfiable, goal_drift. Persist a run charter containing the exact goal, a digest of effective planning rules, and each task's identity, owned paths, dependencies, and test argv. Before scheduling, candidate approval, or merge, compare the current contract with the charter and block unrecorded changes as goal_drift. Only validated typed amendments and accepted test-command replacements may update the affected task contract; undo restores it. Keep legacy runs without a charter readable.
+### FR-151 Gates, violation codes and amendments
+Violation codes: scope_overlap, scope_escape, test_unrunnable, tool_missing, timeout, plan_unsatisfiable, goal_drift. Amendments are typed, validated against the charter, bounded by a budget per run, applied by tier and reversible.
 
-### NFR-65 Deterministic checks, bounded loops
+### NFR-60 Deterministic checks, bounded loops
 Validation never depends on a model, every loop has a budget, and a run never repeats the same block without a recorded decision.
-Trace: R-169 → BG-125 → SF-157 → UC-160 → FR-155/NFR-65 → QAS-166 → DDR-29 → DD-180. GitHub #149, user, 2026-10-22.
+Trace: R-166 → BG-121 → SF-153 → UC-156 → FR-151/NFR-60 → QAS-162 → DDR-27 → DD-176. GitHub #149, user, 2026-10-22.
 
-### FR-156 One decision list from existing records
+### FR-152 One decision list from existing records
 A judgment row has a kind, a judgment, the task it concerns (if any), a detail and the record's summary. Rows come from the run's audit records of tool decisions, reviews, replaced test commands, time-out resumes, automatic recoveries, hand-offs and lessons, and later launch-gate and amendment records. Unknown records are ignored.
 
-### NFR-66 Cannot be hidden
+### NFR-61 Cannot be hidden
 There is no setting that hides judgments, the list is complete up to a documented limit, and the count is cheap enough for the snapshot.
-Trace: R-170 → BG-126 → SF-158 → UC-161 → FR-156/NFR-66 → QAS-167 → DDR-30 → DD-181. GitHub #149, user, 2026-10-22.
+Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → DDR-28 → DD-177. GitHub #149, user, 2026-10-22.
 
-### FR-157 Resolve every executable the run will start
+### FR-153 Resolve every executable the run will start
 Distinct agents of the tasks and each task's test command program are resolved with the app's executable search (PATH, per-user tool folders), an absolute path, or a path relative to the project root. Empty commands are violations.
 
-### NFR-67 Side-effect free
+### NFR-62 Side-effect free
 The gate runs nothing, writes nothing and creates no run folder when it blocks; it adds no dependency and costs a file-system lookup per executable.
-Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → DDR-29 → DD-182. GitHub #149, user, 2026-10-22.
+Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → DDR-27 → DD-178. GitHub #149, user, 2026-10-22.
 
-### FR-158 Assert readiness before lifecycle actions
-Worker tests must observe the required ready marker and active attempt/session state before issuing a directive. Process containment tests must observe a descendant marker before asserting termination and direct-child reaping.
+### FR-154 Amendments, risk and budget
+Valid amendments pass `Plan::validate` (safe, non-overlapping scopes; known, acyclic dependencies). High risk: a single-component path without an extension (a top-level directory) or a sensitive path (.env, .ssh, .aws, keys, secrets, credentials). The budget is five applied amendments per run. Applied, escalated and undone amendments are audit records listed as judgments with their reason; applied ones carry the previous values.
 
-### NFR-68 Bounded readiness with actionable diagnostics
-Every readiness wait has an explicit deadline, polls the required condition, and retains process or workflow evidence on failure. Tests do not rely on fixed startup sleeps.
-Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. GitHub #156, 2026-10-22.
+### NFR-63 Reversible and bounded
+Undo restores exactly the recorded previous paths and dependencies, revokes approvals and leaves the run stopped for an explicit Resume; an escalation never changes the plan.
+Trace: R-169 → BG-121 → SF-156 → UC-159 → FR-154/NFR-63 → QAS-165 → DDR-29 → DD-179. GitHub #149, user, 2026-10-22.
 
-### FR-159 Coordinator requests use the retained review contract
-Send the operator's bounded request with frozen task, test, and candidate evidence to the selected coordinator; preserve separate task-feedback routing; record request lifecycle; validate proposed revisions against current task identities, evidence, charter, and amendment policy; retain completed work unless a named revision requires rerunning it.
+### FR-155 Charter content and drift
+The charter holds the goal and, per task, id, owned paths, test command and dependencies, with a status (recorded or updated). Drift is the number of task-owned paths not in the charter entry of that task. The limit is eight; an amendment that would exceed it escalates with goal_drift. Applied amendments carry the drift after the change; undoing one lowers it.
 
-### NFR-69 Requests are attributable and never grant merge authority
-Each request state and result is attributable to one coordinator request and appears in the existing audit-derived view. A coordinator response cannot approve or merge; only the existing exact human candidate decision can do so. Requests use the configured CLI authentication and bounded process timeout, with no API-key service or resident process. A transient room-lease conflict during review is retried within the same request deadline; unrelated errors are returned immediately and expiry is audited as failure.
-Trace: R-173 → BG-128 → SF-161 → UC-164 → FR-159/NFR-69 → QAS-170 → DDR-33 → DD-184. GitHub #165, 2026-10-22.
+### NFR-64 Cheap and tamper-evident
+The charter is one audit record written once per run (and once per approved scope change); drift needs no model and no file access; the coordinator cannot edit the charter.
+Trace: R-170 → BG-121 → SF-157 → UC-160 → FR-155/NFR-64 → QAS-166 → DDR-30 → DD-180. GitHub #149, user, 2026-10-22.
+
+### FR-156 Assert readiness before lifecycle actions
+Asynchronous worker tests shall observe the requested task's ready marker and active attempt/session state before issuing a directive. Process-tree tests shall observe a descendant marker before verifying termination and direct-child reaping.
+
+### NFR-65 Bounded readiness with actionable diagnostics
+Every readiness wait has a generous explicit deadline, polls the required condition, and reports retained process/workflow evidence on failure. Tests must not rely on fixed startup sleeps or require a busy wait.
+Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #156, 2026-10-22.
+
+### FR-157 Route, run and show a coordinator request
+Messages are 1 byte to 8 KiB without NUL; a coordinator must be recorded for the run; the request waits for the run lock instead of failing; the review prompt carries the message as operator text, not evidence; an accept verdict with no revisions is allowed for a request even without a verified candidate; the three-round automatic limit does not block an operator request; a revise verdict resumes the run unless it escalated. Each state is an audit record listed as a judgment.
+
+### NFR-66 No silent restarts and separate drafts
+A request never restarts a completed task by itself, never grants tool or merge permission, and a failure is recorded with its error.
+Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → DDR-32 → DD-182. GitHub #165, user, 2026-10-23.
 
 ### FR-160 Review rules and exclusions are written down
 The policy states sixteen review rules for new and changed code, the exclusions with their reasons, the measured baseline with the commit it was taken at, and the checks that remain authoritative (`cargo fmt --check`, warning-denied Clippy, `tests/source_layout.rs`).
@@ -607,3 +610,68 @@ The helper offers `lock()`, `set` and `remove`, keeps the first original value o
 ### NFR-72 No behavior change
 Test assertions and the code under test stay as they are; only how variables are set changes. Each changed Rust file stays within its line limit (500 on `main`, 300 on the Rust line). The helper serializes mutating tests only: it cannot stop a non-mutating thread of the same binary from reading the environment, which is recorded as a documented limit.
 Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → DDR-36 → DD-187. GitHub #176, user, 2026-10-24.
+
+### FR-163 Skill prompt and result
+The coordinator prompt holds the unmodified skill text and the references it points to for an existing prompt, the operator's goal and the interface language, and asks for one JSON object with `optimized` (the rewritten goal, in the language of the original), `changes` (short statements of what changed) and `questions` (what the operator should confirm). The coordinator is read-only (Read, Grep, Glob): it can inventory the project files the skill asks it to list but cannot change anything. The skill's eval loop is not run, because no extra model calls are made; the skill is applied as a single pass.
+
+### FR-164 Review and apply
+The workspace screen shows Optimize prompt beside the goal field, disabled while the goal is empty or another job runs. The dialog shows the proposal, the changes and the questions in the interface language. **Use this goal** puts the proposal in the goal field and marks the workspace as changed, **Keep mine** closes the dialog, and neither saves or runs anything.
+
+### NFR-73 Bounded, attributed, one job at a time
+The goal is limited to 8 KiB, the proposal to 16 KiB, at most 12 changes and 8 questions of 400 characters each, and the job times out after five minutes. It uses the existing single job slot, so it cannot overlap planning, a run or an MCP preview. The vendored files are byte-identical to the pinned upstream commit, and the Apache-2.0 license text and a notice naming the origin ship in the release package. Each changed Rust file stays within its line limit (500 on `main`, 300 on the Rust line).
+Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-174/QAS-175 → DDR-37 → DD-188. GitHub #180, user, 2026-10-27.
+
+### FR-165 Settings opens the guide and the manual
+`start-tools-guide` and `start-manual-open` in the Settings dialog close it with `cancel` (nothing is saved) and open the existing `start-tools` dialog and `AC_MANUAL`. The workspace menu builds neither entry.
+Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
+
+### FR-166 Stored conversation
+The `chat` request carries only the new question; the server rebuilds the earlier turns from the stored artifacts of the latest chat (`chat-input-<id>.json` plus its answer), keeps the last 40 turns, and `chat_history` and `chat_reset` read and clear them. An earlier long answer is clipped in the prompt instead of refusing the next question.
+
+### FR-167 Transcript behavior
+The panel loads the history when the workspace opens, adopts a chat that is still running, shows the answer once, keeps typed input when a request is refused, shows elapsed time while waiting, and is cleared when another workspace opens.
+Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
+
+### FR-168 Removal
+`startup.html` and `room.html` have no `local-dot`, `local-label`, `startup-note` or the footer default-mode span; the keys `startup.local_existing_cli_login`, `startup.local_by_default`, `startup.one_application_independent_agent_sessions_your_approval_controls`, `startup.shared_by_default_worktrees_optional` and `room.local_cli_authentication` are gone from both catalogs. The workspace mode stays visible in its checkbox.
+Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
+
+### FR-169 Reconcile on failure
+`send` in `chat.js` calls `resync` on any rejection: it reloads `chat_history`; if the last turn is the operator text that was sent, the turn stays and `settle` adopts the running or completed job; otherwise the optimistic turn is removed and the text and error are shown. If the history cannot be read either, the optimistic turn is removed as before.
+Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192. GitHub #197, user, 2026-10-28.
+
+### FR-170 Log lines and guide
+`Room::dispatch` records `start kind=chat bytes=n` and `done kind=<kind> ms=<n> ok=<bool> [error="..."]` (all chat requests; others at 1000 ms or more) in `~/.agentconductor/request-diagnostics.log`, rotating to `.log.1` above 256 KiB; a write failure never changes the response. The page timeout message carries `{value1}` with the request kind. NFR: no content of the request is logged, only its kind and size.
+Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193. GitHub #200, user, 2026-10-28.
+
+### FR-171 Three schemas and the stream rules
+`input.schema.json`, `event.schema.json`, `describe.schema.json` and `control.schema.json` (draft 2020-12) under `schemas/cli-io/v1`; event envelope, eleven event types and `x-*` extensions; control lines `cancel`, `user_message` and `tool_decision` answered by `ack` events, with a decision timeout that denies; `seq` from 1, one terminal `result`, heartbeat, size limits; stderr is never control information; exit codes 0, 1, 2, 3, 69, 75, 124, 130 and 143 with the events taking precedence.
+Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.
+
+### FR-176 / NFR-75 Quiet automatic polling and suspension-aware deadlines
+Automatic snapshot polls in the workspace and Agent Room shall suppress timeout toasts while preserving visible connectivity status. Native request deadlines count active visible time, pause on `visibilitychange` to hidden, resume on visibility, and restart rather than fail immediately when the timeout callback is materially late. Operator-triggered refresh and action errors remain visible. Requests are never automatically retried.
+Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → DDR-39 → DD-196. GitHub #221, user, 2026-10-28.
+
+### FR-172 Task types and per-model resolution
+`task.type` is one of `extract`, `summarize`, `analyze`, `code`, `agentic`, `creative`; the schema requires the fields each type needs. The effective model and effort are resolved from the operator's choice, the profile's execution options, the CLI's `task_defaults` and the built-in table, clamped to the model's `traits`, with `effort_unsupported` and `model_not_suited` warnings and the result echoed in `session.data.effective`. For every type the prompt is assembled as Document (materials, earlier turns), then Task (instruction, task conditions, current question), then Format (examples, response schema, report, language).
+Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.
+
+### FR-174 Task types in plans (implementation of FR-172)
+`Task.task_type` (`extract`, `summarize`, `analyze`, `code`, `agentic`, `creative`; omitted when absent so older digests hold; a task without one is `code`) is set by the coordinator through the plan schema and prompt. `task_profile::resolve` takes the operator's `execution_options` first, then the agent's `capabilities.task_defaults[type]`, then the built-in table (low, medium, medium, high, high, medium), lowers an effort the model does not honor to the highest allowed value not above it and warns (`effort_unsupported`, `model_not_suited`), and never blocks. The worker applies the result to the arguments and records a `task_profile` entry; the review snapshot carries `task_profiles` and the page shows the kind and effort of each task, keeps `task_type` when the plan is edited, and hints the efforts a model honors on the roles table.
+Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #210, user, 2026-10-28.
+
+### FR-175 Prompt assembly order (implementation of the §2.2 rule)
+The coordinator chat (`chat::build_prompt`), the goal optimizer (`prompt_optimizer::build_prompt`) and the planner (`planner::plan_prompt`) assemble `# Document`, `# Task`, `# Format` once each, in that order. Wording is kept; only the placement changes: material before the instruction, the shape of the answer last, the current question inside the Task, an empty Document stated as `(none)`.
+Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #211, user, 2026-10-28.
+
+### NFR-74 Additive evolution and bounded input
+Within a major version changes only add optional fields, enum values consumers can ignore and `x-*` events; the input is at most 1 MiB and an event line at most 256 KiB by default; secrets never travel in input or arguments.
+Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.
+
+### FR-173 Agent characteristics are settings
+`schemas/cli-io/v1/agent.schema.json` (`acio.agent/1`) holds, per agent, its capabilities, control encodings, argument templates (model, resume, effort, response schema, full access) and models with traits and task defaults. They merge from a shipped preset, the CLI's `--acio-describe` and the operator's profile, later overriding earlier; presets are embedded data files; no code branches on the provider name for these characteristics.
+Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.
+
+### FR-177 Launch workspace selection
+`launch_root` returns the first registry entry that is a saved, non-blank app-owned workspace, else the first saved non-blank workspace, else the default folder as a placeholder. A workspace is blank when it has no name, goal, project folder, plan or run; blank workspaces are left out of the menu and the saved list, the snapshot carries `workspace_blank`, the page opens a required "name your first workspace" dialog, and `create_workspace` moves a blank previous workspace to the recovery folder. The `agentconductor` launch command opens it. Deleting a workspace removes it from the registry, so it can no longer be chosen. The native probe window keeps its own launch rule (Codex track, GitHub #9).
+Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.

@@ -4,6 +4,10 @@ Native UI component tests should exercise the action a person triggers, not only
 
 For packaged Windows acceptance, UI Automation `InvokePattern` may be attempted when a control refuses keyboard focus, but a returned call does not prove activation. Wait for an observable UI state change; if the control remains enabled, use a foreground- and process-checked pointer fallback. A successful API call, emitted input diagnostic, or visible button is not proof that an action ran. Keep keyboard and pointer fallbacks guarded by exact process/control identity; never credit the workflow unless its durable state matches the requested value.
 
+Do not call `SetFocus()` on the top-level desktop window in the PowerShell UI Automation driver. The desktop window is not a focusable control on Windows; interact with its child controls using `ValuePattern` or `InvokePattern` and verify the resulting state. Keep a source-contract test that rejects reintroduction of the unsupported top-level focus call.
+
+For candidate approval, do not depend on explanatory status-banner text appearing in the Windows UIA tree. Treat a closed confirmation dialog as completed input, then wait for the accessible `Merge approved candidate` action before continuing. For terminal merge/reject decisions, the packaged Rust test must poll the persisted workflow report and verify the resulting Git HEAD and fixture files; dialog closure alone is not acceptance evidence.
+
 When testing both English and Korean, use the real localized labels and run the same interaction in each language. For asynchronous panels, cover both accepted actions and the pending state: repeated work must remain disabled while safe navigation such as Close stays available.
 
 Every synthetic egui frame returns a `FullOutput`. Tests that do not apply texture updates must clear both `textures_delta.set` and `textures_delta.free` before dropping the output; clear intermediate frames inside the click helper and the final frame in the caller. Otherwise egui panics on an unapplied texture delta and obscures the actual interaction result.

@@ -14,14 +14,14 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 
 | Step | Document | Contents |
 |---|---|---|
-| 1 | [01-requirements.md](01-requirements.md) | R-01 … R-166 with acceptance criteria |
-| 2 | [02-business-goals.md](02-business-goals.md) | BG-01 … BG-122 and success measures |
-| 3 | [03-system-features.md](03-system-features.md) | SF-01 … SF-154 |
-| 4 | [04-usecases.md](04-usecases.md) | UC-01 … UC-157 |
-| 5 | [04b-functional-nonfunctional-analysis.md](04b-functional-nonfunctional-analysis.md) | FR-01 … FR-152, NFR-01 … NFR-62, C-01 … C-05 |
-| 6 | [05-qas.md](05-qas.md) | QAS-01 … QAS-163 |
-| 7 | [05b-design-drivers.md](05b-design-drivers.md) | DDR-01 … DDR-26 and the architecture view |
-| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-177, DD-UI-01 |
+| 1 | [01-requirements.md](01-requirements.md) | R-01 … R-59 with acceptance criteria |
+| 2 | [02-business-goals.md](02-business-goals.md) | BG-01 … BG-21 and success measures |
+| 3 | [03-system-features.md](03-system-features.md) | SF-01 … SF-49 |
+| 4 | [04-usecases.md](04-usecases.md) | UC-01 … UC-48 |
+| 5 | [04b-functional-nonfunctional-analysis.md](04b-functional-nonfunctional-analysis.md) | FR-01 … FR-44, NFR-01 … NFR-19, C-01 … C-05 |
+| 6 | [05-qas.md](05-qas.md) | QAS-01 … QAS-50 |
+| 7 | [05b-design-drivers.md](05b-design-drivers.md) | DDR-01 … DDR-16 and the architecture view |
+| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-65, DD-UI-01 |
 | 9 | [07-implementation-plan.md](07-implementation-plan.md) | Current status, Plan → TDD → Verify → Complete checklists |
 | — | [user-manual.md](user-manual.md) | User manual: desktop guide and full command reference |
 | — | [08-cli-mvp-release.md](08-cli-mvp-release.md) | CLI MVP release verification |
@@ -77,7 +77,6 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-53 plans with one to twelve tasks | BG-02 | SF-44 | UC-43 | FR-38 | QAS-45 | DDR-02 | DD-60 |
 | R-54 read an existing plan document | BG-19 | SF-44 | UC-43 | FR-39 | QAS-45 | DDR-12 | DD-60 |
 | R-55–R-59 slugs, phases, progress, archives, plan rules | BG-21 | SF-45–SF-49 | UC-44–UC-48 | FR-40–FR-44, NFR-19 | QAS-46–QAS-50 | DDR-16 | DD-61–DD-65 |
-| R-63 per-agent actions | BG-22 | SF-53 | UC-53 | FR-49, NFR-23 | QAS-56 | DDR-07 | DD-69 |
 | R-43 messenger integration (planned) | BG-18 | SF-37 | UC-34, UC-35 | FR-28, NFR-17 | QAS-35, QAS-36 | DDR-14 | DD-51 (proposed) |
 | R-96–104 sandbox orchestration, trust prompt, status at a glance, goal folders, master agents, card order, readable paths, CLI-like activity (2026-10-13) | BG-51–59 | SF-83–91 | UC-86–94 | FR-81–89 | QAS-92–100 | — | DD-104–112 |
 | R-105–108 coordinator final step, live tool decision, coordinator decision record, task list without usage (2026-10-13) | BG-60–63 | SF-92–95 | UC-95–98 | FR-90–93 | QAS-101–104 | — | DD-113–116 |
@@ -88,20 +87,20 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | R-115–116 readable room text and icons, folded plan tasks (2026-10-13) | BG-70–71 | SF-102–103 | UC-105–106 | FR-100–101 | QAS-111–112 | — | DD-123–124 |
 | R-117 whole phased plan reviewed up front (2026-10-13) | BG-72 | SF-104 | UC-107 | FR-102 | QAS-113 | — | DD-125 |
 | R-118–121 runs survive app exit, automatic recovery and resume (default on), visible interruptions, reassign pending tasks during a run (2026-10-13, planned) | BG-73–76 | SF-105–108 | UC-108–111 | FR-103–106 | QAS-114–117 | — | DD-127–130 |
-| R-153 safe OpenCode-shaped MCP registration examples (2026-10-16) | BG-108 | SF-140 | UC-143 | FR-138/NFR-50 | QAS-149 | DD-102 | DD-163 |
-| R-158 300-line authored-file bound | BG-113 | SF-145 | UC-148 | FR-143, NFR-53 | QAS-154 | DDR-19 | DD-168 |
-| R-160 declarative CLI models, execution options, and results | BG-115 | SF-147 | UC-150 | FR-145, NFR-55 | QAS-156 | DDR-20 | DD-170 |
-| R-161 preserve safety and lifecycle contracts in Rust | BG-116 | SF-148 | UC-151 | FR-146, NFR-56 | QAS-157 | DDR-21 | DD-171 |
-| R-162 expose activity and safe in-run controls | BG-117 | SF-149 | UC-152 | FR-147, NFR-62 | QAS-158 | DDR-22 | DD-172 |
-| R-163 coordinator triage for a failed task | BG-118 | SF-150 | UC-153 | FR-148, NFR-57 | QAS-159 | DDR-24 | DD-173 |
-| R-164 stable native details and help overlays | BG-120 | SF-152 | UC-155 | FR-150, NFR-60 | QAS-161 | DDR-26 | DD-175 |
-| R-165 safe scope-failure recovery | BG-121 | SF-153 | UC-156 | FR-151, NFR-61 | QAS-162 | DDR-25 | DD-176 |
-| R-166 read-only workspace coordinator guidance | BG-122 | SF-154 | UC-157 | FR-152, NFR-58 | QAS-163 | DDR-23 | DD-177 |
-| R-167 run lessons shared with later tasks | BG-123 | SF-155 | UC-158 | FR-153, NFR-63 | QAS-164 | DDR-27 | DD-178 |
+| R-158 declarative CLI models, execution options, and results | BG-113 | SF-145 | UC-148 | FR-143, NFR-53 | QAS-154 | DDR-19 | DD-168 |
 | R-174 Rust review policy from the Google Rust Style Guide | BG-129 | SF-162 | UC-165 | FR-160, NFR-70, C-06 | QAS-171 | DDR-34 | DD-185 |
 | R-175 Every unsafe operation states why it is sound | BG-130 | SF-163 | UC-166 | FR-161, NFR-71 | QAS-172 | DDR-35 | DD-186 |
 | R-176 Tests do not mutate the process environment unsoundly | BG-131 | SF-164 | UC-167 | FR-162, NFR-72 | QAS-173 | DDR-36 | DD-187 |
+| R-177 Improve a goal with the bundled prompt-optimizer skill | BG-132 | SF-165 | UC-168 | FR-163, FR-164, NFR-73 | QAS-174, QAS-175 | DDR-37 | DD-188 |
+| R-178 Guide and manual open from Settings | BG-133 | SF-166 | UC-169 | FR-165 | QAS-176 | — | DD-189 |
+| R-179 The coordinator chat behaves like a CLI session | BG-134 | SF-167 | UC-170 | FR-166, FR-167 | QAS-177 | — | DD-190 |
+| R-180 Screens show only information the operator can use | BG-135 | SF-168 | UC-171 | FR-168 | QAS-178 | — | DD-191 |
+| R-181 The chat keeps going when a reply is slow | BG-136 | SF-169 | UC-172 | FR-169 | QAS-179 | — | DD-192 |
+| R-182 Request timeouts can be traced | BG-137 | SF-170 | UC-173 | FR-170 | QAS-180 | — | DD-193 |
+| R-183 A standard, schema-based CLI interface | BG-138 | SF-171 | UC-174 | FR-171, FR-172, FR-173, NFR-74 | QAS-181 | DDR-38 | DD-194, DD-195 |
 
 Known gaps: historical design traces cite UC-06/07/08 and UC-12–14 and features
 SF-13–17 that are not defined in the use-case/feature documents; their scope is covered
-by the rows above. New entries must use the next free identifier at every step.
+by the rows above. New entries must use the next free identifier at every step. R-173, BG-125–128, SF-161, UC-164,
+FR-159, NFR-67–69, QAS-169–170, DDR-33 and DD-183–184 are used on the Rust migration branch
+and are skipped on `main` to avoid collisions.

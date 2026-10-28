@@ -51,7 +51,7 @@ A developer can clone the private repository on Windows and resume from committe
 
 ### R-24 Verified GitHub release artifacts
 
-Publish tested macOS and Windows binaries to the existing private GitHub repository's Releases after platform execution acceptance. Include checksums, dependency licenses and accurate platform/UI support notes. Compilation alone does not prove runtime support; never publish a failing or unverified Windows build as a working release. The macOS app bundle must declare its supported English/Korean UI localizations and development region so LaunchServices can register and start it.
+Publish tested macOS and Windows binaries to the existing private GitHub repository's Releases after platform execution acceptance. Include checksums, dependency licenses and accurate platform/UI support notes. Compilation alone does not prove runtime support; never publish a failing or unverified Windows build as a working release.
 
 ### R-25 Deterministic supervision and optional AI coordination
 
@@ -75,7 +75,7 @@ Agent/session lists show green, yellow or red status lights. Running sessions bl
 
 ### R-30 Live human tool decisions
 
-When a running worker requests a human-gated tool, it pauses before execution and waits for the operator's exact decision instead of terminating. Approval lets the same attempt run the identical input once; rejection refuses only that call and the worker continues. Decisions are possible from the native UI and CLI while the run is active. Stops, expiry and unanswered requests fall back to the stopped/waiting state with retained evidence. A normal resume preserves a decision for the same regenerated request when its exact identity and binding still match; it does not ask for approval again only because the CLI reconstructed that request. The explicit Refresh action is different: it revokes the exact old receipt, creates a fresh pending receipt through the coordinator holding the run lease, and requires the operator to review the replacement before execution.
+When a running worker requests a human-gated tool, it pauses before execution and waits for the operator's exact decision instead of terminating. Approval lets the same attempt run the identical input once; rejection refuses only that call and the worker continues. Decisions are possible from the native UI and CLI while the run is active. Stops, expiry and unanswered requests fall back to the stopped/waiting state with retained evidence. A resumed attempt must not require re-approving a regenerated variant of an already decided request.
 
 ### R-31 Planning with unverifiable company CLIs
 
@@ -95,7 +95,7 @@ Built-in agent kinds (Claude Code, Codex, OpenCode) are shown with the same icon
 
 ### R-35 Maintainable source layout
 
-Production code lives under `src/` and tests under `tests/`; no inline `#[cfg(test)]` modules remain in production files. Every authored source, test, script, example, style, markup, and embedded runtime data file stays at or below the 300-line bound in R-158. Splits follow module responsibilities without changing behavior. Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168.
+Production code lives under `src/` and tests under `tests/`; no inline `#[cfg(test)]` modules remain in production files. Every individual source, test, script, style and markup file stays at or below 500 lines. Splits follow module responsibilities without changing behavior.
 
 ### R-36 Product README and separate user manual
 
@@ -111,7 +111,7 @@ The workspace screen groups its settings under a visible **Workspace settings** 
 
 ### R-39 Multiple workspaces
 
-The window shows which workspace directory is open and offers a workspace menu to open a recent workspace, open an existing folder or create a new one, without restarting the application or using the command line. The menu is an anchored popup and must not push workspace content down; long lists remain reachable by scrolling within the visible window. Other top-bar menus must also overlay the page without changing its layout. One window per workspace is preserved. Source: user request, 2026-10-11; native UI review, 2026-10-21.
+The window shows which workspace directory is open and offers a workspace menu to open a recent workspace, open an existing folder or create a new one, without restarting the application or using the command line. One window per workspace is preserved. Source: user request, 2026-10-11.
 
 ### R-40 Named, registered workspaces
 
@@ -191,7 +191,7 @@ Exporting a workspace writes the workspace settings JSON and one `<slug>.zip` pe
 
 ### R-59 Editable plan rules
 
-The planning rules taught so far (analysis first, phases, task → verification → completed, role assignment, TDD, source/test separation, 300-line files, English documents, recording and assetization) live in a global, editable rules file passed to the planning coordinator. A workspace may override them; the override is stored in the workspace settings JSON. Source: user request, 2026-10-11.
+The planning rules taught so far (analysis first, phases, task → verification → completed, role assignment, TDD, source/test separation, 300-line files, English documents, recording and assetization) live in a global, editable rules file passed to the planning coordinator. A workspace may override them; the override is stored in the workspace settings JSON. When no workspace override is set, Markdown rules under `<repository>/.agentconductor/plan-rules/` are recursively discovered and appended in repository-relative lexical order. Existing global rules remain supported. Source: user request, 2026-10-11; GitHub issue #8.
 
 ### R-60 Collect Claude subscription quota without extra generation
 
@@ -208,10 +208,6 @@ R-61 correction: fresh workspaces must independently collect supported paid-agen
 ### R-63 Agent-specific refresh and action icons
 
 Each agent has its own quota refresh icon and periodic refresh schedule. Remove uses a trash icon, Models keeps its text with a reload icon, and Edit has a pencil icon. Source: user requests, 2026-10-11.
-
-R-63 verification clarification (issue #9, 2026-10-22): the shared agent sidebar must observe metadata completion on every workspace step, including Workspace settings and Review the plan. Navigation must not leave a finished query displayed as running or overwrite unsaved workspace fields.
-
-R-63/R-67 cadence clarification: the native workspace schedules each saved supported profile independently, once on opening and then at its configured 1–60 minute interval (default five). Failed attempts respect the same interval; manual refresh restarts only that agent's deadline. Automatic collection defers while minimized, planning, executing, or processing another metadata request, without a resident CLI or additional polling thread.
 
 ### R-65 Idle footprint within the resource budget
 
@@ -483,7 +479,7 @@ Publish English and Korean operator manuals, a concise public README and genuine
 Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.
 
 ### R-126 The app updates itself from GitHub releases
-Every 10 minutes the app checks the latest GitHub release in the background. When a newer version exists, a downward-arrow update icon appears left of Settings; the icon and the workspace menu item Check for updates open the same dialog with the installed and latest versions. Update and restart downloads the archive for this platform, verifies it against the release SHA256SUMS, replaces the installed executable (or macOS app bundle) and restarts the app. It is refused while any run or app job is active, because restarting ends their agents. The update source defaults to the project repository and can be changed in Settings to a GitHub `owner/name` or HTTPS GitHub-compatible `https://host/owner/name` URL. Release notes, archives, and checksums come from that repository's latest release; the download directory is not configurable (#130).
+Every 10 minutes the app checks the latest GitHub release in the background. When a newer version exists, an update icon, a downward arrow, appears left of Settings; the icon and the workspace menu item Check for updates open the same dialog with the installed and latest versions. Update and restart downloads the archive for this platform, verifies it against the release SHA256SUMS, replaces the installed executable (or macOS app bundle) and restarts the app. It is refused while any run or app job is active, because restarting ends their agents. The update repository defaults to the project's GitHub repository. Settings can change it to a GitHub `owner/name` or an HTTPS repository URL on any GitHub-compatible host, such as an in-house GitHub Enterprise server; release notes, the archive and `SHA256SUMS` come from that repository's latest release, and only the repository is configured, not the download path (#130).
 Trace: R-126 -> BG-81 -> SF-113 -> UC-116 -> FR-111 -> QAS-122 -> DD-135. Source: user request, 2026-10-14.
 
 
@@ -561,12 +557,12 @@ Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 ### Workspace transfer menu — DD-152
 
-Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 300-line source bound without changing dispatch semantics.
+Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
 
 ### R-144 Readable offline HTML manuals
 
-Update README and English/Korean manuals for0.1.21. App-menu help and standalone HTML copies display real tables, code, links and screenshots; wrapped native table cells keep readable columns and never overlap later rows. Safe HTTP(S) links in the native manual open through the operating system browser, while executable schemes remain inert.
+Update README and English/Korean manuals for0.1.21. App-menu help displays actual HTML tables, code, links and screenshots; standalone HTML copies are saved and shipped.
 Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.
 
 
@@ -607,19 +603,9 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 All application behavior, user-interface interaction, release packaging, manual generation, and project-owned verification tooling shall be implemented in Rust. The distributed application shall not execute JavaScript or Python. Replace project-authored JavaScript and Python in these paths with Rust; do not vendor non-Rust implementation source from third-party projects. Preserve user-selected external agent CLIs and operating-system services as process/runtime boundaries.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160. Source: user, 2026-10-15.
 
-### R-153 Safe OpenCode examples in MCP registration
-When no MCP server is registered, the native Settings editor shall show editable OpenCode-shaped local and remote JSONC examples with representative command, URL, environment/header, enabled, and timeout fields. Examples remain comments until copied, uncommented, and edited; credentials use environment references, remote hosts use `.invalid`, and no source binding is inferred.
-Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138/NFR-50 → QAS-149 → DD-163. GitHub #17, user, 2026-10-16.
-
-
-### R-158 Enforce a 300-line source and test bound
-
-Every authored source, test, script, example, style, markup, and embedded runtime data file stays at or below 300 lines. The Rust source-layout regression checks the bound and continues to reject inline production tests. Responsibility-based splits preserve public paths and behavior. Source: user, 2026-10-16; 2026-10-19 clarification from the project goal includes embedded locale JSON resources.
-
-
-### R-159 Recover native plan generation after a failed attempt
-
-When an operator retries plan generation, the native Review page must show the preparation state instead of the previous attempt's failure. If the bounded request times out, show that current request error and provide a direct retry action. Retry is available only when workspace settings and task edits are saved. Source: GitHub issue #36, 2026-10-19.
+### R-152 Recover clearly from a slow plan retry
+When Generate plan is retried after an earlier failed or partially completed planning attempt, preparation, save, baseline checks, and progress snapshots use the bounded planning timeout rather than the short interactive-request timeout. Timeout guidance must describe the existing automatic status refresh and a usable workspace/run-reopen recovery path; it must not direct the operator to a nonexistent refresh control.
+Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162. GitHub #36, user, 2026-10-19.
 
 ### R-155 Maintain a local company build label
 Keep Cargo's package version numeric and let developers set a local suffix in the tracked, empty-by-default `company-suffix.txt`. Workspace and Agent Room titlebars show `0.1.25.company_name` when populated; ordinary builds and public releases remain unsuffixed. Release packaging must refuse a non-empty suffix.
@@ -639,60 +625,64 @@ Trace: R-156 → BG-111 → SF-143 → UC-146 → FR-141 → QAS-152 → DD-166.
 Parallel tasks sharing a run database must wait through short-lived writer locks and persist their state instead of failing immediately. Keep the wait bounded and return a visible error if contention persists; do not drop or silently retry non-idempotent data.
 Trace: R-157 → BG-112 → SF-144 → UC-147 → FR-142 → QAS-153 → DDR-18 → DD-167. GitHub #56, 2026-10-20.
 
-### R-160 Configure custom CLI models, execution options, and result decoding
+### R-158 Configure custom CLI models, execution options, and result decoding
 Custom agent profiles shall use a manually managed model catalog unless an explicit discovery command and JSON response mapping are configured. Profiles may declare argument groups with templates, allowed values, defaults, and model-specific restrictions; tasks may override those groups. Omit an unset optional group as a whole, preserve selected values across resume, and revalidate them after reassignment. Configure a JSON Pointer for result extraction and an optional pointer/value condition that maps an otherwise normal result event to an error. Preserve these settings through profile editing and workspace export/import; keep built-in CLI behavior unchanged.
-Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145/NFR-55 → QAS-156 → DDR-20 → DD-170. GitHub #62, 2026-10-20.
+Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → DDR-19 → DD-168. GitHub #62, 2026-10-20.
 
-### R-161 Preserve established CLI safety and data behavior in the Rust migration
-The Rust implementation shall retain current main behavior for case-insensitive task path scopes, fail-closed shell command classification, environment-backed remote MCP authorization headers, IANA quota reset zones, and removal of successfully installed update downloads. These behaviors must use the existing Rust boundaries and keep failures visible and bounded.
-Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-56 → QAS-157 → DDR-21 → DD-171. GitHub #9; parity scope: #79, #80, #82, #83, #84.
+### R-159 Show live agent activity, current tool, and time since last output
+While a task runs, the Agent Room shall show what is observable without reading logs: the run state, the tool currently executing with its elapsed time, the time of the last output and the time since, and whether the owned process is present, absent or unverifiable. The display must not label silence as thinking or as failure; a CLI-provided reasoning signal is shown as such. Running tasks in the session list animate their agent icon, except under reduced motion.
+Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
 
-### R-162 Expose factual activity and safe in-run operator controls
-The native Agent Room shall show reported current tool activity, elapsed time, last output age, and owned-process state without inferring agent thought or health. During a run, an operator may send feedback to a running task and reassign or change the model of a pending task; a running task's assignment remains immutable.
-Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-62 → QAS-158 → DDR-22 → DD-172. GitHub #9; parity scope: #95, #100, #103.
+### R-161 Chat with the coordinator from the workspace screen
+The workspace screen shall offer a slide-over chat with the registered coordinator, closed by default. The operator can ask how to run or use a finished result, where outputs are, or how to use the current screen; the coordinator answers from the project's files, plans and documents and from the manual. The chat is read-only: it gives exact commands for the operator to run and never changes files or runs commands itself.
+Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
+### R-160 Keep the Agent Room focus on the work that is in progress
+When the session an operator is watching finishes and the run moves on, the Agent Room shall move its selection to the next running session, or to the integration entry when the run is waiting for approval, so the activity shown matches the run state. A session the operator selected for review after it finished stays selected.
+Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
+
+### R-162 Recover from an out-of-scope integration failure through the app
+When a worker finishes but files outside the approved task paths block integration, the operator shall be able to see every offending file, each task's approved paths and the files quarantined in stray-files; review and explicitly approve an exact plan change (owned paths, test command); restore quarantined files without overwriting; and continue from the finished work with the earlier evidence preserved. Feedback alone never changes owned paths.
+Trace: R-162 → BG-117 → SF-149 → UC-152 → FR-147/NFR-56 → QAS-158 → DDR-23 → DD-172. GitHub #122, user, 2026-10-22.
 
 ### R-163 The coordinator decides when a task stops without finishing
-When a task fails, exits without a result, or stalls until it can no longer continue, the workspace coordinator shall review the retained evidence and decide how to proceed (revise the task's instructions and resume, or stop for a person), so the run keeps going without asking the operator for routine judgement. A person is asked only when a decision needs more authority or intervention: a scope change, a tool or privilege approval, a coordinator verdict of blocked, or exhausted review rounds. While a task waits for account availability, a manually requested coordinator review shall use the selected coordinator if available or its explicitly configured, registered fallback after the existing UC-117 fallback deadline; before that deadline, or without an available fallback, it shall refuse with an actionable wait/schedule/reassign reason. Audit both selected and effective coordinator identities. This does not auto-triage a quota wait or change the task's fallback policy.
+When a task fails, exits without a result, or stalls until it can no longer continue, the workspace coordinator shall review the retained evidence and decide how to proceed (revise the task's instructions and resume, or stop for a person), so the run keeps going without asking the operator for routine judgement. A person is asked only when a decision needs more authority or intervention: a scope change, a tool or privilege approval, a coordinator verdict of blocked, or exhausted review rounds. The first slice covers failed and silent tasks; deciding what to do while an account is out of quota (for example moving a waiting task to an available agent) is a follow-up under the same issue.
 Trace: R-163 → BG-118 → SF-150 → UC-153 → FR-148/NFR-57 → QAS-159 → DDR-24 → DD-173. GitHub #135, user, 2026-10-22.
 
-### R-164 Read details and help without displacing page content
-Opening native Review details or task editors, the Agent Room team briefing, advanced agent-profile rules, MCP import-review lists and full source records, the User manual, the Agent tools guide, workspace-action confirmations, execution consent, or update details shall keep surrounding page controls at their existing screen positions. Use bounded popups anchored to their controls for short details and centered windows for long-form help, import review, confirmations, and update details. Repeated controls must retain independent identity. Content remains accessible and can be dismissed through visible close controls or normal popup behavior. Source: user UI review, 2026-10-21; Rust parity issue #9.
-Trace: R-164 → BG-120 → SF-152 → UC-155 → FR-150/NFR-60 → QAS-161 → DDR-26 → DD-175.
+### R-164 Lessons learned at each step are shown and shared with the agents
+When a step teaches the run something worth sharing (the coordinator revises a task after a failure, replaces a test command, or an approved scope change), the app shall record it as a step lesson with its cause and response, show it in the Agent Room, give it to every later task as evidence in the prompt (not only the task it came from), and queue it for agentmemory so agents that use agentmemory or the shared signal can recall it. Lessons are bounded evidence: they never grant tool or merge permission and are never trusted as instructions over the task, scope and approvals. The earlier hash-pinned reviewed lessons stay as they are.
+Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → DDR-25 → DD-174. GitHub #138, user, 2026-10-22.
 
-### R-165 Recover safely from an out-of-scope integration failure
-When integration fails because a worker changed files outside approved task paths, the operator shall inspect offending paths, approved task paths, and quarantined files with original destinations. Feedback alone never widens scope. The operator may review a proposed owned-path and test-command change, validate it against existing plan constraints, preview safe restorations and conflicts, and explicitly approve the exact proposal. Recovery preserves quarantine copies and prior evidence, never overwrites an existing destination, invalidates prior candidate approval, and requires explicit resume before reusing completed work and rerunning integration. A direct resume request while the scope failure remains shall be refused with guidance to use the recovery review.
-Trace: R-165 → BG-121 → SF-153 → UC-156 → FR-151/NFR-61 → QAS-162 → DDR-25 → DD-176. GitHub #122; native Rust parity tracked by #9.
-
-### R-166 Offer optional read-only coordinator guidance from the workspace
-The native Workspace shall let an operator open a closed-by-default chat panel and ask the configured coordinator about project outputs, plans, documentation, and using the current screen. It shall use the registered CLI and existing login, enforce its verified read-only mode, and tell the operator which commands to run rather than executing them. The conversation lasts only for the current window session.
-Trace: R-166 → BG-122 → SF-154 → UC-157 → FR-152/NFR-58 → QAS-163 → DDR-23 → DD-177. Port of GitHub #115 under Rust parity issue #9.
-### R-167 Carry lessons from one task to the whole run
-When a coordinator revision, a test-command replacement, or an approved scope change teaches the run something useful, record the cause and response as bounded evidence, show it in the Agent Room, include it in later task prompts, and queue it for agentmemory. Lessons never change task scope, tool permissions, or merge approval.
-Trace: R-167 → BG-123 → SF-155 → UC-158 → FR-153/NFR-63 → QAS-164 → DDR-27 → DD-178. Native Rust parity for GitHub #138.
-
-### R-168 The task detail column can be folded and still never hides a decision
+### R-165 The task detail column can be folded and still never hides a decision
 The operator shall be able to fold the Agent Room's task detail column to a narrow strip and unfold it, and the choice shall be remembered across runs and restarts. When the run needs a person (approval, tool approval, blocked, or a failure that needs guided recovery) a folded column shall open by itself once per decision, show the candidate review first, and, if the operator folds it again while the decision is open, show a blinking warning dot on the strip until the decision is made. After the decision the column returns to the operator's own choice. Folding removes no information, and the dot blinks only for a decision and not under reduced-motion settings.
-Trace: R-168 → BG-124 → SF-156 → UC-159 → FR-154/NFR-64 → QAS-165 → DDR-28 → DD-179. GitHub #146, user, 2026-10-22.
+Trace: R-165 → BG-120 → SF-152 → UC-155 → FR-150/NFR-59 → QAS-161 → DDR-26 → DD-175. GitHub #146, user, 2026-10-22.
 
-### R-169 The coordinator guards the goal, the plan rules and the scope as one charter
+### R-166 The coordinator guards the goal, the plan rules and the scope as one charter
 The coordinator shall hold the project goal, the planning rules, the owned scopes and the test contract of a run as one charter and use it at three gates: before approval (plan), before launch (a dry run of every test command, tools and runtime present, repository and file limits) and while running (failures, time-outs, scope escapes, tests that cannot run, a plan that cannot pass). A block at a gate is decided by the coordinator through a typed amendment (owned path, test command, dependency, task split, limit) that a deterministic validator checks against the charter; low-risk amendments are applied and recorded with undo, and only widening outside the project or sensitive paths, deleting files, changing the goal or exhausting the amendment budget asks a person.
-Trace: R-169 → BG-125 → SF-157 → UC-160 → FR-155/NFR-65 → QAS-166 → DDR-29 → DD-180. GitHub #149, user, 2026-10-22.
+Trace: R-166 → BG-121 → SF-153 → UC-156 → FR-151/NFR-60 → QAS-162 → DDR-27 → DD-176. GitHub #149, user, 2026-10-22.
 
-### R-170 Every coordinator judgment is shown, whatever the level of trust
+### R-167 Every coordinator judgment is shown, whatever the level of trust
 Each judgment the coordinator makes (tool decisions, reviews and their verdicts, replaced test commands, time-out resumes, recoveries, hand-offs, lessons, launch-gate results and amendments) shall be listed for the operator with the situation, the judgment and the result, in the coordinator view, in the activity of the task it concerns, and as a count on the coordinator row. Visibility does not depend on the amount of automation or trust and cannot be turned off.
-Trace: R-170 → BG-126 → SF-158 → UC-161 → FR-156/NFR-66 → QAS-167 → DDR-30 → DD-181. GitHub #149, user, 2026-10-22.
+Trace: R-167 → BG-122 → SF-154 → UC-157 → FR-152/NFR-61 → QAS-163 → DDR-28 → DD-177. GitHub #149, user, 2026-10-22.
 
-### R-171 A run does not start when it cannot work
+### R-168 A run does not start when it cannot work
 Before any run folder, worktree or agent process exists, the launch gate shall check that every agent executable and every task test command resolves (on PATH, as an absolute path, or relative to the project), and shall refuse to start with every violation listed by code (tool_missing, test_unrunnable), the task and the missing name, instead of failing later or looping. A passed gate is recorded in the run and listed with the coordinator's judgments.
-Trace: R-171 → BG-125 → SF-159 → UC-162 → FR-157/NFR-67 → QAS-168 → DDR-29 → DD-182. GitHub #149, user, 2026-10-22.
+Trace: R-168 → BG-121 → SF-155 → UC-158 → FR-153/NFR-62 → QAS-164 → DDR-27 → DD-178. GitHub #149, user, 2026-10-22.
 
-### R-172 CI tests synchronize on observable readiness
-Integration tests that coordinate workers or process trees shall wait for the required marker and recorded state, within a bounded deadline, before issuing actions or asserting cleanup. Early exit or missing readiness shall report the retained evidence instead of assuming a fixed delay or an unloaded runner.
-Trace: R-172 → BG-127 → SF-160 → UC-163 → FR-158/NFR-68 → QAS-169 → DDR-32 → DD-183. GitHub #156, 2026-10-22.
+### R-169 The coordinator amends the plan within limits, and every amendment can be undone
+When a task fails or leaves its owned paths, the coordinator shall be able to propose a typed amendment (add owned paths, add dependencies) instead of free-form feedback. A deterministic validator shall refuse unsafe or overlapping paths, unknown or cyclic dependencies, and shall classify each valid amendment as low or high risk. Low-risk amendments are applied by the coordinator, bounded to five per run, recorded with the previous values, shown with an Undo action, and the run continues. High-risk amendments (a whole top-level directory, sensitive paths such as secrets or keys), refused amendments and amendments beyond the budget stop the run for a person with the reason shown.
+Trace: R-169 → BG-121 → SF-156 → UC-159 → FR-154/NFR-63 → QAS-165 → DDR-29 → DD-179. GitHub #149, user, 2026-10-22.
 
-### R-173 Send actionable feedback to the selected coordinator
-When the coordinator is selected in the Agent Room, the operator can submit a separate request asking it to investigate retained run evidence, reconcile results, or coordinate remaining work. The UI identifies the recipient, keeps coordinator and task-agent drafts separate, and shows queued, processing, completed, or failed state. Coordinator requests use the registered CLI and validated review/amendment workflow; they do not restart completed tasks without an evidence-backed, validated revision and never approve or merge a candidate.
-Trace: R-173 → BG-128 → SF-161 → UC-164 → FR-159/NFR-69 → QAS-170 → DDR-33 → DD-184. GitHub #165, 2026-10-22.
+### R-170 A run keeps its charter, and the coordinator cannot drift from it silently
+When a run starts, the app shall record a charter: the goal and the original owned paths, test commands and dependencies of every task. The coordinator receives the charter with every review, and the validator measures how far the plan has moved from it. Amendments that would add more than eight paths in total beyond the charter are stopped for a person with the code goal_drift; every applied amendment shows its drift. An operator-approved scope change replaces the charter and the replacement is recorded. The goal itself is never changed by the coordinator.
+Trace: R-170 → BG-121 → SF-157 → UC-160 → FR-155/NFR-64 → QAS-166 → DDR-30 → DD-180. GitHub #149, user, 2026-10-22.
+
+### R-171 CI tests synchronize on observable readiness
+Tests for asynchronous workers and process containment shall wait for the state or marker they need, within a bounded deadline, before issuing actions or asserting cleanup. A process that exits before publishing readiness shall produce a diagnostic failure; a test must not assume that a fixed sleep or a fast runner scheduled its child.
+Trace: R-171 → BG-123 → SF-158 → UC-161 → FR-156/NFR-65 → QAS-167 → DDR-31 → DD-181. GitHub #156, 2026-10-22.
+
+### R-172 The operator can send feedback to the coordinator, and it is acted on
+When the coordinator is selected in the Agent Room, the feedback box shall be enabled and name the coordinator as the recipient, and the text shall reach the coordinator's own workflow, not the last selected development task. The coordinator investigates it with the frozen run evidence, answers in the judgment list, and revises tasks (or amends the plan within limits) only when the evidence shows work must change; a request about coordination alone never restarts finished development tasks. The request's states (queued, processing, completed, failed) are listed with the coordinator's judgments, and drafts of the coordinator and of each task are kept separate. The read-only coordinator chat is a different feature.
+Trace: R-172 → BG-124 → SF-159 → UC-162 → FR-157/NFR-66 → QAS-168 → DDR-32 → DD-182. GitHub #165, user, 2026-10-23.
 
 ### R-174 New Rust code follows a short, evidence-based review policy
 Selected guidance of the Google Rust Style Guide shall be applied as review rules to new and changed Rust code: safe APIs, documented and isolated `unsafe`, borrowing instead of deep copies, `Result` for recoverable external failures, named fields and meaningful types, standard traits, and no new broad glob imports. Chrome- and Fuchsia-specific rules, unstable options and library-only advice are excluded, existing code is not swept, and the existing formatter, Clippy and source-layout checks and their line limits stay authoritative. See [13-rust-review-policy.md](13-rust-review-policy.md).
@@ -705,3 +695,39 @@ Trace: R-175 → BG-130 → SF-163 → UC-166 → FR-161/NFR-71 → QAS-172 → 
 ### R-176 Tests do not mutate the process environment unsoundly
 Integration tests shall change environment variables only through one shared, serialized helper that restores the originals, so no test calls `std::env::set_var` or `remove_var` directly, and the undocumented-unsafe gate covers test targets as well as the library and binaries. Test behavior does not change. See the "Executable checks" section of [13-rust-review-policy.md](13-rust-review-policy.md).
 Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → DDR-36 → DD-187. GitHub #176, user, 2026-10-24.
+
+### R-177 The operator can improve a goal with the bundled prompt-optimizer skill
+The app shall carry the Apache-2.0 `prompt-optimizer` skill published by Sentry (getsentry/skills) and let the operator use it from the workspace screen: an **Optimize prompt** action next to the goal field asks the planning coordinator, read-only in the project folder, to rewrite the goal by the skill's method and shows the proposal with what changed and what is still unclear. The operator keeps the original unless they choose to use the proposal; nothing is saved, planned or run by the action. The skill text, its license and its origin ship with the app unmodified.
+Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-174/QAS-175 → DDR-37 → DD-188. GitHub #180, user, 2026-10-27.
+
+### R-178 Guide and manual open from Settings
+The **Agent tools guide…** and **User manual** entries shall be in the Settings dialog, not the workspace menu, so the workspace menu only lists workspace actions. Supersedes the placement in R-131 and the manual menu entry.
+Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
+
+### R-179 The coordinator chat behaves like a CLI session
+The coordinator chat shall keep what the operator typed and what the coordinator answered with the workspace, show it again after the screen or the workspace is reopened, and present it as a terminal-style transcript with prompt-like input, so asking again does not lose the earlier exchange. Amends R-161 (coordinator chat).
+Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
+
+### R-180 Screens show only information the operator can use
+The workspace and Agent Room screens shall not carry static texts that give no information: the title bar local/login label with its dot, the sidebar tagline under the agent list and the footer line stating the default workspace mode.
+Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
+
+### R-181 The chat keeps going when a reply is slow
+The coordinator chat shall stay a conversation when the page gives up waiting for a reply (the 15-second request limit) or a send fails: the question that the application accepted stays in the transcript, the screen follows the running coordinator and shows its answer when it completes, and only a question the application never received is taken back into the input. Amends R-179.
+Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192. GitHub #197, user, 2026-10-28.
+
+### R-182 Request timeouts can be traced
+The application shall record which page request was slow or failed, and the shipped manuals shall tell an agent how to read that record, so the cause of a "Request timed out" notice can be decided from evidence and not guessed. The notice names the request kind.
+Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193. GitHub #200, user, 2026-10-28.
+
+### R-183 A standard, schema-based CLI interface
+The application shall define one schema-based contract for what goes into a CLI's stdin and what comes out of its stdout, stderr and exit code, that an in-house LLM agent CLI can implement directly or through a thin wrapper. The contract shall state the kind of work (classification and extraction, summary, analysis, code, long agentic work, creative generation) so that model, effort and prompt conditions fit the task and the model and are not the same for every model.
+Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.
+
+### R-184 Idle polling does not report false request timeouts
+Automatic workspace and Agent Room polling shall not show an error toast when a background snapshot request times out. A request deadline shall pause while the page is hidden and resume with its remaining active time; a timer callback delayed by page suspension shall not immediately report failure. Operator-triggered refreshes and actions continue to show request errors.
+Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → DDR-39 → DD-196. GitHub #221, user, 2026-10-28.
+
+### R-185 A deleted default workspace stays deleted
+The application shall not show a default workspace the operator never created, and shall not bring one back after it was deleted. A workspace that has no name, goal, project, plan or run is only a placeholder: it is never listed, and while it is the only one the application asks the operator to name a workspace (the question cannot be skipped). At launch the application opens the most recently used saved workspace.
+Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
