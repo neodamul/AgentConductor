@@ -1,0 +1,6 @@
+{"schema": "acio.event/1", "seq": 1, "ts": "2026-10-28T05:00:00Z", "type": "session", "session_id": "s-4", "data": {"session_id": "s-4"}}
+{"schema": "acio.event/1", "seq": 2, "ts": "2026-10-28T05:00:01Z", "type": "tool", "session_id": "s-4", "data": {"call_id": "c9", "name": "shell", "status": "requested", "input": {"command": "rm -rf build"}, "needs_decision": true}}
+{"schema": "acio.event/1", "seq": 3, "ts": "2026-10-28T05:00:02Z", "type": "ack", "session_id": "s-4", "data": {"control_seq": 2, "status": "applied"}}
+{"schema": "acio.event/1", "seq": 4, "ts": "2026-10-28T05:00:02Z", "type": "tool", "session_id": "s-4", "data": {"call_id": "c9", "name": "shell", "status": "denied"}}
+{"schema": "acio.event/1", "seq": 5, "ts": "2026-10-28T05:00:03Z", "type": "ack", "session_id": "s-4", "data": {"control_seq": 3, "status": "applied"}}
+{"schema": "acio.event/1", "seq": 6, "ts": "2026-10-28T05:00:03Z", "type": "result", "session_id": "s-4", "data": {"status": "cancelled", "summary": "Stopped by the operator."}}

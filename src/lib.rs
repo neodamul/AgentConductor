@@ -1,9 +1,11 @@
 pub mod activity;
 pub mod adapters;
+pub mod agent_settings;
 pub mod archive;
 pub mod availability;
 pub mod chat;
 pub mod claude_control;
+pub mod cli_io;
 pub mod cooperative;
 pub mod coordinator;
 pub mod custom_profile_registry;

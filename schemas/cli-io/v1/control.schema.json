@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:agentconductor:cli-io:1:control",
+  "title": "acio.control/1 - one JSON line the supervisor writes to a running CLI's stdin after the input document",
+  "type": "object",
+  "required": [
+    "schema",
+    "seq",
+    "type",
+    "data"
+  ],
+  "properties": {
+    "schema": {
+      "const": "acio.control/1"
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Starts at 1; echoed in the ack event."
+    },
+    "type": {
+      "enum": [
+        "cancel",
+        "user_message",
+        "tool_decision"
+      ]
+    },
+    "data": {
+      "type": "object"
+    }
+  },
+  "patternProperties": {
+    "^x-[a-z0-9-]+$": {}
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "cancel"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "properties": {
+              "reason": {
+                "type": "string",
+                "maxLength": 500
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "user_message"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "required": [
+              "text"
+            ],
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 8192
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "const": "tool_decision"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "data": {
+            "required": [
+              "call_id",
+              "decision"
+            ],
+            "properties": {
+              "call_id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "decision": {
+                "enum": [
+                  "allow",
+                  "deny"
+                ]
+              },
+              "reason": {
+                "type": "string",
+                "maxLength": 500
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    }
+  ]
+}

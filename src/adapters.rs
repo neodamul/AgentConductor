@@ -1,4 +1,7 @@
-use crate::protocol::Provider;
+use crate::{
+    agent_settings::{Resume, full_access_args as settings_full_access_args, preset, settings_for},
+    protocol::Provider,
+};
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -113,67 +116,74 @@ fn base_session_args(
                 .replace("{session_id}", session.unwrap_or(""))
         })
         .collect();
-    if profile.parser == Provider::Custom {
+    let Some(settings) = settings_for(profile.parser, profile.agent_settings.as_ref())? else {
         return Ok(args);
-    }
+    };
+    let flags = &settings.invocation.session;
     if let Some(model) = model {
-        if args
-            .iter()
-            .any(|a| a == "--model" || a == "-m" || a.starts_with("--model="))
-        {
+        let flag = flags.model_args.first();
+        if args.iter().any(|a| {
+            flag.is_some_and(|f| a == f || a.starts_with(&format!("{f}=")))
+                || flags.model_aliases.contains(a)
+        }) {
             return Err("duplicate model selector in profile".into());
         }
-        args.extend(["--model".into(), model.into()]);
+        args.extend(
+            flags
+                .model_args
+                .iter()
+                .map(|arg| arg.replace("{model}", model)),
+        );
     }
-    if let Some(session) = session {
-        if args.iter().any(|a| {
-            matches!(
-                a.as_str(),
-                "--resume" | "--session" | "--continue" | "--last" | "-c"
-            )
-        }) {
-            return Err("ambiguous session selector in profile".into());
+    let Some(session) = session else {
+        return Ok(args);
+    };
+    if args.iter().any(|arg| flags.selectors.contains(arg)) {
+        return Err("ambiguous session selector in profile".into());
+    }
+    match &flags.resume {
+        Some(Resume::Append { args: extra }) => {
+            args.extend(extra.iter().map(|arg| arg.replace("{session_id}", session)))
         }
-        match profile.parser {
-            Provider::Claude => args.extend(["--resume".into(), session.into()]),
-            Provider::OpenCode => args.extend(["--session".into(), session.into()]),
-            // DD-131: full access is likewise an option of `exec`, before `resume`.
-            Provider::Codex
-                if full_access_args(Provider::Codex).as_ref() == Some(&profile.args) =>
-            {
-                args = vec![
-                    "exec".into(),
-                    "--dangerously-bypass-approvals-and-sandbox".into(),
-                    "resume".into(),
-                    session.into(),
-                    "-".into(),
-                    "--json".into(),
-                ];
-                if let Some(model) = model {
-                    args.extend(["--model".into(), model.into()]);
-                }
+        Some(Resume::ReplaceArgv {
+            argv,
+            full_access_argv,
+            ..
+        }) => {
+            let full = settings_full_access_args(&settings);
+            let initial = settings
+                .invocation
+                .args
+                .iter()
+                .map(|arg| arg.replace("{task_file}", task_file))
+                .collect::<Vec<_>>();
+            args = if full_access_argv.is_some() && full.as_ref() == Some(&profile.args) {
+                full_access_argv
+                    .as_deref()
+                    .unwrap_or_default()
+                    .iter()
+                    .map(|arg| arg.replace("{session_id}", session))
+                    .collect()
+            } else if profile.args == initial {
+                argv.iter()
+                    .map(|arg| arg.replace("{session_id}", session))
+                    .collect()
+            } else {
+                let label = settings.label.as_deref().unwrap_or("This agent");
+                return Err(format!(
+                    "{label} resume requires the verified initial argv template"
+                ));
+            };
+            if let Some(model) = model {
+                args.extend(
+                    flags
+                        .model_args
+                        .iter()
+                        .map(|arg| arg.replace("{model}", model)),
+                );
             }
-            Provider::Codex => {
-                let initial = invocation(Provider::Codex, None, task_file)?.args;
-                if profile.args != initial {
-                    return Err("Codex resume requires the verified initial argv template".into());
-                }
-                // Sandbox is an option of `exec`, preceding its `resume` subcommand.
-                args = vec![
-                    "exec".into(),
-                    "--sandbox".into(),
-                    "workspace-write".into(),
-                    "resume".into(),
-                    session.into(),
-                    "-".into(),
-                    "--json".into(),
-                ];
-                if let Some(model) = model {
-                    args.extend(["--model".into(), model.into()]);
-                }
-            }
-            Provider::Custom => unreachable!(),
         }
+        None => return Err("this agent cannot resume a session".into()),
     }
     Ok(args)
 }
@@ -184,24 +194,7 @@ fn base_session_args(
 /// Claude bypasses its permission prompts and loads the operator's own MCP servers (for
 /// example Playwright for browser checks); Codex runs without approvals or sandbox.
 pub fn full_access_args(provider: Provider) -> Option<Vec<String>> {
-    let args: &[&str] = match provider {
-        Provider::Claude => &[
-            "-p",
-            "--output-format",
-            "stream-json",
-            "--verbose",
-            "--permission-mode",
-            "bypassPermissions",
-        ],
-        Provider::Codex => &[
-            "exec",
-            "-",
-            "--json",
-            "--dangerously-bypass-approvals-and-sandbox",
-        ],
-        _ => return None,
-    };
-    Some(args.iter().map(|a| a.to_string()).collect())
+    settings_full_access_args(preset(provider)?)
 }
 
 pub fn invocation(

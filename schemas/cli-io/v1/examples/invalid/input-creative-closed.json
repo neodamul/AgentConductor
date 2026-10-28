@@ -1,0 +1,1 @@
+{"schema": "acio.input/1", "request_id": "req-bad6", "mode": "ask", "instruction": {"text": "Ideas."}, "workspace": {"root": "/work/shop", "access": "read_only"}, "task": {"type": "creative", "open_ended": false, "variants": 3}}

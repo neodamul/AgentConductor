@@ -275,6 +275,7 @@ impl AgentProfile {
         {
             return Err("custom error condition needs a non-null match value".into());
         }
+        crate::agent_settings::settings_for(self.parser, self.agent_settings.as_ref())?;
         Ok(())
     }
     pub fn quota_key(&self) -> &str {

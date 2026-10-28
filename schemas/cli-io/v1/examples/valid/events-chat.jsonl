@@ -1,0 +1,6 @@
+{"schema": "acio.event/1", "seq": 1, "ts": "2026-10-28T01:00:00.000Z", "type": "session", "session_id": "s-1", "data": {"session_id": "s-1", "resumed": false, "model": "inhouse-large", "cli": {"name": "inhouse-agent", "version": "2.3.0"}, "effective": {"model": "inhouse-large", "effort": "medium", "task_type": "analyze"}}}
+{"schema": "acio.event/1", "seq": 2, "ts": "2026-10-28T01:00:01.000Z", "type": "progress", "session_id": "s-1", "data": {"phase": "reading", "message": "Reading package.json"}}
+{"schema": "acio.event/1", "seq": 3, "ts": "2026-10-28T01:00:02.000Z", "type": "message", "session_id": "s-1", "data": {"role": "assistant", "text": "Run ", "delta": true, "final": false}}
+{"schema": "acio.event/1", "seq": 4, "ts": "2026-10-28T01:00:02.100Z", "type": "message", "session_id": "s-1", "data": {"role": "assistant", "text": "npm test.", "delta": true, "final": true}}
+{"schema": "acio.event/1", "seq": 5, "ts": "2026-10-28T01:00:02.200Z", "type": "usage", "session_id": "s-1", "data": {"input_tokens": 812, "output_tokens": 14, "cost_usd": 0.002}}
+{"schema": "acio.event/1", "seq": 6, "ts": "2026-10-28T01:00:02.300Z", "type": "result", "session_id": "s-1", "data": {"status": "success", "summary": "Run npm test.", "data": {"answer": "Run npm test."}}}
