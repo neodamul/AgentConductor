@@ -2263,6 +2263,15 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Task: commit and push the issue branch; open draft PR with `Fixes #221`.
 - [ ] Complete: merge the verified issue PR into `main`, then port the behavior and native Rust regression coverage to the Rust migration branch.
 
+### Chat button icon — GitHub #229
+
+- [x] Plan: user request 2026-10-28: the coordinator chat is a conversation now, so the "?" button should look like a chatbot. An inline SVG (bubble with two eyes and an antenna, `currentColor`) keeps the theme color and needs no emoji font.
+- [x] Red: `the_chat_button_is_a_chatbot_icon_not_a_question_mark` in `tests/chat_ui.rs` failed before the change.
+- [x] Task: `src/ui/startup.html`; README and manual wording (EN/KO, HTML regenerated); CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, unsafe gate, Rust suite (710 passed), Python, node. Not verified: how the icon looks in the real window (drawn at 96 px and 16 px in a preview only).
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge, then the next release. The native UI (Codex track, #9) keeps its own button.
+
 ### #221 Follow-up diagnostics and quiet retries
 
 - [x] Task: report page-side timeout duration to the local diagnostics log, and show a transport timeout only after three consecutive misses on scheduled background polls. Explicit refresh and non-timeout errors remain visible immediately.

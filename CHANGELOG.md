@@ -6,8 +6,9 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The coordinator chat button in the title bar shows a chat-bubble robot icon instead of a "?" (GitHub #229).
 - A background refresh that misses the application's reply is now retried quietly and the "Request timed out" toast appears only after three misses in a row, so an idle window no longer flashes it; every timeout the page gives up on is also written to the diagnostics log with how long the page really waited and whether it was hidden, and the manual explains how to read it (GitHub #221).
-- The app now opens the workspace you used last instead of always opening the default one, and creates the default workspace only when none is saved, so a deleted default workspace no longer comes back after a restart or an update (GitHub #226).
+- The app now opens the workspace you used last. A workspace with no name, goal, project folder, plan or run is never listed; with none left the app asks you to add a first workspace, so a deleted default workspace no longer comes back after a restart or an update (GitHub #226).
 
 ## v0.1.40
 
