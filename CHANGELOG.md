@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- A background refresh that misses the application's reply is now retried quietly and the "Request timed out" toast appears only after three misses in a row, so an idle window no longer flashes it; every timeout the page gives up on is also written to the diagnostics log with how long the page really waited and whether it was hidden, and the manual explains how to read it (GitHub #221).
+
 ## v0.1.40
 
 - `agentconductor io conformance <executable>` runs a CLI through the acio contract (self-description, a read-only question with a valid event stream, rejection of an invalid input) and prints a pass/fail table; both manuals gained an "Integrating a CLI" chapter (GitHub #212).

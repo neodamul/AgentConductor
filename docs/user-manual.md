@@ -434,6 +434,8 @@ The page waits 15 seconds for each reply from the application. The toast names t
 
 Include the last 50 lines of both files, the request kind from the toast and the time of the toast when you report a timeout.
 
+**Page-side timeouts.** Whenever the page gives up on a reply it also writes `<unix milliseconds> client-timeout of=<kind> waited=<ms> hidden=<true|false>`. `waited` is what the page's own clock measured: about 15000 is a real 15-second wait with no reply; a much larger value, or `hidden=true`, means the page itself was suspended (window in the background, display or machine sleep) and the timeout says nothing about the request. A `client-timeout` with no slow `done` line for the same kind means the application was not slow: the reply never reached the page. The background refresh that keeps the screen current retries a missed reply quietly and shows the toast only after three misses in a row (about 45 seconds), so a toast for `snapshot` means three consecutive misses.
+
 ## Optional tool commands
 
 Run these yourself in the indicated agent CLI or a terminal; the app never installs them.

@@ -23,9 +23,9 @@ async function request(packet) {
   const bridge=window.webkit?.messageHandlers?.agentconductor??(window.__acRequest?{postMessage:window.__acRequest}:null);
   if(!bridge)throw Error(acMessage("startup.native_bridge_unavailable"));
   // A timed-out mutation remains accepted. Never automatically retry it.
-  let timer;
+  let timer;const began=Date.now();
   // Agent Room requests are marked so the workspace page can stay open beside the room.
-  try {return JSON.parse(await Promise.race([bridge.postMessage(JSON.stringify({...packet,room:true})),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error(acMessage("startup.native_response_timed_out_refresh_before_retrying",{value1:packet.kind}))),15000);})]));}
+  try {return JSON.parse(await Promise.race([bridge.postMessage(JSON.stringify({...packet,room:true})),new Promise((_,reject)=>{timer=setTimeout(()=>{/* GitHub #221: tell the native side we gave up (see startup.js). */try{Promise.resolve(bridge.postMessage(JSON.stringify({kind:'client_timeout',of:packet.kind,waited:Date.now()-began,hidden:document.hidden,room:true}))).catch(()=>{});}catch(_){}reject(Object.assign(Error(acMessage("startup.native_response_timed_out_refresh_before_retrying",{value1:packet.kind})),{transport:true}));},15000);})]));}
   finally {clearTimeout(timer);}
 }
 
@@ -448,9 +448,11 @@ $('tool-dialog-allow').onclick=()=>decideTool('tool_approve');$('tool-dialog-den
 $('tool-dialog-later').onclick=()=>$('tool-dialog').close();
 $('tool-dialog').onclose=()=>{if(toolDialog)deferredTools.add(toolDialog.id);toolDialog=null;};
 function autoQuotaRefresh(){if(roomStopped||!snapshot||busy()||snapshot.report.state==='running')return;const agent=snapshot.report.plan.agents.find(a=>['claude','codex'].includes(a.parser)&&snapshot.quota_refresh_due?.[a.id]);if(agent)refreshQuota(agent.id);}
+// GitHub #221: a missed background poll is retried; only the third miss in a row is shown. Other errors show at once.
+let pollFailures=0;function pollFailed(e){if(!e.transport||++pollFailures>=3){AC_I18N.bind($('connection'),()=>(acMessage("room.local_connection_unavailable")));notice(e.message,true);}}function pollSucceeded(){pollFailures=0;}
 async function poll() {
   if(polling||roomStopped)return;polling=true;
-  try{const kinds=JSON.stringify([...new Set((snapshot?.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());const next=await request({kind:'snapshot',quota_refresh_last:Object.fromEntries(quotaRefreshed),icons:!snapshot||kinds!==iconKinds});if(roomStopped)return;if(next.icons){iconCache=next.icons;iconKinds=JSON.stringify([...new Set((next.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());}const before=snapshot;snapshot=next;followProgress(before);const job=snapshot.job;
+  try{const kinds=JSON.stringify([...new Set((snapshot?.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());const next=await request({kind:'snapshot',quota_refresh_last:Object.fromEntries(quotaRefreshed),icons:!snapshot||kinds!==iconKinds});if(roomStopped)return;pollSucceeded();if(next.icons){iconCache=next.icons;iconKinds=JSON.stringify([...new Set((next.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());}const before=snapshot;snapshot=next;followProgress(before);const job=snapshot.job;
     if(job&&job.state!=='running'&&lastJob!==job.id&&job.kind!=='quota'){lastJob=job.id;
       // Feedback or an approval sent to a run that is not running continues it.
       if(resumeAfter&&job.kind===resumeAfter){resumeAfter=null;if(job.state!=='failed'&&['ready','stopped'].includes(snapshot.report.state))setTimeout(()=>act({kind:'resume'}),0);}if(job.state==='failed')notice(()=>(job.error||(job.termination_signal?acMessage("room.action_terminated_by_signal_previous_evidence_is_retained", {value1:job.termination_signal}):acMessage("room.action_failed_previous_evidence_is_retained"))),true);else{
@@ -458,7 +460,7 @@ async function poll() {
       if(job.kind==='approve'&&review&&review.report.candidate?.commit===snapshot.report.candidate?.commit&&review.report.diff_hash===snapshot.report.diff_hash&&JSON.stringify(review.report.tests)===JSON.stringify(snapshot.report.tests))review.revision=snapshot.revision;
       for(const t of snapshot.report.tasks)if(t.feedback&&drafts.get(t.id)===t.feedback){drafts.delete(t.id);if(task()?.id===t.id&&!composing&&$('feedback').value===t.feedback)$('feedback').value='';}
     }}renderSnapshot();setTimeout(autoQuotaRefresh,0);await loadTask();
-  }catch(e){if(roomStopped)return;AC_I18N.bind($('connection'),()=>(acMessage("room.local_connection_unavailable")));notice(e.message,true);}finally{polling=false;}
+  }catch(e){if(roomStopped)return;pollFailed(e);}finally{polling=false;}
 }
 for(const el of document.querySelectorAll('[data-tab]'))el.onclick=()=>el.dataset.tab==='review'?loadReview():changeTab(el.dataset.tab);
 $('brief-team').onclick=briefTeam;$('quota-agent').onchange=()=>{quotaAgent=$('quota-agent').value;renderQuota(profile());};$('quota-refresh').onclick=()=>refreshQuota($('quota-agent').value);$('refresh').onclick=poll;$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('open-tools').onclick=()=>{deferredTools.clear();if(snapshot)syncToolDialog();if(!$('tool-dialog').open)$('tool-requests').scrollIntoView({behavior:'smooth',block:'center'});};

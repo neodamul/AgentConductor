@@ -2252,3 +2252,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite, the Python and node tests.
 - [ ] Verify (Windows): CI (the conformance tests are Unix-only because they use shell scripts).
 - [ ] Complete: merge into `main` after #217 (stacked); then the v0.1.40 release.
+
+### Idle "Request timed out" toast — GitHub #221
+
+- [x] Plan: user report 2026-10-28 on another PC (after a coordinator chat, an update and deleting an unused workspace, with nothing running): the toast appears while idle. The log shows no slow native request, so the page timer fired; the cause is not yet known (suspended page, lost reply). Fix the symptom and make the cause observable: background polls retry quietly (toast on the third consecutive miss), and the page reports each timeout to the log.
+- [x] Red: `tests/poll_failure_runtime.cjs` and two tests in `tests/request_diagnostics.rs` failed before the change.
+- [x] Task: `pollFailed`/`pollSucceeded` in `src/ui/startup.js` and `src/ui/room.js`; `client_timeout` report from both `request` functions; `diagnostics::client_timeout`; manual "Page-side timeouts" paragraph (EN/KO); CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite, node tests. Not verified: the real cause on the reporting PC.
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge, then read the reporting PC's `client-timeout` lines to find the cause; keep #221 open until then.
+

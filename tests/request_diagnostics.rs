@@ -63,3 +63,47 @@ fn both_shipped_manuals_tell_an_agent_how_to_read_the_log() {
         }
     }
 }
+
+#[test]
+fn a_timeout_reported_by_the_page_is_logged_with_how_long_it_really_waited() {
+    let root = std::env::temp_dir().join(format!("ac-client-timeout-{}", std::process::id()));
+    let home = root.join("home");
+    std::fs::create_dir_all(&home).unwrap();
+    let mut env = env::lock();
+    env.set("HOME", &home);
+    let room = Room::startup(
+        &root.join("desktop"),
+        Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+    )
+    .unwrap();
+    let report = br#"{"kind":"client_timeout","of":"snapshot","waited":15031,"hidden":true}"#;
+    assert!(room.dispatch(report).is_ok());
+    let text =
+        std::fs::read_to_string(home.join(".agentconductor/request-diagnostics.log")).unwrap();
+    assert!(
+        text.contains("client-timeout of=snapshot waited=15031 hidden=true"),
+        "{text}"
+    );
+    let hostile = br#"{"kind":"client_timeout","of":"a b\nc=d","waited":1,"hidden":false}"#;
+    room.dispatch(hostile).unwrap();
+    let text =
+        std::fs::read_to_string(home.join(".agentconductor/request-diagnostics.log")).unwrap();
+    assert_eq!(text.lines().count(), 2, "one line per report: {text}");
+    drop(room);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn the_page_retries_missed_polls_quietly_and_reports_its_timeouts() {
+    let result = std::process::Command::new("node")
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .arg("tests/poll_failure_runtime.cjs")
+        .output()
+        .expect("Node runs UI behavior tests");
+    assert!(
+        result.status.success(),
+        "{}{}",
+        String::from_utf8_lossy(&result.stdout),
+        String::from_utf8_lossy(&result.stderr)
+    );
+}
