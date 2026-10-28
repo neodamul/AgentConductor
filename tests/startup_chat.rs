@@ -44,3 +44,99 @@ fn chat_requests_are_validated_and_the_snapshot_carries_a_chat_slot() {
     drop(room);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn chat_submission_does_not_wait_for_repository_head() {
+    use std::{
+        os::unix::fs::PermissionsExt,
+        process::Command,
+        time::{Duration, Instant},
+    };
+
+    let root = std::env::temp_dir().join(format!("ac-chat-timeout-{}", std::process::id()));
+    let repo = root.join("repo");
+    std::fs::create_dir_all(&repo).unwrap();
+    for args in [
+        vec!["init", "-b", "main"],
+        vec!["config", "user.name", "Test"],
+        vec!["config", "user.email", "test@example.invalid"],
+    ] {
+        assert!(
+            Command::new("git")
+                .current_dir(&repo)
+                .args(args)
+                .status()
+                .unwrap()
+                .success()
+        );
+    }
+    std::fs::write(repo.join("base.txt"), "base\n").unwrap();
+    assert!(
+        Command::new("git")
+            .current_dir(&repo)
+            .args(["add", "."])
+            .status()
+            .unwrap()
+            .success()
+    );
+    assert!(
+        Command::new("git")
+            .current_dir(&repo)
+            .args(["commit", "-m", "base"])
+            .status()
+            .unwrap()
+            .success()
+    );
+
+    let mut environment = env::lock();
+    environment.set("HOME", root.join("home"));
+    let room = Room::startup(
+        &root.join("desktop"),
+        std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+    )
+    .unwrap();
+    let before = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    let config = json!({
+        "profiles":[{"id":"coordinator","executable":std::env::current_exe().unwrap(),"args":["-p"],"parser":"claude","permission_mode":"read_only"}],
+        "repository":repo,"goal":"answer questions","coordinator":"coordinator","workspace_mode":"shared"
+    });
+    room.dispatch(
+        json!({"kind":"save","revision":before["revision"],"config":config})
+            .to_string()
+            .as_bytes(),
+    )
+    .unwrap();
+    let saved = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    room.dispatch(
+        json!({"kind":"draft","revision":saved["revision"]})
+            .to_string()
+            .as_bytes(),
+    )
+    .unwrap();
+    let reviewed = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+
+    let git = Command::new("which").arg("git").output().unwrap();
+    let real_git = String::from_utf8(git.stdout).unwrap().trim().to_owned();
+    let bin = root.join("bin");
+    std::fs::create_dir_all(&bin).unwrap();
+    let slow_git = bin.join("git");
+    std::fs::write(&slow_git, format!("#!/bin/sh\ncase \"$*\" in *'rev-parse HEAD'*) sleep 4;; esac\nexec \"{real_git}\" \"$@\"\n")).unwrap();
+    std::fs::set_permissions(&slow_git, std::fs::Permissions::from_mode(0o755)).unwrap();
+    environment.set("PATH", format!("{}:/usr/bin:/bin", bin.display()));
+
+    let started = Instant::now();
+    let result = room.dispatch(
+        json!({"kind":"chat","revision":reviewed["revision"],"text":"Is this responsive?"})
+            .to_string()
+            .as_bytes(),
+    );
+    assert!(result.is_ok(), "chat submission failed: {result:?}");
+    assert!(
+        started.elapsed() < Duration::from_secs(2),
+        "chat request waited for git HEAD: {:?}",
+        started.elapsed()
+    );
+    drop(room);
+    drop(environment);
+    std::fs::remove_dir_all(root).unwrap();
+}

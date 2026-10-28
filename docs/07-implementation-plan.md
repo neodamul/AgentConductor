@@ -2191,6 +2191,15 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify (Windows): CI.
 - [ ] Complete: merge into `main`, then release v0.1.39.
 
+### Coordinator chat avoids repository revision lookup — GitHub #234
+
+- [x] Plan: apply existing R-181 / QAS-179 / DD-192; keep the 15-second UI behavior and preserve active-job checks.
+- [x] Red: a temporary Git shim delayed `rev-parse HEAD` by 4 seconds; chat dispatch waited 8.17 seconds because the request and launcher each repeated the lookup.
+- [x] Task: handle read-only chat before metadata/revision checks and reuse the request revision when recording the job; preserve the normal revision guard for every mutating operation.
+- [x] Verify: the regression passes in 0.19 seconds; `startup_chat` (2), `request_diagnostics` (4), setup unit tests (1), Clippy, rustfmt, diff check, and the 300-line source limit pass on macOS.
+- [ ] Verify: obtain the affected installation's request log and run exact packaged macOS/Windows checks. The reproduced Git delay is not proof of the reported timeout; a preceding queued request remains possible.
+- [ ] Complete: merge the main fix and confirm the corresponding implementation in the Rust migration PR before closing #234.
+
 ### CLI I/O protocol (acio) design — GitHub #205
 
 - [x] Plan: R-183 to DD-194 and DDR-38 added; `docs/cli-io-protocol.md` is the specification.

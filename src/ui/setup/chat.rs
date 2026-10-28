@@ -3,10 +3,27 @@
 use super::*;
 
 impl Startup {
+    pub(super) fn dispatch_chat(
+        &self,
+        saved: &mut Saved,
+        revision: &str,
+        text: &str,
+    ) -> Result<serde_json::Value, String> {
+        // Chat cannot change repository state, so bypass the Git HEAD revision guard.
+        let job = self.job(saved)?;
+        self.settle(saved, &job)?;
+        if job["state"] == "running" {
+            return Err(crate::ui::messages::text("native.startup_operation_still_running").into());
+        }
+        self.ensure_no_live_jobs()?;
+        self.launch_chat(saved, text.to_owned(), revision)
+    }
+
     pub(super) fn launch_chat(
         &self,
         s: &mut Saved,
         text: String,
+        revision: &str,
     ) -> Result<serde_json::Value, String> {
         let language = if crate::ui::language::load() == "ko" {
             "Korean"
@@ -29,10 +46,11 @@ impl Startup {
                 .map_err(|e| e.to_string())?,
         )?;
         s.chat_result = Some(format!("chat-{id}.json"));
-        self.launch(
+        self.launch_with_revision(
             s,
             "chat",
             vec!["chat".into(), self.broker.dir.to_string_lossy().into(), id],
+            revision,
         )
     }
 

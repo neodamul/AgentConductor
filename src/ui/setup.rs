@@ -23,6 +23,7 @@ mod model;
 pub use model::Config;
 pub(super) use model::{Proposal, Saved, StoredJob, defaults};
 
+mod launch;
 mod settle;
 mod storage;
 use storage::{bytes, read, write};
@@ -136,39 +137,6 @@ impl Startup {
         jobs::state(&self.quota_broker, &s.quota_job)
     }
 
-    fn launch(
-        &self,
-        s: &mut Saved,
-        operation: &str,
-        args: Vec<String>,
-    ) -> Result<serde_json::Value, String> {
-        let mut slot = self
-            .broker
-            .job
-            .lock()
-            .map_err(|_| messages::text("native.startup_job_state_poisoned"))?;
-        if slot.as_ref().is_some_and(|j| !j.finished) {
-            return Err(messages::text("native.startup_operation_still_running").into());
-        }
-        let result = self
-            .broker
-            .launch_locked(operation, &args, &self.revision(s)?, &mut slot)?;
-        s.job = Some(StoredJob {
-            id: result["id"]
-                .as_str()
-                .ok_or(messages::text("native.missing_job_id"))?
-                .into(),
-            operation: operation.into(),
-            started_ms: std::time::SystemTime::now()
-                .duration_since(std::time::UNIX_EPOCH)
-                .map_err(|e| e.to_string())?
-                .as_millis()
-                .try_into()
-                .map_err(|_| messages::text("native.clock_out_of_range"))?,
-        });
-        self.store(s)?;
-        Ok(result)
-    }
     pub(crate) fn poll_job(&self) -> Result<(), String> {
         self.broker.poll()?;
         self.quota_broker.poll().map(|_| ())
