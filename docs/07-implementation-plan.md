@@ -6027,8 +6027,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 - [x] Plan: port R-177 through DD-188 from main; use the existing coordinator worker slot and adapt the review dialog to the native eframe workspace screen.
 - [x] Red: optimizer module/import, startup request validation, and package-license assertions failed before the implementation existed.
-- [x] Task: bundle the pinned Apache-2.0 skill and license, add bounded read-only coordinator request/result handling, and expose a proposal review dialog with explicit accept/keep actions.
+- [x] Task: bundle the pinned Apache-2.0 skill and license, add bounded read-only coordinator request/result handling, and expose a proposal review dialog with explicit accept/keep actions. The Room surface omits the workspace-only optimizer-result field from its strict initial snapshot request.
 - [x] Focused tests: optimizer, mocked CLI request, startup validation and release-package tests pass (9 tests); native UI state/request tests pass (2 tests).
-- [ ] Verify: run the full relevant offline regression set, rustfmt, all-target warning-denied Clippy, and source-layout/diff checks; confirm every changed Rust and test file is at most 300 lines.
+- [x] Verify (macOS local): room judgments, manual renderer, bilingual screenshot assets, native package license fixture, focused optimizer/startup/release tests and source layout pass; all-target warning-denied Clippy, rustfmt and diff checks pass. Changed Rust/test files meet the 300-line bound.
+- [x] Task: regenerate both offline HTML manuals from their Markdown sources after the English manual update and current screenshot asset base.
 - [ ] Verify: inspect the native window and run against a real coordinator profile; neither UI screenshot verification nor a real coordinator call has been performed yet.
-- [ ] Complete: commit and push this as a separate draft PR related to #180 and #9; do not merge or close either issue.
+- [ ] Complete: push the verified changes to the existing separate draft PR related to #180 and #9; do not merge or close either issue.
