@@ -17,7 +17,7 @@ fn restored_history_can_start_a_new_conversation_and_disable_chat_until_saved() 
     }));
     state.open();
     let mut output = frame(&context, &mut state, Vec::new()).0;
-    assert!(contains_text(&output, "Previous question"));
+    assert!(contains_text(&output, "> Previous question"));
     let button = control_center(&output, "New chat");
     clear(&mut output);
 
@@ -31,7 +31,7 @@ fn restored_history_can_start_a_new_conversation_and_disable_chat_until_saved() 
     state.reset();
     assert!(!state.awaiting());
     let output = frame(&context, &mut state, Vec::new()).0;
-    assert!(!contains_text(&output, "Previous question"));
+    assert!(!contains_text(&output, "> Previous question"));
 }
 
 #[test]
