@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+## v0.1.45
+
 - Planning: a task without an owned path (a verification task too) is now part of the planning contract: the output schema and the prompt require at least one path and a test command, a rejected task is reported with its id and the wrong field instead of one combined message, and an empty scope gets the same single correction round as an unsafe or overlapping one.
 
 ## v0.1.44
