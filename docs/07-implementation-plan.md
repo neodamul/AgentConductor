@@ -6392,3 +6392,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: focused chat, startup, reset, source-layout and public-doc suites pass 35 tests; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line limit pass.
 - [ ] Verify package: confirm the shipped Rust app carries real latest-run evidence through macOS and Windows packaged chat flows.
 - [ ] Complete: do not change #9 acceptance until exact package evidence passes; source-level tests are not packaged acceptance.
+### 2026-10-29 — Port main #229 coordinator chat icon to Rust — issue #9
+
+- [x] Plan: trace native launcher parity through R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201.
+- [x] Red: require an icon-sized launcher that paints a bubble/robot while retaining its localized accessible name and opening behavior; the old text button failed the size assertion.
+- [x] Task: move launcher rendering into a focused Rust module and paint the glyph with egui, preserving current layout and click handling.
+- [x] Verify locally: native chat launcher/workspace, source-layout and public-doc suites pass 20 tests; warning-denied all-target Clippy, rustfmt, diff check and 300-line limits pass.
+- [ ] Verify app: inspect the exact optimized Rust app screenshot for contrast, alignment and recognizable shape.
+- [ ] Complete: update the LLM Wiki, AgentMemory, issue #9 and PR #22. This small UI parity item does not count toward packaged workflow acceptance.

@@ -1557,3 +1557,6 @@ Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → 
 ### DD-200 Quote run evidence instead of widening the chat sandbox
 The coordinator chat CLI remains read-only and does not receive broader access to run storage. Startup loads the latest report through the Rust workflow layer and serializes only bounded evidence into the normal prompt artifact; this lets chat answer questions about the work while preserving the existing project-folder permission boundary. Neutralize untrusted values and cap the diff before constructing the prompt.
 Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### DD-201 Paint the native chat glyph with egui, keep a semantic label
+Use a small native egui painter icon rather than web SVG, emoji font glyphs, or a new bitmap asset. The button keeps the existing localized accessible name and hover text, so recognition does not depend on icon interpretation. Retain the launcher’s current placement and click behavior.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.

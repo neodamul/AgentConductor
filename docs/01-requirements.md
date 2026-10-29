@@ -739,3 +739,6 @@ Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → 
 ### R-188 Coordinator chat has bounded workspace and run evidence
 When the operator asks about work from coordinator chat, the prompt shall include a bounded Workspace section derived from saved workspace settings and the latest run: project folder, mode and goal; plan task IDs, assigned agents, owned paths and first prompt lines; run state and errors; task states; test exit codes; changed files; and a candidate diff capped at 12 KiB. If no run exists, the prompt shall say so. Untrusted values must not create prompt headings. The coordinator is told to use this quoted evidence because it cannot read the run folder.
 Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### R-189 Native coordinator chat has a recognizable, accessible launcher
+The native Workspace shall show the coordinator-chat launcher as a compact chat-bubble robot icon rather than a text-only action. It shall retain a localized accessible name and hover label so the icon remains discoverable without relying on its shape alone.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.

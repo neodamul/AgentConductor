@@ -686,3 +686,6 @@ Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → 
 ### FR-180 Bounded coordinator workspace evidence
 `chat_context::workspace(saved, project)` reads the latest run through `workflow::load`, quotes bounded plan and report fields, and includes the candidate diff with a 12 KiB cap. It limits task/test evidence to 40 entries and emits an explicit no-run statement. `chat::build_prompt_in` places this section between the manual and earlier conversation; all user-controlled values pass through `prompt_form::neutral` so they cannot add prompt headings. Startup stores the resulting context with the chat input artifact, and the read-only worker uses it without expanding CLI filesystem permissions.
 Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### FR-181 Native coordinator-chat launcher
+The workspace chat launcher renders an icon-only button, paints its speech bubble and robot face with egui primitives using widget visuals, and preserves the localized chat.open accessible name and tooltip. The button continues to toggle the existing chat state.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.

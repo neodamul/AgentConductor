@@ -1,4 +1,5 @@
 use eframe::egui::{self, RichText};
+mod launcher;
 mod reset;
 
 pub enum Event {
@@ -39,12 +40,6 @@ impl State {
         self.resetting = false;
         self.job = None;
         self.error = None;
-    }
-
-    pub fn show_launcher(&mut self, language: &str, ui: &mut egui::Ui) {
-        if ui.button(text(language, "chat.open")).clicked() {
-            self.open = true;
-        }
     }
 
     pub fn show(&mut self, language: &str, ui: &mut egui::Ui) -> Option<Event> {

@@ -747,3 +747,6 @@ Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → 
 ### UC-179 Ask what the workspace planned or ran
 After a run, the operator asks coordinator chat what changed or how to run the result. The coordinator uses the quoted task states, errors, tests, changed files and bounded diff; it reads named project files when useful and does not guess from inaccessible run storage. Before a run, it reports that no run has started.
 Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### UC-180 Open coordinator chat from its icon
+The operator sees the bubble icon in the native Workspace, identifies its purpose through the accessible name or hover label, and activates it to open the coordinator chat drawer.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
