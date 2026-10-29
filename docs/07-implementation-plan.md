@@ -4,8 +4,9 @@
 - [x] Red: add an egui regression for a transport timeout followed by accepted history and unchanged history; it first failed because unknown outcomes had no state transition.
 - [x] Task: represent unknown acceptance separately from explicit rejection, keep the send disabled, and reconcile through the existing workspace snapshot refresh.
 - [x] Local Verify: `native_workspace_chat` passes 6/6, `native_workspace_chat_reset` 2/2, and `native_chat_unknown` 1/1; warning-denied all-target Clippy, `cargo fmt --check`, `git diff --check`, and touched Rust/test ≤300-line checks pass.
+- [x] macOS Package Verify: `cargo run --release --locked -- package-release` succeeded at `f83c5fb15fb088eebd2d622357d719c074da4572`. The `aarch64-apple-darwin` archive manifest matches that source commit; its binary SHA-256 matches the embedded `SHA256SUMS`, and it contains both offline HTML manuals, licenses, and SBOM. Archive SHA-256: `ba37d5215b584b0a776c2942045796dc3918a5b6b6e82b82d487c268e8997423`.
+- [ ] Windows Package Verify: require the exact Windows package and exercise the ambiguous-send recovery before accepting this behavior across platforms.
 - [ ] Full-suite Verify: the full offline suite was stopped after 11+ minutes while it was still progressing; this is not a passing result.
-- [ ] Package Verify: review the exact macOS and Windows packages before counting this behavior toward native UI acceptance.
 - [ ] Complete: update the LLM Wiki, AgentMemory, issue #9 and PR #22 from exact results. Do not award packaged acceptance from state-only tests.
 
 ### Verify the exact Rust branch release package on both platforms — issue #9 / 2026-10-29
