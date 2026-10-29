@@ -35,6 +35,14 @@
     "visible_quota_badge_after_completion": "unverified",
     "result": "Non-blocking UI interaction and quota persistence passed; the tested Agent Roles sidebar does not render custom-agent quota badges, so visible refresh was not exercised"
   },
+  "source_regression": {
+    "test": "tests/native_ui_probe/poll_events.rs::metadata_event_refreshes_quota_snapshot_asynchronously",
+    "result": "passed 1/1; workspace event requested a snapshot through the separate poll lane and the Probe applied the updated quota badge",
+    "native_ui_probe_library_filter": "passed 59/59",
+    "source_layout": "passed 2/2; both modified Rust files are 51 lines",
+    "clippy_format_and_diff": "cargo clippy --lib --locked --offline --features test-fixtures -- -D warnings, cargo fmt --all -- --check, and git diff --check passed",
+    "other_run": "An all-target filtered invocation was interrupted after its native library tests while traversing unrelated targets; not claimed as a full-suite pass"
+  },
   "acceptance": {
     "issue_257_complete": false,
     "issue_9_workflow_credit": false,

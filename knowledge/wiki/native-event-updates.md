@@ -67,6 +67,10 @@ The same `189f6fadeecda8f4b7c92eb269dfb0d455afb9c5` package ran a disposable wor
 
 A three-second custom quota subprocess also completed with exit code 0 and wrote its normalized 75%-remaining snapshot to the isolated quota cache. While it was running, switching the workspace step completed in 0.41 seconds, so the slow read did not block that UI action. The exact package was later bound by its bundle path and its accessibility tree confirmed the disposable workspace and mock profiles. The tested Agent Roles sidebar intentionally renders quota badges only for Claude and Codex, so that custom profile cannot verify visible quota-event refresh. Repeat on a supported badge-rendering surface or with a deterministic first-party-profile fixture. Do not close #257 or award issue #9 packaged UI credit from this evidence. Windows package validation remains open. Evidence: `docs/evidence/issue257-packaged-event-ui-20261030.json`.
 
+## Event-to-metadata regression — 2026-10-30
+
+Added `tests/native_ui_probe/poll_events.rs::metadata_event_refreshes_quota_snapshot_asynchronously`. It publishes an invalidation through the subscribed workspace event hub while the current snapshot reports a running metadata operation, then verifies that the Probe retrieves a new snapshot through its asynchronous poll worker and applies the updated quota badge. Focused test: 1/1 passed; native UI library filter: 59/59; `source_layout`: 2/2; Clippy with `-D warnings`, rustfmt and `git diff --check` passed. Both modified Rust files are 51 lines. An earlier all-target filtered invocation was interrupted after its native library tests while traversing unrelated test targets (exit 130); that invocation is not claimed as a full-suite pass. This strengthens the source event path; it does not replace the remaining packaged quota-badge and Windows checks.
+
 ## Links
 
 - Requirements: `docs/01-requirements.md` through `docs/06-design-decisions.md`, R-192 / DD-204.

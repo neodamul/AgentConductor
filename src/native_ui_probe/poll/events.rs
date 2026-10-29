@@ -1,5 +1,9 @@
 use super::super::Probe;
 
+#[cfg(test)]
+#[path = "../../../tests/native_ui_probe/poll_events.rs"]
+mod tests;
+
 impl Probe {
     pub(super) fn poll_events(&mut self) {
         if self.pending.is_some() || self.poll_pending.is_some() {
