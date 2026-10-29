@@ -39,6 +39,8 @@ The pushed source `62efb31c8725d93fd1bb10021cad170cf3a77533` builds and packages
 
 The packaged app was launched once but opened the user's saved workspace. No workspace or agent action was taken, and its visible controls appeared disabled; this observation is unresolved and earns no GUI workflow credit. Exact packaged UI journeys and Windows packaging remain open acceptance work for #257 and #9.
 
+The follow-up fix at `e7f712a60c83727ddeb27c09da0895624a68bf14` was packaged and launched after closing the earlier package process. In that exact build, stale quota observations were present and workspace fields, agent edit, quota refresh, and save controls were enabled. No saved data was changed. This verifies the quota-refresh lock regression at launch, not the full native UI workflow; Windows remains pending. Evidence: `docs/evidence/issue257-macos-package-e7f712a-20261030.json`.
+
 ## Links
 
 - Requirements: `docs/01-requirements.md` through `docs/06-design-decisions.md`, R-192 / DD-204.

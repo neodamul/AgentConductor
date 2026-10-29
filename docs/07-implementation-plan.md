@@ -4,8 +4,9 @@
 - [x] Red: `slow_quota_refresh_does_not_disable_workspace_editing` failed before the fix; `workspace_save_still_disables_editing` protects the mutation lock.
 - [x] Task: allow workspace edits and navigation during metadata-only quota lookup and its read-only snapshot refresh. New foreground requests supersede old replies through the existing request IDs; active job and mutation guards remain in force.
 - [x] Verify: `cargo test --lib --release --locked --offline --quiet` passed 80 tests; release Clippy with `-D warnings`, rustfmt check, diff check, and the 300-line limit passed.
-- [ ] Exact packaged UI Verify: rebuild and inspect an isolated disposable workspace while automatic Claude/Codex quota lookups are pending. Do not use the user's saved workspace as acceptance evidence.
-- [ ] Complete: record exact package/UI evidence, update issue #257, AgentMemory and the LLM Wiki. #257 stays open until the isolated UI and Windows journeys pass.
+- [x] Exact packaged launch check: rebuilt and launched the exact package at `e7f712a60c83727ddeb27c09da0895624a68bf14`. Stale Claude/Codex quota observations were visible while workspace fields, agent edit, quota refresh, and save controls were enabled. No saved data was changed. Evidence: `docs/evidence/issue257-macos-package-e7f712a-20261030.json`.
+- [ ] Complete UI/Windows Verify: exercise a disposable workspace through quota refresh and another foreground action; verify the response remains current. Then validate the exact Windows package. Do not claim full UI acceptance from launch state alone.
+- [x] Complete this fix unit: update issue #257, AgentMemory and LLM Wiki. #257 stays open until isolated workflow and Windows journeys pass.
 
 ### Verify the exact macOS package at the pushed Rust head — issue #9 / #257 / 2026-10-30
 
