@@ -256,6 +256,8 @@ mod controller;
 use controller::*;
 
 mod automatic;
+mod diagnostics;
+mod diagnostics_dispatch;
 mod update;
 
 mod dispatch;

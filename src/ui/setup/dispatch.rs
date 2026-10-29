@@ -15,6 +15,22 @@ impl Startup {
             .saved
             .lock()
             .map_err(|_| crate::ui::messages::text("native.startup_settings_poisoned"))?;
+        if let Request::Chat { revision, turns } = request {
+            if revision != self.chat_revision(&saved)? {
+                return Err(crate::ui::messages::text(
+                    "native.startup_state_changed_since_review_refresh_before_acting",
+                )
+                .into());
+            }
+            let job = self.job(&saved)?;
+            if job["state"] == "running" {
+                return Err(
+                    crate::ui::messages::text("native.startup_operation_still_running").into(),
+                );
+            }
+            self.ensure_no_live_jobs()?;
+            return self.launch_chat(&mut saved, turns, revision);
+        }
         if matches!(request, Request::StopPlanning {}) {
             return self.stop_planning(&mut saved);
         }

@@ -142,6 +142,7 @@ use request::Request;
 mod dispatch;
 mod planning;
 mod profiles;
+mod revision;
 mod share;
 mod slug;
 mod snapshot;

@@ -16,3 +16,35 @@ The coordinator invocation uses `coordinator::read_only_args`, which verifies th
 - `docs/user-manual.md`, `docs/user-manual.ko.md`: operator-facing limits and usage.
 
 Packaged macOS/Windows UI interaction remains unverified; this feature does not increase the accepted workflow count until the exact packages are reviewed.
+
+## Request-timeout handling (#234)
+
+The native Rust request worker keeps the UI responsive for coordinator chat by taking a
+read-only fast path. It checks the existing job and retained process ownership, then starts
+the chat worker without running the Git `HEAD` lookup used by mutation revision guards. The
+request revision is retained in the audit record, but chat does not mutate the reviewed
+workspace and therefore does not reject a send because a repository lookup is slow.
+
+`Room::dispatch` writes bounded timing evidence to
+`~/.agentconductor/request-diagnostics.log`: every chat request has `start` and `done` lines;
+other requests are recorded only when they take at least one second. A client timeout notice
+can be recorded without changing the request result. The log contains request kind, byte size,
+elapsed time, success, and a bounded error—not prompt contents—and rotates at 256 KiB.
+
+The focused regression uses a Git wrapper that sleeps for 20 seconds on `rev-parse HEAD`; the
+chat request must still be accepted in under two seconds. Exact packaged Windows/macOS
+behavior and the user's failing `start kind=chat` / `done kind=chat ms=...` evidence remain
+separate verification gates.
+
+PR #239 was rebased onto the latest #9 head `69887bab4732aba50d8649951ce153bf20a042dd`.
+The overlapping implementation-plan text was the only conflict; both issue checklists were
+preserved. Focused startup-chat, diagnostics, and source-layout tests pass after rebase, as do
+warning-denied all-target Clippy and formatting. Exact macOS/Windows package verification is
+still required to confirm the packaged request path; the affected user's diagnostics log is also
+needed to distinguish native dispatch delay from external coordinator delay.
+
+## Saved-state freshness without a Git lookup
+
+The chat fast path must skip only the repository `HEAD` subprocess, not the stale saved-context check. The Rust port now exposes a `chat_revision` derived from normalized saved state and review evidence without Git. The native chat request sends that token, and startup dispatch compares it before checking or launching the coordinator. This rejects a stale coordinator, profile, goal, repository, or proposal while preserving the low-latency path; repository mutations still use the complete HEAD-bound revision.
+
+TDD coverage checks that a saved goal change invalidates the old chat token and that chat submission still avoids a slow `rev-parse HEAD`. The native UI packet test verifies it sends `chat_revision`. Main-target PR #240 introduced this behavior in commit `642a428d`; Rust PR #239 ported it in commit `7492291`. Exact package validation on the updated heads is still required.

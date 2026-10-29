@@ -1,0 +1,86 @@
+{
+  "issue": 234,
+  "branch": "codex/issue-234-chat-request-timeout",
+  "original_base": "86ea3c3ddccdb3f43d5ef9677127534997d8c634",
+  "rebased_base": "69887bab4732aba50d8649951ce153bf20a042dd",
+  "current_head": "7492291",
+  "rebase": {
+    "result": "rebased through 28df8394 onto latest #9 head 69887bab without code conflicts; both issue checklists preserved",
+    "commit_before_evidence_update": "b2d53ea2"
+  },
+  "red": {
+    "command": "cargo test --locked --offline --test startup_chat chat_submission_does_not_wait_for_repository_head -- --nocapture",
+    "result": "failed",
+    "evidence": "The 20-second Git wrapper delayed dispatch and the request returned a stale-revision error after 20.42 seconds."
+  },
+  "green": [
+    {
+      "command": "cargo test --locked --offline --test startup_chat -- --nocapture",
+      "result": "2 passed"
+    },
+    {
+      "command": "cargo test --locked --offline --test chat_prompt -- --nocapture",
+      "result": "5 passed"
+    },
+    {
+      "command": "cargo test --locked --offline --test source_layout -- --nocapture",
+      "result": "2 passed"
+    },
+    {
+      "command": "cargo test --locked --offline --test request_diagnostics -- --nocapture",
+      "result": "1 passed"
+    },
+    {
+      "command": "cargo test --locked --offline --test startup -- --nocapture",
+      "result": "3 passed"
+    },
+    {
+      "command": "cargo clippy --locked --offline --all-targets -- -D warnings",
+      "result": "no issues"
+    },
+    {
+      "command": "cargo fmt --all -- --check && git diff --check",
+      "result": "passed"
+    }
+  ],
+  "broad_check": {
+    "command": "cargo test --locked --offline --all-targets --no-fail-fast",
+    "result": "stopped after 818 passed and 14 ignored across 256 suites in 139.16 seconds; no failures were reported before stopping",
+    "complete": false
+  },
+  "rebase_verification": {
+    "command": "cargo test --locked --offline --test startup_chat --test request_diagnostics --test source_layout",
+    "result": "5 passed",
+    "clippy": "cargo clippy --all-targets --locked --features test-fixtures -- -D warnings passed",
+    "format_and_diff": "cargo fmt --check and git diff --check passed"
+  },
+  "latest_rebase_verification": {
+    "command": "cargo test --locked --offline --test startup_chat --test source_layout --features test-fixtures; cargo test --locked --offline --features native-ui-probe --test native_workspace_chat",
+    "result": "startup_chat + source_layout: 5 passed; native_workspace_chat: 4 passed",
+    "clippy": "cargo clippy --all-targets --locked --features test-fixtures,native-ui-probe -- -D warnings passed",
+    "format_and_diff": "cargo fmt --check and git diff --check passed",
+    "source_lines": {
+      "src/ui/diagnostics.rs": 73,
+      "tests/startup_chat.rs": 133,
+      "tests/request_diagnostics.rs": 11
+    }
+  },
+  "stale_context_guard": {
+    "main_predecessor": {
+      "pull_request": 240,
+      "commit": "642a428deb5d3dbdb659d7d34c07e0e817db8781",
+      "exact_run": "40803133126",
+      "status_at_recording": "in_progress"
+    },
+    "rust_port": {
+      "red": "chat_rejects_a_stale_saved_context_after_saved_state_changes failed before chat_revision validation",
+      "green": "the stale goal token is rejected; slow-rev-parse fast-path and native UI chat packet use chat_revision",
+      "code_commit": "7492291",
+      "exact_run": "pending push"
+    }
+  },
+  "remaining": [
+    "Exact packaged macOS and Windows verification",
+    "User request-diagnostics.log start kind=chat and done kind=chat ms=... lines"
+  ]
+}

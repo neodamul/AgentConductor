@@ -6260,3 +6260,18 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: candidate-driver, briefing-driver, and source-layout suites pass 9 tests; formatting, diff checks, and 300-line limits pass. The embedded PowerShell and its contract tests are 181 and 98 lines.
 - [ ] Verify exact package: require Windows to confirm approve, merge, and reject outcomes and persisted Git/run state; the source-level change does not count as package acceptance.
 - [ ] Complete: keep issue #9 at 22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate until exact package evidence passes.
+
+### Rust coordinator chat request timeout — issue #234
+
+- [x] Plan: inspect the Rust `RequestWorker → Room::dispatch → Startup::dispatch → launch_chat` path and compare the unresolved report with the main-line request-diagnostics behavior.
+- [x] Rebase: update PR #239 from base `86ea3c3d` through `28df8394` onto latest #9 head `69887bab4732aba50d8649951ce153bf20a042dd`; preserve both issue checklists after resolving the documentation-only overlap.
+- [x] Red: `tests/startup_chat.rs::chat_submission_does_not_wait_for_repository_head` failed in 20.42 seconds because the chat dispatch reached the synchronous Git `rev-parse HEAD` path and returned a stale-revision error.
+- [x] Task: route non-mutating chat requests before metadata settlement and mutation revision checks; retain job/live-process gates, pass the request revision only to the accepted-job audit record, and add bounded native request diagnostics.
+- [x] Green: after rebase, startup-chat, request-diagnostics, and source-layout suites pass 5 tests; all-target warning-denied Clippy, rustfmt, and diff checks pass. The 20-second Git wrapper no longer delays chat acceptance.
+- [x] Local Verify after latest rebase: startup-chat, request-diagnostics, and source-layout suites pass 5 tests; all-target warning-denied Clippy, rustfmt, and diff checks pass. All edited Rust files are under 300 lines.
+- [x] TDD stale-state follow-up: review found that bypassing full `revision` also bypassed saved coordinator/workspace freshness. The stale-goal test failed on the old fast path; the Rust port now validates `chat_revision`, which hashes normalized saved state and proposal evidence without Git HEAD. Native UI chat requests send this token; full revision remains mandatory for mutations.
+- [x] Port Verify: startup-chat and source-layout suites pass 5 tests; native workspace chat tests pass 4; formatting and warning-denied Clippy checks pass locally.
+- [x] Port implementation: Rust PR #239 carries the same saved-state-only `chat_revision` guard in commit `7492291`; native chat packets use it before any worker launch.
+- [ ] Push/exact Verify: push the Rust port and run exact macOS/Windows validation/package jobs. Main PR #240's predecessor fix is commit `642a428d`; exact run `40803133126` remains in progress. Rust PR #239 run `40800513565` covers the previous head only; rerun on the port commit.
+- [ ] Verify: exact macOS/Windows package and request-path run is pending. Obtain the affected user's `~/.agentconductor/request-diagnostics.log` `start kind=chat` and `done kind=chat ms=...` lines to distinguish native dispatch delay from an external coordinator delay.
+- [ ] Complete: keep issue #234 and its PR open until the cross-platform package evidence and user-side diagnostics are reviewed.
