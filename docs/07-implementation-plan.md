@@ -216,7 +216,8 @@
 - [x] Red/Task: deterministic CLI regressions first failed because the coordinator stopped after one malformed response. `run_json_within_model` now retries exactly once only after a successful, non-stopped process has no usable JSON for the requested field; the retry prompt includes the parse reason and the first attempt log is preserved as `process-format-1`.
 - [x] Focused Local Verify: the correction regressions and nearby coordinator, planner, transient-capacity, public-doc, and source-layout suites pass 28 tests across 7 targets; rustfmt, `git diff --check`, and warning-denied all-target Clippy pass; touched Rust files are 170, 191, and 89 lines.
 - [x] Verify (source): warning-denied all-target Clippy, `cargo fmt --check`, `git diff --check`, and the complete locked/offline all-target test suite pass on `09fa3482`; `source_layout` enforces the 300-line source/test split.
-- [ ] Verify (package): build and exercise this exact head on macOS and Windows, including packaged UI workflows; source tests do not count as package acceptance.
+- [x] Verify (macOS package): exact head `87239f6a68e5b7e4ccc3efc8c0efffc5d11b1407` built as arm64; manifest source and binary hash match, ZIP CRC passes, packaged `--help` exits 0. Archive SHA-256 `f2200d0db44d6e926505ef0ce806cc936d4bb65644863fee00194d688d03dcc4`; evidence `docs/evidence/issue9-macos-package-87239f6-20261029.json`. GUI launch and visual acceptance were not run; this gives no workflow credit.
+- [ ] Verify (Windows package): build and exercise this exact head on Windows, including packaged UI workflows; source tests do not count as package acceptance.
 - [ ] Complete: update architecture traces, evidence, this checklist, LLM Wiki, AgentMemory, issue #9, and PR #22; do not claim Rust parity or mergeability before all required behavior and package gates pass.
 
 ### Rebind the Windows candidate-review UI tree — issue #9 / workflow 24 / 2026-10-28

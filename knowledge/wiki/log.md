@@ -1777,3 +1777,7 @@ Built the exact arm64 package from `79fdea8a` with the offline bilingual manuals
 ## 2026-10-29 — Coordinator format correction retry — GitHub #235 / issue #9
 
 Ported the bounded JSON-format correction behavior with a deterministic local CLI. The first malformed response is preserved in `process-format-1`; exactly one retry includes the parse reason, and a second malformed response fails after exactly two process runs. Timeout, stop, capacity, and provider-error handling remain on existing paths. Focused tests pass 28/28 across seven targets; `cargo fmt --check`, `git diff --check`, and warning-denied all-target Clippy pass. The full locked/offline all-target suite also exits successfully at `09fa3482`; exact package checks remain open and are not credited by this unit. AgentMemory: `mem_mvte7n6u_cb7a6e81ae87`.
+
+## 2026-10-29 — Exact macOS package at Rust head 87239f6 — issue #9
+
+Built `87239f6a68e5b7e4ccc3efc8c0efffc5d11b1407` with the offline Rust release package command. The manifest source SHA and binary SHA match; full ZIP CRC and packaged `--help` pass. Archive SHA-256 `f2200d0db44d6e926505ef0ce806cc936d4bb65644863fee00194d688d03dcc4`; binary SHA-256 `081136f7ab226b91373ee196150b0923f86e11ad210db603eb7c51103566888b`. Evidence: `docs/evidence/issue9-macos-package-87239f6-20261029.json`. No GUI launch/screenshot, Windows package, or UI acceptance credit. AgentMemory: `mem_mvtf3c2h_1057064c096e`.
