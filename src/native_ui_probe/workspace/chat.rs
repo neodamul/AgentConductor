@@ -1,6 +1,8 @@
 use eframe::egui::{self, RichText};
 mod launcher;
+mod outcome;
 mod reset;
+mod send;
 
 pub enum Event {
     Send(Vec<crate::chat::Turn>),
@@ -12,7 +14,9 @@ pub struct State {
     open: bool,
     draft: String,
     turns: Vec<crate::chat::Turn>,
+    pending_before: Option<Vec<crate::chat::Turn>>,
     pending_turn: Option<crate::chat::Turn>,
+    uncertain_error: Option<String>,
     requesting: bool,
     resetting: bool,
     job: Option<String>,
@@ -25,7 +29,11 @@ impl State {
     }
 
     pub fn awaiting(&self) -> bool {
-        self.requesting || self.resetting || self.job.is_some()
+        self.requesting || self.uncertain_error.is_some() || self.resetting || self.job.is_some()
+    }
+
+    pub fn is_uncertain(&self) -> bool {
+        self.uncertain_error.is_some()
     }
 
     pub fn open(&mut self) {
@@ -34,8 +42,10 @@ impl State {
 
     pub fn reset(&mut self) {
         self.turns.clear();
+        self.pending_before = None;
         self.draft.clear();
         self.pending_turn = None;
+        self.uncertain_error = None;
         self.requesting = false;
         self.resetting = false;
         self.job = None;
@@ -108,6 +118,7 @@ impl State {
             role: "operator".into(),
             text: std::mem::take(&mut self.draft),
         };
+        self.pending_before = Some(self.turns.clone());
         self.turns.push(turn.clone());
         self.pending_turn = Some(turn);
         self.error = None;
@@ -116,7 +127,9 @@ impl State {
     }
 
     pub fn started(&mut self, job: String) {
+        self.pending_before = None;
         self.pending_turn = None;
+        self.uncertain_error = None;
         self.requesting = false;
         self.job = Some(job);
         self.error = None;
@@ -137,12 +150,16 @@ impl State {
     }
 
     pub fn failed(&mut self, message: String) {
+        self.pending_before = None;
         self.job = None;
         self.requesting = false;
+        self.uncertain_error = None;
         self.error = Some(message);
     }
 
     pub fn rejected(&mut self, message: String) {
+        self.pending_before = None;
+        self.uncertain_error = None;
         if let Some(turn) = self.pending_turn.take() {
             if self
                 .turns
@@ -182,45 +199,6 @@ pub fn request(
 }
 
 impl super::super::Probe {
-    pub(super) fn send_coordinator_chat(&mut self, turns: Vec<crate::chat::Turn>) {
-        let packet = self
-            .snapshot
-            .as_ref()
-            .ok_or_else(|| "Workspace revision is unavailable".to_owned())
-            .and_then(|snapshot| request(snapshot, &turns));
-        let result = packet.and_then(|packet| {
-            self.worker
-                .as_ref()
-                .ok_or_else(|| "Workspace controller is unavailable".to_owned())?
-                .send(&packet)
-        });
-        match result {
-            Ok(()) => {
-                self.pending = Some(super::super::Pending::ChatStart);
-                self.error = None;
-            }
-            Err(error) => {
-                self.coordinator_chat.rejected(error);
-                self.workspace_next_refresh = None;
-            }
-        }
-    }
-
-    pub(in crate::native_ui_probe) fn refresh_coordinator_chat(&mut self) {
-        let result = self
-            .worker
-            .as_ref()
-            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(br#"{"kind":"snapshot","chat_result":true}"#));
-        match result {
-            Ok(()) => self.pending = Some(super::super::Pending::ChatRefresh),
-            Err(error) => {
-                self.coordinator_chat.failed(error);
-                self.workspace_next_refresh = None;
-            }
-        }
-    }
-
     pub(in crate::native_ui_probe) fn chat_started(&mut self, snapshot: serde_json::Value) {
         if snapshot["accepted"] == true
             && let Some(job) = snapshot["id"].as_str()

@@ -750,3 +750,7 @@ Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200.
 ### UC-180 Open coordinator chat from its icon
 The operator sees the bubble icon in the native Workspace, identifies its purpose through the accessible name or hover label, and activates it to open the coordinator chat drawer.
 Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
+
+### UC-181 A chat send times out before the operator knows whether it was accepted
+The operator sends a question. The controller request and the immediate conversation read both time out, so the question stays visible as pending and the input stays empty. When a later workspace snapshot succeeds, an accepted question is followed through its job; if absent from stored history, the question returns to the input with the original error.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.

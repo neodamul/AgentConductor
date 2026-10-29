@@ -575,3 +575,7 @@ Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200.
 ### BG-144 Recognize chat at a glance
 The operator can identify and open coordinator chat from the native Workspace without reading an extra text button in the primary work area.
 Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
+
+### BG-145 Slow coordinator replies do not duplicate operator messages
+The operator can trust that a timed-out native chat send is still being reconciled instead of resending the same question.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.

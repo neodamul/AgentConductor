@@ -9,12 +9,22 @@ impl Probe {
             Some(Pending::ChatStart | Pending::ChatRefresh)
         ) {
             if matches!(self.pending, Some(Pending::ChatStart)) {
-                self.coordinator_chat.rejected(error);
+                self.coordinator_chat.outcome_unknown(error);
+                self.workspace_next_refresh =
+                    Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
             } else {
                 self.coordinator_chat.failed(error);
+                self.workspace_next_refresh = None;
             }
             self.pending = None;
-            self.workspace_next_refresh = None;
+            self.error = None;
+            return;
+        }
+        if matches!(self.pending, Some(Pending::Refresh)) && self.coordinator_chat.is_uncertain() {
+            self.pending = None;
+            self.workspace_next_refresh =
+                Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+            self.error = None;
             return;
         }
         if matches!(self.pending, Some(Pending::ChatReset)) {

@@ -760,3 +760,7 @@ Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200.
 ### QAS-187 Native chat launcher is visible and accessible
 Given the native Workspace, the coordinator-chat launcher is a compact button with painted bubble/robot shapes and no visible “Ask coordinator” text. Its accessibility tree exposes the localized “Ask coordinator” name, and activating its bounds opens chat. The icon uses theme widget colors and adds no image/font dependency. Verify using egui output/accessibility tests and the exact native app render.
 Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
+
+### QAS-188 A native chat message appears in only one place after a timeout
+Given a chat send whose outcome is unknown, the message stays in the conversation, the input stays empty, and sending remains disabled. When stored history contains the message, the matching job is followed and the answer appears once. When stored history does not contain it, the pending turn is removed, the input receives the text once, and the original error is shown.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.

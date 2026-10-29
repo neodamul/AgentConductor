@@ -129,7 +129,11 @@ impl Probe {
                 &mut self.workspace_next_refresh,
             )
         {
-            self.refresh_coordinator_chat();
+            if self.coordinator_chat.is_uncertain() {
+                self.refresh_workspace();
+            } else {
+                self.refresh_coordinator_chat();
+            }
         }
         if self.room_view.is_none()
             && self.goal_optimizer.awaiting()

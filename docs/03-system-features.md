@@ -677,3 +677,7 @@ Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200.
 ### SF-177 Native chat-bubble launcher
 Render a compact theme-colored bubble/robot glyph inside the existing coordinator-chat button; retain its localized accessible name, tooltip and click behavior.
 Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
+
+### SF-178 Reconcile native chat sends with the stored conversation
+The Rust chat panel keeps a send pending while its result is unknown, then resolves it from the next readable workspace conversation snapshot.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.

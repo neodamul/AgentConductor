@@ -689,3 +689,7 @@ Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200.
 ### FR-181 Native coordinator-chat launcher
 The workspace chat launcher renders an icon-only button, paints its speech bubble and robot face with egui primitives using widget visuals, and preserves the localized chat.open accessible name and tooltip. The button continues to toggle the existing chat state.
 Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
+
+### FR-182 Reconcile an unknown native chat outcome
+On a transport error during `ChatStart`, retain the pending operator turn and its original error while the chat awaits a readable workspace snapshot. If the stored conversation contains the new turn, replace local history and follow the matching chat job. Otherwise remove the unaccepted turn, restore its text to the input, and show the original error. A later snapshot, not a guessed timeout, resolves the state.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.

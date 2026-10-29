@@ -1,3 +1,13 @@
+### Port main #241 unknown-outcome chat recovery to Rust — issue #9 / 2026-10-29
+
+- [x] Plan: trace the existing main bug fix into unique Rust architecture IDs R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202; preserve the accepted-vs-rejected contract without reusing main IDs that already describe ACIO in this branch.
+- [x] Red: add an egui regression for a transport timeout followed by accepted history and unchanged history; it first failed because unknown outcomes had no state transition.
+- [x] Task: represent unknown acceptance separately from explicit rejection, keep the send disabled, and reconcile through the existing workspace snapshot refresh.
+- [x] Local Verify: `native_workspace_chat` passes 6/6, `native_workspace_chat_reset` 2/2, and `native_chat_unknown` 1/1; warning-denied all-target Clippy, `cargo fmt --check`, `git diff --check`, and touched Rust/test ≤300-line checks pass.
+- [ ] Full-suite Verify: the full offline suite was stopped after 11+ minutes while it was still progressing; this is not a passing result.
+- [ ] Package Verify: review the exact macOS and Windows packages before counting this behavior toward native UI acceptance.
+- [ ] Complete: update the LLM Wiki, AgentMemory, issue #9 and PR #22 from exact results. Do not award packaged acceptance from state-only tests.
+
 ### Verify the exact Rust branch release package on both platforms — issue #9 / 2026-10-29
 
 - [x] Plan: workflow run `40839334186` completed successfully on macOS and Windows, including the Windows packaged desktop journey. Its checked-out source was ancestor `923a806b36a8672e366f0102ea840ea38c9ee963`, not the current branch source, so this is diagnostic evidence only and does not satisfy exact-head acceptance.

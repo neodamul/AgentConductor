@@ -1560,3 +1560,7 @@ Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200.
 ### DD-201 Paint the native chat glyph with egui, keep a semantic label
 Use a small native egui painter icon rather than web SVG, emoji font glyphs, or a new bitmap asset. The button keeps the existing localized accessible name and hover text, so recognition does not depend on icon interpretation. Retain the launcher’s current placement and click behavior.
 Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
+
+### DD-202 Keep unknown sends pending and reuse workspace snapshots
+Distinguish a transport failure from an explicit `accepted: false` response. For a transport failure, retain the local turn and wait for the existing workspace refresh path to return chat history; resolve acceptance by comparing that bounded history with the pre-send transcript and pending turn. Do not retry the send or add a second polling loop. Explicit rejection still restores the draft immediately.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.

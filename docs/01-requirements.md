@@ -742,3 +742,7 @@ Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200.
 ### R-189 Native coordinator chat has a recognizable, accessible launcher
 The native Workspace shall show the coordinator-chat launcher as a compact chat-bubble robot icon rather than a text-only action. It shall retain a localized accessible name and hover label so the icon remains discoverable without relying on its shape alone.
 Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
+
+### R-190 An uncertain native chat send stays pending until reconciled
+If a native chat send fails before its acceptance is known and the current conversation cannot be read, the Rust UI shall keep the message visible as pending, keep the input empty, and disable another send. A later successful workspace snapshot decides whether the controller accepted the message: follow an accepted job, or restore the text and show the original error when the conversation did not change.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.

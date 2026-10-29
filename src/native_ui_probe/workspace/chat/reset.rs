@@ -3,14 +3,54 @@ use super::State;
 
 impl State {
     pub fn load_snapshot(&mut self, snapshot: &serde_json::Value) {
+        let Ok(turns) =
+            serde_json::from_value::<Vec<crate::chat::Turn>>(snapshot["chat_history"].clone())
+        else {
+            return;
+        };
+        if let Some(error) = self.uncertain_error.take() {
+            let Some(pending) = self.pending_turn.take() else {
+                self.failed(error);
+                return;
+            };
+            let accepted = self.pending_before.as_ref().is_some_and(|before| {
+                before.len() != turns.len()
+                    || before
+                        .iter()
+                        .zip(&turns)
+                        .any(|(old, new)| old.role != new.role || old.text != new.text)
+            }) && turns
+                .iter()
+                .any(|turn| turn.role == pending.role && turn.text == pending.text);
+            self.pending_before = None;
+            self.requesting = false;
+            self.turns = crate::chat::recent_history(&turns);
+            if !accepted {
+                self.job = None;
+                self.draft = pending.text;
+                self.error = Some(error);
+                return;
+            }
+            self.error = None;
+            if snapshot["job"]["kind"] == "chat"
+                && snapshot["job"]["state"] == "running"
+                && let Some(job) = snapshot["job"]["id"].as_str()
+            {
+                self.started(job.to_owned());
+            } else if snapshot["job"]["kind"] == "chat" && snapshot["job"]["state"] == "failed" {
+                self.failed(
+                    snapshot["job"]["error"]
+                        .as_str()
+                        .unwrap_or("Coordinator could not answer")
+                        .to_owned(),
+                );
+            }
+            return;
+        }
         if self.awaiting() {
             return;
         }
-        if let Ok(turns) =
-            serde_json::from_value::<Vec<crate::chat::Turn>>(snapshot["chat_history"].clone())
-        {
-            self.turns = crate::chat::recent_history(&turns);
-        }
+        self.turns = crate::chat::recent_history(&turns);
         if snapshot["job"]["kind"] == "chat" {
             if snapshot["job"]["state"] == "running"
                 && let Some(job) = snapshot["job"]["id"].as_str()
