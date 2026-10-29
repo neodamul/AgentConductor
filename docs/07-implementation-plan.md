@@ -6277,6 +6277,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Follow-up Exact-package Verify: run `40800347115` passed Windows/macOS validation and the macOS package. Windows saved `agentmemory` and port `7333` in the explicit workspace file and passed all earlier package journeys, but the PowerShell driver then failed on a redundant `Join-Path $env:AC_SIGNAL_WORKSPACE` read because that environment variable was null.
 - [x] Follow-up Red/Green: add a contract that Rust verifies the persisted JSON through its already-known `active_workspace` path and the PowerShell driver has no dependency on that environment variable; the new contract failed before removing the redundant PowerShell file read.
 - [ ] Exact-package Verify: rerun after the harness-only fix; require the Windows signal preference file to contain `agentmemory` and port `7333` under the exact registered workspace path, and require both macOS and Windows package jobs to pass.
+- [x] Follow-up package dispatch: commit `c0b0bd68` is pushed on PR #230, and exact run `40804918637` is queued. Do not mark complete until its Windows package/UI gate is green.
 - [ ] Complete: update PR #230, issue #226, AgentMemory and the LLM Wiki with final exact-head evidence; keep the PR draft and issue open until both package jobs pass.
 
 ### 2026-10-29 — Permit process-owned candidate confirmation outside main-window bounds — issue #9

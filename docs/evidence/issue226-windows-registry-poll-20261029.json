@@ -58,6 +58,9 @@
       }
     },
     "follow_up": {
+      "fix_commit": "c0b0bd682ce6bc0f05ef65ee80eb3e8b5a810f3d",
+      "exact_workflow_run": "40804918637",
+      "exact_workflow_status": "queued",
       "regression": "Require Rust to verify the durable preference using active_workspace and prohibit the PowerShell script from relying on AC_SIGNAL_WORKSPACE.",
       "red": "The new contract failed while the PowerShell script still contained the redundant environment-based Join-Path.",
       "green": "After removing the PowerShell file read and leaving durable JSON verification to Rust, focused suites passed 20 tests.",
