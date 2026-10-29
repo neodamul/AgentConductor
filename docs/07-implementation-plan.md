@@ -1,3 +1,12 @@
+### Reacquire the Windows Signal Settings window for each control — issue #9 / 2026-10-29
+
+- [x] Plan: exact run `40817071475` passed validation on both platforms and the exact macOS package. Windows stopped in `windows_signal_settings`: the driver retained the initial UI Automation window, while the `agentmemory preferred` control appeared under another live top-level window owned by the same packaged process.
+- [x] Red: add a source-contract regression requiring every Signal Settings lookup to enumerate current process-owned top-level windows and update the active window; it failed before the helper existed.
+- [x] Task: reacquire the process-owned window for each name, action, visible action, and edit lookup; use that window handle for focus and pointer input.
+- [x] Local Verify: the six focused room/window-driver/source-layout suites pass 35/35; warning-denied all-target Clippy, rustfmt, diff check, and the 300-line source/test limit pass.
+- [ ] Exact-package Verify: rerun the current source on macOS and Windows; require the Signal Settings preference to persist before proceeding to the tool-decision and stop/resume package journeys.
+- [ ] Complete: update issue #9, PR #22, AgentMemory, and the LLM Wiki after the exact package results. Acceptance remains **22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate**; this failed package adds no credit.
+
 ### Keep the Windows tool-decision confirmation actionable — issue #9 / 2026-10-29
 
 - [x] Plan: exact package run `40811281029` passed macOS package execution, but Windows failed after opening `Deny this exact tool request?`; an active-run background snapshot refresh disabled both confirmation buttons and trapped the modal.

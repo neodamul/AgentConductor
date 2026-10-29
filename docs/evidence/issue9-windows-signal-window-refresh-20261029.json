@@ -1,0 +1,22 @@
+{
+  "date": "2026-10-29",
+  "issue": 9,
+  "failing_exact_package_run": {
+    "run_id": 40817071475,
+    "platform": "windows-latest",
+    "result": "failed in the Signal Settings package journey"
+  },
+  "observed_failure": "The package driver did not find the agentmemory preferred control although it appeared in the packaged process UI Automation diagnostics.",
+  "cause": "The driver searched only the top-level UI Automation window captured during startup; Signal Settings was exposed under another live top-level window owned by the same process.",
+  "change": "Each name, action, visible-action, and edit lookup now enumerates current top-level windows owned by the packaged process, records the window containing the matched control, and uses its current native handle for focus and pointer input.",
+  "local_verification": {
+    "tdd_red": "The source-contract regression failed before the process-window lookup helper was added.",
+    "focused_tests": "35 passed across six suites",
+    "clippy": "passed with warnings denied",
+    "rustfmt": "passed",
+    "diff_check": "passed",
+    "source_test_line_limit": "all changed Rust files are below 300 lines"
+  },
+  "exact_package_reverification": "pending",
+  "acceptance_credit": "none; require the exact Windows package journey to persist the selected Signal transport before continuing to the tool-decision and stop/resume journeys"
+}
