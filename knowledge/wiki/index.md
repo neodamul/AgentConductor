@@ -186,3 +186,4 @@
 - [Native UI poll timeouts](native-ui-poll-timeouts.md): Rust worker request semantics, background error policy, resumed repaint scheduling, and the explicit distinction from JavaScript client-timeout diagnostics.
 - [Coordinator format correction retry](coordinator-format-retry.md): a single bounded JSON-format retry with retained first-attempt logs and deterministic local CLI tests.
 - [Git HEAD fast path](git-head-fast-path.md): resolve common revisions from metadata and refresh linked-worktree fallbacks asynchronously without blocking native requests.
+- [Native event-driven refresh](current-main-rust-parity.md#native-event-driven-refresh): broadcast state invalidations to peer windows and isolate snapshots from interactive requests.

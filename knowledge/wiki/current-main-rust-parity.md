@@ -1,5 +1,9 @@
 # Current-main behavior carried into the Rust UI branch
 
+## Native event-driven refresh
+
+Successful mutating Room requests publish a content-free state invalidation to subscribed peer windows; the source view is suppressed. Each listener coalesces invalidations, requests an authoritative asynchronous snapshot, and wakes the native renderer. Periodic snapshots run on a dedicated worker and reply lane, separate from interactive dispatch, so a delayed refresh cannot consume foreground queue capacity or overwrite a foreground pending result. The active/idle fallback cadence is one second / thirty seconds. Verification includes a deterministic barrier proving a chat request completes while the background snapshot is blocked, plus event fan-out, source-suppression, and read-only-filter tests. Local targeted suites and warning-denied Clippy pass at `153d152f`; full-suite, packaged macOS/Windows, and visual acceptance remain separate gates.
+
 ## Full local Rust test suite — issue #9 / 2026-10-29
 
 At exact branch head `355d6256d358533bfd182712ce1fa99d174b4aa4`, `cargo test --all-targets --locked --offline --features test-fixtures --no-fail-fast --quiet` exited 0 with no failures. The local run is macOS; authenticated provider and exact packaged-binary tests keep their explicit prerequisites. This does not replace the pending exact Windows package check or award packaged UI acceptance. Evidence: `docs/evidence/issue9-full-suite-355d625-20261029.json`.
