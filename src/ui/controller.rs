@@ -216,6 +216,8 @@ impl Controller {
             .stdin(Stdio::null())
             .stdout(out)
             .stderr(err);
+        self.events
+            .configure_child(&mut command, self.event_surface);
         #[cfg(unix)]
         {
             use std::os::unix::process::CommandExt;

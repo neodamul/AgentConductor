@@ -2,6 +2,10 @@
 use std::{ffi::OsStr, process::Command};
 pub fn command(program: impl AsRef<OsStr>) -> Command {
     let mut command = Command::new(program);
+    command
+        .env_remove("AC_UI_EVENT_ADDRESS")
+        .env_remove("AC_UI_EVENT_TOKEN")
+        .env_remove("AC_UI_EVENT_SURFACE");
     #[cfg(windows)]
     {
         use std::os::windows::process::CommandExt;

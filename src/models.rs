@@ -195,6 +195,9 @@ pub async fn discover(profile: &AgentProfile, dir: &Path) -> Result<ModelCatalog
     command
         .args(args)
         .envs(&profile.environment)
+        .env_remove("AC_UI_EVENT_ADDRESS")
+        .env_remove("AC_UI_EVENT_TOKEN")
+        .env_remove("AC_UI_EVENT_SURFACE")
         .current_dir(&dir)
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())

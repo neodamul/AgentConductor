@@ -55,6 +55,9 @@ pub(super) async fn request(
         "--max-filesize",
         &MAX_RESPONSE.to_string(),
     ])
+    .env_remove("AC_UI_EVENT_ADDRESS")
+    .env_remove("AC_UI_EVENT_TOKEN")
+    .env_remove("AC_UI_EVENT_SURFACE")
     .stdin(Stdio::piped())
     .stdout(Stdio::piped())
     .stderr(Stdio::null())

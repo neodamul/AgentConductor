@@ -191,6 +191,9 @@ pub async fn describe(executable: &Path, limit: Duration) -> Result<Value, Strin
     let mut command = tokio::process::Command::new(exe);
     command
         .arg("--acio-describe")
+        .env_remove("AC_UI_EVENT_ADDRESS")
+        .env_remove("AC_UI_EVENT_TOKEN")
+        .env_remove("AC_UI_EVENT_SURFACE")
         .stdin(std::process::Stdio::null())
         .stdout(std::process::Stdio::piped())
         .stderr(std::process::Stdio::null())
