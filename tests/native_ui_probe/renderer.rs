@@ -11,7 +11,7 @@ fn native_renderer_matches_platform_backend() {
 }
 
 #[test]
-fn metadata_completion_is_polled_from_every_workspace_step() {
+fn metadata_completion_event_refreshes_every_workspace_step() {
     use std::time::{Duration, Instant};
     for step in 0..3 {
         let root = std::env::temp_dir().join(format!(
@@ -34,16 +34,21 @@ fn metadata_completion_is_polled_from_every_workspace_step() {
         probe.goal = "Unsaved goal".into();
         probe.snapshot.as_mut().unwrap()["metadata_job"] =
             serde_json::json!({"kind":"quota:claude", "state":"running"});
-        probe.workspace_next_refresh = Some(Instant::now() - Duration::from_secs(1));
-        let mut output = context.run_ui(egui::RawInput::default(), |ui| probe.update_ui(ui));
-        output.textures_delta.set.clear();
-        output.textures_delta.free.clear();
+        probe.workspace_next_refresh = Some(Instant::now() + Duration::from_secs(60));
+        room.publish_event(crate::ui::events::UiEvent::invalidated(
+            crate::ui::events::UiSurface::Workspace,
+        ));
+        probe.poll();
         assert!(
-            matches!(probe.pending, Some(super::super::Pending::MetadataRefresh))
-                || !workspace::profile_tools::metadata_running(probe.snapshot.as_ref().unwrap()),
-            "step {step} must poll the shared sidebar metadata job"
+            matches!(
+                probe.poll_pending,
+                Some(super::super::Pending::MetadataRefresh)
+            ),
+            "step {step} must refresh the shared sidebar when its event arrives; pending={}, poll_pending={}",
+            probe.pending.is_some(),
+            probe.poll_pending.is_some()
         );
-        while probe.pending.is_some() {
+        while probe.pending.is_some() || probe.poll_pending.is_some() {
             probe.poll();
             assert!(Instant::now() < deadline);
             std::thread::yield_now();
@@ -54,7 +59,7 @@ fn metadata_completion_is_polled_from_every_workspace_step() {
         assert_eq!(probe.name, "Unsaved workspace name");
         assert_eq!(probe.goal, "Unsaved goal");
         assert_eq!(probe.workspace_step, step);
-        probe.workspace_next_refresh = Some(Instant::now() - Duration::from_secs(1));
+        probe.workspace_next_refresh = Some(Instant::now() + Duration::from_secs(60));
         let mut idle = context.run_ui(egui::RawInput::default(), |ui| probe.update_ui(ui));
         idle.textures_delta.set.clear();
         idle.textures_delta.free.clear();

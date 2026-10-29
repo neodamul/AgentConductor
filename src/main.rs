@@ -44,6 +44,7 @@ fn main() -> std::process::ExitCode {
     } else {
         execute()
     };
+    agentconductor::ui::events::notify_external_from_environment();
     // DD-79: let queued messenger notifications finish (bounded) before the process exits.
     if !maintenance {
         agentconductor::messenger::flush(std::time::Duration::from_secs(35));

@@ -15,9 +15,12 @@ Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184/NFR-79 → QAS-190 → 
 - Plan and architecture records are updated.
 - A bounded `std::sync::mpsc` event hub now filters subscribers by Workspace or Agent Room, coalesces a full one-slot queue, and calls `egui::Context::request_repaint` without adding an event thread. Publisher delivery uses `try_lock` plus `try_send`; transient registry contention cannot block a state owner, and later snapshots/recovery reconcile invalidations.
 - Successful native UI dispatches publish an invalidation; the matching view listens on its bounded receiver and asks the existing independent poll worker for one background snapshot.
+- Each foreground request receives a monotonic ID. The reply receiver discards completed responses whose IDs are no longer current, preventing the two request lanes from applying an earlier snapshot after a later action.
+- Each background snapshot records the foreground request ID that was current when it began. If a newer foreground request starts before the snapshot returns, the UI drops that response instead of overwriting newer form state.
 - Periodic whole-screen refresh is now only a 30-second recovery deadline regardless of running/idle status. Event subscribers repaint and trigger snapshots immediately, so active workflows no longer cause 1-second polling and idle work no longer causes 5-second polling; quota refresh remains on its own configured schedule.
 - The serialized foreground lane is now two bounded worker lanes. TDD proved a slow request on one lane does not delay a quick request on the other.
 - A UI child-job terminal transition publishes an event when the controller observes process exit. The event wakes the view to read the committed state.
+- Every supervised CLI child notifies its parent UI once at command exit through the same authenticated loopback bridge. The send is non-blocking and is a no-op when the child was not launched by a UI supervisor.
 - When an invalidation arrives during a background snapshot, the view drops that in-flight result and queues one fresh snapshot. This prevents a pre-mutation read from briefly overwriting newer view state.
 - The internal workflow child inherits an ephemeral loopback UDP address and random token. Its supervised stdout-spool reader sends non-blocking invalidations after recording agent progress; the parent wakes only the surface that launched the work. Provider, MCP, quota, and helper subprocesses have these credentials stripped.
 - If the spool observer sees no output, its polling delay increases from 100 ms to at most 2 s; output resets it to 100 ms. The UI itself is woken by events and uses a separate snapshot worker.
@@ -27,7 +30,7 @@ Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184/NFR-79 → QAS-190 → 
 
 ## Verification design
 
-Use deterministic channel and loopback tests for authenticated event delivery, bounded non-blocking sends, subscriber disconnect, coalescing, selective surface delivery, stale snapshot rejection, external declared-scope file changes, and independent foreground progress while another request is blocked. Verify the recovery path's scan bounds and idle backoff. Avoid a thread per notification and avoid work in egui's render callback.
+Use deterministic channel and loopback tests for authenticated event delivery, child-exit notification, bounded non-blocking sends, subscriber disconnect, coalescing, selective surface delivery, superseded request and snapshot rejection, external declared-scope file changes, and independent foreground progress while another request is blocked. Verify the recovery path's scan bounds and idle backoff. Avoid a thread per notification and avoid work in egui's render callback.
 
 ## Links
 

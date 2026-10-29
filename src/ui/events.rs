@@ -169,7 +169,8 @@ fn deliver(subscribers: &Arc<Mutex<Vec<Subscriber>>>, event: UiEvent) {
     });
 }
 
-pub(crate) fn notify_external_from_environment() {
+/// Notify a supervising native UI that this CLI child has finished its command.
+pub fn notify_external_from_environment() {
     static SENDER: OnceLock<Option<(UdpSocket, SocketAddr, String, String)>> = OnceLock::new();
     let sender = SENDER.get_or_init(|| {
         let address = std::env::var("AC_UI_EVENT_ADDRESS").ok()?.parse().ok()?;

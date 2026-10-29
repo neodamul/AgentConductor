@@ -10,7 +10,15 @@ impl Probe {
             .as_ref()
             .is_some_and(|worker| worker.events.try_recv().is_ok());
         if changed {
-            self.refresh_background();
+            if self
+                .snapshot
+                .as_ref()
+                .is_some_and(super::super::workspace::profile_tools::metadata_running)
+            {
+                self.refresh_metadata();
+            } else {
+                self.refresh_background();
+            }
         }
     }
 }

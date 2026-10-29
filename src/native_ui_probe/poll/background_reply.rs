@@ -30,6 +30,13 @@ impl Probe {
             .map(|worker| worker.poll_replies.try_recv());
         match reply {
             Some(Ok(reply)) => {
+                let request_revision = self.poll_request_revision.take();
+                if self.worker.as_ref().is_some_and(|worker| {
+                    request_revision.is_some_and(|revision| revision != worker.latest_request_id())
+                }) {
+                    self.poll_pending = None;
+                    return;
+                }
                 let invalidated = self
                     .worker
                     .as_ref()
@@ -47,6 +54,7 @@ impl Probe {
             }
             Some(Err(std::sync::mpsc::TryRecvError::Disconnected)) => {
                 self.poll_pending = None;
+                self.poll_request_revision = None;
                 self.error = Some("Background poll worker stopped".into());
             }
             Some(Err(std::sync::mpsc::TryRecvError::Empty)) | None => {}

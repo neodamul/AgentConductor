@@ -1,6 +1,11 @@
 use eframe::egui;
 use serde_json::Value;
-use std::sync::{Arc, mpsc};
+use std::sync::{
+    Arc,
+    atomic::{AtomicU64, Ordering},
+    mpsc,
+};
+use std::time::{Duration, Instant};
 
 pub(in crate::native_ui_probe) type Dispatch = dyn Fn(&[u8]) -> Result<Value, String> + Send + Sync;
 
@@ -9,6 +14,10 @@ enum WorkerRequest {
     PickFolder(crate::ui::picker::FolderPurpose),
     PickPlanFile,
     PickExecutable,
+}
+struct TaggedRequest {
+    id: u64,
+    request: WorkerRequest,
 }
 const REQUEST_WORKERS: usize = 2;
 
@@ -59,12 +68,43 @@ pub(super) fn initial_snapshot(room_view: bool) -> &'static [u8] {
 }
 
 pub struct RequestWorker {
-    requests: Vec<mpsc::SyncSender<WorkerRequest>>,
-    pub replies: mpsc::Receiver<Result<Value, String>>,
+    requests: Vec<mpsc::SyncSender<TaggedRequest>>,
+    pub replies: ReplyReceiver,
+    latest_request: Arc<AtomicU64>,
     poll_requests: mpsc::SyncSender<Vec<u8>>,
     pub poll_replies: mpsc::Receiver<Result<Value, String>>,
     pub events: mpsc::Receiver<crate::ui::events::UiEvent>,
     room_view: bool,
+}
+
+pub struct ReplyReceiver {
+    receiver: mpsc::Receiver<(u64, Result<Value, String>)>,
+    latest_request: Arc<AtomicU64>,
+}
+
+impl ReplyReceiver {
+    pub fn try_recv(&self) -> Result<Result<Value, String>, mpsc::TryRecvError> {
+        loop {
+            let (id, reply) = self.receiver.try_recv()?;
+            if id == self.latest_request.load(Ordering::Acquire) {
+                return Ok(reply);
+            }
+        }
+    }
+
+    pub fn recv_timeout(
+        &self,
+        timeout: Duration,
+    ) -> Result<Result<Value, String>, mpsc::RecvTimeoutError> {
+        let deadline = Instant::now() + timeout;
+        loop {
+            let remaining = deadline.saturating_duration_since(Instant::now());
+            let (id, reply) = self.receiver.recv_timeout(remaining)?;
+            if id == self.latest_request.load(Ordering::Acquire) {
+                return Ok(reply);
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -78,6 +118,10 @@ mod event_tests;
 mod request_pool_tests;
 
 impl RequestWorker {
+    pub fn latest_request_id(&self) -> u64 {
+        self.latest_request.load(Ordering::Acquire)
+    }
+
     pub fn new(room: Arc<crate::ui::Room>, context: egui::Context) -> Result<Self, String> {
         Self::connect(room, context, false)
     }
@@ -111,6 +155,7 @@ impl RequestWorker {
         dispatch: Arc<Dispatch>,
     ) -> Result<Self, String> {
         let (reply_tx, replies) = mpsc::channel();
+        let latest_request = Arc::new(AtomicU64::new(0));
         let (poll_requests, poll_queue) = mpsc::sync_channel::<Vec<u8>>(1);
         let (poll_reply_tx, poll_replies) = mpsc::channel();
         let (_, events) = mpsc::sync_channel(1);
@@ -127,7 +172,7 @@ impl RequestWorker {
             .map_err(|error| error.to_string())?;
         let mut requests = Vec::with_capacity(REQUEST_WORKERS);
         for index in 0..REQUEST_WORKERS {
-            let (sender, queue) = mpsc::sync_channel::<WorkerRequest>(1);
+            let (sender, queue) = mpsc::sync_channel::<TaggedRequest>(1);
             requests.push(sender);
             let request_dispatch = Arc::clone(&dispatch);
             let request_reply = reply_tx.clone();
@@ -136,7 +181,8 @@ impl RequestWorker {
                 .name(format!("native-ui-request-{index}"))
                 .spawn(move || {
                     while let Ok(request) = queue.recv() {
-                        let _ = request_reply.send(run_request(request, request_dispatch.as_ref()));
+                        let reply = run_request(request.request, request_dispatch.as_ref());
+                        let _ = request_reply.send((request.id, reply));
                         request_context.request_repaint();
                     }
                 })
@@ -144,7 +190,11 @@ impl RequestWorker {
         }
         Ok(Self {
             requests,
-            replies,
+            replies: ReplyReceiver {
+                receiver: replies,
+                latest_request: Arc::clone(&latest_request),
+            },
+            latest_request,
             poll_requests,
             poll_replies,
             events,
@@ -174,8 +224,10 @@ impl RequestWorker {
             }
             _ => 1,
         };
+        let id = self.latest_request.load(Ordering::Relaxed).wrapping_add(1);
         self.requests[lane]
-            .try_send(request)
+            .try_send(TaggedRequest { id, request })
+            .map(|()| self.latest_request.store(id, Ordering::Release))
             .map_err(|error| match error {
                 mpsc::TrySendError::Full(_) => "foreground request lane is busy".into(),
                 mpsc::TrySendError::Disconnected(_) => {

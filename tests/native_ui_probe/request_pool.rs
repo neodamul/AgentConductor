@@ -30,12 +30,10 @@ fn slow_read_does_not_block_the_state_change_lane() {
         r#"{"kind":"action"}"#
     );
     release.send(()).unwrap();
-    assert_eq!(
+    assert!(
         worker
             .replies
-            .recv_timeout(Duration::from_secs(1))
-            .unwrap()
-            .unwrap()["request"],
-        r#"{"kind":"snapshot"}"#
+            .recv_timeout(Duration::from_millis(50))
+            .is_err()
     );
 }

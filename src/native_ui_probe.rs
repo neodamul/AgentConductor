@@ -81,6 +81,7 @@ pub struct Probe {
     background_poll_failures: u8,
     pending: Option<Pending>,
     poll_pending: Option<Pending>,
+    poll_request_revision: Option<u64>,
     resume_after_tool_approval: bool,
     resume_after_task_feedback: bool,
     confirming_start: Option<(String, String)>,
