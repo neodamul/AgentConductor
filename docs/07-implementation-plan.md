@@ -6539,3 +6539,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: update the reset regression to expect the terminal marker; the test file passes 2/2. Warning-denied all-target Clippy and `cargo fmt --check` pass. A local parallel all-target attempt exposed two timing-sensitive unit tests that pass individually; a serial run passed 331 tests across 77 suites, then stalled in `io_conformance` and was stopped. This is not recorded as a full-suite pass.
 - [x] Exact package: corrected head `3d6fd707` passed exact run `40885718536` on macOS and Windows, including native release packaging and packaged Windows default-desktop UI checks.
 - [x] Complete: squash-merge PR #228 into `codex/issue-9-native-ui-parity` as `f833e522`; close issue #221. The full local all-target test remains unclaimed because the serial run stalled in `io_conformance` after 331 passes / 3 ignored across 77 suites.
+
+### 2026-10-30 — Port current-head coordinator chat package coverage — issue #189 / #9
+
+- [x] Plan: audit PR #192 and exact Windows package run `40800366506`. Its three chat journeys passed on that PR head, but the overall Windows package failed later in `windows_tool_decision`; its `chat_transcript` storage assertion does not match current #9's artifact-backed `chat_history`.
+- [x] Red: the new package-wiring contract failed because current #9 did not include the coordinator-chat package target; the artifact reconstruction tests now cover pending and completed turns and reject path-like result references.
+- [x] Task: port the deterministic Windows chat UI harness to the current artifact format (`startup.json.chat_result`, `mcp/chat-input-<id>.json`, and `mcp/chat-<id>.json`) and run Windows package UI tests serially.
+- [x] Verify locally: focused artifact and package-driver suites pass 5/5; `source_layout` passes 2/2; targeted Clippy, rustfmt, and `git diff --check` pass. All changed Rust files are below 300 lines (largest: 283).
+- [ ] Verify exact Windows package: run the persisted-reopen, in-flight-reconnect, and late-answer journeys against the package built from this branch. They cannot be exercised on the local macOS host.
+- [ ] Verify exact macOS package UI: inspect chat, persistence, keyboard, and restart behavior on the exact package.
+- [ ] Complete: keep #189 and #9 acceptance unchanged until current-head package evidence passes; the prior PR #192 run is not a substitute.
