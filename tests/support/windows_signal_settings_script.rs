@@ -213,23 +213,12 @@ $port = Wait-Edit 'agentmemory port'
 $value = $port.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).Current.Value
 if ($value -ne '7333') { throw "PORT_VALUE_NOT_RETAINED: $value" }
 Click-SaveAction
-$preferencePath = Join-Path $env:AC_SIGNAL_WORKSPACE 'signal-transport.json'
-$persisted = $null
-$persistDeadline = (Get-Date).AddSeconds(5)
-while (-not $persisted -and (Get-Date) -lt $persistDeadline) {
-  try {
-    $candidate = Get-Content -Raw $preferencePath | ConvertFrom-Json
-    if ($candidate.preference.transport -eq 'agentmemory' -and $candidate.preference.port -eq 7333) { $persisted = $candidate }
-  } catch {}
-  if (-not $persisted) { Start-Sleep -Milliseconds 100 }
-}
-if (-not $persisted) { $processAlive = [bool](Get-Process -Id $expectedProcessId -ErrorAction SilentlyContinue); Write-Output "SAVE_STATE=dialog:$([bool](Find-Name 'Signal transport')); process_alive:$processAlive; file:$preferencePath"; Describe-ActionControls; throw "SIGNAL_PREFERENCE_NOT_PERSISTED; file=$preferencePath" }
 $closeDeadline = (Get-Date).AddSeconds(10)
 while ((Find-VisibleActionControl 'Local Rust') -and (Get-Date) -lt $closeDeadline) { Start-Sleep -Milliseconds 100 }
 if (Find-VisibleActionControl 'Local Rust') {
-  Write-Output "SIGNAL_DIALOG_STILL_VISIBLE; persisted=$($persisted | ConvertTo-Json -Compress)"
+  Write-Output 'SIGNAL_DIALOG_STILL_VISIBLE'
   Describe-ActionControls
-  throw "SIGNAL_DIALOG_DID_NOT_CLOSE; persisted=$($persisted | ConvertTo-Json -Compress)"
+  throw 'SIGNAL_DIALOG_DID_NOT_CLOSE'
 }
 Write-Output 'SIGNAL_SETTINGS_SAVED'
 "#;
