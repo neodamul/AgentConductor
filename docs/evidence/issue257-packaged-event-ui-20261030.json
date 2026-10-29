@@ -37,9 +37,9 @@
   },
   "source_regression": {
     "test": "tests/native_ui_probe/poll_events.rs::metadata_event_refreshes_quota_snapshot_asynchronously",
-    "result": "passed 1/1; workspace event requested a snapshot through the separate poll lane and the Probe applied the updated quota badge",
+    "result": "passed 1/1; workspace event requested a snapshot through the separate poll lane, the Probe applied the first-party quota badge, and the native sidebar rendered it in its accessibility tree",
     "native_ui_probe_library_filter": "passed 59/59",
-    "source_layout": "passed 2/2; both modified Rust files are 51 lines",
+    "source_layout": "passed 2/2; source poll module is 51 lines and the regression test is 69 lines (both below 300)",
     "clippy_format_and_diff": "cargo clippy --lib --locked --offline --features test-fixtures -- -D warnings, cargo fmt --all -- --check, and git diff --check passed",
     "other_run": "An all-target filtered invocation was interrupted after its native library tests while traversing unrelated targets; not claimed as a full-suite pass"
   },
