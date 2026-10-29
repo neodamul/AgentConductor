@@ -766,3 +766,7 @@ Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 
 ### UC-184 Check a repository revision without waiting for Git
 An operator opens a workspace or confirms an action while repository state is being checked. For standard `.git` layouts, the native UI reads HEAD from metadata files. For linked worktrees or unsupported layouts, the request receives the last cached or pending revision immediately, while one background worker runs Git. Repeated checks coalesce; a slow Git process cannot block the view or unrelated controls.
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
+
+### UC-185 Keep two native views synchronized while an operation runs
+The operator has Workspace and Agent Room open. A successful action in one view emits one state-change event to the other; the listener requests a single snapshot without echoing another event. If a periodic refresh is already slow, a chat request still enters and completes on its independent request lane. When no process is active, no frequent snapshot loop runs; a 30-second recovery check catches changes from outside the application.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, user, 2026-10-30.

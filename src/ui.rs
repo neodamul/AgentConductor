@@ -14,6 +14,7 @@ use std::{
 
 mod cache;
 mod diff;
+pub(crate) mod events;
 pub mod language;
 pub mod messages;
 pub mod native;
@@ -199,6 +200,7 @@ pub struct Room {
     window_lease: Mutex<crate::leases::Lease>,
     parked_workspaces: Mutex<std::collections::BTreeMap<PathBuf, workspaces::ParkedWorkspace>>,
     workspace_navigation: Mutex<()>,
+    events: events::EventBus,
 }
 impl Room {
     /// A native window holds one kernel lease per canonical run directory.
@@ -228,6 +230,7 @@ impl Room {
             window_lease: Mutex::new(lease),
             parked_workspaces: Mutex::new(std::collections::BTreeMap::new()),
             workspace_navigation: Mutex::new(()),
+            events: events::EventBus::default(),
         })
     }
     pub fn startup(root: &Path, exe: &Path) -> Result<Self, String> {
@@ -242,7 +245,14 @@ impl Room {
             window_lease: Mutex::new(lease),
             parked_workspaces: Mutex::new(std::collections::BTreeMap::new()),
             workspace_navigation: Mutex::new(()),
+            events: events::EventBus::default(),
         })
+    }
+    pub(crate) fn subscribe_events(
+        &self,
+        wake: impl Fn() + Send + Sync + 'static,
+    ) -> Result<events::Subscription, String> {
+        self.events.subscribe_with_wakeup(wake)
     }
     fn surface(&self) -> Result<Option<Arc<setup::Startup>>, String> {
         Ok(self

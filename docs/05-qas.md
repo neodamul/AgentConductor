@@ -776,3 +776,7 @@ Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 
 ### QAS-191 Repository HEAD lookup never blocks a routine request
 Given a repository with loose, packed, or detached HEAD, a request returns the same commit as `git rev-parse HEAD` while `git` is absent from PATH. Given a linked worktree, the first request returns `Pending` without waiting; a later request receives the background Git result. Concurrent requests for one linked worktree start at most one refresh. Given an unrelated slow Git refresh, a foreground request and event publisher still complete. Verify with deterministic local tests for all layouts and the native request path.
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
+
+### QAS-192 State events refresh peer views without request starvation
+Given two open native views, a successful change through one Room is delivered once to the other listener and does not echo to its source. Given a deterministic background snapshot held behind a test barrier, an interactive chat request still returns before that barrier is released; the background result arrives on its own channel and does not replace the foreground pending state. A burst of state events is coalesced to one snapshot. Running jobs retain the one-second recovery cadence and idle views use 30 seconds. Verify these behaviors with EventBus, worker concurrency and native scheduling tests.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, 2026-10-30.

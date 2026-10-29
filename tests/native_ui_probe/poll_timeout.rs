@@ -26,6 +26,18 @@ fn wait_for_reply(probe: &mut Probe) {
     }
 }
 
+fn wait_for_background_reply(probe: &mut Probe) {
+    let deadline = Instant::now() + Duration::from_secs(2);
+    while probe.background_refresh_pending {
+        probe.poll();
+        assert!(
+            Instant::now() < deadline,
+            "background snapshot reply timed out"
+        );
+        std::thread::sleep(Duration::from_millis(5));
+    }
+}
+
 #[test]
 fn initial_snapshot_errors_stay_visible_and_scheduled_room_snapshots_are_background() {
     let root = temp_root("startup");
@@ -59,8 +71,9 @@ fn initial_snapshot_errors_stay_visible_and_scheduled_room_snapshots_are_backgro
     wait_for_reply(&mut probe);
     probe.error = None;
     probe.refresh_background();
-    assert!(matches!(probe.pending, Some(Pending::BackgroundRefresh)));
-    wait_for_reply(&mut probe);
+    assert!(probe.pending.is_none());
+    assert!(probe.background_refresh_pending);
+    wait_for_background_reply(&mut probe);
     assert!(probe.error.is_none());
     assert_eq!(probe.background_poll_failures, 1);
     drop(probe);
@@ -69,15 +82,7 @@ fn initial_snapshot_errors_stay_visible_and_scheduled_room_snapshots_are_backgro
 }
 
 #[test]
-fn background_poll_errors_are_silent_but_explicit_errors_remain_visible() {
-    let mut background = Probe {
-        pending: Some(Pending::BackgroundRefresh),
-        ..Probe::default()
-    };
-    background.handle_error("background snapshot failed");
-    assert!(background.error.is_none());
-    assert!(background.pending.is_none());
-
+fn explicit_poll_errors_remain_visible() {
     let mut explicit = Probe {
         pending: Some(Pending::Refresh),
         ..Probe::default()

@@ -693,3 +693,7 @@ Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 
 ### SF-181 Non-blocking repository HEAD resolution
 Read loose, packed, and detached HEAD values from local Git metadata. When a linked worktree or unsupported layout requires Git, return a cached/pending revision immediately and perform a coalesced background refresh. Keep routine revision and render paths free of Git subprocesses.
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
+
+### SF-182 Broadcast state invalidations and isolate refresh work
+The shared Room publishes successful state changes to subscribed native views, excluding the originating view. Listeners coalesce notifications and request one asynchronous snapshot through a dedicated background queue and reply channel. Active child work retains a bounded one-second refresh fallback; idle views recover at a 30-second interval.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, user, 2026-10-30.

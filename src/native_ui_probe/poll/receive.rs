@@ -1,12 +1,14 @@
 use super::super::{Pending, Probe, cache, room, workspace};
 impl Probe {
     pub(in crate::native_ui_probe) fn poll(&mut self) {
+        self.poll_events();
+        self.dispatch_background_refresh();
+        self.poll_background();
         let Some(worker) = &self.worker else { return };
         let reply = worker.replies.try_recv();
-        let background = matches!(self.pending, Some(Pending::BackgroundRefresh));
         let snapshot_poll = matches!(
             self.pending,
-            Some(Pending::BackgroundRefresh | Pending::Refresh | Pending::PrepareRefresh)
+            Some(Pending::Refresh | Pending::PrepareRefresh)
         );
         if snapshot_poll && matches!(&reply, Ok(Ok(_))) {
             self.poll_succeeded();
@@ -190,8 +192,7 @@ impl Probe {
                 Some(Pending::TaskDetails | Pending::BackgroundTaskDetails) => {
                     super::task_details::apply(self, snapshot)
                 }
-                Some(Pending::BackgroundRefresh | Pending::Refresh | Pending::PrepareRefresh)
-                | None => {
+                Some(Pending::Refresh | Pending::PrepareRefresh) | None => {
                     if let Some(view) = self.room_view.as_mut() {
                         if view
                             .evidence
@@ -258,7 +259,7 @@ impl Probe {
                         }
                     }
                     if self.pending.is_none() && self.room_view.is_some() {
-                        self.refresh_room_details(background);
+                        self.refresh_room_details(false);
                     }
                 }
                 Some(_) => unreachable!("every pending operation has a response handler"),

@@ -12,7 +12,7 @@ pub fn room_refresh_interval(snapshot: &Value) -> Duration {
     {
         Duration::from_secs(1)
     } else {
-        Duration::from_secs(5)
+        Duration::from_secs(30)
     }
 }
 

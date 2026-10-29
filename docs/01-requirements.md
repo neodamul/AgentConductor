@@ -758,3 +758,7 @@ Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 
 ### R-193 Routine repository revision reads never spawn Git
 The native UI shall resolve common repository HEAD layouts from Git metadata files when computing routine state revisions, without spawning Git to answer a snapshot or revision request. Linked worktrees and unsupported metadata layouts shall return immediately from a cached result and refresh through at most one background Git process per repository; retries are coalesced and rate-limited. A slow or unavailable Git fallback shall not block rendering, event delivery, or unrelated actions.
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
+
+### R-194 State changes wake only the other native views
+The native Workspace and Agent Room shall broadcast successful state changes to other open views, and each listener shall coalesce those events into a targeted asynchronous refresh. The sender shall not refresh itself from its own event. Periodic snapshots shall run on an independent worker and reply channel so a slow refresh cannot reject or delay chat and other interactive requests. Active external work may use a bounded 1-second fallback; idle views use a 30-second recovery check.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, user, 2026-10-30.

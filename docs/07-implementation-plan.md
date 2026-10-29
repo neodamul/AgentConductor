@@ -6550,3 +6550,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify exact packaged macOS and Windows UI behavior; source tests do not prove package responsiveness.
 - [x] Complete this unit: code commit `363a6f5` is pushed on `codex/issue-9-git-head-fast-path`; draft PR #260 targets `codex/issue-9-native-ui-parity`; issue #9 has the local verification checkpoint. Keep #9 open; no package acceptance is claimed.
 - [ ] Complete issue #9: exact packaged macOS/Windows behavior and the remaining parity gates are still open.
+
+### 2026-10-30 — Broadcast native state changes and isolate polling — issue #9
+
+- [x] Plan: trace R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. Keep the event payload content-free; the snapshot remains authoritative.
+- [x] Red: add a deterministic worker barrier test where a blocked background snapshot must not block an interactive chat dispatch; add event fan-out, source-suppression, and read-only-filter tests.
+- [x] Task: split periodic snapshots onto an independent worker/reply channel; broadcast successful state invalidations to subscribed peer windows; coalesce refreshes and wake listeners; use 1-second active-work and 30-second idle fallback cadence.
+- [x] Verify locally: 60 library tests and 30 tests across `native_room_render`, `native_ui_profile_refresh`, `native_ui_probe`, and `source_layout`; warning-denied all-target Clippy, `cargo fmt --check --all`, diff check, and 300-line source/test validation pass.
+- [ ] Complete unit: commit and push the issue #9 implementation and record exact verification in AgentMemory. Keep #9 open until packaged macOS/Windows parity acceptance is complete.
