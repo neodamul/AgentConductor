@@ -15,6 +15,7 @@
     "candidate diff contains exactly one change for each of one.txt, two.txt, and three.txt"
   ],
   "focused_tests": "10 passed, 1 package-only test ignored",
+  "full_local_suite": "1,103 passed, 15 ignored, 350 suites, 269.80 seconds",
   "clippy": "all targets pass with warnings denied",
   "format_and_source_layout": "pass; Rust source and test files remain at or below 300 lines",
   "exact_macos_package": "pending",

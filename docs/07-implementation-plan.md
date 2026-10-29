@@ -260,7 +260,7 @@
 - [x] Plan: close the remaining workflow-25 gap with a package-binary journey covering stop, process cleanup, explicit resume, interrupted-run recovery, a second resume, and duplicate-output detection.
 - [x] Red: `exact_package_runs_the_stop_resume_recovery_journey` failed because the Windows package job did not include the recovery integration target.
 - [x] Task: add a bounded Rust mock-agent blocker and `tests/package_run_recovery.rs`; register it in the Windows exact-package job. The test uses only a disposable Git repository and mock CLI.
-- [x] Local Verify: the exact journey passes against the local Rust binary; focused contracts pass 10 tests with 1 package-only test ignored, warning-denied all-target Clippy, rustfmt, diff checks, and the 300-line guard. The final candidate diff contains exactly the three owned fixture files after both resumes.
+- [x] Local Verify: the exact journey passes against the local Rust binary; the full offline suite passes 1,103 tests (15 ignored, 350 suites, 269.80s). Focused contracts pass 21 tests with 1 package-only test ignored; warning-denied all-target Clippy, rustfmt, diff checks, and the 300-line guard pass. The final candidate diff contains exactly the three owned fixture files after both resumes.
 - [ ] Exact-package Verify: run both platform validation and exact macOS/Windows package jobs on this commit. No acceptance credit until the workflow passes on the packaged binary.
 - [ ] Complete: save exact-head evidence, update issue #9, PR #22, AgentMemory and LLM Wiki. Keep candidate packaged acceptance at 22/25 and shipped Rust replacement at 0/25 until all package gates pass.
 
