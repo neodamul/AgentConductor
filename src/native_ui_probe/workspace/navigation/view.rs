@@ -111,6 +111,14 @@ pub fn show_in_language(
             Some(crate::native_ui_probe::appearance::SettingsAction::Mcp) => {
                 event = Some(Event::Mcp);
             }
+            Some(crate::native_ui_probe::appearance::SettingsAction::ToolsGuide) => {
+                state.tools_guide = true;
+            }
+            Some(crate::native_ui_probe::appearance::SettingsAction::UserManual) => {
+                state.manual_blocks = crate::native_ui_probe::manual_viewer::blocks(language);
+                state.manual_language = language.to_owned();
+                state.manual_open = true;
+            }
             Some(crate::native_ui_probe::appearance::SettingsAction::Messenger) => {
                 event = Some(Event::Messenger);
             }

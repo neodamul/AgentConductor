@@ -1,0 +1,35 @@
+{
+  "kind": "rust-settings-help-ui-regression",
+  "base_commit": "9a53443d25019c7a45d91e4ec553258924f2964c",
+  "main_commit": "57170330",
+  "changes": [
+    "Cargo.toml",
+    "src/native_ui_probe/appearance.rs",
+    "src/native_ui_probe/workspace/navigation/view.rs",
+    "tests/native_ui_settings_help.rs"
+  ],
+  "tdd": {
+    "red": "The Settings help regression failed because ToolsGuide and UserManual actions did not exist.",
+    "green": "Both Settings entries route to the existing native guide and manual dialogs."
+  },
+  "verification": {
+    "native_ui_settings_help": "1 passed",
+    "native_ui_appearance": "5 passed",
+    "native_ui_manual": "7 passed",
+    "native_ui_workspaces": "6 passed",
+    "source_layout": "2 passed",
+    "clippy": "passed with warnings denied",
+    "rustfmt": "passed"
+  },
+  "ui_smoke": {
+    "platform": "macOS",
+    "app": "locally assembled .app from optimized Rust binary",
+    "window_count": 1,
+    "settings_entries": ["Agent tools guide", "User manual"],
+    "dialogs_opened": ["Agent tools guide", "User manual"],
+    "actions": "view only; no installation, copy, workspace save, plan generation, or agent run",
+    "screenshot_retained": false,
+    "windows_exact_package": "pending"
+  },
+  "acceptance_effect": "Rust Settings UI and local macOS app only; no GitHub Release or Windows package acceptance."
+}

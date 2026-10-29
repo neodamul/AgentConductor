@@ -15,6 +15,16 @@
 - [x] Verify: launch regression 1/1, native-default/workspace/source-layout tests 6/6, desktop routing tests 3/3, warning-denied Clippy, rustfmt, and the 300-line source-layout check pass.
 - [ ] Complete: update issue #9, PR #22, AgentMemory, and LLM Wiki with the test and source evidence; require Windows exact-package execution before closing this parity item.
 
+### Open the manual and agent tools guide from Settings — main #184 / issue #9
+
+- [x] Plan: make the two help resources reachable from the Settings menu in the Rust desktop, as in main.
+- [x] Red: the UI regression failed because Settings had no `ToolsGuide` or `UserManual` action.
+- [x] Task: route both Settings entries to the existing native guide and manual dialogs; keep the workspace-menu shortcuts.
+- [x] Local Verify: settings help 1/1, appearance 5/5, manual 7/7, workspace menu 6/6, source layout 2/2; warning-denied Clippy and rustfmt pass. Changed source/test files are below 300 lines.
+- [x] macOS Package Verify: rebuilt and opened the optimized Rust app; CUA verified both Settings entries and opened the agent tools guide and user manual. The manual rendered in the native dialog; no guide command, copy control, or workspace action was triggered.
+- [ ] Windows Package Verify: require the exact Windows package to expose and open each dialog.
+- [ ] Complete: update issue #9, PR #22, AgentMemory, and LLM Wiki with exact-head evidence.
+
 ### Structure coordinator prompts as Document, Task, and Format — issue #9 / 2026-10-29
 
 - [x] Plan: move existing-plan and approved source evidence ahead of the planning request; keep schema as the last prompt block without changing the coordinator contract.
