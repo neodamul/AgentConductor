@@ -43,7 +43,9 @@ The follow-up fix at `e7f712a60c83727ddeb27c09da0895624a68bf14` was packaged and
 
 The request-queue fix at `cd2b1d4850f9d77c1814e1e0b95ab2549f62bd31` was packaged, manifest-validated, and smoke-tested across shared/worktree isolation with Git and folder projects. The exact package was launched after closing the prior AgentConductor process; one v0.1.37 app window opened the saved workspace with controls enabled and no pending edits. No workspace data was changed. This confirms package identity and launch only; full UI interaction and Windows acceptance remain pending. Evidence: `docs/evidence/issue257-macos-package-cd2b1d48-20261030.json`.
 
-The next request/event slice adds a second bounded read worker and moves event fan-out to a dedicated asynchronous listener. The regression suite passes 83/83 unit tests; this is not yet package-level UI or Windows acceptance.
+The event-fanout implementation at `01bc3c55338ae5c02e9a0cc46761bd16f383b6b8` packaged for `aarch64-apple-darwin`; manifest/source matching, packaged `--help`, and all four shared/worktree × Git/folder mock-agent smoke cases passed. The package process was started with a disposable workspace, but the UI accessibility bridge timed out, so no interactive UI behavior is claimed. The Windows VM remained on its existing update screen and was not changed. Evidence: `docs/evidence/issue257-macos-package-01bc3c55-20261030.json`.
+
+This event-fanout slice adds a second bounded read worker and moves event delivery to a dedicated asynchronous listener. Its regression suite passes 83/83 unit tests; package-level interactive UI and Windows acceptance remain open.
 
 ## Links
 

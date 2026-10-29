@@ -5,6 +5,7 @@
 - [x] Task: add one bounded read worker to the existing per-lane pool; keep mutations serialized and periodic snapshots on their existing single-flight worker. Route local, child-process, and recovery invalidations through one asynchronous fan-out thread using a capacity-one wake channel and atomic surface bits; only that thread touches the subscriber registry and requests repaint for matching surfaces.
 - [x] Verify: local Rust unit suite 83/83, source-layout checks 2/2, Clippy with `-D warnings`, `cargo fmt --check`, and `git diff --check` pass. All touched Rust/test files remain under 300 lines.
 - [ ] Package/UI/Windows Verify: test event-driven refresh and an independent slow read in the exact packaged UI, then validate the exact Windows package. Keep #257 and #9 open until their acceptance journeys pass.
+- [x] Exact source-package CLI checkpoint: commit `01bc3c55338ae5c02e9a0cc46761bd16f383b6b8` packaged for `aarch64-apple-darwin`; manifest hash, packaged `--help`, and four shared/worktree × Git/folder mock-agent smoke cases passed. This confirms packaging and orchestrator journeys; it does not verify interactive UI behavior or Windows. Evidence: `docs/evidence/issue257-macos-package-01bc3c55-20261030.json`.
 - [x] Complete this unit: update the R-192 design decision, AgentMemory and LLM Wiki; commit/push to the active Rust issue branch.
 
 ### Keep workspace input available during quota refresh — issue #257 / 2026-10-30
