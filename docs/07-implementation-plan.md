@@ -208,14 +208,15 @@
 
 ### Reconcile issue #9 with current main and complete Rust contract parity
 
-- [x] Plan: rechecked current Rust head `023a31da3ca2e51e5cf8d4dda2cef58211ddcc99` against `main` `9a8b3258169a0e5834bc141f1bf5941660deb7a1` from shared base `e32295b3bdb0d056adb7e40ec6b04a0adb01957e`; PR #22 remains conflicting.
-- [x] Conflict inventory: a fresh `git merge-tree` reports 86 conflicted paths. The branch has 73 main-only and 1,035 Rust-only commits since the merge base, with a 1,673-file three-dot diff. Conflicts include architecture/docs and Rust source/test files plus intentionally removed legacy JS UI files; do not auto-select one side for all paths.
+- [x] Plan: rechecked current Rust head `09fa3482daae68f5728e1610eec9b77b632cd736` against fetched `origin/main` `9a8b3258169a0e5834bc141f1bf5941660deb7a1` from shared base `e32295b3bdb0d056adb7e40ec6b04a0adb01957e`; PR #22 remains conflicting.
+- [x] Conflict inventory: a fresh read-only `git merge-tree` reports 88 conflicted paths. The branch has 73 main-only and 1,037 Rust-only commits since the merge base, with 1,675 changed paths from the merge base. Conflicts include architecture/docs and Rust source/test files plus intentionally removed legacy JS UI files; do not auto-select one side for all paths.
 - [x] Requirements re-scan: the old 1,371-line “missing” estimate is stale. The current Rust tree contains the ACIO runtime and worker integration, CLI conformance, structured prompts, task profiles, and model/effort handling; their implementation and local evidence are recorded in the earlier FR-179/FR-172 plan sections. This confirms those contracts exist on Rust, not that every `main` change is reconciled.
 - [ ] Task: reconcile current `main` behavior file by file while preserving the Rust-native UI target and intentional removal of legacy UI code. Port any behavior not already represented on Rust with TDD. Keep source and test files separate and at or below 300 lines.
 - [x] Plan main #235 prompt correction: trace R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. Graphify confirmed `run_json_within_model` does not call the existing `prompt_form::with_previous_reply`; the Rust path assembles Document/Task/Format but has no single format-correction retry.
 - [x] Red/Task: deterministic CLI regressions first failed because the coordinator stopped after one malformed response. `run_json_within_model` now retries exactly once only after a successful, non-stopped process has no usable JSON for the requested field; the retry prompt includes the parse reason and the first attempt log is preserved as `process-format-1`.
 - [x] Focused Local Verify: the correction regressions and nearby coordinator, planner, transient-capacity, public-doc, and source-layout suites pass 28 tests across 7 targets; rustfmt, `git diff --check`, and warning-denied all-target Clippy pass; touched Rust files are 170, 191, and 89 lines.
-- [ ] Verify: warning-denied Clippy, complete locked/offline local suite, source/test layout, formatting, and exact macOS/Windows package execution.
+- [x] Verify (source): warning-denied all-target Clippy, `cargo fmt --check`, `git diff --check`, and the complete locked/offline all-target test suite pass on `09fa3482`; `source_layout` enforces the 300-line source/test split.
+- [ ] Verify (package): build and exercise this exact head on macOS and Windows, including packaged UI workflows; source tests do not count as package acceptance.
 - [ ] Complete: update architecture traces, evidence, this checklist, LLM Wiki, AgentMemory, issue #9, and PR #22; do not claim Rust parity or mergeability before all required behavior and package gates pass.
 
 ### Rebind the Windows candidate-review UI tree — issue #9 / workflow 24 / 2026-10-28
