@@ -698,3 +698,7 @@ Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201.
 ### FR-182 Name the task and the field; correct empty scopes once
 `Plan::validate` reports `task <id>: <field> ...` for id, agent, prompt, paths and test_command. The schema sets `minItems: 1` on paths and test_command. The phased planner retries once on an unsafe, overlapping or empty scope.
 Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. GitHub #251, user, 2026-10-29.
+
+### FR-183 Resolve HEAD without a process on the request path
+`git_head::read(project)` resolves the Git directory (the `.git` directory, or the history kept outside a project that has none), reads `HEAD` and the loose ref or `packed-refs`, and returns what `git rev-parse HEAD` would. `Heads::get` returns it, or for any other layout (a `.git` file, a reftable, an unborn branch) the last answer of a background refresh (`pending` until the first one, `unavailable` if Git failed), and starts at most one refresh per folder when the answer is older than 5 s. `state_revision` uses `Heads`. The snapshot request advances the state under the settings lock, copies it, releases the lock and builds the answer from the copy. `diagnostics::step` writes `step name=<lock|advance|snapshot> ms=<n>` when a step took 500 ms or more.
+Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203. GitHub #234, user, 2026-10-30.

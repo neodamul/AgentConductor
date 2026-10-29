@@ -2334,3 +2334,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: `src/plan.rs`, `src/planner.rs`, `src/planner/schema.rs`, `src/planner/prompt.rs`; CHANGELOG.
 - [x] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI. Not verified: a real coordinator that returns empty paths.
 - [ ] Complete: merge; release only on request.
+
+### Non-blocking state revision and snapshot — GitHub #234
+
+- [x] Plan: user data 2026-10-30: `snapshot` and `quota` take over 15 s on a PC where one Git call takes 2.5 s, and the chat waits behind them on the settings lock. R-191 → DD-203: no Git process on the request path, the snapshot answer built outside the lock, slow steps logged.
+- [x] Red: `tests/git_head.rs` and `tests/snapshot_without_git.rs` (fails on the old revision code with `git` unreachable); the step line in `src/ui/diagnostics.rs`.
+- [x] Task: `src/git_head.rs`, `src/ui/setup/revision.rs`, `src/ui/setup/dispatch.rs`, `src/ui/setup.rs`, `src/ui/diagnostics.rs`; manuals EN/KO; CHANGELOG.
+- [x] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI. Not verified: the user's PC after the change; a snapshot that is slow for another reason (the step log will say which).
+- [ ] Complete: merge; release only on request. Related: Codex PR #239 changes the same files for the Rust UI.

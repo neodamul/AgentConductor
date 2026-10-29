@@ -9,10 +9,12 @@ impl Startup {
             return Err(crate::ui::messages::text("native.native_request_exceeds_64_kib").into());
         }
         let request: Request = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
+        let waiting = std::time::Instant::now();
         let mut saved = self
             .saved
             .lock()
             .map_err(|_| crate::ui::messages::text("native.startup_settings_poisoned"))?;
+        crate::ui::diagnostics::step("lock", waiting.elapsed());
         if let Request::Chat { revision, text } = &request {
             return self.dispatch_chat(&mut saved, revision, text);
         }
@@ -25,23 +27,32 @@ impl Startup {
         if let Request::CacheClear { digest } = &request {
             return self.clear_cache(&saved, Some(digest), 0);
         }
+        let stepping = std::time::Instant::now();
         let metadata_job = self.metadata_tick(&mut saved)?;
         let job = self.job(&saved)?;
         self.settle(&mut saved, &job)?;
+        crate::ui::diagnostics::step("advance", stepping.elapsed());
         if let Request::Snapshot {
             icons,
             mcp_result,
             quota_refresh_last,
         } = request
         {
-            return self.snapshot_state(
-                &saved,
+            // GitHub #234: the lock covers advancing the state only; the answer is built from a copy, so the
+            // periodic snapshot never keeps a chat or an action waiting while it reads files.
+            let view = saved.clone();
+            drop(saved);
+            let building = std::time::Instant::now();
+            let answer = self.snapshot_state(
+                &view,
                 &job,
                 &metadata_job,
                 icons,
                 mcp_result,
                 &quota_refresh_last,
             );
+            crate::ui::diagnostics::step("snapshot", building.elapsed());
+            return answer;
         }
         if let Request::BaselineStatus {} = request {
             return self.baseline_status(&saved);

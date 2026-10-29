@@ -56,6 +56,13 @@ pub(super) fn client_timeout(report: &serde_json::Value) {
     ));
 }
 
+/// A named step of a request that took long enough to matter (`lock` is the wait for the settings lock).
+pub(super) fn step(name: &str, elapsed: Duration) {
+    if let Some(line) = crate::request_steps::line(name, elapsed) {
+        append(&line);
+    }
+}
+
 /// The request reached the native side; only chat requests are worth a line before they finish.
 pub(super) fn start(kind: &str, size: usize) {
     if kind == "chat" {

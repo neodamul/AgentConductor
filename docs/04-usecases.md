@@ -763,3 +763,7 @@ Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201.
 ### UC-181 Plan whose verification tasks have no paths
 The coordinator returns valid phases JSON with `paths: []` on verification tasks; the application asks once for a corrected plan naming the task, and the corrected plan is presented for review.
 Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. GitHub #251, user, 2026-10-29.
+
+### UC-182 Chat on a PC where starting a process is slow
+The operator keeps the window open on a PC where Git needs seconds per call; snapshots return quickly, the chat is accepted at once, and a slow step, if any, is named in the log.
+Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203. GitHub #234, user, 2026-10-30.

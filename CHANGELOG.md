@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Requests: the periodic state request, quota refresh and chat no longer queue behind a slow Git call. The state revision reads the repository HEAD from the Git files instead of starting `git` (a company PC where each `git` call took 2.5 s needed over 15 s per snapshot and made the chat time out), a layout the files cannot answer is refreshed by a short background task, and the snapshot answer is built after the settings lock is released. The request diagnostics log now also names a wait for the lock or a step of half a second or more (`step name=lock|advance|snapshot ms=...`).
+
 ## v0.1.45
 
 - Planning: a task without an owned path (a verification task too) is now part of the planning contract: the output schema and the prompt require at least one path and a test command, a rejected task is reported with its id and the wrong field instead of one combined message, and an empty scope gets the same single correction round as an unsafe or overlapping one.

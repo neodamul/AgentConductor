@@ -773,3 +773,7 @@ Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201.
 ### QAS-188 Empty scope is described and corrected
 Each of empty paths, prompt, agent, test command and duplicate or empty id yields an error naming the task and field; the schema requires one path; a phase with an empty scope is corrected by exactly one retry whose prompt carries the error.
 Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. GitHub #251, user, 2026-10-29.
+
+### QAS-189 No Git process on the request path
+With `git` unreachable (empty PATH), a snapshot of a workspace that has a proposal succeeds and its revision is unchanged; the file-read HEAD equals `git rev-parse HEAD` for a loose ref, packed refs and a detached HEAD and follows a new commit at once; a layout the files cannot answer returns `pending` without waiting for Git and then the real commit; an unborn branch or a plain folder still fails where it failed before; a step of 500 ms or more is logged and a faster one is not.
+Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203. GitHub #234, user, 2026-10-30.
