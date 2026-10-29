@@ -3,7 +3,7 @@
   "pull_request": 228,
   "branch": "codex/issue-221-rust-poll-timeout",
   "base_branch": "codex/issue-9-native-ui-parity",
-  "base_commit": "ba1a56236702c26f92eab6a6f51f17d3b0974ef0",
+  "base_commit": "69887bab4732aba50d8649951ce153bf20a042dd",
   "javascript_source_commits": [
     "2570dac8bcd0a0678dd5d4abf30029bd5a8eafe3",
     "d476b7929f3ea024083434f2f09ade82f209d609"
@@ -33,8 +33,8 @@
     "superseded_failure": "macOS native launch parity test failed at native_worker_starts_only_the_exact_approved_plan; fixed in the #9 base before the next run",
     "latest_exact_run": 40790365479,
     "latest_run_result": "both platform validation jobs passed; macOS package passed; Windows package execution passed but the packaged tool-decision journey failed before confirmation: UIA Invoke had no state change, keyboard SetFocus failed with 'Expecting object to be local', and three pointer attempts did not expose Confirm tool decision; request stayed pending",
-    "shared_driver_followup": "the #9 base includes pointer-target verification at ba1a56236702c26f92eab6a6f51f17d3b0974ef0; exact root verification run 40796746962 is pending. Do not dispatch another #228 exact package run until that result arrives",
+    "shared_driver_followup": "root run 40796746962 passed macOS/Windows validation but both package jobs were cancelled; current #9 base advanced to 69887bab4732aba50d8649951ce153bf20a042dd with the Windows signal-port readiness fix",
     "candidate_rejection_fix": "bounded rejection-reason readiness retry is inherited from the #9 base; no duplicate UI-driver change is included in the #221 diff",
-    "new_exact_head_run": "pending after root run 40796746962 establishes the shared Windows tool-decision driver result"
+    "new_exact_head_run": "pending after push of the rebased #228 head"
   }
 }
