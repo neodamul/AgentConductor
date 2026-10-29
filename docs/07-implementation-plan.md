@@ -6478,7 +6478,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: terminal regressions initially failed for missing `> question` / `< answer` markers, Enter-send, Shift+Enter line insertion, and Up/Down recall.
 - [x] Task 3: render the transcript and prompt in monospace with role markers; Enter sends, Shift+Enter inserts at the current cursor, and Up/Down recalls prior questions while restoring the unsent draft.
 - [x] Verify locally: `native_chat_terminal`, `native_workspace_chat`, `startup_chat`, `chat_startup_context`, and `chat_prompt` pass 22 tests; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line limit pass (largest changed test file: 296 lines).
-- [ ] Full-suite Verify: the earlier cold all-target `cargo test` run was interrupted after 130 tests across 24 suites; it remains incomplete.
+- [ ] Full-suite Verify: the earlier cold all-target run was interrupted after 130 tests across 24 suites. A cached retest later exited 130 after 58 tests across 5 suites; neither run completed the full suite.
 - [x] Update LLM Wiki and AgentMemory with terminal behavior and local evidence; update source map to include `chat/view.rs` and the terminal regression suite.
 - [ ] Verify package: exercise the exact coordinator-chat transcript, keyboard behavior, persistence and restart flows in macOS and Windows packages.
 - [ ] Complete: update issue #189, PR #22, AgentMemory, and the LLM Wiki; do not claim UI parity until exact packaged macOS and Windows journeys pass.
