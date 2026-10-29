@@ -8,7 +8,30 @@ mod background;
 mod catalog;
 mod refresh;
 
+#[cfg(test)]
+#[path = "../../tests/native_ui_probe/poll_singleflight.rs"]
+mod poll_tests;
+
 impl Probe {
+    pub(in crate::native_ui_probe) fn send_poll(
+        &mut self,
+        packet: &[u8],
+        pending: Pending,
+    ) -> Result<bool, String> {
+        if self.poll_pending.is_some() {
+            return Ok(false);
+        }
+        let worker = self
+            .worker
+            .as_ref()
+            .ok_or_else(|| "Workspace controller is unavailable".to_owned())?;
+        let sent = worker.send_poll(packet)?;
+        if sent {
+            self.poll_pending = Some(pending);
+        }
+        Ok(sent)
+    }
+
     pub fn connect_surface(
         room: Arc<crate::ui::Room>,
         context: egui::Context,
@@ -175,13 +198,8 @@ impl Probe {
     }
 
     pub(super) fn refresh_metadata(&mut self) {
-        let result = self
-            .worker
-            .as_ref()
-            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(br#"{"kind":"snapshot"}"#));
-        match result {
-            Ok(()) => self.pending = Some(Pending::MetadataRefresh),
+        match self.send_poll(br#"{"kind":"snapshot"}"#, Pending::MetadataRefresh) {
+            Ok(_) => {}
             Err(error) => self.error = Some(error),
         }
     }

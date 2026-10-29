@@ -204,13 +204,11 @@ impl super::super::Probe {
     }
 
     pub(in crate::native_ui_probe) fn refresh_goal_optimizer(&mut self) {
-        let result = self
-            .worker
-            .as_ref()
-            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(br#"{"kind":"snapshot","optimize_result":true}"#));
-        match result {
-            Ok(()) => self.pending = Some(super::super::Pending::OptimizeRefresh),
+        match self.send_poll(
+            br#"{"kind":"snapshot","optimize_result":true}"#,
+            super::super::Pending::OptimizeRefresh,
+        ) {
+            Ok(_) => {}
             Err(error) => {
                 self.goal_optimizer.failed(error);
                 self.workspace_next_refresh = None;

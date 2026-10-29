@@ -751,6 +751,9 @@ Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201.
 If a native chat send fails before its acceptance is known and the current conversation cannot be read, the Rust UI shall keep the message visible as pending, keep the input empty, and disable another send. A later successful workspace snapshot decides whether the controller accepted the message: follow an accepted job, or restore the text and show the original error when the conversation did not change.
 Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.
 
+### R-191 Native background reads do not block foreground events
+The native UI shall run scheduled read-only snapshots independently from state-changing requests, listen for completion events, and repaint when results arrive. Snapshot assembly shall release the shared settings lock before reading workspace artifacts. Polls shall be bounded and single-flight; a late poll shall not overwrite a foreground operation's newer state. Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183/NFR-78 → QAS-189 → DDR-43 → DD-203. GitHub #189, user, 2026-10-30.
+
 ### R-186 Every agent prompt has one standard form and its reply is checked
 The application shall send every prompt to an agent (coordinator, planner, reviewer, worker) as `# Document`, `# Task` and `# Format` blocks, each once and in that order, and shall check a coordinator reply against the requested JSON shape. No agent CLI, including an in-house one, has to be changed or shown to the application for this. A reply that is not in the requested shape is asked for once more with the reason before the call fails.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.

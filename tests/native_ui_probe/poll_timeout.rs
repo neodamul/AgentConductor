@@ -19,7 +19,7 @@ fn temp_root(label: &str) -> std::path::PathBuf {
 
 fn wait_for_reply(probe: &mut Probe) {
     let deadline = Instant::now() + Duration::from_secs(2);
-    while probe.pending.is_some() {
+    while probe.pending.is_some() || probe.poll_pending.is_some() {
         probe.poll();
         assert!(Instant::now() < deadline, "native snapshot reply timed out");
         std::thread::sleep(Duration::from_millis(5));
@@ -59,7 +59,10 @@ fn initial_snapshot_errors_stay_visible_and_scheduled_room_snapshots_are_backgro
     wait_for_reply(&mut probe);
     probe.error = None;
     probe.refresh_background();
-    assert!(matches!(probe.pending, Some(Pending::BackgroundRefresh)));
+    assert!(matches!(
+        probe.poll_pending,
+        Some(Pending::BackgroundRefresh)
+    ));
     wait_for_reply(&mut probe);
     assert!(probe.error.is_none());
     assert_eq!(probe.background_poll_failures, 1);

@@ -1803,3 +1803,7 @@ Ported the bounded JSON-format correction behavior with a deterministic local CL
 ## 2026-10-29 — Exact macOS package at Rust head 87239f6 — issue #9
 
 Built `87239f6a68e5b7e4ccc3efc8c0efffc5d11b1407` with the offline Rust release package command. The manifest source SHA and binary SHA match; full ZIP CRC and packaged `--help` pass. Archive SHA-256 `f2200d0db44d6e926505ef0ce806cc936d4bb65644863fee00194d688d03dcc4`; binary SHA-256 `081136f7ab226b91373ee196150b0923f86e11ad210db603eb7c51103566888b`. Evidence: `docs/evidence/issue9-macos-package-87239f6-20261029.json`. No GUI launch/screenshot, Windows package, or UI acceptance credit. AgentMemory: `mem_mvtf3c2h_1057064c096e`.
+
+## 2026-10-30 — Native UI event and polling lanes — issue #189
+
+Added a separate bounded poll worker and completion channel; recurring snapshots no longer occupy the serialized foreground request worker. Snapshot assembly now clones saved settings and releases the shared mutex before reading workspace artifacts. Focused local tests pass: poll-vs-command 1/1, poll deferral 1/1, poll single-flight 1/1, existing native poll policy 6/6, lock release 1/1, `startup_chat` 5/5, `metadata_failure` 1/1, and `source_layout` 2/2. Warning-denied library Clippy, rustfmt and diff hygiene pass. Full-suite and exact package acceptance remain open.

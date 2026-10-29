@@ -1,8 +1,17 @@
 use super::*;
+
+pub(super) fn unlock_snapshot<T: Clone>(saved: std::sync::MutexGuard<'_, T>) -> T {
+    (*saved).clone()
+}
+
+#[cfg(test)]
+#[path = "../../../tests/setup_snapshot_lock.rs"]
+mod tests;
+
 impl Startup {
     pub(super) fn snapshot_state(
         &self,
-        saved: &mut Saved,
+        saved: &Saved,
         job: &serde_json::Value,
         metadata_job: &serde_json::Value,
         request: &Request,

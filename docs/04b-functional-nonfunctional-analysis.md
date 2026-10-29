@@ -702,6 +702,13 @@ Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201.
 On a transport error during `ChatStart`, retain the pending operator turn and its original error while the chat awaits a readable workspace snapshot. If the stored conversation contains the new turn, replace local history and follow the matching chat job. Otherwise remove the unaccepted turn, restore its text to the input, and show the original error. A later snapshot, not a guessed timeout, resolves the state.
 Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.
 
+### FR-183 Dispatch foreground events separately from scheduled reads
+The native UI shall route recurring read-only snapshots through a dedicated bounded worker and completion channel. The UI listens for completion, requests repaint on arrival, coalesces duplicate polls, and defers applying a poll while a foreground request is active. Snapshot preparation shall clone the current saved settings and release their mutex before reading workspace files and artifacts. State-changing requests retain their existing serialized path and revision validation.
+Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183/NFR-78 → QAS-189 → DDR-43 → DD-203. GitHub #189, 2026-10-30.
+
+### NFR-78 Bounded event processing without shared-queue starvation
+Periodic polling shall use a capacity-one single-flight lane and a monotonic schedule, with no always-on loop or new async runtime. A slow poll must not delay a foreground request through the UI worker queue or hold the saved-settings mutex during artifact reads. Replies must be applied on the UI thread and stale poll data must not supersede a foreground operation. Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183/NFR-78 → QAS-189 → DDR-43 → DD-203. GitHub #189, 2026-10-30.
+
 ### FR-178 Prompt assembly and reply check
 `prompt_form::assemble(document, task, format)` returns the three blocks in order; heading lines inside the document that look like a block heading are neutralized so untrusted evidence cannot add a block. `prompt_form::review` and `prompt_form::worker_task` build the reviewer and worker prompts while retaining task ownership rules. `coordinator::run_json_within` reruns the agent once, adding the parse error to the prompt, when the reply has no usable JSON for the requested field; capacity retries are unchanged.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.

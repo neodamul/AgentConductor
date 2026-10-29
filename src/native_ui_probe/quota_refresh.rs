@@ -42,6 +42,7 @@ impl Probe {
         if minimized
             || self.room_view.is_some()
             || self.pending.is_some()
+            || self.poll_pending.is_some()
             || self.starting_run.is_some()
             || self.coordinator_chat.awaiting()
             || snapshot["job"]["state"] == "running"

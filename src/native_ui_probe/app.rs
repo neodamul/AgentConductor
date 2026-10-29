@@ -74,7 +74,7 @@ impl Probe {
             self.open_signal_settings();
         }
         self.navigation.appearance.apply(ui.ctx());
-        if self.pending.is_none() {
+        if self.pending.is_none() && self.poll_pending.is_none() {
             let now = std::time::Instant::now();
             let follow_up_due = self
                 .room_view
@@ -91,7 +91,11 @@ impl Probe {
                     .request_repaint_after(deadline.saturating_duration_since(now));
             }
         }
-        if self.room_view.is_none() && self.navigation.stop_for_delete() && self.pending.is_none() {
+        if self.room_view.is_none()
+            && self.navigation.stop_for_delete()
+            && self.pending.is_none()
+            && self.poll_pending.is_none()
+        {
             let now = std::time::Instant::now();
             if let Some(deadline) = self.workspace_next_refresh.filter(|due| *due > now) {
                 ui.ctx().request_repaint_after(deadline - now);
@@ -104,13 +108,19 @@ impl Probe {
             room::refresh_due(
                 ui.ctx(),
                 self.snapshot.as_ref(),
-                self.pending.is_some() || room_view.blocks_background_refresh(),
+                self.pending.is_some()
+                    || self.poll_pending.is_some()
+                    || room_view.blocks_background_refresh(),
                 &mut room_view.next_refresh,
             )
         }) {
             self.refresh_background();
         }
-        if self.room_view.is_none() && self.starting_run.is_some() && self.pending.is_none() {
+        if self.room_view.is_none()
+            && self.starting_run.is_some()
+            && self.pending.is_none()
+            && self.poll_pending.is_none()
+        {
             let now = std::time::Instant::now();
             if let Some(deadline) = self.workspace_next_refresh.filter(|due| *due > now) {
                 ui.ctx().request_repaint_after(deadline - now);
@@ -130,7 +140,7 @@ impl Probe {
             && room::refresh_due(
                 ui.ctx(),
                 self.snapshot.as_ref(),
-                self.pending.is_some(),
+                self.pending.is_some() || self.poll_pending.is_some(),
                 &mut self.workspace_next_refresh,
             )
         {
@@ -139,10 +149,11 @@ impl Probe {
         if self.room_view.is_none()
             && self.coordinator_chat.awaiting()
             && self.pending.is_none()
+            && self.poll_pending.is_none()
             && room::refresh_due(
                 ui.ctx(),
                 self.snapshot.as_ref(),
-                self.pending.is_some(),
+                self.pending.is_some() || self.poll_pending.is_some(),
                 &mut self.workspace_next_refresh,
             )
         {
@@ -155,10 +166,11 @@ impl Probe {
         if self.room_view.is_none()
             && self.goal_optimizer.awaiting()
             && self.pending.is_none()
+            && self.poll_pending.is_none()
             && room::refresh_due(
                 ui.ctx(),
                 self.snapshot.as_ref(),
-                self.pending.is_some(),
+                self.pending.is_some() || self.poll_pending.is_some(),
                 &mut self.workspace_next_refresh,
             )
         {
@@ -172,7 +184,7 @@ impl Probe {
             && room::refresh_due(
                 ui.ctx(),
                 self.snapshot.as_ref(),
-                self.pending.is_some(),
+                self.pending.is_some() || self.poll_pending.is_some(),
                 &mut self.workspace_next_refresh,
             )
         {
@@ -186,7 +198,7 @@ impl Probe {
             && room::refresh_due(
                 ui.ctx(),
                 self.snapshot.as_ref(),
-                self.pending.is_some(),
+                self.pending.is_some() || self.poll_pending.is_some(),
                 &mut self.workspace_next_refresh,
             )
         {

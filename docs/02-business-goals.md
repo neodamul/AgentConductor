@@ -584,6 +584,9 @@ Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201.
 The operator can trust that a timed-out native chat send is still being reconciled instead of resending the same question.
 Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.
 
+### BG-146 Keep native interaction responsive during background work
+Operators can continue using foreground controls while periodic status reads are slow. Completion updates arrive through events without competing for the same queue or holding shared settings state during artifact reads. Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183/NFR-78 → QAS-189 → DDR-43 → DD-203. GitHub #189, 2026-10-30.
+
 ### BG-141 Fewer errors from the way agents are asked
 Agents that cannot be modified still answer predictably because the application, not the CLI, fixes the prompt layout and the reply shape.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.

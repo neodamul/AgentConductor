@@ -6550,3 +6550,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify exact Windows package: run the persisted-reopen, in-flight-reconnect, and late-answer journeys against the package built from this branch. They cannot be exercised on the local macOS host.
 - [ ] Verify exact macOS package UI: inspect chat, persistence, keyboard, and restart behavior on the exact package.
 - [ ] Complete: keep #189 and #9 acceptance unchanged until current-head package evidence passes; the prior PR #192 run is not a substitute.
+
+### 2026-10-30 — Isolate native periodic reads from foreground events — issue #189 / #9
+
+- [x] Plan: trace the stalled snapshot through `RequestWorker` and `Startup::dispatch`. A dedicated poll thread alone was insufficient: `snapshot_state` also performed file and artifact reads while holding the shared settings mutex.
+- [x] Red: add a deterministic worker regression that blocks a poll dispatch and requires a foreground command to finish; it failed before `send_poll` and the independent poll lane existed.
+- [x] Task: add a bounded single-flight poll worker and reply channel; route recurring workspace, Agent Room, chat, optimizer, metadata, and MCP snapshots through it. Keep mutations on the serialized request lane and apply poll replies only when foreground pending state allows.
+- [x] Task: clone `Saved` after the metadata/settle step, release its mutex, then construct the read-only snapshot from the clone.
+- [x] Verify locally: worker concurrency 1/1; poll reply deferral 1/1; poll single-flight 1/1; existing native poll policy 6/6; snapshot lock release 1/1; `startup_chat` 5/5; `metadata_failure` 1/1; `source_layout` 2/2. Warning-denied library Clippy, rustfmt, and `git diff --check` pass; every changed Rust/test file is below 300 lines.
+- [ ] Verify package: exact native UI check on macOS and Windows; Windows cannot be claimed from the current macOS host.
+- [ ] Complete: update issue #189 and the linked PR only after the local checks are recorded; do not claim package acceptance or close the issue without exact platform evidence.

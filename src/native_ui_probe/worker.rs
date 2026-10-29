@@ -2,6 +2,8 @@ use eframe::egui;
 use serde_json::Value;
 use std::sync::{Arc, mpsc};
 
+pub(in crate::native_ui_probe) type Dispatch = dyn Fn(&[u8]) -> Result<Value, String> + Send + Sync;
+
 enum WorkerRequest {
     Dispatch(Vec<u8>),
     PickFolder(crate::ui::picker::FolderPurpose),
@@ -20,8 +22,14 @@ pub(super) fn initial_snapshot(room_view: bool) -> &'static [u8] {
 pub struct RequestWorker {
     requests: mpsc::SyncSender<WorkerRequest>,
     pub replies: mpsc::Receiver<Result<Value, String>>,
+    poll_requests: mpsc::SyncSender<Vec<u8>>,
+    pub poll_replies: mpsc::Receiver<Result<Value, String>>,
     room_view: bool,
 }
+
+#[cfg(test)]
+#[path = "../../tests/native_ui_probe/worker_concurrency.rs"]
+mod concurrency_tests;
 
 impl RequestWorker {
     pub fn new(room: Arc<crate::ui::Room>, context: egui::Context) -> Result<Self, String> {
@@ -37,14 +45,37 @@ impl RequestWorker {
         context: egui::Context,
         room_view: bool,
     ) -> Result<Self, String> {
+        let dispatch: Arc<Dispatch> = Arc::new(move |packet| room.dispatch(packet));
+        Self::connect_with(context, room_view, dispatch)
+    }
+
+    pub(in crate::native_ui_probe) fn connect_with(
+        context: egui::Context,
+        room_view: bool,
+        dispatch: Arc<Dispatch>,
+    ) -> Result<Self, String> {
         let (requests, queue) = mpsc::sync_channel::<WorkerRequest>(1);
         let (reply_tx, replies) = mpsc::channel();
+        let (poll_requests, poll_queue) = mpsc::sync_channel::<Vec<u8>>(1);
+        let (poll_reply_tx, poll_replies) = mpsc::channel();
+        let poll_dispatch = Arc::clone(&dispatch);
+        let poll_context = context.clone();
+        std::thread::Builder::new()
+            .name("native-ui-polls".into())
+            .spawn(move || {
+                while let Ok(packet) = poll_queue.recv() {
+                    let _ = poll_reply_tx.send(poll_dispatch(&packet));
+                    poll_context.request_repaint();
+                }
+            })
+            .map_err(|error| error.to_string())?;
+        let request_dispatch = Arc::clone(&dispatch);
         std::thread::Builder::new()
             .name("native-ui-requests".into())
             .spawn(move || {
                 while let Ok(request) = queue.recv() {
                     let result = match request {
-                        WorkerRequest::Dispatch(packet) => room.dispatch(&packet),
+                        WorkerRequest::Dispatch(packet) => request_dispatch(&packet),
                         WorkerRequest::PickFolder(purpose) => {
                             crate::ui::picker::pick_folder(purpose).and_then(|path| {
                                 let path = path
@@ -95,6 +126,8 @@ impl RequestWorker {
         Ok(Self {
             requests,
             replies,
+            poll_requests,
+            poll_replies,
             room_view,
         })
     }
@@ -121,6 +154,21 @@ impl RequestWorker {
         self.requests
             .try_send(WorkerRequest::Dispatch(packet))
             .map_err(|error| error.to_string())
+    }
+
+    pub fn send_poll(&self, packet: &[u8]) -> Result<bool, String> {
+        let packet = if self.room_view {
+            Self::route_room_request(packet)?
+        } else {
+            packet.to_vec()
+        };
+        match self.poll_requests.try_send(packet) {
+            Ok(()) => Ok(true),
+            Err(mpsc::TrySendError::Full(_)) => Ok(false),
+            Err(mpsc::TrySendError::Disconnected(_)) => {
+                Err("background poll worker is unavailable".into())
+            }
+        }
     }
 
     pub fn send_initial_snapshot(&self) -> Result<(), String> {

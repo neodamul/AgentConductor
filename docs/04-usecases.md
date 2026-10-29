@@ -759,6 +759,9 @@ Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201.
 The operator sends a question. The controller request and the immediate conversation read both time out, so the question stays visible as pending and the input stays empty. When a later workspace snapshot succeeds, an accepted question is followed through its job; if absent from stored history, the question returns to the input with the original error.
 Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.
 
+### UC-182 Keep working while a periodic snapshot is slow
+The operator is using the native Workspace or Agent Room while a scheduled snapshot is slow. They can still submit a foreground command; it is dispatched on its own lane and its completion is received independently. The slow poll cannot monopolize the foreground queue. The UI applies its snapshot only after any active foreground operation finishes, so it cannot replace newer state. The next due read is coalesced while one poll is pending, and no idle busy loop is added. Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183/NFR-78 → QAS-189 → DDR-43 → DD-203. GitHub #189, 2026-10-30.
+
 ### UC-177 A reviewer or worker is asked in the standard form
 The operator runs a plan with an agent CLI that only reads a prompt and prints text. The worker receives the task, its rules and its evidence as Document, Task and Format; the reviewer receives the frozen evidence as Document, its instructions as Task and the JSON verdict shape as Format. A reviewer reply that is not valid JSON is asked for again once with the parse error, then reported.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.

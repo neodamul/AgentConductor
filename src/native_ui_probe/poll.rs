@@ -1,5 +1,6 @@
 use super::{Pending, Probe, room};
 
+mod background_reply;
 mod errors;
 mod mcp;
 mod receive;
