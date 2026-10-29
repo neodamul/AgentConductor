@@ -6409,4 +6409,4 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: optimizer, startup, chat, package-license, source-layout and public-doc regressions pass 53 tests across 13 suites; warning-denied all-target Clippy, rustfmt and diff checks pass. A test caught and fixed the missing `optimize_result` serde default.
 - [x] Assetize the optimizer decision, request flow, traceability and verification boundary in `knowledge/wiki/native-goal-optimization.md` and AgentMemory.
 - [ ] Verify app: inspect the Rust native window and exercise a real coordinator profile; no screenshot or real coordinator request has been verified.
-- [ ] Complete: push the integrated commits and update issue #9 only with exact local/package evidence. Do not count this as packaged workflow acceptance.
+- [x] Complete this source-level slice: push the integrated commits and update issue #9 with exact local verification. Packaged verification remains pending and no acceptance credit was added.
