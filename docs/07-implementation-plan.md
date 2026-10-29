@@ -1,3 +1,12 @@
+### Keep the Windows tool-decision confirmation actionable — issue #9 / 2026-10-29
+
+- [x] Plan: exact package run `40811281029` passed macOS package execution, but Windows failed after opening `Deny this exact tool request?`; an active-run background snapshot refresh disabled both confirmation buttons and trapped the modal.
+- [x] Red: add regressions for suppressing background refresh while a pending tool receipt is awaiting the human decision and keeping Cancel available if a refresh was already in flight. The Cancel regression failed before the UI change.
+- [x] Task: stop periodic Agent Room refresh while a pending tool receipt or confirmation is open; leave Cancel enabled while unrelated work is pending.
+- [x] Local Verify: the four focused native-room suites pass 20/20; warning-denied all-target Clippy, rustfmt, diff check, and 300-line source/test limits pass. The all-target test command exposed a missing `native-ui-probe` feature gate in the new test; the gate was added and the targeted source-contract suite now passes.
+- [ ] Exact-package Verify: dispatch a fresh macOS/Windows run and require approval, rejection, persisted receipt states, and fixture effects on the exact Windows archive.
+- [ ] Complete: record exact-head package evidence in issue #9, PR #22, AgentMemory, and the LLM Wiki. Acceptance remains **22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate** until Windows passes.
+
 ### Launch the native Rust Workspace from the default executable — issue #9 / 2026-10-29
 
 - [x] Plan: the packaged `agentconductor` entrypoint must open the native Workspace with no arguments; explicit CLI subcommands must keep their headless behavior.
