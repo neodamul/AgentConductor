@@ -16,8 +16,12 @@ impl Startup {
             .lock()
             .map_err(|_| crate::ui::messages::text("native.startup_settings_poisoned"))?;
         if let Request::Chat { revision, turns } = request {
-            // Chat is read-only. Do not make a conversational send wait for the Git HEAD
-            // lookup used by mutation revision guards; the revision is retained for audit.
+            if revision != self.chat_revision(&saved)? {
+                return Err(crate::ui::messages::text(
+                    "native.startup_state_changed_since_review_refresh_before_acting",
+                )
+                .into());
+            }
             let job = self.job(&saved)?;
             if job["state"] == "running" {
                 return Err(
