@@ -1,7 +1,12 @@
 {
   "issue": 234,
   "branch": "codex/issue-234-chat-request-timeout",
-  "base": "86ea3c3ddccdb3f43d5ef9677127534997d8c634",
+  "original_base": "86ea3c3ddccdb3f43d5ef9677127534997d8c634",
+  "rebased_base": "28df83945269254fc669bea602bdccab99fe6ab6",
+  "rebase": {
+    "result": "completed without code conflicts; the shared implementation-plan section was resolved by preserving both issue checklists",
+    "commit_before_evidence_update": "b2d53ea2"
+  },
   "red": {
     "command": "cargo test --locked --offline --test startup_chat chat_submission_does_not_wait_for_repository_head -- --nocapture",
     "result": "failed",
@@ -41,6 +46,12 @@
     "command": "cargo test --locked --offline --all-targets --no-fail-fast",
     "result": "stopped after 818 passed and 14 ignored across 256 suites in 139.16 seconds; no failures were reported before stopping",
     "complete": false
+  },
+  "rebase_verification": {
+    "command": "cargo test --locked --offline --test startup_chat --test request_diagnostics --test source_layout",
+    "result": "5 passed",
+    "clippy": "cargo clippy --all-targets --locked --features test-fixtures -- -D warnings passed",
+    "format_and_diff": "cargo fmt --check and git diff --check passed"
   },
   "remaining": [
     "Exact packaged macOS and Windows verification",

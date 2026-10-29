@@ -35,3 +35,9 @@ The focused regression uses a Git wrapper that sleeps for 20 seconds on `rev-par
 chat request must still be accepted in under two seconds. Exact packaged Windows/macOS
 behavior and the user's failing `start kind=chat` / `done kind=chat ms=...` evidence remain
 separate verification gates.
+
+PR #239 was rebased onto current #9 head `28df83945269254fc669bea602bdccab99fe6ab6`.
+The overlapping implementation-plan text was the only conflict; both issue checklists were
+preserved. Focused startup-chat, diagnostics, and source-layout tests pass after rebase, as do
+warning-denied all-target Clippy and formatting. Exact macOS/Windows package verification is
+still required to confirm the packaged request path.
