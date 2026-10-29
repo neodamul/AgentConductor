@@ -8,6 +8,8 @@ Only existing scheduled Agent Room snapshots use a distinct background pending s
 
 The Agent Room repaint scheduler stores a monotonic `Instant`. If the OS delays repaint while the window is minimized, the first resumed frame sends at most one due poll and sets the next deadline to the current time plus the interval. It does not replay state-changing requests.
 
+An operator-triggered tool-request refresh has a separate bounded follow-up: if its immediate acknowledgement snapshot still contains the old pending receipt, the UI requests a quiet snapshot once per second for up to 20 reads, stopping as soon as that receipt is replaced or no longer pending. This recovers from the coordinator processing the refresh just after the acknowledgement snapshot. The follow-up is created only by the operator's refresh action; ordinary scheduled reads remain paused while a pending receipt is actionable. Approve, reject, and refresh requests retain their existing revision and receipt binding.
+
 ## JavaScript distinction
 
 The JavaScript UI owns a client timeout and can report a `client_timeout` event with page visibility and measured wait time. The native Rust path does not create that event, so client-timeout diagnostics are not ported. See issue #221 and the JavaScript follow-up PR #225 for the page-timer investigation.
@@ -16,4 +18,4 @@ The JavaScript UI owns a client timeout and can report a `client_timeout` event 
 
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198.
 
-Rust regression coverage checks visible initial snapshot failures, scheduled Agent Room polling, quiet stale task-detail replies, visible explicit refresh/action failures, and deadline rebasing after a late repaint. Changed Rust files stay at or below 300 lines. Exact macOS/Windows package verification is required before merging the Rust port into the migration branch.
+Rust regression coverage checks visible initial snapshot failures, scheduled Agent Room polling suppression while a pending actionable receipt is shown, preserved explicit approve/refresh dispatch, bounded follow-up after a stale refresh acknowledgement, quiet stale task-detail replies, visible explicit refresh/action failures, and deadline rebasing after a late repaint. Changed Rust files stay at or below 300 lines. Exact macOS/Windows package verification is required before merging the Rust port into the migration branch.

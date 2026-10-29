@@ -81,6 +81,9 @@ impl Probe {
                             self.pending = Some(Pending::Refresh);
                         }
                         Err(error) => {
+                            if let Some(view) = self.room_view.as_mut() {
+                                view.tool_refresh_follow_up = None;
+                            }
                             self.pending = None;
                             self.error = Some(error);
                         }
@@ -228,6 +231,11 @@ impl Probe {
                             view.evidence = None;
                             view.diff.clear();
                         }
+                        room::refresh_follow_up::observe_snapshot(
+                            view,
+                            &snapshot,
+                            std::time::Instant::now(),
+                        );
                     } else {
                         super::workspace_ops::load_workspace(self, &snapshot);
                     }

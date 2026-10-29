@@ -151,19 +151,54 @@ fn late_refresh_callback_restarts_deadline_without_a_catch_up_burst() {
 #[test]
 fn periodic_snapshot_waits_for_an_actionable_tool_receipt() {
     let snapshot = serde_json::json!({
+        "revision":"run-rev-1",
         "report":{"state":"running"},
         "job":{"state":"running"},
-        "tool_requests":[{"status":"pending"}]
+        "tool_requests":[{
+            "id":"a".repeat(64),
+            "status":"pending",
+            "request":{"tool":"Bash","input":{"command":"make test"}},
+            "context":{"task":"test-suite"}
+        }]
     });
     let context = eframe::egui::Context::default();
     let now = Instant::now();
     let mut next = Some(now - Duration::from_secs(1));
 
-    assert!(!crate::native_ui_probe::room::refresh_due(
-        &context,
-        Some(&snapshot),
-        false,
-        &mut next,
-    ));
+    let scheduled =
+        crate::native_ui_probe::room::refresh_due(&context, Some(&snapshot), false, &mut next);
+    assert!(
+        !scheduled,
+        "periodic snapshot would disable approval controls"
+    );
     assert_eq!(next, Some(now - Duration::from_secs(1)));
+
+    let id = snapshot["tool_requests"][0]["id"].as_str().unwrap();
+    for (action, expected) in [
+        (crate::native_ui_probe::ToolAction::Approve, "tool_approve"),
+        (crate::native_ui_probe::ToolAction::Refresh, "tool_refresh"),
+    ] {
+        let packet = crate::native_ui_probe::tool_action_request(&snapshot, id, action).unwrap();
+        let packet: serde_json::Value = serde_json::from_slice(&packet).unwrap();
+        assert_eq!(packet["action"]["kind"], expected);
+        assert_eq!(packet["action"]["sha"], id);
+    }
+}
+
+#[test]
+fn explicit_tool_refresh_rechecks_a_stale_receipt_until_replaced() {
+    let id = "a".repeat(64);
+    let stale = serde_json::json!({
+        "tool_requests":[{"id":id,"status":"pending"}]
+    });
+    let replaced = serde_json::json!({
+        "tool_requests":[{"id":"b".repeat(64),"status":"pending"}]
+    });
+    let now = Instant::now();
+    let mut follow_up = crate::native_ui_probe::room::ToolRefreshFollowUp::new(id);
+
+    follow_up.observe(&stale, now);
+    assert!(follow_up.due(now + Duration::from_secs(1)));
+    follow_up.observe(&replaced, now + Duration::from_secs(1));
+    assert!(!follow_up.due(now + Duration::from_secs(2)));
 }

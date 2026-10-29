@@ -182,6 +182,10 @@ impl Probe {
         match result {
             Ok(()) => {
                 self.error = None;
+                if let Some(view) = self.room_view.as_mut() {
+                    view.tool_refresh_follow_up = (action == ToolAction::Refresh)
+                        .then(|| super::room::ToolRefreshFollowUp::new(id));
+                }
                 self.pending = Some(Pending::ToolDecision { resume_after });
             }
             Err(error) => self.error = Some(error),

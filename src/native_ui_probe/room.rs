@@ -8,12 +8,14 @@ mod candidate;
 pub mod coordinator_feedback;
 pub mod inspector;
 pub mod judgments;
+pub mod refresh_follow_up;
 mod scope_recovery;
 mod status_banner;
 pub mod task_activity;
 pub mod task_controls;
 mod view;
 pub use candidate::candidate_decision_request;
+pub use refresh_follow_up::ToolRefreshFollowUp;
 pub use view::show;
 
 #[derive(Debug, Eq, PartialEq)]
@@ -58,6 +60,7 @@ pub struct State {
     pub confirming_decision: Option<CandidateDecision>,
     pub confirming_recover: bool,
     pub confirming_tool: Option<(String, super::room_actions::ToolAction, String)>,
+    pub tool_refresh_follow_up: Option<ToolRefreshFollowUp>,
     pub tool_dialog: Option<String>,
     pub deferred_tools: HashSet<String>,
     pub briefing: Option<Value>,
@@ -90,6 +93,7 @@ impl Default for State {
             confirming_decision: None,
             confirming_recover: false,
             confirming_tool: None,
+            tool_refresh_follow_up: None,
             tool_dialog: None,
             deferred_tools: HashSet::new(),
             briefing: None,
