@@ -5,9 +5,15 @@ impl Startup {
     pub(super) fn launch_chat(
         &self,
         saved: &mut Saved,
-        turns: Vec<crate::chat::Turn>,
+        question: String,
         revision: &str,
     ) -> Result<serde_json::Value, String> {
+        crate::chat::validate_question(&question)?;
+        let mut turns = self.stored_chat_turns(saved)?;
+        turns.push(crate::chat::Turn {
+            role: "operator".into(),
+            text: question,
+        });
         let turns = crate::chat::recent_history(&turns);
         let language = if crate::ui::language::load() == "ko" {
             "Korean"
@@ -53,7 +59,7 @@ impl Startup {
         &self,
         saved: &mut Saved,
         revision: &str,
-        turns: Vec<crate::chat::Turn>,
+        text: String,
     ) -> Result<serde_json::Value, String> {
         if revision != self.chat_revision(saved)? {
             return Err(crate::ui::messages::text(
@@ -67,7 +73,7 @@ impl Startup {
             return Err(crate::ui::messages::text("native.startup_operation_still_running").into());
         }
         self.ensure_no_live_jobs()?;
-        self.launch_chat(saved, turns, revision)
+        self.launch_chat(saved, text, revision)
     }
 
     pub(super) fn chat_history(
@@ -75,29 +81,7 @@ impl Startup {
         saved: &Saved,
         _job: &serde_json::Value,
     ) -> Result<serde_json::Value, String> {
-        let Some(name) = &saved.chat_result else {
-            return Ok(serde_json::json!([]));
-        };
-        let Some(id) = chat_id(name) else {
-            return Err("stored coordinator chat reference is invalid".into());
-        };
-        let input = self
-            .broker
-            .dir
-            .join("mcp")
-            .join(format!("chat-input-{id}.json"));
-        let mut turns: Vec<crate::chat::Turn> = crate::mcp::load(&input)
-            .ok()
-            .and_then(|bytes| serde_json::from_slice::<serde_json::Value>(&bytes).ok())
-            .and_then(|value| serde_json::from_value(value["turns"].clone()).ok())
-            .unwrap_or_default();
-        if let Some(answer) = self.chat_answer(name) {
-            turns.push(crate::chat::Turn {
-                role: "assistant".into(),
-                text: answer,
-            });
-        }
-        serde_json::to_value(crate::chat::recent_history(&turns)).map_err(|e| e.to_string())
+        serde_json::to_value(self.stored_chat_turns(saved)?).map_err(|e| e.to_string())
     }
 
     pub(super) fn chat_snapshot(
@@ -132,6 +116,33 @@ impl Startup {
             .ok()
             .and_then(|data| serde_json::from_slice::<serde_json::Value>(&data).ok())
             .and_then(|value| value["answer"].as_str().map(str::to_owned))
+    }
+
+    fn stored_chat_turns(&self, saved: &Saved) -> Result<Vec<crate::chat::Turn>, String> {
+        let Some(name) = &saved.chat_result else {
+            return Ok(Vec::new());
+        };
+        let id = chat_id(name).ok_or("stored coordinator chat reference is invalid")?;
+        let input = self
+            .broker
+            .dir
+            .join("mcp")
+            .join(format!("chat-input-{id}.json"));
+        let mut turns = if input.exists() {
+            let bytes = crate::mcp::load(&input).map_err(|error| error.to_string())?;
+            let value: serde_json::Value =
+                serde_json::from_slice(&bytes).map_err(|e| e.to_string())?;
+            serde_json::from_value(value["turns"].clone()).map_err(|e| e.to_string())?
+        } else {
+            Vec::new()
+        };
+        if let Some(answer) = self.chat_answer(name) {
+            turns.push(crate::chat::Turn {
+                role: "assistant".into(),
+                text: answer,
+            });
+        }
+        Ok(crate::chat::recent_history(&turns))
     }
 }
 

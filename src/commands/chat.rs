@@ -16,7 +16,6 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
         let root = std::path::Path::new(root);
         let input_name = format!("chat-input-{id}.json");
         let bytes = agentconductor::mcp::load(&root.join("mcp").join(&input_name))?;
-        let _ = std::fs::remove_file(root.join("mcp").join(&input_name));
         let input: serde_json::Value =
             serde_json::from_slice(&bytes).map_err(|_| "invalid chat input")?;
         let turns: Vec<agentconductor::chat::Turn> =

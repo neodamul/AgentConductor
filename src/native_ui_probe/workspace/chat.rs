@@ -182,14 +182,13 @@ pub fn request(
         .as_str()
         .filter(|value| !value.is_empty())
         .ok_or_else(|| "Workspace revision is unavailable".to_owned())?;
-    let language = if snapshot["language"] == "ko" {
-        "Korean"
-    } else {
-        "English"
-    };
-    crate::chat::build_prompt(turns, language)?;
+    let question = turns
+        .last()
+        .filter(|turn| turn.role == "operator")
+        .ok_or_else(|| "the conversation must end with an operator question".to_owned())?;
+    crate::chat::validate_question(&question.text)?;
     let packet = serde_json::to_vec(&serde_json::json!({
-        "kind":"chat", "revision":revision, "turns":turns
+        "kind":"chat", "revision":revision, "text":question.text
     }))
     .map_err(|error| error.to_string())?;
     if packet.len() > 128 * 1024 {

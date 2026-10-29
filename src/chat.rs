@@ -20,6 +20,13 @@ pub fn recent_history(turns: &[Turn]) -> Vec<Turn> {
     turns[turns.len().saturating_sub(MAX_TURNS)..].to_vec()
 }
 
+pub fn validate_question(text: &str) -> Result<(), String> {
+    if text.trim().is_empty() || text.len() > MAX_TURN_BYTES {
+        return Err("the latest question needs 1..8192 bytes of text".into());
+    }
+    Ok(())
+}
+
 pub fn build_prompt(turns: &[Turn], language: &str) -> Result<String, String> {
     build_prompt_in(turns, language, "")
 }
@@ -30,6 +37,7 @@ pub fn build_prompt_in(turns: &[Turn], language: &str, workspace: &str) -> Resul
     if last.role != "operator" {
         return Err("the conversation must end with an operator question".into());
     }
+    validate_question(&last.text)?;
     for turn in turns {
         let limit = match turn.role.as_str() {
             "operator" => MAX_TURN_BYTES,

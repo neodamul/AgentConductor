@@ -6471,7 +6471,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: add regressions for retaining 40 turns and clipping a long earlier answer; both failed against the 12-turn and 8 KiB-per-turn implementation.
 - [x] Task 1: retain the latest 40 turns and clip previous prompt context at a UTF-8 boundary while preserving the latest operator question.
 - [x] Task 1 Verify: `chat_prompt`, `startup_chat`, and `native_workspace_chat` pass 17/17 with `test-fixtures,native-ui-probe`; `cargo fmt --all` and `git diff --check` pass.
-- [ ] Red: require a chat request packet to carry only the new question; cover saved-history reconstruction and transcript keyboard controls.
-- [ ] Task 2: reconstruct prior turns from the workspace chat artifact, send only the new question, and implement terminal-style transcript/input behavior.
+- [x] Red: the request-contract test failed because the packet still contained `turns`; a restart test failed because the chat worker deleted the only transcript artifact.
+- [x] Task 2: rebuild prior turns from the prior workspace artifact, send only the new question through Startup IPC, preserve the bounded transcript artifact through restart, and keep old installations with a missing transcript file readable.
+- [x] Task 2 Verify: `chat_prompt`, `native_workspace_chat`, `startup_chat`, and `chat_startup_context` pass 19/19, including restart recovery and backward-compatible loading when an old input was deleted; warning-denied all-target Clippy, rustfmt, diff hygiene, and changed Rust/test files below 300 lines pass.
+- [ ] Full-suite Verify: the cold all-target build was interrupted after 130 tests across 24 suites had passed; it did not complete and is not a full-suite pass.
+- [ ] Red: cover Enter-send, Shift+Enter newline, and Up/Down question recall in the native transcript.
+- [ ] Task 3: implement terminal-style transcript and prompt-key behavior.
 - [ ] Verify: focused startup and native-chat tests, all-target suite, Clippy, formatting, and the 300-line source/test limit.
 - [ ] Complete: update issue #189, PR #22, AgentMemory, and the LLM Wiki; do not claim UI parity until exact packaged macOS and Windows journeys pass.

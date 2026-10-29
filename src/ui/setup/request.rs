@@ -22,7 +22,7 @@ pub(super) enum Request {
     },
     Chat {
         revision: String,
-        turns: Vec<crate::chat::Turn>,
+        text: String,
     },
     ChatReset {
         revision: String,
