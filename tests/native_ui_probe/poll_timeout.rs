@@ -147,3 +147,23 @@ fn late_refresh_callback_restarts_deadline_without_a_catch_up_burst() {
     ));
     assert_eq!(next, Some(resumed + interval));
 }
+
+#[test]
+fn periodic_snapshot_waits_for_an_actionable_tool_receipt() {
+    let snapshot = serde_json::json!({
+        "report":{"state":"running"},
+        "job":{"state":"running"},
+        "tool_requests":[{"status":"pending"}]
+    });
+    let context = eframe::egui::Context::default();
+    let now = Instant::now();
+    let mut next = Some(now - Duration::from_secs(1));
+
+    assert!(!crate::native_ui_probe::room::refresh_due(
+        &context,
+        Some(&snapshot),
+        false,
+        &mut next,
+    ));
+    assert_eq!(next, Some(now - Duration::from_secs(1)));
+}

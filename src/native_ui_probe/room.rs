@@ -259,7 +259,17 @@ pub fn refresh_due(
     pending: bool,
     next: &mut Option<Instant>,
 ) -> bool {
-    if pending {
+    if pending
+        || snapshot.is_some_and(|snapshot| {
+            snapshot["tool_requests"]
+                .as_array()
+                .is_some_and(|requests| {
+                    requests
+                        .iter()
+                        .any(|request| request["status"] == "pending")
+                })
+        })
+    {
         return false;
     }
     let interval = room_refresh_interval(snapshot.unwrap_or(&Value::Null));
