@@ -32,7 +32,8 @@
 - [x] Red: add a dispatch-contract regression requiring a verified editor transition, exact process-owned keyboard focus, process-owned point hit test before mouse input, and failure diagnostics. It failed because the driver had no such guarded path.
 - [x] Task: after Invoke, wait briefly for the accessible chat editor; if absent, send Enter only when the focused element is the enabled app-owned launcher button. The mouse fallback now uses `GetClickablePoint`, checks `FromPoint` ancestry against the exact button RuntimeId before and after cursor movement, then verifies foreground and hit-test process ownership before `SendInput`.
 - [x] Local Verify: Windows chat dispatch and source-layout suites pass 4 tests; all-target warning-denied Clippy, rustfmt, and `git diff --check` pass. The PowerShell driver remains under 300 lines.
-- [ ] Rebase/Verify: rebase onto #9 head `69887bab` (shared signal-field readiness fix), run local checks, push, and execute a new exact macOS/Windows package workflow. Root run `40796746962` passed validation but its package jobs were cancelled during compilation.
+- [x] Rebase/local Verify: rebased onto #9 head `69887bab` (shared signal-field readiness fix); focused tests, layout, formatting, warning-denied Clippy, and diff checks pass. Root run `40796746962` passed validation but its package jobs were cancelled during compilation.
+- [ ] Push/package Verify: push the rebased issue branch and execute a new exact macOS/Windows package workflow. Require all three Windows coordinator-chat journeys to pass.
 - [ ] Complete: record the exact package result and update issue #189/PR #192, AgentMemory, and LLM Wiki. Do not claim chat package acceptance until all three Windows journeys pass.
 
 ### Reverify PR #192 on the current #9 base — issue #189 / 2026-10-29

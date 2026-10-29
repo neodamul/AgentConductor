@@ -30,5 +30,11 @@
     "tests/support/windows_chat_script.rs": 255,
     "tests/windows_coordinator_chat_dispatch.rs": 71
   },
-  "next": "Rebase onto root #9 commit ba1a56236702c26f92eab6a6f51f17d3b0974ef0 after validation run 40796746962 is terminal; push and rerun exact Windows package. Do not credit acceptance until all three coordinator-chat journeys pass."
+  "rebase": {
+    "base": "69887bab4732aba50d8649951ce153bf20a042dd",
+    "issue_branch_head": "77b4d0c69f866f7b63d60485aefcc4718dc4c1f2",
+    "root_validation_run": "40796746962",
+    "root_validation": "macOS and Windows validation succeeded; both native-package jobs were cancelled during executable builds"
+  },
+  "next": "Push the rebased issue branch, update issue #189 and PR #192, then run exact macOS/Windows validation and packaging. Do not credit acceptance until all three coordinator-chat journeys pass."
 }
