@@ -61,6 +61,12 @@ This event-fanout slice adds a second bounded read worker and moves event delive
 
 The package from `189f6fadeecda8f4b7c92eb269dfb0d455afb9c5` was opened by its exact app path with `ui-new` targeting a disposable `/private/tmp` workspace. The native window showed an empty workspace and zero agents; the temporary startup configuration was empty. The registered older app was closed, leaving one package process. No workspace data was changed. This proves package identity and isolated startup only; it earns no packaged workflow acceptance. Exact event-driven UI interaction and Windows package acceptance remain open. Evidence: `docs/evidence/issue257-macos-package-189f6fad-20261030.json`.
 
+## Exact packaged workflow interaction — 2026-10-30
+
+The same `189f6fadeecda8f4b7c92eb269dfb0d455afb9c5` package ran a disposable workspace with four deterministic Rust mock profiles. After correcting fixture-only prompt and role assumptions, the plan reached review, three scoped tasks completed, all three `git diff --check` commands passed, the app exposed the diff and test results, and the operator approval and merge gates completed. The UI showed the run as completed.
+
+A three-second custom quota subprocess also completed with exit code 0 and wrote its normalized 75%-remaining snapshot to the isolated quota cache. While it was running, switching the workspace step completed in 0.41 seconds, so the slow read did not block that UI action. A subsequent UI inspection returned a saved-workspace view inconsistent with the disposable fixture, so neither badge rendering nor app-data isolation can be attributed to that view. Visible quota-event refresh remains unverified; repeat it with an unmistakably isolated app-data profile. Do not close #257 or award issue #9 packaged UI credit from this evidence. Windows package validation remains open. Evidence: `docs/evidence/issue257-packaged-event-ui-20261030.json`.
+
 ## Links
 
 - Requirements: `docs/01-requirements.md` through `docs/06-design-decisions.md`, R-192 / DD-204.

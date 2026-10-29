@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-30",
+  "purpose": "Exact packaged native UI interaction for event-driven updates and non-blocking metadata reads",
+  "package": {
+    "source_commit": "189f6fadeecda8f4b7c92eb269dfb0d455afb9c5",
+    "version": "0.1.37",
+    "target": "aarch64-apple-darwin",
+    "binary_sha256": "b5ffd7c36d8f715902e9830bf1b99fb54185c3b9c16aa383f26e357e2f5746eb"
+  },
+  "isolation": {
+    "home": "/private/tmp/ac257-event-e2e/home",
+    "workspace": "/private/tmp/ac257-event-e2e/workspace",
+    "repository": "/private/tmp/ac257-event-e2e/repo",
+    "repository_base": "c53969c842d46b2311ce181526b11eb5de2f7eb0",
+    "profiles": "One deterministic Rust planner, three deterministic Rust workers; no real agent CLI, API, or external service was invoked",
+    "app_data_attribution": "A subsequent UI inspection returned a saved-workspace view inconsistent with the disposable fixture. App-data isolation could not be confirmed for that view; no actions were performed in it."
+  },
+  "workflow": {
+    "plan": "Generated and shown for review after fixture-only prompt/role corrections",
+    "tasks": 3,
+    "task_results": ["one: completed", "two: completed", "three: completed"],
+    "tests": ["one: git diff --check passed", "two: git diff --check passed", "three: git diff --check passed"],
+    "diff_reviewed": true,
+    "human_candidate_approval": true,
+    "merge_confirmed": true,
+    "final_ui_state": "Completed; stage 05 Workspace"
+  },
+  "slow_read": {
+    "operation": "custom quota command",
+    "configured_delay_seconds": 3,
+    "exit_code": 0,
+    "snapshot": "source mock; 25% used, 75% remaining, 300-minute window",
+    "persistence": "quota/worker-one document recorded in the isolated quota.sqlite",
+    "ui_interaction_during_read": "Switching to Workspace settings returned in 0.41 seconds while the quota process was active",
+    "visible_quota_badge_after_completion": "unverified",
+    "result": "Non-blocking UI interaction and quota persistence were observed during the package session; rendered badge refresh and app-data attribution remain unverified"
+  },
+  "acceptance": {
+    "issue_257_complete": false,
+    "issue_9_workflow_credit": false,
+    "windows_package_verified": false,
+    "reason": "Rendered badge refresh and app-data attribution require a repeat in a confirmed isolated package session; Windows validation is also pending"
+  },
+  "cleanup": "The disposable workspace, mock executable, and process logs remain under /private/tmp/ac257-event-e2e pending confirmation that no live process owns them."
+}

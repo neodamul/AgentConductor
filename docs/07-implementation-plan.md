@@ -39,9 +39,11 @@
 
 - [x] Plan: identify the correct app instance by its package path after a display-name lookup relaunched a registered older build.
 - [x] Verify: the `189f6fadeecda8f4b7c92eb269dfb0d455afb9c5` macOS package opened with `ui-new` pointed at a disposable `/private/tmp` workspace. The exact package showed empty workspace fields and no agents; the temporary `startup.json` was blank. One AgentConductor process remained, and no workspace data was changed.
-- [ ] UI workflow: exercise an event-driven state change and slow independent read in the exact packaged UI. This launch check earns no workflow acceptance credit.
+- [x] UI workflow: the exact package generated a three-task plan, updated task/run states, showed 3/3 task checks and the diff, then completed candidate approval and merge in a disposable repository.
+- [x] Slow independent read: a deterministic custom quota command took three seconds and completed with exit code 0 while the workspace step remained interactive; the selection returned in 0.41 seconds.
+- [ ] Visible quota refresh: the quota snapshot was persisted, but a subsequent UI inspection returned a saved-workspace view inconsistent with the disposable test state. Badge rendering and test-app-data isolation are therefore unverified; repeat this check with an unmistakably isolated app-data profile before closing #257.
 - [ ] Windows: validate the exact package and runtime behavior. Keep #257 and #9 open.
-- [x] Evidence: retain `docs/evidence/issue257-macos-package-189f6fad-20261030.json` and update the LLM Wiki and AgentMemory.
+- [x] Evidence: retain `docs/evidence/issue257-macos-package-189f6fad-20261030.json` and `docs/evidence/issue257-packaged-event-ui-20261030.json`; update the LLM Wiki and AgentMemory. The latter records the badge result as unverified because the later UI state did not match the disposable fixture.
 
 ### Verify the exact macOS package at the pushed Rust head — issue #9 / 2026-10-29
 
