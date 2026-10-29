@@ -36,8 +36,9 @@ chat request must still be accepted in under two seconds. Exact packaged Windows
 behavior and the user's failing `start kind=chat` / `done kind=chat ms=...` evidence remain
 separate verification gates.
 
-PR #239 was rebased onto current #9 head `28df83945269254fc669bea602bdccab99fe6ab6`.
+PR #239 was rebased onto the latest #9 head `69887bab4732aba50d8649951ce153bf20a042dd`.
 The overlapping implementation-plan text was the only conflict; both issue checklists were
 preserved. Focused startup-chat, diagnostics, and source-layout tests pass after rebase, as do
 warning-denied all-target Clippy and formatting. Exact macOS/Windows package verification is
-still required to confirm the packaged request path.
+still required to confirm the packaged request path; the affected user's diagnostics log is also
+needed to distinguish native dispatch delay from external coordinator delay.
