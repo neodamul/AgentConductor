@@ -255,6 +255,15 @@
 - [ ] Exact-package Verify: rerun the current Rust branch's macOS/Windows release packages and require refresh, allow, and deny receipt/effect assertions.
 - [ ] Complete: retain exact-head package artifacts and update issue #9, PR #22, AgentMemory, and LLM Wiki. No acceptance credit until the packaged workflow passes; candidate remains 22/25 and shipped Rust replacement remains 0/25.
 
+### Stop, resume, and recover a packaged run — issue #9 / workflow 25 / 2026-10-29
+
+- [x] Plan: close the remaining workflow-25 gap with a package-binary journey covering stop, process cleanup, explicit resume, interrupted-run recovery, a second resume, and duplicate-output detection.
+- [x] Red: `exact_package_runs_the_stop_resume_recovery_journey` failed because the Windows package job did not include the recovery integration target.
+- [x] Task: add a bounded Rust mock-agent blocker and `tests/package_run_recovery.rs`; register it in the Windows exact-package job. The test uses only a disposable Git repository and mock CLI.
+- [x] Local Verify: the exact journey passes against the local Rust binary; focused contracts pass 10 tests with 1 package-only test ignored, warning-denied all-target Clippy, rustfmt, diff checks, and the 300-line guard. The final candidate diff contains exactly the three owned fixture files after both resumes.
+- [ ] Exact-package Verify: run both platform validation and exact macOS/Windows package jobs on this commit. No acceptance credit until the workflow passes on the packaged binary.
+- [ ] Complete: save exact-head evidence, update issue #9, PR #22, AgentMemory and LLM Wiki. Keep candidate packaged acceptance at 22/25 and shipped Rust replacement at 0/25 until all package gates pass.
+
 ### Retain child-process evidence for packaged tool refresh failures — issue #9 / 2026-10-28
 
 - [x] Plan: exact Windows package run `40622684398` passed schedule, signal settings, and earlier package journeys, then timed out waiting for the original tool receipt to become `superseded`. The failure gives no evidence yet to distinguish a failed refresh child from a test polling race.

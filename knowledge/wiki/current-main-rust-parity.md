@@ -206,3 +206,7 @@ The merge-era runs `39999933920`, `40000373810`, and exact-doc-head run `4000172
 ## Settings gear existing-package spot-check — 2026-10-24
 
 The already-running exact bundle for source `f23381cf` was bound without launching another process. The v0.1.37 screenshot and accessibility tree confirmed the gear-only control named `설정` and Settings menu actions. Its renderer/test are unchanged in the current source. Since saved workspace/profile data was visible, the check stopped before any mutation; it earns no workflow acceptance. See `docs/evidence/issue9-settings-gear-existing-package-20261024.json`. Current-head Actions run `40003966004` is in progress; it is validation only, not acceptance evidence.
+
+## Stop, resume, and recover a run — issue #9 / workflow 25 / 2026-10-29
+
+`tests/package_run_recovery.rs` exercises the Rust executable through a disposable Git repository and three mock tasks. A bounded mock blocks until the coordinator stops it; explicit resume completes the work; a simulated stale owner record then exercises recovery followed by another explicit resume. The candidate diff is asserted to contain exactly the three owned file paths, once each. The local binary journey, focused source/layout tests, formatting, and warning-denied all-target Clippy pass. The exact-package Windows and macOS run is pending; this gives no workflow acceptance credit. Evidence: `docs/evidence/issue9-package-stop-resume-recovery-20261029.json`.

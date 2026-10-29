@@ -93,6 +93,7 @@ fn main() {
         | Some("task")
         | Some("task-stray")
         | Some("task-slow")
+        | Some("task-blocking")
         | Some("custom-task")
         | Some("dependency")
         | Some("quota")
@@ -129,6 +130,18 @@ fn main() {
             }
             std::io::stdout().flush().unwrap();
             let mode = std::env::args().nth(1).unwrap();
+            if mode == "task-blocking" {
+                let started = std::env::var("AC_TEST_BLOCKING_STARTED").unwrap();
+                let release = std::env::var("AC_TEST_BLOCKING_RELEASE").unwrap();
+                std::fs::write(started, path).unwrap();
+                let deadline = std::time::Instant::now() + std::time::Duration::from_secs(60);
+                while !std::path::Path::new(&release).exists()
+                    && std::time::Instant::now() < deadline
+                {
+                    std::thread::sleep(std::time::Duration::from_millis(10));
+                }
+                assert!(std::path::Path::new(&release).exists(), "fixture release timed out");
+            }
             let marker = std::env::var("MOCK_MARKERS")
                 .map(|dir| std::path::PathBuf::from(dir).join(format!("marker-{path}")))
                 .ok();
