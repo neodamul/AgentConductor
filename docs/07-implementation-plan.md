@@ -1,3 +1,12 @@
+### Keep workspace input available during quota refresh — issue #257 / 2026-10-30
+
+- [x] Plan: trace the observed disabled workspace to automatic stale-quota metadata work, which occupied the single UI `pending` slot and made `workspace::permissions::editable` reject all inputs.
+- [x] Red: `slow_quota_refresh_does_not_disable_workspace_editing` failed before the fix; `workspace_save_still_disables_editing` protects the mutation lock.
+- [x] Task: allow workspace edits and navigation during metadata-only quota lookup and its read-only snapshot refresh. New foreground requests supersede old replies through the existing request IDs; active job and mutation guards remain in force.
+- [x] Verify: `cargo test --lib --release --locked --offline --quiet` passed 80 tests; release Clippy with `-D warnings`, rustfmt check, diff check, and the 300-line limit passed.
+- [ ] Exact packaged UI Verify: rebuild and inspect an isolated disposable workspace while automatic Claude/Codex quota lookups are pending. Do not use the user's saved workspace as acceptance evidence.
+- [ ] Complete: record exact package/UI evidence, update issue #257, AgentMemory and the LLM Wiki. #257 stays open until the isolated UI and Windows journeys pass.
+
 ### Verify the exact macOS package at the pushed Rust head — issue #9 / #257 / 2026-10-30
 
 - [x] Plan: rebuild the release package at pushed source `62efb31c8725d93fd1bb10021cad170cf3a77533`, which includes non-blocking event fan-out and foreground/background response correlation.

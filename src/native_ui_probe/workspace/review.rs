@@ -95,7 +95,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             let run_available = snapshot["run_available"] == true;
             if ui
                 .add_enabled(
-                    run_available && probe.pending.is_none(),
+                    run_available && super::permissions::editable(probe),
                     egui::Button::new(text(&language, "startup.open_agent_room")),
                 )
                 .clicked()
@@ -197,7 +197,7 @@ fn plan_failure_is_current(probe: &Probe, snapshot: &Value) -> bool {
 fn can_retry_plan(probe: &Probe, snapshot: &Value, current: bool, task_dirty: bool) -> bool {
     snapshot["job"]["kind"] == "plan"
         && snapshot["job"]["state"] == "failed"
-        && probe.pending.is_none()
+        && super::permissions::editable(probe)
         && current
         && !task_dirty
 }

@@ -27,10 +27,9 @@ impl Probe {
                 && snapshot.is_some_and(|value| value["run_available"] == true),
             dirty_areas,
         );
-        let can_change = self.pending.is_none()
+        let can_change = super::super::permissions::editable(self)
             && self.starting_run.is_none()
-            && self.room_view.is_none()
-            && snapshot.is_none_or(|value| value["job"]["state"] != "running");
+            && self.room_view.is_none();
         let event = show(
             &mut self.navigation,
             NavigationContext {

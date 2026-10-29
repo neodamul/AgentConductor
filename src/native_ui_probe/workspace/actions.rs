@@ -21,12 +21,9 @@ pub(super) fn show_role_actions(
         snapshot["job"]["kind"] == "plan" && snapshot["job"]["state"] == "running"
     });
     let snapshot = snapshot.unwrap_or(&Value::Null);
-    let can_generate = editable
-        && current
-        && !planning
-        && probe.pending.is_none()
-        && super::plan_configuration_available(snapshot);
-    let can_choose_plan_source = editable && !planning && probe.pending.is_none();
+    let can_generate =
+        editable && current && !planning && super::plan_configuration_available(snapshot);
+    let can_choose_plan_source = editable && !planning;
 
     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
         if super::super::appearance::primary_button(ui, can_generate, generate_plan).clicked() {
