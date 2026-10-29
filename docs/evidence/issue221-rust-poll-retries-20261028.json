@@ -3,7 +3,7 @@
   "pull_request": 228,
   "branch": "codex/issue-221-rust-poll-timeout",
   "base_branch": "codex/issue-9-native-ui-parity",
-  "base_commit": "69887bab4732aba50d8649951ce153bf20a042dd",
+  "base_commit": "a828a2f480c79d3bd617add00b8e83aa5082ff33",
   "javascript_source_commits": [
     "2570dac8bcd0a0678dd5d4abf30029bd5a8eafe3",
     "d476b7929f3ea024083434f2f09ade82f209d609"
