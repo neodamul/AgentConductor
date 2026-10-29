@@ -1,5 +1,7 @@
+use super::RecoveryObserver;
 use crate::ui::events::{EventHub, UiEvent, UiSurface};
 use eframe::egui;
+use std::sync::Arc;
 
 #[test]
 fn committed_state_event_reaches_subscribers_without_waiting_for_readers() {
@@ -110,4 +112,26 @@ fn publishing_does_not_wait_for_subscriber_registry_lock() {
     );
     drop(guard);
     thread.join().unwrap();
+}
+
+#[test]
+fn standalone_recovery_observer_keeps_external_updates_when_bridge_is_unavailable() {
+    let root = std::env::temp_dir().join(format!(
+        "agentconductor-recovery-only-{}",
+        crate::native_guard::session_id().unwrap()
+    ));
+    std::fs::create_dir_all(&root).unwrap();
+    std::fs::write(root.join("report.json"), b"before").unwrap();
+    let hub = EventHub::default();
+    let workspace = hub.subscribe(UiSurface::Workspace, egui::Context::default());
+    let fallback = RecoveryObserver::new(Arc::clone(&hub.subscribers)).unwrap();
+    fallback.watch_run_dir(&root, UiSurface::Workspace);
+
+    std::fs::write(root.join("report.json"), b"external report change").unwrap();
+
+    assert_eq!(
+        workspace.recv_timeout(std::time::Duration::from_secs(3)),
+        Ok(UiEvent::invalidated(UiSurface::Workspace))
+    );
+    std::fs::remove_dir_all(root).unwrap();
 }

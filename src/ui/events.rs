@@ -1,6 +1,8 @@
 use eframe::egui;
 mod bridge;
 use bridge::EventBridge;
+mod recovery;
+use recovery::RecoveryObserver;
 use std::{
     net::{SocketAddr, UdpSocket},
     process::Command,
@@ -89,6 +91,7 @@ pub struct EventHub {
     mutations: Arc<Mutex<()>>,
     capacity: usize,
     bridge: Option<Arc<EventBridge>>,
+    recovery: Option<Arc<RecoveryObserver>>,
 }
 
 impl EventHub {
@@ -97,11 +100,19 @@ impl EventHub {
         let bridge = EventBridge::new(Arc::clone(&subscribers))
             .ok()
             .map(Arc::new);
+        let recovery = if bridge.is_none() {
+            RecoveryObserver::new(Arc::clone(&subscribers))
+                .ok()
+                .map(Arc::new)
+        } else {
+            None
+        };
         Self {
             subscribers,
             mutations: Arc::new(Mutex::new(())),
             capacity: capacity.max(1),
             bridge,
+            recovery,
         }
     }
 
@@ -124,6 +135,8 @@ impl EventHub {
     pub fn watch_run_dir(&self, dir: &std::path::Path, surface: UiSurface) {
         if let Some(bridge) = &self.bridge {
             bridge.watch_run_dir(dir, surface);
+        } else if let Some(recovery) = &self.recovery {
+            recovery.watch_run_dir(dir, surface);
         }
     }
 

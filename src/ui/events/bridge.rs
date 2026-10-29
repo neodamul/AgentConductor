@@ -13,8 +13,8 @@ use std::{
     time::{Duration, SystemTime},
 };
 
-const MIN_SCAN_DELAY: Duration = Duration::from_secs(1);
-const MAX_SCAN_DELAY: Duration = Duration::from_secs(30);
+pub(super) const MIN_SCAN_DELAY: Duration = Duration::from_secs(1);
+pub(super) const MAX_SCAN_DELAY: Duration = Duration::from_secs(30);
 const MAX_SCOPE_PATHS: usize = 512;
 const MAX_SCOPE_DEPTH: usize = 8;
 
@@ -124,14 +124,14 @@ struct FileStamp {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-struct FileWatch {
+pub(super) struct FileWatch {
     dir: PathBuf,
     surface: UiSurface,
     stamps: Vec<(PathBuf, Option<FileStamp>)>,
 }
 
 impl FileWatch {
-    fn new(dir: &Path, surface: UiSurface) -> Self {
+    pub(super) fn new(dir: &Path, surface: UiSurface) -> Self {
         Self {
             dir: dir.to_path_buf(),
             surface,
@@ -139,7 +139,7 @@ impl FileWatch {
         }
     }
 
-    fn changed(&mut self) -> bool {
+    pub(super) fn changed(&mut self) -> bool {
         let next = file_stamps(&self.dir);
         if next == self.stamps {
             return false;
@@ -244,14 +244,14 @@ fn collect_scope_tree(path: &Path, depth: usize, paths: &mut BTreeSet<PathBuf>) 
     }
 }
 
-fn changed_surface(watch: &Mutex<Option<FileWatch>>) -> Option<UiSurface> {
+pub(super) fn changed_surface(watch: &Mutex<Option<FileWatch>>) -> Option<UiSurface> {
     watch.lock().ok().and_then(|mut watch| {
         let watch = watch.as_mut()?;
         watch.changed().then_some(watch.surface)
     })
 }
 
-fn next_scan_delay(current: Duration, changed: bool) -> Duration {
+pub(super) fn next_scan_delay(current: Duration, changed: bool) -> Duration {
     if changed {
         return MIN_SCAN_DELAY;
     }
