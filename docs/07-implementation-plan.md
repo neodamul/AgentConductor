@@ -1,10 +1,18 @@
+### Structure coordinator prompts as Document, Task, and Format — issue #9 / 2026-10-29
+
+- [x] Plan: move existing-plan and approved source evidence ahead of the planning request; keep schema as the last prompt block without changing the coordinator contract.
+- [x] Red: add a fake-coordinator integration test for one ordered set of sections, untrusted-heading neutralization, evidence placement, planning rules, task-type instructions, and the final schema; it failed against the unstructured prompt.
+- [x] Task: compose the planner's evidence as Document, goal/roles/rules/phases/version-control/cooperation instructions as Task, and the response schema as Format. Keep invalid-plan repair within the same structure.
+- [x] Verify: coordinator contract regressions pass 15 tests across 8 suites; worker/review/recovery regressions pass 50 across 10 suites; Claude quota passes 6, timeout resume and stop each pass, warning-denied focused Clippy, rustfmt, diff, and ≤300-line checks pass.
+- [x] Complete: saved AgentMemory and LLM Wiki notes. This prompt unit adds no packaged UI acceptance credit; chat prompt parity and the full Rust suite remain open.
+
 ### Structure worker prompts as Document, Task, and Format — issue #9 / 2026-10-29
 
 - [x] Plan: preserve the existing worker safety text and task context while separating source evidence, instructions, and required answer shape.
 - [x] Red: add regressions for exactly-once ordered headings, untrusted heading neutralization, task identity/owned paths, and existing cache-safety wording; the safety wording test failed before restoration.
 - [x] Task: add the small Rust `prompt_form` assembler and compose dependency/checkpoint/memory/lesson context as Document, worker instructions and feedback as Task, and evidence reporting as Format.
 - [x] Verify: focused prompt suite passes 4/4; warning-denied focused Clippy, rustfmt, diff check, and ≤300-line checks pass. Worker prompt persistence is exercised by the workflow fixture.
-- [x] Complete: recorded the behavior and limitation in AgentMemory and the LLM Wiki. This prompt-assembly unit adds no packaged UI acceptance credit; coordinator prompts and full-suite verification remain separate work.
+- [x] Complete: recorded the behavior and limitation in AgentMemory and the LLM Wiki. This prompt-assembly unit adds no packaged UI acceptance credit; chat prompt parity and full-suite verification remain separate work.
 
 ### Reacquire only an actionable signal-port field — issue #9 / 2026-10-29
 

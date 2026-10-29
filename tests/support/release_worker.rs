@@ -6,7 +6,13 @@ fn main() {
         Some("task") => {
             let mut prompt = String::new();
             std::io::stdin().read_to_string(&mut prompt).unwrap();
-            let path = prompt.lines().next().unwrap();
+            let task = prompt
+                .split_once("\n# Task\n")
+                .map_or(prompt.as_str(), |(_, task)| task)
+                .split("\n# Format\n")
+                .next()
+                .unwrap();
+            let path = task.lines().find(|line| !line.trim().is_empty()).unwrap();
             assert!(["one.txt", "two.txt", "three.txt"].contains(&path));
             println!("{{\"type\":\"session\",\"session_id\":\"release-{path}\"}}");
             std::io::stdout().flush().unwrap();

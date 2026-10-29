@@ -3,7 +3,13 @@ use std::io::{Read, Write};
 fn main() {
     let mut prompt = String::new();
     std::io::stdin().read_to_string(&mut prompt).unwrap();
-    let path = prompt.lines().next().unwrap().trim();
+    let task = prompt
+        .split_once("\n# Task\n")
+        .map_or(prompt.as_str(), |(_, task)| task)
+        .split("\n# Format\n")
+        .next()
+        .unwrap();
+    let path = task.lines().find(|line| !line.trim().is_empty()).unwrap().trim();
     println!("{{\"type\":\"session\",\"session_id\":\"timeout-{path}\"}}");
     std::io::stdout().flush().unwrap();
     if path == "one.txt" {

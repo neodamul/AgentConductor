@@ -100,7 +100,13 @@ fn main() {
         | Some("quota-known") => {
             let mut prompt = String::new();
             std::io::stdin().read_to_string(&mut prompt).unwrap();
-            let original = prompt.lines().next().unwrap().trim();
+            let task = prompt
+                .split_once("\n# Task\n")
+                .map_or(prompt.as_str(), |(_, task)| task)
+                .split("\n# Format\n")
+                .next()
+                .unwrap();
+            let original = task.lines().find(|line| !line.trim().is_empty()).unwrap().trim();
             let path = if original == "fail" && prompt.contains("Repair failed task") {
                 prompt
                     .lines()

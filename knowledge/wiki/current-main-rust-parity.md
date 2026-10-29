@@ -1,5 +1,9 @@
 # Current-main behavior carried into the Rust UI branch
 
+## Coordinator plan prompt structure — 2026-10-29
+
+Rust planner prompts now persist one ordered `# Document`, `# Task`, and `# Format` sequence. Existing plan material and approved Jira/Confluence source evidence are untrusted Document content; the goal, agent catalog, role and plan rules, phase instructions, task types, repository capabilities, and cooperation guidance stay in Task; the bound response JSON Schema is last in Format. Exact heading lines inside evidence are escaped. Invalid-scope repair uses the same structure and places its validation feedback in Task. Existing source-plan/context sidecar files and schema-constrained CLI arguments are unchanged. Verification: coordinator planning contracts 15/15 over eight suites, worker/review/recovery regressions 50/50 over ten, Claude quota 6/6, timeout resume and stop 1/1 each, focused warning-denied Clippy and rustfmt pass. This does not claim chat prompt parity, full-suite verification, or packaged UI acceptance.
+
 ## Worker prompt structure — 2026-10-29
 
 The Rust worker persists every CLI prompt with exactly one `# Document`, `# Task`, and `# Format` section in that order. Declared dependency evidence, checkpoint continuation, reviewed lessons, and step lessons are document material; task scope, human feedback, direct-folder rules, cooperative context, and checkpoint instructions stay in the task; evidence reporting is the output format. Heading-like lines in supplied material are escaped so they cannot create extra structural sections. The focused suite checks ordering, neutralization, worker scope, retained `.aipro/plans/` cache guidance, and the prompt written by a real workflow fixture. Local evidence: 4 focused tests pass, focused Clippy and rustfmt pass. This covers worker prompts only; it makes no packaged UI acceptance claim and does not establish planner/chat prompt parity or full-suite status.
