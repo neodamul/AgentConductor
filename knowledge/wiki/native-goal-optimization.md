@@ -19,7 +19,7 @@ Workspace snapshots carry chat history and optimizer results together. Chat rese
 
 ## Verification and limits
 
-The focused offline optimizer, startup, coordinator-chat, package-license, source-layout, and public-document suites passed 53 tests across 13 suites after the snapshot compatibility regression was fixed. Warning-denied all-target Clippy and rustfmt passed locally. Every changed Rust/test file is subject to the 300-line source-layout guard.
+The focused offline optimizer, startup, coordinator-chat, package-license, source-layout, and public-document suites passed 53 tests across 13 suites after the snapshot compatibility regression was fixed. Warning-denied all-target Clippy and rustfmt passed locally. The exact Rust head `79fdea8a` also produced a local arm64 package: its manifest source/binary hashes, ZIP CRC, packaged CLI help, and app `Info.plist` passed. Evidence is in `docs/evidence/issue9-macos-local-package-79fdea8-20261029.json`. Every changed Rust/test file is subject to the 300-line source-layout guard.
 
 This is source-level local verification. A real coordinator invocation, native app screenshot review, and exact macOS/Windows package journeys remain unverified and do not count toward issue #9 packaged acceptance.
 

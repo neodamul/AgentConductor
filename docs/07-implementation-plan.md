@@ -6410,3 +6410,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Assetize the optimizer decision, request flow, traceability and verification boundary in `knowledge/wiki/native-goal-optimization.md` and AgentMemory.
 - [ ] Verify app: inspect the Rust native window and exercise a real coordinator profile; no screenshot or real coordinator request has been verified.
 - [x] Complete this source-level slice: push the integrated commits and update issue #9 with exact local verification. Packaged verification remains pending and no acceptance credit was added.
+
+### 2026-10-29 — Build exact local macOS package at Rust head 79fdea8 — issue #9
+
+- [x] Plan: verify the current pushed source head with the Rust release binary and generated offline manuals; keep UI and package acceptance separate.
+- [x] Task: build the arm64 release binary, render English and Korean HTML manuals, and create the local distribution ZIP with SBOM and dependency-license notices.
+- [x] Verify locally: exact manifest source and binary hash match; archive CRC passes for all 486 files; packaged `--help` works; app `Info.plist` lint passes. Archive SHA-256 `2bcf911eeaa7cff4a5cbc8700fe9db98765b63408b08ee7696b57ecc1dd58e20`; binary SHA-256 `862ab066bb69193127c2c745289cdf8a61c85a9894931cc13a429efae724fb7a`. Evidence: `docs/evidence/issue9-macos-local-package-79fdea8-20261029.json`.
+- [ ] Verify app: no window was launched and no screenshot or real coordinator request was captured. Reuse the current existing app/window only when safe.
+- [ ] Verify Windows: exact package test for the updated Rust head remains pending. Run `40839334186` covers ancestor `923a806b`, not this exact source head.
+- [ ] Complete/release: do not publish or increase #9 acceptance until exact macOS and Windows packaged UI journeys and remaining parity gates pass. Current tracked acceptance remains 22/25 packaged, 0/25 shipped Rust replacements, 22/50 aggregate.
