@@ -155,15 +155,31 @@ impl Plan {
         let mut ids = HashSet::new();
         let mut scopes: Vec<&str> = vec![];
         for task in &self.tasks {
-            if task.id.trim().is_empty()
-                || !ids.insert(&task.id)
-                || !agents.contains(&task.agent)
-                || task.prompt.trim().is_empty()
-                || task.paths.is_empty()
-                || task.test_command.is_empty()
-                || task.test_command[0].is_empty()
+            // GitHub #251: name the task and the field, so a coordinator (or a person) can correct exactly that.
+            let id = &task.id;
+            if id.trim().is_empty() {
+                return Err("task id is empty".into());
+            }
+            if !ids.insert(&task.id) {
+                return Err(format!("task {id}: duplicate task id"));
+            }
+            if !agents.contains(&task.agent) {
+                return Err(format!("task {id}: unknown agent {}", task.agent));
+            }
+            if task.prompt.trim().is_empty() {
+                return Err(format!("task {id}: prompt is empty"));
+            }
+            if task.paths.is_empty() {
+                return Err(format!("task {id}: {EMPTY_PATHS}"));
+            }
+            if task
+                .test_command
+                .first()
+                .is_none_or(|executable| executable.is_empty())
             {
-                return Err("invalid task identity, agent, prompt, scope or test command".into());
+                return Err(format!(
+                    "task {id}: test_command must be an executable plus argv, and the executable is missing"
+                ));
             }
             if let Some(model) = &task.model {
                 self.agents
@@ -280,6 +296,9 @@ impl Plan {
         Ok(())
     }
 }
+
+/// A task, a verification task too, owns at least one path; the planner's scope correction retry keys on this text.
+pub const EMPTY_PATHS: &str = "paths is empty; every task, a verification task too, must own at least one literal repo-relative file or directory";
 
 /// Coordinators often write a directory scope as `docs/`. A slash-free directory path
 /// already covers everything inside it (see `overlaps`), so trailing slashes are trimmed

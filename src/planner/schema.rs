@@ -14,13 +14,15 @@ fn object(properties: Value) -> Value {
 }
 pub fn for_plan(agents: &[String], roles: &[String], phased: bool) -> Value {
     let strings = json!({"type":"array","items":{"type":"string"}});
+    // GitHub #251: `Plan::validate` rejects a task without a path or a test command, so the contract says so.
+    let at_least_one = json!({"type":"array","minItems":1,"items":{"type":"string"}});
     let role = if roles.is_empty() {
         json!({"type":["string","null"]})
     } else {
         json!({"type":"string","enum":roles})
     };
     let mut task = object(
-        json!({"id":{"type":"string"},"agent":{"type":"string","enum":agents},"prompt":{"type":"string"},"paths":strings,"depends_on":strings,"test_command":strings,"role":role,"model":{"type":["string","null"]},"execution_options":{"type":"object","additionalProperties":{"type":"string"}},"task_type":{"enum":["extract","summarize","analyze","code","agentic","creative",null]}}),
+        json!({"id":{"type":"string"},"agent":{"type":"string","enum":agents},"prompt":{"type":"string"},"paths":at_least_one,"depends_on":strings,"test_command":at_least_one,"role":role,"model":{"type":["string","null"]},"execution_options":{"type":"object","additionalProperties":{"type":"string"}},"task_type":{"enum":["extract","summarize","analyze","code","agentic","creative",null]}}),
     );
     task["required"]
         .as_array_mut()

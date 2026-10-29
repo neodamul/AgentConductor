@@ -694,3 +694,7 @@ Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199.
 ### FR-181 Examine every fence
 A fenced block that does not parse, or lacks the field, ends only its own attempt: scanning continues from the next fence marker. A reply with only malformed blocks still fails with the no-valid-JSON error. The reply limit is 256 KiB.
 Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.
+
+### FR-182 Name the task and the field; correct empty scopes once
+`Plan::validate` reports `task <id>: <field> ...` for id, agent, prompt, paths and test_command. The schema sets `minItems: 1` on paths and test_command. The phased planner retries once on an unsafe, overlapping or empty scope.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. GitHub #251, user, 2026-10-29.

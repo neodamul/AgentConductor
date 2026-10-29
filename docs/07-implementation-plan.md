@@ -2326,3 +2326,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: `src/coordinator/document.rs`; CHANGELOG.
 - [ ] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI.
 - [ ] Complete: merge; release only on request.
+
+### Empty task paths in planning — GitHub #251
+
+- [x] Plan: user report: verification tasks with `paths: []` failed planning with one combined message, the schema allowed it, and no retry covered it. R-190 → DD-202.
+- [x] Red: `a_rejected_task_is_named_with_its_field` (tests/plan.rs), `a_task_must_own_a_path_and_name_a_test_command` (tests/planning_schema.rs), `retries_phase_scopes_once_after_a_task_has_no_path`.
+- [x] Task: `src/plan.rs`, `src/planner.rs`, `src/planner/schema.rs`, `src/planner/prompt.rs`; CHANGELOG.
+- [x] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI. Not verified: a real coordinator that returns empty paths.
+- [ ] Complete: merge; release only on request.
