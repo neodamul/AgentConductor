@@ -41,6 +41,8 @@ The packaged app was launched once but opened the user's saved workspace. No wor
 
 The follow-up fix at `e7f712a60c83727ddeb27c09da0895624a68bf14` was packaged and launched after closing the earlier package process. In that exact build, stale quota observations were present and workspace fields, agent edit, quota refresh, and save controls were enabled. No saved data was changed. This verifies the quota-refresh lock regression at launch, not the full native UI workflow; Windows remains pending. Evidence: `docs/evidence/issue257-macos-package-e7f712a-20261030.json`.
 
+The request-queue fix at `cd2b1d4850f9d77c1814e1e0b95ab2549f62bd31` was packaged, manifest-validated, and smoke-tested across shared/worktree isolation with Git and folder projects. The exact package was launched after closing the prior AgentConductor process; one v0.1.37 app window opened the saved workspace with controls enabled and no pending edits. No workspace data was changed. This confirms package identity and launch only; full UI interaction and Windows acceptance remain pending. Evidence: `docs/evidence/issue257-macos-package-cd2b1d48-20261030.json`.
+
 ## Links
 
 - Requirements: `docs/01-requirements.md` through `docs/06-design-decisions.md`, R-192 / DD-204.
