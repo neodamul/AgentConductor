@@ -3,7 +3,7 @@
   "pull_request": 228,
   "branch": "codex/issue-221-rust-poll-timeout",
   "base_branch": "codex/issue-9-native-ui-parity",
-  "base_commit": "28df83945269254fc669bea602bdccab99fe6ab6",
+  "base_commit": "ba1a56236702c26f92eab6a6f51f17d3b0974ef0",
   "javascript_source_commits": [
     "2570dac8bcd0a0678dd5d4abf30029bd5a8eafe3",
     "d476b7929f3ea024083434f2f09ade82f209d609"
@@ -18,7 +18,7 @@
     "workspace_idle_poll": "none added"
   },
   "local_verification": {
-    "focused": "pass on current #9 base: poll regressions 4/4; native probe, source layout, and Windows tool-decision dispatch 26/26",
+    "focused": "pass after rebase on current #9 base: poll regressions 4/4; native probe 42/42; Windows driver contract 7/7; source layout 2/2",
     "clippy": "pass: cargo clippy --locked --offline --all-targets -- -D warnings",
     "format": "pass: cargo fmt --all -- --check",
     "diff_check": "pass: git diff --check",
@@ -31,9 +31,10 @@
   "remote_validation": {
     "superseded_run": 40782630380,
     "superseded_failure": "macOS native launch parity test failed at native_worker_starts_only_the_exact_approved_plan; fixed in the #9 base before the next run",
-    "latest_exact_run": 40784502556,
-    "latest_run_result": "both platform validation jobs passed; macOS package passed; Windows package and execution passed but the packaged candidate-review reject journey failed because UI Automation observed a stale disabled Rejection reason edit and SetValue raised ElementNotEnabledException",
-    "driver_followup": "added a RED source-contract regression, then a bounded rebind/readiness gate requiring the edit to be enabled, visible, focused, and owned by the app process before SetValue; local driver suite passes 7/7 and focused regression passes 1/1",
-    "new_exact_head_run": "pending after rebase to latest issue-9 head 28df83945269254fc669bea602bdccab99fe6ab6"
+    "latest_exact_run": 40790365479,
+    "latest_run_result": "both platform validation jobs passed; macOS package passed; Windows package execution passed but the packaged tool-decision journey failed before confirmation: UIA Invoke had no state change, keyboard SetFocus failed with 'Expecting object to be local', and three pointer attempts did not expose Confirm tool decision; request stayed pending",
+    "shared_driver_followup": "the #9 base includes pointer-target verification at ba1a56236702c26f92eab6a6f51f17d3b0974ef0; exact root verification run 40796746962 is pending. Do not dispatch another #228 exact package run until that result arrives",
+    "candidate_rejection_fix": "bounded rejection-reason readiness retry is inherited from the #9 base; no duplicate UI-driver change is included in the #221 diff",
+    "new_exact_head_run": "pending after root run 40796746962 establishes the shared Windows tool-decision driver result"
   }
 }
