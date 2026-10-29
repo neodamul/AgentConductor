@@ -21,6 +21,12 @@
       {"workspace": "worktree", "repository": "folder", "tasks": 3, "tests": 3, "unapproved_merge_refused": true, "approved_merge_verified": true}
     ]
   },
+  "full_local_suite": {
+    "command": "cargo test --locked --offline --features test-fixtures -- --quiet",
+    "exit_code": 0,
+    "failures": 0,
+    "environment_dependent_tests": "remain ignored according to repository prerequisites"
+  },
   "ui_acceptance_credit": false,
   "windows_package_verification": "pending"
 }

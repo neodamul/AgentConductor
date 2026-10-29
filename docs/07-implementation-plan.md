@@ -4,6 +4,7 @@
 - [x] Task: `cargo run --offline --locked --release -j 2 -- package-release` produced `dist/agentconductor-aarch64-apple-darwin-f739b4852ee0.zip`.
 - [x] Verify: ZIP integrity, package manifest/source commit, binary SHA-256, and packaged `--help` passed. The package contains 242 dependency records and the bundled bilingual manuals, screenshots, licenses, and SBOM.
 - [x] Package smoke: the exact packaged binary passed shared-folder and Git-repository runs, with and without worktree isolation. Each case ran three mock tasks and tests in parallel, refused merge before approval, then verified approved merge.
+- [x] Full local suite: `cargo test --locked --offline --features test-fixtures -- --quiet` exited 0 with no failures at product source `f739b4852ee06df6554ec7bf139df8f42ee90106`; repository-marked environment-dependent tests remain ignored.
 - [ ] UI/Windows Verify: this CLI smoke is not a GUI workflow. Verify the exact package through the native UI and run the current Windows package before adding acceptance credit.
 - [x] Complete: retain the package evidence, update issue #9, AgentMemory and the LLM Wiki; packaged UI acceptance remains unchanged.
 

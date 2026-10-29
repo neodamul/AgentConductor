@@ -27,3 +27,5 @@ Built the pushed source commit as an arm64 macOS release package. The archive pa
 The packaged CLI smoke passed four isolated cases: shared and worktree execution, each against both a Git repository and a plain folder. Each case completed three parallel mock tasks and tests, refused merge before approval, and verified the approved merge. This validates the package CLI workflow only; no native GUI or Windows packaged chat acceptance is claimed.
 
 Evidence: `docs/evidence/issue9-macos-package-f739b485-20261029.json`.
+
+The full local test suite also passed on this product source with `cargo test --locked --offline --features test-fixtures -- --quiet`; repository-marked environment-dependent tests remain ignored.
