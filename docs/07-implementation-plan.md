@@ -22,7 +22,8 @@
 - [x] Red: `coordinator_chat_editor_exposes_its_prompt_as_an_accessible_name` failed because the egui multiline editor had placeholder text but no accessible name.
 - [x] Task: expose the localized chat placeholder as the editor's accessible name while preserving the visible hint and multiline behavior.
 - [x] Local Verify: the new accessibility regression passes; related chat, Windows driver-contract, and source-layout suites pass 11/11 across 4 suites. Clippy with `-D warnings`, rustfmt, diff check, and the 300-line limit pass. The failing Windows log remains exact-package evidence; this local test does not prove the UIA mapping on Windows.
-- [ ] Exact-package Verify: port the source fix to the current PR #255 head and rerun the packaged Windows journey. Require all three coordinator-chat cases to pass before continuing to tool decisions; no workflow credit yet.
+- [x] Port: cherry-picked the accessible-name fix onto PR #255's `codex/issue-189-chat-package-current` branch as `fbc2280a`; the focused local suite passes 11 tests across 4 suites, with warning-denied Clippy, rustfmt, diff check, and source-layout guard passing.
+- [ ] Exact-package Verify: rerun the exact Windows package journey at PR head `fbc2280a`. Require all three coordinator-chat cases to pass before continuing to tool decisions; no workflow credit yet.
 - [ ] Complete: record the exact Windows rerun in issue #189/#9, AgentMemory, and LLM Wiki. Keep the existing 22/25 candidate and 0/25 shipped-Rust counters until package acceptance passes.
 
 ### Keep workspace input available during quota refresh — issue #257 / 2026-10-30
