@@ -6653,7 +6653,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Package Verify: exact source `cd2b1d4850f9d77c1814e1e0b95ab2549f62bd31` packaged for `aarch64-apple-darwin`; `validate-package`, packaged `--help`, and the four-case shared/worktree × Git/folder smoke passed. Manifest binary SHA-256: `3fb9c45e2a2153314fbc4055941ac295f7e0e7b582d807afd4430b8d8affa8ed`; archive SHA-256: `eefe3ab861a467f62f758afd2c1b69df0126b4b042d02a391ad3d0b0b5637309`. Evidence: `docs/evidence/issue257-macos-package-cd2b1d48-20261030.json`.
 - [x] Exact package launch: replaced the prior single AgentConductor process with the `cd2b1d48` package; verified one active app window, v0.1.37, the saved workspace loaded, no dirty edits, and its controls enabled. No workspace data was changed.
 - [ ] Verify all targets and exact native UI packages; cross-platform package acceptance remains open.
-- [ ] Verify package: exercise selective event delivery and fallback behavior in exact macOS and Windows packages.
+- [x] Exact macOS package live-refresh check: one Rust mock agent completed while a second remained blocked; after releasing the blocker, Agent Room displayed `2/2` and approval-waiting without a Refresh click. Both task tests returned 0; candidate diff reviewed and the isolated candidate approved/merged. Evidence: `docs/evidence/issue257-exact-package-event-ui-bd03bde7-20261030.json`. The run was started by the packaged CLI; this does not isolate the in-process event bridge from recovery observation.
+- [ ] Verify slow independent UI reads during foreground work in the exact package; source-level concurrency tests pass, but this packaged interaction is not yet proven.
+- [ ] Verify package: exercise selective event delivery and fallback behavior in exact Windows package.
 - [ ] Complete: update #257, issue #189, PR, AgentMemory and LLM Wiki after verification; do not close issues or claim parity before package acceptance.
 
 ### Exact packaged UI workspace-save smoke — issue #257 / #9 / 2026-10-30
