@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Chat: every question now carries a Workspace section with the goal, the latest run's tasks, test results, changed files and candidate diff (cut when long). The read-only coordinator can read the project folder but not the run folder, so before this it could not say what was built or how to run it (#243).
+
 ## v0.1.42
 
 - Every prompt sent to an agent now has the same layout (Document, Task, Format): the reviewer and worker prompts join the chat, planning and optimizer prompts, so an agent CLI that cannot be changed still receives a predictable prompt. A coordinator reply that is not the requested JSON is asked for once more, with the reason, before the call fails; the error now shows how the reply began (GitHub #235).

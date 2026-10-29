@@ -754,3 +754,7 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### QAS-184 Prompt blocks appear once, in order
 Given untrusted evidence containing a `# Format` line, the reviewer prompt has exactly one Document, one Task and one Format block in that order, and the evidence stays inside Document. The worker prompt keeps the `Owned paths:` and `Task:` lines and its rules in Task. A coordinator that first prints text without the requested JSON and then a valid object succeeds on the second attempt and the second prompt names the first error; two bad replies fail with the parse error.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
+
+### QAS-186 Results questions have evidence in the prompt
+Given a run with a failed task, a failing test, changed files and a diff, the prompt contains each of them and the section stays under 24 KiB with a 60 KiB diff; a diff containing `# Task` or `# Format` lines adds no block; with no run the section says no run has started; the coordinator launched from the workspace screen receives the goal and project folder.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.

@@ -735,3 +735,7 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### R-186 Every agent prompt has one standard form and its reply is checked
 The application shall send every prompt to an agent (coordinator, planner, reviewer, worker) as `# Document`, `# Task` and `# Format` blocks, each once and in that order, and shall check a coordinator reply against the requested JSON shape. No agent CLI, including an in-house one, has to be changed or shown to the application for this. A reply that is not in the requested shape is asked for once more with the reason before the call fails.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
+
+### R-188 The chat coordinator knows the workspace and the latest run
+Every chat question shall carry the workspace goal, project folder and mode and, when a run exists, its state, tasks (agent, owned paths, first line of the instruction, error), test exit codes, the candidate's changed files and a bounded candidate diff, so the read-only coordinator can describe what was built and how to run it without reading the run folder. Without a run it says so. Untrusted text in that section shall not add prompt blocks.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.

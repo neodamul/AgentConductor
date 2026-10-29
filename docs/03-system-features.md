@@ -671,3 +671,7 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### SF-174 Standard prompt form and bounded format retry
 One shared builder assembles Document, Task and Format; the reviewer and worker prompts use it. The coordinator JSON call retries once when the reply cannot be read as the requested JSON.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
+
+### SF-176 Workspace section in the chat prompt
+The chat worker builds a Workspace section from the saved settings and the latest run's report and diff and places it between the manual and the conversation.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.

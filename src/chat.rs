@@ -71,6 +71,11 @@ fn clipped(text: &str) -> &str {
 /// The prompt for the operator's latest question; only the most recent turns are sent and an
 /// earlier long answer is clipped rather than refused.
 pub fn build_prompt(turns: &[Turn], language: &str) -> Result<String, String> {
+    build_prompt_in(turns, language, "")
+}
+
+/// The same prompt with the workspace section (GitHub #243, see `chat_context`) between the manual and the conversation.
+pub fn build_prompt_in(turns: &[Turn], language: &str, workspace: &str) -> Result<String, String> {
     let last = turns.last().ok_or("the conversation is empty")?;
     if last.role != "operator" {
         return Err("the conversation must end with an operator question".into());
@@ -97,7 +102,7 @@ pub fn build_prompt(turns: &[Turn], language: &str) -> Result<String, String> {
     };
     // GitHub #211: Document (manual, earlier turns), Task (rules and the current question), Format (the answer's shape).
     Ok(format!(
-        "# Document\n\n## Manual\n\n{MANUAL}\n\n## Earlier conversation\n\n{earlier}\
+        "# Document\n\n## Manual\n\n{MANUAL}\n\n{workspace}\n\n## Earlier conversation\n\n{earlier}\
 # Task\n\nYou are the coordinator agent of AgentConductor, answering the operator's questions \
 from the workspace screen.\n\
 Rules:\n\
@@ -105,6 +110,9 @@ Rules:\n\
 operator wants something run, give the exact command and where to run it.\n\
 - For questions about the project (what was built, how to run or test it, where results are), \
 inspect the project files, plans and documents first, then answer from what you found.\n\
+- For what was built, the run's results or how to run them, start from the Workspace section of the Document \
+(goal, tasks, tests, changed files and the candidate diff), then read the files it names in the project folder. \
+The run folder is outside your reach, so its evidence is only what the Workspace section quotes.\n\
 - For questions about using AgentConductor or the current screen, answer from the manual in the Document.\n\
 - Do not invent files or commands; say when you could not find something.\n\n\
 Answer the last operator message:\n\n{}\n\n\
@@ -135,7 +143,19 @@ pub async fn ask(
     turns: &[Turn],
     language: &str,
 ) -> Result<String, String> {
-    let prompt = build_prompt(turns, language)?;
+    ask_in(profile, project, dir, turns, language, "").await
+}
+
+/// `ask` with the workspace section of the prompt (GitHub #243).
+pub async fn ask_in(
+    profile: &AgentProfile,
+    project: &Path,
+    dir: &Path,
+    turns: &[Turn],
+    language: &str,
+    workspace: &str,
+) -> Result<String, String> {
+    let prompt = build_prompt_in(turns, language, workspace)?;
     let reply = coordinator::run_json_within(
         profile,
         project,

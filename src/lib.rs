@@ -46,6 +46,7 @@ pub mod workflow;
 
 pub mod briefing;
 pub mod chat;
+pub mod chat_context;
 
 pub mod desktop;
 

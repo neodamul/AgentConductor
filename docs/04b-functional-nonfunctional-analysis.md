@@ -679,3 +679,7 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### FR-178 Prompt assembly and reply check
 `prompt_form::assemble(document, task, format)` returns the three blocks in order; heading lines inside the document that look like a block heading are neutralized so untrusted evidence cannot add a block. `prompt_form::review` and `prompt_form::worker` build the reviewer and worker prompts (the `Owned paths:` line stays verbatim). `coordinator::run_json_within` reruns the agent once, adding the parse error to the Format block, when the reply has no usable JSON for the requested field; capacity retries are unchanged.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
+
+### FR-180 Render the workspace section
+`chat_context::workspace(saved, project)` loads the run named by `last_run` (`workflow::load`, `diff.patch`) and `chat_context::render` writes goal, mode, state, error, up to 40 tasks and tests, changed files and the diff cut at 12 KiB with a note. `chat::build_prompt_in` inserts it between `## Manual` and `## Earlier conversation`; heading lines are neutralized (`prompt_form::neutral`). The Task rules point the coordinator at the section.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.

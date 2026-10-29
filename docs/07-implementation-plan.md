@@ -2294,3 +2294,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Task: `src/prompt_form.rs`; `workflow/review.rs` and `workflow/execution/worker.rs` use it; one bounded format retry in `coordinator::run_json_within`; manual 2.9 rewritten for CLIs that cannot be changed (example path fixed); CHANGELOG.
 - [ ] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI.
 - [ ] Complete: merge; release only on request. MCP select/preview prompts and the orchestrator prompt are a follow-up if the first change is accepted.
+
+### Chat knows the workspace and the latest run — GitHub #243
+
+- [x] Plan: user report 2026-10-29: the coordinator cannot read project documents and does not know the run results. R-188 → DD-200. Checked with real Claude and Codex: project files are readable; the prompt lacked the plan and results and the run folder is outside the project.
+- [x] Red: `tests/chat_context.rs` did not compile before `chat_context` and `build_prompt_in` existed.
+- [x] Task: `src/chat_context.rs`, `chat::build_prompt_in`/`ask_in`, `commands/chat.rs`; manual EN/KO and CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI. Not verified: a real coordinator answering with the new section; Codex read-only on Windows.
+- [ ] Complete: merge; release only on request.

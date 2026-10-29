@@ -57,6 +57,19 @@ fn a_slow_coordinator_answers_later_and_the_conversation_continues() {
         "a second question waits for the first"
     );
     assert_eq!(wait_for_answer(&startup)["chat"]["answer"], "Answer-1");
+    // GitHub #243: the coordinator is told the workspace (goal, mode, project folder) with every question.
+    let seen = std::fs::read_dir(&root)
+        .unwrap()
+        .flatten()
+        .filter(|e| e.file_name().to_string_lossy().starts_with("prompt."))
+        .map(|e| std::fs::read_to_string(e.path()).unwrap())
+        .next()
+        .unwrap();
+    assert!(
+        seen.contains("## Workspace") && seen.contains("Goal: g"),
+        "{seen}"
+    );
+    assert!(seen.contains(root.join("repo").to_str().unwrap()));
     mutate(&startup, json!({"kind":"chat","text":"second question"})).unwrap();
     assert_eq!(wait_for_answer(&startup)["chat"]["answer"], "Answer-2");
     let turns = startup.dispatch(br#"{"kind":"chat_history"}"#).unwrap()["turns"].clone();

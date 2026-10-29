@@ -569,3 +569,7 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### BG-141 Fewer errors from the way agents are asked
 Agents that cannot be modified still answer predictably because the application, not the CLI, fixes the prompt layout and the reply shape.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
+
+### BG-143 The coordinator is worth asking
+The operator gets answers about results and how to run them from the same chat that answers questions about the screen.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
