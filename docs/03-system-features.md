@@ -546,9 +546,11 @@ Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162.
 ### SF-142 Local company build label
 Embed an optional validated suffix from the empty-by-default repository file `company-suffix.txt` in the displayed version. Keep Cargo and update comparisons numeric; reject release packaging when the suffix is non-empty.
 Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #13.
+
 ### SF-141 Declarative custom CLI event and quota profiles
 Store custom event names, session-ID JSON Pointer, quota argv, timeout, and normalized quota output pointer on each AgentProfile. Existing provider adapters remain the default for Claude, Codex, and OpenCode; custom profiles can opt into these fields without adding provider-specific Rust branches.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+
 ### SF-140 Retain timeout evidence, retry safely, and report blocked causes
 On subprocess wall-timeout, persist attempt artifacts and audit evidence, keep the task pending during a bounded retry delay, and retry automatically unless a stop request exists. Surface the timeout in the run error banner; when retry is exhausted or the task ends blocked, place its cause in the final report.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
@@ -572,6 +574,7 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### SF-148 Read-only coordinator chat as a bounded worker job
 Run each question as a worker job of the existing job slot: the coordinator profile runs in the project folder with its read-only tools, receives the recent conversation and the manual, and returns one JSON answer that the page shows when the job completes.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
+
 ### SF-147 Follow the run with the selected session
 On each snapshot, compare the previous and current session states; when the selected session stopped running, select the next running session, or the integration entry while the run awaits a decision.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
@@ -671,3 +674,15 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### SF-174 Standard prompt form and bounded format retry
 One shared builder assembles Document, Task and Format; the reviewer and worker prompts use it. The coordinator JSON call retries once when the reply cannot be read as the requested JSON.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
+
+### SF-176 Workspace section in the chat prompt
+The chat worker builds a Workspace section from the saved settings and the latest run's report and diff and places it between the manual and the conversation.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+
+### SF-175 Pending state for a chat send whose outcome is unknown
+The chat panel keeps an unconfirmed message as a pending turn, keeps the send button disabled, and reconciles with the stored conversation as soon as it can be read.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.
+
+### SF-177 Fence scan that tries every block
+The reply reader tries each fenced block in turn and skips the ones that do not parse or lack the field.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.

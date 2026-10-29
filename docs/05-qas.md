@@ -626,9 +626,11 @@ Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162.
 ### QAS-151 Company suffix is visible locally and excluded from releases
 Given an empty suffix file, both titlebars show the numeric Cargo version. Given `company_name`, both show `<numeric-version>.company_name`, while update comparison still uses numeric components. Package assembly fails before writing an archive for any non-empty suffix. Invalid labels do not alter the displayed version.
 Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #13.
+
 ### QAS-150 Custom CLI profile extension is bounded and backward compatible
 Given an existing workspace profile without custom event or quota settings, deserialize and execute it with the previous wire behavior. Given a custom profile, map configured event names and session pointers, invoke only its configured argv quota command within 1–300 seconds, retain process logs, reject output over 1 MiB or outside the normalized Snapshot bounds, and preserve the configuration through workspace export/import. A profile without a quota command is not queried. Verify with Rust tests on macOS and Windows; built-in Claude/Codex/OpenCode fixtures must remain unchanged.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+
 ### QAS-149 Timeout recovery preserves evidence, honors Stop, and informs operators
 Given a worker times out once then succeeds, the run retries after a bounded delay, reaches review, and retains the first attempt's timeout logs and audit record. Given a stop request during the retry delay, no new attempt starts and the run ends stopped. When the final state is blocked, the report's top-level error identifies the cause. Regression tests cover automatic retry, Stop during backoff, and the existing JavaScript run-banner contract consuming `Report.error` without suppressing it for blocked state.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
@@ -652,6 +654,7 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### QAS-157 A question yields an answer or a visible error, never a file change
 Given a coordinator that answers `{"answer": ...}`, the chat shows that answer once; given a failing coordinator it shows the error and keeps the conversation usable; invalid conversations (empty, ending with the assistant, over-long, unknown role) are refused before any job starts; the prompt stays under the coordinator limit.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
+
 ### QAS-156 The selection follows a completed session to the next running one
 Given sessions a (running) and b (pending), when a completes and b starts, the selection moves to b; when a completes and the run waits for approval, the integration entry opens; a finished session selected for review stays selected.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
@@ -754,3 +757,15 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### QAS-184 Prompt blocks appear once, in order
 Given untrusted evidence containing a `# Format` line, the reviewer prompt has exactly one Document, one Task and one Format block in that order, and the evidence stays inside Document. The worker prompt keeps the `Owned paths:` and `Task:` lines and its rules in Task. A coordinator that first prints text without the requested JSON and then a valid object succeeds on the second attempt and the second prompt names the first error; two bad replies fail with the parse error.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
+
+### QAS-186 Results questions have evidence in the prompt
+Given a run with a failed task, a failing test, changed files and a diff, the prompt contains each of them and the section stays under 24 KiB with a 60 KiB diff; a diff containing `# Task` or `# Format` lines adds no block; with no run the section says no run has started; the coordinator launched from the workspace screen receives the goal and project folder.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+
+### QAS-185 No message in both the conversation and the input
+Given a send that times out and a history request that fails, the message stays in the conversation, the input stays empty and sending is disabled. When the history then contains the message, the conversation equals the stored one and the late answer is shown once with the input still empty. When the history then lacks the message, the turn is removed, the text is back in the input and the error is shown.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.
+
+### QAS-187 Incomplete draft then valid JSON parses
+An incomplete draft followed by a valid block returns the valid block; two valid blocks return the first; malformed-only replies fail with the no-valid-JSON error; a 100 KiB reply is accepted and a reply above 256 KiB is refused.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.

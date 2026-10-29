@@ -17,9 +17,9 @@ vm.runInContext(source + ';this.chatUi=chatUi;', context);
 const plain = v => JSON.parse(JSON.stringify(v));
 const key = (q, init) => q('chat-input').handlers.keydown({ preventDefault() {}, isComposing: false, shiftKey: false, altKey: false, ...init });
 (async () => {
-  const calls = [], notices = []; let current = { revision: 'rev', chat_revision: 'chat-rev', job: null, chat: null }, stored = [], reply = { id: 'job-1' };
+  const calls = [], notices = []; let current = { revision: 'rev', chat_revision: 'chat-rev', job: null, chat: null }, stored = [], reply = { id: 'job-1' }, historyDown = false;
   const q = make();
-  const ui = context.chatUi({ q, request: async p => { calls.push(p); if (p.kind === 'chat_history') return { turns: stored }; if (p.kind === 'chat_reset') return { turns: [] }; if (reply instanceof Error) throw reply; return reply; }, state: () => current, notice: (m, e) => notices.push([m, e]) });
+  const ui = context.chatUi({ q, request: async p => { calls.push(p); if (p.kind === 'chat_history') { if (historyDown) throw new Error('timed out'); return { turns: stored }; } if (p.kind === 'chat_reset') return { turns: [] }; if (reply instanceof Error) throw reply; return reply; }, state: () => current, notice: (m, e) => notices.push([m, e]) });
   stored = [{ role: 'operator', text: 'What was built?' }, { role: 'assistant', text: 'A ladder game.' }];
   ui.update(); await tick();
   assert.deepEqual(plain(ui.turns()), stored, 'the stored conversation is shown again');
@@ -33,7 +33,7 @@ const key = (q, init) => q('chat-input').handlers.keydown({ preventDefault() {},
   assert.deepEqual(plain(calls.at(-1)), { kind: 'chat', revision: 'chat-rev', text: 'How do I run it?\nthen test' });
   assert.equal(q('chat-send').disabled, true, 'sending is blocked while the coordinator works');
   assert.equal(q('chat-input').value, '', 'the input is cleared');
-  current = { revision: 'rev', job: { id: 'job-1', kind: 'chat', state: 'completed' }, chat: { job: 'job-1', answer: 'Run:\n```\nnpm start\n```\nDone.' } };
+  current = { revision: 'rev', chat_revision: 'chat-rev', job: { id: 'job-1', kind: 'chat', state: 'completed' }, chat: { job: 'job-1', answer: 'Run:\n```\nnpm start\n```\nDone.' } };
   ui.update();
   assert.equal(ui.turns().length, 4);
   const answer = q('chat-log').children.at(-1).children;
@@ -69,10 +69,32 @@ const key = (q, init) => q('chat-input').handlers.keydown({ preventDefault() {},
   current = { revision: 'rev', chat_revision: 'chat-rev', job: { id: 'job-7', kind: 'chat', state: 'completed' }, chat: { job: 'job-7', answer: 'Started.' } };
   ui.update();
   assert.deepEqual(plain(ui.turns().at(-1)), { role: 'assistant', text: 'Started.' }, 'the late answer is shown');
-  stored = savedHistory; current = { revision: 'rev', job: null, chat: null };
+  stored = savedHistory; current = { revision: 'rev', chat_revision: 'chat-rev', job: null, chat: null };
   reply = new Error('timed out'); q('chat-input').value = 'Never started'; key(q, { key: 'Enter' }); await tick(); await tick();
   assert.equal(q('chat-input').value, 'Never started', 'a question the native side never saw is restored');
   assert.ok(!ui.turns().some(t => t.text === 'Never started'));
+  // GitHub #241: when the stored conversation cannot be read either, the outcome is unknown and nothing is rolled back.
+  historyDown = true; reply = new Error('timed out'); q('chat-input').value = 'Slow one'; key(q, { key: 'Enter' }); await tick(); await tick();
+  assert.equal(q('chat-input').value, '', 'an unconfirmed send is not put back into the input');
+  assert.equal(ui.turns().at(-1).text, 'Slow one', 'and stays in the conversation as pending');
+  assert.equal(q('chat-send').disabled, true, 'while sending stays blocked');
+  historyDown = false; stored = [...savedHistory, { role: 'operator', text: 'Slow one' }];
+  current = { revision: 'rev', chat_revision: 'chat-rev', job: { id: 'job-8', kind: 'chat', state: 'running' }, chat: null };
+  ui.update(); await tick();
+  assert.equal(q('chat-input').value, '', 'the native side had accepted it: the input stays empty');
+  assert.equal(q('chat-send').disabled, true, 'and its job is followed');
+  current = { revision: 'rev', chat_revision: 'chat-rev', job: { id: 'job-8', kind: 'chat', state: 'completed' }, chat: { job: 'job-8', answer: 'Late.' } };
+  ui.update();
+  assert.deepEqual(plain(ui.turns().at(-1)), { role: 'assistant', text: 'Late.' });
+  assert.equal(ui.turns().filter(t => t.text === 'Slow one').length, 1, 'the message appears once');
+  stored = savedHistory; current = { revision: 'rev', chat_revision: 'chat-rev', job: null, chat: null }; ui.reset(); ui.update(); await tick();
+  historyDown = true; q('chat-input').value = 'Lost one'; key(q, { key: 'Enter' }); await tick(); await tick();
+  assert.equal(q('chat-input').value, '');
+  historyDown = false; ui.update(); await tick();
+  assert.equal(q('chat-input').value, 'Lost one', 'the native side never saw it: the text returns once that is known');
+  assert.ok(!ui.turns().some(t => t.text === 'Lost one'));
+  assert.equal(notices.at(-1)[0], 'timed out');
+  assert.equal(q('chat-send').disabled, false);
   // A new conversation clears the screen and the stored history.
   q('chat-new').onclick(); await tick();
   assert.equal(calls.at(-1).kind, 'chat_reset');
@@ -81,11 +103,11 @@ const key = (q, init) => q('chat-input').handlers.keydown({ preventDefault() {},
   assert.equal(q('chat').hidden, true);
   // Reopening while the coordinator is still working picks the running chat up, then shows its answer.
   const q2 = make(); stored = [{ role: 'operator', text: 'Where are results?' }];
-  current = { revision: 'rev', job: { id: 'job-9', kind: 'chat', state: 'running' }, chat: null };
+  current = { revision: 'rev', chat_revision: 'chat-rev', job: { id: 'job-9', kind: 'chat', state: 'running' }, chat: null };
   const ui2 = context.chatUi({ q: q2, request: async p => (p.kind === 'chat_history' ? { turns: stored } : { id: 'x' }), state: () => current, notice() {} });
   ui2.update(); await tick();
   assert.equal(q2('chat-send').disabled, true, 'a running chat is adopted');
-  current = { revision: 'rev', job: { id: 'job-9', kind: 'chat', state: 'completed' }, chat: { job: 'job-9', answer: 'In dist/.' } };
+  current = { revision: 'rev', chat_revision: 'chat-rev', job: { id: 'job-9', kind: 'chat', state: 'completed' }, chat: { job: 'job-9', answer: 'In dist/.' } };
   ui2.update();
   assert.deepEqual(plain(ui2.turns().at(-1)), { role: 'assistant', text: 'In dist/.' });
   assert.equal(q2('chat-send').disabled, false);

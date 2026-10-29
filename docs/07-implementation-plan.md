@@ -2303,3 +2303,26 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Task: `src/prompt_form.rs`; `workflow/review.rs` and `workflow/execution/worker.rs` use it; one bounded format retry in `coordinator::run_json_within`; manual 2.9 rewritten for CLIs that cannot be changed (example path fixed); CHANGELOG.
 - [ ] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI.
 - [ ] Complete: merge; release only on request. MCP select/preview prompts and the orchestrator prompt are a follow-up if the first change is accepted.
+
+### Chat knows the workspace and the latest run — GitHub #243
+
+- [x] Plan: user report 2026-10-29: the coordinator cannot read project documents and does not know the run results. R-188 → DD-200. Checked with real Claude and Codex: project files are readable; the prompt lacked the plan and results and the run folder is outside the project.
+- [x] Red: `tests/chat_context.rs` did not compile before `chat_context` and `build_prompt_in` existed.
+- [x] Task: `src/chat_context.rs`, `chat::build_prompt_in`/`ask_in`, `commands/chat.rs`; manual EN/KO and CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI. Not verified: a real coordinator answering with the new section; Codex read-only on Windows.
+- [ ] Complete: merge; release only on request.
+### Chat send whose outcome is unknown — GitHub #241
+
+- [x] Plan: user report 2026-10-29: chat timed out, the text went back into the input, a snapshot also timed out, and much later the answer arrived while the same text was still in the input. R-187 → DD-199: keep the message pending while the stored conversation cannot be read, decide when it can.
+- [x] Red: a case in `tests/chat_runtime.cjs` (timeout + failing history, then accepted / not accepted) failed before the change.
+- [x] Task: `src/ui/chat.js`; CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI. Not verified: a real stalled application.
+- [ ] Complete: merge; release only on request. Related: Codex PR #240 shortens the stall (#234) and does not change this rollback.
+
+### Fenced JSON after an unfinished draft — GitHub #247
+
+- [x] Plan: user report: `json_reply` skipped the complete second block when an unfinished fenced draft came first, and the 64 KiB reply limit is too small. R-189 → DD-201: advance past the opening marker only; limit 256 KiB.
+- [x] Red: `tests/coordinator_document.rs` (draft then valid, two valid, malformed only, size limits).
+- [x] Task: `src/coordinator/document.rs`; CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI.
+- [ ] Complete: merge; release only on request.

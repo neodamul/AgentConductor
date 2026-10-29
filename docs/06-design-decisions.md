@@ -1404,6 +1404,7 @@ Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162.
 ### DD-165 Keep company suffixes local and outside release artifacts
 Leave Cargo.toml's version as numeric `x.y.z`. Embed the contents of the empty-by-default root `company-suffix.txt` at build time and append it to `update::current()` only when it is a short ASCII label (`[A-Za-z0-9_.-]`). Use that function in both titlebars; keep MCP client protocol versions and semantic update comparisons numeric. Before assembling a macOS or Windows release package, Rust reads the suffix file and refuses any non-whitespace content. The tracked file remains empty in ordinary commits/releases; a company developer's local edit is visibly uncommitted and cannot be packaged.
 Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #13.
+
 ### DD-164 Custom CLI parsing and quota configuration (#12)
 Keep native Claude/Codex/OpenCode parsing and quota collection as their verified defaults. Custom profiles may declare `event_types` as raw `type` string → standard event kind, and `session_id_pointer` as a JSON Pointer. Optional `quota_command` contains direct argv, `timeout_seconds` (default 30, bounded 1–300), and optional `output_pointer`; `{workspace}` and `{agent_id}` placeholders are substituted before spawn. The process has a dedicated cwd and retained stdout/stderr logs; no shell is involved. Output is one JSON object matching `Snapshot` (`source`, positive `observed_at`, optional `plan_type`, `windows`, `budgets`, optional `restriction`), with 1 MiB and field/count bounds. The custom CLI or a local wrapper must normalize its provider-specific response to this schema; a general parser DSL is deliberately out of scope. Omitted fields preserve the legacy custom event contract and disable quota polling. Shared workspace JSON export/import carries declarative settings while continuing to omit local environment values and model catalogs.
 
@@ -1428,6 +1429,7 @@ Example profile fragment:
 Omitted fields preserve the legacy decoder; omitting `quota_command` excludes that profile from the Rust quota-due map. The Rust `quota-refresh` command and controller dispatch accept configured custom profiles. The current production WebView still gates quota controls to Claude/Codex; custom quota controls await the Rust UI migration under R-151 and are not added in this change.
 
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+
 ### DD-163 Resume wall-timeout attempts through the existing scheduler
 Treat a worker process wall-timeout as a recoverable pending attempt: retain the per-attempt directory and ownership log, increment `TaskReport.timeouts`, publish an audit event and user-visible error, then set `retry_not_before` using `min(task_timeout, 60 seconds)`. The scheduler already checks `stop.request` before launching pending work, so Stop during backoff prevents relaunch. If recovery ends blocked, copy the blocked task's cause into `Report.error`, which the existing run banner consumes. Keep this deterministic Rust-side control loop independent of agent steering or additional model calls.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
@@ -1451,6 +1453,7 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### DD-171 Implement chat as a `chat` worker job with an artifact answer
 `Request::Chat` validates the turns (`src/chat.rs`), writes the conversation to a private artifact and launches `agentconductor chat` through the existing job slot, like MCP preview. The worker calls `coordinator::run_json_within` with a prompt holding the embedded manual and recent turns, stores the answer artifact, and the snapshot returns it once with its job ID. The page (`chat.js`) keeps the conversation in memory.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
+
 ### DD-170 Decide the follow target from consecutive snapshots in the page
 `followTarget(prev, next, selectedId, onCoordinator)` in the Agent Room script returns the next running session or the integration entry, or nothing; the poll applies it through the existing selection functions. No backend change.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
@@ -1556,3 +1559,15 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### DD-198 One prompt builder, one retry
 Layout is code-owned and CLI-independent: `src/prompt_form.rs` holds `assemble`, `review` and `worker`. Format retry is a single extra run inside `run_json_within` (bounded, prompt gains `# Previous reply` with the error), not a loop, so cost stays bounded. Rejected: asking operators to make CLIs speak acio (impossible for CLIs nobody can change, decision 3 in `docs/cli-io-protocol.md`) and per-CLI mapping fields for this purpose.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
+
+### DD-200 Quote the evidence instead of widening the sandbox
+The coordinator keeps `Read,Grep,Glob` in the project folder (`--add-dir` or an unrestricted read would also expose secrets under the data folder and differs per CLI). Checked with the real Claude and Codex read-only argv: both read project files; the gap was missing context, not a sandbox fault. The run's evidence is quoted, bounded, in the prompt. Rejected: a per-CLI extra-folder option and sending whole run folders.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+
+### DD-199 Pending instead of guessing
+Only `chat.js` changes. The unknown outcome is a state (`unsure`) held next to `waiting`, resolved by the next successful `chat_history`; no timer and no extra request, because snapshot renders already call `update()`, which reloads the history while `ready` is false. Rejected: restoring the text and clearing it later (the input may have been edited by then) and a fixed wait before rolling back.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.
+
+### DD-201 Advance one fence marker at a time
+`json_reply` moves past the opening marker only, never past a closing marker it assumed. An unfinished block then ends at the next marker, which is read as the start of the following block. A marker that closes a block is read as an opening whose body is not JSON and is skipped. The reply limit is one constant, 256 KiB, still below the 1 MiB decoder bound.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.

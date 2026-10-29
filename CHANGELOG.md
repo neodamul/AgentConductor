@@ -6,6 +6,13 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Coordinator replies: a complete fenced JSON document is now found even when an unfinished fenced draft comes before it (the second opening marker was taken for the first block's closing one, so planning failed). The coordinator reply limit is raised from 64 KiB to 256 KiB.
+
+## v0.1.43
+
+- Chat: every question now carries a Workspace section with the goal, the latest run's tasks, test results, changed files and candidate diff (cut when long). The read-only coordinator can read the project folder but not the run folder, so before this it could not say what was built or how to run it (#243).
+- Chat: when a send times out and the stored conversation cannot be read either, the message stays in the conversation as pending instead of being put back into the input. Once the conversation can be read, an accepted message is followed to its answer with the input still empty; a message the application never received returns to the input with the error. Before, the same text showed in the input and in the conversation when the late answer arrived (#241).
+
 ## v0.1.42
 
 - Every prompt sent to an agent now has the same layout (Document, Task, Format): the reviewer and worker prompts join the chat, planning and optimizer prompts, so an agent CLI that cannot be changed still receives a predictable prompt. A coordinator reply that is not the requested JSON is asked for once more, with the reason, before the call fails; the error now shows how the reply began (GitHub #235).
