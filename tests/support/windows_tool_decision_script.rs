@@ -2,6 +2,7 @@ pub const SCRIPT: &str = r#"
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
+Add-Type -AssemblyName WindowsBase
 $A = [System.Windows.Automation.AutomationElement]
 $T = [System.Windows.Automation.TreeScope]
 $C = [System.Windows.Automation.Condition]::TrueCondition
@@ -49,6 +50,17 @@ function Wait-EnabledButton($name) {
   $button = Find-CurrentButton $name
   $enabled = if ($button) { $button.Current.IsEnabled } else { 'missing' }
   throw "ACTION_BUTTON_NOT_ENABLED: name=$name enabled=$enabled"
+}
+function PointHitsButton($x, $y, $name) {
+  $point = [System.Windows.Point]::new([double]$x, [double]$y)
+  $element = $A::FromPoint($point)
+  $walker = [System.Windows.Automation.TreeWalker]::ControlViewWalker
+  for ($depth = 0; $element -and $depth -lt 8; $depth++) {
+    if ($element.Current.ProcessId -ne $targetPid) { return $false }
+    if ($element.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' -and $element.Current.Name -eq $name) { return $true }
+    $element = $walker.GetParent($element)
+  }
+  return $false
 }
 function Ensure-ButtonInsideWindow($name) {
   $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
@@ -199,9 +211,13 @@ function Activate($button, $expected, $visible) {
     $button = Ensure-ButtonInsideWindow $name
     $button = Wait-EnabledButton $name
     if (($null -ne (Find-Button $expected)) -eq $visible) { return }
-    $bounds = $button.Current.BoundingRectangle
-    $x = [int]($bounds.Left + $bounds.Width / 2)
-    $y = [int]($bounds.Top + $bounds.Height / 2)
+    $point = $button.GetClickablePoint()
+    $x = [int][Math]::Round($point.X)
+    $y = [int][Math]::Round($point.Y)
+    if (-not (PointHitsButton $x $y $name)) {
+      Write-Output "POINTER_NOT_ON_TARGET_BUTTON: name=$name x=$x y=$y"
+      continue
+    }
     $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
     $clickFailure = [ToolDecisionMouse]::Click($hwnd, $x, $y, [uint32]$targetPid)
     if ($clickFailure) { throw "CHECKED_POINTER_CLICK_FAILED: $clickFailure" }

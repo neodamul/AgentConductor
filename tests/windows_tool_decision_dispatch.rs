@@ -79,6 +79,25 @@ fn checked_pointer_fallback_uses_sendinput_after_process_ownership_checks() {
 }
 
 #[test]
+fn pointer_fallback_uses_and_verifies_the_uia_button_click_point() {
+    let source = include_str!("support/windows_tool_decision_script.rs");
+    let activation = source
+        .split("function Activate($button")
+        .nth(1)
+        .expect("activation helper must be explicit");
+    let point = activation.find("$button.GetClickablePoint()").unwrap();
+    let hit_test = activation.find("PointHitsButton $x $y $name").unwrap();
+    let click = activation
+        .find("[ToolDecisionMouse]::Click($hwnd, $x, $y")
+        .unwrap();
+    assert!(
+        point < hit_test && hit_test < click,
+        "pointer fallback must target and verify the named accessible button"
+    );
+    assert!(source.contains("$A::FromPoint($point)"));
+}
+
+#[test]
 fn checked_activation_journals_uia_and_pointer_results_before_waiting() {
     let source = include_str!("support/windows_tool_decision_script.rs");
 

@@ -1,3 +1,12 @@
+### Verify the exact tool-decision target before Windows pointer input — issue #9 / 2026-10-29
+
+- [x] Plan: exact Windows package run `40790365479` showed the tool-decision driver reporting pointer clicks inside the app process while the `Allow once` modal remained unchanged; the helper did not verify that the point hit that named button.
+- [x] Red: add a source-contract test requiring UIA's clickable point and exact hit-target check before pointer injection; it failed before the driver added either guard.
+- [x] Task: use the enabled button's UIA clickable point and `AutomationElement.FromPoint`, then accept it only when the control-view parent chain resolves to the same app-owned named button.
+- [x] Local Verify: tool-decision driver contracts pass 12/12; source-layout checks pass 2/2; warning-denied Clippy, formatting, and diff checks pass. Each touched file remains under 300 lines.
+- [ ] Exact-package Verify: run the packaged Windows tool-decision approval and rejection journey on the current head; a visible confirmation and persisted receipt state are required.
+- [ ] Complete: update issue #9, PR #22, AgentMemory, LLM Wiki, and retained package evidence after the exact-head result. Acceptance remains 22/50 until all required package gates pass.
+
 ### Wait for the candidate rejection field to become actionable — issue #9 / 2026-10-29
 
 - [x] Plan: exact Windows package run `40790146777` failed after the reject prompt appeared because periodic Agent Room refresh left the rejection edit disabled; UIA `SetValue` raised `ElementNotEnabledException`.
