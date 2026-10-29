@@ -40,7 +40,7 @@ impl Probe {
         } else {
             RequestWorker::new(room, context)?
         };
-        worker.send(br#"{"kind":"snapshot","icons":true}"#)?;
+        worker.send_initial_snapshot()?;
         Ok(Self {
             motion,
             worker: Some(worker),

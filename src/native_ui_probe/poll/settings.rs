@@ -258,6 +258,16 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
         }
         Some(Pending::ChatStart) => probe.chat_started(snapshot),
         Some(Pending::ChatRefresh) => probe.chat_refreshed(snapshot),
+        Some(Pending::ChatReset) if snapshot["reset"] == true => {
+            probe.coordinator_chat.reset();
+            probe.pending = None;
+            probe.error = None;
+        }
+        Some(Pending::ChatReset) => {
+            probe.coordinator_chat.reset_failed();
+            probe.pending = None;
+            probe.error = Some("Coordinator conversation was not reset".into());
+        }
         _ => {}
     }
 }

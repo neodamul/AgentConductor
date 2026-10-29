@@ -67,7 +67,7 @@ pub struct Saved {
     pub(super) imports: Option<crate::mcp::Applied>,
     #[serde(default)]
     pub(super) mcp_result: Option<String>,
-    #[serde(skip)]
+    #[serde(default)]
     pub(super) chat_result: Option<String>,
     pub(super) config: Config,
     pub(super) proposal: Option<Proposal>,

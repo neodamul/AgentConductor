@@ -78,8 +78,10 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                     .size_range(300.0..=480.0)
                     .show(ui, |ui| probe.coordinator_chat.show(&language, ui))
                     .inner;
-                if let Some(chat::Event::Send(turns)) = event {
-                    probe.send_coordinator_chat(turns);
+                match event {
+                    Some(chat::Event::Send(turns)) => probe.send_coordinator_chat(turns),
+                    Some(chat::Event::NewConversation) => probe.reset_coordinator_chat(),
+                    None => {}
                 }
             }
             probe.show_sharing(ui.ctx());

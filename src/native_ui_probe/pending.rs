@@ -58,5 +58,6 @@ pub(super) enum Pending {
     UpdateSourceSave,
     ChatStart,
     ChatRefresh,
+    ChatReset,
     Update,
 }

@@ -6371,5 +6371,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: add a real egui interaction regression that submits a question and checks the draft/history after rejection; it fails because the existing state loses the draft and retains the unsent turn.
 - [x] Task: keep the just-submitted turn pending until the backend accepts a job. Restore it only for pre-acceptance/request errors; keep accepted-job failures in the conversation history.
 - [x] Verify locally: `native_workspace_chat`, `startup_chat`, and `source_layout` pass 8 tests; formatting, warning-denied all-target Clippy, and diff hygiene pass. Changed source/test files are 256, 66, and 221 lines.
+- [x] Port the DD-192 artifact-pair history contract: persist the latest chat artifact pointer, restore the transcript on initial open and after saving workspace settings, resume following a still-running accepted chat job, and clear history/artifacts through **New chat**. Red/Green covers history restoration from input+answer artifacts, settings-save preservation, reset across reopen, UI reset activation, and active-job restoration.
+- [x] Verify locally: startup/chat/reset/native-probe/localization/source-layout/public-doc suites pass 44 tests; warning-denied all-target Clippy, rustfmt, diff checks, and the 300-line limit pass.
 - [ ] Verify packaged macOS/Windows chat submission and accepted-job failure behavior in a package run that includes this commit.
-- [ ] Complete: continue the remaining #197 work for persisted history, late accepted jobs, and new/reset conversation behavior; do not claim the chat parity unit complete yet.
+- [ ] Complete: run exact packaged macOS/Windows chat flows; then update issue #9 and acceptance only from observed package evidence.

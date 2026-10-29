@@ -7,7 +7,7 @@ impl Startup {
         saved: &mut Saved,
         turns: Vec<crate::chat::Turn>,
     ) -> Result<serde_json::Value, String> {
-        clear_previous_chat_artifacts(&self.broker.dir)?;
+        let turns = crate::chat::recent_history(&turns);
         let language = if crate::ui::language::load() == "ko" {
             "Korean"
         } else {
@@ -22,12 +22,53 @@ impl Startup {
             &serde_json::to_vec(&serde_json::json!({"turns": turns, "language": language}))
                 .map_err(|e| e.to_string())?,
         )?;
+        let old_result = saved.chat_result.clone();
         saved.chat_result = Some(format!("chat-{id}.json"));
-        self.launch(
+        let result = self.launch(
             saved,
             "chat",
-            vec!["chat".into(), self.broker.dir.to_string_lossy().into(), id],
-        )
+            vec![
+                "chat".into(),
+                self.broker.dir.to_string_lossy().into(),
+                id.clone(),
+            ],
+        );
+        if result.is_err() {
+            saved.chat_result = old_result;
+        } else {
+            let _ = clear_previous_chat_artifacts(&self.broker.dir, Some(&id));
+        }
+        result
+    }
+
+    pub(super) fn chat_history(
+        &self,
+        saved: &Saved,
+        _job: &serde_json::Value,
+    ) -> Result<serde_json::Value, String> {
+        let Some(name) = &saved.chat_result else {
+            return Ok(serde_json::json!([]));
+        };
+        let Some(id) = chat_id(name) else {
+            return Err("stored coordinator chat reference is invalid".into());
+        };
+        let input = self
+            .broker
+            .dir
+            .join("mcp")
+            .join(format!("chat-input-{id}.json"));
+        let mut turns: Vec<crate::chat::Turn> = crate::mcp::load(&input)
+            .ok()
+            .and_then(|bytes| serde_json::from_slice::<serde_json::Value>(&bytes).ok())
+            .and_then(|value| serde_json::from_value(value["turns"].clone()).ok())
+            .unwrap_or_default();
+        if let Some(answer) = self.chat_answer(name) {
+            turns.push(crate::chat::Turn {
+                role: "assistant".into(),
+                text: answer,
+            });
+        }
+        serde_json::to_value(crate::chat::recent_history(&turns)).map_err(|e| e.to_string())
     }
 
     pub(super) fn chat_snapshot(
@@ -41,20 +82,45 @@ impl Startup {
         let Some(name) = &saved.chat_result else {
             return serde_json::Value::Null;
         };
-        let path = self.broker.dir.join("mcp").join(name);
-        let answer = crate::mcp::load(&path)
+        let answer = self.chat_answer(name);
+        let Some(answer) = answer else {
+            return serde_json::Value::Null;
+        };
+        serde_json::json!({"job":job["id"],"answer":answer})
+    }
+
+    pub(super) fn reset_chat(&self, saved: &mut Saved) -> Result<serde_json::Value, String> {
+        saved.chat_result = None;
+        self.store(saved)?;
+        let _ = clear_previous_chat_artifacts(&self.broker.dir, None);
+        Ok(serde_json::json!({"reset":true}))
+    }
+
+    fn chat_answer(&self, name: &str) -> Option<String> {
+        let id = chat_id(name)?;
+        let path = self.broker.dir.join("mcp").join(format!("chat-{id}.json"));
+        crate::mcp::load(&path)
             .ok()
             .and_then(|data| serde_json::from_slice::<serde_json::Value>(&data).ok())
-            .map(|value| serde_json::json!({"job": job["id"], "answer": value["answer"]}));
-        let _ = std::fs::remove_file(path);
-        answer.unwrap_or(serde_json::Value::Null)
+            .and_then(|value| value["answer"].as_str().map(str::to_owned))
     }
 }
 
-fn clear_previous_chat_artifacts(root: &Path) -> Result<(), String> {
+fn chat_id(name: &str) -> Option<&str> {
+    let id = name.strip_prefix("chat-")?.strip_suffix(".json")?;
+    (!id.is_empty()
+        && id
+            .bytes()
+            .all(|byte| byte.is_ascii_hexdigit() || byte == b'-'))
+    .then_some(id)
+}
+
+fn clear_previous_chat_artifacts(root: &Path, keep: Option<&str>) -> Result<(), String> {
     for entry in fs::read_dir(root).map_err(|error| error.to_string())? {
         let entry = entry.map_err(|error| error.to_string())?;
         if entry.file_name().to_string_lossy().starts_with("chat-run-")
+            && !keep
+                .is_some_and(|id| entry.file_name().to_string_lossy() == format!("chat-run-{id}"))
             && entry
                 .file_type()
                 .map_err(|error| error.to_string())?
@@ -70,6 +136,10 @@ fn clear_previous_chat_artifacts(root: &Path) -> Result<(), String> {
             let name = entry.file_name();
             if name.to_string_lossy().starts_with("chat-")
                 && name.to_string_lossy().ends_with(".json")
+                && !keep.is_some_and(|id| {
+                    name.to_string_lossy() == format!("chat-{id}.json")
+                        || name.to_string_lossy() == format!("chat-input-{id}.json")
+                })
                 && entry
                     .file_type()
                     .map_err(|error| error.to_string())?

@@ -15,6 +15,10 @@ pub struct Turn {
     pub text: String,
 }
 
+pub fn recent_history(turns: &[Turn]) -> Vec<Turn> {
+    turns[turns.len().saturating_sub(MAX_TURNS)..].to_vec()
+}
+
 pub fn build_prompt(turns: &[Turn], language: &str) -> Result<String, String> {
     let last = turns.last().ok_or("the conversation is empty")?;
     if last.role != "operator" {

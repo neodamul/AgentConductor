@@ -61,7 +61,7 @@ impl Startup {
             } else {
                 None
             },
-            chat_result: None,
+            chat_result: saved.chat_result.clone(),
             config,
             proposal: if keep { saved.proposal.clone() } else { None },
             job: if keep { saved.job.clone() } else { None },

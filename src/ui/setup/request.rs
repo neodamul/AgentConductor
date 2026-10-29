@@ -24,6 +24,9 @@ pub(super) enum Request {
         revision: String,
         turns: Vec<crate::chat::Turn>,
     },
+    ChatReset {
+        revision: String,
+    },
     McpApply {
         revision: String,
         preview_id: String,
@@ -36,6 +39,8 @@ pub(super) enum Request {
         mcp_result: bool,
         #[serde(default)]
         chat_result: bool,
+        #[serde(default)]
+        chat_history: bool,
         /// DD-71: icon data URLs only when the page asks for them.
         #[serde(default)]
         icons: bool,

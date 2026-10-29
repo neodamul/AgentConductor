@@ -115,6 +115,14 @@ impl RequestWorker {
             .map_err(|error| error.to_string())
     }
 
+    pub fn send_initial_snapshot(&self) -> Result<(), String> {
+        self.send(if self.room_view {
+            br#"{"kind":"snapshot","icons":true}"#
+        } else {
+            br#"{"kind":"snapshot","icons":true,"chat_history":true,"chat_result":true}"#
+        })
+    }
+
     pub fn pick_folder(&self, purpose: crate::ui::picker::FolderPurpose) -> Result<(), String> {
         self.requests
             .try_send(WorkerRequest::PickFolder(purpose))

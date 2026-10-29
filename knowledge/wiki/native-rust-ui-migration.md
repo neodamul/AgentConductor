@@ -1459,7 +1459,9 @@ The driver now sends checked Win32 `SendInput` down/up events only after foregro
 
 ### Coordinator chat submission lifecycle — 2026-10-29
 
-Keep a coordinator question in a pending-send state until Startup confirms that a chat job was accepted. If request construction, dispatch, or job acceptance fails, restore the question to the editor and remove it from the sent conversation turns. Once Startup returns an accepted job ID, retain the user turn even if that job later fails; this avoids misrepresenting an accepted asynchronous request as never sent. Regression coverage uses actual egui input and AccessKit values in `tests/native_workspace_chat.rs`. Packaged acceptance and durable conversation history remain open.
+Keep a coordinator question in a pending-send state until Startup confirms that a chat job was accepted. If request construction, dispatch, or job acceptance fails, restore the question to the editor and remove it from the sent conversation turns. Once Startup returns an accepted job ID, retain the user turn even if that job later fails; this avoids misrepresenting an accepted asynchronous request as never sent. Regression coverage uses actual egui input and AccessKit values in `tests/native_workspace_chat.rs`. Packaged acceptance remains open.
+
+The durable history follows DD-192 without a second mutable history file. `Saved.chat_result` points to the newest `chat-input-<id>.json` / `chat-<id>.json` artifact pair; an initial workspace snapshot reads the bounded transcript and any completed answer. If its stored job is still running, the UI restores the job ID and resumes polling. New chat clears the pointer and old chat artifacts. Local regression coverage verifies input+answer restoration, reset across reopen, the accessible New chat action, and restored running-job following. Exact package validation remains pending.
 
 ### Native UI request diagnostics — 2026-10-29
 

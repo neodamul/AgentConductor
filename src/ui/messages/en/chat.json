@@ -2,6 +2,7 @@
   "chat.open": "Ask coordinator",
   "chat.title": "Coordinator",
   "chat.close": "Close",
+  "chat.new": "New chat",
   "chat.you": "You",
   "chat.placeholder": "Ask about this workspace or its project…",
   "chat.send": "Send",

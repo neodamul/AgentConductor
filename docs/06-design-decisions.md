@@ -1528,7 +1528,7 @@ The footer line is deleted, not turned into a live mode display, because the wor
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
 
 ### DD-192 Ask the application instead of guessing
-A timeout says nothing about whether the job started, so the page treats the stored conversation as the truth. The request limit is not raised: any limit can be exceeded and a longer wait only delays the same blind spot. Why a reply takes more than 15 seconds is not established.
+A timeout says nothing about whether the job started, so the UI restores the latest conversation from the persisted `chat_result` pointer and its input/answer artifact pair. The input contains the bounded transcript; an answer artifact is included when present, and a running accepted job is followed after reopening. Saving workspace settings preserves the pointer; **New chat** clears it and old chat artifacts. No second conversation file is introduced. The request limit is not raised: any limit can be exceeded and a longer wait only delays the same blind spot. Why a reply takes more than 15 seconds is not established.
 Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192. GitHub #197, user, 2026-10-28.
 
 ### DD-193 Log the kind and the time, never the content

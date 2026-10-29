@@ -17,6 +17,12 @@ impl Probe {
             self.workspace_next_refresh = None;
             return;
         }
+        if matches!(self.pending, Some(Pending::ChatReset)) {
+            self.coordinator_chat.reset_failed();
+            self.pending = None;
+            self.error = Some(error);
+            return;
+        }
         if matches!(self.pending, Some(Pending::CatalogSave)) {
             self.profile_editor.set_catalog_error(Some(error));
             self.pending = None;

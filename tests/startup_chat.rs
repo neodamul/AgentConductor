@@ -28,3 +28,100 @@ fn large_chat_request_uses_the_existing_startup_job_gate() {
     drop(startup);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn chat_history_is_returned_on_demand_and_reset_persists_across_reopen() {
+    let root = std::env::temp_dir().join(format!(
+        "ac-chat-history-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    let exe = std::env::current_exe().unwrap();
+    let startup = Startup::open(&root, &exe).unwrap();
+    let mut saved: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(root.join("startup.json")).unwrap()).unwrap();
+    let history = json!([
+        {"role":"operator","text":"What changed?"},
+        {"role":"assistant","text":"The request diagnostics were added."}
+    ]);
+    saved["chat_result"] = json!("chat-a1b2c3.json");
+    std::fs::write(
+        root.join("startup.json"),
+        serde_json::to_vec(&saved).unwrap(),
+    )
+    .unwrap();
+    std::fs::create_dir_all(root.join("mcp")).unwrap();
+    std::fs::write(
+        root.join("mcp/chat-input-a1b2c3.json"),
+        serde_json::to_vec(&json!({
+            "turns":[{"role":"operator","text":"What changed?"}],
+            "language":"English"
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+    std::fs::write(
+        root.join("mcp/chat-a1b2c3.json"),
+        serde_json::to_vec(&json!({"answer":"The request diagnostics were added."})).unwrap(),
+    )
+    .unwrap();
+    drop(startup);
+
+    let startup = Startup::open(&root, &exe).unwrap();
+    let snapshot = startup
+        .dispatch(br#"{"kind":"snapshot","chat_history":true}"#)
+        .unwrap();
+    assert_eq!(snapshot["chat_history"], history);
+    let save = serde_json::to_vec(&json!({
+        "kind":"save",
+        "revision":snapshot["revision"],
+        "config":snapshot["config"]
+    }))
+    .unwrap();
+    assert_eq!(startup.dispatch(&save).unwrap()["saved"], true);
+    let snapshot = startup
+        .dispatch(br#"{"kind":"snapshot","chat_history":true}"#)
+        .unwrap();
+    assert_eq!(snapshot["chat_history"], history);
+    let reset = serde_json::to_vec(&json!({
+        "kind":"chat_reset",
+        "revision":snapshot["revision"]
+    }))
+    .unwrap();
+    assert_eq!(startup.dispatch(&reset).unwrap()["reset"], true);
+    drop(startup);
+
+    let startup = Startup::open(&root, &exe).unwrap();
+    let snapshot = startup
+        .dispatch(br#"{"kind":"snapshot","chat_history":true}"#)
+        .unwrap();
+    assert_eq!(snapshot["chat_history"], json!([]));
+    drop(startup);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn invalid_chat_artifact_pointer_is_rejected() {
+    let root = std::env::temp_dir().join(format!(
+        "ac-chat-pointer-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    let exe = std::env::current_exe().unwrap();
+    let startup = Startup::open(&root, &exe).unwrap();
+    let mut saved: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(root.join("startup.json")).unwrap()).unwrap();
+    saved["chat_result"] = json!("chat-../../outside.json");
+    std::fs::write(
+        root.join("startup.json"),
+        serde_json::to_vec(&saved).unwrap(),
+    )
+    .unwrap();
+    drop(startup);
+    let startup = Startup::open(&root, &exe).unwrap();
+    assert!(
+        startup
+            .dispatch(br#"{"kind":"snapshot","chat_history":true}"#)
+            .is_err()
+    );
+    drop(startup);
+    std::fs::remove_dir_all(root).unwrap();
+}

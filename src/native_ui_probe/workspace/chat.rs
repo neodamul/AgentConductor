@@ -1,7 +1,9 @@
 use eframe::egui::{self, RichText};
+mod reset;
 
 pub enum Event {
     Send(Vec<crate::chat::Turn>),
+    NewConversation,
 }
 
 #[derive(Default)]
@@ -11,6 +13,7 @@ pub struct State {
     turns: Vec<crate::chat::Turn>,
     pending_turn: Option<crate::chat::Turn>,
     requesting: bool,
+    resetting: bool,
     job: Option<String>,
     error: Option<String>,
 }
@@ -21,11 +24,21 @@ impl State {
     }
 
     pub fn awaiting(&self) -> bool {
-        self.requesting || self.job.is_some()
+        self.requesting || self.resetting || self.job.is_some()
     }
 
     pub fn open(&mut self) {
         self.open = true;
+    }
+
+    pub fn reset(&mut self) {
+        self.turns.clear();
+        self.draft.clear();
+        self.pending_turn = None;
+        self.requesting = false;
+        self.resetting = false;
+        self.job = None;
+        self.error = None;
     }
 
     pub fn show_launcher(&mut self, language: &str, ui: &mut egui::Ui) {
@@ -35,14 +48,24 @@ impl State {
     }
 
     pub fn show(&mut self, language: &str, ui: &mut egui::Ui) -> Option<Event> {
+        let mut new_conversation = false;
         ui.horizontal(|ui| {
             ui.heading(text(language, "chat.title"));
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                 if ui.button(text(language, "chat.close")).clicked() {
                     self.open = false;
                 }
+                if !self.turns.is_empty()
+                    && !self.awaiting()
+                    && ui.button(text(language, "chat.new")).clicked()
+                {
+                    new_conversation = true;
+                }
             });
         });
+        if new_conversation {
+            return Some(Event::NewConversation);
+        }
         ui.separator();
         egui::ScrollArea::vertical()
             .stick_to_bottom(true)
@@ -112,6 +135,7 @@ impl State {
             role: "assistant".into(),
             text: answer,
         });
+        self.turns = crate::chat::recent_history(&self.turns);
         self.job = None;
         self.requesting = false;
         true
@@ -249,6 +273,13 @@ impl super::super::Probe {
         self.pending = None;
         self.error = None;
     }
+}
+
+pub(in crate::native_ui_probe) fn load_history(
+    probe: &mut super::Probe,
+    snapshot: &serde_json::Value,
+) {
+    probe.coordinator_chat.load_snapshot(snapshot);
 }
 
 fn text(language: &str, id: &'static str) -> &'static str {

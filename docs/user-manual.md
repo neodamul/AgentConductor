@@ -47,7 +47,7 @@ Only saved app-owned workspace data can be removed; the project is preserved.
 Data moves to `~/.agentconductor/workspace-trash/<id>` for recovery.
 **Remove from recents** hides an entry without deleting it.
 
-Choose **Ask coordinator** on the Workspace screen to open a side chat. It reads the project and this manual with the coordinator's verified read-only CLI profile; it cannot write files or run commands. A coordinator must be registered. Chat uses the single background-operation slot shared with planning, and its conversation stays in the current window.
+Choose **Ask coordinator** on the Workspace screen to open a side chat. It reads the project and this manual with the coordinator's verified read-only CLI profile; it cannot write files or run commands. A coordinator must be registered. Chat uses the single background-operation slot shared with planning. Its latest conversation is restored when the workspace reopens; choose **New chat** to clear it.
 
 ![Workspace and goal configuration](assets/ui-workspace-current.png)
 

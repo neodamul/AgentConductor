@@ -89,6 +89,7 @@ impl Startup {
             "metadata_input",
             "metadata_settled",
             "metadata_error",
+            "chat_result",
         ] {
             context.as_object_mut().unwrap().remove(key);
         }
