@@ -584,3 +584,7 @@ Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199.
 ### BG-144 A finished plan is never lost to a draft before it
 The operator sees the plan the coordinator produced, even when the coordinator printed a broken draft first.
 Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.
+
+### BG-145 A plan that can be corrected is corrected, not abandoned
+A coordinator slip that the application can describe precisely costs one more round, not the whole planning run.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. GitHub #251, user, 2026-10-29.

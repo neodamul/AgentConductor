@@ -759,3 +759,7 @@ Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199.
 ### UC-180 Plan from a reply with an unfinished draft first
 A custom adapter prints an incomplete JSON draft and then the complete document; the plan is presented for review.
 Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.
+
+### UC-181 Plan whose verification tasks have no paths
+The coordinator returns valid phases JSON with `paths: []` on verification tasks; the application asks once for a corrected plan naming the task, and the corrected plan is presented for review.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. GitHub #251, user, 2026-10-29.

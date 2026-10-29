@@ -175,3 +175,45 @@ fn validates_custom_event_and_quota_settings_without_requiring_them_on_old_profi
     p.agents[0].session_id_pointer = Some("not/a/pointer".into());
     assert!(p.validate().is_err());
 }
+
+/// GitHub #251 (DD-202): a rejected task is named together with the field that is wrong.
+#[test]
+fn a_rejected_task_is_named_with_its_field() {
+    type Case = (&'static str, fn(&mut Task), &'static str);
+    let cases: [Case; 5] = [
+        (
+            "empty paths",
+            |t| t.paths.clear(),
+            "task task-1: paths is empty",
+        ),
+        (
+            "empty prompt",
+            |t| t.prompt = " ".into(),
+            "task task-1: prompt is empty",
+        ),
+        (
+            "unknown agent",
+            |t| t.agent = "nobody".into(),
+            "task task-1: unknown agent nobody",
+        ),
+        (
+            "no test command",
+            |t| t.test_command.clear(),
+            "task task-1: test_command",
+        ),
+        (
+            "duplicate id",
+            |t| t.id = "task-0".into(),
+            "task task-0: duplicate task id",
+        ),
+    ];
+    for (label, change, expected) in cases {
+        let mut plan = plan();
+        change(&mut plan.tasks[1]);
+        let error = plan.validate().unwrap_err();
+        assert!(error.contains(expected), "{label}: {error}");
+    }
+    let mut plan = plan();
+    plan.tasks[1].id = " ".into();
+    assert!(plan.validate().unwrap_err().contains("task id is empty"));
+}

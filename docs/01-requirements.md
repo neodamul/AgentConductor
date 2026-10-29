@@ -750,3 +750,7 @@ Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199.
 ### R-189 A valid JSON block is found even after an unfinished one
 When a coordinator reply holds an unfinished fenced draft followed by a complete fenced JSON document, the application shall read the complete document instead of failing the planning or review. Every fenced block is examined, not only the ones that follow a successful parse, and the first block that carries the requested field wins. The coordinator reply limit is 256 KiB, because a real five-phase plan reply already reached 21 KiB and larger plans must not fail on size.
 Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.
+
+### R-190 The planning contract matches plan validation
+A plan task shall need at least one owned path (a verification task too) and a test command, and the planning output contract and prompt shall say so. When a coordinator plan has a task without a path, the application shall name the task and the field, and shall give the coordinator the same single correction round it gets for unsafe or overlapping scopes. Other task validation errors name the task and the field as well.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. GitHub #251, user, 2026-10-29.

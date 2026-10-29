@@ -1571,3 +1571,7 @@ Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199.
 ### DD-201 Advance one fence marker at a time
 `json_reply` moves past the opening marker only, never past a closing marker it assumed. An unfinished block then ends at the next marker, which is read as the start of the following block. A marker that closes a block is read as an opening whose body is not JSON and is skipped. The reply limit is one constant, 256 KiB, still below the 1 MiB decoder bound.
 Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.
+
+### DD-202 One contract, one retry
+The schema carries `minItems: 1` for paths and test_command (supported by the Claude and Codex structured output modes). `plan::EMPTY_PATHS` is the single text of the empty-scope error and the key the planner matches for its existing retry, next to `unsafe or overlapping scope`. Validation errors are split per field instead of one combined message. The retry prompt asks for a path on every task, a verification task too. Flat (non-phased) plans keep their single attempt.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. GitHub #251, user, 2026-10-29.

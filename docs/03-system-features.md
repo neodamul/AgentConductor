@@ -686,3 +686,7 @@ Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199.
 ### SF-177 Fence scan that tries every block
 The reply reader tries each fenced block in turn and skips the ones that do not parse or lack the field.
 Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.
+
+### SF-178 Plan contract and scope correction
+The output schema requires a non-empty paths array and test command, the prompt says verification tasks own a path, validation errors name the task and the field, and an empty scope is corrected once like an unsafe one.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. GitHub #251, user, 2026-10-29.

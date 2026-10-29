@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Planning: a task without an owned path (a verification task too) is now part of the planning contract: the output schema and the prompt require at least one path and a test command, a rejected task is reported with its id and the wrong field instead of one combined message, and an empty scope gets the same single correction round as an unsafe or overlapping one.
+
 ## v0.1.44
 
 - Coordinator replies: a complete fenced JSON document is now found even when an unfinished fenced draft comes before it (the second opening marker was taken for the first block's closing one, so planning failed). The coordinator reply limit is raised from 64 KiB to 256 KiB.

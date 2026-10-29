@@ -769,3 +769,7 @@ Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199.
 ### QAS-187 Incomplete draft then valid JSON parses
 An incomplete draft followed by a valid block returns the valid block; two valid blocks return the first; malformed-only replies fail with the no-valid-JSON error; a 100 KiB reply is accepted and a reply above 256 KiB is refused.
 Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.
+
+### QAS-188 Empty scope is described and corrected
+Each of empty paths, prompt, agent, test command and duplicate or empty id yields an error naming the task and field; the schema requires one path; a phase with an empty scope is corrected by exactly one retry whose prompt carries the error.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. GitHub #251, user, 2026-10-29.

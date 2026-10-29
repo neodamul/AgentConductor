@@ -176,9 +176,12 @@ pub async fn generate_from(
     let tasks = match inputs.phases_root {
         Some(root) => match phased(profile, &output, goal, profiles, roles, root) {
             Ok(tasks) => tasks,
-            Err(error) if error.contains("unsafe or overlapping scope") => {
+            Err(error)
+                if error.contains("unsafe or overlapping scope")
+                    || error.contains(crate::plan::EMPTY_PATHS) =>
+            {
                 let retry = format!(
-                    "{prompt}\n\nThe previous plan failed validation: {error}. Return a corrected complete plan. Keep each task's intent but give every task literal repo-relative file or directory paths, unique and disjoint within its phase. Do not use category labels such as `score:` as paths."
+                    "{prompt}\n\nThe previous plan failed validation: {error}. Return a corrected complete plan. Keep each task's intent but give every task, a verification task too, at least one literal repo-relative file or directory path, unique and disjoint within its phase. Do not use category labels such as `score:` as paths."
                 );
                 fs::write(&task_file, &retry).map_err(|e| e.to_string())?;
                 let retried = runner::run(
