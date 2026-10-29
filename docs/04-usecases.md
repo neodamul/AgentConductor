@@ -619,9 +619,11 @@ Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162.
 ### UC-145 Identify a local company build
 The developer writes a short label such as `company_name` in `company-suffix.txt` and rebuilds. Workspace and Agent Room show the numeric package version followed by the label. Before preparing a public release, packaging refuses any non-empty label; the developer clears the file and rebuilds.
 Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #13.
+
 ### UC-144 Configure a custom CLI's event and quota behavior
 Actor: workspace operator. Export workspace settings, add a custom profile's `event_types`, optional `session_id_pointer`, and optional `quota_command`, then import and review the settings. Run a goal and verify mapped progress/result/session events. Request account metadata only when a quota command is configured; validate its bounded JSON Snapshot and retain stdout/stderr logs. Invalid pointers, event values, timeouts, or output fields are rejected or reported without affecting built-in CLI behavior.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+
 ### UC-143 Recover from an agent task timeout
 An agent exceeds the configured execution limit. The coordinator retains its attempt logs and partial workspace, displays the timeout reason, waits for a bounded backoff and resumes automatically. The operator may stop during backoff; if the task later becomes blocked, the report explains the cause and retained evidence for recovery.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
@@ -645,6 +647,7 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### UC-151 Ask how to run what the team built
 An operator returns to the workspace after a completed run, opens the chat from the title bar, asks how to run the result, and receives the project-specific commands. Another question about the current screen is answered from the manual. Closing the panel keeps the conversation for the session.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
+
 ### UC-150 Watch a multi-session run without re-selecting
 An operator watches the running session. When it completes and another starts, the activity panel moves to the new one. When all sessions finish and the run waits for approval, the integration entry opens with the tests and decisions to review.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
@@ -744,6 +747,10 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### UC-177 A reviewer or worker is asked in the standard form
 The operator runs a plan with an agent CLI that only reads a prompt and prints text. The worker receives the task, its rules and its evidence as Document, Task and Format; the reviewer receives the frozen evidence as Document, its instructions as Task and the JSON verdict shape as Format. A reviewer reply that is not valid JSON is asked for again once with the parse error, then reported.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
+
+### UC-179 Ask what was built and how to run it
+After a run reached review or completion the operator asks the coordinator what was built and how to run it. The answer names the changed files and gives the command, from the quoted tasks, tests and diff and from project files the coordinator can read; where the evidence is missing it says so.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
 
 ### UC-178 The application stalls while the operator chats
 The operator sends a message, the page reports a timeout and a later snapshot also times out. The message stays in the conversation as working. When the application recovers, the answer appears and the input stays empty; had the application never received the message, the text would return to the input with the error.

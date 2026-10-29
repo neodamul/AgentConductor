@@ -38,12 +38,13 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
             .enable_all()
             .build()
             .map_err(|e| e.to_string())?;
-        let answer = runtime.block_on(agentconductor::chat::ask(
+        let answer = runtime.block_on(agentconductor::chat::ask_in(
             profile,
             &project,
             &root.join(format!("chat-run-{id}")),
             &turns,
             input["language"].as_str().unwrap_or("English"),
+            &agentconductor::chat_context::workspace(&saved, &project),
         ))?;
         agentconductor::mcp::store(
             root,
