@@ -569,3 +569,7 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### BG-141 Fewer errors from the way agents are asked
 Agents that cannot be modified still answer predictably because the application, not the CLI, fixes the prompt layout and the reply shape.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
+
+### BG-142 Slow requests do not duplicate what the operator typed
+A stalled application never makes the operator think a message was lost and send it again.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.

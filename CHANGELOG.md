@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Chat: when a send times out and the stored conversation cannot be read either, the message stays in the conversation as pending instead of being put back into the input. Once the conversation can be read, an accepted message is followed to its answer with the input still empty; a message the application never received returns to the input with the error. Before, the same text showed in the input and in the conversation when the late answer arrived (#241).
+
 ## v0.1.42
 
 - Every prompt sent to an agent now has the same layout (Document, Task, Format): the reviewer and worker prompts join the chat, planning and optimizer prompts, so an agent CLI that cannot be changed still receives a predictable prompt. A coordinator reply that is not the requested JSON is asked for once more, with the reason, before the call fails; the error now shows how the reply began (GitHub #235).

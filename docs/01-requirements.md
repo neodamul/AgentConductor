@@ -735,3 +735,7 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### R-186 Every agent prompt has one standard form and its reply is checked
 The application shall send every prompt to an agent (coordinator, planner, reviewer, worker) as `# Document`, `# Task` and `# Format` blocks, each once and in that order, and shall check a coordinator reply against the requested JSON shape. No agent CLI, including an in-house one, has to be changed or shown to the application for this. A reply that is not in the requested shape is asked for once more with the reason before the call fails.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
+
+### R-187 An unconfirmed chat send is never rolled back
+When a chat message is sent and the page cannot learn whether the application accepted it (the send timed out and the stored conversation cannot be read either), the page shall keep the message in the conversation as pending and shall not put it back into the input. It decides when the stored conversation can be read: accepted, the job is followed; not accepted, the text returns to the input with the error. The message never shows both in the conversation and in the input.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.

@@ -754,3 +754,7 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### QAS-184 Prompt blocks appear once, in order
 Given untrusted evidence containing a `# Format` line, the reviewer prompt has exactly one Document, one Task and one Format block in that order, and the evidence stays inside Document. The worker prompt keeps the `Owned paths:` and `Task:` lines and its rules in Task. A coordinator that first prints text without the requested JSON and then a valid object succeeds on the second attempt and the second prompt names the first error; two bad replies fail with the parse error.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
+
+### QAS-185 No message in both the conversation and the input
+Given a send that times out and a history request that fails, the message stays in the conversation, the input stays empty and sending is disabled. When the history then contains the message, the conversation equals the stored one and the late answer is shown once with the input still empty. When the history then lacks the message, the turn is removed, the text is back in the input and the error is shown.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.

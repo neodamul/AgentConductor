@@ -744,3 +744,7 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### UC-177 A reviewer or worker is asked in the standard form
 The operator runs a plan with an agent CLI that only reads a prompt and prints text. The worker receives the task, its rules and its evidence as Document, Task and Format; the reviewer receives the frozen evidence as Document, its instructions as Task and the JSON verdict shape as Format. A reviewer reply that is not valid JSON is asked for again once with the parse error, then reported.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
+
+### UC-178 The application stalls while the operator chats
+The operator sends a message, the page reports a timeout and a later snapshot also times out. The message stays in the conversation as working. When the application recovers, the answer appears and the input stays empty; had the application never received the message, the text would return to the input with the error.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.
