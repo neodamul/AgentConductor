@@ -6548,4 +6548,5 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify affected targets: `source_layout`, `git_head`, and `snapshot_without_git` pass 7/7; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the 300-line source/test audit pass. Graphify refreshed to 11,889 nodes / 19,466 edges and confirms `revision` and `chat_revision` call `state_revision`; CocoIndex CLI unavailable.
 - [ ] Full all-target test: interrupted after 848 passed and 15 ignored across 252 suites / 138.97 seconds of test execution; no failures had occurred, but this is not a complete pass.
 - [ ] Verify exact packaged macOS and Windows UI behavior; source tests do not prove package responsiveness.
-- [ ] Complete: update #9 and its linked PR after review; do not count this port as shipped Rust UI parity or close #9.
+- [x] Complete this unit: code commit `363a6f5` is pushed on `codex/issue-9-git-head-fast-path`; draft PR #260 targets `codex/issue-9-native-ui-parity`; issue #9 has the local verification checkpoint. Keep #9 open; no package acceptance is claimed.
+- [ ] Complete issue #9: exact packaged macOS/Windows behavior and the remaining parity gates are still open.
