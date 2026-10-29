@@ -1,13 +1,10 @@
 use eframe::egui;
+mod bridge;
+use bridge::EventBridge;
 use std::{
     net::{SocketAddr, UdpSocket},
     process::Command,
-    sync::{
-        Arc, Mutex, OnceLock,
-        atomic::{AtomicBool, Ordering},
-        mpsc,
-    },
-    thread,
+    sync::{Arc, Mutex, OnceLock, mpsc},
 };
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -94,66 +91,6 @@ pub struct EventHub {
     bridge: Option<Arc<EventBridge>>,
 }
 
-struct EventBridge {
-    address: SocketAddr,
-    token: String,
-    stopped: Arc<AtomicBool>,
-    shutdown: UdpSocket,
-}
-
-impl EventBridge {
-    fn new(subscribers: Arc<Mutex<Vec<Subscriber>>>) -> std::io::Result<Self> {
-        let listener = UdpSocket::bind("127.0.0.1:0")?;
-        let address = listener.local_addr()?;
-        let shutdown = listener.try_clone()?;
-        let token = crate::native_guard::session_id().map_err(std::io::Error::other)?;
-        let stopped = Arc::new(AtomicBool::new(false));
-        let receiver_stop = Arc::clone(&stopped);
-        let receiver_token = token.clone();
-        thread::Builder::new()
-            .name("native-ui-events".into())
-            .spawn(move || {
-                let mut packet = [0; 128];
-                while !receiver_stop.load(Ordering::Acquire) {
-                    let Ok((length, _)) = listener.recv_from(&mut packet) else {
-                        break;
-                    };
-                    let Ok(message) = std::str::from_utf8(&packet[..length]) else {
-                        continue;
-                    };
-                    let Some((token, surface)) = message.split_once(':') else {
-                        continue;
-                    };
-                    if token == receiver_token
-                        && let Some(surface) = UiSurface::from_wire(surface)
-                    {
-                        deliver(&subscribers, UiEvent::invalidated(surface));
-                    }
-                }
-            })?;
-        Ok(Self {
-            address,
-            token,
-            stopped,
-            shutdown,
-        })
-    }
-
-    fn apply_to(&self, command: &mut Command, surface: UiSurface) {
-        command
-            .env("AC_UI_EVENT_ADDRESS", self.address.to_string())
-            .env("AC_UI_EVENT_TOKEN", &self.token)
-            .env("AC_UI_EVENT_SURFACE", surface.wire_name());
-    }
-}
-
-impl Drop for EventBridge {
-    fn drop(&mut self) {
-        self.stopped.store(true, Ordering::Release);
-        let _ = self.shutdown.send_to(&[], self.address);
-    }
-}
-
 impl EventHub {
     pub fn new(capacity: usize) -> Self {
         let subscribers = Arc::new(Mutex::new(Vec::new()));
@@ -184,6 +121,12 @@ impl EventHub {
         deliver(&self.subscribers, event);
     }
 
+    pub fn watch_run_dir(&self, dir: &std::path::Path, surface: UiSurface) {
+        if let Some(bridge) = &self.bridge {
+            bridge.watch_run_dir(dir, surface);
+        }
+    }
+
     pub(crate) fn configure_child(&self, command: &mut Command, surface: UiSurface) {
         if let Some(bridge) = &self.bridge {
             bridge.apply_to(command, surface);
@@ -192,9 +135,7 @@ impl EventHub {
 
     #[cfg(test)]
     fn bridge_credentials(&self) -> Option<(SocketAddr, String)> {
-        self.bridge
-            .as_ref()
-            .map(|bridge| (bridge.address, bridge.token.clone()))
+        self.bridge.as_ref().map(|bridge| bridge.credentials())
     }
 }
 

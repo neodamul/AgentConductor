@@ -20,13 +20,13 @@ Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184/NFR-79 → QAS-190 → 
 - When an invalidation arrives during a background snapshot, the view drops that in-flight result and queues one fresh snapshot. This prevents a pre-mutation read from briefly overwriting newer view state.
 - The internal workflow child inherits an ephemeral loopback UDP address and random token. Its supervised stdout-spool reader sends non-blocking invalidations after recording agent progress; the parent wakes only the surface that launched the work. Provider, MCP, quota, and helper subprocesses have these credentials stripped.
 - If the spool observer sees no output, its polling delay increases from 100 ms to at most 2 s; output resets it to 100 ms. The UI itself is woken by events and uses a separate snapshot worker.
-- Filesystem changes that do not originate in a supervised workflow still depend on the existing periodic recovery snapshots. A separate coalescing observer for those changes remains unimplemented; this slice is not a complete event-driven replacement for polling.
+- The same listener runs one bounded recovery scan for external changes. It compares `report.json`, the SQLite state/WAL, and files declared in active tasks' worktree scopes (at most 512 paths and depth 8). It emits only the owning surface's invalidation; idle scans back off from 1 s to 30 s and reset after a detected change. The native render callback does no filesystem work.
 - Local CocoIndex CLI and Python module are unavailable in the current environment (`python3 -c 'import cocoindex'` fails with `ModuleNotFoundError`). Graphify was refreshed and used to trace the worker/snapshot path. Do not claim CocoIndex execution.
 - Enhancement #257 is open. The package acceptance boundary remains macOS and Windows exact-build UI journeys.
 
 ## Verification design
 
-Use deterministic channel and loopback tests for authenticated event delivery, bounded non-blocking sends, subscriber disconnect, coalescing, selective surface delivery, stale snapshot rejection, and independent foreground progress while another request is blocked. Keep any eventless external observer on a separate bounded worker; verify that fallback cadence backs off while idle. Avoid a thread per notification and avoid work in egui's render callback.
+Use deterministic channel and loopback tests for authenticated event delivery, bounded non-blocking sends, subscriber disconnect, coalescing, selective surface delivery, stale snapshot rejection, external declared-scope file changes, and independent foreground progress while another request is blocked. Verify the recovery path's scan bounds and idle backoff. Avoid a thread per notification and avoid work in egui's render callback.
 
 ## Links
 

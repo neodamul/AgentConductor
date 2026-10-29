@@ -60,3 +60,34 @@ fn authenticated_child_event_wakes_only_target_surface_and_rejects_forgery() {
     );
     assert!(workspace.try_recv().is_err());
 }
+
+#[test]
+fn fallback_observer_wakes_the_run_view_when_external_state_changes() {
+    let root = std::env::temp_dir().join(format!(
+        "agentconductor-run-watch-{}",
+        crate::native_guard::session_id().unwrap()
+    ));
+    let worktree = root.join("worktree");
+    std::fs::create_dir_all(worktree.join("src")).unwrap();
+    std::fs::write(worktree.join("src/external.rs"), b"before").unwrap();
+    std::fs::write(
+        root.join("report.json"),
+        serde_json::to_vec(&serde_json::json!({
+            "plan": {"tasks": [{"id": "agent-1", "paths": ["src/**/*.rs"]}]},
+            "tasks": [{"id": "agent-1", "cwd": worktree}]
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+    let hub = EventHub::default();
+    let room = hub.subscribe(UiSurface::AgentRoom, egui::Context::default());
+    hub.watch_run_dir(&root, UiSurface::AgentRoom);
+
+    std::fs::write(worktree.join("src/external.rs"), b"external edit detected").unwrap();
+
+    assert_eq!(
+        room.recv_timeout(std::time::Duration::from_secs(3)),
+        Ok(UiEvent::invalidated(UiSurface::AgentRoom))
+    );
+    std::fs::remove_dir_all(root).unwrap();
+}

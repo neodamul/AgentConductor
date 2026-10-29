@@ -43,6 +43,7 @@ impl Controller {
         events: crate::ui::events::EventHub,
         event_surface: crate::ui::events::UiSurface,
     ) -> Self {
+        events.watch_run_dir(&dir, event_surface);
         Self {
             dir,
             exe,
