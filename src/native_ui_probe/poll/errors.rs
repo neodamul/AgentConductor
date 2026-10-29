@@ -8,7 +8,11 @@ impl Probe {
             self.pending,
             Some(Pending::ChatStart | Pending::ChatRefresh)
         ) {
-            self.coordinator_chat.failed(error);
+            if matches!(self.pending, Some(Pending::ChatStart)) {
+                self.coordinator_chat.rejected(error);
+            } else {
+                self.coordinator_chat.failed(error);
+            }
             self.pending = None;
             self.workspace_next_refresh = None;
             return;

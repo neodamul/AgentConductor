@@ -6357,3 +6357,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: 21 tests pass across `native_room_poll`, `native_ui_tool_dialog`, `windows_tool_decision_dispatch`, and `source_layout`; formatting passes. Files remain below 300 lines.
 - [ ] Verify exact Windows package: rerun all packaged UI journeys and confirm tool refresh, approval, rejection, and persisted ledger outcomes.
 - [ ] Complete: keep issue #9 open and acceptance unchanged at 22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate until exact-package verification and remaining parity work pass.
+
+### 2026-10-29 — Restore unaccepted coordinator chat submissions — issue #9 / main #197
+
+- [x] Plan: implement the outstanding #197 contract that distinguishes an unaccepted coordinator request from a job accepted by the CLI. A rejected submission must return the question to the draft and avoid showing it as sent history.
+- [x] Red: add a real egui interaction regression that submits a question and checks the draft/history after rejection; it fails because the existing state loses the draft and retains the unsent turn.
+- [x] Task: keep the just-submitted turn pending until the backend accepts a job. Restore it only for pre-acceptance/request errors; keep accepted-job failures in the conversation history.
+- [x] Verify locally: `native_workspace_chat`, `startup_chat`, and `source_layout` pass 8 tests; formatting, warning-denied all-target Clippy, and diff hygiene pass. Changed source/test files are 256, 66, and 221 lines.
+- [ ] Verify packaged macOS/Windows chat submission and accepted-job failure behavior in a package run that includes this commit.
+- [ ] Complete: continue the remaining #197 work for persisted history, late accepted jobs, and new/reset conversation behavior; do not claim the chat parity unit complete yet.

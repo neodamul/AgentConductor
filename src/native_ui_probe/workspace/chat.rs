@@ -9,6 +9,7 @@ pub struct State {
     open: bool,
     draft: String,
     turns: Vec<crate::chat::Turn>,
+    pending_turn: Option<crate::chat::Turn>,
     requesting: bool,
     job: Option<String>,
     error: Option<String>,
@@ -85,17 +86,19 @@ impl State {
         if !send {
             return None;
         }
-        let question = std::mem::take(&mut self.draft);
-        self.turns.push(crate::chat::Turn {
+        let turn = crate::chat::Turn {
             role: "operator".into(),
-            text: question,
-        });
+            text: std::mem::take(&mut self.draft),
+        };
+        self.turns.push(turn.clone());
+        self.pending_turn = Some(turn);
         self.error = None;
         self.requesting = true;
         Some(Event::Send(self.turns.clone()))
     }
 
     pub fn started(&mut self, job: String) {
+        self.pending_turn = None;
         self.requesting = false;
         self.job = Some(job);
         self.error = None;
@@ -118,6 +121,20 @@ impl State {
         self.job = None;
         self.requesting = false;
         self.error = Some(message);
+    }
+
+    pub fn rejected(&mut self, message: String) {
+        if let Some(turn) = self.pending_turn.take() {
+            if self
+                .turns
+                .last()
+                .is_some_and(|last| last.role == turn.role && last.text == turn.text)
+            {
+                self.turns.pop();
+            }
+            self.draft = turn.text;
+        }
+        self.failed(message);
     }
 }
 
@@ -164,7 +181,7 @@ impl super::super::Probe {
                 self.error = None;
             }
             Err(error) => {
-                self.coordinator_chat.failed(error);
+                self.coordinator_chat.rejected(error);
                 self.workspace_next_refresh = None;
             }
         }
@@ -195,7 +212,7 @@ impl super::super::Probe {
             self.pending = None;
         } else {
             self.coordinator_chat
-                .failed("Coordinator chat job was not accepted".into());
+                .rejected("Coordinator chat job was not accepted".into());
             self.pending = None;
         }
     }
