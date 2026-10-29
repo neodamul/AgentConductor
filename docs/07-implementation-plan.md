@@ -18,6 +18,15 @@
 - [x] Exact source-package CLI checkpoint: commit `01bc3c55338ae5c02e9a0cc46761bd16f383b6b8` packaged for `aarch64-apple-darwin`; manifest hash, packaged `--help`, and four shared/worktree × Git/folder mock-agent smoke cases passed. This confirms packaging and orchestrator journeys; it does not verify interactive UI behavior or Windows. Evidence: `docs/evidence/issue257-macos-package-01bc3c55-20261030.json`.
 - [x] Complete this unit: update the R-192 design decision, AgentMemory and LLM Wiki; commit/push to the active Rust issue branch.
 
+### Expose the coordinator chat editor to Windows UI Automation — issue #189 / #9 / 2026-10-30
+
+- [x] Plan: Windows package run `40955925655` failed all three coordinator-chat journeys before submission. Diagnostics found the disabled `Send` button but no text-edit element with the prompt name expected by UI Automation.
+- [x] Red: `coordinator_chat_editor_exposes_its_prompt_as_an_accessible_name` failed because the egui multiline editor had placeholder text but no accessible name.
+- [x] Task: expose the localized chat placeholder as the editor's accessible name while preserving the visible hint and multiline behavior.
+- [x] Local Verify: the new accessibility regression passes; related chat, Windows driver-contract, and source-layout suites pass 11/11 across 4 suites. Clippy with `-D warnings`, rustfmt, diff check, and the 300-line limit pass. The failing Windows log remains exact-package evidence; this local test does not prove the UIA mapping on Windows.
+- [ ] Exact-package Verify: port the source fix to the current PR #255 head and rerun the packaged Windows journey. Require all three coordinator-chat cases to pass before continuing to tool decisions; no workflow credit yet.
+- [ ] Complete: record the exact Windows rerun in issue #189/#9, AgentMemory, and LLM Wiki. Keep the existing 22/25 candidate and 0/25 shipped-Rust counters until package acceptance passes.
+
 ### Keep workspace input available during quota refresh — issue #257 / 2026-10-30
 
 - [x] Plan: trace the observed disabled workspace to automatic stale-quota metadata work, which occupied the single UI `pending` slot and made `workspace::permissions::editable` reject all inputs.
