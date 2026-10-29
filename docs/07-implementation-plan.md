@@ -14,7 +14,9 @@
 - [x] Red: after the merge, `native_room_poll::only_an_open_tool_dialog_suspends_background_room_refresh` failed because a deferred receipt in snapshot data still paused polling.
 - [x] Task: make current UI modal state the sole polling gate; a deferred pending receipt no longer suspends background refresh. Route new settings states through `Pending::handled_by_settings`, keep an exhaustive poll fallback, and move refresh scheduling helpers into `room/polling.rs` to keep every Rust file under 300 lines.
 - [x] Verify locally: `source_layout` 2/2, `native_room_poll` 2/2, `native_ui_probe` 13/13, and `native_ui_tool_dialog` 4/4 pass. Warning-denied all-target Clippy, rustfmt, diff checks, and touched-file line limits pass.
-- [ ] Exact-package Verify: current-head macOS/Windows package and Windows candidate-review journey remain required before merging PR #228 or crediting #221.
+- [x] Follow-up Red: exact PR run `40852587950` failed on macOS and Windows in `periodic_snapshot_waits_for_an_actionable_tool_receipt`; the assertion treated a deferred receipt as an open dialog. The same assertion failed locally before the test correction.
+- [x] Follow-up Green: distinguish `pending=true` (an open decision dialog pauses refresh) from `pending=false` (a deferred receipt does not); preserve the explicit tool-action binding checks. Focused verification passes 21 tests across four suites; warning-denied all-target Clippy, rustfmt, diff check, and the 300-line check pass. The updated test file is 238 lines.
+- [ ] Exact-head CI: push the corrected contract test and require macOS/Windows platform validation to pass. The exact Windows package and candidate-review journey remain required before merging PR #228 or crediting #221.
 - [ ] Complete: update issue #221, PR #228, AgentMemory, and the LLM Wiki with the pushed commit; keep #221 and #9 open pending package verification.
 
 ### Verify the exact Rust branch release package on both platforms — issue #9 / 2026-10-29

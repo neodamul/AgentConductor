@@ -149,7 +149,7 @@ fn late_refresh_callback_restarts_deadline_without_a_catch_up_burst() {
 }
 
 #[test]
-fn periodic_snapshot_waits_for_an_actionable_tool_receipt() {
+fn only_an_open_tool_dialog_suspends_background_room_refresh() {
     let snapshot = serde_json::json!({
         "revision":"run-rev-1",
         "report":{"state":"running"},
@@ -166,12 +166,24 @@ fn periodic_snapshot_waits_for_an_actionable_tool_receipt() {
     let mut next = Some(now - Duration::from_secs(1));
 
     let scheduled =
-        crate::native_ui_probe::room::refresh_due(&context, Some(&snapshot), false, &mut next);
+        crate::native_ui_probe::room::refresh_due(&context, Some(&snapshot), true, &mut next);
     assert!(
         !scheduled,
-        "periodic snapshot would disable approval controls"
+        "an open decision dialog must not be invalidated by a background refresh"
     );
     assert_eq!(next, Some(now - Duration::from_secs(1)));
+
+    let mut deferred_next = Some(now - Duration::from_secs(1));
+    assert!(
+        crate::native_ui_probe::room::refresh_due(
+            &context,
+            Some(&snapshot),
+            false,
+            &mut deferred_next,
+        ),
+        "a deferred receipt must not freeze background polling"
+    );
+    assert!(deferred_next.is_some_and(|deadline| deadline > now));
 
     let id = snapshot["tool_requests"][0]["id"].as_str().unwrap();
     for (action, expected) in [
