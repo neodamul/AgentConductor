@@ -24,6 +24,9 @@ impl Startup {
         if let Request::CacheClear { digest } = &request {
             return self.clear_cache(&saved, Some(digest), 0);
         }
+        if let Request::Chat { revision, turns } = &request {
+            return self.dispatch_chat(&mut saved, revision, turns.clone());
+        }
         let metadata_job = self.metadata_tick(&mut saved)?;
         let job = self.job(&saved)?;
         self.settle(&mut saved, &job)?;

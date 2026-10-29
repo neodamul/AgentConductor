@@ -6445,3 +6445,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify app: no window was launched and no screenshot or real coordinator request was captured. Reuse the current existing app/window only when safe.
 - [ ] Verify Windows: exact package test for the updated Rust head remains pending. Run `40839334186` covers ancestor `923a806b`, not this exact source head.
 - [ ] Complete/release: do not publish or increase #9 acceptance until exact macOS and Windows packaged UI journeys and remaining parity gates pass. Current tracked acceptance remains 22/25 packaged, 0/25 shipped Rust replacements, 22/50 aggregate.
+
+### 2026-10-29 — Port main #234 chat revision fast path — issue #9
+
+- [x] Plan: trace the existing R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192 contract; retain Git HEAD validation for mutations while allowing read-only chat to validate saved workspace context without resolving Git HEAD.
+- [x] Red: add a deterministic startup regression proving a Git HEAD change preserves `chat_revision`, changes the mutation `revision`, and a saved goal change rejects an old chat request; it failed because snapshots lacked `chat_revision`.
+- [x] Task: expose `chat_revision`, validate chat against it before general dispatch, and pass that accepted revision into the supervised job launch.
+- [x] Verify locally: `startup_chat` passes 4 tests; `cargo fmt` passes; modified Rust and test files stay below 300 lines.
+- [ ] Verify package: exercise coordinator chat in exact macOS and Windows packages and confirm it avoids the Git HEAD lookup without weakening mutation guards.
+- [ ] Complete: do not claim packaged acceptance or infer that this change alone explains historical chat timeouts.

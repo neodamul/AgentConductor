@@ -6,6 +6,7 @@ impl Startup {
         &self,
         saved: &mut Saved,
         turns: Vec<crate::chat::Turn>,
+        revision: &str,
     ) -> Result<serde_json::Value, String> {
         let turns = crate::chat::recent_history(&turns);
         let language = if crate::ui::language::load() == "ko" {
@@ -30,7 +31,7 @@ impl Startup {
         )?;
         let old_result = saved.chat_result.clone();
         saved.chat_result = Some(format!("chat-{id}.json"));
-        let result = self.launch(
+        let result = self.launch_with_revision(
             saved,
             "chat",
             vec![
@@ -38,6 +39,7 @@ impl Startup {
                 self.broker.dir.to_string_lossy().into(),
                 id.clone(),
             ],
+            revision,
         );
         if result.is_err() {
             saved.chat_result = old_result;
@@ -45,6 +47,27 @@ impl Startup {
             let _ = clear_previous_chat_artifacts(&self.broker.dir, Some(&id));
         }
         result
+    }
+
+    pub(super) fn dispatch_chat(
+        &self,
+        saved: &mut Saved,
+        revision: &str,
+        turns: Vec<crate::chat::Turn>,
+    ) -> Result<serde_json::Value, String> {
+        if revision != self.chat_revision(saved)? {
+            return Err(crate::ui::messages::text(
+                "native.startup_state_changed_since_review_refresh_before_acting",
+            )
+            .into());
+        }
+        let job = self.job(saved)?;
+        self.settle(saved, &job)?;
+        if job["state"] == "running" {
+            return Err(crate::ui::messages::text("native.startup_operation_still_running").into());
+        }
+        self.ensure_no_live_jobs()?;
+        self.launch_chat(saved, turns, revision)
     }
 
     pub(super) fn chat_history(

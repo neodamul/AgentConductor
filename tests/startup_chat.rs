@@ -1,5 +1,6 @@
 use agentconductor::ui::setup::Startup;
 use serde_json::json;
+use std::{path::Path, process::Command};
 
 #[test]
 fn large_chat_request_uses_the_existing_startup_job_gate() {
@@ -124,4 +125,94 @@ fn invalid_chat_artifact_pointer_is_rejected() {
     );
     drop(startup);
     std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn chat_revision_ignores_git_head_and_rejects_stale_workspace() {
+    let root = std::env::temp_dir().join(format!(
+        "ac-chat-revision-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    let repo = root.join("repo");
+    let proposal = root.join("proposal");
+    std::fs::create_dir_all(&repo).unwrap();
+    std::fs::create_dir_all(&proposal).unwrap();
+    for args in [
+        vec!["init", "-b", "main"],
+        vec!["config", "user.name", "Test"],
+        vec!["config", "user.email", "test@example.invalid"],
+    ] {
+        git(&repo, &args);
+    }
+    std::fs::write(repo.join("base.txt"), "base\n").unwrap();
+    git(&repo, &["add", "."]);
+    git(&repo, &["commit", "-m", "base"]);
+
+    let exe = std::env::current_exe().unwrap();
+    let startup = Startup::open(&root, &exe).unwrap();
+    let mut saved: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(root.join("startup.json")).unwrap()).unwrap();
+    saved["config"]["repository"] = json!(repo);
+    saved["proposal"] = json!({
+        "workspace": repo,
+        "directory": proposal,
+        "repository_base": "base",
+        "run": root.join("run"),
+        "phase": "ready"
+    });
+    std::fs::write(
+        root.join("startup.json"),
+        serde_json::to_vec(&saved).unwrap(),
+    )
+    .unwrap();
+    drop(startup);
+
+    let startup = Startup::open(&root, &exe).unwrap();
+    let first = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    let chat_revision = first["chat_revision"].as_str().unwrap().to_owned();
+    std::fs::write(repo.join("next.txt"), "next\n").unwrap();
+    git(&repo, &["add", "."]);
+    git(&repo, &["commit", "-m", "advance head"]);
+    let next = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    assert_ne!(first["revision"], next["revision"]);
+    assert_eq!(next["chat_revision"], chat_revision);
+    drop(startup);
+
+    let mut saved: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(root.join("startup.json")).unwrap()).unwrap();
+    saved["config"]["goal"] = json!("changed after the chat snapshot");
+    std::fs::write(
+        root.join("startup.json"),
+        serde_json::to_vec(&saved).unwrap(),
+    )
+    .unwrap();
+    let startup = Startup::open(&root, &exe).unwrap();
+    let error = startup
+        .dispatch(
+            &serde_json::to_vec(&json!({
+                "kind":"chat", "revision":chat_revision, "turns":[]
+            }))
+            .unwrap(),
+        )
+        .unwrap_err();
+    assert!(
+        error.contains("changed") || error.contains("refresh") || error.contains("새로고침"),
+        "{error}"
+    );
+    drop(startup);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+fn git(repo: &Path, args: &[&str]) {
+    let output = Command::new("git")
+        .arg("-C")
+        .arg(repo)
+        .args(args)
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
 }
