@@ -13,12 +13,12 @@ Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184/NFR-79 → QAS-190 → 
 ## Implementation status
 
 - Plan and architecture records are updated.
-- A bounded `std::sync::mpsc` event hub now filters subscribers by Workspace or Agent Room, coalesces a full one-slot queue, and calls `egui::Context::request_repaint` without adding an event thread. Publisher delivery uses `try_lock` plus `try_send`; transient registry contention cannot block a state owner, and later snapshots/recovery reconcile invalidations.
+- A bounded `std::sync::mpsc` event hub filters subscribers by Workspace or Agent Room and coalesces a full one-slot subscriber queue. Publishers atomically set surface bits and `try_send` one wake token to a capacity-one channel, then return. One lightweight fan-out thread drains and coalesces those bits, touches the subscriber registry, and calls `egui::Context::request_repaint` for matching surfaces. Registry contention delays delivery on the fan-out thread rather than blocking the state owner or losing the event.
 - Successful native UI dispatches publish an invalidation; the matching view listens on its bounded receiver and asks the existing independent poll worker for one background snapshot.
 - Each foreground request receives a monotonic ID. The reply receiver discards completed responses whose IDs are no longer current, preventing the two request lanes from applying an earlier snapshot after a later action.
 - Each background snapshot records the foreground request ID that was current when it began. If a newer foreground request starts before the snapshot returns, the UI drops that response instead of overwriting newer form state.
 - Periodic whole-screen refresh is now only a 30-second recovery deadline regardless of running/idle status. Event subscribers repaint and trigger snapshots immediately, so active workflows no longer cause 1-second polling and idle work no longer causes 5-second polling; quota refresh remains on its own configured schedule.
-- The foreground dispatcher has two independent bounded lanes: a single-flight poll lane and two worker lanes for UI commands. Each command lane queues up to 16 requests with `try_send`, so input never waits on a worker and short bursts do not fail just because one request is still running. TDD covers both poll isolation and queued commands.
+- The foreground dispatcher has bounded lanes for reads and mutations, plus a separate single-flight periodic poll lane. Reads have two workers so one slow read cannot stall another; mutations remain serialized by the shared state owner. Each foreground lane queues up to 16 requests with `try_send`, so the render callback never waits on dispatch. TDD covers poll isolation, worker concurrency, and queuing.
 - A UI child-job terminal transition publishes an event when the controller observes process exit. The event wakes the view to read the committed state.
 - Every supervised CLI child notifies its parent UI once at command exit through the same authenticated loopback bridge. The send is non-blocking and is a no-op when the child was not launched by a UI supervisor.
 - When an invalidation arrives during a background snapshot, the view drops that in-flight result and queues one fresh snapshot. This prevents a pre-mutation read from briefly overwriting newer view state.
@@ -42,6 +42,8 @@ The packaged app was launched once but opened the user's saved workspace. No wor
 The follow-up fix at `e7f712a60c83727ddeb27c09da0895624a68bf14` was packaged and launched after closing the earlier package process. In that exact build, stale quota observations were present and workspace fields, agent edit, quota refresh, and save controls were enabled. No saved data was changed. This verifies the quota-refresh lock regression at launch, not the full native UI workflow; Windows remains pending. Evidence: `docs/evidence/issue257-macos-package-e7f712a-20261030.json`.
 
 The request-queue fix at `cd2b1d4850f9d77c1814e1e0b95ab2549f62bd31` was packaged, manifest-validated, and smoke-tested across shared/worktree isolation with Git and folder projects. The exact package was launched after closing the prior AgentConductor process; one v0.1.37 app window opened the saved workspace with controls enabled and no pending edits. No workspace data was changed. This confirms package identity and launch only; full UI interaction and Windows acceptance remain pending. Evidence: `docs/evidence/issue257-macos-package-cd2b1d48-20261030.json`.
+
+The next request/event slice adds a second bounded read worker and moves event fan-out to a dedicated asynchronous listener. The regression suite passes 83/83 unit tests; this is not yet package-level UI or Windows acceptance.
 
 ## Links
 

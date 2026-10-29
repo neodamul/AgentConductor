@@ -64,7 +64,7 @@ fn controller_publishes_once_when_a_job_reaches_terminal_state() {
     }
 
     assert_eq!(
-        subscriber.try_recv(),
+        subscriber.recv_timeout(Duration::from_secs(1)),
         Ok(UiEvent::invalidated(UiSurface::AgentRoom))
     );
     assert!(subscriber.try_recv().is_err());

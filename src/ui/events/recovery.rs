@@ -1,4 +1,4 @@
-use super::{Subscriber, UiEvent, UiSurface, bridge};
+use super::{EventPublisher, UiEvent, UiSurface, bridge};
 use std::{
     path::Path,
     sync::{
@@ -15,13 +15,14 @@ pub(super) struct RecoveryObserver {
 }
 
 impl RecoveryObserver {
-    pub(super) fn new(subscribers: Arc<Mutex<Vec<Subscriber>>>) -> std::io::Result<Self> {
+    pub(super) fn new(publisher: EventPublisher) -> std::io::Result<Self> {
         let stopped = Arc::new(AtomicBool::new(false));
         let wake = Arc::new(Condvar::new());
         let watch = Arc::new(Mutex::new(None));
         let thread_stop = Arc::clone(&stopped);
         let thread_wake = Arc::clone(&wake);
         let thread_watch = Arc::clone(&watch);
+        let thread_publisher = publisher;
         thread::Builder::new()
             .name("native-ui-recovery".into())
             .spawn(move || {
@@ -39,7 +40,7 @@ impl RecoveryObserver {
                     }
                     let changed = bridge::changed_surface(&thread_watch);
                     if let Some(surface) = changed {
-                        super::deliver(&subscribers, UiEvent::invalidated(surface));
+                        thread_publisher.publish(UiEvent::invalidated(surface));
                     }
                     delay = bridge::next_scan_delay(delay, changed.is_some());
                 }

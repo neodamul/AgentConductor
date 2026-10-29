@@ -1,12 +1,14 @@
 use eframe::egui;
-mod bridge;
-use bridge::EventBridge;
-mod recovery;
+pub(super) mod bridge;
+pub(super) mod recovery;
+#[cfg(test)]
 use recovery::RecoveryObserver;
+mod hub;
+pub use hub::EventHub;
+use hub::EventPublisher;
 use std::{
     net::{SocketAddr, UdpSocket},
-    process::Command,
-    sync::{Arc, Mutex, OnceLock, mpsc},
+    sync::{OnceLock, mpsc},
 };
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -78,97 +80,6 @@ impl UiEvent {
     }
 }
 
-#[derive(Clone)]
-struct Subscriber {
-    surface: UiSurface,
-    context: egui::Context,
-    sender: mpsc::SyncSender<UiEvent>,
-}
-
-#[derive(Clone)]
-pub struct EventHub {
-    subscribers: Arc<Mutex<Vec<Subscriber>>>,
-    mutations: Arc<Mutex<()>>,
-    capacity: usize,
-    bridge: Option<Arc<EventBridge>>,
-    recovery: Option<Arc<RecoveryObserver>>,
-}
-
-impl EventHub {
-    pub fn new(capacity: usize) -> Self {
-        let subscribers = Arc::new(Mutex::new(Vec::new()));
-        let bridge = EventBridge::new(Arc::clone(&subscribers))
-            .ok()
-            .map(Arc::new);
-        let recovery = if bridge.is_none() {
-            RecoveryObserver::new(Arc::clone(&subscribers))
-                .ok()
-                .map(Arc::new)
-        } else {
-            None
-        };
-        Self {
-            subscribers,
-            mutations: Arc::new(Mutex::new(())),
-            capacity: capacity.max(1),
-            bridge,
-            recovery,
-        }
-    }
-
-    pub fn subscribe(&self, surface: UiSurface, context: egui::Context) -> mpsc::Receiver<UiEvent> {
-        let (sender, receiver) = mpsc::sync_channel(self.capacity);
-        if let Ok(mut subscribers) = self.subscribers.lock() {
-            subscribers.push(Subscriber {
-                surface,
-                context,
-                sender,
-            });
-        }
-        receiver
-    }
-
-    pub fn publish(&self, event: UiEvent) {
-        deliver(&self.subscribers, event);
-    }
-
-    pub fn watch_run_dir(&self, dir: &std::path::Path, surface: UiSurface) {
-        if let Some(bridge) = &self.bridge {
-            bridge.watch_run_dir(dir, surface);
-        } else if let Some(recovery) = &self.recovery {
-            recovery.watch_run_dir(dir, surface);
-        }
-    }
-
-    pub(crate) fn configure_child(&self, command: &mut Command, surface: UiSurface) {
-        if let Some(bridge) = &self.bridge {
-            bridge.apply_to(command, surface);
-        }
-    }
-
-    #[cfg(test)]
-    fn bridge_credentials(&self) -> Option<(SocketAddr, String)> {
-        self.bridge.as_ref().map(|bridge| bridge.credentials())
-    }
-}
-
-fn deliver(subscribers: &Arc<Mutex<Vec<Subscriber>>>, event: UiEvent) {
-    let Ok(mut subscribers) = subscribers.try_lock() else {
-        return;
-    };
-    subscribers.retain(|subscriber| {
-        if !event.applies_to(subscriber.surface) {
-            return true;
-        }
-        match subscriber.sender.try_send(event) {
-            Ok(()) => subscriber.context.request_repaint(),
-            Err(mpsc::TrySendError::Full(_)) => {}
-            Err(mpsc::TrySendError::Disconnected(_)) => return false,
-        }
-        true
-    });
-}
-
 /// Notify a supervising native UI that this CLI child has finished its command.
 pub fn notify_external_from_environment() {
     static SENDER: OnceLock<Option<(UdpSocket, SocketAddr, String, String)>> = OnceLock::new();
@@ -194,12 +105,6 @@ fn notify_external(address: SocketAddr, token: &str, surface: UiSurface) {
             format!("{token}:{}", surface.wire_name()).as_bytes(),
             address,
         );
-    }
-}
-
-impl Default for EventHub {
-    fn default() -> Self {
-        Self::new(1)
     }
 }
 

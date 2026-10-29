@@ -38,7 +38,10 @@ fn metadata_completion_event_refreshes_every_workspace_step() {
         room.publish_event(crate::ui::events::UiEvent::invalidated(
             crate::ui::events::UiSurface::Workspace,
         ));
-        probe.poll();
+        while probe.poll_pending.is_none() && Instant::now() < deadline {
+            probe.poll();
+            std::thread::yield_now();
+        }
         assert!(
             matches!(
                 probe.poll_pending,

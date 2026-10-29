@@ -1,3 +1,12 @@
+### Keep native UI event delivery non-blocking and reads concurrent — issue #257 / #9 / 2026-10-30
+
+- [x] Plan: trace event fan-out and request queues. Event publication could silently drop an invalidation when the subscriber registry mutex was busy; the read lane also had one worker, so one slow read held up other reads of the same class.
+- [x] Red/Green: add regressions proving that a blocked read does not block another read and a busy subscriber registry delays delivery without blocking or losing the publisher's event.
+- [x] Task: add one bounded read worker to the existing per-lane pool; keep mutations serialized and periodic snapshots on their existing single-flight worker. Route local, child-process, and recovery invalidations through one asynchronous fan-out thread using a capacity-one wake channel and atomic surface bits; only that thread touches the subscriber registry and requests repaint for matching surfaces.
+- [x] Verify: local Rust unit suite 83/83, source-layout checks 2/2, Clippy with `-D warnings`, `cargo fmt --check`, and `git diff --check` pass. All touched Rust/test files remain under 300 lines.
+- [ ] Package/UI/Windows Verify: test event-driven refresh and an independent slow read in the exact packaged UI, then validate the exact Windows package. Keep #257 and #9 open until their acceptance journeys pass.
+- [x] Complete this unit: update the R-192 design decision, AgentMemory and LLM Wiki; commit/push to the active Rust issue branch.
+
 ### Keep workspace input available during quota refresh — issue #257 / 2026-10-30
 
 - [x] Plan: trace the observed disabled workspace to automatic stale-quota metadata work, which occupied the single UI `pending` slot and made `workspace::permissions::editable` reject all inputs.

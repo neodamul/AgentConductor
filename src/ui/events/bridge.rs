@@ -1,4 +1,4 @@
-use super::{Subscriber, UiEvent, UiSurface, deliver};
+use super::{EventPublisher, UiEvent, UiSurface};
 use std::{
     collections::BTreeSet,
     fs,
@@ -27,7 +27,7 @@ pub(super) struct EventBridge {
 }
 
 impl EventBridge {
-    pub(super) fn new(subscribers: Arc<Mutex<Vec<Subscriber>>>) -> std::io::Result<Self> {
+    pub(super) fn new(publisher: EventPublisher) -> std::io::Result<Self> {
         let listener = UdpSocket::bind("127.0.0.1:0")?;
         let address = listener.local_addr()?;
         let shutdown = listener.try_clone()?;
@@ -37,6 +37,7 @@ impl EventBridge {
         let receiver_token = token.clone();
         let watch = Arc::new(Mutex::new(None));
         let receiver_watch = Arc::clone(&watch);
+        let receiver_publisher = publisher;
         thread::Builder::new()
             .name("native-ui-events".into())
             .spawn(move || {
@@ -60,7 +61,7 @@ impl EventBridge {
                                 && received_token == receiver_token
                                 && let Some(surface) = UiSurface::from_wire(surface)
                             {
-                                deliver(&subscribers, UiEvent::invalidated(surface));
+                                receiver_publisher.publish(UiEvent::invalidated(surface));
                                 delay = MIN_SCAN_DELAY;
                             }
                         }
@@ -71,7 +72,7 @@ impl EventBridge {
                             ) =>
                         {
                             if let Some(surface) = changed_surface(&receiver_watch) {
-                                deliver(&subscribers, UiEvent::invalidated(surface));
+                                receiver_publisher.publish(UiEvent::invalidated(surface));
                                 delay = MIN_SCAN_DELAY;
                             } else {
                                 delay = next_scan_delay(delay, false);

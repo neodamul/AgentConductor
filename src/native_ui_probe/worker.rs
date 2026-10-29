@@ -19,7 +19,8 @@ struct TaggedRequest {
     id: u64,
     request: WorkerRequest,
 }
-const REQUEST_WORKERS: usize = 2;
+const REQUEST_LANES: usize = 2;
+const WORKERS_PER_LANE: [usize; REQUEST_LANES] = [2, 1];
 const REQUEST_QUEUE_CAPACITY: usize = 16;
 
 fn run_request(request: WorkerRequest, dispatch: &Dispatch) -> Result<Value, String> {
@@ -171,23 +172,37 @@ impl RequestWorker {
                 }
             })
             .map_err(|error| error.to_string())?;
-        let mut requests = Vec::with_capacity(REQUEST_WORKERS);
-        for index in 0..REQUEST_WORKERS {
+        let mut requests = Vec::with_capacity(REQUEST_LANES);
+        for (lane, worker_count) in WORKERS_PER_LANE.into_iter().enumerate() {
             let (sender, queue) = mpsc::sync_channel::<TaggedRequest>(REQUEST_QUEUE_CAPACITY);
             requests.push(sender);
-            let request_dispatch = Arc::clone(&dispatch);
-            let request_reply = reply_tx.clone();
-            let request_context = context.clone();
-            std::thread::Builder::new()
-                .name(format!("native-ui-request-{index}"))
-                .spawn(move || {
-                    while let Ok(request) = queue.recv() {
-                        let reply = run_request(request.request, request_dispatch.as_ref());
-                        let _ = request_reply.send((request.id, reply));
-                        request_context.request_repaint();
-                    }
-                })
-                .map_err(|error| error.to_string())?;
+            let queue = Arc::new(std::sync::Mutex::new(queue));
+            for worker in 0..worker_count {
+                let request_queue = Arc::clone(&queue);
+                let request_dispatch = Arc::clone(&dispatch);
+                let request_reply = reply_tx.clone();
+                let request_context = context.clone();
+                std::thread::Builder::new()
+                    .name(format!("native-ui-request-{lane}-{worker}"))
+                    .spawn(move || {
+                        loop {
+                            let received = {
+                                request_queue
+                                    .lock()
+                                    .unwrap_or_else(std::sync::PoisonError::into_inner)
+                                    .recv()
+                            };
+                            let request = match received {
+                                Ok(request) => request,
+                                Err(_) => break,
+                            };
+                            let reply = run_request(request.request, request_dispatch.as_ref());
+                            let _ = request_reply.send((request.id, reply));
+                            request_context.request_repaint();
+                        }
+                    })
+                    .map_err(|error| error.to_string())?;
+            }
         }
         Ok(Self {
             requests,

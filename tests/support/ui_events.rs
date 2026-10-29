@@ -1,7 +1,6 @@
 use super::RecoveryObserver;
 use crate::ui::events::{EventHub, UiEvent, UiSurface};
 use eframe::egui;
-use std::sync::Arc;
 
 #[test]
 fn committed_state_event_reaches_subscribers_without_waiting_for_readers() {
@@ -11,7 +10,10 @@ fn committed_state_event_reaches_subscribers_without_waiting_for_readers() {
 
     events.publish(event);
 
-    assert_eq!(subscriber.try_recv(), Ok(event));
+    assert_eq!(
+        subscriber.recv_timeout(std::time::Duration::from_secs(1)),
+        Ok(event)
+    );
 }
 
 #[test]
@@ -22,7 +24,10 @@ fn slow_and_disconnected_subscribers_do_not_block_event_producers() {
     events.publish(first);
     events.publish(first);
 
-    assert_eq!(slow.try_recv(), Ok(first));
+    assert_eq!(
+        slow.recv_timeout(std::time::Duration::from_secs(1)),
+        Ok(first)
+    );
     assert!(slow.try_recv().is_err());
     drop(slow);
     events.publish(first);
@@ -115,6 +120,32 @@ fn publishing_does_not_wait_for_subscriber_registry_lock() {
 }
 
 #[test]
+fn event_waits_for_a_busy_registry_without_blocking_the_publisher() {
+    let hub = EventHub::default();
+    let subscriber = hub.subscribe(UiSurface::Workspace, egui::Context::default());
+    let event = UiEvent::invalidated(UiSurface::Workspace);
+    let guard = hub.subscribers.lock().unwrap();
+    let producer = hub.clone();
+    let (done, result) = std::sync::mpsc::channel();
+    let thread = std::thread::spawn(move || {
+        producer.publish(event);
+        let _ = done.send(());
+    });
+
+    assert!(
+        result
+            .recv_timeout(std::time::Duration::from_millis(500))
+            .is_ok()
+    );
+    drop(guard);
+    assert_eq!(
+        subscriber.recv_timeout(std::time::Duration::from_secs(1)),
+        Ok(event)
+    );
+    thread.join().unwrap();
+}
+
+#[test]
 fn standalone_recovery_observer_keeps_external_updates_when_bridge_is_unavailable() {
     let root = std::env::temp_dir().join(format!(
         "agentconductor-recovery-only-{}",
@@ -124,7 +155,7 @@ fn standalone_recovery_observer_keeps_external_updates_when_bridge_is_unavailabl
     std::fs::write(root.join("report.json"), b"before").unwrap();
     let hub = EventHub::default();
     let workspace = hub.subscribe(UiSurface::Workspace, egui::Context::default());
-    let fallback = RecoveryObserver::new(Arc::clone(&hub.subscribers)).unwrap();
+    let fallback = RecoveryObserver::new(hub.publisher.clone()).unwrap();
     fallback.watch_run_dir(&root, UiSurface::Workspace);
 
     std::fs::write(root.join("report.json"), b"external report change").unwrap();
