@@ -1,6 +1,6 @@
 {
   "scope": "Issue #226 Windows packaged signal-settings first-run workspace registry polling",
-  "base_head": "1decc2926b0e242d1e87eb7842a5f0a5687e12e4",
+  "base_head": "69887bab4732aba50d8649951ce153bf20a042dd",
   "fix_commit": "bbad7e1",
   "workflow_runs": {
     "40783168410": {
@@ -24,6 +24,23 @@
       "macos_package": "passed",
       "windows_package": "failed in signal-settings test setup",
       "failure": "The stale first-workspace modal helper expected Name for a new workspace/Create workspace, but the packaged UI showed the current Workspace settings form and Settings action; it exited FIRST_WORKSPACE_PROMPT_MISSING before running the signal-settings UI driver."
+    },
+    "40795726569": {
+      "head": "c53c347812933775f31213c9a97cbf546faf0b27",
+      "macos_validation": "passed",
+      "windows_validation": "passed",
+      "macos_package": "passed",
+      "windows_package": "failed after reaching signal settings",
+      "failure": "The shared Windows UIA driver reported PORT_FIELD_NOT_INTERACTABLE before saving; this failure was diagnosed and fixed on the root #9 branch."
+    },
+    "40800347115": {
+      "head": "f18f923ade364b39ff1fb511b1a08120c3dd1c2e",
+      "base_head": "69887bab4732aba50d8649951ce153bf20a042dd",
+      "macos_validation": "passed",
+      "windows_validation": "passed",
+      "macos_package": "passed",
+      "windows_package": "failed after the exact signal preference was saved",
+      "failure": "The PowerShell test driver failed at Join-Path $env:AC_SIGNAL_WORKSPACE because that environment variable was null. The persisted file already contained transport=agentmemory and port=7333; Rust independently knows and verifies the exact active_workspace path."
     }
   },
   "red_green": {
@@ -39,11 +56,20 @@
         "tests/windows_signal_settings_dispatch.rs": 262,
         "tests/windows_signal_workspace_registry.rs": 58
       }
+    },
+    "follow_up": {
+      "regression": "Require Rust to verify the durable preference using active_workspace and prohibit the PowerShell script from relying on AC_SIGNAL_WORKSPACE.",
+      "red": "The new contract failed while the PowerShell script still contained the redundant environment-based Join-Path.",
+      "green": "After removing the PowerShell file read and leaving durable JSON verification to Rust, focused suites passed 20 tests.",
+      "clippy": "passed",
+      "cargo_fmt": "passed",
+      "git_diff_check": "passed",
+      "changed_test_files_under_300_lines": true,
+      "agentmemory": "mem_mvswpnge_827a3ba6c1cd"
     }
   },
   "not_verified": [
-    "Exact Windows package execution of the ui-new registry-path fixture update",
-    "Exact macOS and Windows package runs after the latest test-fixture head"
+    "Exact Windows package execution after removing the redundant PowerShell environment-path read"
   ],
   "issue_state": "Keep issue #226 open and PR #230 draft/open until exact-head macOS and Windows package checks pass.",
   "agentmemory": "mem_mvsthh65_b78fe80b5dd4"

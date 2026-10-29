@@ -232,15 +232,14 @@ fn port_setfocus_failure_uses_owned_visible_edit_click_and_rechecks_focus() {
 }
 
 #[test]
-fn signal_save_checks_durable_preference_before_visible_dialog_closure() {
+fn signal_save_waits_for_dialog_closure_without_relying_on_a_child_path_environment_variable() {
     let source = include_str!("support/windows_signal_settings_script.rs");
     let save = source.find("Click-SaveAction").unwrap();
-    assert!(source.contains("$persistDeadline"));
-    assert!(source.contains("SIGNAL_PREFERENCE_NOT_PERSISTED"));
-    assert!(source.contains("$env:AC_SIGNAL_WORKSPACE"));
-    let persist = source.find("$persistDeadline").unwrap();
+    assert!(!source.contains("$env:AC_SIGNAL_WORKSPACE"));
+    assert!(!source.contains("Join-Path"));
     let close = source.find("$closeDeadline").unwrap();
-    assert!(save < persist && persist < close);
+    let success = source.find("SIGNAL_SETTINGS_SAVED").unwrap();
+    assert!(save < close && close < success);
     assert!(source.contains("Find-VisibleActionControl 'Local Rust'"));
 }
 
@@ -255,16 +254,27 @@ fn signal_package_test_checks_the_explicit_workspace_registered_by_ui_new() {
 }
 
 #[test]
-fn signal_dialog_failure_reports_visible_controls_and_saved_file_contents() {
+fn rust_verifies_persisted_signal_settings_at_the_explicit_workspace_path() {
+    let test = include_str!("windows_signal_settings.rs");
+    let script = include_str!("support/windows_signal_settings_script.rs");
+
+    assert!(test.contains("active_workspace.join(\"signal-transport.json\")"));
+    assert!(test.contains("settings[\"preference\"][\"transport\"] == \"agentmemory\""));
+    assert!(test.contains("settings[\"preference\"][\"port\"] == 7333"));
+    assert!(!script.contains("$env:AC_SIGNAL_WORKSPACE"));
+}
+
+#[test]
+fn signal_dialog_failure_reports_visible_controls_and_rust_workspace_path() {
     let source = include_str!("support/windows_signal_settings_script.rs");
     let test = include_str!("windows_signal_settings.rs");
     assert!(source.contains("function Find-VisibleActionControl"));
     assert!(source.contains(".Current.IsOffscreen"));
     assert!(source.contains(".Current.BoundingRectangle.IsEmpty"));
-    assert!(source.contains("SIGNAL_DIALOG_DID_NOT_CLOSE; persisted="));
+    assert!(source.contains("SIGNAL_DIALOG_DID_NOT_CLOSE"));
     assert!(source.contains("Describe-ActionControls"));
     assert!(test.contains("persisted_settings="));
-    assert!(source.contains("SAVE_STATE=dialog:"));
+    assert!(test.contains("active_workspace.join(\"signal-transport.json\")"));
 }
 
 #[test]
