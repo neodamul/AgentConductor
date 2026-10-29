@@ -6348,3 +6348,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: candidate-driver, briefing-driver, and source-layout suites pass 9 tests; formatting, diff checks, and 300-line limits pass. The embedded PowerShell and its contract tests are 181 and 98 lines.
 - [ ] Verify exact package: require Windows to confirm approve, merge, and reject outcomes and persisted Git/run state; the source-level change does not count as package acceptance.
 - [ ] Complete: keep issue #9 at 22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate until exact package evidence passes.
+
+### 2026-10-29 — Resume background refresh after deferring a tool request — issue #9
+
+- [x] Plan: inspect exact-head package run `40826726048` at `d82104c8`. Windows build and package execution passed; default desktop, schedule, briefing, signal settings, candidate review, and stop/resume/recovery passed. The tool-decision journey failed because the UI still exposed the previous pending request after refresh.
+- [x] Red: add a regression requiring a deferred pending request to resume background polling while an open tool modal continues to suspend polling. It failed against the old `blocks_background_refresh` behavior.
+- [x] Task: suspend background refresh only while a decision/modal is actively open. A deferred pending receipt no longer freezes the snapshot, so a newly issued request can reach the UI.
+- [x] Verify locally: 21 tests pass across `native_room_poll`, `native_ui_tool_dialog`, `windows_tool_decision_dispatch`, and `source_layout`; formatting passes. Files remain below 300 lines.
+- [ ] Verify exact Windows package: rerun all packaged UI journeys and confirm tool refresh, approval, rejection, and persisted ledger outcomes.
+- [ ] Complete: keep issue #9 open and acceptance unchanged at 22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate until exact-package verification and remaining parity work pass.

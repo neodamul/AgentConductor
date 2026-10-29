@@ -117,20 +117,13 @@ impl Default for State {
 }
 
 impl State {
-    pub fn blocks_background_refresh(&self, snapshot: Option<&Value>) -> bool {
+    pub fn blocks_background_refresh(&self) -> bool {
         self.tool_dialog.is_some()
             || self.confirming_tool.is_some()
             || self.confirming_decision.is_some()
             || self.confirming_stop
             || self.confirming_recover
             || self.scope_recovery_open
-            || snapshot
-                .and_then(|value| value["tool_requests"].as_array())
-                .is_some_and(|requests| {
-                    requests
-                        .iter()
-                        .any(|request| request["status"] == "pending")
-                })
     }
 }
 

@@ -87,8 +87,7 @@ impl Probe {
             room::refresh_due(
                 ui.ctx(),
                 self.snapshot.as_ref(),
-                self.pending.is_some()
-                    || room_view.blocks_background_refresh(self.snapshot.as_ref()),
+                self.pending.is_some() || room_view.blocks_background_refresh(),
                 &mut room_view.next_refresh,
             )
         }) {
