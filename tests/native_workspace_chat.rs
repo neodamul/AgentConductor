@@ -55,19 +55,7 @@ fn rejected_chat_submission_restores_the_question_as_an_unsent_draft() {
     let mut state = State::default();
     state.open();
     let question = "How is this workspace configured?";
-    let mut output = render_chat(&context, &mut state, Vec::new()).0;
-    let point = control_center(&output, Role::MultilineTextInput, None);
-    clear(&mut output);
-    click_chat(&context, &mut state, point);
-    let mut output = render_chat(
-        &context,
-        &mut state,
-        vec![Event::Paste(question.to_owned())],
-    )
-    .0;
-    let send = control_center(&output, Role::Button, Some("Send"));
-    clear(&mut output);
-    let submitted = click_chat(&context, &mut state, send);
+    let submitted = submit_question(&context, &mut state, question);
     assert!(matches!(submitted, Some(chat::Event::Send(_))));
     state.rejected("Coordinator job was not accepted".into());
 
@@ -90,6 +78,59 @@ fn rejected_chat_submission_restores_the_question_as_an_unsent_draft() {
         !conversation_contains_unaccepted_turn,
         "an unaccepted question must not remain as a conversation turn"
     );
+}
+
+#[test]
+fn a_late_accepted_chat_job_keeps_the_question_and_eventually_shows_its_answer() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut state = State::default();
+    state.open();
+    let question = "How is this workspace configured?";
+    let submitted = submit_question(&context, &mut state, question);
+    assert!(matches!(submitted, Some(chat::Event::Send(_))));
+
+    state.started("job-late".into());
+    assert!(state.awaiting(), "accepted delayed jobs remain followed");
+    let mut output = render_chat(&context, &mut state, Vec::new()).0;
+    let question_visible = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .any(|(_, node)| node.label() == Some(question) || node.value() == Some(question))
+        || output.shapes.iter().any(|shape| {
+            matches!(&shape.shape, egui::Shape::Text(text) if text.galley.job.text == question)
+        });
+    clear(&mut output);
+    assert!(
+        question_visible,
+        "accepted operator turn remains in chat history"
+    );
+
+    assert!(state.completed("job-late", "The repository uses Cargo.".into()));
+    let mut output = render_chat(&context, &mut state, Vec::new()).0;
+    let rendered = |text: &str| {
+        output
+            .platform_output
+            .accesskit_update
+            .as_ref()
+            .unwrap()
+            .nodes
+            .iter()
+            .any(|(_, node)| node.label() == Some(text) || node.value() == Some(text))
+            || output.shapes.iter().any(|shape| {
+                matches!(&shape.shape, egui::Shape::Text(item) if item.galley.job.text == text)
+            })
+    };
+    let question_visible = rendered(question);
+    let answer_visible = rendered("The repository uses Cargo.");
+    clear(&mut output);
+    assert!(question_visible, "accepted question remains in history");
+    assert!(answer_visible, "completed answer appears in history");
+    assert!(!state.awaiting());
 }
 
 #[test]
@@ -218,4 +259,19 @@ fn click_chat(context: &egui::Context, state: &mut State, point: Pos2) -> Option
         vec![Event::PointerMoved(point), pointer(point, true)],
     );
     render_chat(context, state, vec![pointer(point, false)]).1
+}
+
+fn submit_question(
+    context: &egui::Context,
+    state: &mut State,
+    question: &str,
+) -> Option<chat::Event> {
+    let mut output = render_chat(context, state, Vec::new()).0;
+    let input = control_center(&output, Role::MultilineTextInput, None);
+    clear(&mut output);
+    click_chat(context, state, input);
+    let mut output = render_chat(context, state, vec![Event::Paste(question.to_owned())]).0;
+    let send = control_center(&output, Role::Button, Some("Send"));
+    clear(&mut output);
+    click_chat(context, state, send)
 }

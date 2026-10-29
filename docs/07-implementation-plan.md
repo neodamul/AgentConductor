@@ -6327,6 +6327,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Task: report UIA no-op, checked pointer fallback, and immediate post-click expected-state result so the next package run identifies whether the click or product transition failed. Do not change product behavior without that evidence.
 - [ ] Verify: rerun the exact packaged Windows gate and retain the action journal, UIA snapshot, request receipt, and workflow report; refresh/allow/deny must all be exercised.
 - [ ] Port main #197 chat semantics: persist conversation history; distinguish accepted/unreceived sends; restore an unsent draft after failure; follow accepted late jobs; support new/reset conversation.
+  - [x] Restore a rejected pre-acceptance question to the editor; verified with `native_workspace_chat` regression coverage.
+  - [x] Keep an accepted late job followed in the transcript and render its eventual answer; verified with `native_workspace_chat` regression coverage.
+  - [ ] Persist chat history and support starting/resetting a conversation.
 - [ ] Port main #200 diagnostics: emit `diagnostics::start/done` around native Room dispatch/routing and add request-kind-specific timeout text/catalog entries.
 - [ ] Complete: #9 remains open; Windows package acceptance is not credited until the exact gate passes and the main-parity requirements above are implemented and verified.
 
