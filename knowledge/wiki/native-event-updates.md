@@ -71,6 +71,10 @@ A three-second custom quota subprocess also completed with exit code 0 and wrote
 
 Added `tests/native_ui_probe/poll_events.rs::metadata_event_refreshes_quota_snapshot_asynchronously`. It publishes an invalidation through the subscribed workspace event hub while the current snapshot reports a running metadata operation, verifies that the Probe retrieves a new snapshot through its asynchronous poll worker, and renders the resulting first-party quota badge in the native sidebar accessibility tree. Focused test: 1/1 passed; native UI filter: 59/59; full library suite: 85/85; `source_layout`: 2/2; Clippy with `-D warnings`, rustfmt and `git diff --check` passed. The source poll module is 51 lines and the regression test is 69 lines. An earlier all-target filtered invocation was interrupted after its native library tests while traversing unrelated test targets (exit 130); that invocation is not claimed as a full all-target pass. This strengthens source-to-view event evidence; exact packaged UI and Windows checks remain open.
 
+## Focused non-blocking recheck — 2026-10-30
+
+At source head `0e664568`, `cargo test --locked --offline --lib event` passed 21 tests and the `blocked` filter passed 2 tests. This confirms event delivery and independent request progress in the current local source; it does not close the exact packaged UI or Windows acceptance gates.
+
 ## Links
 
 - Requirements: `docs/01-requirements.md` through `docs/06-design-decisions.md`, R-192 / DD-204.
