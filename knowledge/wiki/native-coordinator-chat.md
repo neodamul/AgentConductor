@@ -42,3 +42,9 @@ preserved. Focused startup-chat, diagnostics, and source-layout tests pass after
 warning-denied all-target Clippy and formatting. Exact macOS/Windows package verification is
 still required to confirm the packaged request path; the affected user's diagnostics log is also
 needed to distinguish native dispatch delay from external coordinator delay.
+
+## Saved-state freshness without a Git lookup
+
+The chat fast path must skip only the repository `HEAD` subprocess, not the stale saved-context check. The Rust port now exposes a `chat_revision` derived from normalized saved state and review evidence without Git. The native chat request sends that token, and startup dispatch compares it before checking or launching the coordinator. This rejects a stale coordinator, profile, goal, repository, or proposal while preserving the low-latency path; repository mutations still use the complete HEAD-bound revision.
+
+TDD coverage checks that a saved goal change invalidates the old chat token and that chat submission still avoids a slow `rev-parse HEAD`. The native UI packet test verifies it sends `chat_revision`. Main-target PR #240 introduced this behavior in commit `642a428d`; Rust PR #239 ported it in commit `7492291`. Exact package validation on the updated heads is still required.

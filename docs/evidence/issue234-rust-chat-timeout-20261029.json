@@ -3,7 +3,7 @@
   "branch": "codex/issue-234-chat-request-timeout",
   "original_base": "86ea3c3ddccdb3f43d5ef9677127534997d8c634",
   "rebased_base": "69887bab4732aba50d8649951ce153bf20a042dd",
-  "current_head": "096e9f9142ccd725a7d37217ca11f8a4c6935ac1",
+  "current_head": "7492291",
   "rebase": {
     "result": "rebased through 28df8394 onto latest #9 head 69887bab without code conflicts; both issue checklists preserved",
     "commit_before_evidence_update": "b2d53ea2"
@@ -55,14 +55,28 @@
     "format_and_diff": "cargo fmt --check and git diff --check passed"
   },
   "latest_rebase_verification": {
-    "command": "cargo test --locked --offline --test startup_chat --test request_diagnostics --test source_layout",
-    "result": "5 passed",
-    "clippy": "cargo clippy --all-targets --locked --features test-fixtures -- -D warnings passed",
+    "command": "cargo test --locked --offline --test startup_chat --test source_layout --features test-fixtures; cargo test --locked --offline --features native-ui-probe --test native_workspace_chat",
+    "result": "startup_chat + source_layout: 5 passed; native_workspace_chat: 4 passed",
+    "clippy": "cargo clippy --all-targets --locked --features test-fixtures,native-ui-probe -- -D warnings passed",
     "format_and_diff": "cargo fmt --check and git diff --check passed",
     "source_lines": {
       "src/ui/diagnostics.rs": 73,
       "tests/startup_chat.rs": 133,
       "tests/request_diagnostics.rs": 11
+    }
+  },
+  "stale_context_guard": {
+    "main_predecessor": {
+      "pull_request": 240,
+      "commit": "642a428deb5d3dbdb659d7d34c07e0e817db8781",
+      "exact_run": "40803133126",
+      "status_at_recording": "in_progress"
+    },
+    "rust_port": {
+      "red": "chat_rejects_a_stale_saved_context_after_saved_state_changes failed before chat_revision validation",
+      "green": "the stale goal token is rejected; slow-rev-parse fast-path and native UI chat packet use chat_revision",
+      "code_commit": "7492291",
+      "exact_run": "pending push"
     }
   },
   "remaining": [
