@@ -67,8 +67,12 @@ pub struct Saved {
     pub(super) imports: Option<crate::mcp::Applied>,
     #[serde(default)]
     pub(super) mcp_result: Option<String>,
-    #[serde(skip)]
+    #[serde(default)]
     pub(super) chat_result: Option<String>,
+    #[serde(default)]
+    pub(super) chat_transcript: Vec<crate::chat::Turn>,
+    #[serde(default)]
+    pub(super) chat_history: std::collections::BTreeMap<PathBuf, Vec<crate::chat::Turn>>,
     pub(super) config: Config,
     pub(super) proposal: Option<Proposal>,
     pub(super) job: Option<StoredJob>,

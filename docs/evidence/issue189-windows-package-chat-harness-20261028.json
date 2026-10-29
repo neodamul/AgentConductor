@@ -1,0 +1,72 @@
+{
+  "issue": 189,
+  "pull_request": 192,
+  "scope": "exact Windows package coordinator chat persistence and in-flight reconnect",
+  "source_branch": "codex/issue-189-native-coordinator-chat",
+  "tdd": {
+    "red": {
+      "command": "cargo test --locked --offline --test windows_coordinator_chat_dispatch -- --nocapture",
+      "result": "failed as expected",
+      "diagnostic": "tests/windows_coordinator_chat.rs was absent before the package harness was added"
+    },
+    "green": {
+      "command": "cargo test --locked --offline --test windows_coordinator_chat_dispatch -- --nocapture",
+      "result": "passed"
+    }
+  },
+  "package_test": {
+    "test_target": "windows_coordinator_chat",
+    "binary_source": "AGENTCONDUCTOR_DESKTOP_BINARY",
+    "scenarios": [
+      "persist transcript and show it after workspace reopen",
+      "reconnect a running chat worker after the first app process closes",
+      "recover a late answer after the UI request timeout boundary"
+    ],
+    "oracles": [
+      "PowerShell UI Automation sees CHAT_VISIBLE, the operator question, and PACKAGE_CHAT_ANSWER",
+      "startup.json chat_transcript contains both operator and assistant turns",
+      "coordinator-ui-*/process/owner.json proves the resumed job was running before the first app closed"
+    ]
+  },
+  "local_verification": {
+    "windows_coordinator_chat_dispatch": "passed",
+    "windows_desktop_driver": "passed",
+    "windows_schedule_dispatch": "passed",
+    "focused_windows_package_dispatch_layout_docs": "passed 20 tests",
+    "clippy_warnings_denied": "passed",
+    "cargo_fmt": "passed",
+    "git_diff_check": "passed"
+  },
+  "windows_package_status": "pending exact Windows runner execution; no package result is claimed from macOS",
+  "latest_ci_failure": {
+    "run_id": 40608162559,
+    "job": "native-package (windows-latest)",
+    "failure": "The UIA driver invoked Send while it was present but disabled, producing ElementNotEnabledException; the in-flight scenario consequently did not emit CHAT_SENT.",
+    "fix": "Re-query Send until IsEnabled is true before invoking it."
+  },
+  "latest_ci_failure_after_enabled_wait": {
+    "run_id": 40613402175,
+    "job": "native-package (windows-latest)",
+    "failure": "Both coordinator-chat scenarios timed out without a usable Send control. The reopen scenario reported NO_CHAT_SEND; the in-flight assertion did not retain the driver report and only showed that CHAT_SENT was absent.",
+    "diagnosis_fix": "Source inspection found that the chat TextEdit exposed only hint text and no stable UI Automation name, so the old fallback could edit another field and leave Send disabled. The UI now assigns the placeholder as an explicit accessible name. The driver also requires the named visible enabled editor, focuses it, verifies ValuePattern.Current.Value, selects an enabled visible Send candidate from all same-name controls, and retains bounded UIA diagnostics and stderr/stdout on failure.",
+    "next_verification": "Rerun the exact packaged Windows tests and inspect CHAT_CONTROL_DIAGNOSTIC if Send remains unavailable."
+  },
+  "package_run_40618263589": {
+    "windows_job": 122594712090,
+    "macos_job": 122594711994,
+    "windows_result": "The persisted/reopen scenario passed. The in-flight scenario failed before sending with NO_CHAT_LAUNCHER while both coordinator scenarios were running concurrently in one test binary.",
+    "macos_result": "Build, manual render, and package execution passed; artifact upload failed with ENOTFOUND.",
+    "follow_up": "Serialize the exact Windows UI test binary with --test-threads=1 and rerun. Preserve bounded CHAT_WINDOW/CHAT_DESKTOP_WINDOW/CHAT_CONTROL launcher-tree diagnostics and packaged-process stderr. Rerun macOS packaging after the workflow is terminal to retain its artifact."
+  },
+  "issue_197_timeout_recovery": {
+    "scope": "Rust coordinator chat overlap added to #189",
+    "acceptance": [
+      "accepted questions remain in the transcript after a late request reply",
+      "running native chat jobs are followed after resynchronization",
+      "completed late answers are restored from the persisted transcript",
+      "only unaccepted requests restore the draft to the input"
+    ],
+    "local_regression": "native_workspace_chat, native_workspace_chat_interaction and windows_coordinator_chat_dispatch passed 13 tests; Clippy, rustfmt, diff and <=300-line checks passed",
+    "package_status": "exact Windows late-reply recovery remains unverified; the next package run includes the timeout scenario"
+  }
+}

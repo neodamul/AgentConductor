@@ -47,6 +47,7 @@ public static class BriefingMouse {
   [DllImport("user32.dll")] static extern IntPtr WindowFromPoint(Point point);
   [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
   [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
+  [DllImport("user32.dll")] static extern void keybd_event(byte key, byte scan, uint flags, UIntPtr extra);
   [DllImport("user32.dll", SetLastError=true)] static extern uint SendInput(uint count, Input[] inputs, int size);
   public static bool Focus(IntPtr window) {
     SetForegroundWindow(window);
@@ -70,6 +71,11 @@ public static class BriefingMouse {
     if (SendInput(1, new[] { down }, size) != 1) return false;
     System.Threading.Thread.Sleep(80);
     return SendInput(1, new[] { up }, size) == 1;
+  }
+  public static void KeyboardActivate() {
+    keybd_event(0x20, 0, 0, UIntPtr.Zero);
+    System.Threading.Thread.Sleep(80);
+    keybd_event(0x20, 0, 2, UIntPtr.Zero);
   }
 }
 "@
@@ -130,6 +136,20 @@ for ($attempt = 1; $attempt -le 3; $attempt++) {
 if (-not $menu -and $activationState -eq 'unchanged') {
   Write-Output 'BRIEFING_ACTION_NO_STATE_CHANGE; attempts=3'
   exit 11
+}
+if (-not $menu) {
+  try {
+    $load.SetFocus()
+    [BriefingMouse]::KeyboardActivate()
+    Write-Output 'BRIEFING_KEYBOARD_FALLBACK'
+  } catch {
+    Write-Output "BRIEFING_KEYBOARD_FALLBACK_FAILED; $($_.Exception.Message)"
+  }
+  $keyboardDeadline = (Get-Date).AddSeconds(3)
+  while (-not $menu -and (Get-Date) -lt $keyboardDeadline) {
+    $menu = Find-Button 'Team briefing · read-only'
+    if (-not $menu) { Start-Sleep -Milliseconds 100 }
+  }
 }
 while (-not $menu -and (Get-Date) -lt $deadline) {
   $menu = Find-Button 'Team briefing · read-only'

@@ -683,3 +683,10 @@ Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → 
 ### NFR-77 ACIO execution preserves existing safety boundaries
 ACIO input remains schema-bounded; process timeout, cancellation, stdout/stderr capture, task ownership, and candidate review remain coordinator-owned. A protocol declaration is not an OS sandbox: filesystem containment is limited to the existing isolated workspace and its scoped task contract, and privileged tool execution requires the existing human decision ledger. Non-ACIO profiles remain backward compatible.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.
+
+### FR-163 Persisted coordinator transcript and resumable requests
+Persist the conversation in the workspace startup state, expose it in snapshots, restore active chat job identity, allow explicit transcript reset, and send only the newest question in a chat request. Rebuild CLI context from the latest 40 transcript turns and clip turn text to fit the existing prompt bound.
+
+### NFR-73 Bounded, workspace-scoped conversation state
+Transcript storage is local and workspace-scoped; follow-up requests remain within the existing 128 KiB IPC and prompt bounds. Closing or reopening the panel does not clear history, and a reset does not delete retained run logs. The interface remains responsive while the existing asynchronous CLI job runs.
+Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/NFR-73 → QAS-174 → DDR-37 → DD-188. GitHub #189.

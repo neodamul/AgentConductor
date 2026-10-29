@@ -6,7 +6,8 @@ use std::{path::Path, time::Duration};
 
 const MANUAL: &str = include_str!("../docs/user-manual.md");
 const MAX_TURN_BYTES: usize = 8 * 1024;
-const MAX_TURNS: usize = 12;
+const MAX_TURNS: usize = 40;
+pub(crate) const MAX_STORED_TURNS: usize = 40;
 const MAX_ANSWER_BYTES: usize = 32 * 1024;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -15,25 +16,28 @@ pub struct Turn {
     pub text: String,
 }
 
+pub(crate) fn retain_recent(turns: &mut Vec<Turn>) {
+    let excess = turns.len().saturating_sub(MAX_STORED_TURNS);
+    if excess > 0 {
+        turns.drain(..excess);
+    }
+}
+
 pub fn build_prompt(turns: &[Turn], language: &str) -> Result<String, String> {
     let last = turns.last().ok_or("the conversation is empty")?;
     if last.role != "operator" {
         return Err("the conversation must end with an operator question".into());
     }
     if turns.iter().any(|turn| {
-        !matches!(turn.role.as_str(), "operator" | "assistant")
-            || turn.text.trim().is_empty()
-            || turn.text.len() > MAX_TURN_BYTES
+        !matches!(turn.role.as_str(), "operator" | "assistant") || turn.text.trim().is_empty()
     }) {
-        return Err(
-            "each turn needs an operator or assistant role and 1..8192 bytes of text".into(),
-        );
+        return Err("each turn needs an operator or assistant role and non-empty text".into());
     }
     let mut start = turns.len().saturating_sub(MAX_TURNS);
     loop {
         let conversation: String = turns[start..]
             .iter()
-            .map(|turn| format!("{}: {}\n\n", turn.role, turn.text.trim()))
+            .map(|turn| format!("{}: {}\n\n", turn.role, clipped(&turn.text)))
             .collect();
         let prompt = format!(
             "You are the coordinator agent of AgentConductor, answering the operator's questions \
@@ -52,12 +56,21 @@ inspect the project files, plans and documents first, then answer from what you 
             return Ok(prompt);
         }
         if start + 1 == turns.len() {
-            return Err(
-                "the latest question and manual exceed the coordinator prompt bound".into(),
-            );
+            return Err("the coordinator prompt exceeds its 128 KiB bound".into());
         }
         start += 1;
     }
+}
+
+fn clipped(text: &str) -> String {
+    if text.len() <= MAX_TURN_BYTES {
+        return text.trim().to_owned();
+    }
+    let mut end = MAX_TURN_BYTES;
+    while !text.is_char_boundary(end) {
+        end -= 1;
+    }
+    format!("{}… [older text clipped]", text[..end].trim())
 }
 
 pub fn answer_from(reply: &Value) -> Result<String, String> {

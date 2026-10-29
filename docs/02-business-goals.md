@@ -569,3 +569,7 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### BG-142 Connect an in-house CLI without bypassing human control
 An ACIO-enabled CLI can take part in a real supervised task while the Rust coordinator owns session identity, task scope, event collection, and human decisions.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.
+
+### BG-132 Continue coordinator guidance across workspace restarts
+Operators can return to the same conversation and follow up while an accepted coordinator request is still running.
+Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/NFR-73 → QAS-174 → DDR-37 → DD-188. GitHub #189.

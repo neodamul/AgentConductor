@@ -25,6 +25,26 @@
 - [ ] Exact-package Verify: dispatch the current-head macOS/Windows workflow and require the packaged Windows candidate approval/rejection journey to pass.
 - [ ] Complete: update issue #9, PR #22, AgentMemory, LLM Wiki, and retained package evidence from the exact-head run. Packaged acceptance remains 22/50 until the full gate passes.
 
+### Recover chat-launch UI Automation after a no-op activation — issue #189 / 2026-10-29
+
+- [x] Plan: exact package run `40791972889` passed both validation jobs and macOS packaging, then Windows failed all three coordinator-chat journeys at `CHAT_CONTROL_DIAGNOSTIC:NO_CHAT_EDIT` before any chat transcript or job was persisted.
+- [x] Diagnose: the driver found `Ask coordinator` (it did not report `NO_CHAT_LAUNCHER`) and invoked it, but had no post-Invoke state check or activation fallback. The empty transcript, null job, and null chat result show the request never reached the chat dispatch path; this is a launcher/UIA transition failure, not evidence of the chat timeout fix failing.
+- [x] Red: add a dispatch-contract regression requiring a verified editor transition, exact process-owned keyboard focus, process-owned point hit test before mouse input, and failure diagnostics. It failed because the driver had no such guarded path.
+- [x] Task: after Invoke, wait briefly for the accessible chat editor; if absent, send Enter only when the focused element is the enabled app-owned launcher button. The mouse fallback now uses `GetClickablePoint`, checks `FromPoint` ancestry against the exact button RuntimeId before and after cursor movement, then verifies foreground and hit-test process ownership before `SendInput`.
+- [x] Local Verify: Windows chat dispatch and source-layout suites pass 4 tests; all-target warning-denied Clippy, rustfmt, and `git diff --check` pass. The PowerShell driver remains under 300 lines.
+- [x] Rebase/local Verify: rebased onto #9 head `69887bab` (shared signal-field readiness fix); focused tests, layout, formatting, warning-denied Clippy, and diff checks pass. Root run `40796746962` passed validation but its package jobs were cancelled during compilation.
+- [ ] Push/package Verify: push the rebased issue branch and execute a new exact macOS/Windows package workflow. Require all three Windows coordinator-chat journeys to pass.
+- [ ] Complete: record the exact package result and update issue #189/PR #192, AgentMemory, and LLM Wiki. Do not claim chat package acceptance until all three Windows journeys pass.
+
+### Reverify PR #192 on the current #9 base — issue #189 / 2026-10-29
+
+- [x] Plan: PR #192 head `3d8070af9e28ec233eda125e231f87191e53b3b3` failed exact Windows packaging in run `40751085821` at `windows_tool_decision`; macOS package and prior Windows journeys passed.
+- [x] Rebase: rebase the issue-linked branch onto #9 head `28df83945269254fc669bea602bdccab99fe6ab6`; no conflicts. The old failure predates #9's receipt-bound confirmation preservation fix.
+- [x] Diagnose: retained UIA output shows the active pending-tool modal, “Tool refresh queued for the active coordinator,” `Running`, and the `Allow once` control disabled after the bounded 20-second wait. The old run alone does not distinguish transient controller-pending state from product gating; do not claim a root cause or package pass from it.
+- [x] Local Verify: focused tool-decision, tool-dialog, native UI launch, and source-layout suites pass 28 tests; all-target warning-denied Clippy, rustfmt, `git diff --check`, and source-layout checks pass.
+- [ ] Exact-package Verify: push the rebased PR head and rerun macOS/Windows platform validation plus exact package execution, including Windows tool decision and coordinator chat journeys.
+- [ ] Complete: record the new exact-head workflow results, update issue #189/PR #192 and LLM Wiki/AgentMemory. Keep both open until the Windows package gate passes.
+
 ### Guard the Windows signal-port field focus fallback — issue #9 / 2026-10-29
 
 - [x] Plan: exact package run `40784206494` passed macOS packaging but the Windows package failed in `windows_signal_settings` when UI Automation `SetFocus()` raised `ElementNotEnabledException` / `Unrecognized error` for the visible port edit; no preference file was saved.
@@ -130,7 +150,7 @@
 - [x] Plan: exact run `40692521680` passed macOS/Windows source validation and the macOS package. The Windows candidate-review package test failed waiting for the candidate SHA; the app remained on the approval screen with `Review candidate` visible and no evidence in the UIA tree.
 - [x] Red: add `candidate_review_driver_rebinds_the_window_before_reading_controls`; it failed because the embedded PowerShell driver had no fresh-window lookup for each UI tree read.
 - [x] Task: reacquire the packaged process's top-level window before each `Nodes` enumeration so `Wait-Text` and button lookups observe the post-click UI tree.
-- [x] Local Verify: `cargo test --locked --offline --test windows_desktop_driver --test source_layout` passes 5 tests; rustfmt, `git diff --check`, and the 300-line guard pass. The driver and contract test are 110 and 35 lines.
+- [x] Local Verify: `cargo test --locked --offline --test windows_desktop_driver --test source_layout` passes 5 tests; rustfmt, `git diff --check`, and the 300-line guard pass. The driver and contract test are 110 and 35 lines. The source-contract assertion normalizes Windows CRLF checkout line endings before matching the embedded PowerShell driver.
 - [ ] Exact-package Verify: rerun the exact Windows package candidate-review journey and require candidate SHA, diff, tests, approve+merge, rejection, persisted final states, and Git HEAD checks.
 - [ ] Complete: update issue #9, PR #22, evidence, LLM Wiki, and AgentMemory from the exact rerun. Workflow 24 remains uncredited; acceptance stays **22/25**, shipped Rust replacement **0/25**, aggregate **22/50 (44%)**.
 
@@ -191,6 +211,14 @@
 - [x] Local Verify: `windows_schedule_dispatch`, `windows_schedule`, and `native_ui_task_scheduling` pass 13 tests; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the 300-line guard pass. The dispatch regression also verifies the controller owner record is required before persistence polling.
 - [x] Exact-package Verify: run `40641796364`, Windows package job `122669820640`, passed the scheduled-retry journey including persisted manual schedule state, as well as signal-settings save/reopen. The same package later failed the separate tool-refresh journey; see the checkpoint above.
 - [x] Complete: retain exact-package evidence and update issue #9, AgentMemory, and LLM Wiki. Schedule dispatch is verified for this exact package, but no overall UI acceptance credit is added: candidate remains 22/25 and shipped Rust replacement 0/25.
+### Rebind the Windows chat UIA tree after launcher transitions — issue #189 / 2026-10-28
+
+- [x] Plan: exact-head package run `40675510083` passed both platform validation jobs and exposed one first-launch chat-driver failure; the two recovery scenarios passed. The corrective exact-head run is `40682687729` on `53c42854`.
+- [x] Red: `windows_coordinator_chat_dispatch::exact_package_chat_test_is_wired_into_the_windows_package_gate` first failed because the chat driver had no post-launch window rebind contract.
+- [x] Task: add a bounded `RefreshWindow()` lookup by the target PID and refresh the UIA window before launcher discovery, editor/send lookup, and transcript polling. Keep the product chat implementation unchanged because the failed run persisted no question or answer.
+- [x] Local Verify: the dispatch contract passes 1/1, warning-denied Clippy, rustfmt, `git diff --check`, and the 300-line source/test check pass.
+- [x] Exact-package Verify: Windows packaged release run `40682687729`, job `122808825933`, passed all three `windows_coordinator_chat` scenarios: persistence/reopen, in-flight reconnect, and late-answer recovery (3/3, 56.86s). macOS package job `122808825796` also passed. The Windows job later failed in unrelated `windows_tool_decision` with `NO_CONFIRMATION_BUTTON`; that failure does not invalidate the chat evidence.
+- [x] Complete: retain the Windows package SHA-256 `887011a5485dbd01a0098e382deb317d1c83bd778ec9a8a017af0c78eed2799b`, update issue #189/PR #192, and keep the issue open because the overall package job still has an unrelated #9 failure.
 
 ### Reconcile Rust UI acceptance ledger and remaining workflows — issue #9 / 2026-10-28
 
@@ -6260,3 +6288,135 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: candidate-driver, briefing-driver, and source-layout suites pass 9 tests; formatting, diff checks, and 300-line limits pass. The embedded PowerShell and its contract tests are 181 and 98 lines.
 - [ ] Verify exact package: require Windows to confirm approve, merge, and reject outcomes and persisted Git/run state; the source-level change does not count as package acceptance.
 - [ ] Complete: keep issue #9 at 22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate until exact package evidence passes.
+
+### Persist and resume native coordinator chat — GitHub #189 / Rust branch
+
+- [x] Plan: trace the current-window transcript loss and temporary answer artifact through the native panel, Startup request, Saved state and snapshot; record R-177 → DD-188.
+- [x] Red: prompt regressions fail for turns over 8 KiB and long previous answers; update tests to require 40-turn context, clipping and a single-question IPC request.
+- [x] Task: persist transcript and result reference in local workspace state, expose transcript in snapshots, reconnect a running chat job, and clear transcript only through New conversation.
+- [x] Task: use monospace prompt-marked transcript, Enter send, Shift+Enter newline and Up recall.
+- [x] Red: persistence regressions fail when a completed answer grows the stored transcript to 41 turns and when two folderless workspaces reuse the same empty repository path.
+- [x] Task: cap persisted chat history at the documented 40 turns and use the persisted workspace root as the deterministic folderless identity while retaining repository-path keys for existing settings.
+- [x] Red / Green identity audit: identical name+goal values in two distinct workspace roots first produced the same history key; the root-derived key now keeps those identities distinct. Mutable display name and goal are not used as identity.
+- [x] Verify: `startup_chat_persistence` passes 5/5 for the 40-turn cap, repository isolation and folderless workspace isolation; focused chat/UI/startup suites pass 21/21, `source_layout` 2/2, warning-denied Clippy, rustfmt and diff checks pass. Changed files remain at or below 300 lines.
+- [x] Verify focused: chat_prompt 6/6, native_workspace_chat 5/5, native_workspace_chat_interaction 2/2, startup_chat 1/1, startup_chat_persistence 2/2, source_layout 2/2; rustfmt, diff check and warning-denied all-target Clippy pass. Changed Rust and test files remain at or below 300 lines.
+- [x] Red: change the completed-answer persistence test to use an ordinary startup snapshot without `chat_result`; it failed because only the operator turn was restored.
+- [x] Task: consume a completed pending chat result during the first ordinary workspace snapshot and clear the result reference in the same settings write that persists the assistant turn.
+- [x] Local Verify: startup_chat_persistence 2/2; focused chat/workspace/startup/layout suites 18/18; warning-denied Clippy, rustfmt and `git diff --check` pass.
+- [ ] Exact-head Verify: CI and package checks for PR #192 head after the completed-answer recovery fix.
+- [x] Full local verification before the final workspace-switch UI guard: `cargo test --locked --offline --features native-ui-probe` passed 997 tests with 14 ignored across 333 suites in 247.30 seconds. The final source version passed all focused chat, workspace-switch, startup-persistence, source-layout and Clippy checks.
+- [x] Final source full verification: `cargo test --locked --offline --features native-ui-probe` passed 1,000 tests with 14 ignored across 334 suites in 245.81 seconds; 0 failures. This supersedes the interrupted attempt below.
+- [x] Earlier attempt after the workspace-switch guard was interrupted at 903 passed, 14 ignored across 280 suites in 208.28 seconds; it is incomplete and superseded by the final full pass above.
+- [ ] Verify: exact Windows package UI remains unverified.
+- [x] Complete implementation checkpoint: commit and push `d1519f46` on `codex/issue-189-native-coordinator-chat`; draft PR #192 targets `codex/issue-9-native-ui-parity`. Keep #189 open while cross-platform PR checks and package review remain pending.
+- [ ] Complete issue: review and merge PR #192 after checks, then close #189 only when all acceptance criteria are verified.
+
+### Final lifecycle fix exact-package rerun — GitHub #189 / PR #192 / 2026-10-28
+
+- [x] Task: commit and push `edecd77a`, classify chat workers as maintenance commands, and retain startup/owner diagnostics when Windows UI automation cannot find the chat editor.
+- [x] Local Verify: chat lifecycle/dispatch tests 2 passed; source/public-doc tests 13 passed; rustfmt, diff check, and warning-denied all-target Clippy passed. The changed source and test files remain below 300 lines.
+- [x] Plan and LLM Wiki record the previous exact Windows package failures and their evidence; do not mark the failed scenarios as passing.
+- [ ] Exact-head Verify: workflow [40644006383](https://github.com/neodamul/AgentConductor/actions/runs/40644006383) must pass macOS and Windows platform validation and both native packages. The Windows package must pass briefing, desktop, schedule, signal, tool-decision, and all three coordinator-chat scenarios.
+- [ ] Complete: keep PR #192 draft and issue #189 open until the exact package evidence passes; then review and merge through the issue-linked branch workflow.
+
+### Verify coordinator chat in the exact Windows package — GitHub #189 / PR #192
+
+- [x] Plan: audit the existing `AGENTCONDUCTOR_DESKTOP_BINARY` and PowerShell UI Automation harness; source tests alone do not prove packaged transcript reopen or in-flight reconnect.
+- [x] Red: `windows_coordinator_chat_dispatch` failed because the package test and Windows workflow entry did not exist.
+- [x] Task: add a deterministic Rust coordinator fixture, package UI Automation driver, durable `startup.json` transcript oracle, and owner-file running-job oracle.
+- [x] Task: cover both completed transcript visibility after workspace reopen and an in-flight chat worker that finishes after the first UI process closes.
+- [x] Verify local: dispatch wiring, rustfmt and diff checks pass; the exact Windows package tests remain ignored outside Windows and require the package workflow.
+- [ ] Verify Windows: run `windows_coordinator_chat` with `AGENTCONDUCTOR_DESKTOP_BINARY` and require `CHAT_VISIBLE` plus persisted transcript evidence for both scenarios.
+- [ ] Complete: record the exact package artifact/run, update #189 and PR #192, then close the issue only after all acceptance criteria pass.
+- [x] Red from Actions run `40608162559`: both package scenarios failed at UIA `Send` because the driver invoked a present-but-disabled button (`ElementNotEnabledException`); the in-flight case therefore never emitted `CHAT_SENT`.
+- [x] Task: wait for a freshly discovered `Send` element whose `IsEnabled` is true before invoking it; this is a UIA synchronization fix and does not alter product behavior.
+- [x] Red from Actions run `40613402175`: both scenarios still timed out; the driver reported `NO_CHAT_SEND` and the in-flight assertion discarded the same diagnostic. Source inspection found that the chat `TextEdit` had only hint text and no stable accessible name, so UIA could fall back to another editor and leave the real chat draft empty.
+- [x] Task: give the chat editor a stable accessible name; require that named, visible, enabled editor; focus it; verify `ValuePattern.Current.Value`; select a visible enabled Send candidate from all same-name controls; and emit a bounded UIA diagnostic on failure. The in-flight assertion now preserves driver stdout/stderr.
+- [x] Verify local: the new AccessKit regression passes; `windows_coordinator_chat_dispatch` 1/1, focused Windows dispatch/layout/public-doc suites 20/20, warning-denied Clippy, rustfmt, diff check, and the 300-line check pass. Windows PowerShell/package execution is not available on macOS.
+- [x] Verify package run `40618263589`: the persisted/reopen scenario passed; the in-flight scenario failed before sending with `NO_CHAT_LAUNCHER`. Both scenarios were running concurrently in one Windows test binary, so the failure indicates UI-window contention rather than a chat Send regression.
+- [x] Task: serialize the exact Windows UI test binary with `--test-threads=1` and retain a bounded launcher accessibility-tree dump (`CHAT_CONTROL:`) when the launcher is absent.
+- [ ] Verify: rerun the exact Windows package and require both chat scenarios to pass; use the launcher tree diagnostic if the serialized run still cannot find `Ask coordinator`.
+
+### Preserve accepted native chat questions after a late request reply — GitHub #197 overlap / #189
+
+- [x] Plan: incorporate #197's timeout-recovery acceptance into the Rust coordinator chat scope: an accepted question must remain in the transcript, resynchronize from persisted/native job state, follow a running coordinator, and show a late answer; only an unaccepted request restores the text to the input.
+- [x] Red/Green: add state regressions for a late start reply followed by a completed transcript and for restoring an unaccepted question; both pass after the recovery state is implemented.
+- [x] Task: retain the in-flight question until the native worker confirms acceptance, resync `running`/`completed` chat snapshots after `ChatStart` or `ChatRefresh` errors, and restore the draft only when no chat job was accepted.
+- [x] Verify local: native chat/UI and Windows dispatch suites pass 13/13; warning-denied Clippy, rustfmt, diff, and 300-line checks pass.
+- [x] Task: add `exact_windows_package_recovers_a_late_answer_after_request_timeout`; the deterministic 5-second fixture keeps the accepted worker running after `AC_CHAT_WAIT=0`, then the reopened exact package must show the persisted late answer.
+- [ ] Verify Windows: exact packaged late-reply recovery remains coupled to the next Windows package run; no merge/close until both timeout and reopen evidence exists.
+
+### Diagnose the Windows briefing precondition before coordinator-chat verification — GitHub #189 / PR #192 / 2026-10-28
+
+- [x] Plan: keep the coordinator-chat product behavior unchanged and distinguish a Windows UI Automation driver failure from a chat persistence failure before interpreting package evidence.
+- [x] Red: exact package run [40633075185](https://github.com/neodamul/AgentConductor/actions/runs/40633075185) failed in `windows_briefing.rs:183` with `BRIEFING_UIA_INVOKE_FAILED` and `NO_BRIEFING_RESULT`; the coordinator-chat cases did not run.
+- [x] Task: add explicit driver markers for pointer rejection, pointer delivery, and immediate menu visibility after the UIA fallback; add a source-contract regression without weakening the product or package assertions.
+- [x] Local Verify: commit `b2da0d8e` passes `cargo fmt --all`, `cargo test --locked --offline --test windows_briefing_dispatch --test source_layout -- --nocapture` (4 passed), `git diff --check`, and the 300-line check (`windows_briefing.rs` 200 lines; dispatch 38 lines).
+- [ ] Exact-package Verify: workflow dispatch [40637940299](https://github.com/neodamul/AgentConductor/actions/runs/40637940299) is currently platform validation only; require a package run that passes briefing before evaluating the persisted-reopen, in-flight reconnect, and late-answer chat cases.
+- [ ] Complete: do not merge or close #189 until the exact Windows package executes and passes all three coordinator-chat scenarios.
+### Exact Windows package coordinator-chat evidence — issue #189 / run 40637940299 / 2026-10-28
+
+- [x] Plan: retain the successful reopen/persistence journey and separate the two direct recovery failures from the earlier briefing-driver failure.
+- [x] Verify: Windows package job `122657181265` passed `exact_windows_package_persists_chat_after_workspace_reopen` and `windows_briefing`; `exact_windows_package_reconnects_an_in_flight_chat_after_app_close` failed with `CHAT_TRANSCRIPT_INCOMPLETE`, while `exact_windows_package_recovers_a_late_answer_after_request_timeout` failed before send with `CHAT_CONTROL_DIAGNOSTIC:NO_CHAT_EDIT`.
+- [x] Evidence: the in-flight failure retained `startup.json` with the operator turn only and a `chat` owner still in `phase=running`; this is not a transcript-selector failure. The late-answer failure is a separate Windows editor-discovery/input path and needs its own diagnostic capture.
+- [ ] Task: make the chat worker terminate promptly after writing its answer, add the missing late-answer UI-state diagnostics, and preserve the accepted-question/late-answer behavior without weakening the package assertions.
+- [ ] Verify: rerun local focused tests and the exact Windows package; require reopen, in-flight reconnect, and late-answer recovery to pass before closing #189 or PR #192.
+
+### Detach native UI workers from the desktop lifetime — issue #189 / run 40644006383 / 2026-10-28
+
+- [x] Plan: inspect the exact package result after the chat maintenance fix; preserve the three scenario assertions.
+- [x] Red: Windows package job `122676691469` still passed reopen but both in-flight reconnect and late-answer recovery ended with `CHAT_TRANSCRIPT_INCOMPLETE`; retained owner records stayed `phase=running` with no stderr.
+- [x] Task: add a source regression requiring UI workers to use a background command with `CREATE_BREAKAWAY_FROM_JOB`, `CREATE_NEW_PROCESS_GROUP`, and `CREATE_NO_WINDOW`, then route `Controller::launch_locked` through it so a worker is not tied to the desktop process/job lifetime.
+- [x] Local Verify: `chat_worker_lifecycle` 2 tests pass, warning-denied all-target Clippy passes, rustfmt and diff checks pass; touched source/test files remain below 300 lines.
+- [ ] Exact-package Verify: rerun the Windows package on the pushed fix and require reopen, in-flight reconnect, and late-answer recovery to pass.
+- [ ] Complete: keep #189/PR #192 open until the exact packaged binary proves all three scenarios.
+
+### Preserve the Windows no-console source contract — issue #189 / run 40649290231 / 2026-10-28
+
+- [x] Plan: classify the macOS validation failure as a stale source-contract assertion, not a product regression; retain `command` checks for Git/messenger and the dedicated background path for UI workers.
+- [x] Red: `tests/native_window_behavior.rs:31` expected `crate::subprocess::command(` in `src/ui/controller.rs`, but the worker-lifetime fix intentionally uses `background_command`.
+- [x] Task: update the contract to require `command` for Git/messenger, `background_command` for the UI controller, and no direct `std::process::Command::new` construction.
+- [x] Local Verify: native-window, lifecycle, and source-layout tests pass (6 total); rustfmt, diff check, warning-denied all-target Clippy, and the 300-line guard pass.
+- [ ] Exact-package Verify: rerun platform validation and the Windows packaged coordinator-chat scenarios on the new head.
+
+### Scope detached workers and recover denied breakaway creation — issue #189 / run 40651115200 / 2026-10-28
+
+- [x] Plan: inspect the complete Windows validation failure before accepting the detached-worker fix.
+- [x] Evidence: run `40651115200` failed 14 Windows targets with `Access is denied. (os error 5)` during temp/workspace cleanup, including `workspace_active` and `workspace_project_folder`; the failed targets also included MCP, metadata, native UI, planning, and startup suites. macOS validation passed.
+- [x] Red/Task: the unconditional `CREATE_BREAKAWAY_FROM_JOB` path was applied to every `Controller` operation, and Windows runners reject breakaway creation. Detached spawning is now selected only for `chat`; if Windows returns `ERROR_ACCESS_DENIED` (error 5), the chat worker retries with `CREATE_NEW_PROCESS_GROUP | CREATE_NO_WINDOW` only. Other UI operations retain their former subprocess semantics, and no other spawn error is retried.
+- [x] Local Verify: lifecycle, native-window, and source-layout tests pass (6 total); rustfmt, diff check, warning-denied all-target Clippy, and the 300-line guard pass.
+- [ ] Exact-package Verify: rerun Windows platform validation and the packaged chat scenarios on the new head; require unrelated native targets to be green before package evidence is accepted.
+
+### Resolve Windows lint gate for the selective breakaway fallback — issue #189 / run 40653615626 / 2026-10-28
+
+- [x] Plan/Evidence: Windows reached the native UI launch validation but `clippy -D warnings` rejected the cfg(windows) helper for `needless_return` at `src/ui/controller.rs:6`; no package evidence is accepted from that run.
+- [x] Task: preserve the raw error-5 boundary and replace the cfg(windows) explicit return with an expression.
+- [x] Local Verify: lifecycle, native-window, and source-layout tests pass (6 total); rustfmt, diff check, warning-denied all-target Clippy, and the 300-line guard pass.
+- [ ] Exact-package Verify: rerun platform validation and the Windows package on the corrected head.
+
+### Recover the packaged briefing gate before coordinator-chat verification — issue #189 / run 40656111666 / 2026-10-28
+
+- [x] Plan: treat the packaged `windows_briefing` failure as a prerequisite UI-driver problem; do not interpret it as chat evidence or change chat runtime behavior.
+- [x] Red: the exact Windows package reported `BRIEFING_UIA_INVOKE_FAILED` (`Invoke` returned `Unrecognized error`), then `BRIEFING_POINTER_ACCEPTED` without a menu and `NO_BRIEFING_RESULT`; the UI tree showed the same-process button visible and enabled.
+- [x] Task: add a keyboard activation fallback after the checked pointer path (`SetFocus` plus `keybd_event` Space) and a source-contract regression. This keeps the product unchanged and gives the packaged test a second input path when AccessKit UIA invocation is unavailable.
+- [x] Local Verify: the new briefing dispatch regression is red before the driver change and green after it; focused Windows dispatch/lifecycle/native-window/source-layout tests pass (9 total), rustfmt, diff check, warning-denied Clippy, and the 300-line check pass (`windows_briefing.rs` 220 lines; dispatch 46 lines).
+- [ ] Exact-package Verify: push the driver-only fix and require `windows_briefing` plus all three coordinator-chat scenarios to pass in the Windows package before accepting #189.
+- [ ] Complete: keep #189 and PR #192 open; do not claim coordinator-chat package evidence until the prerequisite and chat cases pass.
+
+### Consume detached chat answers after UI reopen — issue #189 / run 40661926831 / 2026-10-28
+
+- [x] Plan: use the exact packaged result to distinguish a chat-runtime recovery gap from the preceding briefing-driver gate.
+- [x] Evidence: run [40661926831](https://github.com/neodamul/AgentConductor/actions/runs/40661926831) passed the briefing case and the completed transcript/reopen case, but the in-flight reconnect and late-answer cases showed `Coordinator could not answer` / `CHAT_TRANSCRIPT_INCOMPLETE`. Both retained `startup.json` with a durable `chat_result`, an operator-only transcript, and an owner record still in `phase=running`.
+- [x] Red: add a startup persistence regression with a result artifact present while the detached chat owner remains running; it failed to expose the answer because `chat_snapshot` required `job.state=completed`.
+- [x] Task: consume a valid durable chat result regardless of the stale owner phase, clear the stored job after consumption, and expose a completed chat job in that snapshot so the native panel reconnects and renders the late answer.
+- [x] Local Verify: startup persistence, startup chat, native workspace chat, and Windows dispatch suites pass (16 tests); rustfmt, diff check, warning-denied Clippy, and the 300-line check pass.
+- [ ] Exact-package Verify: rerun the packaged Windows binary and require all three coordinator-chat scenarios to pass on the product fix.
+- [ ] Complete: keep #189/PR #192 open until the exact packaged reconnect and timeout-recovery cases pass.
+
+### Resynchronize a persisted late answer when the live job is gone — issue #189 / run 40668156666 / 2026-10-28
+
+- [x] Red: add a native chat regression for an accepted question whose reopened snapshot has the completed transcript but `job: null`; the state previously rejected the snapshot because it required a live chat job.
+- [x] Task: accept a matching persisted operator/assistant transcript before live-job matching, and route that state through the native controller refresh path. Split the controller implementation so every Rust source file remains under 300 lines.
+- [x] Local Verify: native workspace chat (9), startup persistence (6), Windows dispatch (1), warning-denied Clippy, rustfmt, diff check, and the source/test line-limit scan pass.
+- [ ] Exact-package Verify: run the shipped Windows binary and require the late-answer scenario to pass together with the two already-passing coordinator-chat scenarios.
+- [ ] Complete: keep #189/PR #192 open until the exact package run is green.

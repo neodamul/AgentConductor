@@ -78,25 +78,95 @@ fn coordinator_panel_controls_have_korean_labels() {
     clear(&mut output);
     assert!(labels.iter().any(|label| label == "닫기"));
     assert!(labels.iter().any(|label| label == "보내기"));
+    assert!(labels.iter().any(|label| label == "새 대화"));
 }
 
 #[test]
 fn large_conversations_fit_the_explicit_chat_request_bound() {
-    let turns = (0..12)
-        .map(|index| agentconductor::chat::Turn {
-            role: if index == 11 { "operator" } else { "assistant" }.into(),
-            text: "x".repeat(8 * 1024),
-        })
-        .collect::<Vec<_>>();
     let packet = chat::request(
         &serde_json::json!({"revision":"rev-1","language":"en"}),
-        &turns,
+        "latest question",
     )
     .unwrap();
     assert!(packet.len() <= 128 * 1024);
     let value: serde_json::Value = serde_json::from_slice(&packet).unwrap();
     assert_eq!(value["kind"], "chat");
-    assert_eq!(value["turns"].as_array().unwrap().len(), 12);
+    assert_eq!(value["question"], "latest question");
+    assert!(value.get("turns").is_none());
+}
+
+#[test]
+fn persisted_transcript_and_running_job_restore_when_the_panel_reopens() {
+    let mut state = State::default();
+    state.restore(&serde_json::json!({
+        "chat_transcript":[{"role":"operator","text":"Earlier question"}],
+        "job":{"kind":"chat","state":"running","id":"chat-1"}
+    }));
+    assert!(state.awaiting());
+    assert_eq!(state.transcript()[0].text, "Earlier question");
+    state.open();
+}
+
+#[test]
+fn accepted_chat_reconnects_after_a_late_start_reply() {
+    let mut state = State::default();
+    state.begin_request("late question".into());
+    state.request_failed("request timed out".into());
+    assert!(state.awaiting());
+    assert!(state.reconnect(&serde_json::json!({
+        "job":{"kind":"chat","state":"running","id":"chat-late"}
+    })));
+    assert!(state.awaiting());
+    assert_eq!(state.transcript()[0].text, "late question");
+    assert!(state.reconnect(&serde_json::json!({
+        "job":{"kind":"chat","state":"completed","id":"chat-late"},
+        "chat_transcript":[
+            {"role":"operator","text":"late question"},
+            {"role":"assistant","text":"late answer"}
+        ]
+    })));
+    assert!(!state.awaiting());
+    assert_eq!(state.transcript()[1].text, "late answer");
+}
+
+#[test]
+fn accepted_chat_reconnects_from_a_persisted_answer_without_a_live_job() {
+    let mut state = State::default();
+    state.begin_request("late question".into());
+    state.started("chat-late".into());
+    assert!(state.reconnect(&serde_json::json!({
+        "job": null,
+        "chat_transcript": [
+            {"role":"operator","text":"late question"},
+            {"role":"assistant","text":"late answer"}
+        ]
+    })));
+    assert!(!state.awaiting());
+    assert_eq!(state.transcript()[1].text, "late answer");
+}
+
+#[test]
+fn unaccepted_chat_failure_restores_the_question_to_input() {
+    let mut state = State::default();
+    state.begin_request("retry me".into());
+    state.failed("request was not accepted".into());
+    assert!(!state.awaiting());
+    assert!(state.transcript().is_empty());
+    assert_eq!(state.draft(), "retry me");
+}
+
+#[test]
+fn switching_workspace_clears_the_previous_transcript_before_restoring() {
+    let mut state = State::default();
+    state.restore(&serde_json::json!({
+        "config":{"repository":"/repo-a"},
+        "chat_transcript":[{"role":"operator","text":"Repo A"}]
+    }));
+    state.restore(&serde_json::json!({
+        "config":{"repository":"/repo-b"},
+        "chat_transcript":[]
+    }));
+    assert!(state.transcript().is_empty());
 }
 
 fn frame(context: &egui::Context, state: &mut State, events: Vec<Event>) -> egui::FullOutput {

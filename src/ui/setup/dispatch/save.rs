@@ -1,5 +1,25 @@
 use super::*;
 
+fn chat_history_key(root: &Path, config: &Config) -> std::path::PathBuf {
+    if !config.repository.as_os_str().is_empty() {
+        return config.repository.clone();
+    }
+    format!(
+        "__agentconductor_folderless__{}",
+        crate::workflow::digest(root.to_string_lossy().as_bytes())
+    )
+    .into()
+}
+
+fn legacy_chat_history_key(config: &Config) -> std::path::PathBuf {
+    let identity = format!("{}\n{}", config.name.trim(), config.goal.trim());
+    format!(
+        "__agentconductor_folderless__{}",
+        crate::workflow::digest(identity.as_bytes())
+    )
+    .into()
+}
+
 impl Startup {
     pub(super) fn save_config(
         &self,
@@ -50,6 +70,26 @@ impl Startup {
                 == serde_json::to_value(saved.config.workspace_mode).ok()
             && profiles::execution_view(&config.profiles)?
                 == profiles::execution_view(&saved.config.profiles)?;
+        let previous_chat_key = chat_history_key(&self.broker.dir, &saved.config);
+        let next_chat_key = chat_history_key(&self.broker.dir, &config);
+        let mut chat_history = saved.chat_history.clone();
+        if previous_chat_key != next_chat_key {
+            chat_history.insert(previous_chat_key.clone(), saved.chat_transcript.clone());
+        }
+        let chat_transcript = if next_chat_key == previous_chat_key {
+            saved.chat_transcript.clone()
+        } else {
+            chat_history
+                .remove(&next_chat_key)
+                .or_else(|| {
+                    config.repository.as_os_str().is_empty().then(|| {
+                        chat_history
+                            .remove(&legacy_chat_history_key(&config))
+                            .unwrap_or_default()
+                    })
+                })
+                .unwrap_or_default()
+        };
         let next = Saved {
             imports: if config.goal == saved.config.goal {
                 saved.imports.clone()
@@ -62,6 +102,8 @@ impl Startup {
                 None
             },
             chat_result: None,
+            chat_transcript,
+            chat_history,
             config,
             proposal: if keep { saved.proposal.clone() } else { None },
             job: if keep { saved.job.clone() } else { None },

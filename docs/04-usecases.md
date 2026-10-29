@@ -744,3 +744,6 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### UC-178 Run a task with an ACIO-enabled CLI
 The coordinator assigns a task to a profile that declares protocol ACIO, sends structured input with its owned workspace scope and session ID, records validated progress/result events, and resumes the worker only after the operator decides a requested tool action. A profile without ACIO follows its existing CLI path.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.
+
+### UC-168 Resume a terminal-style coordinator conversation
+The operator opens Workspace chat and sees earlier questions and answers from the same workspace. The operator types a new question, uses Enter to send or Shift+Enter for a newline, and can recall the previous question with Up. A running request remains visible and is polled after reopening. New conversation clears only the chat transcript. The coordinator receives the new question and a bounded context rebuilt from up to 40 recent turns; oversized prior text is clipped. Trace: R-177 → BG-132 → SF-165 → FR-163/NFR-73 → QAS-174 → DDR-37 → DD-188. GitHub #189.

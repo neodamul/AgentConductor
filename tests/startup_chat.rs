@@ -9,13 +9,8 @@ fn large_chat_request_uses_the_existing_startup_job_gate() {
     ));
     let startup = Startup::open(&root, &std::env::current_exe().unwrap()).unwrap();
     let snapshot = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-    let turns = (0..9)
-        .map(|index| {
-            json!({"role":if index == 8 {"operator"} else {"assistant"},"text":"x".repeat(8192)})
-        })
-        .collect::<Vec<_>>();
     let request = serde_json::to_vec(&json!({
-        "kind":"chat", "revision":snapshot["revision"], "turns":turns
+        "kind":"chat", "revision":snapshot["revision"], "question":"x".repeat(70 * 1024)
     }))
     .unwrap();
     assert!(request.len() > 64 * 1024 && request.len() < 128 * 1024);
