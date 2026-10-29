@@ -35,6 +35,14 @@
 - [ ] UI/Windows Verify: use an isolated disposable workspace to exercise event-driven updates and task completion in the native UI, then validate the exact Windows package. Keep #257 and #9 open until those workflows pass.
 - [x] Complete this package-check unit: retain `docs/evidence/issue257-macos-package-62efb31-20261030.json`; update AgentMemory and the LLM Wiki. This does not complete #257 or #9.
 
+### Open the exact isolated package UI — issue #257 / #9 / 2026-10-30
+
+- [x] Plan: identify the correct app instance by its package path after a display-name lookup relaunched a registered older build.
+- [x] Verify: the `189f6fadeecda8f4b7c92eb269dfb0d455afb9c5` macOS package opened with `ui-new` pointed at a disposable `/private/tmp` workspace. The exact package showed empty workspace fields and no agents; the temporary `startup.json` was blank. One AgentConductor process remained, and no workspace data was changed.
+- [ ] UI workflow: exercise an event-driven state change and slow independent read in the exact packaged UI. This launch check earns no workflow acceptance credit.
+- [ ] Windows: validate the exact package and runtime behavior. Keep #257 and #9 open.
+- [x] Evidence: retain `docs/evidence/issue257-macos-package-189f6fad-20261030.json` and update the LLM Wiki and AgentMemory.
+
 ### Verify the exact macOS package at the pushed Rust head — issue #9 / 2026-10-29
 
 - [x] Plan: rebuild the release archive after the Rust chat fast-path commits so package evidence names the exact pushed source head `f739b4852ee06df6554ec7bf139df8f42ee90106`.

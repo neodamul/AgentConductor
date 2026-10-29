@@ -1,0 +1,31 @@
+{
+  "manifest": {
+    "binary": "agentconductor",
+    "binary_bytes": 19592496,
+    "binary_sha256": "b5ffd7c36d8f715902e9830bf1b99fb54185c3b9c16aa383f26e357e2f5746eb",
+    "dependency_count": 242,
+    "external_requirements": [
+      "Git",
+      "selected authenticated agent CLIs"
+    ],
+    "name": "agentconductor",
+    "runtime": "one native executable; SQLite bundled",
+    "source_commit": "189f6fadeecda8f4b7c92eb269dfb0d455afb9c5",
+    "target": "aarch64-apple-darwin"
+  },
+  "ui_launch": {
+    "app_version": "0.1.37",
+    "active_agentconductor_processes": 1,
+    "app_selected_by_exact_package_path": true,
+    "command": "AgentConductor.app/Contents/MacOS/agentconductor ui-new <disposable-workspace>",
+    "disposable_workspace": true,
+    "initial_agents_registered": 0,
+    "initial_goal_empty": true,
+    "initial_project_folder_empty": true,
+    "initial_workspace_name_empty": true,
+    "startup_config_empty": true,
+    "workspace_data_changed": false,
+    "workflow_acceptance_credit": 0,
+    "scope": "Exact package identity and isolated startup inspection only; no event-driven UI workflow or Windows acceptance claimed."
+  }
+}

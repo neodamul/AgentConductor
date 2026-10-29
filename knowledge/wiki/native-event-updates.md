@@ -57,6 +57,10 @@ The event-fanout implementation at `01bc3c55338ae5c02e9a0cc46761bd16f383b6b8` pa
 
 This event-fanout slice adds a second bounded read worker and moves event delivery to a dedicated asynchronous listener. Its regression suite passes 83/83 unit tests; package-level interactive UI and Windows acceptance remain open.
 
+## Exact isolated package startup — 2026-10-30
+
+The package from `189f6fadeecda8f4b7c92eb269dfb0d455afb9c5` was opened by its exact app path with `ui-new` targeting a disposable `/private/tmp` workspace. The native window showed an empty workspace and zero agents; the temporary startup configuration was empty. The registered older app was closed, leaving one package process. No workspace data was changed. This proves package identity and isolated startup only; it earns no packaged workflow acceptance. Exact event-driven UI interaction and Windows package acceptance remain open. Evidence: `docs/evidence/issue257-macos-package-189f6fad-20261030.json`.
+
 ## Links
 
 - Requirements: `docs/01-requirements.md` through `docs/06-design-decisions.md`, R-192 / DD-204.
