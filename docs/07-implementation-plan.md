@@ -6655,3 +6655,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify all targets and exact native UI packages; cross-platform package acceptance remains open.
 - [ ] Verify package: exercise selective event delivery and fallback behavior in exact macOS and Windows packages.
 - [ ] Complete: update #257, issue #189, PR, AgentMemory and LLM Wiki after verification; do not close issues or claim parity before package acceptance.
+
+### Exact packaged UI workspace-save smoke — issue #257 / #9 / 2026-10-30
+
+- [x] Launch the exact `bd03bde7` macOS package once with `ui-new` pointed at `/private/tmp/ac-event-ui.KaQaiT`; confirm v0.1.37 and an isolated empty agent registry.
+- [x] Save a temporary workspace and confirm its values persist in `startup.json`; the native UI clears its dirty-state affordance after the asynchronous save. No agent or external service was invoked and the user workspace was not changed.
+- [ ] Do not count this save response as event-only refresh evidence: save returns a foreground reply. Exercise an Agent Room progress/completion invalidation and an independent slow read in the exact package.
+- [ ] Keep Windows exact-package acceptance open; the current platform-validation rerun does not by itself prove the packaged Windows UI journey.
+- [x] Evidence: `docs/evidence/issue257-exact-package-ui-save-bd03bde7-20261030.json`. This is partial UI evidence, not issue completion.

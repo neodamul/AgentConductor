@@ -1,0 +1,22 @@
+{
+  "issue": 257,
+  "source_commit": "bd03bde71e33c4996f5d02c8b949e6321727de8b",
+  "package_version": "0.1.37",
+  "package_archive_sha256": "2b5909888ba16981c4c74f16967034bd95fc8dda19dc762b83585ef901cb34fc",
+  "workspace_root": "/private/tmp/ac-event-ui.KaQaiT",
+  "launch": "AgentConductor.app/Contents/MacOS/agentconductor ui-new /private/tmp/ac-event-ui.KaQaiT",
+  "steps": [
+    "Confirmed the exact packaged app window and isolated workspace were visible in macOS Accessibility state.",
+    "Entered a disposable workspace name, project directory, and goal that explicitly forbids agent or external-service execution.",
+    "Saved the workspace in the native UI and observed the discard-changes control become disabled.",
+    "Read startup.json and verified the temporary values persisted with an empty profile list and no active job."
+  ],
+  "agents_or_external_services_invoked": 0,
+  "result": "pass_for_isolated_packaged_workspace_save",
+  "limitations": [
+    "This save action has a foreground response and does not prove an event-only refresh path.",
+    "No slow independent read or Agent Room progress event was exercised in the packaged window.",
+    "Windows exact-package acceptance remains pending."
+  ],
+  "user_workspace_modified": false
+}
