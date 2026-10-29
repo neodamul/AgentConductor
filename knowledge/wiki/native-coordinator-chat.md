@@ -10,15 +10,15 @@ If sending a chat request times out, the Rust UI treats acceptance as unknown. I
 
 ## Source map
 
-- `src/native_ui_probe/workspace/chat.rs`: panel controls and current-window conversation state.
+- `src/native_ui_probe/workspace/chat.rs`, `src/native_ui_probe/workspace/chat/view.rs`: panel state and terminal-style transcript/input. Questions and answers use monospace `> ` / `< ` markers; Enter sends, Shift+Enter inserts a newline at the cursor, and Up/Down recalls operator questions while preserving an unsent draft.
 - `src/native_ui_probe/workspace/chat/{outcome,reset,send}.rs`: distinguish unknown transport outcomes, reconcile the pending turn against history, and retry snapshots.
 - `src/native_ui_probe/probe/refresh.rs`, `src/native_ui_probe/poll/errors.rs`, `src/native_ui_probe/app.rs`: request history while reconciling, retry failed snapshots, and schedule the reconciliation refresh.
 - `src/ui/setup/chat.rs`: bounded request artifact and Startup job submission/result consumption.
 - `src/chat.rs`: prompt/answer bounds and read-only coordinator request.
 - `src/coordinator.rs`: verified provider-specific read-only invocation.
-- `tests/chat_prompt.rs`, `tests/native_workspace_chat.rs`, `tests/startup_chat.rs`: prompt, UI, and dispatch regressions.
+- `tests/chat_prompt.rs`, `tests/native_workspace_chat.rs`, `tests/native_chat_terminal.rs`, `tests/startup_chat.rs`, `tests/chat_startup_context.rs`: prompt, keyboard, UI, restart, and dispatch regressions.
 - `docs/user-manual.md`, `docs/user-manual.ko.md`: operator-facing limits and usage.
 
-GitHub #189 / R-179 is still in progress: the native panel needs its terminal-style prompt, Enter/Shift+Enter, and question-history controls. Do not treat history persistence or prompt tests as packaged UI parity.
+GitHub #189 / R-179 remains in progress. The terminal-style transcript and keyboard controls now pass local egui interaction tests. Do not treat source tests as packaged UI parity.
 
-The regression `tests/native_chat_unknown.rs` verifies accepted and rejected outcomes through egui's accessible UI tree. The focused test passes locally. Full offline suite and exact packaged macOS/Windows interaction remain pending; this feature does not increase the accepted workflow count until those gates pass.
+The regression `tests/native_chat_unknown.rs` verifies accepted and rejected outcomes through egui's accessible UI tree. The five focused suites pass 22 tests; warning-denied all-target Clippy, formatting, diff checks, and the 300-line limit pass locally. A prior cold all-target test build was interrupted after 130 tests across 24 suites, so the full suite is not verified. Exact packaged macOS/Windows interaction remains pending; this feature does not increase the accepted workflow count until those gates pass.

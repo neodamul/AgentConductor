@@ -1,8 +1,8 @@
-use eframe::egui::{self, RichText};
 mod launcher;
 mod outcome;
 mod reset;
 mod send;
+mod view;
 
 pub enum Event {
     Send(Vec<crate::chat::Turn>),
@@ -21,6 +21,10 @@ pub struct State {
     resetting: bool,
     job: Option<String>,
     error: Option<String>,
+    question_cursor: Option<usize>,
+    history_draft: String,
+    editor_focused: bool,
+    editor_cursor: usize,
 }
 
 impl State {
@@ -50,80 +54,10 @@ impl State {
         self.resetting = false;
         self.job = None;
         self.error = None;
-    }
-
-    pub fn show(&mut self, language: &str, ui: &mut egui::Ui) -> Option<Event> {
-        let mut new_conversation = false;
-        ui.horizontal(|ui| {
-            ui.heading(text(language, "chat.title"));
-            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                if ui.button(text(language, "chat.close")).clicked() {
-                    self.open = false;
-                }
-                if !self.turns.is_empty()
-                    && !self.awaiting()
-                    && ui.button(text(language, "chat.new")).clicked()
-                {
-                    new_conversation = true;
-                }
-            });
-        });
-        if new_conversation {
-            return Some(Event::NewConversation);
-        }
-        ui.separator();
-        egui::ScrollArea::vertical()
-            .stick_to_bottom(true)
-            .show(ui, |ui| {
-                for turn in &self.turns {
-                    ui.label(
-                        RichText::new(if turn.role == "operator" {
-                            text(language, "chat.you")
-                        } else {
-                            text(language, "chat.title")
-                        })
-                        .strong(),
-                    );
-                    ui.label(&turn.text);
-                    ui.add_space(8.0);
-                }
-                if self.awaiting() {
-                    ui.horizontal(|ui| {
-                        ui.spinner();
-                        ui.label(text(language, "chat.thinking"));
-                    });
-                }
-                if let Some(error) = &self.error {
-                    ui.colored_label(ui.visuals().error_fg_color, error);
-                }
-            });
-        ui.separator();
-        ui.add_enabled_ui(!self.awaiting(), |ui| {
-            ui.add(
-                egui::TextEdit::multiline(&mut self.draft)
-                    .desired_rows(3)
-                    .hint_text(text(language, "chat.placeholder")),
-            );
-        });
-        let send = ui
-            .add_enabled(
-                !self.awaiting() && !self.draft.trim().is_empty(),
-                egui::Button::new(text(language, "chat.send")),
-            )
-            .clicked();
-        if !send {
-            return None;
-        }
-        let turn = crate::chat::Turn {
-            role: "operator".into(),
-            text: std::mem::take(&mut self.draft),
-        };
-        self.pending_before = Some(self.turns.clone());
-        self.turns.push(turn.clone());
-        self.pending_turn = Some(turn);
-        self.error = None;
-        self.requesting = true;
-        Some(Event::Send(self.turns.clone()))
+        self.question_cursor = None;
+        self.history_draft.clear();
+        self.editor_focused = false;
+        self.editor_cursor = 0;
     }
 
     pub fn started(&mut self, job: String) {
@@ -252,8 +186,4 @@ pub(in crate::native_ui_probe) fn load_history(
     snapshot: &serde_json::Value,
 ) {
     probe.coordinator_chat.load_snapshot(snapshot);
-}
-
-fn text(language: &str, id: &'static str) -> &'static str {
-    crate::ui::messages::in_language(language, id)
 }

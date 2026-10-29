@@ -100,9 +100,12 @@ fn a_late_accepted_chat_job_keeps_the_question_and_eventually_shows_its_answer()
         .unwrap()
         .nodes
         .iter()
-        .any(|(_, node)| node.label() == Some(question) || node.value() == Some(question))
+        .any(|(_, node)| {
+            node.label().is_some_and(|label| label.contains(question))
+                || node.value().is_some_and(|value| value.contains(question))
+        })
         || output.shapes.iter().any(|shape| {
-            matches!(&shape.shape, egui::Shape::Text(text) if text.galley.job.text == question)
+            matches!(&shape.shape, egui::Shape::Text(text) if text.galley.job.text.contains(question))
         });
     clear(&mut output);
     assert!(
@@ -120,9 +123,12 @@ fn a_late_accepted_chat_job_keeps_the_question_and_eventually_shows_its_answer()
             .unwrap()
             .nodes
             .iter()
-            .any(|(_, node)| node.label() == Some(text) || node.value() == Some(text))
+            .any(|(_, node)| {
+                node.label().is_some_and(|label| label.contains(text))
+                    || node.value().is_some_and(|value| value.contains(text))
+            })
             || output.shapes.iter().any(|shape| {
-                matches!(&shape.shape, egui::Shape::Text(item) if item.galley.job.text == text)
+                matches!(&shape.shape, egui::Shape::Text(item) if item.galley.job.text.contains(text))
             })
     };
     let question_visible = rendered(question);

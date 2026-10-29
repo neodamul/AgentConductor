@@ -6475,7 +6475,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task 2: rebuild prior turns from the prior workspace artifact, send only the new question through Startup IPC, preserve the bounded transcript artifact through restart, and keep old installations with a missing transcript file readable.
 - [x] Task 2 Verify: `chat_prompt`, `native_workspace_chat`, `startup_chat`, and `chat_startup_context` pass 19/19, including restart recovery and backward-compatible loading when an old input was deleted; warning-denied all-target Clippy, rustfmt, diff hygiene, and changed Rust/test files below 300 lines pass.
 - [ ] Full-suite Verify: the cold all-target build was interrupted after 130 tests across 24 suites had passed; it did not complete and is not a full-suite pass.
-- [ ] Red: cover Enter-send, Shift+Enter newline, and Up/Down question recall in the native transcript.
-- [ ] Task 3: implement terminal-style transcript and prompt-key behavior.
-- [ ] Verify: focused startup and native-chat tests, all-target suite, Clippy, formatting, and the 300-line source/test limit.
+- [x] Red: terminal regressions initially failed for missing `> question` / `< answer` markers, Enter-send, Shift+Enter line insertion, and Up/Down recall.
+- [x] Task 3: render the transcript and prompt in monospace with role markers; Enter sends, Shift+Enter inserts at the current cursor, and Up/Down recalls prior questions while restoring the unsent draft.
+- [x] Verify locally: `native_chat_terminal`, `native_workspace_chat`, `startup_chat`, `chat_startup_context`, and `chat_prompt` pass 22 tests; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line limit pass (largest changed test file: 296 lines).
+- [ ] Full-suite Verify: the earlier cold all-target `cargo test` run was interrupted after 130 tests across 24 suites; it remains incomplete.
+- [x] Update LLM Wiki and AgentMemory with terminal behavior and local evidence; update source map to include `chat/view.rs` and the terminal regression suite.
+- [ ] Verify package: exercise the exact coordinator-chat transcript, keyboard behavior, persistence and restart flows in macOS and Windows packages.
 - [ ] Complete: update issue #189, PR #22, AgentMemory, and the LLM Wiki; do not claim UI parity until exact packaged macOS and Windows journeys pass.
