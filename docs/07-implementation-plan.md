@@ -208,9 +208,10 @@
 
 ### Reconcile issue #9 with current main and complete Rust contract parity
 
-- [x] Plan: compare the Rust migration head `c51998cb` with current `main` `d324caca` from shared base `e32295b3`; PR #22 is `DIRTY`, with 43 merge conflicts and a 1,546-file branch diff.
-- [x] Requirements scan: identify 1,371 lines across 11 main-branch ACIO, CLI-I/O, prompt-order, and task-profile source/test files absent from the current Rust branch. These cover process I/O conformance, CLI control channels, structured prompt assembly, task types/model effort, and configurable agent characteristics.
-- [ ] Task: after the active issue #9 exact-package gate, reconcile upstream Rust behavior file by file; preserve intentional removal of legacy UI code and port all still-required CLI contracts using TDD. Keep source and test files separate and at or below 300 lines.
+- [x] Plan: rechecked current Rust head `023a31da3ca2e51e5cf8d4dda2cef58211ddcc99` against `main` `9a8b3258169a0e5834bc141f1bf5941660deb7a1` from shared base `e32295b3bdb0d056adb7e40ec6b04a0adb01957e`; PR #22 remains conflicting.
+- [x] Conflict inventory: a fresh `git merge-tree` reports 86 conflicted paths. The branch has 73 main-only and 1,035 Rust-only commits since the merge base, with a 1,673-file three-dot diff. Conflicts include architecture/docs and Rust source/test files plus intentionally removed legacy JS UI files; do not auto-select one side for all paths.
+- [x] Requirements re-scan: the old 1,371-line “missing” estimate is stale. The current Rust tree contains the ACIO runtime and worker integration, CLI conformance, structured prompts, task profiles, and model/effort handling; their implementation and local evidence are recorded in the earlier FR-179/FR-172 plan sections. This confirms those contracts exist on Rust, not that every `main` change is reconciled.
+- [ ] Task: reconcile current `main` behavior file by file while preserving the Rust-native UI target and intentional removal of legacy UI code. Port any behavior not already represented on Rust with TDD. Keep source and test files separate and at or below 300 lines.
 - [ ] Verify: focused regressions, complete locked/offline local suite, source/test layout, formatting, warning-denied Clippy, and exact macOS/Windows package execution.
 - [ ] Complete: update architecture traces, evidence, this checklist, LLM Wiki, AgentMemory, issue #9, and PR #22; do not claim Rust parity or mergeability before all required behavior and package gates pass.
 
