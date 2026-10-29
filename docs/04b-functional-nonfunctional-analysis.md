@@ -471,9 +471,11 @@ Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162.
 ### FR-140 / NFR-52 Keep company labels local
 FR-138: read the validated optional suffix from `company-suffix.txt` for both application titlebars while preserving Cargo's numeric version for release/update comparison. NFR-50: refuse package assembly before archive creation when the suffix contains a non-whitespace value.
 Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #13.
+
 ### FR-139 Configure custom CLI event and quota adapters per profile
 For a custom profile, map raw JSONL event names to the standard event kinds and optionally identify session IDs with a JSON Pointer. Optionally invoke an argv-only quota command with a bounded timeout and extract a normalized Snapshot from stdout using a JSON Pointer. Preserve these fields in workspace JSON export/import, retain process logs, and keep existing built-in provider behavior unchanged.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+
 ### FR-138 Keep task timeout recovery visible and stoppable
 On a wall-timeout, retain attempt artifacts, increment timeout evidence, keep the task pending, and set a retry time using a bounded backoff no longer than 60 seconds. Automatically resume due tasks while the run is active; honor `stop.request` before launching again. Persist an audit event and expose timeout/error details in the report during retry and at blocked completion.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
@@ -506,6 +508,7 @@ Accept 1..8192-byte operator turns, send at most the 12 most recent turns, requi
 ### NFR-55 Keep the chat read-only and bounded
 The coordinator runs only through its verified read-only template, never changes files or runs commands, shares the single job slot (a running operation refuses a new question), and times out after five minutes. The page renders answers as plain text.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
+
 ### FR-145 Move the selection when the watched session stops running
 Only a selected session that was running and no longer is triggers the move; a session selected after it finished, and the integration entry, are never taken away. The first snapshot never moves the selection.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
@@ -683,3 +686,7 @@ Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198.
 ### FR-180 Render the workspace section
 `chat_context::workspace(saved, project)` loads the run named by `last_run` (`workflow::load`, `diff.patch`) and `chat_context::render` writes goal, mode, state, error, up to 40 tasks and tests, changed files and the diff cut at 12 KiB with a note. `chat::build_prompt_in` inserts it between `## Manual` and `## Earlier conversation`; heading lines are neutralized (`prompt_form::neutral`). The Task rules point the coordinator at the section.
 Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+
+### FR-179 Reconcile an unconfirmed send with the stored conversation
+`chatUi.resync` leaves the local turn and the waiting state in place when `chat_history` fails; each later `load` that succeeds compares the stored conversation with the pending text. A matching last operator turn means accepted (conversation replaced by the stored one, job followed through `settle`); otherwise the local turn is dropped, the text returns to the input and the original error is shown.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.

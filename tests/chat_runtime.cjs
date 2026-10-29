@@ -17,9 +17,9 @@ vm.runInContext(source + ';this.chatUi=chatUi;', context);
 const plain = v => JSON.parse(JSON.stringify(v));
 const key = (q, init) => q('chat-input').handlers.keydown({ preventDefault() {}, isComposing: false, shiftKey: false, altKey: false, ...init });
 (async () => {
-  const calls = [], notices = []; let current = { revision: 'rev', job: null, chat: null }, stored = [], reply = { id: 'job-1' };
+  const calls = [], notices = []; let current = { revision: 'rev', job: null, chat: null }, stored = [], reply = { id: 'job-1' }, historyDown = false;
   const q = make();
-  const ui = context.chatUi({ q, request: async p => { calls.push(p); if (p.kind === 'chat_history') return { turns: stored }; if (p.kind === 'chat_reset') return { turns: [] }; if (reply instanceof Error) throw reply; return reply; }, state: () => current, notice: (m, e) => notices.push([m, e]) });
+  const ui = context.chatUi({ q, request: async p => { calls.push(p); if (p.kind === 'chat_history') { if (historyDown) throw new Error('timed out'); return { turns: stored }; } if (p.kind === 'chat_reset') return { turns: [] }; if (reply instanceof Error) throw reply; return reply; }, state: () => current, notice: (m, e) => notices.push([m, e]) });
   stored = [{ role: 'operator', text: 'What was built?' }, { role: 'assistant', text: 'A ladder game.' }];
   ui.update(); await tick();
   assert.deepEqual(plain(ui.turns()), stored, 'the stored conversation is shown again');
@@ -73,6 +73,28 @@ const key = (q, init) => q('chat-input').handlers.keydown({ preventDefault() {},
   reply = new Error('timed out'); q('chat-input').value = 'Never started'; key(q, { key: 'Enter' }); await tick(); await tick();
   assert.equal(q('chat-input').value, 'Never started', 'a question the native side never saw is restored');
   assert.ok(!ui.turns().some(t => t.text === 'Never started'));
+  // GitHub #241: when the stored conversation cannot be read either, the outcome is unknown and nothing is rolled back.
+  historyDown = true; reply = new Error('timed out'); q('chat-input').value = 'Slow one'; key(q, { key: 'Enter' }); await tick(); await tick();
+  assert.equal(q('chat-input').value, '', 'an unconfirmed send is not put back into the input');
+  assert.equal(ui.turns().at(-1).text, 'Slow one', 'and stays in the conversation as pending');
+  assert.equal(q('chat-send').disabled, true, 'while sending stays blocked');
+  historyDown = false; stored = [...savedHistory, { role: 'operator', text: 'Slow one' }];
+  current = { revision: 'rev', job: { id: 'job-8', kind: 'chat', state: 'running' }, chat: null };
+  ui.update(); await tick();
+  assert.equal(q('chat-input').value, '', 'the native side had accepted it: the input stays empty');
+  assert.equal(q('chat-send').disabled, true, 'and its job is followed');
+  current = { revision: 'rev', job: { id: 'job-8', kind: 'chat', state: 'completed' }, chat: { job: 'job-8', answer: 'Late.' } };
+  ui.update();
+  assert.deepEqual(plain(ui.turns().at(-1)), { role: 'assistant', text: 'Late.' });
+  assert.equal(ui.turns().filter(t => t.text === 'Slow one').length, 1, 'the message appears once');
+  stored = savedHistory; current = { revision: 'rev', job: null, chat: null }; ui.reset(); ui.update(); await tick();
+  historyDown = true; q('chat-input').value = 'Lost one'; key(q, { key: 'Enter' }); await tick(); await tick();
+  assert.equal(q('chat-input').value, '');
+  historyDown = false; ui.update(); await tick();
+  assert.equal(q('chat-input').value, 'Lost one', 'the native side never saw it: the text returns once that is known');
+  assert.ok(!ui.turns().some(t => t.text === 'Lost one'));
+  assert.equal(notices.at(-1)[0], 'timed out');
+  assert.equal(q('chat-send').disabled, false);
   // A new conversation clears the screen and the stored history.
   q('chat-new').onclick(); await tick();
   assert.equal(calls.at(-1).kind, 'chat_reset');

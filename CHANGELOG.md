@@ -7,6 +7,7 @@ the GitHub Release notes for its tag.
 ## Unreleased
 
 - Chat: every question now carries a Workspace section with the goal, the latest run's tasks, test results, changed files and candidate diff (cut when long). The read-only coordinator can read the project folder but not the run folder, so before this it could not say what was built or how to run it (#243).
+- Chat: when a send times out and the stored conversation cannot be read either, the message stays in the conversation as pending instead of being put back into the input. Once the conversation can be read, an accepted message is followed to its answer with the input still empty; a message the application never received returns to the input with the error. Before, the same text showed in the input and in the conversation when the late answer arrived (#241).
 
 ## v0.1.42
 

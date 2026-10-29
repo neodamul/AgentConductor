@@ -610,9 +610,11 @@ Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162.
 ### R-155 Maintain a local company build label
 Keep Cargo's package version numeric and let developers set a local suffix in the tracked, empty-by-default `company-suffix.txt`. Workspace and Agent Room titlebars show `0.1.25.company_name` when populated; ordinary builds and public releases remain unsuffixed. Release packaging must refuse a non-empty suffix.
 Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #13.
+
 ### R-154 Custom CLI behavior belongs to its agent profile
 An operator can define a custom CLI's event-name mapping and session-ID JSON Pointer in the per-agent JSON profile, and optionally configure a quota argv, timeout, and output pointer. Existing built-in providers keep their current defaults. Custom quota output uses the versioned application Snapshot schema; commands execute directly as argv without a shell. Shared workspace export/import preserves these settings without credentials.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
+
 ### R-153 Explain task timeouts and resume automatically
 When an agent subprocess reaches its wall-time limit, retain its partial work and logs, record the timeout attempt, and automatically retry after a bounded backoff unless the operator has stopped the run. Show timeout evidence while retrying and expose the cause when retries finish blocked so operators can choose a recovery action.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, user, 2026-10-19.
@@ -636,6 +638,7 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### R-161 Chat with the coordinator from the workspace screen
 The workspace screen shall offer a slide-over chat with the registered coordinator, closed by default. The operator can ask how to run or use a finished result, where outputs are, or how to use the current screen; the coordinator answers from the project's files, plans and documents and from the manual. The chat is read-only: it gives exact commands for the operator to run and never changes files or runs commands itself.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
+
 ### R-160 Keep the Agent Room focus on the work that is in progress
 When the session an operator is watching finishes and the run moves on, the Agent Room shall move its selection to the next running session, or to the integration entry when the run is waiting for approval, so the activity shown matches the run state. A session the operator selected for review after it finished stays selected.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
@@ -739,3 +742,7 @@ Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198.
 ### R-188 The chat coordinator knows the workspace and the latest run
 Every chat question shall carry the workspace goal, project folder and mode and, when a run exists, its state, tasks (agent, owned paths, first line of the instruction, error), test exit codes, the candidate's changed files and a bounded candidate diff, so the read-only coordinator can describe what was built and how to run it without reading the run folder. Without a run it says so. Untrusted text in that section shall not add prompt blocks.
 Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+
+### R-187 An unconfirmed chat send is never rolled back
+When a chat message is sent and the page cannot learn whether the application accepted it (the send timed out and the stored conversation cannot be read either), the page shall keep the message in the conversation as pending and shall not put it back into the input. It decides when the stored conversation can be read: accepted, the job is followed; not accepted, the text returns to the input with the error. The message never shows both in the conversation and in the input.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.
