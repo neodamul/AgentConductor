@@ -4,8 +4,16 @@
 - [x] Red: add a source-route regression for `agentconductor`'s empty-argument path; it failed because `main.rs` sent every non-maintenance invocation to the CLI parser.
 - [x] Task: route empty arguments through the existing desktop workspace, `Room::startup`, and `ui::native::open`; preserve all non-empty CLI arguments.
 - [x] Verify: desktop routing tests 3/3, default UI entrypoint and CLI tests 6/6, native-feature binary `cargo check`, warning-denied Clippy, rustfmt, and diff check pass. Changed source/test files are below 300 lines.
-- [x] Local release launch: `cargo build --release --locked --offline --bin agentconductor` succeeds; the default binary starts and remains in its native event loop. A stale hidden probe held the default workspace lease and was stopped before launch. macOS denied the accessibility query (`osascript` -1728), so window visibility and rendered content are not claimed.
-- [ ] Complete: run the exact default executable as a packaged desktop app on macOS and Windows; visually inspect Workspace and ensure the package launches one window. This source change alone adds no packaged UI acceptance credit.
+- [x] Local Rust desktop smoke: the optimized binary was assembled into a temporary `.app` and opened from its current source build. CUA found one standard window and visually verified Workspace, Agent Roles, and Plan Review; navigation did not save, generate, approve, or run a plan. The screenshot was shown in the work session and is not retained because it contains the user's workspace details.
+- [ ] Complete: run the exact Release workflow package on macOS and Windows, verify the Windows window and one-window behavior, and complete packaged UI workflows. The local `.app` is not a release archive and does not earn shipped UI acceptance by itself.
+
+### Open the last saved workspace at launch — main #226 / issue #9
+
+- [x] Plan: preserve main's first-run behavior in the Rust desktop entrypoint: reopen the last saved workspace; create the default workspace only if none remain.
+- [x] Red: add an isolated launch regression; it failed because `workspaces::launch_root` did not exist.
+- [x] Task: resolve the last saved workspace before initializing `Room`; keep explicit CLI workspace commands unchanged.
+- [x] Verify: launch regression 1/1, native-default/workspace/source-layout tests 6/6, desktop routing tests 3/3, warning-denied Clippy, rustfmt, and the 300-line source-layout check pass.
+- [ ] Complete: update issue #9, PR #22, AgentMemory, and LLM Wiki with the test and source evidence; require Windows exact-package execution before closing this parity item.
 
 ### Structure coordinator prompts as Document, Task, and Format — issue #9 / 2026-10-29
 

@@ -1,0 +1,27 @@
+{
+  "kind": "rust-workspace-launch-regression",
+  "base_commit": "f6fdad94a7f42fe596b4a48fb5ec57c1b925a898",
+  "main_commit": "27612421",
+  "changes": ["src/ui/workspaces.rs", "src/desktop.rs", "tests/launch_workspace.rs"],
+  "tdd": {
+    "red": "The isolated launch test failed because workspaces::launch_root was missing.",
+    "green": "The launch test passed after adding last-saved-workspace selection and routing the default desktop entrypoint through it."
+  },
+  "verification": {
+    "launch_workspace": "1 passed",
+    "native_ui_default_workspace_settings_source_layout": "6 passed",
+    "desktop_routing": "3 passed",
+    "clippy": "passed with warnings denied",
+    "rustfmt": "passed"
+  },
+  "ui_smoke": {
+    "app": "locally assembled macOS .app from the optimized Rust binary",
+    "platform": "macOS",
+    "window_count": 1,
+    "surfaces_observed": ["Workspace", "Agent Roles", "Plan Review"],
+    "actions": "navigation only; no workspace save, plan generation, approval, agent run, or merge",
+    "screenshot_retained": false,
+    "windows_exact_release_package": "pending"
+  },
+  "acceptance_effect": "Source regression and local Rust UI smoke only; exact cross-platform release-package UI acceptance remains pending."
+}

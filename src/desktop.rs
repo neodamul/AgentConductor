@@ -16,7 +16,7 @@ pub fn is_workspace_launch(args: &[String]) -> bool {
 
 pub fn launch_default() -> Result<(), String> {
     let executable = std::env::current_exe().map_err(|error| error.to_string())?;
-    let room = crate::ui::Room::startup(&workspace()?, &executable)?;
+    let room = crate::ui::Room::startup(&crate::ui::workspaces::launch_root()?, &executable)?;
     crate::ui::native::open(
         std::sync::Arc::new(room),
         crate::ui::native::Surface::Workspace,
