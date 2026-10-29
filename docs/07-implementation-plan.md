@@ -6578,5 +6578,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task 4: the existing loopback listener performs one bounded recovery scan of run state and declared task worktree paths; it watches at most 512 paths to depth 8, emits a surface-scoped invalidation, and exponentially backs off from 1 s to 30 s while idle. No per-event thread or render-loop filesystem work.
 - [x] Red/GREEN: an integration test changes a declared worktree file without sending an event; the subscribed Agent Room receives an invalidation within the bounded recovery interval.
 - [x] Red/GREEN: a publisher blocked behind the subscriber-registry mutex timed out before `try_lock`; it returns immediately after the change.
+- [x] Remove duplicate high-frequency whole-screen recovery reads: all workspace/room snapshots now use a 30 s recovery deadline regardless of active state; event notifications remain immediate. Replace the two 500 ms startup snapshots with the same recovery deadline.
+- [x] Verify recovery cadence locally: native room render 12/12, profile refresh 3/3, poll timeout 6/6, warning-denied native UI library Clippy, rustfmt, and diff checks pass.
 - [ ] Verify package: exercise selective event delivery and fallback behavior in exact macOS and Windows packages.
 - [ ] Complete: update #257, issue #189, PR, AgentMemory and LLM Wiki after verification; do not close issues or claim parity before package acceptance.

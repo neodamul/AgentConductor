@@ -2,18 +2,10 @@ use eframe::egui;
 use serde_json::Value;
 use std::time::{Duration, Instant};
 
-pub fn room_refresh_interval(snapshot: &Value) -> Duration {
-    let state = snapshot["report"]["state"]
-        .as_str()
-        .or_else(|| snapshot["state"].as_str());
-    if snapshot["job"]["state"] == "running"
-        || super::super::workspace::profile_tools::metadata_running(snapshot)
-        || matches!(state, Some("running" | "ready"))
-    {
-        Duration::from_secs(1)
-    } else {
-        Duration::from_secs(5)
-    }
+pub const RECOVERY_INTERVAL: Duration = Duration::from_secs(30);
+
+pub fn room_refresh_interval(_snapshot: &Value) -> Duration {
+    RECOVERY_INTERVAL
 }
 
 pub fn refresh_due(

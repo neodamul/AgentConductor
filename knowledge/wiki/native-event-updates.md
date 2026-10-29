@@ -15,6 +15,7 @@ Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184/NFR-79 → QAS-190 → 
 - Plan and architecture records are updated.
 - A bounded `std::sync::mpsc` event hub now filters subscribers by Workspace or Agent Room, coalesces a full one-slot queue, and calls `egui::Context::request_repaint` without adding an event thread. Publisher delivery uses `try_lock` plus `try_send`; transient registry contention cannot block a state owner, and later snapshots/recovery reconcile invalidations.
 - Successful native UI dispatches publish an invalidation; the matching view listens on its bounded receiver and asks the existing independent poll worker for one background snapshot.
+- Periodic whole-screen refresh is now only a 30-second recovery deadline regardless of running/idle status. Event subscribers repaint and trigger snapshots immediately, so active workflows no longer cause 1-second polling and idle work no longer causes 5-second polling; quota refresh remains on its own configured schedule.
 - The serialized foreground lane is now two bounded worker lanes. TDD proved a slow request on one lane does not delay a quick request on the other.
 - A UI child-job terminal transition publishes an event when the controller observes process exit. The event wakes the view to read the committed state.
 - When an invalidation arrives during a background snapshot, the view drops that in-flight result and queues one fresh snapshot. This prevents a pre-mutation read from briefly overwriting newer view state.

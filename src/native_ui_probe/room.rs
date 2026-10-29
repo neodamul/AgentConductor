@@ -15,7 +15,7 @@ pub mod task_activity;
 pub mod task_controls;
 mod view;
 pub use candidate::candidate_decision_request;
-pub use polling::{refresh_due, refresh_due_at, room_refresh_interval};
+pub use polling::{RECOVERY_INTERVAL, refresh_due, refresh_due_at, room_refresh_interval};
 pub use refresh_follow_up::ToolRefreshFollowUp;
 pub use view::show;
 

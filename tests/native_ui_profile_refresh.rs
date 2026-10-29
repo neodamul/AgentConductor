@@ -1,27 +1,27 @@
 #![cfg(feature = "native-ui-probe")]
 
 #[test]
-fn metadata_work_uses_fast_refresh_but_idle_profiles_do_not() {
+fn metadata_work_and_idle_profiles_share_a_low_frequency_recovery_interval() {
     let running = serde_json::json!({
         "metadata_job": {"kind": "catalog:claude", "state": "running"}
     });
     let idle = serde_json::json!({"metadata_job": {"state": "completed"}});
     assert_eq!(
         agentconductor::native_ui_probe::room::room_refresh_interval(&running),
-        std::time::Duration::from_secs(1)
+        std::time::Duration::from_secs(30)
     );
     assert_eq!(
         agentconductor::native_ui_probe::room::room_refresh_interval(&idle),
-        std::time::Duration::from_secs(5)
+        std::time::Duration::from_secs(30)
     );
 }
 
 #[test]
-fn waiting_availability_uses_idle_refresh_interval() {
+fn waiting_availability_uses_recovery_interval() {
     let waiting = serde_json::json!({"report":{"state":"waiting_availability"}});
     assert_eq!(
         agentconductor::native_ui_probe::room::room_refresh_interval(&waiting),
-        std::time::Duration::from_secs(5)
+        std::time::Duration::from_secs(30)
     );
 }
 
