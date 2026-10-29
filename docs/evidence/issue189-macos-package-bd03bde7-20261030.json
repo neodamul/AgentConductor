@@ -25,7 +25,8 @@
       { "mode": "worktree", "source_mode": "git", "tasks": 3, "tests": 3, "approved_merge": true, "unapproved_merge_refused": true },
       { "mode": "worktree", "source_mode": "folder", "tasks": 3, "tests": 3, "approved_merge": true, "unapproved_merge_refused": true }
     ],
-    "interactive_ui": "not tested",
+    "interactive_ui": "opened packaged chat; verified accessible input, send enablement, Shift+Enter newline, and send disabled after clearing; did not submit a request",
+    "chat_persistence_restart": "pending",
     "windows_package_ui": "pending"
   }
 }
