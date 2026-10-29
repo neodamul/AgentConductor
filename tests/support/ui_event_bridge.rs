@@ -45,3 +45,9 @@ fn fallback_scan_includes_declared_worktree_files() {
     assert!(file_stamps(&root).iter().any(|(path, _)| path == &target));
     fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn broad_glob_scopes_are_clamped_to_the_bounded_worktree_root() {
+    assert_eq!(safe_scope_path("**/*"), Some(PathBuf::from(".")));
+    assert_eq!(safe_scope_path("../outside/**"), None);
+}

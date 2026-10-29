@@ -205,9 +205,12 @@ fn collect_declared_worktree_paths(dir: &Path, paths: &mut BTreeSet<PathBuf>) {
 
 fn safe_scope_path(value: &str) -> Option<PathBuf> {
     let prefix = value.split(['*', '?', '[']).next()?.trim_end_matches('/');
-    let path = Path::new(prefix);
-    if path.as_os_str().is_empty()
-        || path.is_absolute()
+    let path = if prefix.is_empty() {
+        Path::new(".")
+    } else {
+        Path::new(prefix)
+    };
+    if path.is_absolute()
         || path.components().any(|part| {
             matches!(
                 part,
