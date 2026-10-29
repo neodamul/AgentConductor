@@ -2,9 +2,9 @@
 
 Built the optimized package locally from clean source `f83c5fb15fb088eebd2d622357d719c074da4572` with `cargo run --release --locked -- package-release`. The Apple Silicon archive manifest matches the source commit, its embedded binary SHA-256 matches `SHA256SUMS`, and the package contains English/Korean HTML manuals, license records, and SBOM. Archive SHA-256: `ba37d5215b584b0a776c2942045796dc3918a5b6b6e82b82d487c268e8997423`. `docs/07-implementation-plan.md` records evidence. Windows package recovery, full-suite verification, and #9 completion remain open. Graphify/CocoIndex status was not re-run for this package-only check.
 
-# [2026-10-29] audit | ACIO worker integration gap — issue #9 / FR-171
+# [2026-10-29] superseded audit | ACIO worker integration — issue #9 / FR-179
 
-Graphify `explain` and source inspection confirmed that the new ACIO runtime is not wired into real task execution: `src/workflow/execution/worker.rs` still passes the assembled prompt to `process::run_until` and decodes the output after exit. A profile marked `protocol: acio` would therefore not receive an `acio.input/1` document and could not use its live control channel. Added the remaining plan checklist and documented the required TDD path: structured task input, persisted event/session behavior, cancellation/process ownership, and decision-required tools routed through the human approval ledger with no auto-allow. No implementation or UI acceptance is claimed in this audit. CocoIndex CLI is unavailable in the current environment. AgentMemory: `mem_mvseb26m_e3cae6f00030`.
+The earlier audit claiming the ACIO runtime was disconnected was stale and incorrect for the current branch. `src/workflow/execution/worker.rs` sends `acio.input/1` and routes opted-in profiles through `worker::acio::run`; `tests/acio_worker.rs` verifies structured input, session ownership, live events, human approval, and rejection of mismatched sessions. Plan section “Route opted-in ACIO profiles through the live worker” records the prior 1,083-test full-suite evidence and completion commit `447afce112c44e37e2de0fbacb8ebb6bc73eb0fc`. This correction adds no new implementation or package acceptance. Graphify was refreshed on 2026-10-29; CocoIndex CLI is unavailable in this environment.
 
 # [2026-10-29] plan/task/verify | Add Rust ACIO runtime and CLI conformance — issue #9
 
