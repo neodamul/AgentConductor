@@ -17,6 +17,8 @@ pub struct Startup {
     broker: Controller,
     quota_broker: Controller,
     saved: Mutex<Saved>,
+    /// GitHub #234: the repository HEAD for the state revision, never fetched by a request through a Git process.
+    heads: crate::git_head::Heads,
     _lease: crate::leases::Lease,
 }
 mod model;
@@ -93,6 +95,7 @@ impl Startup {
                 job: Mutex::new(None),
             },
             saved: Mutex::new(saved),
+            heads: Default::default(),
             _lease: lease,
         };
         if let Ok(saved) = startup.saved.lock() {

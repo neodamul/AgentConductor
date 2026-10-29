@@ -754,3 +754,7 @@ Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201.
 ### R-190 The planning contract matches plan validation
 A plan task shall need at least one owned path (a verification task too) and a test command, and the planning output contract and prompt shall say so. When a coordinator plan has a task without a path, the application shall name the task and the field, and shall give the coordinator the same single correction round it gets for unsafe or overlapping scopes. Other task validation errors name the task and the field as well.
 Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. GitHub #251, user, 2026-10-29.
+
+### R-191 Requests never wait on a slow step of another request
+The window's periodic state request (`snapshot`), a quota refresh and the chat shall not queue behind each other's slow work. The state revision shall not start a Git process on the request path: on a company PC where one Git call took 2.5 s, a snapshot needed three of them, took longer than the 15 s the page waits, and held every other request, the chat included, in line. The revision still covers the repository HEAD, so a plan reviewed before the repository changed is still refused. A snapshot shall hold the settings lock only to advance the state and shall build its answer outside it. A request that waited for the lock or spent half a second in a step shall say so in the request diagnostics log.
+Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203. GitHub #234, user, 2026-10-30.

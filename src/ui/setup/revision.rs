@@ -34,16 +34,11 @@ impl Startup {
                 bytes.extend(super::bytes(&path)?);
             }
             if include_head {
-                bytes.extend(
-                    Repository::open(
-                        proposal
-                            .workspace
-                            .as_deref()
-                            .unwrap_or(&saved.config.repository),
-                    )?
-                    .head()?
-                    .as_bytes(),
-                );
+                let project = proposal
+                    .workspace
+                    .as_deref()
+                    .unwrap_or(&saved.config.repository);
+                bytes.extend(self.heads.get(project).bytes());
             }
         }
         Ok(workflow::digest(&bytes))

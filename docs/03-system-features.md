@@ -690,3 +690,7 @@ Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201.
 ### SF-178 Plan contract and scope correction
 The output schema requires a non-empty paths array and test command, the prompt says verification tasks own a path, validation errors name the task and the field, and an empty scope is corrected once like an unsafe one.
 Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. GitHub #251, user, 2026-10-29.
+
+### SF-179 Non-blocking state revision and snapshot
+HEAD is read from the Git files without a process; a layout the files cannot answer is refreshed by a short background task and read from a cache; the snapshot is built outside the settings lock; the request diagnostics log names a lock wait or a step of 500 ms or more.
+Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203. GitHub #234, user, 2026-10-30.

@@ -406,7 +406,7 @@ OpenCode 2.0.25, agentmemory 0.9.29입니다. 설치 버전은 다를 수 있으
 
 화면은 응용 프로그램의 응답을 요청마다 15초 기다립니다. 토스트에는 요청 종류가 표시됩니다(예: `요청 시간이 초과됐습니다(chat)`). 요청은 작업을 시작하기만 합니다. 코디네이터 답이 몇 분 걸리는 것은 실행 중인 작업이지 시간 초과된 요청이 아닙니다.
 
-**어디를 보나.** `~/.agentconductor/request-diagnostics.log`(Windows: `%USERPROFILE%\.agentconductor\request-diagnostics.log`), 이전 로그는 `request-diagnostics.log.1`입니다. 파일마다 최대 256 KiB입니다. 줄 형식은 `<unix 밀리초> start kind=<종류> bytes=<n>`과 `<unix 밀리초> done kind=<종류> ms=<n> ok=<true|false> [error="<이유>"]`입니다. `start`는 `chat`에만 쓰고, `done`은 모든 `chat` 요청과 1000 ms 이상 걸린 요청에 씁니다. 빠른 요청은 기록하지 않습니다. 토스트가 뜬 시각은 `date -r <초>`(macOS)로 바꿔 줄의 시각과 비교합니다.
+**어디를 보나.** `~/.agentconductor/request-diagnostics.log`(Windows: `%USERPROFILE%\.agentconductor\request-diagnostics.log`), 이전 로그는 `request-diagnostics.log.1`입니다. 파일마다 최대 256 KiB입니다. 줄 형식은 `<unix 밀리초> start kind=<종류> bytes=<n>`과 `<unix 밀리초> done kind=<종류> ms=<n> ok=<true|false> [error="<이유>"]`입니다. `start`는 `chat`에만 쓰고, `done`은 모든 `chat` 요청과 1000 ms 이상 걸린 요청에 씁니다. 설정 잠금을 기다린 시간(`lock`), 상태를 갱신한 시간(`advance`), 스냅샷을 만든 시간(`snapshot`)이 500 ms 이상이면 `step name=<lock|advance|snapshot> ms=<n>` 줄을 씁니다. `lock`은 요청이 다른 요청 뒤에서 기다린 시간입니다. 빠른 요청은 기록하지 않습니다. 토스트가 뜬 시각은 `date -r <초>`(macOS)로 바꿔 줄의 시각과 비교합니다.
 
 **어떻게 판단하나.** 토스트 시각 전 30초의 줄을 봅니다.
 
