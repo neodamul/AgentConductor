@@ -9,7 +9,12 @@ impl Startup {
         revision: &str,
         text: &str,
     ) -> Result<serde_json::Value, String> {
-        // Chat cannot change repository state, so bypass the Git HEAD revision guard.
+        if revision != self.chat_revision(saved)? {
+            return Err(crate::ui::messages::text(
+                "native.startup_state_changed_since_review_refresh_before_acting",
+            )
+            .into());
+        }
         let job = self.job(saved)?;
         self.settle(saved, &job)?;
         if job["state"] == "running" {

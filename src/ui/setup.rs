@@ -102,37 +102,6 @@ impl Startup {
         startup.recover_last_run()?;
         Ok(startup)
     }
-    fn revision(&self, s: &Saved) -> Result<String, String> {
-        // Observations and scheduler progress cannot invalidate an unrelated edit.
-        let mut context = serde_json::to_value(s).map_err(|e| e.to_string())?;
-        for key in [
-            "quota_job",
-            "metadata_queue",
-            "metadata_input",
-            "metadata_settled",
-            "metadata_error",
-        ] {
-            context.as_object_mut().unwrap().remove(key);
-        }
-        if let Some(profiles) = context["config"]["profiles"].as_array_mut() {
-            for profile in profiles {
-                profile.as_object_mut().unwrap().remove("catalog");
-            }
-        }
-        let mut bytes = serde_json::to_vec(&context).map_err(|e| e.to_string())?;
-        if let Some(p) = &s.proposal {
-            let path = p.directory.join("review.json");
-            if path.exists() {
-                bytes.extend(self::bytes(&path)?);
-            }
-            bytes.extend(
-                Repository::open(p.workspace.as_deref().unwrap_or(&s.config.repository))?
-                    .head()?
-                    .as_bytes(),
-            );
-        }
-        Ok(workflow::digest(&bytes))
-    }
     fn quota_job(&self, s: &Saved) -> Result<serde_json::Value, String> {
         jobs::state(&self.quota_broker, &s.quota_job)
     }
@@ -250,6 +219,7 @@ use request::Request;
 mod dispatch;
 mod planning;
 mod profiles;
+mod revision;
 mod share;
 mod slug;
 mod snapshot;

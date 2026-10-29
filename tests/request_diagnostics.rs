@@ -21,7 +21,7 @@ fn chat_requests_are_logged_fast_ones_are_not_and_the_log_is_bounded() {
     let log = home.join(".agentconductor/request-diagnostics.log");
     room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     assert!(!log.exists(), "a fast snapshot leaves no trace");
-    let revision = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap()["revision"].clone();
+    let revision = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap()["chat_revision"].clone();
     let packet = serde_json::json!({"kind":"chat","revision":revision,"text":"hello"}).to_string();
     assert!(room.dispatch(packet.as_bytes()).is_err());
     let text = std::fs::read_to_string(&log).unwrap();

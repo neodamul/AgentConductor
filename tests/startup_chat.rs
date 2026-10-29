@@ -18,7 +18,7 @@ fn chat_requests_are_validated_and_the_snapshot_carries_a_chat_slot() {
     .unwrap();
     let snapshot = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     assert!(snapshot["chat"].is_null(), "no answer before any chat");
-    let revision = snapshot["revision"].clone();
+    let revision = snapshot["chat_revision"].clone();
     let send = |text: &str| {
         room.dispatch(
             json!({"kind":"chat","revision":revision,"text":text})
@@ -126,7 +126,7 @@ fn chat_submission_does_not_wait_for_repository_head() {
 
     let started = Instant::now();
     let result = room.dispatch(
-        json!({"kind":"chat","revision":reviewed["revision"],"text":"Is this responsive?"})
+        json!({"kind":"chat","revision":reviewed["chat_revision"],"text":"Is this responsive?"})
             .to_string()
             .as_bytes(),
     );
@@ -135,6 +135,55 @@ fn chat_submission_does_not_wait_for_repository_head() {
         started.elapsed() < Duration::from_secs(2),
         "chat request waited for git HEAD: {:?}",
         started.elapsed()
+    );
+    drop(room);
+    drop(environment);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn chat_rejects_a_stale_saved_context_without_a_git_head_lookup() {
+    let root = std::env::temp_dir().join(format!("ac-chat-stale-context-{}", std::process::id()));
+    let repository = root.join("repo");
+    std::fs::create_dir_all(&repository).unwrap();
+    let mut environment = env::lock();
+    environment.set("HOME", root.join("home"));
+    let room = Room::startup(
+        &root.join("desktop"),
+        std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+    )
+    .unwrap();
+    let initial = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    let config = json!({"profiles":[],"coordinator":"","goal":"first goal","repository":repository,"workspace_mode":"shared"});
+    room.dispatch(
+        json!({"kind":"save","revision":initial["revision"],"config":config})
+            .to_string()
+            .as_bytes(),
+    )
+    .unwrap();
+    let reviewed = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    let stale_chat_revision = reviewed["chat_revision"].clone();
+    assert!(
+        stale_chat_revision.is_string(),
+        "chat context revision is exposed"
+    );
+
+    let changed = json!({"profiles":[],"coordinator":"","goal":"changed goal","repository":repository,"workspace_mode":"shared"});
+    room.dispatch(
+        json!({"kind":"save","revision":reviewed["revision"],"config":changed})
+            .to_string()
+            .as_bytes(),
+    )
+    .unwrap();
+    let result = room.dispatch(
+        json!({"kind":"chat","revision":stale_chat_revision,"text":"hello"})
+            .to_string()
+            .as_bytes(),
+    );
+    let error = result.unwrap_err();
+    assert!(
+        error.contains("startup state changed since review"),
+        "stale chat must be rejected before attempting coordinator launch: {error}"
     );
     drop(room);
     drop(environment);
