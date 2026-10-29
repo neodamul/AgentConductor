@@ -374,7 +374,8 @@
 - [x] Red: add `activation_refreshes_the_app_window_before_looking_for_modal_confirmation`; it failed because `Find-Button` searched only the UI Automation element captured before the confirmation dialog appeared.
 - [x] Task: refresh top-level UI Automation windows for each lookup, restrict candidates to the packaged process ID, and search each owned window for the exact accessible button. Pointer and keyboard fallbacks retain process/window ownership checks.
 - [x] Local Verify: tool-decision dispatch 13/13, source-layout 2/2, warning-denied all-target Clippy, rustfmt, and `git diff --check` pass. Changed files are 235 and 283 lines.
-- [ ] Exact-package Verify: rerun the current Rust branch's macOS/Windows release packages and require refresh, allow, and deny receipt/effect assertions.
+- [x] Verify checkpoint: PR #255 head `d588aa917dc0b5394276d8addb510dc5121d67c7` includes this fix. Run `40955925655` passed macOS and Windows validation; its exact macOS and Windows package jobs are still running. This is not package acceptance.
+- [ ] Exact-package Verify: require both package jobs from run `40955925655` to finish successfully and require refresh, allow, and deny receipt/effect assertions.
 - [ ] Complete: retain exact-head package artifacts and update issue #9, PR #22, AgentMemory, and LLM Wiki. No acceptance credit until the packaged workflow passes; candidate remains 22/25 and shipped Rust replacement remains 0/25.
 
 ### Stop, resume, and recover a packaged run — issue #9 / workflow 25 / 2026-10-29
