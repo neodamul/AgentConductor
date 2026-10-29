@@ -1,0 +1,35 @@
+{
+  "issue": 189,
+  "pull_request": 192,
+  "date": "2026-10-29",
+  "previous_head": "3d8070af9e28ec233eda125e231f87191e53b3b3",
+  "previous_run": "40751085821",
+  "previous_run_result": {
+    "macos_validation": "passed",
+    "windows_validation": "passed",
+    "macos_package": "passed",
+    "windows_package": "failed in windows_tool_decision after the other packaged Windows journeys passed",
+    "failure": "exact_windows_package_refreshes_approves_and_rejects_tool_requests waited for an enabled Allow once button and timed out after the refresh sequence"
+  },
+  "observed_windows_ui": {
+    "active_job": "Running",
+    "notice": "Tool refresh queued for the active coordinator",
+    "modal": "Tool request needs a decision remained visible",
+    "controls": "Allow once, Deny, and Refresh request were disabled; Decide later was enabled"
+  },
+  "diagnosis": "This old run does not isolate whether an unrelated snapshot revision cleared approval confirmation or the controller still considered a request pending. The UI tree confirms the disabled state but not its source. The run predates #9 commit 28df83945269254fc669bea602bdccab99fe6ab6, which binds confirmation to receipt ID/status/evidence across unrelated revisions. Revalidate on the updated base before changing product code or weakening the test.",
+  "rebase": {
+    "base_branch": "codex/issue-9-native-ui-parity",
+    "base_sha": "28df83945269254fc669bea602bdccab99fe6ab6",
+    "result": "clean rebase; no conflicts",
+    "rebased_pr_head_before_evidence_commit": "001c0b4d7e9b2f376f069a68c042bbbd7f2ba471"
+  },
+  "local_verification": {
+    "focused_suites": "windows_tool_decision_dispatch, native_ui_tool_dialog, native_ui_launch, and source_layout: 28 passed",
+    "clippy": "cargo clippy --all-targets --locked --features test-fixtures -- -D warnings passed",
+    "format": "cargo fmt --check passed",
+    "diff": "git diff --check passed",
+    "platform_limit": "Windows UI Automation cannot execute on this macOS host; exact packaged Windows rerun is required"
+  },
+  "next": "Push this rebased PR head and run exact macOS/Windows platform validation and native packaging, then inspect the Windows tool-decision and coordinator-chat scenarios. No package acceptance is claimed yet."
+}

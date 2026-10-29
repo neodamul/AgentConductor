@@ -25,6 +25,15 @@
 - [ ] Exact-package Verify: dispatch the current-head macOS/Windows workflow and require the packaged Windows candidate approval/rejection journey to pass.
 - [ ] Complete: update issue #9, PR #22, AgentMemory, LLM Wiki, and retained package evidence from the exact-head run. Packaged acceptance remains 22/50 until the full gate passes.
 
+### Reverify PR #192 on the current #9 base — issue #189 / 2026-10-29
+
+- [x] Plan: PR #192 head `3d8070af9e28ec233eda125e231f87191e53b3b3` failed exact Windows packaging in run `40751085821` at `windows_tool_decision`; macOS package and prior Windows journeys passed.
+- [x] Rebase: rebase the issue-linked branch onto #9 head `28df83945269254fc669bea602bdccab99fe6ab6`; no conflicts. The old failure predates #9's receipt-bound confirmation preservation fix.
+- [x] Diagnose: retained UIA output shows the active pending-tool modal, “Tool refresh queued for the active coordinator,” `Running`, and the `Allow once` control disabled after the bounded 20-second wait. The old run alone does not distinguish transient controller-pending state from product gating; do not claim a root cause or package pass from it.
+- [x] Local Verify: focused tool-decision, tool-dialog, native UI launch, and source-layout suites pass 28 tests; all-target warning-denied Clippy, rustfmt, `git diff --check`, and source-layout checks pass.
+- [ ] Exact-package Verify: push the rebased PR head and rerun macOS/Windows platform validation plus exact package execution, including Windows tool decision and coordinator chat journeys.
+- [ ] Complete: record the new exact-head workflow results, update issue #189/PR #192 and LLM Wiki/AgentMemory. Keep both open until the Windows package gate passes.
+
 ### Guard the Windows signal-port field focus fallback — issue #9 / 2026-10-29
 
 - [x] Plan: exact package run `40784206494` passed macOS packaging but the Windows package failed in `windows_signal_settings` when UI Automation `SetFocus()` raised `ElementNotEnabledException` / `Unrecognized error` for the visible port edit; no preference file was saved.
