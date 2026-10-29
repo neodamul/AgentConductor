@@ -60,8 +60,9 @@ function Describe-ActionControls {
   } | Select-Object -First 100
 }
 function Wait-Name($name) {
+  $controlDeadline = (Get-Date).AddSeconds(15)
   $found = $null
-  while (-not $found -and (Get-Date) -lt $deadline) {
+  while (-not $found -and (Get-Date) -lt $controlDeadline) {
     $found = Find-Name $name
     if (-not $found) { Start-Sleep -Milliseconds 100 }
   }
@@ -69,8 +70,9 @@ function Wait-Name($name) {
   return $found
 }
 function Wait-ActionControl($name) {
+  $controlDeadline = (Get-Date).AddSeconds(15)
   $found = $null
-  while (-not $found -and (Get-Date) -lt $deadline) {
+  while (-not $found -and (Get-Date) -lt $controlDeadline) {
     $found = Find-ActionControl $name
     if (-not $found) { Start-Sleep -Milliseconds 100 }
   }
@@ -81,8 +83,9 @@ function Wait-ActionControl($name) {
   return $found
 }
 function Wait-Edit($name) {
+  $controlDeadline = (Get-Date).AddSeconds(15)
   $found = $null
-  while (-not $found -and (Get-Date) -lt $deadline) {
+  while (-not $found -and (Get-Date) -lt $controlDeadline) {
     $found = Find-Edit $name
     if (-not $found) { Start-Sleep -Milliseconds 100 }
   }

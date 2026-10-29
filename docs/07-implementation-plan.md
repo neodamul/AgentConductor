@@ -6375,3 +6375,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: startup/chat/reset/native-probe/localization/source-layout/public-doc suites pass 44 tests; warning-denied all-target Clippy, rustfmt, diff checks, and the 300-line limit pass.
 - [ ] Verify packaged macOS/Windows chat submission and accepted-job failure behavior in a package run that includes this commit.
 - [ ] Complete: run exact packaged macOS/Windows chat flows; then update issue #9 and acceptance only from observed package evidence.
+
+### 2026-10-29 — Keep Windows signal-settings control waits independent — issue #9
+
+- [x] Plan: inspect Windows package run `40832308285`, which checked out `374797b0`, not the current branch head. Its signal-settings step ended `MISSING_ACTION_CONTROL: Local Rust`; the final accessibility dump showed the visible control, while the sequence had exhausted its one global 40-second deadline.
+- [x] Red: add a source-contract regression requiring fresh bounded deadlines in `Wait-Name`, `Wait-ActionControl`, and `Wait-Edit`; it fails against the shared startup deadline.
+- [x] Task: give each wait its own 15-second deadline. The initial 40-second bound is now only for finding the packaged app window; settings interactions and later control lookups continue on independent bounded clocks.
+- [x] Verify locally: Windows signal-settings driver contracts and source-layout pass 17 tests; warning-denied all-target Clippy, rustfmt, and diff checks pass. Driver files are 263 and 298 lines.
+- [ ] Verify exact package: rerun Windows signal-settings and other exact-package journeys on this branch head. The previous failure is old-source evidence and does not count as a current-head result.
+- [ ] Complete: keep issue #9 acceptance at 22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 overall until current-head Windows and macOS package evidence passes.
