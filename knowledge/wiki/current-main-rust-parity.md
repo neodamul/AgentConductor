@@ -1,5 +1,13 @@
 # Current-main behavior carried into the Rust UI branch
 
+## Full local Rust test suite — issue #9 / 2026-10-29
+
+At exact branch head `355d6256d358533bfd182712ce1fa99d174b4aa4`, `cargo test --all-targets --locked --offline --features test-fixtures --no-fail-fast --quiet` exited 0 with no failures. The local run is macOS; authenticated provider and exact packaged-binary tests keep their explicit prerequisites. This does not replace the pending exact Windows package check or award packaged UI acceptance. Evidence: `docs/evidence/issue9-full-suite-355d625-20261029.json`.
+
+## Exact-current-head macOS package — issue #9 / 2026-10-29
+
+Built the optimized Apple Silicon archive from source `355d6256d358533bfd182712ce1fa99d174b4aa4`. The archive CRC passed; its manifest identifies that exact commit and a 19,456,032-byte binary, whose SHA-256 matches the embedded `SHA256SUMS`. The packaged binary's `--help` ran successfully. Bilingual HTML manuals, licenses, SBOM, and UI screenshot assets are present. Archive SHA-256: `560e138b9ce2543157caed57fedda16e73fa92000295b96e16f2f26fba2cd73e`. GUI launch and visual acceptance were not performed, so this adds no packaged UI workflow credit. Exact Windows package is still pending. Evidence: `docs/evidence/issue9-macos-package-355d625-20261029.json`.
+
 ## Verify Windows scheduled retries through controller dispatch and persistence — issue #9 / 2026-10-29
 
 Exact run `40821720696` passed both platform validation jobs and the macOS package, but the Windows package stopped in the schedule journey after UI Automation focus and invoke failed. A foreground-checked pointer click was sent, but the test driver treated the still-enabled Schedule button as proof that no action was accepted and exited before inspecting the controller owner record or persisted timestamp. The driver now receives the isolated run directory and treats either the button's disabled transition or a process-owned `coordinator-ui-*` owner record as an action transition; the package test still requires the controller dispatch record and exact persisted `manual_schedule` time. The source-contract regression was red before the change. Local verification passes: schedule driver 7/7, source layout 2/2, native schedule/action tests 6/6, warning-denied Clippy, rustfmt, diff check, and the 300-line source/test limit. Exact package rerun is pending. No acceptance credit is added; issue #9 remains **22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate**.

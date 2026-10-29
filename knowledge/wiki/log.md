@@ -1,3 +1,11 @@
+# [2026-10-29] verify | Full local Rust test suite — issue #9
+
+At source `355d6256d358533bfd182712ce1fa99d174b4aa4`, the complete locked/offline all-target test command exited 0 with no failures. Authenticated provider and exact packaged-binary tests remain gated by their declared prerequisites. Exact Windows package and three remaining packaged UI workflows are still pending. Evidence: `docs/evidence/issue9-full-suite-355d625-20261029.json`.
+
+# [2026-10-29] verify | Exact-current-head macOS package — issue #9
+
+Built the optimized Apple Silicon package from source `355d6256d358533bfd182712ce1fa99d174b4aa4`. Manifest, binary checksum, archive CRC, packaged help, bilingual manuals, license records, SBOM, and screenshot assets were verified. Archive SHA-256: `560e138b9ce2543157caed57fedda16e73fa92000295b96e16f2f26fba2cd73e`. GUI acceptance was not run and the package earns no workflow acceptance. Windows package and the full-suite exit code remain pending. Evidence: `docs/evidence/issue9-macos-package-355d625-20261029.json`.
+
 # [2026-10-29] verify | Exact macOS package for coordinator chat recovery — issue #9
 
 Built the optimized package locally from clean source `f83c5fb15fb088eebd2d622357d719c074da4572` with `cargo run --release --locked -- package-release`. The Apple Silicon archive manifest matches the source commit, its embedded binary SHA-256 matches `SHA256SUMS`, and the package contains English/Korean HTML manuals, license records, and SBOM. Archive SHA-256: `ba37d5215b584b0a776c2942045796dc3918a5b6b6e82b82d487c268e8997423`. `docs/07-implementation-plan.md` records evidence. Windows package recovery, full-suite verification, and #9 completion remain open. Graphify/CocoIndex status was not re-run for this package-only check.

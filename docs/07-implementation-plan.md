@@ -5,8 +5,9 @@
 - [x] Task: represent unknown acceptance separately from explicit rejection, keep the send disabled, and reconcile through the existing workspace snapshot refresh.
 - [x] Local Verify: `native_workspace_chat` passes 6/6, `native_workspace_chat_reset` 2/2, and `native_chat_unknown` 1/1; warning-denied all-target Clippy, `cargo fmt --check`, `git diff --check`, and touched Rust/test ≤300-line checks pass.
 - [x] macOS Package Verify: `cargo run --release --locked -- package-release` succeeded at `f83c5fb15fb088eebd2d622357d719c074da4572`. The `aarch64-apple-darwin` archive manifest matches that source commit; its binary SHA-256 matches the embedded `SHA256SUMS`, and it contains both offline HTML manuals, licenses, and SBOM. Archive SHA-256: `ba37d5215b584b0a776c2942045796dc3918a5b6b6e82b82d487c268e8997423`.
+- [x] Exact-current-head macOS Package Verify: source `355d6256d358533bfd182712ce1fa99d174b4aa4`; archive CRC, manifest source/hash, packaged `--help`, bilingual manuals, licenses, SBOM, and screenshots verified. Archive SHA-256: `560e138b9ce2543157caed57fedda16e73fa92000295b96e16f2f26fba2cd73e`. GUI launch was not performed; this earns no packaged UI workflow credit. Evidence: `docs/evidence/issue9-macos-package-355d625-20261029.json`.
 - [ ] Windows Package Verify: require the exact Windows package and exercise the ambiguous-send recovery before accepting this behavior across platforms.
-- [ ] Full-suite Verify: the full offline suite was stopped after 11+ minutes while it was still progressing; this is not a passing result.
+- [x] Full-suite Verify: `cargo test --all-targets --locked --offline --features test-fixtures --no-fail-fast --quiet` completed at `355d6256d358533bfd182712ce1fa99d174b4aa4` with exit code 0 and no failures. Authenticated provider and exact packaged-binary tests retain their declared prerequisites. Evidence: `docs/evidence/issue9-full-suite-355d625-20261029.json`.
 - [ ] Complete: update the LLM Wiki, AgentMemory, issue #9 and PR #22 from exact results. Do not award packaged acceptance from state-only tests.
 
 ### Verify the exact Rust branch release package on both platforms — issue #9 / 2026-10-29
