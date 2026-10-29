@@ -712,3 +712,11 @@ Periodic polling shall use a capacity-one single-flight lane and a monotonic sch
 ### FR-178 Prompt assembly and reply check
 `prompt_form::assemble(document, task, format)` returns the three blocks in order; heading lines inside the document that look like a block heading are neutralized so untrusted evidence cannot add a block. `prompt_form::review` and `prompt_form::worker_task` build the reviewer and worker prompts while retaining task ownership rules. `coordinator::run_json_within` reruns the agent once, adding the parse error to the prompt, when the reply has no usable JSON for the requested field; capacity retries are unchanged.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### FR-184 Publish and consume state-change events
+Local state owners publish typed, bounded events after committed changes. Subscribers identify the affected surface and data class, coalesce duplicates, and request an asynchronous targeted refresh. Disconnected or slow subscribers are skipped without waiting on them. Long-running jobs deliver start, progress, and completion independently of UI request handling. A bounded recovery observer handles external changes that cannot emit local events.
+Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184/NFR-79 → QAS-190 → DDR-44 → DD-204. GitHub #257, user, 2026-10-30.
+
+### NFR-79 Event observation has bounded cost and no head-of-line blocking
+Event queues, worker concurrency, refresh coalescing, fallback cadence, and backoff are bounded. Event publication must not block state mutation on UI work. Conflicting writes remain serialized, and snapshot revisions prevent late reads from replacing newer state. Idle observation does not busy-poll.
+Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184/NFR-79 → QAS-190 → DDR-44 → DD-204. GitHub #257, user, 2026-10-30.

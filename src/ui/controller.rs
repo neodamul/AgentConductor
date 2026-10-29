@@ -1,6 +1,9 @@
 use super::*;
 
 mod action;
+#[cfg(test)]
+#[path = "../../tests/support/controller_events.rs"]
+mod event_tests;
 mod review;
 pub(super) use action::{Action, ActionRequest};
 
@@ -17,8 +20,38 @@ pub(super) struct Controller {
     pub(super) dir: PathBuf,
     pub(super) exe: PathBuf,
     pub(super) job: Mutex<Option<Job>>,
+    pub(super) events: crate::ui::events::EventHub,
+    pub(super) event_surface: crate::ui::events::UiSurface,
 }
 impl Controller {
+    pub(super) fn for_run(
+        dir: PathBuf,
+        startup: &crate::ui::setup::Startup,
+        event_surface: crate::ui::events::UiSurface,
+    ) -> Self {
+        Self::new(
+            dir,
+            startup.executable().to_owned(),
+            startup.events.clone(),
+            event_surface,
+        )
+    }
+
+    pub(super) fn new(
+        dir: PathBuf,
+        exe: PathBuf,
+        events: crate::ui::events::EventHub,
+        event_surface: crate::ui::events::UiSurface,
+    ) -> Self {
+        Self {
+            dir,
+            exe,
+            job: Mutex::new(None),
+            events,
+            event_surface,
+        }
+    }
+
     pub(super) fn recovery_preview(
         &self,
         task: String,
@@ -61,6 +94,8 @@ impl Controller {
                 &serde_json::json!({"id":job.id,"kind":job.label,"exit_code":code,"termination_signal":job.owner.termination_signal}),
                 &crate::ui::messages::render("native.ui_action_finished_with_exit_signal", &[("value1", &job.label.to_string()), ("code", &format!("{:?}", code)), ("value2", &format!("{:?}", job.owner.termination_signal))]),
             )?;
+            self.events
+                .publish(crate::ui::events::UiEvent::invalidated(self.event_surface));
         }
         Ok(
             serde_json::json!({"id":job.id,"kind":job.label,"state":if !job.finished {"running"} else if job.exit==Some(0) {"completed"} else {"failed"},"exit_code":job.exit,"termination_signal":job.owner.termination_signal,"error":if job.finished && job.exit!=Some(0){tail(&job.logs.join("stderr.log"),4096)?}else{String::new()}}),

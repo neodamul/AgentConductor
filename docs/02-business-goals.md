@@ -590,3 +590,6 @@ Operators can continue using foreground controls while periodic status reads are
 ### BG-141 Fewer errors from the way agents are asked
 Agents that cannot be modified still answer predictably because the application, not the CLI, fixes the prompt layout and the reply shape.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### BG-147 Keep the native app responsive as work changes
+The operator sees relevant workspace and agent state soon after it changes, while idle observation uses little host resource and slow work never holds up unrelated controls. Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184/NFR-79 → QAS-190 → DDR-44 → DD-204. GitHub #257, user, 2026-10-30.

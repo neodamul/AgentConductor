@@ -14,6 +14,7 @@ use std::{
 
 mod cache;
 mod diff;
+pub mod events;
 pub mod language;
 pub mod messages;
 pub mod native;
@@ -193,6 +194,7 @@ enum Request {
 }
 
 pub struct Room {
+    pub(super) events: events::EventHub,
     controller: Mutex<Option<Arc<Controller>>>,
     startup: Mutex<Option<Arc<setup::Startup>>>,
     run_lease: Mutex<Option<crate::leases::Lease>>,
@@ -215,13 +217,16 @@ impl Room {
             }
         })?;
         let enabled = workflow::auto_resume_enabled(&dir);
-        let controller = Arc::new(Controller {
+        let events = events::EventHub::default();
+        let controller = Arc::new(Controller::new(
             dir,
-            exe: exe.canonicalize().map_err(|e| e.to_string())?,
-            job: Mutex::new(None),
-        });
+            exe.canonicalize().map_err(|e| e.to_string())?,
+            events.clone(),
+            events::UiSurface::AgentRoom,
+        ));
         controller.automatic(enabled)?;
         Ok(Self {
+            events,
             controller: Mutex::new(Some(controller)),
             startup: Mutex::new(None),
             run_lease: Mutex::new(None),
@@ -235,7 +240,9 @@ impl Room {
         let _navigation = crate::leases::Lease::workspace(root)?;
         let lease = crate::leases::Lease::acquire(&root.join("ui-window.lock"))?;
         let startup = setup::Startup::open(root, exe)?;
+        let events = startup.events.clone();
         Ok(Self {
+            events,
             controller: Mutex::new(None),
             startup: Mutex::new(Some(Arc::new(startup))),
             run_lease: Mutex::new(None),

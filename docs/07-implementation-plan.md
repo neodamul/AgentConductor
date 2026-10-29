@@ -6560,3 +6560,16 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: worker concurrency 1/1; poll reply deferral 1/1; poll single-flight 1/1; existing native poll policy 6/6; snapshot lock release 1/1; `startup_chat` 5/5; `metadata_failure` 1/1; `source_layout` 2/2. Warning-denied library Clippy, rustfmt, and `git diff --check` pass; every changed Rust/test file is below 300 lines.
 - [ ] Verify package: exact native UI check on macOS and Windows; Windows cannot be claimed from the current macOS host.
 - [ ] Complete: update issue #189 and the linked PR only after the local checks are recorded; do not claim package acceptance or close the issue without exact platform evidence.
+
+### 2026-10-30 — Event-driven native updates — GitHub #257 / issue #9
+
+- [x] Plan: record R-192 → BG-147 → SF-180 → UC-183 → FR-184/NFR-79 → QAS-190 → DDR-44 → DD-204; define event publication, subscriptions, bounded delivery, targeted refresh, stale-revision rejection, and external-change fallback.
+- [x] Task: create enhancement #257 and update the requirements, business goals, system features, use case, functional/nonfunctional analysis, QAS, design driver, and design decision.
+- [x] Red: event delivery failed when the hub was disabled; independent foreground-request progress timed out when the pool was reduced to one worker.
+- [x] Task 1: add a bounded per-surface Rust event hub; successful UI dispatches publish invalidations, the subscribed eframe context repaints directly, and the native loop listens for the event and schedules one background snapshot. Slow/disconnected subscribers cannot block producers.
+- [x] Task 2: replace the single foreground request thread with two bounded worker lanes; a blocked request no longer holds up an independent foreground request. Keep state owners' locks/revisions and the separate poll lane.
+- [x] Verify locally: event hub 4/4, controller terminal-event transition 1/1, native worker concurrency/event/request-pool tests 4/4, saved-settings lock release 1/1, source layout 2/2; warning-denied library Clippy, rustfmt, `git diff --check`, and all changed Rust/test files at or below 300 lines pass.
+- [ ] Verify all targets: the first locked/offline all-target run found that a test support file at the tests root was auto-built as a separate integration crate; moved it under `tests/support` and verified its module, but have not rerun all targets after this feature slice. The full suite remains unclaimed.
+- [ ] Task 3: publish progress/completion from long-running workflow/agent owners and move external CLI/file-change recovery to one independent bounded backoff observer; event hub currently covers successful UI dispatch and UI child-job terminal transitions when observed.
+- [ ] Verify package: exercise selective event delivery and fallback behavior in exact macOS and Windows packages.
+- [ ] Complete: update #257, issue #189, PR, AgentMemory and LLM Wiki after verification; do not close issues or claim parity before package acceptance.

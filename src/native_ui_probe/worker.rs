@@ -10,6 +10,45 @@ enum WorkerRequest {
     PickPlanFile,
     PickExecutable,
 }
+const REQUEST_WORKERS: usize = 2;
+
+fn run_request(request: WorkerRequest, dispatch: &Dispatch) -> Result<Value, String> {
+    match request {
+        WorkerRequest::Dispatch(packet) => dispatch(&packet),
+        WorkerRequest::PickFolder(purpose) => {
+            crate::ui::picker::pick_folder(purpose).and_then(|path| {
+                let path = path
+                    .map(|path| {
+                        path.into_os_string().into_string().map_err(|_| {
+                            crate::ui::messages::text("native.non_utf_8_folder_path").to_owned()
+                        })
+                    })
+                    .transpose()?;
+                Ok(serde_json::json!({"picked_folder": path}))
+            })
+        }
+        WorkerRequest::PickPlanFile => crate::ui::picker::pick_file().and_then(|path| {
+            let path = path
+                .map(|path| {
+                    path.into_os_string().into_string().map_err(|_| {
+                        crate::ui::messages::text("native.non_utf_8_folder_path").to_owned()
+                    })
+                })
+                .transpose()?;
+            Ok(serde_json::json!({"picked_plan_file": path}))
+        }),
+        WorkerRequest::PickExecutable => crate::ui::picker::pick_executable().and_then(|path| {
+            let path = path
+                .map(|path| {
+                    path.into_os_string()
+                        .into_string()
+                        .map_err(|_| "Executable path is not UTF-8".to_owned())
+                })
+                .transpose()?;
+            Ok(serde_json::json!({"picked_executable":path}))
+        }),
+    }
+}
 
 pub(super) fn initial_snapshot(room_view: bool) -> &'static [u8] {
     if room_view {
@@ -20,16 +59,23 @@ pub(super) fn initial_snapshot(room_view: bool) -> &'static [u8] {
 }
 
 pub struct RequestWorker {
-    requests: mpsc::SyncSender<WorkerRequest>,
+    requests: Vec<mpsc::SyncSender<WorkerRequest>>,
     pub replies: mpsc::Receiver<Result<Value, String>>,
     poll_requests: mpsc::SyncSender<Vec<u8>>,
     pub poll_replies: mpsc::Receiver<Result<Value, String>>,
+    pub events: mpsc::Receiver<crate::ui::events::UiEvent>,
     room_view: bool,
 }
 
 #[cfg(test)]
 #[path = "../../tests/native_ui_probe/worker_concurrency.rs"]
 mod concurrency_tests;
+#[cfg(test)]
+#[path = "../../tests/native_ui_probe/worker_events.rs"]
+mod event_tests;
+#[cfg(test)]
+#[path = "../../tests/native_ui_probe/request_pool.rs"]
+mod request_pool_tests;
 
 impl RequestWorker {
     pub fn new(room: Arc<crate::ui::Room>, context: egui::Context) -> Result<Self, String> {
@@ -45,8 +91,18 @@ impl RequestWorker {
         context: egui::Context,
         room_view: bool,
     ) -> Result<Self, String> {
-        let dispatch: Arc<Dispatch> = Arc::new(move |packet| room.dispatch(packet));
-        Self::connect_with(context, room_view, dispatch)
+        let surface = if room_view {
+            crate::ui::events::UiSurface::AgentRoom
+        } else {
+            crate::ui::events::UiSurface::Workspace
+        };
+        let events = room.subscribe_events(surface, context.clone());
+        let dispatch_room = Arc::clone(&room);
+        let dispatch: Arc<Dispatch> =
+            Arc::new(move |packet| dispatch_room.dispatch_ui_request(packet));
+        let mut worker = Self::connect_with(context, room_view, dispatch)?;
+        worker.events = events;
+        Ok(worker)
     }
 
     pub(in crate::native_ui_probe) fn connect_with(
@@ -54,10 +110,10 @@ impl RequestWorker {
         room_view: bool,
         dispatch: Arc<Dispatch>,
     ) -> Result<Self, String> {
-        let (requests, queue) = mpsc::sync_channel::<WorkerRequest>(1);
         let (reply_tx, replies) = mpsc::channel();
         let (poll_requests, poll_queue) = mpsc::sync_channel::<Vec<u8>>(1);
         let (poll_reply_tx, poll_replies) = mpsc::channel();
+        let (_, events) = mpsc::sync_channel(1);
         let poll_dispatch = Arc::clone(&dispatch);
         let poll_context = context.clone();
         std::thread::Builder::new()
@@ -69,65 +125,29 @@ impl RequestWorker {
                 }
             })
             .map_err(|error| error.to_string())?;
-        let request_dispatch = Arc::clone(&dispatch);
-        std::thread::Builder::new()
-            .name("native-ui-requests".into())
-            .spawn(move || {
-                while let Ok(request) = queue.recv() {
-                    let result = match request {
-                        WorkerRequest::Dispatch(packet) => request_dispatch(&packet),
-                        WorkerRequest::PickFolder(purpose) => {
-                            crate::ui::picker::pick_folder(purpose).and_then(|path| {
-                                let path = path
-                                    .map(|path| {
-                                        path.into_os_string().into_string().map_err(|_| {
-                                            crate::ui::messages::text(
-                                                "native.non_utf_8_folder_path",
-                                            )
-                                            .to_owned()
-                                        })
-                                    })
-                                    .transpose()?;
-                                Ok(serde_json::json!({"picked_folder": path}))
-                            })
-                        }
-                        WorkerRequest::PickPlanFile => {
-                            crate::ui::picker::pick_file().and_then(|path| {
-                                let path = path
-                                    .map(|path| {
-                                        path.into_os_string().into_string().map_err(|_| {
-                                            crate::ui::messages::text(
-                                                "native.non_utf_8_folder_path",
-                                            )
-                                            .to_owned()
-                                        })
-                                    })
-                                    .transpose()?;
-                                Ok(serde_json::json!({"picked_plan_file": path}))
-                            })
-                        }
-                        WorkerRequest::PickExecutable => crate::ui::picker::pick_executable()
-                            .and_then(|path| {
-                                let path = path
-                                    .map(|path| {
-                                        path.into_os_string()
-                                            .into_string()
-                                            .map_err(|_| "Executable path is not UTF-8".to_owned())
-                                    })
-                                    .transpose()?;
-                                Ok(serde_json::json!({"picked_executable":path}))
-                            }),
-                    };
-                    let _ = reply_tx.send(result);
-                    context.request_repaint();
-                }
-            })
-            .map_err(|error| error.to_string())?;
+        let mut requests = Vec::with_capacity(REQUEST_WORKERS);
+        for index in 0..REQUEST_WORKERS {
+            let (sender, queue) = mpsc::sync_channel::<WorkerRequest>(1);
+            requests.push(sender);
+            let request_dispatch = Arc::clone(&dispatch);
+            let request_reply = reply_tx.clone();
+            let request_context = context.clone();
+            std::thread::Builder::new()
+                .name(format!("native-ui-request-{index}"))
+                .spawn(move || {
+                    while let Ok(request) = queue.recv() {
+                        let _ = request_reply.send(run_request(request, request_dispatch.as_ref()));
+                        request_context.request_repaint();
+                    }
+                })
+                .map_err(|error| error.to_string())?;
+        }
         Ok(Self {
             requests,
             replies,
             poll_requests,
             poll_replies,
+            events,
             room_view,
         })
     }
@@ -145,15 +165,32 @@ impl RequestWorker {
         self.room_view = room_view;
     }
 
+    fn send_request(&self, request: WorkerRequest) -> Result<(), String> {
+        let lane = match &request {
+            WorkerRequest::Dispatch(packet)
+                if crate::ui::events::UiEvent::for_request(packet).is_none() =>
+            {
+                0
+            }
+            _ => 1,
+        };
+        self.requests[lane]
+            .try_send(request)
+            .map_err(|error| match error {
+                mpsc::TrySendError::Full(_) => "foreground request lane is busy".into(),
+                mpsc::TrySendError::Disconnected(_) => {
+                    "foreground request lane is unavailable".into()
+                }
+            })
+    }
+
     pub fn send(&self, packet: &[u8]) -> Result<(), String> {
         let packet = if self.room_view {
             Self::route_room_request(packet)?
         } else {
             packet.to_vec()
         };
-        self.requests
-            .try_send(WorkerRequest::Dispatch(packet))
-            .map_err(|error| error.to_string())
+        self.send_request(WorkerRequest::Dispatch(packet))
     }
 
     pub fn send_poll(&self, packet: &[u8]) -> Result<bool, String> {
@@ -176,20 +213,14 @@ impl RequestWorker {
     }
 
     pub fn pick_folder(&self, purpose: crate::ui::picker::FolderPurpose) -> Result<(), String> {
-        self.requests
-            .try_send(WorkerRequest::PickFolder(purpose))
-            .map_err(|error| error.to_string())
+        self.send_request(WorkerRequest::PickFolder(purpose))
     }
 
     pub fn pick_plan_file(&self) -> Result<(), String> {
-        self.requests
-            .try_send(WorkerRequest::PickPlanFile)
-            .map_err(|error| error.to_string())
+        self.send_request(WorkerRequest::PickPlanFile)
     }
 
     pub fn pick_executable(&self) -> Result<(), String> {
-        self.requests
-            .try_send(WorkerRequest::PickExecutable)
-            .map_err(|error| error.to_string())
+        self.send_request(WorkerRequest::PickExecutable)
     }
 }

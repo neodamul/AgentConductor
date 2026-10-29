@@ -2,6 +2,7 @@ use super::{Pending, Probe, room};
 
 mod background_reply;
 mod errors;
+mod events;
 mod mcp;
 mod receive;
 mod scope_recovery;

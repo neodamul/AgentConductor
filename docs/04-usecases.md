@@ -765,3 +765,7 @@ The operator is using the native Workspace or Agent Room while a scheduled snaps
 ### UC-177 A reviewer or worker is asked in the standard form
 The operator runs a plan with an agent CLI that only reads a prompt and prints text. The worker receives the task, its rules and its evidence as Document, Task and Format; the reviewer receives the frozen evidence as Document, its instructions as Task and the JSON verdict shape as Format. A reviewer reply that is not valid JSON is asked for again once with the parse error, then reported.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### UC-183 A workspace view follows state-change events
+The operator leaves the Workspace or Agent Room open while a plan, agent, quota query, or UI action changes state. The view subscribes to relevant local events and refreshes only affected information. A slow operation completes on its independent worker; another control remains usable. If an external provider cannot publish events, an independent bounded fallback observes it without blocking input or flooding the host.
+Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184/NFR-79 → QAS-190 → DDR-44 → DD-204. GitHub #257, user, 2026-10-30.

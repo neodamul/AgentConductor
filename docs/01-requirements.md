@@ -757,3 +757,6 @@ The native UI shall run scheduled read-only snapshots independently from state-c
 ### R-186 Every agent prompt has one standard form and its reply is checked
 The application shall send every prompt to an agent (coordinator, planner, reviewer, worker) as `# Document`, `# Task` and `# Format` blocks, each once and in that order, and shall check a coordinator reply against the requested JSON shape. No agent CLI, including an in-house one, has to be changed or shown to the application for this. A reply that is not in the requested shape is asked for once more with the reason before the call fails.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### R-192 Native UI state changes are event-driven and non-blocking
+The Rust UI shall listen for relevant local state-change events and update only the affected views. Slow I/O and subprocess work shall run independently and return results asynchronously. An unavailable event source may use a bounded, coalesced background fallback with backoff. A slow observer must never block user input, another independent operation, or event producers; conflicting mutations remain serialized and guarded by current revisions and approvals. Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184/NFR-79 → QAS-190 → DDR-44 → DD-204. GitHub #257, user, 2026-10-30.

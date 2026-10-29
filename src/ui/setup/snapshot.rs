@@ -5,7 +5,7 @@ pub(super) fn unlock_snapshot<T: Clone>(saved: std::sync::MutexGuard<'_, T>) -> 
 }
 
 #[cfg(test)]
-#[path = "../../../tests/setup_snapshot_lock.rs"]
+#[path = "../../../tests/support/setup_snapshot_lock.rs"]
 mod tests;
 
 impl Startup {

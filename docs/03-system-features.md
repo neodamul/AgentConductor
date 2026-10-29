@@ -692,3 +692,6 @@ Run recurring read-only snapshots on a bounded worker separate from the serializ
 ### SF-174 Standard prompt form and bounded format retry
 One shared builder assembles Document, Task and Format; the reviewer and worker prompts use it. The coordinator JSON call retries once when the reply cannot be read as the requested JSON.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### SF-180 Local event delivery for native views
+The Rust coordinator publishes bounded state-change events to subscribed native views. Consumers coalesce repeated notifications, request only the affected snapshot, and repaint on completion. Slow or external sources use independent bounded workers with backoff; observer failure cannot stall event producers or foreground actions. Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184/NFR-79 → QAS-190 → DDR-44 → DD-204. GitHub #257, user, 2026-10-30.

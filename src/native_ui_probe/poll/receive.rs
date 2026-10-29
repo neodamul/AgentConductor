@@ -5,6 +5,7 @@ impl Probe {
             self.apply_reply(reply);
         }
         self.poll_background_reply();
+        self.poll_events();
     }
 
     pub(super) fn apply_reply(

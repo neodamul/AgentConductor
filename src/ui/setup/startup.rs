@@ -59,17 +59,22 @@ impl Startup {
                 Ok(profiles) => (profiles, false),
                 Err(_) => (Vec::new(), true),
             };
+        let events = crate::ui::events::EventHub::default();
+        let executable = exe.canonicalize().map_err(|e| e.to_string())?;
         let startup = Self {
-            quota_broker: Controller {
-                dir: root.join("quota-jobs"),
-                exe: exe.canonicalize().map_err(|e| e.to_string())?,
-                job: Mutex::new(None),
-            },
-            broker: Controller {
-                dir: root,
-                exe: exe.canonicalize().map_err(|e| e.to_string())?,
-                job: Mutex::new(None),
-            },
+            quota_broker: Controller::new(
+                root.join("quota-jobs"),
+                executable.clone(),
+                events.clone(),
+                crate::ui::events::UiSurface::Workspace,
+            ),
+            broker: Controller::new(
+                root,
+                executable,
+                events.clone(),
+                crate::ui::events::UiSurface::Workspace,
+            ),
+            events,
             saved: Mutex::new(saved),
             custom_profiles,
             custom_registry_invalid,

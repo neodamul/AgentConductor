@@ -21,11 +21,12 @@ impl Startup {
         if self.ensure_no_live_jobs().is_err() {
             return Ok(());
         }
-        let controller = Controller {
+        let controller = Controller::new(
             dir,
-            exe: self.broker.exe.clone(),
-            job: Mutex::new(None),
-        };
+            self.broker.exe.clone(),
+            self.events.clone(),
+            crate::ui::events::UiSurface::Workspace,
+        );
         controller.automatic(enabled)
     }
 }

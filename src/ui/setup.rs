@@ -18,6 +18,7 @@ use std::{
 pub struct Startup {
     broker: Controller,
     quota_broker: Controller,
+    pub(super) events: crate::ui::events::EventHub,
     saved: Mutex<Saved>,
     custom_profiles: Vec<AgentProfile>,
     custom_registry_invalid: bool,
