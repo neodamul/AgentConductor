@@ -1,0 +1,35 @@
+{
+  "issue": 234,
+  "pull_request": 240,
+  "date": "2026-10-29",
+  "base": "main",
+  "previous_head": "539e8d05c5b662f457360c35e66338f198130bb1",
+  "assessment": "The fast path accepted chat before checking the full saved-state revision. A stale page could therefore start read-only chat against current, changed coordinator or workspace settings. The chat does not mutate the repository, but stale saved context still must be rejected.",
+  "design": "Expose a separate chat_revision computed from normalized saved state and proposal review evidence, excluding only Git HEAD. Validate this token before job checks and launch. Keep the full Git-bound revision on mutation paths.",
+  "tdd": {
+    "red_stale_state": "chat_rejects_a_stale_saved_context_without_a_git_head_lookup failed before chat_revision validation; a changed goal was accepted until coordinator launch instead of returning the stale-state error.",
+    "red_ui_contract": "chat_runtime.cjs expected chat_revision and failed while the UI still sent the full revision.",
+    "green": [
+      "cargo test --locked --offline --test startup_chat --test request_diagnostics --test source_layout: 8 passed",
+      "node tests/chat_runtime.cjs: passed",
+      "cargo fmt --check: passed",
+      "cargo clippy --all-targets --locked -- -D warnings: passed",
+      "git diff --check: passed"
+    ]
+  },
+  "source_lines": {
+    "src/ui/setup.rs": 239,
+    "src/ui/setup/revision.rs": 51,
+    "src/ui/setup/chat.rs": 102,
+    "src/ui/setup/snapshot.rs": 79,
+    "tests/startup_chat.rs": 191,
+    "tests/request_diagnostics.rs": 109,
+    "tests/chat_runtime.cjs": 95
+  },
+  "previous_exact_package": {
+    "run": "40758557105",
+    "head": "539e8d05c5b662f457360c35e66338f198130bb1",
+    "result": "macOS and Windows validation and native package jobs passed; this run predates the stale-context guard"
+  },
+  "pending": "Push the guard to PR #240 and run exact macOS/Windows validation and packaging; then port the same semantics to Rust PR #239 and verify that head. Do not merge either PR until their own evidence is complete."
+}
