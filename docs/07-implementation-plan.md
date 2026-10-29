@@ -246,6 +246,15 @@
 - [ ] Integration: after the package gate, reconcile PR #22 with current `main` while preserving the Rust migration intent, then rerun local tests and platform package verification. Latest observed main is `0389dea` (#213/#207); PR #214 is open for ACIO phase 2 based on that main. Rust ports: #180 has draft PR #202 at `bae0001` (`mergeable=false`); #190 has draft PR #199 at `20b5522` (`mergeable=true`); both target `codex/issue-9-native-ui-parity` and are not merged. #184 and #200 have no open Rust port PR. Queue after the package gate: #180, #184, #190, #200, #205/#207; account for the existing #202/#199 work rather than treating #180/#190 as unimplemented.
 - [ ] Complete: update issue #9, evidence, LLM Wiki, and AgentMemory after each accepted workflow. Current full denominator remains **22/50 (44%)**.
 
+### Refresh the owned UI Automation tree for tool confirmation — issue #9 / 2026-10-29
+
+- [x] Plan: exact Windows package runs `40803567094` and `40805049482` passed validation and other package journeys, then failed while `Allow once` waited for `Confirm tool decision`. The final accessibility dump showed the confirmation control, so the product's human-approval gate must remain unchanged.
+- [x] Red: add `activation_refreshes_the_app_window_before_looking_for_modal_confirmation`; it failed because `Find-Button` searched only the UI Automation element captured before the confirmation dialog appeared.
+- [x] Task: refresh top-level UI Automation windows for each lookup, restrict candidates to the packaged process ID, and search each owned window for the exact accessible button. Pointer and keyboard fallbacks retain process/window ownership checks.
+- [x] Local Verify: tool-decision dispatch 13/13, source-layout 2/2, warning-denied all-target Clippy, rustfmt, and `git diff --check` pass. Changed files are 235 and 283 lines.
+- [ ] Exact-package Verify: rerun the current Rust branch's macOS/Windows release packages and require refresh, allow, and deny receipt/effect assertions.
+- [ ] Complete: retain exact-head package artifacts and update issue #9, PR #22, AgentMemory, and LLM Wiki. No acceptance credit until the packaged workflow passes; candidate remains 22/25 and shipped Rust replacement remains 0/25.
+
 ### Retain child-process evidence for packaged tool refresh failures — issue #9 / 2026-10-28
 
 - [x] Plan: exact Windows package run `40622684398` passed schedule, signal settings, and earlier package journeys, then timed out waiting for the original tool receipt to become `superseded`. The failure gives no evidence yet to distinguish a failed refresh child from a test polling race.

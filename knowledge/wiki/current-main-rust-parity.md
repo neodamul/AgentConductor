@@ -1,5 +1,9 @@
 # Current-main behavior carried into the Rust UI branch
 
+## Refresh Windows UI Automation controls for modal tool confirmation — 2026-10-29
+
+Exact package runs `40803567094` and `40805049482` both passed validation and preceding Windows journeys, then failed to observe the `Confirm tool decision` control after activating `Allow once`. The failure dump showed that the confirmation prompt and button were present, while the approval request remained pending. The test driver retained a UI Automation element from before the modal state change and searched only that window subtree. It now enumerates the current top-level UI Automation windows owned by the packaged process and looks up the exact accessible button in each. The new red/green source-contract test passes with the 12 existing dispatch regressions; source-layout, warning-denied Clippy, rustfmt, diff checks, and the 300-line limit pass. Exact Windows package rerun is pending, so workflow 23 gets no acceptance credit yet. Evidence: `docs/evidence/issue9-tool-confirmation-live-uia-20261029.json`.
+
 ## Default executable opens the native Workspace — 2026-10-29
 
 The `agentconductor` binary now routes an empty argument list to the native desktop flow and keeps explicit CLI commands on their existing path. The optimized binary was assembled as a temporary macOS `.app` and launched from the current Rust branch. CUA confirmed one standard window and rendered Workspace, Agent Roles, and Plan Review; navigation did not save or execute any workspace action. The screenshot was shown in-session and intentionally not retained because it contains private workspace details. This local bundle is not the GitHub Release archive; Windows exact-package verification and packaged workflow acceptance remain pending.
