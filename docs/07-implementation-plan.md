@@ -6400,3 +6400,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: native chat launcher/workspace, source-layout and public-doc suites pass 20 tests; warning-denied all-target Clippy, rustfmt, diff check and 300-line limits pass.
 - [ ] Verify app: inspect the exact optimized Rust app screenshot for contrast, alignment and recognizable shape.
 - [ ] Complete: update the LLM Wiki, AgentMemory, issue #9 and PR #22. This small UI parity item does not count toward packaged workflow acceptance.
+
+### 2026-10-29 — Integrate native goal optimizer — issue #9 / main #180
+
+- [x] Plan: integrate the existing Rust-native optimizer implementation into the current #9 branch, preserving the current coordinator-chat history and reset behavior.
+- [x] Red: integration regression surfaced because the newly optional optimizer-result field lacked a serde default; the existing chat startup-context test rejected its request.
+- [x] Task: combine chat and optimizer state in workspace snapshots; keep the Room snapshot strict; use one bounded initial request for both chat history and optimizer results; preserve optimizer proposals only while their goal and repository still match.
+- [x] Verify locally: optimizer, startup, chat, package-license, source-layout and public-doc regressions pass 53 tests across 13 suites; warning-denied all-target Clippy, rustfmt and diff checks pass. A test caught and fixed the missing `optimize_result` serde default.
+- [x] Assetize the optimizer decision, request flow, traceability and verification boundary in `knowledge/wiki/native-goal-optimization.md` and AgentMemory.
+- [ ] Verify app: inspect the Rust native window and exercise a real coordinator profile; no screenshot or real coordinator request has been verified.
+- [ ] Complete: push the integrated commits and update issue #9 only with exact local/package evidence. Do not count this as packaged workflow acceptance.
