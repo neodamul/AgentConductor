@@ -1,5 +1,9 @@
 # Current-main behavior carried into the Rust UI branch
 
+## Worker prompt structure — 2026-10-29
+
+The Rust worker persists every CLI prompt with exactly one `# Document`, `# Task`, and `# Format` section in that order. Declared dependency evidence, checkpoint continuation, reviewed lessons, and step lessons are document material; task scope, human feedback, direct-folder rules, cooperative context, and checkpoint instructions stay in the task; evidence reporting is the output format. Heading-like lines in supplied material are escaped so they cannot create extra structural sections. The focused suite checks ordering, neutralization, worker scope, retained `.aipro/plans/` cache guidance, and the prompt written by a real workflow fixture. Local evidence: 4 focused tests pass, focused Clippy and rustfmt pass. This covers worker prompts only; it makes no packaged UI acceptance claim and does not establish planner/chat prompt parity or full-suite status.
+
 ## Candidate confirmation outside the main-window rectangle — issue #9 / 2026-10-29
 
 Run `40745298702` passed the briefing journey after the bounded retry update and reached the Windows candidate approve/merge flow. The final `Confirm candidate decision` control was rejected because its UIA bounds fell outside the primary app window rectangle. The driver now permits an enabled, visible confirmation control at those coordinates only if the foreground window and `WindowFromPoint` both belong to the expected AgentConductor process. Empty or offscreen controls still fail closed. Local candidate-driver, briefing-driver, and source-layout contracts pass 9 tests; exact packaged Windows confirmation and persisted Git/run assertions remain required. No issue #9 acceptance credit is added.

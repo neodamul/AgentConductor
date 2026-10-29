@@ -1,3 +1,11 @@
+### Structure worker prompts as Document, Task, and Format — issue #9 / 2026-10-29
+
+- [x] Plan: preserve the existing worker safety text and task context while separating source evidence, instructions, and required answer shape.
+- [x] Red: add regressions for exactly-once ordered headings, untrusted heading neutralization, task identity/owned paths, and existing cache-safety wording; the safety wording test failed before restoration.
+- [x] Task: add the small Rust `prompt_form` assembler and compose dependency/checkpoint/memory/lesson context as Document, worker instructions and feedback as Task, and evidence reporting as Format.
+- [x] Verify: focused prompt suite passes 4/4; warning-denied focused Clippy, rustfmt, diff check, and ≤300-line checks pass. Worker prompt persistence is exercised by the workflow fixture.
+- [x] Complete: recorded the behavior and limitation in AgentMemory and the LLM Wiki. This prompt-assembly unit adds no packaged UI acceptance credit; coordinator prompts and full-suite verification remain separate work.
+
 ### Reacquire only an actionable signal-port field — issue #9 / 2026-10-29
 
 - [x] Plan: exact Windows package run `40795726569` failed the shared `windows_signal_settings` journey with `PORT_FIELD_NOT_INTERACTABLE` after selecting the agentmemory transport.
