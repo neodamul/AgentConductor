@@ -755,3 +755,7 @@ Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200.
 ### UC-178 The application stalls while the operator chats
 The operator sends a message, the page reports a timeout and a later snapshot also times out. The message stays in the conversation as working. When the application recovers, the answer appears and the input stays empty; had the application never received the message, the text would return to the input with the error.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.
+
+### UC-180 Plan from a reply with an unfinished draft first
+A custom adapter prints an incomplete JSON draft and then the complete document; the plan is presented for review.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.

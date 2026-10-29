@@ -2309,3 +2309,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: `src/ui/chat.js`; CHANGELOG.
 - [ ] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI. Not verified: a real stalled application.
 - [ ] Complete: merge; release only on request. Related: Codex PR #240 shortens the stall (#234) and does not change this rollback.
+
+### Fenced JSON after an unfinished draft — GitHub #247
+
+- [x] Plan: user report: `json_reply` skipped the complete second block when an unfinished fenced draft came first, and the 64 KiB reply limit is too small. R-189 → DD-201: advance past the opening marker only; limit 256 KiB.
+- [x] Red: `tests/coordinator_document.rs` (draft then valid, two valid, malformed only, size limits).
+- [x] Task: `src/coordinator/document.rs`; CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI.
+- [ ] Complete: merge; release only on request.

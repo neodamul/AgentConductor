@@ -124,11 +124,12 @@ fn codex_tool_output_is_not_a_coordinator_decision() {
 
 #[test]
 fn opencode_accumulated_output_is_bounded() {
-    let line =
-        serde_json::json!({"type":"text","part":{"text":"x".repeat(40*1024)}}).to_string() + "\n";
+    let line = serde_json::json!({"type":"text","part":{"text":"x".repeat(150 * 1024)}})
+        .to_string()
+        + "\n";
     let path = spool("bounded", &(line.repeat(2)));
     let error = coordinator::read_document(Provider::OpenCode, &path, "revisions").unwrap_err();
-    assert!(error.contains("64 KiB"));
+    assert!(error.contains("256 KiB"));
     std::fs::remove_file(path).unwrap();
 }
 

@@ -580,3 +580,7 @@ Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200.
 ### BG-142 Slow requests do not duplicate what the operator typed
 A stalled application never makes the operator think a message was lost and send it again.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.
+
+### BG-144 A finished plan is never lost to a draft before it
+The operator sees the plan the coordinator produced, even when the coordinator printed a broken draft first.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.

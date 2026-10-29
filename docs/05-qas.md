@@ -765,3 +765,7 @@ Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200.
 ### QAS-185 No message in both the conversation and the input
 Given a send that times out and a history request that fails, the message stays in the conversation, the input stays empty and sending is disabled. When the history then contains the message, the conversation equals the stored one and the late answer is shown once with the input still empty. When the history then lacks the message, the turn is removed, the text is back in the input and the error is shown.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.
+
+### QAS-187 Incomplete draft then valid JSON parses
+An incomplete draft followed by a valid block returns the valid block; two valid blocks return the first; malformed-only replies fail with the no-valid-JSON error; a 100 KiB reply is accepted and a reply above 256 KiB is refused.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.

@@ -5,7 +5,12 @@ use crate::{
 use serde_json::Value;
 use std::{fs, io::Read, path::Path};
 
-/// The whole reply as JSON, or the first fenced JSON block carrying `field`.
+/// Largest reply text accepted from a coordinator (GitHub #247); the decoder's own bound is 1 MiB.
+const MAX_REPLY: usize = 256 * 1024;
+const TOO_LARGE: &str = "coordinator document exceeds 256 KiB";
+
+/// The whole reply as JSON, or the first fenced JSON block carrying `field`. A block that fails only ends its own attempt:
+/// scanning resumes inside its body, so the marker that closed an unfinished draft still opens the block after it (GitHub #247).
 fn json_reply(text: &str, field: &str) -> Option<Value> {
     let has = |value: &Value| value.get(field).is_some();
     if let Ok(json) = serde_json::from_str::<Value>(text.trim()) {
@@ -22,7 +27,7 @@ fn json_reply(text: &str, field: &str) -> Option<Value> {
         {
             return Some(json);
         }
-        rest = &body[close + 3..];
+        rest = body;
     }
     None
 }
@@ -117,12 +122,12 @@ fn read_document_inner(
             };
             if let Some(value) = value {
                 if let Some(chunk) = value.as_str() {
-                    if chunk.len() > 64 * 1024 {
-                        return Err("coordinator document exceeds 64 KiB".into());
+                    if chunk.len() > MAX_REPLY {
+                        return Err(TOO_LARGE.into());
                     }
                     if provider == Provider::OpenCode {
-                        if text.len().saturating_add(chunk.len()) > 64 * 1024 {
-                            return Err("coordinator document exceeds 64 KiB".into());
+                        if text.len().saturating_add(chunk.len()) > MAX_REPLY {
+                            return Err(TOO_LARGE.into());
                         }
                         text.push_str(chunk);
                     } else if let Some(json) = json_reply(chunk, field) {
@@ -134,9 +139,9 @@ fn read_document_inner(
                     if serde_json::to_vec(value)
                         .map_err(|error| error.to_string())?
                         .len()
-                        > 64 * 1024
+                        > MAX_REPLY
                     {
-                        return Err("coordinator document exceeds 64 KiB".into());
+                        return Err(TOO_LARGE.into());
                     }
                     document = Some(value.clone());
                 }

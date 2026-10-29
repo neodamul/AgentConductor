@@ -1565,3 +1565,7 @@ Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200.
 ### DD-199 Pending instead of guessing
 Only `chat.js` changes. The unknown outcome is a state (`unsure`) held next to `waiting`, resolved by the next successful `chat_history`; no timer and no extra request, because snapshot renders already call `update()`, which reloads the history while `ready` is false. Rejected: restoring the text and clearing it later (the input may have been edited by then) and a fixed wait before rolling back.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.
+
+### DD-201 Advance one fence marker at a time
+`json_reply` moves past the opening marker only, never past a closing marker it assumed. An unfinished block then ends at the next marker, which is read as the start of the following block. A marker that closes a block is read as an opening whose body is not JSON and is skipped. The reply limit is one constant, 256 KiB, still below the 1 MiB decoder bound.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.
