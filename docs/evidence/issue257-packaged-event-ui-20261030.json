@@ -13,7 +13,7 @@
     "repository": "/private/tmp/ac257-event-e2e/repo",
     "repository_base": "c53969c842d46b2311ce181526b11eb5de2f7eb0",
     "profiles": "One deterministic Rust planner, three deterministic Rust workers; no real agent CLI, API, or external service was invoked",
-    "app_data_attribution": "A subsequent UI inspection returned a saved-workspace view inconsistent with the disposable fixture. App-data isolation could not be confirmed for that view; no actions were performed in it."
+    "app_data_attribution": "The exact package was bound by its full bundle path; its accessibility tree showed the disposable workspace, repository, and mock profiles. An earlier generic display-name lookup resolved to another saved-workspace view; it was not modified."
   },
   "workflow": {
     "plan": "Generated and shown for review after fixture-only prompt/role corrections",
@@ -33,13 +33,13 @@
     "persistence": "quota/worker-one document recorded in the isolated quota.sqlite",
     "ui_interaction_during_read": "Switching to Workspace settings returned in 0.41 seconds while the quota process was active",
     "visible_quota_badge_after_completion": "unverified",
-    "result": "Non-blocking UI interaction and quota persistence were observed during the package session; rendered badge refresh and app-data attribution remain unverified"
+    "result": "Non-blocking UI interaction and quota persistence passed; the tested Agent Roles sidebar does not render custom-agent quota badges, so visible refresh was not exercised"
   },
   "acceptance": {
     "issue_257_complete": false,
     "issue_9_workflow_credit": false,
     "windows_package_verified": false,
-    "reason": "Rendered badge refresh and app-data attribution require a repeat in a confirmed isolated package session; Windows validation is also pending"
+    "reason": "Visible refresh requires a supported quota-badge view or deterministic first-party-profile fixture; Windows validation is also pending"
   },
-  "cleanup": "The disposable workspace, mock executable, and process logs remain under /private/tmp/ac257-event-e2e pending confirmation that no live process owns them."
+  "cleanup": "After the exact packaged UI process exited successfully, the disposable workspace, mock executable, and process logs under /private/tmp/ac257-event-e2e were removed."
 }
