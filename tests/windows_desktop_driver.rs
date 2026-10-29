@@ -84,6 +84,7 @@ fn candidate_confirmation_accepts_owned_dialog_outside_primary_window_bounds() {
 #[test]
 fn rejection_driver_waits_for_an_enabled_reason_field_before_setting_it() {
     let driver = include_str!("support/windows_candidate_review_script.rs");
+    let retry = driver.find("while (-not $reasonSet").unwrap();
     let wait = driver
         .find("ControlType.Edit' -and $_.Current.IsEnabled")
         .unwrap();
@@ -91,8 +92,8 @@ fn rejection_driver_waits_for_an_enabled_reason_field_before_setting_it() {
         .find(".SetValue('Reviewed exact diff; reject fixture')")
         .unwrap();
     assert!(
-        wait < set,
-        "the reason control must be enabled before UIA SetValue"
+        retry < wait && wait < set,
+        "the driver must retry only with an enabled reason control before UIA SetValue"
     );
 }
 

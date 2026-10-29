@@ -1,3 +1,12 @@
+### Wait for the candidate rejection field to become actionable — issue #9 / 2026-10-29
+
+- [x] Plan: exact Windows package run `40790146777` failed after the reject prompt appeared because periodic Agent Room refresh left the rejection edit disabled; UIA `SetValue` raised `ElementNotEnabledException`.
+- [x] Red: add a source-contract regression for checking the edit's enabled state and retry deadline; it failed before the bounded retry loop was added.
+- [x] Task: reacquire the rejection edit and retry `SetValue` for up to 10 seconds only while UIA reports it enabled and on-screen; print the accessible controls and fail if it never becomes actionable.
+- [x] Local Verify: Windows driver contracts pass 7/7, warning-denied Clippy, formatting, and diff checks pass. The individual Rust files remain below 300 lines.
+- [ ] Exact-package Verify: dispatch the current-head macOS/Windows workflow and require the packaged Windows candidate approval/rejection journey to pass.
+- [ ] Complete: update issue #9, PR #22, AgentMemory, LLM Wiki, and retained package evidence from the exact-head run. Packaged acceptance remains 22/50 until the full gate passes.
+
 ### Guard the Windows signal-port field focus fallback — issue #9 / 2026-10-29
 
 - [x] Plan: exact package run `40784206494` passed macOS packaging but the Windows package failed in `windows_signal_settings` when UI Automation `SetFocus()` raised `ElementNotEnabledException` / `Unrecognized error` for the visible port edit; no preference file was saved.

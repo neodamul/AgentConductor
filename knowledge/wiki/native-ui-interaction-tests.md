@@ -10,6 +10,8 @@ Tests that wait for multiple asynchronous workflow phases must give each phase i
 
 For Windows editable fields, `SetFocus()` can throw even when UI Automation reports a visible enabled edit. Catch that failure and use a mouse click only after checking the edit's process ID, enabled/visible state, and bounds; the click helper must also verify the point belongs to the packaged app process. Re-read the focused element and send keyboard input only when it is the exact app-owned edit. Keep this PowerShell in `tests/support/` so source-contract tests can inspect it and the Rust test remains under the 300-line limit.
 
+Agent Room background refresh can temporarily disable a candidate rejection field while its prompt remains visible. Reacquire the app-owned edit by accessible name and retry `ValuePattern.SetValue` only while it is enabled and on-screen, with a short deadline and UIA diagnostics on failure. Never bypass the pending-action guard to force input.
+
 Do not call `SetFocus()` on the top-level desktop window in the PowerShell UI Automation driver. The desktop window is not a focusable control on Windows; interact with its child controls using `ValuePattern` or `InvokePattern` and verify the resulting state. Keep a source-contract test that rejects reintroduction of the unsupported top-level focus call.
 
 For candidate approval, do not depend on explanatory status-banner text appearing in the Windows UIA tree. Treat a closed confirmation dialog as completed input, then wait for the accessible `Merge approved candidate` action before continuing. For terminal merge/reject decisions, the packaged Rust test must poll the persisted workflow report and verify the resulting Git HEAD and fixture files; dialog closure alone is not acceptance evidence.

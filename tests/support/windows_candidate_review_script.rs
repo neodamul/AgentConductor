@@ -160,14 +160,24 @@ Wait-Text 'integration tests passed'
 if ($env:AC_DECISION -eq 'reject') {
   Activate-Button 'Reject candidate' 'Reject this candidate and send feedback?'
   $reason = $null
-  while (-not $reason -and (Get-Date) -lt $deadline) {
+  $reasonSet = $false
+  $reasonDeadline = (Get-Date).AddSeconds(10)
+  while (-not $reasonSet -and (Get-Date) -lt $reasonDeadline) {
     $reason = Nodes | Where-Object {
-      $_.Current.Name -eq 'Rejection reason' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit' -and $_.Current.IsEnabled
+      $_.Current.Name -eq 'Rejection reason' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit' -and $_.Current.IsEnabled -and -not $_.Current.IsOffscreen
     } | Select-Object -First 1
-    if (-not $reason) { Start-Sleep -Milliseconds 200 }
+    if ($reason) {
+      try {
+        $reason.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('Reviewed exact diff; reject fixture')
+        $reasonSet = $true
+      } catch { Start-Sleep -Milliseconds 200 }
+    } else { Start-Sleep -Milliseconds 200 }
   }
-  if (-not $reason) { Write-Output 'REJECTION_REASON_NOT_ENABLED'; exit 5 }
-  $reason.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('Reviewed exact diff; reject fixture')
+  if (-not $reasonSet) {
+    Write-Output 'REJECTION_REASON_NOT_READY'
+    Nodes | ForEach-Object { Write-Output "$($_.Current.ControlType.ProgrammaticName) | $($_.Current.Name) | enabled=$($_.Current.IsEnabled) | offscreen=$($_.Current.IsOffscreen)" }
+    exit 5
+  }
   Activate-Button 'Confirm candidate decision' $null
 } else {
   Activate-Button 'Approve verified candidate' 'Confirm approval of this verified diff and tests?'
