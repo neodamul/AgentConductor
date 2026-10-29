@@ -82,6 +82,21 @@ fn candidate_confirmation_accepts_owned_dialog_outside_primary_window_bounds() {
 }
 
 #[test]
+fn rejection_driver_waits_for_an_enabled_reason_field_before_setting_it() {
+    let driver = include_str!("support/windows_candidate_review_script.rs");
+    let wait = driver
+        .find("ControlType.Edit' -and $_.Current.IsEnabled")
+        .unwrap();
+    let set = driver
+        .find(".SetValue('Reviewed exact diff; reject fixture')")
+        .unwrap();
+    assert!(
+        wait < set,
+        "the reason control must be enabled before UIA SetValue"
+    );
+}
+
+#[test]
 fn approval_opens_review_changes_before_waiting_for_merge() {
     let driver = include_str!("support/windows_candidate_review_script.rs");
     let approve = driver

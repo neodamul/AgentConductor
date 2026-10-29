@@ -162,11 +162,11 @@ if ($env:AC_DECISION -eq 'reject') {
   $reason = $null
   while (-not $reason -and (Get-Date) -lt $deadline) {
     $reason = Nodes | Where-Object {
-      $_.Current.Name -eq 'Rejection reason' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit'
+      $_.Current.Name -eq 'Rejection reason' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit' -and $_.Current.IsEnabled
     } | Select-Object -First 1
     if (-not $reason) { Start-Sleep -Milliseconds 200 }
   }
-  if (-not $reason) { Write-Output 'REJECTION_REASON_MISSING'; exit 5 }
+  if (-not $reason) { Write-Output 'REJECTION_REASON_NOT_ENABLED'; exit 5 }
   $reason.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('Reviewed exact diff; reject fixture')
   Activate-Button 'Confirm candidate decision' $null
 } else {
