@@ -20,10 +20,6 @@ impl Probe {
 
 pub(super) fn load_workspace(probe: &mut Probe, snapshot: &Value) {
     super::super::workspace::chat::load_history(probe, snapshot);
-    if probe.coordinator_chat.awaiting() {
-        probe.workspace_next_refresh =
-            Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
-    }
     probe.goal_optimizer.restore(snapshot);
     probe.goal = snapshot["config"]["goal"]
         .as_str()
@@ -97,7 +93,6 @@ pub(super) fn stop_plan_refresh(probe: &mut Probe, snapshot: &Value) {
         probe.navigation.finish_stop_for_delete();
         probe.navigate(event);
     } else {
-        probe.workspace_next_refresh =
-            Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+        probe.workspace_next_refresh = None;
     }
 }

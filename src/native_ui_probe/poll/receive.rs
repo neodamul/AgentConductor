@@ -144,8 +144,6 @@ impl Probe {
                         self.pending = None;
                         self.error = None;
                     } else {
-                        self.workspace_next_refresh =
-                            Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
                         self.snapshot = Some(snapshot);
                         self.pending = None;
                         self.error = None;

@@ -19,8 +19,6 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
                 (Some("mcp"), Some("running")) => {
                     probe.pending = None;
                     probe.error = None;
-                    probe.workspace_next_refresh =
-                        Some(std::time::Instant::now() + std::time::Duration::from_secs(1));
                 }
                 (Some("mcp"), Some("completed")) if snapshot["mcp_result"]["tools"].is_array() => {
                     probe.mcp_editor.discovery_result(&snapshot["mcp_result"]);

@@ -1,3 +1,11 @@
+### Remove recurring UI snapshot polling; refresh on events — issue #257 / #189 / 2026-10-30
+
+- [x] Plan: trace event delivery for workspace, coordinator chat, metadata, MCP, Agent Room, and child-process completion. The UI still scheduled 30-second snapshots, while non-metadata invalidations fetched only a generic snapshot and could miss chat/optimizer/MCP result payloads.
+- [x] Red: add regressions showing that an overdue workspace timer enqueues a snapshot without an event and that a chat invalidation must request the chat result; both failed before the fix. Change the controller completion test to require a terminal event without calling `poll()`.
+- [x] Task: remove recurring render-loop snapshot refreshes; route invalidations to the matching snapshot request. Keep only explicit one-shot uncertainty/recovery retries, scheduled tool follow-up, quota refresh, and the bounded background eventless observer.
+- [x] Task: wait for each UI child process on its own monitor thread and publish completion as an event, so terminal status does not depend on a UI snapshot polling the child.
+- [x] Verify: `cargo test --all-targets --locked --offline --features test-fixtures -j 2` passed 1,177 tests, with 15 ignored, across 367 suites. The final chat-timer regression passed within focused local verification (103 tests / 5 suites); source-layout passed 2/2, all-target Clippy passed with `-D warnings`, rustfmt and diff checks passed, and every touched Rust/test file is at most 300 lines. The initial all-target run exposed one process-reaping race in `tests/ui.rs`; the test now observes the dedicated monitor’s terminal record instead of calling `waitpid` independently. Keep #9/#189/#257 open pending packaged UI and Windows acceptance.
+
 ### Keep native UI event delivery non-blocking and reads concurrent — issue #257 / #9 / 2026-10-30
 
 - [x] Plan: trace event fan-out and request queues. Event publication could silently drop an invalidation when the subscriber registry mutex was busy; the read lane also had one worker, so one slow read held up other reads of the same class.

@@ -1,6 +1,6 @@
 use std::{path::PathBuf, time::Duration};
 
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
 pub struct Ownership {
     pub coordinator_pid: u32,
     pub pid: Option<u32>,

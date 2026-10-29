@@ -2,7 +2,11 @@
 
 ## Current behavior
 
-Before this implementation slice, the native UI used one serialized foreground request worker and an independent single-flight poll worker. The poll thread protected controls from a stalled scheduled snapshot, but Workspace and Agent Room still relied on periodic snapshot reads. Asynchronous placement alone did not provide event-driven state propagation or prevent a slow foreground dispatch from delaying a later request.
+The native UI uses bounded typed invalidations to wake only subscribed surfaces. These events enqueue targeted reads on a background request lane; the render callback only drains completion/event channels and schedules repaint. There is no repeating whole-screen snapshot timer. Explicit retry deadlines, configured quota refresh, and tool follow-up remain one-shot or separately scheduled work.
+
+Local UI child processes are supervised by one named monitor thread per active child. It blocks in `Child::wait()` off the UI/request workers, persists terminal state without holding the controller state lock, then publishes one completion invalidation. State-changing commands remain serialized at the state owner; independent reads use bounded worker lanes and stale replies are rejected by request/revision identity.
+
+Earlier iterations used periodic full snapshots as recovery. That fallback was removed from the UI path in the follow-up recorded below; the separate authenticated observer remains responsible for external process/filesystem changes with bounded backoff.
 
 ## Requirement and decision
 
@@ -14,12 +18,12 @@ Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184/NFR-79 → QAS-190 → 
 
 - Plan and architecture records are updated.
 - A bounded `std::sync::mpsc` event hub filters subscribers by Workspace or Agent Room and coalesces a full one-slot subscriber queue. Publishers atomically set surface bits and `try_send` one wake token to a capacity-one channel, then return. One lightweight fan-out thread drains and coalesces those bits, touches the subscriber registry, and calls `egui::Context::request_repaint` for matching surfaces. Registry contention delays delivery on the fan-out thread rather than blocking the state owner or losing the event.
-- Successful native UI dispatches publish an invalidation; the matching view listens on its bounded receiver and asks the existing independent poll worker for one background snapshot.
+- Successful native UI dispatches publish an invalidation; the matching view listens on its bounded receiver and asks the existing independent read lane for one background result.
 - Each foreground request receives a monotonic ID. The reply receiver discards completed responses whose IDs are no longer current, preventing the two request lanes from applying an earlier snapshot after a later action.
 - Each background snapshot records the foreground request ID that was current when it began. If a newer foreground request starts before the snapshot returns, the UI drops that response instead of overwriting newer form state.
-- Periodic whole-screen refresh is now only a 30-second recovery deadline regardless of running/idle status. Event subscribers repaint and trigger snapshots immediately, so active workflows no longer cause 1-second polling and idle work no longer causes 5-second polling; quota refresh remains on its own configured schedule.
-- The foreground dispatcher has bounded lanes for reads and mutations, plus a separate single-flight periodic poll lane. Reads have two workers so one slow read cannot stall another; mutations remain serialized by the shared state owner. Each foreground lane queues up to 16 requests with `try_send`, so the render callback never waits on dispatch. TDD covers poll isolation, worker concurrency, and queuing.
-- A UI child-job terminal transition publishes an event when the controller observes process exit. The event wakes the view to read the committed state.
+- There is no recurring whole-screen recovery deadline in the UI. Event subscribers trigger refresh immediately. Timed recovery is limited to explicit one-shot retry work, quota refresh, tool follow-up, and the independent bounded external-change observer.
+- The dispatcher has bounded lanes for reads and mutations, plus a separate single-flight background snapshot lane used only when requested by an event or explicit deadline. Reads have two workers so one slow read cannot stall another; mutations remain serialized by the shared state owner. Each foreground lane queues up to 16 requests with `try_send`, so the render callback never waits on dispatch. TDD covers snapshot isolation, worker concurrency, and queuing.
+- A UI child-job terminal transition is observed by a dedicated thread blocked in `Child::wait()`, not by UI polling. It updates in-memory terminal state, releases the controller lock before file/SQLite persistence, then publishes one invalidation.
 - Every supervised CLI child notifies its parent UI once at command exit through the same authenticated loopback bridge. The send is non-blocking and is a no-op when the child was not launched by a UI supervisor.
 - When an invalidation arrives during a background snapshot, the view drops that in-flight result and queues one fresh snapshot. This prevents a pre-mutation read from briefly overwriting newer view state.
 - The internal workflow child inherits an ephemeral loopback UDP address and random token. Its supervised stdout-spool reader sends non-blocking invalidations after recording agent progress; the parent wakes only the surface that launched the work. Provider, MCP, quota, and helper subprocesses have these credentials stripped.
@@ -32,6 +36,12 @@ Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184/NFR-79 → QAS-190 → 
 ## Verification design
 
 Use deterministic channel and loopback tests for authenticated event delivery, child-exit notification, bounded non-blocking sends, subscriber disconnect, coalescing, selective surface delivery, superseded request and snapshot rejection, external declared-scope file changes, and independent foreground progress while another request is blocked. Verify the recovery path's scan bounds and idle backoff. Avoid a thread per notification and avoid work in egui's render callback.
+
+## No-periodic-snapshot and child-wait follow-up — 2026-10-30
+
+Removed the repeating 30-second Workspace/Agent Room snapshot cadence and its `room::State.next_refresh` timer. Event callbacks now route coordinator chat, optimizer, metadata, MCP, start/stop and generic invalidations to their relevant background result request. An invalidation that races a snapshot supersedes it and queues targeted work. CLI child exit now comes from `Child::wait()` on the monitor thread; UI reads no longer call `try_wait()`.
+
+TDD regressions first failed because idle render scheduled a snapshot, coordinator chat invalidation requested a generic snapshot, and controller completion depended on calling `poll()`. Their green counterparts are in `tests/native_ui_probe/renderer.rs`, `tests/native_ui_probe/app.rs`, and `tests/support/controller_events.rs`. Local full-suite status is recorded in `knowledge/wiki/log.md` after completion.
 
 ## Exact package checkpoint — 2026-10-30
 

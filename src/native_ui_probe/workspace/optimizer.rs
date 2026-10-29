@@ -221,8 +221,7 @@ impl super::super::Probe {
             && let Some(job) = snapshot["id"].as_str()
         {
             self.goal_optimizer.started(job.to_owned());
-            self.workspace_next_refresh =
-                Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+            self.workspace_next_refresh = None;
         } else {
             self.goal_optimizer
                 .failed("Goal optimizer job was not accepted".into());
@@ -242,8 +241,7 @@ impl super::super::Probe {
             self.workspace_next_refresh = None;
         } else if snapshot["job"]["state"] == "running" {
             self.snapshot = Some(snapshot);
-            self.workspace_next_refresh =
-                Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+            self.workspace_next_refresh = None;
         } else if snapshot["job"]["state"] == "completed" {
             self.goal_optimizer.completed(&job, &snapshot["optimize"]);
             self.snapshot = Some(snapshot);

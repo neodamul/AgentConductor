@@ -4,13 +4,14 @@ mod action;
 #[cfg(test)]
 #[path = "../../tests/support/controller_events.rs"]
 mod event_tests;
+mod job_monitor;
 mod review;
 pub(super) use action::{Action, ActionRequest};
 
 pub(super) struct Job {
     pub(super) id: String,
     pub(super) label: String,
-    pub(super) child: Child,
+    pub(super) child: Arc<Mutex<Child>>,
     pub(super) logs: PathBuf,
     pub(super) owner: Ownership,
     pub(super) exit: Option<i32>,
@@ -19,7 +20,7 @@ pub(super) struct Job {
 pub(super) struct Controller {
     pub(super) dir: PathBuf,
     pub(super) exe: PathBuf,
-    pub(super) job: Mutex<Option<Job>>,
+    pub(super) job: Arc<Mutex<Option<Job>>>,
     pub(super) events: crate::ui::events::EventHub,
     pub(super) event_surface: crate::ui::events::UiSurface,
 }
@@ -47,7 +48,7 @@ impl Controller {
         Self {
             dir,
             exe,
-            job: Mutex::new(None),
+            job: Arc::new(Mutex::new(None)),
             events,
             event_surface,
         }
@@ -69,37 +70,37 @@ impl Controller {
             .unwrap_or(true)
     }
     pub(super) fn poll(&self) -> Result<serde_json::Value, String> {
-        let mut slot = self
+        let slot = self
             .job
             .lock()
             .map_err(|_| crate::ui::messages::text("native.ui_job_state_poisoned"))?;
-        let Some(job) = slot.as_mut() else {
+        let Some(job) = slot.as_ref() else {
             return Ok(serde_json::Value::Null);
         };
-        if !job.finished
-            && let Some(status) = job.child.try_wait().map_err(|e| e.to_string())?
-        {
-            let code = status.code();
-            job.exit = code;
-            job.finished = true;
-            job.owner.phase = "terminal".into();
-            job.owner.exit_code = code;
-            #[cfg(unix)]
-            {
-                use std::os::unix::process::ExitStatusExt;
-                job.owner.termination_signal = status.signal();
-            }
-            record_owner(&job.logs, &job.owner)?;
-            Store::open(self.dir.join("state.sqlite"))?.record(
-                "ui_action_result",
-                &serde_json::json!({"id":job.id,"kind":job.label,"exit_code":code,"termination_signal":job.owner.termination_signal}),
-                &crate::ui::messages::render("native.ui_action_finished_with_exit_signal", &[("value1", &job.label.to_string()), ("code", &format!("{:?}", code)), ("value2", &format!("{:?}", job.owner.termination_signal))]),
-            )?;
-            self.events
-                .publish(crate::ui::events::UiEvent::invalidated(self.event_surface));
-        }
         Ok(
             serde_json::json!({"id":job.id,"kind":job.label,"state":if !job.finished {"running"} else if job.exit==Some(0) {"completed"} else {"failed"},"exit_code":job.exit,"termination_signal":job.owner.termination_signal,"error":if job.finished && job.exit!=Some(0){tail(&job.logs.join("stderr.log"),4096)?}else{String::new()}}),
+        )
+    }
+
+    #[cfg(test)]
+    pub(super) fn monitor_job(&self) -> std::io::Result<()> {
+        let slot = self
+            .job
+            .lock()
+            .map_err(|_| std::io::Error::other("coordinator job lock poisoned"))?;
+        let Some(job) = slot.as_ref() else {
+            return Err(std::io::Error::other("No coordinator job to monitor"));
+        };
+        let id = job.id.clone();
+        let child = Arc::clone(&job.child);
+        drop(slot);
+        job_monitor::start(
+            child,
+            id,
+            Arc::clone(&self.job),
+            self.dir.clone(),
+            self.events.clone(),
+            self.event_surface,
         )
     }
     pub(super) fn action(&self, request: ActionRequest) -> Result<serde_json::Value, String> {
@@ -237,6 +238,7 @@ impl Controller {
         owner.pid = Some(child.id());
         owner.process_group = Some(child.id() as i32);
         owner.phase = "running".into();
+        let child = Arc::new(Mutex::new(child));
         *slot = Some(Job {
             id: id.clone(),
             label: label.into(),
@@ -255,6 +257,18 @@ impl Controller {
                 &[("value1", label)],
             ),
         )?;
+        if let Some(job) = slot.as_ref()
+            && let Err(error) = job_monitor::start(
+                Arc::clone(&job.child),
+                job.id.clone(),
+                Arc::clone(&self.job),
+                self.dir.clone(),
+                self.events.clone(),
+                self.event_surface,
+            )
+        {
+            eprintln!("could not start coordinator process monitor: {error}");
+        }
         Ok(serde_json::json!({"accepted":true,"id":id,"kind":label}))
     }
 }

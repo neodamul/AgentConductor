@@ -9,8 +9,7 @@ use crate::{
 use std::{
     fs,
     process::{Command, Stdio},
-    thread,
-    time::{Duration, Instant},
+    time::Duration,
 };
 
 #[test]
@@ -51,22 +50,19 @@ fn controller_publishes_once_when_a_job_reaches_terminal_state() {
     *controller.job.lock().unwrap() = Some(Job {
         id: "job".into(),
         label: "test".into(),
-        child,
+        child: std::sync::Arc::new(std::sync::Mutex::new(child)),
         logs,
         owner,
         exit: None,
         finished: false,
     });
-
-    let deadline = Instant::now() + Duration::from_secs(2);
-    while controller.poll().unwrap()["state"] == "running" && Instant::now() < deadline {
-        thread::sleep(Duration::from_millis(10));
-    }
+    controller.monitor_job().unwrap();
 
     assert_eq!(
         subscriber.recv_timeout(Duration::from_secs(1)),
         Ok(UiEvent::invalidated(UiSurface::AgentRoom))
     );
+    assert_eq!(controller.poll().unwrap()["state"], "completed");
     assert!(subscriber.try_recv().is_err());
     drop(controller.job.lock().unwrap().take());
     fs::remove_dir_all(root).unwrap();
