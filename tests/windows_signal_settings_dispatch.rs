@@ -245,12 +245,13 @@ fn signal_save_checks_durable_preference_before_visible_dialog_closure() {
 }
 
 #[test]
-fn signal_package_test_checks_the_workspace_created_by_first_run() {
+fn signal_package_test_checks_the_explicit_workspace_registered_by_ui_new() {
     let source = include_str!("windows_signal_settings.rs");
     assert!(source.contains("workspace_registry::active_workspace(&home"));
-    assert!(source.contains(".join(\"windows-uia-workspace\")"));
+    assert!(source.contains(".args([\"ui-new\", workspace.to_str().unwrap()])"));
+    assert!(source.contains("workspace_registry::active_workspace(&home, &workspace)"));
     assert!(source.contains(".env(\"AC_SIGNAL_WORKSPACE\", &active_workspace)"));
-    assert!(!source.contains(".env(\"AC_SIGNAL_WORKSPACE\", &workspace)"));
+    assert!(!source.contains("desktop_setup::SCRIPT"));
 }
 
 #[test]

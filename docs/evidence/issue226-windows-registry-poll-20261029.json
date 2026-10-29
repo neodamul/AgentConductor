@@ -16,25 +16,35 @@
       "macos_package": "passed",
       "windows_package": "failed before registry assertion",
       "failure": "The shared signal-settings driver raised ElementNotEnabledException while focusing the agentmemory port field. The #9 agent owns this shared UIA driver fix."
+    },
+    "40790683853": {
+      "head": "497aaad5e9e056abb3a1f699fabc9a941d6ea551",
+      "macos_validation": "passed",
+      "windows_validation": "passed",
+      "macos_package": "passed",
+      "windows_package": "failed in signal-settings test setup",
+      "failure": "The stale first-workspace modal helper expected Name for a new workspace/Create workspace, but the packaged UI showed the current Workspace settings form and Settings action; it exited FIRST_WORKSPACE_PROMPT_MISSING before running the signal-settings UI driver."
     }
   },
   "red_green": {
     "regression": "A delayed registry writer proves the helper waits for the exact first-run workspace path.",
     "local_verification": {
-      "windows_signal_settings_dispatch": "15 passed",
+      "windows_signal_settings_dispatch_and_registry": "16 passed",
       "source_layout": "2 passed",
       "cargo_fmt": "passed",
       "git_diff_check": "passed",
       "changed_file_lines": {
         "tests/support/signal_workspace_registry.rs": 35,
-        "tests/windows_signal_settings.rs": 117,
-        "tests/windows_signal_settings_dispatch.rs": 264
+        "tests/windows_signal_settings.rs": 94,
+        "tests/windows_signal_settings_dispatch.rs": 262,
+        "tests/windows_signal_workspace_registry.rs": 58
       }
     }
   },
   "not_verified": [
-    "Exact Windows package execution of fix commit bbad7e1",
-    "Exact macOS and Windows package runs after rebase onto the final #9 head"
+    "Exact Windows package execution of the ui-new registry-path fixture update",
+    "Exact macOS and Windows package runs after the latest test-fixture head"
   ],
-  "issue_state": "Keep issue #226 open and PR #230 draft/open until exact-head macOS and Windows package checks pass."
+  "issue_state": "Keep issue #226 open and PR #230 draft/open until exact-head macOS and Windows package checks pass.",
+  "agentmemory": "mem_mvsthh65_b78fe80b5dd4"
 }
