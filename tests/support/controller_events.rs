@@ -21,6 +21,8 @@ fn controller_publishes_once_when_a_job_reaches_terminal_state() {
     let logs = root.join("process");
     fs::create_dir_all(&logs).unwrap();
     Store::open(root.join("state.sqlite")).unwrap();
+    let writer = rusqlite::Connection::open(root.join("state.sqlite")).unwrap();
+    writer.execute_batch("BEGIN IMMEDIATE").unwrap();
     let events = EventHub::default();
     let subscriber = events.subscribe(UiSurface::AgentRoom, eframe::egui::Context::default());
     let controller = Controller::new(
@@ -51,12 +53,24 @@ fn controller_publishes_once_when_a_job_reaches_terminal_state() {
         id: "job".into(),
         label: "test".into(),
         child: std::sync::Arc::new(std::sync::Mutex::new(child)),
-        logs,
+        logs: logs.clone(),
         owner,
         exit: None,
         finished: false,
     });
     controller.monitor_job().unwrap();
+
+    let deadline = std::time::Instant::now() + Duration::from_secs(1);
+    while serde_json::from_slice::<Ownership>(&fs::read(logs.join("owner.json")).unwrap())
+        .unwrap()
+        .phase
+        != "terminal"
+    {
+        assert!(std::time::Instant::now() < deadline, "child did not exit");
+        std::thread::yield_now();
+    }
+    assert_eq!(controller.poll().unwrap()["state"], "running");
+    writer.execute_batch("COMMIT").unwrap();
 
     assert_eq!(
         subscriber.recv_timeout(Duration::from_secs(1)),

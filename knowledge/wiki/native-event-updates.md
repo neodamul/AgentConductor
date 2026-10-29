@@ -4,7 +4,7 @@
 
 The native UI uses bounded typed invalidations to wake only subscribed surfaces. These events enqueue targeted reads on a background request lane; the render callback only drains completion/event channels and schedules repaint. There is no repeating whole-screen snapshot timer. Explicit retry deadlines, configured quota refresh, and tool follow-up remain one-shot or separately scheduled work.
 
-Local UI child processes are supervised by one named monitor thread per active child. It blocks in `Child::wait()` off the UI/request workers, persists terminal state without holding the controller state lock, then publishes one completion invalidation. State-changing commands remain serialized at the state owner; independent reads use bounded worker lanes and stale replies are rejected by request/revision identity.
+Local UI child processes are supervised by one named monitor thread per active child. It blocks in `Child::wait()` off the UI/request workers, persists the owner and SQLite audit records without holding the controller state lock, then marks the job finished and publishes one completion invalidation. The UI cannot observe `completed` while terminal persistence is still in progress. State-changing commands remain serialized at the state owner; independent reads use bounded worker lanes and stale replies are rejected by request/revision identity.
 
 Earlier iterations used periodic full snapshots as recovery. That fallback was removed from the UI path in the follow-up recorded below; the separate authenticated observer remains responsible for external process/filesystem changes with bounded backoff.
 

@@ -44,7 +44,6 @@ fn complete(
     };
     let Some((logs, owner, label, exit, termination_signal)) =
         slot.as_mut().filter(|job| job.id == id).map(|job| {
-            job.finished = true;
             job.owner.phase = "terminal".into();
             match status {
                 Ok(status) => {
@@ -92,5 +91,10 @@ fn complete(
     {
         Ok(()) => {}
         Err(error) => eprintln!("could not save coordinator action result: {error}"),
+    }
+    if let Ok(mut slot) = job_slot.lock()
+        && let Some(job) = slot.as_mut().filter(|job| job.id == id)
+    {
+        job.finished = true;
     }
 }
