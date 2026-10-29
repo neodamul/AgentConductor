@@ -6464,3 +6464,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: `startup_chat` passes 4 tests and `native_workspace_chat` passes 6; the first UI request regression failed on the full revision, then passed after switching the panel to `chat_revision`. `cargo fmt` passes; modified Rust and test files stay below 300 lines.
 - [ ] Verify package: exercise coordinator chat in exact macOS and Windows packages and confirm it avoids the Git HEAD lookup without weakening mutation guards.
 - [ ] Complete: do not claim packaged acceptance or infer that this change alone explains historical chat timeouts.
+
+### Preserve the Rust coordinator chat as a CLI-style conversation — issue #189 / issue #9
+
+- [x] Plan: apply existing R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. Keep one read-only CLI process per question and persist the transcript with the workspace.
+- [x] Red: add regressions for retaining 40 turns and clipping a long earlier answer; both failed against the 12-turn and 8 KiB-per-turn implementation.
+- [x] Task 1: retain the latest 40 turns and clip previous prompt context at a UTF-8 boundary while preserving the latest operator question.
+- [x] Task 1 Verify: `chat_prompt`, `startup_chat`, and `native_workspace_chat` pass 17/17 with `test-fixtures,native-ui-probe`; `cargo fmt --all` and `git diff --check` pass.
+- [ ] Red: require a chat request packet to carry only the new question; cover saved-history reconstruction and transcript keyboard controls.
+- [ ] Task 2: reconstruct prior turns from the workspace chat artifact, send only the new question, and implement terminal-style transcript/input behavior.
+- [ ] Verify: focused startup and native-chat tests, all-target suite, Clippy, formatting, and the 300-line source/test limit.
+- [ ] Complete: update issue #189, PR #22, AgentMemory, and the LLM Wiki; do not claim UI parity until exact packaged macOS and Windows journeys pass.

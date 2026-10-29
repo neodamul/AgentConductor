@@ -71,6 +71,39 @@ fn oversized_history_is_trimmed_to_the_prompt_bound_without_losing_the_question(
 }
 
 #[test]
+fn history_retains_the_most_recent_forty_turns() {
+    let turns = (0..25)
+        .flat_map(|index| {
+            [
+                turn("operator", &format!("question {index}")),
+                turn("assistant", &format!("answer {index}")),
+            ]
+        })
+        .collect::<Vec<_>>();
+
+    let recent = agentconductor::chat::recent_history(&turns);
+
+    assert_eq!(recent.len(), 40);
+    assert_eq!(recent.first().unwrap().text, "question 5");
+    assert_eq!(recent.last().unwrap().text, "answer 24");
+}
+
+#[test]
+fn a_long_earlier_answer_is_clipped_instead_of_rejecting_the_follow_up() {
+    let turns = [
+        turn("operator", "Explain the output."),
+        turn("assistant", &"x".repeat(24 * 1024)),
+        turn("operator", "What should I do next?"),
+    ];
+
+    let prompt = build_prompt(&turns, "English").unwrap();
+
+    assert!(prompt.contains("What should I do next?"));
+    assert!(prompt.contains("[Earlier turn clipped]"));
+    assert!(prompt.len() <= 128 * 1024);
+}
+
+#[test]
 fn answer_is_non_empty_and_bounded() {
     assert_eq!(
         answer_from(&json!({"answer":"Run `cargo run`."})).unwrap(),
