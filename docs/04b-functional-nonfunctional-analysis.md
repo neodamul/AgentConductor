@@ -679,3 +679,7 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### FR-178 Prompt assembly and reply check
 `prompt_form::assemble(document, task, format)` returns the three blocks in order; heading lines inside the document that look like a block heading are neutralized so untrusted evidence cannot add a block. `prompt_form::review` and `prompt_form::worker` build the reviewer and worker prompts (the `Owned paths:` line stays verbatim). `coordinator::run_json_within` reruns the agent once, adding the parse error to the Format block, when the reply has no usable JSON for the requested field; capacity retries are unchanged.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
+
+### FR-179 Reconcile an unconfirmed send with the stored conversation
+`chatUi.resync` leaves the local turn and the waiting state in place when `chat_history` fails; each later `load` that succeeds compares the stored conversation with the pending text. A matching last operator turn means accepted (conversation replaced by the stored one, job followed through `settle`); otherwise the local turn is dropped, the text returns to the input and the original error is shown.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.

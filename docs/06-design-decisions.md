@@ -1554,3 +1554,7 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### DD-198 One prompt builder, one retry
 Layout is code-owned and CLI-independent: `src/prompt_form.rs` holds `assemble`, `review` and `worker`. Format retry is a single extra run inside `run_json_within` (bounded, prompt gains `# Previous reply` with the error), not a loop, so cost stays bounded. Rejected: asking operators to make CLIs speak acio (impossible for CLIs nobody can change, decision 3 in `docs/cli-io-protocol.md`) and per-CLI mapping fields for this purpose.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
+
+### DD-199 Pending instead of guessing
+Only `chat.js` changes. The unknown outcome is a state (`unsure`) held next to `waiting`, resolved by the next successful `chat_history`; no timer and no extra request, because snapshot renders already call `update()`, which reloads the history while `ready` is false. Rejected: restoring the text and clearing it later (the input may have been edited by then) and a fixed wait before rolling back.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.
