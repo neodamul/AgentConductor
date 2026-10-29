@@ -1,3 +1,12 @@
+### Reacquire only an actionable signal-port field — issue #9 / 2026-10-29
+
+- [x] Plan: exact Windows package run `40795726569` failed the shared `windows_signal_settings` journey with `PORT_FIELD_NOT_INTERACTABLE` after selecting the agentmemory transport.
+- [x] Red: extend the source-contract regression to require an enabled, on-screen, nonempty port edit and a bounded readiness wait; it failed before the lookup filtered duplicate controls.
+- [x] Task: make `Find-Edit` return only actionable edits and retry missing/disabled states within the existing three-second focus deadline. Preserve the app's own pending/interaction guards.
+- [x] Local Verify: signal-settings contracts pass 14/14; source-layout 2/2, warning-denied Clippy, formatting, and diff checks pass. Each touched Rust file remains below 300 lines.
+- [ ] Exact-package Verify: run the updated packaged signal-settings journey with the current head on Windows and require the port to persist as `7333`.
+- [ ] Complete: update issue #9, PR #22, AgentMemory, LLM Wiki, and exact-head evidence; packaged acceptance remains 22/50 until all required UI journeys pass.
+
 ### Verify the exact tool-decision target before Windows pointer input — issue #9 / 2026-10-29
 
 - [x] Plan: exact Windows package run `40790365479` showed the tool-decision driver reporting pointer clicks inside the app process while the `Allow once` modal remained unchanged; the helper did not verify that the point hit that named button.

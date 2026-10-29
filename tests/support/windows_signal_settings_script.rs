@@ -24,7 +24,9 @@ function Find-VisibleActionControl($name) {
   } | Select-Object -First 1
 }
 function Find-Edit($name) {
-  $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit' } | Select-Object -First 1
+  $window.FindAll($T::Descendants, $C) | Where-Object {
+    $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit' -and $_.Current.IsEnabled -and -not $_.Current.IsOffscreen -and -not $_.Current.BoundingRectangle.IsEmpty
+  } | Select-Object -First 1
 }
 function Describe-ActionControls {
   $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID } | ForEach-Object {
@@ -145,12 +147,13 @@ function Click-PortEdit($port) {
 }
 function Assert-PortFieldFocused($port) {
   $focusDeadline = (Get-Date).AddSeconds(3)
+  $focused = $A::FocusedElement
   do {
     $port = Find-Edit 'agentmemory port'
-    if (-not $port) { throw 'PORT_FIELD_NOT_FOUND' }
+    if (-not $port) { Start-Sleep -Milliseconds 100; continue }
     $current = $port.Current
     if ($current.ProcessId -ne $expectedProcessId) { throw 'PORT_FIELD_NOT_OWNED' }
-    if (-not $current.IsEnabled -or $current.IsOffscreen -or $current.BoundingRectangle.IsEmpty) { throw 'PORT_FIELD_NOT_INTERACTABLE' }
+    if (-not $current.IsEnabled -or $current.IsOffscreen -or $current.BoundingRectangle.IsEmpty) { Start-Sleep -Milliseconds 100; continue }
     $focused = $A::FocusedElement
     if ($focused.Current.ProcessId -eq $expectedProcessId -and $focused.Current.Name -eq 'agentmemory port' -and $focused.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit' -and $focused.Current.IsEnabled) { return }
     try { $port.SetFocus() } catch { Click-PortEdit $port }

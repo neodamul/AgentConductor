@@ -17,6 +17,31 @@ fn transport_choices_are_dispatched_as_radio_controls() {
 }
 
 #[test]
+fn signal_port_lookup_skips_disabled_or_offscreen_duplicate_edits() {
+    let source = include_str!("support/windows_signal_settings_script.rs");
+    let lookup = source
+        .split("function Find-Edit($name)")
+        .nth(1)
+        .unwrap_or_default()
+        .split("function Describe-ActionControls")
+        .next()
+        .unwrap_or_default();
+
+    assert!(lookup.contains("$_.Current.IsEnabled"));
+    assert!(lookup.contains("-not $_.Current.IsOffscreen"));
+    assert!(lookup.contains("-not $_.Current.BoundingRectangle.IsEmpty"));
+    let focus = source
+        .split("function Assert-PortFieldFocused($port)")
+        .nth(1)
+        .unwrap_or_default()
+        .split("function Activate-ActionControl")
+        .next()
+        .unwrap_or_default();
+    assert!(focus.contains("if (-not $port) { Start-Sleep -Milliseconds 100; continue }"));
+    assert!(focus.contains("if (-not $current.IsEnabled -or $current.IsOffscreen -or $current.BoundingRectangle.IsEmpty) { Start-Sleep -Milliseconds 100; continue }"));
+}
+
+#[test]
 fn signal_navigation_uses_a_verified_keyboard_fallback() {
     let source = include_str!("support/windows_signal_settings_script.rs");
     let activation = source
