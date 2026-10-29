@@ -91,3 +91,23 @@ fn fallback_observer_wakes_the_run_view_when_external_state_changes() {
     );
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn publishing_does_not_wait_for_subscriber_registry_lock() {
+    let hub = EventHub::default();
+    let guard = hub.subscribers.lock().unwrap();
+    let producer = hub.clone();
+    let (done, result) = std::sync::mpsc::channel();
+    let thread = std::thread::spawn(move || {
+        producer.publish(UiEvent::invalidated(UiSurface::Workspace));
+        let _ = done.send(());
+    });
+
+    assert!(
+        result
+            .recv_timeout(std::time::Duration::from_millis(500))
+            .is_ok()
+    );
+    drop(guard);
+    thread.join().unwrap();
+}

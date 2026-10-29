@@ -140,7 +140,7 @@ impl EventHub {
 }
 
 fn deliver(subscribers: &Arc<Mutex<Vec<Subscriber>>>, event: UiEvent) {
-    let Ok(mut subscribers) = subscribers.lock() else {
+    let Ok(mut subscribers) = subscribers.try_lock() else {
         return;
     };
     subscribers.retain(|subscriber| {
