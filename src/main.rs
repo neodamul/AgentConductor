@@ -73,6 +73,9 @@ fn execute() -> Result<(), String> {
     // DD-135: a process started by an update waits for the one it replaced.
     agentconductor::update::after_restart();
     let args: Vec<_> = std::env::args().skip(1).collect();
+    if agentconductor::desktop::is_workspace_launch(&args) {
+        return agentconductor::desktop::launch_default();
+    }
     execute_args(&args)
 }
 

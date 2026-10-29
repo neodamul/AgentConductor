@@ -1,5 +1,9 @@
 # Current-main behavior carried into the Rust UI branch
 
+## Default executable opens the native Workspace — 2026-10-29
+
+The `agentconductor` binary now routes an empty argument list to the existing native desktop flow: select the local workspace, initialize `ui::Room`, and open `Surface::Workspace` through `ui::native`. Explicit CLI commands continue through their existing dispatcher. A TDD route regression failed before this change because the binary sent empty arguments to the CLI parser; it now passes alongside the desktop routing and CLI tests. Local checks: 3 desktop tests, 6 default-entrypoint/CLI tests, native-feature binary check, warning-denied Clippy, rustfmt, and diff check. The secondary probe binary remains available to the native UI harness. Exact macOS/Windows package launch and visual verification are still pending, so no shipped UI acceptance is claimed.
+
 ## Coordinator plan prompt structure — 2026-10-29
 
 Rust planner prompts now persist one ordered `# Document`, `# Task`, and `# Format` sequence. Existing plan material and approved Jira/Confluence source evidence are untrusted Document content; the goal, agent catalog, role and plan rules, phase instructions, task types, repository capabilities, and cooperation guidance stay in Task; the bound response JSON Schema is last in Format. Exact heading lines inside evidence are escaped. Invalid-scope repair uses the same structure and places its validation feedback in Task. Existing source-plan/context sidecar files and schema-constrained CLI arguments are unchanged. Verification: coordinator planning contracts 15/15 over eight suites, worker/review/recovery regressions 50/50 over ten, Claude quota 6/6, timeout resume and stop 1/1 each, focused warning-denied Clippy and rustfmt pass. This does not claim chat prompt parity, full-suite verification, or packaged UI acceptance.

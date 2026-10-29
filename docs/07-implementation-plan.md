@@ -1,3 +1,11 @@
+### Launch the native Rust Workspace from the default executable — issue #9 / 2026-10-29
+
+- [x] Plan: the packaged `agentconductor` entrypoint must open the native Workspace with no arguments; explicit CLI subcommands must keep their headless behavior.
+- [x] Red: add a source-route regression for `agentconductor`'s empty-argument path; it failed because `main.rs` sent every non-maintenance invocation to the CLI parser.
+- [x] Task: route empty arguments through the existing desktop workspace, `Room::startup`, and `ui::native::open`; preserve all non-empty CLI arguments.
+- [x] Verify: desktop routing tests 3/3, default UI entrypoint and CLI tests 6/6, native-feature binary `cargo check`, warning-denied Clippy, rustfmt, and diff check pass. Changed source/test files are below 300 lines.
+- [ ] Complete: run the exact default executable as a packaged desktop app on macOS and Windows; visually inspect Workspace and ensure the package launches one window. This source change alone adds no packaged UI acceptance credit.
+
 ### Structure coordinator prompts as Document, Task, and Format — issue #9 / 2026-10-29
 
 - [x] Plan: move existing-plan and approved source evidence ahead of the planning request; keep schema as the last prompt block without changing the coordinator contract.
