@@ -1,3 +1,12 @@
+### Verify the exact macOS package at the pushed Rust head — issue #9 / #257 / 2026-10-30
+
+- [x] Plan: rebuild the release package at pushed source `62efb31c8725d93fd1bb10021cad170cf3a77533`, which includes non-blocking event fan-out and foreground/background response correlation.
+- [x] Task: `cargo run --offline --locked --release -j 2 -- package-release` produced the arm64 macOS app and archive.
+- [x] Verify: package manifest validation matched the exact source commit and embedded binary SHA-256 `d1ccb7123a83401a5a2ee107f538a7a3d100fc15a807d8aba87daaf5ffffbcb4`; archive integrity, packaged `--help`, and package smoke passed. Archive SHA-256: `e7541978201958099923bf7e88fdac8da7690344b58f2f1b933e1fd4bc8f9e49`.
+- [x] GUI launch: opened the exact packaged app once. It loaded the saved user workspace, so no workspace or agent actions were performed; the visible controls appeared disabled and the cause remains unverified. This earns no packaged UI workflow credit.
+- [ ] UI/Windows Verify: use an isolated disposable workspace to exercise event-driven updates and task completion in the native UI, then validate the exact Windows package. Keep #257 and #9 open until those workflows pass.
+- [x] Complete this package-check unit: retain `docs/evidence/issue257-macos-package-62efb31-20261030.json`; update AgentMemory and the LLM Wiki. This does not complete #257 or #9.
+
 ### Verify the exact macOS package at the pushed Rust head — issue #9 / 2026-10-29
 
 - [x] Plan: rebuild the release archive after the Rust chat fast-path commits so package evidence names the exact pushed source head `f739b4852ee06df6554ec7bf139df8f42ee90106`.

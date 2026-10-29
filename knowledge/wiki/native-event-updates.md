@@ -32,6 +32,12 @@ Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184/NFR-79 → QAS-190 → 
 
 Use deterministic channel and loopback tests for authenticated event delivery, child-exit notification, bounded non-blocking sends, subscriber disconnect, coalescing, selective surface delivery, superseded request and snapshot rejection, external declared-scope file changes, and independent foreground progress while another request is blocked. Verify the recovery path's scan bounds and idle backoff. Avoid a thread per notification and avoid work in egui's render callback.
 
+## Exact package checkpoint — 2026-10-30
+
+The pushed source `62efb31c8725d93fd1bb10021cad170cf3a77533` builds and packages for `aarch64-apple-darwin`. Manifest/source matching, embedded binary digest, archive integrity, packaged `--help`, and package smoke passed. Evidence: `docs/evidence/issue257-macos-package-62efb31-20261030.json`.
+
+The packaged app was launched once but opened the user's saved workspace. No workspace or agent action was taken, and its visible controls appeared disabled; this observation is unresolved and earns no GUI workflow credit. Exact packaged UI journeys and Windows packaging remain open acceptance work for #257 and #9.
+
 ## Links
 
 - Requirements: `docs/01-requirements.md` through `docs/06-design-decisions.md`, R-192 / DD-204.

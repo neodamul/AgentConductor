@@ -1,0 +1,25 @@
+{
+  "issue": 257,
+  "pull_request": 255,
+  "source_commit": "62efb31c8725d93fd1bb10021cad170cf3a77533",
+  "target": "aarch64-apple-darwin",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-62efb31c8725.zip",
+  "archive_sha256": "e7541978201958099923bf7e88fdac8da7690344b58f2f1b933e1fd4bc8f9e49",
+  "binary_sha256": "d1ccb7123a83401a5a2ee107f538a7a3d100fc15a807d8aba87daaf5ffffbcb4",
+  "binary_bytes": 19575200,
+  "dependency_count": 242,
+  "checks": {
+    "release_build_and_packaging": "passed",
+    "package_manifest_validation": "passed; source commit and embedded binary digest match",
+    "archive_integrity": "passed",
+    "packaged_binary_help": "passed",
+    "package_release_smoke": "passed",
+    "gui_launch": "passed; exact packaged app opened once",
+    "packaged_ui_workflows": "not verified; the app opened the existing user workspace and no actions were performed",
+    "windows_package": "pending"
+  },
+  "notes": [
+    "The UI observation is not acceptance evidence. The loaded workspace showed disabled controls; the cause was not investigated because it is the user's saved workspace.",
+    "Do not claim issue 257 or packaged UI acceptance complete from this package smoke."
+  ]
+}
