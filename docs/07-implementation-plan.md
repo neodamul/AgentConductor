@@ -6603,8 +6603,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: port the deterministic Windows chat UI harness to the current artifact format (`startup.json.chat_result`, `mcp/chat-input-<id>.json`, and `mcp/chat-<id>.json`); cover persistence after reopen, reconnect to a worker after app close, and a 20-second answer while the chat stays open.
 - [x] Verify locally: focused artifact and package-driver suites pass 5/5; `source_layout` passes 2/2; targeted Clippy, rustfmt, and `git diff --check` pass. A broad cold `cargo test` was stopped during test-target compilation after about 10 minutes and is not claimed as passing. All changed Rust files are below 300 lines (largest: 281).
 - [x] Accuracy: `AC_CHAT_WAIT=0` only exits the test driver after send; it does not reproduce the legacy 15-second UI request timeout. The slow-response test now observes the open chat for the answer instead of naming that behavior a timeout.
+- [x] Exact macOS binary package: source `bd03bde71e33c4996f5d02c8b949e6321727de8b` built and passed package validation plus all four shared/worktree × Git/folder mock-agent workflows; archive SHA-256 `2b5909888ba16981c4c74f16967034bd95fc8dda19dc762b83585ef901cb34fc`. Evidence: `docs/evidence/issue189-macos-package-bd03bde7-20261030.json`.
 - [ ] Verify exact Windows package: run the persisted-reopen, in-flight-reconnect, and late-answer journeys against the package built from this branch. They cannot be exercised on the local macOS host.
-- [ ] Verify exact macOS package UI: inspect chat, persistence, keyboard, and restart behavior on the exact package.
+- [ ] Verify exact macOS package UI: interactive chat, persistence, keyboard, and restart behavior have not been exercised in the packaged window.
 - [ ] Complete: keep #189 and #9 acceptance unchanged until current-head package evidence passes; the prior PR #192 run is not a substitute.
 
 ### 2026-10-30 — Isolate native periodic reads from foreground events — issue #189 / #9
