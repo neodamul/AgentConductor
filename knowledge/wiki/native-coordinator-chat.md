@@ -32,3 +32,9 @@ The earlier PR #192 package run is not current-head evidence: although its three
 ## Windows chat editor accessibility — 2026-10-30
 
 Run `40955925655` failed all three exact Windows package coordinator-chat journeys before question submission. The UI Automation diagnostics exposed a disabled `Send` button but no edit matching the editor prompt. A local AccessKit regression reproduced the contract gap: the multiline editor had visible placeholder text but no accessible name. The Rust editor now sets its localized placeholder as its accessible name while retaining the same visible hint. The new regression and related chat, Windows driver-contract, and source-layout tests pass 11/11 across four suites; warning-denied Clippy, rustfmt, diff checks, and the 300-line source/test limit pass. The fix is pushed to PR #255 head `fbc2280a1f2f3c919f051d512f4f56a24fa11e74`. This does not prove the corresponding Windows UI Automation mapping; rerun the exact package and confirm all chat journeys before crediting workflow 23 or continuing to tool-decision acceptance.
+
+## Current PR macOS package — 2026-10-30
+
+PR head `bb769e9c5141e775232843eeeb58d09fd19dddbc` built locally with the repository's release package command. `validate-package` verified the source commit, arm64 target, 242 dependency records, and embedded binary SHA-256; ZIP integrity passed. The package smoke completed four shared/worktree × Git/folder cases, each with three parallel tasks and tests, approved merge accepted, and unapproved merge refused. Archive SHA-256: `af291a547268263a9fba769efc81d1b0f6949f8c852967bf0008ccf8a5d49302`. Evidence: `docs/evidence/issue189-macos-package-bb769e9c-20261030.json`.
+
+This verifies the macOS package and CLI smoke only. The exact Windows packaged UIA rerun is still pending; no chat or tool-decision UI acceptance is claimed.

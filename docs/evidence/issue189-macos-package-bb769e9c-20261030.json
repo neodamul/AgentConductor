@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-30",
+  "source_commit": "bb769e9c5141e775232843eeeb58d09fd19dddbc",
+  "target": "aarch64-apple-darwin",
+  "package_command": "cargo run --release --locked --offline -- package-release",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-bb769e9c5141.zip",
+  "archive_sha256": "af291a547268263a9fba769efc81d1b0f6949f8c852967bf0008ccf8a5d49302",
+  "manifest": {
+    "binary": "agentconductor",
+    "binary_bytes": 19592496,
+    "binary_sha256": "152bf35884fb604b3c5c1c9125b37ed313683f1e86bf381760850b644ac720c3",
+    "dependency_count": 242,
+    "runtime": "one native executable; SQLite bundled",
+    "source_commit": "bb769e9c5141e775232843eeeb58d09fd19dddbc",
+    "target": "aarch64-apple-darwin"
+  },
+  "verification": {
+    "package_release_exit_code": 0,
+    "validate_package": "passed",
+    "zip_integrity": "passed",
+    "smoke_exit_code": 0,
+    "smoke_cases": [
+      { "mode": "shared", "source_mode": "git", "tasks": 3, "tests": 3, "approved_merge": true, "unapproved_merge_refused": true },
+      { "mode": "shared", "source_mode": "folder", "tasks": 3, "tests": 3, "approved_merge": true, "unapproved_merge_refused": true },
+      { "mode": "worktree", "source_mode": "git", "tasks": 3, "tests": 3, "approved_merge": true, "unapproved_merge_refused": true },
+      { "mode": "worktree", "source_mode": "folder", "tasks": 3, "tests": 3, "approved_merge": true, "unapproved_merge_refused": true }
+    ],
+    "interactive_ui": "not tested",
+    "windows_package_ui": "pending"
+  }
+}
