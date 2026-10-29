@@ -1,3 +1,11 @@
+### Verify the exact Rust branch release package on both platforms — issue #9 / 2026-10-29
+
+- [x] Plan: workflow run `40839334186` completed successfully on macOS and Windows, including the Windows packaged desktop journey. Its checked-out source was ancestor `923a806b36a8672e366f0102ea840ea38c9ee963`, not the current branch source, so this is diagnostic evidence only and does not satisfy exact-head acceptance.
+- [x] Local macOS package: built and verified Rust source commit `79fdea8aad8b67de8ba89708264e00116aea33fb` (v0.1.37). Archive integrity, manifest hashes, app plist, arm64 executable, and packaged `--help` passed. Archive SHA-256: `2bcf911eeaa7cff4a5cbc8700fe9db98765b63408b08ee7696b57ecc1dd58e20`.
+- [x] Focused local source verification: 53 tests across 13 suites; warning-denied all-target Clippy, rustfmt, source-layout (300-line limit), public-doc tests, and diff check passed at the optimizer integration.
+- [ ] Exact-head Verify: run macOS and Windows validation and packaged UI journeys at current Rust branch head. Require all Windows package workflows to complete and retain exact-head artifacts/evidence.
+- [ ] Complete: update issue #9, PR #22, AgentMemory, and the LLM Wiki from exact-head results. Acceptance remains **22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate**; do not merge or release from ancestor-only Windows evidence.
+
 ### Verify Windows schedule requests through controller dispatch and persistence — issue #9 / 2026-10-29
 
 - [x] Plan: exact run `40821720696` passed both platform validations and the macOS package. Windows passed the packaged Signal Settings journey, then stopped in `windows_schedule`: UIA focus/invoke were unavailable; the guarded pointer click sent input, but the driver waited only for the Schedule button to become disabled and exited before checking controller dispatch or the saved schedule.
