@@ -33,17 +33,18 @@ fn repository(name: &str) -> std::path::PathBuf {
 
 #[test]
 fn the_file_read_head_equals_git_for_loose_packed_and_detached_heads() {
-    let repo = repository("layouts");
     let mut env = env::lock();
+    let repo = repository("layouts");
+    let path = std::env::var_os("PATH").unwrap_or_default();
     // With no `git` reachable, only a file read can answer.
     let real = git(&repo, &["rev-parse", "HEAD"]);
     env.set("PATH", "");
     assert_eq!(git_head::head(&repo).unwrap(), real, "loose ref");
-    env.remove("PATH");
+    env.set("PATH", &path);
     git(&repo, &["pack-refs", "--all", "--prune"]);
     env.set("PATH", "");
     assert_eq!(git_head::head(&repo).unwrap(), real, "packed refs");
-    env.remove("PATH");
+    env.set("PATH", &path);
     git(&repo, &["checkout", "-q", "--detach"]);
     env.set("PATH", "");
     assert_eq!(git_head::head(&repo).unwrap(), real, "detached HEAD");
@@ -53,8 +54,8 @@ fn the_file_read_head_equals_git_for_loose_packed_and_detached_heads() {
 
 #[test]
 fn a_new_commit_is_seen_at_once() {
-    let repo = repository("commit");
     let _env = env::lock();
+    let repo = repository("commit");
     let before = git_head::head(&repo).unwrap();
     std::fs::write(repo.join("b.txt"), "b").unwrap();
     git(&repo, &["add", "."]);
@@ -68,11 +69,11 @@ fn a_new_commit_is_seen_at_once() {
 #[test]
 fn an_unusual_layout_is_answered_by_git_and_a_non_repository_still_fails() {
     // An unborn branch has no ref file: the old Git call answers (with its own error).
+    let _env = env::lock();
     let unborn = std::env::temp_dir().join(format!("ac-git-head-unborn-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&unborn);
     std::fs::create_dir_all(&unborn).unwrap();
     git(&unborn, &["init", "-q"]);
-    let _env = env::lock();
     assert!(git_head::head(&unborn).is_err());
     let plain = std::env::temp_dir().join(format!("ac-git-head-plain-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&plain);
@@ -104,6 +105,7 @@ fn a_hostile_ref_name_never_leaves_the_refs_directory() {
 fn a_layout_the_files_cannot_answer_is_refreshed_in_the_background() {
     use agentconductor::git_head::{Head, Heads};
     use std::time::{Duration, Instant};
+    let _env = env::lock();
     let repo = repository("worktree");
     let linked = std::env::temp_dir().join(format!("ac-git-head-linked-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&linked);
@@ -118,7 +120,6 @@ fn a_layout_the_files_cannot_answer_is_refreshed_in_the_background() {
             linked.to_str().unwrap(),
         ],
     );
-    let _env = env::lock();
     let real = git(&linked, &["rev-parse", "HEAD"]);
     // `.git` is a file here, so only Git can say what HEAD is.
     assert_eq!(git_head::read(&linked), None);
