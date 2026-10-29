@@ -744,3 +744,6 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### UC-178 Run a task with an ACIO-enabled CLI
 The coordinator assigns a task to a profile that declares protocol ACIO, sends structured input with its owned workspace scope and session ID, records validated progress/result events, and resumes the worker only after the operator decides a requested tool action. A profile without ACIO follows its existing CLI path.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.
+### UC-179 Ask what the workspace planned or ran
+After a run, the operator asks coordinator chat what changed or how to run the result. The coordinator uses the quoted task states, errors, tests, changed files and bounded diff; it reads named project files when useful and does not guess from inaccessible run storage. Before a run, it reports that no run has started.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.

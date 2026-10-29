@@ -13,14 +13,20 @@ impl Startup {
         } else {
             "English"
         };
-        crate::chat::build_prompt(&turns, language)?;
+        let saved_value = serde_json::to_value(&*saved).map_err(|error| error.to_string())?;
+        let workspace = crate::chat_context::workspace(&saved_value, &saved.config.repository);
+        crate::chat::build_prompt_in(&turns, language, &workspace)?;
         crate::mcp::coordinator_profile(&saved.config.profiles, &saved.config.coordinator)?;
         let id = crate::native_guard::session_id()?;
         crate::mcp::store(
             &self.broker.dir,
             &format!("chat-input-{id}.json"),
-            &serde_json::to_vec(&serde_json::json!({"turns": turns, "language": language}))
-                .map_err(|e| e.to_string())?,
+            &serde_json::to_vec(&serde_json::json!({
+                "turns": turns,
+                "language": language,
+                "workspace": workspace
+            }))
+            .map_err(|e| e.to_string())?,
         )?;
         let old_result = saved.chat_result.clone();
         saved.chat_result = Some(format!("chat-{id}.json"));

@@ -6384,3 +6384,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: Windows signal-settings driver contracts and source-layout pass 17 tests; warning-denied all-target Clippy, rustfmt, and diff checks pass. Driver files are 263 and 298 lines.
 - [ ] Verify exact package: rerun Windows signal-settings and other exact-package journeys on this branch head. The previous failure is old-source evidence and does not count as a current-head result.
 - [ ] Complete: keep issue #9 acceptance at 22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 overall until current-head Windows and macOS package evidence passes.
+### 2026-10-29 — Port main #243 workspace evidence into Rust coordinator chat — issue #9
+
+- [x] Plan: trace R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200 into the Rust chat design.
+- [x] Red: add renderer and deterministic startup-to-CLI tests for workspace context; the initial compile fails because the Rust renderer and context-aware prompt API do not exist.
+- [x] Task: construct bounded workspace/run evidence in Rust at startup and pass it in the saved chat input artifact to the read-only coordinator CLI.
+- [x] Verify locally: focused chat, startup, reset, source-layout and public-doc suites pass 35 tests; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line limit pass.
+- [ ] Verify package: confirm the shipped Rust app carries real latest-run evidence through macOS and Windows packaged chat flows.
+- [ ] Complete: do not change #9 acceptance until exact package evidence passes; source-level tests are not packaged acceptance.

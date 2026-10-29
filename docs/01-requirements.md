@@ -735,3 +735,7 @@ Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197.
 ### R-187 ACIO profiles run through the supervised worker
 When an agent profile opts into protocol ACIO, the coordinator shall send the versioned structured task input over stdin, collect and validate its live JSONL events, retain the supervisor-owned session identity, and route any tool request that needs a decision through the existing human approval gate. Profiles without ACIO remain on their existing execution path.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, user, 2026-10-29.
+
+### R-188 Coordinator chat has bounded workspace and run evidence
+When the operator asks about work from coordinator chat, the prompt shall include a bounded Workspace section derived from saved workspace settings and the latest run: project folder, mode and goal; plan task IDs, assigned agents, owned paths and first prompt lines; run state and errors; task states; test exit codes; changed files; and a candidate diff capped at 12 KiB. If no run exists, the prompt shall say so. Untrusted values must not create prompt headings. The coordinator is told to use this quoted evidence because it cannot read the run folder.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
