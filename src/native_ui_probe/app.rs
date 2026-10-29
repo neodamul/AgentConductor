@@ -104,7 +104,7 @@ impl Probe {
             room::refresh_due(
                 ui.ctx(),
                 self.snapshot.as_ref(),
-                self.pending.is_some(),
+                self.pending.is_some() || room_view.blocks_background_refresh(),
                 &mut room_view.next_refresh,
             )
         }) {
@@ -146,7 +146,23 @@ impl Probe {
                 &mut self.workspace_next_refresh,
             )
         {
-            self.refresh_coordinator_chat();
+            if self.coordinator_chat.is_uncertain() {
+                self.refresh_workspace();
+            } else {
+                self.refresh_coordinator_chat();
+            }
+        }
+        if self.room_view.is_none()
+            && self.goal_optimizer.awaiting()
+            && self.pending.is_none()
+            && room::refresh_due(
+                ui.ctx(),
+                self.snapshot.as_ref(),
+                self.pending.is_some(),
+                &mut self.workspace_next_refresh,
+            )
+        {
+            self.refresh_goal_optimizer();
         }
         if self.room_view.is_none()
             && self

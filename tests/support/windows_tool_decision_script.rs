@@ -17,9 +17,15 @@ while (-not $window -and (Get-Date) -lt $deadline) {
 }
 if (-not $window) { Write-Output 'NO_WINDOW'; exit 2 }
 function Find-Button($name) {
-  $script:window.FindAll($T::Descendants, $C) | Where-Object {
-    $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button'
-  } | Select-Object -First 1
+  foreach ($window in $A::RootElement.FindAll($T::Children, $C) | Where-Object {
+    $_.Current.ProcessId -eq $targetPid
+  }) {
+    $button = $window.FindAll($T::Descendants, $C) | Where-Object {
+      $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button'
+    } | Select-Object -First 1
+    if ($button) { $script:window = $window; return $button }
+  }
+  return $null
 }
 function Find-ModalButton($name) {
   foreach ($modal in $script:window.FindAll($T::Descendants, $C) | Where-Object {

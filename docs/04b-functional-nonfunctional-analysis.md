@@ -691,3 +691,13 @@ Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → 
 ### NFR-77 ACIO execution preserves existing safety boundaries
 ACIO input remains schema-bounded; process timeout, cancellation, stdout/stderr capture, task ownership, and candidate review remain coordinator-owned. A protocol declaration is not an OS sandbox: filesystem containment is limited to the existing isolated workspace and its scoped task contract, and privileged tool execution requires the existing human decision ledger. Non-ACIO profiles remain backward compatible.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.
+### FR-180 Bounded coordinator workspace evidence
+`chat_context::workspace(saved, project)` reads the latest run through `workflow::load`, quotes bounded plan and report fields, and includes the candidate diff with a 12 KiB cap. It limits task/test evidence to 40 entries and emits an explicit no-run statement. `chat::build_prompt_in` places this section between the manual and earlier conversation; all user-controlled values pass through `prompt_form::neutral` so they cannot add prompt headings. Startup stores the resulting context with the chat input artifact, and the read-only worker uses it without expanding CLI filesystem permissions.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### FR-181 Native coordinator-chat launcher
+The workspace chat launcher renders an icon-only button, paints its speech bubble and robot face with egui primitives using widget visuals, and preserves the localized chat.open accessible name and tooltip. The button continues to toggle the existing chat state.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
+
+### FR-182 Reconcile an unknown native chat outcome
+On a transport error during `ChatStart`, retain the pending operator turn and its original error while the chat awaits a readable workspace snapshot. If the stored conversation contains the new turn, replace local history and follow the matching chat job. Otherwise remove the unaccepted turn, restore its text to the input, and show the original error. A later snapshot, not a guessed timeout, resolves the state.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.

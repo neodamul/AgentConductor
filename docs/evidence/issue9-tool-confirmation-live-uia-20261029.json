@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-29",
+  "issue": 9,
+  "failing_exact_package_runs": [
+    {
+      "run_id": 40803567094,
+      "source_sha": "22c0e889ca21136c7648c7e930526c74cd72649a",
+      "platform": "windows-latest",
+      "result": "failed during allow-once confirmation"
+    },
+    {
+      "run_id": 40805049482,
+      "platform": "windows-latest",
+      "result": "failed during allow-once confirmation"
+    }
+  ],
+  "observed_failure": "The package automation failed to observe Confirm tool decision after Allow once. Its final UI Automation dump showed that control and the confirmation prompt, while the request remained pending.",
+  "cause": "Find-Button searched descendants of the UI Automation window reference captured before the modal confirmation appeared.",
+  "change": "Find-Button now enumerates current top-level UI Automation windows owned by the packaged process and searches each for the exact button.",
+  "local_verification": {
+    "tdd_red": "activation_refreshes_the_app_window_before_looking_for_modal_confirmation failed before the lookup change",
+    "tool_decision_dispatch": "13 passed",
+    "source_layout": "2 passed",
+    "clippy": "passed with warnings denied",
+    "rustfmt": "passed",
+    "diff_check": "passed",
+    "file_lines": {
+      "tests/windows_tool_decision_dispatch.rs": 235,
+      "tests/support/windows_tool_decision_script.rs": 283
+    }
+  },
+  "exact_package_reverification": "pending",
+  "acceptance_credit": "none; require the exact Windows release package to pass refresh, allow, deny, receipt, and mock-effect assertions"
+}

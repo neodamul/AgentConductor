@@ -675,3 +675,13 @@ Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → 
 ### SF-175 Supervised ACIO worker execution
 For opted-in profiles, build and schema-check the ACIO task input, run it through the existing process supervisor, normalize live events and sessions, and pause for the existing exact human approval when an ACIO tool requests a decision. Keep non-ACIO profiles unchanged.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.
+### SF-176 Coordinator workspace evidence
+Build a bounded Workspace prompt section from saved settings and the latest workflow report, then place it between the manual and earlier conversation. Include a clear no-run state and keep untrusted text inside neutralized evidence values.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### SF-177 Native chat-bubble launcher
+Render a compact theme-colored bubble/robot glyph inside the existing coordinator-chat button; retain its localized accessible name, tooltip and click behavior.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
+
+### SF-178 Reconcile native chat sends with the stored conversation
+The Rust chat panel keeps a send pending while its result is unknown, then resolves it from the next readable workspace conversation snapshot.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.

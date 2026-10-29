@@ -15,7 +15,16 @@ pub struct Turn {
     pub text: String,
 }
 
+pub fn recent_history(turns: &[Turn]) -> Vec<Turn> {
+    turns[turns.len().saturating_sub(MAX_TURNS)..].to_vec()
+}
+
 pub fn build_prompt(turns: &[Turn], language: &str) -> Result<String, String> {
+    build_prompt_in(turns, language, "")
+}
+
+/// Includes the bounded workspace/run evidence between the manual and conversation.
+pub fn build_prompt_in(turns: &[Turn], language: &str, workspace: &str) -> Result<String, String> {
     let last = turns.last().ok_or("the conversation is empty")?;
     if last.role != "operator" {
         return Err("the conversation must end with an operator question".into());
@@ -31,22 +40,32 @@ pub fn build_prompt(turns: &[Turn], language: &str) -> Result<String, String> {
     }
     let mut start = turns.len().saturating_sub(MAX_TURNS);
     loop {
-        let conversation: String = turns[start..]
+        let conversation: String = turns[start..turns.len() - 1]
             .iter()
             .map(|turn| format!("{}: {}\n\n", turn.role, turn.text.trim()))
             .collect();
+        let conversation = if conversation.is_empty() {
+            "(none)\n\n".to_string()
+        } else {
+            conversation
+        };
         let prompt = format!(
-            "You are the coordinator agent of AgentConductor, answering the operator's questions \
+            "# Document\n\n## Manual\n\n{MANUAL}\n\n{workspace}\n\n## Earlier conversation\n\n{conversation}\\
+# Task\n\nYou are the coordinator agent of AgentConductor, answering the operator's questions \
 from the workspace screen.\n\
 Rules:\n\
 - You run read-only (Read, Grep, Glob only): you cannot change files or run commands. When the \
 operator wants something run, give the exact command and where to run it.\n\
 - For questions about the project (what was built, how to run or test it, where results are), \
 inspect the project files, plans and documents first, then answer from what you found.\n\
-- For questions about using AgentConductor or the current screen, answer from the manual below.\n\
-- Do not invent files or commands; say when you could not find something.\n\
-- Reply in {language}. Output one JSON object only: {{\"answer\": \"<Markdown text>\"}}.\n\n\
-        # Manual\n\n{MANUAL}\n\n# Conversation\n\n{conversation}Answer the last operator message."
+- For questions about what was built, run results or how to run them, start from the Workspace \
+section above, then read the files it names in the project folder. The run folder is outside your \
+reach, so its evidence is only what the Workspace section quotes.\n\
+- For questions about using AgentConductor or the current screen, answer from the manual in the Document.\n\
+- Do not invent files or commands; say when you could not find something.\n\n\
+Answer the last operator message:\n\n{}\n\n\
+# Format\n\nReply in {language}. Output one JSON object only: {{\"answer\": \"<Markdown text>\"}}.\n",
+            last.text.trim()
         );
         if prompt.len() <= 128 * 1024 {
             return Ok(prompt);
@@ -80,7 +99,18 @@ pub async fn ask(
     turns: &[Turn],
     language: &str,
 ) -> Result<String, String> {
-    let prompt = build_prompt(turns, language)?;
+    ask_in(profile, project, dir, turns, language, "").await
+}
+
+pub async fn ask_in(
+    profile: &AgentProfile,
+    project: &Path,
+    dir: &Path,
+    turns: &[Turn],
+    language: &str,
+    workspace: &str,
+) -> Result<String, String> {
+    let prompt = build_prompt_in(turns, language, workspace)?;
     let reply = coordinator::run_json_within(
         profile,
         project,

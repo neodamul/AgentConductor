@@ -1,0 +1,29 @@
+{
+  "issue": 9,
+  "date": "2026-10-29",
+  "status": "local_verified_exact_package_pending",
+  "scope": "Keep the packaged Windows tool-decision modal actionable while a live run is polled",
+  "failing_run": {
+    "id": 40811281029,
+    "commit": "01bb9385a45bd0c6ea718788fead6e3408bf83f5",
+    "platform": "windows-latest",
+    "journey": "exact_windows_package_refreshes_approves_and_rejects_tool_requests",
+    "failure": "A background snapshot refresh disabled both Cancel and Confirm after opening the deny confirmation, leaving the decision modal trapped."
+  },
+  "change": [
+    "Suppress periodic Agent Room refresh while a pending tool receipt or operator confirmation is open.",
+    "Keep Cancel available if a snapshot request was already in flight when the modal opened."
+  ],
+  "red_green": {
+    "cancel_modal_regression": "failed before the UI fix because Cancel was disabled during a pending refresh",
+    "focused_native_room_suites": "20 passed across 4 suites",
+    "native_ui_feature_gate": "added after all-target test discovery caught the missing native-ui-probe gate"
+  },
+  "local_verification": {
+    "clippy": "all targets pass with warnings denied",
+    "format": "pass",
+    "source_test_limits": "all changed Rust sources and tests are at or below 300 lines"
+  },
+  "exact_package_verification": "pending",
+  "acceptance_credit": false
+}

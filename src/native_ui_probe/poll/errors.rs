@@ -23,7 +23,36 @@ impl Probe {
             self.pending,
             Some(Pending::ChatStart | Pending::ChatRefresh)
         ) {
-            self.coordinator_chat.failed(error);
+            if matches!(self.pending, Some(Pending::ChatStart)) {
+                self.coordinator_chat.outcome_unknown(error);
+                self.workspace_next_refresh =
+                    Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+            } else {
+                self.coordinator_chat.failed(error);
+                self.workspace_next_refresh = None;
+            }
+            self.pending = None;
+            self.error = None;
+            return;
+        }
+        if matches!(self.pending, Some(Pending::Refresh)) && self.coordinator_chat.is_uncertain() {
+            self.pending = None;
+            self.workspace_next_refresh =
+                Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+            self.error = None;
+            return;
+        }
+        if matches!(self.pending, Some(Pending::ChatReset)) {
+            self.coordinator_chat.reset_failed();
+            self.pending = None;
+            self.error = Some(error);
+            return;
+        }
+        if matches!(
+            self.pending,
+            Some(Pending::OptimizeStart | Pending::OptimizeRefresh)
+        ) {
+            self.goal_optimizer.failed(error);
             self.pending = None;
             self.workspace_next_refresh = None;
             return;

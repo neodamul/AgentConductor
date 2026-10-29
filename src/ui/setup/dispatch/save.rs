@@ -50,6 +50,8 @@ impl Startup {
                 == serde_json::to_value(saved.config.workspace_mode).ok()
             && profiles::execution_view(&config.profiles)?
                 == profiles::execution_view(&saved.config.profiles)?;
+        let keep_optimizer = config.repository == saved.config.repository
+            && saved.optimize_goal.as_deref() == Some(config.goal.as_str());
         let next = Saved {
             imports: if config.goal == saved.config.goal {
                 saved.imports.clone()
@@ -61,7 +63,13 @@ impl Startup {
             } else {
                 None
             },
-            chat_result: None,
+            chat_result: saved.chat_result.clone(),
+            optimize_result: keep_optimizer
+                .then(|| saved.optimize_result.clone())
+                .flatten(),
+            optimize_goal: keep_optimizer
+                .then(|| saved.optimize_goal.clone())
+                .flatten(),
             config,
             proposal: if keep { saved.proposal.clone() } else { None },
             job: if keep { saved.job.clone() } else { None },

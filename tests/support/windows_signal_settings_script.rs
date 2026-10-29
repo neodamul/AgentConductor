@@ -13,20 +13,41 @@ while (-not $window -and (Get-Date) -lt $deadline) {
 }
 if (-not $window) { Write-Output 'NO_WINDOW'; exit 2 }
 function Find-Name($name) {
-  $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq $name } | Select-Object -First 1
+  foreach ($candidateWindow in (Get-ProcessWindows)) {
+    $control = $candidateWindow.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq $name } | Select-Object -First 1
+    if ($control) { $script:window = $candidateWindow; return $control }
+  }
+  return $null
+}
+function Get-ProcessWindows {
+  $A::RootElement.FindAll($T::Children, $C) | Where-Object {
+    $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID
+  }
 }
 function Find-ActionControl($name) {
-  $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -in @('ControlType.Button', 'ControlType.RadioButton') } | Select-Object -First 1
+  foreach ($candidateWindow in (Get-ProcessWindows)) {
+    $control = $candidateWindow.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -in @('ControlType.Button', 'ControlType.RadioButton') } | Select-Object -First 1
+    if ($control) { $script:window = $candidateWindow; return $control }
+  }
+  return $null
 }
 function Find-VisibleActionControl($name) {
-  $window.FindAll($T::Descendants, $C) | Where-Object {
-    $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -in @('ControlType.Button', 'ControlType.RadioButton') -and $_.Current.IsEnabled -and -not $_.Current.IsOffscreen -and -not $_.Current.BoundingRectangle.IsEmpty
-  } | Select-Object -First 1
+  foreach ($candidateWindow in (Get-ProcessWindows)) {
+    $control = $candidateWindow.FindAll($T::Descendants, $C) | Where-Object {
+      $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -in @('ControlType.Button', 'ControlType.RadioButton') -and $_.Current.IsEnabled -and -not $_.Current.IsOffscreen -and -not $_.Current.BoundingRectangle.IsEmpty
+    } | Select-Object -First 1
+    if ($control) { $script:window = $candidateWindow; return $control }
+  }
+  return $null
 }
 function Find-Edit($name) {
-  $window.FindAll($T::Descendants, $C) | Where-Object {
-    $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit' -and $_.Current.IsEnabled -and -not $_.Current.IsOffscreen -and -not $_.Current.BoundingRectangle.IsEmpty
-  } | Select-Object -First 1
+  foreach ($candidateWindow in (Get-ProcessWindows)) {
+    $control = $candidateWindow.FindAll($T::Descendants, $C) | Where-Object {
+      $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit' -and $_.Current.IsEnabled -and -not $_.Current.IsOffscreen -and -not $_.Current.BoundingRectangle.IsEmpty
+    } | Select-Object -First 1
+    if ($control) { $script:window = $candidateWindow; return $control }
+  }
+  return $null
 }
 function Describe-ActionControls {
   $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID } | ForEach-Object {
@@ -39,8 +60,9 @@ function Describe-ActionControls {
   } | Select-Object -First 100
 }
 function Wait-Name($name) {
+  $controlDeadline = (Get-Date).AddSeconds(15)
   $found = $null
-  while (-not $found -and (Get-Date) -lt $deadline) {
+  while (-not $found -and (Get-Date) -lt $controlDeadline) {
     $found = Find-Name $name
     if (-not $found) { Start-Sleep -Milliseconds 100 }
   }
@@ -48,8 +70,9 @@ function Wait-Name($name) {
   return $found
 }
 function Wait-ActionControl($name) {
+  $controlDeadline = (Get-Date).AddSeconds(15)
   $found = $null
-  while (-not $found -and (Get-Date) -lt $deadline) {
+  while (-not $found -and (Get-Date) -lt $controlDeadline) {
     $found = Find-ActionControl $name
     if (-not $found) { Start-Sleep -Milliseconds 100 }
   }
@@ -60,8 +83,9 @@ function Wait-ActionControl($name) {
   return $found
 }
 function Wait-Edit($name) {
+  $controlDeadline = (Get-Date).AddSeconds(15)
   $found = $null
-  while (-not $found -and (Get-Date) -lt $deadline) {
+  while (-not $found -and (Get-Date) -lt $controlDeadline) {
     $found = Find-Edit $name
     if (-not $found) { Start-Sleep -Milliseconds 100 }
   }
@@ -125,6 +149,7 @@ function Click-ActionControl($name) {
   $control = Wait-ActionControl $name
   $bounds = $control.Current.BoundingRectangle
   if ($bounds.IsEmpty -or $control.Current.IsOffscreen) { throw "CONTROL_OFFSCREEN: $name; bounds=$bounds" }
+  $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
   if (-not [SignalSettingsMouse]::Click($hwnd, [int]($bounds.Left + $bounds.Width / 2), [int]($bounds.Top + $bounds.Height / 2), $expectedProcessId)) {
     throw "CLICK_FAILED: $name; bounds=$bounds; window=$($window.Current.BoundingRectangle)"
   }
@@ -132,6 +157,7 @@ function Click-ActionControl($name) {
 function Click-SaveAction {
   $save = Find-VisibleActionControl 'Save'
   if (-not $save) { throw 'SAVE_BUTTON_NOT_VISIBLE_OR_ENABLED' }
+  $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
   try { $save.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke() }
   catch { $bounds = $save.Current.BoundingRectangle; if (-not [SignalSettingsMouse]::Click($hwnd, [int]($bounds.Left + $bounds.Width / 2), [int]($bounds.Top + $bounds.Height / 2), $expectedProcessId)) { throw "SAVE_INVOKE_AND_CLICK_FAILED: $_" } }
 }
@@ -141,6 +167,7 @@ function Click-PortEdit($port) {
   if ($current.ProcessId -ne $expectedProcessId) { throw 'PORT_FIELD_NOT_OWNED' }
   if (-not $current.IsEnabled) { throw 'PORT_FIELD_NOT_ENABLED' }
   if ($current.IsOffscreen -or $bounds.IsEmpty) { throw "PORT_FIELD_NOT_VISIBLE: $bounds" }
+  $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
   if (-not [SignalSettingsMouse]::Click($hwnd, [int]($bounds.Left + $bounds.Width / 2), [int]($bounds.Top + $bounds.Height / 2), $expectedProcessId)) {
     throw "PORT_FIELD_CLICK_FAILED: $bounds"
   }
@@ -163,6 +190,7 @@ function Assert-PortFieldFocused($port) {
 }
 function Activate-ActionControl($name, $nextName) {
   $control = Wait-ActionControl $name
+  $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
   $expectedProcessId = [uint32]$env:AC_DESKTOP_PID
   try {
     if (-not [SignalSettingsMouse]::Focus($hwnd)) { throw 'PACKAGED_WINDOW_NOT_FOREGROUND' }

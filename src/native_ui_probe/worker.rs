@@ -9,6 +9,14 @@ enum WorkerRequest {
     PickExecutable,
 }
 
+pub(super) fn initial_snapshot(room_view: bool) -> &'static [u8] {
+    if room_view {
+        br#"{"kind":"snapshot","icons":true}"#
+    } else {
+        br#"{"kind":"snapshot","icons":true,"chat_history":true,"chat_result":true,"optimize_result":true}"#
+    }
+}
+
 pub struct RequestWorker {
     requests: mpsc::SyncSender<WorkerRequest>,
     pub replies: mpsc::Receiver<Result<Value, String>>,
@@ -113,6 +121,10 @@ impl RequestWorker {
         self.requests
             .try_send(WorkerRequest::Dispatch(packet))
             .map_err(|error| error.to_string())
+    }
+
+    pub fn send_initial_snapshot(&self) -> Result<(), String> {
+        self.send(initial_snapshot(self.room_view))
     }
 
     pub fn pick_folder(&self, purpose: crate::ui::picker::FolderPurpose) -> Result<(), String> {

@@ -61,5 +61,50 @@ pub(super) enum Pending {
     UpdateSourceSave,
     ChatStart,
     ChatRefresh,
+    ChatReset,
+    OptimizeStart,
+    OptimizeRefresh,
     Update,
+}
+
+impl Pending {
+    pub(super) fn handled_by_settings(self) -> bool {
+        matches!(
+            self,
+            Self::PickFolder
+                | Self::ShareFolder(_)
+                | Self::ShareExport
+                | Self::SharePreview
+                | Self::ShareImport
+                | Self::PickExecutable
+                | Self::ResolveExecutable
+                | Self::ProfileSave
+                | Self::CatalogSave
+                | Self::CatalogRefresh
+                | Self::ProfileRefresh
+                | Self::ProfileRetryRefresh
+                | Self::McpSave
+                | Self::McpRefresh
+                | Self::MessengerLoad
+                | Self::MessengerTest
+                | Self::MessengerSave
+                | Self::MessengerRefresh
+                | Self::SignalSettingsLoad
+                | Self::SignalSettingsSave
+                | Self::UpdateSourceLoad
+                | Self::UpdateSourceSave
+                | Self::Update
+                | Self::Save
+                | Self::Prepare
+                | Self::NextPhase
+                | Self::SelectGoal
+                | Self::Metadata
+                | Self::MetadataRefresh
+                | Self::ChatStart
+                | Self::ChatRefresh
+                | Self::ChatReset
+                | Self::OptimizeStart
+                | Self::OptimizeRefresh
+        )
+    }
 }

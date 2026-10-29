@@ -13,39 +13,9 @@ impl Probe {
         }
         match reply {
             Ok(Ok(snapshot)) => match self.pending {
-                Some(
-                    Pending::PickFolder
-                    | Pending::ShareFolder(_)
-                    | Pending::ShareExport
-                    | Pending::SharePreview
-                    | Pending::ShareImport
-                    | Pending::PickExecutable
-                    | Pending::ResolveExecutable
-                    | Pending::ProfileSave
-                    | Pending::CatalogSave
-                    | Pending::CatalogRefresh
-                    | Pending::ProfileRefresh
-                    | Pending::ProfileRetryRefresh
-                    | Pending::McpSave
-                    | Pending::McpRefresh
-                    | Pending::MessengerLoad
-                    | Pending::MessengerTest
-                    | Pending::MessengerSave
-                    | Pending::MessengerRefresh
-                    | Pending::SignalSettingsLoad
-                    | Pending::SignalSettingsSave
-                    | Pending::UpdateSourceLoad
-                    | Pending::UpdateSourceSave
-                    | Pending::Update
-                    | Pending::Save
-                    | Pending::Prepare
-                    | Pending::NextPhase
-                    | Pending::SelectGoal
-                    | Pending::Metadata
-                    | Pending::MetadataRefresh
-                    | Pending::ChatStart
-                    | Pending::ChatRefresh,
-                ) => super::settings::apply(self, snapshot),
+                Some(pending) if pending.handled_by_settings() => {
+                    super::settings::apply(self, snapshot)
+                }
                 Some(Pending::Action | Pending::ScopeRecoveryApply) => {
                     let recovery = matches!(self.pending, Some(Pending::ScopeRecoveryApply));
                     match room::action_reply(self.worker.as_ref().unwrap(), &snapshot) {
@@ -291,6 +261,7 @@ impl Probe {
                         self.refresh_room_details(background);
                     }
                 }
+                Some(_) => unreachable!("every pending operation has a response handler"),
             },
             Ok(Err(error)) => self.handle_error(error),
             Err(std::sync::mpsc::TryRecvError::Empty) => {}

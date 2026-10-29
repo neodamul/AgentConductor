@@ -95,6 +95,7 @@ pub struct Probe {
     messenger_editor: workspace::messenger::State,
     signal_settings: workspace::signal_settings::State,
     coordinator_chat: workspace::chat::State,
+    goal_optimizer: workspace::optimizer::State,
     updates: updates::State,
     update_source: updates::SourceEditor,
 }

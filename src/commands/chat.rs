@@ -41,12 +41,13 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
             .build()
             .map_err(|error| error.to_string())?;
         let run_dir = root.join(format!("chat-run-{id}"));
-        let answer = runtime.block_on(agentconductor::chat::ask(
+        let answer = runtime.block_on(agentconductor::chat::ask_in(
             profile,
             &project,
             &run_dir,
             &turns,
             input["language"].as_str().unwrap_or("English"),
+            input["workspace"].as_str().unwrap_or(""),
         ));
         let answer = match answer {
             Ok(answer) => {

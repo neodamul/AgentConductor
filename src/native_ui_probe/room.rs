@@ -1,4 +1,3 @@
-use eframe::egui;
 use serde_json::Value;
 use std::{
     collections::HashSet,
@@ -8,6 +7,7 @@ mod candidate;
 pub mod coordinator_feedback;
 pub mod inspector;
 pub mod judgments;
+mod polling;
 pub mod refresh_follow_up;
 mod scope_recovery;
 mod status_banner;
@@ -15,6 +15,7 @@ pub mod task_activity;
 pub mod task_controls;
 mod view;
 pub use candidate::candidate_decision_request;
+pub use polling::{refresh_due, refresh_due_at, room_refresh_interval};
 pub use refresh_follow_up::ToolRefreshFollowUp;
 pub use view::show;
 
@@ -117,6 +118,17 @@ impl Default for State {
             scope_paths: String::new(),
             scope_test_command: "[]".into(),
         }
+    }
+}
+
+impl State {
+    pub fn blocks_background_refresh(&self) -> bool {
+        self.tool_dialog.is_some()
+            || self.confirming_tool.is_some()
+            || self.confirming_decision.is_some()
+            || self.confirming_stop
+            || self.confirming_recover
+            || self.scope_recovery_open
     }
 }
 
@@ -240,60 +252,5 @@ impl super::Probe {
             }
             Err(error) => self.error = Some(error),
         }
-    }
-}
-
-pub fn room_refresh_interval(snapshot: &Value) -> Duration {
-    let state = snapshot["report"]["state"]
-        .as_str()
-        .or_else(|| snapshot["state"].as_str());
-    if snapshot["job"]["state"] == "running"
-        || super::workspace::profile_tools::metadata_running(snapshot)
-        || matches!(state, Some("running" | "ready"))
-    {
-        Duration::from_secs(1)
-    } else {
-        Duration::from_secs(5)
-    }
-}
-
-pub fn refresh_due(
-    context: &egui::Context,
-    snapshot: Option<&Value>,
-    pending: bool,
-    next: &mut Option<Instant>,
-) -> bool {
-    if pending
-        || snapshot.is_some_and(|snapshot| {
-            snapshot["tool_requests"]
-                .as_array()
-                .is_some_and(|requests| {
-                    requests
-                        .iter()
-                        .any(|request| request["status"] == "pending")
-                })
-        })
-    {
-        return false;
-    }
-    let interval = room_refresh_interval(snapshot.unwrap_or(&Value::Null));
-    let now = Instant::now();
-    let due = refresh_due_at(now, interval, next);
-    if due {
-        context.request_repaint_after(interval);
-    } else if let Some(deadline) = next {
-        context.request_repaint_after(deadline.saturating_duration_since(now));
-    }
-    due
-}
-
-pub fn refresh_due_at(now: Instant, interval: Duration, next: &mut Option<Instant>) -> bool {
-    let deadline = next.get_or_insert(now + interval);
-    *deadline = (*deadline).min(now + interval);
-    if now >= *deadline {
-        *deadline = now + interval;
-        true
-    } else {
-        false
     }
 }

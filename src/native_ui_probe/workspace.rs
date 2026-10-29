@@ -12,6 +12,7 @@ pub mod header;
 pub mod mcp;
 pub mod messenger;
 pub mod navigation;
+pub(super) mod optimizer;
 mod pending;
 mod permissions;
 pub mod plan_source;
@@ -49,6 +50,10 @@ pub use role_rules::show as show_role_rules;
 #[path = "../../tests/native_ui_probe/workspace_actions.rs"]
 mod action_tests;
 
+#[cfg(test)]
+#[path = "../../tests/native_ui_probe/optimizer.rs"]
+mod optimizer_tests;
+
 pub(super) fn plan_configuration_available(snapshot: &Value) -> bool {
     let config = &snapshot["config"];
     config["goal"]
@@ -78,8 +83,10 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                     .size_range(300.0..=480.0)
                     .show(ui, |ui| probe.coordinator_chat.show(&language, ui))
                     .inner;
-                if let Some(chat::Event::Send(turns)) = event {
-                    probe.send_coordinator_chat(turns);
+                match event {
+                    Some(chat::Event::Send(turns)) => probe.send_coordinator_chat(turns),
+                    Some(chat::Event::NewConversation) => probe.reset_coordinator_chat(),
+                    None => {}
                 }
             }
             probe.show_sharing(ui.ctx());

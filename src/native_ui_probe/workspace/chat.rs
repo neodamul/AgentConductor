@@ -1,7 +1,12 @@
 use eframe::egui::{self, RichText};
+mod launcher;
+mod outcome;
+mod reset;
+mod send;
 
 pub enum Event {
     Send(Vec<crate::chat::Turn>),
+    NewConversation,
 }
 
 #[derive(Default)]
@@ -9,7 +14,11 @@ pub struct State {
     open: bool,
     draft: String,
     turns: Vec<crate::chat::Turn>,
+    pending_before: Option<Vec<crate::chat::Turn>>,
+    pending_turn: Option<crate::chat::Turn>,
+    uncertain_error: Option<String>,
     requesting: bool,
+    resetting: bool,
     job: Option<String>,
     error: Option<String>,
 }
@@ -20,28 +29,48 @@ impl State {
     }
 
     pub fn awaiting(&self) -> bool {
-        self.requesting || self.job.is_some()
+        self.requesting || self.uncertain_error.is_some() || self.resetting || self.job.is_some()
+    }
+
+    pub fn is_uncertain(&self) -> bool {
+        self.uncertain_error.is_some()
     }
 
     pub fn open(&mut self) {
         self.open = true;
     }
 
-    pub fn show_launcher(&mut self, language: &str, ui: &mut egui::Ui) {
-        if ui.button(text(language, "chat.open")).clicked() {
-            self.open = true;
-        }
+    pub fn reset(&mut self) {
+        self.turns.clear();
+        self.pending_before = None;
+        self.draft.clear();
+        self.pending_turn = None;
+        self.uncertain_error = None;
+        self.requesting = false;
+        self.resetting = false;
+        self.job = None;
+        self.error = None;
     }
 
     pub fn show(&mut self, language: &str, ui: &mut egui::Ui) -> Option<Event> {
+        let mut new_conversation = false;
         ui.horizontal(|ui| {
             ui.heading(text(language, "chat.title"));
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                 if ui.button(text(language, "chat.close")).clicked() {
                     self.open = false;
                 }
+                if !self.turns.is_empty()
+                    && !self.awaiting()
+                    && ui.button(text(language, "chat.new")).clicked()
+                {
+                    new_conversation = true;
+                }
             });
         });
+        if new_conversation {
+            return Some(Event::NewConversation);
+        }
         ui.separator();
         egui::ScrollArea::vertical()
             .stick_to_bottom(true)
@@ -85,17 +114,22 @@ impl State {
         if !send {
             return None;
         }
-        let question = std::mem::take(&mut self.draft);
-        self.turns.push(crate::chat::Turn {
+        let turn = crate::chat::Turn {
             role: "operator".into(),
-            text: question,
-        });
+            text: std::mem::take(&mut self.draft),
+        };
+        self.pending_before = Some(self.turns.clone());
+        self.turns.push(turn.clone());
+        self.pending_turn = Some(turn);
         self.error = None;
         self.requesting = true;
         Some(Event::Send(self.turns.clone()))
     }
 
     pub fn started(&mut self, job: String) {
+        self.pending_before = None;
+        self.pending_turn = None;
+        self.uncertain_error = None;
         self.requesting = false;
         self.job = Some(job);
         self.error = None;
@@ -109,15 +143,34 @@ impl State {
             role: "assistant".into(),
             text: answer,
         });
+        self.turns = crate::chat::recent_history(&self.turns);
         self.job = None;
         self.requesting = false;
         true
     }
 
     pub fn failed(&mut self, message: String) {
+        self.pending_before = None;
         self.job = None;
         self.requesting = false;
+        self.uncertain_error = None;
         self.error = Some(message);
+    }
+
+    pub fn rejected(&mut self, message: String) {
+        self.pending_before = None;
+        self.uncertain_error = None;
+        if let Some(turn) = self.pending_turn.take() {
+            if self
+                .turns
+                .last()
+                .is_some_and(|last| last.role == turn.role && last.text == turn.text)
+            {
+                self.turns.pop();
+            }
+            self.draft = turn.text;
+        }
+        self.failed(message);
     }
 }
 
@@ -146,45 +199,6 @@ pub fn request(
 }
 
 impl super::super::Probe {
-    pub(super) fn send_coordinator_chat(&mut self, turns: Vec<crate::chat::Turn>) {
-        let packet = self
-            .snapshot
-            .as_ref()
-            .ok_or_else(|| "Workspace revision is unavailable".to_owned())
-            .and_then(|snapshot| request(snapshot, &turns));
-        let result = packet.and_then(|packet| {
-            self.worker
-                .as_ref()
-                .ok_or_else(|| "Workspace controller is unavailable".to_owned())?
-                .send(&packet)
-        });
-        match result {
-            Ok(()) => {
-                self.pending = Some(super::super::Pending::ChatStart);
-                self.error = None;
-            }
-            Err(error) => {
-                self.coordinator_chat.failed(error);
-                self.workspace_next_refresh = None;
-            }
-        }
-    }
-
-    pub(in crate::native_ui_probe) fn refresh_coordinator_chat(&mut self) {
-        let result = self
-            .worker
-            .as_ref()
-            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(br#"{"kind":"snapshot","chat_result":true}"#));
-        match result {
-            Ok(()) => self.pending = Some(super::super::Pending::ChatRefresh),
-            Err(error) => {
-                self.coordinator_chat.failed(error);
-                self.workspace_next_refresh = None;
-            }
-        }
-    }
-
     pub(in crate::native_ui_probe) fn chat_started(&mut self, snapshot: serde_json::Value) {
         if snapshot["accepted"] == true
             && let Some(job) = snapshot["id"].as_str()
@@ -195,7 +209,7 @@ impl super::super::Probe {
             self.pending = None;
         } else {
             self.coordinator_chat
-                .failed("Coordinator chat job was not accepted".into());
+                .rejected("Coordinator chat job was not accepted".into());
             self.pending = None;
         }
     }
@@ -232,6 +246,13 @@ impl super::super::Probe {
         self.pending = None;
         self.error = None;
     }
+}
+
+pub(in crate::native_ui_probe) fn load_history(
+    probe: &mut super::Probe,
+    snapshot: &serde_json::Value,
+) {
+    probe.coordinator_chat.load_snapshot(snapshot);
 }
 
 fn text(language: &str, id: &'static str) -> &'static str {

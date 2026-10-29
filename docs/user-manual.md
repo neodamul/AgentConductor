@@ -47,7 +47,7 @@ Only saved app-owned workspace data can be removed; the project is preserved.
 Data moves to `~/.agentconductor/workspace-trash/<id>` for recovery.
 **Remove from recents** hides an entry without deleting it.
 
-Choose **Ask coordinator** on the Workspace screen to open a side chat. It reads the project and this manual with the coordinator's verified read-only CLI profile; it cannot write files or run commands. A coordinator must be registered. Chat uses the single background-operation slot shared with planning, and its conversation stays in the current window.
+Choose **Ask coordinator** on the Workspace screen to open a side chat. It reads the project and this manual with the coordinator's verified read-only CLI profile; it cannot write files or run commands. A coordinator must be registered. Chat uses the single background-operation slot shared with planning. Its latest conversation is restored when the workspace reopens; choose **New chat** to clear it.
 
 ![Workspace and goal configuration](assets/ui-workspace-current.png)
 
@@ -167,6 +167,7 @@ The coordinator is a selectable entry after tasks, showing integration steps, de
 - Reassign agents or change observed models through the task inspector; existing work/logs remain. A task that has not started yet can be changed while other tasks run; the change is queued and applied just before the task starts.
 - **Resume at** schedules an unavailable session. **Stop run**, **Resume** and **Recover** manage owned work.
 - **Brief team** summarizes assigned work, latest activity, freshness, restrictions and next actions.
+- **Optimize goal** asks the selected coordinator to rewrite the goal with the bundled Apache-2.0 `prompt-optimizer` skill. It reads the project folder without modifying it, then shows the proposed goal, changes and questions in a native review dialog. **Use optimized goal** updates the unsaved goal field; **Keep original goal** leaves it unchanged. Neither option saves workspace settings or starts planning. This action requires a saved coordinator and project folder and shares the single background-operation slot.
 - **Ask the coordinator** (the ? button in the title bar) opens a side chat on the workspace screen. Ask how to run or use what was built, where results are, or how to use the screen; the coordinator reads the project, its plans and this manual, and answers with commands for you to run. It is read-only: it never changes files or runs commands, it needs a registered coordinator, and it shares the single background-operation slot with planning.
 
 On reopening, automatic recovery checks that the interrupted run and its owned processes are quiescent before continuing unchanged work. It permits at most two attempts without new task progress. Explicitly stopped runs stay stopped, unknown ownership prevents recovery, and candidate approvals are revoked. Inspect the retained evidence if recovery cannot proceed.
@@ -383,6 +384,8 @@ one `{session_id}` argument. The engine supplies `AC_CHECKPOINT_RUN_DIR`,
 | `agentconductor io conformance <executable>` | Check ACIO description, a read-only response and invalid-input handling. |
 
 `io conformance` starts the selected executable using the current user's OS permissions. Its read-only request and temporary workspace are protocol inputs, not an OS sandbox; only run it against a CLI you trust. It does not yet check task-mode runs, cancellation timing or oversized output.
+
+Native UI request diagnostics are written to `~/.agentconductor/request-diagnostics.log` (`%USERPROFILE%\.agentconductor\request-diagnostics.log` on Windows). The JSONL log records every `chat` request and other requests that take at least one second. Each request has a `start` record (`kind`, `at_unix_ms`, `bytes`) and a `done` record (`duration_ms`, `outcome`). Request contents are never logged. The active file is limited to 256 KiB and the previous file is kept as `request-diagnostics.log.1`; log write failures do not change the request result.
 
 ## Part 3 — Validation and troubleshooting
 

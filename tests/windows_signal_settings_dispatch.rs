@@ -98,6 +98,27 @@ fn missing_signal_control_reports_the_accessibility_tree() {
 }
 
 #[test]
+fn signal_control_waits_have_deadlines_independent_of_window_startup() {
+    let source = include_str!("support/windows_signal_settings_script.rs");
+    for function in [
+        "function Wait-Name($name)",
+        "function Wait-ActionControl($name)",
+        "function Wait-Edit($name)",
+    ] {
+        let body = source
+            .split(function)
+            .nth(1)
+            .and_then(|tail| tail.split("\nfunction ").next())
+            .unwrap_or_default();
+        assert!(
+            body.contains("$controlDeadline = (Get-Date).AddSeconds")
+                && body.contains("-lt $controlDeadline"),
+            "{function} must use a fresh bounded deadline, not the window startup deadline"
+        );
+    }
+}
+
+#[test]
 fn signal_port_uses_real_keyboard_input_in_the_desktop_test() {
     let source = include_str!("support/windows_signal_settings_script.rs");
 

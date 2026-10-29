@@ -1528,7 +1528,7 @@ The footer line is deleted, not turned into a live mode display, because the wor
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
 
 ### DD-192 Ask the application instead of guessing
-A timeout says nothing about whether the job started, so the page treats the stored conversation as the truth. The request limit is not raised: any limit can be exceeded and a longer wait only delays the same blind spot. Why a reply takes more than 15 seconds is not established.
+A timeout says nothing about whether the job started, so the UI restores the latest conversation from the persisted `chat_result` pointer and its input/answer artifact pair. The input contains the bounded transcript; an answer artifact is included when present, and a running accepted job is followed after reopening. Saving workspace settings preserves the pointer; **New chat** clears it and old chat artifacts. No second conversation file is introduced. The request limit is not raised: any limit can be exceeded and a longer wait only delays the same blind spot. Why a reply takes more than 15 seconds is not established.
 Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192. GitHub #197, user, 2026-10-28.
 
 ### DD-193 Log the kind and the time, never the content
@@ -1558,3 +1558,13 @@ Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → 
 ### DD-199 Route ACIO profiles through the existing supervised worker
 An opted-in ACIO profile uses the existing scheduler-owned session, split process runner, observer/spool, task state, and human approval ledger. The worker validates structured input before spawn, sends it as the initial stdin line, requires emitted session identity to match the supervisor, and keeps resume identity only after the session is established. Tool decisions pause the worker and use the existing workspace/task/session-bound receipt; no decision never authorizes an action. Profiles without protocol ACIO retain the existing adapter path. This deliberately does not claim that the protocol is an OS sandbox or count as a packaged UI workflow.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.
+### DD-200 Quote run evidence instead of widening the chat sandbox
+The coordinator chat CLI remains read-only and does not receive broader access to run storage. Startup loads the latest report through the Rust workflow layer and serializes only bounded evidence into the normal prompt artifact; this lets chat answer questions about the work while preserving the existing project-folder permission boundary. Neutralize untrusted values and cap the diff before constructing the prompt.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### DD-201 Paint the native chat glyph with egui, keep a semantic label
+Use a small native egui painter icon rather than web SVG, emoji font glyphs, or a new bitmap asset. The button keeps the existing localized accessible name and hover text, so recognition does not depend on icon interpretation. Retain the launcher’s current placement and click behavior.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
+
+### DD-202 Keep unknown sends pending and reuse workspace snapshots
+Distinguish a transport failure from an explicit `accepted: false` response. For a transport failure, retain the local turn and wait for the existing workspace refresh path to return chat history; resolve acceptance by comparing that bounded history with the pre-send transcript and pending turn. Do not retry the send or add a second polling loop. Explicit rejection still restores the draft immediately.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.

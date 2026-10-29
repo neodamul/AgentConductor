@@ -118,6 +118,19 @@ fn checked_activation_journals_uia_and_pointer_results_before_waiting() {
 }
 
 #[test]
+fn activation_refreshes_the_app_window_before_looking_for_modal_confirmation() {
+    let source = include_str!("support/windows_tool_decision_script.rs");
+    let finder = source
+        .split("function Find-Button($name)")
+        .nth(1)
+        .and_then(|tail| tail.split("function Find-ModalButton").next())
+        .expect("button lookup must remain isolated");
+
+    assert!(finder.contains("$A::RootElement.FindAll($T::Children, $C)"));
+    assert!(finder.contains("$_.Current.ProcessId -eq $targetPid"));
+}
+
+#[test]
 fn activation_uses_a_process_checked_keyboard_fallback_before_pointer_input() {
     let source = include_str!("support/windows_tool_decision_script.rs");
     let activation = source

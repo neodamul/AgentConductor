@@ -739,3 +739,14 @@ Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → 
 ### R-187 ACIO profiles run through the supervised worker
 When an agent profile opts into protocol ACIO, the coordinator shall send the versioned structured task input over stdin, collect and validate its live JSONL events, retain the supervisor-owned session identity, and route any tool request that needs a decision through the existing human approval gate. Profiles without ACIO remain on their existing execution path.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, user, 2026-10-29.
+
+### R-188 Coordinator chat has bounded workspace and run evidence
+When the operator asks about work from coordinator chat, the prompt shall include a bounded Workspace section derived from saved workspace settings and the latest run: project folder, mode and goal; plan task IDs, assigned agents, owned paths and first prompt lines; run state and errors; task states; test exit codes; changed files; and a candidate diff capped at 12 KiB. If no run exists, the prompt shall say so. Untrusted values must not create prompt headings. The coordinator is told to use this quoted evidence because it cannot read the run folder.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### R-189 Native coordinator chat has a recognizable, accessible launcher
+The native Workspace shall show the coordinator-chat launcher as a compact chat-bubble robot icon rather than a text-only action. It shall retain a localized accessible name and hover label so the icon remains discoverable without relying on its shape alone.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
+
+### R-190 An uncertain native chat send stays pending until reconciled
+If a native chat send fails before its acceptance is known and the current conversation cannot be read, the Rust UI shall keep the message visible as pending, keep the input empty, and disable another send. A later successful workspace snapshot decides whether the controller accepted the message: follow an accepted job, or restore the text and show the original error when the conversation did not change.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.

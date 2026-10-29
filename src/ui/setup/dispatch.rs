@@ -28,7 +28,7 @@ impl Startup {
         let job = self.job(&saved)?;
         self.settle(&mut saved, &job)?;
         if matches!(&request, Request::Snapshot { .. }) {
-            return self.snapshot_state(&saved, &job, &metadata_job, &request);
+            return self.snapshot_state(&mut saved, &job, &metadata_job, &request);
         }
         if let Request::BaselineStatus {} = request {
             return self.baseline_status(&saved);
@@ -86,6 +86,8 @@ impl Startup {
             | Request::McpDiscover { revision, .. }
             | Request::McpPreview { revision, .. }
             | Request::Chat { revision, .. }
+            | Request::ChatReset { revision }
+            | Request::OptimizeGoal { revision, .. }
             | Request::McpApply { revision, .. }
             | Request::Save { revision, .. }
             | Request::Quota { revision, .. }

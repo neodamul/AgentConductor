@@ -1,3 +1,84 @@
+### Port main #241 unknown-outcome chat recovery to Rust — issue #9 / 2026-10-29
+
+- [x] Plan: trace the existing main bug fix into unique Rust architecture IDs R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202; preserve the accepted-vs-rejected contract without reusing main IDs that already describe ACIO in this branch.
+- [x] Red: add an egui regression for a transport timeout followed by accepted history and unchanged history; it first failed because unknown outcomes had no state transition.
+- [x] Task: represent unknown acceptance separately from explicit rejection, keep the send disabled, and reconcile through the existing workspace snapshot refresh.
+- [x] Local Verify: `native_workspace_chat` passes 6/6, `native_workspace_chat_reset` 2/2, and `native_chat_unknown` 1/1; warning-denied all-target Clippy, `cargo fmt --check`, `git diff --check`, and touched Rust/test ≤300-line checks pass.
+- [ ] Full-suite Verify: the full offline suite was stopped after 11+ minutes while it was still progressing; this is not a passing result.
+- [ ] Package Verify: review the exact macOS and Windows packages before counting this behavior toward native UI acceptance.
+- [ ] Complete: update the LLM Wiki, AgentMemory, issue #9 and PR #22 from exact results. Do not award packaged acceptance from state-only tests.
+
+### Reconcile issue #221 with the current Rust base — 2026-10-29
+
+- [x] Plan: bring PR #228 onto the current issue #9 head `f83c5fb1` in the existing Codex worktree; retain the issue branch and resolve the three expected conflicts in the implementation plan, wiki log, and poll dispatcher.
+- [x] Red: after the merge, `native_room_poll::only_an_open_tool_dialog_suspends_background_room_refresh` failed because a deferred receipt in snapshot data still paused polling.
+- [x] Task: make current UI modal state the sole polling gate; a deferred pending receipt no longer suspends background refresh. Route new settings states through `Pending::handled_by_settings`, keep an exhaustive poll fallback, and move refresh scheduling helpers into `room/polling.rs` to keep every Rust file under 300 lines.
+- [x] Verify locally: `source_layout` 2/2, `native_room_poll` 2/2, `native_ui_probe` 13/13, and `native_ui_tool_dialog` 4/4 pass. Warning-denied all-target Clippy, rustfmt, diff checks, and touched-file line limits pass.
+- [ ] Exact-package Verify: current-head macOS/Windows package and Windows candidate-review journey remain required before merging PR #228 or crediting #221.
+- [ ] Complete: update issue #221, PR #228, AgentMemory, and the LLM Wiki with the pushed commit; keep #221 and #9 open pending package verification.
+
+### Verify the exact Rust branch release package on both platforms — issue #9 / 2026-10-29
+
+- [x] Plan: workflow run `40839334186` completed successfully on macOS and Windows, including the Windows packaged desktop journey. Its checked-out source was ancestor `923a806b36a8672e366f0102ea840ea38c9ee963`, not the current branch source, so this is diagnostic evidence only and does not satisfy exact-head acceptance.
+- [x] Local macOS package: built and verified Rust source commit `79fdea8aad8b67de8ba89708264e00116aea33fb` (v0.1.37). Archive integrity, manifest hashes, app plist, arm64 executable, and packaged `--help` passed. Archive SHA-256: `2bcf911eeaa7cff4a5cbc8700fe9db98765b63408b08ee7696b57ecc1dd58e20`.
+- [x] Focused local source verification: 53 tests across 13 suites; warning-denied all-target Clippy, rustfmt, source-layout (300-line limit), public-doc tests, and diff check passed at the optimizer integration.
+- [ ] Exact-head Verify: run macOS and Windows validation and packaged UI journeys at current Rust branch head. Require all Windows package workflows to complete and retain exact-head artifacts/evidence.
+- [ ] Complete: update issue #9, PR #22, AgentMemory, and the LLM Wiki from exact-head results. Acceptance remains **22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate**; do not merge or release from ancestor-only Windows evidence.
+
+### Verify Windows schedule requests through controller dispatch and persistence — issue #9 / 2026-10-29
+
+- [x] Plan: exact run `40821720696` passed both platform validations and the macOS package. Windows passed the packaged Signal Settings journey, then stopped in `windows_schedule`: UIA focus/invoke were unavailable; the guarded pointer click sent input, but the driver waited only for the Schedule button to become disabled and exited before checking controller dispatch or the saved schedule.
+- [x] Red: add a source-contract regression requiring the package driver to receive the isolated run directory and accept only a disabled button or a process-owned `coordinator-ui-*` owner record; the new regression failed before implementation.
+- [x] Task: pass `AC_RUN_DIR` to the driver, recognize a dispatched controller job as an action transition, and keep the authoritative follow-up checks for the UI dispatch record and exact persisted `manual_schedule` timestamp.
+- [x] Local Verify: schedule driver contracts 7/7, source layout 2/2, native schedule/action tests 6/6, warning-denied all-target Clippy, rustfmt, diff check, and 300-line source/test limits pass. Changed Rust files are 248 lines or fewer.
+- [ ] Exact-package Verify: run both platforms again and require the Windows exact packaged schedule to dispatch to the controller and persist `2099-01-01T09:00:00+09:00` before accepting this workflow.
+- [ ] Complete: update issue #9, PR #22, AgentMemory, and the LLM Wiki from exact package results. Acceptance remains **22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate**; the failed Windows schedule journey adds no credit.
+
+### Reacquire the Windows Signal Settings window for each control — issue #9 / 2026-10-29
+
+- [x] Plan: exact run `40817071475` passed validation on both platforms and the exact macOS package. Windows stopped in `windows_signal_settings`: the driver retained the initial UI Automation window, while the `agentmemory preferred` control appeared under another live top-level window owned by the same packaged process.
+- [x] Red: add a source-contract regression requiring every Signal Settings lookup to enumerate current process-owned top-level windows and update the active window; it failed before the helper existed.
+- [x] Task: reacquire the process-owned window for each name, action, visible action, and edit lookup; use that window handle for focus and pointer input.
+- [x] Local Verify: the six focused room/window-driver/source-layout suites pass 35/35; warning-denied all-target Clippy, rustfmt, diff check, and the 300-line source/test limit pass.
+- [ ] Exact-package Verify: rerun the current source on macOS and Windows; require the Signal Settings preference to persist before proceeding to the tool-decision and stop/resume package journeys.
+- [ ] Complete: update issue #9, PR #22, AgentMemory, and the LLM Wiki after the exact package results. Acceptance remains **22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate**; this failed package adds no credit.
+
+### Keep the Windows tool-decision confirmation actionable — issue #9 / 2026-10-29
+
+- [x] Plan: exact package run `40811281029` passed macOS package execution, but Windows failed after opening `Deny this exact tool request?`; an active-run background snapshot refresh disabled both confirmation buttons and trapped the modal.
+- [x] Red: add regressions for suppressing background refresh while a pending tool receipt is awaiting the human decision and keeping Cancel available if a refresh was already in flight. The Cancel regression failed before the UI change.
+- [x] Task: stop periodic Agent Room refresh while a pending tool receipt or confirmation is open; leave Cancel enabled while unrelated work is pending.
+- [x] Local Verify: the four focused native-room suites pass 20/20; warning-denied all-target Clippy, rustfmt, diff check, and 300-line source/test limits pass. The all-target test command exposed a missing `native-ui-probe` feature gate in the new test; the gate was added and the targeted source-contract suite now passes.
+- [ ] Exact-package Verify: dispatch a fresh macOS/Windows run and require approval, rejection, persisted receipt states, and fixture effects on the exact Windows archive.
+- [ ] Complete: record exact-head package evidence in issue #9, PR #22, AgentMemory, and the LLM Wiki. Acceptance remains **22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate** until Windows passes.
+
+### Launch the native Rust Workspace from the default executable — issue #9 / 2026-10-29
+
+- [x] Plan: the packaged `agentconductor` entrypoint must open the native Workspace with no arguments; explicit CLI subcommands must keep their headless behavior.
+- [x] Red: add a source-route regression for `agentconductor`'s empty-argument path; it failed because `main.rs` sent every non-maintenance invocation to the CLI parser.
+- [x] Task: route empty arguments through the existing desktop workspace, `Room::startup`, and `ui::native::open`; preserve all non-empty CLI arguments.
+- [x] Verify: desktop routing tests 3/3, default UI entrypoint and CLI tests 6/6, native-feature binary `cargo check`, warning-denied Clippy, rustfmt, and diff check pass. Changed source/test files are below 300 lines.
+- [x] Local Rust desktop smoke: the optimized binary was assembled into a temporary `.app` and opened from its current source build. CUA found one standard window and visually verified Workspace, Agent Roles, and Plan Review; navigation did not save, generate, approve, or run a plan. The screenshot was shown in the work session and is not retained because it contains the user's workspace details.
+- [ ] Complete: run the exact Release workflow package on macOS and Windows, verify the Windows window and one-window behavior, and complete packaged UI workflows. The local `.app` is not a release archive and does not earn shipped UI acceptance by itself.
+
+### Open the last saved workspace at launch — main #226 / issue #9
+
+- [x] Plan: preserve main's first-run behavior in the Rust desktop entrypoint: reopen the last saved workspace; create the default workspace only if none remain.
+- [x] Red: add an isolated launch regression; it failed because `workspaces::launch_root` did not exist.
+- [x] Task: resolve the last saved workspace before initializing `Room`; keep explicit CLI workspace commands unchanged.
+- [x] Verify: launch regression 1/1, native-default/workspace/source-layout tests 6/6, desktop routing tests 3/3, warning-denied Clippy, rustfmt, and the 300-line source-layout check pass.
+- [ ] Complete: update issue #9, PR #22, AgentMemory, and LLM Wiki with the test and source evidence; require Windows exact-package execution before closing this parity item.
+
+### Open the manual and agent tools guide from Settings — main #184 / issue #9
+
+- [x] Plan: make the two help resources reachable from the Settings menu in the Rust desktop, as in main.
+- [x] Red: the UI regression failed because Settings had no `ToolsGuide` or `UserManual` action.
+- [x] Task: route both Settings entries to the existing native guide and manual dialogs; keep the workspace-menu shortcuts.
+- [x] Local Verify: settings help 1/1, appearance 5/5, manual 7/7, workspace menu 6/6, source layout 2/2; warning-denied Clippy and rustfmt pass. Changed source/test files are below 300 lines.
+- [x] macOS Package Verify: rebuilt and opened the optimized Rust app; CUA verified both Settings entries and opened the agent tools guide and user manual. The manual rendered in the native dialog; no guide command, copy control, or workspace action was triggered.
+- [ ] Windows Package Verify: require the exact Windows package to expose and open each dialog.
+- [ ] Complete: update issue #9, PR #22, AgentMemory, and LLM Wiki with exact-head evidence.
+
 ### Structure coordinator prompts as Document, Task, and Format — issue #9 / 2026-10-29
 
 - [x] Plan: move existing-plan and approved source evidence ahead of the planning request; keep schema as the last prompt block without changing the coordinator contract.
@@ -218,6 +299,24 @@
 - [ ] Shipped Rust replacement: verify the 25 workflows against a stable, merged/released Rust default UI; current acceptance is 0/25. Do not count source inventory or a launch smoke as replacement parity.
 - [ ] Integration: after the package gate, reconcile PR #22 with current `main` while preserving the Rust migration intent, then rerun local tests and platform package verification. Latest observed main is `0389dea` (#213/#207); PR #214 is open for ACIO phase 2 based on that main. Rust ports: #180 has draft PR #202 at `bae0001` (`mergeable=false`); #190 has draft PR #199 at `20b5522` (`mergeable=true`); both target `codex/issue-9-native-ui-parity` and are not merged. #184 and #200 have no open Rust port PR. Queue after the package gate: #180, #184, #190, #200, #205/#207; account for the existing #202/#199 work rather than treating #180/#190 as unimplemented.
 - [ ] Complete: update issue #9, evidence, LLM Wiki, and AgentMemory after each accepted workflow. Current full denominator remains **22/50 (44%)**.
+
+### Refresh the owned UI Automation tree for tool confirmation — issue #9 / 2026-10-29
+
+- [x] Plan: exact Windows package runs `40803567094` and `40805049482` passed validation and other package journeys, then failed while `Allow once` waited for `Confirm tool decision`. The final accessibility dump showed the confirmation control, so the product's human-approval gate must remain unchanged.
+- [x] Red: add `activation_refreshes_the_app_window_before_looking_for_modal_confirmation`; it failed because `Find-Button` searched only the UI Automation element captured before the confirmation dialog appeared.
+- [x] Task: refresh top-level UI Automation windows for each lookup, restrict candidates to the packaged process ID, and search each owned window for the exact accessible button. Pointer and keyboard fallbacks retain process/window ownership checks.
+- [x] Local Verify: tool-decision dispatch 13/13, source-layout 2/2, warning-denied all-target Clippy, rustfmt, and `git diff --check` pass. Changed files are 235 and 283 lines.
+- [ ] Exact-package Verify: rerun the current Rust branch's macOS/Windows release packages and require refresh, allow, and deny receipt/effect assertions.
+- [ ] Complete: retain exact-head package artifacts and update issue #9, PR #22, AgentMemory, and LLM Wiki. No acceptance credit until the packaged workflow passes; candidate remains 22/25 and shipped Rust replacement remains 0/25.
+
+### Stop, resume, and recover a packaged run — issue #9 / workflow 25 / 2026-10-29
+
+- [x] Plan: close the remaining workflow-25 gap with a package-binary journey covering stop, process cleanup, explicit resume, interrupted-run recovery, a second resume, and duplicate-output detection.
+- [x] Red: `exact_package_runs_the_stop_resume_recovery_journey` failed because the Windows package job did not include the recovery integration target.
+- [x] Task: add a bounded Rust mock-agent blocker and `tests/package_run_recovery.rs`; register it in the Windows exact-package job. The test uses only a disposable Git repository and mock CLI.
+- [x] Local Verify: the exact journey passes against the local Rust binary; the full offline suite passes 1,103 tests (15 ignored, 350 suites, 269.80s). Focused contracts pass 21 tests with 1 package-only test ignored; warning-denied all-target Clippy, rustfmt, diff checks, and the 300-line guard pass. The final candidate diff contains exactly the three owned fixture files after both resumes.
+- [ ] Exact-package Verify: run both platform validation and exact macOS/Windows package jobs on this commit. No acceptance credit until the workflow passes on the packaged binary.
+- [ ] Complete: save exact-head evidence, update issue #9, PR #22, AgentMemory and LLM Wiki. Keep candidate packaged acceptance at 22/25 and shipped Rust replacement at 0/25 until all package gates pass.
 
 ### Retain child-process evidence for packaged tool refresh failures — issue #9 / 2026-10-28
 
@@ -6255,7 +6354,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Task: report UIA no-op, checked pointer fallback, and immediate post-click expected-state result so the next package run identifies whether the click or product transition failed. Do not change product behavior without that evidence.
 - [ ] Verify: rerun the exact packaged Windows gate and retain the action journal, UIA snapshot, request receipt, and workflow report; refresh/allow/deny must all be exercised.
 - [ ] Port main #197 chat semantics: persist conversation history; distinguish accepted/unreceived sends; restore an unsent draft after failure; follow accepted late jobs; support new/reset conversation.
-- [ ] Port main #200 diagnostics: emit `diagnostics::start/done` around native Room dispatch/routing and add request-kind-specific timeout text/catalog entries.
+  - [x] Restore a rejected pre-acceptance question to the editor; verified with `native_workspace_chat` regression coverage.
+  - [x] Keep an accepted late job followed in the transcript and render its eventual answer; verified with `native_workspace_chat` regression coverage.
+  - [ ] Persist chat history and support starting/resetting a conversation.
+- [ ] Port main #200 diagnostics: emit bounded request records around native Room dispatch/routing; name request kinds in timeout feedback where a real timeout exists.
+  - [x] Red/Green: content-free JSONL logging covers all `chat` requests and requests lasting at least one second; rotate at 256 KiB; ignore logging failures. Focused tests cover filtering, fields, redaction, and rotation.
+  - [x] Verify/local: request-diagnostics, native room/chat, public-doc, and source-layout suites pass (26 tests); warning-denied Clippy, rustfmt, and `git diff --check` pass. English/Korean Markdown and offline HTML regenerated with the Rust manual renderer.
+  - [ ] Verify/package: current run `40832308285` validates an earlier source revision (`374797b0`), not these changes; require exact-head macOS/Windows package validation before credit.
+  - [ ] Timeout feedback: the native worker currently has no request deadline or timeout state. Add request-kind feedback only alongside an explicit bounded timeout/recovery design; do not label an indefinitely-running request as timed out.
 - [ ] Complete: #9 remains open; Windows package acceptance is not credited until the exact gate passes and the main-parity requirements above are implemented and verified.
 
 ### 2026-10-29 — Bounded retry for Windows briefing activation — issue #9
@@ -6288,7 +6394,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Package: run exact macOS/Windows package validation on the Rust PR head before merging it into the migration branch.
 - [x] Design: add native Rust trace R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198 and Wiki page `native-ui-poll-timeouts.md`, preserving newer main-line requirement identifiers.
 - [ ] Verify: refresh Graphify and record the current tool availability; CocoIndex is unavailable in this environment.
-- [ ] Complete: keep draft PR #228 targeting `codex/issue-9-native-ui-parity` and #221 open until exact-head platform/package CI and migration-branch integration pass.
+- [ ] Complete: keep PR #228 targeting `codex/issue-9-native-ui-parity` and #221 open until exact-head platform/package CI and migration-branch integration pass.
 
 ### Port main #225 scheduled-poll failure policy to Rust — 2026-10-28
 
@@ -6312,3 +6418,67 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify follow-up locally: poll-timeout 6/6, native UI probe/tool-dialog 17/17, source layout 2/2, warning-denied focused Clippy, rustfmt, diff check, and ≤300-line checks pass. Exact package verification remains open because run `40811697532` failed in the shared Windows candidate-review stage.
 - [ ] Exact package: push this follow-up and rerun macOS/Windows package verification on its exact head after coordinating the latest issue-9 base.
 - [ ] Complete: keep PR #228 ready/open and #221 open until exact package verification passes and the required migration-branch merge sequence is approved.
+
+### 2026-10-29 — Resume background refresh after deferring a tool request — issue #9
+
+- [x] Plan: inspect exact-head package run `40826726048` at `d82104c8`. Windows build and package execution passed; default desktop, schedule, briefing, signal settings, candidate review, and stop/resume/recovery passed. The tool-decision journey failed because the UI still exposed the previous pending request after refresh.
+- [x] Red: add a regression requiring a deferred pending request to resume background polling while an open tool modal continues to suspend polling. It failed against the old `blocks_background_refresh` behavior.
+- [x] Task: suspend background refresh only while a decision/modal is actively open. A deferred pending receipt no longer freezes the snapshot, so a newly issued request can reach the UI.
+- [x] Verify locally: 21 tests pass across `native_room_poll`, `native_ui_tool_dialog`, `windows_tool_decision_dispatch`, and `source_layout`; formatting passes. Files remain below 300 lines.
+- [ ] Verify exact Windows package: rerun all packaged UI journeys and confirm tool refresh, approval, rejection, and persisted ledger outcomes.
+- [ ] Complete: keep issue #9 open and acceptance unchanged at 22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate until exact-package verification and remaining parity work pass.
+
+### 2026-10-29 — Restore unaccepted coordinator chat submissions — issue #9 / main #197
+
+- [x] Plan: implement the outstanding #197 contract that distinguishes an unaccepted coordinator request from a job accepted by the CLI. A rejected submission must return the question to the draft and avoid showing it as sent history.
+- [x] Red: add a real egui interaction regression that submits a question and checks the draft/history after rejection; it fails because the existing state loses the draft and retains the unsent turn.
+- [x] Task: keep the just-submitted turn pending until the backend accepts a job. Restore it only for pre-acceptance/request errors; keep accepted-job failures in the conversation history.
+- [x] Verify locally: `native_workspace_chat`, `startup_chat`, and `source_layout` pass 8 tests; formatting, warning-denied all-target Clippy, and diff hygiene pass. Changed source/test files are 256, 66, and 221 lines.
+- [x] Port the DD-192 artifact-pair history contract: persist the latest chat artifact pointer, restore the transcript on initial open and after saving workspace settings, resume following a still-running accepted chat job, and clear history/artifacts through **New chat**. Red/Green covers history restoration from input+answer artifacts, settings-save preservation, reset across reopen, UI reset activation, and active-job restoration.
+- [x] Verify locally: startup/chat/reset/native-probe/localization/source-layout/public-doc suites pass 44 tests; warning-denied all-target Clippy, rustfmt, diff checks, and the 300-line limit pass.
+- [ ] Verify packaged macOS/Windows chat submission and accepted-job failure behavior in a package run that includes this commit.
+- [ ] Complete: run exact packaged macOS/Windows chat flows; then update issue #9 and acceptance only from observed package evidence.
+
+### 2026-10-29 — Keep Windows signal-settings control waits independent — issue #9
+
+- [x] Plan: inspect Windows package run `40832308285`, which checked out `374797b0`, not the current branch head. Its signal-settings step ended `MISSING_ACTION_CONTROL: Local Rust`; the final accessibility dump showed the visible control, while the sequence had exhausted its one global 40-second deadline.
+- [x] Red: add a source-contract regression requiring fresh bounded deadlines in `Wait-Name`, `Wait-ActionControl`, and `Wait-Edit`; it fails against the shared startup deadline.
+- [x] Task: give each wait its own 15-second deadline. The initial 40-second bound is now only for finding the packaged app window; settings interactions and later control lookups continue on independent bounded clocks.
+- [x] Verify locally: Windows signal-settings driver contracts and source-layout pass 17 tests; warning-denied all-target Clippy, rustfmt, and diff checks pass. Driver files are 263 and 298 lines.
+- [ ] Verify exact package: rerun Windows signal-settings and other exact-package journeys on this branch head. The previous failure is old-source evidence and does not count as a current-head result.
+- [ ] Complete: keep issue #9 acceptance at 22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 overall until current-head Windows and macOS package evidence passes.
+### 2026-10-29 — Port main #243 workspace evidence into Rust coordinator chat — issue #9
+
+- [x] Plan: trace R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200 into the Rust chat design.
+- [x] Red: add renderer and deterministic startup-to-CLI tests for workspace context; the initial compile fails because the Rust renderer and context-aware prompt API do not exist.
+- [x] Task: construct bounded workspace/run evidence in Rust at startup and pass it in the saved chat input artifact to the read-only coordinator CLI.
+- [x] Verify locally: focused chat, startup, reset, source-layout and public-doc suites pass 35 tests; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line limit pass.
+- [ ] Verify package: confirm the shipped Rust app carries real latest-run evidence through macOS and Windows packaged chat flows.
+- [ ] Complete: do not change #9 acceptance until exact package evidence passes; source-level tests are not packaged acceptance.
+### 2026-10-29 — Port main #229 coordinator chat icon to Rust — issue #9
+
+- [x] Plan: trace native launcher parity through R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201.
+- [x] Red: require an icon-sized launcher that paints a bubble/robot while retaining its localized accessible name and opening behavior; the old text button failed the size assertion.
+- [x] Task: move launcher rendering into a focused Rust module and paint the glyph with egui, preserving current layout and click handling.
+- [x] Verify locally: native chat launcher/workspace, source-layout and public-doc suites pass 20 tests; warning-denied all-target Clippy, rustfmt, diff check and 300-line limits pass.
+- [ ] Verify app: inspect the exact optimized Rust app screenshot for contrast, alignment and recognizable shape.
+- [ ] Complete: update the LLM Wiki, AgentMemory, issue #9 and PR #22. This small UI parity item does not count toward packaged workflow acceptance.
+
+### 2026-10-29 — Integrate native goal optimizer — issue #9 / main #180
+
+- [x] Plan: integrate the existing Rust-native optimizer implementation into the current #9 branch, preserving the current coordinator-chat history and reset behavior.
+- [x] Red: integration regression surfaced because the newly optional optimizer-result field lacked a serde default; the existing chat startup-context test rejected its request.
+- [x] Task: combine chat and optimizer state in workspace snapshots; keep the Room snapshot strict; use one bounded initial request for both chat history and optimizer results; preserve optimizer proposals only while their goal and repository still match.
+- [x] Verify locally: optimizer, startup, chat, package-license, source-layout and public-doc regressions pass 53 tests across 13 suites; warning-denied all-target Clippy, rustfmt and diff checks pass. A test caught and fixed the missing `optimize_result` serde default.
+- [x] Assetize the optimizer decision, request flow, traceability and verification boundary in `knowledge/wiki/native-goal-optimization.md` and AgentMemory.
+- [ ] Verify app: inspect the Rust native window and exercise a real coordinator profile; no screenshot or real coordinator request has been verified.
+- [x] Complete this source-level slice: push the integrated commits and update issue #9 with exact local verification. Packaged verification remains pending and no acceptance credit was added.
+
+### 2026-10-29 — Build exact local macOS package at Rust head 79fdea8 — issue #9
+
+- [x] Plan: verify the current pushed source head with the Rust release binary and generated offline manuals; keep UI and package acceptance separate.
+- [x] Task: build the arm64 release binary, render English and Korean HTML manuals, and create the local distribution ZIP with SBOM and dependency-license notices.
+- [x] Verify locally: exact manifest source and binary hash match; archive CRC passes for all 486 files; packaged `--help` works; app `Info.plist` lint passes. Archive SHA-256 `2bcf911eeaa7cff4a5cbc8700fe9db98765b63408b08ee7696b57ecc1dd58e20`; binary SHA-256 `862ab066bb69193127c2c745289cdf8a61c85a9894931cc13a429efae724fb7a`. Evidence: `docs/evidence/issue9-macos-local-package-79fdea8-20261029.json`.
+- [ ] Verify app: no window was launched and no screenshot or real coordinator request was captured. Reuse the current existing app/window only when safe.
+- [ ] Verify Windows: exact package test for the updated Rust head remains pending. Run `40839334186` covers ancestor `923a806b`, not this exact source head.
+- [ ] Complete/release: do not publish or increase #9 acceptance until exact macOS and Windows packaged UI journeys and remaining parity gates pass. Current tracked acceptance remains 22/25 packaged, 0/25 shipped Rust replacements, 22/50 aggregate.
