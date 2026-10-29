@@ -4,6 +4,7 @@
 - [x] Red: add a source-route regression for `agentconductor`'s empty-argument path; it failed because `main.rs` sent every non-maintenance invocation to the CLI parser.
 - [x] Task: route empty arguments through the existing desktop workspace, `Room::startup`, and `ui::native::open`; preserve all non-empty CLI arguments.
 - [x] Verify: desktop routing tests 3/3, default UI entrypoint and CLI tests 6/6, native-feature binary `cargo check`, warning-denied Clippy, rustfmt, and diff check pass. Changed source/test files are below 300 lines.
+- [x] Local release launch: `cargo build --release --locked --offline --bin agentconductor` succeeds; the default binary starts and remains in its native event loop. A stale hidden probe held the default workspace lease and was stopped before launch. macOS denied the accessibility query (`osascript` -1728), so window visibility and rendered content are not claimed.
 - [ ] Complete: run the exact default executable as a packaged desktop app on macOS and Windows; visually inspect Workspace and ensure the package launches one window. This source change alone adds no packaged UI acceptance credit.
 
 ### Structure coordinator prompts as Document, Task, and Format — issue #9 / 2026-10-29
