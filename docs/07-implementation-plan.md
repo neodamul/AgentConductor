@@ -1,3 +1,12 @@
+### Verify the exact macOS package at the pushed Rust head — issue #9 / 2026-10-29
+
+- [x] Plan: rebuild the release archive after the Rust chat fast-path commits so package evidence names the exact pushed source head `f739b4852ee06df6554ec7bf139df8f42ee90106`.
+- [x] Task: `cargo run --offline --locked --release -j 2 -- package-release` produced `dist/agentconductor-aarch64-apple-darwin-f739b4852ee0.zip`.
+- [x] Verify: ZIP integrity, package manifest/source commit, binary SHA-256, and packaged `--help` passed. The package contains 242 dependency records and the bundled bilingual manuals, screenshots, licenses, and SBOM.
+- [x] Package smoke: the exact packaged binary passed shared-folder and Git-repository runs, with and without worktree isolation. Each case ran three mock tasks and tests in parallel, refused merge before approval, then verified approved merge.
+- [ ] UI/Windows Verify: this CLI smoke is not a GUI workflow. Verify the exact package through the native UI and run the current Windows package before adding acceptance credit.
+- [x] Complete: retain the package evidence, update issue #9, AgentMemory and the LLM Wiki; packaged UI acceptance remains unchanged.
+
 ### Port main #241 unknown-outcome chat recovery to Rust — issue #9 / 2026-10-29
 
 - [x] Plan: trace the existing main bug fix into unique Rust architecture IDs R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202; preserve the accepted-vs-rejected contract without reusing main IDs that already describe ACIO in this branch.
