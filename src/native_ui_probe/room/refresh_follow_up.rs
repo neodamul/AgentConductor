@@ -7,14 +7,16 @@ const MAX_FOLLOW_UPS: u8 = 20;
 
 pub struct ToolRefreshFollowUp {
     id: String,
+    task: Option<String>,
     remaining: u8,
     next: Option<Instant>,
 }
 
 impl ToolRefreshFollowUp {
-    pub fn new(id: String) -> Self {
+    pub fn new(id: String, task: Option<String>) -> Self {
         Self {
             id,
+            task,
             remaining: MAX_FOLLOW_UPS,
             next: None,
         }
@@ -30,14 +32,23 @@ impl ToolRefreshFollowUp {
     }
 
     pub fn observe(&mut self, snapshot: &Value, now: Instant) -> bool {
-        let still_pending = snapshot["tool_requests"]
+        let requests = snapshot["tool_requests"]
             .as_array()
-            .is_some_and(|requests| {
-                requests
-                    .iter()
-                    .any(|request| request["id"] == self.id && request["status"] == "pending")
-            });
-        if !still_pending || self.remaining == 0 {
+            .map(Vec::as_slice)
+            .unwrap_or_default();
+        let replacement_pending = self.task.as_ref().is_some_and(|task| {
+            requests.iter().any(|request| {
+                request["id"] != self.id
+                    && request["status"] == "pending"
+                    && request["context"]["task"] == task.as_str()
+            })
+        });
+        let old_pending = requests
+            .iter()
+            .any(|request| request["id"] == self.id && request["status"] == "pending");
+        let replacement_in_progress =
+            snapshot["report"]["state"] == "running" && !replacement_pending;
+        if replacement_pending || !(old_pending || replacement_in_progress) || self.remaining == 0 {
             self.next = None;
             return false;
         }

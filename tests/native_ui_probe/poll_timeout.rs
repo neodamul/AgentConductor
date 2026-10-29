@@ -189,16 +189,38 @@ fn periodic_snapshot_waits_for_an_actionable_tool_receipt() {
 fn explicit_tool_refresh_rechecks_a_stale_receipt_until_replaced() {
     let id = "a".repeat(64);
     let stale = serde_json::json!({
-        "tool_requests":[{"id":id,"status":"pending"}]
+        "report":{"state":"running"},
+        "job":{"state":"running"},
+        "tool_requests":[{"id":id,"status":"pending","context":{"task":"task-1"}}]
     });
     let replaced = serde_json::json!({
-        "tool_requests":[{"id":"b".repeat(64),"status":"pending"}]
+        "report":{"state":"running"},
+        "job":{"state":"running"},
+        "tool_requests":[{"id":"b".repeat(64),"status":"pending","context":{"task":"task-1"}}]
+    });
+    let transition_gap = serde_json::json!({
+        "report":{"state":"running"},
+        "job":{"state":"running"},
+        "tool_requests":[]
+    });
+    let unrelated_request = serde_json::json!({
+        "report":{"state":"running"},
+        "job":{"state":"running"},
+        "tool_requests":[{"id":"c".repeat(64),"status":"pending","context":{"task":"task-2"}}]
     });
     let now = Instant::now();
-    let mut follow_up = crate::native_ui_probe::room::ToolRefreshFollowUp::new(id);
+    let mut follow_up =
+        crate::native_ui_probe::room::ToolRefreshFollowUp::new(id, Some("task-1".into()));
 
-    follow_up.observe(&stale, now);
+    assert!(follow_up.observe(&stale, now));
     assert!(follow_up.due(now + Duration::from_secs(1)));
-    follow_up.observe(&replaced, now + Duration::from_secs(1));
-    assert!(!follow_up.due(now + Duration::from_secs(2)));
+    assert!(
+        follow_up.observe(&transition_gap, now + Duration::from_secs(1)),
+        "refresh follow-up must survive the coordinator's receipt replacement gap"
+    );
+    assert!(follow_up.due(now + Duration::from_secs(2)));
+    assert!(follow_up.observe(&unrelated_request, now + Duration::from_secs(2)));
+    assert!(follow_up.due(now + Duration::from_secs(3)));
+    assert!(!follow_up.observe(&replaced, now + Duration::from_secs(3)));
+    assert!(!follow_up.due(now + Duration::from_secs(3)));
 }
