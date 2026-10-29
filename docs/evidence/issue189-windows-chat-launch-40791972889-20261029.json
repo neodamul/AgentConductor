@@ -1,0 +1,34 @@
+{
+  "issue": 189,
+  "pull_request": 192,
+  "date": "2026-10-29",
+  "failure_run": "40791972889",
+  "failure_head": "01971de2c94461b5044fd1369c9f27e462458239",
+  "windows_package": {
+    "result": "failed",
+    "failed_tests": [
+      "exact_windows_package_persists_chat_after_workspace_reopen",
+      "exact_windows_package_reconnects_an_in_flight_chat_after_app_close",
+      "exact_windows_package_recovers_a_late_answer_after_request_timeout"
+    ],
+    "failure": "CHAT_CONTROL_DIAGNOSTIC:NO_CHAT_EDIT",
+    "persisted_state": "empty chat_transcript, null job, null chat_result; no coordinator-ui job artifacts",
+    "other_package_tests": "passed through desktop, schedule, briefing, signal settings, and tool decision before the coordinator-chat suite"
+  },
+  "diagnosis": "The test driver found the Ask coordinator launcher (it did not report NO_CHAT_LAUNCHER) and invoked UIA Invoke, but did not verify that the UI opened or provide a guarded activation fallback. Persisted state shows the request never reached chat dispatch. This is a UIA launcher transition failure, not evidence against chat persistence or timeout handling.",
+  "tdd": {
+    "red": "chat_launcher_requires_a_verified_transition_and_process_owned_fallbacks failed because the script lacked a verified editor transition and guarded activation fallbacks",
+    "green": [
+      "cargo test --locked --offline --test windows_coordinator_chat_dispatch --test source_layout: 4 passed",
+      "cargo fmt --check: passed",
+      "cargo clippy --all-targets --locked --features test-fixtures -- -D warnings: passed",
+      "git diff --check: passed"
+    ]
+  },
+  "change": "Wait for the accessible editor after UIA Invoke; if absent, send Enter only after verifying the exact focused launcher button and process ownership. For pointer fallback, obtain GetClickablePoint from the enabled launcher, verify AutomationElement.FromPoint ancestry matches its exact RuntimeId before and after cursor positioning, then verify foreground and hit-test process ownership before SendInput. Failure diagnostics include the app window/control tree.",
+  "source_layout": {
+    "tests/support/windows_chat_script.rs": 255,
+    "tests/windows_coordinator_chat_dispatch.rs": 71
+  },
+  "next": "Rebase onto root #9 commit ba1a56236702c26f92eab6a6f51f17d3b0974ef0 after validation run 40796746962 is terminal; push and rerun exact Windows package. Do not credit acceptance until all three coordinator-chat journeys pass."
+}

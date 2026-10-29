@@ -25,6 +25,16 @@
 - [ ] Exact-package Verify: dispatch the current-head macOS/Windows workflow and require the packaged Windows candidate approval/rejection journey to pass.
 - [ ] Complete: update issue #9, PR #22, AgentMemory, LLM Wiki, and retained package evidence from the exact-head run. Packaged acceptance remains 22/50 until the full gate passes.
 
+### Recover chat-launch UI Automation after a no-op activation — issue #189 / 2026-10-29
+
+- [x] Plan: exact package run `40791972889` passed both validation jobs and macOS packaging, then Windows failed all three coordinator-chat journeys at `CHAT_CONTROL_DIAGNOSTIC:NO_CHAT_EDIT` before any chat transcript or job was persisted.
+- [x] Diagnose: the driver found `Ask coordinator` (it did not report `NO_CHAT_LAUNCHER`) and invoked it, but had no post-Invoke state check or activation fallback. The empty transcript, null job, and null chat result show the request never reached the chat dispatch path; this is a launcher/UIA transition failure, not evidence of the chat timeout fix failing.
+- [x] Red: add a dispatch-contract regression requiring a verified editor transition, exact process-owned keyboard focus, process-owned point hit test before mouse input, and failure diagnostics. It failed because the driver had no such guarded path.
+- [x] Task: after Invoke, wait briefly for the accessible chat editor; if absent, send Enter only when the focused element is the enabled app-owned launcher button. The mouse fallback now uses `GetClickablePoint`, checks `FromPoint` ancestry against the exact button RuntimeId before and after cursor movement, then verifies foreground and hit-test process ownership before `SendInput`.
+- [x] Local Verify: Windows chat dispatch and source-layout suites pass 4 tests; all-target warning-denied Clippy, rustfmt, and `git diff --check` pass. The PowerShell driver remains under 300 lines.
+- [ ] Rebase/Verify: rebase onto #9 head `69887bab` (shared signal-field readiness fix), run local checks, push, and execute a new exact macOS/Windows package workflow. Root run `40796746962` passed validation but its package jobs were cancelled during compilation.
+- [ ] Complete: record the exact package result and update issue #189/PR #192, AgentMemory, and LLM Wiki. Do not claim chat package acceptance until all three Windows journeys pass.
+
 ### Reverify PR #192 on the current #9 base — issue #189 / 2026-10-29
 
 - [x] Plan: PR #192 head `3d8070af9e28ec233eda125e231f87191e53b3b3` failed exact Windows packaging in run `40751085821` at `windows_tool_decision`; macOS package and prior Windows journeys passed.

@@ -23,3 +23,49 @@ fn exact_package_chat_test_is_wired_into_the_windows_package_gate() {
     assert!(package_test.contains("fn send_without_wait(root: &Path"));
     assert!(package_test.matches("diagnostic_state(root)").count() >= 2);
 }
+
+#[test]
+fn chat_launcher_requires_a_verified_transition_and_process_owned_fallbacks() {
+    let script = include_str!("support/windows_chat_script.rs");
+    for contract in [
+        "CHAT_LAUNCHER_INVOKE_NO_STATE_CHANGE",
+        "function WaitChatEdit",
+        "$open.SetFocus()",
+        "$focused.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID",
+        "$focused.Current.Name -eq 'Ask coordinator'",
+        "function IsExactButtonAtPoint($button, $point)",
+        "$open.GetClickablePoint()",
+        "$A::FromPoint($point)",
+        "$walker.GetParent($hit)",
+        "[ChatMouse]::Position(",
+        "[ChatMouse]::Click([uint32]$env:AC_DESKTOP_PID)",
+        "ProcessAt(x, y) != expectedPid",
+        "SendInput(1, new[] { down }, size)",
+        "CHAT_LAUNCHER_NOT_OPEN",
+    ] {
+        assert!(
+            script.contains(contract),
+            "missing chat launcher guard: {contract}"
+        );
+    }
+    let click = script
+        .split("public static string Click(uint expectedPid)")
+        .nth(1)
+        .expect("chat launcher pointer fallback must be explicit");
+    assert!(
+        click
+            .find("ProcessAt(point.X, point.Y) != expectedPid")
+            .unwrap()
+            < click.find("SendInput(1, new[] { down }, size)").unwrap()
+    );
+    let fallback = script
+        .split("$point = $open.GetClickablePoint()")
+        .nth(1)
+        .unwrap();
+    let position = fallback.find("[ChatMouse]::Position(").unwrap();
+    let second_hit_test = fallback
+        .find("} elseif (IsExactButtonAtPoint $open $point)")
+        .unwrap();
+    let click_call = fallback.find("[ChatMouse]::Click(").unwrap();
+    assert!(position < second_hit_test && second_hit_test < click_call);
+}
