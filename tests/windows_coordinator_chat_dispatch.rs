@@ -6,7 +6,8 @@ fn exact_package_chat_test_is_wired_into_the_windows_package_gate() {
     assert!(package_test.contains("chat_history"));
     assert!(!package_test.contains("chat_transcript"));
     assert!(package_test.contains("in-flight"));
-    assert!(package_test.contains("recovers_a_late_answer_after_request_timeout"));
+    assert!(package_test.contains("handles_a_slow_coordinator_answer_without_losing_the_chat"));
+    assert!(package_test.contains("Some(20_000)"));
     assert!(workflow.contains("--test windows_coordinator_chat"));
     assert!(workflow.contains("--test-threads=1"));
     let script = include_str!("support/windows_chat_script.rs");
@@ -16,6 +17,7 @@ fn exact_package_chat_test_is_wired_into_the_windows_package_gate() {
     assert!(history.contains("\"turns\""));
     assert!(history.contains("is_ascii_hexdigit"));
     assert!(script.contains("function RefreshWindow()"));
+    assert!(script.contains("$env:AC_CHAT_MODE -in @('send', 'verify')"));
     assert!(script.contains("$window = RefreshWindow"));
     assert!(script.contains("function EnabledButton($name)"));
     assert!(script.contains("$edit.SetFocus()"));

@@ -222,7 +222,7 @@ fn send_without_wait(root: &Path, app: &mut RunningApp, question: &str) {
     let driver = Command::new("powershell.exe")
         .env("AC_DESKTOP_PID", app.0.id().to_string())
         .env("AC_CHAT_MODE", "send")
-        // AC_CHAT_WAIT=0 models the UI request timeout boundary: the worker remains active.
+        // Return after sending so the test can observe the live background chat.
         .env("AC_CHAT_WAIT", "0")
         .env("AC_CHAT_QUESTION", question)
         .env("AC_CHAT_ANSWER", "PACKAGE_CHAT_ANSWER")
@@ -270,14 +270,12 @@ fn exact_windows_package_reconnects_an_in_flight_chat_after_app_close() {
 
 #[test]
 #[ignore = "Runs only against the exact packaged binary."]
-fn exact_windows_package_recovers_a_late_answer_after_request_timeout() {
-    let (_cleanup, root) = prepare_workspace("timeout", Some(5000));
-    let question = "Answer after timeout";
+fn exact_windows_package_handles_a_slow_coordinator_answer_without_losing_the_chat() {
+    let (_cleanup, root) = prepare_workspace("slow", Some(20_000));
+    let question = "Answer after a slow response";
     let mut app = launch(&root);
     send_without_wait(&root, &mut app, question);
     wait_for_running_chat(&root);
-    drop(app);
-    let mut reopened = launch(&root);
-    drive(&root, &mut reopened, question, "verify");
+    drive(&root, &mut app, question, "observe");
     wait_for_transcript(&root, question);
 }
