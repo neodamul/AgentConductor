@@ -108,7 +108,9 @@ async fn run_json_within_model(
         args
     };
     fs::create_dir(dir).map_err(|e| e.to_string())?;
-    fs::write(task_file, prompt).map_err(|e| e.to_string())?;
+    let mut prompt = prompt.to_owned();
+    fs::write(&task_file, &prompt).map_err(|e| e.to_string())?;
+    let mut asked_again = false;
     // A model "at capacity" is momentary: keep each bounded retry's logs.
     let mut retries = 0;
     loop {
@@ -148,6 +150,19 @@ async fn run_json_within_model(
                 )
                 .map_err(|e| e.to_string())?;
                 tokio::time::sleep(Duration::from_secs(30)).await;
+            }
+            Err(error)
+                if !asked_again
+                    && result.exit_code == Some(0)
+                    && !result.timed_out
+                    && !result.stopped
+                    && error.starts_with(document::NO_JSON) =>
+            {
+                asked_again = true;
+                prompt = crate::prompt_form::with_previous_reply(&prompt, &error);
+                fs::rename(dir.join("process"), dir.join("process-format-1"))
+                    .map_err(|e| e.to_string())?;
+                fs::write(&task_file, &prompt).map_err(|e| e.to_string())?;
             }
             outcome => return outcome,
         }

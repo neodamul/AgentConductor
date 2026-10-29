@@ -18,7 +18,7 @@ impl Startup {
             Request::McpSave { settings, .. } => self.save_mcp(saved, &settings),
             Request::McpDiscover { server, .. } => self.launch_mcp(saved, Some(&server)),
             Request::McpPreview { .. } => self.launch_mcp(saved, None),
-            Request::Chat { turns, .. } => self.launch_chat(saved, turns),
+            Request::Chat { text, revision } => self.dispatch_chat(saved, &revision, text),
             Request::ChatReset { .. } => self.reset_chat(saved),
             Request::OptimizeGoal { goal, .. } => self.launch_optimize(saved, goal),
             Request::McpApply {

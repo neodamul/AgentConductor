@@ -1,5 +1,13 @@
 # Current-main behavior carried into the Rust UI branch
 
+## Full local Rust test suite — issue #9 / 2026-10-29
+
+At exact branch head `355d6256d358533bfd182712ce1fa99d174b4aa4`, `cargo test --all-targets --locked --offline --features test-fixtures --no-fail-fast --quiet` exited 0 with no failures. The local run is macOS; authenticated provider and exact packaged-binary tests keep their explicit prerequisites. This does not replace the pending exact Windows package check or award packaged UI acceptance. Evidence: `docs/evidence/issue9-full-suite-355d625-20261029.json`.
+
+## Exact-current-head macOS package — issue #9 / 2026-10-29
+
+Built the optimized Apple Silicon archive from source `355d6256d358533bfd182712ce1fa99d174b4aa4`. The archive CRC passed; its manifest identifies that exact commit and a 19,456,032-byte binary, whose SHA-256 matches the embedded `SHA256SUMS`. The packaged binary's `--help` ran successfully. Bilingual HTML manuals, licenses, SBOM, and UI screenshot assets are present. Archive SHA-256: `560e138b9ce2543157caed57fedda16e73fa92000295b96e16f2f26fba2cd73e`. GUI launch and visual acceptance were not performed, so this adds no packaged UI workflow credit. Exact Windows package is still pending. Evidence: `docs/evidence/issue9-macos-package-355d625-20261029.json`.
+
 ## Verify Windows scheduled retries through controller dispatch and persistence — issue #9 / 2026-10-29
 
 Exact run `40821720696` passed both platform validation jobs and the macOS package, but the Windows package stopped in the schedule journey after UI Automation focus and invoke failed. A foreground-checked pointer click was sent, but the test driver treated the still-enabled Schedule button as proof that no action was accepted and exited before inspecting the controller owner record or persisted timestamp. The driver now receives the isolated run directory and treats either the button's disabled transition or a process-owned `coordinator-ui-*` owner record as an action transition; the package test still requires the controller dispatch record and exact persisted `manual_schedule` time. The source-contract regression was red before the change. Local verification passes: schedule driver 7/7, source layout 2/2, native schedule/action tests 6/6, warning-denied Clippy, rustfmt, diff check, and the 300-line source/test limit. Exact package rerun is pending. No acceptance credit is added; issue #9 remains **22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate**.
@@ -222,3 +230,13 @@ The already-running exact bundle for source `f23381cf` was bound without launchi
 ## Stop, resume, and recover a run — issue #9 / workflow 25 / 2026-10-29
 
 `tests/package_run_recovery.rs` exercises the Rust executable through a disposable Git repository and three mock tasks. A bounded mock blocks until the coordinator stops it; explicit resume completes the work; a simulated stale owner record then exercises recovery followed by another explicit resume. The candidate diff is asserted to contain exactly the three owned file paths, once each. The exact local binary journey passes. Full offline regression passes 1,103 tests (15 ignored across 350 suites); focused source/layout tests, formatting, and warning-denied all-target Clippy pass. The exact-package Windows and macOS run is pending; this gives no workflow acceptance credit. Evidence: `docs/evidence/issue9-package-stop-resume-recovery-20261029.json`.
+
+## Full regression and current main conflict checkpoint — issue #9 / 2026-10-29
+
+At Rust head `09fa3482daae68f5728e1610eec9b77b632cd736`, the complete command `cargo test --all-targets --locked --offline --features test-fixtures --no-fail-fast` exited successfully, including the coordinator-format-retry regression. Warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test guard pass. Authenticated live CLI tests and exact-package acceptance tests are explicitly ignored in this local run and remain separate.
+
+Against fetched `origin/main` `9a8b3258169a0e5834bc141f1bf5941660deb7a1` (merge base `e32295b3bdb0d056adb7e40ec6b04a0adb01957e`), a read-only merge-tree reports 88 conflicted paths. The branch has 1,037 Rust-only and 73 main-only commits, with 1,675 changed paths from the merge base. Conflicts span shared Rust implementation/tests and architecture documents, plus legacy JavaScript UI paths intentionally removed on Rust. PR #22 is still open, draft, and conflicting. No merge, package, or workflow acceptance is claimed. AgentMemory: `mem_mvtee8n7_19ec20ce2bae`.
+
+## Exact macOS package at current Rust head — issue #9 / 2026-10-29
+
+Built `87239f6a68e5b7e4ccc3efc8c0efffc5d11b1407` with `cargo run --release --locked --offline -- package-release`. The package manifest names that exact source commit and its binary SHA matches the extracted executable; `unzip -t` validates the complete archive, and the packaged executable's `--help` exits successfully. Archive SHA-256: `f2200d0db44d6e926505ef0ce806cc936d4bb65644863fee00194d688d03dcc4`; binary SHA-256: `081136f7ab226b91373ee196150b0923f86e11ad210db603eb7c51103566888b`. Evidence: `docs/evidence/issue9-macos-package-87239f6-20261029.json`. No GUI launch or screenshot was captured; Windows exact-package verification and all acceptance credit remain pending.

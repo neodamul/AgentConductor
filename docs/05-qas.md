@@ -768,3 +768,7 @@ Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201.
 ### QAS-188 A native chat message appears in only one place after a timeout
 Given a chat send whose outcome is unknown, the message stays in the conversation, the input stays empty, and sending remains disabled. When stored history contains the message, the matching job is followed and the answer appears once. When stored history does not contain it, the pending turn is removed, the input receives the text once, and the original error is shown.
 Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.
+
+### QAS-184 Prompt blocks appear once, in order
+Given untrusted evidence containing a `# Format` line, the reviewer prompt has exactly one Document, one Task and one Format block in that order, and the evidence stays inside Document. The worker prompt keeps its `Owned paths:` and `Task:` lines and its rules in Task. A coordinator that first prints text without the requested JSON and then a valid object succeeds on the second attempt and the second prompt names the first error; two bad replies fail after exactly two runs.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.

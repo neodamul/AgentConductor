@@ -1,6 +1,18 @@
-# [2026-10-29] audit | ACIO worker integration gap — issue #9 / FR-171
+# [2026-10-29] verify | Full local Rust test suite — issue #9
 
-Graphify `explain` and source inspection confirmed that the new ACIO runtime is not wired into real task execution: `src/workflow/execution/worker.rs` still passes the assembled prompt to `process::run_until` and decodes the output after exit. A profile marked `protocol: acio` would therefore not receive an `acio.input/1` document and could not use its live control channel. Added the remaining plan checklist and documented the required TDD path: structured task input, persisted event/session behavior, cancellation/process ownership, and decision-required tools routed through the human approval ledger with no auto-allow. No implementation or UI acceptance is claimed in this audit. CocoIndex CLI is unavailable in the current environment. AgentMemory: `mem_mvseb26m_e3cae6f00030`.
+At source `355d6256d358533bfd182712ce1fa99d174b4aa4`, the complete locked/offline all-target test command exited 0 with no failures. Authenticated provider and exact packaged-binary tests remain gated by their declared prerequisites. Exact Windows package and three remaining packaged UI workflows are still pending. Evidence: `docs/evidence/issue9-full-suite-355d625-20261029.json`.
+
+# [2026-10-29] verify | Exact-current-head macOS package — issue #9
+
+Built the optimized Apple Silicon package from source `355d6256d358533bfd182712ce1fa99d174b4aa4`. Manifest, binary checksum, archive CRC, packaged help, bilingual manuals, license records, SBOM, and screenshot assets were verified. Archive SHA-256: `560e138b9ce2543157caed57fedda16e73fa92000295b96e16f2f26fba2cd73e`. GUI acceptance was not run and the package earns no workflow acceptance. Windows package and the full-suite exit code remain pending. Evidence: `docs/evidence/issue9-macos-package-355d625-20261029.json`.
+
+# [2026-10-29] verify | Exact macOS package for coordinator chat recovery — issue #9
+
+Built the optimized package locally from clean source `f83c5fb15fb088eebd2d622357d719c074da4572` with `cargo run --release --locked -- package-release`. The Apple Silicon archive manifest matches the source commit, its embedded binary SHA-256 matches `SHA256SUMS`, and the package contains English/Korean HTML manuals, license records, and SBOM. Archive SHA-256: `ba37d5215b584b0a776c2942045796dc3918a5b6b6e82b82d487c268e8997423`. `docs/07-implementation-plan.md` records evidence. Windows package recovery, full-suite verification, and #9 completion remain open. Graphify/CocoIndex status was not re-run for this package-only check.
+
+# [2026-10-29] superseded audit | ACIO worker integration — issue #9 / FR-179
+
+The earlier audit claiming the ACIO runtime was disconnected was stale and incorrect for the current branch. `src/workflow/execution/worker.rs` sends `acio.input/1` and routes opted-in profiles through `worker::acio::run`; `tests/acio_worker.rs` verifies structured input, session ownership, live events, human approval, and rejection of mismatched sessions. Plan section “Route opted-in ACIO profiles through the live worker” records the prior 1,083-test full-suite evidence and completion commit `447afce112c44e37e2de0fbacb8ebb6bc73eb0fc`. This correction adds no new implementation or package acceptance. Graphify was refreshed on 2026-10-29; CocoIndex CLI is unavailable in this environment.
 
 # [2026-10-29] plan/task/verify | Add Rust ACIO runtime and CLI conformance — issue #9
 
@@ -1776,3 +1788,10 @@ Built the exact arm64 package from `79fdea8a` with the offline bilingual manuals
 ## 2026-10-29 — Reconcile issue #221 with current Rust base
 
 Updated the existing Rust issue branch to current #9 commit `f83c5fb1` in the designated worktree. Merge exposed a deferred-receipt polling regression: background refresh remained paused from snapshot state after the operator had deferred the decision. The regression failed before removing that stale snapshot check and passes when only live confirmation/modal state gates polling. The split poll receiver now routes all settings-owned pending states through the current `handled_by_settings` predicate; Room refresh helpers moved to `room/polling.rs` to meet the 300-line source limit. Local verification passes: source layout 2/2, native room poll 2/2, native probe 13/13, tool dialog 4/4, warning-denied all-target Clippy, rustfmt, and diff hygiene. The old CI's 317-line `room.rs` failure was from the stale merge base; the current merged file is 256 lines. Exact macOS/Windows package verification and PR #228 merge remain open.
+## 2026-10-29 — Coordinator format correction retry — GitHub #235 / issue #9
+
+Ported the bounded JSON-format correction behavior with a deterministic local CLI. The first malformed response is preserved in `process-format-1`; exactly one retry includes the parse reason, and a second malformed response fails after exactly two process runs. Timeout, stop, capacity, and provider-error handling remain on existing paths. Focused tests pass 28/28 across seven targets; `cargo fmt --check`, `git diff --check`, and warning-denied all-target Clippy pass. The full locked/offline all-target suite also exits successfully at `09fa3482`; exact package checks remain open and are not credited by this unit. AgentMemory: `mem_mvte7n6u_cb7a6e81ae87`.
+
+## 2026-10-29 — Exact macOS package at Rust head 87239f6 — issue #9
+
+Built `87239f6a68e5b7e4ccc3efc8c0efffc5d11b1407` with the offline Rust release package command. The manifest source SHA and binary SHA match; full ZIP CRC and packaged `--help` pass. Archive SHA-256 `f2200d0db44d6e926505ef0ce806cc936d4bb65644863fee00194d688d03dcc4`; binary SHA-256 `081136f7ab226b91373ee196150b0923f86e11ad210db603eb7c51103566888b`. Evidence: `docs/evidence/issue9-macos-package-87239f6-20261029.json`. No GUI launch/screenshot, Windows package, or UI acceptance credit. AgentMemory: `mem_mvtf3c2h_1057064c096e`.

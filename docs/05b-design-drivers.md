@@ -176,3 +176,6 @@ The native worker has no request deadline, so a second timeout mechanism would c
 
 ### Driver DDR-41 Reuse the process supervisor and approval ledger for ACIO
 The existing worker owns child lifetime, output capture, persistence, and workspace scope; the existing tool ledger owns exact human decisions. Route opted-in ACIO input/events through those paths instead of adding a second runner, event store, or authorization mechanism. Trace: R-187, QAS-185.
+
+### Driver DDR-42 Keep prompt correction bounded and CLI-independent
+Build the requested answer shape in the orchestrator and allow at most one correction attempt when the process succeeds but its output lacks the requested JSON document. Preserve the first attempt's logs, include only the bounded parse reason in the retry prompt, and leave timeout, stop, capacity and provider-error behavior on their existing paths. Do not require CLI changes or add a protocol for prompt correction. Trace: QAS-184.

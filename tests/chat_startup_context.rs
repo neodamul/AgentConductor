@@ -47,7 +47,7 @@ echo '{"type":"result","is_error":false,"result":"{\"answer\":\"Run cargo test\"
         &startup,
         json!({
             "kind":"chat",
-            "turns":[{"role":"operator","text":"What was built?"}]
+            "text":"What was built?"
         }),
     );
 
@@ -67,6 +67,51 @@ echo '{"type":"result","is_error":false,"result":"{\"answer\":\"Run cargo test\"
     assert!(prompt.contains("Build the ladder game"), "{prompt}");
     assert!(prompt.contains(project.to_str().unwrap()), "{prompt}");
     assert!(prompt.contains("No run has started yet"), "{prompt}");
+
+    let history = startup
+        .dispatch(br#"{"kind":"snapshot","chat_history":true,"chat_result":true}"#)
+        .unwrap();
+    assert_eq!(
+        history["chat_history"],
+        json!([
+            {"role":"operator","text":"What was built?"},
+            {"role":"assistant","text":"Run cargo test"}
+        ])
+    );
+    drop(startup);
+
+    let startup = Startup::open(&desktop, Path::new(env!("CARGO_BIN_EXE_agentconductor"))).unwrap();
+    let restored = startup
+        .dispatch(br#"{"kind":"snapshot","chat_history":true}"#)
+        .unwrap();
+    assert_eq!(restored["chat_history"], history["chat_history"]);
+    startup
+        .dispatch(
+            json!({
+                "kind":"chat",
+                "revision":restored["chat_revision"],
+                "text":"What should I do next?"
+            })
+            .to_string()
+            .as_bytes(),
+        )
+        .unwrap();
+
+    let deadline = std::time::Instant::now() + Duration::from_secs(15);
+    loop {
+        let result = startup
+            .dispatch(br#"{"kind":"snapshot","chat_result":true}"#)
+            .unwrap();
+        if result["chat"]["answer"] == "Run cargo test" {
+            break;
+        }
+        assert!(std::time::Instant::now() < deadline, "{result}");
+        std::thread::sleep(Duration::from_millis(50));
+    }
+    let prompt = std::fs::read_to_string(root.join("prompt.seen")).unwrap();
+    assert!(prompt.contains("What was built?"), "{prompt}");
+    assert!(prompt.contains("Run cargo test"), "{prompt}");
+    assert!(prompt.contains("What should I do next?"), "{prompt}");
     drop(startup);
     std::fs::remove_dir_all(root).unwrap();
 }

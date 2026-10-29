@@ -6,8 +6,9 @@ use std::{path::Path, time::Duration};
 
 const MANUAL: &str = include_str!("../docs/user-manual.md");
 const MAX_TURN_BYTES: usize = 8 * 1024;
-const MAX_TURNS: usize = 12;
+const MAX_TURNS: usize = 40;
 const MAX_ANSWER_BYTES: usize = 32 * 1024;
+const CLIPPED_TURN: &str = "\n[Earlier turn clipped]";
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Turn {
@@ -17,6 +18,13 @@ pub struct Turn {
 
 pub fn recent_history(turns: &[Turn]) -> Vec<Turn> {
     turns[turns.len().saturating_sub(MAX_TURNS)..].to_vec()
+}
+
+pub fn validate_question(text: &str) -> Result<(), String> {
+    if text.trim().is_empty() || text.len() > MAX_TURN_BYTES {
+        return Err("the latest question needs 1..8192 bytes of text".into());
+    }
+    Ok(())
 }
 
 pub fn build_prompt(turns: &[Turn], language: &str) -> Result<String, String> {
@@ -29,20 +37,25 @@ pub fn build_prompt_in(turns: &[Turn], language: &str, workspace: &str) -> Resul
     if last.role != "operator" {
         return Err("the conversation must end with an operator question".into());
     }
-    if turns.iter().any(|turn| {
-        !matches!(turn.role.as_str(), "operator" | "assistant")
-            || turn.text.trim().is_empty()
-            || turn.text.len() > MAX_TURN_BYTES
-    }) {
-        return Err(
-            "each turn needs an operator or assistant role and 1..8192 bytes of text".into(),
-        );
+    validate_question(&last.text)?;
+    for turn in turns {
+        let limit = match turn.role.as_str() {
+            "operator" => MAX_TURN_BYTES,
+            "assistant" => MAX_ANSWER_BYTES,
+            _ => return Err("each turn needs an operator or assistant role".into()),
+        };
+        if turn.text.trim().is_empty() || turn.text.len() > limit {
+            return Err(format!(
+                "each {} turn needs 1..{limit} bytes of text",
+                turn.role
+            ));
+        }
     }
     let mut start = turns.len().saturating_sub(MAX_TURNS);
     loop {
         let conversation: String = turns[start..turns.len() - 1]
             .iter()
-            .map(|turn| format!("{}: {}\n\n", turn.role, turn.text.trim()))
+            .map(|turn| format!("{}: {}\n\n", turn.role, clip_earlier_turn(&turn.text)))
             .collect();
         let conversation = if conversation.is_empty() {
             "(none)\n\n".to_string()
@@ -76,6 +89,19 @@ Answer the last operator message:\n\n{}\n\n\
             );
         }
         start += 1;
+    }
+}
+
+fn clip_earlier_turn(text: &str) -> String {
+    let max = MAX_TURN_BYTES - CLIPPED_TURN.len();
+    let mut end = text.len().min(max);
+    while !text.is_char_boundary(end) {
+        end -= 1;
+    }
+    if end == text.len() {
+        text.to_owned()
+    } else {
+        format!("{}{CLIPPED_TURN}", &text[..end])
     }
 }
 

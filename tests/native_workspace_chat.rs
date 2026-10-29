@@ -100,9 +100,12 @@ fn a_late_accepted_chat_job_keeps_the_question_and_eventually_shows_its_answer()
         .unwrap()
         .nodes
         .iter()
-        .any(|(_, node)| node.label() == Some(question) || node.value() == Some(question))
+        .any(|(_, node)| {
+            node.label().is_some_and(|label| label.contains(question))
+                || node.value().is_some_and(|value| value.contains(question))
+        })
         || output.shapes.iter().any(|shape| {
-            matches!(&shape.shape, egui::Shape::Text(text) if text.galley.job.text == question)
+            matches!(&shape.shape, egui::Shape::Text(text) if text.galley.job.text.contains(question))
         });
     clear(&mut output);
     assert!(
@@ -120,9 +123,12 @@ fn a_late_accepted_chat_job_keeps_the_question_and_eventually_shows_its_answer()
             .unwrap()
             .nodes
             .iter()
-            .any(|(_, node)| node.label() == Some(text) || node.value() == Some(text))
+            .any(|(_, node)| {
+                node.label().is_some_and(|label| label.contains(text))
+                    || node.value().is_some_and(|value| value.contains(text))
+            })
             || output.shapes.iter().any(|shape| {
-                matches!(&shape.shape, egui::Shape::Text(item) if item.galley.job.text == text)
+                matches!(&shape.shape, egui::Shape::Text(item) if item.galley.job.text.contains(text))
             })
     };
     let question_visible = rendered(question);
@@ -166,22 +172,35 @@ fn coordinator_panel_controls_have_korean_labels() {
 }
 
 #[test]
-fn large_conversations_fit_the_explicit_chat_request_bound() {
-    let turns = (0..12)
-        .map(|index| agentconductor::chat::Turn {
-            role: if index == 11 { "operator" } else { "assistant" }.into(),
-            text: "x".repeat(8 * 1024),
-        })
-        .collect::<Vec<_>>();
+fn chat_request_contains_only_the_new_question() {
+    let turns = [
+        agentconductor::chat::Turn {
+            role: "operator".into(),
+            text: "earlier question".into(),
+        },
+        agentconductor::chat::Turn {
+            role: "assistant".into(),
+            text: "earlier answer".into(),
+        },
+        agentconductor::chat::Turn {
+            role: "operator".into(),
+            text: "latest question".into(),
+        },
+    ];
     let packet = chat::request(
-        &serde_json::json!({"revision":"rev-1","language":"en"}),
+        &serde_json::json!({
+            "revision":"head-bound-revision",
+            "chat_revision":"chat-fast-revision",
+            "language":"en"
+        }),
         &turns,
     )
     .unwrap();
-    assert!(packet.len() <= 128 * 1024);
     let value: serde_json::Value = serde_json::from_slice(&packet).unwrap();
     assert_eq!(value["kind"], "chat");
-    assert_eq!(value["turns"].as_array().unwrap().len(), 12);
+    assert_eq!(value["revision"], "chat-fast-revision");
+    assert_eq!(value["text"], "latest question");
+    assert!(value.get("turns").is_none());
 }
 
 fn frame(context: &egui::Context, state: &mut State, events: Vec<Event>) -> egui::FullOutput {

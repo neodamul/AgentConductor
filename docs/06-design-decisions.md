@@ -1528,7 +1528,7 @@ The footer line is deleted, not turned into a live mode display, because the wor
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
 
 ### DD-192 Ask the application instead of guessing
-A timeout says nothing about whether the job started, so the UI restores the latest conversation from the persisted `chat_result` pointer and its input/answer artifact pair. The input contains the bounded transcript; an answer artifact is included when present, and a running accepted job is followed after reopening. Saving workspace settings preserves the pointer; **New chat** clears it and old chat artifacts. No second conversation file is introduced. The request limit is not raised: any limit can be exceeded and a longer wait only delays the same blind spot. Why a reply takes more than 15 seconds is not established.
+A timeout says nothing about whether the job started, so the UI restores the latest conversation from the persisted `chat_result` pointer and its input/answer artifact pair. The input contains the bounded transcript; an answer artifact is included when present, and a running accepted job is followed after reopening. Saving workspace settings preserves the pointer; **New chat** clears it and old chat artifacts. No second conversation file is introduced. The request limit is not raised: any limit can be exceeded and a longer wait only delays the same blind spot. The native chat panel reads `chat_revision` from the workspace snapshot; chat dispatch validates a digest over saved workspace context and the reviewed plan artifact, omitting Git HEAD so a read-only question does not trigger another slow repository lookup. Mutations keep the full revision including HEAD. Why a reply takes more than 15 seconds is not established.
 Trace: R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192. GitHub #197, user, 2026-10-28.
 
 ### DD-193 Log the kind and the time, never the content
@@ -1568,3 +1568,7 @@ Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201.
 ### DD-202 Keep unknown sends pending and reuse workspace snapshots
 Distinguish a transport failure from an explicit `accepted: false` response. For a transport failure, retain the local turn and wait for the existing workspace refresh path to return chat history; resolve acceptance by comparing that bounded history with the pre-send transcript and pending turn. Do not retry the send or add a second polling loop. Explicit rejection still restores the draft immediately.
 Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.
+
+### DD-198 One prompt builder, one correction retry
+Layout is code-owned and CLI-independent: `src/prompt_form.rs` assembles Document, Task and Format blocks for the applicable coordinator, reviewer and worker prompts. When a successful coordinator process returns no usable JSON for the requested field, make exactly one additional run with the bounded parse reason inserted before Format; keep the original process logs separately. Do not retry timeouts, stops, provider errors or capacity failures through this path, and do not require an agent CLI to implement a new protocol.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.

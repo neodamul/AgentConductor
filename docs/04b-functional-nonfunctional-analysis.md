@@ -701,3 +701,7 @@ Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201.
 ### FR-182 Reconcile an unknown native chat outcome
 On a transport error during `ChatStart`, retain the pending operator turn and its original error while the chat awaits a readable workspace snapshot. If the stored conversation contains the new turn, replace local history and follow the matching chat job. Otherwise remove the unaccepted turn, restore its text to the input, and show the original error. A later snapshot, not a guessed timeout, resolves the state.
 Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.
+
+### FR-178 Prompt assembly and reply check
+`prompt_form::assemble(document, task, format)` returns the three blocks in order; heading lines inside the document that look like a block heading are neutralized so untrusted evidence cannot add a block. `prompt_form::review` and `prompt_form::worker_task` build the reviewer and worker prompts while retaining task ownership rules. `coordinator::run_json_within` reruns the agent once, adding the parse error to the prompt, when the reply has no usable JSON for the requested field; capacity retries are unchanged.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
