@@ -13,6 +13,7 @@ pub mod coordinator;
 pub mod custom_profile_registry;
 pub mod gates;
 pub mod git;
+pub mod git_head;
 pub mod guard;
 pub mod icons;
 pub mod knowledge;

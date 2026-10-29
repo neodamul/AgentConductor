@@ -762,3 +762,7 @@ Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202.
 ### UC-177 A reviewer or worker is asked in the standard form
 The operator runs a plan with an agent CLI that only reads a prompt and prints text. The worker receives the task, its rules and its evidence as Document, Task and Format; the reviewer receives the frozen evidence as Document, its instructions as Task and the JSON verdict shape as Format. A reviewer reply that is not valid JSON is asked for again once with the parse error, then reported.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### UC-184 Check a repository revision without waiting for Git
+An operator opens a workspace or confirms an action while repository state is being checked. For standard `.git` layouts, the native UI reads HEAD from metadata files. For linked worktrees or unsupported layouts, the request receives the last cached or pending revision immediately, while one background worker runs Git. Repeated checks coalesce; a slow Git process cannot block the view or unrelated controls.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.

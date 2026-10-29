@@ -754,3 +754,7 @@ Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202.
 ### R-186 Every agent prompt has one standard form and its reply is checked
 The application shall send every prompt to an agent (coordinator, planner, reviewer, worker) as `# Document`, `# Task` and `# Format` blocks, each once and in that order, and shall check a coordinator reply against the requested JSON shape. No agent CLI, including an in-house one, has to be changed or shown to the application for this. A reply that is not in the requested shape is asked for once more with the reason before the call fails.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### R-193 Routine repository revision reads never spawn Git
+The native UI shall resolve common repository HEAD layouts from Git metadata files when computing routine state revisions, without spawning Git to answer a snapshot or revision request. Linked worktrees and unsupported metadata layouts shall return immediately from a cached result and refresh through at most one background Git process per repository; retries are coalesced and rate-limited. A slow or unavailable Git fallback shall not block rendering, event delivery, or unrelated actions.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.

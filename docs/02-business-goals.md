@@ -587,3 +587,7 @@ Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202.
 ### BG-141 Fewer errors from the way agents are asked
 Agents that cannot be modified still answer predictably because the application, not the CLI, fixes the prompt layout and the reply shape.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### BG-148 Keep repository revision checks responsive
+Repository metadata lookups must not hold up native input, state events, or unrelated work, including when the repository uses an unusual Git layout.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.

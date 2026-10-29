@@ -1,3 +1,7 @@
+# [2026-10-30] plan/task/verify | Keep repository revision checks off the Git subprocess path — issue #9
+
+Added the Rust port of main #234's Git HEAD fast path. A deterministic proposal snapshot test first failed when PATH hid Git, then passed after common HEAD layouts switched to metadata reads and unsupported layouts gained a single-flight background refresh. Focused regression/layout tests pass 7/7; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test audit pass. The full all-target run was interrupted after 848 passed / 15 ignored across 252 suites with no failures, so no full-suite pass is claimed. Graphify refreshed to 11,889 nodes / 19,466 edges; CocoIndex CLI is unavailable. Exact-package responsiveness remains pending. Trace: R-193 through DD-205. See `git-head-fast-path.md` and the implementation checklist in `docs/07-implementation-plan.md`.
+
 # [2026-10-29] verify | Full local Rust test suite — issue #9
 
 At source `355d6256d358533bfd182712ce1fa99d174b4aa4`, the complete locked/offline all-target test command exited 0 with no failures. Authenticated provider and exact packaged-binary tests remain gated by their declared prerequisites. Exact Windows package and three remaining packaged UI workflows are still pending. Evidence: `docs/evidence/issue9-full-suite-355d625-20261029.json`.

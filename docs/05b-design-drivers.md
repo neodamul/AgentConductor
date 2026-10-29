@@ -179,3 +179,6 @@ The existing worker owns child lifetime, output capture, persistence, and worksp
 
 ### Driver DDR-42 Keep prompt correction bounded and CLI-independent
 Build the requested answer shape in the orchestrator and allow at most one correction attempt when the process succeeds but its output lacks the requested JSON document. Preserve the first attempt's logs, include only the bounded parse reason in the retry prompt, and leave timeout, stop, capacity and provider-error behavior on their existing paths. Do not require CLI changes or add a protocol for prompt correction. Trace: QAS-184.
+
+### Driver DDR-45 Use metadata first, process fallback off-path
+Common Git HEAD layouts are directly readable, so spawning Git on every revision check adds latency and contention without adding information. Linked worktrees and unsupported layouts still require Git; a single-flight background fallback preserves compatibility without blocking request or render paths. Trace: R-193 → QAS-191.

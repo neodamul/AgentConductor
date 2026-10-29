@@ -705,3 +705,11 @@ Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202.
 ### FR-178 Prompt assembly and reply check
 `prompt_form::assemble(document, task, format)` returns the three blocks in order; heading lines inside the document that look like a block heading are neutralized so untrusted evidence cannot add a block. `prompt_form::review` and `prompt_form::worker_task` build the reviewer and worker prompts while retaining task ownership rules. `coordinator::run_json_within` reruns the agent once, adding the parse error to the prompt, when the reply has no usable JSON for the requested field; capacity retries are unchanged.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### FR-185 Resolve repository HEAD without request-time subprocesses
+For a standard Git directory, derive HEAD from detached, loose-ref, or packed-ref metadata. For a linked worktree or unsupported layout, return a cached or pending answer immediately and schedule one background Git refresh per repository. Coalesce concurrent refresh requests and retry failed or stale answers after the bounded refresh interval.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
+
+### NFR-80 Routine Git revision fallback cannot block native requests
+No routine revision request or render callback may wait for a Git process. The unsupported-layout fallback may use one short-lived worker per active repository; repeated lookups must not create additional processes until the fallback entry becomes stale. File reads on the common metadata path remain bounded to the repository's HEAD, relevant ref, and packed-ref files. Explicit repository mutations retain their existing serialized, revision-checked validation.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.

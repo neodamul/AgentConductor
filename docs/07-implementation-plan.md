@@ -6539,3 +6539,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: update the reset regression to expect the terminal marker; the test file passes 2/2. Warning-denied all-target Clippy and `cargo fmt --check` pass. A local parallel all-target attempt exposed two timing-sensitive unit tests that pass individually; a serial run passed 331 tests across 77 suites, then stalled in `io_conformance` and was stopped. This is not recorded as a full-suite pass.
 - [x] Exact package: corrected head `3d6fd707` passed exact run `40885718536` on macOS and Windows, including native release packaging and packaged Windows default-desktop UI checks.
 - [x] Complete: squash-merge PR #228 into `codex/issue-9-native-ui-parity` as `f833e522`; close issue #221. The full local all-target test remains unclaimed because the serial run stalled in `io_conformance` after 331 passes / 3 ignored across 77 suites.
+
+### 2026-10-30 — Keep routine repository revision checks off the Git subprocess path — issue #9 / port #234
+
+- [x] Plan: add R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205; keep unsupported layouts compatible and preserve serialized mutation/revision guards.
+- [x] Red: `snapshot_with_a_proposal_succeeds_when_git_is_not_reachable` failed when PATH hid Git, proving snapshot revision still spawned a process.
+- [x] Task: read detached, loose-ref and packed-ref HEAD directly; return a cached/pending state for linked worktrees and coalesce background Git refresh; use the resolver in native state revision checks.
+- [x] Verify affected targets: `source_layout`, `git_head`, and `snapshot_without_git` pass 7/7; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the 300-line source/test audit pass. Graphify refreshed to 11,889 nodes / 19,466 edges and confirms `revision` and `chat_revision` call `state_revision`; CocoIndex CLI unavailable.
+- [ ] Full all-target test: interrupted after 848 passed and 15 ignored across 252 suites / 138.97 seconds of test execution; no failures had occurred, but this is not a complete pass.
+- [ ] Verify exact packaged macOS and Windows UI behavior; source tests do not prove package responsiveness.
+- [ ] Complete: update #9 and its linked PR after review; do not count this port as shipped Rust UI parity or close #9.

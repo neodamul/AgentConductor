@@ -689,3 +689,7 @@ Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202.
 ### SF-174 Standard prompt form and bounded format retry
 One shared builder assembles Document, Task and Format; the reviewer and worker prompts use it. The coordinator JSON call retries once when the reply cannot be read as the requested JSON.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### SF-181 Non-blocking repository HEAD resolution
+Read loose, packed, and detached HEAD values from local Git metadata. When a linked worktree or unsupported layout requires Git, return a cached/pending revision immediately and perform a coalesced background refresh. Keep routine revision and render paths free of Git subprocesses.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
