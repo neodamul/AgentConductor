@@ -17,6 +17,7 @@ Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184/NFR-79 → QAS-190 → 
 - Successful native UI dispatches publish an invalidation; the matching view listens on its bounded receiver and asks the existing independent poll worker for one background snapshot.
 - The serialized foreground lane is now two bounded worker lanes. TDD proved a slow request on one lane does not delay a quick request on the other.
 - A UI child-job terminal transition publishes an event when the controller observes process exit. The event wakes the view to read the committed state.
+- When an invalidation arrives during a background snapshot, the view drops that in-flight result and queues one fresh snapshot. This prevents a pre-mutation read from briefly overwriting newer view state.
 - Workflow/agent progress written by an external child process still depends on the existing periodic recovery snapshots. The independent backoff observer and producer-side progress events are not implemented; this slice is not a complete event-driven replacement for polling.
 - Local CocoIndex CLI and Python module are unavailable in the current environment (`python3 -c 'import cocoindex'` fails with `ModuleNotFoundError`). Graphify was refreshed and used to trace the worker/snapshot path. Do not claim CocoIndex execution.
 - Enhancement #257 is open. The package acceptance boundary remains macOS and Windows exact-build UI journeys.

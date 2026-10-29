@@ -11,6 +11,10 @@ fn take_poll_pending(
     }
 }
 
+fn poll_reply_invalidated(event_arrived_during_poll: bool) -> bool {
+    event_arrived_during_poll
+}
+
 #[cfg(test)]
 #[path = "../../../tests/native_ui_probe/poll_background_reply.rs"]
 mod tests;
@@ -26,6 +30,15 @@ impl Probe {
             .map(|worker| worker.poll_replies.try_recv());
         match reply {
             Some(Ok(reply)) => {
+                let invalidated = self
+                    .worker
+                    .as_ref()
+                    .is_some_and(|worker| worker.events.try_recv().is_ok());
+                if poll_reply_invalidated(invalidated) {
+                    self.poll_pending = None;
+                    self.refresh_background();
+                    return;
+                }
                 let Some(pending) = take_poll_pending(self.pending, &mut self.poll_pending) else {
                     return;
                 };

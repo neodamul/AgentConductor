@@ -13,3 +13,9 @@ fn poll_reply_stays_pending_until_foreground_operation_finishes() {
     ));
     assert!(poll.is_none());
 }
+
+#[test]
+fn poll_reply_is_stale_when_a_state_event_arrived_while_it_was_running() {
+    assert!(super::poll_reply_invalidated(true));
+    assert!(!super::poll_reply_invalidated(false));
+}
