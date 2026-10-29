@@ -178,7 +178,7 @@ pub fn request(
     snapshot: &serde_json::Value,
     turns: &[crate::chat::Turn],
 ) -> Result<Vec<u8>, String> {
-    let revision = snapshot["revision"]
+    let revision = snapshot["chat_revision"]
         .as_str()
         .filter(|value| !value.is_empty())
         .ok_or_else(|| "Workspace revision is unavailable".to_owned())?;

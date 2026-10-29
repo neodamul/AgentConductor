@@ -174,13 +174,18 @@ fn large_conversations_fit_the_explicit_chat_request_bound() {
         })
         .collect::<Vec<_>>();
     let packet = chat::request(
-        &serde_json::json!({"revision":"rev-1","language":"en"}),
+        &serde_json::json!({
+            "revision":"head-bound-revision",
+            "chat_revision":"chat-fast-revision",
+            "language":"en"
+        }),
         &turns,
     )
     .unwrap();
     assert!(packet.len() <= 128 * 1024);
     let value: serde_json::Value = serde_json::from_slice(&packet).unwrap();
     assert_eq!(value["kind"], "chat");
+    assert_eq!(value["revision"], "chat-fast-revision");
     assert_eq!(value["turns"].as_array().unwrap().len(), 12);
 }
 

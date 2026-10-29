@@ -6450,7 +6450,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 - [x] Plan: trace the existing R-181 → BG-136 → SF-169 → UC-172 → FR-169 → QAS-179 → DD-192 contract; retain Git HEAD validation for mutations while allowing read-only chat to validate saved workspace context without resolving Git HEAD.
 - [x] Red: add a deterministic startup regression proving a Git HEAD change preserves `chat_revision`, changes the mutation `revision`, and a saved goal change rejects an old chat request; it failed because snapshots lacked `chat_revision`.
-- [x] Task: expose `chat_revision`, validate chat against it before general dispatch, and pass that accepted revision into the supervised job launch.
-- [x] Verify locally: `startup_chat` passes 4 tests; `cargo fmt` passes; modified Rust and test files stay below 300 lines.
+- [x] Task: expose `chat_revision`, make the native chat panel send it, validate it before general dispatch, and pass the accepted revision into the supervised job launch.
+- [x] Verify locally: `startup_chat` passes 4 tests and `native_workspace_chat` passes 6; the first UI request regression failed on the full revision, then passed after switching the panel to `chat_revision`. `cargo fmt` passes; modified Rust and test files stay below 300 lines.
 - [ ] Verify package: exercise coordinator chat in exact macOS and Windows packages and confirm it avoids the Git HEAD lookup without weakening mutation guards.
 - [ ] Complete: do not claim packaged acceptance or infer that this change alone explains historical chat timeouts.
