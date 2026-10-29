@@ -676,6 +676,14 @@ Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 �
 `launch_root` returns the first registry entry that is a saved, non-blank app-owned workspace, else the first saved non-blank workspace, else the default folder as a placeholder. A workspace is blank when it has no name, goal, project folder, plan or run; blank workspaces are left out of the menu and the saved list, the snapshot carries `workspace_blank`, the page opens a required "name your first workspace" dialog, and `create_workspace` moves a blank previous workspace to the recovery folder. The `agentconductor` launch command opens it. Deleting a workspace removes it from the registry, so it can no longer be chosen. The native probe window keeps its own launch rule (Codex track, GitHub #9).
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
 
+### FR-178 Native scheduled background read policy
+The Rust UI classifies existing scheduled Agent Room snapshots and their automatic detail/coordinator reads as background. Their failures clear pending without user-action feedback; the next normal scheduled read may retry. Initial Workspace/Agent Room snapshots, explicit Workspace refreshes, approvals and mutations retain visible errors. A delayed repaint uses the current `Instant`, emits no more than one due Agent Room poll, and rebases its next deadline from that instant. Native requests have no page-side deadline; no idle Workspace polling or automatic mutation retry is introduced.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198. GitHub #221, 2026-10-29.
+
+### NFR-76 Native background supervision is bounded and single-shot
+The change reuses the existing worker and Agent Room schedule, adds no request timeout, timer thread, idle Workspace poll or mutation retry, and keeps all changed Rust files within the 300-line limit. Delayed repaint can dispatch at most one scheduled snapshot.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198. GitHub #221, 2026-10-29.
+
 ### FR-179 Live ACIO worker contract
 When AgentProfile.protocol is ACIO, the scheduler assigns the owned session ID before spawn; the worker validates a bounded ACIO input document, sends it as the first stdin line, and uses the existing process supervisor to decode and persist ordered JSONL events. The returned session ID must equal the supervisor-owned ID. A tool event that needs a decision creates an exact workspace/task/session-bound human approval request and pauses task timeout accounting; a missing or expired decision never grants access. Once established, the same session ID is supplied as resume_id. Profiles without the opt-in field keep their prior adapter.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.

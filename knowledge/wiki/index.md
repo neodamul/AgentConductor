@@ -183,4 +183,5 @@
 - [UTM Windows guest access](utm-windows-guest-access.md): post-reset guest-agent evidence, user-session drive-mapping limits, and the remaining Windows validation gate.
 
 - [Current local verification](current-verification.md): full locked/offline Rust test results, exact macOS bundle checks, and unresolved package/Windows gates.
+- [Native UI poll timeouts](native-ui-poll-timeouts.md): Rust worker request semantics, background error policy, resumed repaint scheduling, and the explicit distinction from JavaScript client-timeout diagnostics.
 - [Coordinator format correction retry](coordinator-format-retry.md): a single bounded JSON-format retry with retained first-attempt logs and deterministic local CLI tests.

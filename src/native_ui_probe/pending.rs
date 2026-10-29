@@ -3,6 +3,9 @@ use super::workspace;
 #[derive(Clone, Copy)]
 pub(super) enum Pending {
     Save,
+    BackgroundRefresh,
+    BackgroundTaskDetails,
+    BackgroundCoordinator,
     Refresh,
     Action,
     ToolDecision { resume_after: bool },

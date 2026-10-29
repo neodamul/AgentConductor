@@ -1,8 +1,23 @@
 use super::super::{Pending, Probe};
 
 impl Probe {
-    pub(super) fn handle_error(&mut self, error: impl ToString) {
+    pub(in crate::native_ui_probe) fn handle_error(&mut self, error: impl ToString) {
         let error = error.to_string();
+        if matches!(self.pending, Some(Pending::BackgroundRefresh)) {
+            self.background_poll_failures = self.background_poll_failures.saturating_add(1);
+            if self.background_poll_failures >= 3 {
+                self.error = Some(error);
+            }
+            self.pending = None;
+            return;
+        }
+        if matches!(
+            self.pending,
+            Some(Pending::BackgroundTaskDetails | Pending::BackgroundCoordinator)
+        ) {
+            self.pending = None;
+            return;
+        }
         crate::native_ui_probe::workspace::plan_source::cancel(self);
         if matches!(
             self.pending,
@@ -87,5 +102,9 @@ impl Probe {
         self.pending = None;
         self.navigation_failed();
         self.error = Some(error);
+    }
+
+    pub(in crate::native_ui_probe) fn poll_succeeded(&mut self) {
+        self.background_poll_failures = 0;
     }
 }

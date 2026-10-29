@@ -171,6 +171,9 @@ Bidirectional control is needed, but plain control lines with acks need no reque
 ### Driver DDR-39 Distinguish observation from operator action
 An automatic snapshot and an explicit user action share the request bridge but have different feedback requirements. Mark only scheduled and visibility-resume polls as background, and pause the same request deadline while the document is hidden instead of adding a second transport or retry policy. Trace: QAS-182.
 
+### Driver DDR-40 Reuse the native monotonic poll schedule
+The native worker has no request deadline, so a second timeout mechanism would create stale-reply handling with no benefit. Keep scheduled Agent Room reads quiet, explicit operations visible, and let the existing monotonic scheduler send one poll after a delayed repaint. Trace: QAS-184.
+
 ### Driver DDR-41 Reuse the process supervisor and approval ledger for ACIO
 The existing worker owns child lifetime, output capture, persistence, and workspace scope; the existing tool ledger owns exact human decisions. Route opted-in ACIO input/events through those paths instead of adding a second runner, event store, or authorization mechanism. Trace: R-187, QAS-185.
 

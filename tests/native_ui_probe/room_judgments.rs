@@ -112,7 +112,7 @@ fn pending_tool_requests_skip_background_room_detail_loading() {
         ..Probe::default()
     };
 
-    probe.refresh_room_details();
+    probe.refresh_room_details(true);
 
     assert!(probe.pending.is_none());
     assert!(probe.error.is_none());

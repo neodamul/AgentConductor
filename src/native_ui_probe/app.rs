@@ -74,6 +74,23 @@ impl Probe {
             self.open_signal_settings();
         }
         self.navigation.appearance.apply(ui.ctx());
+        if self.pending.is_none() {
+            let now = std::time::Instant::now();
+            let follow_up_due = self
+                .room_view
+                .as_mut()
+                .is_some_and(|view| room::refresh_follow_up::refresh_due(view, now));
+            if follow_up_due {
+                self.refresh_background();
+            } else if let Some(deadline) = self
+                .room_view
+                .as_ref()
+                .and_then(room::refresh_follow_up::next_deadline)
+            {
+                ui.ctx()
+                    .request_repaint_after(deadline.saturating_duration_since(now));
+            }
+        }
         if self.room_view.is_none() && self.navigation.stop_for_delete() && self.pending.is_none() {
             let now = std::time::Instant::now();
             if let Some(deadline) = self.workspace_next_refresh.filter(|due| *due > now) {
@@ -91,7 +108,7 @@ impl Probe {
                 &mut room_view.next_refresh,
             )
         }) {
-            self.refresh_room();
+            self.refresh_background();
         }
         if self.room_view.is_none() && self.starting_run.is_some() && self.pending.is_none() {
             let now = std::time::Instant::now();

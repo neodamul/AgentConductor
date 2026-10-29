@@ -1,4 +1,3 @@
-use eframe::egui;
 use serde_json::Value;
 use std::{
     collections::HashSet,
@@ -8,12 +7,16 @@ mod candidate;
 pub mod coordinator_feedback;
 pub mod inspector;
 pub mod judgments;
+mod polling;
+pub mod refresh_follow_up;
 mod scope_recovery;
 mod status_banner;
 pub mod task_activity;
 pub mod task_controls;
 mod view;
 pub use candidate::candidate_decision_request;
+pub use polling::{refresh_due, refresh_due_at, room_refresh_interval};
+pub use refresh_follow_up::ToolRefreshFollowUp;
 pub use view::show;
 
 #[derive(Debug, Eq, PartialEq)]
@@ -58,6 +61,7 @@ pub struct State {
     pub confirming_decision: Option<CandidateDecision>,
     pub confirming_recover: bool,
     pub confirming_tool: Option<(String, super::room_actions::ToolAction, String)>,
+    pub tool_refresh_follow_up: Option<ToolRefreshFollowUp>,
     pub tool_dialog: Option<String>,
     pub deferred_tools: HashSet<String>,
     pub briefing: Option<Value>,
@@ -90,6 +94,7 @@ impl Default for State {
             confirming_decision: None,
             confirming_recover: false,
             confirming_tool: None,
+            tool_refresh_follow_up: None,
             tool_dialog: None,
             deferred_tools: HashSet::new(),
             briefing: None,
@@ -247,42 +252,5 @@ impl super::Probe {
             }
             Err(error) => self.error = Some(error),
         }
-    }
-}
-
-pub fn room_refresh_interval(snapshot: &Value) -> Duration {
-    let state = snapshot["report"]["state"]
-        .as_str()
-        .or_else(|| snapshot["state"].as_str());
-    if snapshot["job"]["state"] == "running"
-        || super::workspace::profile_tools::metadata_running(snapshot)
-        || matches!(state, Some("running" | "ready"))
-    {
-        Duration::from_secs(1)
-    } else {
-        Duration::from_secs(5)
-    }
-}
-
-pub fn refresh_due(
-    context: &egui::Context,
-    snapshot: Option<&Value>,
-    pending: bool,
-    next: &mut Option<Instant>,
-) -> bool {
-    if pending {
-        return false;
-    }
-    let interval = room_refresh_interval(snapshot.unwrap_or(&Value::Null));
-    let now = Instant::now();
-    let deadline = next.get_or_insert(now + interval);
-    *deadline = (*deadline).min(now + interval);
-    if now >= *deadline {
-        *deadline = now + interval;
-        context.request_repaint_after(interval);
-        true
-    } else {
-        context.request_repaint_after(*deadline - now);
-        false
     }
 }

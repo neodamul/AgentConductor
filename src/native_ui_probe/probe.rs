@@ -4,6 +4,7 @@ use std::sync::Arc;
 
 use super::{Pending, Probe, RequestWorker, Surface, render, room, workspace};
 
+mod background;
 mod catalog;
 mod refresh;
 
@@ -46,7 +47,7 @@ impl Probe {
             motion,
             worker: Some(worker),
             room_view: room_view.then(room::State::default),
-            pending: room_view.then_some(Pending::Refresh),
+            pending: Some(Pending::Refresh),
             ..Self::default()
         })
     }
