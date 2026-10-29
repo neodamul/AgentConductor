@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Coordinator replies: a complete fenced JSON document is now found even when an unfinished fenced draft comes before it (the second opening marker was taken for the first block's closing one, so planning failed). The coordinator reply limit is raised from 64 KiB to 256 KiB.
+
 ## v0.1.43
 
 - Chat: every question now carries a Workspace section with the goal, the latest run's tasks, test results, changed files and candidate diff (cut when long). The read-only coordinator can read the project folder but not the run folder, so before this it could not say what was built or how to run it (#243).

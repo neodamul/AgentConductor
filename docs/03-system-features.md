@@ -682,3 +682,7 @@ Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200.
 ### SF-175 Pending state for a chat send whose outcome is unknown
 The chat panel keeps an unconfirmed message as a pending turn, keeps the send button disabled, and reconciles with the stored conversation as soon as it can be read.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.
+
+### SF-177 Fence scan that tries every block
+The reply reader tries each fenced block in turn and skips the ones that do not parse or lack the field.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.

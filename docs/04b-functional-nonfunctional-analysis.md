@@ -690,3 +690,7 @@ Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200.
 ### FR-179 Reconcile an unconfirmed send with the stored conversation
 `chatUi.resync` leaves the local turn and the waiting state in place when `chat_history` fails; each later `load` that succeeds compares the stored conversation with the pending text. A matching last operator turn means accepted (conversation replaced by the stored one, job followed through `settle`); otherwise the local turn is dropped, the text returns to the input and the original error is shown.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.
+
+### FR-181 Examine every fence
+A fenced block that does not parse, or lacks the field, ends only its own attempt: scanning continues from the next fence marker. A reply with only malformed blocks still fails with the no-valid-JSON error. The reply limit is 256 KiB.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.

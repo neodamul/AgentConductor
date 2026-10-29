@@ -746,3 +746,7 @@ Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200.
 ### R-187 An unconfirmed chat send is never rolled back
 When a chat message is sent and the page cannot learn whether the application accepted it (the send timed out and the stored conversation cannot be read either), the page shall keep the message in the conversation as pending and shall not put it back into the input. It decides when the stored conversation can be read: accepted, the job is followed; not accepted, the text returns to the input with the error. The message never shows both in the conversation and in the input.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.
+
+### R-189 A valid JSON block is found even after an unfinished one
+When a coordinator reply holds an unfinished fenced draft followed by a complete fenced JSON document, the application shall read the complete document instead of failing the planning or review. Every fenced block is examined, not only the ones that follow a successful parse, and the first block that carries the requested field wins. The coordinator reply limit is 256 KiB, because a real five-phase plan reply already reached 21 KiB and larger plans must not fail on size.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.
