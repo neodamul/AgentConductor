@@ -1773,3 +1773,7 @@ Run `40745298702` reached the Windows candidate flow after briefing passed, then
 ## 2026-10-29 — Local macOS release package at Rust head 79fdea8 — issue #9
 
 Built the exact arm64 package from `79fdea8a` with the offline bilingual manuals, SBOM, and dependency-license notices. All 486 ZIP entries pass CRC; manifest source and binary hash match; packaged CLI help and `Info.plist` lint pass. Archive SHA-256: `2bcf911eeaa7cff4a5cbc8700fe9db98765b63408b08ee7696b57ecc1dd58e20`; binary SHA-256: `862ab066bb69193127c2c745289cdf8a61c85a9894931cc13a429efae724fb7a`. Evidence: `docs/evidence/issue9-macos-local-package-79fdea8-20261029.json`. No GUI launch, screenshot, real coordinator invocation, or Windows exact-head package journey is claimed; acceptance remains 22/25 packaged, 0/25 shipped Rust replacements, 22/50 aggregate.
+
+## 2026-10-29 — Coordinator format correction retry — GitHub #235 / issue #9
+
+Ported the bounded JSON-format correction behavior with a deterministic local CLI. The first malformed response is preserved in `process-format-1`; exactly one retry includes the parse reason, and a second malformed response fails after exactly two process runs. Timeout, stop, capacity, and provider-error handling remain on existing paths. Focused tests pass 28/28 across seven targets; `cargo fmt --check`, `git diff --check`, and warning-denied all-target Clippy pass. The complete suite and exact package checks remain open and are not credited by this unit. AgentMemory: `mem_mvte7n6u_cb7a6e81ae87`.
