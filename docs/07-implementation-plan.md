@@ -6330,7 +6330,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
   - [x] Restore a rejected pre-acceptance question to the editor; verified with `native_workspace_chat` regression coverage.
   - [x] Keep an accepted late job followed in the transcript and render its eventual answer; verified with `native_workspace_chat` regression coverage.
   - [ ] Persist chat history and support starting/resetting a conversation.
-- [ ] Port main #200 diagnostics: emit `diagnostics::start/done` around native Room dispatch/routing and add request-kind-specific timeout text/catalog entries.
+- [ ] Port main #200 diagnostics: emit bounded request records around native Room dispatch/routing; name request kinds in timeout feedback where a real timeout exists.
+  - [x] Red/Green: content-free JSONL logging covers all `chat` requests and requests lasting at least one second; rotate at 256 KiB; ignore logging failures. Focused tests cover filtering, fields, redaction, and rotation.
+  - [x] Verify/local: request-diagnostics, native room/chat, public-doc, and source-layout suites pass (26 tests); warning-denied Clippy, rustfmt, and `git diff --check` pass. English/Korean Markdown and offline HTML regenerated with the Rust manual renderer.
+  - [ ] Verify/package: current run `40832308285` validates an earlier source revision (`374797b0`), not these changes; require exact-head macOS/Windows package validation before credit.
+  - [ ] Timeout feedback: the native worker currently has no request deadline or timeout state. Add request-kind feedback only alongside an explicit bounded timeout/recovery design; do not label an indefinitely-running request as timed out.
 - [ ] Complete: #9 remains open; Windows package acceptance is not credited until the exact gate passes and the main-parity requirements above are implemented and verified.
 
 ### 2026-10-29 — Bounded retry for Windows briefing activation — issue #9

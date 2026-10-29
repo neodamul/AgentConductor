@@ -3,6 +3,10 @@ use super::*;
 mod requests;
 impl Room {
     pub fn dispatch(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
+        crate::ui::request_diagnostics::dispatch(bytes, || self.dispatch_inner(bytes))
+    }
+
+    fn dispatch_inner(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
         use crate::cooperative::route::Preference;
         #[derive(Deserialize)]
         #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]

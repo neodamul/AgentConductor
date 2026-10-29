@@ -174,6 +174,7 @@
 <tr><td><code>agentconductor io conformance &lt;executable&gt;</code></td><td>ACIO 설명, 읽기 전용 응답, 잘못된 입력 처리를 검사합니다.</td></tr>
 </tbody></table></div>
 <p><code>io conformance</code>는 현재 사용자의 OS 권한으로 선택한 실행 파일을 실행합니다. 읽기 전용 요청과 임시 작업 경로는 프로토콜 입력일 뿐 OS 샌드박스가 아니므로 신뢰하는 CLI에만 사용하세요. 아직 작업 실행 모드, 취소 타이밍, 최대 크기 초과 출력을 검사하지 않습니다.</p>
+<p>네이티브 UI 요청 진단은 <code>~/.agentconductor/request-diagnostics.log</code>에 기록합니다(Windows: <code>%USERPROFILE%\.agentconductor\request-diagnostics.log</code>). JSONL에 모든 <code>chat</code> 요청과 1초 이상 걸린 요청을 남깁니다. 요청마다 <code>start</code> 기록(<code>kind</code>, <code>at_unix_ms</code>, <code>bytes</code>)과 <code>done</code> 기록(<code>duration_ms</code>, <code>outcome</code>)이 있습니다. 요청 내용은 기록하지 않습니다. 현재 파일은 256 KiB로 제한하고 이전 파일은 <code>request-diagnostics.log.1</code>로 보관합니다. 기록 실패는 요청 결과에 영향을 주지 않습니다.</p>
 <p>협력 CLI는 <code>cooperative: checkpoint_v1</code>과 정확한 <code>{session_id}</code> 인자를 사용합니다. <code>AC_CHECKPOINT_RUN_DIR</code>, <code>AC_CHECKPOINT_ADDRESS_FILE</code>, <code>AC_CHECKPOINT_EXECUTABLE</code>이 전달됩니다. handoff를 수락·완료하고 프로세스가 종료되면 검토된 대체 에이전트로 이어갑니다. pause는 중단합니다. 학습 초안에는 context/failure/cause/response/evidence/confidence와 소스 path/sha256을 기록합니다. JSON 필드 이름과 CLI 인자는 번역하지 않습니다. 자세한 형식은 실행파일의 <code>--help</code>와 영어 프로토콜 문서를 확인하세요.</p>
 <h2>3. 검증 범위와 문제 해결</h2>
 <p>패키지 실행파일은 macOS·Windows의 결정적 오프라인 작업자로 검증합니다. Git/일반 폴더, 공유/worktree, 병렬 실행과 미승인 반영 거절을 검사합니다. 이 검증이 실제 사내 에이전트·Enterprise 계정·메신저까지 검증했다는 뜻은 아닙니다.</p>

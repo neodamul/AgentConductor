@@ -361,6 +361,8 @@ Cargo 빌드 캐시는 앱 캐시와 별개입니다.
 
 `io conformance`는 현재 사용자의 OS 권한으로 선택한 실행 파일을 실행합니다. 읽기 전용 요청과 임시 작업 경로는 프로토콜 입력일 뿐 OS 샌드박스가 아니므로 신뢰하는 CLI에만 사용하세요. 아직 작업 실행 모드, 취소 타이밍, 최대 크기 초과 출력을 검사하지 않습니다.
 
+네이티브 UI 요청 진단은 `~/.agentconductor/request-diagnostics.log`에 기록합니다(Windows: `%USERPROFILE%\.agentconductor\request-diagnostics.log`). JSONL에 모든 `chat` 요청과 1초 이상 걸린 요청을 남깁니다. 요청마다 `start` 기록(`kind`, `at_unix_ms`, `bytes`)과 `done` 기록(`duration_ms`, `outcome`)이 있습니다. 요청 내용은 기록하지 않습니다. 현재 파일은 256 KiB로 제한하고 이전 파일은 `request-diagnostics.log.1`로 보관합니다. 기록 실패는 요청 결과에 영향을 주지 않습니다.
+
 협력 CLI는 `cooperative: checkpoint_v1`과 정확한 `{session_id}` 인자를 사용합니다.
 `AC_CHECKPOINT_RUN_DIR`, `AC_CHECKPOINT_ADDRESS_FILE`, `AC_CHECKPOINT_EXECUTABLE`이 전달됩니다.
 handoff를 수락·완료하고 프로세스가 종료되면 검토된 대체 에이전트로 이어갑니다. pause는 중단합니다.

@@ -384,6 +384,8 @@ one `{session_id}` argument. The engine supplies `AC_CHECKPOINT_RUN_DIR`,
 
 `io conformance` starts the selected executable using the current user's OS permissions. Its read-only request and temporary workspace are protocol inputs, not an OS sandbox; only run it against a CLI you trust. It does not yet check task-mode runs, cancellation timing or oversized output.
 
+Native UI request diagnostics are written to `~/.agentconductor/request-diagnostics.log` (`%USERPROFILE%\.agentconductor\request-diagnostics.log` on Windows). The JSONL log records every `chat` request and other requests that take at least one second. Each request has a `start` record (`kind`, `at_unix_ms`, `bytes`) and a `done` record (`duration_ms`, `outcome`). Request contents are never logged. The active file is limited to 256 KiB and the previous file is kept as `request-diagnostics.log.1`; log write failures do not change the request result.
+
 ## Part 3 — Validation and troubleshooting
 
 The packaged native executable is checked on macOS and Windows using deterministic offline workers,
