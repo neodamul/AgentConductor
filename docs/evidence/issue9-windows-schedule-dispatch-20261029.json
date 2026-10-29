@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-29",
+  "issue": 9,
+  "failing_exact_package_run": {
+    "run_id": 40821720696,
+    "platform": "windows-latest",
+    "result": "failed in the exact-package waiting-task schedule journey"
+  },
+  "observed_failure": "UI Automation SetFocus and Invoke were unavailable. The process-checked pointer click was sent, but the test driver saw the Schedule button remain enabled and exited before checking the controller action owner record or persisted schedule.",
+  "change": "Pass the isolated run directory to the UI driver. Accept an action transition only when the Schedule button disables or a coordinator-ui owner record for the packaged app process appears. The Rust package test continues to require UI action dispatch and the exact persisted manual_schedule timestamp.",
+  "local_verification": {
+    "tdd_red": "The source-contract regression failed before the run-directory and owner-record checks were implemented.",
+    "schedule_driver_contracts": "7 passed",
+    "source_layout": "2 passed",
+    "native_schedule_and_action_tests": "6 passed",
+    "clippy": "passed with warnings denied",
+    "rustfmt": "passed",
+    "diff_check": "passed",
+    "changed_rust_file_limit": "all changed Rust files are below 300 lines"
+  },
+  "exact_package_reverification": "pending",
+  "acceptance_credit": "none; require the exact Windows package to dispatch the schedule action and persist the exact manual time"
+}

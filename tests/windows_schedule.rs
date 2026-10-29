@@ -43,6 +43,7 @@ async fn package_schedules_a_waiting_agent_room_task() {
     let app = RunningApp(
         Command::new(executable)
             .args(["ui", run.to_str().unwrap()])
+            .env("AC_RUN_DIR", &run)
             .env("HOME", &home)
             .env("USERPROFILE", &home)
             .stderr(Stdio::null())

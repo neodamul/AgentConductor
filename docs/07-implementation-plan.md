@@ -1,3 +1,12 @@
+### Verify Windows schedule requests through controller dispatch and persistence — issue #9 / 2026-10-29
+
+- [x] Plan: exact run `40821720696` passed both platform validations and the macOS package. Windows passed the packaged Signal Settings journey, then stopped in `windows_schedule`: UIA focus/invoke were unavailable; the guarded pointer click sent input, but the driver waited only for the Schedule button to become disabled and exited before checking controller dispatch or the saved schedule.
+- [x] Red: add a source-contract regression requiring the package driver to receive the isolated run directory and accept only a disabled button or a process-owned `coordinator-ui-*` owner record; the new regression failed before implementation.
+- [x] Task: pass `AC_RUN_DIR` to the driver, recognize a dispatched controller job as an action transition, and keep the authoritative follow-up checks for the UI dispatch record and exact persisted `manual_schedule` timestamp.
+- [x] Local Verify: schedule driver contracts 7/7, source layout 2/2, native schedule/action tests 6/6, warning-denied all-target Clippy, rustfmt, diff check, and 300-line source/test limits pass. Changed Rust files are 248 lines or fewer.
+- [ ] Exact-package Verify: run both platforms again and require the Windows exact packaged schedule to dispatch to the controller and persist `2099-01-01T09:00:00+09:00` before accepting this workflow.
+- [ ] Complete: update issue #9, PR #22, AgentMemory, and the LLM Wiki from exact package results. Acceptance remains **22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate**; the failed Windows schedule journey adds no credit.
+
 ### Reacquire the Windows Signal Settings window for each control — issue #9 / 2026-10-29
 
 - [x] Plan: exact run `40817071475` passed validation on both platforms and the exact macOS package. Windows stopped in `windows_signal_settings`: the driver retained the initial UI Automation window, while the `agentmemory preferred` control appeared under another live top-level window owned by the same packaged process.
