@@ -20,6 +20,7 @@ struct TaggedRequest {
     request: WorkerRequest,
 }
 const REQUEST_WORKERS: usize = 2;
+const REQUEST_QUEUE_CAPACITY: usize = 16;
 
 fn run_request(request: WorkerRequest, dispatch: &Dispatch) -> Result<Value, String> {
     match request {
@@ -172,7 +173,7 @@ impl RequestWorker {
             .map_err(|error| error.to_string())?;
         let mut requests = Vec::with_capacity(REQUEST_WORKERS);
         for index in 0..REQUEST_WORKERS {
-            let (sender, queue) = mpsc::sync_channel::<TaggedRequest>(1);
+            let (sender, queue) = mpsc::sync_channel::<TaggedRequest>(REQUEST_QUEUE_CAPACITY);
             requests.push(sender);
             let request_dispatch = Arc::clone(&dispatch);
             let request_reply = reply_tx.clone();

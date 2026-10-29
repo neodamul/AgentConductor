@@ -6587,6 +6587,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: event delivery failed when the hub was disabled; independent foreground-request progress timed out when the pool was reduced to one worker.
 - [x] Task 1: add a bounded per-surface Rust event hub; successful UI dispatches publish invalidations, the subscribed eframe context repaints directly, and the native loop listens for the event and schedules one background snapshot. Slow/disconnected subscribers cannot block producers.
 - [x] Task 2: replace the single foreground request thread with two bounded worker lanes; a blocked request no longer holds up an independent foreground request. Keep state owners' locks/revisions and the separate poll lane.
+- [x] Red: queue a first state-changing request behind a deterministic gate, then submit two more; the third was rejected because each worker queue held only one waiting request.
+- [x] Task: raise each non-blocking request queue to 16 entries. The UI still uses `try_send`, so it never waits for a worker; periodic snapshots retain their separate single-flight queue.
+- [x] Verify: regression confirms requests queue behind a running action; the focused case and all 81 native UI library tests pass in the release profile.
 - [x] Task 2: discard an in-flight background snapshot when its subscribed surface receives a newer invalidation; immediately queue one replacement snapshot instead of briefly applying stale state.
 - [x] Task 3a: propagate supervised workflow progress to the subscribed UI through a random-token-authenticated loopback event bridge; use non-blocking sends and strip credentials before provider/tool subprocesses.
 - [x] Task 3b: bound the eventless stdout-spool recovery reader with exponential backoff from 100 ms to 2 s, resetting after observed output.
