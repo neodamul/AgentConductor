@@ -13,7 +13,21 @@ alternate inputs from returning.
 Local static Windows-driver tests pass on macOS, but Windows package acceptance is
 still pending; this change does not claim a successful Windows runtime journey.
 
-## Exact-current macOS package at issue #9 head — 2026-10-30
+## Exact-current macOS package at issue #9 head — 2026-10-30 (source 7a56e372)
+
+The current pushed source `7a56e372e598fff7df593d3ab4933bad62021360` builds an
+Apple Silicon package at
+`dist/agentconductor-aarch64-apple-darwin-7a56e372e598.zip`. Package validation,
+manifest/source identity, the 19,523,904-byte executable checksum, ZIP integrity,
+archive checksum, and packaged `--help` pass. The exact packaged executable passed
+four mock workflows (shared/worktree × Git/folder), including 12 parallel tasks and
+tests, merge refusal before approval, and verified merge after approval. The package
+contains the bilingual manuals, 242 dependency license records, notices, SBOM, and
+README assets. This does not prove GUI or Windows package acceptance and is not a
+GitHub Release. Evidence: `docs/evidence/issue9-7a56e372-macos-package.json` and
+`docs/evidence/issue9-7a56e372-macos-smoke.json`.
+
+## Package at source 043d2ecb — 2026-10-30
 
 Built `codex/issue-9-git-head-fast-path` at source commit
 `043d2ecb13022966d3ee8c09f2fd1ed8c9ae4510` with

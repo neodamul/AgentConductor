@@ -1,3 +1,12 @@
+### Package and smoke-test the latest pushed Rust head — issue #9 / 2026-10-30
+
+- [x] Plan: package exact source `7a56e372e598fff7df593d3ab4933bad62021360` after the Windows approval-driver correction.
+- [x] Task / Verify: built `dist/agentconductor-aarch64-apple-darwin-7a56e372e598.zip`; exact source manifest, binary checksum, archive checksum, ZIP integrity, packaged `--help`, bilingual manuals, dependency license inventory, notices, and SBOM pass.
+- [x] Packaged workflow: the exact executable passed shared/worktree × Git/folder mock runs (4 cases, 12 parallel tasks/tests total, pre-approval merge refusal, post-approval merge verification). Evidence: `docs/evidence/issue9-7a56e372-macos-package.json` and `docs/evidence/issue9-7a56e372-macos-smoke.json`.
+- [x] Cleanup: removed the superseded 043d2ecb archive and extracted package; retained its machine-readable evidence.
+- [ ] Acceptance: packaged GUI workflow and Windows package remain unverified; local CLI smoke does not add shipped UI acceptance or authorize a release.
+- [x] Assetize: refresh Graphify to 11,754 nodes / 17,855 edges and record exact package and smoke evidence in the LLM Wiki and AgentMemory.
+
 ### Prevent duplicate Windows tool-decision inputs during delayed UI updates — issue #9 / 2026-10-30
 
 - [x] Plan: address the Windows package journey where UI Automation reported no state change after 500 ms although the final accessibility dump contained the confirmation button. The script previously retried the same approval by pointer up to three times.
@@ -7,7 +16,7 @@
 - [x] Assetize: refresh Graphify to 11,751 nodes / 17,852 edges; update this plan and the LLM Wiki with the observed Windows package failure and the test-driver correction.
 - [ ] Windows Verify: rerun the exact Windows packaged UI journey; macOS source tests cannot prove Windows UI Automation timing.
 
-### Verify exact-current macOS package and packaged workflow — issue #9 / 2026-10-30
+### Verify macOS package and packaged workflow at source 043d2ecb — issue #9 / 2026-10-30
 
 - [x] Plan: package the pushed Rust head `043d2ecb13022966d3ee8c09f2fd1ed8c9ae4510` locally; do not treat command-line smoke as GUI or Windows acceptance.
 - [x] Task: `cargo run --release --locked --offline -j 2 -- package-release` produced `dist/agentconductor-aarch64-apple-darwin-043d2ecb1302.zip` (21.3 MiB).
