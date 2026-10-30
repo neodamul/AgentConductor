@@ -79,5 +79,6 @@ fn controller_publishes_once_when_a_job_reaches_terminal_state() {
     assert_eq!(controller.poll().unwrap()["state"], "completed");
     assert!(subscriber.try_recv().is_err());
     drop(controller.job.lock().unwrap().take());
+    drop(writer);
     fs::remove_dir_all(root).unwrap();
 }

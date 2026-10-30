@@ -43,6 +43,10 @@ Removed the repeating 30-second Workspace/Agent Room snapshot cadence and its `r
 
 TDD regressions first failed because idle render scheduled a snapshot, coordinator chat invalidation requested a generic snapshot, and controller completion depended on calling `poll()`. Their green counterparts are in `tests/native_ui_probe/renderer.rs`, `tests/native_ui_probe/app.rs`, and `tests/support/controller_events.rs`. Local full-suite status is recorded in `knowledge/wiki/log.md` after completion.
 
+## Windows fixture teardown follow-up — 2026-10-30
+
+Windows validation run `40972282855` failed only in `controller_publishes_once_when_a_job_reaches_terminal_state`: the test attempted to remove its temp directory while its SQLite writer connection was still open (OS error 32). The test now drops that connection before fixture cleanup. Local verification passes the focused controller regression (1/1), related event tests (12/12), Rust formatting, and diff checks. This is test cleanup only; Windows rerun and exact packaged Windows UI acceptance remain pending.
+
 ## Exact package checkpoint — 2026-10-30
 
 The pushed source `62efb31c8725d93fd1bb10021cad170cf3a77533` builds and packages for `aarch64-apple-darwin`. Manifest/source matching, embedded binary digest, archive integrity, packaged `--help`, and package smoke passed. Evidence: `docs/evidence/issue257-macos-package-62efb31-20261030.json`.

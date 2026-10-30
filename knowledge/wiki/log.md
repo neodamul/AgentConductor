@@ -1,3 +1,7 @@
+# [2026-10-30] fix/verify | Windows event-test fixture file lock — issue #257
+
+Windows validation run `40972282855` failed at teardown of `controller_publishes_once_when_a_job_reaches_terminal_state` because the test removed its temp directory before closing its SQLite writer (OS error 32). The fixture now drops the connection before cleanup. Local focused controller test: 1/1; event tests: 12/12; rustfmt and diff checks pass. This fixes a test-only lock, not product behavior. The exact Windows rerun and package UI gate remain open. AgentMemory: `mem_mvuaba2w_955723612423`.
+
 # [2026-10-29] verify | Full local Rust test suite — issue #9
 
 At source `355d6256d358533bfd182712ce1fa99d174b4aa4`, the complete locked/offline all-target test command exited 0 with no failures. Authenticated provider and exact packaged-binary tests remain gated by their declared prerequisites. Exact Windows package and three remaining packaged UI workflows are still pending. Evidence: `docs/evidence/issue9-full-suite-355d625-20261029.json`.
