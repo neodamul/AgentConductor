@@ -6596,3 +6596,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify focused: 53 native UI tests pass; public-doc/source-layout checks pass 13 tests; warning-denied all-target Clippy, rustfmt, diff hygiene, and changed source/test line limits pass. Graphify re-extracts 11,738 nodes / 19,183 edges; `cocoindex-code` is present but fails import because `mcp.server.fastmcp` is unavailable.
 - [x] Record all-target attempt: the locked/offline run with `native-ui-probe` was stopped after 756 passed, 14 ignored across 231 suites (exit 130, no failure observed); this is not a full-suite pass. Exact packaged responsiveness remains open.
 - [x] Complete unit: commit `be1026e8` is pushed on `codex/issue-9-git-head-fast-path`; progress comments are recorded on [#9](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6513164786), [#257](https://github.com/neodamul/AgentConductor/issues/257#issuecomment-6513164086), and [PR #260](https://github.com/neodamul/AgentConductor/pull/260#issuecomment-6513165649). AgentMemory: `mem_mvubyrnn_4eadeb64cedf`; Graphify: 11,738 nodes / 19,183 edges. Keep #9 open until exact macOS/Windows package and parity gates pass.
+
+### 2026-10-30 — Scope state invalidations to affected native views — issue #257
+
+- [x] Plan: distinguish Workspace-only changes from run changes so unrelated surfaces do not wake and request snapshots.
+- [x] Red: add EventBus regressions for workspace-only delivery, run delivery to both views, and request-to-scope routing.
+- [x] Task / Green: subscribe each native view with its scope; route workspace mutations to Workspace and run mutations to both views; keep source suppression, bounded coalescing, and repaint callbacks.
+- [x] Verify locally: all 70 native UI library tests pass with `native-ui-probe`; 13 public-doc/source-layout tests pass; warning-denied all-target Clippy reports no issues, and rustfmt/diff checks pass.
+- [ ] Verify complete workspace/package journeys on exact macOS and Windows binaries; source tests do not satisfy packaged acceptance.
+- [ ] Commit and push after focused review; keep #257 and PR #260 open until package acceptance is complete.

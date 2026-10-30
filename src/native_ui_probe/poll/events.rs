@@ -7,7 +7,7 @@ mod tests;
 impl Probe {
     pub(super) fn poll_events(&mut self) {
         let Some(worker) = &self.worker else { return };
-        while let Ok(crate::ui::events::Event::StateChanged) = worker.events.try_recv() {
+        while worker.events.try_recv().is_ok() {
             self.refresh_generation = self.refresh_generation.saturating_add(1);
             self.refresh_requested = true;
         }

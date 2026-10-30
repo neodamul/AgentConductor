@@ -51,7 +51,13 @@ impl RequestWorker {
         room_view: bool,
     ) -> Result<Self, String> {
         let wake_context = context.clone();
-        let subscription = room.subscribe_events(move || wake_context.request_repaint())?;
+        let event_surface = if room_view {
+            crate::ui::events::EventSurface::AgentRoom
+        } else {
+            crate::ui::events::EventSurface::Workspace
+        };
+        let subscription =
+            room.subscribe_events(event_surface, move || wake_context.request_repaint())?;
         let source = subscription.id;
         let handler: Handler = Arc::new(move |request| handle(&room, source, request));
         Self::with_handler(context, room_view, handler, subscription.events)

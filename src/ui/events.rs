@@ -2,7 +2,24 @@ use std::sync::{Mutex, mpsc};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Event {
-    StateChanged,
+    WorkspaceChanged,
+    RunChanged,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum EventSurface {
+    Workspace,
+    AgentRoom,
+}
+
+impl Event {
+    fn targets(self, surface: EventSurface) -> bool {
+        matches!(self, Self::RunChanged)
+            || matches!(
+                (self, surface),
+                (Self::WorkspaceChanged, EventSurface::Workspace)
+            )
+    }
 }
 
 #[derive(Default)]
@@ -13,7 +30,7 @@ pub struct EventBus {
 #[derive(Default)]
 struct Subscribers {
     next_id: u64,
-    listeners: Vec<(u64, mpsc::SyncSender<Event>, Wake)>,
+    listeners: Vec<(u64, EventSurface, mpsc::SyncSender<Event>, Wake)>,
 }
 
 type Wake = std::sync::Arc<dyn Fn() + Send + Sync>;
@@ -25,12 +42,13 @@ pub struct Subscription {
 
 impl EventBus {
     #[cfg(test)]
-    pub fn subscribe(&self) -> Result<Subscription, String> {
-        self.subscribe_with_wakeup(|| {})
+    pub fn subscribe(&self, surface: EventSurface) -> Result<Subscription, String> {
+        self.subscribe_with_wakeup(surface, || {})
     }
 
     pub fn subscribe_with_wakeup(
         &self,
+        surface: EventSurface,
         wake: impl Fn() + Send + Sync + 'static,
     ) -> Result<Subscription, String> {
         let mut subscribers = self
@@ -42,7 +60,7 @@ impl EventBus {
         let (sender, events) = mpsc::sync_channel(1);
         subscribers
             .listeners
-            .push((id, sender, std::sync::Arc::new(wake)));
+            .push((id, surface, sender, std::sync::Arc::new(wake)));
         Ok(Subscription { id, events })
     }
 
@@ -53,8 +71,8 @@ impl EventBus {
             Err(_) => return,
         };
         let mut disconnected = Vec::new();
-        for (id, sender, wake) in listeners {
-            if Some(id) == source {
+        for (id, surface, sender, wake) in listeners {
+            if Some(id) == source || !event.targets(surface) {
                 continue;
             }
             match sender.try_send(event) {
@@ -69,7 +87,7 @@ impl EventBus {
         if let Ok(mut subscribers) = self.subscribers.lock() {
             subscribers
                 .listeners
-                .retain(|(id, _, _)| !disconnected.contains(id));
+                .retain(|(id, _, _, _)| !disconnected.contains(id));
         }
     }
 }
@@ -95,7 +113,9 @@ pub fn event_for_request(packet: &[u8]) -> Option<Event> {
         | "messenger"
         | "baseline_status"
         | "resolve_executable" => None,
-        _ => Some(Event::StateChanged),
+        "start" | "open_run" => Some(Event::RunChanged),
+        _ if request["room"] == true => Some(Event::RunChanged),
+        _ => Some(Event::WorkspaceChanged),
     }
 }
 

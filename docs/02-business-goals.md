@@ -593,7 +593,7 @@ Repository metadata lookups must not hold up native input, state events, or unre
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
 
 ### BG-149 Keep native views responsive without idle polling load
-An action in one open native view is reflected in the other view promptly, including while an independent interactive response is pending, while background refresh cannot occupy the interactive request path or consume frequent polling resources when the workspace is idle.
+Workspace-only changes wake Workspace, while run changes wake Workspace and Agent Room because both show run progress. Events received while an independent interactive response is pending still trigger a background refresh; idle views do not consume frequent polling resources.
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, user, 2026-10-30.
 
 ### BG-150 Keep native interaction responsive under slow work

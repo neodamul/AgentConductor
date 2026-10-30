@@ -250,9 +250,10 @@ impl Room {
     }
     pub(crate) fn subscribe_events(
         &self,
+        surface: events::EventSurface,
         wake: impl Fn() + Send + Sync + 'static,
     ) -> Result<events::Subscription, String> {
-        self.events.subscribe_with_wakeup(wake)
+        self.events.subscribe_with_wakeup(surface, wake)
     }
     fn surface(&self) -> Result<Option<Arc<setup::Startup>>, String> {
         Ok(self
