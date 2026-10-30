@@ -10,6 +10,7 @@ Routine native state-revision and snapshot paths must not invoke `git rev-parse`
 
 - `tests/snapshot_without_git.rs` hides Git from PATH after a proposal exists and verifies that a native snapshot still succeeds with a stable revision.
 - `tests/git_head.rs` verifies loose, packed and detached refs, new commits, ref-name validation, and asynchronous linked-worktree fallback.
+- The complete locked/offline all-target suite passed on branch head `6bbb4254683cb2d147696d98384643d4dea7fc6e`: 1,143 passed and 15 ignored across 364 suites. This supersedes the earlier interrupted full-suite attempt; it does not replace exact packaged macOS/Windows UI acceptance.
 
 ## Limitation
 
