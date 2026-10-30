@@ -225,6 +225,7 @@
   "native.startup_artifacts_must_be_outside_repository": "startup artifacts must be outside repository",
   "native.startup_document_exceeds_64_kib": "startup document exceeds 64 KiB",
   "native.startup_job_state_poisoned": "startup job state poisoned",
+  "native.chat_still_answering": "the coordinator is still answering; wait for the answer",
   "native.startup_operation_still_running": "startup operation still running",
   "native.startup_settings_poisoned": "startup settings poisoned",
   "native.startup_state_changed_since_review_refresh_before_acting": "startup state changed since review; refresh before acting",

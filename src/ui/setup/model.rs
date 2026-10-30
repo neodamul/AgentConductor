@@ -76,6 +76,9 @@ pub struct Saved {
     pub(super) job: Option<StoredJob>,
     #[serde(default)]
     pub(super) quota_job: Option<StoredJob>,
+    /// GitHub #261 (DD-204): the coordinator chat has its own slot, so it runs next to a plan or start job.
+    #[serde(default)]
+    pub(super) chat_job: Option<StoredJob>,
     #[serde(default)]
     pub(super) metadata_queue: Vec<metadata::Pending>,
     #[serde(default)]

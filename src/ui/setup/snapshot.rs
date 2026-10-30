@@ -67,7 +67,9 @@ impl Startup {
         {
             snapshot["job"]["output"] = jobs::activity(&p.directory.join("process"));
         }
-        snapshot["chat"] = self.chat_snapshot(saved, job);
+        let chat_job = self.chat_job(saved)?;
+        snapshot["chat"] = self.chat_snapshot(saved, &chat_job);
+        snapshot["chat_job"] = chat_job;
         snapshot["optimize"] = self.optimize_snapshot(saved, job);
         if icons {
             snapshot["icons"] = serde_json::json!(crate::icons::icon_map(

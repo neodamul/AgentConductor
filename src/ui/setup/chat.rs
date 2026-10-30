@@ -15,12 +15,10 @@ impl Startup {
             )
             .into());
         }
-        let job = self.job(saved)?;
-        self.settle(saved, &job)?;
-        if job["state"] == "running" {
-            return Err(crate::ui::messages::text("native.startup_operation_still_running").into());
+        // GitHub #261: a chat is read-only; a plan or start job running beside it is no reason to refuse it.
+        if self.chat_job(saved)?["state"] == "running" {
+            return Err(crate::ui::messages::text("native.chat_still_answering").into());
         }
-        self.ensure_no_live_jobs()?;
         self.launch_chat(saved, text.to_owned(), revision)
     }
 
@@ -51,9 +49,8 @@ impl Startup {
                 .map_err(|e| e.to_string())?,
         )?;
         s.chat_result = Some(format!("chat-{id}.json"));
-        self.launch_with_revision(
+        self.launch_chat_worker(
             s,
-            "chat",
             vec!["chat".into(), self.broker.dir.to_string_lossy().into(), id],
             revision,
         )
@@ -70,13 +67,9 @@ impl Startup {
     }
 
     /// Starts a new conversation; the old artifacts stay in the private folder.
-    pub(super) fn chat_reset(
-        &self,
-        s: &mut Saved,
-        job: &serde_json::Value,
-    ) -> Result<serde_json::Value, String> {
-        if job["kind"] == "chat" && job["state"] == "running" {
-            return Err(crate::ui::messages::text("native.startup_operation_still_running").into());
+    pub(super) fn chat_reset(&self, s: &mut Saved) -> Result<serde_json::Value, String> {
+        if self.chat_job(s)?["state"] == "running" {
+            return Err(crate::ui::messages::text("native.chat_still_answering").into());
         }
         s.chat_result = None;
         self.store(s)?;

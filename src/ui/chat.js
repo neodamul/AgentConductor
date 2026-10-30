@@ -1,4 +1,4 @@
-// DD-171 (GitHub #115) and DD-190 (#185): coordinator chat on the workspace screen as a persistent, terminal-style transcript; the server keeps the conversation and the answer arrives with the job snapshot.
+// DD-171 (GitHub #115) and DD-190 (#185): coordinator chat on the workspace screen as a persistent, terminal-style transcript; the server keeps the conversation and the answer arrives with the chat job's snapshot (GitHub #261: its own slot, next to a plan).
 function chatUi({q,request,state,notice}) {
  let turns=[],waiting=null,loading=null,ready=false,recall=-1,draft='',unsure=null;
  const box=()=>q('chat');
@@ -13,9 +13,9 @@ function chatUi({q,request,state,notice}) {
  async function send(){const text=q('chat-input').value.trim();if(!text||waiting)return;await load();if(waiting)return;const before=sendable().length;turns.push({role:'operator',text});q('chat-input').value='';recall=-1;waiting={at:Date.now()};draw();try{const r=await request({kind:'chat',revision:state().chat_revision,text});waiting={job:r.id,at:waiting.at};}catch(e){await resync(text,e,before);}draw();}
  // A timed-out send may have started a job; failed history reads keep the outcome pending until it can be reconciled.
  async function resync(text,error,before){unsure={text,error,before};loading=null;ready=false;await load();}
- function reconcile(stored){const {text:sent,error,before}=unsure;unsure=null;waiting=null;turns=stored.map(({role,text})=>({role,text}));if(stored.filter(t=>t.role==='operator').length>before)return;const typed=q('chat-input').value;q('chat-input').value=sent+(typed?'\n'+typed:'');notice(error.message,true);}
+ function reconcile(stored){const {text:sent,error,before}=unsure;unsure=null;waiting=null;turns=stored.map(({role,text})=>({role,text}));if(stored.filter(t=>t.role==='operator').length>before)return;const typed=q('chat-input').value;q('chat-input').value=sent+(typed?'\n'+typed:'');turns.push({role:'assistant',error:true,text:error.message});}
  // Follows the job: shows the answer or the failure once, and picks up a chat that was running when the screen reopened.
- function settle(){const s=state();if(!s||!ready)return;const job=s.job;if(waiting&&!waiting.job)return;if(waiting){if(job?.id!==waiting.job)return;if(job.state==='completed'&&s.chat?.job===job.id){turns.push({role:'assistant',text:s.chat.answer});waiting=null;}else if(['failed','interrupted','stopped'].includes(job.state)){turns.push({role:'assistant',error:true,text:acMessage('startup.chat_error',{value1:job.error||job.state})});waiting=null;}draw();return;}
+ function settle(){const s=state();if(!s||!ready)return;const job=s.chat_job;if(waiting&&!waiting.job)return;if(waiting){if(job?.id!==waiting.job)return;if(job.state==='completed'&&s.chat?.job===job.id){turns.push({role:'assistant',text:s.chat.answer});waiting=null;}else if(['failed','interrupted','stopped'].includes(job.state)){turns.push({role:'assistant',error:true,text:acMessage('startup.chat_error',{value1:job.error||job.state})});waiting=null;}draw();return;}
   if(turns.at(-1)?.role!=='operator'||job?.kind!=='chat')return;if(job.state==='running'){waiting={job:job.id,at:Date.now()};draw();}else if(job.state==='completed'&&s.chat?.job===job.id){turns.push({role:'assistant',text:s.chat.answer});draw();}}
  function update(){if(!state())return;if(!ready){load();return;}settle();if(waiting)draw();}
  // A different workspace has its own conversation.

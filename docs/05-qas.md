@@ -778,6 +778,10 @@ Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202.
 With `git` unreachable (empty PATH), a snapshot of a workspace that has a proposal succeeds and its revision is unchanged; the file-read HEAD equals `git rev-parse HEAD` for a loose ref, packed refs and a detached HEAD and follows a new commit at once; a layout the files cannot answer returns `pending` without waiting for Git and then the real commit; an unborn branch or a plain folder still fails where it failed before; a step of 500 ms or more is logged and a faster one is not.
 Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203. GitHub #234, user, 2026-10-30.
 
+### QAS-190 Chat next to a running job
+With a planning job running, a chat request is accepted, starts its own worker and does not change `job`; a second chat is refused while one runs; `chat_job` follows the chat to completion and the answer is returned with its id. The Running work section names the job, its elapsed time and the age of its last output, is bounded, and is empty when nothing runs. A rejected send leaves an error turn in the conversation and its text in the input, with no toast.
+Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204. GitHub #261, user, 2026-10-30.
+
 ### QAS-191 The facts line is not in the arrow column
 The stylesheet places `.task-profile` in the task summary grid explicitly (row 3, from column 2); in a browser the line is as wide as the text column and one line tall for a short text.
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.

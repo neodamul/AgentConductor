@@ -695,6 +695,10 @@ Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202.
 HEAD is read from the Git files without a process; a layout the files cannot answer is refreshed by a short background task and read from a cache; the snapshot is built outside the settings lock; the request diagnostics log names a lock wait or a step of 500 ms or more.
 Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203. GitHub #234, user, 2026-10-30.
 
+### SF-180 Chat in its own job slot, with the running work in its prompt
+The chat worker is started in its own slot and followed through `chat_job` in the snapshot; planning, starting and chat no longer exclude each other. The chat prompt has a bounded Running work section built from the saved job and the planner's process folder; a rejected send appears as an error turn in the conversation.
+Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204. GitHub #261, user, 2026-10-30.
+
 ### SF-181 Task summary layout
 The task summary is a grid whose third line, the facts line, is placed explicitly under the text column.
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.

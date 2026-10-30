@@ -34,6 +34,9 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
         if !project.is_dir() {
             return Err("choose a project folder first".into());
         }
+        let now_ms = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_or(0, |d| d.as_millis() as u64);
         let runtime = tokio::runtime::Builder::new_current_thread()
             .enable_all()
             .build()
@@ -44,7 +47,11 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
             &root.join(format!("chat-run-{id}")),
             &turns,
             input["language"].as_str().unwrap_or("English"),
-            &agentconductor::chat_context::workspace(&saved, &project),
+            &format!(
+                "{}\n\n{}",
+                agentconductor::chat_context::workspace(&saved, &project),
+                agentconductor::chat_context::running(&saved, root, now_ms)
+            ),
         ))?;
         agentconductor::mcp::store(
             root,

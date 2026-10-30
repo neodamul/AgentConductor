@@ -84,6 +84,7 @@ impl Startup {
                     proposal: if keep { saved.proposal.clone() } else { None },
                     job: if keep { saved.job.clone() } else { None },
                     quota_job: saved.quota_job.clone(),
+                    chat_job: saved.chat_job.clone(),
                     metadata_queue: saved.metadata_queue.clone(),
                     metadata_input: saved.metadata_input.clone(),
                     metadata_settled: saved.metadata_settled.clone(),

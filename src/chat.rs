@@ -113,6 +113,9 @@ inspect the project files, plans and documents first, then answer from what you 
 - For what was built, the run's results or how to run them, start from the Workspace section of the Document \
 (goal, tasks, tests, changed files and the candidate diff), then read the files it names in the project folder. \
 The run folder is outside your reach, so its evidence is only what the Workspace section quotes.\n\
+- For questions about why a plan or run is slow or stuck, use the Running work section of the Document (the job, how long it has \
+run, how much output its process has written and when it last wrote, and the end of its output and errors) and say what it \
+shows; do not guess beyond it.\n\
 - For questions about using AgentConductor or the current screen, answer from the manual in the Document.\n\
 - Do not invent files or commands; say when you could not find something.\n\n\
 Answer the last operator message:\n\n{}\n\n\

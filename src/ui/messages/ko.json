@@ -225,6 +225,7 @@
   "native.startup_artifacts_must_be_outside_repository": "시작 작업 자료는 저장소 밖에 있어야 합니다",
   "native.startup_document_exceeds_64_kib": "시작 문서가 64 KiB를 초과했습니다",
   "native.startup_job_state_poisoned": "시작 작업 상태를 읽을 수 없습니다",
+  "native.chat_still_answering": "코디네이터가 아직 답하는 중입니다. 답을 기다려 주세요",
   "native.startup_operation_still_running": "시작 작업이 진행 중입니다",
   "native.startup_settings_poisoned": "시작 설정을 읽을 수 없습니다",
   "native.startup_state_changed_since_review_refresh_before_acting": "검토 후 시작 상태가 변경됐습니다. 작업하기 전에 새로고침하세요",

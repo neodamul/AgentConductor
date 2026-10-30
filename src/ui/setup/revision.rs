@@ -15,6 +15,7 @@ impl Startup {
         let mut context = serde_json::to_value(saved).map_err(|error| error.to_string())?;
         for key in [
             "quota_job",
+            "chat_job",
             "metadata_queue",
             "metadata_input",
             "metadata_settled",

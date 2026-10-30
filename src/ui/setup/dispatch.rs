@@ -64,7 +64,7 @@ impl Startup {
             return Ok(self.chat_history(&saved));
         }
         if let Request::ChatReset {} = request {
-            return self.chat_reset(&mut saved, &job);
+            return self.chat_reset(&mut saved);
         }
         if let Request::Messenger {} = request {
             return Ok(crate::messenger::status(
