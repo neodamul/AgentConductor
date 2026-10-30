@@ -4,6 +4,10 @@ use pool::{Pool, Replies};
 use serde_json::Value;
 use std::sync::{Arc, mpsc};
 
+const READ_LANE: usize = 0;
+const STATE_CHANGE_LANE: usize = 1;
+const FOREGROUND_WORKERS: [usize; 2] = [2, 1];
+
 type Handler = Arc<dyn Fn(WorkerRequest) -> Result<Value, String> + Send + Sync>;
 #[cfg(test)]
 type TestDispatch = Arc<dyn Fn(&[u8]) -> Result<Value, String> + Send + Sync>;
@@ -59,7 +63,7 @@ impl RequestWorker {
         handler: Handler,
         events: mpsc::Receiver<crate::ui::events::Event>,
     ) -> Result<Self, String> {
-        let (requests, replies) = Pool::new(context.clone(), &[2, 1], handler.clone())?;
+        let (requests, replies) = Pool::new(context.clone(), &FOREGROUND_WORKERS, handler.clone())?;
         let (background_requests, background_queue) = mpsc::sync_channel::<WorkerRequest>(1);
         let (background_reply_tx, background_replies) = mpsc::channel();
         spawn_lane(
@@ -111,7 +115,11 @@ impl RequestWorker {
         } else {
             packet.to_vec()
         };
-        let lane = usize::from(crate::ui::events::event_for_request(&packet).is_some());
+        let lane = if crate::ui::events::event_for_request(&packet).is_some() {
+            STATE_CHANGE_LANE
+        } else {
+            READ_LANE
+        };
         self.requests.send(lane, WorkerRequest::Dispatch(packet))
     }
 
@@ -131,15 +139,18 @@ impl RequestWorker {
     }
 
     pub fn pick_folder(&self, purpose: crate::ui::picker::FolderPurpose) -> Result<(), String> {
-        self.requests.send(1, WorkerRequest::PickFolder(purpose))
+        self.requests
+            .send(STATE_CHANGE_LANE, WorkerRequest::PickFolder(purpose))
     }
 
     pub fn pick_plan_file(&self) -> Result<(), String> {
-        self.requests.send(1, WorkerRequest::PickPlanFile)
+        self.requests
+            .send(STATE_CHANGE_LANE, WorkerRequest::PickPlanFile)
     }
 
     pub fn pick_executable(&self) -> Result<(), String> {
-        self.requests.send(1, WorkerRequest::PickExecutable)
+        self.requests
+            .send(STATE_CHANGE_LANE, WorkerRequest::PickExecutable)
     }
 }
 

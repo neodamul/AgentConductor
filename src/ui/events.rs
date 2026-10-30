@@ -47,6 +47,7 @@ impl EventBus {
     }
 
     pub fn publish(&self, source: Option<u64>, event: Event) {
+        // Keep the registry lock out of channel sends and UI wake callbacks.
         let listeners = match self.subscribers.lock() {
             Ok(subscribers) => subscribers.listeners.clone(),
             Err(_) => return,
@@ -91,7 +92,9 @@ pub fn event_for_request(packet: &[u8]) -> Option<Event> {
         | "mcp_source_suggestions"
         | "preview_settings"
         | "cache_preview"
-        | "messenger" => None,
+        | "messenger"
+        | "baseline_status"
+        | "resolve_executable" => None,
         _ => Some(Event::StateChanged),
     }
 }

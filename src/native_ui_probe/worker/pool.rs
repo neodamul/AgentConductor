@@ -7,6 +7,8 @@ use std::sync::{
 };
 use std::time::{Duration, Instant};
 
+const QUEUE_CAPACITY: usize = 16;
+
 struct Tagged<T> {
     id: u64,
     request: T,
@@ -58,7 +60,7 @@ impl<T: Send + 'static> Pool<T> {
         let latest_id = Arc::new(AtomicU64::new(0));
         let mut senders = Vec::with_capacity(worker_counts.len());
         for (lane, worker_count) in worker_counts.iter().copied().enumerate() {
-            let (sender, queue) = mpsc::sync_channel::<Tagged<T>>(16);
+            let (sender, queue) = mpsc::sync_channel::<Tagged<T>>(QUEUE_CAPACITY);
             senders.push(sender);
             let queue = Arc::new(Mutex::new(queue));
             for worker in 0..worker_count {

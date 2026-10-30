@@ -49,6 +49,7 @@ fn repeated_state_changes_coalesce_while_a_window_is_busy() {
 #[test]
 fn read_only_snapshots_do_not_trigger_refresh_broadcasts() {
     assert_eq!(event_for_request(br#"{"kind":"snapshot"}"#), None);
+    assert_eq!(event_for_request(br#"{"kind":"baseline_status"}"#), None);
     assert_eq!(
         event_for_request(br#"{"kind":"chat"}"#),
         Some(Event::StateChanged)
