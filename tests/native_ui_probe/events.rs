@@ -84,6 +84,21 @@ fn disconnected_subscriber_does_not_block_or_remain_registered() {
 }
 
 #[test]
+fn subscriber_wakeup_runs_outside_the_registry_lock() {
+    let bus = std::sync::Arc::new(EventBus::default());
+    let callback_bus = bus.clone();
+    let listener = bus
+        .subscribe_with_wakeup(EventSurface::Workspace, move || {
+            assert!(callback_bus.subscribers.try_lock().is_ok());
+        })
+        .unwrap();
+
+    bus.publish(None, Event::WorkspaceChanged);
+
+    assert_eq!(listener.events.try_recv().unwrap(), Event::WorkspaceChanged);
+}
+
+#[test]
 fn read_only_snapshots_do_not_trigger_refresh_broadcasts() {
     assert_eq!(event_for_request(br#"{"kind":"snapshot"}"#), None);
     assert_eq!(event_for_request(br#"{"kind":"baseline_status"}"#), None);
