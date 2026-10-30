@@ -2342,3 +2342,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: `src/git_head.rs`, `src/ui/setup/revision.rs`, `src/ui/setup/dispatch.rs`, `src/ui/setup.rs`, `src/ui/diagnostics.rs`; manuals EN/KO; CHANGELOG.
 - [x] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI. Not verified: the user's PC after the change; a snapshot that is slow for another reason (the step log will say which).
 - [ ] Complete: merge; release only on request. Related: Codex PR #239 changes the same files for the Rust UI.
+
+### Task facts line layout — GitHub #262
+
+- [x] Plan: user report 2026-10-30 (v0.1.45): the task type / effort line of a task in the plan review is a one-character-wide column. R-193 → DD-205: place it explicitly in the summary grid.
+- [ ] Red: `tests/task_profile_layout.rs`.
+- [ ] Task: `src/ui/startup.css`; CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, Rust suite, a browser check of the real stylesheet. Windows: CI.
+- [ ] Complete: merge; release only on request.

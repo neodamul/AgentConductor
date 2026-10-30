@@ -702,3 +702,7 @@ Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202.
 ### FR-183 Resolve HEAD without a process on the request path
 `git_head::read(project)` resolves the Git directory (the `.git` directory, or the history kept outside a project that has none), reads `HEAD` and the loose ref or `packed-refs`, and returns what `git rev-parse HEAD` would. `Heads::get` returns it, or for any other layout (a `.git` file, a reftable, an unborn branch) the last answer of a background refresh (`pending` until the first one, `unavailable` if Git failed), and starts at most one refresh per folder when the answer is older than 5 s. `state_revision` uses `Heads`. The snapshot request advances the state under the settings lock, copies it, releases the lock and builds the answer from the copy. `diagnostics::step` writes `step name=<lock|advance|snapshot> ms=<n>` when a step took 500 ms or more.
 Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203. GitHub #234, user, 2026-10-30.
+
+### FR-185 Place the facts line in the grid
+`details.startup-task>summary .task-profile` is placed in row 3 and spans from the text column to the last column, so the 22px arrow column and the right-hand remove column are not used for text and the line wraps normally.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.

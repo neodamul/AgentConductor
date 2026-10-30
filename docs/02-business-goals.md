@@ -592,3 +592,7 @@ Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202.
 ### BG-146 The coordinator chat answers while the window keeps refreshing
 A slow machine does not turn the periodic refresh into a queue that stops the operator from asking.
 Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203. GitHub #234, user, 2026-10-30.
+
+### BG-148 The plan review can be read after a long analysis
+The operator who waited for a long analysis sees every task in full, not a column of single letters.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.

@@ -1579,3 +1579,7 @@ Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202.
 ### DD-203 Read the files, refresh in the background, build outside the lock
 The request path only reads files and a cache. The fast path returns a value only when it can prove it from the files Git reads in the same order (`HEAD`, the loose ref, `packed-refs`); the ref name stays inside `refs/` and carries no `..`. Any doubt gives `None` and the answer comes from the cache, which a one-shot thread fills by running the old Git call; nothing polls while nobody asks, and no thread is held. The snapshot answer is built from a copy of the saved state after the lock is released, so the chat and actions are not queued behind it. Still done under the lock: advancing the state (including starting a metadata child process) and, for a chat, starting its worker; the step log shows if either becomes the slow part. The page keeps asking for snapshots, which are now cheap; a push channel to the page is not part of this change. The 15 s page timeout is unchanged: raising it would only lengthen the queue.
 Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203. GitHub #234, user, 2026-10-30.
+
+### DD-205 Explicit placement instead of auto-placement
+A grid child without a column goes to the first free cell, here the arrow column. The rule names the row and the columns, which also holds when the remove button is absent (the third column then has no width).
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.
