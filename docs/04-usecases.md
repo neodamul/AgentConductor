@@ -775,3 +775,7 @@ Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204.
 ### UC-184 Opening the review of a finished plan
 The plan is ready; the operator sees each task as three readable lines and opens one to edit it.
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.
+
+### UC-185 Watching a run in the coordinator Activity tab
+Three tasks run; the operator opens the coordinator tab and sees `running · 0 of 3 completed · 3 running` with one row per task, and between the availability timer and task profile entries no `workflow` lines.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206. GitHub #267, user, 2026-10-30.

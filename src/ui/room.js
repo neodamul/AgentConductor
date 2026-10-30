@@ -270,10 +270,14 @@ function fixIntegration(test) {
   $('feedback').value=acMessage("room.the_coordinator_s_integration_verification_ran_this_task", {value1:clipLines(test.output||acMessage("common.no_output"),12)});
   $('feedback').focus();notice(()=>(acMessage("room.review_the_drafted_direction_then_send_feedback_the")));
 }
+// GitHub #267 (DD-206): the coordinator tab starts with the run's status, and the `workflow` rows (one per report save, always the same counts) are not drawn, because the board carries that status; the stored history is unchanged.
+function boardCounts(tasks) { const n = s => tasks.filter(t => t.status === s).length; return { total: tasks.length, completed: n('completed'), running: n('running'), failed: n('failed'), pending: n('pending') }; }
+function shownHistory(rows) { return rows.filter(h => h.event !== 'workflow'); }
+function boardNode(r) { const c = boardCounts(r.tasks), box = node('section', undefined, 'coord-board'); box.append(node('p', () => acMessage("room.board_summary", { value1: statusLabel(r.state), value2: c.completed, value3: c.total, value4: c.running, value5: c.failed, value6: c.pending }), 'coord-board-summary')); r.tasks.forEach((t, i) => { const act = activityLines(snapshot.activity?.[t.id], Date.now() - activityAt).join(' · '); box.append(node('p', () => [t.id, r.plan.tasks[i]?.agent, statusLabel(t.status), act].filter(Boolean).join(' · '), 'coord-board-task')); }); return box; }
 function renderCoordinator(data) {
   if(!coordinatorView)return;const r=snapshot.report;
   const timeline=[event(acMessage("room.coordinator"),acMessage("room.runs_every_task_test_on_the_combined_result"),'plan')];
-  const judged=new Map((data.judgments||[]).map(j=>[j.seq,j]));for(const h of data.history||[]){if(h.event==='tool_orchestrator_decision'){timeline.push(decisionEntry(h.payload));continue;}if(judged.has(h.seq)){timeline.push(judgmentEntry(judged.get(h.seq)));continue;}const bad=/fail|error|reject|interrupt/i.test(h.event+' '+h.summary);timeline.push(event(statusLabel(h.event),h.summary||'',bad?'error':'status',h.seq));}
+  const judged=new Map((data.judgments||[]).map(j=>[j.seq,j]));timeline.push(boardNode(r));for(const h of shownHistory(data.history||[])){if(h.event==='tool_orchestrator_decision'){timeline.push(decisionEntry(h.payload));continue;}if(judged.has(h.seq)){timeline.push(judgmentEntry(judged.get(h.seq)));continue;}const bad=/fail|error|reject|interrupt/i.test(h.event+' '+h.summary);timeline.push(event(statusLabel(h.event),h.summary||'',bad?'error':'status',h.seq));}
   for(const t of r.tests){const ok=t.exit_code===0&&!t.timed_out;timeline.push(event(ok?acMessage("room.integration_test_passed"):acMessage("room.integration_test_failed"),acMessage("room.exit_df653f", {value1:t.task,value2:t.exit_code??'?',value3:t.timed_out?acMessage("common.timed_out"):'',value4:t.output?'\n'+clipLines(t.output,12):''}),ok?'result':'error'));}
   if(r.error)timeline.push(event(acMessage("room.run_error"),r.error,'error'));
   const activity=$('activity'),nearBottom=activity.parentElement.scrollHeight-activity.parentElement.scrollTop-activity.parentElement.clientHeight<70;

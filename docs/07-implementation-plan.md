@@ -2358,3 +2358,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Task: `src/ui/startup.css`; CHANGELOG.
 - [ ] Verify (macOS): fmt, clippy, Rust suite, a browser check of the real stylesheet. Windows: CI.
 - [ ] Complete: merge; release only on request.
+
+### Coordinator Activity tab status board — GitHub #267
+
+- [x] Plan: user report 2026-10-30: the coordinator Activity tab repeats `AgentConductor run=… phase=running completed=0 failed=0`; a dashboard is wanted. R-194 → DD-206: a status board, and the `workflow` rows left out of the drawn history, in the page only.
+- [x] Red: `tests/coordinator_board.cjs` (the helpers did not exist).
+- [x] Task: `src/ui/room.js`, `src/ui/room.css`, `src/ui/messages/*.json`; CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, Rust suite, Python, node, a browser check of the real room page if feasible. Windows: CI.
+- [ ] Complete: merge; release only on request. The Rust UI has its own room (Codex, out of quota): not changed.

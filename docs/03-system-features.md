@@ -702,3 +702,7 @@ Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204.
 ### SF-181 Task summary layout
 The task summary is a grid whose third line, the facts line, is placed explicitly under the text column.
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.
+
+### SF-182 Status board in the coordinator Activity tab, without the workflow rows
+The tab starts with a board built from the snapshot the page already has, followed by the history without its `workflow` entries.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206. GitHub #267, user, 2026-10-30.

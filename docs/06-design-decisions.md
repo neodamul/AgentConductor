@@ -1587,3 +1587,7 @@ Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204.
 ### DD-205 Explicit placement instead of auto-placement
 A grid child without a column goes to the first free cell, here the arrow column. The rule names the row and the columns, which also holds when the remove button is absent (the third column then has no width).
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.
+
+### DD-206 Leave the workflow rows out of the page, keep the stored history
+The audit history is evidence and stays as recorded (one `workflow` row per report save); leaving them out happens only when the page draws it, so nothing is lost and no Rust change is needed. The board uses data already in the snapshot (`report.tasks`, `activity`), so it adds no request. The row summary that only carries counts stays as it is: the board carries the counts. Folding repeats was rejected because the repeats are not consecutive (they sit between informative rows), and the operator asked for the line not to be printed at all.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206. GitHub #267, user, 2026-10-30.

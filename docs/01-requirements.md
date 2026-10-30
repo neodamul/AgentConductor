@@ -766,3 +766,7 @@ Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204.
 ### R-193 A task's facts line stays readable in the plan review
 In the plan review, every task shall show its id, its one-line description and its facts line (task type, effort, warnings) as readable text beside or below the arrow, at any window width. The facts line shall not be squeezed into the arrow's column.
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.
+
+### R-194 The coordinator Activity tab shows the run's status, not a repeating line
+While agents work, the coordinator Activity tab of the run screen shall show the current status of the run (state, how many tasks are completed, running, failed and pending, and for each task its agent, status and how long ago it last produced output), and shall not list the `workflow` entries, which repeat the same counts after every saved change and only interleave with the entries that carry information (availability timer, task profile, decisions, results). The recorded history itself is unchanged.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206. GitHub #267, user, 2026-10-30.

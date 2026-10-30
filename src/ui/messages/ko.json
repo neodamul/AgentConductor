@@ -332,6 +332,7 @@
   "room.connecting_to_local_run": "로컬 실행에 연결 중…",
   "room.connecting_to_your_run": "실행에 연결 중…",
   "room.content": "내용",
+  "room.board_summary": "실행 {value1}: 작업 {value3}개 중 {value2}개 완료 · {value4}개 실행 중 · {value5}개 실패 · {value6}개 대기",
   "room.coordinator": "코디네이터",
   "room.coordinator_allowed": "코디네이터 허용",
   "room.coordinator_could_not_decide": "코디네이터 판단 불가",
