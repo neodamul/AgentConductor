@@ -9,10 +9,7 @@ impl Probe {
                 self.poll_succeeded();
                 self.refresh_requested =
                     self.refresh_generation != self.background_refresh_generation;
-                if self.pending.is_some() {
-                    self.refresh_requested = true;
-                    return;
-                }
+                let interactive_pending = self.pending.is_some();
                 if let Some(view) = self.room_view.as_mut() {
                     if view
                         .evidence
@@ -27,13 +24,15 @@ impl Probe {
                         &snapshot,
                         std::time::Instant::now(),
                     );
-                } else {
+                } else if !interactive_pending {
                     super::workspace_ops::load_workspace(self, &snapshot);
                 }
                 self.snapshot = Some(snapshot);
-                self.error = None;
-                super::super::workspace::plan_source::after_refresh(self);
-                if self.room_view.is_some() {
+                if !interactive_pending {
+                    self.error = None;
+                    super::super::workspace::plan_source::after_refresh(self);
+                }
+                if !interactive_pending && self.room_view.is_some() {
                     self.refresh_room_details(true);
                 }
             }

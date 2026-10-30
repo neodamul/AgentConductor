@@ -715,7 +715,7 @@ After a successful state-changing Room request, publish a small invalidation eve
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, 2026-10-30.
 
 ### NFR-81 Background refresh cannot occupy interactive request handling
-Periodic snapshots shall use a separate worker and response channel from interactive requests. A slow or failed snapshot must not fill the interactive queue, overwrite its pending state, or block rendering. State changes wake peer views immediately; active external jobs retain the one-second recovery cadence and idle views check at most once every 30 seconds.
+Periodic snapshots shall use a separate worker and response channel from interactive requests. A slow or failed snapshot must not fill the interactive queue or block rendering. A completed snapshot shall refresh visible state while preserving any interactive pending action, unsaved form values, and current error. State changes wake peer views immediately; active external jobs retain the one-second recovery cadence and idle views check at most once every 30 seconds.
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, 2026-10-30.
 
 ### NFR-80 Routine Git revision fallback cannot block native requests

@@ -86,7 +86,7 @@ impl RequestWorker {
     }
 
     #[cfg(test)]
-    fn with_dispatch_for_test(
+    pub(super) fn with_dispatch_for_test(
         context: egui::Context,
         dispatch: TestDispatch,
     ) -> Result<Self, String> {
