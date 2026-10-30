@@ -694,3 +694,7 @@ Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202.
 ### SF-179 Non-blocking state revision and snapshot
 HEAD is read from the Git files without a process; a layout the files cannot answer is refreshed by a short background task and read from a cache; the snapshot is built outside the settings lock; the request diagnostics log names a lock wait or a step of 500 ms or more.
 Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203. GitHub #234, user, 2026-10-30.
+
+### SF-181 Task summary layout
+The task summary is a grid whose third line, the facts line, is placed explicitly under the text column.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.
