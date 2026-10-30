@@ -6576,4 +6576,4 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: 66 library tests, 13 native UI integration tests, and 2 source-layout tests pass; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the 300-line source/test limit pass.
 - [x] Update the LLM Wiki and refresh Graphify to 11,723 nodes / 17,818 edges. CocoIndex is not installed in this environment; no substitute dependency was added.
 - [ ] Verify exact packaged macOS and Windows responsiveness; no UI/package acceptance is claimed from source tests.
-- [ ] Complete: update issue #257 and PR #260 after local verification; issue #9 remains open until package parity gates pass.
+- [x] Post the local verification checkpoint to issue #257 and draft PR #260 at `c97e0d3`; leave both open for packaged macOS/Windows and full all-target gates.
