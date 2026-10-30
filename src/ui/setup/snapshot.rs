@@ -2,7 +2,7 @@ use super::*;
 impl Startup {
     pub(super) fn snapshot_state(
         &self,
-        saved: &mut Saved,
+        saved: &Saved,
         job: &serde_json::Value,
         metadata_job: &serde_json::Value,
         request: &Request,
