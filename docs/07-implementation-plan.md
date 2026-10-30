@@ -6563,6 +6563,17 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Shared-lock fix: add the lock-release regression first (it failed to compile until the detached snapshot boundary existed), then clone `Saved` and release its mutex before snapshot filesystem/quota/revision work. A deterministic barrier test holds snapshot assembly and proves a concurrent operation can acquire the shared state lock. Existing UI pending state still serializes intentional foreground operations per window; this change removes cross-window waiting caused by long snapshot assembly.
 - [x] Shared-lock verification: 62 library tests and four targeted tests across native start journey, chat startup context, and source layout pass; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test check pass.
 - [x] Background-during-interaction regression: reproduce that a completed independent snapshot was discarded whenever an interactive reply was pending. Apply the new authoritative snapshot while preserving the pending operation, dirty form values and current error; targeted regression passes.
-- [ ] Remaining architecture gap: interactive dispatch is still one serial worker with a scalar pending state. Define independent long-running operation lanes and correlated replies before claiming that unrelated interactive requests can proceed concurrently; add a barrier regression proving a slow foreground operation does not suppress independent progress updates.
+- [x] Worker-level architecture gap: replace the single foreground worker with bounded read and serialized state-change lanes; preserve a separate poll worker and correlate replies. The UI retains one foreground pending presentation slot, while work on independent lanes no longer shares one request thread.
 - [ ] Full local regression after this follow-up: interrupted after 682 passed / 14 ignored across 204 suites; no failures observed, but this is not a complete pass.
 - [ ] Exact packaged macOS and Windows responsiveness remains unverified.
+
+### 2026-10-30 — Keep independent native requests responsive — issue #9 / #257
+
+- [x] Plan: trace R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207; preserve event broadcast, serialized mutations, and the existing single-flight snapshot worker.
+- [x] Red: add a barrier regression proving a slow snapshot prevents a later independent action from completing; the test timed out on the single foreground worker.
+- [x] Task / Green: route reads to two fixed workers, state-changing and unknown valid requests to one bounded serialized worker, and keep periodic snapshots in their isolated lane. Correlate replies and drop stale completions.
+- [x] Verify focused: a state change completes during a blocked snapshot; two read requests run concurrently; state changes remain serialized; read-only requests do not emit invalidations.
+- [x] Verify locally: 66 library tests, 13 native UI integration tests, and 2 source-layout tests pass; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the 300-line source/test limit pass.
+- [x] Update the LLM Wiki and refresh Graphify to 11,723 nodes / 17,818 edges. CocoIndex is not installed in this environment; no substitute dependency was added.
+- [ ] Verify exact packaged macOS and Windows responsiveness; no UI/package acceptance is claimed from source tests.
+- [ ] Complete: update issue #257 and PR #260 after local verification; issue #9 remains open until package parity gates pass.

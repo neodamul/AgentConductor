@@ -53,4 +53,8 @@ fn read_only_snapshots_do_not_trigger_refresh_broadcasts() {
         event_for_request(br#"{"kind":"chat"}"#),
         Some(Event::StateChanged)
     );
+    assert_eq!(
+        event_for_request(br#"{"kind":"future_state_change"}"#),
+        Some(Event::StateChanged)
+    );
 }

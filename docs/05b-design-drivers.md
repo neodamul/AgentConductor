@@ -185,3 +185,6 @@ Common Git HEAD layouts are directly readable, so spawning Git on every revision
 
 ### Driver DDR-46 Let events wake peer views; keep snapshots off the command lane
 The native app has two views sharing one Room. Use a small in-process broadcast bus with per-view subscriptions and source suppression, a separate bounded background snapshot lane, and one coalesced invalidation flag. Keep the event payload content-free; the receiving view reads authoritative state from the existing snapshot API. Apply completed snapshots without clearing interactive pending state or replacing unsaved inputs. A short active-job timer and slow idle recovery timer cover external CLI changes without making a watcher or runtime dependency mandatory. Trace: R-194 → QAS-192.
+
+### Driver DDR-47 Isolate reads, mutations, and recovery work
+Use a fixed two-worker read lane, a single-worker state-change lane, and the existing single-flight background poll lane. Keep each queue bounded, tag foreground responses, and ignore superseded replies. Unknown valid request kinds default to the state-change lane. Keep event messages content-free and coalesce refresh requests; do not add an async runtime or unbounded task spawning. Trace: QAS-193.

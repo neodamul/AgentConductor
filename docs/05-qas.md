@@ -780,3 +780,7 @@ Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → 
 ### QAS-192 State events refresh peer views without request starvation
 Given two open native views, a successful change through one Room is delivered once to the other listener and does not echo to its source. Given a deterministic background snapshot held behind a test barrier, another interactive request can acquire shared startup state before that barrier is released; snapshot assembly must use a detached state copy and must not retain the shared state lock. Given an interactive response is pending when a background snapshot completes, the visible snapshot is updated while the pending response, unsaved form value and current error remain intact. A burst of state events is coalesced to one snapshot. Running jobs retain the one-second recovery cadence and idle views use 30 seconds. Verify these behaviors with EventBus, snapshot-lock, worker-concurrency and native scheduling tests.
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, 2026-10-30.
+
+### QAS-193 A blocked read does not starve state changes
+Use deterministic barriers to prove that two reads can run on the bounded read lane, a state-changing action completes while a read is blocked, and state-changing actions remain serialized. Verify stale replies are ignored, poll requests remain separate, and event notifications coalesce without blocking publishers.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.

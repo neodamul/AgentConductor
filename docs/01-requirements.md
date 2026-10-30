@@ -762,3 +762,7 @@ Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → 
 ### R-194 State changes wake only the other native views
 The native Workspace and Agent Room shall broadcast successful state changes to other open views, and each listener shall coalesce those events into a targeted asynchronous refresh. The sender shall not refresh itself from its own event. Periodic snapshots shall run on an independent worker and reply channel so a slow refresh cannot reject or delay chat and other interactive requests. A completed background snapshot shall update visible state even while an interactive response is pending, without clearing that response, overwriting unsaved form input, or replacing its error. Active external work may use a bounded 1-second fallback; idle views use a 30-second recovery check.
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, user, 2026-10-30.
+
+### R-195 Independent native requests must not wait behind slow reads
+Long-running native reads and periodic refreshes must not occupy the state-change request lane or block an unrelated user action. State-changing requests must remain serialized, and stale responses must not replace the latest visible operation.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.

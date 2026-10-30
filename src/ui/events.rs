@@ -47,20 +47,29 @@ impl EventBus {
     }
 
     pub fn publish(&self, source: Option<u64>, event: Event) {
-        let Ok(mut subscribers) = self.subscribers.lock() else {
-            return;
+        let listeners = match self.subscribers.lock() {
+            Ok(subscribers) => subscribers.listeners.clone(),
+            Err(_) => return,
         };
-        subscribers.listeners.retain(|(id, sender, wake)| {
-            if *id == source.unwrap_or_default() {
-                return true;
+        let mut disconnected = Vec::new();
+        for (id, sender, wake) in listeners {
+            if Some(id) == source {
+                continue;
             }
             match sender.try_send(event) {
                 Ok(()) => wake(),
                 Err(mpsc::TrySendError::Full(_)) => {}
-                Err(mpsc::TrySendError::Disconnected(_)) => return false,
+                Err(mpsc::TrySendError::Disconnected(_)) => disconnected.push(id),
             }
-            true
-        });
+        }
+        if disconnected.is_empty() {
+            return;
+        }
+        if let Ok(mut subscribers) = self.subscribers.lock() {
+            subscribers
+                .listeners
+                .retain(|(id, _, _)| !disconnected.contains(id));
+        }
     }
 }
 
@@ -68,46 +77,22 @@ pub fn event_for_request(packet: &[u8]) -> Option<Event> {
     let request: serde_json::Value = serde_json::from_slice(packet).ok()?;
     let kind = request["kind"].as_str()?;
     match kind {
-        "save"
-        | "prepare"
-        | "draft"
-        | "read_plan"
-        | "next_phase"
-        | "start"
-        | "new_goal"
-        | "select_goal"
-        | "save_plan_rules"
-        | "commit_baseline"
-        | "ignore_os_files"
-        | "create_slug"
-        | "save_profiles"
-        | "export_settings"
-        | "import_settings"
-        | "save_messenger"
-        | "test_messenger"
-        | "mcp_save"
-        | "mcp_discover"
-        | "mcp_preview"
-        | "mcp_apply"
-        | "chat"
-        | "chat_reset"
-        | "optimize_goal"
-        | "quota"
-        | "discover"
-        | "catalog"
-        | "stop_planning"
-        | "cache_clear"
-        | "action"
-        | "create_workspace"
-        | "switch_workspace"
-        | "forget_workspace"
-        | "delete_workspace"
-        | "set_language"
-        | "set_theme"
-        | "set_signal_transport"
-        | "set_update_settings"
-        | "apply_update" => Some(Event::StateChanged),
-        _ => None,
+        "snapshot"
+        | "evidence"
+        | "task"
+        | "coordinator"
+        | "scope_failure"
+        | "scope_recovery_preview"
+        | "workspaces"
+        | "saved_workspaces"
+        | "signal_transport"
+        | "update_status"
+        | "manual_document"
+        | "mcp_source_suggestions"
+        | "preview_settings"
+        | "cache_preview"
+        | "messenger" => None,
+        _ => Some(Event::StateChanged),
     }
 }
 

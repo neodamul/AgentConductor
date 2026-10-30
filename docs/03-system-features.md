@@ -697,3 +697,7 @@ Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → 
 ### SF-182 Broadcast state invalidations and isolate refresh work
 The shared Room publishes successful state changes to subscribed native views, excluding the originating view. Listeners coalesce notifications and request one asynchronous snapshot through a dedicated background queue and reply channel. A completed snapshot updates the visible state without replacing an interactive request's pending state or dirty form values. Active child work retains a bounded one-second refresh fallback; idle views recover at a 30-second interval.
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, user, 2026-10-30.
+
+### SF-183 Dispatch native requests through bounded independent lanes
+Run read-only requests in a small bounded worker pool, serialize state-changing requests in their own bounded lane, and keep scheduled snapshots on their existing single-flight background lane. Correlate replies and ignore superseded results. Classify unknown valid request kinds conservatively as state changes so they cannot race mutations or bypass peer-view invalidation.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.

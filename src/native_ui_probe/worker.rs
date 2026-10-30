@@ -1,4 +1,6 @@
 use eframe::egui;
+mod pool;
+use pool::{Pool, Replies};
 use serde_json::Value;
 use std::sync::{Arc, mpsc};
 
@@ -22,9 +24,9 @@ pub(super) fn initial_snapshot(room_view: bool) -> &'static [u8] {
 }
 
 pub struct RequestWorker {
-    requests: mpsc::SyncSender<WorkerRequest>,
+    requests: Pool<WorkerRequest>,
     background_requests: mpsc::SyncSender<WorkerRequest>,
-    pub replies: mpsc::Receiver<Result<Value, String>>,
+    pub replies: Replies,
     pub background_replies: mpsc::Receiver<Result<Value, String>>,
     pub events: mpsc::Receiver<crate::ui::events::Event>,
     room_view: bool,
@@ -57,17 +59,9 @@ impl RequestWorker {
         handler: Handler,
         events: mpsc::Receiver<crate::ui::events::Event>,
     ) -> Result<Self, String> {
-        let (requests, queue) = mpsc::sync_channel::<WorkerRequest>(1);
+        let (requests, replies) = Pool::new(context.clone(), &[2, 1], handler.clone())?;
         let (background_requests, background_queue) = mpsc::sync_channel::<WorkerRequest>(1);
-        let (reply_tx, replies) = mpsc::channel();
         let (background_reply_tx, background_replies) = mpsc::channel();
-        spawn_lane(
-            "native-ui-requests",
-            queue,
-            reply_tx,
-            context.clone(),
-            handler.clone(),
-        )?;
         spawn_lane(
             "native-ui-background-refresh",
             background_queue,
@@ -117,9 +111,8 @@ impl RequestWorker {
         } else {
             packet.to_vec()
         };
-        self.requests
-            .try_send(WorkerRequest::Dispatch(packet))
-            .map_err(|error| error.to_string())
+        let lane = usize::from(crate::ui::events::event_for_request(&packet).is_some());
+        self.requests.send(lane, WorkerRequest::Dispatch(packet))
     }
 
     pub fn send_background(&self, packet: &[u8]) -> Result<(), String> {
@@ -138,21 +131,15 @@ impl RequestWorker {
     }
 
     pub fn pick_folder(&self, purpose: crate::ui::picker::FolderPurpose) -> Result<(), String> {
-        self.requests
-            .try_send(WorkerRequest::PickFolder(purpose))
-            .map_err(|error| error.to_string())
+        self.requests.send(1, WorkerRequest::PickFolder(purpose))
     }
 
     pub fn pick_plan_file(&self) -> Result<(), String> {
-        self.requests
-            .try_send(WorkerRequest::PickPlanFile)
-            .map_err(|error| error.to_string())
+        self.requests.send(1, WorkerRequest::PickPlanFile)
     }
 
     pub fn pick_executable(&self) -> Result<(), String> {
-        self.requests
-            .try_send(WorkerRequest::PickExecutable)
-            .map_err(|error| error.to_string())
+        self.requests.send(1, WorkerRequest::PickExecutable)
     }
 }
 
