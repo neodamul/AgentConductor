@@ -57,6 +57,15 @@ function Wait-EnabledButton($name) {
   $enabled = if ($button) { $button.Current.IsEnabled } else { 'missing' }
   throw "ACTION_BUTTON_NOT_ENABLED: name=$name enabled=$enabled"
 }
+$actionStateTimeoutMs = 4000
+function Wait-ActionState($expected, $visible) {
+  $until = (Get-Date).AddMilliseconds($actionStateTimeoutMs)
+  while ((Get-Date) -lt $until) {
+    if (($null -ne (Find-Button $expected)) -eq $visible) { return $true }
+    Start-Sleep -Milliseconds 50
+  }
+  return (($null -ne (Find-Button $expected)) -eq $visible)
+}
 function PointHitsButton($x, $y, $name) {
   $point = [System.Windows.Point]::new([double]$x, [double]$y)
   $element = $A::FromPoint($point)
@@ -178,65 +187,50 @@ public static class ToolDecisionMouse {
 function Activate($button, $expected, $visible) {
   $name = $button.Current.Name
   $invokeError = $null
-  for ($attempt = 0; $attempt -lt 3; $attempt++) {
-    $button = Wait-EnabledButton $name
-    if ($attempt -eq 0) {
-      try { $button.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke() }
-      catch { $invokeError = $_.Exception.Message }
-      $until = (Get-Date).AddMilliseconds(300)
-      while ((Get-Date) -lt $until) {
-        if (($null -ne (Find-Button $expected)) -eq $visible) {
-          Write-Output "ACTION_STATE_CONFIRMED_AFTER_UIA: expected=$expected visible=$visible"
+  $button = Wait-EnabledButton $name
+  try { $button.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke() }
+  catch { $invokeError = $_.Exception.Message }
+  if (Wait-ActionState $expected $visible) {
+    Write-Output "ACTION_STATE_CONFIRMED_AFTER_UIA: expected=$expected visible=$visible"
+    return
+  }
+  Write-Output "ACTION_INVOKE_NO_STATE_CHANGE: name=$name expected=$expected visible=$visible invokeError=$invokeError"
+  try {
+    $button = Find-CurrentButton $name
+    if ($button -and $button.Current.IsEnabled) {
+      $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
+      if ([ToolDecisionMouse]::Focus($hwnd, [uint32]$targetPid)) { $button.SetFocus() }
+      $focused = $A::FocusedElement
+      if ($focused.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $focused.Current.Name -eq $name -and $focused.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' -and $focused.Current.IsEnabled) {
+        $keyFailure = [ToolDecisionMouse]::Key(0x0D)
+        if ($keyFailure) { throw $keyFailure }
+        if (Wait-ActionState $expected $visible) {
+          Write-Output "ACTION_STATE_CONFIRMED_AFTER_KEYBOARD: expected=$expected visible=$visible"
           return
         }
-        Start-Sleep -Milliseconds 50
+        Write-Output "ACTION_KEYBOARD_NO_STATE_CHANGE: name=$name expected=$expected visible=$visible"
+      } else {
+        Write-Output "ACTION_KEYBOARD_TARGET_NOT_FOCUSED: name=$name focused=$($focused.Current.Name) pid=$($focused.Current.ProcessId)"
       }
-      Write-Output "ACTION_INVOKE_NO_STATE_CHANGE: name=$name expected=$expected visible=$visible invokeError=$invokeError"
-      try {
-        $button = Find-CurrentButton $name
-        $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
-        if ([ToolDecisionMouse]::Focus($hwnd, [uint32]$targetPid)) { $button.SetFocus() }
-        $focused = $A::FocusedElement
-        if ($focused.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $focused.Current.Name -eq $name -and $focused.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' -and $focused.Current.IsEnabled) {
-          $keyFailure = [ToolDecisionMouse]::Key(0x0D)
-          if ($keyFailure) { throw $keyFailure }
-          $until = (Get-Date).AddMilliseconds(500)
-          while ((Get-Date) -lt $until) {
-            if (($null -ne (Find-Button $expected)) -eq $visible) {
-              Write-Output "ACTION_STATE_CONFIRMED_AFTER_KEYBOARD: expected=$expected visible=$visible"
-              return
-            }
-            Start-Sleep -Milliseconds 50
-          }
-          Write-Output "ACTION_KEYBOARD_NO_STATE_CHANGE: name=$name expected=$expected visible=$visible"
-        } else {
-          Write-Output "ACTION_KEYBOARD_TARGET_NOT_FOCUSED: name=$name focused=$($focused.Current.Name) pid=$($focused.Current.ProcessId)"
-        }
-      } catch { Write-Output "ACTION_KEYBOARD_FALLBACK_UNAVAILABLE: $_" }
     }
-    $button = Ensure-ButtonInsideWindow $name
-    $button = Wait-EnabledButton $name
-    if (($null -ne (Find-Button $expected)) -eq $visible) { return }
-    $point = $button.GetClickablePoint()
-    $x = [int][Math]::Round($point.X)
-    $y = [int][Math]::Round($point.Y)
-    if (-not (PointHitsButton $x $y $name)) {
-      Write-Output "POINTER_NOT_ON_TARGET_BUTTON: name=$name x=$x y=$y"
-      continue
-    }
-    $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
-    $clickFailure = [ToolDecisionMouse]::Click($hwnd, $x, $y, [uint32]$targetPid)
-    if ($clickFailure) { throw "CHECKED_POINTER_CLICK_FAILED: $clickFailure" }
-    Write-Output "ACTION_POINTER_CLICKED: name=$name x=$x y=$y attempt=$attempt"
-    $until = (Get-Date).AddMilliseconds(500)
-    while ((Get-Date) -lt $until) {
-      if (($null -ne (Find-Button $expected)) -eq $visible) {
-        Write-Output "ACTION_STATE_CONFIRMED_AFTER_POINTER: expected=$expected visible=$visible"
-        return
-      }
-      Start-Sleep -Milliseconds 50
-    }
-    if ($attempt -lt 2) { Write-Output "ACTION_RETRYING_AFTER_NO_STATE_CHANGE: name=$name" }
+  } catch { Write-Output "ACTION_KEYBOARD_FALLBACK_UNAVAILABLE: $_" }
+  if (($null -ne (Find-Button $expected)) -eq $visible) { return }
+  $button = Ensure-ButtonInsideWindow $name
+  $button = Wait-EnabledButton $name
+  if (($null -ne (Find-Button $expected)) -eq $visible) { return }
+  $point = $button.GetClickablePoint()
+  $x = [int][Math]::Round($point.X)
+  $y = [int][Math]::Round($point.Y)
+  if (-not (PointHitsButton $x $y $name)) {
+    throw "POINTER_NOT_ON_TARGET_BUTTON: name=$name x=$x y=$y"
+  }
+  $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
+  $clickFailure = [ToolDecisionMouse]::Click($hwnd, $x, $y, [uint32]$targetPid)
+  if ($clickFailure) { throw "CHECKED_POINTER_CLICK_FAILED: $clickFailure" }
+  Write-Output "ACTION_POINTER_CLICKED: name=$name x=$x y=$y"
+  if (Wait-ActionState $expected $visible) {
+    Write-Output "ACTION_STATE_CONFIRMED_AFTER_POINTER: expected=$expected visible=$visible"
+    return
   }
   throw "ACTION_STATE_NOT_VISIBLE_AFTER_POINTER: expected=$expected visible=$visible"
 }

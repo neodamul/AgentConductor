@@ -1,5 +1,16 @@
 # Rust native release packaging
 
+## Windows tool-decision package journey timing — 2026-10-30
+
+The Windows UI Automation driver observed `Confirm tool decision` in the final
+accessibility dump after reporting that the expected state had not appeared within
+500 ms. Its activation helper could then send repeated pointer clicks (up to three)
+for one approval action. The driver now waits up to four seconds after each input,
+checks current state before using a fallback, and sends a pointer click at most once
+per activation. A source-contract regression prevents the retry loop from returning.
+Local static Windows-driver tests pass on macOS, but Windows package acceptance is
+still pending; this change does not claim a successful Windows runtime journey.
+
 ## Exact-current macOS package at issue #9 head — 2026-10-30
 
 Built `codex/issue-9-git-head-fast-path` at source commit

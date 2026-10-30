@@ -1,3 +1,12 @@
+### Prevent duplicate Windows tool-decision inputs during delayed UI updates — issue #9 / 2026-10-30
+
+- [x] Plan: address the Windows package journey where UI Automation reported no state change after 500 ms although the final accessibility dump contained the confirmation button. The script previously retried the same approval by pointer up to three times.
+- [x] Red: add `activation_waits_for_async_state_without_repeating_approval_inputs`; it failed because the driver had no bounded state-wait helper and retained repeated-input retries.
+- [x] Task / Green: wait up to 4 seconds after each UIA, keyboard, or pointer input; check state before falling back; send at most one input per method and one pointer click per activation.
+- [x] Verify locally: 15 Windows tool-decision and source-layout tests pass; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the 300-line limit pass. The test driver is 277 lines.
+- [x] Assetize: refresh Graphify to 11,751 nodes / 17,852 edges; update this plan and the LLM Wiki with the observed Windows package failure and the test-driver correction.
+- [ ] Windows Verify: rerun the exact Windows packaged UI journey; macOS source tests cannot prove Windows UI Automation timing.
+
 ### Verify exact-current macOS package and packaged workflow — issue #9 / 2026-10-30
 
 - [x] Plan: package the pushed Rust head `043d2ecb13022966d3ee8c09f2fd1ed8c9ae4510` locally; do not treat command-line smoke as GUI or Windows acceptance.
