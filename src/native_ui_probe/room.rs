@@ -89,7 +89,7 @@ pub struct State {
 impl Default for State {
     fn default() -> Self {
         Self {
-            next_refresh: Some(Instant::now() + Duration::from_secs(5)),
+            next_refresh: Some(Instant::now() + Duration::from_secs(30)),
             confirming_stop: false,
             confirming_decision: None,
             confirming_recover: false,

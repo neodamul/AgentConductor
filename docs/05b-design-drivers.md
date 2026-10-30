@@ -179,3 +179,12 @@ The existing worker owns child lifetime, output capture, persistence, and worksp
 
 ### Driver DDR-42 Keep prompt correction bounded and CLI-independent
 Build the requested answer shape in the orchestrator and allow at most one correction attempt when the process succeeds but its output lacks the requested JSON document. Preserve the first attempt's logs, include only the bounded parse reason in the retry prompt, and leave timeout, stop, capacity and provider-error behavior on their existing paths. Do not require CLI changes or add a protocol for prompt correction. Trace: QAS-184.
+
+### Driver DDR-45 Use metadata first, process fallback off-path
+Common Git HEAD layouts are directly readable, so spawning Git on every revision check adds latency and contention without adding information. Linked worktrees and unsupported layouts still require Git; a single-flight background fallback preserves compatibility without blocking request or render paths. Trace: R-193 → QAS-191.
+
+### Driver DDR-46 Let events wake peer views; keep snapshots off the command lane
+The native app has two views sharing one Room. Use a small in-process broadcast bus with per-view subscriptions and source suppression, a separate bounded background snapshot lane, and one coalesced invalidation flag. Keep the event payload content-free; the receiving view reads authoritative state from the existing snapshot API. Do not suppress a due event or recovery snapshot merely because an unrelated interactive operation is pending; a human decision modal may pause refresh for its view. Apply completed snapshots without clearing pending state or replacing unsaved inputs. A short active-job timer and slow idle recovery timer cover external CLI changes without making a watcher or runtime dependency mandatory. Trace: R-194 → QAS-192.
+
+### Driver DDR-47 Isolate reads, mutations, external I/O, and recovery work
+Use a fixed two-worker read lane, a single-worker state-change lane, a dedicated bounded worker for synchronous network I/O, and the existing single-flight background poll lane. Keep each queue bounded, tag foreground responses, and ignore superseded replies. Unknown valid request kinds default to the state-change lane. Keep event messages content-free and coalesce refresh requests; do not add an async runtime or unbounded task spawning. Trace: QAS-193.

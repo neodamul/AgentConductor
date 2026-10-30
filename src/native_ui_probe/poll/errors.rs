@@ -3,14 +3,6 @@ use super::super::{Pending, Probe};
 impl Probe {
     pub(in crate::native_ui_probe) fn handle_error(&mut self, error: impl ToString) {
         let error = error.to_string();
-        if matches!(self.pending, Some(Pending::BackgroundRefresh)) {
-            self.background_poll_failures = self.background_poll_failures.saturating_add(1);
-            if self.background_poll_failures >= 3 {
-                self.error = Some(error);
-            }
-            self.pending = None;
-            return;
-        }
         if matches!(
             self.pending,
             Some(Pending::BackgroundTaskDetails | Pending::BackgroundCoordinator)

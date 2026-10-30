@@ -1,5 +1,22 @@
 # Current-main behavior carried into the Rust UI branch
 
+## Triage workspace reappearing report — bug #226 / 2026-10-30
+
+Review of PR #230 head `10927906` found no product-source changes in the PR and
+no reproducible data-restore defect in the base behavior. Confirmed Delete moves
+the app-owned directory to `workspace-trash` and removes its registry entry;
+startup scans only the active desktop and registered workspace directories.
+Remove-from-menu is intentionally different: it retains the directory and lists
+it as `registered:false`. Deleting the default workspace can initialize a fresh
+empty desktop on next launch, not restore the old data. Five focused workspace,
+delete, and launch suites pass 20 tests. The issue report does not identify which
+action/default workspace was involved; keep #226 open for a reproducible path and
+exact Windows package verification.
+
+## Native event-driven refresh
+
+Successful mutating Room requests publish content-free, scoped invalidations to subscribed peer views; the source view is suppressed. Workspace changes wake only Workspace; run changes wake both Workspace and Agent Room. Each listener has a one-event bounded queue, so repeated invalidations coalesce to one wakeup; the listener then requests an authoritative asynchronous snapshot and wakes the native renderer. Periodic snapshots run on a dedicated worker and reply lane, separate from interactive dispatch. A snapshot that completes during an interactive request updates the displayed state without clearing that request, replacing the user's unsaved form value, or erasing its current error. Snapshot assembly clones the small saved state and releases its shared mutex before filesystem, quota, and revision reads. The active/idle fallback cadence is one second / thirty seconds. Tests cover burst coalescing, scoped delivery, source suppression, read-only filtering, lock release, and snapshot application during a pending request. The bounded worker and targeted refresh changes are source-verified; exact packaged macOS/Windows and visual acceptance remain separate gates.
+
 ## Full local Rust test suite — issue #9 / 2026-10-29
 
 At exact branch head `355d6256d358533bfd182712ce1fa99d174b4aa4`, `cargo test --all-targets --locked --offline --features test-fixtures --no-fail-fast --quiet` exited 0 with no failures. The local run is macOS; authenticated provider and exact packaged-binary tests keep their explicit prerequisites. This does not replace the pending exact Windows package check or award packaged UI acceptance. Evidence: `docs/evidence/issue9-full-suite-355d625-20261029.json`.
@@ -230,6 +247,10 @@ The already-running exact bundle for source `f23381cf` was bound without launchi
 ## Stop, resume, and recover a run — issue #9 / workflow 25 / 2026-10-29
 
 `tests/package_run_recovery.rs` exercises the Rust executable through a disposable Git repository and three mock tasks. A bounded mock blocks until the coordinator stops it; explicit resume completes the work; a simulated stale owner record then exercises recovery followed by another explicit resume. The candidate diff is asserted to contain exactly the three owned file paths, once each. The exact local binary journey passes. Full offline regression passes 1,103 tests (15 ignored across 350 suites); focused source/layout tests, formatting, and warning-denied all-target Clippy pass. The exact-package Windows and macOS run is pending; this gives no workflow acceptance credit. Evidence: `docs/evidence/issue9-package-stop-resume-recovery-20261029.json`.
+
+On 2026-10-30, the same ignored lifecycle journey also passed 1/1 against the retained exact-source macOS package binary (SHA-256 `2c4db7c77e4597aa96f7376834a467962153083f46da9dacc6a4d0bcc2ba5a66`, matching its package manifest). This exercises CLI stop/resume/recovery, process exit, persisted state, and duplicate-output assertions; it does not exercise GUI controls or Windows process ownership, so it earns no packaged UI acceptance. Evidence: `docs/evidence/issue9-workflow25-macos-package-cli-20261030.json`.
+
+The next UI slice adds `tests/windows_run_lifecycle.rs` and a bounded PowerShell UI Automation driver to the Windows exact-package job. The ignored journey starts one blocking mock task, stops it through the packaged UI with a required reason, checks that the coordinator exits, resumes to approval, simulates a stale owner, relaunches the UI to recover, then resumes and asserts the exact owned diff and attempt count. Native UI worker/event/polling library tests pass 54/54; EventBus tests pass 7/7, including the wake-callback lock-release regression. The driver contract plus source-layout checks pass locally (3 passed, 1 package-only test ignored); warning-denied all-target Clippy, formatting, and diff checks pass. The test body compiles on macOS but only runs against the Windows package. Graphify refresh: 11,784 nodes / 17,902 edges. This is local verification, not package acceptance. Windows package execution is pending; workflow 25 remains uncredited. Evidence: `docs/evidence/issue9-workflow25-windows-ui-harness-20261030.json`.
 
 ## Full regression and current main conflict checkpoint — issue #9 / 2026-10-29
 

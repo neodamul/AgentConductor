@@ -8,6 +8,9 @@ mod motion;
 mod pending;
 mod poll;
 #[cfg(test)]
+#[path = "../tests/native_ui_probe/poll_background_pending.rs"]
+mod poll_background_pending_tests;
+#[cfg(test)]
 #[path = "../tests/native_ui_probe/poll_timeout.rs"]
 mod poll_timeout_tests;
 mod probe;
@@ -79,6 +82,10 @@ pub struct Probe {
     snapshot: Option<Value>,
     error: Option<String>,
     background_poll_failures: u8,
+    background_refresh_pending: bool,
+    refresh_requested: bool,
+    refresh_generation: u64,
+    background_refresh_generation: u64,
     pending: Option<Pending>,
     resume_after_tool_approval: bool,
     resume_after_task_feedback: bool,

@@ -1,0 +1,23 @@
+{
+  "source_commit": "043d2ecb13022966d3ee8c09f2fd1ed8c9ae4510",
+  "target": "aarch64-apple-darwin",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-043d2ecb1302.zip",
+  "archive_sha256": "e46c2e4973fe82ad494e66756f2a2802728fba8a6ebe99b8046de9dd93c40244",
+  "package": {
+    "manifest_exact_source": true,
+    "binary_bytes": 19523904,
+    "binary_sha256": "c202e96cd51e21a030080e23e276e2c2b3aa2f37abae9c84ba9f5d065a567a71",
+    "dependency_count": 242,
+    "zip_integrity": true,
+    "checksum_validation": true,
+    "packaged_binary_help": true,
+    "english_and_korean_manuals": true,
+    "license_inventory_and_notices": true,
+    "sbom": true
+  },
+  "acceptance": {
+    "macos_gui_journey": "not verified",
+    "windows_package": "not verified"
+  },
+  "release_published": false
+}

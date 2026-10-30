@@ -98,12 +98,10 @@ fn pointer_fallback_uses_and_verifies_the_uia_button_click_point() {
 }
 
 #[test]
-fn checked_activation_journals_uia_and_pointer_results_before_waiting() {
+fn activation_records_one_pointer_result_before_waiting_for_state() {
     let source = include_str!("support/windows_tool_decision_script.rs");
 
     for diagnostic in [
-        "ACTION_INVOKE_NO_STATE_CHANGE",
-        "$invokeError = $_.Exception.Message",
         "ACTION_POINTER_CLICKED",
         "ACTION_STATE_NOT_VISIBLE_AFTER_POINTER",
     ] {
@@ -131,22 +129,21 @@ fn activation_refreshes_the_app_window_before_looking_for_modal_confirmation() {
 }
 
 #[test]
-fn activation_uses_a_process_checked_keyboard_fallback_before_pointer_input() {
+fn activation_checks_target_and_sends_one_pointer_input_before_waiting() {
     let source = include_str!("support/windows_tool_decision_script.rs");
     let activation = source
         .split("function Activate($button")
         .nth(1)
         .expect("activation helper must be explicit");
 
-    assert!(source.contains("public static string Key(ushort key)"));
-    let focus = activation.find("$button.SetFocus()").unwrap();
-    let focused = activation.find("$focused = $A::FocusedElement").unwrap();
-    let owner = activation
-        .find("$focused.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID")
+    let bounds = activation.find("Ensure-ButtonInsideWindow $name").unwrap();
+    let hit = activation.find("PointHitsButton $x $y $name").unwrap();
+    let click = activation.find("[ToolDecisionMouse]::Click(").unwrap();
+    let wait = activation
+        .find("Wait-ActionState $expected $visible")
         .unwrap();
-    let key = activation.find("[ToolDecisionMouse]::Key(0x0D)").unwrap();
-    let pointer = activation.find("ACTION_POINTER_CLICKED").unwrap();
-    assert!(focus < focused && focused < owner && owner < key && key < pointer);
+    assert!(bounds < hit && hit < click && click < wait);
+    assert_eq!(activation.matches("[ToolDecisionMouse]::Click(").count(), 1);
 }
 
 #[test]
@@ -182,16 +179,20 @@ fn activation_waits_for_a_fresh_enabled_control_before_ui_input() {
 }
 
 #[test]
-fn activation_retries_when_a_running_snapshot_races_the_confirmation_click() {
+fn activation_waits_for_async_state_without_repeating_approval_inputs() {
     let source = include_str!("support/windows_tool_decision_script.rs");
     let activation = source
         .split("function Activate($button")
         .nth(1)
         .expect("activation helper must be explicit");
-    assert!(activation.contains("for ($attempt = 0; $attempt -lt 3; $attempt++)"));
-    assert!(activation.contains("ACTION_RETRYING_AFTER_NO_STATE_CHANGE"));
-    assert!(activation.contains("Wait-EnabledButton $name"));
-    assert!(activation.contains("Ensure-ButtonInsideWindow $name"));
+    assert!(source.contains("function Wait-ActionState($expected, $visible)"));
+    assert!(source.contains("$actionStateTimeoutMs = 4000"));
+    assert!(!activation.contains("for ($attempt"));
+    assert!(!activation.contains("ACTION_RETRYING_AFTER_NO_STATE_CHANGE"));
+    assert!(!activation.contains("InvokePattern]::Pattern).Invoke()"));
+    assert_eq!(activation.matches("[ToolDecisionMouse]::Click(").count(), 1);
+    assert_eq!(activation.matches("[ToolDecisionMouse]::Key(").count(), 0);
+    assert!(activation.contains("Wait-ActionState $expected $visible"));
 }
 
 #[test]

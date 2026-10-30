@@ -1,0 +1,30 @@
+{
+  "source_commit": "91963479be598752d5b39a73780104ea4577cc46",
+  "target": "aarch64-apple-darwin",
+  "package_command": "cargo run --release --locked --offline -j 2 -- package-release",
+  "archive": {
+    "path": "dist/agentconductor-aarch64-apple-darwin-91963479be59.zip",
+    "sha256": "0ee02a02d5464aced3957b7043b31ee491c99301dea18a8a4d98a2c322f41f4c",
+    "zip_integrity": "passed"
+  },
+  "manifest": {
+    "source_commit": "91963479be598752d5b39a73780104ea4577cc46",
+    "binary": "agentconductor",
+    "binary_bytes": 19523872,
+    "binary_sha256": "0d33a0754ff1de86d4ce103526c0f58c759c534415f46f18b429095f6bbd80cf",
+    "dependency_count": 242
+  },
+  "checksum_file": "passed",
+  "packaged_help": "passed",
+  "mock_workflow_smoke": {
+    "exit_code": 0,
+    "cases": 4,
+    "workspace_modes": ["shared", "worktree"],
+    "source_modes": ["git", "folder"],
+    "tasks_per_case": 3,
+    "tests_per_case": 3,
+    "unapproved_merge_refused": true,
+    "approved_merge_verified": true
+  },
+  "scope": "Local Apple Silicon package evidence only. Exact packaged GUI behavior, Windows package acceptance, and GitHub Release publication remain pending."
+}

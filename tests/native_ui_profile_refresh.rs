@@ -12,7 +12,7 @@ fn metadata_work_uses_fast_refresh_but_idle_profiles_do_not() {
     );
     assert_eq!(
         agentconductor::native_ui_probe::room::room_refresh_interval(&idle),
-        std::time::Duration::from_secs(5)
+        std::time::Duration::from_secs(30)
     );
 }
 
@@ -21,7 +21,7 @@ fn waiting_availability_uses_idle_refresh_interval() {
     let waiting = serde_json::json!({"report":{"state":"waiting_availability"}});
     assert_eq!(
         agentconductor::native_ui_probe::room::room_refresh_interval(&waiting),
-        std::time::Duration::from_secs(5)
+        std::time::Duration::from_secs(30)
     );
 }
 
