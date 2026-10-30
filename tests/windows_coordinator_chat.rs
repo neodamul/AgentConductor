@@ -257,14 +257,19 @@ fn exact_windows_package_persists_chat_after_workspace_reopen() {
 #[ignore = "Runs only against the exact packaged binary."]
 fn exact_windows_package_reconnects_an_in_flight_chat_after_app_close() {
     // in-flight: the worker must outlive the first UI process and finish after reopen.
-    let (_cleanup, root) = prepare_workspace("resume", Some(5000));
+    let (_cleanup, root) = prepare_workspace("resume", Some(30_000));
     let question = "Resume this answer";
     let mut app = launch(&root);
     send_without_wait(&root, &mut app, question);
     wait_for_running_chat(&root);
     drop(app);
     let mut reopened = launch(&root);
-    drive(&root, &mut reopened, question, "verify");
+    let report = drive(&root, &mut reopened, question, "verify");
+    assert!(report.contains("CHAT_RECONNECTED_IN_FLIGHT"), "{report}");
+    assert!(
+        report.contains("CHAT_RECONNECTED_AND_REENABLED"),
+        "{report}"
+    );
     wait_for_transcript(&root, question);
 }
 
