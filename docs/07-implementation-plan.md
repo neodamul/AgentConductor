@@ -6574,6 +6574,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task / Green: route reads to two fixed workers, state-changing and unknown valid requests to one bounded serialized worker, and keep periodic snapshots in their isolated lane. Correlate replies and drop stale completions.
 - [x] Verify focused: a state change completes during a blocked snapshot; two read requests run concurrently; state changes remain serialized; read-only requests do not emit invalidations.
 - [x] Verify locally: 66 library tests, 13 native UI integration tests, and 2 source-layout tests pass; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the 300-line source/test limit pass.
+- [x] Full local regression at product head `460d9b3`: `cargo test --all-targets` passed 1,143 tests, 15 ignored, and 0 failed across 364 suites in 263.09 seconds.
 - [x] Update the LLM Wiki and refresh Graphify to 11,723 nodes / 17,818 edges. CocoIndex is not installed in this environment; no substitute dependency was added.
 - [ ] Verify exact packaged macOS and Windows responsiveness; no UI/package acceptance is claimed from source tests.
-- [x] Post the local verification checkpoint to issue #257 and draft PR #260 at `c97e0d3`; leave both open for packaged macOS/Windows and full all-target gates.
+- [x] Update issue #257 and draft PR #260 at product head `460d9b3` and docs head `566145c`; keep both open for exact packaged macOS/Windows responsiveness.
