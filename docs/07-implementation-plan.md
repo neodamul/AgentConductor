@@ -1,3 +1,11 @@
+### Build an exact-source macOS Rust package — issue #9 / 2026-10-30
+
+- [x] Plan: package the pushed Rust head `91963479be598752d5b39a73780104ea4577cc46` locally; do not treat a package build as UI or Windows acceptance.
+- [x] Task: `cargo run --release --locked --offline -j 2 -- package-release` built `dist/agentconductor-aarch64-apple-darwin-91963479be59.zip`.
+- [x] Verify: package manifest source and binary SHA-256 match; `SHA256SUMS`, `unzip -t`, and the packaged executable's `--help` pass. The Rust package builder's four mock workflow cases pass (shared/worktree × Git/folder; three tasks and tests per case; unapproved merges refused, approved merges verified). Archive SHA-256: `0ee02a02d5464aced3957b7043b31ee491c99301dea18a8a4d98a2c322f41f4c`. Evidence: `docs/evidence/issue9-macos-package-91963479-20261030.json`.
+- [ ] Acceptance: this is a local Apple Silicon package only. Exact packaged GUI acceptance, Windows package validation, current-main parity, and GitHub Release publication remain open.
+- [x] Complete this package unit: record the package evidence in the LLM Wiki and AgentMemory, then commit/push the evidence. Do not publish a release before the remaining acceptance gates pass.
+
 ### Verify the exact macOS package at the pushed Rust head — issue #9 / 2026-10-29
 
 - [x] Plan: rebuild the release archive after the Rust chat fast-path commits so package evidence names the exact pushed source head `f739b4852ee06df6554ec7bf139df8f42ee90106`.

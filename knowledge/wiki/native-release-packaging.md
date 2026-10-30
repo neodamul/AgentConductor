@@ -1,5 +1,22 @@
 # Rust native release packaging
 
+## Exact-current macOS package at issue #9 head — 2026-10-30
+
+Built `codex/issue-9-git-head-fast-path` at source commit
+`91963479be598752d5b39a73780104ea4577cc46` with
+`cargo run --release --locked --offline -j 2 -- package-release`. The Apple
+Silicon archive is `dist/agentconductor-aarch64-apple-darwin-91963479be59.zip`
+with SHA-256
+`0ee02a02d5464aced3957b7043b31ee491c99301dea18a8a4d98a2c322f41f4c`. Its
+manifest records the exact source commit, a 19,523,872-byte executable, and
+binary SHA-256
+`0d33a0754ff1de86d4ce103526c0f58c759c534415f46f18b429095f6bbd80cf`.
+`SHA256SUMS`, ZIP integrity, packaged `--help`, and the package builder's four
+shared/worktree × Git/folder mock workflow cases pass. This package contains
+the bilingual offline manuals, license inventory, notices, SBOM, and README
+assets. It does not prove exact GUI acceptance or Windows behavior and is not
+a GitHub Release. Evidence: `docs/evidence/issue9-macos-package-91963479-20261030.json`.
+
 ## Exact macOS package for chat-send recovery — issue #9 / 2026-10-29
 
 The optimized Rust release package was built locally from clean source commit

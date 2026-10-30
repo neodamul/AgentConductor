@@ -1,3 +1,7 @@
+# [2026-10-30] plan/task/verify | Build exact-source macOS Rust package — issue #9
+
+Packaged source head `91963479be598752d5b39a73780104ea4577cc46` locally with the Rust `package-release` command. The arm64 ZIP passed integrity, manifest/source, embedded executable checksum, `SHA256SUMS`, packaged `--help`, and all four built-in mock workflow cases (shared/worktree × Git/folder; three tasks/tests each; approval gate verified). Archive SHA-256: `0ee02a02d5464aced3957b7043b31ee491c99301dea18a8a4d98a2c322f41f4c`. This does not establish packaged GUI or Windows acceptance and is not a GitHub Release. Evidence: `docs/evidence/issue9-macos-package-91963479-20261030.json`.
+
 # [2026-10-30] verify | Complete full local Rust suite on current #9 branch
 
 On `codex/issue-9-git-head-fast-path` at `6bbb4254683cb2d147696d98384643d4dea7fc6e`, `cargo test --all-targets --locked --offline -j 2` exited 0: 1,143 passed, 15 ignored across 364 suites (265.54 seconds). This resolves the previous interrupted-run checkpoint for the current branch. It does not verify exact packaged UI behavior or Windows package acceptance. Graphify/CocoIndex were not needed for this test-only verification.
