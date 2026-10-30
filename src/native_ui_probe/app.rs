@@ -100,13 +100,12 @@ impl Probe {
                 self.refresh_workspace();
             }
         }
+        let room_refresh_blocked = self.room_refresh_blocked();
         if self.room_view.as_mut().is_some_and(|room_view| {
             room::refresh_due(
                 ui.ctx(),
                 self.snapshot.as_ref(),
-                self.pending.is_some()
-                    || self.background_refresh_pending
-                    || room_view.blocks_background_refresh(),
+                room_refresh_blocked,
                 &mut room_view.next_refresh,
             )
         }) {
@@ -196,6 +195,14 @@ impl Probe {
         }
         self.refresh_quotas(ui.ctx(), super::quota_refresh::now());
         self.show(ui);
+    }
+
+    fn room_refresh_blocked(&self) -> bool {
+        self.background_refresh_pending
+            || self
+                .room_view
+                .as_ref()
+                .is_some_and(room::State::blocks_background_refresh)
     }
 }
 

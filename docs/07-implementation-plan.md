@@ -6586,3 +6586,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Update the LLM Wiki and refresh Graphify to 11,723 nodes / 17,818 edges. CocoIndex is not installed in this environment; no substitute dependency was added.
 - [ ] Verify exact packaged macOS and Windows responsiveness; no UI/package acceptance is claimed from source tests.
 - [x] Update issue #257 and draft PR #260 at product head `460d9b3` and docs head `566145c`; keep both open for exact packaged macOS/Windows responsiveness.
+
+
+### 2026-10-30 — Dispatch event refresh during foreground work — issue #257 / #9
+
+- [x] Plan: close the gap between receiving a snapshot during a pending operation and actually starting an event/recovery refresh while that operation is pending. Keep human decision modals as an explicit per-view pause.
+- [x] Red: `state_change_event_refresh_runs_while_an_interactive_request_is_pending` failed because the pending-action gate prevented the separate refresh worker from starting. `foreground_action_does_not_disable_periodic_room_refresh` first failed because the refresh eligibility policy was not exposed for regression testing.
+- [x] Task: let coalesced state events dispatch through the bounded background worker during foreground work; keep the periodic schedule independent of unrelated pending requests and preserve modal guards. Snapshot replies continue to retain the pending action, dirty input, and current error.
+- [x] Verify focused: 53 native UI tests pass; public-doc/source-layout checks pass 13 tests; warning-denied all-target Clippy, rustfmt, diff hygiene, and changed source/test line limits pass. Graphify re-extracts 11,738 nodes / 19,183 edges; `cocoindex-code` is present but fails import because `mcp.server.fastmcp` is unavailable.
+- [x] Record all-target attempt: the locked/offline run with `native-ui-probe` was stopped after 756 passed, 14 ignored across 231 suites (exit 130, no failure observed); this is not a full-suite pass. Exact packaged responsiveness remains open.
+- [ ] Complete: push the focused, locally verified unit and update issue #257, PR #260, AgentMemory, and LLM Wiki; keep #9 open until exact macOS/Windows package and parity gates pass.

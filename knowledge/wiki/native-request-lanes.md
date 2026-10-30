@@ -16,7 +16,7 @@ Keep slow local reads from preventing user actions or state changes in the Rust 
 
 ## UI contract
 
-The UI submits requests without waiting for execution. Worker completion requests a repaint; event listeners wake peer views; scheduled refreshes stay isolated from user commands. Snapshot application preserves active pending operations and unsaved input.
+The UI submits requests without waiting for execution. Worker completion requests a repaint; event listeners wake peer views; due event and recovery refreshes run even while unrelated user work is pending, except while a decision modal freezes its view. Snapshot application preserves pending operations, unsaved input, and errors.
 
 ## Regression coverage
 
@@ -25,3 +25,7 @@ The UI submits requests without waiting for execution. Worker completion request
 ## Constraints
 
 The implementation uses Rust standard-library threads and channels. It adds no async runtime, watcher service, or unbounded task spawning. The fixed worker pool adds two read workers and one mutation worker per native view, in addition to the existing single-flight refresh worker.
+
+## Event and recovery refresh during foreground work
+
+A pending foreground response no longer prevents a peer-view invalidation or due recovery check from dispatching to the bounded snapshot worker. Active human decision modals still pause refresh for their view. The snapshot reply lane remains separate from foreground replies, and application preserves the pending action, dirty form data, and current error. Regressions: `tests/native_ui_probe/poll_events.rs` and `tests/native_ui_probe/renderer.rs`.

@@ -711,7 +711,7 @@ For a standard Git directory, derive HEAD from detached, loose-ref, or packed-re
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
 
 ### FR-186 Broadcast committed state changes to peer views
-After a successful state-changing Room request, publish a small invalidation event to every subscribed native view except its origin. A listener shall coalesce queued events and fetch one current snapshot on its background lane. Read-only snapshot requests shall not publish invalidations.
+After a successful state-changing Room request, publish a small invalidation event to every subscribed native view except its origin. A listener shall coalesce queued events and fetch one current snapshot on its background lane, even while an unrelated foreground request is pending. Read-only snapshot requests shall not publish invalidations; a human decision modal may pause refresh for its view.
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, 2026-10-30.
 
 ### FR-187 Dispatch native requests through independent bounded lanes
@@ -722,7 +722,7 @@ The native UI shall use a fixed number of standard-library workers and bounded q
 Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
 
 ### NFR-81 Background refresh cannot occupy interactive request handling
-Periodic snapshots shall use a separate worker and response channel from interactive requests. A slow or failed snapshot must not fill the interactive queue or block rendering. A completed snapshot shall refresh visible state while preserving any interactive pending action, unsaved form values, and current error. State changes wake peer views immediately; active external jobs retain the one-second recovery cadence and idle views check at most once every 30 seconds.
+Periodic snapshots shall use a separate worker and response channel from interactive requests. A due event or recovery refresh shall not be suppressed by an unrelated pending request; an open human decision modal may pause refresh for its view. A slow or failed snapshot must not fill the interactive queue or block rendering. A completed snapshot shall refresh visible state while preserving the pending action, unsaved form values, and current error. State changes wake peer views immediately; active external jobs retain the one-second recovery cadence and idle views check at most once every 30 seconds.
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, 2026-10-30.
 
 ### NFR-80 Routine Git revision fallback cannot block native requests
