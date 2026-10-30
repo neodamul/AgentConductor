@@ -20,6 +20,13 @@ impl Probe {
 
 pub(super) fn load_workspace(probe: &mut Probe, snapshot: &Value) {
     super::super::workspace::chat::load_history(probe, snapshot);
+    if probe.coordinator_chat.awaiting()
+        && snapshot["job"]["kind"] == "chat"
+        && snapshot["job"]["state"] == "running"
+    {
+        probe.workspace_next_refresh =
+            Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+    }
     probe.goal_optimizer.restore(snapshot);
     probe.goal = snapshot["config"]["goal"]
         .as_str()
@@ -53,6 +60,10 @@ pub(super) fn navigation_refresh(probe: &mut Probe, snapshot: Value) {
     probe.error = None;
     probe.navigate(super::super::workspace::navigation::Event::List);
 }
+
+#[cfg(test)]
+#[path = "../../../tests/native_ui_probe/resumed_chat_poll.rs"]
+mod resumed_chat_poll_tests;
 
 pub(super) fn stop_plan_reply(probe: &mut Probe, snapshot: &Value) {
     if matches!(probe.pending.as_ref(), Some(Pending::StopPlanningRefresh)) {

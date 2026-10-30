@@ -156,7 +156,8 @@ impl super::super::Probe {
                 .failed("Coordinator chat job no longer matches the request".into());
         } else if snapshot["job"]["state"] == "running" {
             self.snapshot = Some(snapshot);
-            self.workspace_next_refresh = None;
+            self.workspace_next_refresh =
+                Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
         } else if snapshot["job"]["state"] == "completed" {
             let answer = snapshot["chat"]["answer"].as_str().unwrap_or_default();
             if !self.coordinator_chat.completed(&job, answer.to_owned()) {
