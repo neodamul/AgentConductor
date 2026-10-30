@@ -6652,6 +6652,8 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Full-suite attempt: `cargo test --all-targets --locked --offline` was interrupted during linking after 389 tests passed and 4 were ignored across 91 suites (75.46 seconds reported by the runner); no test failure was observed, but this is not a full-suite pass.
 - [x] Complete implementation unit: AgentMemory entries `mem_mvuddx7j_c270fcce8617` and `mem_mvudtjuu_3465b42f1a28` and the LLM Wiki are updated; commits `1eb0172` and `479a8625` are pushed. Progress is recorded on [issue #257](https://github.com/neodamul/AgentConductor/issues/257#issuecomment-6513747301) and PR #260.
 - [ ] Verify latest-head platform run `40993952492`; exact packaged GUI on macOS and Windows remains unverified. Local CLI package smoke is not a GUI acceptance result.
+- [x] Re-run the native UI integration target locally: `cargo test --locked --offline --test native_ui_probe` passes 13/13.
+- [x] Disk cleanup: removed only idle Cargo `target/debug/incremental` and `target/debug/tmp` caches (9.2 GiB and 801 MiB before cleanup); target shrank from 35 GiB to 27 GiB. Source, package archives, dependency outputs, and binaries were preserved.
 
 ### 2026-10-30 — Exact current-head Apple Silicon package — issue #9
 
