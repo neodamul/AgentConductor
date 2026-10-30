@@ -771,9 +771,9 @@ Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → 
 The operator has Workspace and Agent Room open. A successful action in one view emits one state-change event to the other; the listener requests a single snapshot without echoing another event. A slow background refresh does not block an interactive request. When a peer-view event arrives during an unrelated pending response, the listener starts one bounded snapshot without waiting; the view applies it while preserving the pending action, unsaved form values, and current error. An open human decision modal can pause refresh for its view. Snapshot assembly releases the shared lock before filesystem and revision reads. When no process is active, no frequent snapshot loop runs; a 30-second recovery check catches changes from outside the application.
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, user, 2026-10-30.
 
-### UC-186 Continue an independent action during a slow native read
-1. A view starts a slow snapshot or read.
+### UC-186 Continue an independent action during slow native work
+1. A view starts a slow snapshot, read, or blocking external I/O request.
 2. The operator starts an independent state-changing action or another view publishes a state change.
-3. The read worker and state-change worker progress independently; mutations remain ordered.
+3. Read, external-I/O, state-change, and periodic-refresh workers progress independently; mutations remain ordered.
 4. The UI listens for a coalesced invalidation, requests an asynchronous authoritative snapshot, and discards replies superseded by a newer foreground request.
 Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.

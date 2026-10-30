@@ -597,5 +597,5 @@ Workspace-only changes wake Workspace, while run changes wake Workspace and Agen
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, user, 2026-10-30.
 
 ### BG-150 Keep native interaction responsive under slow work
-The app stays responsive when one view is reading slow local state, an agent operation is active, or another view publishes a state change. It uses bounded standard-library workers and avoids spinning up an async runtime.
+The app stays responsive when one view is reading slow local state, an agent operation is active, a blocking external I/O request is pending, or another view publishes a state change. It uses bounded standard-library workers and avoids spinning up an async runtime.
 Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.

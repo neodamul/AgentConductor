@@ -8,6 +8,7 @@ Keep slow local reads from preventing user actions or state changes in the Rust 
 
 - A fixed pool of two workers handles known read-only requests.
 - One worker handles state-changing requests and picker requests, preserving mutation order.
+- A dedicated bounded worker handles synchronous network-bound work such as messenger connection checks, so it cannot occupy the state-change lane.
 - Each foreground lane has a bounded queue of 16 requests. A full queue returns a short busy error instead of creating more threads.
 - Periodic snapshots retain their separate single-flight worker and reply channel.
 - Foreground replies carry monotonically increasing IDs. The UI discards replies older than the most recently accepted request.
@@ -20,11 +21,11 @@ The UI submits requests without waiting for execution. Worker completion request
 
 ## Regression coverage
 
-`tests/native_ui_probe/worker_concurrency.rs` uses barriers to prove that two reads can execute concurrently, a state-changing action completes while a snapshot is blocked, and state changes remain serialized. `tests/native_ui_probe/events.rs` verifies coalesced event fanout, source suppression, and read-only filtering.
+`tests/native_ui_probe/worker_concurrency.rs` uses barriers to prove that two reads can execute concurrently, a state-changing action completes while a snapshot or messenger connection check is blocked, and state changes remain serialized. `tests/native_ui_probe/events.rs` verifies coalesced event fanout, source suppression, and read-only filtering.
 
 ## Constraints
 
-The implementation uses Rust standard-library threads and channels. It adds no async runtime, watcher service, or unbounded task spawning. The fixed worker pool adds two read workers and one mutation worker per native view, in addition to the existing single-flight refresh worker.
+The implementation uses Rust standard-library threads and channels. It adds no async runtime, watcher service, or unbounded task spawning. The fixed worker pool adds two read workers, one mutation worker, and one blocking-I/O worker per native view, in addition to the existing single-flight refresh worker.
 
 ## Event and recovery refresh during foreground work
 

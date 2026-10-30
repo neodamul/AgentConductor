@@ -715,10 +715,10 @@ After a successful state-changing Room request, publish a small invalidation eve
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, 2026-10-30.
 
 ### FR-187 Dispatch native requests through independent bounded lanes
-Route known read-only requests through a bounded pool of two workers. Route state-changing requests, picker operations, and unknown valid request kinds through one serialized state-change worker. Keep periodic snapshots on the dedicated single-flight lane and tag foreground replies so superseded work is ignored.
+Route known read-only requests through a bounded pool of two workers. Route synchronous network-bound requests, including messenger connection checks, through a dedicated bounded I/O worker. Route state-changing requests, picker operations, and unknown valid request kinds through one serialized state-change worker. Keep periodic snapshots on the dedicated single-flight lane and tag foreground replies so superseded work is ignored.
 
 ### NFR-82 Bound native concurrency without blocking independent work
-The native UI shall use a fixed number of standard-library workers and bounded queues. A slow read cannot block the state-change lane; a slow state change cannot block independent reads; state changes stay serialized; and stale replies cannot replace the latest visible action. No unbounded task spawning or async runtime is introduced.
+The native UI shall use a fixed number of standard-library workers and bounded queues. Slow reads, blocking network I/O, and periodic refreshes cannot block the state-change lane; a slow state change cannot block independent reads; state changes stay serialized; and stale replies cannot replace the latest visible action. No unbounded task spawning or async runtime is introduced.
 Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
 
 ### NFR-81 Background refresh cannot occupy interactive request handling

@@ -6641,6 +6641,15 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify complete workspace/package journeys on exact macOS and Windows binaries; source tests do not satisfy packaged acceptance.
 - [ ] Commit and push after focused review; keep #257 and PR #260 open until package acceptance is complete.
 
+### 2026-10-30 — Isolate synchronous network checks from state changes — issue #9 / #257
+
+- [x] Plan: extend R-195 through BG-150, SF-183, UC-186, FR-187/NFR-82, QAS-193, DDR-47, and DD-207. Keep mutation ordering while isolating blocking external I/O and periodic refreshes.
+- [x] Red: add a barrier regression where a blocked `test_messenger` request prevents a later workspace save; it timed out on the shared state-change lane.
+- [x] Task / Green: classify messenger connection checks onto a dedicated bounded I/O worker; keep reads, mutations, and periodic snapshots on their existing lanes.
+- [x] Verify focused: worker concurrency suite passes 5 tests, including state serialization, parallel reads, and a save completing while the messenger check is blocked. Changed Rust source and test files remain under 300 lines.
+- [x] Verify: worker concurrency tests pass (5/5); messenger and source-layout integration tests pass (4/4); warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test limit pass. Graphify refresh: 11,762 nodes / 17,864 edges.
+- [ ] Complete: record the result in AgentMemory, update issue #257 / PR #260, and commit. Exact packaged macOS/Windows responsiveness remains a separate gate.
+
 ### 2026-10-30 — Exact current-head Apple Silicon package — issue #9
 
 - [x] Build `043d2ecb13022966d3ee8c09f2fd1ed8c9ae4510` with `cargo run --release --locked --offline -j 2 -- package-release`.

@@ -157,3 +157,44 @@ fn state_changes_remain_serialized_while_reads_use_parallel_workers() {
     assert_eq!(started_rx.recv_timeout(Duration::from_secs(2)).unwrap(), 2);
     release_tx.send(()).unwrap();
 }
+
+#[test]
+fn slow_external_io_does_not_block_workspace_actions() {
+    let (started_tx, started_rx) = mpsc::channel();
+    let (action_tx, action_rx) = mpsc::channel();
+    let (release_tx, release_rx) = mpsc::channel();
+    let release_rx = Arc::new(std::sync::Mutex::new(release_rx));
+    let worker = RequestWorker::with_dispatch_for_test(
+        egui::Context::default(),
+        Arc::new(move |packet: &[u8]| {
+            let request: Value = serde_json::from_slice(packet).unwrap();
+            match request["kind"].as_str() {
+                Some("test_messenger") => {
+                    started_tx.send(()).unwrap();
+                    release_rx.lock().unwrap().recv().unwrap();
+                    Ok(serde_json::json!({"sent": true}))
+                }
+                Some("save") => {
+                    action_tx.send(()).unwrap();
+                    Ok(serde_json::json!({"saved": true}))
+                }
+                other => panic!("unexpected request: {other:?}"),
+            }
+        }),
+    )
+    .unwrap();
+
+    worker.send(br#"{"kind":"test_messenger"}"#).unwrap();
+    started_rx.recv_timeout(Duration::from_secs(2)).unwrap();
+    worker.send(br#"{"kind":"save"}"#).unwrap();
+    action_rx
+        .recv_timeout(Duration::from_millis(250))
+        .expect("slow external I/O must not occupy the workspace mutation lane");
+    let reply = worker
+        .replies
+        .recv_timeout(Duration::from_millis(250))
+        .expect("the workspace action should return while external I/O is pending")
+        .unwrap();
+    assert_eq!(reply["saved"], true);
+    release_tx.send(()).unwrap();
+}

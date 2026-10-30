@@ -6,7 +6,8 @@ use std::sync::{Arc, mpsc};
 
 const READ_LANE: usize = 0;
 const STATE_CHANGE_LANE: usize = 1;
-const FOREGROUND_WORKERS: [usize; 2] = [2, 1];
+const BLOCKING_IO_LANE: usize = 2;
+const FOREGROUND_WORKERS: [usize; 3] = [2, 1, 1];
 
 type Handler = Arc<dyn Fn(WorkerRequest) -> Result<Value, String> + Send + Sync>;
 #[cfg(test)]
@@ -121,7 +122,9 @@ impl RequestWorker {
         } else {
             packet.to_vec()
         };
-        let lane = if crate::ui::events::event_for_request(&packet).is_some() {
+        let lane = if is_blocking_io(&packet) {
+            BLOCKING_IO_LANE
+        } else if crate::ui::events::event_for_request(&packet).is_some() {
             STATE_CHANGE_LANE
         } else {
             READ_LANE
@@ -158,6 +161,10 @@ impl RequestWorker {
         self.requests
             .send(STATE_CHANGE_LANE, WorkerRequest::PickExecutable)
     }
+}
+
+fn is_blocking_io(packet: &[u8]) -> bool {
+    serde_json::from_slice::<Value>(packet).is_ok_and(|request| request["kind"] == "test_messenger")
 }
 
 fn spawn_lane(
