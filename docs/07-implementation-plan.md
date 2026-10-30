@@ -6667,3 +6667,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Confirm bilingual manuals, dependency license inventory, third-party notices, and SBOM are in the archive.
 - [ ] Run exact packaged macOS GUI workflow and Windows package workflows; no UI/package acceptance is claimed from the CLI smoke.
 - [ ] Publish no release until the exact platform packages and current #9 acceptance gates pass.
+
+### 2026-10-30 — Listen for persisted Agent Room changes — issue #9 / R-194
+
+- [x] Plan: keep the R-194/R-195 event contract: state-change work remains asynchronous, views receive coalesced invalidations, and snapshots stay on the background worker lane.
+- [x] Red: add a regression that writes a new run report and expects the subscribed view to receive a run-change event.
+- [x] Task / Green: add stoppable standard-library listeners for `startup.json` and the active `report.json`; they check file metadata every 500 ms and broadcast only when length or modification time changes. The existing 1-second active-work snapshot remains a recovery fallback.
+- [x] Verify focused: native EventBus tests pass 8/8, including startup/run scope routing, persisted-report wakeup, bounded coalescing, and nonblocking subscriber wake callbacks.
+- [x] Verify locally: EventBus tests pass 8/8, native UI integration passes 13/13, source layout passes 2/2, warning-denied all-target Clippy and rustfmt pass, and the 300-line source/test bound holds.
+- [x] Commit the unit locally; save AgentMemory `mem_mvufyvr9_997c8499dc20` and refresh Graphify (11,812 nodes / 17,951 edges).
+- [ ] Push after existing run `40997481871` completes so its macOS/Windows package build is not canceled; then verify this exact head.
+- [ ] Verify exact packaged macOS/Windows UI workflows before changing #9 acceptance; current full-denominator progress remains 22/50 (44%).

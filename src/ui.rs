@@ -200,7 +200,8 @@ pub struct Room {
     window_lease: Mutex<crate::leases::Lease>,
     parked_workspaces: Mutex<std::collections::BTreeMap<PathBuf, workspaces::ParkedWorkspace>>,
     workspace_navigation: Mutex<()>,
-    events: events::EventBus,
+    events: Arc<events::EventBus>,
+    _listeners: Vec<events::listener::RunChangeListener>,
 }
 impl Room {
     /// A native window holds one kernel lease per canonical run directory.
@@ -223,6 +224,12 @@ impl Room {
             job: Mutex::new(None),
         });
         controller.automatic(enabled)?;
+        let events = Arc::new(events::EventBus::default());
+        let run_listener = events::listener::RunChangeListener::spawn(
+            controller.dir.join("report.json"),
+            Arc::clone(&events),
+        )
+        .ok();
         Ok(Self {
             controller: Mutex::new(Some(controller)),
             startup: Mutex::new(None),
@@ -230,22 +237,32 @@ impl Room {
             window_lease: Mutex::new(lease),
             parked_workspaces: Mutex::new(std::collections::BTreeMap::new()),
             workspace_navigation: Mutex::new(()),
-            events: events::EventBus::default(),
+            events,
+            _listeners: run_listener.into_iter().collect(),
         })
     }
     pub fn startup(root: &Path, exe: &Path) -> Result<Self, String> {
         fs::create_dir_all(root).map_err(|e| e.to_string())?;
         let _navigation = crate::leases::Lease::workspace(root)?;
         let lease = crate::leases::Lease::acquire(&root.join("ui-window.lock"))?;
-        let startup = setup::Startup::open(root, exe)?;
+        let startup = Arc::new(setup::Startup::open(root, exe)?);
+        let events = Arc::new(events::EventBus::default());
+        let observed_startup = Arc::clone(&startup);
+        let workspace_listener = events::listener::RunChangeListener::spawn_startup(
+            startup.root().join("startup.json"),
+            move || observed_startup.watched_run(),
+            Arc::clone(&events),
+        )
+        .ok();
         Ok(Self {
             controller: Mutex::new(None),
-            startup: Mutex::new(Some(Arc::new(startup))),
+            startup: Mutex::new(Some(startup)),
             run_lease: Mutex::new(None),
             window_lease: Mutex::new(lease),
             parked_workspaces: Mutex::new(std::collections::BTreeMap::new()),
             workspace_navigation: Mutex::new(()),
-            events: events::EventBus::default(),
+            events,
+            _listeners: workspace_listener.into_iter().collect(),
         })
     }
     pub(crate) fn subscribe_events(

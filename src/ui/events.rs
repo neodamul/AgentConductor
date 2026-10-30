@@ -1,5 +1,7 @@
 use std::sync::{Mutex, mpsc};
 
+pub mod listener;
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Event {
     WorkspaceChanged,

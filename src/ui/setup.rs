@@ -39,6 +39,14 @@ impl Startup {
     pub(crate) fn root(&self) -> &Path {
         &self.broker.dir
     }
+    pub(crate) fn watched_run(&self) -> Option<PathBuf> {
+        self.saved.lock().ok().and_then(|saved| {
+            saved
+                .last_run
+                .clone()
+                .or_else(|| saved.proposal.as_ref().map(|proposal| proposal.run.clone()))
+        })
+    }
     /// DD-48: name a freshly created workspace through the same validated store.
     pub(crate) fn set_name(&self, name: &str) -> Result<(), String> {
         validate_name(name)?;
