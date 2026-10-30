@@ -16,6 +16,8 @@ use std::{
 pub struct Startup {
     broker: Controller,
     quota_broker: Controller,
+    /// GitHub #261: logs of the chat worker, apart from the planning slot.
+    chat_broker: Controller,
     saved: Mutex<Saved>,
     /// GitHub #234: the repository HEAD for the state revision, never fetched by a request through a Git process.
     heads: crate::git_head::Heads,
@@ -61,6 +63,7 @@ impl Startup {
                 proposal: None,
                 job: None,
                 quota_job: None,
+                chat_job: None,
                 metadata_queue: Vec::new(),
                 metadata_input: None,
                 metadata_settled: None,
@@ -89,6 +92,11 @@ impl Startup {
                 exe: exe.canonicalize().map_err(|e| e.to_string())?,
                 job: Mutex::new(None),
             },
+            chat_broker: Controller {
+                dir: root.join("chat-jobs"),
+                exe: exe.canonicalize().map_err(|e| e.to_string())?,
+                job: Mutex::new(None),
+            },
             broker: Controller {
                 dir: root,
                 exe: exe.canonicalize().map_err(|e| e.to_string())?,
@@ -109,8 +117,13 @@ impl Startup {
         jobs::state(&self.quota_broker, &s.quota_job)
     }
 
+    fn chat_job(&self, s: &Saved) -> Result<serde_json::Value, String> {
+        jobs::state(&self.chat_broker, &s.chat_job)
+    }
+
     pub(crate) fn poll_job(&self) -> Result<(), String> {
         self.broker.poll()?;
+        self.chat_broker.poll()?;
         self.quota_broker.poll().map(|_| ())
     }
     pub(crate) fn root(&self) -> &Path {
@@ -135,7 +148,9 @@ impl Startup {
             .saved
             .lock()
             .map_err(|_| messages::text("native.startup_settings_poisoned"))?;
-        if self.job(&saved)?["state"] == "running" || self.quota_job(&saved)?["state"] == "running"
+        if self.job(&saved)?["state"] == "running"
+            || self.quota_job(&saved)?["state"] == "running"
+            || self.chat_job(&saved)?["state"] == "running"
         {
             return Err(
                 messages::text("native.wait_for_the_running_planning_or_metadata_job").into(),

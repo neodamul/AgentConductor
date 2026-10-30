@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Chat: the coordinator can now be asked while a plan is being made or a run is starting (it had its own refusal "startup operation still running", and the message was rolled back with only a toast). The chat runs in its own slot, is told which job runs, for how long and how much output its process has written and when it last wrote, so it can answer why a plan takes long, and a question that cannot be accepted is shown in the conversation. The snapshot gains `chat_job`; the chat is no longer reported as `job`.
+
 ## v0.1.46
 
 - Requests: the periodic state request, quota refresh and chat no longer queue behind a slow Git call. The state revision reads the repository HEAD from the Git files instead of starting `git` (a company PC where each `git` call took 2.5 s needed over 15 s per snapshot and made the chat time out), a layout the files cannot answer is refreshed by a short background task, and the snapshot answer is built after the settings lock is released. The request diagnostics log now also names a wait for the lock or a step of half a second or more (`step name=lock|advance|snapshot ms=...`).

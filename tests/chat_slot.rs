@@ -51,22 +51,39 @@ fn a_chat_is_accepted_and_followed_while_a_plan_is_running() {
 
     let room = Room::startup(&desktop, exe).unwrap();
     let before = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-    assert_eq!((before["job"]["kind"].as_str(), before["job"]["state"].as_str()), (Some("plan"), Some("running")));
+    assert_eq!(
+        (
+            before["job"]["kind"].as_str(),
+            before["job"]["state"].as_str()
+        ),
+        (Some("plan"), Some("running"))
+    );
     assert!(before["chat_job"].is_null(), "no chat has run");
     let ask = |revision: &Value| {
-        room.dispatch(json!({"kind":"chat","revision":revision,"text":"Why is the plan slow?"}).to_string().as_bytes())
+        room.dispatch(
+            json!({"kind":"chat","revision":revision,"text":"Why is the plan slow?"})
+                .to_string()
+                .as_bytes(),
+        )
     };
-    let accepted = ask(&before["chat_revision"]).expect("a chat is not refused because a plan is running");
+    let accepted =
+        ask(&before["chat_revision"]).expect("a chat is not refused because a plan is running");
     assert_eq!(accepted["kind"], "chat");
 
     let during = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     assert_eq!(during["job"]["id"], id, "the plan job is untouched");
     assert_eq!(during["job"]["state"], "running");
-    assert_eq!(during["chat_job"]["id"], accepted["id"], "the chat is followed in its own slot");
+    assert_eq!(
+        during["chat_job"]["id"], accepted["id"],
+        "the chat is followed in its own slot"
+    );
     assert_eq!(during["chat_job"]["state"], "running");
     assert!(ask(&during["chat_revision"]).is_err(), "one chat at a time");
     let reset = room.dispatch(br#"{"kind":"chat_reset"}"#);
-    assert!(reset.is_err(), "the conversation is not cleared under a running chat");
+    assert!(
+        reset.is_err(),
+        "the conversation is not cleared under a running chat"
+    );
 
     drop(room);
     planner.kill().unwrap();

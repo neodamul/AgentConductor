@@ -2346,7 +2346,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 ### Coordinator chat during planning — GitHub #261
 
 - [x] Plan: user report 2026-10-30 (v0.1.45): the chat during plan review showed only the toast "startup operation still running", rolled the message back, and learned nothing. R-192 → DD-204: chat in its own slot, a Running work section in the prompt, a rejected send shown in the conversation.
-- [ ] Red: tests for the chat slot, `chat_context::running`, and the page's error turn.
-- [ ] Task: `src/ui/setup/*` (chat slot, snapshot), `src/chat_context.rs`, `src/commands/chat.rs`, `src/ui/chat.js`; manuals EN/KO; CHANGELOG.
+- [x] Red: `tests/chat_slot.rs` (refused with "startup operation still running" before), `tests/chat_running.rs`, `tests/chat_runtime.cjs` (chat_job and the error turn).
+- [x] Task: `src/ui/setup/*` (chat slot, snapshot), `src/chat_context.rs`, `src/commands/chat.rs`, `src/ui/chat.js`, `src/ui/startup.js` (1 s polling while a chat runs), `src/ui/cache.rs`; manuals EN/KO; CHANGELOG.
 - [ ] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI. Not verified: a real planner and coordinator on the user's PC.
 - [ ] Complete: merge; release only on request. Related: Codex's Rust chat (#189) must read `chat_job`.

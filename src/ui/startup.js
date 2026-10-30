@@ -200,7 +200,7 @@ q('read-plan').onclick=async()=>{if(!await save())return;if(!await ensureBaselin
   document.addEventListener('ac-language-change',()=>{profileStamp='';goalsStamp='';if(draft&&state){profiles();renderGoals();renderButtons();sources.update();}});
   workspaceLabel();
   // DD-71: refresh every second only while work is happening; every 5 s when idle; never while hidden.
-  let pollTimer=null;function schedule(){clearTimeout(pollTimer);if(document.hidden)return;const fast=busy()||dirty||planDirty||state?.metadata_job?.state==='running'||state?.metadata_queue?.length||state?.quota_job?.state==='running'||state?.job?.state==='running'||['planning','starting'].includes(state?.proposal?.phase);pollTimer=setTimeout(async()=>{await poll(true);schedule();},fast?1000:5000);}
+  let pollTimer=null;function schedule(){clearTimeout(pollTimer);if(document.hidden)return;const fast=busy()||dirty||planDirty||state?.metadata_job?.state==='running'||state?.metadata_queue?.length||state?.quota_job?.state==='running'||state?.job?.state==='running'||state?.chat_job?.state==='running'||['planning','starting'].includes(state?.proposal?.phase);pollTimer=setTimeout(async()=>{await poll(true);schedule();},fast?1000:5000);}
   document.addEventListener('visibilitychange',()=>{if(document.hidden)clearTimeout(pollTimer);else poll(true).then(schedule);});
   poll(true).then(schedule);
 })();
