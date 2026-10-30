@@ -1,3 +1,13 @@
+### Verify exact-current macOS package and packaged workflow — issue #9 / 2026-10-30
+
+- [x] Plan: package the pushed Rust head `043d2ecb13022966d3ee8c09f2fd1ed8c9ae4510` locally; do not treat command-line smoke as GUI or Windows acceptance.
+- [x] Task: `cargo run --release --locked --offline -j 2 -- package-release` produced `dist/agentconductor-aarch64-apple-darwin-043d2ecb1302.zip` (21.3 MiB).
+- [x] Verify: exact-source manifest, binary and archive SHA-256, ZIP integrity, packaged `--help`, bilingual manuals, license inventory, notices and SBOM passed.
+- [x] Packaged workflow: run the packaged executable against disposable mock repositories. Shared and worktree isolation across Git and folder sources all passed (4 cases; 12 tasks and tests total; parallel execution; unapproved merge refused; approved merge verified). Evidence: `docs/evidence/issue9-043d2ecb-macos-smoke.json`.
+- [x] Assetize: refresh Graphify to 11,748 nodes / 17,849 edges. CocoIndex remains unavailable in this environment; no replacement dependency was added.
+- [ ] Acceptance: exact packaged GUI journey, Windows package, and GitHub Release remain unverified; this package smoke adds no native UI acceptance credit.
+- [x] Complete this package unit: retain machine-readable evidence, update the LLM Wiki and AgentMemory. Keep overall issue #9 open until remaining acceptance gates pass.
+
 ### Build an exact-source macOS Rust package — issue #9 / 2026-10-30
 
 - [x] Plan: package the pushed Rust head `91963479be598752d5b39a73780104ea4577cc46` locally; do not treat a package build as UI or Windows acceptance.
@@ -6605,3 +6615,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: all 70 native UI library tests pass with `native-ui-probe`; 13 public-doc/source-layout tests pass; warning-denied all-target Clippy reports no issues, and rustfmt/diff checks pass.
 - [ ] Verify complete workspace/package journeys on exact macOS and Windows binaries; source tests do not satisfy packaged acceptance.
 - [ ] Commit and push after focused review; keep #257 and PR #260 open until package acceptance is complete.
+
+### 2026-10-30 — Exact current-head Apple Silicon package — issue #9
+
+- [x] Build `043d2ecb13022966d3ee8c09f2fd1ed8c9ae4510` with `cargo run --release --locked --offline -j 2 -- package-release`.
+- [x] Verify package manifest source, embedded executable SHA-256, `SHA256SUMS`, archive integrity, and packaged `--help`; retain evidence in `docs/evidence/issue9-043d2ecb-macos-package.json`.
+- [x] Confirm bilingual manuals, dependency license inventory, third-party notices, and SBOM are in the archive.
+- [ ] Run exact packaged macOS GUI workflow and Windows package workflows; no UI/package acceptance is claimed from the CLI smoke.
+- [ ] Publish no release until the exact platform packages and current #9 acceptance gates pass.

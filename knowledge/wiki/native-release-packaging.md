@@ -3,19 +3,23 @@
 ## Exact-current macOS package at issue #9 head — 2026-10-30
 
 Built `codex/issue-9-git-head-fast-path` at source commit
-`91963479be598752d5b39a73780104ea4577cc46` with
+`043d2ecb13022966d3ee8c09f2fd1ed8c9ae4510` with
 `cargo run --release --locked --offline -j 2 -- package-release`. The Apple
-Silicon archive is `dist/agentconductor-aarch64-apple-darwin-91963479be59.zip`
+Silicon archive is `dist/agentconductor-aarch64-apple-darwin-043d2ecb1302.zip`
 with SHA-256
-`0ee02a02d5464aced3957b7043b31ee491c99301dea18a8a4d98a2c322f41f4c`. Its
-manifest records the exact source commit, a 19,523,872-byte executable, and
+`e46c2e4973fe82ad494e66756f2a2802728fba8a6ebe99b8046de9dd93c40244`. Its
+manifest records the exact source commit, a 19,523,904-byte executable, and
 binary SHA-256
-`0d33a0754ff1de86d4ce103526c0f58c759c534415f46f18b429095f6bbd80cf`.
-`SHA256SUMS`, ZIP integrity, packaged `--help`, and the package builder's four
-shared/worktree × Git/folder mock workflow cases pass. This package contains
+`c202e96cd51e21a030080e23e276e2c2b3aa2f37abae9c84ba9f5d065a567a71`.
+`validate-package`, `SHA256SUMS`, ZIP integrity, and packaged `--help` pass. The
+exact packaged executable also passed the four-case shared/worktree × Git/folder
+mock workflow smoke, covering 12 parallel tasks and tests, refusal of merge
+before approval, and verified merge after approval. This package contains
 the bilingual offline manuals, license inventory, notices, SBOM, and README
 assets. It does not prove exact GUI acceptance or Windows behavior and is not
-a GitHub Release. Evidence: `docs/evidence/issue9-macos-package-91963479-20261030.json`.
+a GitHub Release. Package evidence:
+`docs/evidence/issue9-043d2ecb-macos-package.json`; workflow evidence:
+`docs/evidence/issue9-043d2ecb-macos-smoke.json`.
 
 ## Exact macOS package for chat-send recovery — issue #9 / 2026-10-29
 
