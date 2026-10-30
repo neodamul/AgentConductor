@@ -1,0 +1,24 @@
+{
+  "source_commit": "1eb01727932fa0f623e92ac5a9a160b498701bae",
+  "target": "aarch64-apple-darwin",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-1eb01727932f.zip",
+  "archive_sha256": "7f1017b96f11da8584ee45c6b0840861d58f150ea8bfbb957951034f6df4ab55",
+  "package": {
+    "manifest_exact_source": true,
+    "binary_bytes": 19523904,
+    "binary_sha256": "2c4db7c77e4597aa96f7376834a467962153083f46da9dacc6a4d0bcc2ba5a66",
+    "dependency_count": 242,
+    "zip_integrity": true,
+    "checksum_validation": true,
+    "packaged_binary_help": true,
+    "english_and_korean_manuals": true,
+    "license_inventory_and_notices": true,
+    "sbom": true
+  },
+  "packaged_workflow_smoke": "docs/evidence/issue9-1eb0172-macos-smoke.json/run-74340-1793328473406811000-0/smoke.json",
+  "acceptance": {
+    "macos_gui_journey": "not verified",
+    "windows_package": "not verified"
+  },
+  "release_published": false
+}

@@ -6648,7 +6648,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task / Green: classify messenger connection checks onto a dedicated bounded I/O worker; keep reads, mutations, and periodic snapshots on their existing lanes.
 - [x] Verify focused: worker concurrency suite passes 5 tests, including state serialization, parallel reads, and a save completing while the messenger check is blocked. Changed Rust source and test files remain under 300 lines.
 - [x] Verify: worker concurrency tests pass (5/5); messenger and source-layout integration tests pass (4/4); warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test limit pass. Graphify refresh: 11,762 nodes / 17,864 edges.
-- [ ] Complete: record the result in AgentMemory, update issue #257 / PR #260, and commit. Exact packaged macOS/Windows responsiveness remains a separate gate.
+- [x] Package verify: exact commit `1eb01727932fa0f623e92ac5a9a160b498701bae` builds and validates locally; archive integrity, package checksum, and packaged `--help` pass. Four packaged mock workflows pass, covering shared/worktree × Git/folder, parallel tasks, and approval-gated merge. Evidence: `docs/evidence/issue9-1eb0172-macos-package.json` and its referenced smoke result.
+- [x] Complete implementation unit: AgentMemory entry `mem_mvuddx7j_c270fcce8617` and the LLM Wiki are updated; implementation commit `1eb0172` is locally verified. Issue #257 / PR #260 progress updates and push are the final publication step.
+- [ ] Verify exact packaged GUI on macOS and Windows; local CLI package smoke is not a GUI acceptance result.
 
 ### 2026-10-30 — Exact current-head Apple Silicon package — issue #9
 
