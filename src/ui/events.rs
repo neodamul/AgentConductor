@@ -13,7 +13,7 @@ pub struct EventBus {
 #[derive(Default)]
 struct Subscribers {
     next_id: u64,
-    listeners: Vec<(u64, mpsc::Sender<Event>, Wake)>,
+    listeners: Vec<(u64, mpsc::SyncSender<Event>, Wake)>,
 }
 
 type Wake = std::sync::Arc<dyn Fn() + Send + Sync>;
@@ -39,7 +39,7 @@ impl EventBus {
             .map_err(|_| "UI event subscriber list is poisoned".to_owned())?;
         subscribers.next_id = subscribers.next_id.wrapping_add(1).max(1);
         let id = subscribers.next_id;
-        let (sender, events) = mpsc::channel();
+        let (sender, events) = mpsc::sync_channel(1);
         subscribers
             .listeners
             .push((id, sender, std::sync::Arc::new(wake)));
@@ -54,10 +54,11 @@ impl EventBus {
             if *id == source.unwrap_or_default() {
                 return true;
             }
-            if sender.send(event).is_err() {
-                return false;
+            match sender.try_send(event) {
+                Ok(()) => wake(),
+                Err(mpsc::TrySendError::Full(_)) => {}
+                Err(mpsc::TrySendError::Disconnected(_)) => return false,
             }
-            wake();
             true
         });
     }

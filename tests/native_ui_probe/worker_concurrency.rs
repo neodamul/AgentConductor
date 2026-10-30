@@ -22,7 +22,7 @@ fn background_refresh_does_not_block_interactive_dispatch() {
                     release_rx.lock().unwrap().recv().unwrap();
                     Ok(serde_json::json!({"kind":"snapshot"}))
                 }
-                Some("chat") => Ok(serde_json::json!({"kind":"chat","accepted":true})),
+                Some("save") => Ok(serde_json::json!({"kind":"save","accepted":true})),
                 other => panic!("unexpected request: {other:?}"),
             }
         }),
@@ -33,13 +33,13 @@ fn background_refresh_does_not_block_interactive_dispatch() {
         .send_background(br#"{"kind":"slow_snapshot"}"#)
         .unwrap();
     started_rx.recv_timeout(Duration::from_secs(2)).unwrap();
-    worker.send(br#"{"kind":"chat"}"#).unwrap();
+    worker.send(br#"{"kind":"save"}"#).unwrap();
     let reply = worker
         .replies
         .recv_timeout(Duration::from_secs(2))
         .expect("interactive request must complete while refresh is blocked")
         .unwrap();
-    assert_eq!(reply["kind"], "chat");
+    assert_eq!(reply["kind"], "save");
 
     release_tx.send(()).unwrap();
     let background = worker
