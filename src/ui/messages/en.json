@@ -332,6 +332,7 @@
   "room.connecting_to_local_run": "Connecting to local run…",
   "room.connecting_to_your_run": "Connecting to your run…",
   "room.content": "Content",
+  "room.board_summary": "Run {value1}: {value2} of {value3} tasks completed · {value4} running · {value5} failed · {value6} pending",
   "room.coordinator": "Coordinator",
   "room.coordinator_allowed": "Coordinator allowed",
   "room.coordinator_could_not_decide": "Coordinator could not decide",

@@ -785,3 +785,7 @@ Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204.
 ### QAS-191 The facts line is not in the arrow column
 The stylesheet places `.task-profile` in the task summary grid explicitly (row 3, from column 2); in a browser the line is as wide as the text column and one line tall for a short text.
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.
+
+### QAS-192 The shown history and the counts are exact
+Rows of the kinds `workflow`, `availability_timer`, `task_profile` and `tool_orchestrator_decision` in any order give only the last three, in order, whatever the `workflow` summaries are; the stored rows are not changed; the counts equal the number of tasks per status.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206. GitHub #267, user, 2026-10-30.

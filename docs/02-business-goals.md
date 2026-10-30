@@ -600,3 +600,7 @@ Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204.
 ### BG-148 The plan review can be read after a long analysis
 The operator who waited for a long analysis sees every task in full, not a column of single letters.
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.
+
+### BG-149 The operator sees progress at a glance during a run
+Watching a long run, the operator reads a status board instead of scrolling through repeated lines between the entries that matter.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206. GitHub #267, user, 2026-10-30.

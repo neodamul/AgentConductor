@@ -710,3 +710,7 @@ Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204.
 ### FR-185 Place the facts line in the grid
 `details.startup-task>summary .task-profile` is placed in row 3 and spans from the text column to the last column, so the 22px arrow column and the right-hand remove column are not used for text and the line wraps normally.
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.
+
+### FR-186 Board counts and the shown history
+`boardCounts(tasks)` returns total, completed, running, failed and pending. `shownHistory(rows)` drops the rows whose event is `workflow` and keeps every other row in order. `renderCoordinator` puts the board first and renders the remaining rows.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206. GitHub #267, user, 2026-10-30.
