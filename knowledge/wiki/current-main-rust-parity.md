@@ -1,5 +1,18 @@
 # Current-main behavior carried into the Rust UI branch
 
+## Triage workspace reappearing report — bug #226 / 2026-10-30
+
+Review of PR #230 head `10927906` found no product-source changes in the PR and
+no reproducible data-restore defect in the base behavior. Confirmed Delete moves
+the app-owned directory to `workspace-trash` and removes its registry entry;
+startup scans only the active desktop and registered workspace directories.
+Remove-from-menu is intentionally different: it retains the directory and lists
+it as `registered:false`. Deleting the default workspace can initialize a fresh
+empty desktop on next launch, not restore the old data. Five focused workspace,
+delete, and launch suites pass 20 tests. The issue report does not identify which
+action/default workspace was involved; keep #226 open for a reproducible path and
+exact Windows package verification.
+
 ## Native event-driven refresh
 
 Successful mutating Room requests publish content-free, scoped invalidations to subscribed peer views; the source view is suppressed. Workspace changes wake only Workspace; run changes wake both Workspace and Agent Room. Each listener has a one-event bounded queue, so repeated invalidations coalesce to one wakeup; the listener then requests an authoritative asynchronous snapshot and wakes the native renderer. Periodic snapshots run on a dedicated worker and reply lane, separate from interactive dispatch. A snapshot that completes during an interactive request updates the displayed state without clearing that request, replacing the user's unsaved form value, or erasing its current error. Snapshot assembly clones the small saved state and releases its shared mutex before filesystem, quota, and revision reads. The active/idle fallback cadence is one second / thirty seconds. Tests cover burst coalescing, scoped delivery, source suppression, read-only filtering, lock release, and snapshot application during a pending request. The bounded worker and targeted refresh changes are source-verified; exact packaged macOS/Windows and visual acceptance remain separate gates.

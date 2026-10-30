@@ -1,3 +1,10 @@
+### Triage deleted-workspace restore report — bug #226 / 2026-10-30
+
+- [x] Plan: inspect the issue-linked PR #230 without touching the root #9 worktree; distinguish confirmed Delete from Remove-from-menu behavior.
+- [x] Verify: five focused workspace/delete/launch suites pass 20 tests. Confirmed Delete archives the app-owned directory and unregisters it; startup scans registered desktop/workspaces folders only. Remove-from-menu retains the directory as `registered:false`; deleting the default may initialize a new empty desktop workspace.
+- [x] Record: update issue #226 and PR #230 with the evidence; AgentMemory and LLM Wiki record the distinction.
+- [ ] Complete bug: the report does not say which action/default workspace was involved, so no product defect is established. Keep #226 open pending a reproducible path and exact Windows package verification.
+
 ### Package and smoke-test the latest pushed Rust head — issue #9 / 2026-10-30
 
 - [x] Plan: package exact source `7a56e372e598fff7df593d3ab4933bad62021360` after the Windows approval-driver correction.

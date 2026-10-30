@@ -1845,3 +1845,7 @@ The Windows packaged tool-decision driver could report a false negative after a 
 ## 2026-10-30 — Package the current pushed issue #9 head
 
 Source `7a56e372e598fff7df593d3ab4933bad62021360` built an exact Apple Silicon package. Manifest/source, binary and archive checksums, ZIP integrity, packaged help, bilingual manuals, licenses, notices and SBOM pass. The packaged binary passed four mock workflows across shared/worktree × Git/folder, with 12 parallel tasks/tests, merge refusal before approval, and approved merge verification. Focused package-evidence/public-doc/source-layout tests pass 19/19; warning-denied Clippy, rustfmt, diff hygiene and 300-line cap pass. Graphify refreshed to 11,754 nodes / 17,855 edges. Packaged GUI, Windows exact package, current-main merge, and release remain unverified. Evidence: `docs/evidence/issue9-7a56e372-macos-package.json` and `docs/evidence/issue9-7a56e372-macos-smoke.json`.
+
+## 2026-10-30 — Triage bug #226 workspace restore report
+
+Reviewing PR #230 found no reproducible product defect from the current report. Five focused workspace/delete/launch suites pass 20 tests. Confirmed Delete archives and unregisters a folder, while Remove-from-menu deliberately retains the directory; deleting the default may create an empty replacement workspace. The report does not identify which path occurred. Issue #226 remains open for repro details and exact Windows package verification. See `docs/07-implementation-plan.md` and `knowledge/wiki/current-main-rust-parity.md`.
