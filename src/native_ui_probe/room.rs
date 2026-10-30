@@ -1,13 +1,9 @@
 use serde_json::Value;
-use std::{
-    collections::HashSet,
-    time::{Duration, Instant},
-};
+use std::collections::HashSet;
 mod candidate;
 pub mod coordinator_feedback;
 pub mod inspector;
 pub mod judgments;
-mod polling;
 pub mod refresh_follow_up;
 mod scope_recovery;
 mod status_banner;
@@ -15,7 +11,6 @@ pub mod task_activity;
 pub mod task_controls;
 mod view;
 pub use candidate::candidate_decision_request;
-pub use polling::{refresh_due, refresh_due_at, room_refresh_interval};
 pub use refresh_follow_up::ToolRefreshFollowUp;
 pub use view::show;
 
@@ -56,7 +51,6 @@ pub enum CandidateDecision {
 }
 
 pub struct State {
-    pub next_refresh: Option<Instant>,
     pub confirming_stop: bool,
     pub confirming_decision: Option<CandidateDecision>,
     pub confirming_recover: bool,
@@ -89,7 +83,6 @@ pub struct State {
 impl Default for State {
     fn default() -> Self {
         Self {
-            next_refresh: Some(Instant::now() + Duration::from_secs(5)),
             confirming_stop: false,
             confirming_decision: None,
             confirming_recover: false,

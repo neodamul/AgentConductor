@@ -179,3 +179,9 @@ The existing worker owns child lifetime, output capture, persistence, and worksp
 
 ### Driver DDR-42 Keep prompt correction bounded and CLI-independent
 Build the requested answer shape in the orchestrator and allow at most one correction attempt when the process succeeds but its output lacks the requested JSON document. Preserve the first attempt's logs, include only the bounded parse reason in the retry prompt, and leave timeout, stop, capacity and provider-error behavior on their existing paths. Do not require CLI changes or add a protocol for prompt correction. Trace: QAS-184.
+
+### Driver DDR-43 Isolate observations from operator commands
+Scheduled reads must not share a saturated request queue or a long-held settings lock with foreground commands. Use a bounded, single-flight poll lane with completion events; coalesce repeated polls, listen for completion on the UI thread, and request repaint only when a reply arrives. Keep state-changing requests serialized. Trace: R-191 → QAS-189.
+
+### Driver DDR-44 Publish changes; isolate observers and slow work
+Make committed local changes observable through bounded typed events. Event publication is non-blocking; consumers subscribe by surface/data class, coalesce duplicate invalidations, and refresh asynchronously. External CLI/file changes use one independent bounded recovery observer with backoff. Keep mutation ordering and revision/approval guards at the state owner. Trace: R-192 → QAS-190.

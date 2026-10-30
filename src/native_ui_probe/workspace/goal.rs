@@ -122,7 +122,6 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         let language = probe.navigation.appearance.language().to_owned();
         let config = probe.snapshot.as_ref().map(|snapshot| &snapshot["config"]);
         let optimization_enabled = can_edit
-            && probe.pending.is_none()
             && !probe.goal.trim().is_empty()
             && std::path::Path::new(&probe.repository).is_dir()
             && config.is_some_and(|config| {

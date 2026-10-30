@@ -37,15 +37,11 @@ impl super::super::Probe {
     }
 
     pub(in crate::native_ui_probe) fn refresh_mcp_snapshot(&mut self) {
-        let result = self
-            .worker
-            .as_ref()
-            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| {
-                worker.send(br#"{"kind":"snapshot","mcp_result":true,"icons":true}"#)
-            });
-        match result {
-            Ok(()) => self.pending = Some(super::super::Pending::McpStatus),
+        match self.send_poll(
+            br#"{"kind":"snapshot","mcp_result":true,"icons":true}"#,
+            super::super::Pending::McpStatus,
+        ) {
+            Ok(_) => {}
             Err(error) => self.handle_mcp_error(error),
         }
     }

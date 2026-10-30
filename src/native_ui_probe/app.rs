@@ -74,7 +74,8 @@ impl Probe {
             self.open_signal_settings();
         }
         self.navigation.appearance.apply(ui.ctx());
-        if self.pending.is_none() {
+        self.refresh_scheduled_request(ui.ctx());
+        if self.pending.is_none() && self.poll_pending.is_none() {
             let now = std::time::Instant::now();
             let follow_up_due = self
                 .room_view
@@ -91,109 +92,42 @@ impl Probe {
                     .request_repaint_after(deadline.saturating_duration_since(now));
             }
         }
-        if self.room_view.is_none() && self.navigation.stop_for_delete() && self.pending.is_none() {
-            let now = std::time::Instant::now();
-            if let Some(deadline) = self.workspace_next_refresh.filter(|due| *due > now) {
-                ui.ctx().request_repaint_after(deadline - now);
-            } else {
-                self.workspace_next_refresh = Some(now + std::time::Duration::from_millis(500));
-                self.refresh_workspace();
-            }
+        self.refresh_quotas(ui.ctx(), super::quota_refresh::now());
+        self.show(ui);
+    }
+
+    fn refresh_scheduled_request(&mut self, context: &egui::Context) {
+        if self.room_view.is_some() || self.pending.is_some() || self.poll_pending.is_some() {
+            return;
         }
-        if self.room_view.as_mut().is_some_and(|room_view| {
-            room::refresh_due(
-                ui.ctx(),
-                self.snapshot.as_ref(),
-                self.pending.is_some() || room_view.blocks_background_refresh(),
-                &mut room_view.next_refresh,
-            )
-        }) {
-            self.refresh_background();
+        let Some(deadline) = self.workspace_next_refresh else {
+            return;
+        };
+        let now = std::time::Instant::now();
+        if deadline > now {
+            context.request_repaint_after(deadline - now);
+            return;
         }
-        if self.room_view.is_none() && self.starting_run.is_some() && self.pending.is_none() {
-            let now = std::time::Instant::now();
-            if let Some(deadline) = self.workspace_next_refresh.filter(|due| *due > now) {
-                ui.ctx().request_repaint_after(deadline - now);
-            } else {
-                self.workspace_next_refresh = Some(now + std::time::Duration::from_millis(500));
-                self.refresh_workspace();
-            }
-        }
-        if self.room_view.is_none()
-            && self.workspace_step == 2
-            && self.starting_run.is_none()
-            && !self.coordinator_chat.awaiting()
-            && self
-                .snapshot
-                .as_ref()
-                .is_some_and(|snapshot| snapshot["job"]["state"] == "running")
-            && room::refresh_due(
-                ui.ctx(),
-                self.snapshot.as_ref(),
-                self.pending.is_some(),
-                &mut self.workspace_next_refresh,
-            )
-        {
+        self.workspace_next_refresh = None;
+        if self.navigation.stop_for_delete() || self.starting_run.is_some() {
             self.refresh_workspace();
-        }
-        if self.room_view.is_none()
-            && self.coordinator_chat.awaiting()
-            && self.pending.is_none()
-            && room::refresh_due(
-                ui.ctx(),
-                self.snapshot.as_ref(),
-                self.pending.is_some(),
-                &mut self.workspace_next_refresh,
-            )
-        {
+        } else if self.coordinator_chat.awaiting() {
             if self.coordinator_chat.is_uncertain() {
                 self.refresh_workspace();
             } else {
                 self.refresh_coordinator_chat();
             }
-        }
-        if self.room_view.is_none()
-            && self.goal_optimizer.awaiting()
-            && self.pending.is_none()
-            && room::refresh_due(
-                ui.ctx(),
-                self.snapshot.as_ref(),
-                self.pending.is_some(),
-                &mut self.workspace_next_refresh,
-            )
-        {
+        } else if self.goal_optimizer.awaiting() {
             self.refresh_goal_optimizer();
-        }
-        if self.room_view.is_none()
-            && self
-                .snapshot
-                .as_ref()
-                .is_some_and(workspace::profile_tools::metadata_running)
-            && room::refresh_due(
-                ui.ctx(),
-                self.snapshot.as_ref(),
-                self.pending.is_some(),
-                &mut self.workspace_next_refresh,
-            )
+        } else if self
+            .snapshot
+            .as_ref()
+            .is_some_and(workspace::profile_tools::metadata_running)
         {
             self.refresh_metadata();
-        }
-        if self.room_view.is_none()
-            && (self.mcp_editor.discovering() || self.mcp_sources.previewing())
-            && self.snapshot.as_ref().is_some_and(|snapshot| {
-                snapshot["job"]["kind"] == "mcp" && snapshot["job"]["state"] == "running"
-            })
-            && room::refresh_due(
-                ui.ctx(),
-                self.snapshot.as_ref(),
-                self.pending.is_some(),
-                &mut self.workspace_next_refresh,
-            )
-        {
+        } else if self.mcp_editor.discovering() || self.mcp_sources.previewing() {
             self.refresh_mcp_snapshot();
         }
-        self.refresh_quotas(ui.ctx(), super::quota_refresh::now());
-        self.show(ui);
     }
 }
 

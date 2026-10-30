@@ -137,8 +137,7 @@ impl super::super::Probe {
             && let Some(job) = snapshot["id"].as_str()
         {
             self.coordinator_chat.started(job.to_owned());
-            self.workspace_next_refresh =
-                Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+            self.workspace_next_refresh = None;
             self.pending = None;
         } else {
             self.coordinator_chat

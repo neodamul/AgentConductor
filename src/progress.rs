@@ -5,6 +5,21 @@ use crate::{
 use std::{future::Future, path::Path, time::Duration};
 use tokio::io::{AsyncReadExt, AsyncSeekExt};
 
+const MIN_POLL_DELAY: Duration = Duration::from_millis(100);
+const MAX_POLL_DELAY: Duration = Duration::from_secs(2);
+
+#[cfg(test)]
+#[path = "../tests/support/progress_observer.rs"]
+mod tests;
+
+fn next_poll_delay(current: Duration, observed_output: bool) -> Duration {
+    if observed_output {
+        MIN_POLL_DELAY
+    } else {
+        current.saturating_mul(2).min(MAX_POLL_DELAY)
+    }
+}
+
 struct Reader {
     offset: u64,
     decoder: Decoder,
@@ -43,6 +58,9 @@ impl Reader {
             self.decoder.push(&bytes[..n])?
         };
         self.store.append_task_events(task, attempt, &events)?;
+        if !events.is_empty() {
+            crate::ui::events::notify_external_from_environment();
+        }
         if let Some(profile) = &self.profile {
             crate::quota::observe_events(&mut self.store, profile, &events)?;
         }
@@ -103,8 +121,7 @@ async fn observe_inner<F: Future>(
         store: Store::open(database)?,
     };
     tokio::pin!(future);
-    let mut interval = tokio::time::interval(Duration::from_millis(100));
-    interval.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
+    let mut delay = MIN_POLL_DELAY;
     loop {
         tokio::select! {
             result=&mut future=>{
@@ -114,7 +131,10 @@ async fn observe_inner<F: Future>(
                 }
                 return Ok(result);
             },
-            _=interval.tick()=>{reader.poll(spool,task,attempt,false).await?;},
+            _=tokio::time::sleep(delay)=>{
+                let observed = reader.poll(spool,task,attempt,false).await?;
+                delay = next_poll_delay(delay, observed);
+            },
         }
     }
 }

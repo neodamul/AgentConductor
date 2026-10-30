@@ -8,6 +8,10 @@ mod background;
 mod catalog;
 mod refresh;
 
+#[cfg(test)]
+#[path = "../../tests/native_ui_probe/poll_singleflight.rs"]
+mod poll_tests;
+
 impl Probe {
     pub fn connect_surface(
         room: Arc<crate::ui::Room>,
@@ -175,13 +179,8 @@ impl Probe {
     }
 
     pub(super) fn refresh_metadata(&mut self) {
-        let result = self
-            .worker
-            .as_ref()
-            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(br#"{"kind":"snapshot"}"#));
-        match result {
-            Ok(()) => self.pending = Some(Pending::MetadataRefresh),
+        match self.send_poll(br#"{"kind":"snapshot"}"#, Pending::MetadataRefresh) {
+            Ok(_) => {}
             Err(error) => self.error = Some(error),
         }
     }

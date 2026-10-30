@@ -686,6 +686,12 @@ Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201.
 The Rust chat panel keeps a send pending while its result is unknown, then resolves it from the next readable workspace conversation snapshot.
 Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.
 
+### SF-179 Asynchronous foreground events and isolated polling
+Run recurring read-only snapshots on a bounded worker separate from the serialized foreground command lane. Return completion events on a dedicated channel, request UI repaint only after a reply, coalesce duplicate polls, and apply a poll response only when it cannot supersede foreground state. Release the settings mutex after cloning the saved snapshot input and before filesystem/artifact reads. Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183/NFR-78 → QAS-189 → DDR-43 → DD-203. GitHub #189, 2026-10-30.
+
 ### SF-174 Standard prompt form and bounded format retry
 One shared builder assembles Document, Task and Format; the reviewer and worker prompts use it. The coordinator JSON call retries once when the reply cannot be read as the requested JSON.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### SF-180 Local event delivery for native views
+The Rust coordinator publishes bounded state-change events to subscribed native views. Consumers coalesce repeated notifications, request only the affected snapshot, and repaint on completion. Slow or external sources use independent bounded workers with backoff; observer failure cannot stall event producers or foreground actions. Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184/NFR-79 → QAS-190 → DDR-44 → DD-204. GitHub #257, user, 2026-10-30.

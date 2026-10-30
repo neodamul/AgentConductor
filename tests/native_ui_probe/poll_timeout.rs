@@ -19,7 +19,7 @@ fn temp_root(label: &str) -> std::path::PathBuf {
 
 fn wait_for_reply(probe: &mut Probe) {
     let deadline = Instant::now() + Duration::from_secs(2);
-    while probe.pending.is_some() {
+    while probe.pending.is_some() || probe.poll_pending.is_some() {
         probe.poll();
         assert!(Instant::now() < deadline, "native snapshot reply timed out");
         std::thread::sleep(Duration::from_millis(5));
@@ -59,7 +59,10 @@ fn initial_snapshot_errors_stay_visible_and_scheduled_room_snapshots_are_backgro
     wait_for_reply(&mut probe);
     probe.error = None;
     probe.refresh_background();
-    assert!(matches!(probe.pending, Some(Pending::BackgroundRefresh)));
+    assert!(matches!(
+        probe.poll_pending,
+        Some(Pending::BackgroundRefresh)
+    ));
     wait_for_reply(&mut probe);
     assert!(probe.error.is_none());
     assert_eq!(probe.background_poll_failures, 1);
@@ -129,72 +132,6 @@ fn stale_background_task_details_are_discarded_quietly_but_explicit_mismatches_s
         explicit.error.as_deref(),
         Some("Task activity response did not match the selection")
     );
-}
-
-#[test]
-fn late_refresh_callback_restarts_deadline_without_a_catch_up_burst() {
-    let interval = Duration::from_secs(5);
-    let first = Instant::now();
-    let mut next = Some(first + interval);
-
-    let resumed = first + Duration::from_secs(60);
-    assert!(crate::native_ui_probe::room::refresh_due_at(
-        resumed, interval, &mut next
-    ));
-    assert_eq!(next, Some(resumed + interval));
-    assert!(!crate::native_ui_probe::room::refresh_due_at(
-        resumed, interval, &mut next
-    ));
-    assert_eq!(next, Some(resumed + interval));
-}
-
-#[test]
-fn only_an_open_tool_dialog_suspends_background_room_refresh() {
-    let snapshot = serde_json::json!({
-        "revision":"run-rev-1",
-        "report":{"state":"running"},
-        "job":{"state":"running"},
-        "tool_requests":[{
-            "id":"a".repeat(64),
-            "status":"pending",
-            "request":{"tool":"Bash","input":{"command":"make test"}},
-            "context":{"task":"test-suite"}
-        }]
-    });
-    let context = eframe::egui::Context::default();
-    let now = Instant::now();
-    let mut next = Some(now - Duration::from_secs(1));
-
-    let scheduled =
-        crate::native_ui_probe::room::refresh_due(&context, Some(&snapshot), true, &mut next);
-    assert!(
-        !scheduled,
-        "an open decision dialog must not be invalidated by a background refresh"
-    );
-    assert_eq!(next, Some(now - Duration::from_secs(1)));
-
-    let mut deferred_next = Some(now - Duration::from_secs(1));
-    assert!(
-        crate::native_ui_probe::room::refresh_due(
-            &context,
-            Some(&snapshot),
-            false,
-            &mut deferred_next,
-        ),
-        "a deferred receipt must not freeze background polling"
-    );
-    assert!(deferred_next.is_some_and(|deadline| deadline > now));
-
-    let id = snapshot["tool_requests"][0]["id"].as_str().unwrap();
-    for (action, expected) in [
-        (crate::native_ui_probe::ToolAction::Approve, "tool_approve"),
-        (crate::native_ui_probe::ToolAction::Refresh, "tool_refresh"),
-    ] {
-        let packet = crate::native_ui_probe::tool_action_request(&snapshot, id, action).unwrap();
-        let packet: serde_json::Value = serde_json::from_slice(&packet).unwrap();
-        assert_eq!(packet["action"]["kind"], expected);
-        assert_eq!(packet["action"]["sha"], id);
-    }
 }
 
 #[test]

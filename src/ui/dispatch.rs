@@ -210,11 +210,11 @@ impl Room {
                             crate::ui::messages::text("native.window_lease_state_poisoned")
                         })? = None;
                         let lease = crate::leases::Lease::acquire(&dir.join("ui-window.lock"))?;
-                        let next = Arc::new(Controller {
+                        let next = Arc::new(Controller::for_run(
                             dir,
-                            exe: startup.executable().to_owned(),
-                            job: Mutex::new(None),
-                        });
+                            &startup,
+                            crate::ui::events::UiSurface::AgentRoom,
+                        ));
                         next.automatic(startup.auto_resume())?;
                         *controller = Some(next);
                         *self.run_lease.lock().map_err(|_| {

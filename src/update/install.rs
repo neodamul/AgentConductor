@@ -209,6 +209,9 @@ fn restart(exe: &Path) -> Result<(), String> {
     }
     std::process::Command::new(exe)
         .args(std::env::args_os().skip(1))
+        .env_remove("AC_UI_EVENT_ADDRESS")
+        .env_remove("AC_UI_EVENT_TOKEN")
+        .env_remove("AC_UI_EVENT_SURFACE")
         .env(WAIT_PID, std::process::id().to_string())
         .spawn()
         .map_err(|e| format!("cannot restart: {e}"))?;

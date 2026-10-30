@@ -40,13 +40,11 @@ impl Probe {
     }
 
     pub(in crate::native_ui_probe) fn refresh_coordinator_chat(&mut self) {
-        let result = self
-            .worker
-            .as_ref()
-            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(br#"{"kind":"snapshot","chat_result":true}"#));
-        match result {
-            Ok(()) => self.pending = Some(Pending::ChatRefresh),
+        match self.send_poll(
+            br#"{"kind":"snapshot","chat_result":true}"#,
+            Pending::ChatRefresh,
+        ) {
+            Ok(_) => {}
             Err(error) => {
                 self.coordinator_chat.failed(error);
                 self.workspace_next_refresh = None;

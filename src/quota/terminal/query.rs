@@ -48,6 +48,9 @@ pub async fn query_claude(
             "{\"disableAllHooks\":true}",
         ])
         .envs(&profile.environment)
+        .env_remove("AC_UI_EVENT_ADDRESS")
+        .env_remove("AC_UI_EVENT_TOKEN")
+        .env_remove("AC_UI_EVENT_SURFACE")
         // LaunchServices does not promise a terminal type; Claude waits before its prompt otherwise.
         .env(
             "TERM",

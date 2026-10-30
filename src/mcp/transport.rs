@@ -53,6 +53,9 @@ impl Client {
                 for (k, v) in environment {
                     c.env(k, config::expand(v)?);
                 }
+                c.env_remove("AC_UI_EVENT_ADDRESS")
+                    .env_remove("AC_UI_EVENT_TOKEN")
+                    .env_remove("AC_UI_EVENT_SURFACE");
                 ProcessGroup::prepare(&mut c);
                 let mut child = c
                     .spawn()

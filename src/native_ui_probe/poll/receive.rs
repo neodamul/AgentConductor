@@ -1,8 +1,17 @@
 use super::super::{Pending, Probe, cache, room, workspace};
 impl Probe {
     pub(in crate::native_ui_probe) fn poll(&mut self) {
-        let Some(worker) = &self.worker else { return };
-        let reply = worker.replies.try_recv();
+        if let Some(reply) = self.worker.as_ref().map(|worker| worker.replies.try_recv()) {
+            self.apply_reply(reply);
+        }
+        self.poll_background_reply();
+        self.poll_events();
+    }
+
+    pub(super) fn apply_reply(
+        &mut self,
+        reply: Result<Result<serde_json::Value, String>, std::sync::mpsc::TryRecvError>,
+    ) {
         let background = matches!(self.pending, Some(Pending::BackgroundRefresh));
         let snapshot_poll = matches!(
             self.pending,
@@ -135,8 +144,6 @@ impl Probe {
                         self.pending = None;
                         self.error = None;
                     } else {
-                        self.workspace_next_refresh =
-                            Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
                         self.snapshot = Some(snapshot);
                         self.pending = None;
                         self.error = None;

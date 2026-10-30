@@ -106,39 +106,6 @@ fn native_workspace_review_renders_the_proposed_plan() {
 }
 
 #[test]
-fn native_room_refresh_matches_the_existing_active_and_idle_poll_cadence() {
-    use std::time::Duration;
-
-    assert_eq!(
-        agentconductor::native_ui_probe::room_refresh_interval(&json!({
-            "report": {"state": "running"}
-        })),
-        Duration::from_secs(1)
-    );
-    assert_eq!(
-        agentconductor::native_ui_probe::room_refresh_interval(&json!({
-            "report": {"state": "completed"}
-        })),
-        Duration::from_secs(5)
-    );
-}
-
-#[test]
-fn native_room_poll_shortens_an_idle_deadline_when_work_becomes_active() {
-    use std::time::{Duration, Instant};
-
-    let mut next = Some(Instant::now() + Duration::from_secs(5));
-    let snapshot = json!({"report": {"state": "running"}});
-    assert!(!agentconductor::native_ui_probe::refresh_due(
-        &egui::Context::default(),
-        Some(&snapshot),
-        false,
-        &mut next,
-    ));
-    assert!(next.unwrap() <= Instant::now() + Duration::from_secs(2));
-}
-
-#[test]
 fn native_room_offers_review_evidence_for_a_candidate() {
     let snapshot = json!({
         "report": {

@@ -2,13 +2,11 @@
 
 use agentconductor::native_ui_probe::{ToolAction, room};
 use eframe::egui;
-use std::time::{Duration, Instant};
 
 #[test]
-fn only_an_open_tool_dialog_suspends_background_room_refresh() {
+fn tool_dialog_blocks_invalidation_refresh_until_the_decision_is_resolved() {
     let mut state = room::State::default();
     let id = "a".repeat(64);
-    let snapshot = serde_json::json!({"tool_requests":[{"id":id,"status":"pending"}]});
     assert!(!state.blocks_background_refresh());
 
     state.tool_dialog = Some(id.clone());
@@ -17,14 +15,6 @@ fn only_an_open_tool_dialog_suspends_background_room_refresh() {
     state.tool_dialog = None;
     state.deferred_tools.insert(id);
     assert!(!state.blocks_background_refresh());
-
-    let mut deadline = Some(Instant::now() - Duration::from_secs(1));
-    assert!(room::refresh_due(
-        &egui::Context::default(),
-        Some(&snapshot),
-        state.blocks_background_refresh(),
-        &mut deadline,
-    ));
 
     state.tool_dialog = Some("a".repeat(64));
     state.confirming_decision = Some(room::CandidateDecision::Reject);

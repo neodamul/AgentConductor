@@ -1,0 +1,29 @@
+{
+  "issue": 257,
+  "related_issue": 9,
+  "source_commit": "bd03bde71e33c4996f5d02c8b949e6321727de8b",
+  "package_version": "0.1.37",
+  "package_archive_sha256": "2b5909888ba16981c4c74f16967034bd95fc8dda19dc762b83585ef901cb34fc",
+  "workspace_root": "/private/tmp/ac-issue9-event-ui-20261030",
+  "fixture": "Rust mock agent compiled from tests/support/mock_agent.rs",
+  "run_id": "dbeab9c78141532821f52d7b6713fcae209f3fc3",
+  "steps": [
+    "Started one blocked mock task and one independent fast mock task in a disposable Git repository.",
+    "Opened the exact packaged Agent Room while the first task was blocked; the UI showed one of two tasks completed and the other still running.",
+    "Released the blocked task from the fixture directory. Without clicking Refresh, the packaged UI changed to two of two completed and approval-waiting.",
+    "Reviewed the candidate diff in the UI; both test commands reported exit code 0. Approved the disposable candidate through the UI and merged only into the temporary Git repository.",
+    "Restored the saved user workspace without changing its startup data."
+  ],
+  "result": "pass_for_packaged_live_progress_and_completion_refresh",
+  "merge_state": "completed",
+  "candidate_files": ["blocked.txt", "fast.txt"],
+  "test_exit_codes": [0, 0],
+  "limitations": [
+    "The workflow was started by the packaged CLI, not from the Workspace screen; this check does not distinguish the in-process event bridge from bounded recovery observation.",
+    "A slow independent UI read during a foreground action was not induced in the exact package; source-level concurrency tests are separate evidence.",
+    "Exact Windows package acceptance remains pending."
+  ],
+  "user_workspace_modified": false,
+  "user_workspace_restored": true,
+  "temporary_fixture_removed": true
+}

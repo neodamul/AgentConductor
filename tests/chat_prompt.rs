@@ -19,6 +19,7 @@ fn the_prompt_carries_the_manual_the_history_and_the_latest_question() {
     let prompt = build_prompt(&turns, "Korean").unwrap();
     assert!(prompt.contains("AgentConductor"));
     assert!(prompt.contains("How do I run it?"));
+    assert!(prompt.contains("Answer the last operator message:"));
     assert!(prompt.contains("A ladder game."));
     assert!(prompt.contains("Korean"));
     assert!(prompt.contains("\"answer\""));

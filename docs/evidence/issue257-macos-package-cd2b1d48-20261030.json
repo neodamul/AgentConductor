@@ -1,0 +1,123 @@
+{
+  "cases": [
+    {
+      "approved_merge_verified": true,
+      "base": "9e725c5116140b81558978b091c09faf95833fe9",
+      "candidate": "08dbaf41ca30975984663c0c5dde1cd049c42786",
+      "mode": "shared",
+      "parallel_ranges": [
+        [
+          1793302426209,
+          1793302428325
+        ],
+        [
+          1793302426214,
+          1793302428326
+        ],
+        [
+          1793302426220,
+          1793302428328
+        ]
+      ],
+      "source_mode": "git",
+      "tasks": 3,
+      "tests": 3,
+      "unapproved_merge_refused": true
+    },
+    {
+      "approved_merge_verified": true,
+      "base": null,
+      "candidate": "1a3af898976530ac29c3895dbebeae71ee989153",
+      "mode": "shared",
+      "parallel_ranges": [
+        [
+          1793302429128,
+          1793302431169
+        ],
+        [
+          1793302429136,
+          1793302431189
+        ],
+        [
+          1793302429146,
+          1793302431199
+        ]
+      ],
+      "source_mode": "folder",
+      "tasks": 3,
+      "tests": 3,
+      "unapproved_merge_refused": true
+    },
+    {
+      "approved_merge_verified": true,
+      "base": "487422a16295e4160e33ed667554a345b1ee6a9a",
+      "candidate": "b40a31dfd503a718f4f4ddf28f419421a3639445",
+      "mode": "worktree",
+      "parallel_ranges": [
+        [
+          1793302432038,
+          1793302434139
+        ],
+        [
+          1793302432050,
+          1793302434147
+        ],
+        [
+          1793302432064,
+          1793302434184
+        ]
+      ],
+      "source_mode": "git",
+      "tasks": 3,
+      "tests": 3,
+      "unapproved_merge_refused": true
+    },
+    {
+      "approved_merge_verified": true,
+      "base": null,
+      "candidate": "858d4722257d18583d4bc83ce9de03c6aecf20e2",
+      "mode": "worktree",
+      "parallel_ranges": [
+        [
+          1793302435306,
+          1793302437416
+        ],
+        [
+          1793302435324,
+          1793302437423
+        ],
+        [
+          1793302435339,
+          1793302437468
+        ]
+      ],
+      "source_mode": "folder",
+      "tasks": 3,
+      "tests": 3,
+      "unapproved_merge_refused": true
+    }
+  ],
+  "exit_code": 0,
+  "manifest": {
+    "binary": "agentconductor",
+    "binary_bytes": 19575216,
+    "binary_sha256": "3fb9c45e2a2153314fbc4055941ac295f7e0e7b582d807afd4430b8d8affa8ed",
+    "dependency_count": 242,
+    "external_requirements": [
+      "Git",
+      "selected authenticated agent CLIs"
+    ],
+    "name": "agentconductor",
+    "runtime": "one native executable; SQLite bundled",
+    "source_commit": "cd2b1d4850f9d77c1814e1e0b95ab2549f62bd31",
+    "target": "aarch64-apple-darwin"
+  },
+  "ui_launch": {
+    "app_version": "0.1.37",
+    "active_agentconductor_processes_after_launch": 1,
+    "dirty_edits_before_close": false,
+    "saved_workspace_loaded": true,
+    "workspace_data_changed": false,
+    "scope": "Exact package launch and accessibility-state inspection; no end-to-end UI mutation workflow claimed."
+  }
+}

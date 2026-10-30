@@ -31,7 +31,8 @@ impl Startup {
         let job = self.job(&saved)?;
         self.settle(&mut saved, &job)?;
         if matches!(&request, Request::Snapshot { .. }) {
-            return self.snapshot_state(&mut saved, &job, &metadata_job, &request);
+            let snapshot_saved = super::snapshot::unlock_snapshot(saved);
+            return self.snapshot_state(&snapshot_saved, &job, &metadata_job, &request);
         }
         if let Request::BaselineStatus {} = request {
             return self.baseline_status(&saved);

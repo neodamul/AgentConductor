@@ -1,3 +1,60 @@
+### Remove recurring UI snapshot polling; refresh on events — issue #257 / #189 / 2026-10-30
+
+- [x] Plan: trace event delivery for workspace, coordinator chat, metadata, MCP, Agent Room, and child-process completion. The UI still scheduled 30-second snapshots, while non-metadata invalidations fetched only a generic snapshot and could miss chat/optimizer/MCP result payloads.
+- [x] Red: add regressions showing that an overdue workspace timer enqueues a snapshot without an event and that a chat invalidation must request the chat result; both failed before the fix. Change the controller completion test to require a terminal event without calling `poll()`.
+- [x] Task: remove recurring render-loop snapshot refreshes; route invalidations to the matching snapshot request. Keep only explicit one-shot uncertainty/recovery retries, scheduled tool follow-up, quota refresh, and the bounded background eventless observer.
+- [x] Task: wait for each UI child process on its own monitor thread and publish completion as an event, so terminal status does not depend on a UI snapshot polling the child.
+- [x] Verify: `cargo test --all-targets --locked --offline --features test-fixtures -j 2` passed 1,177 tests, with 15 ignored, across 367 suites. The final chat-timer regression passed within focused local verification (103 tests / 5 suites); source-layout passed 2/2, all-target Clippy passed with `-D warnings`, rustfmt and diff checks passed, and every touched Rust/test file is at most 300 lines. The initial all-target run exposed one process-reaping race in `tests/ui.rs`; the test now observes the dedicated monitor’s terminal record instead of calling `waitpid` independently. Keep #9/#189/#257 open pending packaged UI and Windows acceptance.
+
+### Keep native UI event delivery non-blocking and reads concurrent — issue #257 / #9 / 2026-10-30
+
+- [x] Plan: trace event fan-out and request queues. Event publication could silently drop an invalidation when the subscriber registry mutex was busy; the read lane also had one worker, so one slow read held up other reads of the same class.
+- [x] Red/Green: add regressions proving that a blocked read does not block another read and a busy subscriber registry delays delivery without blocking or losing the publisher's event.
+- [x] Task: add one bounded read worker to the existing per-lane pool; keep mutations serialized and periodic snapshots on their existing single-flight worker. Route local, child-process, and recovery invalidations through one asynchronous fan-out thread using a capacity-one wake channel and atomic surface bits; only that thread touches the subscriber registry and requests repaint for matching surfaces.
+- [x] Verify: local Rust unit suite 83/83, source-layout checks 2/2, Clippy with `-D warnings`, `cargo fmt --check`, and `git diff --check` pass. All touched Rust/test files remain under 300 lines.
+- [x] Fix/Verify: Windows validation run `40972282855` exposed OS error 32 during test-fixture cleanup: the controller event regression removed its temp directory while a SQLite writer connection remained open. Explicitly drop the writer first. The focused controller test passes locally (1/1), event tests pass (12/12), `cargo fmt --all -- --check` and `git diff --check` pass; the touched test file is 84 lines.
+- [ ] Package/UI/Windows Verify: test event-driven refresh and an independent slow read in the exact packaged UI, then validate the exact Windows package. Keep #257 and #9 open until their acceptance journeys pass.
+- [x] Exact source-package CLI checkpoint: commit `01bc3c55338ae5c02e9a0cc46761bd16f383b6b8` packaged for `aarch64-apple-darwin`; manifest hash, packaged `--help`, and four shared/worktree × Git/folder mock-agent smoke cases passed. This confirms packaging and orchestrator journeys; it does not verify interactive UI behavior or Windows. Evidence: `docs/evidence/issue257-macos-package-01bc3c55-20261030.json`.
+- [x] Complete this unit: update the R-192 design decision, AgentMemory and LLM Wiki; commit/push to the active Rust issue branch.
+
+### Expose the coordinator chat editor to Windows UI Automation — issue #189 / #9 / 2026-10-30
+
+- [x] Plan: Windows package run `40955925655` failed all three coordinator-chat journeys before submission. Diagnostics found the disabled `Send` button but no text-edit element with the prompt name expected by UI Automation.
+- [x] Red: `coordinator_chat_editor_exposes_its_prompt_as_an_accessible_name` failed because the egui multiline editor had placeholder text but no accessible name.
+- [x] Task: expose the localized chat placeholder as the editor's accessible name while preserving the visible hint and multiline behavior.
+- [x] Local Verify: the new accessibility regression passes; related chat, Windows driver-contract, and source-layout suites pass 11/11 across 4 suites. Clippy with `-D warnings`, rustfmt, diff check, and the 300-line limit pass. The failing Windows log remains exact-package evidence; this local test does not prove the UIA mapping on Windows.
+- [x] Port: cherry-picked the accessible-name fix onto PR #255's `codex/issue-189-chat-package-current` branch as `fbc2280a`; the focused local suite passes 11 tests across 4 suites, with warning-denied Clippy, rustfmt, diff check, and source-layout guard passing.
+- [x] macOS package: exact PR head `bb769e9c5141e775232843eeeb58d09fd19dddbc` built with `cargo run --release --locked --offline -- package-release`; manifest validation, ZIP integrity, and four mock-agent smoke combinations (3 tasks/tests each, approved merge accepted, unapproved merge refused) pass. Evidence: `docs/evidence/issue189-macos-package-bb769e9c-20261030.json`. This is package/CLI evidence, not interactive UI acceptance.
+- [ ] Exact-package Verify: rerun the exact Windows package journey at PR head `fbc2280a`. Require all three coordinator-chat cases to pass before continuing to tool decisions; no workflow credit yet.
+- [ ] Complete: record the exact Windows rerun in issue #189/#9, AgentMemory, and LLM Wiki. Keep the existing 22/25 candidate and 0/25 shipped-Rust counters until package acceptance passes.
+
+### Keep workspace input available during quota refresh — issue #257 / 2026-10-30
+
+- [x] Plan: trace the observed disabled workspace to automatic stale-quota metadata work, which occupied the single UI `pending` slot and made `workspace::permissions::editable` reject all inputs.
+- [x] Red: `slow_quota_refresh_does_not_disable_workspace_editing` failed before the fix; `workspace_save_still_disables_editing` protects the mutation lock.
+- [x] Task: allow workspace edits and navigation during metadata-only quota lookup and its read-only snapshot refresh. New foreground requests supersede old replies through the existing request IDs; active job and mutation guards remain in force.
+- [x] Verify: `cargo test --lib --release --locked --offline --quiet` passed 80 tests; release Clippy with `-D warnings`, rustfmt check, diff check, and the 300-line limit passed.
+- [x] Exact packaged launch check: rebuilt and launched the exact package at `e7f712a60c83727ddeb27c09da0895624a68bf14`. Stale Claude/Codex quota observations were visible while workspace fields, agent edit, quota refresh, and save controls were enabled. No saved data was changed. Evidence: `docs/evidence/issue257-macos-package-e7f712a-20261030.json`.
+- [ ] Complete UI/Windows Verify: exercise a disposable workspace through quota refresh and another foreground action; verify the response remains current. Then validate the exact Windows package. Do not claim full UI acceptance from launch state alone.
+- [x] Complete this fix unit: update issue #257, AgentMemory and LLM Wiki. #257 stays open until isolated workflow and Windows journeys pass.
+
+### Verify the exact macOS package at the pushed Rust head — issue #9 / #257 / 2026-10-30
+
+- [x] Plan: rebuild the release package at pushed source `62efb31c8725d93fd1bb10021cad170cf3a77533`, which includes non-blocking event fan-out and foreground/background response correlation.
+- [x] Task: `cargo run --offline --locked --release -j 2 -- package-release` produced the arm64 macOS app and archive.
+- [x] Verify: package manifest validation matched the exact source commit and embedded binary SHA-256 `d1ccb7123a83401a5a2ee107f538a7a3d100fc15a807d8aba87daaf5ffffbcb4`; archive integrity, packaged `--help`, and package smoke passed. Archive SHA-256: `e7541978201958099923bf7e88fdac8da7690344b58f2f1b933e1fd4bc8f9e49`.
+- [x] GUI launch: opened the exact packaged app once. It loaded the saved user workspace, so no workspace or agent actions were performed; the visible controls appeared disabled and the cause remains unverified. This earns no packaged UI workflow credit.
+- [ ] UI/Windows Verify: use an isolated disposable workspace to exercise event-driven updates and task completion in the native UI, then validate the exact Windows package. Keep #257 and #9 open until those workflows pass.
+- [x] Complete this package-check unit: retain `docs/evidence/issue257-macos-package-62efb31-20261030.json`; update AgentMemory and the LLM Wiki. This does not complete #257 or #9.
+
+### Open the exact isolated package UI — issue #257 / #9 / 2026-10-30
+
+- [x] Plan: identify the correct app instance by its package path after a display-name lookup relaunched a registered older build.
+- [x] Verify: the `189f6fadeecda8f4b7c92eb269dfb0d455afb9c5` macOS package opened with `ui-new` pointed at a disposable `/private/tmp` workspace. The exact package showed empty workspace fields and no agents; the temporary `startup.json` was blank. One AgentConductor process remained, and no workspace data was changed.
+- [ ] UI workflow: exercise an event-driven state change and slow independent read in the exact packaged UI. This launch check earns no workflow acceptance credit.
+- [ ] Windows: validate the exact package and runtime behavior. Keep #257 and #9 open.
+- [x] Evidence: retain `docs/evidence/issue257-macos-package-189f6fad-20261030.json` and update the LLM Wiki and AgentMemory.
+
 ### Verify the exact macOS package at the pushed Rust head — issue #9 / 2026-10-29
 
 - [x] Plan: rebuild the release archive after the Rust chat fast-path commits so package evidence names the exact pushed source head `f739b4852ee06df6554ec7bf139df8f42ee90106`.
@@ -6539,3 +6596,73 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: update the reset regression to expect the terminal marker; the test file passes 2/2. Warning-denied all-target Clippy and `cargo fmt --check` pass. A local parallel all-target attempt exposed two timing-sensitive unit tests that pass individually; a serial run passed 331 tests across 77 suites, then stalled in `io_conformance` and was stopped. This is not recorded as a full-suite pass.
 - [x] Exact package: corrected head `3d6fd707` passed exact run `40885718536` on macOS and Windows, including native release packaging and packaged Windows default-desktop UI checks.
 - [x] Complete: squash-merge PR #228 into `codex/issue-9-native-ui-parity` as `f833e522`; close issue #221. The full local all-target test remains unclaimed because the serial run stalled in `io_conformance` after 331 passes / 3 ignored across 77 suites.
+
+### 2026-10-30 — Port current-head coordinator chat package coverage — issue #189 / #9
+
+- [x] Plan: audit PR #192 and exact Windows package run `40800366506`. Its three chat journeys passed on that PR head, but the overall Windows package failed later in `windows_tool_decision`; its `chat_transcript` storage assertion does not match current #9's artifact-backed `chat_history`.
+- [x] Red: the new package-wiring contract failed because current #9 did not include the coordinator-chat package target; the artifact reconstruction tests now cover pending and completed turns and reject path-like result references.
+- [x] Task: port the deterministic Windows chat UI harness to the current artifact format (`startup.json.chat_result`, `mcp/chat-input-<id>.json`, and `mcp/chat-<id>.json`); cover persistence after reopen, reconnect to a worker after app close, and a 20-second answer while the chat stays open.
+- [x] Verify locally: focused artifact and package-driver suites pass 5/5; `source_layout` passes 2/2; targeted Clippy, rustfmt, and `git diff --check` pass. A broad cold `cargo test` was stopped during test-target compilation after about 10 minutes and is not claimed as passing. All changed Rust files are below 300 lines (largest: 281).
+- [x] Accuracy: `AC_CHAT_WAIT=0` only exits the test driver after send; it does not reproduce the legacy 15-second UI request timeout. The slow-response test now observes the open chat for the answer instead of naming that behavior a timeout.
+- [x] Exact macOS binary package: source `bd03bde71e33c4996f5d02c8b949e6321727de8b` built and passed package validation plus all four shared/worktree × Git/folder mock-agent workflows; archive SHA-256 `2b5909888ba16981c4c74f16967034bd95fc8dda19dc762b83585ef901cb34fc`. Evidence: `docs/evidence/issue189-macos-package-bd03bde7-20261030.json`.
+- [ ] Verify exact Windows package: run the persisted-reopen, in-flight-reconnect, and late-answer journeys against the package built from this branch. They cannot be exercised on the local macOS host.
+- [x] Partial exact macOS package UI: opened chat and verified its accessible input, send enablement, Shift+Enter newline, and disabled-send state after clearing; no request was submitted.
+- [ ] Complete exact macOS chat acceptance: persistence after reopen, keyboard history recall, and restart/reconnect behavior still need packaged-window verification.
+- [ ] Complete: keep #189 and #9 acceptance unchanged until current-head package evidence passes; the prior PR #192 run is not a substitute.
+
+### 2026-10-30 — Isolate native periodic reads from foreground events — issue #189 / #9
+
+- [x] Plan: trace the stalled snapshot through `RequestWorker` and `Startup::dispatch`. A dedicated poll thread alone was insufficient: `snapshot_state` also performed file and artifact reads while holding the shared settings mutex.
+- [x] Red: add a deterministic worker regression that blocks a poll dispatch and requires a foreground command to finish; it failed before `send_poll` and the independent poll lane existed.
+- [x] Task: add a bounded single-flight poll worker and reply channel; route recurring workspace, Agent Room, chat, optimizer, metadata, and MCP snapshots through it. Keep mutations on the serialized request lane and apply poll replies only when foreground pending state allows.
+- [x] Task: clone `Saved` after the metadata/settle step, release its mutex, then construct the read-only snapshot from the clone.
+- [x] Verify locally: worker concurrency 1/1; poll reply deferral 1/1; poll single-flight 1/1; existing native poll policy 6/6; snapshot lock release 1/1; `startup_chat` 5/5; `metadata_failure` 1/1; `source_layout` 2/2. Warning-denied library Clippy, rustfmt, and `git diff --check` pass; every changed Rust/test file is below 300 lines.
+- [ ] Verify package: exact native UI check on macOS and Windows; Windows cannot be claimed from the current macOS host.
+- [ ] Complete: update issue #189 and the linked PR only after the local checks are recorded; do not claim package acceptance or close the issue without exact platform evidence.
+
+### 2026-10-30 — Event-driven native updates — GitHub #257 / issue #9
+
+- [x] Plan: record R-192 → BG-147 → SF-180 → UC-183 → FR-184/NFR-79 → QAS-190 → DDR-44 → DD-204; define event publication, subscriptions, bounded delivery, targeted refresh, stale-revision rejection, and external-change fallback.
+- [x] Task: create enhancement #257 and update the requirements, business goals, system features, use case, functional/nonfunctional analysis, QAS, design driver, and design decision.
+- [x] Red: event delivery failed when the hub was disabled; independent foreground-request progress timed out when the pool was reduced to one worker.
+- [x] Task 1: add a bounded per-surface Rust event hub; successful UI dispatches publish invalidations, the subscribed eframe context repaints directly, and the native loop listens for the event and schedules one background snapshot. Slow/disconnected subscribers cannot block producers.
+- [x] Task 2: replace the single foreground request thread with two bounded worker lanes; a blocked request no longer holds up an independent foreground request. Keep state owners' locks/revisions and the separate poll lane.
+- [x] Red: queue a first state-changing request behind a deterministic gate, then submit two more; the third was rejected because each worker queue held only one waiting request.
+- [x] Task: raise each non-blocking request queue to 16 entries. The UI still uses `try_send`, so it never waits for a worker; periodic snapshots retain their separate single-flight queue.
+- [x] Verify: regression confirms requests queue behind a running action; the focused case and all 81 native UI library tests pass in the release profile.
+- [x] Task 2: discard an in-flight background snapshot when its subscribed surface receives a newer invalidation; immediately queue one replacement snapshot instead of briefly applying stale state.
+- [x] Task 3a: propagate supervised workflow progress to the subscribed UI through a random-token-authenticated loopback event bridge; use non-blocking sends and strip credentials before provider/tool subprocesses.
+- [x] Task 3b: bound the eventless stdout-spool recovery reader with exponential backoff from 100 ms to 2 s, resetting after observed output.
+- [x] Verify progress bridge: authenticated delivery wakes only the designated surface, invalid credentials are ignored; spool backoff resets on output and caps while idle; live-progress integration passes.
+- [x] Verify locally: event hub 11/11 including authenticated loopback, external task-scope fallback, standalone recovery when socket setup is unavailable, root-scoped glob handling under path/depth bounds, and a publisher that returns while the subscriber-registry lock is held; progress backoff 1/1, live progress 2/2, controller terminal-event transition 1/1, native worker concurrency/event/request-pool tests 4/4, stale background reply tests 2/2, saved-settings lock release 1/1, source layout 2/2; warning-denied library Clippy, rustfmt, `git diff --check`, and all changed Rust/test files at or below 300 lines pass.
+- [x] Red: hold a SQLite writer transaction after the child exits; the controller exposed `completed` while the terminal audit write was still blocked.
+- [x] Task: publish `finished` only after the owner record and SQLite terminal audit record settle; emit the terminal invalidation after that state transition.
+- [x] Verify locally: the locked-writer regression passes, as do the metadata-registration and workspace-quota cleanup tests that failed on Windows CI with OS error 32.
+- [ ] Verify Windows: rerun the exact-head native tests and packaged UI checks; CI run `40963838474` exposed the premature completion race in the two cleanup tests.
+- [x] Verify all targets locally after the completion-order fix: `cargo test --all-targets --locked --offline --features test-fixtures -j 2` passed 1,179 tests, 15 ignored, across 368 suites; warning-denied all-target Clippy, `cargo fmt --check`, and `git diff --check` passed.
+- [x] Task 3: publish supervised workflow progress to the initiating view; the internal child sends authenticated non-blocking invalidations and the UI child-job monitor publishes terminal transitions.
+- [x] Task 3c: notify the parent UI on every supervised CLI child exit; use a token-authenticated, non-blocking UDP send configured only in the internal child environment.
+- [x] Task 3d: tag foreground requests and discard completions superseded by a newer request; discard background snapshots started before a newer foreground request.
+- [x] Red/GREEN: metadata completion refreshes all workspace steps from its event while preserving unsaved workspace fields; stale profile retry survives an older in-flight snapshot.
+- [x] Task 4: the existing loopback listener performs one bounded recovery scan of run state and declared task worktree paths; it watches at most 512 paths to depth 8, emits a surface-scoped invalidation, and exponentially backs off from 1 s to 30 s while idle. If socket setup fails, one dedicated recovery worker preserves that fallback. No per-event thread or render-loop filesystem work.
+- [x] Red/GREEN: an integration test changes a declared worktree file without sending an event; the subscribed Agent Room receives an invalidation within the bounded recovery interval.
+- [x] Red/GREEN: a publisher blocked behind the subscriber-registry mutex timed out before `try_lock`; it returns immediately after the change.
+- [x] Remove duplicate high-frequency whole-screen recovery reads: all workspace/room snapshots now use a 30 s recovery deadline regardless of active state; event notifications remain immediate. Replace the two 500 ms startup snapshots with the same recovery deadline.
+- [x] Verify recovery cadence locally: native room render 12/12, profile refresh 3/3, poll timeout 6/6, warning-denied native UI library Clippy, rustfmt, and diff checks pass.
+- [x] Verify the completed event/request slice locally: `cargo test --lib` 78/78, `cargo test --test ui_child_events` 1/1, rustfmt, warning-denied library Clippy, and `git diff --check` pass.
+- [x] Local Verify: focused queue regression passes; `cargo test --lib --release --locked --offline --quiet` passes 81/81; `cargo test --test source_layout --release --locked --offline --quiet` passes 2/2; warning-denied library Clippy, formatting, and diff checks pass.
+- [x] Package Verify: exact source `cd2b1d4850f9d77c1814e1e0b95ab2549f62bd31` packaged for `aarch64-apple-darwin`; `validate-package`, packaged `--help`, and the four-case shared/worktree × Git/folder smoke passed. Manifest binary SHA-256: `3fb9c45e2a2153314fbc4055941ac295f7e0e7b582d807afd4430b8d8affa8ed`; archive SHA-256: `eefe3ab861a467f62f758afd2c1b69df0126b4b042d02a391ad3d0b0b5637309`. Evidence: `docs/evidence/issue257-macos-package-cd2b1d48-20261030.json`.
+- [x] Exact package launch: replaced the prior single AgentConductor process with the `cd2b1d48` package; verified one active app window, v0.1.37, the saved workspace loaded, no dirty edits, and its controls enabled. No workspace data was changed.
+- [ ] Verify all targets and exact native UI packages; cross-platform package acceptance remains open.
+- [x] Exact macOS package live-refresh check: one Rust mock agent completed while a second remained blocked; after releasing the blocker, Agent Room displayed `2/2` and approval-waiting without a Refresh click. Both task tests returned 0; candidate diff reviewed and the isolated candidate approved/merged. Evidence: `docs/evidence/issue257-exact-package-event-ui-bd03bde7-20261030.json`. The run was started by the packaged CLI; this does not isolate the in-process event bridge from recovery observation.
+- [ ] Verify slow independent UI reads during foreground work in the exact package; source-level concurrency tests pass, but this packaged interaction is not yet proven.
+- [ ] Verify package: exercise selective event delivery and fallback behavior in exact Windows package.
+- [ ] Complete: update #257, issue #189, PR, AgentMemory and LLM Wiki after verification; do not close issues or claim parity before package acceptance.
+
+### Exact packaged UI workspace-save smoke — issue #257 / #9 / 2026-10-30
+
+- [x] Launch the exact `bd03bde7` macOS package once with `ui-new` pointed at `/private/tmp/ac-event-ui.KaQaiT`; confirm v0.1.37 and an isolated empty agent registry.
+- [x] Save a temporary workspace and confirm its values persist in `startup.json`; the native UI clears its dirty-state affordance after the asynchronous save. No agent or external service was invoked and the user workspace was not changed.
+- [ ] Do not count this save response as event-only refresh evidence: save returns a foreground reply. Exercise an Agent Room progress/completion invalidation and an independent slow read in the exact package.
+- [ ] Keep Windows exact-package acceptance open; the current platform-validation rerun does not by itself prove the packaged Windows UI journey.
+- [x] Evidence: `docs/evidence/issue257-exact-package-ui-save-bd03bde7-20261030.json`. This is partial UI evidence, not issue completion.

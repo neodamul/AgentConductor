@@ -184,4 +184,6 @@
 
 - [Current local verification](current-verification.md): full locked/offline Rust test results, exact macOS bundle checks, and unresolved package/Windows gates.
 - [Native UI poll timeouts](native-ui-poll-timeouts.md): Rust worker request semantics, background error policy, resumed repaint scheduling, and the explicit distinction from JavaScript client-timeout diagnostics.
+- [Native UI event and polling lanes](native-event-polling.md): isolated recurring reads, completion events, snapshot lock release, and local concurrency evidence.
+- [Event-driven native updates](native-event-updates.md): requirements and design for bounded typed broadcasts, selective refresh, independent workers, and external-change fallback.
 - [Coordinator format correction retry](coordinator-format-retry.md): a single bounded JSON-format retry with retained first-attempt logs and deterministic local CLI tests.

@@ -1,0 +1,26 @@
+{
+  "issue": 257,
+  "pull_request": 255,
+  "source_commit": "e7f712a60c83727ddeb27c09da0895624a68bf14",
+  "target": "aarch64-apple-darwin",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-e7f712a60c83.zip",
+  "archive_sha256": "6dd2342fe9dec6d4badbe22e37f8dd26643521e2a835ae37f1fcdfafe45dcc70",
+  "binary_sha256": "5c48a2a7d671cb2f33de82f57ef736624c4c30d265fd07bbd47740e2957daa35",
+  "binary_bytes": 19575216,
+  "dependency_count": 242,
+  "checks": {
+    "release_build_and_packaging": "passed",
+    "package_manifest_validation": "passed; source commit and embedded binary digest match",
+    "archive_integrity": "passed",
+    "packaged_binary_help": "passed",
+    "package_release_smoke": "passed",
+    "native_ui_launch": "passed; previous package process was closed before launching this package",
+    "quota_refresh_input_lock": "passed; saved workspace showed stale quota observations while workspace, agent edit, quota refresh, and save controls were enabled",
+    "workspace_task_workflow": "not exercised; no user data was changed",
+    "windows_package": "pending"
+  },
+  "notes": [
+    "The launch check verifies responsiveness during stale quota refresh but does not count as a complete packaged UI workflow.",
+    "Full all-target tests were not completed; the run was interrupted before the focused fix. Release library tests and source_layout passed."
+  ]
+}
