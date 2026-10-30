@@ -714,3 +714,7 @@ Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205.
 ### FR-186 Board counts and the shown history
 `boardCounts(tasks)` returns total, completed, running, failed and pending. `shownHistory(rows)` drops the rows whose event is `workflow` and keeps every other row in order. `renderCoordinator` puts the board first and renders the remaining rows.
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206. GitHub #267, user, 2026-10-30.
+
+### FR-187 Clear the starting mark
+`startEnded()` sets `startPending=false` and redraws the progress and buttons. `enter()` calls it when the run opens. The poll calls it when a `start` job has ended, and then also drops `autoOpen` when that job did not complete.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187 → QAS-193 → DD-207. GitHub #269, user, 2026-10-30.

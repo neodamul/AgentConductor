@@ -1591,3 +1591,7 @@ Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205.
 ### DD-206 Leave the workflow rows out of the page, keep the stored history
 The audit history is evidence and stays as recorded (one `workflow` row per report save); leaving them out happens only when the page draws it, so nothing is lost and no Rust change is needed. The board uses data already in the snapshot (`report.tasks`, `activity`), so it adds no request. The row summary that only carries counts stays as it is: the board carries the counts. Folding repeats was rejected because the repeats are not consecutive (they sit between informative rows), and the operator asked for the line not to be printed at all.
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206. GitHub #267, user, 2026-10-30.
+
+### DD-207 End the mark where the run opens
+The click handler keeps the mark after a start whose report is not yet visible so that "starting" stays on screen until the run opens (a slow PC writes the report a moment later). That deferral had no owner for the end: the later `enter()` reset `home` and `autoOpen` but not the mark. The end now lives in `enter()` and in the poll's handling of an ended `start` job, which also covers a start that fails and never opens a run. `reloadWorkspace` keeps its own reset.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187 → QAS-193 → DD-207. GitHub #269, user, 2026-10-30.

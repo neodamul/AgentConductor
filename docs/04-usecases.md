@@ -779,3 +779,7 @@ Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205.
 ### UC-185 Watching a run in the coordinator Activity tab
 Three tasks run; the operator opens the coordinator tab and sees `running · 0 of 3 completed · 3 running` with one row per task, and between the availability timer and task profile entries no `workflow` lines.
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206. GitHub #267, user, 2026-10-30.
+
+### UC-186 Going on with phase 2
+Phase 1 finishes; the operator returns to the workspace and the review of phase 2 is offered with its buttons enabled, also when the run's report appeared a moment after the start was accepted.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187 → QAS-193 → DD-207. GitHub #269, user, 2026-10-30.
