@@ -767,3 +767,7 @@ Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202.
 ### UC-182 Chat on a PC where starting a process is slow
 The operator keeps the window open on a PC where Git needs seconds per call; snapshots return quickly, the chat is accepted at once, and a slow step, if any, is named in the log.
 Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203. GitHub #234, user, 2026-10-30.
+
+### UC-183 Asking why the plan is slow
+While the plan is being made the operator opens the chat and asks why it takes so long; the question is accepted at once, the planner keeps running, and the answer names the running job, its elapsed time, the size and age of its output and the last lines it wrote.
+Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204. GitHub #261, user, 2026-10-30.

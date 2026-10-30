@@ -592,3 +592,7 @@ Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202.
 ### BG-146 The coordinator chat answers while the window keeps refreshing
 A slow machine does not turn the periodic refresh into a queue that stops the operator from asking.
 Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203. GitHub #234, user, 2026-10-30.
+
+### BG-147 A slow plan can be questioned instead of waited out
+The operator who sees a plan running for minutes asks the coordinator about it and gets an answer based on what the planner is doing.
+Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204. GitHub #261, user, 2026-10-30.
