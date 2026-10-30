@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+## v0.1.48
+
 - Phases: after a phase finished, the workspace could keep showing "starting agent execution" with every button disabled (no review of the next phase) until the app was restarted. The mark that says a start is in progress was not ended when the run opened after its report appeared late, nor when a start job ended without opening a run; it now ends in both cases.
 
 - Run screen: the coordinator Activity tab starts with a status board (run state, completed / running / failed / pending counts and one row per task with its agent, status and last output) and no longer lists the `workflow` entries, instead of repeating `AgentConductor run=… phase=running completed=0 failed=0` once per report save. The recorded history is unchanged.
