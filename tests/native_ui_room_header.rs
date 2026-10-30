@@ -50,8 +50,7 @@ fn the_room_context_does_not_repeat_the_shared_app_title() {
     assert!(
         texts
             .iter()
-            .any(|text| text == "Local · CLI authentication"),
-        "{texts:?}"
+            .all(|text| text != "Local · CLI authentication")
     );
 }
 
@@ -95,11 +94,6 @@ fn the_room_context_header_fits_both_locales_at_supported_widths() {
                 .collect::<Vec<_>>();
             output.textures_delta.set.clear();
             output.textures_delta.free.clear();
-            let auth = if language == "ko" {
-                "로컬 · CLI 인증"
-            } else {
-                "Local · CLI authentication"
-            };
             let version = format!("v{}", env!("CARGO_PKG_VERSION"));
             assert!(
                 labels.iter().all(|(label, _)| {
@@ -107,20 +101,19 @@ fn the_room_context_header_fits_both_locales_at_supported_widths() {
                 }),
                 "shared branding is repeated at {width}px in {language}: {labels:?}"
             );
-            for expected in ["project", auth] {
-                let bounds = labels
-                    .iter()
-                    .find_map(|(label, bounds)| (label == expected).then_some(bounds));
-                let Some(bounds) = bounds else {
-                    panic!(
-                        "header text {expected:?} missing at {width}px in {language}: {labels:?}"
-                    );
-                };
-                assert!(
-                    bounds.min.x >= 0.0 && bounds.max.x <= width,
-                    "header text {expected:?} overflows {width}px in {language}: {bounds:?}"
-                );
-            }
+            assert!(labels.iter().all(|(label, _)| {
+                label != "로컬 · CLI 인증" && label != "Local · CLI authentication"
+            }));
+            let bounds = labels
+                .iter()
+                .find_map(|(label, bounds)| (label == "project").then_some(bounds))
+                .unwrap_or_else(|| {
+                    panic!("project missing at {width}px in {language}: {labels:?}")
+                });
+            assert!(
+                bounds.min.x >= 0.0 && bounds.max.x <= width,
+                "project overflows {width}px in {language}: {bounds:?}"
+            );
             assert!(
                 labels.iter().any(|(label, bounds)| {
                     label.contains("Authentication") && bounds.min.x >= 0.0 && bounds.max.x <= width
