@@ -6564,7 +6564,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Shared-lock verification: 62 library tests and four targeted tests across native start journey, chat startup context, and source layout pass; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test check pass.
 - [x] Background-during-interaction regression: reproduce that a completed independent snapshot was discarded whenever an interactive reply was pending. Apply the new authoritative snapshot while preserving the pending operation, dirty form values and current error; targeted regression passes.
 - [x] Worker-level architecture gap: replace the single foreground worker with bounded read and serialized state-change lanes; preserve a separate poll worker and correlate replies. The UI retains one foreground pending presentation slot, while work on independent lanes no longer shares one request thread.
-- [ ] Full local regression after this follow-up: interrupted after 682 passed / 14 ignored across 204 suites; no failures observed, but this is not a complete pass.
+- [x] Full local regression after this follow-up: `cargo test --all-targets` passed 1,143 tests, 15 ignored, 0 failed across 364 suites in 263.09s (exit 0).
 - [ ] Exact packaged macOS and Windows responsiveness remains unverified.
 
 ### 2026-10-30 — Keep independent native requests responsive — issue #9 / #257
