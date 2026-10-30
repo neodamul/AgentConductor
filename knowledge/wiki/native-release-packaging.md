@@ -5,9 +5,11 @@
 The Windows UI Automation driver observed `Confirm tool decision` in the final
 accessibility dump after reporting that the expected state had not appeared within
 500 ms. Its activation helper could then send repeated pointer clicks (up to three)
-for one approval action. The driver now waits up to four seconds after each input,
-checks current state before using a fallback, and sends a pointer click at most once
-per activation. A source-contract regression prevents the retry loop from returning.
+for one approval action, after UIA and keyboard attempts. The driver now verifies
+the in-window process-owned target, sends one pointer click, and waits up to four
+seconds for the resulting state. It no longer sends alternate approval inputs when
+the outcome is ambiguous. A source-contract regression prevents retries and
+alternate inputs from returning.
 Local static Windows-driver tests pass on macOS, but Windows package acceptance is
 still pending; this change does not claim a successful Windows runtime journey.
 
