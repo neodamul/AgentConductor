@@ -762,3 +762,7 @@ Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203.
 ### R-192 The coordinator can be asked while a plan is being made
 The coordinator chat shall work while a plan is being made or a run is being started, because that is when the operator most wants to ask what is going on. A chat is read-only and shall not wait for, or be refused because of, a planning or start job. A message the application cannot accept shall be shown in the conversation as an error, not only as a toast, and the text shall stay available to send again. The chat prompt shall tell the coordinator which work is running, for how long, and whether it is still producing output, so a question such as "why does the plan take so long" can be answered from facts.
 Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204. GitHub #261, user, 2026-10-30.
+
+### R-193 A task's facts line stays readable in the plan review
+In the plan review, every task shall show its id, its one-line description and its facts line (task type, effort, warnings) as readable text beside or below the arrow, at any window width. The facts line shall not be squeezed into the arrow's column.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.

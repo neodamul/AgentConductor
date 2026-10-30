@@ -1583,3 +1583,7 @@ Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203.
 ### DD-204 A chat slot like the metadata slot
 The metadata worker already runs in its own controller so it does not take the planning slot; the chat does the same, with its logs in `chat-jobs` and its artifacts where they were (the worker still receives the private folder). A chat no longer needs the retained-job check because it does not touch the run or the plan. Starting a plan while a chat answers is allowed: both only read the project, and the planner's own check of retained jobs does not see the chat. Switching workspaces still waits for a running chat. The snapshot field `job` keeps its meaning (planning, starting, other actions); the Rust UI must read `chat_job` for the chat. The Running work section reads only files the application already wrote (`startup.json`, the process folder), never starts a process, and cuts every part to a fixed size.
 Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204. GitHub #261, user, 2026-10-30.
+
+### DD-205 Explicit placement instead of auto-placement
+A grid child without a column goes to the first free cell, here the arrow column. The rule names the row and the columns, which also holds when the remove button is absent (the third column then has no width).
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.

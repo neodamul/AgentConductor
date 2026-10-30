@@ -698,3 +698,7 @@ Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203.
 ### SF-180 Chat in its own job slot, with the running work in its prompt
 The chat worker is started in its own slot and followed through `chat_job` in the snapshot; planning, starting and chat no longer exclude each other. The chat prompt has a bounded Running work section built from the saved job and the planner's process folder; a rejected send appears as an error turn in the conversation.
 Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204. GitHub #261, user, 2026-10-30.
+
+### SF-181 Task summary layout
+The task summary is a grid whose third line, the facts line, is placed explicitly under the text column.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.

@@ -596,3 +596,7 @@ Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203.
 ### BG-147 A slow plan can be questioned instead of waited out
 The operator who sees a plan running for minutes asks the coordinator about it and gets an answer based on what the planner is doing.
 Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204. GitHub #261, user, 2026-10-30.
+
+### BG-148 The plan review can be read after a long analysis
+The operator who waited for a long analysis sees every task in full, not a column of single letters.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.

@@ -706,3 +706,7 @@ Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203.
 ### FR-184 A separate chat slot and a Running work section
 `Startup` owns a third controller (`chat-jobs`) and `Saved.chat_job`. `dispatch_chat` checks the revision and that no chat is running, and does not look at the planning slot or at the retained startup jobs; the snapshot carries `chat_job` and the chat answer is tagged with it. `chat_reset` is refused only while a chat runs. `chat_context::running(saved, now_ms)` renders the job kind, elapsed time, whether its process is alive, the planner output bytes and the age of its last write, and the tail of its stderr and stdout, each bounded; the chat worker adds it after the Workspace section. In the page, a failed send adds an error turn to the conversation, keeps the text in the input and raises no toast.
 Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204. GitHub #261, user, 2026-10-30.
+
+### FR-185 Place the facts line in the grid
+`details.startup-task>summary .task-profile` is placed in row 3 and spans from the text column to the last column, so the 22px arrow column and the right-hand remove column are not used for text and the line wraps normally.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.

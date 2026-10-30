@@ -2350,3 +2350,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: `src/ui/setup/*` (chat slot, snapshot), `src/chat_context.rs`, `src/commands/chat.rs`, `src/ui/chat.js`, `src/ui/startup.js` (1 s polling while a chat runs), `src/ui/cache.rs`; manuals EN/KO; CHANGELOG.
 - [ ] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI. Not verified: a real planner and coordinator on the user's PC.
 - [ ] Complete: merge; release only on request. Related: Codex's Rust chat (#189) must read `chat_job`.
+
+### Task facts line layout — GitHub #262
+
+- [x] Plan: user report 2026-10-30 (v0.1.45): the task type / effort line of a task in the plan review is a one-character-wide column. R-193 → DD-205: place it explicitly in the summary grid.
+- [ ] Red: `tests/task_profile_layout.rs`.
+- [ ] Task: `src/ui/startup.css`; CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, Rust suite, a browser check of the real stylesheet. Windows: CI.
+- [ ] Complete: merge; release only on request.
