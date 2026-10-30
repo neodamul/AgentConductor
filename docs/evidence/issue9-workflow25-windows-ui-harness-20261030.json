@@ -8,6 +8,7 @@
     "result": "failed before driver implementation because AC_RUN_LIFECYCLE_ACTION was absent"
   },
   "local_green": {
+    "nonblocking_architecture_tests": "native_ui_probe: 13 passed, including scoped event broadcast/coalescing, async refresh while a request is pending, and slow external I/O isolation",
     "tests": "windows_run_lifecycle and source_layout: 3 passed, 1 ignored",
     "ignored_test": "exact_windows_package_ui_stops_resumes_and_recovers_without_duplicate_work",
     "ignored_reason": "Requires the exact packaged Windows binary and Windows UI Automation",
