@@ -789,3 +789,7 @@ Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205.
 ### QAS-192 The shown history and the counts are exact
 Rows of the kinds `workflow`, `availability_timer`, `task_profile` and `tool_orchestrator_decision` in any order give only the last three, in order, whatever the `workflow` summaries are; the stored rows are not changed; the counts equal the number of tasks per status.
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206. GitHub #267, user, 2026-10-30.
+
+### QAS-193 The starting mark does not outlive its start
+With `startPending` and `autoOpen` set and `home` true (the first poll after the start saw no report), a later `enter()` that opens the run leaves `startPending` false and redraws; `startEnded()` clears it on its own.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187 → QAS-193 → DD-207. GitHub #269, user, 2026-10-30.

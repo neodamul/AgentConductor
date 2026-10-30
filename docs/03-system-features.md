@@ -706,3 +706,7 @@ Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205.
 ### SF-182 Status board in the coordinator Activity tab, without the workflow rows
 The tab starts with a board built from the snapshot the page already has, followed by the history without its `workflow` entries.
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206. GitHub #267, user, 2026-10-30.
+
+### SF-183 End of the starting state
+The page clears its "starting" mark when the run opens and when a start job ends.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187 → QAS-193 → DD-207. GitHub #269, user, 2026-10-30.

@@ -2366,3 +2366,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: `src/ui/room.js`, `src/ui/room.css`, `src/ui/messages/*.json`; CHANGELOG.
 - [ ] Verify (macOS): fmt, clippy, Rust suite, Python, node, a browser check of the real room page if feasible. Windows: CI.
 - [ ] Complete: merge; release only on request. The Rust UI has its own room (Codex, out of quota): not changed.
+
+### Phase hand-over stuck in "starting" — GitHub #269
+
+- [x] Plan: user report 2026-10-30: after phase 1 (and phase 2) the workspace keeps "starting agent execution" with every button disabled until the app restarts. R-195 → DD-207: the page's `startPending` mark has no owner for its end when the report is not visible at the first poll.
+- [x] Red: `tests/start_pending_runtime.cjs`.
+- [x] Task: `src/ui/startup.js` (`startEnded`, `enter`, poll); CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, Rust suite, Python, node. Windows: CI. Not verified: the user's slow PC; a real multi-phase run.
+- [ ] Complete: merge and release on the user's request (given 2026-10-30).

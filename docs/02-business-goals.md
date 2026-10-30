@@ -604,3 +604,7 @@ Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205.
 ### BG-149 The operator sees progress at a glance during a run
 Watching a long run, the operator reads a status board instead of scrolling through repeated lines between the entries that matter.
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206. GitHub #267, user, 2026-10-30.
+
+### BG-150 A long plan is not stopped by a stale screen state
+A plan of several phases can be carried through in one session; the operator never has to restart the app to continue.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187 → QAS-193 → DD-207. GitHub #269, user, 2026-10-30.

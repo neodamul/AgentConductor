@@ -770,3 +770,7 @@ Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205.
 ### R-194 The coordinator Activity tab shows the run's status, not a repeating line
 While agents work, the coordinator Activity tab of the run screen shall show the current status of the run (state, how many tasks are completed, running, failed and pending, and for each task its agent, status and how long ago it last produced output), and shall not list the `workflow` entries, which repeat the same counts after every saved change and only interleave with the entries that carry information (availability timer, task profile, decisions, results). The recorded history itself is unchanged.
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206. GitHub #267, user, 2026-10-30.
+
+### R-195 The next phase can always be reviewed after a phase is done
+After a phase of a multi-phase plan has been started and has finished, the workspace screen shall offer the review of the next phase, whatever the timing of the run's report and the screens visited in between. The "starting" state of the workspace screen shall end when the run opens, or when the start job ends without opening a run, and shall not depend on an application restart.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187 → QAS-193 → DD-207. GitHub #269, user, 2026-10-30.
