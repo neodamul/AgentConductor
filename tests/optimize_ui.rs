@@ -17,7 +17,7 @@ fn the_startup_document_embeds_the_optimize_controls_and_script() {
         "id=\"start-optimize-keep\"",
         "function optimizeUi(",
         "optimizeUi({q,request",
-        "optimize.update();sources.update();chat.update();AC_I18N.bind(q('status')",
+        "optimize.update();sources.update();chat.update();renderStatus();",
         ".optimize-goal{",
     ] {
         assert!(document.contains(needle), "{needle}");

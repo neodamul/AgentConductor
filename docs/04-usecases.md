@@ -783,3 +783,7 @@ Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206.
 ### UC-186 Going on with phase 2
 Phase 1 finishes; the operator returns to the workspace and the review of phase 2 is offered with its buttons enabled, also when the run's report appeared a moment after the start was accepted.
 Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187 → QAS-193 → DD-207. GitHub #269, user, 2026-10-30.
+
+### UC-187 Following a long plan and run
+The operator starts planning and switches to the Team tab: a line under the step tabs keeps counting the planning time. The app is busy for a minute: the line says no new state came for 40 s. The operator confirms the run: the start is sent and its line counts the time until the run report exists; after reopening the workspace the line is still there; when the start fails its cause stays under the run button. In the run, a pending task says it waits for task-1, a running task row shows its last output age, after the last task the banner names the integration test that is running, a stop shows "stopping", and a run whose process died says so and points at Recover.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188 → QAS-194 → DD-208. GitHub #273, user, 2026-10-31.

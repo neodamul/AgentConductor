@@ -15,6 +15,8 @@ pub(super) async fn drive(
     let worktree = report.plan.workspace_mode == WorkspaceMode::Worktree;
     report.state = "running".into();
     save(store, dir, &report)?;
+    // GitHub #273: the run screen probes this PID to tell a lost run process from a quiet one.
+    fs::write(dir.join("runner.pid"), std::process::id().to_string()).map_err(|e| e.to_string())?;
     repository_lease.claim()?;
     let mut jobs = tokio::task::JoinSet::new();
     loop {

@@ -8,7 +8,7 @@ for(const tag of markup.matchAll(/<(?:button|section)\b[^>]*id="start-((?:tab|pa
 const source=fs.readFileSync('src/ui/startup.js','utf8');
 const code=source.slice(source.indexOf(' const stepNames='),source.indexOf(' const copy='));
 nodes.set('save',{});
-const context=vm.createContext({q:id=>nodes.get(id)});vm.runInContext(code,context);
+const context=vm.createContext({q:id=>nodes.get(id),mirrorProgress(){}});vm.runInContext(code,context);
 const names=['workspace','team','review'];
 function active(name){for(const n of names){const tab=nodes.get('tab-'+n),panel=nodes.get('panel-'+n),selected=n===name;assert.equal(tab.attrs.role,'tab');assert.equal(panel.attrs.role,'tabpanel');assert.equal(tab.attrs['aria-controls'],panel.attrs.id);assert.equal(panel.attrs['aria-labelledby'],tab.attrs.id);assert.equal(tab.attrs['aria-selected'],String(selected));assert.equal(tab.tabIndex,selected?0:-1);assert.equal(panel.hidden,!selected);}}
 active('workspace');

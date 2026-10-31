@@ -15,7 +15,7 @@ class PlanningFeedback(unittest.TestCase):
         poll = self.js.split("async function poll(")[1].split("\n")[0]
         self.assertIn("mutating||planStarting?PLAN_START_LIMIT:undefined", poll)
     def test_progress_reports_coordinator_output(self):
-        progress = self.js.split("function planProgress(")[1].split("\n")[0]
+        progress = self.js.split("function progressBoxes(")[1].split("function mirrorProgress(")[0]
         for text in ["job.output", "startup.waiting_for_the_coordinator_s_first_output", "startup.last_coordinator_output_s_ago_kb", "stale"]:
             self.assertIn(text, progress)
     def test_cli_icon_reuses_room_opacity_and_respects_reduced_motion(self):
@@ -27,7 +27,7 @@ class PlanningFeedback(unittest.TestCase):
         self.assertNotIn("transform", icon)
     def test_progress_shows_while_the_folder_is_prepared(self):
         # The plan job exists only after prepare replies; the press itself shows progress meanwhile.
-        progress = self.js.split("function planProgress(")[1].split("\n")[0]
+        progress = self.js.split("function progressBoxes(")[1].split("function mirrorProgress(")[0]
         self.assertIn("if(planStarting&&!running)", progress)
         self.assertIn("startup.preparing_the_project_folder_for_planning", progress)
         self.assertIn("setInterval(planProgress,1000)", self.js)

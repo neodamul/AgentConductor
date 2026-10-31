@@ -710,3 +710,7 @@ Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206.
 ### SF-183 End of the starting state
 The page clears its "starting" mark when the run opens and when a start job ends.
 Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187 → QAS-193 → DD-207. GitHub #269, user, 2026-10-30.
+
+### SF-184 Live progress on every step of the JS pages
+The workspace page shows planning and starting progress on every tab, with elapsed time counted from recorded start times, a lasting failure box for a failed start, optimize and model discovery in progress, and the age of the last snapshot when the app is slow to answer. The run screen shows why a task is pending, the silence of each running task, the integration verification in progress, a stop in progress, a run whose process is gone, the elapsed time of its own actions and the age of the last snapshot. The snapshot gives the run's process presence, the stop request, the verification step and the start time of UI actions.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188 → QAS-194 → DD-208. GitHub #273, user, 2026-10-31.

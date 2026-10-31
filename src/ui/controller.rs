@@ -11,6 +11,8 @@ pub(super) struct Job {
     pub(super) owner: Ownership,
     pub(super) exit: Option<i32>,
     pub(super) finished: bool,
+    /// GitHub #273: the run screen counts the action's time from here.
+    pub(super) started_ms: u64,
 }
 pub(super) struct Controller {
     pub(super) dir: PathBuf,
@@ -53,7 +55,7 @@ impl Controller {
             )?;
         }
         Ok(
-            serde_json::json!({"id":job.id,"kind":job.label,"state":if !job.finished {"running"} else if job.exit==Some(0) {"completed"} else {"failed"},"exit_code":job.exit,"termination_signal":job.owner.termination_signal,"error":if job.finished && job.exit!=Some(0){tail(&job.logs.join("stderr.log"),4096)?}else{String::new()}}),
+            serde_json::json!({"id":job.id,"kind":job.label,"started_ms":job.started_ms,"state":if !job.finished {"running"} else if job.exit==Some(0) {"completed"} else {"failed"},"exit_code":job.exit,"termination_signal":job.owner.termination_signal,"error":if job.finished && job.exit!=Some(0){tail(&job.logs.join("stderr.log"),4096)?}else{String::new()}}),
         )
     }
     pub(super) fn snapshot(
@@ -116,7 +118,7 @@ impl Controller {
             }
         }
         Ok(
-            serde_json::json!({"report":value,"revision":revision,"activity":crate::briefing::running_activity(&store, &report, (now as u64) * 1000)?,"quotas":quotas,"quota_window_labels":quota_window_labels,"quota_window_reset_labels":quota_window_reset_labels,"quota_budget_rows":quota_budget_rows,"quota_refresh_due":quota_refresh_due,"job":job,"tool_requests":approvals,"coordinator":crate::native_guard::orchestrator_profile(&self.dir).map(|p| p.id),"decision_count":workflow::decisions::count(&self.dir)?,"tool_decision_wait_secs":crate::native_guard::decision_wait(),"run_dir":self.dir,"phase":workflow::phase_status(&self.dir),"owned_changes":owned_changes,"availability_timer":if self.dir.join("stop.request").exists(){vec![]}else{workflow::availability_timer(&report,now)} ,"availability_timer_error":availability_status.err()}),
+            serde_json::json!({"report":value,"revision":revision,"activity":crate::briefing::running_activity(&store, &report, (now as u64) * 1000)?,"quotas":quotas,"quota_window_labels":quota_window_labels,"quota_window_reset_labels":quota_window_reset_labels,"quota_budget_rows":quota_budget_rows,"quota_refresh_due":quota_refresh_due,"job":job,"tool_requests":approvals,"coordinator":crate::native_guard::orchestrator_profile(&self.dir).map(|p| p.id),"decision_count":workflow::decisions::count(&self.dir)?,"tool_decision_wait_secs":crate::native_guard::decision_wait(),"run_dir":self.dir,"phase":workflow::phase_status(&self.dir),"owned_changes":owned_changes,"availability_timer":if self.dir.join("stop.request").exists(){vec![]}else{workflow::availability_timer(&report,now)} ,"availability_timer_error":availability_status.err(),"runner":crate::briefing::runner(&self.dir,&report),"stopping":self.dir.join("stop.request").exists(),"verification":crate::briefing::verification(&self.dir,&report)}),
         )
         .map(|mut snapshot| {
             if icons {
@@ -248,6 +250,9 @@ impl Controller {
             owner,
             exit: None,
             finished: false,
+            started_ms: std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map_or(0, |d| d.as_millis() as u64),
         });
         record_owner(&logs, &slot.as_ref().unwrap().owner)?;
         Store::open(self.dir.join("state.sqlite"))?.record(

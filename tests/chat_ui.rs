@@ -44,7 +44,7 @@ fn the_chat_panel_script_sends_shows_and_reports() {
 fn the_page_refreshes_the_chat_when_a_snapshot_is_rendered() {
     let script = include_str!("../src/ui/startup.js");
     assert!(
-        script.contains("sources.update();chat.update();AC_I18N.bind(q('status')"),
+        script.contains("sources.update();chat.update();renderStatus();"),
         "answers only show if the render path updates the chat"
     );
 }
