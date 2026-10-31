@@ -774,3 +774,7 @@ Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206.
 ### R-195 The next phase can always be reviewed after a phase is done
 After a phase of a multi-phase plan has been started and has finished, the workspace screen shall offer the review of the next phase, whatever the timing of the run's report and the screens visited in between. The "starting" state of the workspace screen shall end when the run opens, or when the start job ends without opening a run, and shall not depend on an application restart.
 Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187 → QAS-193 → DD-207. GitHub #269, user, 2026-10-30.
+
+### R-196 No step of planning or execution looks frozen
+While a plan is made, a run is started and a run executes, the JS pages shall always show, on the tab or panel in view, that work is going on, for how long, and what it is waiting for; when the work has ended or failed they shall say so where the work was shown, and keep saying it until the next attempt. When the app itself stops answering, the pages shall say how long they have had no new state instead of showing the last values as current. The start of a run shall be sent when the operator confirms it.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188 → QAS-194 → DD-208. GitHub #273, user, 2026-10-31.

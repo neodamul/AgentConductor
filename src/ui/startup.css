@@ -26,6 +26,8 @@
 .plan-progress{display:flex;align-items:center;gap:10px;margin-top:16px;padding:14px 16px;border-radius:10px;font-size:13px;line-height:1.5;background:var(--accent-soft);border:1px solid var(--line);color:var(--ink)}
 .plan-progress.failed{display:block;background:var(--err-bg);border-color:var(--err);color:var(--err);overflow-wrap:anywhere}
 .plan-progress.stale::before{background:var(--warn)}
+/* GitHub #273: planning and starting stay in view on the other tabs; a click opens Review the plan. */
+.step-progress{margin:10px 0 0;cursor:pointer}#start-status.stale{color:var(--warn)}
 .step-title{display:flex;align-items:center;gap:10px}.step-title .step-number{display:none}
 .startup-goal>h3.step-title{font-size:15px;margin:0 0 16px}
 .role-rules{border-top:1px solid var(--line);margin-top:18px;padding-top:16px}.role-rules h3{font-size:15px;margin:0 0 6px}

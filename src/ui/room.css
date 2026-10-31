@@ -87,3 +87,5 @@ button.is-busy{position:relative;overflow:hidden;cursor:progress}button.is-busy,
 @media(max-width:850px){.insp-closed .inspector{padding:8px 15px}.insp-closed .inspector-heading{flex-direction:row}.insp-closed .inspector-heading h2{display:block}}
 
 .coord-board{margin:0 0 16px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:8px}.coord-board p{margin:0;font-size:13px;line-height:1.7;overflow-wrap:anywhere}.coord-board-summary{font-weight:650;margin-bottom:6px!important}.coord-board-task{color:var(--soft)}
+/* GitHub #273: a stop in progress or a lost run process, the wait of a pending task and the silence of a running one, the age of the last snapshot. */
+#run-banner-attention{margin:3px 0 0;color:var(--warn);font-size:13px;font-weight:600;overflow-wrap:anywhere}.session-note{display:block;font-size:11px;color:var(--soft);overflow-wrap:anywhere}#connection.stale{color:var(--warn)}

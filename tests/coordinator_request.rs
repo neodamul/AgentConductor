@@ -174,6 +174,12 @@ async fn the_room_action_delivers_the_request_to_the_coordinator() {
     let deadline = std::time::Instant::now() + std::time::Duration::from_secs(30);
     loop {
         let state = ask(serde_json::json!({"kind":"snapshot"})).unwrap();
+        // GitHub #273: the run screen counts the action's time from its start.
+        assert!(
+            state["job"]["started_ms"].as_u64().is_some_and(|ms| ms > 0),
+            "{}",
+            state["job"]
+        );
         if state["job"]["state"] == "completed" || state["job"]["state"] == "failed" {
             assert_eq!(state["job"]["state"], "completed", "{}", state["job"]);
             break;

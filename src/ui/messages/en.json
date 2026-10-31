@@ -1156,5 +1156,19 @@
   "startup.task_type_creative": "Creative",
   "startup.task_warning_effort_unsupported": "effort {value1} is not honored by the model, using {value2}",
   "startup.task_warning_model_not_suited": "{value1} is not a good fit for: {value2}",
-  "startup.model_hint": "Effort: {value1} · Suits: {value2}"
+  "startup.model_hint": "Effort: {value1} · Suits: {value2}",
+  "common.no_new_state": "No new state from the app for {value1}s",
+  "startup.start_text": "Starting agent execution… {value1}:{value2} elapsed, waiting for the run report",
+  "startup.start_failed": "The run did not start: {value1}{value2}. Logs: {value3}",
+  "startup.models_querying": "Querying models…",
+  "startup.models_queued": "Model query queued",
+  "room.pending_dependencies": "Waiting for {value1} to complete",
+  "room.pending_retry": "Automatic retry in {value1}",
+  "room.pending_session_limit": "Waiting for a free session (at most {value1} at a time)",
+  "room.pending_account": "Waiting for the account to become available",
+  "room.verification_preparing": "Integration verification: preparing the combined candidate",
+  "room.verification_test": "Integration verification: test {value1} of {value2} ({value3}) running for {value4}",
+  "room.verification_next": "Every task is done; the coordinator is verifying the combined result.",
+  "room.stopping_run": "Stopping: waiting for the agents and tests to exit.",
+  "room.runner_absent": "The run's process is not running, but the run is still marked as running. Use Recover to continue it."
 }

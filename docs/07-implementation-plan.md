@@ -2374,3 +2374,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: `src/ui/startup.js` (`startEnded`, `enter`, poll); CHANGELOG.
 - [ ] Verify (macOS): fmt, clippy, Rust suite, Python, node. Windows: CI. Not verified: the user's slow PC; a real multi-phase run.
 - [ ] Complete: merge and release on the user's request (given 2026-10-30).
+
+### Progress on every step of the JS pages — GitHub #273
+
+- [x] Plan: user request 2026-10-31: steps look frozen during planning and execution. Code analysis plus a simulator of the native bridge (page assembled as in `document.rs`, scenario snapshots) found: start never sent (wrong element id since #38); planning progress only on the Review tab; frozen text while the app is slow; start without elapsed time, lost after reopening, failure only in a toast; optimize lost after reopening; model discovery not shown; pending tasks without a reason; silent running tasks only visible when selected; integration verification shown as "agents are working"; no sign of a stop in progress or of a dead run process; UI actions without elapsed time. R-196 → DD-208.
+- [x] Red: `tests/progress_runtime.cjs` (helpers missing), `tests/run_progress_snapshot.rs` (fields missing), the started time in `tests/coordinator_request.rs`; `tests/start_feedback_runtime.cjs` was already red and unrun.
+- [x] Task: `src/ui/startup.js`, `src/ui/startup.html`, `src/ui/startup.css`, `src/ui/room.js`, `src/ui/room.css`, `src/ui/optimize.js`, `src/ui/i18n.js`, messages; `src/ui/controller.rs`, `src/briefing.rs`, `src/workflow/scheduler.rs` (`runner.pid`), `src/workflow/scheduler/finalize.rs`; `tests/node_runtime.rs` runs every `tests/*.cjs` (13 had no runner); `tests/ui_sim` (the simulator); CHANGELOG. The run lease's PID was not usable for liveness: the availability watcher takes the lease and writes its own PID, so the scheduler records `runner.pid`.
+- [ ] Verify (macOS): gates, simulator replay of every case (done: start sent, progress on other tabs, counting while the bridge hangs, start after reopening and its failure, optimize after reopening, model query, pending reasons, silent rows, verification step, lost runner, stopping, action time, room staleness). Windows: CI. Not verified: the native app's WebKit view and the user's machine.
+- [ ] Complete: merge and release only on request.
+

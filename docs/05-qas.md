@@ -793,3 +793,7 @@ Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206.
 ### QAS-193 The starting mark does not outlive its start
 With `startPending` and `autoOpen` set and `home` true (the first poll after the start saw no report), a later `enter()` that opens the run leaves `startPending` false and redraws; `startEnded()` clears it on its own.
 Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187 → QAS-193 → DD-207. GitHub #269, user, 2026-10-30.
+
+### QAS-194 Every waiting state has a visible, current sign
+In a simulator of the native bridge: confirming the run sends `start`; a plan running while the Workspace tab is shown has a visible line with its elapsed time; with the bridge not answering, the elapsed time keeps counting and the line says how long no state came, within 6 s; a start job shows elapsed time also after reopening, and a failed one keeps its cause after the toast is gone; in the run, a pending task with an unfinished dependency names it, the verification names the test in progress, `runner: absent` and `stopping` are shown. Unit tests cover the helpers and the snapshot fields.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188 → QAS-194 → DD-208. GitHub #273, user, 2026-10-31.

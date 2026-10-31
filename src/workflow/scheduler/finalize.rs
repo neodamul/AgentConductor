@@ -94,6 +94,8 @@ pub(super) async fn finish(
         return Ok(report);
     }
     report.verification_attempt += 1;
+    // GitHub #273: the run screen reads the attempt to show which integration test runs.
+    save(store, dir, &report)?;
     let plan = report.plan.clone();
     if !worktree {
         super::stray::move_stray_files(git, &plan, dir, store)?;

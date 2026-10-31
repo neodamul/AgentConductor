@@ -24,7 +24,7 @@ vm.runInContext(source + ';this.optimizeUi=optimizeUi;', context);
   await q('optimize-button').onclick();
   assert.deepEqual(JSON.parse(JSON.stringify(calls)), [{ kind: 'optimize_goal', revision: 'rev', goal: 'make it faster' }]);
   assert.equal(q('optimize-button').disabled, true, 'blocked while the coordinator works');
-  assert.equal(q('optimize-status').textContent, 'startup.optimize_working');
+  assert.match(q('optimize-status').textContent, /^startup\.optimize_working 0:0\d$/, 'the status counts the time (GitHub #273)');
   current = { revision: 'rev', job: { id: 'job-1', state: 'completed' },
     optimize: { job: 'job-1', proposal: { optimized: 'Speed up checkout; verify with npm run bench', changes: ['added a check'], questions: ['Which browser?'] } } };
   ui.update();
@@ -60,5 +60,14 @@ vm.runInContext(source + ';this.optimizeUi=optimizeUi;', context);
   reply = new Error('another operation is running'); await q('optimize-button').onclick();
   assert.deepEqual(notices.at(-1), ['another operation is running', true]);
   assert.equal(q('optimize-button').disabled, false);
+  // GitHub #273: a rewrite still running when the page reopens is followed and its time counted from its start.
+  const reopened = context.optimizeUi({ q, request: async () => reply, state: () => current, notice: (m, e) => notices.push([m, e]), busy: () => false, applyGoal: t => applied.push(t) });
+  current = { revision: 'rev', job: { id: 'job-4', kind: 'optimize', state: 'running', started_ms: Date.now() - 125000 }, optimize: null };
+  reopened.update();
+  assert.equal(q('optimize-button').disabled, true);
+  assert.match(q('optimize-status').textContent, /2:0[5-6]$/);
+  current = { revision: 'rev', job: { id: 'job-4', kind: 'optimize', state: 'completed' }, optimize: { job: 'job-4', proposal: { optimized: 'Fourth', changes: [], questions: [] } } };
+  reopened.update();
+  assert.equal(q('optimize-goal').textContent, 'Fourth', 'its proposal is shown');
   console.log('optimize runtime ok');
 })().catch(e => { console.error(e); process.exitCode = 1; });
