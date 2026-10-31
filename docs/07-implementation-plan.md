@@ -2383,3 +2383,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify (macOS): gates, simulator replay of every case (done: start sent, progress on other tabs, counting while the bridge hangs, start after reopening and its failure, optimize after reopening, model query, pending reasons, silent rows, verification step, lost runner, stopping, action time, room staleness). Also replayed over the real dispatcher with `tests/ui_live_bridge.rs` (ignored test serving the real page; real plan job with a stalling coordinator, real start, run with mock agents, verification, a killed run process, a stop, and a paused app): every line above appeared as expected. The same scenario with real button clicks also ran in a visible WKWebView (the native app's engine) over the live bridge: all lines appeared, and the same check on `origin/main` reproduced the start defect (`TypeError: null is not an object (evaluating 'node.nodeType')`, no run opened). Windows: CI. Not verified: the user's machine.
 - [ ] Complete: merge and release only on request.
 
+### Manual header version and screenshots — GitHub #277
+
+- [x] Plan: user report 2026-10-31: the manual says 0.1.30 and the captures are old (v0.1.21). R-197 → DD-209.
+- [x] Red: `tests/manual_renderer.rs` header test.
+- [x] Task: header 0.1.49 (EN/KO), rendered HTML, six captures recaptured with `tests/ui_live_bridge.rs` demo mode in WKWebView, unused `ui-manual-current.png` removed; CHANGELOG.
+- [ ] Verify: manual tests, CI of the release PR.
+- [ ] Complete: shipped with v0.1.49.
+

@@ -797,3 +797,7 @@ Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187 → QAS-193 → DD-207.
 ### QAS-194 Every waiting state has a visible, current sign
 In a simulator of the native bridge: confirming the run sends `start`; a plan running while the Workspace tab is shown has a visible line with its elapsed time; with the bridge not answering, the elapsed time keeps counting and the line says how long no state came, within 6 s; a start job shows elapsed time also after reopening, and a failed one keeps its cause after the toast is gone; in the run, a pending task with an unfinished dependency names it, the verification names the test in progress, `runner: absent` and `stopping` are shown. Unit tests cover the helpers and the snapshot fields.
 Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188 → QAS-194 → DD-208. GitHub #273, user, 2026-10-31.
+
+### QAS-195 The header cannot fall behind again
+`tests/manual_renderer.rs` fails when either manual header differs from `CARGO_PKG_VERSION`; the captures are the same size as before (1280×892).
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209. GitHub #277, user, 2026-10-31.

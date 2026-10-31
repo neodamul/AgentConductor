@@ -61,3 +61,21 @@ fn committed_html_is_generated_from_both_manual_sources() {
         }
     }
 }
+
+/// GitHub #277: the manual's header names the version being released, not an old one.
+#[test]
+fn the_manual_header_names_the_package_version() {
+    let version = env!("CARGO_PKG_VERSION");
+    for (path, header) in [
+        ("docs/user-manual.md", format!("Version **{version}**")),
+        ("docs/user-manual.ko.md", format!("버전 **{version}**")),
+    ] {
+        let text = std::fs::read_to_string(path).unwrap();
+        assert!(
+            text.lines()
+                .nth(2)
+                .is_some_and(|line| line.starts_with(&header)),
+            "{path} line 3 must start with {header}"
+        );
+    }
+}
