@@ -612,3 +612,7 @@ Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187 → QAS-193 → DD-207.
 ### BG-151 The operator never has to guess whether work stopped
 At any moment of planning and execution the operator can tell from the screen whether work is going on, has ended, has failed, or whether the app is not answering, without restarting the app or opening log folders.
 Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188 → QAS-194 → DD-208. GitHub #273, user, 2026-10-31.
+
+### BG-152 Documentation matches the app the reader has
+A reader comparing the manual with the app sees the same version and the same screens.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209. GitHub #277, user, 2026-10-31.

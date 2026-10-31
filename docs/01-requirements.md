@@ -778,3 +778,7 @@ Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187 → QAS-193 → DD-207.
 ### R-196 No step of planning or execution looks frozen
 While a plan is made, a run is started and a run executes, the JS pages shall always show, on the tab or panel in view, that work is going on, for how long, and what it is waiting for; when the work has ended or failed they shall say so where the work was shown, and keep saying it until the next attempt. When the app itself stops answering, the pages shall say how long they have had no new state instead of showing the last values as current. The start of a run shall be sent when the operator confirms it.
 Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188 → QAS-194 → DD-208. GitHub #273, user, 2026-10-31.
+
+### R-197 The manual and README show the current release
+The user manual's header shall name the released version, and the screenshots in the README and the manual shall show the current interface.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209. GitHub #277, user, 2026-10-31.

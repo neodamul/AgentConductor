@@ -787,3 +787,7 @@ Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187 → QAS-193 → DD-207.
 ### UC-187 Following a long plan and run
 The operator starts planning and switches to the Team tab: a line under the step tabs keeps counting the planning time. The app is busy for a minute: the line says no new state came for 40 s. The operator confirms the run: the start is sent and its line counts the time until the run report exists; after reopening the workspace the line is still there; when the start fails its cause stays under the run button. In the run, a pending task says it waits for task-1, a running task row shows its last output age, after the last task the banner names the integration test that is running, a stop shows "stopping", and a run whose process died says so and points at Recover.
 Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188 → QAS-194 → DD-208. GitHub #273, user, 2026-10-31.
+
+### UC-188 Reading the manual of the installed version
+The operator opens ⚙ Settings → User manual in 0.1.49 and reads "Version 0.1.49" above screenshots that look like the app.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209. GitHub #277, user, 2026-10-31.

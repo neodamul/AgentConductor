@@ -32,7 +32,11 @@ fn git(repo: &Path, args: &[&str]) {
 #[test]
 #[ignore = "serves the live page for a manual check"]
 fn serve_the_live_page() {
-    let root = std::env::temp_dir().join(format!("ac-live-{}", std::process::id()));
+    // `AC_LIVE_ROOT` picks a short folder for screenshots; it must not exist yet.
+    let root = std::env::var_os("AC_LIVE_ROOT").map_or_else(
+        || std::env::temp_dir().join(format!("ac-live-{}", std::process::id())),
+        std::path::PathBuf::from,
+    );
     let (repo, desktop, home) = (root.join("repo"), root.join("desktop"), root.join("home"));
     std::fs::create_dir_all(&repo).unwrap();
     std::fs::create_dir_all(&home).unwrap();
@@ -65,11 +69,38 @@ fn serve_the_live_page() {
     saved["config"]["repository"] = json!(repo);
     saved["config"]["goal"] = "write one.txt and two.txt".into();
     saved["config"]["name"] = "live".into();
+    // GitHub #277: `AC_LIVE_DEMO=1` shows a team like the manual's screenshots (Claude and Codex
+    // profiles that are never run, and a local agent that does the work).
+    if std::env::var_os("AC_LIVE_DEMO").is_some() {
+        // Named commands: Claude and Codex never run (a plan is drafted, not generated); the local agent works.
+        let bin = root.join("bin");
+        std::fs::create_dir_all(&bin).unwrap();
+        for name in ["claude", "codex"] {
+            std::fs::write(bin.join(name), "#!/bin/sh\nexit 0\n").unwrap();
+            std::fs::set_permissions(
+                bin.join(name),
+                std::os::unix::fs::PermissionsExt::from_mode(0o755),
+            )
+            .unwrap();
+        }
+        std::fs::copy(support::fixture(), bin.join("local-agent")).unwrap();
+        let catalog = |models: &[&str]| json!({"models":models,"source":"cli","queried_at":1793400000,"cli_version":"demo"});
+        saved["config"]["profiles"] = json!([
+            {"id":"claude","executable":bin.join("claude"),"args":[],"parser":"claude","permission_mode":"native_callback","max_sessions":3,"catalog":catalog(&["opus","sonnet","haiku"])},
+            {"id":"codex","executable":bin.join("codex"),"args":[],"parser":"codex","permission_mode":"native_sandbox","max_sessions":3,"catalog":catalog(&["gpt-5","gpt-5-codex"])},
+            {"id":"local-agent","executable":bin.join("local-agent"),"args":["task-slow"],"parser":"custom","permission_mode":"external_sandbox","max_sessions":3}
+        ]);
+        saved["config"]["coordinator"] = "claude".into();
+        saved["config"]["goal"] =
+            "Add a lightweight readiness endpoint with tests and documentation.".into();
+        saved["config"]["name"] = "Status endpoint".into();
+    }
     std::fs::write(&path, saved.to_string()).unwrap();
     let room = Arc::new(Room::startup(&desktop, exe).unwrap());
-    let page = room
-        .document()
-        .unwrap()
+    // Built per request, so a language or theme change shows after a reload, as in the app.
+    let page = |room: &Room| {
+        room.document()
+            .unwrap()
         .split("<meta http-equiv=\"Content-Security-Policy\"")
         .enumerate()
         .map(|(i, part)| if i == 0 { part.to_string() } else { part[part.find('>').unwrap() + 1..].to_string() })
@@ -78,7 +109,8 @@ fn serve_the_live_page() {
             "<head>",
             "<head><script>window.__acRequest=b=>fetch('/rpc',{method:'POST',body:b}).then(r=>r.text().then(t=>{if(!r.ok)throw Error(t);return t;}));</script>",
             1,
-        );
+        )
+    };
     let listener = TcpListener::bind("127.0.0.1:8766").unwrap();
     let seconds: u64 = std::env::var("AC_LIVE_SECONDS")
         .ok()
@@ -93,7 +125,7 @@ fn serve_the_live_page() {
             continue;
         };
         stream.set_nonblocking(false).unwrap();
-        let (room, page) = (room.clone(), page.clone());
+        let room = room.clone();
         std::thread::spawn(move || {
             let mut reader = BufReader::new(stream.try_clone().unwrap());
             let mut line = String::new();
@@ -117,7 +149,7 @@ fn serve_the_live_page() {
                     Err(error) => ("500 Error", error.to_string()),
                 }
             } else {
-                ("200 OK", page)
+                ("200 OK", page(&room))
             };
             let mut stream = stream;
             let _ = write!(
