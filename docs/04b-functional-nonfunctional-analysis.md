@@ -743,3 +743,6 @@ Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → 
 ### NFR-80 Routine Git revision fallback cannot block native requests
 No routine revision request or render callback may wait for a Git process. The unsupported-layout fallback may use one short-lived worker per active repository; repeated lookups must not create additional processes until the fallback entry becomes stale. File reads on the common metadata path remain bounded to the repository's HEAD, relevant ref, and packed-ref files. Explicit repository mutations retain their existing serialized, revision-checked validation.
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
+### FR-194 Display quota errors beside unavailable values
+When a quota record contains a non-empty error, the native sidebar and agent settings shall render the error beside the quota badge and Agent Room shall render it in the run status area. All surfaces shall provide the complete text to accessibility clients and retain it on hover. Records without an error shall keep the existing compact badge layout.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.

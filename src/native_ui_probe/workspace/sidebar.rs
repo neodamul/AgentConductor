@@ -199,6 +199,7 @@ pub fn show(
                                 });
                             }
                         });
+                        crate::native_ui_probe::quota_error::show(snapshot, Some(id), language, ui);
                         if let Some(fallback) = profile["fallback"]["agent"].as_str() {
                             let fallback = crate::ui::messages::interpolate(
                                 text(language, "startup.fallback"),

@@ -6763,4 +6763,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify run `41301522543`: platform validation passed on both systems and the macOS package passed, but the Windows package saved `Windows UIA goa`; the last character was still dropped by the 40 ms driver.
 - [x] Red: strengthen the source contract to require 100 ms per character and a 750 ms settle before Save; it failed against the 40 ms / 250 ms implementation.
 - [x] Green: increase the driver pacing and settle delay. Focused driver, documentation, and source-layout suites pass 22 tests locally; formatting and diff checks pass.
-- [ ] Push the updated driver, synchronize #311, and rerun exact Windows package verification. Do not claim Windows UI acceptance until the packaged default desktop and schedule journeys pass.
+- [x] Port the readiness/focus/readback fix into the #9 integration branch (`fb1c3156`); local `windows_desktop_driver` and source-layout tests pass.
+- [ ] Verify the latest exact-head macOS/Windows package run before closing #311 as superseded. Do not claim Windows UI acceptance until the packaged default desktop and schedule journeys pass.
+
+### GitHub #295 — Surface quota errors across native Rust UI
+- [x] Plan: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214; implement on the #9 integration branch to avoid a stacked issue branch.
+- [x] Red: add English/Korean accessibility-tree tests for the sidebar, settings view, and Agent Room; confirm the run-screen assertion fails before the UI update.
+- [x] Task / Green: show the stored quota error inline on all three surfaces with the full accessible/hover reason.
+- [x] Verify: 27 focused tests pass across new quota error cases and existing quota editor/profile/room render suites; `cargo fmt --check` and `git diff --check` pass; all touched Rust/test files remain below 300 lines.
+- [ ] Complete: run warning-denied Clippy, source-layout and optimized native package checks; update AgentMemory/Wiki/Graphify, commit and push the integration change; confirm cross-platform validation and close #295/#304 only after integration.

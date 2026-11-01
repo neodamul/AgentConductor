@@ -793,3 +793,6 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → 
 ### QAS-195 Workspace listeners follow switches without retaining leases
 Given an idle Room on workspace A, switching to workspace B releases A's startup lease before the listener stops. A second Room can open A immediately. Changes to B's persisted report still emit a run event, and changes to A do not emit events through the switched Room. Verify with a dynamic-listener test and the workspace deletion/switch integration tests.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+### QAS-200 Quota failures are readable without opening logs
+Given a quota record with a stored failure reason, the native agent sidebar, settings view, and Agent Room run screen shall show that reason in both English and Korean, expose the complete text as an accessible label, and preserve the existing appearance when no error exists. Verify with deterministic egui accessibility-tree tests; no provider CLI is required.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.

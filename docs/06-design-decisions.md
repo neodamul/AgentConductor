@@ -1592,3 +1592,7 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → 
 ### DD-209 Resolve the watched workspace dynamically through a weak session reference
 Keep one workspace listener, but give it a shared weak reference to the Room's current `Startup`. Each check resolves the current startup and report paths; switching updates the weak reference alongside the `startup` field. This avoids retaining an old session's lease while still observing the selected workspace. A strong reference in the listener would keep an idle workspace locked after switch; a static path or weak reference to only the initial session would watch stale state.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### DD-214 Show the recorded quota failure beside its badge
+Use the quota error already present in the snapshot and render it inline on the native agent sidebar, settings list, and Agent Room run status, retaining the full text for accessibility and hover. Do not add Enterprise-specific parsing based on an unverified screen; this gives the operator evidence from the actual collector result.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.

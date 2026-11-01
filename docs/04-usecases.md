@@ -790,3 +790,9 @@ When the operator approves a plan, the Workspace follows the persisted run event
 3. The previous workspace lease is released, so another Room can open that workspace immediately.
 4. Persisted changes in the newly selected workspace continue to emit scoped notifications.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### UC-193 Inspect an unavailable quota reason
+1. The operator opens an agent list, agent settings, or Agent Room while quota is unavailable.
+2. The native UI shows the saved query error next to the quota badge or run status.
+3. The operator reads the same full error with a screen reader or by hovering the message.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
