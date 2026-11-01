@@ -1,13 +1,17 @@
 ### Unblock Windows packaged UI Automation checks — issue #9 / 2026-11-01
 
-- [x] Plan: inspect Windows package failures in PR #260, #239, and #311 instead of treating the open PRs as approval-waiting. The logs showed two test-driver assumptions: `ValuePattern` on egui text inputs and a stop button invoked before its asynchronous state enabled it.
-- [x] Red: added cross-platform source-contract assertions; they failed first on missing keyboard entry and later on missing enabled-state polling.
+- [x] Plan: inspect Windows package failures in PR #260, #239, and #311 instead of treating the open PRs as approval-waiting. The logs showed two driver issues: `ValuePattern` on egui text inputs and a stop button invoked before its asynchronous state enabled it.
+- [x] Red: source-contract assertions first exposed missing keyboard entry and missing enabled-state polling. Shared validation then failed on a stale contract that still required `ValuePattern.SetValue` after the driver moved to keyboard input.
 - [x] Task / Green: drive text fields through focus plus keyboard input, find the stop-reason edit adjacent to its label, and wait for the `Stop run` button to become enabled before invoking it.
 - [x] Verify locally: pushed both Windows UI automation test fixes and the verification record to PR #260. Focused batch: 15 passed, 1 ignored; formatting, warning-denied Clippy, diff hygiene, and 300-line checks pass.
 - [x] Follow-up Red / Green: Windows run `41294797195` exposed a same-length, rapid report rewrite that could be missed at the Windows filesystem timestamp resolution. Changed the test fixture to increase the report length on update; targeted test passes locally.
+- [x] Follow-up Red / Green: platform runs `41297846153`, `41297870756`, `41298028204`, `41298098982`, and `41298169824` all failed the same macOS `windows_desktop_driver` source-contract test: it still expected `ValuePattern.SetValue`. Replaced that stale expectation with the actual focus → select → type → save order and retained the prohibition on focusing the non-focusable top-level window.
+- [x] Verify the correction: `cargo test --locked --test windows_desktop_driver` passes 8/8 locally.
+- [x] Record local environment limit: full all-target runs cannot pass in this sandbox because four AgentMemory tests require loopback TCP bind and three folder-execution tests require filesystem operations denied here (`Operation not permitted`). The CI failure under repair was the stale desktop-driver assertion, not these environment-limited tests.
 - [x] Verify follow-up locally: `cargo test --locked --lib` passes 80 tests; focused listener test passes; `cargo fmt --check`, `git diff --check`, and the 300-line limit pass.
 - [x] Assetize: AgentMemory records `mem_mvxob8f0_92018d2932da` and `mem_mvxod8ne_88e7c8d28622`; Graphify refreshed to 11,854 nodes / 17,993 edges / 867 communities. LLM Wiki records the failure and limits. CocoIndex is unavailable in this Rust-only environment.
-- [ ] Windows Verify: platform validation for the new test-fixture commit is pending; no Windows pass is claimed for the latest head.
+- [ ] Local Verify: run warning-denied all-target Clippy, rustfmt, diff hygiene, and file limits for the updated contract; retain the exact local sandbox exclusions above.
+- [ ] Windows Verify: platform validation for the updated test contract is pending; no Windows pass is claimed for the latest head.
 - [ ] Complete: keep PR #260 and downstream package failures open until the exact Windows package journey passes; do not convert drafts to review-ready based only on local source checks.
 
 ### Triage deleted-workspace restore report — bug #226 / 2026-10-30
