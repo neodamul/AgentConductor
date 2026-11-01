@@ -6726,5 +6726,5 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task / Green: compare each editable setting against the previous saved config, retain only dirty local values, and refresh unchanged settings plus the authoritative snapshot. Keep the goal optimizer proposal when the goal is dirty.
 - [x] Verify locally: `cargo test --locked --offline --features native-ui-probe --lib --test native_ui_probe --test source_layout` passes 96 tests across three suites. Warning-denied all-target Clippy, rustfmt, diff hygiene, and the ≤300-line source/test limit pass; the largest changed file is 164 lines.
 - [x] Update QAS-192/DD-206, LLM Wiki, and Graphify (11,857 nodes / 19,366 edges). CocoIndex is installed but cannot import `mcp.server.fastmcp`; no dependency was added.
-- [ ] Update AgentMemory and #257/PR #260, then commit and push this issue branch.
+- [x] Complete the issue unit: AgentMemory `mem_mvxdrsve_6454a5eac748`; progress is posted to #257 and PR #260. Commit `e8cb9400` is pushed on `codex/issue-257-rust-draft-preservation`; draft PR #294 references #257/#9. Keep the packaged macOS/Windows gate open.
 - [ ] Verify packaged macOS/Windows UI behavior; source tests do not satisfy the package acceptance gate.
