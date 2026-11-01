@@ -77,3 +77,11 @@ the button to its enabled state. The screenshot was not retained because it expo
 usage and a local project path. This component check does not add a distinct #9 workflow.
 See
 `docs/evidence/issue9-claude-quota-f438820-macos-package-20261023.json`.
+
+## Slow CLI startup and elapsed query display — GitHub #297
+
+The interactive Claude quota collector now has a single 60-second deadline across CLI startup, trust-screen handling, prompt detection, and `/usage` response on macOS and Windows. Fast queries retain the existing early result path. Timeout messages identify the duration and whether the collector was waiting for a prompt or a `/usage` response. The production call keeps the signed-in CLI session; tests inject a short duration and use a local fixture executable.
+
+The native UI shows a small elapsed clock only on the agent card whose quota job is running. It schedules a local one-second repaint while that job is active; the repaint does not request a new backend snapshot. The job's existing start timestamp supplies the display. After a failed query, the same card exposes the complete timeout detail through accessible text and a hover message.
+
+Evidence: source observation [2026-11-01 issue #297](../raw/2026-11-01-issue297-claude-quota-wait.md), Claude change commit `aa394f8e`, Rust implementation branch `codex/issue-297-rust-quota-wait`. Local macOS verification passed 26 targeted tests, source-layout checks, warning-denied Clippy, formatting, and the 300-line limit. The Windows target was not installed on the Mac host, and the reported company-machine duration remains unknown.

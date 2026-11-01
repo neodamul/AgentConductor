@@ -795,3 +795,7 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → 
 ### QAS-195 Workspace listeners follow switches without retaining leases
 Given an idle Room on workspace A, switching to workspace B releases A's startup lease before the listener stops. A second Room can open A immediately. Changes to B's persisted report still emit a run event, and changes to A do not emit events through the switched Room. Verify with a dynamic-listener test and the workspace deletion/switch integration tests.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### QAS-199 Slow Claude quota refresh remains bounded and observable
+Given a fixture Claude CLI that takes longer than 20 seconds to start, the query completes successfully before its configured 60-second deadline and the existing CLI authentication is used. Given a fixture that does not present a prompt or return `/usage`, the collector terminates at the configured deadline and names the duration and stage without requesting generation. A running quota job shows elapsed time only on its matching native agent card; completion or failure stops the timer. A failed card exposes the timeout message to keyboard and screen-reader users and on hover. Verify on macOS and Windows with a short injected deadline, then run the targeted native UI and quota tests locally.
+Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.

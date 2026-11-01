@@ -144,6 +144,7 @@
   "native.project_path_must_be_a_directory": "project path must be a directory",
   "native.quit_agentconductor": "Quit AgentConductor",
   "native.quota_query_is_unsupported_for_this_agent": "quota query is unsupported for this agent",
+  "native.quota_query_running_for": "Quota query running for {value1}",
   "native.recover_or_stop_the_workspace_run_before_deleting": "recover or stop the workspace run before deleting",
   "native.register_an_agent_before_writing_a_plan": "register an agent before writing a plan",
   "native.register_at_most_16_cli_profiles": "register at most 16 CLI profiles",

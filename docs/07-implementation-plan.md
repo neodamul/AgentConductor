@@ -6784,3 +6784,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Save AgentMemory `mem_mvxf7p2e_e73272420eed`.
 - [x] Update #257 and PR #294; send Claude signal `sig_mvxf94bp_27c4629e7206`.
 - [x] Commit/push `1cfed4e` on `codex/issue-257-rust-draft-preservation`.
+
+### Claude quota query is cut off after 20 seconds on a slow machine — GitHub #297
+
+- [x] Plan: add R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. Claude's two quota collectors currently use a 20-second ceiling; Rust UI must also show elapsed time for the matching quota query.
+- [x] Red: delayed fixture tests failed to compile until the injected query API and production limit existed; native UI test asserted elapsed time is scoped to one agent.
+- [x] Task / Green: set a shared 60-second production wait for macOS and Windows; expose an injected deadline for tests; report limit and pre/post `/usage` stage; show elapsed time in the native quota card while its asynchronous job runs.
+- [x] Verify locally: 26 targeted tests passed, 1 ignored; source-layout suite passed; warning-denied Clippy, `cargo fmt --check`, `git diff --check`, and the 300-line limit passed. Windows cross-target compile was unavailable because `x86_64-pc-windows-gnu` is not installed here.
+- [ ] Complete: update issue #297 and the Rust PR, save the result to AgentMemory and the LLM Wiki, update Graphify, then commit/push the issue branch. Keep platform package acceptance explicit before merge/release.

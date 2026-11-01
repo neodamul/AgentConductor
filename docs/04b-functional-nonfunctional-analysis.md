@@ -710,6 +710,10 @@ Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 
 For a standard Git directory, derive HEAD from detached, loose-ref, or packed-ref metadata. For a linked worktree or unsupported layout, return a cached or pending answer immediately and schedule one background Git refresh per repository. Coalesce concurrent refresh requests and retry failed or stale answers after the bounded refresh interval.
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
 
+### FR-193 Claude quota query duration and stage are visible
+The Claude quota collector shall accept a bounded wait duration for deterministic tests and use 60 seconds in production on macOS and Windows. Timeout errors shall state the configured limit and whether the query was waiting for the CLI prompt or for `/usage`. A running quota job shall expose its start time to the native UI, which shows elapsed time for only the queried agent. A failed quota card shall expose its error through accessible text and a hover detail.
+Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
+
 ### FR-186 Broadcast committed state changes to peer views
 After a successful state-changing Room request, publish a small invalidation event to every subscribed native view except its origin. A listener shall coalesce queued events and fetch one current snapshot on its background lane, even while an unrelated foreground request is pending. Read-only snapshot requests shall not publish invalidations; a human decision modal may pause refresh for its view.
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, 2026-10-30.

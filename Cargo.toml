@@ -127,6 +127,15 @@ name = "native_ui_updates"
 path = "tests/native_ui_updates.rs"
 required-features = ["native-ui-probe"]
 
+[[test]]
+name = "native_ui_quota_elapsed"
+path = "tests/native_ui_quota_elapsed.rs"
+required-features = ["native-ui-probe"]
+
+[[test]]
+name = "claude_wait"
+path = "tests/claude_wait.rs"
+
 [profile.release]
 lto = "thin"
 codegen-units = 1

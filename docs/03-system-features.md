@@ -709,3 +709,7 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → 
 ### SF-185 Follow the current workspace without owning stale sessions
 Resolve the listener's startup and report paths from the current workspace on each check. Keep only a non-owning reference to `Startup` so a workspace switch releases an idle previous session and its lease.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### SF-189 Wait safely for Claude quota output
+Give the whole interactive Claude quota query up to 60 seconds across CLI startup, project trust, prompt, and `/usage` response. Preserve prompt-stage versus response-stage timeout details and return immediately after parsed quota output. Show elapsed time on the queried agent card while its quota job is active.
+Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.

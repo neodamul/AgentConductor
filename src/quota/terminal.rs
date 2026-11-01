@@ -125,12 +125,18 @@ pub fn claude_usage_ready(text: &str) -> bool {
             })
         })
 }
-fn quota_timeout(sent: bool) -> &'static str {
-    if sent {
-        "Claude quota response timed out after /usage; no generation requested"
+pub const CLAUDE_WAIT: std::time::Duration = std::time::Duration::from_secs(60);
+
+fn quota_timeout(sent: bool, wait: std::time::Duration) -> String {
+    let stage = if sent {
+        "response timed out after /usage"
     } else {
-        "Claude quota prompt timed out before /usage; no generation requested"
-    }
+        "prompt timed out before /usage"
+    };
+    format!(
+        "Claude quota {stage} after {} s; no generation requested",
+        wait.as_secs()
+    )
 }
 fn spent_budget(text: &str, at: i64) -> Result<Option<super::Budget>, String> {
     let lines: Vec<_> = text.lines().collect();
@@ -269,8 +275,8 @@ fn require_project(cwd: &std::path::Path) -> Result<(), String> {
 #[cfg(not(windows))]
 mod query;
 #[cfg(not(windows))]
-pub use query::query_claude;
+pub use query::{query_claude, query_claude_within};
 #[cfg(windows)]
 mod windows;
 #[cfg(windows)]
-pub use windows::query_claude;
+pub use windows::{query_claude, query_claude_within};

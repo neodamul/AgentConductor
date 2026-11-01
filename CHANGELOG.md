@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Claude quota refresh on macOS and Windows now allows 60 seconds for slow CLI startup or `/usage` responses and shows the elapsed time on the matching agent card (GitHub #297).
+
 - Integration tests no longer call `env::set_var` / `remove_var` directly: a shared helper serializes and restores environment changes, every remaining test `unsafe` call states why it is sound, and the CI safety-comment gate now covers test targets (GitHub #176).
 
 - Every `unsafe` block in the application now states why it is sound, and CI on macOS and Windows rejects a new one without a `// SAFETY:` comment; the icon code is split into per-platform files (GitHub #172).
