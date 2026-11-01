@@ -160,7 +160,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 .as_deref(),
             ui,
         ) {
-            Some(super::mcp::SourceEvent::Preview) => probe.preview_mcp_sources(),
+            Some(super::mcp::SourceEvent::Preview) => probe.begin_mcp_preview(),
             Some(super::mcp::SourceEvent::Apply(selected)) => probe.apply_mcp_sources(&selected),
             None => {}
         }

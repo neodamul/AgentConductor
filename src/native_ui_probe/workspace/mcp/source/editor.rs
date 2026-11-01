@@ -21,6 +21,7 @@ pub struct State {
     preview_goal_sources: Value,
     preview_open: bool,
     previewing: bool,
+    preview_after_save: bool,
     applying: bool,
     selected: BTreeSet<String>,
     error: Option<String>,
@@ -87,7 +88,6 @@ impl State {
             if ui
                 .add_enabled(
                     can_edit
-                        && saved_goal
                         && references > 0
                         && has_servers
                         && has_coordinator
@@ -217,6 +217,20 @@ impl State {
         self.error = None;
     }
 
+    pub(in crate::native_ui_probe) fn queue_preview_after_save(&mut self) {
+        self.preview_after_save = true;
+    }
+
+    pub(in crate::native_ui_probe) fn take_preview_after_save(&mut self) -> bool {
+        std::mem::take(&mut self.preview_after_save)
+    }
+
+    pub(in crate::native_ui_probe) fn cancel_preview_after_save(&mut self, error: &str) {
+        if self.take_preview_after_save() {
+            self.preview_failed(error);
+        }
+    }
+
     pub(in crate::native_ui_probe) fn preview_failed(&mut self, error: &str) {
         self.previewing = false;
         self.applying = false;
@@ -240,6 +254,7 @@ impl State {
         self.preview_mcp = Value::Null;
         self.preview_goal_sources = Value::Null;
         self.previewing = false;
+        self.preview_after_save = false;
         self.applying = false;
     }
 }

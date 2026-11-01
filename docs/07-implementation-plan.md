@@ -6727,3 +6727,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task / Green: show elapsed and stale status in each owning native UI panel/dialog; restore job clocks from `started_ms`; count update phases from their local start; repaint at one second without sending a worker request. Reference count and prerequisite text now reflect the current goal on the next frame.
 - [x] Verify: 109 targeted tests pass across five suites; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the source-layout 300-line guard pass locally.
 - [x] Complete unit: update the LLM Wiki and AgentMemory, refresh Graphify to 11,914 nodes / 19,478 edges, comment on #283 and PR #260, and push commit `18224cda`; draft PR #284 is open. CocoIndex is unavailable in this environment (`cocoindex` executable not found). Exact packaged macOS/Windows UI acceptance remains a separate #9 gate.
+
+### Follow up the typed-reference preview path from Claude PR #280
+
+- [x] Red: add a UI interaction regression that types a Jira reference into a draft goal and clicks Preview imports; before the fix, the click emitted no event because the saved-goal guard disabled the button.
+- [x] Green: enable preview as soon as references and server/coordinator prerequisites are present. On click, save and refresh an unsaved goal before sending the read-only preview request; clear pending preview state on save/refresh failure.
+- [x] Verify: 112 targeted tests pass across six suites; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the source-layout 300-line guard pass locally.
+- [ ] Complete: update AgentMemory `mem_mvxbgd8g_23b654999b54` and LLM Wiki; refresh Graphify to 11,936 nodes / 19,511 edges; update #283 and PR #284; commit/push the follow-up. Exact packaged macOS/Windows behavior remains a separate #9 gate.

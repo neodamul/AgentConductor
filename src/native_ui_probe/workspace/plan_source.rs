@@ -36,6 +36,9 @@ pub fn after_refresh(probe: &mut Probe) {
     if let Some(action) = probe.plan_source.after_save.take() {
         start(probe, action);
     }
+    if probe.mcp_sources.take_preview_after_save() {
+        probe.preview_mcp_sources();
+    }
 }
 
 pub fn picked_file(probe: &mut Probe, response: &Value) {
