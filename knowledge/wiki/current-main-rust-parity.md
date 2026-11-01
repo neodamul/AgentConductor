@@ -4,18 +4,18 @@
 
 Run `41299460959` passed macOS but failed Windows in
 `default_native_workspace_is_accessible_and_saves_through_ui_automation`: the workspace
-saved only `Windows U` instead of `Windows UIA goal`. The keyboard driver sent the complete
-string in one `SendWait`, outrunning the native editor. A source-contract regression first
-failed against that implementation; the fix sends one character every 40 ms, pauses after
-select-all, and waits before Save. The focused local driver suite now passes 9/9. A new
-Windows run is still required; the exact Windows package journey remains unverified.
+saved only `Windows U` instead of `Windows UIA goal`. The first paced fix was insufficient:
+run `41301522543` passed platform validation and the exact macOS package, but the Windows
+package still saved `Windows UIA goa`, dropping the last character. A stricter source
+regression for 100 ms per-character pacing and a 750 ms settle before Save failed against
+the 40/250 ms implementation; the updated focused driver/docs/layout suites pass 22 tests
+locally. The change remains local and needs a fresh exact Windows package run.
 
-PR #311 had previously run `41297870756` against old parent `2c465180` and failed a stale
-source-contract assertion. Parent `284ac00b` fixes that assertion. PR #311 has since been
-synchronized to current #260 by merge commit `20f3f749`; it still requires the updated
-Windows validation and exact package journey. The merge tree was conflict-free, and the
-relevant parent driver suite passed locally 8/8 before this new Windows UI regression was
-found.
+PR #311 run `41301571571` is based on parent `4ee8be59` (`ad6235e3` merge commit). Both
+platform validations and the exact macOS package passed; its exact Windows package is still
+running against the older 40/250 ms UI driver. Synchronize it with the new pacing change and
+rerun before accepting the schedule journey. The original stale assertion was corrected at
+parent commit `284ac00b`.
 
 ## Enterprise quota parser coverage — bug #295 / 2026-11-01
 

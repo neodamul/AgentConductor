@@ -6753,5 +6753,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify the stale downstream parent assertion fix at `284ac00b`; local `windows_desktop_driver` passed 8/8 before the Windows run.
 - [x] Inspect failed Windows run `41299460959`: the native tests reached `default_native_workspace_is_accessible_and_saves_through_ui_automation`, which saved only `Windows U` instead of `Windows UIA goal`.
 - [x] Red: add a source-contract regression requiring per-character SendKeys pacing before Save; the new test failed against the old whole-string SendWait driver.
-- [x] Green: send each character with a 40 ms interval, allow 100 ms after select-all and 250 ms before Save; focused `windows_desktop_driver` passes 9/9 locally.
-- [ ] Re-run the updated head on Windows. Do not claim Windows UI or exact package acceptance until it passes.
+- [x] Verify run `41301522543`: platform validation passed on both systems and the macOS package passed, but the Windows package saved `Windows UIA goa`; the last character was still dropped by the 40 ms driver.
+- [x] Red: strengthen the source contract to require 100 ms per character and a 750 ms settle before Save; it failed against the 40 ms / 250 ms implementation.
+- [x] Green: increase the driver pacing and settle delay. Focused driver, documentation, and source-layout suites pass 22 tests locally; formatting and diff checks pass.
+- [ ] Push the updated driver, synchronize #311, and rerun exact Windows package verification. Do not claim Windows UI acceptance until the packaged default desktop and schedule journeys pass.
