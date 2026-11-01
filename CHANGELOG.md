@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+## v0.1.53
+
 - Claude usage: a company allocation written with thousands separators (`$1,351.23 / $5,000.00 spent`) and a terminal that draws spaces as cursor moves are now read, and a usage screen that was read but not understood is named in the error (`screen not understood: ...`) instead of ending as a bare timeout (#295).
 
 ## v0.1.52
