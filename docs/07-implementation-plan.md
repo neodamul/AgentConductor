@@ -3,9 +3,9 @@
 - [x] Plan: inspect Windows package failures in PR #260, #239, and #311 instead of treating the open PRs as approval-waiting. The logs showed two test-driver assumptions: `ValuePattern` on egui text inputs and a stop button invoked before its asynchronous state enabled it.
 - [x] Red: added cross-platform source-contract assertions; they failed first on missing keyboard entry and later on missing enabled-state polling.
 - [x] Task / Green: drive text fields through focus plus keyboard input, find the stop-reason edit adjacent to its label, and wait for the `Stop run` button to become enabled before invoking it.
-- [x] Verify locally: pushed `2465664935f3cffd4779419f8428d19f2f751794` and `bb654cc965548682fdb6c39d86962e855512b781` to PR #260. Focused batch: 15 passed, 1 ignored; formatting, warning-denied Clippy, diff hygiene, and 300-line checks pass.
+- [x] Verify locally: pushed `2465664935f3cffd4779419f8428d19f2f751794`, `bb654cc965548682fdb6c39d86962e855512b781`, and the verification record `443dfb0466b5c06f38ea95734ef2c97f1b9836fc` to PR #260. Focused batch: 15 passed, 1 ignored; formatting, warning-denied Clippy, diff hygiene, and 300-line checks pass.
 - [x] Assetize: AgentMemory records `mem_mvxob8f0_92018d2932da` and `mem_mvxod8ne_88e7c8d28622`; Graphify refreshed to 11,854 nodes / 17,993 edges / 867 communities. LLM Wiki records the failure and limits. CocoIndex is unavailable in this Rust-only environment.
-- [ ] Windows Verify: run `41296765273` is validating final head `bb654cc965548682fdb6c39d86962e855512b781`; the prior package run failed because `Stop run` was initially disabled. No Windows pass is claimed.
+- [ ] Windows Verify: run `41297482397` is pending on final head `443dfb0466b5c06f38ea95734ef2c97f1b9836fc`; the prior package run failed because `Stop run` was initially disabled. No Windows pass is claimed.
 - [ ] Complete: keep PR #260 and downstream package failures open until the exact Windows package journey passes; do not convert drafts to review-ready based only on local source checks.
 
 ### Triage deleted-workspace restore report — bug #226 / 2026-10-30
