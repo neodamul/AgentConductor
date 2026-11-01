@@ -26,11 +26,17 @@ fn goal_driver_types_each_character_before_saving() {
         .unwrap()
         + type_loop;
     let pacing = source[send_character..]
-        .find("Start-Sleep -Milliseconds 40")
+        .find("Start-Sleep -Milliseconds 100")
         .unwrap()
         + send_character;
+    let settled = source[pacing..]
+        .find("Start-Sleep -Milliseconds 750")
+        .unwrap()
+        + pacing;
     let save = source.find("$save.GetCurrentPattern(").unwrap();
-    assert!(type_loop < send_character && send_character < pacing && pacing < save);
+    assert!(
+        type_loop < send_character && send_character < pacing && pacing < settled && settled < save
+    );
     assert!(!source.contains("SendWait('Windows UIA goal')"));
 }
 

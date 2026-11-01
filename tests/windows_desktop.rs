@@ -42,9 +42,9 @@ $goal.SetFocus()
 Start-Sleep -Milliseconds 100
 foreach ($character in 'Windows UIA goal'.ToCharArray()) {
   [System.Windows.Forms.SendKeys]::SendWait([string]$character)
-  Start-Sleep -Milliseconds 40
+  Start-Sleep -Milliseconds 100
 }
-Start-Sleep -Milliseconds 250
+Start-Sleep -Milliseconds 750
 
 $save.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 Write-Output 'DRIVEN'
