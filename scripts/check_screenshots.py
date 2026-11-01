@@ -15,7 +15,7 @@ CAPTURES = ["docs/assets/ui-*-current.png", "docs/assets/screenshots-current.txt
 
 
 def git(repo, *args, check=True):
-    return subprocess.run(["git", "-C", repo, *args], capture_output=True, text=True, check=check)
+    return subprocess.run(["git", "-C", repo, *args], capture_output=True, encoding="utf-8", check=check)
 
 
 def last(repo, paths):

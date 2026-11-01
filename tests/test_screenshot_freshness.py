@@ -1,6 +1,7 @@
 """GitHub #290 (QAS-198): the captured screens are as new as the interface, or a later commit confirms them."""
 import pathlib
 import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -16,13 +17,13 @@ def git(repo, *args):
 def commit(repo, path, text):
     file = pathlib.Path(repo) / path
     file.parent.mkdir(parents=True, exist_ok=True)
-    file.write_text(text)
+    file.write_text(text, encoding="utf-8")
     git(repo, "add", "-A")
     git(repo, "commit", "-q", "-m", f"change {path}")
 
 
 def check(repo):
-    return subprocess.run(["python3", str(SCRIPT), str(repo)], capture_output=True, text=True)
+    return subprocess.run([sys.executable, str(SCRIPT), str(repo)], capture_output=True, encoding="utf-8")
 
 
 class Screenshots(unittest.TestCase):
@@ -67,7 +68,7 @@ class Screenshots(unittest.TestCase):
         commit(repo, "src/ui/room.css", "a{}")
         clone = tempfile.TemporaryDirectory()
         self.addCleanup(clone.cleanup)
-        subprocess.run(["git", "clone", "-q", "--depth", "1", f"file://{repo}", clone.name], check=True, capture_output=True)
+        subprocess.run(["git", "clone", "-q", "--depth", "1", pathlib.Path(repo).as_uri(), clone.name], check=True, capture_output=True)
         result = check(clone.name)
         self.assertEqual(result.returncode, 2)
         self.assertIn("full history", result.stderr)

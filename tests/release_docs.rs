@@ -47,12 +47,18 @@ fn every_shown_screenshot_exists_and_every_captured_screen_is_shown() {
         .collect();
     let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("docs/assets");
     for name in &shown {
-        assert!(root.join(name).is_file(), "docs/assets/{name} is shown but missing");
+        assert!(
+            root.join(name).is_file(),
+            "docs/assets/{name} is shown but missing"
+        );
     }
     for entry in fs::read_dir(&root).unwrap() {
         let name = entry.unwrap().file_name().to_string_lossy().into_owned();
         if name.starts_with("ui-") && name.ends_with("-current.png") {
-            assert!(shown.contains(&name), "docs/assets/{name} is not shown in the README or a manual");
+            assert!(
+                shown.contains(&name),
+                "docs/assets/{name} is not shown in the README or a manual"
+            );
         }
     }
 }
@@ -70,7 +76,10 @@ fn image_targets_are_read_from_markdown() {
 fn publishing_waits_for_the_screenshot_check_with_full_history() {
     let workflow = read(".github/workflows/release.yml");
     assert!(workflow.contains("python3 scripts/check_screenshots.py"));
-    assert!(workflow.contains("fetch-depth: 0"), "the check needs the full history");
+    assert!(
+        workflow.contains("fetch-depth: 0"),
+        "the check needs the full history"
+    );
     assert!(
         workflow.contains("needs: [verify, screenshots]"),
         "a release is published only after the screenshot check"
