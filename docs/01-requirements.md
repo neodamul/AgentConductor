@@ -782,3 +782,9 @@ Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213.
 ### R-202 Quota query failures are visible beside the quota
 When an agent quota query fails, the native agent list, agent settings, and Agent Room run screen shall display the recorded reason as readable text next to the unavailable quota value or run status. The complete reason shall remain available to assistive technology and on hover. The UI shall present the captured reason without guessing or rewriting provider-specific CLI output.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
+### R-199 The coordinator Activity view summarizes the current run
+When the operator selects coordinator Activity, show the run state, task counts, and one status row per planned task with its assigned agent and available latest-output age. Use the current Agent Room snapshot; do not add a request or polling source. Keep judgments and meaningful history below the board while hiding repetitive workflow-save rows from this view only. Preserve the audit records unchanged. Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → DDR-51 → DD-212. Rust port of JavaScript #267, GitHub #286, 2026-11-01.
+
+### R-200 Preserve the coordinator status board in the native application
+The Rust Agent Room shall provide the coordinator run/task status summary available in the current JavaScript UI, using existing run and activity data and preserving the operator's existing review and audit controls. This is a native Rust UI implementation; it does not transfer ownership of JavaScript UI or backend changes from their current author.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.

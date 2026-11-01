@@ -107,6 +107,7 @@ pub(super) fn show(
                             if let Some(action) = task_activity::coordinator(
                                 &mut state.activity_tab,
                                 state.coordinator_judgments.as_ref(),
+                                snapshot,
                                 language,
                                 ui,
                             ) {

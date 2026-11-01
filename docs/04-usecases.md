@@ -803,3 +803,10 @@ Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213.
 2. The native UI shows the saved query error next to the quota badge or run status.
 3. The operator reads the same full error with a screen reader or by hovering the message.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
+### UC-190 Review coordinator run status
+The operator selects Coordinator in Agent Room. The Activity view shows the run state, completed/running/failed/pending counts, and a row for every task with its assigned agent, status and latest output age when available. Judgments and useful timeline history remain below the board; routine workflow-save summaries are omitted from the display, not deleted from the audit store. The view uses the current snapshot and emits no additional request.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → DDR-51 → DD-212. Rust port of JavaScript #267, GitHub #286, 2026-11-01.
+
+### UC-191 Supervise a run in the native Rust Agent Room
+The operator opens the Rust Agent Room and selects Coordinator. They can immediately see the run state, task counts, each assignment and status, plus latest output age where the snapshot reports it. They can continue to inspect judgments, approvals and retained useful history below the status board. The Rust view reads the existing snapshot and leaves JS/backend ownership with its current contributor.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.

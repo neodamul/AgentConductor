@@ -615,3 +615,10 @@ Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213.
 ### BG-157 Diagnose quota collection failures from the native UI
 Operators can identify why an agent quota is unavailable without opening logs or relying on a provider-specific screen guess.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
+### BG-154 See coordinator and task progress at a glance
+The operator can understand a run's overall state and each task's assignment, state and recent output from the coordinator Activity view without reading repeated save summaries.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → DDR-51 → DD-212. Rust port of JavaScript #267, GitHub #286, 2026-11-01.
+
+### BG-155 Keep native Rust UI at feature parity with the current product
+Rust UI users can supervise coordinator and task progress with the same essential information available in the current JavaScript UI, without requiring the JavaScript implementation to be taken over or changed.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.

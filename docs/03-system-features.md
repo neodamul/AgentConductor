@@ -717,3 +717,10 @@ Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213.
 ### SF-190 Show quota query errors inline
 On the native agent sidebar and agent settings list, show the stored quota error beside the unavailable quota badge. On the Agent Room run screen, show each stored agent quota error in the run status area. Keep the full error as accessible text and a hover detail. Do not infer an Enterprise response format or alter the captured error.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
+### SF-187 Coordinator run status board
+Render run state and task counts above the coordinator timeline, then show each planned task with its agent, status and available latest-output age. Derive the board from the existing snapshot, and omit repetitive workflow-save rows only from the visible timeline.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → DDR-51 → DD-212. Rust port of JavaScript #267, GitHub #286, 2026-11-01.
+
+### SF-188 Native coordinator Activity parity
+Expose the current run summary, per-task status and available activity age in the Rust Agent Room while retaining the existing coordinator judgment, review and audit actions. Rust consumes the existing snapshot and does not change the JavaScript UI/backend implementation.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.

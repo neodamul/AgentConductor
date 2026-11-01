@@ -6904,8 +6904,8 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] #239 — its slow-`rev-parse HEAD` chat-dispatch regression is now in `tests/startup_chat.rs` with a scoped helper. It passes locally in 0.21 seconds against the 20-second Git wrapper. PR #239 was closed as superseded by #260; exact package acceptance remains represented on the parent branch where applicable.
 - [x] #255 — closed as superseded by #260 after moving the unique in-flight Windows chat editor acceptance checks. Its 500 ms resumed-chat poll was deliberately not ported because it contradicts QAS-192/DD-206's event-driven design and fixed 30-second fallback.
 - [ ] #260 — active Rust #9 parent with Git HEAD fast path and bounded request/event lanes; GitHub reports mergeable. Exact packaged macOS/Windows gates remain open.
-- [ ] #284 — Port elapsed/stale task progress to the Rust UI; review its unique behavior and local tests.
-- [ ] #288 — Port the coordinator status board to Rust; review against current workspace and Agent Room surfaces.
+- [x] #284 — Integrated elapsed/stale task progress and reference preview into #260 at `20c14113`; GitHub closed #284 as merged. Exact package acceptance remains open under #9.
+- [x] #288 — Integrated the coordinator status board into #260 after reviewing its Agent Room scope, requirements, tests, and LLM Wiki entries; exact package acceptance remains open under #9.
 - [ ] #289 — Port request feedback to the native Rust UI; review its acceptance and localization tests.
 - [x] #294 — Integrated event-driven refresh, child monitoring, progress backoff, task-worktree recovery scope, and draft preservation into the current #9 branch at `9126dfd0`. Full local all-target/all-feature tests and Clippy pass; exact packaged macOS/Windows UI acceptance remains open.
 - [x] #305 and #293 — Chat lifecycle and Windows UIA accessible-name changes are integrated in `5753ba0d` and `432b3bb6`; GitHub marks both PRs merged. Keep #189 open until exact packaged Windows chat acceptance passes.
@@ -6977,3 +6977,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: enable preview as soon as references and server/coordinator prerequisites are present. On click, save and refresh an unsaved goal before sending the read-only preview request; clear pending preview state on save/refresh failure.
 - [x] Verify: 112 targeted tests pass across six suites; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the source-layout 300-line guard pass locally.
 - [x] Complete: update AgentMemory `mem_mvxbgd8g_23b654999b54` and LLM Wiki; refresh Graphify to 11,936 nodes / 19,511 edges; update #283 and PR #284; push commit `eda13b5c` to `codex/issue-283-rust-progress-feedback`. Draft PR #284 remains open for review; exact packaged macOS/Windows behavior remains a separate #9 gate.
+### 2026-11-01 — Port coordinator run status board to native Rust — issue #286
+
+- [x] Plan: trace R-199/R-200 → BG-154/BG-155 → SF-187/SF-188 → UC-190/UC-191 → FR-192/FR-193 and NFR-85/NFR-86 → QAS-198/QAS-199 → DDR-51/DDR-52 → DD-212/DD-213. Keep changes limited to the Codex Rust worktree; Claude retains JS and backend work.
+- [x] Red: add deterministic tests for mixed task states and task-ID pairing, latest-output age, workflow-only display filtering with unchanged source data, bilingual accessible output, retained judgments and no request dispatch; the first targeted test build failed because the model and display filter were absent.
+- [x] Task / Green: render the status summary and task rows from the existing run snapshot before the existing judgment/history view; filter only displayed workflow-save rows.
+- [x] Verify locally: 2 coordinator-board tests and 106 Rust library tests; 13 public-doc/source-layout tests; warning-denied all-target Clippy, rustfmt, diff check and the 300-line source/test guard pass after integration.
+- [ ] Broader `cargo test --locked --offline --features native-ui-probe` was stopped after 90 seconds without output; it is not recorded as a pass.
+- [x] Complete source unit: issue #286 updated, AgentMemory `mem_mvxcb2ra_4e1fff7aaa46`, LLM Wiki and Graphify refreshed; implementation commit `85905874` and its documentation were integrated into #260. GitHub closed #288 as merged; exact packaged GUI review stays with #9.

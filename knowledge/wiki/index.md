@@ -55,7 +55,7 @@
 - [Native goal phase labels](native-goal-phase-labels.md): localized numbered phase action and AccessKit regression evidence.
 - [Native sidebar static-label removal](native-sidebar-footer.md): issue #190 removal of fixed local/login labels from Rust views and bilingual regression evidence.
 - [Native sidebar card density](native-sidebar-card-density.md): one-line agent detail labels with full AccessKit and hover text retained.
-- [Current-main Rust parity](current-main-rust-parity.md): requirement-traced Rust parity, active port coverage, and current root #22 mergeability audit.
+- [Current-main Rust parity](current-main-rust-parity.md): issue #9 parity inventory, coordinator board #286, root #22 mergeability audit, and remaining platform gates.
 - [Native Room failure feedback](native-room-failure-feedback.md): localized generated guidance with verbatim diagnostic output and explicit verification limits.
 
 - [Quota, fallback and native status](quota-fallback-and-status.md): provider metadata, durable account restrictions, reviewed failover and actual status-light/stop evidence.

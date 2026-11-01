@@ -42,6 +42,7 @@
   "room.available": "Available {value1}",
   "room.back_to_workspace": "Back to workspace",
   "room.blocked": "Blocked",
+  "room.board_summary": "{value1} · Completed {value2}/{value3} · Running {value4} · Failed {value5} · Pending {value6}",
   "room.branch": "Branch: ",
   "room.brief_team": "Brief team",
   "room.candidate": "{value1}\nCandidate: {value2}",
