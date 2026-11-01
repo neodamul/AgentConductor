@@ -37,6 +37,10 @@ pub fn fixture(root: &Path, target: &str) -> Value {
         "MIT License\n\nCopyright (c) fixture\n",
     )
     .unwrap();
+    let skill = root.join("third_party/prompt-optimizer");
+    fs::create_dir_all(&skill).unwrap();
+    fs::write(skill.join("LICENSE"), "Apache fixture\n").unwrap();
+    fs::write(skill.join("SOURCE.md"), "origin fixture\n").unwrap();
     let icon = root.join("src/ui/assets/ac.icns");
     fs::create_dir_all(icon.parent().unwrap()).unwrap();
     fs::copy(

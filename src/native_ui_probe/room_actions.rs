@@ -163,6 +163,15 @@ impl Probe {
     }
 
     pub(super) fn decide_tool(&mut self, action: ToolAction, id: String) {
+        let task = self.snapshot.as_ref().and_then(|snapshot| {
+            snapshot["tool_requests"]
+                .as_array()?
+                .iter()
+                .find(|request| request["id"] == id)?
+                .get("context")?["task"]
+                .as_str()
+                .map(str::to_owned)
+        });
         let resume_after = action == ToolAction::Approve
             && self
                 .snapshot
@@ -182,6 +191,10 @@ impl Probe {
         match result {
             Ok(()) => {
                 self.error = None;
+                if let Some(view) = self.room_view.as_mut() {
+                    view.tool_refresh_follow_up = (action == ToolAction::Refresh)
+                        .then(|| super::room::ToolRefreshFollowUp::new(id, task));
+                }
                 self.pending = Some(Pending::ToolDecision { resume_after });
             }
             Err(error) => self.error = Some(error),

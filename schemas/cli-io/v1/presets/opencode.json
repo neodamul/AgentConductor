@@ -1,0 +1,68 @@
+{
+  "schema": "acio.agent/1",
+  "preset": "opencode",
+  "label": "OpenCode",
+  "capabilities": {
+    "read_only": false,
+    "workspace_write": true,
+    "streaming": false,
+    "resume": true,
+    "tools": true,
+    "response_schema": false,
+    "languages": [
+      "ko",
+      "en"
+    ],
+    "control": {
+      "cancel": false,
+      "user_message": false,
+      "tool_decision": false
+    }
+  },
+  "invocation": {
+    "executable": "opencode",
+    "input": "file",
+    "args": [
+      "run",
+      "--format",
+      "json",
+      "--file",
+      "{task_file}",
+      "Follow the attached task scope and completion conditions"
+    ],
+    "session": {
+      "model_args": [
+        "--model",
+        "{model}"
+      ],
+      "model_aliases": [
+        "-m"
+      ],
+      "selectors": [
+        "--resume",
+        "--session",
+        "--continue",
+        "--last",
+        "-c"
+      ],
+      "resume": {
+        "mode": "append",
+        "args": [
+          "--session",
+          "{session_id}"
+        ]
+      }
+    },
+    "control": {
+      "cancel": {
+        "mode": "signal"
+      },
+      "user_message": {
+        "encoding": "none"
+      },
+      "tool_decision": {
+        "encoding": "none"
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "issue": 9,
+  "date": "2026-10-29",
+  "failing_run": "40784206494",
+  "failing_head": "1decc2926b0e242d1e87eb7842a5f0a5687e12e4",
+  "failed_job": "native-package (windows-latest)",
+  "failed_test": "exact_windows_package_saves_signal_transport_and_retains_port",
+  "failure": "The exact Windows package opened the settings flow, then UI Automation SetFocus on the visible agentmemory port edit raised ElementNotEnabledException / Unrecognized error. No signal preference file was saved. The macOS package passed and all earlier Windows UI flows passed.",
+  "red": "The new source-contract regression failed before the fallback existed because Assert-PortFieldFocused had no try/catch path or process-guarded edit click.",
+  "change": "Move the embedded PowerShell into tests/support/windows_signal_settings_script.rs. If SetFocus fails, click only the enabled visible port edit owned by the packaged process, verify focused process/name/control type, and never send keyboard input before that exact edit is focused.",
+  "green": [
+    "windows_signal_settings_dispatch: 13 passed",
+    "source_layout: 2 passed",
+    "cargo clippy --all-targets --locked --features test-fixtures -- -D warnings: passed",
+    "cargo fmt --check: passed",
+    "git diff --check: passed",
+    "Line counts: windows_signal_settings.rs 89; support script 232; dispatch tests 252."
+  ],
+  "exact_package_rerun": "pending"
+}

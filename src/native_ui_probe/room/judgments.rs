@@ -141,7 +141,18 @@ impl crate::native_ui_probe::Probe {
         self.error = None;
     }
 
-    pub(in crate::native_ui_probe) fn refresh_room_details(&mut self) {
+    pub(in crate::native_ui_probe) fn refresh_room_details(&mut self, background: bool) {
+        if self.snapshot.as_ref().is_some_and(|snapshot| {
+            snapshot["tool_requests"]
+                .as_array()
+                .is_some_and(|requests| {
+                    requests.iter().any(|request| {
+                        matches!(request["status"].as_str(), Some("pending" | "approved"))
+                    })
+                })
+        }) {
+            return;
+        }
         let changed = self
             .room_view
             .as_ref()
@@ -150,13 +161,28 @@ impl crate::native_ui_probe::Probe {
             .zip(self.snapshot.as_ref())
             .is_some_and(|(data, snapshot)| data["decision_count"] != snapshot["decision_count"]);
         if changed {
-            self.load_coordinator_judgments();
+            if background {
+                self.load_coordinator_judgments_background();
+            } else {
+                self.load_coordinator_judgments();
+            }
         } else if !self
             .room_view
             .as_ref()
             .is_some_and(|view| view.coordinator_selected)
         {
-            self.refresh_selected_task_details();
+            self.refresh_selected_task_details(background);
+        }
+    }
+
+    pub(in crate::native_ui_probe) fn load_coordinator_judgments_background(&mut self) {
+        let result = self
+            .worker
+            .as_ref()
+            .ok_or_else(|| "Agent Room controller is unavailable".to_owned())
+            .and_then(|worker| worker.send(br#"{"kind":"coordinator"}"#));
+        if result.is_ok() {
+            self.pending = Some(crate::native_ui_probe::Pending::BackgroundCoordinator);
         }
     }
 }

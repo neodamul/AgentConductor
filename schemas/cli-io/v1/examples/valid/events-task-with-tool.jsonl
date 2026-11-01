@@ -1,0 +1,6 @@
+{"schema":"acio.event/1","seq":1,"ts":"2026-10-28T02:00:00Z","type":"session","session_id":"s-2","data":{"session_id":"s-2","resumed":true}}
+{"schema":"acio.event/1","seq":2,"ts":"2026-10-28T02:00:05Z","type":"tool","session_id":"s-2","data":{"call_id":"c1","name":"shell","status":"running","input":{"command":"npm test"}}}
+{"schema":"acio.event/1","seq":3,"ts":"2026-10-28T02:00:20Z","type":"tool","session_id":"s-2","data":{"call_id":"c1","name":"shell","status":"completed","output_summary":"12 passed","exit_code":0}}
+{"schema":"acio.event/1","seq":4,"ts":"2026-10-28T02:00:25Z","type":"heartbeat","session_id":"s-2","data":{"activity":"editing src/checkout.ts"}}
+{"schema":"acio.event/1","seq":5,"ts":"2026-10-28T02:00:30Z","type":"x-inhouse-audit","session_id":"s-2","data":{"ticket":"PAY-42"}}
+{"schema":"acio.event/1","seq":6,"ts":"2026-10-28T02:00:31Z","type":"result","session_id":"s-2","data":{"status":"success","summary":"Added tax to the total.","changed_paths":["src/checkout.ts","tests/checkout.test.ts"],"artifacts":[{"path":"report.md","kind":"report"}]}}

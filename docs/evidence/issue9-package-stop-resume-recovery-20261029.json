@@ -1,0 +1,25 @@
+{
+  "issue": 9,
+  "workflow": 25,
+  "date": "2026-10-29",
+  "status": "local_verified_exact_package_pending",
+  "scope": "Rust package stop, resume, interrupted-run recovery, and no duplicate owned outputs",
+  "test": "tests/package_run_recovery.rs::exact_windows_package_stops_resumes_and_recovers_without_duplicate_work",
+  "local_binary_journey": "passed",
+  "fixture": "three mock CLI tasks in a disposable shared Git repository; no external CLI or service",
+  "assertions": [
+    "active mock worker starts before stop is requested",
+    "stop reaches stopped state and coordinator exits",
+    "explicit resume completes the tasks and revalidates",
+    "stale process ownership is recovered before a second explicit resume",
+    "candidate diff contains exactly one change for each of one.txt, two.txt, and three.txt"
+  ],
+  "focused_tests": "10 passed, 1 package-only test ignored",
+  "full_local_suite": "1,103 passed, 15 ignored, 350 suites, 269.80 seconds",
+  "clippy": "all targets pass with warnings denied",
+  "format_and_source_layout": "pass; Rust source and test files remain at or below 300 lines",
+  "exact_macos_package": "pending",
+  "exact_windows_package": "pending",
+  "acceptance_credit": false,
+  "risk": "Windows package execution is required to validate packaged process ownership and recovery behavior."
+}

@@ -7,6 +7,7 @@
   "native.agentconductor_agent_room": "AgentConductor · Agent Room",
   "native.aliased_cache_retained": "aliased cache retained",
   "native.another_ui_action_is_still_running": "another UI action is still running",
+  "native.tool_refresh_queued_for_active_coordinator": "Tool refresh queued for the active coordinator",
   "native.approve_the_exact_displayed_mcp_preview": "approve the exact displayed MCP preview",
   "native.approve_the_exact_reviewed_plan_digest": "approve the exact reviewed plan digest",
   "native.approvers_must_be_1_32_non_empty_ids": "approvers must be 1–32 non-empty IDs",

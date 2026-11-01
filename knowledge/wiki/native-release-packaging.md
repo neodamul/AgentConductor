@@ -1,5 +1,20 @@
 # Rust native release packaging
 
+## Exact macOS package for chat-send recovery — issue #9 / 2026-10-29
+
+The optimized Rust release package was built locally from clean source commit
+`f83c5fb15fb088eebd2d622357d719c074da4572` using
+`cargo run --release --locked -- package-release`. The `aarch64-apple-darwin`
+archive SHA-256 is
+`ba37d5215b584b0a776c2942045796dc3918a5b6b6e82b82d487c268e8997423`.
+Its manifest names the exact source commit; the embedded binary digest
+`d7ab72c2a2523a080c790d3e9e1b4891af417717559e4423a415bcd82ead7c21` matches
+the package `SHA256SUMS`. The ZIP includes both offline HTML manuals, license
+inventory, notices, and SBOM. This verifies the local Apple Silicon package
+only. Windows package recovery, the stopped full test suite, overall UI
+acceptance, and PR #22 mergeability remain unresolved. Evidence and checklist:
+`docs/07-implementation-plan.md`.
+
 ## Cross-platform package artifacts — issue #9 / 2026-10-24
 
 Run `40011350882` on source `db568c3f59fea29b15c8d60829e7fd41857fc62e` passed all macOS and Windows validation gates, release executable builds, bilingual manual rendering, exact-package execution/smoke, and artifact retention. macOS artifact `12527489015` is 21,164,379 bytes (artifact SHA-256 `faf6d2a0acea970638e4c59697d77175737c44e8dd79fc51ccc8971ca0703a79`; ZIP SHA-256 `47075ce7a6908926d14d049e8613a02bce862170ff58bf3992b1c17f41ef7629`). Windows artifact `12528158860` is 15,301,355 bytes (artifact SHA-256 `02bc04f6cd86b4e9bdaa96c6d05bac58d46a94b5ee6b377dbaa1adf546b7e856`; ZIP SHA-256 `9927f872a25505804c3f07ccff70ef33e318c49fdab83d2e15fe599c5a19e8d1`). These are temporary GitHub Actions artifacts expiring 2026-11-06, not a published release. Issue #9 remains open at 16/25 exact-package UI workflows; shipped/default Rust UI remains 0/25. Evidence: `docs/evidence/issue9-platform-packages-40011350882-20261024.json`.

@@ -1,14 +1,58 @@
 use super::super::{Pending, Probe};
 
 impl Probe {
-    pub(super) fn handle_error(&mut self, error: impl ToString) {
+    pub(in crate::native_ui_probe) fn handle_error(&mut self, error: impl ToString) {
         let error = error.to_string();
+        if matches!(self.pending, Some(Pending::BackgroundRefresh)) {
+            self.background_poll_failures = self.background_poll_failures.saturating_add(1);
+            if self.background_poll_failures >= 3 {
+                self.error = Some(error);
+            }
+            self.pending = None;
+            return;
+        }
+        if matches!(
+            self.pending,
+            Some(Pending::BackgroundTaskDetails | Pending::BackgroundCoordinator)
+        ) {
+            self.pending = None;
+            return;
+        }
         crate::native_ui_probe::workspace::plan_source::cancel(self);
         if matches!(
             self.pending,
             Some(Pending::ChatStart | Pending::ChatRefresh)
         ) {
-            self.coordinator_chat.failed(error);
+            if matches!(self.pending, Some(Pending::ChatStart)) {
+                self.coordinator_chat.outcome_unknown(error);
+                self.workspace_next_refresh =
+                    Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+            } else {
+                self.coordinator_chat.failed(error);
+                self.workspace_next_refresh = None;
+            }
+            self.pending = None;
+            self.error = None;
+            return;
+        }
+        if matches!(self.pending, Some(Pending::Refresh)) && self.coordinator_chat.is_uncertain() {
+            self.pending = None;
+            self.workspace_next_refresh =
+                Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+            self.error = None;
+            return;
+        }
+        if matches!(self.pending, Some(Pending::ChatReset)) {
+            self.coordinator_chat.reset_failed();
+            self.pending = None;
+            self.error = Some(error);
+            return;
+        }
+        if matches!(
+            self.pending,
+            Some(Pending::OptimizeStart | Pending::OptimizeRefresh)
+        ) {
+            self.goal_optimizer.failed(error);
             self.pending = None;
             self.workspace_next_refresh = None;
             return;
@@ -58,5 +102,9 @@ impl Probe {
         self.pending = None;
         self.navigation_failed();
         self.error = Some(error);
+    }
+
+    pub(in crate::native_ui_probe) fn poll_succeeded(&mut self) {
+        self.background_poll_failures = 0;
     }
 }

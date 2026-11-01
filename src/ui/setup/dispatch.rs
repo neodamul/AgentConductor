@@ -8,7 +8,7 @@ impl Startup {
             return Err(crate::ui::messages::text("native.native_request_exceeds_128_kib").into());
         }
         let request: Request = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
-        if bytes.len() > 64 * 1024 && !matches!(&request, Request::Chat { .. }) {
+        if bytes.len() > 64 * 1024 {
             return Err(crate::ui::messages::text("native.native_request_exceeds_64_kib").into());
         }
         let mut saved = self
@@ -24,11 +24,14 @@ impl Startup {
         if let Request::CacheClear { digest } = &request {
             return self.clear_cache(&saved, Some(digest), 0);
         }
+        if let Request::Chat { revision, text } = &request {
+            return self.dispatch_chat(&mut saved, revision, text.clone());
+        }
         let metadata_job = self.metadata_tick(&mut saved)?;
         let job = self.job(&saved)?;
         self.settle(&mut saved, &job)?;
         if matches!(&request, Request::Snapshot { .. }) {
-            return self.snapshot_state(&saved, &job, &metadata_job, &request);
+            return self.snapshot_state(&mut saved, &job, &metadata_job, &request);
         }
         if let Request::BaselineStatus {} = request {
             return self.baseline_status(&saved);
@@ -86,6 +89,8 @@ impl Startup {
             | Request::McpDiscover { revision, .. }
             | Request::McpPreview { revision, .. }
             | Request::Chat { revision, .. }
+            | Request::ChatReset { revision }
+            | Request::OptimizeGoal { revision, .. }
             | Request::McpApply { revision, .. }
             | Request::Save { revision, .. }
             | Request::Quota { revision, .. }

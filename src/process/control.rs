@@ -12,7 +12,11 @@ pub(super) async fn control_io(
     input: tokio::process::ChildStdin,
     mut file: tokio::fs::File,
     initial: Vec<u8>,
-    (mut handler, evaluation_limit): (AsyncControlHandler, Duration),
+    (mut handler, evaluation_limit, mut outbound): (
+        AsyncControlHandler,
+        Duration,
+        Option<tokio::sync::mpsc::UnboundedReceiver<Vec<u8>>>,
+    ),
     cancelled: std::sync::Arc<std::sync::atomic::AtomicBool>,
     exited: std::sync::Arc<std::sync::atomic::AtomicBool>,
 ) -> Result<(), String> {
@@ -33,7 +37,21 @@ pub(super) async fn control_io(
     let mut pending = Vec::new();
     let mut bytes = [0; 8192];
     loop {
-        let n = output.read(&mut bytes).await.map_err(|e| e.to_string())?;
+        let n = tokio::select! {
+            n = output.read(&mut bytes) => n.map_err(|e| e.to_string())?,
+            Some(line) = async {
+                match outbound.as_mut() {
+                    Some(queue) => queue.recv().await,
+                    None => std::future::pending().await,
+                }
+            } => {
+                if let Some(stdin) = input.as_mut() {
+                    stdin.write_all(&line).await.map_err(|e| e.to_string())?;
+                    stdin.flush().await.map_err(|e| e.to_string())?;
+                }
+                continue;
+            }
+        };
         if n == 0 {
             if !pending.is_empty() || input.is_some() {
                 return Err(

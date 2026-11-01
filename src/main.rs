@@ -73,6 +73,9 @@ fn execute() -> Result<(), String> {
     // DD-135: a process started by an update waits for the one it replaced.
     agentconductor::update::after_restart();
     let args: Vec<_> = std::env::args().skip(1).collect();
+    if agentconductor::desktop::is_workspace_launch(&args) {
+        return agentconductor::desktop::launch_default();
+    }
     execute_args(&args)
 }
 
@@ -107,6 +110,8 @@ mod sessions_review;
 
 #[path = "commands/chat.rs"]
 mod chat_commands;
+#[path = "commands/io.rs"]
+mod io_commands;
 #[path = "commands/quota.rs"]
 mod quota_commands;
 
@@ -114,12 +119,20 @@ mod quota_commands;
 mod manual_commands;
 #[path = "commands/mcp.rs"]
 mod mcp_commands;
+#[path = "commands/optimize.rs"]
+mod optimize_commands;
 
 fn execute_args(args: &[String]) -> Result<(), String> {
+    if let Some(result) = io_commands::execute(args) {
+        return result;
+    }
     if let Some(result) = manual_commands::execute(args) {
         return result;
     }
     if let Some(result) = mcp_commands::execute(args) {
+        return result;
+    }
+    if let Some(result) = optimize_commands::execute(args) {
         return result;
     }
     if let Some(result) = chat_commands::execute(args) {

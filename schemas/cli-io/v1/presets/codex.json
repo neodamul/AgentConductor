@@ -1,0 +1,155 @@
+{
+  "schema": "acio.agent/1",
+  "preset": "codex",
+  "label": "Codex",
+  "capabilities": {
+    "read_only": true,
+    "workspace_write": true,
+    "streaming": false,
+    "resume": true,
+    "tools": true,
+    "response_schema": true,
+    "heartbeat_seconds": 60,
+    "languages": [
+      "ko",
+      "en"
+    ],
+    "task_types": [
+      "extract",
+      "summarize",
+      "analyze",
+      "code",
+      "agentic",
+      "creative"
+    ],
+    "control": {
+      "cancel": false,
+      "user_message": false,
+      "tool_decision": false
+    },
+    "task_defaults": {
+      "extract": {
+        "effort": "low"
+      },
+      "summarize": {
+        "effort": "medium"
+      },
+      "analyze": {
+        "effort": "medium"
+      },
+      "code": {
+        "effort": "high"
+      },
+      "agentic": {
+        "effort": "high"
+      },
+      "creative": {
+        "effort": "medium"
+      }
+    }
+  },
+  "invocation": {
+    "executable": "codex",
+    "input": "stdin",
+    "args": [
+      "exec",
+      "-",
+      "--json",
+      "--sandbox",
+      "workspace-write"
+    ],
+    "full_access": {
+      "mode": "replace_argv",
+      "argv": [
+        "exec",
+        "-",
+        "--json",
+        "--dangerously-bypass-approvals-and-sandbox"
+      ]
+    },
+    "session": {
+      "model_args": [
+        "--model",
+        "{model}"
+      ],
+      "model_aliases": [
+        "-m"
+      ],
+      "selectors": [
+        "--resume",
+        "--session",
+        "--continue",
+        "--last",
+        "-c"
+      ],
+      "resume": {
+        "mode": "replace_argv",
+        "argv": [
+          "exec",
+          "--sandbox",
+          "workspace-write",
+          "resume",
+          "{session_id}",
+          "-",
+          "--json"
+        ],
+        "full_access_argv": [
+          "exec",
+          "--dangerously-bypass-approvals-and-sandbox",
+          "resume",
+          "{session_id}",
+          "-",
+          "--json"
+        ],
+        "bare_argv": [
+          "exec",
+          "resume",
+          "{session_id}",
+          "-",
+          "--json"
+        ]
+      }
+    },
+    "options": {
+      "effort": {
+        "args": [
+          "-c",
+          "model_reasoning_effort=\"{value}\""
+        ],
+        "values": [
+          "low",
+          "medium",
+          "high"
+        ],
+        "default": "medium"
+      }
+    },
+    "response_schema": {
+      "file_args": [
+        "--output-schema",
+        "{schema_file}"
+      ]
+    },
+    "direct_folder": {
+      "after": "exec",
+      "args": [
+        "--skip-git-repo-check"
+      ],
+      "skip_if_present": [
+        "--skip-git-repo-check"
+      ],
+      "missing_anchor_message": "folder.codex_exec_required"
+    },
+    "control": {
+      "cancel": {
+        "mode": "signal"
+      },
+      "user_message": {
+        "encoding": "none"
+      },
+      "tool_decision": {
+        "encoding": "none"
+      }
+    }
+  }
+}

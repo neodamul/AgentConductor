@@ -1,3 +1,31 @@
+# [2026-10-29] verify | Full local Rust test suite — issue #9
+
+At source `355d6256d358533bfd182712ce1fa99d174b4aa4`, the complete locked/offline all-target test command exited 0 with no failures. Authenticated provider and exact packaged-binary tests remain gated by their declared prerequisites. Exact Windows package and three remaining packaged UI workflows are still pending. Evidence: `docs/evidence/issue9-full-suite-355d625-20261029.json`.
+
+# [2026-10-29] verify | Exact-current-head macOS package — issue #9
+
+Built the optimized Apple Silicon package from source `355d6256d358533bfd182712ce1fa99d174b4aa4`. Manifest, binary checksum, archive CRC, packaged help, bilingual manuals, license records, SBOM, and screenshot assets were verified. Archive SHA-256: `560e138b9ce2543157caed57fedda16e73fa92000295b96e16f2f26fba2cd73e`. GUI acceptance was not run and the package earns no workflow acceptance. Windows package and the full-suite exit code remain pending. Evidence: `docs/evidence/issue9-macos-package-355d625-20261029.json`.
+
+# [2026-10-29] verify | Exact macOS package for coordinator chat recovery — issue #9
+
+Built the optimized package locally from clean source `f83c5fb15fb088eebd2d622357d719c074da4572` with `cargo run --release --locked -- package-release`. The Apple Silicon archive manifest matches the source commit, its embedded binary SHA-256 matches `SHA256SUMS`, and the package contains English/Korean HTML manuals, license records, and SBOM. Archive SHA-256: `ba37d5215b584b0a776c2942045796dc3918a5b6b6e82b82d487c268e8997423`. `docs/07-implementation-plan.md` records evidence. Windows package recovery, full-suite verification, and #9 completion remain open. Graphify/CocoIndex status was not re-run for this package-only check.
+
+# [2026-10-29] superseded audit | ACIO worker integration — issue #9 / FR-179
+
+The earlier audit claiming the ACIO runtime was disconnected was stale and incorrect for the current branch. `src/workflow/execution/worker.rs` sends `acio.input/1` and routes opted-in profiles through `worker::acio::run`; `tests/acio_worker.rs` verifies structured input, session ownership, live events, human approval, and rejection of mismatched sessions. Plan section “Route opted-in ACIO profiles through the live worker” records the prior 1,083-test full-suite evidence and completion commit `447afce112c44e37e2de0fbacb8ebb6bc73eb0fc`. This correction adds no new implementation or package acceptance. Graphify was refreshed on 2026-10-29; CocoIndex CLI is unavailable in this environment.
+
+# [2026-10-29] plan/task/verify | Add Rust ACIO runtime and CLI conformance — issue #9
+
+Added the `io` CLI command family, ACIO describe/runtime and event decoding, plus ordered stdin control delivery through the existing split process runner. TDD exposed the absent protocol field and decoder mapping; a doc test caught the missing bilingual `io` command entries, and both Markdown/HTML manuals are now synchronized. Focused tests pass 38 across seven suites; full locked/offline verification passes 1,077 tests, 14 ignored, 344 suites; warning-denied Clippy, rustfmt, diff, and source/test layout pass. This does not increase packaged UI acceptance. AgentMemory: `mem_mvsdaubm_bb0d4f08eca7`.
+
+# [2026-10-28] task/verify | Retry Windows tool-decision activation across live snapshot updates — issue #9
+
+Run `40675926557` passed Windows platform validation and the exact macOS package, then failed workflow 23 in the Windows package: the Refresh UIA/pointer interaction did not expose the confirmation before the live snapshot disabled controls. Added a red/green driver contract and bounded activation retries that reacquire a fresh enabled control before each attempt. `windows_tool_decision_dispatch` passes 10/10; formatting, diff, and 300-line checks pass (230- and 184-line files). Commit `b8a95ee6` is local only. The exact Windows package rerun must verify refresh/allow/deny receipts and mock effects; workflow 23 remains uncredited at 22/25. AgentMemory: `mem_mvs1z1ve_dfd428b84d7a`.
+
+# [2026-10-28] verify | Exact Windows package recheck of tool-request refresh — issue #9 / workflow 23
+
+Run `40675926557` passed both platform-validation jobs and the exact macOS package. The Windows release package built and rendered its bilingual manual; briefing (1/1), desktop (1/1), schedule (3/3), and signal-settings (1/1) passed. `windows_tool_decision` failed: UI Automation Invoke showed no state change, checked pointer input did not open `Confirm tool decision`, and the app then exposed disabled tool controls while the Agent Room showed `Running`. Candidate-review workflow 24 was absent from this tested head. The packaged Windows artifact is `12813540926`. Workflow 23 remains uncredited at 22/25 until the driver/product transition is fixed and the exact package passes. AgentMemory: `mem_mvs1tvqj_3cca76988685`.
+
 # [2026-10-27] task/verify | Stabilize the packaged Windows Team Briefing input — issue #9
 
 Exact-head run `40455732953` passed both platform validation jobs and the macOS package. The Windows package failed in `windows_briefing` before the signal-settings test ran: UIA `InvokePattern.Invoke()` returned `Unrecognized error`, and the fallback click did not open the menu. The same briefing test passed in exact package run `40431084361`, showing an intermittent driver issue. Failure artifact `12713663734`, archive SHA-256 `b6fa9d9ada4cb9229293f822dc345d6fe19cc495a280cd8661b81d18cbe48a1c`; evidence: `docs/evidence/issue9-windows-briefing-404557-failure-20261027.json`.
@@ -1723,3 +1751,55 @@ Run `40496851499` validated macOS/Windows and packaged the exact macOS/Windows b
 ## 2026-10-27 — Windows signal-settings activation follow-up — issue #9 / UC-121
 
 Run `40504210152` showed that clicking the Settings menu action did not open its destination dialog. Commit `de1b5bff` adds guarded same-process UIA keyboard activation and waits for the expected destination control before pointer fallback. Six local suites pass 27 tests; warning-denied Clippy, rustfmt, diff checks, and the 300-line limit pass. Workflow `40512063929` passed both platform validation jobs and the exact macOS package (artifact `12740230574`, SHA-256 `730d336f344e98c3c9ed41ebf86cb94c9ef6db1396b1efbebf6f1382b818d657`); Windows packaging and settings persistence are pending. Acceptance stays 22/25. AgentMemory: `mem_mvqpxisw_448c8c55e047`.
+# [2026-10-28] task/verify | Add the packaged candidate-review journey — issue #9
+
+Added the exact Windows package UI journey for reviewing a candidate SHA, the actual `+implemented` diff line, and test output, then separately approving+merging or rejecting it. The source-contract regression first failed because the workflow did not run this test; it passes after the package command was wired. A second red/green assertion now requires the visible diff content, and the driver reads UIA TextPattern as a multiline fallback. The architecture trace uses the human-review requirements and keeps the separate cross-platform package trace in context. Local contract/layout checks pass 4/4, formatting and diff checks pass, and files remain under 300 lines. Commits `4abf408`, `a4aba2a`, and `5e0a554` are local; the current in-flight package run tests the prior head, so workflow 24 remains uncredited pending a new exact Windows package run. AgentMemory: `mem_mvs14hut_5804924e6b2c`, `mem_mvs1c1r3_aca0fdfa4dff`, `mem_mvs1f28w_b4d93ff3a0a6`, `mem_mvs1k5mx_98d3bae72d3e`.
+
+
+## 2026-10-28 — Exact Windows package compile failure in candidate review
+
+Run `40683626949` checked out exact PR head `829e58ee`. Windows validation failed before package execution because `tests/windows_candidate_review.rs` treated `Repository::clean()` as a boolean twice; the method returns `Result<(), String>` and enforces the clean-state invariant itself. The two assertions now call `git.clean().unwrap()` directly. Focused local source-contract and layout checks pass 4/4; rustfmt, diff check, and the 300-line limit pass. Windows candidate review remains unverified and workflow 24 receives no credit until a new exact-head package run passes. AgentMemory: `mem_mvs2e2aa_e8bf2c3e0c6b`.
+
+## 2026-10-29 — Live ACIO worker integration — issue #9
+
+TDD wired only profiles that opt into protocol ACIO through the live Rust worker. A deterministic worker regression first failed because the old plain-text stdin path did not provide ACIO input and tool requests never reached the approval ledger. The worker now sends schema-validated structured task/workspace input with a host-owned session ID, consumes ordered events through the existing process observer, persists session/results, resumes only established sessions, and sends decision-required tools through the existing exact human approval ledger. An unanswered request remains pending and does not grant permission. A live session mismatch is rejected before any tool approval receipt can be created. Added the optional bounded session ID to the input schema and documented the assignment/echo contract. Focused ACIO tests passed 17/17; the full offline all-target suite passed 1,083 tests, 14 ignored, across 345 suites; warning-denied Clippy, rustfmt, diff checks, and the 300-line guard passed.
+
+Commit 447afce112c44e37e2de0fbacb8ebb6bc73eb0fc was pushed to PR #22. AgentMemory: mem_mvsg09ok_a99229b36e7b. This source integration earns no packaged UI acceptance credit. Packaged UI acceptance remains 22/25, shipped/default Rust UI remains 0/25, aggregate 22/50.
+
+## 2026-10-29 — Windows approval review transition — issue #9 / workflow 24
+
+Run 40736018268 on issue #221 exposed the existing #9 Windows candidate-review journey gap: after approval, the driver waited for the merge control without opening Review changes. A source-contract regression failed first, then passed after adding the missing UI step. Commit 447afce112c44e37e2de0fbacb8ebb6bc73eb0fc fixes the transition, and docs head b512639face151dfbbe2e4e6192e2018af8b40a1 is pushed. Exact Windows packaged verification for that head is pending; do not credit workflow 24. CocoIndex is not installed in this environment; Graphify's local AST graph was refreshed to 10,948 nodes, 16,648 edges, and 806 communities.
+
+## 2026-10-29 — Bounded Windows briefing activation retry — issue #9
+
+Run `40741509631` failed in `windows_briefing` before candidate review: UIA Invoke returned `Unrecognized error`; the checked pointer fallback returned success but did not open the briefing or enter pending state. Added a red/green contract requiring observable state checks and a maximum of three attempts. Each retry reacquires the button and revalidates its bounds and same-process target; retries stop when the request is pending or the briefing menu appears. Local contract/layout tests pass 3/3, formatting, diff, and 300-line checks pass. The exact packaged Windows rerun remains required; acceptance stays 22/25, shipped Rust UI 0/25, aggregate 22/50.
+
+## 2026-10-29 — Candidate confirmation outside main-window bounds — issue #9
+
+Run `40745298702` reached the Windows candidate flow after briefing passed, then failed because the `Confirm candidate decision` button's UIA bounds fell outside the main-window rectangle. Added a red/green regression and removed that overly strict containment check. The driver still rejects empty/offscreen controls and checks foreground/point ownership against the exact app process before sending input. The focused candidate-driver, briefing-driver, and source-layout suites pass 9 tests, with formatting, diff, and 300-line checks clean. Exact packaged approve/merge/reject verification remains open; acceptance stays 22/25, 0/25 shipped Rust replacement, 22/50 aggregate.
+## 2026-10-29 — Native Rust scheduled-poll behavior — issue #221
+
+The Rust port keeps existing scheduled Agent Room reads quiet, leaves initial and explicit operation failures visible, discards stale background task-detail replies, and rebases a delayed poll from the current monotonic time without adding an idle Workspace poll. Its non-conflicting trace is R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198. Post-rebase focused tests pass (poll 4/4, native probe 13/13, source layout 2/2), with format/diff checks passing. PR #228 remains draft/open while exact package validation is rerun on the latest base. AgentMemory: `mem_mvsdzhk9_4842d473a9a6`.
+
+## 2026-10-29 — Local macOS release package at Rust head 79fdea8 — issue #9
+
+Built the exact arm64 package from `79fdea8a` with the offline bilingual manuals, SBOM, and dependency-license notices. All 486 ZIP entries pass CRC; manifest source and binary hash match; packaged CLI help and `Info.plist` lint pass. Archive SHA-256: `2bcf911eeaa7cff4a5cbc8700fe9db98765b63408b08ee7696b57ecc1dd58e20`; binary SHA-256: `862ab066bb69193127c2c745289cdf8a61c85a9894931cc13a429efae724fb7a`. Evidence: `docs/evidence/issue9-macos-local-package-79fdea8-20261029.json`. No GUI launch, screenshot, real coordinator invocation, or Windows exact-head package journey is claimed; acceptance remains 22/25 packaged, 0/25 shipped Rust replacements, 22/50 aggregate.
+
+## 2026-10-29 — Reconcile issue #221 with current Rust base
+
+Updated the existing Rust issue branch to current #9 commit `f83c5fb1` in the designated worktree. Merge exposed a deferred-receipt polling regression: background refresh remained paused from snapshot state after the operator had deferred the decision. The regression failed before removing that stale snapshot check and passes when only live confirmation/modal state gates polling. The split poll receiver now routes all settings-owned pending states through the current `handled_by_settings` predicate; Room refresh helpers moved to `room/polling.rs` to meet the 300-line source limit. Local verification passes: source layout 2/2, native room poll 2/2, native probe 13/13, tool dialog 4/4, warning-denied all-target Clippy, rustfmt, and diff hygiene. The old CI's 317-line `room.rs` failure was from the stale merge base; the current merged file is 256 lines. Exact macOS/Windows package verification and PR #228 merge remain open.
+
+## 2026-10-29 — Correct synchronized chat reset expectation — Rust PR #228
+
+Exact-head run `40882128427` failed macOS native tests because `native_workspace_chat_reset` expected an unmarked operator turn after the synchronized #9 UI had changed to terminal-style `> ` / `< ` markers. Reproduced the failure locally, corrected the expected rendered text, and verified the test target 2/2, warning-denied all-target Clippy, and formatting. A local all-target run is not green: parallel execution exposed two timing-sensitive UI tests (each passes alone); the single-thread run passed 331 tests across 77 suites and then stalled in `io_conformance`, so it was interrupted. Exact cross-platform validation must rerun on the corrected head before PR #228 can merge.
+
+## 2026-10-29 — Complete Rust issue #221 integration
+
+Corrected head `3d6fd707` passed exact run `40885718536` on macOS and Windows, including native package execution and the packaged Windows default-desktop UI checks. PR #228 was squash-merged into `codex/issue-9-native-ui-parity` as `f833e522`; issue #221 is closed. Local focused verification passes for the chat reset target (2/2), source layout (2/2), warning-denied all-target Clippy, rustfmt, and diff checks. The local full all-target test remains incomplete because `io_conformance` stalled after 331 passing tests / 3 ignored across 77 suites. AgentMemory: test correction `mem_mvtlpu05_1858a756874e`; completion `mem_mvtnoi50_a12ac3ad56b8`.
+## 2026-10-29 — Coordinator format correction retry — GitHub #235 / issue #9
+
+Ported the bounded JSON-format correction behavior with a deterministic local CLI. The first malformed response is preserved in `process-format-1`; exactly one retry includes the parse reason, and a second malformed response fails after exactly two process runs. Timeout, stop, capacity, and provider-error handling remain on existing paths. Focused tests pass 28/28 across seven targets; `cargo fmt --check`, `git diff --check`, and warning-denied all-target Clippy pass. The full locked/offline all-target suite also exits successfully at `09fa3482`; exact package checks remain open and are not credited by this unit. AgentMemory: `mem_mvte7n6u_cb7a6e81ae87`.
+
+## 2026-10-29 — Exact macOS package at Rust head 87239f6 — issue #9
+
+Built `87239f6a68e5b7e4ccc3efc8c0efffc5d11b1407` with the offline Rust release package command. The manifest source SHA and binary SHA match; full ZIP CRC and packaged `--help` pass. Archive SHA-256 `f2200d0db44d6e926505ef0ce806cc936d4bb65644863fee00194d688d03dcc4`; binary SHA-256 `081136f7ab226b91373ee196150b0923f86e11ad210db603eb7c51103566888b`. Evidence: `docs/evidence/issue9-macos-package-87239f6-20261029.json`. No GUI launch/screenshot, Windows package, or UI acceptance credit. AgentMemory: `mem_mvtf3c2h_1057064c096e`.

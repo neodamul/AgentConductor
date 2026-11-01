@@ -2,6 +2,7 @@ pub const SCRIPT: &str = r#"
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName UIAutomationClient
 Add-Type -AssemblyName UIAutomationTypes
+Add-Type -AssemblyName WindowsBase
 $A = [System.Windows.Automation.AutomationElement]
 $T = [System.Windows.Automation.TreeScope]
 $C = [System.Windows.Automation.Condition]::TrueCondition
@@ -16,9 +17,56 @@ while (-not $window -and (Get-Date) -lt $deadline) {
 }
 if (-not $window) { Write-Output 'NO_WINDOW'; exit 2 }
 function Find-Button($name) {
-  $script:window.FindAll($T::Descendants, $C) | Where-Object {
-    $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button'
-  } | Select-Object -First 1
+  foreach ($window in $A::RootElement.FindAll($T::Children, $C) | Where-Object {
+    $_.Current.ProcessId -eq $targetPid
+  }) {
+    $button = $window.FindAll($T::Descendants, $C) | Where-Object {
+      $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button'
+    } | Select-Object -First 1
+    if ($button) { $script:window = $window; return $button }
+  }
+  return $null
+}
+function Find-ModalButton($name) {
+  foreach ($modal in $script:window.FindAll($T::Descendants, $C) | Where-Object {
+    $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Window'
+  }) {
+    $buttons = @($modal.FindAll($T::Descendants, $C) | Where-Object {
+      $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button'
+    })
+    if ($buttons | Where-Object { $_.Current.Name -eq 'Decide later' }) {
+      $target = $buttons | Where-Object { $_.Current.Name -eq $name } | Select-Object -First 1
+      if ($target) { return $target }
+    }
+  }
+  return $null
+}
+function Find-CurrentButton($name) {
+  $modalButton = Find-ModalButton $name
+  if ($modalButton) { return $modalButton }
+  return Find-Button $name
+}
+function Wait-EnabledButton($name) {
+  $until = (Get-Date).AddSeconds(20)
+  while ((Get-Date) -lt $until) {
+    $button = Find-CurrentButton $name
+    if ($button -and $button.Current.IsEnabled) { return $button }
+    Start-Sleep -Milliseconds 100
+  }
+  $button = Find-CurrentButton $name
+  $enabled = if ($button) { $button.Current.IsEnabled } else { 'missing' }
+  throw "ACTION_BUTTON_NOT_ENABLED: name=$name enabled=$enabled"
+}
+function PointHitsButton($x, $y, $name) {
+  $point = [System.Windows.Point]::new([double]$x, [double]$y)
+  $element = $A::FromPoint($point)
+  $walker = [System.Windows.Automation.TreeWalker]::ControlViewWalker
+  for ($depth = 0; $element -and $depth -lt 8; $depth++) {
+    if ($element.Current.ProcessId -ne $targetPid) { return $false }
+    if ($element.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' -and $element.Current.Name -eq $name) { return $true }
+    $element = $walker.GetParent($element)
+  }
+  return $false
 }
 function Ensure-ButtonInsideWindow($name) {
   $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
@@ -29,7 +77,7 @@ function Ensure-ButtonInsideWindow($name) {
     $script:window = $A::RootElement.FindAll($T::Children, $C) | Where-Object {
       $_.Current.ProcessId -eq $targetPid -and $_.Current.Name -like 'AgentConductor*'
     } | Select-Object -First 1
-    $button = Find-Button $name
+    $button = Find-CurrentButton $name
     if (-not $button) { throw "ACTION_BUTTON_DISAPPEARED: $name" }
     $bounds = $button.Current.BoundingRectangle
     $windowBounds = $script:window.Current.BoundingRectangle
@@ -56,6 +104,10 @@ using System;
 using System.Runtime.InteropServices;
 public static class ToolDecisionMouse {
   [StructLayout(LayoutKind.Sequential)] struct Point { public int x, y; }
+  [StructLayout(LayoutKind.Sequential)] struct MouseInput { public int x, y; public uint data, flags, time; public IntPtr extraInfo; }
+  [StructLayout(LayoutKind.Sequential)] struct KeyboardInput { public ushort virtualKey, scan; public uint flags, time; public IntPtr extraInfo; }
+  [StructLayout(LayoutKind.Explicit)] struct InputPayload { [FieldOffset(0)] public MouseInput mouse; [FieldOffset(0)] public KeyboardInput keyboard; }
+  [StructLayout(LayoutKind.Sequential)] struct Input { public uint type; public InputPayload payload; }
   [DllImport("user32.dll")] static extern bool ShowWindow(IntPtr window, int command);
   [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
   [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
@@ -63,6 +115,7 @@ public static class ToolDecisionMouse {
   [DllImport("user32.dll")] static extern IntPtr WindowFromPoint(Point point);
   [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
   [DllImport("user32.dll")] static extern void mouse_event(uint flags, uint dx, uint dy, uint data, UIntPtr extra);
+  [DllImport("user32.dll", SetLastError=true)] static extern uint SendInput(uint count, Input[] inputs, int size);
   public static uint ProcessAt(int x, int y) {
     uint processId;
     GetWindowThreadProcessId(WindowFromPoint(new Point { x = x, y = y }), out processId);
@@ -93,35 +146,99 @@ public static class ToolDecisionMouse {
     while (DateTime.UtcNow < deadline && !ForegroundBelongsTo(expectedPid)) System.Threading.Thread.Sleep(50);
     return ForegroundBelongsTo(expectedPid);
   }
+  public static string Key(ushort key) {
+    var size = Marshal.SizeOf(typeof(Input));
+    var down = new Input { type = 1, payload = new InputPayload { keyboard = new KeyboardInput { virtualKey = key } } };
+    var up = new Input { type = 1, payload = new InputPayload { keyboard = new KeyboardInput { virtualKey = key, flags = 2 } } };
+    if (SendInput(1, new[] { down }, size) != 1) return "SEND_INPUT_KEY_DOWN_FAILED: error=" + Marshal.GetLastWin32Error();
+    System.Threading.Thread.Sleep(50);
+    if (SendInput(1, new[] { up }, size) != 1) return "SEND_INPUT_KEY_UP_FAILED: error=" + Marshal.GetLastWin32Error();
+    return "";
+  }
   public static string Click(IntPtr window, int x, int y, uint expectedPid) {
     if (!Focus(window, expectedPid)) return "FOREGROUND_NOT_OWNED: pid=" + ForegroundProcessId() + " hwnd=" + window;
     var pointProcessId = ProcessAt(x, y);
     if (pointProcessId != expectedPid) return "POINT_NOT_OWNED: pid=" + pointProcessId + " expected=" + expectedPid + " x=" + x + " y=" + y;
-    if (!SetCursorPos(x, y)) return "CURSOR_POSITION_FAILED: error=" + Marshal.GetLastWin32Error() + " x=" + x + " y=" + y;
-    mouse_event(0x0001, 0, 0, 0, UIntPtr.Zero);
+    if (!SetCursorPos(x - 1, y)) return "CURSOR_POSITION_FAILED: error=" + Marshal.GetLastWin32Error() + " x=" + x + " y=" + y;
+    mouse_event(0x0001, 1, 0, 0, UIntPtr.Zero);
     System.Threading.Thread.Sleep(100);
+    pointProcessId = ProcessAt(x, y);
+    if (pointProcessId != expectedPid) return "POINT_NOT_OWNED_AFTER_CURSOR_MOVE: pid=" + pointProcessId + " expected=" + expectedPid + " x=" + x + " y=" + y;
+    var size = Marshal.SizeOf(typeof(Input));
+    var down = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 2 } } };
+    var up = new Input { payload = new InputPayload { mouse = new MouseInput { flags = 4 } } };
+    if (SendInput(1, new[] { down }, size) != 1) return "SEND_INPUT_DOWN_FAILED: error=" + Marshal.GetLastWin32Error();
+    System.Threading.Thread.Sleep(80);
     if (!ForegroundBelongsTo(expectedPid)) return "FOREGROUND_CHANGED: pid=" + ForegroundProcessId() + " expected=" + expectedPid;
-    mouse_event(0x0002, 0, 0, 0, UIntPtr.Zero);
-    System.Threading.Thread.Sleep(100);
-    mouse_event(0x0004, 0, 0, 0, UIntPtr.Zero);
+    if (SendInput(1, new[] { up }, size) != 1) return "SEND_INPUT_UP_FAILED: error=" + Marshal.GetLastWin32Error();
     return "";
   }
 }
 "@
 function Activate($button, $expected, $visible) {
-  try { $button.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke() } catch {}
-  $until = (Get-Date).AddSeconds(2)
-  while ((Get-Date) -lt $until) {
+  $name = $button.Current.Name
+  $invokeError = $null
+  for ($attempt = 0; $attempt -lt 3; $attempt++) {
+    $button = Wait-EnabledButton $name
+    if ($attempt -eq 0) {
+      try { $button.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke() }
+      catch { $invokeError = $_.Exception.Message }
+      $until = (Get-Date).AddMilliseconds(300)
+      while ((Get-Date) -lt $until) {
+        if (($null -ne (Find-Button $expected)) -eq $visible) {
+          Write-Output "ACTION_STATE_CONFIRMED_AFTER_UIA: expected=$expected visible=$visible"
+          return
+        }
+        Start-Sleep -Milliseconds 50
+      }
+      Write-Output "ACTION_INVOKE_NO_STATE_CHANGE: name=$name expected=$expected visible=$visible invokeError=$invokeError"
+      try {
+        $button = Find-CurrentButton $name
+        $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
+        if ([ToolDecisionMouse]::Focus($hwnd, [uint32]$targetPid)) { $button.SetFocus() }
+        $focused = $A::FocusedElement
+        if ($focused.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $focused.Current.Name -eq $name -and $focused.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' -and $focused.Current.IsEnabled) {
+          $keyFailure = [ToolDecisionMouse]::Key(0x0D)
+          if ($keyFailure) { throw $keyFailure }
+          $until = (Get-Date).AddMilliseconds(500)
+          while ((Get-Date) -lt $until) {
+            if (($null -ne (Find-Button $expected)) -eq $visible) {
+              Write-Output "ACTION_STATE_CONFIRMED_AFTER_KEYBOARD: expected=$expected visible=$visible"
+              return
+            }
+            Start-Sleep -Milliseconds 50
+          }
+          Write-Output "ACTION_KEYBOARD_NO_STATE_CHANGE: name=$name expected=$expected visible=$visible"
+        } else {
+          Write-Output "ACTION_KEYBOARD_TARGET_NOT_FOCUSED: name=$name focused=$($focused.Current.Name) pid=$($focused.Current.ProcessId)"
+        }
+      } catch { Write-Output "ACTION_KEYBOARD_FALLBACK_UNAVAILABLE: $_" }
+    }
+    $button = Ensure-ButtonInsideWindow $name
+    $button = Wait-EnabledButton $name
     if (($null -ne (Find-Button $expected)) -eq $visible) { return }
-    Start-Sleep -Milliseconds 100
+    $point = $button.GetClickablePoint()
+    $x = [int][Math]::Round($point.X)
+    $y = [int][Math]::Round($point.Y)
+    if (-not (PointHitsButton $x $y $name)) {
+      Write-Output "POINTER_NOT_ON_TARGET_BUTTON: name=$name x=$x y=$y"
+      continue
+    }
+    $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
+    $clickFailure = [ToolDecisionMouse]::Click($hwnd, $x, $y, [uint32]$targetPid)
+    if ($clickFailure) { throw "CHECKED_POINTER_CLICK_FAILED: $clickFailure" }
+    Write-Output "ACTION_POINTER_CLICKED: name=$name x=$x y=$y attempt=$attempt"
+    $until = (Get-Date).AddMilliseconds(500)
+    while ((Get-Date) -lt $until) {
+      if (($null -ne (Find-Button $expected)) -eq $visible) {
+        Write-Output "ACTION_STATE_CONFIRMED_AFTER_POINTER: expected=$expected visible=$visible"
+        return
+      }
+      Start-Sleep -Milliseconds 50
+    }
+    if ($attempt -lt 2) { Write-Output "ACTION_RETRYING_AFTER_NO_STATE_CHANGE: name=$name" }
   }
-  $button = Ensure-ButtonInsideWindow $button.Current.Name
-  $bounds = $button.Current.BoundingRectangle
-  $x = [int]($bounds.Left + $bounds.Width / 2)
-  $y = [int]($bounds.Top + $bounds.Height / 2)
-  $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
-  $clickFailure = [ToolDecisionMouse]::Click($hwnd, $x, $y, [uint32]$targetPid)
-  if ($clickFailure) { throw "CHECKED_POINTER_CLICK_FAILED: $clickFailure" }
+  throw "ACTION_STATE_NOT_VISIBLE_AFTER_POINTER: expected=$expected visible=$visible"
 }
 $id = $env:AC_TOOL_REQUEST_ID
 $action = $env:AC_TOOL_ACTION
@@ -132,9 +249,19 @@ $verb = switch ($action) {
   default { Write-Output "INVALID_ACTION: $action"; exit 3 }
 }
 $actionName = "$verb tool request $id"
-$button = $null
-while (-not $button -and (Get-Date) -lt $deadline) {
+if ($action -eq 'refresh') {
+  $later = Find-ModalButton 'Decide later'
+  if ($later) { Activate $later 'Decide later' $false }
   $button = Find-Button $actionName
+} else {
+  $button = Find-ModalButton $actionName
+}
+while (-not $button -and (Get-Date) -lt $deadline) {
+  if ($action -eq 'refresh') {
+    $button = Find-Button $actionName
+  } else {
+    $button = Find-ModalButton $actionName
+  }
   if (-not $button) { Start-Sleep -Milliseconds 200 }
 }
 if (-not $button) { Write-Output "NO_ACTION_BUTTON: $actionName"; Dump-Controls; exit 4 }

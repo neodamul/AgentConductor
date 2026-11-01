@@ -1,2 +1,4 @@
 # Preserve reviewed upstream notice bytes and their source digests.
 licenses/upstream/**/LICENSE* -text
+# Keep the vendored prompt-optimizer skill byte-identical to its source hashes.
+third_party/prompt-optimizer/** -text

@@ -93,19 +93,43 @@ if ($load.Current.IsOffscreen -or $bounds.Left -lt $windowBounds.Left -or $bound
 $x = [int]($bounds.Left + $bounds.Width / 2); $y = [int]($bounds.Top + $bounds.Height / 2)
 $targetPid = [BriefingMouse]::ProcessAt($x, $y)
 if ($targetPid -ne $expectedPid) { Write-Output "BRIEFING_TARGET_PROCESS_MISMATCH; expected=$expectedPid; target=$targetPid; point=$x,$y"; exit 10 }
+function Wait-BriefingChange {
+  $stateDeadline = (Get-Date).AddSeconds(2)
+  while ((Get-Date) -lt $stateDeadline) {
+    if (Find-Button 'Team briefing · read-only') { return 'ready' }
+    $action = Find-Button 'Load read-only team briefing'
+    if (-not $action -or -not $action.Current.IsEnabled) { return 'pending' }
+    Start-Sleep -Milliseconds 100
+  }
+  return 'unchanged'
+}
 $invoked = $false
 try { $load.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke(); $invoked = $true } catch { Write-Output "BRIEFING_UIA_INVOKE_FAILED; $($_.Exception.Message)" }
-$menu = $null
-if ($invoked) {
-  $invokeDeadline = (Get-Date).AddSeconds(2)
-  while (-not $menu -and (Get-Date) -lt $invokeDeadline) {
-    $menu = Find-Button 'Team briefing · read-only'
-    if (-not $menu) { Start-Sleep -Milliseconds 100 }
+$activationState = if ($invoked) { Wait-BriefingChange } else { 'unchanged' }
+$menu = Find-Button 'Team briefing · read-only'
+for ($attempt = 1; $attempt -le 3; $attempt++) {
+  if ($menu -or $activationState -eq 'pending') { break }
+  $load = Find-Button 'Load read-only team briefing'
+  if (-not $load -or -not $load.Current.IsEnabled) { $activationState = 'pending'; break }
+  $bounds = $load.Current.BoundingRectangle
+  $windowBounds = $window.Current.BoundingRectangle
+  if ($load.Current.IsOffscreen -or $bounds.Left -lt $windowBounds.Left -or $bounds.Top -lt $windowBounds.Top -or $bounds.Right -gt $windowBounds.Right -or $bounds.Bottom -gt $windowBounds.Bottom) {
+    Write-Output "BRIEFING_BUTTON_OUTSIDE_WINDOW; button=$bounds; window=$windowBounds; offscreen=$($load.Current.IsOffscreen)"
+    exit 9
   }
+  $x = [int]($bounds.Left + $bounds.Width / 2); $y = [int]($bounds.Top + $bounds.Height / 2)
+  $targetPid = [BriefingMouse]::ProcessAt($x, $y)
+  if ($targetPid -ne $expectedPid) { Write-Output "BRIEFING_TARGET_PROCESS_MISMATCH; expected=$expectedPid; target=$targetPid; point=$x,$y"; exit 10 }
+  if (-not [BriefingMouse]::Click($hwnd, $x, $y, $expectedPid)) {
+    Write-Output 'WINDOW_FOREGROUND_FAILED_BEFORE_BRIEFING_CLICK'
+    exit 6
+  }
+  $activationState = Wait-BriefingChange
+  $menu = Find-Button 'Team briefing · read-only'
 }
-if (-not $menu -and -not [BriefingMouse]::Click($hwnd, $x, $y, $expectedPid)) {
-  Write-Output 'WINDOW_FOREGROUND_FAILED_BEFORE_BRIEFING_CLICK'
-  exit 6
+if (-not $menu -and $activationState -eq 'unchanged') {
+  Write-Output 'BRIEFING_ACTION_NO_STATE_CHANGE; attempts=3'
+  exit 11
 }
 while (-not $menu -and (Get-Date) -lt $deadline) {
   $menu = Find-Button 'Team briefing · read-only'

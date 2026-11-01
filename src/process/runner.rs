@@ -22,6 +22,7 @@ pub(super) async fn run_with_control(
     stop_file: Option<PathBuf>,
     control: Option<(AsyncControlHandler, Duration)>,
     paused: Option<std::sync::Arc<std::sync::atomic::AtomicBool>>,
+    outbound: Option<tokio::sync::mpsc::UnboundedReceiver<Vec<u8>>>,
 ) -> Result<ProcessResult, String> {
     use std::process::Stdio;
     use tokio::{fs::File, io::AsyncWriteExt, process::Command};
@@ -130,7 +131,7 @@ pub(super) async fn run_with_control(
                     input,
                     out_file,
                     spec.input,
-                    (handler, limit),
+                    (handler, limit, outbound),
                     control_cancel,
                     control_exit,
                 )

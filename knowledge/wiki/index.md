@@ -11,6 +11,7 @@
 - [CLI protocols](cli-protocols.md): headless commands, parsing, resume contracts.
 - [Custom CLI JSONL normalization](custom-cli-jsonl-normalization.md): profile-declared event names and session identifiers.
 - [Custom CLI profiles](custom-cli-profiles.md): declarative model catalogs, execution arguments, result events, JSONL mappings, and bounded normalized quota commands.
+- [Task types and effort resolution](task-type-effort-resolution.md): optional task categories, bounded model-specific effort defaults, and remaining FR-172 porting work.
 - [License review](license-review.md): preliminary internal-distribution review.
 - [Progress log](log.md): research and development records.
 - [Research observations](../raw/2026-10-09-research.md): dates, revisions, tools.
@@ -28,6 +29,7 @@
 - [Live intermediate task reports](live-progress.md): bounded spool observation, per-attempt evidence and SQLite concurrency lesson.
 
 - [Planning retry timeout](planning-retry-timeout.md): one timeout bound and actionable recovery during delayed plan startup.
+- [Packaged Rust candidate review](native-candidate-review.md): exact diff/test/SHA inspection and confirmed approve/reject/merge UI journey.
 - [Planning overlap repair](planning-overlap-repair.md): keep scope validation and allow one bounded coordinator correction for overlapping phase paths.
 - [Coordinator failed-task triage](coordinator-failed-task-triage.md): bounded task repair plus quota-aware manual review through registered coordinator fallbacks.
 - [SQLite writer contention](sqlite-writer-contention.md): bounded busy-timeout behavior for parallel task-state writes.
@@ -127,6 +129,7 @@
 - [Native window ownership](native-window-ownership.md)
 
 - [Native Rust UI migration](native-rust-ui-migration.md): Rust UI prototype, snapshot integration boundary, diff/test evidence, migration gates, and remaining production parity.
+- [Native goal optimization](native-goal-optimization.md): bounded read-only coordinator request, explicit native proposal review, snapshot compatibility and package evidence boundary.
 - [Native screenshot provenance](native-screenshot-provenance.md): distinguish rendered-image evidence from filenames and retain the exact-build capture gate.
 
 - [Fresh project settings](fresh-project-settings.md)
@@ -180,3 +183,5 @@
 - [UTM Windows guest access](utm-windows-guest-access.md): post-reset guest-agent evidence, user-session drive-mapping limits, and the remaining Windows validation gate.
 
 - [Current local verification](current-verification.md): full locked/offline Rust test results, exact macOS bundle checks, and unresolved package/Windows gates.
+- [Native UI poll timeouts](native-ui-poll-timeouts.md): Rust worker request semantics, background error policy, resumed repaint scheduling, and the explicit distinction from JavaScript client-timeout diagnostics.
+- [Coordinator format correction retry](coordinator-format-retry.md): a single bounded JSON-format retry with retained first-attempt logs and deterministic local CLI tests.

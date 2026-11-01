@@ -1,4 +1,4 @@
-use crate::plan::{Plan, Task, WorkspaceMode};
+use crate::plan::{AgentProfile, Plan, Task, WorkspaceMode};
 use eframe::egui::{self, Ui};
 use serde_json::Value;
 
@@ -115,10 +115,18 @@ pub fn controls_in_language(
         .as_array()
         .cloned()
         .unwrap_or_default();
+    let profiles: Vec<AgentProfile> =
+        serde_json::from_value(serde_json::Value::Array(agents.clone())).unwrap_or_default();
+    let typed_tasks: Vec<Task> =
+        serde_json::from_value(serde_json::Value::Array(draft.tasks.clone())).unwrap_or_default();
+    let task_profiles = crate::task_profile::summaries(&profiles, &typed_tasks);
     let mut remove = None;
     let can_remove = draft.tasks.len() > 1;
     for (index, task) in draft.tasks.iter_mut().enumerate() {
-        if task_card::show(ui, index, task, can_remove, &agents, language) {
+        let task_profile = task_profiles
+            .iter()
+            .find(|value| value["task_id"] == task["id"]);
+        if task_card::show(ui, index, task, task_profile, can_remove, &agents, language) {
             remove = Some(index);
         }
     }

@@ -16,7 +16,6 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
         let root = std::path::Path::new(root);
         let input_name = format!("chat-input-{id}.json");
         let bytes = agentconductor::mcp::load(&root.join("mcp").join(&input_name))?;
-        let _ = std::fs::remove_file(root.join("mcp").join(&input_name));
         let input: serde_json::Value =
             serde_json::from_slice(&bytes).map_err(|_| "invalid chat input")?;
         let turns: Vec<agentconductor::chat::Turn> =
@@ -41,12 +40,13 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
             .build()
             .map_err(|error| error.to_string())?;
         let run_dir = root.join(format!("chat-run-{id}"));
-        let answer = runtime.block_on(agentconductor::chat::ask(
+        let answer = runtime.block_on(agentconductor::chat::ask_in(
             profile,
             &project,
             &run_dir,
             &turns,
             input["language"].as_str().unwrap_or("English"),
+            input["workspace"].as_str().unwrap_or(""),
         ));
         let answer = match answer {
             Ok(answer) => {

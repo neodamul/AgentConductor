@@ -67,8 +67,12 @@ pub struct Saved {
     pub(super) imports: Option<crate::mcp::Applied>,
     #[serde(default)]
     pub(super) mcp_result: Option<String>,
-    #[serde(skip)]
+    #[serde(default)]
     pub(super) chat_result: Option<String>,
+    #[serde(default)]
+    pub(super) optimize_result: Option<String>,
+    #[serde(default)]
+    pub(super) optimize_goal: Option<String>,
     pub(super) config: Config,
     pub(super) proposal: Option<Proposal>,
     pub(super) job: Option<StoredJob>,
@@ -102,6 +106,8 @@ pub fn defaults() -> Result<Config, String> {
                 .unwrap_or(invocation.executable),
             args: invocation.args,
             parser: provider,
+            protocol: None,
+            agent_settings: None,
             input_mode: invocation.input,
             environment: Default::default(),
             permission_mode: "unverified".into(),

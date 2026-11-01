@@ -152,6 +152,7 @@ mod lifecycle;
 mod master;
 mod mcp;
 mod metadata;
+mod optimize;
 mod project;
 mod quota;
 mod run_binding;

@@ -6,6 +6,7 @@ pub(super) fn show(
     ui: &mut Ui,
     index: usize,
     task: &mut Value,
+    resolved: Option<&Value>,
     can_remove: bool,
     agents: &[Value],
     language: &str,
@@ -48,6 +49,15 @@ pub(super) fn show(
                         )
                         .accessible_name(label);
                     }
+                    let kind = task["task_type"].as_str().unwrap_or("code");
+                    let label = fields::task_type_label(language, kind);
+                    ui.label(
+                        egui::RichText::new(label)
+                            .small()
+                            .color(ui.visuals().weak_text_color()),
+                    )
+                    .accessible_name(label);
+                    show_profile(ui, language, resolved);
                 });
                 ui.add(egui::Label::new(egui::RichText::new(&summary).small()).truncate())
                     .accessible_name(summary.clone());
@@ -78,6 +88,7 @@ pub(super) fn show(
                                             text_field(ui, language, "startup.task_id", task, "id");
                                             agent_picker(ui, language, task, agents);
                                             fields::model_picker(ui, language, task, agents);
+                                            fields::task_type_picker(ui, language, task);
                                             fields::execution_option_pickers(
                                                 ui, language, task, agents,
                                             );
@@ -137,6 +148,57 @@ pub(super) fn show(
         });
     });
     remove
+}
+
+fn show_profile(ui: &mut Ui, language: &str, resolved: Option<&Value>) {
+    let Some(profile) = resolved else {
+        return;
+    };
+    let text = |key| crate::ui::messages::in_language(language, key);
+    if let Some(error) = profile["error"].as_str() {
+        ui.colored_label(egui::Color32::YELLOW, error)
+            .accessible_name(error);
+        return;
+    }
+    let model = profile["model"]
+        .as_str()
+        .unwrap_or(text("startup.cli_default"));
+    let effort = profile["options"]["effort"]
+        .as_str()
+        .unwrap_or(text("startup.profile_default"));
+    let summary = crate::ui::messages::interpolate(
+        text("startup.task_effective_profile"),
+        &[("value1", model), ("value2", effort)],
+    );
+    ui.add(egui::Label::new(egui::RichText::new(&summary).small()).truncate())
+        .accessible_name(summary);
+    for warning in profile["warnings"].as_array().into_iter().flatten() {
+        let message = match warning["code"].as_str() {
+            Some("effort_unsupported") => crate::ui::messages::interpolate(
+                text("startup.task_warning_effort_unsupported"),
+                &[
+                    ("value1", warning["asked"].as_str().unwrap_or("?")),
+                    ("value2", warning["applied"].as_str().unwrap_or("—")),
+                ],
+            ),
+            Some("model_not_suited") => crate::ui::messages::interpolate(
+                text("startup.task_warning_model_not_suited"),
+                &[
+                    ("value1", warning["model"].as_str().unwrap_or("?")),
+                    (
+                        "value2",
+                        fields::task_type_label(
+                            language,
+                            warning["task_type"].as_str().unwrap_or("code"),
+                        ),
+                    ),
+                ],
+            ),
+            _ => continue,
+        };
+        ui.colored_label(egui::Color32::YELLOW, &message)
+            .accessible_name(message);
+    }
 }
 
 fn role_label<'a>(language: &str, role: &'a str) -> &'a str {

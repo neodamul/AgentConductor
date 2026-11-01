@@ -4,6 +4,22 @@ Native UI component tests should exercise the action a person triggers, not only
 
 For packaged Windows acceptance, UI Automation `InvokePattern` may be attempted when a control refuses keyboard focus, but a returned call does not prove activation. Wait for an observable UI state change; if the control remains enabled, use a foreground- and process-checked pointer fallback. A successful API call, emitted input diagnostic, or visible button is not proof that an action ran. Keep keyboard and pointer fallbacks guarded by exact process/control identity; never credit the workflow unless its durable state matches the requested value.
 
+For custom modal buttons, a point belonging to the app process does not prove it is on the requested control. Use UIA `GetClickablePoint`, resolve it with `AutomationElement.FromPoint`, and walk control-view parents to the exact named button before injecting input; refuse the click if that target check fails.
+
+Tool-decision confirmations are bound to the receipt ID, its eligible status, and the captured request/context evidence—not the overall run revision, which can change for unrelated updates. When the user confirms, build the action from the latest snapshot revision and revalidate that the exact receipt is still eligible and has complete evidence. Test that unrelated revisions preserve the prompt while removed, ineligible, or changed-evidence receipts clear it.
+
+Tests that wait for multiple asynchronous workflow phases must give each phase its own bounded deadline. Start the execution deadline only after the plan is ready and the start request is accepted; a planning timeout must not consume the execution-start budget. Keep a focused assertion that the execution deadline is fresh, so slow CI planning cannot create a false execution failure while genuinely stuck execution still times out.
+
+For Windows editable fields, `SetFocus()` can throw even when UI Automation reports a visible enabled edit. Catch that failure and use a mouse click only after checking the edit's process ID, enabled/visible state, and bounds; the click helper must also verify the point belongs to the packaged app process. Re-read the focused element and send keyboard input only when it is the exact app-owned edit. Keep this PowerShell in `tests/support/` so source-contract tests can inspect it and the Rust test remains under the 300-line limit.
+
+Agent Room background refresh can temporarily disable a candidate rejection field while its prompt remains visible. Reacquire the app-owned edit by accessible name and retry `ValuePattern.SetValue` only while it is enabled and on-screen, with a short deadline and UIA diagnostics on failure. Never bypass the pending-action guard to force input.
+
+Windows may expose more than one UIA edit with the same accessible name during a settings transition. For editable settings, choose only an enabled, on-screen edit with nonempty bounds, and wait within a bounded deadline for it to become actionable before focusing or typing.
+
+Do not call `SetFocus()` on the top-level desktop window in the PowerShell UI Automation driver. The desktop window is not a focusable control on Windows; interact with its child controls using `ValuePattern` or `InvokePattern` and verify the resulting state. Keep a source-contract test that rejects reintroduction of the unsupported top-level focus call.
+
+For candidate approval, do not depend on explanatory status-banner text appearing in the Windows UIA tree. Treat a closed confirmation dialog as completed input, then wait for the accessible `Merge approved candidate` action before continuing. For terminal merge/reject decisions, the packaged Rust test must poll the persisted workflow report and verify the resulting Git HEAD and fixture files; dialog closure alone is not acceptance evidence.
+
 When testing both English and Korean, use the real localized labels and run the same interaction in each language. For asynchronous panels, cover both accepted actions and the pending state: repeated work must remain disabled while safe navigation such as Close stays available.
 
 Every synthetic egui frame returns a `FullOutput`. Tests that do not apply texture updates must clear both `textures_delta.set` and `textures_delta.free` before dropping the output; clear intermediate frames inside the click helper and the final frame in the caller. Otherwise egui panics on an unapplied texture delta and obscures the actual interaction result.

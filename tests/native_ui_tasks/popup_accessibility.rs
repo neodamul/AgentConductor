@@ -16,6 +16,8 @@ fn task_editor_exposes_assignment_instructions_scope_dependencies_and_command() 
     for label in [
         "Assigned agent",
         "Session model",
+        "Task type",
+        "Agentic",
         "Instructions",
         "Owned paths (one per line)",
         "Dependencies (comma separated)",
@@ -48,6 +50,7 @@ fn task_editor_uses_korean_labels_and_accessible_names() {
         "작업 ID",
         "배정된 에이전트",
         "세션 모델",
+        "작업 유형",
         "지침",
         "담당 경로 (한 줄에 하나)",
         "의존성 (쉼표로 구분)",

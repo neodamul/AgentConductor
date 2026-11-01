@@ -68,7 +68,16 @@ fn native_package_includes_each_reviewed_macos_license() {
         std::process::id(),
         NEXT.fetch_add(1, Ordering::Relaxed)
     ));
+    let project = Path::new(env!("CARGO_MANIFEST_DIR"));
     fs::create_dir_all(root.join("docs")).unwrap();
+    fs::create_dir_all(root.join("third_party/prompt-optimizer")).unwrap();
+    for file in ["LICENSE", "SOURCE.md"] {
+        fs::copy(
+            project.join("third_party/prompt-optimizer").join(file),
+            root.join("third_party/prompt-optimizer").join(file),
+        )
+        .unwrap();
+    }
     fs::write(root.join("README.md"), "# Fixture\n").unwrap();
     fs::write(root.join("docs/user-manual.md"), "# Fixture manual\n").unwrap();
     fs::write(root.join("docs/user-manual.ko.md"), "# Fixture manual\n").unwrap();
@@ -130,7 +139,6 @@ fn native_package_includes_each_reviewed_macos_license() {
             "LICENSE-MIT",
         ),
     ];
-    let project = Path::new(env!("CARGO_MANIFEST_DIR"));
     let upstream = root.join("licenses/upstream");
     fs::create_dir_all(&upstream).unwrap();
     fs::copy(

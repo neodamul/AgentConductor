@@ -2,6 +2,10 @@ use super::ToolAction;
 use eframe::egui;
 use serde_json::Value;
 
+fn confirmation_evidence(request: &Value) -> Option<String> {
+    serde_json::to_string(&[&request["request"], &request["context"]]).ok()
+}
+
 pub(in crate::native_ui_probe) fn tool_controls(
     state: &mut super::super::room::State,
     snapshot: Option<&Value>,
@@ -11,7 +15,6 @@ pub(in crate::native_ui_probe) fn tool_controls(
 ) -> Option<super::super::room::Event> {
     let text = |id| crate::ui::messages::in_language(language, id);
     let snapshot = snapshot?;
-    let revision = snapshot["revision"].as_str().unwrap_or_default();
     let Some(requests) = snapshot["tool_requests"].as_array() else {
         state.confirming_tool = None;
         state.tool_dialog = None;
@@ -23,20 +26,19 @@ pub(in crate::native_ui_probe) fn tool_controls(
         state
             .confirming_tool
             .as_ref()
-            .is_some_and(|(id, action, rev)| {
-                rev == revision
-                    && requests.iter().any(|request| {
-                        request["id"].as_str() == Some(id.as_str())
-                            && match action {
-                                ToolAction::Approve | ToolAction::Reject => {
-                                    request["status"] == "pending"
-                                }
-                                ToolAction::Refresh => matches!(
-                                    request["status"].as_str(),
-                                    Some("pending" | "approved")
-                                ),
+            .is_some_and(|(id, action, evidence)| {
+                requests.iter().any(|request| {
+                    request["id"].as_str() == Some(id.as_str())
+                        && match action {
+                            ToolAction::Approve | ToolAction::Reject => {
+                                request["status"] == "pending"
                             }
-                    })
+                            ToolAction::Refresh => {
+                                matches!(request["status"].as_str(), Some("pending" | "approved"))
+                            }
+                        }
+                        && confirmation_evidence(request).as_deref() == Some(evidence.as_str())
+                })
             });
     if !confirmation_is_current {
         state.confirming_tool = None;
@@ -124,11 +126,10 @@ pub(in crate::native_ui_probe) fn tool_controls(
                                     .add_enabled(can_decide, egui::Button::new(label))
                                     .accessible_name(accessible)
                                     .clicked()
-                                    && let (Some(id), Some(revision)) =
-                                        (request["id"].as_str(), snapshot["revision"].as_str())
+                                    && let (Some(id), Some(evidence)) =
+                                        (request["id"].as_str(), confirmation_evidence(request))
                                 {
-                                    state.confirming_tool =
-                                        Some((id.to_owned(), action, revision.to_owned()));
+                                    state.confirming_tool = Some((id.to_owned(), action, evidence));
                                 }
                             }
                         });
@@ -158,10 +159,7 @@ pub(in crate::native_ui_probe) fn tool_controls(
         ));
         ui.horizontal(|ui| {
             if ui
-                .add_enabled(
-                    !pending,
-                    egui::Button::new(text("room.cancel_tool_decision")),
-                )
+                .button(text("room.cancel_tool_decision"))
                 .accessible_name(text("room.cancel_tool_decision"))
                 .clicked()
             {
@@ -189,7 +187,10 @@ pub(in crate::native_ui_probe) fn tool_controls(
         let confirmation = state
             .confirming_tool
             .as_ref()
-            .filter(|(current, _, rev)| current == &id && rev == revision)
+            .filter(|(current, _, evidence)| {
+                current == &id
+                    && confirmation_evidence(&request).as_deref() == Some(evidence.as_str())
+            })
             .map(|(_, action, _)| *action);
         let mut dialog_event = None;
         egui::Modal::new(egui::Id::unique("pending-tool-request")).show(ui.ctx(), |ui| {
@@ -226,10 +227,7 @@ pub(in crate::native_ui_probe) fn tool_controls(
                 });
                 ui.horizontal(|ui| {
                     if ui
-                        .add_enabled(
-                            !pending,
-                            egui::Button::new(text("room.cancel_tool_decision")),
-                        )
+                        .button(text("room.cancel_tool_decision"))
                         .accessible_name(text("room.cancel_tool_decision"))
                         .clicked()
                     {
@@ -263,8 +261,9 @@ pub(in crate::native_ui_probe) fn tool_controls(
                             .add_enabled(can_decide, egui::Button::new(label))
                             .accessible_name(accessible)
                             .clicked()
+                            && let Some(evidence) = confirmation_evidence(&request)
                         {
-                            state.confirming_tool = Some((id.clone(), action, revision.to_owned()));
+                            state.confirming_tool = Some((id.clone(), action, evidence));
                         }
                     }
                     if ui

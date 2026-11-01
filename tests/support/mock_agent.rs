@@ -93,6 +93,7 @@ fn main() {
         | Some("task")
         | Some("task-stray")
         | Some("task-slow")
+        | Some("task-blocking")
         | Some("custom-task")
         | Some("dependency")
         | Some("quota")
@@ -100,7 +101,13 @@ fn main() {
         | Some("quota-known") => {
             let mut prompt = String::new();
             std::io::stdin().read_to_string(&mut prompt).unwrap();
-            let original = prompt.lines().next().unwrap().trim();
+            let task = prompt
+                .split_once("\n# Task\n")
+                .map_or(prompt.as_str(), |(_, task)| task)
+                .split("\n# Format\n")
+                .next()
+                .unwrap();
+            let original = task.lines().find(|line| !line.trim().is_empty()).unwrap().trim();
             let path = if original == "fail" && prompt.contains("Repair failed task") {
                 prompt
                     .lines()
@@ -111,7 +118,7 @@ fn main() {
                 original
             };
             if std::env::args().nth(1).as_deref() == Some("custom-task") {
-                println!("{{\"type\":\"vendor.session\",\"meta\":{{\"id\":\"vendor-{path}\"}}}}");
+                println!("{{\"schema\":\"acio.event/1\",\"seq\":1,\"ts\":\"2026-10-28T01:00:00Z\",\"type\":\"session\",\"session_id\":\"vendor-{path}\",\"data\":{{\"session_id\":\"vendor-{path}\",\"effective\":{{\"task_type\":\"code\"}}}}}}");
             } else {
                 use std::hash::{Hash, Hasher};
                 let mut identity = std::collections::hash_map::DefaultHasher::new();
@@ -123,6 +130,18 @@ fn main() {
             }
             std::io::stdout().flush().unwrap();
             let mode = std::env::args().nth(1).unwrap();
+            if mode == "task-blocking" {
+                let started = std::env::var("AC_TEST_BLOCKING_STARTED").unwrap();
+                let release = std::env::var("AC_TEST_BLOCKING_RELEASE").unwrap();
+                std::fs::write(started, path).unwrap();
+                let deadline = std::time::Instant::now() + std::time::Duration::from_secs(60);
+                while !std::path::Path::new(&release).exists()
+                    && std::time::Instant::now() < deadline
+                {
+                    std::thread::sleep(std::time::Duration::from_millis(10));
+                }
+                assert!(std::path::Path::new(&release).exists(), "fixture release timed out");
+            }
             let marker = std::env::var("MOCK_MARKERS")
                 .map(|dir| std::path::PathBuf::from(dir).join(format!("marker-{path}")))
                 .ok();
@@ -201,7 +220,7 @@ fn main() {
                 std::fs::write(format!(".aipro/plans/{path}.md"), "plan\n").unwrap();
             }
             if mode == "custom-task" {
-                println!("{{\"type\":\"vendor.done\",\"payload\":{{\"summary\":\"implemented\"}}}}");
+                println!("{{\"schema\":\"acio.event/1\",\"seq\":2,\"ts\":\"2026-10-28T01:00:01Z\",\"type\":\"result\",\"session_id\":\"vendor-{path}\",\"data\":{{\"status\":\"success\",\"summary\":\"implemented\"}}}}");
             } else {
                 println!("{{\"type\":\"result\",\"payload\":{{\"summary\":\"implemented\"}}}}");
             }

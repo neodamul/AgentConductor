@@ -1,0 +1,29 @@
+{
+  "source_commit": "79fdea8aad8b67de8ba89708264e00116aea33fb",
+  "target": "aarch64-apple-darwin",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-79fdea8aad8b.zip",
+  "archive_sha256": "2bcf911eeaa7cff4a5cbc8700fe9db98765b63408b08ee7696b57ecc1dd58e20",
+  "binary": "dist/agentconductor-aarch64-apple-darwin-79fdea8aad8b/agentconductor",
+  "binary_sha256": "862ab066bb69193127c2c745289cdf8a61c85a9894931cc13a429efae724fb7a",
+  "binary_bytes": 19456032,
+  "dependency_count": 242,
+  "validation": {
+    "release_build_locked_offline": true,
+    "manifest_source_matches": true,
+    "manifest_binary_hash_matches": true,
+    "archive_crc": true,
+    "packaged_help": true,
+    "info_plist_lint": true,
+    "bilingual_manual_render": true,
+    "focused_local_tests": "53 passed across 13 suites",
+    "all_target_clippy_warnings_denied": true,
+    "rustfmt": true,
+    "source_layout_300_line_guard": true
+  },
+  "runtime": {
+    "exact_package_ui_launched": false,
+    "screenshot_captured": false,
+    "real_coordinator_invoked": false
+  },
+  "acceptance_note": "Exact local arm64 package and CLI smoke passed. This does not verify native UI interaction or Windows, and does not increase issue #9 packaged workflow acceptance."
+}

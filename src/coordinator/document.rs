@@ -3,6 +3,8 @@ use crate::process;
 use crate::protocol::{Decoder, EventKind};
 use std::{fs, io::Read, path::Path};
 
+pub const NO_JSON: &str = "coordinator response contains no valid JSON ";
+
 /// The whole reply as JSON, or else the first fenced ```json block that carries `field`.
 /// Models often wrap the requested object in a Markdown fence despite "return only JSON".
 fn json_reply(text: &str, field: &str) -> Option<Value> {
@@ -185,5 +187,5 @@ fn read_with_decoder(
     if !terminal {
         return Err("coordinator did not return successful final output".into());
     }
-    document.ok_or_else(|| format!("coordinator response contains no valid JSON {field} document"))
+    document.ok_or_else(|| format!("{NO_JSON}{field} document"))
 }

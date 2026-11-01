@@ -7,6 +7,9 @@ pub mod manual_viewer;
 mod motion;
 mod pending;
 mod poll;
+#[cfg(test)]
+#[path = "../tests/native_ui_probe/poll_timeout.rs"]
+mod poll_timeout_tests;
 mod probe;
 mod quota_refresh;
 mod render;
@@ -75,6 +78,7 @@ pub struct Probe {
     worker: Option<RequestWorker>,
     snapshot: Option<Value>,
     error: Option<String>,
+    background_poll_failures: u8,
     pending: Option<Pending>,
     resume_after_tool_approval: bool,
     resume_after_task_feedback: bool,
@@ -91,6 +95,7 @@ pub struct Probe {
     messenger_editor: workspace::messenger::State,
     signal_settings: workspace::signal_settings::State,
     coordinator_chat: workspace::chat::State,
+    goal_optimizer: workspace::optimizer::State,
     updates: updates::State,
     update_source: updates::SourceEditor,
 }

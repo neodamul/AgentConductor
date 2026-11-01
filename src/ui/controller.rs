@@ -90,6 +90,26 @@ impl Controller {
                 serde_json::json!({"accepted":true,"kind":request.action.label(),"decided":true,"message":crate::ui::messages::text("native.decision_recorded_the_paused_worker_continues")}),
             );
         }
+        if let Action::ToolRefresh { sha } = &request.action {
+            let report = workflow::load(&self.dir)?;
+            if report.state == "running" {
+                if workflow::revision(&report)? != request.revision {
+                    return Err(crate::ui::messages::text(
+                        "native.run_changed_since_review_refresh_before_acting",
+                    )
+                    .into());
+                }
+                workflow::queue_live_tool_refresh(&self.dir, sha)?;
+                return Ok(serde_json::json!({
+                    "accepted": true,
+                    "kind": "tool_refresh",
+                    "queued": true,
+                    "message": crate::ui::messages::text(
+                        "native.tool_refresh_queued_for_active_coordinator",
+                    ),
+                }));
+            }
+        }
         self.poll()?;
         let mut slot = self
             .job

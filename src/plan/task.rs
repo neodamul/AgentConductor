@@ -18,6 +18,20 @@ pub struct Task {
     /// Operator-selected values for profile-declared argument groups.
     #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
     pub execution_options: std::collections::BTreeMap<String, String>,
+    /// GitHub #210: work category used to resolve task-specific model settings.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub task_type: Option<TaskType>,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum TaskType {
+    Extract,
+    Summarize,
+    Analyze,
+    Code,
+    Agentic,
+    Creative,
 }
 
 #[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq, Eq)]

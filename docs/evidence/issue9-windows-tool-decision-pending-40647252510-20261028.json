@@ -1,0 +1,43 @@
+{
+  "run_id": 40647252510,
+  "tested_head_sha": "528020459d4c12581c2a2d2b92b91378b6ae2f93",
+  "windows_package_job_id": 122687834798,
+  "windows_package_artifact_id": 12800106882,
+  "macos_package_job_id": 122687834768,
+  "result": "failed_windows_tool_decision_pending_controls",
+  "passed_platform_jobs": [
+    122678854905,
+    122678855215
+  ],
+  "macos_package": "passed exact release package build, bilingual manual render, and binary execution",
+  "passed_windows_journeys": [
+    "default desktop",
+    "team briefing",
+    "scheduled retry persisted to manual_schedule",
+    "signal transport save and port persistence"
+  ],
+  "failed_journey": "exact_windows_package_refreshes_approves_and_rejects_tool_requests",
+  "driver_sequence": [
+    "UIA confirmed Decide later was no longer visible after dismissal",
+    "Refresh UIA Invoke returned no state change",
+    "checked pointer helper reported Refresh click at (230,593)",
+    "confirmation did not appear"
+  ],
+  "final_observation": "The request remained Pending and the run remained Running, while Allow once, Deny, Refresh, Assign, and other async room controls were disabled.",
+  "root_cause": "The room had an outstanding snapshot refresh. Native tool controls intentionally use can_decide = !pending && (live || job.state != running); the package driver attempted Refresh before that pending operation completed. The product safety gate is correct and must not be weakened.",
+  "fix_under_test": "Reacquire the current modal/card control on each poll and wait up to 20 seconds for IsEnabled before UIA or checked-pointer activation. Modal-scoped Allow/Deny selection and all foreground/process/window ownership checks remain in place.",
+  "local_verification": {
+    "red": "activation_waits_for_a_fresh_enabled_control_before_ui_input failed before the driver wait was added",
+    "green": "tool-decision, dispatch, source-layout, and public-doc suites passed 21 tests",
+    "clippy": "cargo clippy --all-targets --features native-ui-probe -- -D warnings passed",
+    "format": "cargo fmt --check passed",
+    "diff_check": "git diff --check passed",
+    "line_limit": "all changed source and test files are below 300 lines"
+  },
+  "acceptance": {
+    "candidate_packaged_ui": "22/25",
+    "shipped_rust_replacement": "0/25",
+    "credit_added": false
+  },
+  "next_step": "Rerun the exact Windows release package after the bounded enabled-control wait is pushed; require refresh, allow, and deny receipt/effect assertions."
+}

@@ -1,7 +1,12 @@
-use eframe::egui::{self, RichText};
+mod launcher;
+mod outcome;
+mod reset;
+mod send;
+mod view;
 
 pub enum Event {
     Send(Vec<crate::chat::Turn>),
+    NewConversation,
 }
 
 #[derive(Default)]
@@ -9,9 +14,17 @@ pub struct State {
     open: bool,
     draft: String,
     turns: Vec<crate::chat::Turn>,
+    pending_before: Option<Vec<crate::chat::Turn>>,
+    pending_turn: Option<crate::chat::Turn>,
+    uncertain_error: Option<String>,
     requesting: bool,
+    resetting: bool,
     job: Option<String>,
     error: Option<String>,
+    question_cursor: Option<usize>,
+    history_draft: String,
+    editor_focused: bool,
+    editor_cursor: usize,
 }
 
 impl State {
@@ -20,82 +33,37 @@ impl State {
     }
 
     pub fn awaiting(&self) -> bool {
-        self.requesting || self.job.is_some()
+        self.requesting || self.uncertain_error.is_some() || self.resetting || self.job.is_some()
+    }
+
+    pub fn is_uncertain(&self) -> bool {
+        self.uncertain_error.is_some()
     }
 
     pub fn open(&mut self) {
         self.open = true;
     }
 
-    pub fn show_launcher(&mut self, language: &str, ui: &mut egui::Ui) {
-        if ui.button(text(language, "chat.open")).clicked() {
-            self.open = true;
-        }
-    }
-
-    pub fn show(&mut self, language: &str, ui: &mut egui::Ui) -> Option<Event> {
-        ui.horizontal(|ui| {
-            ui.heading(text(language, "chat.title"));
-            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                if ui.button(text(language, "chat.close")).clicked() {
-                    self.open = false;
-                }
-            });
-        });
-        ui.separator();
-        egui::ScrollArea::vertical()
-            .stick_to_bottom(true)
-            .show(ui, |ui| {
-                for turn in &self.turns {
-                    ui.label(
-                        RichText::new(if turn.role == "operator" {
-                            text(language, "chat.you")
-                        } else {
-                            text(language, "chat.title")
-                        })
-                        .strong(),
-                    );
-                    ui.label(&turn.text);
-                    ui.add_space(8.0);
-                }
-                if self.awaiting() {
-                    ui.horizontal(|ui| {
-                        ui.spinner();
-                        ui.label(text(language, "chat.thinking"));
-                    });
-                }
-                if let Some(error) = &self.error {
-                    ui.colored_label(ui.visuals().error_fg_color, error);
-                }
-            });
-        ui.separator();
-        ui.add_enabled_ui(!self.awaiting(), |ui| {
-            ui.add(
-                egui::TextEdit::multiline(&mut self.draft)
-                    .desired_rows(3)
-                    .hint_text(text(language, "chat.placeholder")),
-            );
-        });
-        let send = ui
-            .add_enabled(
-                !self.awaiting() && !self.draft.trim().is_empty(),
-                egui::Button::new(text(language, "chat.send")),
-            )
-            .clicked();
-        if !send {
-            return None;
-        }
-        let question = std::mem::take(&mut self.draft);
-        self.turns.push(crate::chat::Turn {
-            role: "operator".into(),
-            text: question,
-        });
+    pub fn reset(&mut self) {
+        self.turns.clear();
+        self.pending_before = None;
+        self.draft.clear();
+        self.pending_turn = None;
+        self.uncertain_error = None;
+        self.requesting = false;
+        self.resetting = false;
+        self.job = None;
         self.error = None;
-        self.requesting = true;
-        Some(Event::Send(self.turns.clone()))
+        self.question_cursor = None;
+        self.history_draft.clear();
+        self.editor_focused = false;
+        self.editor_cursor = 0;
     }
 
     pub fn started(&mut self, job: String) {
+        self.pending_before = None;
+        self.pending_turn = None;
+        self.uncertain_error = None;
         self.requesting = false;
         self.job = Some(job);
         self.error = None;
@@ -109,15 +77,34 @@ impl State {
             role: "assistant".into(),
             text: answer,
         });
+        self.turns = crate::chat::recent_history(&self.turns);
         self.job = None;
         self.requesting = false;
         true
     }
 
     pub fn failed(&mut self, message: String) {
+        self.pending_before = None;
         self.job = None;
         self.requesting = false;
+        self.uncertain_error = None;
         self.error = Some(message);
+    }
+
+    pub fn rejected(&mut self, message: String) {
+        self.pending_before = None;
+        self.uncertain_error = None;
+        if let Some(turn) = self.pending_turn.take() {
+            if self
+                .turns
+                .last()
+                .is_some_and(|last| last.role == turn.role && last.text == turn.text)
+            {
+                self.turns.pop();
+            }
+            self.draft = turn.text;
+        }
+        self.failed(message);
     }
 }
 
@@ -125,18 +112,17 @@ pub fn request(
     snapshot: &serde_json::Value,
     turns: &[crate::chat::Turn],
 ) -> Result<Vec<u8>, String> {
-    let revision = snapshot["revision"]
+    let revision = snapshot["chat_revision"]
         .as_str()
         .filter(|value| !value.is_empty())
         .ok_or_else(|| "Workspace revision is unavailable".to_owned())?;
-    let language = if snapshot["language"] == "ko" {
-        "Korean"
-    } else {
-        "English"
-    };
-    crate::chat::build_prompt(turns, language)?;
+    let question = turns
+        .last()
+        .filter(|turn| turn.role == "operator")
+        .ok_or_else(|| "the conversation must end with an operator question".to_owned())?;
+    crate::chat::validate_question(&question.text)?;
     let packet = serde_json::to_vec(&serde_json::json!({
-        "kind":"chat", "revision":revision, "turns":turns
+        "kind":"chat", "revision":revision, "text":question.text
     }))
     .map_err(|error| error.to_string())?;
     if packet.len() > 128 * 1024 {
@@ -146,45 +132,6 @@ pub fn request(
 }
 
 impl super::super::Probe {
-    pub(super) fn send_coordinator_chat(&mut self, turns: Vec<crate::chat::Turn>) {
-        let packet = self
-            .snapshot
-            .as_ref()
-            .ok_or_else(|| "Workspace revision is unavailable".to_owned())
-            .and_then(|snapshot| request(snapshot, &turns));
-        let result = packet.and_then(|packet| {
-            self.worker
-                .as_ref()
-                .ok_or_else(|| "Workspace controller is unavailable".to_owned())?
-                .send(&packet)
-        });
-        match result {
-            Ok(()) => {
-                self.pending = Some(super::super::Pending::ChatStart);
-                self.error = None;
-            }
-            Err(error) => {
-                self.coordinator_chat.failed(error);
-                self.workspace_next_refresh = None;
-            }
-        }
-    }
-
-    pub(in crate::native_ui_probe) fn refresh_coordinator_chat(&mut self) {
-        let result = self
-            .worker
-            .as_ref()
-            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(br#"{"kind":"snapshot","chat_result":true}"#));
-        match result {
-            Ok(()) => self.pending = Some(super::super::Pending::ChatRefresh),
-            Err(error) => {
-                self.coordinator_chat.failed(error);
-                self.workspace_next_refresh = None;
-            }
-        }
-    }
-
     pub(in crate::native_ui_probe) fn chat_started(&mut self, snapshot: serde_json::Value) {
         if snapshot["accepted"] == true
             && let Some(job) = snapshot["id"].as_str()
@@ -195,7 +142,7 @@ impl super::super::Probe {
             self.pending = None;
         } else {
             self.coordinator_chat
-                .failed("Coordinator chat job was not accepted".into());
+                .rejected("Coordinator chat job was not accepted".into());
             self.pending = None;
         }
     }
@@ -234,6 +181,9 @@ impl super::super::Probe {
     }
 }
 
-fn text(language: &str, id: &'static str) -> &'static str {
-    crate::ui::messages::in_language(language, id)
+pub(in crate::native_ui_probe) fn load_history(
+    probe: &mut super::Probe,
+    snapshot: &serde_json::Value,
+) {
+    probe.coordinator_chat.load_snapshot(snapshot);
 }

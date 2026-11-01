@@ -119,6 +119,31 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         )
         .labelled_by(label.id)
         .accessible_name(goal);
+        let language = probe.navigation.appearance.language().to_owned();
+        let config = probe.snapshot.as_ref().map(|snapshot| &snapshot["config"]);
+        let optimization_enabled = can_edit
+            && probe.pending.is_none()
+            && !probe.goal.trim().is_empty()
+            && std::path::Path::new(&probe.repository).is_dir()
+            && config.is_some_and(|config| {
+                config["repository"] == probe.repository
+                    && config["coordinator"] == probe.coordinator
+                    && probe
+                        .snapshot
+                        .as_ref()
+                        .is_some_and(|snapshot| snapshot["job"]["state"] != "running")
+            });
+        if let Some(event) =
+            probe
+                .goal_optimizer
+                .show(&language, &probe.goal, optimization_enabled, ui)
+        {
+            match event {
+                super::optimizer::Event::Request(goal) => probe.optimize_goal(goal),
+                super::optimizer::Event::Use(goal) => probe.goal = goal,
+                super::optimizer::Event::Keep => {}
+            }
+        }
         match probe.mcp_sources.show(
             &mut probe.goal,
             probe.snapshot.as_ref(),

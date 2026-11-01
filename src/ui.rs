@@ -18,6 +18,7 @@ pub mod language;
 pub mod messages;
 pub mod native;
 pub mod picker;
+pub mod request_diagnostics;
 pub mod setup;
 mod source_references;
 pub mod workspaces;
