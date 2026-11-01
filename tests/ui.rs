@@ -109,21 +109,27 @@ async fn native_review_requires_current_revision_and_exact_candidate_and_keeps_a
     )
     .unwrap();
     let id = accepted["id"].as_str().unwrap();
-    let owner: serde_json::Value = serde_json::from_slice(
-        &fs::read(dir.join(format!("coordinator-ui-{id}/process/owner.json"))).unwrap(),
-    )
-    .unwrap();
-    let pid = owner["pid"].as_i64().unwrap() as libc::pid_t;
+    let owner_path = dir.join(format!("coordinator-ui-{id}/process/owner.json"));
+    let job_deadline = std::time::Instant::now() + Duration::from_secs(15);
+    loop {
+        let state = snapshot(&room);
+        if state["job"]["id"] == id && state["job"]["state"] == "completed" {
+            assert_eq!(state["job"]["exit_code"], 0);
+            break;
+        }
+        assert!(std::time::Instant::now() < job_deadline, "{state:?}");
+        std::thread::sleep(Duration::from_millis(20));
+    }
+    let owner: agentconductor::process::Ownership =
+        serde_json::from_slice(&fs::read(owner_path).unwrap()).unwrap();
+    assert_eq!(owner.phase, "terminal");
+    assert_eq!(owner.exit_code, Some(0));
     drop(room);
     let deadline = std::time::Instant::now() + Duration::from_secs(15);
     while workflow::load(&dir).unwrap().state != "completed" {
         assert!(std::time::Instant::now() < deadline);
         std::thread::sleep(Duration::from_millis(20));
     }
-    let mut status = 0;
-    // SAFETY: `status` is a valid writable c_int for the call; `pid` is a child this test spawned and reaps only here.
-    assert_eq!(unsafe { libc::waitpid(pid, &mut status, 0) }, pid);
-    assert_eq!(libc::WEXITSTATUS(status), 0);
     assert_eq!(
         agentconductor::git::Repository::open(&root.join("repo"))
             .unwrap()
