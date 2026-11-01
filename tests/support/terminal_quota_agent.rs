@@ -39,6 +39,8 @@ fn main(){
         std::io::stdout().flush().unwrap();
         std::thread::sleep(std::time::Duration::from_secs(60)); return;
     }
+    // GitHub #297: a CLI that starts slowly (scanning, managed settings, proxy).
+    if let Some(ms)=std::env::var("AC_QUOTA_DELAY_MS").ok().and_then(|v|v.parse().ok()){std::thread::sleep(std::time::Duration::from_millis(ms));}
     if let Some(expected)=std::env::var_os("AC_EXPECT_CWD"){
         let same=std::env::current_dir().ok().and_then(|d|d.canonicalize().ok())==std::path::Path::new(&expected).canonicalize().ok();
         if !same {println!("wrong cwd {:?}",std::env::current_dir()); std::io::stdout().flush().unwrap(); return;}

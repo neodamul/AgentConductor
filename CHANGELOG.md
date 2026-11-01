@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Claude usage: the query is given up after 60 s instead of 20 s, so a slow company PC (scanning, managed settings, proxy) can still report usage, and a timeout names the limit and the stage. While a usage query runs, the agent card and the run screen show how long it has run, and the run screen's refresh button is marked busy instead of only disabled (#297).
+
 ## v0.1.51
 
 - Workspace and run screen: every button that asks the app for something shows that it is working until the answer, and after a second the status line (the connection line in the run screen) names the request with its time, for example while a workspace is deleted, the messenger is tested or the team briefing is read. Before, about 30 of these showed nothing until the answer or a timeout. An idle page no longer risks saying for a moment that the app sent no new state (#285).

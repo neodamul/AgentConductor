@@ -1,0 +1,63 @@
+//! GitHub #297 (R-201 / QAS-199): a Claude CLI that is slow to start is waited for, a stuck one is
+//! given up with the limit named, and the default limit is a minute for both collectors.
+#[cfg(any(target_os = "macos", windows))]
+#[tokio::test]
+async fn a_slow_cli_is_waited_for_and_a_stuck_one_names_the_limit() {
+    use agentconductor::{plan::AgentProfile, quota};
+    use std::time::Duration;
+    let root = std::env::temp_dir().join(agentconductor::native_guard::session_id().unwrap());
+    std::fs::create_dir(&root).unwrap();
+    let exe = root.join(if cfg!(windows) {
+        "terminal.exe"
+    } else {
+        "terminal"
+    });
+    assert!(
+        std::process::Command::new("rustc")
+            .args(["tests/support/terminal_quota_agent.rs", "-o"])
+            .arg(&exe)
+            .status()
+            .unwrap()
+            .success()
+    );
+    let profile = |delay_ms: u64| -> AgentProfile {
+        serde_json::from_value(serde_json::json!({"id":"claude","parser":"claude","executable":exe,"args":[],"environment":{"AC_QUOTA_DELAY_MS":delay_ms.to_string()}})).unwrap()
+    };
+    let slow = quota::query_claude_within(
+        &profile(3000),
+        &root.join("slow"),
+        &root,
+        Duration::from_secs(15),
+    )
+    .await
+    .unwrap();
+    assert_eq!(slow.windows[0].remaining_percent, Some(73.0));
+    let error = quota::query_claude_within(
+        &profile(5000),
+        &root.join("stuck"),
+        &root,
+        Duration::from_secs(2),
+    )
+    .await
+    .unwrap_err();
+    assert!(error.contains("before /usage"), "{error}");
+    assert!(error.contains("after 2 s"), "{error}");
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn the_default_limit_is_a_minute_for_both_collectors() {
+    assert_eq!(
+        agentconductor::quota::CLAUDE_WAIT,
+        std::time::Duration::from_secs(60)
+    );
+    for source in [
+        include_str!("../src/quota/terminal.rs"),
+        include_str!("../src/quota/terminal/windows.rs"),
+    ] {
+        assert!(
+            !source.contains("from_secs(20)"),
+            "a literal 20 s limit is left"
+        );
+    }
+}
