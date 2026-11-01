@@ -7,8 +7,8 @@ pub const NO_JSON: &str = "coordinator response contains no valid JSON ";
 const MAX_REPLY: usize = 256 * 1024;
 const TOO_LARGE: &str = "coordinator document exceeds 256 KiB";
 
-/// The whole reply as JSON, or else the first fenced ```json block that carries `field`.
-/// Models often wrap the requested object in a Markdown fence despite "return only JSON".
+/// The whole reply as JSON, or the first fenced JSON block carrying `field`. A block that fails only ends its own attempt:
+/// scanning resumes inside its body, so the marker that closed an unfinished draft still opens the block after it (GitHub #247).
 fn json_reply(text: &str, field: &str) -> Option<Value> {
     let has = |v: &Value| v.get(field).is_some();
     if let Ok(json) = serde_json::from_str::<Value>(text.trim()) {
@@ -25,9 +25,7 @@ fn json_reply(text: &str, field: &str) -> Option<Value> {
         {
             return Some(json);
         }
-        // Scan every later fence. The closing marker can also be the opening marker of a valid
-        // block when a model leaves an earlier fenced draft unfinished.
-        rest = &rest[open + 3..];
+        rest = body;
     }
     None
 }
