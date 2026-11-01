@@ -6760,6 +6760,17 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] #255 — current event-driven UI/chat/package work; exact Windows package acceptance and main-branch parity remain open.
 - [ ] #260 — Git HEAD fast path and bounded request/event lanes; this is the base branch for #294 and must be reconciled before #294 can merge.
 
+### 2026-11-01 — Observe declared task worktree changes during event recovery — issue #257 / Claude PR #255 parity
+
+- [x] Plan: extend the metadata-only recovery listener to task worktree paths declared by `tasks[].cwd` and `plan.tasks[].paths`; preserve bounded host use and never traverse unsafe paths or symlink directories.
+- [x] Red: `run_listener_observes_changes_in_declared_worktree_scope` timed out before the listener fingerprinted worktree paths.
+- [x] Task / Green: include declared-path metadata in the adaptive listener fingerprint; cap traversal at 512 paths and depth 8, and handle Unix and Windows relative/glob separators.
+- [x] Verify focused: the worktree-change regression passes; path tests reject parent traversal, drive paths, and UNC paths and cover glob declarations on both separators.
+- [x] Verify: affected native UI/source-layout suites pass 106 tests; all-target/all-feature Clippy with `-D warnings`, rustfmt, diff hygiene, and changed source/test ≤300-line checks pass.
+- [x] Update QAS-194/DD-208 and LLM Wiki; refresh Graphify to 11,960 nodes / 18,164 edges / 892 communities. CocoIndex CLI is unavailable in this environment.
+- [ ] Save AgentMemory, update #257 / PR #294 with evidence, then commit and push this unit on `codex/issue-257-rust-draft-preservation`.
+- [ ] Exact packaged macOS/Windows GUI validation remains open; source tests do not satisfy package acceptance.
+
 ### 2026-11-01 — Port process events and adaptive recovery — issue #257 / Claude PR #255 parity
 
 - [x] Plan: add an authenticated loopback notification for spawned AgentConductor commands; keep metadata recovery bounded and adaptive; prevent event credentials from reaching provider/MCP processes.

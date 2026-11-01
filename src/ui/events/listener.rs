@@ -1,4 +1,6 @@
 use super::{Event, EventBus};
+#[path = "listener/scope.rs"]
+mod scope;
 use std::{
     fs,
     path::PathBuf,
@@ -33,6 +35,7 @@ struct Fingerprint {
     primary: Option<FileStamp>,
     database: Option<FileStamp>,
     wal: Option<FileStamp>,
+    scope: Vec<(PathBuf, FileStamp)>,
 }
 
 pub struct RunChangeListener {
@@ -178,12 +181,17 @@ fn fingerprint(path: &std::path::Path) -> Option<Fingerprint> {
     let primary = stamp(path);
     let database = stamp(&parent.join("state.sqlite"));
     let wal = stamp(&parent.join("state.sqlite-wal"));
-    if primary.is_none() && database.is_none() && wal.is_none() {
+    let scope: Vec<_> = scope::declared_paths(path)
+        .into_iter()
+        .filter_map(|path| scope::stamp(&path).map(|stamp| (path, stamp)))
+        .collect();
+    if primary.is_none() && database.is_none() && wal.is_none() && scope.is_empty() {
         return None;
     }
     Some(Fingerprint {
         primary,
         database,
         wal,
+        scope,
     })
 }
