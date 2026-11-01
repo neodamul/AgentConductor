@@ -18,3 +18,7 @@ Porting notes for the Rust UI branch:
 - Render elapsed time only on the card for the active quota job; schedule local UI repaint without backend snapshot polling.
 
 Unknown: how long the reported Windows company machine normally needs. A real packaged Windows check remains necessary to establish that 60 seconds covers that machine.
+
+## Windows-only compile follow-up
+
+Platform run `41309135388` reached the Windows build step and failed. The run logs were not available while macOS validation remained active. Source inspection found one outer-deadline branch still calling the old one-argument `quota_timeout(sent)` helper after the helper signature gained the configured wait duration. A new `claude_wait` source regression failed before the correction; both Windows timeout branches now call `quota_timeout(sent, wait)`. Local verification after the fix: 36 focused quota/UI/driver/docs/schedule tests, warning-denied Clippy, rustfmt, and diff hygiene pass. Cross-platform confirmation remains pending.

@@ -93,3 +93,16 @@ fn production_wait_is_one_minute_for_both_collectors() {
         );
     }
 }
+
+#[test]
+fn windows_collector_passes_the_wait_limit_on_each_timeout_path() {
+    let source = include_str!("../src/quota/terminal/windows.rs");
+    assert!(
+        source.matches("quota_timeout(sent, wait)").count() >= 2,
+        "both Windows timeout paths must pass the configured wait limit"
+    );
+    assert!(
+        !source.contains("quota_timeout(sent).into()"),
+        "the obsolete one-argument timeout call does not compile"
+    );
+}

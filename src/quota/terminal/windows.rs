@@ -128,7 +128,7 @@ fn collect(
         loop {
             if Instant::now() >= end {
                 owner.timed_out = true;
-                return Err(super::quota_timeout(sent).into());
+                return Err(super::quota_timeout(sent, wait));
             }
             if s.overflow.load(Ordering::Acquire) {
                 return Err("Claude quota output queue exceeded its bound".into());

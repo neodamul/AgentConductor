@@ -89,3 +89,4 @@ The deterministic terminal fixture emits a Claude version and a `>` prompt, dela
 - Requirement/design trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297.
 - `tests/claude_wait.rs` verifies slow startup, pre/post-`/usage` timeout details, and the shared production deadline; `tests/native_ui_quota_elapsed.rs` verifies elapsed-time scope and visible failure details.
 - Local targeted tests passed on macOS. Windows package validation is still required before integration is complete.
+- The first exact-head Windows build found a stale one-argument `quota_timeout` call in the Windows-only outer deadline branch. A source regression failed before the correction; both Windows timeout paths now pass the injected wait duration. The next exact-head platform run must confirm the Windows build before this port is complete.
