@@ -126,6 +126,9 @@ pub fn show(
                                 .accessible_name(meta);
                             });
                         });
+                        let saved = snapshot["config"]["profiles"]
+                            .as_array()
+                            .is_some_and(|items| items.iter().any(|item| item["id"] == id));
                         ui.horizontal_wrapped(|ui| {
                             let model_count =
                                 profile["catalog"]["models"].as_array().map_or(0, Vec::len);
@@ -143,9 +146,6 @@ pub fn show(
                                     .color(ui.visuals().weak_text_color()),
                             )
                             .accessible_name(model_text);
-                            let saved = snapshot["config"]["profiles"]
-                                .as_array()
-                                .is_some_and(|items| items.iter().any(|item| item["id"] == id));
                             if let Some(action) = models::show(
                                 profile,
                                 snapshot,
@@ -157,13 +157,13 @@ pub fn show(
                             ) {
                                 event = Some(action);
                             }
-                            if matches!(parser, "claude" | "codex")
-                                && let Some(action) =
-                                    quota::show(id, snapshot, language, can_edit && saved, ui)
-                            {
-                                event = Some(action);
-                            }
                         });
+                        if matches!(parser, "claude" | "codex")
+                            && let Some(action) =
+                                quota::show(id, snapshot, language, can_edit && saved, ui)
+                        {
+                            event = Some(action);
+                        }
                         if let Some(fallback) = profile["fallback"]["agent"].as_str() {
                             let fallback = crate::ui::messages::interpolate(
                                 text(language, "startup.fallback"),

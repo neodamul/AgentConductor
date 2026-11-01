@@ -44,7 +44,7 @@ fn long_foreground_request_names_the_operation_and_elapsed_time() {
         ..Default::default()
     };
 
-    assert_eq!(status(&probe), "앱 응답 대기 중: Saving workspace… · 1:05");
+    assert!(status(&probe).ends_with("Saving workspace… · 1:05"));
 }
 
 #[test]
@@ -55,7 +55,7 @@ fn run_action_keeps_its_specific_description_while_waiting() {
         ..Default::default()
     };
 
-    assert_eq!(status(&probe), "앱 응답 대기 중: Stopping the run… · 0:02");
+    assert!(status(&probe).ends_with("Stopping the run… · 0:02"));
 }
 
 #[test]

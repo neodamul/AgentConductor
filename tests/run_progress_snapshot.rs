@@ -23,16 +23,19 @@ async fn the_test_in_progress_is_named_while_verification_runs() {
         let (repo, run) = (root.join("repo"), run.clone());
         async move { workflow::run(plan, &repo, &run, 30).await }
     });
+    for _ in 0..300 {
+        if run.join("state.sqlite").exists() {
+            break;
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(50)).await;
+    }
+    let room = Room::open(&run, exe).unwrap();
     let mut seen = None;
     for _ in 0..300 {
-        if run.join("state.sqlite").exists()
-            && let Ok(room) = Room::open(&run, exe)
-        {
-            let value = snapshot(&room);
-            if value["verification"]["stage"] == "test" {
-                seen = Some(value);
-                break;
-            }
+        let value = snapshot(&room);
+        if value["verification"]["stage"] == "test" {
+            seen = Some(value);
+            break;
         }
         tokio::time::sleep(std::time::Duration::from_millis(50)).await;
     }
@@ -52,7 +55,6 @@ async fn the_test_in_progress_is_named_while_verification_runs() {
     assert_eq!(value["stopping"], false);
     let report = worker.await.unwrap().unwrap();
     assert_eq!(report.state, "waiting_approval");
-    let room = Room::open(&run, exe).unwrap();
     assert!(
         snapshot(&room)["verification"].is_null(),
         "no step once it ended"
@@ -83,10 +85,7 @@ async fn a_running_run_without_its_process_and_a_stop_in_progress_are_reported()
         .unwrap();
     drop(store);
     // The run's process record names a process that has exited.
-    let mut gone = std::process::Command::new("true").spawn().unwrap();
-    let pid = gone.id();
-    gone.wait().unwrap();
-    std::fs::write(run.join("runner.pid"), pid.to_string()).unwrap();
+    std::fs::write(run.join("runner.pid"), i32::MAX.to_string()).unwrap();
     let value = snapshot(&room);
     assert_eq!(value["runner"], "absent");
     assert_eq!(value["stopping"], false);

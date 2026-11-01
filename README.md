@@ -10,10 +10,6 @@ tests the combined result and asks for your approval before merging. It runs on 
 
 ![Workspace and goal configuration](docs/assets/ui-workspace-current.png)
 
-![Agent room with task progress](docs/assets/ui-agent-room-current.png)
-
-![Dark agent room](docs/assets/ui-agent-room-dark-current.png)
-
 ## What it does
 
 - **One goal, a team of agents** — scoped tasks with dependencies, tests and their own agent sessions; files never overlap between tasks.

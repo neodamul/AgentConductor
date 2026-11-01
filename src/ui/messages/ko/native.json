@@ -106,6 +106,7 @@
   "native.native_controller_failed": "네이티브 컨트롤러에 실패했습니다",
   "native.native_controller_is_busy": "네이티브 컨트롤러가 작업 중입니다",
   "native.native_message_delegate_initialization_failed": "네이티브 메시지 처리기 초기화에 실패했습니다",
+  "native.chat_still_answering": "이전 채팅 요청을 처리 중입니다",
   "native.native_message_must_be_a_utf_8_json": "네이티브 메시지는 UTF-8 JSON 문자열이어야 합니다",
   "native.native_picker_closed": "파일 선택 창이 닫혔습니다",
   "native.native_picker_failed": "파일 선택 창에 실패했습니다",

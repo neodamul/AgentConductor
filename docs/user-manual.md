@@ -67,10 +67,6 @@ The workspace menu includes **Agent tools guide…** for optional agentmemory, R
 
 ![Dark Korean workspace](assets/ui-workspace-dark-current.png)
 
-![Agent room with task progress](assets/ui-agent-room-current.png)
-
-![Dark agent room](assets/ui-agent-room-dark-current.png)
-
 ### 1.3 Agents and models
 
 The app-owned workspaces share one machine-wide CLI list, `~/.agentconductor/agents.json`.

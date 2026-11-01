@@ -105,6 +105,7 @@
   "native.native_controller_failed": "native controller failed",
   "native.native_controller_is_busy": "native controller is busy",
   "native.native_message_delegate_initialization_failed": "native message delegate initialization failed",
+  "native.chat_still_answering": "the previous chat request is still running",
   "native.native_message_must_be_a_utf_8_json": "native message must be a UTF-8 JSON string",
   "native.native_picker_closed": "native picker closed",
   "native.native_picker_failed": "native picker failed",

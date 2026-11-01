@@ -92,6 +92,9 @@ pub(super) async fn drive(
         return Ok(report);
     }
     report.verification_attempt += 1;
+    // Persist the verification phase before launching its tests so read-only UI snapshots can
+    // report what is running, even while the next integration command is still in progress.
+    save(store, dir, &report)?;
     let plan = report.plan.clone();
     if !worktree {
         super::stray::move_stray_files(&git, &plan, dir, store)?;

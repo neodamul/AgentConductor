@@ -17,6 +17,7 @@ using System;
 using System.Runtime.InteropServices;
 public static class DesktopInput {
   const uint KEYEVENTF_KEYUP = 2;
+  const uint KEYEVENTF_UNICODE = 4;
   [StructLayout(LayoutKind.Sequential)] struct MouseInput { public int X, Y; public uint Data, Flags, Time; public IntPtr ExtraInfo; }
   [StructLayout(LayoutKind.Sequential)] struct KeyboardInput { public ushort VirtualKey, Scan; public uint Flags, Time; public IntPtr ExtraInfo; }
   [StructLayout(LayoutKind.Explicit)] struct Payload { [FieldOffset(0)] public MouseInput Mouse; [FieldOffset(0)] public KeyboardInput Keyboard; }
@@ -27,6 +28,7 @@ public static class DesktopInput {
   [DllImport("user32.dll", SetLastError=true)] static extern uint SendInput(uint count, Input[] inputs, int size);
   static uint ProcessId(IntPtr window) { uint processId; GetWindowThreadProcessId(window, out processId); return processId; }
   static Input Key(ushort key, uint flags) { return new Input { Type = 1, Payload = new Payload { Keyboard = new KeyboardInput { VirtualKey = key, Flags = flags } } }; }
+  static Input UnicodeKey(char key, uint flags) { return new Input { Type = 1, Payload = new Payload { Keyboard = new KeyboardInput { Scan = key, Flags = flags | KEYEVENTF_UNICODE } } }; }
   public static bool Focus(IntPtr window, uint pid) {
     SetForegroundWindow(window);
     var until = DateTime.UtcNow.AddSeconds(3);
@@ -36,6 +38,12 @@ public static class DesktopInput {
   public static void PressEnter() {
     var keys = new[] { Key(0x0D, 0), Key(0x0D, KEYEVENTF_KEYUP) };
     if (SendInput(2, keys, Marshal.SizeOf(typeof(Input))) != 2) throw new InvalidOperationException("SEND_INPUT_ENTER_FAILED");
+  }
+  public static void TypeText(string text) {
+    foreach (char key in text) {
+      var keys = new[] { UnicodeKey(key, 0), UnicodeKey(key, KEYEVENTF_KEYUP) };
+      if (SendInput(2, keys, Marshal.SizeOf(typeof(Input))) != 2) throw new InvalidOperationException("SEND_INPUT_TEXT_FAILED");
+    }
   }
 }
 "@
@@ -88,7 +96,7 @@ if (-not $goal.Current.HasKeyboardFocus) {
 }
 $goalPattern = $goal.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
 if ($goalPattern.Current.IsReadOnly) { Write-Output 'GOAL_VALUE_READ_ONLY'; exit 7 }
-$goalPattern.SetValue('Windows UIA goal')
+[DesktopInput]::TypeText('Windows UIA goal')
 $goalText = $goalPattern.Current.Value
 $focused = [System.Windows.Automation.AutomationElement]::FocusedElement
 Write-Output "GOAL_FOCUS_AFTER_INPUT:$($focused.Current.ProcessId):$($focused.Current.ControlType.ProgrammaticName):$($focused.Current.Name)"

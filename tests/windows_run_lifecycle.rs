@@ -52,7 +52,7 @@ fn lifecycle_driver_exposes_stop_resume_and_recovery_observations() {
     assert!(desktop_script.contains("[DesktopInput]::TypeText('Windows UIA goal')"));
     assert!(desktop_script.contains("[DesktopInput]::PressEnter()"));
     assert!(!desktop_script.contains("SendWait"));
-    assert!(!desktop_script.contains("ValuePattern"));
+    assert!(!desktop_script.contains(".SetValue("));
 }
 
 #[tokio::test]
