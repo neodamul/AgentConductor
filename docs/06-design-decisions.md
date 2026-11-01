@@ -1520,7 +1520,7 @@ The two buttons join the Settings `source-actions` row and use the same close-th
 Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
 
 ### DD-190 Rebuild the conversation from immutable artifacts
-No mutable chat file is added: the latest `chat_result` already names the artifact pair of the last chat, so `chat::history` reads its input turns and answer, and `chat_reset` only clears the pointer. The request carries the question text only, which also keeps it under the 64 KiB request limit. A true long-lived coordinator process (stdin session) was not built.
+No mutable chat file is added: the latest `chat_result` already names the artifact pair of the last chat, so `chat::history` reads its input turns and answer, and `chat_reset` only clears the pointer. The request carries the question text only, which also keeps it under the 64 KiB request limit. The native multiline editor uses its localized prompt as its AccessKit accessible name for reliable keyboard and UI automation. A true long-lived coordinator process (stdin session) was not built.
 Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
 
 ### DD-191 Delete rather than replace

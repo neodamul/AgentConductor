@@ -32,3 +32,5 @@ The current request-pool lanes must be preserved. PR #192's old `sync_channel(1)
 ## Windows package UI Automation selection (2026-11-01)
 
 Run [41270341316](https://github.com/neodamul/AgentConductor/actions/runs/41270341316) passed validation and the macOS package but failed the Windows stop/resume package journey because its driver could not find the `Stop reason` editor after invoking `Stop run`. The previous driver searched all top-level windows owned by the process, including hidden/offscreen windows. It now filters top-level windows and descendants using `IsOffscreen` and a non-empty `BoundingRectangle`, and prints matching process-window diagnostics on timeout. `lifecycle_driver_exposes_stop_resume_and_recovery_observations` was run red then green locally. The updated exact Windows package journey still needs to pass before #9 acceptance changes.
+
+The native multiline chat editor also exposes its localized placeholder as its AccessKit accessible name. `tests/native_workspace_chat_accessibility.rs` guards this contract for Windows UI Automation; it does not replace exact packaged Windows verification.

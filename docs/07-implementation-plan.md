@@ -6740,6 +6740,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Record local verification in AgentMemory (`mem_mvx8bws9_da5214784410`) and the LLM Wiki; Graphify refreshed to 11,829 nodes / 19,326 edges. CocoIndex could not run because `mcp.server.fastmcp` is missing; no app dependency was added. Exact packaged acceptance remains unverified.
 - [ ] Exact packaged macOS/Windows behavior and visual acceptance remain open; issue #9 acceptance stays 22/50 until tested.
 
+### 2026-11-01 — Expose the native coordinator chat editor to UI automation — issue #189
+
+- [x] Plan / Red: add an egui AccessKit regression requiring the coordinator chat multiline editor to expose its localized prompt as an accessible name; it failed on the Rust base before the change.
+- [x] Task / Green: apply the localized prompt as the editor response's accessible name, matching the JS accessibility fix without importing its unrelated backend changes.
+- [x] Verify locally: 17 tests across six focused suites pass; warning-denied Clippy, rustfmt, diff hygiene, and the 300-line source/test limit pass. `view.rs` is 167 lines and the regression test is 37 lines.
+- [ ] Verify the exact Windows package UI Automation path and complete issue #189; source-level AccessKit tests do not satisfy package acceptance.
+
 ### 2026-11-01 — Release previous workspace lease when switching — issue #226 / #257
 
 - [x] Plan: add R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. The current workspace listener must follow the selected workspace without strongly retaining an old `Startup` and its lease.

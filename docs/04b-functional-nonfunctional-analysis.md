@@ -629,7 +629,7 @@ Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189.
 The `chat` request carries only the new question; the server rebuilds the earlier turns from the stored artifacts of the latest chat (`chat-input-<id>.json` plus its answer), keeps the last 40 turns, and `chat_history` and `chat_reset` read and clear them. An earlier long answer is clipped in the prompt instead of refusing the next question.
 
 ### FR-167 Transcript behavior
-The panel loads the history when the workspace opens, adopts a chat that is still running, shows the answer once, keeps typed input when a request is refused, shows elapsed time while waiting, and is cleared when another workspace opens.
+The panel loads the history when the workspace opens, adopts a chat that is still running, shows the answer once, keeps typed input when a request is refused, shows elapsed time while waiting, and is cleared when another workspace opens. The multiline editor exposes its localized prompt as an accessible name.
 Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
 
 ### FR-168 Removal

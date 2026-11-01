@@ -68,13 +68,17 @@ impl State {
         ui.add_enabled_ui(can_edit, |ui| {
             ui.horizontal(|ui| {
                 ui.label(RichText::new("> ").monospace());
-                editor = Some(
-                    egui::TextEdit::multiline(&mut self.draft)
-                        .desired_rows(3)
-                        .font(egui::TextStyle::Monospace)
-                        .hint_text(text(language, "chat.placeholder"))
-                        .show(ui),
-                );
+                let mut output = egui::TextEdit::multiline(&mut self.draft)
+                    .desired_rows(3)
+                    .font(egui::TextStyle::Monospace)
+                    .hint_text(text(language, "chat.placeholder"))
+                    .show(ui);
+                output.response.response = output
+                    .response
+                    .response
+                    .clone()
+                    .accessible_name(text(language, "chat.placeholder"));
+                editor = Some(output);
             });
         });
         let changed = editor
