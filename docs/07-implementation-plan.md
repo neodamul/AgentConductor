@@ -12,6 +12,12 @@
 - [x] Environment check: the running UTM Windows guest has no `cargo`, `rustc`, or `msbuild.exe`; the temporary probe files were removed, and no VM settings changed.
 - [ ] Complete: run the exact packaged Windows schedule journey. Keep #310 open until that package verification passes.
 
+### Verify coordinator chat on the Rust root — bug #189 / 2026-11-02
+
+- [x] Task: confirm the accessible editor name and persisted/reconnectable transcript are present on root PR #22; do not reopen the old child PR.
+- [x] Local Verify: `cargo test --locked --offline --test native_workspace_chat_accessibility --test windows_chat_script_contract --test chat_worker_lifecycle --test native_chat_terminal` passes 8 tests across 4 suites.
+- [ ] Complete: exact Windows package chat interaction remains unverified. Keep #189 open until the packaged UI flow passes.
+
 ### Fix packaged Windows default-workspace input gate — issue #9 / 2026-11-02
 
 - [x] Plan: inspect failed exact package run `41309723645`; Windows UI Automation focused the goal field but persisted an empty value after the driver sent `Windows UIA goal`.
