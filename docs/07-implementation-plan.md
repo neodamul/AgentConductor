@@ -6726,4 +6726,4 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task / Green: render the status summary and task rows from the existing run snapshot before the existing judgment/history view; filter only displayed workflow-save rows.
 - [x] Verify locally: 2 coordinator-board tests, 18 Agent Room/language/layout tests, source-layout guard (2), warning-denied all-target Clippy, rustfmt, diff check and the 300-line source/test guard pass.
 - [ ] Broader `cargo test --locked --offline --features native-ui-probe` was stopped after 90 seconds without output; it is not recorded as a pass.
-- [ ] Complete unit: update issue #286, AgentMemory and LLM Wiki; refresh Graphify; commit and push the Rust-only change. Exact packaged GUI review stays with #9.
+- [x] Complete source unit: issue #286 updated, AgentMemory `mem_mvxcb2ra_4e1fff7aaa46`, LLM Wiki and Graphify refreshed; implementation commit `85905874` pushed on the issue branch and draft PR #288 opened. Keep #286 open through review; exact packaged GUI review stays with #9.
