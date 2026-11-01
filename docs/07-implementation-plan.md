@@ -1,10 +1,12 @@
 ### Fix packaged Windows default-workspace input gate — issue #9 / 2026-11-02
 
 - [x] Plan: inspect failed exact package run `41309723645`; Windows UI Automation focused the goal field but persisted an empty value after the driver sent `Windows UIA goal`.
-- [x] Red / Green: the new driver contract failed before the fix because Unicode input had no pacing; one 100 ms delay after each character pair now keeps the existing post-entry settle and persisted-value assertion.
-- [x] Verify locally: Windows driver, run-lifecycle, source-layout, and desktop contract suites pass 16 tests with one ignored; rustfmt and diff checks pass; changed test files are 202 and 193 lines. The all-target native suite observed 1,029 passed / 15 ignored across 309 suites before it was stopped for runtime; no test failure was observed, but this is not counted as a completed command.
-- [x] Integrate: commit `70d8f409` is pushed to the active #9 branch and recorded on #9, #310, and PR #260.
-- [ ] Verify package: the previous exact Windows package failed to persist the goal text. Exact-head run `41321569450` was cancelled after more than six minutes in native build/test validation; its native-package job had zero steps and never ran. Rerun the exact package acceptance before counting this #9 workflow.
+- [x] Red / Green: the initial 100 ms Unicode-key pacing change was disproved by the next exact Windows package, which saved only `Windows UIA goa`. A new contract test failed until the driver switched to UI Automation `ValuePattern.SetValue`, read back the complete field value, then saved.
+- [x] Verify locally: `windows_desktop_driver`, `source_layout`, and `public_docs` pass 27 tests; targeted warning-denied Clippy, rustfmt, diff hygiene pass. `windows_desktop.rs` is 165 lines and its driver tests are 184 lines. This verifies the test contract on macOS, not the Windows package.
+- [x] Dependency evidence: the locked `egui 0.37.0` text editor sends AccessKit `SetValue`; `accesskit_windows 0.35.1` maps that action to UIA `IValueProvider.SetValue` for value-bearing nodes.
+- [x] Assetize: LLM Wiki `windows-uia-text-input.md`; AgentMemory `mem_mvy3og4v_30b25f1436b5`; Graphify refreshed to 12,366 nodes / 18,737 edges. CocoIndex CLI is unavailable.
+- [ ] Integrate: commit the improved driver on the active #9 branch and update issue #9 / PR #22; do not reopen or stack PR #311.
+- [ ] Verify package: run the exact Windows package journey after a Windows package build. Prior run `41321569450` was cancelled before its native-package job ran. Do not count this workflow or close related bug #310 from local source tests alone.
 - [x] Assetize: document the packaged-driver boundary in the LLM Wiki and save AgentMemory `mem_mvxzjvkh_e262c47c9cba`; Graphify refreshed to 12,159 nodes / 19,847 edges.
 - [x] Record local-first CI decision in AgentMemory `mem_mvxzuhf9_3fb94bacea78`; do not treat the cancelled workflow as acceptance evidence.
 

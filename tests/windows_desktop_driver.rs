@@ -1,64 +1,68 @@
 #[test]
-fn goal_driver_focuses_and_types_before_saving() {
+fn goal_driver_focuses_and_sets_the_accessible_value_before_saving() {
     let source = include_str!("windows_desktop.rs");
-    assert!(
-        !source.contains("$window.SetFocus()"),
-        "desktop UI Automation must not focus a non-focusable top-level window"
-    );
     let focus = source.find("[DesktopInput]::Focus($hwnd, $expectedProcessId)");
-    let click = source.find("[DesktopInput]::Click($hwnd, $centerX, $centerY, $expectedProcessId)");
-    let select = source.find("[DesktopInput]::SelectAll()");
-    let type_goal = source.find("[DesktopInput]::TypeText('Windows UIA goal')");
+    let goal_focus = source.find("$goal.SetFocus()");
+    let set_value = source.find("$goalPattern.SetValue('Windows UIA goal')");
     let save = source.find("$save.SetFocus()");
-    assert!(focus.is_some_and(|index| Some(index) < click));
-    assert!(click.is_some_and(|index| Some(index) < select));
-    assert!(select.is_some_and(|index| Some(index) < type_goal));
-    assert!(type_goal.is_some_and(|index| Some(index) < save));
-    assert!(!source.contains("SendKeys"));
+    assert!(focus.is_some_and(|index| goal_focus.is_some_and(|goal| index < goal)));
+    assert!(goal_focus.is_some_and(|index| set_value.is_some_and(|set| index < set)));
+    assert!(set_value.is_some_and(|index| Some(index) < save));
+    assert!(!source.contains("TypeText("));
 }
 
 #[test]
-fn goal_driver_uses_unicode_keyboard_input_after_clicking_the_edit() {
+fn goal_driver_uses_accessibility_value_input_and_keyboard_save() {
     let source = include_str!("windows_desktop.rs");
-    assert!(source.contains("KEYEVENTF_UNICODE = 4"));
-    assert!(source.contains("SendInput(2, new[] { down, up }, Marshal.SizeOf(typeof(Input)))"));
-    assert!(source.contains("$goal.Current.BoundingRectangle"));
+    assert!(source.contains("[System.Windows.Automation.ValuePattern]::Pattern"));
+    assert!(source.contains("$goalPattern.SetValue('Windows UIA goal')"));
+    assert!(source.contains("$goalPattern.Current.Value"));
     assert!(source.contains("SetForegroundWindow(window)"));
+    assert!(source.contains("[DesktopInput]::PressEnter()"));
 }
 
 #[test]
-fn goal_driver_reports_focused_control_and_text_when_input_is_lost() {
+fn goal_driver_reports_the_focused_control_and_exact_goal_value() {
     let source = include_str!("windows_desktop.rs");
     assert!(source.contains("[System.Windows.Automation.AutomationElement]::FocusedElement"));
-    assert!(source.contains("[System.Windows.Automation.TextPattern]::Pattern"));
+    assert!(source.contains("[System.Windows.Automation.ValuePattern]::Pattern"));
     assert!(source.contains("GOAL_FOCUS_AFTER_INPUT:"));
     assert!(source.contains("GOAL_TEXT_AFTER_INPUT:"));
     assert!(source.contains("driver output: {report}"));
 }
 
 #[test]
-fn goal_driver_waits_for_enabled_controls_and_keyboard_focus_before_typing() {
+fn goal_driver_waits_for_enabled_controls_and_focus_before_setting_value() {
     let source = include_str!("windows_desktop.rs");
     let wait_enabled = source.find("$goal.Current.IsEnabled -or -not $save.Current.IsEnabled");
     let focus = source.find("[DesktopInput]::Focus($hwnd, $expectedProcessId)");
     let wait_focus = source.find("-not $goal.Current.HasKeyboardFocus");
-    let type_goal = source.find("[DesktopInput]::TypeText('Windows UIA goal')");
+    let set_value = source.find("$goalPattern.SetValue('Windows UIA goal')");
     assert!(wait_enabled.is_some_and(|index| Some(index) < focus));
     assert!(focus.is_some_and(|index| Some(index) < wait_focus));
-    assert!(wait_focus.is_some_and(|index| Some(index) < type_goal));
+    assert!(wait_focus.is_some_and(|index| Some(index) < set_value));
 }
 
 #[test]
-fn goal_driver_paces_unicode_input_between_characters() {
+fn goal_driver_does_not_type_goal_text_through_lossy_synthetic_keys() {
     let source = include_str!("windows_desktop.rs");
-    let type_text = source
-        .split("public static void TypeText(string text) {")
-        .nth(1)
-        .and_then(|body| body.split("public static void PressEnter() {").next())
-        .expect("goal field text input helper");
-    let send = type_text.find("SendInput(2, new[] { down, up }");
-    let pace = type_text.find("System.Threading.Thread.Sleep(100);");
-    assert!(send.is_some_and(|index| pace.is_some_and(|sleep| index < sleep)));
+    assert!(!source.contains("KEYEVENTF_UNICODE"));
+    assert!(!source.contains("public static void TypeText("));
+    assert!(source.contains("$goalPattern.SetValue('Windows UIA goal')"));
+}
+
+#[test]
+fn goal_driver_sets_and_reads_back_text_through_the_uia_value_pattern() {
+    let source = include_str!("windows_desktop.rs");
+    let pattern =
+        source.find("$goal.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)");
+    let set_value = source.find("$goalPattern.SetValue('Windows UIA goal')");
+    let read_value = source.find("$goalPattern.Current.Value");
+    let save = source.find("$save.SetFocus()");
+    assert!(pattern.is_some());
+    assert!(pattern.is_some_and(|index| set_value.is_some_and(|set| index < set)));
+    assert!(set_value.is_some_and(|set| read_value.is_some_and(|read| set < read)));
+    assert!(read_value.is_some_and(|read| save.is_some_and(|save| read < save)));
 }
 
 #[test]
