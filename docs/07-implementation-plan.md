@@ -6737,4 +6737,4 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify focused: the cadence regression and live progress/quota observer suites pass (9 tests total).
 - [x] Verify locally: 105 tests across native UI, source-layout, live-progress, and Claude-quota suites pass. Warning-denied all-target Clippy, rustfmt, diff hygiene, and the ≤300-line source/test limit pass; `progress.rs` is 143 lines and the test is 15.
 - [x] Update QAS-194/DD-208, LLM Wiki, and Graphify (11,867 nodes / 19,379 edges). CocoIndex remains unavailable because `mcp.server.fastmcp` cannot import.
-- [ ] Update AgentMemory and #257/PR #260, then commit and push this unit.
+- [x] Complete this unit: AgentMemory `mem_mvxe3g5u_f5672b6bb9e3`; progress updated on #257/PR #260; commit `e7d1a8a` pushed to the #257 issue branch and included in draft PR #294.
