@@ -6768,7 +6768,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify focused: the worktree-change regression passes; path tests reject parent traversal, drive paths, and UNC paths and cover glob declarations on both separators.
 - [x] Verify: affected native UI/source-layout suites pass 106 tests; all-target/all-feature Clippy with `-D warnings`, rustfmt, diff hygiene, and changed source/test ≤300-line checks pass.
 - [x] Update QAS-194/DD-208 and LLM Wiki; refresh Graphify to 11,960 nodes / 18,164 edges / 892 communities. CocoIndex CLI is unavailable in this environment.
-- [ ] Save AgentMemory, update #257 / PR #294 with evidence, then commit and push this unit on `codex/issue-257-rust-draft-preservation`.
+- [x] Save AgentMemory `mem_mvxfmjfb_1a22b2a2f701`; update #257 and PR #294; commit `f34137c` pushed to `codex/issue-257-rust-draft-preservation`; signal Claude `sig_mvxfnpz7_c75fb017e0c1`.
 - [ ] Exact packaged macOS/Windows GUI validation remains open; source tests do not satisfy package acceptance.
 
 ### 2026-11-01 — Port process events and adaptive recovery — issue #257 / Claude PR #255 parity
