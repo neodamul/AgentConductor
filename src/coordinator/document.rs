@@ -4,6 +4,8 @@ use crate::protocol::{Decoder, EventKind};
 use std::{fs, io::Read, path::Path};
 
 pub const NO_JSON: &str = "coordinator response contains no valid JSON ";
+const MAX_REPLY: usize = 256 * 1024;
+const TOO_LARGE: &str = "coordinator document exceeds 256 KiB";
 
 /// The whole reply as JSON, or else the first fenced ```json block that carries `field`.
 /// Models often wrap the requested object in a Markdown fence despite "return only JSON".
@@ -23,7 +25,9 @@ fn json_reply(text: &str, field: &str) -> Option<Value> {
         {
             return Some(json);
         }
-        rest = &body[close + 3..];
+        // Scan every later fence. The closing marker can also be the opening marker of a valid
+        // block when a model leaves an earlier fenced draft unfinished.
+        rest = &rest[open + 3..];
     }
     None
 }
@@ -157,20 +161,20 @@ fn read_with_decoder(
             };
             if let Some(value) = value {
                 if let Some(chunk) = value.as_str() {
-                    if chunk.len() > 64 * 1024 {
-                        return Err("coordinator document exceeds 64 KiB".into());
+                    if chunk.len() > MAX_REPLY {
+                        return Err(TOO_LARGE.into());
                     }
                     if provider == Provider::OpenCode {
-                        if text.len().saturating_add(chunk.len()) > 64 * 1024 {
-                            return Err("coordinator document exceeds 64 KiB".into());
+                        if text.len().saturating_add(chunk.len()) > MAX_REPLY {
+                            return Err(TOO_LARGE.into());
                         }
                         text.push_str(chunk);
                     } else if let Some(json) = json_reply(chunk, field) {
                         document = Some(json);
                     }
                 } else if value.get(field).is_some() {
-                    if serde_json::to_vec(value).map_err(|e| e.to_string())?.len() > 64 * 1024 {
-                        return Err("coordinator document exceeds 64 KiB".into());
+                    if serde_json::to_vec(value).map_err(|e| e.to_string())?.len() > MAX_REPLY {
+                        return Err(TOO_LARGE.into());
                     }
                     document = Some(value.clone());
                 }

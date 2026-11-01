@@ -781,3 +781,7 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-191 → QAS-197 → DDR-50 
 ### FR-195 Name invalid task fields and retry an empty phased scope once
 `Plan::validate` reports task-specific errors for empty IDs, duplicate IDs, unknown agents, empty prompts, empty `paths`, and missing or empty `test_command` executables. The output schema sets `minItems: 1` for `paths` and `test_command`. Phased planning retries once for `paths is empty` using the existing correction path for unsafe or overlapping scopes; flat plans keep their existing single attempt.
 Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215. GitHub #251, 2026-11-02.
+
+### FR-196 Select a complete coordinator JSON document within a fixed bound
+Parse an entire JSON reply or scan fenced candidates in order. If a candidate is malformed or lacks the requested field, continue scanning from its body so an opening fence embedded after an unfinished draft can be found. Accept at most 256 KiB of response text and reject larger or invalid replies.
+Trace: R-204 → BG-159 → SF-192 → UC-195 → FR-196 → QAS-202 → DDR-53 → DD-216. Rust parity port of main #247, 2026-11-02.

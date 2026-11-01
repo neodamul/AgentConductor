@@ -1625,3 +1625,7 @@ Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211.
 ### DD-215 Keep task identity checks shared and make empty scope retryable
 Move task identity/required-field validation into the bounded task-validation module so the existing plan module stays within the 300-line limit. Keep one `EMPTY_PATHS` diagnostic shared by validation and phased planner retry matching; set `minItems: 1` for paths and test commands while leaving dependencies optional. The coordinator gets only one correction retry, and only for a phased empty or unsafe/overlapping scope.
 Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215. GitHub #251, 2026-11-02.
+
+### DD-216 Continue scanning after an invalid fenced candidate
+Try the entire trimmed reply first. Otherwise scan fenced candidates in order; after an invalid or field-incomplete candidate, resume at that candidate's body so an opening fence embedded after an unfinished draft can be found. Reject content above 256 KiB, keeping the provider event decoder's independent 1 MiB safety bound.
+Trace: R-204 → BG-159 → SF-192 → UC-195 → FR-196 → QAS-202 → DDR-53 → DD-216. Rust parity port of main #247, 2026-11-02.

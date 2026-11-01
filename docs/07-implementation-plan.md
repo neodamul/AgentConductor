@@ -6,6 +6,14 @@
 - [x] Cross-check latest-main Claude quota fixes #297/#315: Rust uses a shared 180-second limit in both collectors and exposes elapsed time. Local quota/wait/parser tests pass 16 with 1 ignored; elapsed UI tests pass 2/2. Exact Windows package/account verification remains open.
 - [ ] Next: reconcile current-main behavior into the Rust root without restoring the legacy UI; resolve the remaining exact-package Windows workflow 23/24 gates. Do not create another PR for this work.
 
+### Port main #247 complete-document parsing — Rust parity / 2026-11-02
+
+- [x] Plan and architecture trace: R-204 → BG-159 → SF-192 → UC-195 → FR-196 → QAS-202 → DDR-53 → DD-216. Main #247 accepts a complete fenced document after an unfinished draft and raises the response bound to 256 KiB; the Rust parser currently stops at the first unmatched fence and rejects at 64 KiB.
+- [x] Red: three provider-JSONL regressions failed on the old behavior: unfinished fence returned no JSON, a 100 KiB reply was rejected, and a 257 KiB reply reported the old 64 KiB limit.
+- [x] Task / Green: scan subsequent fence markers after each malformed candidate; accept a reply of exactly 256 KiB and retain the independent 1 MiB provider event bound.
+- [x] Verify: coordinator, new document, public-doc, and source-layout suites pass 23 tests; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line checks pass (`src/coordinator/document.rs`: 195 lines; new test: 42; coordinator tests: 161).
+- [ ] Complete: update LLM Wiki and AgentMemory; commit/push to existing #22 only; refresh its body/issue #9 progress. This port adds no packaged-workflow credit.
+
 ### Verify Windows schedule test path — bug #310 / 2026-11-02
 
 - [x] Task: confirm the existing Rust root passes `AC_RUN_DIR` to both the packaged app and PowerShell driver; retain the run-directory assertion in the driver.

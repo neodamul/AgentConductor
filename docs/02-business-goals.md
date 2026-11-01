@@ -633,3 +633,7 @@ Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211.
 ### BG-158 Correct an empty task scope instead of losing the plan
 An actionable, field-specific correction gives the coordinator one chance to fix a phased plan whose task omitted its owned files.
 Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215. GitHub #251, 2026-11-02.
+
+### BG-159 Keep planning resilient to imperfect coordinator drafts
+Operators can review a complete plan even when a model emitted an unfinished JSON draft before its final structured answer.
+Trace: R-204 → BG-159 → SF-192 → UC-195 → FR-196 → QAS-202 → DDR-53 → DD-216. Rust parity port of main #247, 2026-11-02.

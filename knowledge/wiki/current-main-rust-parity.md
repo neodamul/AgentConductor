@@ -28,6 +28,14 @@ time exposed by the native UI. Local quota/wait/parser tests pass 16 tests with
 1 ignored; the elapsed UI tests pass 2/2. This confirms Rust source behavior,
 not the exact Windows package or the reported Enterprise account environment.
 
+Main #247's coordinator reply fix is ported in Rust: the parser scans later
+fences after an invalid or unfinished candidate, accepts requested JSON up to
+256 KiB, and preserves the separate 1 MiB event-decoder bound. Red/Green
+JSONL regressions cover incomplete-draft recovery, the exact accepted boundary,
+and oversize rejection. The focused coordinator/docs/layout suites pass 23
+tests; warning-denied all-target Clippy and formatting pass. The Rust source
+remains split and below 300 lines. Exact platform packaging remains part of #9.
+
 For bug #310, the Rust Windows schedule driver passes `AC_RUN_DIR` to the app
 and PowerShell process; local dispatch/layout checks pass 9/9. For bug #189,
 the coordinator-chat editor accessibility and lifecycle checks pass 8/8. Both

@@ -799,3 +799,7 @@ Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211.
 ### R-203 Planning contracts match executable validation
 Every planned task, including a verification task, shall own at least one literal repository-relative path and provide a test command with an executable. The output schema and planner prompt shall state these requirements. Validation errors shall identify the task and invalid field. When a phased plan has an empty path list, the coordinator shall receive the same single correction attempt as for an unsafe or overlapping scope.
 Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215. GitHub #251, 2026-11-02.
+
+### R-204 Recover complete coordinator JSON from bounded replies
+The coordinator shall select the first complete JSON object containing the requested field, even when an earlier fenced draft is unfinished. Replies up to 256 KiB are accepted; larger replies and replies without a valid object fail with an actionable error.
+Trace: R-204 → BG-159 → SF-192 → UC-195 → FR-196 → QAS-202 → DDR-53 → DD-216. Rust parity port of main #247, 2026-11-02.

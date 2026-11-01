@@ -735,3 +735,7 @@ Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211.
 ### SF-191 Enforce task paths and describe one correctable scope failure
 Require non-empty `paths` and `test_command` arrays in the output schema; validate each task field with an actionable task-specific error; and retry a phased plan once when a task has no path.
 Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215. GitHub #251, 2026-11-02.
+
+### SF-192 Extract a bounded complete coordinator document
+Scan provider output for the first complete valid JSON object containing the requested field, continuing after an unfinished fenced draft. Enforce a 256 KiB document limit and report oversize or missing-document failures.
+Trace: R-204 → BG-159 → SF-192 → UC-195 → FR-196 → QAS-202 → DDR-53 → DD-216. Rust parity port of main #247, 2026-11-02.

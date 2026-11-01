@@ -27,6 +27,7 @@ Priority: business importance / technical risk (H, M, L).
 | DDR-17 | Extend custom CLI event and quota behavior through reviewable data | Modifiability + availability | FR-139, QAS-150, NFR-06/07 | H/M | DD-03, DD-04, DD-164 |
 | DDR-14 (planned) | Remote awareness and decisions without weakening local authority | Quality (security) + integration | FR-28, NFR-17, QAS-35, QAS-36 | H/H | DD-51 (proposed) |
 | DDR-10 | Recognizable providers without redistributing their artwork | Quality (usability) + constraint | FR-20, NFR-10, NFR-12, QAS-27 | M/L | DD-40 |
+| DDR-53 | Recover complete coordinator JSON from bounded provider output | Quality (robustness) | FR-196, QAS-202 | M/M | DD-216 |
 
 ## Architecture
 
@@ -203,3 +204,6 @@ Trace: QAS-198.
 
 ### Driver DDR-52 Port the native surface without crossing workstream ownership
 Implement the coordinator board inside the native Rust Agent Room, reusing the snapshot shape and localized egui components. Preserve existing review controls and stored audit records. Treat the current JS/backend behavior as a reference contract; do not edit or absorb those workstreams. Trace: QAS-199.
+
+### Driver DDR-53 Bound and recover coordinator document parsing
+Keep provider event framing separate from requested-document parsing. Scan completed fenced JSON candidates in order, continue after malformed/incomplete candidates, require the requested field, and cap accepted reply text at 256 KiB. Preserve the existing 1 MiB event-decoder bound and actionable errors. Trace: QAS-202.

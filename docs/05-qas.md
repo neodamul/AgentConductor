@@ -826,3 +826,7 @@ Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211.
 ### QAS-201 An empty phased task scope is corrected with actionable feedback
 Given a phased plan whose task has `paths: []`, validation names the task and missing field, the coordinator receives exactly one retry containing that reason, and the corrected plan is saved. Given a valid task, schema constraints require at least one path and executable test command; dependencies may remain empty. Verify task-field errors, flat and phased schemas, one retry for empty scope, and preservation of the existing overlap retry.
 Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215. GitHub #251, 2026-11-02.
+
+### QAS-202 An unfinished draft does not hide a complete coordinator response
+Given a reply with an unfinished fenced JSON draft followed by a complete requested document, select the complete document. Given multiple valid documents, select the first. Accept a response of 256 KiB or less and reject a larger one; reject replies with no complete object or malformed objects only. Verify these cases with provider JSONL fixtures and keep source/test files within 300 lines.
+Trace: R-204 → BG-159 → SF-192 → UC-195 → FR-196 → QAS-202 → DDR-53 → DD-216. Rust parity port of main #247, 2026-11-02.
