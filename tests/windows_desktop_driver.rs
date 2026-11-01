@@ -8,7 +8,7 @@ fn goal_driver_focuses_and_types_before_saving() {
     let focus = source.find("$goal.SetFocus()");
     let select = source.find("[System.Windows.Forms.SendKeys]::SendWait('^a')");
     let type_goal = source.find("foreach ($character in 'Windows UIA goal'.ToCharArray())");
-    let save = source.find("$save.GetCurrentPattern(");
+    let save = source.find("$save.SetFocus()");
     assert!(focus.is_some_and(|index| Some(index) < select));
     assert!(select.is_some_and(|index| Some(index) < type_goal));
     assert!(type_goal.is_some_and(|index| Some(index) < save));
@@ -33,7 +33,7 @@ fn goal_driver_types_each_character_before_saving() {
         .find("Start-Sleep -Milliseconds 750")
         .unwrap()
         + pacing;
-    let save = source.find("$save.GetCurrentPattern(").unwrap();
+    let save = source.find("$save.SetFocus()").unwrap();
     assert!(
         type_loop < send_character && send_character < pacing && pacing < settled && settled < save
     );
@@ -60,6 +60,17 @@ fn goal_driver_waits_for_enabled_controls_and_keyboard_focus_before_typing() {
     assert!(wait_enabled.is_some_and(|index| Some(index) < focus));
     assert!(focus.is_some_and(|index| Some(index) < wait_focus));
     assert!(wait_focus.is_some_and(|index| Some(index) < type_goal));
+}
+
+#[test]
+fn save_driver_uses_keyboard_activation_when_invoke_pattern_is_missing() {
+    let source = include_str!("windows_desktop.rs");
+    let focus = source.find("$save.SetFocus()");
+    let wait_focus = source.find("-not $save.Current.HasKeyboardFocus");
+    let enter = source.find("SendWait('{ENTER}')");
+    assert!(focus.is_some_and(|index| Some(index) < wait_focus));
+    assert!(wait_focus.is_some_and(|index| Some(index) < enter));
+    assert!(!source.contains("InvokePattern"));
 }
 
 #[test]

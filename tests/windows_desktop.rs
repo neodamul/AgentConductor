@@ -69,7 +69,16 @@ try {
 Write-Output "GOAL_FOCUS_AFTER_INPUT:$($focused.Current.ProcessId):$($focused.Current.ControlType.ProgrammaticName):$($focused.Current.Name)"
 Write-Output "GOAL_TEXT_AFTER_INPUT:$goalText"
 
-$save.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
+$save.SetFocus()
+$saveFocusDeadline = (Get-Date).AddSeconds(3)
+while ((Get-Date) -lt $saveFocusDeadline -and -not $save.Current.HasKeyboardFocus) {
+  Start-Sleep -Milliseconds 50
+}
+if (-not $save.Current.HasKeyboardFocus) {
+  Write-Output 'SAVE_FOCUS_FAILED'
+  exit 8
+}
+[System.Windows.Forms.SendKeys]::SendWait('{ENTER}')
 Write-Output 'DRIVEN'
 "#;
 
