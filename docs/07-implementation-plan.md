@@ -6792,3 +6792,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task / Green: set a shared 60-second production wait for macOS and Windows; expose an injected deadline for tests; report limit and pre/post `/usage` stage; show elapsed time in the native quota card while its asynchronous job runs.
 - [x] Verify locally: 26 targeted tests passed, 1 ignored; source-layout suite passed; warning-denied Clippy, `cargo fmt --check`, `git diff --check`, and the 300-line limit passed. Windows cross-target compile was unavailable because `x86_64-pc-windows-gnu` is not installed here.
 - [x] Complete: issue #297 labeled `bug` and updated; Rust draft PR #303 is stacked on PR #294; AgentMemory `mem_mvxh8c3a_13b6f650bf06`; Claude signal `sig_mvxh8c41_92e4daa1feb3`; Graphify updated (11,990 nodes / 18,212 edges); commit `b438d6e3` pushed. Keep #297 open until Rust integration and Windows package validation.
+
+### GitHub #295 — Surface Claude quota errors in the Rust UI
+- [x] Plan: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214; keep the work on an issue-specific Rust branch.
+- [x] Red: add deterministic English/Korean egui accessibility tests for the agent sidebar and settings view; both fail because the error is only present in the badge tooltip.
+- [x] Task / Green: show the stored quota error beside the badge in the native agent sidebar and settings, and in Agent Room's run status area; preserve the compact badge layout when no error exists.
+- [x] Verify: 14 focused tests passed across quota error, existing profile status, sidebar, and source-layout suites; warning-denied Clippy, `cargo fmt --check`, `git diff --check`, 300-line source/test checks, and the optimized native UI binary build passed locally.
+- [x] Update the LLM Wiki entry `knowledge/wiki/native-quota-error-visibility.md`; Graphify rebuilt the local graph (12,024 nodes / 19,637 edges). CocoIndex remains unavailable because `cocoindex-code` fails to import `mcp.server.fastmcp`.
+- [x] Record the design decision in AgentMemory `mem_mvxhta6d_9b688d0c76df`.
+- [ ] Complete: update AgentMemory and GitHub #295, push the issue branch, and open a draft PR stacked on the current Rust integration branch. Keep #295 open until integrated and verified on Windows.

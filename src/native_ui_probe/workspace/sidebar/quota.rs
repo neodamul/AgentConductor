@@ -77,5 +77,6 @@ pub(super) fn show(
             }
         }
     });
+    crate::native_ui_probe::quota_error::show(snapshot, Some(agent), language, ui);
     action
 }

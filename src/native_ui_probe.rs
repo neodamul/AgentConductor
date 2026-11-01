@@ -14,6 +14,7 @@ mod poll_background_pending_tests;
 #[path = "../tests/native_ui_probe/poll_timeout.rs"]
 mod poll_timeout_tests;
 mod probe;
+mod quota_error;
 mod quota_refresh;
 mod render;
 pub mod room;

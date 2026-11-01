@@ -799,3 +799,7 @@ Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → DDR-49 → D
 ### QAS-199 Slow Claude quota refresh remains bounded and observable
 Given a fixture Claude CLI that takes longer than 20 seconds to start, the query completes successfully before its configured 60-second deadline and the existing CLI authentication is used. Given a fixture that does not present a prompt or return `/usage`, the collector terminates at the configured deadline and names the duration and stage without requesting generation. A running quota job shows elapsed time only on its matching native agent card; completion or failure stops the timer. A failed card exposes the timeout message to keyboard and screen-reader users and on hover. Verify on macOS and Windows with a short injected deadline, then run the targeted native UI and quota tests locally.
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
+
+### QAS-200 Quota failures are readable without opening logs
+Given a quota record with a stored failure reason, the native agent sidebar, settings view, and Agent Room run screen shall show that reason in both English and Korean, expose the complete text as an accessible label, and preserve the existing appearance when no error exists. Verify with deterministic egui accessibility-tree tests; no provider CLI is required.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.

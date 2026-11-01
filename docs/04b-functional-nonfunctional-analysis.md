@@ -710,6 +710,10 @@ Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 
 For a standard Git directory, derive HEAD from detached, loose-ref, or packed-ref metadata. For a linked worktree or unsupported layout, return a cached or pending answer immediately and schedule one background Git refresh per repository. Coalesce concurrent refresh requests and retry failed or stale answers after the bounded refresh interval.
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
 
+### FR-194 Display quota errors beside unavailable values
+When a quota record contains a non-empty error, the native sidebar and agent settings shall render the error beside the quota badge and Agent Room shall render it in the run status area. All surfaces shall provide the complete text to accessibility clients and retain it on hover. Records without an error shall keep the existing compact badge layout.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
+
 ### FR-193 Claude quota query duration and stage are visible
 The Claude quota collector shall accept a bounded wait duration for deterministic tests and use 60 seconds in production on macOS and Windows. Timeout errors shall state the configured limit and whether the query was waiting for the CLI prompt or for `/usage`. A running quota job shall expose its start time to the native UI, which shows elapsed time for only the queried agent. A failed quota card shall expose its error through accessible text and a hover detail.
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.

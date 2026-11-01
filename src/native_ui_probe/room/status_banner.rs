@@ -60,6 +60,7 @@ pub(super) fn show(
                     ],
                 ));
             });
+            crate::native_ui_probe::quota_error::show(snapshot, None, language, ui);
             if merge_running {
                 ui.label(RichText::new(text("room.merge_in_progress")).strong());
                 ui.label(text("room.applying_approved_candidate_to_workspace"));

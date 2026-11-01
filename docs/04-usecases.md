@@ -797,3 +797,9 @@ Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → 
 3. The query returns as soon as quota is parsed, or after 60 seconds reports the elapsed limit and whether it was waiting before or after `/usage`.
 4. The UI stops the elapsed timer when the metadata job completes or fails.
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
+
+### UC-193 Inspect an unavailable quota reason
+1. The operator opens an agent list, agent settings, or Agent Room while quota is unavailable.
+2. The native UI shows the saved query error next to the quota badge or run status.
+3. The operator reads the same full error with a screen reader or by hovering the message.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.

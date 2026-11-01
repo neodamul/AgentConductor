@@ -713,3 +713,7 @@ Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → 
 ### SF-189 Wait safely for Claude quota output
 Give the whole interactive Claude quota query up to 60 seconds across CLI startup, project trust, prompt, and `/usage` response. Preserve prompt-stage versus response-stage timeout details and return immediately after parsed quota output. Show elapsed time on the queried agent card while its quota job is active.
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
+
+### SF-190 Show quota query errors inline
+On the native agent sidebar and agent settings list, show the stored quota error beside the unavailable quota badge. On the Agent Room run screen, show each stored agent quota error in the run status area. Keep the full error as accessible text and a hover detail. Do not infer an Enterprise response format or alter the captured error.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
