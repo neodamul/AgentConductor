@@ -1803,3 +1803,7 @@ Ported the bounded JSON-format correction behavior with a deterministic local CL
 ## 2026-10-29 — Exact macOS package at Rust head 87239f6 — issue #9
 
 Built `87239f6a68e5b7e4ccc3efc8c0efffc5d11b1407` with the offline Rust release package command. The manifest source SHA and binary SHA match; full ZIP CRC and packaged `--help` pass. Archive SHA-256 `f2200d0db44d6e926505ef0ce806cc936d4bb65644863fee00194d688d03dcc4`; binary SHA-256 `081136f7ab226b91373ee196150b0923f86e11ad210db603eb7c51103566888b`. Evidence: `docs/evidence/issue9-macos-package-87239f6-20261029.json`. No GUI launch/screenshot, Windows package, or UI acceptance credit. AgentMemory: `mem_mvtf3c2h_1057064c096e`.
+
+## [2026-11-01] task/verify | Remove fixed labels from native Room and sidebar — issue #190
+
+Updated the existing issue branch with current Rust #9 head `f123f2c`; merge commit `9014c02cbf4aa07cf64debe99687ac80795ff23b` keeps the PR diff to the 12 intended Rust, locale, and test files. The CLI-authentication label and fixed local-first sidebar tagline are removed; bilingual regressions protect the absence of both strings. Five focused suites pass 7 tests, warning-denied Clippy, rustfmt, and diff checks pass. Graphify refresh is pending; CocoIndex CLI is unavailable in this environment. Exact-head GitHub Actions run `41287908205` is pending, so no packaged UI acceptance credit is claimed.

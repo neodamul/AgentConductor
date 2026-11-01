@@ -1,13 +1,13 @@
-# Native sidebar local-first footer
+# Native room and sidebar static labels
 
 ## Finding
 
-The Rust CLI-agent sidebar omitted two existing localized messages: the local-first heading and the summary that explains independent agent sessions and human control of execution and final merge. The English and Korean catalog entries already existed.
+The native Room showed a fixed “Local · CLI authentication” label, and the sidebar repeated a fixed local-first tagline. These statements were removed from the Rust UI because they duplicated configuration context and occupied space without reflecting per-agent state. CLI authentication remains owned by each registered CLI profile; the product's local-first behavior is unchanged.
 
 ## Change and verification
 
-A rendered-text regression uses the production 248 px egui left panel and checks both languages. It failed before the footer was rendered and passes after it was added below the independently scrolling agent list. The list reserves space for the footer so it remains visible. The native sidebar suite passes 5/5, the footer regression passes 1/1, and the source-layout test passes. Formatting and whitespace checks pass.
+A regression checks both languages and fails if the removed labels return. The updated Room header, sidebar footer, language, and static-label suites pass 7 tests. Warning-denied Clippy, rustfmt, and diff checks pass. The issue branch now contains the latest Rust #9 base at `f123f2c`; exact-head GitHub Actions run `41287908205` is pending.
 
-Graphify local AST extraction updated the code graph to 6,680 nodes and 11,590 edges. CocoIndex Code's no-index structural grep found the workspace sidebar entry point; project index initialization remains unavailable. AgentMemory record: `mem_mvedynhg_5787cdf797cd`.
+Graphify is being refreshed for the current branch. CocoIndex CLI is not installed in this environment. AgentMemory records this task's branch update, verification, and pending CI separately.
 
-This is component-level evidence only. The exact v0.1.24 visual comparison, packaged macOS/Windows validation, constrained-window checks, and full keyboard/screen-reader traversal remain open. The accepted workflow count remains 0/25.
+This is component-level evidence only. Exact packaged UI acceptance, constrained-window checks, and full keyboard/screen-reader traversal remain open. The accepted workflow count remains 0/25.
