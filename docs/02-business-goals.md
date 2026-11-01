@@ -628,3 +628,11 @@ Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211.
 ### BG-155 The docs a user reads match the release they run
 The manual and the README never again lag the app by many releases without anyone noticing.
 Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-192 → QAS-198 → DD-212. GitHub #290, user, 2026-11-01.
+
+### BG-156 Usage is reported on a slow managed machine
+A company PC with scanning, managed settings or a proxy shows the account usage like a personal machine does, only a little later.
+Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
+
+### BG-157 The absence of silent waits is enforced
+The coverage reached by the progress work does not erode when a request is added later.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.

@@ -2430,3 +2430,19 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Task: `tests/release_docs.rs`, `scripts/check_screenshots.py`, the `screenshots` job in `.github/workflows/release.yml`, `docs/assets/screenshots-current.txt`.
 - [x] Verify (macOS): the new tests, the script on this repository (it flagged the v0.1.50 change of `src/ui/mcp.html` until the confirmation file was committed), full test suite.
 - [ ] Complete: merge and release only on request. Releases run `python3 scripts/check_screenshots.py` before tagging, because the release workflow runs it only after the tag exists.
+
+### Claude usage query is cut off after 20 s on a slow machine — GitHub #297
+
+- [x] Plan: user report 2026-11-01: the company machine needs more than 20 s for the quota query (related to #295, the card shows only "—"). Both Claude collectors shared a literal 20 s limit for start, trust screen, prompt and `/usage`; the run screen showed nothing while a quota job ran (the banner leaves quota jobs out and the button was only disabled). R-201 → DD-213. Numbered after R-200 of #290, which is not merged yet.
+- [x] Red: `tests/claude_wait.rs` (`query_claude_within`, `CLAUDE_WAIT` missing; a fixture CLI delayed by `AC_QUOTA_DELAY_MS`), `tests/progress_runtime.cjs` (`quotaText`, `quotaRunning`, `quotaWait` missing).
+- [x] Task: `src/quota/terminal.rs` (`CLAUDE_WAIT`, `query_claude_within`, the timeout names its limit), `src/quota/terminal/windows.rs`, `src/quota.rs`, `src/ui/startup.js`, `src/ui/room.js`, messages; fixture delay in `tests/support/terminal_quota_agent.rs`; CHANGELOG.
+- [x] Verify (macOS): tests below; simulator replay of a running `quota` job on the card (counting, only the queried agent, stays correct while the app is silent) and in the run screen (busy button, counting source line, normal again after). The Windows collector was not compiled here (no Windows target); Windows CI compiles it and runs the same fixture test.
+- [ ] Complete: merge and release only on request. The company's real duration is still unknown; with this change the card shows it.
+
+### Request kind guard — GitHub #301
+
+- [x] Plan: the stop-hook review of the goal of 2026-10-31 pointed out that the coverage checklist (#285) is an assertion; each pass found new gaps by hand. R-202 → DD-214. Numbered after R-200 (#290) and R-201 (#297), both still open; the appended sections need a trivial conflict resolution when they merge.
+- [x] Red: a request kind added to a page script and a direct kind added to the quiet list both fail the new test (checked by temporarily editing the sources).
+- [x] Task: `tests/request_kinds_runtime.cjs` (76 kinds: 7 refresh, 21 job, 47 direct); no product code changes.
+- [x] Verify (macOS): the node test, `node_runtime`, `source_layout`.
+- [ ] Complete: merge and release only on request (test only, nothing to release).
