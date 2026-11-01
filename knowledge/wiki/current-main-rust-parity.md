@@ -240,3 +240,7 @@ Against fetched `origin/main` `9a8b3258169a0e5834bc141f1bf5941660deb7a1` (merge 
 ## Exact macOS package at current Rust head — issue #9 / 2026-10-29
 
 Built `87239f6a68e5b7e4ccc3efc8c0efffc5d11b1407` with `cargo run --release --locked --offline -- package-release`. The package manifest names that exact source commit and its binary SHA matches the extracted executable; `unzip -t` validates the complete archive, and the packaged executable's `--help` exits successfully. Archive SHA-256: `f2200d0db44d6e926505ef0ce806cc936d4bb65644863fee00194d688d03dcc4`; binary SHA-256: `081136f7ab226b91373ee196150b0923f86e11ad210db603eb7c51103566888b`. Evidence: `docs/evidence/issue9-macos-package-87239f6-20261029.json`. No GUI launch or screenshot was captured; Windows exact-package verification and all acceptance credit remain pending.
+
+## Current main integration baseline — issue #9 / 2026-11-01
+
+Fetched remote `main` at `4301f4adad13722227d9d13e40caccfee4c1dc8a`; Rust PR #22 remains at `f123f2ce06859eebdc491992c3317a670e461178`. Main has 132 commits beyond the Rust head and the read-only merge simulation reports 110 conflicts across architecture docs, shared Rust backend/UI, tests, screenshots, and legacy UI files deleted on the Rust branch. A trial merge was aborted before committing; no conflicted content was retained. Continue through issue-linked Rust ports, test each independently, then reconcile the remaining current-main delta. This investigation adds no packaged UI acceptance; issue #9 remains at 22/50 (44%).

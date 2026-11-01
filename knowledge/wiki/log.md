@@ -1807,3 +1807,7 @@ Built `87239f6a68e5b7e4ccc3efc8c0efffc5d11b1407` with the offline Rust release p
 ## [2026-11-01] task/verify | Remove fixed labels from native Room and sidebar — issue #190
 
 Updated the existing issue branch with current Rust #9 head `f123f2c`; merge commit `9014c02cbf4aa07cf64debe99687ac80795ff23b` keeps the PR diff to the 12 intended Rust, locale, and test files. The CLI-authentication label and fixed local-first sidebar tagline are removed; bilingual regressions protect the absence of both strings. Five focused suites pass 7 tests, warning-denied Clippy, rustfmt, and diff checks pass. Graphify refresh is pending; CocoIndex CLI is unavailable in this environment. Exact-head GitHub Actions run `41287908205` is pending, so no packaged UI acceptance credit is claimed.
+
+## [2026-11-01] plan | Refresh current-main integration baseline — issue #9
+
+Fetched remote `main` at `4301f4adad13722227d9d13e40caccfee4c1dc8a`; Rust PR #22 remains at `f123f2ce06859eebdc491992c3317a670e461178`. The main-only delta is 132 commits and a read-only merge simulation reports 110 conflicts. A trial merge was aborted before a merge commit; no conflicted content was retained. Continue the Rust migration through issue-linked, locally verified ports and reconcile the remaining main delta after these units. No packaged UI acceptance is added; full-denominator progress remains 22/50 (44%).
