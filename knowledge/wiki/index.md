@@ -53,7 +53,7 @@
 - [Native goal phase labels](native-goal-phase-labels.md): localized numbered phase action and AccessKit regression evidence.
 - [Native sidebar footer](native-sidebar-footer.md): bilingual local-first footer restoration and component verification limits.
 - [Native sidebar card density](native-sidebar-card-density.md): one-line agent detail labels with full AccessKit and hover text retained.
-- [Current-main Rust parity](current-main-rust-parity.md): issue #9 Rust parity and the 2026-10-24 integration of main #169/#172, with full local test evidence and remaining CI/platform gates.
+- [Current-main Rust parity](current-main-rust-parity.md): requirement-traced Rust parity, active port coverage, and current root #22 mergeability audit.
 - [Native Room failure feedback](native-room-failure-feedback.md): localized generated guidance with verbatim diagnostic output and explicit verification limits.
 
 - [Quota, fallback and native status](quota-fallback-and-status.md): provider metadata, durable account restrictions, reviewed failover and actual status-light/stop evidence.
