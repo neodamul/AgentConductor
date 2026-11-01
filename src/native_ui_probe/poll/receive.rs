@@ -13,6 +13,9 @@ impl Probe {
         if snapshot_poll && matches!(&reply, Ok(Ok(_))) {
             self.poll_succeeded();
         }
+        if let Ok(Ok(snapshot)) = &reply {
+            self.active_work.observe_current_snapshot(snapshot);
+        }
         match reply {
             Ok(Ok(snapshot)) => match self.pending {
                 Some(pending) if pending.handled_by_settings() => {

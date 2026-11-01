@@ -35,6 +35,18 @@ impl State {
         can_edit: bool,
         ui: &mut egui::Ui,
     ) -> Option<Event> {
+        self.show_with_progress(goal, snapshot, language, can_edit, None, ui)
+    }
+
+    pub(in crate::native_ui_probe) fn show_with_progress(
+        &mut self,
+        goal: &mut String,
+        snapshot: Option<&Value>,
+        language: &str,
+        can_edit: bool,
+        progress: Option<&str>,
+        ui: &mut egui::Ui,
+    ) -> Option<Event> {
         let text = |id| crate::ui::messages::in_language(language, id);
         if snapshot.is_some_and(|snapshot| {
             self.preview.is_some()
@@ -96,8 +108,8 @@ impl State {
         ui.label(text("mcp.explicit_references_are_kept_in_your_goal_adding"));
         if references > 0 {
             let count = references.to_string();
-            ui.label(crate::ui::messages::render(
-                "mcp.references_to_preview",
+            ui.label(crate::ui::messages::interpolate(
+                text("mcp.references_to_preview"),
                 &[("value1", &count)],
             ));
             if !saved_goal {
@@ -128,6 +140,9 @@ impl State {
                 ui.spinner();
                 ui.label(text("mcp.applying_sources"));
             });
+        }
+        if let Some(progress) = progress {
+            ui.small(progress);
         }
         if let Some(error) = &self.error {
             ui.colored_label(ui.visuals().error_fg_color, error);

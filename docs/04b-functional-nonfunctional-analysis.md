@@ -743,3 +743,7 @@ Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → 
 ### NFR-80 Routine Git revision fallback cannot block native requests
 No routine revision request or render callback may wait for a Git process. The unsupported-layout fallback may use one short-lived worker per active repository; repeated lookups must not create additional processes until the fallback entry becomes stale. File reads on the common metadata path remain bounded to the repository's HEAD, relevant ref, and packed-ref files. Explicit repository mutations retain their existing serialized, revision-checked validation.
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
+
+### FR-191 Native wait clocks use persisted starts and observed snapshots
+For a running chat, goal rewrite, or MCP operation, the Rust workspace shall derive elapsed time from the job's persisted `started_ms` when present and from the local acceptance time otherwise. Each accepted state snapshot refreshes the observation time. The visible status shall show elapsed `m:ss` and, after five seconds without an observed snapshot, the age of that silence. Update checks and installs use a local phase start because their status has no persisted start timestamp. One-second UI repaints may redraw labels only and shall not request snapshots.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-191 → QAS-197 → DDR-50 → DD-211. GitHub #283, 2026-11-01.

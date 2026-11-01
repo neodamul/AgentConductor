@@ -73,6 +73,17 @@ impl State {
         can_save: bool,
         ui: &mut egui::Ui,
     ) -> Option<Event> {
+        self.show_with_progress(snapshot, language, can_save, None, ui)
+    }
+
+    pub(in crate::native_ui_probe) fn show_with_progress(
+        &mut self,
+        snapshot: Option<&Value>,
+        language: &str,
+        can_save: bool,
+        progress: Option<&str>,
+        ui: &mut egui::Ui,
+    ) -> Option<Event> {
         if !self.open {
             return None;
         }
@@ -109,7 +120,7 @@ impl State {
                 ui.label(text(
                     "mcp.local_commands_run_only_when_you_request_discovery",
                 ));
-                self.show_discovery(snapshot, language, can_save, ui);
+                self.show_discovery(snapshot, language, can_save, progress, ui);
                 ui.horizontal(|ui| {
                     if ui
                         .add_enabled(
@@ -135,6 +146,7 @@ impl State {
         snapshot: Option<&Value>,
         language: &str,
         can_save: bool,
+        progress: Option<&str>,
         ui: &mut egui::Ui,
     ) {
         let Some(snapshot) = snapshot else { return };
@@ -168,11 +180,14 @@ impl State {
                 self.begin_discovery(&server, snapshot);
             }
         });
-        if self.discovering() {
+        if self.discovering() || progress.is_some() {
             ui.horizontal(|ui| {
                 ui.spinner();
                 ui.label(text("mcp.loading_tools"));
             });
+            if let Some(progress) = progress {
+                ui.small(progress);
+            }
         }
         if let Some(error) = &self.discovery_error {
             ui.colored_label(

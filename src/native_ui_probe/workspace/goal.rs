@@ -133,22 +133,31 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                         .as_ref()
                         .is_some_and(|snapshot| snapshot["job"]["state"] != "running")
             });
-        if let Some(event) =
+        if let Some(event) = probe.goal_optimizer.show(
+            &language,
+            &probe.goal,
+            optimization_enabled,
             probe
-                .goal_optimizer
-                .show(&language, &probe.goal, optimization_enabled, ui)
-        {
+                .active_work
+                .label("optimize", &language, std::time::Instant::now())
+                .as_deref(),
+            ui,
+        ) {
             match event {
                 super::optimizer::Event::Request(goal) => probe.optimize_goal(goal),
                 super::optimizer::Event::Use(goal) => probe.goal = goal,
                 super::optimizer::Event::Keep => {}
             }
         }
-        match probe.mcp_sources.show(
+        match probe.mcp_sources.show_with_progress(
             &mut probe.goal,
             probe.snapshot.as_ref(),
-            probe.navigation.appearance.language(),
+            &language,
             can_edit,
+            probe
+                .active_work
+                .label("mcp", &language, std::time::Instant::now())
+                .as_deref(),
             ui,
         ) {
             Some(super::mcp::SourceEvent::Preview) => probe.preview_mcp_sources(),

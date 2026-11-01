@@ -6718,3 +6718,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Record AgentMemory `mem_mvxa9njl_167fb9020f53` and the LLM Wiki; refresh Graphify to 11,851 nodes / 17,990 edges / 884 communities; update issue #257 and PR #260 before unit commit `f877dcb`.
 - [x] Push `f877dcb` to `codex/issue-9-git-head-fast-path`.
 - [ ] Exact packaged macOS/Windows GUI verification remains open; this source-level test does not change #9 acceptance (22/50).
+
+### Port elapsed and stale wait feedback to the Rust UI — GitHub #283
+
+- [x] Plan: audit merged Claude PR #280 and confirm its elapsed/stale UI changes are JS-only; register enhancement #283 and link branch `codex/issue-283-rust-progress-feedback` to the current Rust issue line.
+- [x] Architecture: trace R-198 → BG-153 → SF-186 → UC-189 → FR-191 → QAS-197 → DDR-50 → DD-211. Reuse persisted job starts and scoped state snapshots; use local repaint-only ticks.
+- [x] Red: add deterministic clock tests for persisted start restoration, elapsed formatting, stale threshold, and observation reset; add surface tests for chat, optimizer, MCP, update, and immediate reference count. The elapsed-format regression failed before implementation.
+- [x] Task / Green: show elapsed and stale status in each owning native UI panel/dialog; restore job clocks from `started_ms`; count update phases from their local start; repaint at one second without sending a worker request. Reference count and prerequisite text now reflect the current goal on the next frame.
+- [x] Verify: 109 targeted tests pass across five suites; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the source-layout 300-line guard pass locally.
+- [ ] Complete unit: update the LLM Wiki and AgentMemory, refresh Graphify, comment on #283 and the stacked PR, then commit/push. Exact packaged macOS/Windows UI acceptance remains a separate #9 gate.
