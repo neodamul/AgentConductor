@@ -20,6 +20,33 @@ pub fn recent_history(turns: &[Turn]) -> Vec<Turn> {
     turns[turns.len().saturating_sub(MAX_TURNS)..].to_vec()
 }
 
+/// Rebuild the latest conversation from the stored question and optional answer artifacts.
+pub fn history(root: &Path, result: &str) -> Vec<Turn> {
+    let Some(id) = result
+        .strip_prefix("chat-")
+        .and_then(|name| name.strip_suffix(".json"))
+        .filter(|id| !id.is_empty() && id.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-'))
+    else {
+        return Vec::new();
+    };
+    let read = |name: &str| {
+        let bytes = crate::mcp::load(&root.join("mcp").join(name)).ok()?;
+        serde_json::from_slice::<Value>(&bytes).ok()
+    };
+    let Some(input) = read(&format!("chat-input-{id}.json")) else {
+        return Vec::new();
+    };
+    let mut turns: Vec<Turn> = serde_json::from_value(input["turns"].clone()).unwrap_or_default();
+    if let Some(answer) = read(result).and_then(|value| value["answer"].as_str().map(str::to_owned))
+    {
+        turns.push(Turn {
+            role: "assistant".into(),
+            text: answer,
+        });
+    }
+    turns
+}
+
 pub fn validate_question(text: &str) -> Result<(), String> {
     if text.trim().is_empty() || text.len() > MAX_TURN_BYTES {
         return Err("the latest question needs 1..8192 bytes of text".into());
@@ -74,6 +101,8 @@ inspect the project files, plans and documents first, then answer from what you 
 - For questions about what was built, run results or how to run them, start from the Workspace \
 section above, then read the files it names in the project folder. The run folder is outside your \
 reach, so its evidence is only what the Workspace section quotes.\n\
+- For questions about current execution, progress or delays, start from the Running work section above; \
+it reports the active job, elapsed time and latest process output.\n\
 - For questions about using AgentConductor or the current screen, answer from the manual in the Document.\n\
 - Do not invent files or commands; say when you could not find something.\n\n\
 Answer the last operator message:\n\n{}\n\n\

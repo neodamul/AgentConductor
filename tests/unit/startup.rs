@@ -31,6 +31,7 @@ fn detached_snapshot_releases_startup_state_lock_before_work() {
         chat_result: None,
         optimize_result: None,
         optimize_goal: None,
+        chat_job: None,
         config: super::defaults().unwrap(),
         proposal: None,
         job: None,

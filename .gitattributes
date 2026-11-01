@@ -2,3 +2,5 @@
 licenses/upstream/**/LICENSE* -text
 # Keep the vendored prompt-optimizer skill byte-identical to its source hashes.
 third_party/prompt-optimizer/** -text
+# Vendored skill text must match the recorded SHA-256 sums on every platform.
+third_party/** -text

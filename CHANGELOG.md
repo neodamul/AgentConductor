@@ -6,15 +6,100 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
-- Planning now requires a path and executable test command for every task, identifies invalid fields by task, and gives phased plans one correction retry for empty scopes (GitHub #251).
+## v0.1.53
 
-- Claude quota refresh on macOS and Windows now allows 180 seconds for slow CLI startup or `/usage` responses and shows elapsed time on the matching agent card (GitHub #297/#315).
-- The native Rust UI shows stored quota query failures beside the quota in the agent list, settings, and Agent Room (GitHub #295).
+- Claude usage: the query is given up after 3 minutes instead of 1, for PCs where it takes longer than a minute; a fast PC is unaffected because the query ends as soon as the usage is read (#315).
+- Claude usage: a company allocation written with thousands separators (`$1,351.23 / $5,000.00 spent`) and a terminal that draws spaces as cursor moves are now read, and a usage screen that was read but not understood is named in the error (`screen not understood: ...`) instead of ending as a bare timeout (#295).
 
+## v0.1.52
+
+- Docs and release: tests now fail when the README or a manual sentence does not name the package version, when a screenshot they show is missing or a captured screen is not shown, and the release workflow refuses to publish when the interface changed after the screens were captured, unless a commit confirms they still match (#290).
+- Claude usage: the query is given up after 60 s instead of 20 s, so a slow company PC (scanning, managed settings, proxy) can still report usage, and a timeout names the limit and the stage. While a usage query runs, the agent card and the run screen show how long it has run, and the run screen's refresh button is marked busy instead of only disabled (#297).
+- Tests: every kind of request the JS pages send must be classified (job with a progress rendering, refresh, or direct), so a request whose wait shows nothing cannot be added unnoticed (#301).
+
+## v0.1.51
+
+- Workspace and run screen: every button that asks the app for something shows that it is working until the answer, and after a second the status line (the connection line in the run screen) names the request with its time, for example while a workspace is deleted, the messenger is tested or the team briefing is read. Before, about 30 of these showed nothing until the answer or a timeout. An idle page no longer risks saying for a moment that the app sent no new state (#285).
+
+## v0.1.50
+
+- Workspace: the coordinator chat, the goal rewrite, the MCP lookup (review window, tool discovery and source line) and the app update check and install now show how long they have run, and say when the app has sent no new state for a few seconds. A chat that is still running when the workspace reopens counts from its start instead of from the reopening. Typing a `jira:` or `confluence:` reference enables the source preview at once instead of after the next refresh, up to 5 s later (#279).
+
+## v0.1.49
+
+- Docs: the user manual's header said 0.1.30; it now names the released version and a test keeps it equal to the package version. The README and manual screenshots are recaptured from the current interface (they showed v0.1.21).
+- Workspace: confirming "Approve plan and run" did not send the start. Since v0.1.30 the start feedback looked up a wrong element, so the handler stopped with an error (`null is not an object`) before sending. From then on every refresh of the page failed the same way and the screen stopped updating. The start is sent again, and its line counts the time until the run report exists. The line also stays after the workspace reopens, and a start that fails keeps its cause under the run button instead of only a short toast. "Back to run" is available while the run executes.
+- Workspace: planning and starting progress shows under the step tabs on every tab, and a click opens Review the plan. Elapsed times keep counting every second from the recorded start, also when the app is slow to answer. After 5 s without a new state the line and the footer say how long nothing came. A goal rewrite shows its elapsed time and is followed again after reopening. A model query in progress or queued is shown on the agent card.
+- Run screen: a pending task says what it waits for (a dependency, the automatic retry time, a free session or the account). A running task's row shows how long ago it last wrote output. After the last task the banner and the integration row name the test in progress, its time and its last output, instead of "agents are working". The banner says when a stop is in progress and when the run's process is gone while the run is still marked running (Recover continues it). Actions show their elapsed time, and the banner and footer say how long no new state came.
+- Tests: every `tests/*.cjs` UI test now runs in CI (13 had no runner), and `tests/ui_sim` holds a simulator of the native bridge to check what each step shows.
+
+## v0.1.48
+
+- Phases: after a phase finished, the workspace could keep showing "starting agent execution" with every button disabled (no review of the next phase) until the app was restarted. The mark that says a start is in progress was not ended when the run opened after its report appeared late, nor when a start job ended without opening a run; it now ends in both cases.
+
+- Run screen: the coordinator Activity tab starts with a status board (run state, completed / running / failed / pending counts and one row per task with its agent, status and last output) and no longer lists the `workflow` entries, instead of repeating `AgentConductor run=… phase=running completed=0 failed=0` once per report save. The recorded history is unchanged.
+
+## v0.1.47
+
+- Chat: the coordinator can now be asked while a plan is being made or a run is starting (it had its own refusal "startup operation still running", and the message was rolled back with only a toast). The chat runs in its own slot, is told which job runs, for how long and how much output its process has written and when it last wrote, so it can answer why a plan takes long, and a question that cannot be accepted is shown in the conversation. The snapshot gains `chat_job`; the chat is no longer reported as `job`.
+- Plan review: the line with a task's type and effort is no longer squeezed into the one-character-wide arrow column (it ran down the page as a tall column of single letters); it now sits under the task description at full width.
+
+## v0.1.46
+
+- Requests: the periodic state request, quota refresh and chat no longer queue behind a slow Git call. The state revision reads the repository HEAD from the Git files instead of starting `git` (a company PC where each `git` call took 2.5 s needed over 15 s per snapshot and made the chat time out), a layout the files cannot answer is refreshed by a short background task, and the snapshot answer is built after the settings lock is released. The request diagnostics log now also names a wait for the lock or a step of half a second or more (`step name=lock|advance|snapshot ms=...`).
+
+## v0.1.45
+
+- Planning: a task without an owned path (a verification task too) is now part of the planning contract: the output schema and the prompt require at least one path and a test command, a rejected task is reported with its id and the wrong field instead of one combined message, and an empty scope gets the same single correction round as an unsafe or overlapping one.
+
+## v0.1.44
+
+- Coordinator replies: a complete fenced JSON document is now found even when an unfinished fenced draft comes before it (the second opening marker was taken for the first block's closing one, so planning failed). The coordinator reply limit is raised from 64 KiB to 256 KiB.
+
+## v0.1.43
+
+- Chat: every question now carries a Workspace section with the goal, the latest run's tasks, test results, changed files and candidate diff (cut when long). The read-only coordinator can read the project folder but not the run folder, so before this it could not say what was built or how to run it (#243).
+- Chat: when a send times out and the stored conversation cannot be read either, the message stays in the conversation as pending instead of being put back into the input. Once the conversation can be read, an accepted message is followed to its answer with the input still empty; a message the application never received returns to the input with the error. Before, the same text showed in the input and in the conversation when the late answer arrived (#241).
+
+## v0.1.42
+
+- Every prompt sent to an agent now has the same layout (Document, Task, Format): the reviewer and worker prompts join the chat, planning and optimizer prompts, so an agent CLI that cannot be changed still receives a predictable prompt. A coordinator reply that is not the requested JSON is asked for once more, with the reason, before the call fails; the error now shows how the reply began (GitHub #235).
+
+## v0.1.41
+
+- The coordinator chat button in the title bar shows a chat-bubble robot icon instead of a "?" (GitHub #229).
+- A background refresh that misses the application's reply is now retried quietly and the "Request timed out" toast appears only after three misses in a row, so an idle window no longer flashes it; every timeout the page gives up on is also written to the diagnostics log with how long the page really waited and whether it was hidden, and the manual explains how to read it (GitHub #221).
+- The app now opens the workspace you used last. A workspace with no name, goal, project folder, plan or run is never listed; with none left the app asks you to add a first workspace, so a deleted default workspace no longer comes back after a restart or an update (GitHub #226).
+
+## v0.1.40
+
+- Idle workspace and Agent Room polling no longer raise a timeout toast on their own; request deadlines pause while the page is hidden and resume after it returns (GitHub #221).
+
+- `agentconductor io conformance <executable>` runs a CLI through the acio contract (self-description, a read-only question with a valid event stream, rejection of an invalid input) and prints a pass/fail table; both manuals gained an "Integrating a CLI" chapter (GitHub #212).
+
+- The prompts for the coordinator chat, Optimize prompt and plan generation are now assembled as Document (the material), Task (what to do and the current question) and Format (the shape of the answer), with the wording unchanged (GitHub #211).
+
+- Each plan task now has a kind chosen by the coordinator (classify or extract, summarize, analyze, code, long agent work, creative). The effort a task runs with follows your choice, then the agent's default for that kind, and is lowered with a warning when the model does not honor it; the review shows the kind and effort of every task and the roles table shows the efforts a model honors (GitHub #210).
+
+- What differs between the built-in agent CLIs (arguments, resume, model flags, full access, folder rules, capabilities) is now shipped preset data instead of code, and a profile can override session flags with `agent_settings`; the argument lists are unchanged (GitHub #209).
+
+- Agent profiles can set `protocol: acio` on a custom CLI: its events need no mapping tables, tool requests that need a decision wait for one (denied when none comes), the supervisor can send a user message and a cancel line while it runs, and `agentconductor io describe <exe>` registers a CLI from its `--acio-describe` document (GitHub #208).
+
+- `agentconductor io schema` prints the acio CLI I/O schemas (input, event, describe, control, agent settings) and `io validate` checks a document or a captured event stream against them, including the stream rules (GitHub #207).
+
+## v0.1.39
+
+- Request diagnostics: the "Request timed out" notice names the request kind, and the application records every chat request and every request of one second or more in `~/.agentconductor/request-diagnostics.log` (kind, size, duration, failure reason; no content). The manuals explain how to read it (GitHub #200).
+- Coordinator chat: a request that timed out no longer removes your question or blocks the next one; the screen checks what the application received, keeps an accepted question, follows the running coordinator and shows its late answer (GitHub #197).
+
+## v0.1.38
+
+- **Agent tools guide…** and **User manual** moved from the workspace menu into Settings, beside MCP servers and Clear cache.
+- Ask the coordinator now keeps the conversation with the workspace and shows it again after reopening, as a terminal-style transcript (Enter sends, Shift+Enter breaks the line, Up recalls earlier questions, New conversation starts over). A long earlier answer no longer blocks the next question. The chat still runs one read-only coordinator call per question; it is not a long-lived CLI session.
+- Removed fixed texts that carried no information: the title bar "local · existing CLI login" label, the sidebar tagline under the agent list and the footer "shared by default · worktree optional" line.
+- Optimize prompt: a button below the goal field asks the coordinator to rewrite the goal with the bundled Sentry `prompt-optimizer` skill (Apache-2.0, license shipped in the package); it reads the project read-only and shows the proposed goal, the changes and open questions, and the goal only changes when you choose Use this goal (GitHub #180).
 - Integration tests no longer call `env::set_var` / `remove_var` directly: a shared helper serializes and restores environment changes, every remaining test `unsafe` call states why it is sound, and the CI safety-comment gate now covers test targets (GitHub #176).
-
 - Every `unsafe` block in the application now states why it is sound, and CI on macOS and Windows rejects a new one without a `// SAFETY:` comment; the icon code is split into per-platform files (GitHub #172).
-
 - A short Rust review policy is documented in `docs/13-rust-review-policy.md`: sixteen rules adopted from the Google Rust Style Guide for new and changed code, with the excluded rules, their reasons and a measured baseline; no existing code or check changes (GitHub #169).
 
 ## v0.1.37
@@ -106,7 +191,6 @@ the GitHub Release notes for its tag.
 - English and Korean offline manuals use generated HTML with readable tables and embedded screenshots, loaded only when opened. Documentation and screenshots match this version.
 - Windows desktop validation targets the window owned by its launched process and reports visible controls when startup fails.
 
-
 ## v0.1.21
 
 - Export workspace and Import workspace are adjacent in the menu, with consistent English/Korean workspace labels.
@@ -137,11 +221,9 @@ Includes every change prepared for v0.1.19, which was not published (its first r
 - Reverted plan/workspace edits no longer leave approval disabled. Actual unsaved edits and background jobs remain guarded with clear reasons.
 - Claude api_error usage_limit_reached / HTTP 429 is parsed as an availability restriction even without type/is_error, retaining explicit reset times and the durable five-hour reviewed fallback policy. Duration telemetry never becomes a reset time.
 
-
 - Custom agent CLIs (for example aipro set to auto-approve tools) run after plan approval as approving their own tools, like the full-access default, instead of being refused as unverified; no extra setting is needed.
 
 - The update dialog shows the actual GitHub release notes beneath the release link in a keyboard-focusable, scrollable text panel.
-
 
 ## v0.1.18
 

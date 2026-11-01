@@ -70,6 +70,8 @@ pub struct Saved {
     #[serde(default)]
     pub(super) chat_result: Option<String>,
     #[serde(default)]
+    pub(super) chat_job: Option<StoredJob>,
+    #[serde(default)]
     pub(super) optimize_result: Option<String>,
     #[serde(default)]
     pub(super) optimize_goal: Option<String>,

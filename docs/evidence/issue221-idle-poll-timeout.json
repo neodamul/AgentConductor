@@ -1,0 +1,31 @@
+{
+  "issue": 221,
+  "branch": "221-idle-workspace-timeout-toast",
+  "trace": "R-184 -> BG-139 -> SF-172 -> UC-175 -> FR-176/NFR-75 -> QAS-182 -> DDR-39 -> DD-196",
+  "red": {
+    "command": "rtk node tests/idle_poll_timeout_runtime.cjs",
+    "result": "failed before the request bridge registered visibilitychange; hidden-page timeout regression was red"
+  },
+  "green": {
+    "commands": [
+      "rtk node tests/idle_poll_timeout_runtime.cjs",
+      "rtk python3 -m unittest discover -s tests -p 'test_*.py'",
+      "rtk node --check src/ui/startup.js",
+      "rtk node --check src/ui/room.js",
+      "rtk git diff --check",
+      "rtk cargo test --locked --offline --test public_docs --test source_layout"
+    ],
+    "results": {
+      "focused_regression": "passed",
+      "python_tests": "39 passed",
+      "javascript_syntax": "passed for both changed UI scripts",
+      "diff_check": "passed",
+      "cargo_tests": "4 passed across 2 suites"
+    }
+  },
+  "unverified": [
+    "Exact macOS release package",
+    "Exact Windows release package and packaged UI"
+  ],
+  "safety": "The request bridge does not retry mutations; explicit refresh and action errors remain visible."
+}

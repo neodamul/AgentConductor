@@ -64,6 +64,7 @@ impl Startup {
                 None
             },
             chat_result: saved.chat_result.clone(),
+            chat_job: saved.chat_job.clone(),
             optimize_result: keep_optimizer
                 .then(|| saved.optimize_result.clone())
                 .flatten(),

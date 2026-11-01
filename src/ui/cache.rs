@@ -81,6 +81,7 @@ fn inventory(root: &Path, protected: &[PathBuf]) -> Result<(Vec<Entry>, usize), 
         (root.clone(), "quota-query-"),
         (root.join("quota-jobs"), "coordinator-ui-"),
         (root.join("quota-jobs"), "catalog-"),
+        (root.join("chat-jobs"), "coordinator-ui-"),
     ] {
         if !parent.exists() {
             continue;

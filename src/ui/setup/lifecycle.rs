@@ -117,6 +117,13 @@ impl Startup {
                     .join(format!("coordinator-ui-{}", job.id)),
             );
         }
+        if let Some(job) = &saved.chat_job {
+            keep.push(
+                self.chat_broker
+                    .dir
+                    .join(format!("coordinator-ui-{}", job.id)),
+            );
+        }
         if let Some(path) = &saved.metadata_input {
             keep.push(path.clone());
         }
@@ -163,6 +170,7 @@ impl Startup {
     ) -> Result<serde_json::Value, String> {
         if self.job(saved)?["state"] == "running"
             || self.quota_job(saved)?["state"] == "running"
+            || self.chat_job(saved)?["state"] == "running"
             || !saved.metadata_queue.is_empty()
         {
             return Err(crate::ui::messages::text(

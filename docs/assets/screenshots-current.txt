@@ -1,0 +1,2 @@
+The captured screens in this folder match the interface of 0.1.51.
+Checked 2026-11-01 against the changes since they were captured (#279, #285): they only add progress text shown while work runs, which is not on a captured screen.

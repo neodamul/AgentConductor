@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.1.37** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.1.53** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.1.37 adds the coordinator guardrail: every coordinator judgment is listed and cannot be hidden, a launch gate refuses runs whose agents or test commands cannot be found, the coordinator amends plans within limits (typed amendments with an Undo button, a charter and a goal-drift stop) and decides scope escapes first. You can send feedback to the coordinator itself, the task details column folds and opens by itself when a decision is needed, worktrees of merged or rejected runs are removed, and credit balances are shown as whole numbers. Public release packages keep the numeric version and reject local labels.
+The app version is beside the title. Version 0.1.53 improves Claude usage reporting for company allocations and slow terminals. Coordinator guardrails include: every coordinator judgment is listed and cannot be hidden, a launch gate refuses runs whose agents or test commands cannot be found, the coordinator amends plans within limits (typed amendments with an Undo button, a charter and a goal-drift stop) and decides scope escapes first. You can send feedback to the coordinator itself, the task details column folds and opens by itself when a decision is needed, worktrees of merged or rejected runs are removed, and credit balances are shown as whole numbers. Public release packages keep the numeric version and reject local labels.
 
 ### 1.1a Application updates
 
@@ -66,6 +66,10 @@ The workspace menu includes **Agent tools guide…** for optional agentmemory, R
 ![Korean workspace](assets/ui-workspace-korean-current.png)
 
 ![Dark Korean workspace](assets/ui-workspace-dark-current.png)
+
+![Agent room with task progress](assets/ui-agent-room-current.png)
+
+![Dark agent room](assets/ui-agent-room-dark-current.png)
 
 ### 1.3 Agents and models
 

@@ -4,8 +4,26 @@ use std::{fs, process::Command};
 
 #[tokio::test]
 async fn retries_phase_scopes_once_after_overlap_validation() {
+    repair("overlap", &[]).await;
+}
+
+/// GitHub #251: a task without any owned path is a scope error, so it gets the same one correction.
+#[tokio::test]
+async fn retries_phase_scopes_once_after_a_task_has_no_path() {
+    repair(
+        "empty",
+        &[
+            ("AC_PLAN_FIRST_A", "[\"selection.rs\"]"),
+            ("AC_PLAN_FIRST_B", "[]"),
+            ("AC_PLAN_EXPECT", "task b: paths is empty"),
+        ],
+    )
+    .await;
+}
+
+async fn repair(name: &str, extra: &[(&str, &str)]) {
     let root = std::env::temp_dir().join(format!(
-        "ac-overlap-repair-{}",
+        "ac-overlap-repair-{name}-{}",
         agentconductor::native_guard::session_id().unwrap()
     ));
     fs::create_dir_all(root.join("repo")).unwrap();
@@ -36,10 +54,15 @@ async fn retries_phase_scopes_once_after_overlap_validation() {
             .unwrap()
             .success()
     );
+    let mut environment =
+        serde_json::json!({"AC_PLAN_REPAIR_MARKER":root.join("attempt").to_str().unwrap()});
+    for (key, value) in extra {
+        environment[key] = (*value).into();
+    }
     let profile: AgentProfile = serde_json::from_value(serde_json::json!({
         "id":"claude", "parser":"claude", "executable":exe,
         "args":["fixture"], "permission_mode":"read_only",
-        "environment":{"AC_PLAN_REPAIR_MARKER":root.join("attempt").to_str().unwrap()}
+        "environment":environment
     }))
     .unwrap();
     let slug = root.join("slug");

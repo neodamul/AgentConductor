@@ -1,0 +1,5 @@
+{
+  "codex_foreign_template_resume": {
+    "error": "Codex resume requires the verified initial argv template"
+  }
+}

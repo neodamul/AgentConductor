@@ -3,16 +3,22 @@
 mod test_env;
 use std::{
     sync::{
-        Arc, Barrier,
+        Arc, Barrier, Mutex, MutexGuard,
         atomic::{AtomicBool, Ordering},
     },
     time::Duration,
 };
 
 const KEY: &str = "AGENTCONDUCTOR_ENV_GUARD_TEST";
+static TEST_LOCK: Mutex<()> = Mutex::new(());
+
+fn serialize_test() -> MutexGuard<'static, ()> {
+    TEST_LOCK.lock().unwrap_or_else(|error| error.into_inner())
+}
 
 #[test]
 fn values_are_set_and_originals_return_when_the_guard_drops() {
+    let _test_lock = serialize_test();
     let mut guard = test_env::lock();
     let original = std::env::var_os(KEY);
     guard.set(KEY, "first");
@@ -27,6 +33,7 @@ fn values_are_set_and_originals_return_when_the_guard_drops() {
 
 #[test]
 fn a_second_holder_waits_until_the_first_has_restored() {
+    let _test_lock = serialize_test();
     let mut guard = test_env::lock();
     guard.set(KEY, "held");
     let entered = Arc::new(AtomicBool::new(false));
@@ -55,6 +62,7 @@ fn a_second_holder_waits_until_the_first_has_restored() {
 
 #[test]
 fn a_panicking_test_restores_and_does_not_poison_the_lock() {
+    let _test_lock = serialize_test();
     let result = std::thread::spawn(|| {
         let mut guard = test_env::lock();
         guard.set(KEY, "lost");

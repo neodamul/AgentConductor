@@ -18,6 +18,7 @@ use std::{
 pub struct Startup {
     broker: Controller,
     quota_broker: Controller,
+    chat_broker: Controller,
     heads: crate::git_head::Heads,
     saved: Mutex<Saved>,
     custom_profiles: Vec<AgentProfile>,
@@ -34,7 +35,8 @@ use storage::{bytes, read, write};
 impl Startup {
     pub(crate) fn poll_job(&self) -> Result<(), String> {
         self.broker.poll()?;
-        self.quota_broker.poll().map(|_| ())
+        self.quota_broker.poll()?;
+        self.chat_broker.poll().map(|_| ())
     }
     pub(crate) fn root(&self) -> &Path {
         &self.broker.dir
@@ -66,7 +68,9 @@ impl Startup {
             .saved
             .lock()
             .map_err(|_| messages::text("native.startup_settings_poisoned"))?;
-        if self.job(&saved)?["state"] == "running" || self.quota_job(&saved)?["state"] == "running"
+        if self.job(&saved)?["state"] == "running"
+            || self.quota_job(&saved)?["state"] == "running"
+            || self.chat_job(&saved)?["state"] == "running"
         {
             return Err(
                 messages::text("native.wait_for_the_running_planning_or_metadata_job").into(),
@@ -145,6 +149,7 @@ impl Startup {
 
 mod baseline;
 mod chat;
+mod launch;
 mod messenger;
 mod request;
 #[cfg(test)]

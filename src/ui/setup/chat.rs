@@ -22,7 +22,13 @@ impl Startup {
         };
         let saved_value = serde_json::to_value(&*saved).map_err(|error| error.to_string())?;
         let workspace = crate::chat_context::workspace(&saved_value, &saved.config.repository);
-        crate::chat::build_prompt_in(&turns, language, &workspace)?;
+        let now_ms = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_err(|error| error.to_string())?
+            .as_millis() as u64;
+        let running = crate::chat_context::running(&saved_value, &self.broker.dir, now_ms);
+        let context = format!("{workspace}\n\n{running}");
+        crate::chat::build_prompt_in(&turns, language, &context)?;
         crate::mcp::coordinator_profile(&saved.config.profiles, &saved.config.coordinator)?;
         let id = crate::native_guard::session_id()?;
         crate::mcp::store(
@@ -31,15 +37,14 @@ impl Startup {
             &serde_json::to_vec(&serde_json::json!({
                 "turns": turns,
                 "language": language,
-                "workspace": workspace
+                "workspace": context
             }))
             .map_err(|e| e.to_string())?,
         )?;
         let old_result = saved.chat_result.clone();
         saved.chat_result = Some(format!("chat-{id}.json"));
-        let result = self.launch_with_revision(
+        let result = self.launch_chat_worker(
             saved,
-            "chat",
             vec![
                 "chat".into(),
                 self.broker.dir.to_string_lossy().into(),
@@ -67,12 +72,9 @@ impl Startup {
             )
             .into());
         }
-        let job = self.job(saved)?;
-        self.settle(saved, &job)?;
-        if job["state"] == "running" {
-            return Err(crate::ui::messages::text("native.startup_operation_still_running").into());
+        if self.chat_job(saved)?["state"] == "running" {
+            return Err(crate::ui::messages::text("native.chat_still_answering").into());
         }
-        self.ensure_no_live_jobs()?;
         self.launch_chat(saved, text, revision)
     }
 
@@ -87,9 +89,9 @@ impl Startup {
     pub(super) fn chat_snapshot(
         &self,
         saved: &Saved,
-        job: &serde_json::Value,
+        chat_job: &serde_json::Value,
     ) -> serde_json::Value {
-        if job["kind"] != "chat" || job["state"] != "completed" {
+        if chat_job["state"] != "completed" {
             return serde_json::Value::Null;
         }
         let Some(name) = &saved.chat_result else {
@@ -99,7 +101,7 @@ impl Startup {
         let Some(answer) = answer else {
             return serde_json::Value::Null;
         };
-        serde_json::json!({"job":job["id"],"answer":answer})
+        serde_json::json!({"job":chat_job["id"],"answer":answer})
     }
 
     pub(super) fn reset_chat(&self, saved: &mut Saved) -> Result<serde_json::Value, String> {

@@ -201,3 +201,77 @@ pub(crate) fn running_activity(
     }
     Ok(Value::Object(map))
 }
+
+/// GitHub #273 (DD-208): whether the process executing the run is there while the run says
+/// `running`. The scheduler writes its PID to `runner.pid` when it starts; probing that PID never
+/// touches a lock, so a resume is never disturbed. Not running → `null`; no record or no Unix
+/// probe → `unknown`.
+pub fn runner(dir: &Path, report: &Report) -> Value {
+    if report.state != "running" {
+        return Value::Null;
+    }
+    let pid = std::fs::read_to_string(dir.join("runner.pid"))
+        .ok()
+        .and_then(|text| text.trim().parse::<i32>().ok())
+        .filter(|pid| *pid > 0);
+    #[cfg(unix)]
+    {
+        let Some(pid) = pid else {
+            return json!("unknown");
+        };
+        // SAFETY: kill with signal 0 only probes for existence; `pid` is a positive PID and no memory is passed.
+        if unsafe { libc::kill(pid, 0) } == 0
+            || std::io::Error::last_os_error().raw_os_error() == Some(libc::EPERM)
+        {
+            json!("present")
+        } else {
+            json!("absent")
+        }
+    }
+    #[cfg(not(unix))]
+    {
+        let _ = pid;
+        json!("unknown")
+    }
+}
+
+/// The integration step in progress once every task is done: preparing the candidate, or the test
+/// whose log folder (`test-<i>-<attempt>`) was created last, with its start and its output time.
+pub fn verification(dir: &Path, report: &Report) -> Value {
+    if report.state != "running"
+        || report.verification_attempt == 0
+        || report.tasks.iter().any(|t| t.status != "completed")
+    {
+        return Value::Null;
+    }
+    let attempt = report.verification_attempt;
+    let total = report.plan.tasks.len();
+    let Some(index) = (0..total)
+        .rev()
+        .find(|i| dir.join(format!("test-{i}-{attempt}")).is_dir())
+    else {
+        return json!({"stage":"candidate","attempt":attempt});
+    };
+    let log = dir.join(format!("test-{index}-{attempt}"));
+    let ms = |path: &Path| {
+        std::fs::metadata(path)
+            .and_then(|m| m.modified())
+            .ok()
+            .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
+            .map(|d| d.as_millis() as u64)
+    };
+    let (mut bytes, mut updated) = (0, None);
+    for name in ["stdout.jsonl", "stderr.log"] {
+        let path = log.join(name);
+        let len = std::fs::metadata(&path).map_or(0, |m| m.len());
+        bytes += len;
+        updated = updated.max(ms(&path).filter(|_| len > 0));
+    }
+    let started = std::fs::metadata(&log)
+        .and_then(|m| m.created())
+        .ok()
+        .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
+        .map(|d| d.as_millis() as u64)
+        .or_else(|| ms(&log));
+    json!({"stage":"test","attempt":attempt,"index":index,"total":total,"task":report.plan.tasks[index].id,"started_ms":started,"output":{"bytes":bytes,"updated_ms":updated}})
+}
