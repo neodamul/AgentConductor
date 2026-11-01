@@ -1857,3 +1857,9 @@ PR #260's Windows packaged lifecycle check (run `41270341316`) failed while sear
 
 After the text-entry update, Windows package run `41293037713` advanced beyond the former `Stop reason` lookup failure and then failed because the `Stop run` control was present but not yet enabled. The test driver now polls for the enabled state before invoking it. TDD source contract was red before this addition and the focused macOS source/native-room/layout checks pass afterward (15 passed, 1 ignored); formatting and warning-denied Clippy also pass. This remains a Windows UI acceptance blocker until the final pushed PR head passes.
 
+## Shared validation exposed a stale Windows input contract — issue #9 / 2026-11-01
+
+Runs `41297846153`, `41297870756`, `41298028204`, `41298098982`, and `41298169824` all failed macOS `windows_desktop_driver` because its source-contract test still required `ValuePattern.SetValue` after the driver had moved to focus plus keyboard input. The failure was in the test's expected implementation, before exact Windows package execution. Updated the contract to require focus → select → type → save and reject the obsolete `SetValue` path; the actual packaged Windows save journey still needs a fresh run.
+
+The corrected focused driver suite passes 8/8 on the local Mac. Full local all-target test execution is constrained by this sandbox: four AgentMemory tests cannot bind loopback TCP and three folder-execution tests hit denied filesystem operations (`Operation not permitted`). These are separate environment restrictions; exact CI and Windows package results remain the acceptance gate.
+

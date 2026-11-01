@@ -1,16 +1,18 @@
 #[test]
-fn goal_driver_uses_and_confirms_value_pattern_before_saving() {
+fn goal_driver_focuses_and_types_before_saving() {
     let source = include_str!("windows_desktop.rs");
     assert!(
         !source.contains("$window.SetFocus()"),
         "desktop UI Automation must not focus a non-focusable top-level window"
     );
-    let set = source.find("$goalPattern.SetValue('Windows UIA goal')");
-    let verify = source.find("while ($goalPattern.Current.Value");
+    let focus = source.find("$goal.SetFocus()");
+    let select = source.find("[System.Windows.Forms.SendKeys]::SendWait('^a')");
+    let type_goal = source.find("[System.Windows.Forms.SendKeys]::SendWait('Windows UIA goal')");
     let save = source.find("$save.GetCurrentPattern(");
-    assert!(set.is_some_and(|index| Some(index) < verify));
-    assert!(verify.is_some_and(|index| Some(index) < save));
-    assert!(!source.contains("SendKeys]::SendWait"));
+    assert!(focus.is_some_and(|index| Some(index) < select));
+    assert!(select.is_some_and(|index| Some(index) < type_goal));
+    assert!(type_goal.is_some_and(|index| Some(index) < save));
+    assert!(!source.contains("$goalPattern.SetValue"));
 }
 
 #[test]
