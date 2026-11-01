@@ -1,5 +1,33 @@
 # Current-main behavior carried into the Rust UI branch
 
+## Windows goal-entry CI regression — issue #9 / #260 / 2026-11-01
+
+Run `41299460959` passed macOS but failed Windows in
+`default_native_workspace_is_accessible_and_saves_through_ui_automation`: the workspace
+saved only `Windows U` instead of `Windows UIA goal`. The keyboard driver sent the complete
+string in one `SendWait`, outrunning the native editor. A source-contract regression first
+failed against that implementation; the fix sends one character every 40 ms, pauses after
+select-all, and waits before Save. The focused local driver suite now passes 9/9. A new
+Windows run is still required; the exact Windows package journey remains unverified.
+
+PR #311 had previously run `41297870756` against old parent `2c465180` and failed a stale
+source-contract assertion. Parent `284ac00b` fixes that assertion. PR #311 has since been
+synchronized to current #260 by merge commit `20f3f749`; it still requires the updated
+Windows validation and exact package journey. The merge tree was conflict-free, and the
+relevant parent driver suite passed locally 8/8 before this new Windows UI regression was
+found.
+
+## Enterprise quota parser coverage — bug #295 / 2026-11-01
+
+The Rust quota draft on `codex/issue-295-rust-quota-error` already recognizes Claude's
+aggregate `$used / $allocated spent` line in `src/quota/terminal.rs::spent_budget`.
+`tests/claude_prompt.rs::enterprise_spent_allocation_preserves_exact_amounts_and_does_not_invent_reset_time`
+uses synthetic Claude 2.1.296 Enterprise output and checks exact amounts while refusing
+to invent a reset time from a date-only label. This confirms the parser format is covered;
+it does not explain the reported Windows timeout before `/usage` or replace inspection of
+the actual `quota-query-*` terminal capture. Keep #295 open until the Windows failure is
+reproduced or its captured screen is diagnosed and the exact package is verified.
+
 ## Triage workspace reappearing report — bug #226 / 2026-10-30
 
 Review of PR #230 head `10927906` found no product-source changes in the PR and
@@ -273,3 +301,9 @@ The macOS validation for PR #260 failed five workspace deletion/switch tests. Lo
 ## Open Agent Room when its report arrives — 2026-11-01
 
 The exact approval journey timed out at the old 30-second recovery boundary even though the child coordinator had created `report.json` and the three mock tasks had reached `waiting_approval`. The persisted-state listener had delivered the report change and the background snapshot had observed it, but only foreground `StartRefresh` responses performed the transition that sends `open_run`. Both response paths now share that transition, so a delivered event opens Agent Room immediately; a deterministic worker regression failed before and passed after the fix, and the full native start journey passed in 6.96 seconds. No packaged macOS/Windows acceptance is claimed.
+
+## Root Rust migration reconciliation — issue #9 / 2026-11-01
+
+Current GitHub main `a8b82b55` and root Rust branch `f123f2ce` are not merge-ready: PR #22 is draft/dirty, and read-only merge-tree reports 110 paths (63 content, 19 add/add, 28 modify/delete) across application code, tests, public/design documentation, manuals, and images. The Rust branch intentionally deletes the JavaScript UI, so choosing main's side wholesale would violate the Rust-only goal; choosing the Rust side wholesale could omit backend and workflow changes added after its base. The branch delta is 135 main-only commits and 1,051 Rust-only commits from the common base. The next step is a requirement-traced parity inventory that maps main behavior to existing Rust code or an active port PR, then ports gaps before conflict resolution. No merge or completion claim is made. The latest #260 CI blocker (stale `ValuePattern.SetValue` source assertion) is fixed by `284ac00b`; run `41299460959` remains in progress, and Windows package acceptance is still open.
+
+The current Rust branch already has issue-specific port work open: #260 handles nonblocking refresh/revision checks; #311 the Windows schedule run-directory journey; #294 event-driven draft preservation; #303/#304 Claude quota status and failure display; #305/#293 coordinator chat lifecycle/accessibility; #284 elapsed/stale progress; #289 request feedback; #288 the coordinator status board; #230 workspace restore; #202 goal optimization; #199 label parity; and #239 chat timeout recovery. These PRs are incomplete and stacked on #22 or #260; they are coverage candidates for the parity inventory, not evidence that the main-side commits have been integrated or accepted. The inventory must also identify main behavior with no active Rust port before declaring the 135-commit delta covered.
