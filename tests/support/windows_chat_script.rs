@@ -5,7 +5,9 @@ Add-Type -AssemblyName UIAutomationTypes
 $A = [System.Windows.Automation.AutomationElement]
 $T = [System.Windows.Automation.TreeScope]
 $C = [System.Windows.Automation.Condition]::TrueCondition
-$deadline = (Get-Date).AddSeconds(45)
+$deadlineSeconds = 45
+if ($env:AC_CHAT_MODE -eq 'verify') { $deadlineSeconds = 90 }
+$deadline = (Get-Date).AddSeconds($deadlineSeconds)
 $window = $null
 function RefreshWindow() {
   $script:window = $A::RootElement.FindAll($T::Children, $C) | Where-Object {
@@ -96,14 +98,14 @@ function EnabledButton($name) {
     -not $_.Current.BoundingRectangle.IsEmpty
   } | Select-Object -First 1
 }
-function ChatEdit() {
+function ChatEdit($allowDisabled = $false) {
   if (-not $window) { return $null }
   $edits = $window.FindAll($T::Descendants, $C) | Where-Object {
     $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit'
   }
   return $edits | Where-Object {
     $_.Current.Name -like 'Ask about this workspace*' -and
-    $_.Current.IsEnabled -and
+    ($_.Current.IsEnabled -or $allowDisabled) -and
     -not $_.Current.IsOffscreen -and
     -not $_.Current.BoundingRectangle.IsEmpty
   } | Select-Object -First 1
@@ -125,11 +127,11 @@ function IsExactButtonAtPoint($button, $point) {
   }
   return $false
 }
-function WaitChatEdit($seconds) {
+function WaitChatEdit($seconds, $allowDisabled = $false) {
   $until = (Get-Date).AddSeconds($seconds)
   while ((Get-Date) -lt $until) {
     $window = RefreshWindow
-    $edit = ChatEdit
+    $edit = ChatEdit $allowDisabled
     if ($edit) { return $edit }
     Start-Sleep -Milliseconds 100
   }
@@ -184,8 +186,15 @@ if ($env:AC_CHAT_MODE -in @('send', 'verify')) {
     exit 3
   }
   $open.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
-  $edit = WaitChatEdit 0.8
-  if (-not $edit) {
+  if ($env:AC_CHAT_MODE -eq 'verify') {
+    $edit = WaitChatEdit 2 $true
+    if ($edit -and -not $edit.Current.IsEnabled) {
+      Write-Output 'CHAT_RECONNECTED_IN_FLIGHT'
+    }
+  } else {
+    $edit = WaitChatEdit 0.8
+  }
+  if (-not $edit -and $env:AC_CHAT_MODE -ne 'verify') {
     Write-Output 'CHAT_LAUNCHER_INVOKE_NO_STATE_CHANGE'
     $window = RefreshWindow
     $open = Buttons 'Ask coordinator'
@@ -209,7 +218,7 @@ if ($env:AC_CHAT_MODE -in @('send', 'verify')) {
       $edit = WaitChatEdit 1.5
     }
   }
-  if (-not $edit) {
+  if (-not $edit -and $env:AC_CHAT_MODE -ne 'verify') {
     $window = RefreshWindow
     $open = Buttons 'Ask coordinator'
     if ($open -and $open.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and
@@ -275,6 +284,12 @@ while (-not $visible -and (Get-Date) -lt $deadline) {
 if (-not $visible) {
   Write-Output "CHAT_TRANSCRIPT_INCOMPLETE`n$names"
   exit 6
+}
+if ($env:AC_CHAT_MODE -eq 'verify') {
+  $window = RefreshWindow
+  $edit = ChatEdit
+  if (-not $edit) { ChatControlDiagnostic 'CHAT_EDITOR_NOT_REENABLED_AFTER_COMPLETION'; exit 9 }
+  Write-Output 'CHAT_RECONNECTED_AND_REENABLED'
 }
 Write-Output 'CHAT_VISIBLE'
 Write-Output $names

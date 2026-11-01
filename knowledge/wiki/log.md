@@ -1,3 +1,7 @@
+# [2026-11-01] reconcile PR backlog | issue #9
+
+Integrated PRs #305, #293, and #294 into the active #9 branch at `9126dfd0`. Audited #255: its 500 ms resumed-chat polling conflicts with QAS-192/DD-206's event-driven updates and fixed 30-second lost-event recovery. Moved its distinct Windows UI acceptance forward by asserting the editor is disabled during an in-flight resumed chat and re-enabled after completion; the exact packaged Windows run is still required. Local Rust test-target compilation, formatting, and the 300-line limit pass. #255 is superseded by the current parent branch; keep issue #189/#9 open until packaged Windows acceptance passes.
+
 # [2026-10-30] plan/task/verify | Build exact-source macOS Rust package — issue #9
 
 Packaged source head `91963479be598752d5b39a73780104ea4577cc46` locally with the Rust `package-release` command. The arm64 ZIP passed integrity, manifest/source, embedded executable checksum, `SHA256SUMS`, packaged `--help`, and all four built-in mock workflow cases (shared/worktree × Git/folder; three tasks/tests each; approval gate verified). Archive SHA-256: `0ee02a02d5464aced3957b7043b31ee491c99301dea18a8a4d98a2c322f41f4c`. This does not establish packaged GUI or Windows acceptance and is not a GitHub Release. Evidence: `docs/evidence/issue9-macos-package-91963479-20261030.json`.

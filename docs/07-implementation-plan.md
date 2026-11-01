@@ -1,3 +1,12 @@
+### Reconcile the stacked #9 pull requests — 2026-11-01
+
+- [x] Task: integrate the completed #305 chat lifecycle, #293 chat accessibility, and #294 event-driven refresh/draft preservation work into the active #9 branch at `9126dfd0`.
+- [x] Audit: PR #255 contains older event-refresh changes and a 500 ms resumed-chat poll. The current QAS-192/DD-206 design uses scoped events plus a fixed 30-second lost-event recovery cadence; the 500 ms poll would violate that resource constraint and is not ported.
+- [x] Port: strengthen the current Windows exact-package reconnect scenario to assert the editor is disabled while a resumed chat is running and enabled after its answer appears. Keep the package test on the #9 parent branch.
+- [x] Local verify: `windows_coordinator_chat` integration target compiles; `cargo fmt --check` passes; both changed test files remain below 300 lines.
+- [x] Cleanup: close PR #255 as superseded after moving its unique Windows acceptance assertions to #260. Issue #189 remains open until exact packaged Windows acceptance passes.
+- [ ] Verify: run the strengthened reconnect scenario against the exact Windows package and retain its result with issue #189/#9 evidence.
+
 ### Unblock Windows packaged UI Automation checks — issue #9 / 2026-11-01
 
 - [x] Plan: inspect Windows package failures in PR #260, #239, and #311 instead of treating the open PRs as approval-waiting. The logs showed two driver issues: `ValuePattern` on egui text inputs and a stop button invoked before its asynchronous state enabled it.
