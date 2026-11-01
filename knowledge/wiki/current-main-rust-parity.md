@@ -21,6 +21,15 @@ exposes Preview through the localized accessible UI. `native_ui_mcp_sources` pas
 the current branch. The adjacent elapsed-time accounting change is tracked with the separate
 Rust progress-feedback port; this evidence covers the reference-preview portion only.
 
+## PR #255 and #294 relationship — 2026-11-01
+
+These open PRs are overlapping but not interchangeable. #255 targets the older root head
+`f123f2ce`, changes 102 files (+3,774/-508), and includes package evidence plus earlier
+event-driven changes. #294 targets the current #9 fast-path branch, changes 42 files
+(+1,219/-147), and carries the event-driven/draft-preservation port. Their heads contain 61
+and 33 unique commits, respectively. Keep both visible until the overlapping code and unique
+package tests are reconciled; do not merge or close either based on title alone.
+
 ## Windows goal-entry CI regression — issue #9 / #260 / 2026-11-01
 
 Windows package run `41301522543` saved `Windows UIA goa`, dropping the final character.
