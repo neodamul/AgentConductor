@@ -813,3 +813,7 @@ Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211.
 ### QAS-199 A slow CLI is waited for, a stuck one is named
 A fixture CLI that prints its prompt 3 s late is collected when the wait is 10 s; one that is 5 s late with a wait of 2 s fails with `before /usage` and `after 2 s`; the default wait is 60 s and neither collector contains a literal 20 s. In the simulator a running `quota:<agent>` job shows `Querying usage…` with a counting time on that agent's card and nothing on the others; in the run screen a running `quota` job marks the refresh button busy and the source line counts its time, and both return to normal when the job ends.
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
+
+### QAS-200 A new or wrongly quiet request fails
+Adding an unclassified kind to a page script, or a direct kind to the quiet list, fails `tests/request_kinds_runtime.cjs` with a message naming it; removing a job's progress rendering fails it too. It passes on the current pages (76 kinds: 7 refresh, 21 job, 47 direct).
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.

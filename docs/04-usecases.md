@@ -803,3 +803,7 @@ Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211.
 ### UC-192 Usage on a company PC
 The CLI needs 35 s before it answers `/usage`. The operator presses refresh: the card says "Querying usage… 0:35" and then shows the percentages. A CLI that never answers ends after 60 s with "Claude quota prompt timed out before /usage after 60 s".
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
+
+### UC-193 Adding a request
+A developer adds `request({kind:'export_report'})`; the guard fails and names it. They classify it (direct, so the pressed button and the waiting line already cover it), or, if it starts a background job, name the progress rendering the page has for it.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.

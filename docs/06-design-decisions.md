@@ -1615,3 +1615,7 @@ Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211.
 ### DD-213 A larger shared limit instead of a per-profile setting
 The query ends as soon as `/usage` is parsed, so a larger limit costs nothing on a fast machine; it only lets a stuck CLI hold its process (killed at the limit) for longer. A per-profile setting would touch the profile schema, validation, the editor and both UIs for a value nobody has asked to vary, so the shared limit is raised first and the message now says which limit was hit, so a company that needs more reports a number. Codex keeps its 30 s: it answers with JSON and has not been reported slow.
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
+
+### DD-214 A classification test instead of a longer checklist
+The checklist of #285 states coverage but cannot notice a later addition, and every earlier pass found gaps by hand. Extracting the kinds from the sources makes the list complete by construction and makes the decision explicit at the moment a request is added. The progress renderings are checked by a named string, not by behaviour: this guards removal and forgetting, while the behaviour itself stays covered by the simulator replays and the unit tests of each rendering.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.

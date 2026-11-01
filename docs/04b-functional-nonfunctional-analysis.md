@@ -738,3 +738,7 @@ Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211.
 ### FR-193 The limit is one value passed to both collectors
 `quota::CLAUDE_WAIT` is 60 s. `query_claude` calls `query_claude_within(profile, dir, cwd, wait)`; the macOS collector's timeout and the Windows collector's deadline both use `wait`. `quota_timeout(sent, wait)` appends ` after {seconds} s`. The agent card adds a fact with `data-quota-since` (the job's `started_ms`) while a `quota:<agent>` job runs; the page's 1 s timer sets its text from `AC_ELAPSED`. In the run screen `quotaRunning(snapshot)` (the snapshot's job is a running `quota` job; the banner leaves quota jobs out) holds the refresh button busy and `quotaWait` puts the counting time on the quota source line, redrawn by `renderLive`.
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
+
+### FR-194 Classification and checks
+`tests/request_kinds_runtime.cjs` reads `kind: '<name>'` literals of `startup.js`, `room.js`, `mcp.js`, `chat.js`, `optimize.js` and `manual.js`. Each kind is in exactly one of ENVELOPE, REFRESH, JOBS, DIRECT; none is unclassified or stale. The quiet list of `AC_WAIT` equals REFRESH, the usage job and the two update polls. Each JOBS entry names a string its page source must contain (its progress rendering).
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.

@@ -2430,3 +2430,11 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Task: `src/quota/terminal.rs` (`CLAUDE_WAIT`, `query_claude_within`, the timeout names its limit), `src/quota/terminal/windows.rs`, `src/quota.rs`, `src/ui/startup.js`, `src/ui/room.js`, messages; fixture delay in `tests/support/terminal_quota_agent.rs`; CHANGELOG.
 - [x] Verify (macOS): tests below; simulator replay of a running `quota` job on the card (counting, only the queried agent, stays correct while the app is silent) and in the run screen (busy button, counting source line, normal again after). The Windows collector was not compiled here (no Windows target); Windows CI compiles it and runs the same fixture test.
 - [ ] Complete: merge and release only on request. The company's real duration is still unknown; with this change the card shows it.
+
+### Request kind guard — GitHub #301
+
+- [x] Plan: the stop-hook review of the goal of 2026-10-31 pointed out that the coverage checklist (#285) is an assertion; each pass found new gaps by hand. R-202 → DD-214. Numbered after R-200 (#290) and R-201 (#297), both still open; the appended sections need a trivial conflict resolution when they merge.
+- [x] Red: a request kind added to a page script and a direct kind added to the quiet list both fail the new test (checked by temporarily editing the sources).
+- [x] Task: `tests/request_kinds_runtime.cjs` (76 kinds: 7 refresh, 21 job, 47 direct); no product code changes.
+- [x] Verify (macOS): the node test, `node_runtime`, `source_layout`.
+- [ ] Complete: merge and release only on request (test only, nothing to release).

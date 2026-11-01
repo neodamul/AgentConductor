@@ -730,3 +730,7 @@ Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211.
 ### SF-189 Wait limit of the Claude usage query and its elapsed time
 One shared limit of 60 s for starting the CLI, the trust screen, the prompt and the `/usage` answer; a timeout names that limit; the agent card counts the running query.
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
+
+### SF-190 Request kind guard
+A node test extracts the request kinds from the page scripts and compares them with a classification in the test and with the quiet list of the waiting helper.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.

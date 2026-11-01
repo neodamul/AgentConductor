@@ -794,3 +794,7 @@ Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211.
 ### R-201 A slow Claude usage query is waited for and shown
 The Claude usage query shall be given up only after a minute, not after 20 seconds, so that a machine where the CLI starts or answers slowly still reports usage. When it is given up, the message shall name the limit and the stage it was waiting in. While a usage query runs, the agent card shall show how long it has run.
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
+
+### R-202 No request can be added whose wait shows nothing
+Every kind of request the JS pages send shall be classified as a job with its own progress rendering, a refresh, or a direct request whose wait the page names, and a request kind that is not classified, or a kind left quiet that is not a refresh, shall fail the tests.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.
