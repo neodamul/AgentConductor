@@ -1,5 +1,15 @@
 # Windows packaged schedule interaction
 
+## 2026-11-01 text-entry automation
+
+Windows package runs `41270341316` and `41280824549` exposed two test-driver assumptions: the lifecycle script required a prefilled TextEdit to have the exact UIA name `Stop reason`, and the desktop-save script required `ValuePattern` on an AccessKit text input. Those are not stable Windows UIA contracts for egui text fields. The drivers now locate the edit after its visible label and use keyboard focus plus `SendKeys`, matching normal user input. A local TDD check was red before the change and now passes with the source-layout/native-room batch (15 passed, 1 ignored), formatting and warning-denied Clippy. Exact Windows package execution is still required before these failures can be considered resolved.
+
+The later Windows package run `41293037713` advanced past the former missing-edit failure, then found `Stop run` while it was temporarily disabled. The lifecycle driver now waits for the UIA control to become enabled before invoking it. This is an asynchronous UI-state condition, so the earlier package result is not a Windows pass. Re-run the final PR head before closing either blocker.
+
+## 2026-11-01 Windows file-stamp test stability
+
+Windows platform run `41294797195` failed the native unit test `startup_changes_wake_workspace_and_run_changes_wake_both_surfaces`: it rewrote a report with different JSON but identical byte length and immediately expected a metadata fingerprint change. A filesystem timestamp can have coarser resolution than the test's rapid writes. The test now changes the report length (`completed: 0` to `completed: 10`) so it asserts deterministic fingerprint change without depending on timestamp precision. The focused listener test and all 80 library tests pass locally. This fixes test determinism; the latest Windows validation is still pending and no Windows pass is claimed.
+
 ## 2026-10-27 pointer fallback did not dispatch
 
 Exact-package run [40496851499](https://github.com/neodamul/AgentConductor/actions/runs/40496851499) passed both platform validations, the macOS package, the Windows package build/smoke, and the packaged briefing/default-desktop journeys. The Windows schedule journey still failed: UIA button focus was refused, the foreground-/process-checked pointer fallback reported input sent, but the persisted run stayed `waiting_availability` / `manual_required` with no `available_at` and no coordinator UI action. Signal-settings was not reached. Windows artifact `12732733595`, SHA-256 `7fc2cc49b4204b29b679b87052fa6a293b6cb2f50e37e5126fa7916e12937689`; evidence: `docs/evidence/issue9-windows-schedule-40496851499-20261027.json`.

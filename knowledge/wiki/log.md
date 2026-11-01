@@ -1849,7 +1849,6 @@ Source `7a56e372e598fff7df593d3ab4933bad62021360` built an exact Apple Silicon p
 ## 2026-10-30 — Triage bug #226 workspace restore report
 
 Reviewing PR #230 found no reproducible product defect from the current report. Five focused workspace/delete/launch suites pass 20 tests. Confirmed Delete archives and unregisters a folder, while Remove-from-menu deliberately retains the directory; deleting the default may create an empty replacement workspace. The report does not identify which path occurred. Issue #226 remains open for repro details and exact Windows package verification. See `docs/07-implementation-plan.md` and `knowledge/wiki/current-main-rust-parity.md`.
-
 ## 2026-11-01 — Preserve unsaved Workspace settings during event refresh — issue #257
 
 R-194/QAS-192 required event snapshots to preserve unsaved form input, but `poll_background` called the full workspace loader and replaced local values. A deterministic regression failed on the unsaved workspace name. Background application now compares each setting with the previous saved snapshot: dirty fields remain local, clean fields accept the incoming saved value, and a dirty goal keeps its optimizer proposal. Updated the old renderer test to inject an event snapshot rather than assume fast polling. Local verification: 96 tests across native UI and source-layout suites; warning-denied all-target Clippy, rustfmt, diff checks, and the 300-line limit pass. Graphify: 11,857 nodes / 19,366 edges. CocoIndex cannot import `mcp.server.fastmcp`. Exact packaged macOS/Windows checks remain open.
@@ -1869,3 +1868,14 @@ Current #255 uses a token-authenticated loopback UDP event bridge plus adaptive 
 ## [2026-11-01] verify | Keep event recovery at a fixed 30-second cadence — issue #257
 
 The #257 clarification requires event-driven active updates and only a 30-second missed-notification recovery check. The previous 1-to-30-second backoff reset to 1 second on metadata changes, so sustained task writes could schedule repeated snapshots. A regression failed with `1s` versus `30s`. Production listeners now keep a fixed 30-second metadata-only interval and publish invalidations without building snapshots; tests inject a short interval to stay deterministic. Focused event/listener tests (17), source-layout (2), all-target/all-feature Clippy, rustfmt, and diff checks pass. Exact platform/package validation remains pending.
+## Windows UI Automation text entry — issue #9 / 2026-11-01
+
+PR #260's Windows packaged lifecycle check (run `41270341316`) failed while searching for a prefilled stop-reason edit by an exact UIA Name. PR #239's packaged desktop-save check (run `41280824549`) failed because the egui/AccessKit text input did not provide UIA `ValuePattern`. Updated both Windows test drivers to focus the accessible edit and send keyboard input; the lifecycle driver locates the edit adjacent to the visible label. TDD source contract failed before the change and passed after it. Local focused batch: 15 passed, 1 ignored; formatting and warning-denied Clippy pass. The exact Windows package check must be rerun; no Windows runtime pass is claimed yet.
+
+## Windows packaged lifecycle readiness — issue #9 / 2026-11-01
+
+After the text-entry update, Windows package run `41293037713` advanced beyond the former `Stop reason` lookup failure and then failed because the `Stop run` control was present but not yet enabled. The test driver now polls for the enabled state before invoking it. TDD source contract was red before this addition and the focused macOS source/native-room/layout checks pass afterward (15 passed, 1 ignored); formatting and warning-denied Clippy also pass. This remains a Windows UI acceptance blocker until the final pushed PR head passes.
+
+## Windows event test timestamp stability — issue #9 / 2026-11-01
+
+Windows run `41294797195` found a race in a listener test that rewrote same-length JSON and expected the metadata fingerprint to change immediately. The updated fixture changes the report length, avoiding reliance on filesystem timestamp precision. The focused test and all 80 library tests pass locally; the latest Windows validation remains pending.

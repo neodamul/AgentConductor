@@ -37,11 +37,9 @@ if (-not $heading) { Write-Output 'NO_HEADING'; $window.FindAll($T::Descendants,
 if (-not $goal) { Write-Output 'NO_GOAL'; exit 4 }
 if (-not $save) { Write-Output 'NO_SAVE'; exit 5 }
 Start-Sleep -Milliseconds 300
-$goalPattern = $goal.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
-$goalPattern.SetValue('Windows UIA goal')
-$goalDeadline = (Get-Date).AddSeconds(5)
-while ($goalPattern.Current.Value -ne 'Windows UIA goal' -and (Get-Date) -lt $goalDeadline) { Start-Sleep -Milliseconds 100 }
-if ($goalPattern.Current.Value -ne 'Windows UIA goal') { Write-Output "GOAL_VALUE_NOT_APPLIED; value=$($goalPattern.Current.Value)"; exit 7 }
+$goal.SetFocus()
+[System.Windows.Forms.SendKeys]::SendWait('^a')
+[System.Windows.Forms.SendKeys]::SendWait('Windows UIA goal')
 
 $save.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 Write-Output 'DRIVEN'
