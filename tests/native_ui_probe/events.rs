@@ -206,7 +206,7 @@ fn startup_changes_wake_workspace_and_run_changes_wake_both_surfaces() {
         Err(std::sync::mpsc::TryRecvError::Empty)
     ));
 
-    std::fs::write(&report, br#"{"state":"running","completed":1}"#).unwrap();
+    std::fs::write(&report, br#"{"state":"running","completed":10}"#).unwrap();
     assert_eq!(
         workspace
             .events
