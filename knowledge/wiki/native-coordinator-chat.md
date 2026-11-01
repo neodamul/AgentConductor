@@ -22,3 +22,7 @@ If sending a chat request times out, the Rust UI treats acceptance as unknown. I
 GitHub #189 / R-179 remains in progress. The terminal-style transcript and keyboard controls now pass local egui interaction tests. Do not treat source tests as packaged UI parity.
 
 The regression `tests/native_chat_unknown.rs` verifies accepted and rejected outcomes through egui's accessible UI tree. The five focused suites pass 22 tests; warning-denied all-target Clippy, formatting, diff checks, and the 300-line limit pass locally. Full all-target tests remain unverified: a cold run was interrupted after 130 tests across 24 suites, and a cached retest exited 130 after 58 tests across 5 suites. Exact packaged macOS/Windows interaction remains pending; this feature does not increase the accepted workflow count until those gates pass.
+
+## UI child process completion evidence
+
+`Room::snapshot` is the authoritative test observation for UI action child completion. The controller polling path calls `Child::try_wait`; a test that later calls `waitpid` on the same process races the controller and may receive `ECHILD`. Assert the persisted job state and exit code from the room snapshot, then verify the terminal `owner.json` record instead of reaping the child a second time. Main PR #309 passed macOS and Windows validation and exact package execution with this pattern.
