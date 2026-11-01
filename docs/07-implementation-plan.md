@@ -6800,4 +6800,5 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: 14 focused tests passed across quota error, existing profile status, sidebar, and source-layout suites; warning-denied Clippy, `cargo fmt --check`, `git diff --check`, 300-line source/test checks, and the optimized native UI binary build passed locally.
 - [x] Update the LLM Wiki entry `knowledge/wiki/native-quota-error-visibility.md`; Graphify rebuilt the local graph (12,024 nodes / 19,637 edges). CocoIndex remains unavailable because `cocoindex-code` fails to import `mcp.server.fastmcp`.
 - [x] Record the design decision in AgentMemory `mem_mvxhta6d_9b688d0c76df`.
-- [ ] Complete: update AgentMemory and GitHub #295, push the issue branch, and open a draft PR stacked on the current Rust integration branch. Keep #295 open until integrated and verified on Windows.
+- [x] Complete this Rust unit: commit `0599a42` pushed on `codex/issue-295-rust-quota-error`; draft PR #304 is mergeable and stacked on #303. GitHub #295 has a progress comment and `bug` label; AgentMemory `mem_mvxhta6d_9b688d0c76df`; Claude signal `sig_mvxhup6a_6f054e76d24b`.
+- [ ] Keep #295 open until the Rust branch is integrated, the Windows package is verified, and the actual Enterprise CLI failure evidence is available.
