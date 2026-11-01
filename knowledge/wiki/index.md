@@ -188,3 +188,4 @@
 - [Coordinator format correction retry](coordinator-format-retry.md): a single bounded JSON-format retry with retained first-attempt logs and deterministic local CLI tests.
 - [Git HEAD fast path](git-head-fast-path.md): resolve common revisions from metadata and refresh linked-worktree fallbacks asynchronously without blocking native requests.
 - [Native event-driven refresh](current-main-rust-parity.md#native-event-driven-refresh): broadcast state invalidations to peer windows and isolate snapshots from interactive requests.
+- [Native request feedback](native-request-feedback.md): immediate action feedback, elapsed wait text, quiet refreshes, and parity with main #279/#285.

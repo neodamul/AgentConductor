@@ -1592,3 +1592,11 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → 
 ### DD-209 Resolve the watched workspace dynamically through a weak session reference
 Keep one workspace listener, but give it a shared weak reference to the Room's current `Startup`. Each check resolves the current startup and report paths; switching updates the weak reference alongside the `startup` field. This avoids retaining an old session's lease while still observing the selected workspace. A strong reference in the listener would keep an idle workspace locked after switch; a static path or weak reference to only the initial session would watch stale state.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### DD-210 Repaint workspace wait content from recorded starts
+Use existing job start timestamps and the one-second local status repaint for workspace chat, rewrite, MCP, and update waits. Derive stale-state text from snapshot timestamps, and update controls directly from worker replies. No new snapshot loop or asynchronous runtime is needed.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### DD-211 Track native request age in the foreground probe
+Reuse the probe's pending request state instead of wrapping every control separately. A monotonic start is set when foreground pending work begins and reset when its pending kind changes or clears. A bounded one-second repaint updates only the wait label; metadata refreshes and background snapshots stay quiet. This keeps feedback in the native event loop without making request processing synchronous or increasing snapshot polling.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. Rust follow-up to GitHub #285, 2026-11-01.

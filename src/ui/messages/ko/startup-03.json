@@ -49,6 +49,7 @@
   "startup.wait_for_availability": "사용 가능해질 때까지 대기",
   "startup.wait_for_the_running_plan_or_execution_before": "워크스페이스를 전환하기 전에 계획 또는 실행 작업이 끝날 때까지 기다리세요.",
   "startup.waiting_for_account_availability": "계정 사용 한도로 대기",
+  "startup.waiting_for_app": "앱 응답 대기 중: {value1} · {value2}",
   "startup.waiting_for_the_coordinator_s_first_output": "코디네이터의 첫 출력을 기다리고 있습니다.",
   "startup.webhook_url": "웹훅 URL",
   "startup.weekly": "주간",

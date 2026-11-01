@@ -68,7 +68,7 @@ fn metadata_completion_is_polled_from_every_workspace_step() {
 #[test]
 fn foreground_action_does_not_disable_periodic_room_refresh() {
     let probe = Probe {
-        pending: Some(crate::native_ui_probe::Pending::Action),
+        pending: Some(crate::native_ui_probe::Pending::Action("Running action…")),
         room_view: Some(Default::default()),
         ..Probe::default()
     };

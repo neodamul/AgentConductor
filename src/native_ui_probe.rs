@@ -87,6 +87,8 @@ pub struct Probe {
     refresh_generation: u64,
     background_refresh_generation: u64,
     pending: Option<Pending>,
+    pending_kind: Option<std::mem::Discriminant<Pending>>,
+    pending_since: Option<std::time::Instant>,
     resume_after_tool_approval: bool,
     resume_after_task_feedback: bool,
     confirming_start: Option<(String, String)>,

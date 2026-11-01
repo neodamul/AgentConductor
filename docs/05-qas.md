@@ -793,3 +793,11 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → 
 ### QAS-195 Workspace listeners follow switches without retaining leases
 Given an idle Room on workspace A, switching to workspace B releases A's startup lease before the listener stops. A second Room can open A immediately. Changes to B's persisted report still emit a run event, and changes to A do not emit events through the switched Room. Verify with a dynamic-listener test and the workspace deletion/switch integration tests.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### QAS-196 Workspace waits keep counting and recover dependent controls
+Given a workspace job that remains active, the visible wait count advances without new snapshots and the stale-state age appears after six seconds. Given an MCP lookup reply, its preview control is enabled immediately. Verify the existing elapsed/status helpers and response transition tests.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### QAS-197 A slow foreground request is visible in both native views
+Given a held foreground reply, Workspace and Agent Room show immediate activity and, within two seconds, the request description with a counting `m:ss`; after a reply or error the wait line clears. Given metadata/background refreshes, no user-wait indicator is shown and no periodic full snapshot is added. Verify with deterministic timer and both-view rendering tests.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. Rust follow-up to GitHub #285, 2026-11-01.

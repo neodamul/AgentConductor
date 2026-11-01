@@ -6718,3 +6718,15 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Record AgentMemory `mem_mvxa9njl_167fb9020f53` and the LLM Wiki; refresh Graphify to 11,851 nodes / 17,990 edges / 884 communities; update issue #257 and PR #260 before unit commit `f877dcb`.
 - [x] Push `f877dcb` to `codex/issue-9-git-head-fast-path`.
 - [ ] Exact packaged macOS/Windows GUI verification remains open; this source-level test does not change #9 acceptance (22/50).
+
+### 2026-11-01 — Port visible request waits to native Rust — GitHub #285 / #9
+
+- [x] Plan: inspect Claude's #285 JS change and keep its implementation in the Claude-owned worktree. Port the same user-visible contract to Rust without changing the Rust request/backend lanes: immediate spinner, named wait after one second, no progress UI for metadata or snapshot refreshes.
+- [x] Red: add Rust regression tests for a named elapsed wait, immediate request feedback, quiet metadata and snapshot refreshes, timer reset across request kinds, and Agent Room rendering. The elapsed-wait test first failed because `Probe` had no pending start time.
+- [x] Task / Green: track monotonic pending age in `Probe`; repaint locally while foreground work waits; show the wait in Workspace feedback and Agent Room; leave routine refreshes excluded.
+- [x] Verify: feedback tests pass 5/5; Agent Room request feedback tests pass 3/3; native UI library, both UI integration targets and source-layout suites pass 102 tests across 4 suites.
+- [x] Verify locally: warning-denied targeted Clippy (`--lib`, `native_ui_probe`, `native_room_poll`, `source_layout`), rustfmt, diff hygiene, the 300-line changed-file limit, and 102 tests across four suites pass. This is not an all-target Clippy or full-suite claim.
+- [x] Follow-up audit: R-198 job-specific wait and stale-snapshot feedback are already present in the Rust branch through #283 commit `18224cda` / PR #284; no duplicate implementation was added. Current Claude #285 PR #287 remains JS-only and open. The Rust #285 implementation below is isolated from Claude's worktree and preserves the Rust async/event request lanes.
+- [x] Assetize: AgentMemory `mem_mvxcyztq_6526beda96cb`, LLM Wiki `native-request-feedback.md`, and Graphify refreshed to 11,885 nodes / 19,393 edges. CocoIndex is unavailable because the runtime has no `cocoindex` module; no project dependency was added.
+- [ ] Complete: update the linked GitHub progress record, commit, and push this unit.
+- [ ] Acceptance: exact packaged Rust UI screenshots and end-to-end parity remain part of open issue #9; this unit does not change its overall acceptance count.

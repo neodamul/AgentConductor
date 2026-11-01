@@ -109,7 +109,9 @@ impl crate::native_ui_probe::Probe {
         }).and_then(|packet| self.worker.as_ref().ok_or_else(|| "Agent Room controller is unavailable".to_owned())?.send(&packet));
         match result {
             Ok(()) => {
-                self.pending = Some(crate::native_ui_probe::Pending::Action);
+                self.pending = Some(crate::native_ui_probe::Pending::Action(
+                    "Undoing the amendment…",
+                ));
                 self.error = None;
             }
             Err(error) => self.error = Some(error),

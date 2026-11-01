@@ -728,6 +728,14 @@ The workspace listener shall resolve the active `startup.json` and watched run r
 A listener must not hold an inactive workspace's startup lease after a switch. It shall follow the current workspace and use the existing bounded check cadence; it shall not add a worker per workspace.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
 
+### FR-190 Redraw long-running workspace waits
+Show elapsed job time and stale snapshot age in the active workspace panel or dialog. The MCP source preview and other dependent controls become available on the response event, without waiting for a periodic snapshot.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### FR-191 Acknowledge native requests and show elapsed time
+Every foreground `Pending` request shows immediate busy feedback. After one second, show a localized waiting indicator with the request description and `m:ss` elapsed time in Workspace feedback or Agent Room. Keep the indicator current with a local egui repaint while pending. Reset it on reply or error; exclude metadata refreshes and background snapshots.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. Rust follow-up to GitHub #285, 2026-11-01.
+
 ### NFR-82 Bound native concurrency without blocking independent work
 The native UI shall use a fixed number of standard-library workers and bounded queues. Slow reads, blocking network I/O, and periodic refreshes cannot block the state-change lane; a slow state change cannot block independent reads; state changes stay serialized; and stale replies cannot replace the latest visible action. No unbounded task spawning or async runtime is introduced.
 Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.

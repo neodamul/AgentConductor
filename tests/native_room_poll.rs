@@ -75,3 +75,25 @@ fn cancel_remains_available_while_an_unrelated_refresh_is_pending() {
     output.textures_delta.free.clear();
     assert!(cancel_enabled, "the pending refresh trapped the modal");
 }
+
+#[test]
+fn waiting_status_is_visible_during_a_pending_room_request() {
+    let mut state = room::State::default();
+    state.pending_status = Some("Waiting for the app: review · 0:02".into());
+    let context = egui::Context::default();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        room::show(&mut state, None, true, None, "en", ui);
+    });
+    let labels: Vec<_> = output
+        .shapes
+        .iter()
+        .filter_map(|shape| match &shape.shape {
+            egui::Shape::Text(text) => Some(text.galley.text().to_owned()),
+            _ => None,
+        })
+        .collect();
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+
+    assert!(labels.iter().any(|label| label.contains("review · 0:02")));
+}

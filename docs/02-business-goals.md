@@ -607,3 +607,11 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → 
 ### BG-152 Release inactive workspace resources during navigation
 Switching away from an idle workspace releases its startup lease promptly, while change notifications continue to follow the workspace currently displayed.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### BG-153 Make long workspace waits legible
+The operator can tell that a long workspace job is still active, how long it has waited, and whether the app has stopped sending state updates.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### BG-154 Acknowledge every user request
+Every user-initiated request visibly starts when pressed, then reports its operation and elapsed time if the response takes longer than one second.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, 2026-11-01.

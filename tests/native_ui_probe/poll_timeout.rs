@@ -92,7 +92,7 @@ fn explicit_poll_errors_remain_visible() {
     assert!(explicit.pending.is_none());
 
     let mut action = Probe {
-        pending: Some(Pending::Action),
+        pending: Some(Pending::Action("Running action…")),
         ..Probe::default()
     };
     action.handle_error("action failed");

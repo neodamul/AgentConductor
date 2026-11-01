@@ -709,3 +709,11 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → 
 ### SF-185 Follow the current workspace without owning stale sessions
 Resolve the listener's startup and report paths from the current workspace on each check. Keep only a non-owning reference to `Startup` so a workspace switch releases an idle previous session and its lease.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### SF-186 Show elapsed time for workspace jobs
+Redraw operator-visible chat, rewrite, MCP, and update status from their recorded or observed start times. Show snapshot age after six seconds of silence and refresh dependent controls immediately after an asynchronous answer.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### SF-187 Acknowledge direct requests across native views
+Both native views mark a user-triggered request immediately and, after one second, display its operation and elapsed time. Exclude routine and background refreshes. Repaint locally while a foreground request is pending; do not introduce recurring snapshots.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. Rust follow-up to GitHub #285, 2026-11-01.

@@ -790,3 +790,11 @@ When the operator approves a plan, the Workspace follows the persisted run event
 3. The previous workspace lease is released, so another Room can open that workspace immediately.
 4. Persisted changes in the newly selected workspace continue to emit scoped notifications.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### UC-189 Wait for a workspace lookup or update
+The operator opens a workspace job, lookup, or update flow that takes time. The panel or dialog reports elapsed time while it runs; after six seconds without a new snapshot it also reports the snapshot age. A dependent control becomes available as soon as the lookup response arrives.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### UC-190 Wait for a direct request response
+The operator sends a messenger test, deletes or switches a workspace, requests a team briefing, or submits a run action. The control immediately shows activity. If the reply takes over one second, the workspace status or Agent Room connection line names the request and counts its elapsed time until the reply arrives. Background refreshes remain quiet.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, 2026-11-01.

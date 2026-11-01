@@ -774,3 +774,11 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → 
 ### R-197 A workspace listener must not retain a switched-away workspace lease
 After an idle workspace switch, the previous workspace's startup lease must be released immediately, while the listener follows the new workspace's persisted state and continues broadcasting its changes. The listener must not keep a strong reference to a stale `Startup` instance.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### R-198 Workspace waits report elapsed time and stale state
+Operator-started workspace jobs and lookups shall show elapsed time in the panel or dialog where the operator is waiting, including after the view is reopened. If the app has sent no state update for more than six seconds, show the age of the last update. A completed lookup shall enable its dependent control as soon as its response arrives.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### R-199 Every press receives visible acknowledgement
+When the operator presses a control that sends a request, immediately mark that request as running. If the reply takes longer than one second, name the request and show elapsed time where the page reports its status. Keep this feedback after a dialog closes. Do not show routine refreshes as user work, and do not report a normal idle refresh as app silence.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, 2026-11-01.
