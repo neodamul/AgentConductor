@@ -1,3 +1,7 @@
+# [2026-11-02] task/verify | Reconcile chat-timeout PR #239
+
+Moved PR #239's slow-Git regression onto the current #260 parent. The test injects a wrapper that sleeps 20 seconds on `rev-parse HEAD`, but chat dispatch returns in 0.21 seconds. The first test run caught an outdated `turns` field and wrong revision token; adapting to the current `text`/`chat_revision` protocol produced a passing regression. `startup_chat` passes 6/6, source-layout 2/2, request-diagnostics 4/4, and the Windows chat test target compiles. Formatting, diff hygiene, and the 300-line file cap pass. PR #239 is closed as superseded; issue #234's product fix is already present. Exact packaged Windows chat reconnect remains unverified and issue #189 stays open.
+
 # [2026-11-01] reconcile PR backlog | issue #9
 
 Integrated PRs #305, #293, and #294 into the active #9 branch at `9126dfd0`. Audited #255: its 500 ms resumed-chat polling conflicts with QAS-192/DD-206's event-driven updates and fixed 30-second lost-event recovery. Moved its distinct Windows UI acceptance forward by asserting the editor is disabled during an in-flight resumed chat and re-enabled after completion; the exact packaged Windows run is still required. Local Rust test-target compilation, formatting, and the 300-line limit pass. #255 is superseded by the current parent branch; keep issue #189/#9 open until packaged Windows acceptance passes.

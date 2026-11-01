@@ -38,3 +38,7 @@ The native multiline chat editor also exposes its localized placeholder as its A
 ## Resumed chat UI acceptance and PR #255 audit (2026-11-01)
 
 The current exact-package Windows reconnect scenario also asserts the accessible editor remains disabled while the persisted chat job is running and becomes enabled after the answer is visible. This assertion lives on the active #9 parent branch so it can be exercised with the current package. PR #255's separate 500 ms status poll was not ported: QAS-192/DD-206 deliberately rely on scoped events and an independent fixed 30-second lost-event recovery check to avoid frequent snapshot polling. Issue #189 stays open until the strengthened scenario passes against the exact Windows package.
+
+## Slow repository lookup regression and PR #239 audit (2026-11-02)
+
+`tests/startup_chat.rs::chat_submission_does_not_wait_for_repository_head` wraps Git so `rev-parse HEAD` sleeps for 20 seconds, then asserts the Rust chat dispatch finishes in under two seconds. The helper scopes the environment override with a restoring lock and removes its temporary repository on drop. The first port exposed an old `turns` request shape and a repository revision token where the current Rust protocol requires `text` and `chat_revision`; the updated test passes in 0.21 seconds. PR #239 was closed as superseded after this regression was preserved on the active #260 parent. The product behavior was already present there; no old source implementation was copied.

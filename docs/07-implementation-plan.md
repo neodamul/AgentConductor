@@ -5,6 +5,8 @@
 - [x] Port: strengthen the current Windows exact-package reconnect scenario to assert the editor is disabled while a resumed chat is running and enabled after its answer appears. Keep the package test on the #9 parent branch.
 - [x] Local verify: `windows_coordinator_chat` integration target compiles; `cargo fmt --check` passes; both changed test files remain below 300 lines.
 - [x] Cleanup: close PR #255 as superseded after moving its unique Windows acceptance assertions to #260. Issue #189 remains open until exact packaged Windows acceptance passes.
+- [x] Port #239 regression: exercise a chat dispatch while `git rev-parse HEAD` is deliberately delayed by 20 seconds; current Rust `chat_revision` dispatch completes in under two seconds. The initial port caught stale request-field and revision-token assumptions; after adapting to the current `text`/`chat_revision` protocol, the test passes in 0.21 seconds. Existing parent code already provides the behavior, so no product code was copied from the older branch.
+- [x] Cleanup: close PR #239 as superseded after preserving its regression on #260. Issue #234 remains fixed in the Rust parent and main product PR #240.
 - [ ] Verify: run the strengthened reconnect scenario against the exact Windows package and retain its result with issue #189/#9 evidence.
 
 ### Unblock Windows packaged UI Automation checks — issue #9 / 2026-11-01
@@ -6861,20 +6863,20 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Save the completed unit to AgentMemory `mem_mvxehy1e_18717541fc81`; update #257 and PR #294 progress. Signal Claude with the Rust port and verification boundary.
 - [x] Commit and push `846e65b` on `codex/issue-257-rust-draft-preservation`.
 
-### Open Rust PR follow-up inventory — refreshed 2026-11-01
+### Open Rust PR follow-up inventory — refreshed 2026-11-02
 
-- [x] Recheck GitHub state: #199, #202, #230, #239, #255, #260, #284, #288, and #289 are open issue drafts; #22 is the main Rust migration parent. #305 and #293 are integrated into the active #9 branch; #294 is being integrated in this unit.
+- [x] Recheck GitHub state: #199, #202, #230, #260, #284, #288, and #289 are open Rust drafts; #22 is the main Rust migration parent. #239 and #255 are closed as superseded after their unique regressions were moved to #260. #305, #293, and #294 are integrated into the active #9 branch; #312 is a separate main-branch Claude PR.
 - [x] Refreshed Graphify after this audit: 12,122 nodes / 19,804 edges.
 - [ ] #199 — remove fixed authentication/local-first labels. GitHub currently reports mergeable; exact native package acceptance remains to be established.
 - [ ] #202 — native goal optimizer and proposal review. GitHub currently reports not mergeable; refresh against the active #9 base before integration.
 - [ ] #230 — reopen the last saved workspace and retire blank placeholders. GitHub currently reports not mergeable; its reported Windows package failure is in the shared tool-decision journey, while the original #226 symptom still lacks a concrete repro.
-- [x] #239 — retargeted to #260 and reduced to a regression-only PR. Commit `0af92d26` preserves the current `chat_revision`/diagnostics implementation and adds the slow-`rev-parse HEAD` dispatch regression plus plan/evidence/Wiki records; the five-file PR diff contains no product-source changes. Twelve focused tests, all-target warning-denied Clippy, rustfmt, and diff checks pass. PR is open, Draft, and mergeable. Exact packaged macOS/Windows UI acceptance remains open. Main fix #234 is already in PR #240; do not reintroduce the old implementation.
-- [ ] #255 — Related event-driven UI/chat/package work. Its branch overlaps #294 on 58 changed files and has distinct package evidence and source files. Audit its remaining unique behavior against the integrated #294 implementation before closing or porting anything.
-- [ ] #260 — Git HEAD fast path and bounded request/event lanes; GitHub reports mergeable and this is the base branch for #294.
+- [x] #239 — its slow-`rev-parse HEAD` chat-dispatch regression is now in `tests/startup_chat.rs` with a scoped helper. It passes locally in 0.21 seconds against the 20-second Git wrapper. PR #239 was closed as superseded by #260; exact package acceptance remains represented on the parent branch where applicable.
+- [x] #255 — closed as superseded by #260 after moving the unique in-flight Windows chat editor acceptance checks. Its 500 ms resumed-chat poll was deliberately not ported because it contradicts QAS-192/DD-206's event-driven design and fixed 30-second fallback.
+- [ ] #260 — active Rust #9 parent with Git HEAD fast path and bounded request/event lanes; GitHub reports mergeable. Exact packaged macOS/Windows gates remain open.
 - [ ] #284 — Port elapsed/stale task progress to the Rust UI; review its unique behavior and local tests.
 - [ ] #288 — Port the coordinator status board to Rust; review against current workspace and Agent Room surfaces.
 - [ ] #289 — Port request feedback to the native Rust UI; review its acceptance and localization tests.
-- [x] #294 — Integrated event-driven refresh, child monitoring, progress backoff, task-worktree recovery scope, and draft preservation into the current #9 branch. Full local all-target/all-feature tests and Clippy pass; exact packaged macOS/Windows UI acceptance remains open.
+- [x] #294 — Integrated event-driven refresh, child monitoring, progress backoff, task-worktree recovery scope, and draft preservation into the current #9 branch at `9126dfd0`. Full local all-target/all-feature tests and Clippy pass; exact packaged macOS/Windows UI acceptance remains open.
 - [x] #305 and #293 — Chat lifecycle and Windows UIA accessible-name changes are integrated in `5753ba0d` and `432b3bb6`; GitHub marks both PRs merged. Keep #189 open until exact packaged Windows chat acceptance passes.
 
 ### 2026-11-01 — Observe declared task worktree changes during event recovery — issue #257 / Claude PR #255 parity

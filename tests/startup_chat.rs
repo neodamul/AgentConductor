@@ -2,6 +2,22 @@ use agentconductor::ui::setup::Startup;
 use serde_json::json;
 use std::{path::Path, process::Command};
 
+#[cfg(unix)]
+#[path = "support/startup_chat_timeout.rs"]
+mod startup_chat_timeout;
+
+#[cfg(unix)]
+#[test]
+fn chat_submission_does_not_wait_for_repository_head() {
+    use std::time::Duration;
+
+    let elapsed = startup_chat_timeout::dispatch_latency();
+    assert!(
+        elapsed < Duration::from_secs(2),
+        "chat request waited for git HEAD: {elapsed:?}"
+    );
+}
+
 #[test]
 fn oversized_question_is_rejected_without_starting_a_chat_job() {
     let root = std::env::temp_dir().join(format!(
