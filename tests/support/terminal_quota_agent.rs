@@ -46,9 +46,18 @@ fn main(){
         let same=std::env::current_dir().ok().and_then(|d|d.canonicalize().ok())==std::path::Path::new(&expected).canonicalize().ok();
         if !same {println!("wrong cwd {:?}",std::env::current_dir()); std::io::stdout().flush().unwrap(); return;}
     }
+    if let Some(ms)=std::env::var("AC_QUOTA_DELAY_MS").ok().and_then(|v|v.parse::<u64>().ok()){
+        std::thread::sleep(std::time::Duration::from_millis(ms));
+    }
     println!("Claude Code vfixture\n{}",std::env::var("AC_QUOTA_PROMPT").unwrap_or("$".into())); std::io::stdout().flush().unwrap();
     for line in std::io::stdin().lock().lines(){
         if line.unwrap().trim()=="/usage"{
+            if std::env::var("AC_QUOTA_HANG_AFTER_USAGE").as_deref()==Ok("1") {
+                println!("Current session");
+                std::io::stdout().flush().unwrap();
+                std::thread::sleep(std::time::Duration::from_secs(60));
+                return;
+            }
             if std::env::var("AC_QUOTA_ENTERPRISE").as_deref()==Ok("1") { println!("Enterprise plan\n70% used $351.23 / $500.00 spent - Resets Nov 1 (Asia/Seoul)"); } else { println!("Current session\n27% used\nCurrent week\n60% used"); }
             std::io::stdout().flush().unwrap();
         }else{panic!("Only usage is allowed");}

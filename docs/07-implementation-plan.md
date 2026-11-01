@@ -13,11 +13,13 @@
 - [x] Verify follow-up locally: `cargo test --locked --lib` passes 80 tests; focused listener test passes; `cargo fmt --check`, `git diff --check`, and the 300-line limit pass.
 - [x] Assetize: AgentMemory records `mem_mvxob8f0_92018d2932da` and `mem_mvxod8ne_88e7c8d28622`; Graphify refreshed to 11,854 nodes / 17,993 edges / 867 communities. LLM Wiki records the failure and limits. CocoIndex is unavailable in this Rust-only environment.
 - [x] Local Verify: warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test limit pass for the updated contract. Full all-target execution remains limited by the recorded sandbox restrictions above.
-- [ ] Platform Verify: #260's latest pushed source head `7bde8ed7` is running as `41306529259` (macOS native tests; Windows native build/tests). #311 head `37569d5c` run `41304840330` passed macOS validation but failed the Windows desktop goal-save test; its exact Windows package job was skipped. The latest local diagnostic/regression follow-up is not pushed yet.
+- [x] Remote diagnosis from completed #304 run `41306779270`: Windows failed because Save has no UIA `InvokePattern`; macOS failed because the source contract expected obsolete `ValuePattern` despite the keyboard driver. This is now a confirmed test-driver problem, not a product save-path failure.
 - [x] New Windows regression evidence: #311 run `41304840330` completed with Windows `default_native_workspace_is_accessible_and_saves_through_ui_automation` failing because only `Win` was saved (expected `Windows UIA goal`) despite the 100 ms per-character / 750 ms settle driver. This disproves the timing-only fix; inspect actual focused control and text after input before changing timing again.
 - [x] Root-cause TDD: the driver found the Goal/Save controls before the initial snapshot finished; `editable()` disables them while `Pending::Refresh` is active. A new source-contract test first failed, then the driver was changed to wait up to 20 seconds for both controls to enable and up to 3 seconds for keyboard focus before typing. Failure output now includes UIA focused-control and TextPattern text diagnostics.
-- [x] Local Verify: Windows driver contracts 11/11, source-layout 2/2, formatting/diff clean; the two touched test files total exactly 300 lines. This proves the driver precondition and diagnostic wiring only. Windows Actions must rerun before claiming #310 fixed; the separate background-snapshot draft-overwrite risk is not proven by the current failure.
-- [ ] Complete: keep the #260/#311 package journey open until the exact Windows package tests pass. Do not convert drafts to review-ready based only on local source checks; the current fixes have 22 focused local tests passing, but package validation is still pending.
+- [x] Save-action Red/Green: source-contract tests first failed on the InvokePattern-only script; the driver now focuses Save, waits for keyboard focus, and sends Enter. `windows_desktop_driver` passes 12/12 locally.
+- [x] Local Verify: latest integrated suite passes 65 tests across 13 focused quota/UI suites plus 13 source-layout/public-doc tests; warning-denied Clippy, rustfmt, diff hygiene, release UI build, and the 300-line limit pass.
+- [x] Exact-head run `41307850806` for `d4a11db6` passed macOS validation; it was canceled before Windows native tests after the matching #304 log exposed the already-known Save activation failure.
+- [ ] Platform Verify: push the locally verified Save keyboard activation fix with the #297 port, then require a fresh exact-head Windows package/native UI run before closing #310/#311. The 60-second #297 behavior also needs exact-head macOS/Windows checks.
 
 ### Reconcile the root Rust migration with latest main — issue #9 / 2026-11-01
 
@@ -6771,4 +6773,18 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: add English/Korean accessibility-tree tests for the sidebar, settings view, and Agent Room; confirm the run-screen assertion fails before the UI update.
 - [x] Task / Green: show the stored quota error inline on all three surfaces with the full accessible/hover reason.
 - [x] Verify: 27 focused tests pass across new quota error cases and existing quota editor/profile/room render suites; `cargo fmt --check` and `git diff --check` pass; all touched Rust/test files remain below 300 lines.
-- [ ] Complete: run warning-denied Clippy, source-layout and optimized native package checks; update AgentMemory/Wiki/Graphify, commit and push the integration change; confirm cross-platform validation and close #295/#304 only after integration.
+- [x] Complete local: warning-denied Clippy, source-layout/public-doc tests, AgentMemory and LLM Wiki updates, Graphify refresh, commit `d4a11db6`, and push to the #9 integration branch.
+- [x] Cross-platform macOS job passed on exact head `d4a11db6` in run `41307850806`.
+- [x] Windows blocker diagnosed from #304 run `41306779270`: the UIA Save button has no `InvokePattern`; run `41307850806` was canceled after macOS passed and before the same known Windows driver failure could waste another run.
+- [ ] Keep #295/#304 open until the corrected keyboard-activation driver and quota behavior pass a new exact-head Windows/macOS run. CocoIndex is installed but blocked by `ModuleNotFoundError: mcp.server.fastmcp`.
+
+### GitHub #297 — Wait for slow Claude quota queries
+- [x] Plan: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213; retain existing CLI login and do not request generation.
+- [x] Red: delayed-session tests failed because the collector did not expose an injectable deadline or the shared 60-second production limit.
+- [x] Task / Green: add the shared bounded wait to macOS and Windows collectors, report the limit and prompt/response stage, and display elapsed time only on the active agent card.
+- [x] Verify: 31 focused tests pass across quota wait/elapsed/error/profile/room suites; 13 source-layout/public-doc tests pass; warning-denied Clippy, rustfmt, and diff hygiene pass. The fixture emits a Claude version/prompt and recognized `/usage` sections; its temporary directory is removed on test exit.
+- [x] Update LLM Wiki and raw source observation. Graphify refreshed after this port (11,935 nodes / 18,092 edges / 879 communities). CocoIndex import fails because `mcp.server.fastmcp` is missing.
+- [x] Verify locally: 31 focused quota/editor/profile/room tests, 13 source-layout/public-doc tests, warning-denied Clippy, rustfmt, diff hygiene, <=300-line checks, and the optimized native Rust UI build pass.
+- [x] Assetize: update the Claude quota Wiki/raw source observation and AgentMemory `mem_mvxtzns5_23660b8ac209`; refresh Graphify (11,935 nodes / 18,092 edges / 879 communities). CocoIndex remains unavailable because `mcp.server.fastmcp` is missing.
+- [ ] Commit and push the #297 port on the #9 integration branch; wait for the active Windows job in exact-head run `41307850806` before pushing so its already-running cross-platform check is not discarded.
+- [ ] Cross-platform: confirm exact-head macOS and Windows checks, then close #297 and its stacked #303 only after the behavior is present in the integration branch.

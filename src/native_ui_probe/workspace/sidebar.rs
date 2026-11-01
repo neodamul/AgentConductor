@@ -6,6 +6,7 @@ pub(in crate::native_ui_probe::workspace) mod controls;
 mod header;
 pub(crate) mod icons;
 mod models;
+mod quota;
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum Event {
@@ -156,50 +157,13 @@ pub fn show(
                             ) {
                                 event = Some(action);
                             }
-                            if matches!(parser, "claude" | "codex") {
-                                let badge = &snapshot["quota_badges"][id];
-                                let quota = badge["text"].as_str().unwrap_or("—");
-                                let title = badge["title"].as_str().unwrap_or_default();
-                                ui.horizontal(|ui| {
-                                    ui.spacing_mut().item_spacing.x = 5.0;
-                                    ui.label(
-                                        RichText::new(quota)
-                                            .small()
-                                            .strong()
-                                            .monospace()
-                                            .color(ui.visuals().text_color()),
-                                    )
-                                    .on_hover_text(title)
-                                    .accessible_name(
-                                        if title.is_empty() {
-                                            quota.to_owned()
-                                        } else {
-                                            format!("{quota}: {title}")
-                                        },
-                                    );
-                                    let busy =
-                                        profile_tools::metadata_active(snapshot, "quota", id);
-                                    let refresh = crate::ui::messages::interpolate(
-                                        text(language, "startup.refresh_quota"),
-                                        &[("value1", id)],
-                                    );
-                                    if busy {
-                                        ui.spinner();
-                                    } else if ui
-                                        .add_enabled(
-                                            can_edit && saved,
-                                            egui::Button::new("↻").small(),
-                                        )
-                                        .accessible_name(refresh.clone())
-                                        .on_hover_text(refresh)
-                                        .clicked()
-                                    {
-                                        event = Some(Event::Quota(id.to_owned()));
-                                    }
-                                });
+                            if matches!(parser, "claude" | "codex")
+                                && let Some(action) =
+                                    quota::show(id, snapshot, language, can_edit && saved, ui)
+                            {
+                                event = Some(action);
                             }
                         });
-                        crate::native_ui_probe::quota_error::show(snapshot, Some(id), language, ui);
                         if let Some(fallback) = profile["fallback"]["agent"].as_str() {
                             let fallback = crate::ui::messages::interpolate(
                                 text(language, "startup.fallback"),

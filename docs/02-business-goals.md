@@ -608,6 +608,10 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → 
 Switching away from an idle workspace releases its startup lease promptly, while change notifications continue to follow the workspace currently displayed.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
 
+### BG-156 Usage is reported on a slow managed machine
+A company machine that takes longer to start the Claude CLI or return `/usage` still reports quota, and the operator can see that the query is progressing.
+Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, 2026-11-01.
+
 ### BG-157 Diagnose quota collection failures from the native UI
 Operators can identify why an agent quota is unavailable without opening logs or relying on a provider-specific screen guess.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.

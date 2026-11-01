@@ -21,4 +21,31 @@ pub(crate) fn show(snapshot: &Value, agent: Option<&str>, language: &str, ui: &m
             .on_hover_text(error);
         }
     }
+    let job = &snapshot["metadata_job"];
+    let Some(error) = job["error"]
+        .as_str()
+        .filter(|error| !error.trim().is_empty())
+    else {
+        return;
+    };
+    let Some(id) = job["kind"]
+        .as_str()
+        .and_then(|kind| kind.strip_prefix("quota:"))
+    else {
+        return;
+    };
+    if job["state"] != "failed" || agent.is_some_and(|agent| agent != id) {
+        return;
+    }
+    if snapshot["quotas"][id]["error"].as_str() == Some(error) {
+        return;
+    }
+    let diagnostic = format!("{id} · {unavailable}: {error}");
+    ui.label(
+        RichText::new(&diagnostic)
+            .small()
+            .color(ui.visuals().error_fg_color),
+    )
+    .accessible_name(diagnostic)
+    .on_hover_text(error);
 }

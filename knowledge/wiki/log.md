@@ -1863,3 +1863,7 @@ Runs `41297846153`, `41297870756`, `41298028204`, `41298098982`, and `4129816982
 
 The corrected focused driver suite passes 8/8 on the local Mac. Full local all-target test execution is constrained by this sandbox: four AgentMemory tests cannot bind loopback TCP and three folder-execution tests hit denied filesystem operations (`Operation not permitted`). These are separate environment restrictions; exact CI and Windows package results remain the acceptance gate.
 
+## 2026-11-01 — Port quota diagnostics and slow-query handling into #9 Rust integration
+
+GitHub #295 quota errors are now shown in native sidebar, agent settings, and Agent Room from the recorded snapshot or failed quota metadata job. TDD adds bilingual accessibility-tree tests and keeps the compact quota row when no error exists. GitHub #297 quota queries now use an injected deadline with a shared 60-second production limit on macOS and Windows; the UI shows a local elapsed timer only on the active agent card. The fixture uses the Claude version/prompt and quota section headings required by the real collector, and cleans its temp root on panic. Local targeted tests, source-layout/public-doc checks, warning-denied Clippy, formatting and diff checks pass. #295 was committed/pushed as `d4a11db6`; #297 changes are still uncommitted in the same integration worktree. Exact-head platform run `41307850806` for #295 remains active. CocoIndex cannot import `mcp.server.fastmcp`; Graphify was refreshed before the #297 local changes and needs another update.
+

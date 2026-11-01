@@ -77,3 +77,15 @@ the button to its enabled state. The screenshot was not retained because it expo
 usage and a local project path. This component check does not add a distinct #9 workflow.
 See
 `docs/evidence/issue9-claude-quota-f438820-macos-package-20261023.json`.
+
+## Rust native UI: slow query wait and elapsed display — GitHub #297
+
+The native Rust collector uses one injected deadline with a 60-second production value on macOS and Windows. Timeout diagnostics identify whether the collector was waiting for the CLI prompt or the `/usage` response and include the configured duration. Successful parsing still returns after the terminal becomes quiet. The agent sidebar reads the quota job's persisted `started_ms` and repaints locally once per second while that one agent's query is active; it does not poll the coordinator.
+
+The deterministic terminal fixture emits a Claude version and a `>` prompt, delays startup when requested, and can hang after `/usage` without producing usage. This keeps prompt detection and parser tests aligned with real CLI interaction and ensures temporary files are removed when tests fail.
+
+## Trace and verification
+
+- Requirement/design trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297.
+- `tests/claude_wait.rs` verifies slow startup, pre/post-`/usage` timeout details, and the shared production deadline; `tests/native_ui_quota_elapsed.rs` verifies elapsed-time scope and visible failure details.
+- Local targeted tests passed on macOS. Windows package validation is still required before integration is complete.
