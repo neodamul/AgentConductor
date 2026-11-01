@@ -6536,10 +6536,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: `checked_activation_journals_uia_and_pointer_results_before_waiting` fails until activation-path diagnostics are present.
 - [ ] Task: report UIA no-op, checked pointer fallback, and immediate post-click expected-state result so the next package run identifies whether the click or product transition failed. Do not change product behavior without that evidence.
 - [ ] Verify: rerun the exact packaged Windows gate and retain the action journal, UIA snapshot, request receipt, and workflow report; refresh/allow/deny must all be exercised.
-- [ ] Port main #197 chat semantics: persist conversation history; distinguish accepted/unreceived sends; restore an unsent draft after failure; follow accepted late jobs; support new/reset conversation.
+- [x] Port main #197 chat semantics: persist conversation history; distinguish accepted/unreceived sends; restore an unsent draft after failure; follow accepted late jobs; support new/reset conversation. Rust tests cover persistence/reset across reopen, accepted late answers, and unknown-send reconciliation.
   - [x] Restore a rejected pre-acceptance question to the editor; verified with `native_workspace_chat` regression coverage.
   - [x] Keep an accepted late job followed in the transcript and render its eventual answer; verified with `native_workspace_chat` regression coverage.
-  - [ ] Persist chat history and support starting/resetting a conversation.
+  - [x] Persist chat history and support starting/resetting a conversation; `startup_chat`, `chat_startup_context`, and `native_workspace_chat_reset` cover restore, save, and reset across reopen.
 - [ ] Port main #200 diagnostics: emit bounded request records around native Room dispatch/routing; name request kinds in timeout feedback where a real timeout exists.
   - [x] Red/Green: content-free JSONL logging covers all `chat` requests and requests lasting at least one second; rotate at 256 KiB; ignore logging failures. Focused tests cover filtering, fields, redaction, and rotation.
   - [x] Verify/local: request-diagnostics, native room/chat, public-doc, and source-layout suites pass (26 tests); warning-denied Clippy, rustfmt, and `git diff --check` pass. English/Korean Markdown and offline HTML regenerated with the Rust manual renderer.
@@ -6619,6 +6619,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: `native_workspace_chat`, `startup_chat`, and `source_layout` pass 8 tests; formatting, warning-denied all-target Clippy, and diff hygiene pass. Changed source/test files are 256, 66, and 221 lines.
 - [x] Port the DD-192 artifact-pair history contract: persist the latest chat artifact pointer, restore the transcript on initial open and after saving workspace settings, resume following a still-running accepted chat job, and clear history/artifacts through **New chat**. Red/Green covers history restoration from input+answer artifacts, settings-save preservation, reset across reopen, UI reset activation, and active-job restoration.
 - [x] Verify locally: startup/chat/reset/native-probe/localization/source-layout/public-doc suites pass 44 tests; warning-denied all-target Clippy, rustfmt, diff checks, and the 300-line limit pass.
+- [x] Reverify latest root 2026-11-02: chat history/context/reset/unknown-send suites pass 16 tests across five targets, including accepted late-answer following; exact package acceptance remains open.
 - [ ] Verify packaged macOS/Windows chat submission and accepted-job failure behavior in a package run that includes this commit.
 - [ ] Complete: run exact packaged macOS/Windows chat flows; then update issue #9 and acceptance only from observed package evidence.
 

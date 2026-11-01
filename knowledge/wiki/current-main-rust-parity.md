@@ -13,6 +13,15 @@ The native UI already uses bounded per-surface events and separate request lanes
 for reads, state changes, blocking I/O, and background refresh. Local worker and
 event-bus regressions pass 16/16.
 
+Coordinator chat parity for main #197 is also present in the Rust root: persisted
+input/answer artifacts restore the transcript across workspace save and reopen;
+New chat clears it; accepted late jobs remain followed; and an unknown send is
+reconciled against history before the UI restores an unaccepted draft. The
+2026-11-02 `startup_chat`, `chat_startup_context`,
+`native_workspace_chat_reset`, `native_workspace_chat`, and `native_chat_unknown`
+suites pass 16 tests. This is source-level evidence; packaged UI acceptance stays
+open.
+
 The current Rust root also carries the latest Claude quota wait: one shared
 180-second deadline is used by the macOS and Windows collectors, with elapsed
 time exposed by the native UI. Local quota/wait/parser tests pass 16 tests with
