@@ -705,7 +705,7 @@ The **Agent tools guide…** and **User manual** entries shall be in the Setting
 Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
 
 ### R-179 The coordinator chat behaves like a CLI session
-The coordinator chat shall keep what the operator typed and what the coordinator answered with the workspace, show it again after the screen or the workspace is reopened, and present it as a terminal-style transcript with prompt-like input, so asking again does not lose the earlier exchange. Amends R-161 (coordinator chat).
+The coordinator chat shall keep what the operator typed and what the coordinator answered with the workspace, show it again after the screen or the workspace is reopened, and present it as a terminal-style transcript with prompt-like input, so asking again does not lose the earlier exchange. The multiline input shall expose its localized prompt as its accessible name so keyboard and UI automation can find it. Amends R-161 (coordinator chat).
 Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
 
 ### R-180 Screens show only information the operator can use

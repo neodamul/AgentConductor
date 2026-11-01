@@ -1849,3 +1849,7 @@ Source `7a56e372e598fff7df593d3ab4933bad62021360` built an exact Apple Silicon p
 ## 2026-10-30 — Triage bug #226 workspace restore report
 
 Reviewing PR #230 found no reproducible product defect from the current report. Five focused workspace/delete/launch suites pass 20 tests. Confirmed Delete archives and unregisters a folder, while Remove-from-menu deliberately retains the directory; deleting the default may create an empty replacement workspace. The report does not identify which path occurred. Issue #226 remains open for repro details and exact Windows package verification. See `docs/07-implementation-plan.md` and `knowledge/wiki/current-main-rust-parity.md`.
+
+## 2026-11-01 — Make the native coordinator chat input discoverable — issue #189
+
+The Windows package UI Automation flow could not locate the Rust chat editor by its prompt because the multiline TextEdit had no accessible name. Added a focused AccessKit regression, observed it fail before the fix, and assigned the localized placeholder as the editor's accessible name. Six focused suites pass 17 tests; warning-denied Clippy, rustfmt, diff checks, and the 300-line cap pass. Exact packaged Windows UI Automation remains unverified. This ports the relevant behavior from Claude's JS/Rust changes without taking over or copying their unrelated backend work.
