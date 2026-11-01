@@ -1,5 +1,9 @@
 # Windows packaged schedule interaction
 
+## 2026-11-01 text-entry automation
+
+Windows package runs `41270341316` and `41280824549` exposed two test-driver assumptions: the lifecycle script required a prefilled TextEdit to have the exact UIA name `Stop reason`, and the desktop-save script required `ValuePattern` on an AccessKit text input. Those are not stable Windows UIA contracts for egui text fields. The drivers now locate the edit after its visible label and use keyboard focus plus `SendKeys`, matching normal user input. A local TDD check was red before the change and now passes with the source-layout/native-room batch (15 passed, 1 ignored), formatting and warning-denied Clippy. Exact Windows package execution is still required before these failures can be considered resolved.
+
 ## 2026-10-27 pointer fallback did not dispatch
 
 Exact-package run [40496851499](https://github.com/neodamul/AgentConductor/actions/runs/40496851499) passed both platform validations, the macOS package, the Windows package build/smoke, and the packaged briefing/default-desktop journeys. The Windows schedule journey still failed: UIA button focus was refused, the foreground-/process-checked pointer fallback reported input sent, but the persisted run stayed `waiting_availability` / `manual_required` with no `available_at` and no coordinator UI action. Signal-settings was not reached. Windows artifact `12732733595`, SHA-256 `7fc2cc49b4204b29b679b87052fa6a293b6cb2f50e37e5126fa7916e12937689`; evidence: `docs/evidence/issue9-windows-schedule-40496851499-20261027.json`.
