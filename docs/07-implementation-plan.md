@@ -6603,7 +6603,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 - [x] Plan: trace R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. Keep the event payload content-free; the snapshot remains authoritative.
 - [x] Red: add a deterministic worker barrier test where a blocked background snapshot must not block an interactive chat dispatch; add event fan-out, source-suppression, and read-only-filter tests.
-- [x] Task: split periodic snapshots onto an independent worker/reply channel; broadcast successful state invalidations to subscribed peer windows; coalesce refreshes and wake listeners; use 1-second active-work and 30-second idle fallback cadence.
+- [x] Task: split periodic snapshots onto an independent worker/reply channel; broadcast successful state invalidations to subscribed peer windows; coalesce refreshes and wake listeners; use notification-driven active refresh and a 30-second recovery cadence.
 - [x] Verify locally: 60 library tests and 30 tests across `native_room_render`, `native_ui_profile_refresh`, `native_ui_probe`, and `source_layout`; warning-denied all-target Clippy, `cargo fmt --check --all`, diff check, and 300-line source/test validation pass.
 - [x] Complete unit: commit `153d152f` is pushed to `codex/issue-9-git-head-fast-path`; AgentMemory entry `mem_mvu7a0nj_e1bbe9fa40b8`, LLM Wiki, Graphify, and issue #9 are updated. Keep #9 open until packaged macOS/Windows parity acceptance is complete.
 - [x] Follow-up: bound each subscriber's invalidation queue to one event. A burst of 10,000 state changes now produces one wakeup and one authoritative snapshot request instead of unbounded queued refreshes. Regression proves coalescing; the blocked background-refresh test now uses a generic save dispatch rather than chat-only behavior.
@@ -6672,9 +6672,17 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 - [x] Plan: keep the R-194/R-195 event contract: state-change work remains asynchronous, views receive coalesced invalidations, and snapshots stay on the background worker lane.
 - [x] Red: add a regression that writes a new run report and expects the subscribed view to receive a run-change event.
-- [x] Task / Green: add stoppable standard-library listeners for `startup.json` and the active `report.json`; they check file metadata every 500 ms and broadcast only when length or modification time changes. The existing 1-second active-work snapshot remains a recovery fallback.
+- [x] Task / Green: add stoppable standard-library listeners for `startup.json` and the active `report.json`; they check file metadata every 500 ms and broadcast only when length or modification time changes. The 1-second active snapshot fallback is removed; only a 30-second missed-event recovery check remains.
 - [x] Verify focused: native EventBus tests pass 8/8, including startup/run scope routing, persisted-report wakeup, bounded coalescing, and nonblocking subscriber wake callbacks.
 - [x] Verify locally: EventBus tests pass 8/8, native UI integration passes 13/13, source layout passes 2/2, warning-denied all-target Clippy and rustfmt pass, and the 300-line source/test bound holds.
 - [x] Commit the unit locally; save AgentMemory `mem_mvufyvr9_997c8499dc20` and refresh Graphify (11,812 nodes / 17,951 edges).
-- [ ] Push after existing run `40997481871` completes so its macOS/Windows package build is not canceled; then verify this exact head.
+- [x] Inspect existing run `40997481871`: it is terminal. macOS/Windows validation and macOS packaging passed; the Windows package failed in the default-desktop UI journey. This is not a pass for the new code.
 - [ ] Verify exact packaged macOS/Windows UI workflows before changing #9 acceptance; current full-denominator progress remains 22/50 (44%).
+
+### Remove the active one-second snapshot loop — issue #257 / 2026-11-01
+
+- [x] Plan: add R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208; amend R-194 to make the persisted-state listener the active refresh path.
+- [x] Red: require a 30-second recovery interval even while run/metadata work is active; the prior one-second interval failed this test.
+- [x] Task / Green: active reports and startup-state changes wake the scoped listener, which coalesces invalidation into the existing asynchronous snapshot lane. The only periodic recovery check is 30 seconds.
+- [x] Local Verify: `native_room_render` 12/12, `native_ui_profile_refresh` 3/3, `native_ui_probe` 13/13, and `source_layout` 2/2 pass. warning-denied all-target Clippy, `cargo fmt --all -- --check`, `git diff --check`, and the ≤300-line changed-file check pass.
+- [ ] Complete: record in AgentMemory and LLM Wiki, commit/push this unit, then verify exact macOS/Windows packaged responsiveness; packaged UI acceptance stays 22/50 until that evidence passes.

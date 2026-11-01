@@ -106,14 +106,14 @@ fn native_workspace_review_renders_the_proposed_plan() {
 }
 
 #[test]
-fn native_room_refresh_is_fast_while_active_and_event_driven_while_idle() {
+fn native_room_uses_event_refresh_with_a_slow_recovery_fallback() {
     use std::time::Duration;
 
     assert_eq!(
         agentconductor::native_ui_probe::room_refresh_interval(&json!({
             "report": {"state": "running"}
         })),
-        Duration::from_secs(1)
+        Duration::from_secs(30)
     );
     assert_eq!(
         agentconductor::native_ui_probe::room_refresh_interval(&json!({
@@ -124,7 +124,7 @@ fn native_room_refresh_is_fast_while_active_and_event_driven_while_idle() {
 }
 
 #[test]
-fn native_room_poll_shortens_an_idle_deadline_when_work_becomes_active() {
+fn native_room_poll_keeps_a_slow_fallback_when_work_becomes_active() {
     use std::time::{Duration, Instant};
 
     let mut next = Some(Instant::now() + Duration::from_secs(30));
@@ -135,7 +135,7 @@ fn native_room_poll_shortens_an_idle_deadline_when_work_becomes_active() {
         false,
         &mut next,
     ));
-    assert!(next.unwrap() <= Instant::now() + Duration::from_secs(2));
+    assert!(next.unwrap() > Instant::now() + Duration::from_secs(25));
 }
 
 #[test]

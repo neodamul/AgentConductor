@@ -599,3 +599,7 @@ Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → 
 ### BG-150 Keep native interaction responsive under slow work
 The app stays responsive when one view is reading slow local state, an agent operation is active, a blocking external I/O request is pending, or another view publishes a state change. It uses bounded standard-library workers and avoids spinning up an async runtime.
 Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
+
+### BG-151 Update active native views only when state changes
+The native UI spends host resources on state reads only after a meaningful state change, while a slow recovery check protects against a missed external notification.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.

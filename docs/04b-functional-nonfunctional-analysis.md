@@ -717,12 +717,20 @@ Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → 
 ### FR-187 Dispatch native requests through independent bounded lanes
 Route known read-only requests through a bounded pool of two workers. Route synchronous network-bound requests, including messenger connection checks, through a dedicated bounded I/O worker. Route state-changing requests, picker operations, and unknown valid request kinds through one serialized state-change worker. Keep periodic snapshots on the dedicated single-flight lane and tag foreground replies so superseded work is ignored.
 
+### FR-188 Refresh active views from invalidation events
+After an in-process mutation or a detected external persisted-state change, publish or receive a scoped invalidation, coalesce it, and schedule one asynchronous snapshot for the affected view. Retain a 30-second recovery timer for missed notifications; do not schedule 0.5–1 second full snapshots while work is active.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
+
 ### NFR-82 Bound native concurrency without blocking independent work
 The native UI shall use a fixed number of standard-library workers and bounded queues. Slow reads, blocking network I/O, and periodic refreshes cannot block the state-change lane; a slow state change cannot block independent reads; state changes stay serialized; and stale replies cannot replace the latest visible action. No unbounded task spawning or async runtime is introduced.
 Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
 
+### NFR-83 Active native refresh uses change notifications
+While work is active, the view shall not assemble snapshots on a recurring 0.5–1 second timer. State-change listeners run independently, coalesce bursts, and wake only affected views. A missed notification is recovered within 30 seconds; notification delivery and refresh scheduling never wait on the UI thread or foreground request queue.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
+
 ### NFR-81 Background refresh cannot occupy interactive request handling
-Periodic snapshots shall use a separate worker and response channel from interactive requests. A due event or recovery refresh shall not be suppressed by an unrelated pending request; an open human decision modal may pause refresh for its view. A slow or failed snapshot must not fill the interactive queue or block rendering. A completed snapshot shall refresh visible state while preserving the pending action, unsaved form values, and current error. State changes wake peer views immediately; active external jobs retain the one-second recovery cadence and idle views check at most once every 30 seconds.
+Periodic snapshots shall use a separate worker and response channel from interactive requests. A due event or recovery refresh shall not be suppressed by an unrelated pending request; an open human decision modal may pause refresh for its view. A slow or failed snapshot must not fill the interactive queue or block rendering. A completed snapshot shall refresh visible state while preserving the pending action, unsaved form values, and current error. State changes wake peer views immediately; all views use a 30-second recovery cadence.
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, 2026-10-30.
 
 ### NFR-80 Routine Git revision fallback cannot block native requests

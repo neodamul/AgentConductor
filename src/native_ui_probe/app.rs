@@ -96,7 +96,7 @@ impl Probe {
             if let Some(deadline) = self.workspace_next_refresh.filter(|due| *due > now) {
                 ui.ctx().request_repaint_after(deadline - now);
             } else {
-                self.workspace_next_refresh = Some(now + std::time::Duration::from_millis(500));
+                self.workspace_next_refresh = Some(now + std::time::Duration::from_secs(30));
                 self.refresh_workspace();
             }
         }
@@ -116,7 +116,7 @@ impl Probe {
             if let Some(deadline) = self.workspace_next_refresh.filter(|due| *due > now) {
                 ui.ctx().request_repaint_after(deadline - now);
             } else {
-                self.workspace_next_refresh = Some(now + std::time::Duration::from_millis(500));
+                self.workspace_next_refresh = Some(now + std::time::Duration::from_secs(30));
                 self.refresh_workspace();
             }
         }

@@ -768,7 +768,7 @@ An operator opens a workspace or confirms an action while repository state is be
 Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
 
 ### UC-185 Keep two native views synchronized while an operation runs
-The operator has Workspace and Agent Room open. A successful action in one view emits one state-change event to the other; the listener requests a single snapshot without echoing another event. A slow background refresh does not block an interactive request. When a peer-view event arrives during an unrelated pending response, the listener starts one bounded snapshot without waiting; the view applies it while preserving the pending action, unsaved form values, and current error. An open human decision modal can pause refresh for its view. Snapshot assembly releases the shared lock before filesystem and revision reads. When no process is active, no frequent snapshot loop runs; a 30-second recovery check catches changes from outside the application.
+The operator has Workspace and Agent Room open. A successful action in one view emits one state-change event to the other; the listener requests a single snapshot without echoing another event. A slow background refresh does not block an interactive request. When a peer-view event arrives during an unrelated pending response, the listener starts one bounded snapshot without waiting; the view applies it while preserving the pending action, unsaved form values, and current error. An open human decision modal can pause refresh for its view. Snapshot assembly releases the shared lock before filesystem and revision reads. Active and idle views both use events as the primary refresh path; a 30-second recovery check catches missed changes from outside the application.
 Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, user, 2026-10-30.
 
 ### UC-186 Continue an independent action during slow native work
@@ -777,3 +777,7 @@ Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → 
 3. Read, external-I/O, state-change, and periodic-refresh workers progress independently; mutations remain ordered.
 4. The UI listens for a coalesced invalidation, requests an asynchronous authoritative snapshot, and discards replies superseded by a newer foreground request.
 Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
+
+### UC-187 Refresh active views from state-change notifications
+The operator leaves Workspace and Agent Room open while a coordinator or metadata subprocess is active. A local state change broadcasts an invalidation; an external state-file change wakes its listener. The affected view coalesces notifications and requests one asynchronous snapshot. If a notification is missed, a 30-second recovery check eventually reconciles the view without a frequent active-job snapshot loop.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
