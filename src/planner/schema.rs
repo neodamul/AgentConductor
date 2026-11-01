@@ -14,13 +14,14 @@ fn object(properties: Value) -> Value {
 }
 pub fn for_plan(agents: &[String], roles: &[String], phased: bool) -> Value {
     let strings = json!({"type":"array","items":{"type":"string"}});
+    let non_empty_strings = json!({"type":"array","minItems":1,"items":{"type":"string"}});
     let role = if roles.is_empty() {
         json!({"type":["string","null"]})
     } else {
         json!({"type":"string","enum":roles})
     };
     let mut task = object(
-        json!({"id":{"type":"string"},"agent":{"type":"string","enum":agents},"prompt":{"type":"string"},"paths":strings,"depends_on":strings,"test_command":strings,"role":role,"model":{"type":["string","null"]},"execution_options":{"type":"object","additionalProperties":{"type":"string"}},"task_type":{"type":["string","null"],"enum":["extract","summarize","analyze","code","agentic","creative",null]}}),
+        json!({"id":{"type":"string"},"agent":{"type":"string","enum":agents},"prompt":{"type":"string"},"paths":non_empty_strings,"depends_on":strings,"test_command":non_empty_strings,"role":role,"model":{"type":["string","null"]},"execution_options":{"type":"object","additionalProperties":{"type":"string"}},"task_type":{"type":["string","null"],"enum":["extract","summarize","analyze","code","agentic","creative",null]}}),
     );
     task["required"]
         .as_array_mut()

@@ -152,10 +152,41 @@ fn rejects_empty_inputs_and_shell_executable() {
     assert!(p.validate().is_err());
     let mut p = plan();
     p.tasks[0].paths.clear();
-    assert!(p.validate().is_err());
+    assert!(
+        p.validate()
+            .unwrap_err()
+            .contains("task task-0: paths is empty")
+    );
     let mut p = plan();
     p.agents[0].executable = "sh".into();
     assert!(p.validate().is_err());
+}
+
+#[test]
+fn task_validation_names_the_invalid_field() {
+    let mut p = plan();
+    p.tasks[0].prompt.clear();
+    assert!(
+        p.validate()
+            .unwrap_err()
+            .contains("task task-0: prompt is empty")
+    );
+
+    let mut p = plan();
+    p.tasks[0].test_command.clear();
+    assert!(
+        p.validate()
+            .unwrap_err()
+            .contains("task task-0: test_command")
+    );
+
+    let mut p = plan();
+    p.tasks[0].agent = "missing".into();
+    assert!(
+        p.validate()
+            .unwrap_err()
+            .contains("task task-0: unknown agent missing")
+    );
 }
 
 #[test]

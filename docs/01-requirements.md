@@ -795,3 +795,7 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210.
 ### R-199 Every press receives visible acknowledgement
 When the operator presses a control that sends a request, immediately mark that request as running. If the reply takes longer than one second, name the request and show elapsed time where the page reports its status. Keep this feedback after a dialog closes. Do not show routine refreshes as user work, and do not report a normal idle refresh as app silence.
 Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, 2026-11-01.
+
+### R-203 Planning contracts match executable validation
+Every planned task, including a verification task, shall own at least one literal repository-relative path and provide a test command with an executable. The output schema and planner prompt shall state these requirements. Validation errors shall identify the task and invalid field. When a phased plan has an empty path list, the coordinator shall receive the same single correction attempt as for an unsafe or overlapping scope.
+Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215. GitHub #251, 2026-11-02.

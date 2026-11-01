@@ -3,11 +3,13 @@ use std::collections::HashSet;
 
 mod profile;
 mod task;
+mod task_validation;
 pub use profile::{
     AgentProfile, CatalogOrigin, CooperativeMode, ExecutionOption, Fallback, JsonCondition,
     ModelCatalog, ModelDiscovery, QuotaCommand,
 };
 pub use task::{Task, TaskType, WorkspaceMode};
+pub use task_validation::EMPTY_PATHS;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -143,16 +145,7 @@ impl Plan {
         let mut ids = HashSet::new();
         let mut scopes: Vec<&str> = vec![];
         for task in &self.tasks {
-            if task.id.trim().is_empty()
-                || !ids.insert(&task.id)
-                || !agents.contains(&task.agent)
-                || task.prompt.trim().is_empty()
-                || task.paths.is_empty()
-                || task.test_command.is_empty()
-                || task.test_command[0].is_empty()
-            {
-                return Err("invalid task identity, agent, prompt, scope or test command".into());
-            }
+            task_validation::identity(task, &agents, &mut ids)?;
             if let Some(model) = &task.model {
                 self.agents
                     .iter()

@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Planning now requires a path and executable test command for every task, identifies invalid fields by task, and gives phased plans one correction retry for empty scopes (GitHub #251).
+
 - Claude quota refresh on macOS and Windows now allows 180 seconds for slow CLI startup or `/usage` responses and shows elapsed time on the matching agent card (GitHub #297/#315).
 - The native Rust UI shows stored quota query failures beside the quota in the agent list, settings, and Agent Room (GitHub #295).
 

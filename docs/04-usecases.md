@@ -818,3 +818,7 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210.
 ### UC-190 Wait for a direct request response
 The operator sends a messenger test, deletes or switches a workspace, requests a team briefing, or submits a run action. The control immediately shows activity. If the reply takes over one second, the workspace status or Agent Room connection line names the request and counts its elapsed time until the reply arrives. Background refreshes remain quiet.
 Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, 2026-11-01.
+
+### UC-194 Correct a verification task that has no owned path
+The coordinator returns a phased plan containing `paths: []` for a verification task. The application identifies the task and missing field, requests one corrected plan, and presents the corrected result for review.
+Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215. GitHub #251, 2026-11-02.

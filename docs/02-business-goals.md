@@ -629,3 +629,7 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210.
 ### BG-154 Acknowledge every user request
 Every user-initiated request visibly starts when pressed, then reports its operation and elapsed time if the response takes longer than one second.
 Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, 2026-11-01.
+
+### BG-158 Correct an empty task scope instead of losing the plan
+An actionable, field-specific correction gives the coordinator one chance to fix a phased plan whose task omitted its owned files.
+Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215. GitHub #251, 2026-11-02.

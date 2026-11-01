@@ -731,3 +731,7 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210.
 ### SF-187 Acknowledge direct requests across native views
 Both native views mark a user-triggered request immediately and, after one second, display its operation and elapsed time. Exclude routine and background refreshes. Repaint locally while a foreground request is pending; do not introduce recurring snapshots.
 Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. Rust follow-up to GitHub #285, 2026-11-01.
+
+### SF-191 Enforce task paths and describe one correctable scope failure
+Require non-empty `paths` and `test_command` arrays in the output schema; validate each task field with an actionable task-specific error; and retry a phased plan once when a task has no path.
+Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215. GitHub #251, 2026-11-02.

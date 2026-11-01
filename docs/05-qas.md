@@ -822,3 +822,7 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210.
 ### QAS-197 A slow foreground request is visible in both native views
 Given a held foreground reply, Workspace and Agent Room show immediate activity and, within two seconds, the request description with a counting `m:ss`; after a reply or error the wait line clears. Given metadata/background refreshes, no user-wait indicator is shown and no periodic full snapshot is added. Verify with deterministic timer and both-view rendering tests.
 Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. Rust follow-up to GitHub #285, 2026-11-01.
+
+### QAS-201 An empty phased task scope is corrected with actionable feedback
+Given a phased plan whose task has `paths: []`, validation names the task and missing field, the coordinator receives exactly one retry containing that reason, and the corrected plan is saved. Given a valid task, schema constraints require at least one path and executable test command; dependencies may remain empty. Verify task-field errors, flat and phased schemas, one retry for empty scope, and preservation of the existing overlap retry.
+Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215. GitHub #251, 2026-11-02.

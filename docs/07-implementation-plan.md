@@ -7028,4 +7028,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Assetize: update LLM Wiki `enterprise-quota-screen-parsing.md`; save AgentMemory `mem_mvy2n7xu_e7216d910505`; refresh Graphify to 12,333 nodes / 18,703 edges.
 - [x] Tool check: CocoIndex CLI is not installed in this environment; no indexing result is claimed.
 - [ ] Windows Verify: cross-target compilation and Windows package acceptance remain required; the local MSVC target is not installed.
-- [ ] Complete: update GitHub #315, issue #9 and PR #22; commit and push directly to the existing root branch. Do not create a child PR.
+- [x] Complete: comment on #315 and #9, update PR #22, and push `ed43417b` directly to the root branch; no child PR.
+
+### 2026-11-02 — Port planning scope correction to native Rust — GitHub #251 / issue #9
+
+- [x] Plan: current `main`'s #251 change uses IDs already assigned to other Rust requirements. Add a unique trace R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215.
+- [x] Red: field-specific validation, non-empty path/test schema, and an empty-scope correction test each failed against the current Rust planner.
+- [x] Task / Green: split task identity checks into `src/plan/task_validation.rs`; schema requires paths and an executable test command; phased plans retry once for the shared empty-path diagnostic; prompt covers verification tasks. Flat plans retain one attempt.
+- [x] Focused Verify: `plan` 13/13, `planning_schema` 5/5, `planning_empty_scope_retry` 1/1, and existing `planning_overlap_repair` 1/1 pass.
+- [x] Full Verify: `cargo test --all-targets --locked --offline --features native-ui-probe,test-fixtures --no-fail-fast --quiet` passes 1,243 tests, 16 ignored, across 380 suites (279.81s). All-target warning-denied Clippy, rustfmt, public docs, source layout, diff hygiene, and the 300-line guard pass.
+- [x] Assetize: LLM Wiki `planning-empty-scope-correction.md`; AgentMemory `mem_mvy3ai00_9deaa20f5d37`; Graphify refreshed to 12,357 nodes / 18,728 edges. CocoIndex CLI is unavailable in this environment.
+- [ ] Complete: comment on upstream #251 and root issue #9, update PR #22, then commit/push this unit directly to the root branch. Do not create a child PR.

@@ -1621,3 +1621,7 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210.
 ### DD-211 Track native request age in the foreground probe
 Reuse the probe's pending request state instead of wrapping every control separately. A monotonic start is set when foreground pending work begins and reset when its pending kind changes or clears. A bounded one-second repaint updates only the wait label; metadata refreshes and background snapshots stay quiet. This keeps feedback in the native event loop without making request processing synchronous or increasing snapshot polling.
 Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. Rust follow-up to GitHub #285, 2026-11-01.
+
+### DD-215 Keep task identity checks shared and make empty scope retryable
+Move task identity/required-field validation into the bounded task-validation module so the existing plan module stays within the 300-line limit. Keep one `EMPTY_PATHS` diagnostic shared by validation and phased planner retry matching; set `minItems: 1` for paths and test commands while leaving dependencies optional. The coordinator gets only one correction retry, and only for a phased empty or unsafe/overlapping scope.
+Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215. GitHub #251, 2026-11-02.
