@@ -76,11 +76,18 @@ public static class ChatMouse {
 }
 "@
 function Buttons($name) {
+  if (-not $window) { return $null }
   $window.FindAll($T::Descendants, $C) | Where-Object {
-    $_.Current.Name -eq $name -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button'
+    $_.Current.Name -eq $name -and
+    $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' -and
+    $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and
+    $_.Current.IsEnabled -and
+    -not $_.Current.IsOffscreen -and
+    -not $_.Current.BoundingRectangle.IsEmpty
   } | Select-Object -First 1
 }
 function EnabledButton($name) {
+  if (-not $window) { return $null }
   $window.FindAll($T::Descendants, $C) | Where-Object {
     $_.Current.Name -eq $name -and
     $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' -and
@@ -90,6 +97,7 @@ function EnabledButton($name) {
   } | Select-Object -First 1
 }
 function ChatEdit() {
+  if (-not $window) { return $null }
   $edits = $window.FindAll($T::Descendants, $C) | Where-Object {
     $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit'
   }
@@ -129,6 +137,7 @@ function WaitChatEdit($seconds) {
 }
 function ChatControlDiagnostic($label) {
   Write-Output "CHAT_CONTROL_DIAGNOSTIC:$label"
+  if (-not $window) { Write-Output 'CHAT_WINDOW_UNAVAILABLE'; return }
   $window.FindAll($T::Descendants, $C) | Where-Object {
     $_.Current.ControlType.ProgrammaticName -in @('ControlType.Button', 'ControlType.Edit') -and
     ($_.Current.Name -eq 'Send' -or $_.Current.Name -like 'Ask about this workspace*')
@@ -140,7 +149,18 @@ function ChatControlDiagnostic($label) {
     Write-Output "$($_.Current.ControlType.ProgrammaticName) | $($_.Current.Name) | enabled=$($_.Current.IsEnabled) | offscreen=$($_.Current.IsOffscreen) | value=$value"
   }
 }
+function ChatLauncherDiagnostic($label) {
+  Write-Output "CHAT_LAUNCHER_DIAGNOSTIC:$label"
+  if (-not $window) { Write-Output 'CHAT_WINDOW_UNAVAILABLE'; return }
+  $window.FindAll($T::Descendants, $C) | Where-Object {
+    $_.Current.Name -eq 'Ask coordinator' -and
+    $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button'
+  } | ForEach-Object {
+    Write-Output "CHAT_LAUNCHER: pid=$($_.Current.ProcessId) | enabled=$($_.Current.IsEnabled) | offscreen=$($_.Current.IsOffscreen) | bounds=$($_.Current.BoundingRectangle)"
+  }
+}
 function ChatWindowDiagnostic($label) {
+  if (-not $window) { Write-Output "CHAT_WINDOW:$label | unavailable"; return }
   $bounds = $window.Current.BoundingRectangle
   Write-Output "CHAT_WINDOW:$label | pid=$($window.Current.ProcessId) | hwnd=$($window.Current.NativeWindowHandle) | name=$($window.Current.Name) | enabled=$($window.Current.IsEnabled) | offscreen=$($window.Current.IsOffscreen) | bounds=$bounds"
   $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.Name } | Select-Object -First 40 | ForEach-Object {
@@ -156,10 +176,11 @@ if ($env:AC_CHAT_MODE -in @('send', 'verify')) {
   }
   if (-not $open) {
     ChatWindowDiagnostic 'NO_CHAT_LAUNCHER'
+    ChatLauncherDiagnostic 'NO_CHAT_LAUNCHER'
     ChatControlDiagnostic 'NO_CHAT_LAUNCHER'
-    $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 40 | ForEach-Object {
+    if ($window) { $window.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name } | Select-Object -First 40 | ForEach-Object {
       Write-Output "CHAT_CONTROL: $($_.Current.ControlType.ProgrammaticName) | $($_.Current.Name) | enabled=$($_.Current.IsEnabled)"
-    }
+    } }
     exit 3
   }
   $open.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
@@ -213,7 +234,12 @@ if ($env:AC_CHAT_MODE -in @('send', 'verify')) {
       }
     }
   }
-  if (-not $edit) { ChatWindowDiagnostic 'CHAT_LAUNCHER_NOT_OPEN'; ChatControlDiagnostic 'CHAT_LAUNCHER_NOT_OPEN'; exit 8 }
+  if (-not $edit) {
+    ChatWindowDiagnostic 'CHAT_LAUNCHER_NOT_OPEN'
+    ChatLauncherDiagnostic 'CHAT_LAUNCHER_NOT_OPEN'
+    ChatControlDiagnostic 'CHAT_LAUNCHER_NOT_OPEN'
+    exit 8
+  }
   if ($env:AC_CHAT_MODE -eq 'send') {
     $window = RefreshWindow
     $edit.SetFocus()
