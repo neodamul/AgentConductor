@@ -1,5 +1,11 @@
 # Native Rust UI migration
 
+## Current main integration — 2026-11-02
+
+The Rust migration remains consolidated in root PR #22. Commit `ad11775e` merges current `main` into the issue branch and resolves the 119 reported merge conflicts without restoring legacy HTML, JavaScript, CSS, Python, or Node UI/build code. Native Rust tests cover the retained behavior. Screenshot freshness is checked by the Rust `check_screenshots` executable.
+
+Verification on that pushed head: 249 local tests passed, 1 ignored across 43 suites; release-profile native desktop executable and repository screenshot check passed. These source-level checks do not count as exact-package acceptance. Windows packaged workflows and screen-by-screen parity remain open; keep PR #22 draft and issue #9 open until both are evidenced. The currently running Platform Validation workflow is 41336821290, for which no result is claimed here.
+
 ## Live tool refresh must be coordinator-mediated — issue #9 / 2026-10-28
 
 Exact package run `40660363226` passed both source-validation jobs and the macOS package. The Windows package passed briefing, workspace save, schedule, and signal-settings journeys, then failed workflow 23. The refresh UI spawned `coordinator-ui-*` PID 6776; its stderr proved the child could not acquire `run/coordinator.lock` while the active coordinator owned it. The request therefore remained Pending. The earlier pointer activation defect is no longer the blocker.

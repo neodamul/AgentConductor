@@ -1,3 +1,9 @@
+## Root PR integration checkpoint — 2026-11-02
+
+PR #22 is the only open PR. Current `main` was integrated into `codex/issue-9-native-ui-parity` at merge commit `ad11775e593eb454299eda5e9180b06a73dbbaaf`; the branch is pushed, clean, and GitHub reports it mergeable. The 119 conflicts reported before the merge were resolved while preserving the Rust-native UI/build boundary and replacing web-only tests with native Rust coverage.
+
+Local verification on the pushed head: `cargo test --locked --offline` passed 249 tests, 1 ignored across 43 suites; the release-profile `agentconductor-native-ui-probe` build and repository screenshot-freshness check passed. This does not count packaged workflow or visual acceptance. Exact Windows package execution and screen-by-screen UI parity remain open. GitHub Platform Validation run [41336821290](https://github.com/neodamul/AgentConductor/actions/runs/41336821290) was in progress when recorded. The configured UTM Windows VM is started, but the host cannot read its shared-folder path, so no Windows UI result is claimed.
+
 ## Native request-lane checkpoint — 2026-10-30
 
 PR #260 head `479a86251fe8fcad269afe7927370517739e538d` contains the bounded I/O-lane change from source commit `1eb01727932fa0f623e92ac5a9a160b498701bae`. The synchronous messenger test could wait on `curl` for up to three 10-second attempts while holding the serialized state-change worker; it now runs on a dedicated one-worker I/O lane. The two-worker read lane, serialized mutation lane, and single-flight periodic snapshot lane remain separate. No async runtime or unbounded workers were added.

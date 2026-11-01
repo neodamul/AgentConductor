@@ -4,7 +4,9 @@
 - [x] Latest-main audit: `main` is `13ff88b2`; current Rust head is `4d176e93`; merge base is `e32295b3`. The branch is 1,066 commits ahead and 143 behind; the PR changes 1,776 files. Read-only `git merge-tree` reports 119 conflicts (68 content, 23 add/add, 28 modify/delete).
 - [x] Verify #257's existing implementation instead of duplicating it: scoped event subscriptions and coalesced invalidations are present; reads, state changes, blocking I/O, and background refresh use separate bounded lanes. Local Rust worker-concurrency and event tests pass 16/16.
 - [x] Cross-check latest-main Claude quota fixes #297/#315: Rust uses a shared 180-second limit in both collectors and exposes elapsed time. Local quota/wait/parser tests pass 16 with 1 ignored; elapsed UI tests pass 2/2. Exact Windows package/account verification remains open.
-- [ ] Next: reconcile current-main behavior into the Rust root without restoring the legacy UI; resolve the remaining exact-package Windows workflow 23/24 gates. Do not create another PR for this work.
+- [x] Integrate current `main` into the existing Rust root: commit `ad11775e` resolves all reported conflicts without restoring web UI/build code; the pushed branch is clean and GitHub reports PR #22 mergeable. No child PR was opened.
+- [x] Verify locally: `cargo test --locked --offline` passes 249 tests, 1 ignored across 43 suites; `cargo build --locked --offline --release --bin agentconductor-native-ui-probe` and the repository screenshot-freshness gate pass. The Rust source/test guard enforces the 300-line limit.
+- [ ] Next: verify the exact packaged Windows workflows and screen-by-screen native UI acceptance. Keep PR #22 draft until the outstanding issue #9 gates pass.
 
 ### Port main #247 complete-document parsing — Rust parity / 2026-11-02
 
@@ -7079,5 +7081,6 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Review PR state: #22 is the only open PR, remains draft/conflicting, and currently has no submitted reviews or review threads. The branch contains 1,056 commits / 1,774 changed files. Do not create a child PR.
 - [x] Storage cleanup: removed the clean, superseded `/private/tmp/AgentConductor-issue-260` worktree and local branch `codex/issue-9-quota-295` after verifying its commit is an ancestor of the active Rust branch; removed its 28 GiB reported directory. `cargo clean` removed 14.1 GiB of generated output from the active Codex target. APFS reported used space decreasing from 410 GiB to 408 GiB; other in-progress worktrees and uncommitted changes were preserved.
 - [x] Assetize: AgentMemory checkpoint `mem_mvy3hnot_c68ce8d7a506`; Graphify refreshed to 12,359 nodes / 18,730 edges. CocoIndex CLI remains unavailable in this environment.
-- [ ] Task: reconcile the 119 paths against main's behavior, retaining Rust-native implementations and importing missing semantics. Resolve conflicts in coherent source/test groups and locally verify each group before committing directly to this root branch.
-- [ ] Verify: after reconciliation, confirm the root PR is mergeable and rerun the full local Rust suite plus exact package acceptance gates; do not infer completion from a merge-tree or targeted tests alone.
+- [x] Task: reconciled the 119 reported paths against `main`, retained Rust-native behavior, removed web-only code/tests, and resolved all conflicts in merge commit `ad11775e`.
+- [x] Verify: PR #22 is now mergeable; full local Rust tests pass 249/1 ignored across 43 suites, the release-profile native binary builds, and the screenshot-freshness gate passes.
+- [ ] Remaining acceptance: exact Windows package execution and screen-by-screen native UI parity are not yet verified; keep issue #9 open and PR #22 draft.
