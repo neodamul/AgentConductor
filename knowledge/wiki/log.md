@@ -1853,3 +1853,7 @@ Reviewing PR #230 found no reproducible product defect from the current report. 
 
 PR #260's Windows packaged lifecycle check (run `41270341316`) failed while searching for a prefilled stop-reason edit by an exact UIA Name. PR #239's packaged desktop-save check (run `41280824549`) failed because the egui/AccessKit text input did not provide UIA `ValuePattern`. Updated both Windows test drivers to focus the accessible edit and send keyboard input; the lifecycle driver locates the edit adjacent to the visible label. TDD source contract failed before the change and passed after it. Local focused batch: 15 passed, 1 ignored; formatting and warning-denied Clippy pass. The exact Windows package check must be rerun; no Windows runtime pass is claimed yet.
 
+## Windows packaged lifecycle readiness — issue #9 / 2026-11-01
+
+After the text-entry update, Windows package run `41293037713` advanced beyond the former `Stop reason` lookup failure and then failed because the `Stop run` control was present but not yet enabled. The test driver now polls for the enabled state before invoking it. TDD source contract was red before this addition and the focused macOS source/native-room/layout checks pass afterward (15 passed, 1 ignored); formatting and warning-denied Clippy also pass. This remains a Windows UI acceptance blocker until the final pushed PR head passes.
+

@@ -47,9 +47,16 @@ function Wait-EditAfterLabel($name) {
   }
   throw "CONTROL_NOT_FOUND: editable input after label $name"
 }
+function Wait-Enabled-Control($name, $type) {
+  while ((Get-Date) -lt $deadline) {
+    $control = Find-Control $name $type
+    if ($control -and $control.Current.IsEnabled) { return $control }
+    Start-Sleep -Milliseconds 100
+  }
+  throw "CONTROL_NOT_ENABLED: $name ($type)"
+}
 function Activate($name) {
-  $button = Wait-Control $name 'Button'
-  if (-not $button.Current.IsEnabled) { throw "CONTROL_DISABLED: $name" }
+  $button = Wait-Enabled-Control $name 'Button'
   $button.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 }
 $action = $env:AC_RUN_LIFECYCLE_ACTION

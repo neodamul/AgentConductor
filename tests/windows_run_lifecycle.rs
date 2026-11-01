@@ -34,6 +34,7 @@ fn lifecycle_driver_exposes_stop_resume_and_recovery_observations() {
         "Wait-EditAfterLabel",
         "Confirm stop",
         "Resume run",
+        "Wait-Enabled-Control",
         "InvokePattern",
     ] {
         assert!(
