@@ -8,6 +8,7 @@ the GitHub Release notes for its tag.
 
 ## v0.1.53
 
+- Claude usage: the query is given up after 3 minutes instead of 1, for PCs where it takes longer than a minute; a fast PC is unaffected because the query ends as soon as the usage is read (#315).
 - Claude usage: a company allocation written with thousands separators (`$1,351.23 / $5,000.00 spent`) and a terminal that draws spaces as cursor moves are now read, and a usage screen that was read but not understood is named in the error (`screen not understood: ...`) instead of ending as a bare timeout (#295).
 
 ## v0.1.52

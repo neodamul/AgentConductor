@@ -1,5 +1,5 @@
 //! GitHub #297 (R-201 / QAS-199): a Claude CLI that is slow to start is waited for, a stuck one is
-//! given up with the limit named, and the default limit is a minute for both collectors.
+//! given up with the limit named, and the default limit is three minutes for both collectors.
 #[cfg(any(target_os = "macos", windows))]
 #[tokio::test]
 async fn a_slow_cli_is_waited_for_and_a_stuck_one_names_the_limit() {
@@ -60,10 +60,10 @@ async fn a_slow_cli_is_waited_for_and_a_stuck_one_names_the_limit() {
 }
 
 #[test]
-fn the_default_limit_is_a_minute_for_both_collectors() {
+fn the_default_limit_is_three_minutes_for_both_collectors() {
     assert_eq!(
         agentconductor::quota::CLAUDE_WAIT,
-        std::time::Duration::from_secs(60)
+        std::time::Duration::from_secs(180)
     );
     for source in [
         include_str!("../src/quota/terminal.rs"),

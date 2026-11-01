@@ -131,10 +131,11 @@ pub fn claude_usage_ready(text: &str) -> bool {
             })
         })
 }
-/// GitHub #297: the whole Claude query (start, trust screen, prompt, `/usage` answer) is given up after
-/// this long. A company PC with scanning, managed settings or a proxy needs more than 20 s; a fast
-/// machine is unaffected because the query ends as soon as `/usage` is parsed.
-pub const CLAUDE_WAIT: std::time::Duration = std::time::Duration::from_secs(60);
+/// GitHub #297 / #315: the whole Claude query (start, trust screen, prompt, `/usage` answer) is given up
+/// after this long. A company PC with scanning, managed settings or a proxy needed more than 20 s and
+/// then more than 60 s; a fast machine is unaffected because the query ends as soon as `/usage` is parsed.
+/// Custom quota commands allow up to 300 s, so this stays inside that range.
+pub const CLAUDE_WAIT: std::time::Duration = std::time::Duration::from_secs(180);
 
 /// `unread` is the last reason a screen could not be parsed: a screen that was read but not
 /// understood must not look like a CLI that never answered (GitHub #295).
