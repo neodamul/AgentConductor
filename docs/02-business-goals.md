@@ -616,3 +616,7 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188 → QAS-194 → DD-208.
 ### BG-152 Documentation matches the app the reader has
 A reader comparing the manual with the app sees the same version and the same screens.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209. GitHub #277, user, 2026-10-31.
+
+### BG-153 No panel or dialog looks frozen
+Whatever the operator waits for on the workspace page, the place they are looking at tells whether it is still going on.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, user, 2026-11-01.

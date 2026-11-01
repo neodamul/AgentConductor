@@ -791,3 +791,7 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188 → QAS-194 → DD-208.
 ### UC-188 Reading the manual of the installed version
 The operator opens ⚙ Settings → User manual in 0.1.49 and reads "Version 0.1.49" above screenshots that look like the app.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209. GitHub #277, user, 2026-10-31.
+
+### UC-189 Waiting for an answer, a rewrite, a lookup or an update
+The operator asks the coordinator, closes the workspace and opens it again: the chat line says the coordinator has been reading for 2:06 and keeps counting. The app stops answering for 9 s: the line adds that no new state came for 9 s. The same holds for a goal rewrite, for the MCP review dialog while sources are read, and for the update dialog while it checks or installs.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, user, 2026-11-01.

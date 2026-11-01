@@ -718,3 +718,7 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188 → QAS-194 → DD-208.
 ### SF-185 Version-checked manual header and recaptured screenshots
 The manual header is checked against the package version; the six screenshots are captured from the current page in WKWebView over the live bridge's demo workspace.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209. GitHub #277, user, 2026-10-31.
+
+### SF-186 Elapsed time and staleness for chat, rewrite, MCP lookup and update
+The chat working line, the goal rewrite status, the MCP review dialog, the tool discovery text, the source status line and the update dialog show the elapsed time of their job from its recorded start, redrawn every second, with the age of the last snapshot when it is over 5 s.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, user, 2026-11-01.

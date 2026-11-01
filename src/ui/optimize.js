@@ -1,8 +1,8 @@
 // DD-188 (GitHub #180): rewrite the goal with the bundled prompt-optimizer skill; the operator reviews the proposal before it replaces the goal text.
-function optimizeUi({q,request,state,notice,busy,applyGoal}) {
+function optimizeUi({q,request,state,notice,busy,applyGoal,stale=()=>''}) {
  let waiting=null,shown=null;
  // GitHub #273 (DD-208): a rewrite in progress shows its elapsed time and is followed again after the page reopens.
- const refresh=()=>{q('optimize-button').disabled=!!waiting||busy()||!q('goal').value.trim();if(typeof AC_PRESS!=='undefined')AC_PRESS.hold(q('optimize-button'),!!waiting);if(waiting){const s=Math.max(0,Math.floor((Date.now()-waiting.at)/1000));q('optimize-status').textContent=acMessage('startup.optimize_working')+' '+Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}};
+ const refresh=()=>{q('optimize-button').disabled=!!waiting||busy()||!q('goal').value.trim();if(typeof AC_PRESS!=='undefined')AC_PRESS.hold(q('optimize-button'),!!waiting);if(waiting){const late=stale();q('optimize-status').textContent=acMessage('startup.optimize_working')+' '+AC_ELAPSED(waiting.at)+(late?' · '+late:'');}};
  function fill(list,title,items){title.hidden=!items.length;list.hidden=!items.length;list.replaceChildren(...items.map(text=>{const li=document.createElement('li');li.textContent=text;return li;}));}
  function show(proposal){shown=proposal;q('optimize-goal').textContent=proposal.optimized;fill(q('optimize-changes'),q('optimize-changes-title'),proposal.changes||[]);fill(q('optimize-questions'),q('optimize-questions-title'),proposal.questions||[]);q('optimize').showModal();}
  function done(text){waiting=null;q('optimize-status').textContent=text||'';refresh();}

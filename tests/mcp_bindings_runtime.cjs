@@ -8,7 +8,8 @@ class Node {
 }
 const body=new Node('BODY'),document={body,documentElement:{lang:'en'},dispatchEvent(){},createTextNode:text=>({nodeType:3,childNodes:[],textContent:text}),createElement:tag=>new Node(tag.toUpperCase())};
 const context={document,Event:class{},AC_MESSAGES:{en:JSON.parse(fs.readFileSync('src/ui/messages/en.json','utf8')),ko:JSON.parse(fs.readFileSync('src/ui/messages/ko.json','utf8'))},requestAnimationFrame:fn=>fn()};
-const runtime=vm.runInNewContext(fs.readFileSync('src/ui/i18n.js','utf8').split('// DD-111:')[0]+';({AC_I18N,acMessage})',context);Object.assign(context,runtime);
+const i18n=fs.readFileSync('src/ui/i18n.js','utf8'),elapsed=i18n.split('\n').find(l=>l.startsWith('const AC_ELAPSED='));assert.ok(elapsed,'AC_ELAPSED exists (GitHub #279)');
+const runtime=vm.runInNewContext(i18n.split('// DD-111:')[0]+elapsed+';({AC_I18N,acMessage,AC_ELAPSED})',context);Object.assign(context,runtime);
 const {mcpUi}=vm.runInNewContext(fs.readFileSync('src/ui/mcp.js','utf8')+';({mcpUi})',context);
 const jira={name:'getJiraIssue',annotations:{readOnlyHint:true},inputSchema:{type:'object',properties:{issueIdOrKey:{type:'string'},cloudId:{type:'string'}},required:['issueIdOrKey','cloudId']}};
 const fields=new Map();function q(id){if(!fields.has(id)){const n=new Node(id==='mcp-server'?'SELECT':'DIV');fields.set(id,n);body.append(n);}return fields.get(id);}
@@ -17,7 +18,8 @@ let state={config:{mcp:{atlassian:{type:'local',command:['company-mcp']},other:{
 const draft={...state.config},packets=[],notices=[],uiRequests=[];
 async function action(packet){packets.push(packet);if(packet.kind==='mcp_save'){const s=JSON.parse(packet.settings);state.config={...state.config,...s};state.job=null;state.mcp_result=null;}return {saved:true};}
 q('goal').value=state.config.goal;
-const ui=mcpUi({q,el,request:async packet=>{uiRequests.push(packet);return packet.kind==='mcp_source_suggestions'?{references:['jira:EMM-1','confluence:123'],reference_ranges:[{reference:'jira:EMM-1',start:0,end:10},{reference:'confluence:123',start:11,end:25}],suggestions:['jira:EMM-1']}:{};},action,save:async()=>true,mark(){},capture(){},poll(){},state:()=>state,draft:()=>draft,notice:text=>notices.push(typeof text==='function'?text():text)});
+let staleText='';
+const ui=mcpUi({q,el,stale:()=>staleText,request:async packet=>{uiRequests.push(packet);return packet.kind==='mcp_source_suggestions'?{references:['jira:EMM-1','confluence:123'],reference_ranges:[{reference:'jira:EMM-1',start:0,end:10},{reference:'confluence:123',start:11,end:25}],suggestions:['jira:EMM-1']}:{};},action,save:async()=>true,mark(){},capture(){},poll(){},state:()=>state,draft:()=>draft,notice:text=>notices.push(typeof text==='function'?text():text)});
 (async()=>{
  await q('mcp-preview').onclick();assert.equal(packets.at(-1).kind,'mcp_preview','coordinator uses registered servers without manual bindings');
  draft.coordinator='missing';const before=packets.length;await q('mcp-preview').onclick();assert.equal(packets.length,before);assert.match(notices.at(-1),/Register an agent CLI/);draft.coordinator='planner';
@@ -26,5 +28,13 @@ const ui=mcpUi({q,el,request:async packet=>{uiRequests.push(packet);return packe
  q('mcp-server').value='atlassian';q('mcp-server').onchange();state.job={kind:'mcp',state:'completed',id:'catalog-other'};state.mcp_result={server:'other',tools:[jira]};ui.update();await Promise.resolve();assert(uiRequests.some(p=>p.kind==='mcp_source_suggestions'&&p.goal===state.config.goal),'source suggestions and tag ranges come from Rust');assert.deepEqual(q('goal-tags').childNodes.filter(n=>n.tagName==='MARK').map(n=>n.dataset.ref),['jira:EMM-1','confluence:123']);assert.equal(q('source-suggestions').childNodes.length,1);assert.equal(q('mcp-server').value,'atlassian','late discovery must not switch selected server');assert(!q('mcp-tools').textContent.includes('getJiraIssue'));
  q('mcp-server').value='other';q('mcp-server').onchange();assert.match(q('mcp-tools').textContent,/getJiraIssue/);assert.match(q('mcp-tools').textContent,/other/);
  q('mcp-server-json').value=JSON.stringify({type:'local',command:['changed']});await q('mcp-server-save').onclick();assert.equal(q('mcp-server').value,'other');assert.equal(state.config.mcp.atlassian.command[0],'company-mcp');assert.equal(state.config.mcp.other.command[0],'changed');assert(!q('mcp-tools').textContent.includes('getJiraIssue'),'changed server invalidates its catalog');
+ // GitHub #279: a typed reference enables the preview as soon as the suggestions answer, not at the next refresh (up to 5 s).
+ state.job=null;draft.goal='jira:EMM-2 and more';ui.update();assert.equal(q('mcp-preview').disabled,true,'no count before the answer');
+ for(let i=0;i<5;i++)await Promise.resolve();assert.equal(q('mcp-preview').disabled,false,'the answer enables the preview');assert.match(q('source-status').textContent,/2/);
+ // GitHub #279: a lookup in progress counts its time in the review window and the source line, and says when the app sends no new state.
+ staleText='';state.job={kind:'mcp',state:'running',id:'lookup-1',started_ms:Date.now()-75000};ui.update();
+ assert.match(q('mcp-loading-time').textContent,/1:1[5-6]$/);assert.match(q('source-status').textContent,/1:1[5-6]$/);
+ staleText='no new state for 7s';ui.update();assert.match(q('mcp-loading-time').textContent,/no new state for 7s$/);
+ state.job={kind:'mcp',state:'completed',id:'lookup-1'};state.mcp_result=null;ui.update();assert.equal(q('mcp-loading-time').textContent,'');
  assert.equal(fields.has('source-binding-save'),false,'ordinary UI never asks user to select document tools');console.log('Coordinator selection, missing coordinator, per-server configuration/catalog, late result and stale cache checks passed');
 })().catch(e=>{console.error(e);process.exitCode=1;});

@@ -10,7 +10,9 @@ const q = id => { if (!els['start-' + id]) throw new Error('no element start-' +
 const calls = [], notices = [], applied = []; let current = { revision: 'rev', job: null, optimize: null }, busy = false, reply = { id: 'job-1' };
 const context = vm.createContext({ document: { createElement: node }, console,
   acMessage: (id, v = {}) => id + (v.value1 ? ':' + v.value1 : ''), AC_I18N: { text: (n, f) => { n.textContent = f(); } } });
-vm.runInContext(source + ';this.optimizeUi=optimizeUi;', context);
+const elapsed = fs.readFileSync('src/ui/i18n.js', 'utf8').split('\n').find(l => l.startsWith('const AC_ELAPSED='));
+assert.ok(elapsed, 'AC_ELAPSED exists (GitHub #279)');
+vm.runInContext(elapsed + source + ';this.optimizeUi=optimizeUi;', context);
 (async () => {
   const ui = context.optimizeUi({ q, request: async p => { calls.push(p); if (reply instanceof Error) throw reply; return reply; },
     state: () => current, notice: (m, e) => notices.push([m, e]), busy: () => busy, applyGoal: t => applied.push(t) });
@@ -66,6 +68,10 @@ vm.runInContext(source + ';this.optimizeUi=optimizeUi;', context);
   reopened.update();
   assert.equal(q('optimize-button').disabled, true);
   assert.match(q('optimize-status').textContent, /2:0[5-6]$/);
+  // GitHub #279: when the app sends no new state the status says so.
+  const quiet = context.optimizeUi({ q, request: async () => reply, state: () => current, notice() {}, busy: () => false, applyGoal() {}, stale: () => 'no new state for 8s' });
+  quiet.update();
+  assert.match(q('optimize-status').textContent, /2:0[5-6] · no new state for 8s$/);
   current = { revision: 'rev', job: { id: 'job-4', kind: 'optimize', state: 'completed' }, optimize: { job: 'job-4', proposal: { optimized: 'Fourth', changes: [], questions: [] } } };
   reopened.update();
   assert.equal(q('optimize-goal').textContent, 'Fourth', 'its proposal is shown');

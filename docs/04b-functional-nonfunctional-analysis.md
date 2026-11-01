@@ -726,3 +726,7 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188 → QAS-194 → DD-208.
 ### FR-189 Header version and captures
 Line 3 of `docs/user-manual.md` and `docs/user-manual.ko.md` starts with the package version. `tests/ui_live_bridge.rs` with `AC_LIVE_DEMO=1` and `AC_LIVE_ROOT` serves a demo team (Claude and Codex profiles that never run, a local agent that works) for 1280×892 captures; the unused `ui-manual-current.png` is removed.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209. GitHub #277, user, 2026-10-31.
+
+### FR-190 Shared elapsed format and the 1 s redraw
+`AC_ELAPSED(from, now)` gives m:ss, never negative. `chatUi`, `optimizeUi` and `mcpUi` take `stale()` (the workspace page passes `AC_STALE(lastSnapshotAt)`) and append it to their wait text. A chat adopted after reopening counts from `chat_job.started_ms`; `chat.tick()` rewrites only the working line. The MCP wait text is in `#start-mcp-loading-time`, the tool discovery text and the source status. The update dialog counts from the moment the page first saw the `checking` or `installing` phase. The page's 1 s timer calls `chat.tick()`, `optimize.update()`, `sources.update()` while an MCP job is the current job, and `renderUpdate()` while the update dialog is open in one of those phases. The answer of `mcp_source_suggestions` calls `update()` so that the preview button and the source line follow it at once.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, user, 2026-11-01.
