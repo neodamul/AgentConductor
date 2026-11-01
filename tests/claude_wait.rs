@@ -52,7 +52,10 @@ async fn a_slow_cli_is_waited_for_and_a_stuck_one_names_the_limit() {
             .await
             .unwrap_err();
     assert!(error.contains("after /usage"), "{error}");
-    assert!(error.contains("allocated budget must be positive"), "{error}");
+    assert!(
+        error.contains("allocated budget must be positive"),
+        "{error}"
+    );
     std::fs::remove_dir_all(root).unwrap();
 }
 
