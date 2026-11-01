@@ -136,7 +136,8 @@ pub fn claude_usage_ready(text: &str) -> bool {
             })
         })
 }
-pub const CLAUDE_WAIT: std::time::Duration = std::time::Duration::from_secs(60);
+/// GitHub #297/#315: bound managed CLI startup and `/usage` without changing the subscription login.
+pub const CLAUDE_WAIT: std::time::Duration = std::time::Duration::from_secs(180);
 
 fn quota_timeout(sent: bool, wait: std::time::Duration, unread: Option<&str>) -> String {
     let stage = if sent {

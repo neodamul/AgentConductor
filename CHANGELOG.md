@@ -6,7 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
-- Claude quota refresh on macOS and Windows now allows 60 seconds for slow CLI startup or `/usage` responses and shows elapsed time on the matching agent card (GitHub #297).
+- Claude quota refresh on macOS and Windows now allows 180 seconds for slow CLI startup or `/usage` responses and shows elapsed time on the matching agent card (GitHub #297/#315).
 - The native Rust UI shows stored quota query failures beside the quota in the agent list, settings, and Agent Room (GitHub #295).
 
 - Integration tests no longer call `env::set_var` / `remove_var` directly: a shared helper serializes and restores environment changes, every remaining test `unsafe` call states why it is sound, and the CI safety-comment gate now covers test targets (GitHub #176).

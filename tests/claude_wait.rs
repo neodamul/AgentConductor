@@ -92,15 +92,19 @@ async fn waits_for_slow_start_and_names_both_timeout_stages() {
 }
 
 #[test]
-fn production_wait_is_one_minute_for_both_collectors() {
+fn production_wait_is_three_minutes_for_both_collectors() {
     assert_eq!(
         agentconductor::quota::CLAUDE_WAIT,
-        std::time::Duration::from_secs(60)
+        std::time::Duration::from_secs(180)
     );
     for source in [
         include_str!("../src/quota/terminal/query.rs"),
         include_str!("../src/quota/terminal/windows.rs"),
     ] {
+        assert!(
+            source.contains("super::CLAUDE_WAIT"),
+            "both collectors must use the shared production limit"
+        );
         assert!(
             !source.contains("from_secs(20)"),
             "20-second timeout remains"

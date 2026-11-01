@@ -9,9 +9,15 @@ The latest `main` fix for #295 showed an Enterprise allocation using grouped amo
 - Accept only valid comma-separated thousands groups and normalize them before the existing monetary parser.
 - Preserve CSI cursor-forward as bounded spaces (at most 200 per sequence) before parsing the screen.
 - Reject malformed grouping and preserve the most recent parse error in the bounded timeout diagnostic, in both platform collectors.
-- Keep the existing CLI login, one-minute timeout, no-generation command, and native inline error display. Do not infer account usage or contact a provider from tests.
+- Keep the existing CLI login and no-generation command. The bounded wait is 180 seconds for managed environments that exceed the prior 60-second limit; it stays within the 300-second ceiling for configured custom quota commands. Keep native inline error display. Do not infer account usage or contact a provider from tests.
 
 This refines R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. The Rust branch already owns that requirement trace; no new requirement ID or stacked PR is needed.
+
+## Slow managed CLI startup — GitHub #315
+
+Some company-managed hosts exceed the prior 60-second wait before Claude finishes startup and `/usage`. Keep the same shared deadline for both macOS and Windows collectors, but raise it to 180 seconds. This remains within the 300-second cap already allowed for custom quota commands. Parsed quota still returns early, and timeout messages retain the existing stage and duration.
+
+TDD changed the production contract test to require 180 seconds first; it failed with the existing 60-second value. After changing the shared constant, `claude_wait` passes 3/3, `claude_prompt` 4/4, and `source_layout` 2/2. Warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test guard pass locally. The Windows MSVC target is not installed here, so no Windows build claim is made.
 
 ## Verification
 

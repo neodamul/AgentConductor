@@ -7018,3 +7018,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Assetize: AgentMemory checkpoint `mem_mvxcyztq_6526beda96cb` and completion record `mem_mvxd1ouz_9e1619a15b11`; LLM Wiki `native-request-feedback.md`; Graphify refreshed to 11,885 nodes / 19,393 edges. CocoIndex is unavailable because the runtime has no `cocoindex` module; no project dependency was added.
 - [x] Complete: original implementation commit `35ec7f4d` is integrated into the existing #260 branch at `d802a9fa`; PR #289 is merged. AgentMemory `mem_mvy0fo8d_bf25df594487`; Graphify 12,318 nodes / 20,115 edges. Verification passed 110 library tests, 29 related integration tests, 13 public-doc/source-layout tests, warning-denied Clippy, rustfmt, diff hygiene, and the 300-line guard.
 - [ ] Acceptance: exact packaged Rust UI screenshots and end-to-end parity remain part of open issue #9; this unit does not change its overall acceptance count.
+
+### 2026-11-02 — Extend Claude quota wait to three minutes — GitHub #315 / issue #9
+
+- [x] Plan: #315 reports managed company environments exceeding the prior 60-second quota wait. Preserve R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213; 180 seconds remains below custom quota commands' 300-second maximum.
+- [x] Red: change the production-limit contract test to require 180 seconds; it failed against the existing 60-second implementation.
+- [x] Task / Green: use the shared 180-second deadline for both macOS and Windows collectors; early parsed results still return immediately and timeout errors retain their existing stage/duration detail.
+- [x] Verify locally: `claude_wait` 3/3, `claude_prompt` 4/4, and `source_layout` 2/2 pass; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the 300-line guard pass (`src/quota/terminal.rs`: exactly 300 lines).
+- [x] Assetize: update LLM Wiki `enterprise-quota-screen-parsing.md`; save AgentMemory `mem_mvy2n7xu_e7216d910505`; refresh Graphify to 12,333 nodes / 18,703 edges.
+- [x] Tool check: CocoIndex CLI is not installed in this environment; no indexing result is claimed.
+- [ ] Windows Verify: cross-target compilation and Windows package acceptance remain required; the local MSVC target is not installed.
+- [ ] Complete: update GitHub #315, issue #9 and PR #22; commit and push directly to the existing root branch. Do not create a child PR.
