@@ -6802,4 +6802,5 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: 17 event/listener tests, 2 source-layout tests, all-target/all-feature Clippy with `-D warnings`, rustfmt, and `git diff --check` pass.
 - [ ] Verify exact macOS and Windows platform validation on the updated PR #294 head; no packaged UI acceptance is claimed by source tests.
 - [x] Update QAS-194/DD-208 and LLM Wiki; refresh Graphify to 11,965 nodes / 19,568 edges; record AgentMemory `mem_mvxksy1o_c634d18900f9`.
-- [ ] Update issue #257 and PR #294, then commit and push this unit.
+- [x] Update issue #257 and PR #294; commit and push `c7c7330b`.
+- [ ] Re-run exact-head macOS/Windows platform validation after the follow-up plan checkpoint; no packaged UI acceptance is claimed.
