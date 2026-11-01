@@ -13,6 +13,15 @@ fn main() {
         }
         Some("--version") => println!("mock 0.1"),
         Some("models") => println!("local/one\nlocal/two"),
+        Some("quota-json") => {
+            let observed_at = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_secs();
+            println!(
+                r#"{{"source":"deterministic fixture","observed_at":{observed_at},"windows":[{{"bucket":"fixture","label":"5h","used_percent":36.0,"remaining_percent":64.0,"window_minutes":300,"resets_at":null}}],"budgets":[],"plan_type":"fixture"}}"#
+            );
+        }
         Some("-p") => session::run(),
         Some("app-server") => {
             use std::io::BufRead;

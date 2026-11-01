@@ -166,3 +166,19 @@ and adds no packaged workflow acceptance.
 ## 2026-10-24 current v0.1.37 Workspace documentation captures
 
 Built `agentconductor-native-ui-probe` from the current Rust branch using the opt-in `manual-screenshot-capture` feature. The framebuffer callback captured the exact current Workspace view at 1140×740 and closed each temporary window. Each run used a fresh HOME under `/private/tmp` with no profiles, user workspaces, goals, provider CLI credentials, or MCP servers. The first-frame updater may perform only the public unauthenticated latest-release GET at `https://api.github.com/repos/neodamul/AgentConductor/releases/latest`. English light replaces `docs/assets/ui-workspace-current.png` (SHA-256 `7e01d71a1f365e0c450928c0b149523716cf57ad2532bb7a9ddbd2c0d31292f8`); Korean light is `docs/assets/ui-workspace-korean-current.png` (`709a6c9b2ea3ff00118598b123fa60216ba7127c10750db764e0ee08867f47d2`); Korean dark is `docs/assets/ui-workspace-dark-current.png` (`caa351cd89a56faa0e9a1e92178140f1cd3974cfa5f166469d784852809ff3ab`). README and the bilingual manuals identify v0.1.37; HTML was regenerated with the Rust manual renderer. These are isolated source-build documentation captures, not exact release-package or Windows evidence, and add no workflow acceptance credit. See `docs/evidence/issue9-current-workspace-docs-20261024.json`.
+
+## 2026-11-02 current v0.1.53 Rust native UI captures
+
+The English, Korean light, and Korean dark Workspace screenshots were refreshed from the v0.1.53 Rust native UI and visually inspected. The English and Korean Agent Room images were captured through the opt-in `manual-screenshot-capture` feature from one disposable run with three deterministic Rust mock tasks. Each scoped file was produced and its task test passed. A custom mock quota command returned a normalized fixture snapshot showing 64% remaining so the screenshot does not display an unqueried-quota warning; this is sample data, not a provider account reading.
+
+The Agent Room run remained `waiting_approval`; no approval or merge was performed. The public Workspace had no user workspaces or credentials. All captures use the native eframe framebuffer callback. Workspace screenshots are 1140×740 and Agent Room screenshots are 1140×960, in the light theme except for the Korean dark Workspace image.
+
+| Asset | SHA-256 |
+| --- | --- |
+| `docs/assets/ui-agent-room-native.png` | `8069898a4d641ecafbf935aac26e708311f5bd8784a57ec955b2c930cd1442f0` |
+| `docs/assets/ui-agent-room-native-ko.png` | `ac421fa7e9654186cbe0cb74d552cdf4d4ca5cc2cf43dee72abf33ad845d7c8e` |
+| `docs/assets/ui-workspace-current.png` | `b5ff985e1cdeb1892ba37b8feb0812740722199de0f47d9bc683205882ea36b0` |
+| `docs/assets/ui-workspace-korean-current.png` | `e080f5d3b111cd485d77e4fdcf4c4b27ed0be6c2713bd376df82639d8999292b` |
+| `docs/assets/ui-workspace-dark-current.png` | `d9b529cadd3570ef05da13cf1d63bfbc95b60872e0047e9951d1ae9d169d90db` |
+
+The Markdown and generated bilingual HTML manuals reference these assets. See `docs/evidence/issue9-current-native-screenshots-20261102.json`. These source-build captures are not exact release-package evidence and do not establish Windows acceptance or complete legacy UI parity.

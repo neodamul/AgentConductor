@@ -5,12 +5,12 @@
 - [x] Task: remove the obsolete agent-settings screenshot from both Markdown manuals, rendered HTML manuals, and the native manual viewer. Regenerate HTML through Rust `manual render`.
 - [x] Verify locally: all-target native-feature suite passes 1,279 tests, 16 ignored across 394 suites; warning-denied Clippy, rustfmt, diff checks, and the explicit 300-line source-layout test pass. Changed Rust files remain under 300 lines.
 - [x] Complete this local unit: commit and push `dfbc4edd` to existing PR #22; update the PR and issue #9 progress.
-- [ ] Verify: exact-head Platform Validation run `41346181632` is queued. Windows packaged execution and screen-by-screen visual acceptance remain separate open gates; issue #9 stays incomplete.
+- [x] Verify: exact-head Platform Validation run `41346377052` is in progress on head `483eed22`; macOS passed and Windows is executing native tests. A new exact-head run is required after the current screenshot/documentation commit. Windows packaged execution and screen-by-screen visual acceptance remain open gates; issue #9 stays incomplete.
 
 ### Root PR status and event-driven UI verification — 2026-11-02
 
 - [x] GitHub audit: PR #22 is the only open pull request. The Rust migration is not blocked by a pile of open child PRs; it is concentrated in one oversized root PR.
-- [x] Latest-main audit: `main` is `13ff88b2`; current Rust head is `dfbc4edd`. GitHub reports root PR #22 mergeable; it is the repository's only open PR.
+- [x] Latest PR audit: PR #22 is the only open PR and is still Draft. At head `483eed22`, GitHub reports it mergeable with 1,074 commits and 1,770 changed files. Its size and repeated checkpoint commits are process debt; keep only #22 open, finish its explicit Windows-package and screen-by-screen acceptance gates, and do not add child PRs.
 - [x] Verify #257's existing implementation instead of duplicating it: scoped event subscriptions and coalesced invalidations are present; reads, state changes, blocking I/O, and background refresh use separate bounded lanes. Local Rust worker-concurrency and event tests pass 16/16.
 - [x] Cross-check latest-main Claude quota fixes #297/#315: Rust uses a shared 180-second limit in both collectors and exposes elapsed time. Local quota/wait/parser tests pass 16 with 1 ignored; elapsed UI tests pass 2/2. Exact Windows package/account verification remains open.
 - [x] Integrate current `main` into the existing Rust root: commit `ad11775e` resolves all reported conflicts without restoring web UI/build code; the pushed branch is clean and GitHub reports PR #22 mergeable. No child PR was opened.
@@ -7103,4 +7103,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: run-progress snapshots 3/3; focused native/manual/Windows-driver/screenshot regression suites pass; sidebar and quota-layout tests pass; rustfmt and diff checks pass. The interrupted all-target run is not counted as a pass.
 - [x] Assetize: add LLM Wiki `knowledge/wiki/pr-22-ci-regression-loop.md`; refresh Graphify to 12,555 nodes / 20,484 edges; save AgentMemory `mem_mvy8o48o_33f47e47d32f`. CocoIndex is unavailable (`cocoindex` executable not installed).
 - [x] Commit and push `6d1762ca` to the existing `codex/issue-9-native-ui-parity` branch; update PR #22 and issue #9. No additional PR opened.
-- [ ] Exact-head Platform Validation run [41343162485](https://github.com/neodamul/AgentConductor/actions/runs/41343162485) is still building on macOS and Windows. Wait for its terminal result, fix any failures on the same branch, then verify the required packaged UI and screen-by-screen acceptance. Keep PR #22 draft and issue #9 open until those gates pass.
+- [x] Exact-head run [41343162485](https://github.com/neodamul/AgentConductor/actions/runs/41343162485) was superseded by newer pushes and canceled; do not use it as validation evidence. The current exact-head run is tracked above.
+
+### 2026-11-02 — Refresh current Rust UI manual screenshots
+
+- [x] Capture and visually inspect current v0.1.53 Workspace screenshots in English, Korean, and Korean dark theme.
+- [x] Capture and visually inspect English and Korean Agent Room screenshots from a disposable three-task Rust mock run; all three task tests pass, the run remains `waiting_approval`, and no approval or merge was issued.
+- [x] Configure the test fixture to return a normalized sample quota snapshot so the screenshot does not show an unqueried-quota warning; label this as fixture data in provenance documentation.
+- [x] Regenerate the English and Korean HTML manuals; record image hashes and limitations in `knowledge/wiki/native-screenshot-provenance.md` and `docs/evidence/issue9-current-native-screenshots-20261102.json`.
+- [x] Verify locally: documentation, screenshot freshness, native UI manual, and release-doc suites pass 15 tests across 4 suites; source-layout passes 2 tests; rustfmt and diff checks pass.
+- [ ] Commit and push this unit to the existing #22 branch; verify the resulting exact-head macOS and Windows workflow. Screenshot refresh does not complete Windows package acceptance or full screen-by-screen legacy UI parity.

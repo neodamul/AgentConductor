@@ -1,0 +1,52 @@
+{
+  "date": "2026-11-02",
+  "kind": "current-native-ui-manual-screenshots",
+  "issue": 9,
+  "source_commit": "483eed22780f7462a72f1df430ae272bfebde6b9",
+  "app_version": "0.1.53",
+  "capture_feature": "manual-screenshot-capture",
+  "agent_room_fixture": {
+    "location": "/private/tmp/ac9-agent-room-capture",
+    "executor": "deterministic local Rust mock; no provider CLI or external service",
+    "tasks_completed": 3,
+    "tests_passed": 3,
+    "sample_quota_remaining_percent": 64,
+    "state": "waiting_approval",
+    "approved": false,
+    "merged": false,
+    "user_workspace_touched": false
+  },
+  "capture": {
+    "method": "native eframe framebuffer callback after snapshot and selected task details loaded",
+    "dimensions": "1140x960 for Agent Room; 1140x740 for Workspace",
+    "assets": [
+      {
+        "path": "docs/assets/ui-agent-room-native.png",
+        "sha256": "8069898a4d641ecafbf935aac26e708311f5bd8784a57ec955b2c930cd1442f0"
+      },
+      {
+        "path": "docs/assets/ui-agent-room-native-ko.png",
+        "sha256": "ac421fa7e9654186cbe0cb74d552cdf4d4ca5cc2cf43dee72abf33ad845d7c8e"
+      },
+      {
+        "path": "docs/assets/ui-workspace-current.png",
+        "sha256": "b5ff985e1cdeb1892ba37b8feb0812740722199de0f47d9bc683205882ea36b0"
+      },
+      {
+        "path": "docs/assets/ui-workspace-korean-current.png",
+        "sha256": "e080f5d3b111cd485d77e4fdcf4c4b27ed0be6c2713bd376df82639d8999292b"
+      },
+      {
+        "path": "docs/assets/ui-workspace-dark-current.png",
+        "sha256": "d9b529cadd3570ef05da13cf1d63bfbc95b60872e0047e9951d1ae9d169d90db"
+      }
+    ]
+  },
+  "manuals": [
+    "docs/user-manual.html",
+    "docs/user-manual.ko.html"
+  ],
+  "limitations": [
+    "The screenshots document the v0.1.53 Rust native UI; they do not establish Windows package acceptance or full legacy UI parity."
+  ]
+}
