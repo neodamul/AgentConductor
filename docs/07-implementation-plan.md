@@ -6718,3 +6718,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Record AgentMemory `mem_mvxa9njl_167fb9020f53` and the LLM Wiki; refresh Graphify to 11,851 nodes / 17,990 edges / 884 communities; update issue #257 and PR #260 before unit commit `f877dcb`.
 - [x] Push `f877dcb` to `codex/issue-9-git-head-fast-path`.
 - [ ] Exact packaged macOS/Windows GUI verification remains open; this source-level test does not change #9 acceptance (22/50).
+
+### 2026-11-01 — Keep coordinator chat alive across desktop close — issue #189 / #9
+
+- [x] Plan: use existing R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177. Add DD-210 to keep the one-shot coordinator chat worker independent from the desktop lifetime while preserving the current multi-lane native UI request pool. Do not take #192's single `sync_channel(1)` worker regression.
+- [x] Red: `chat_worker_lifecycle` initially failed to compile because the background-chat policy, maintenance exit classification, and detached command were absent.
+- [x] Task: start only `chat` UI jobs with Windows breakaway process flags, fall back on access denied, retain normal ownership for other actions, and skip the messenger flush for the chat worker.
+- [x] Local Verify: `chat_worker_lifecycle` (2), `native_workspace_chat` (6), `native_workspace_chat_reset` (2), `startup_chat` (5), `source_layout` (2), rustfmt, diff check, warning-denied all-target Clippy pass. The Windows package harness was added but is not executed on macOS (0 platform tests run).
+- [x] Full local Verify: `cargo test --all-targets --locked --offline --features native-ui-probe -j 2` passed on macOS; the Windows-only package harness compiled with 0 tests selected on this host. `cargo clean` then removed the completed 14.2 GiB build cache.
+- [ ] Verify exact Windows package: close the desktop during delayed chat, reopen the same workspace, confirm the question and answer restore; also run all tool-decision journeys on this #260-based code.
+- [ ] Complete: keep issue #189 and #9 open, do not increase #9 from 22/50 until exact package evidence.
