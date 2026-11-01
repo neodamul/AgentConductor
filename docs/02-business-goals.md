@@ -624,3 +624,7 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210.
 ### BG-154 No press goes unanswered
 The operator never wonders whether a click was taken: every press shows at once that it is being handled.
 Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.
+
+### BG-157 The absence of silent waits is enforced
+The coverage reached by the progress work does not erode when a request is added later.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.

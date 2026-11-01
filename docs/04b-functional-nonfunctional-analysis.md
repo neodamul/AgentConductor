@@ -734,3 +734,7 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210.
 ### FR-191 The request helper and the silence threshold
 `AC_WAIT.watch(kind, promise)` passes refresh kinds (`snapshot`, `client_timeout`, `update_status`, `check_update`, `mcp_source_suggestions`, `chat_history`, `workspaces`, `task`, `coordinator`, `quota`) through; any other kind is recorded with its start, marked on the pressed button by `AC_PRESS.track` and removed when it settles. `AC_WAIT.text(now)` names the oldest open request after 1 s with `AC_ELAPSED`. `request()` of both pages routes itself through it once (`watched`); `action()` and `act()` no longer track on their own. The workspace status line shows silence, then a waiting request, then the usual text; the room connection line does the same and its snapshot render keeps a waiting line. `AC_STALE` reports silence after 6 s instead of 5 s.
 Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.
+
+### FR-194 Classification and checks
+`tests/request_kinds_runtime.cjs` reads `kind: '<name>'` literals of `startup.js`, `room.js`, `mcp.js`, `chat.js`, `optimize.js` and `manual.js`. Each kind is in exactly one of ENVELOPE, REFRESH, JOBS, DIRECT; none is unclassified or stale. The quiet list of `AC_WAIT` equals REFRESH, the usage job and the two update polls. Each JOBS entry names a string its page source must contain (its progress rendering).
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.

@@ -809,3 +809,7 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210.
 ### QAS-197 A held reply is visible within 2 s
 In the bridge simulator with the reply held: messenger test, delete workspace after its dialog, switch workspace, the team briefing and a stop with its reason mark their button and show the waiting line with a counting time within 2 s, and the line returns to normal after the reply; an idle page sampled every 100 ms for 16 s never shows the silence line. Unit tests cover `AC_WAIT` and the 6 s threshold.
 Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.
+
+### QAS-200 A new or wrongly quiet request fails
+Adding an unclassified kind to a page script, or a direct kind to the quiet list, fails `tests/request_kinds_runtime.cjs` with a message naming it; removing a job's progress rendering fails it too. It passes on the current pages (76 kinds: 7 refresh, 21 job, 47 direct).
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.

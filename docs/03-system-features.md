@@ -726,3 +726,7 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210.
 ### SF-187 One waiting sign for every request
 Both pages send every request through one helper that marks the pressed button and names a request that has waited over 1 s with its time; refreshes are left out.
 Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.
+
+### SF-190 Request kind guard
+A node test extracts the request kinds from the page scripts and compares them with a classification in the test and with the quiet list of the waiting helper.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.

@@ -2422,3 +2422,11 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 | App update (`check_update`, `apply_update`) | Update dialog title and state with elapsed time |
 | Every other direct request (workspace create/open/switch/delete/forget, settings import/export, cache preview/clear, messenger test, plan rules, baseline, briefing, evidence, scope review, undo) | Pressed button; after 1 s the status or connection line names it with its time |
 | Refreshes (`snapshot`, `task`, `coordinator`, `chat_history`, `workspaces`, suggestions, update polling, `quota`) | Not shown as a wait; their absence shows as silence after 6 s |
+
+### Request kind guard — GitHub #301
+
+- [x] Plan: the stop-hook review of the goal of 2026-10-31 pointed out that the coverage checklist (#285) is an assertion; each pass found new gaps by hand. R-202 → DD-214. Numbered after R-200 (#290) and R-201 (#297), both still open; the appended sections need a trivial conflict resolution when they merge.
+- [x] Red: a request kind added to a page script and a direct kind added to the quiet list both fail the new test (checked by temporarily editing the sources).
+- [x] Task: `tests/request_kinds_runtime.cjs` (76 kinds: 7 refresh, 21 job, 47 direct); no product code changes.
+- [x] Verify (macOS): the node test, `node_runtime`, `source_layout`.
+- [ ] Complete: merge and release only on request (test only, nothing to release).

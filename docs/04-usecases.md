@@ -799,3 +799,7 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210.
 ### UC-190 Pressing a button the app is slow to answer
 The operator presses the messenger test, deletes a workspace or asks for the team briefing; the button shows it is working and after a second the status line reads "Waiting for the app: delete workspace 0:03" until the answer comes, then the line returns to normal.
 Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.
+
+### UC-193 Adding a request
+A developer adds `request({kind:'export_report'})`; the guard fails and names it. They classify it (direct, so the pressed button and the waiting line already cover it), or, if it starts a background job, name the progress rendering the page has for it.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.
