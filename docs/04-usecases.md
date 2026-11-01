@@ -799,3 +799,7 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210.
 ### UC-190 Pressing a button the app is slow to answer
 The operator presses the messenger test, deletes a workspace or asks for the team briefing; the button shows it is working and after a second the status line reads "Waiting for the app: delete workspace 0:03" until the answer comes, then the line returns to normal.
 Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.
+
+### UC-192 Usage on a company PC
+The CLI needs 35 s before it answers `/usage`. The operator presses refresh: the card says "Querying usage… 0:35" and then shows the percentages. A CLI that never answers ends after 60 s with "Claude quota prompt timed out before /usage after 60 s".
+Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.

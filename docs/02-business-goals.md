@@ -624,3 +624,7 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210.
 ### BG-154 No press goes unanswered
 The operator never wonders whether a click was taken: every press shows at once that it is being handled.
 Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.
+
+### BG-156 Usage is reported on a slow managed machine
+A company PC with scanning, managed settings or a proxy shows the account usage like a personal machine does, only a little later.
+Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.

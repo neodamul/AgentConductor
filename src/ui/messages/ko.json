@@ -1163,6 +1163,7 @@
   "startup.start_failed": "실행이 시작되지 않았습니다: {value1}{value2}. 로그: {value3}",
   "startup.models_querying": "모델 조회 중…",
   "startup.models_queued": "모델 조회 대기 중",
+  "startup.quota_querying": "사용량 조회 중…",
   "room.pending_dependencies": "{value1} 완료를 기다리는 중",
   "room.pending_retry": "{value1} 후 자동 재시도",
   "room.pending_session_limit": "빈 세션을 기다리는 중 (동시에 최대 {value1}개)",

@@ -809,3 +809,7 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210.
 ### QAS-197 A held reply is visible within 2 s
 In the bridge simulator with the reply held: messenger test, delete workspace after its dialog, switch workspace, the team briefing and a stop with its reason mark their button and show the waiting line with a counting time within 2 s, and the line returns to normal after the reply; an idle page sampled every 100 ms for 16 s never shows the silence line. Unit tests cover `AC_WAIT` and the 6 s threshold.
 Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.
+
+### QAS-199 A slow CLI is waited for, a stuck one is named
+A fixture CLI that prints its prompt 3 s late is collected when the wait is 10 s; one that is 5 s late with a wait of 2 s fails with `before /usage` and `after 2 s`; the default wait is 60 s and neither collector contains a literal 20 s. In the simulator a running `quota:<agent>` job shows `Querying usage…` with a counting time on that agent's card and nothing on the others; in the run screen a running `quota` job marks the refresh button busy and the source line counts its time, and both return to normal when the job ends.
+Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
