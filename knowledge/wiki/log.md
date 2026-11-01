@@ -1945,3 +1945,7 @@ Resolved all 119 previously reported conflicts in existing PR #22 and pushed mer
 # [2026-11-02] verify | Refresh v0.1.53 Rust UI manual screenshots — issue #9
 
 Replaced stale public Workspace and Agent Room captures with visually inspected v0.1.53 Rust native UI images. Captured the Agent Room from a disposable three-task Rust mock run: all three tasks and tests passed, a deterministic sample quota showed 64% remaining, and the run stayed `waiting_approval` without approval or merge. Regenerated the English and Korean HTML manuals. Evidence is in `docs/evidence/issue9-current-native-screenshots-20261102.json`; image hashes and capture limits are in `native-screenshot-provenance.md`. This documentation work does not satisfy exact Windows package acceptance or full legacy UI parity.
+
+## 2026-11-02 — Fix the actual Windows workspace input driver — issue #9
+
+Exact-head run `41347900792` failed the Windows `windows_desktop` test: UI Automation found and focused the Goal edit, but the test's Unicode `SendInput` left its value empty. Source inspection showed the earlier plan/Wiki statement that the driver called `ValuePattern.SetValue` was false. TDD changed the driver contract first (five expected failures), then the PowerShell driver now calls `SetValue`, polls readback for up to three seconds, and saves only on an exact value. The focused contract and source-layout suites pass 16 tests; warning-denied test Clippy, rustfmt, and diff checks pass. The exact package run is still required; no Windows acceptance is claimed until it passes.
