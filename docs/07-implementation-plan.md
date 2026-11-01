@@ -6746,5 +6746,5 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task / Green: add a named child monitor; poll reads job state without waiting for the child or SQLite terminal record.
 - [x] Verify affected local suites: `cargo test --locked --offline --features native-ui-probe --lib --test native_ui_probe --test source_layout` passes 98 tests across three suites; warning-denied all-target Clippy passes. The unrestricted all-tests command was stopped after running silently for over a minute.
 - [x] Record formatting, diff, and 300-line checks; refresh Graphify (11,888 nodes / 19,421 edges).
-- [ ] Save the completed unit to AgentMemory and update #257 / PR #294 progress.
-- [ ] Commit and push this unit on the issue branch.
+- [x] Save the completed unit to AgentMemory `mem_mvxehy1e_18717541fc81`; update #257 and PR #294 progress. Signal Claude with the Rust port and verification boundary.
+- [x] Commit and push `846e65b` on `codex/issue-257-rust-draft-preservation`.
