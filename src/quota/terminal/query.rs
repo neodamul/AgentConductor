@@ -34,6 +34,7 @@ pub async fn query_claude(
     let executable = crate::executable::resolve(&profile.executable)
         .unwrap_or_else(|| profile.executable.clone().into());
     let mut command = Command::new("/usr/bin/script");
+    crate::subprocess::clear_tokio_event_environment(&mut command);
     command
         .args(["-q", "/dev/null"])
         .arg(executable)

@@ -192,6 +192,7 @@ pub async fn discover(profile: &AgentProfile, dir: &Path) -> Result<ModelCatalog
     let executable = crate::executable::resolve(&profile.executable)
         .unwrap_or_else(|| profile.executable.clone().into());
     let mut command = Command::new(executable);
+    crate::subprocess::clear_tokio_event_environment(&mut command);
     command
         .args(args)
         .envs(&profile.environment)

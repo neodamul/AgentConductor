@@ -23,6 +23,8 @@ pub(super) struct Controller {
     pub(super) dir: PathBuf,
     pub(super) exe: PathBuf,
     pub(super) job: Arc<Mutex<Option<Job>>>,
+    pub(super) event_endpoint: Option<crate::ui::events::EventEndpoint>,
+    pub(super) event_surface: crate::ui::events::EventSurface,
 }
 impl Controller {
     pub(super) fn recovery_preview(
@@ -218,6 +220,9 @@ impl Controller {
             .stdin(Stdio::null())
             .stdout(out)
             .stderr(err);
+        if let Some(endpoint) = &self.event_endpoint {
+            endpoint.configure(&mut command, self.event_surface);
+        }
         #[cfg(unix)]
         {
             use std::os::unix::process::CommandExt;

@@ -76,6 +76,7 @@ pub(super) async fn run_with_control(
     let executable = crate::executable::resolve(&spec.executable.to_string_lossy())
         .unwrap_or_else(|| spec.executable.clone());
     let mut command = Command::new(executable);
+    crate::subprocess::clear_tokio_event_environment(&mut command);
     command
         .args(&spec.args)
         .env_remove("AC_CHECKPOINT_RUN_DIR")

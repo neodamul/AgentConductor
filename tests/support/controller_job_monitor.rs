@@ -51,6 +51,8 @@ fn controller_poll_stays_responsive_while_terminal_audit_is_locked() {
             monitoring: false,
             audit_error: None,
         }))),
+        event_endpoint: None,
+        event_surface: crate::ui::events::EventSurface::AgentRoom,
     };
     controller.start_job_monitor().unwrap();
 

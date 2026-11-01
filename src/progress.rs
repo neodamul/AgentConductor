@@ -63,6 +63,9 @@ impl Reader {
         } else {
             self.decoder.push(&bytes[..n])?
         };
+        if n > 0 {
+            crate::ui::events::notify_external_from_environment();
+        }
         self.store.append_task_events(task, attempt, &events)?;
         if let Some(profile) = &self.profile {
             crate::quota::observe_events(&mut self.store, profile, &events)?;

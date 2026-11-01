@@ -189,6 +189,7 @@ pub async fn describe(executable: &Path, limit: Duration) -> Result<Value, Strin
     let exe = crate::executable::resolve(&executable.to_string_lossy())
         .unwrap_or_else(|| executable.to_path_buf());
     let mut command = tokio::process::Command::new(exe);
+    crate::subprocess::clear_tokio_event_environment(&mut command);
     command
         .arg("--acio-describe")
         .stdin(std::process::Stdio::null())

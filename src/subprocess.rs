@@ -2,6 +2,7 @@
 use std::{ffi::OsStr, process::Command};
 pub fn command(program: impl AsRef<OsStr>) -> Command {
     let mut command = Command::new(program);
+    clear_event_environment(&mut command);
     #[cfg(windows)]
     {
         use std::os::windows::process::CommandExt;
@@ -10,6 +11,20 @@ pub fn command(program: impl AsRef<OsStr>) -> Command {
     #[cfg(not(windows))]
     let _ = &mut command;
     command
+}
+
+pub fn clear_event_environment(command: &mut Command) {
+    command
+        .env_remove("AC_UI_EVENT_ADDRESS")
+        .env_remove("AC_UI_EVENT_TOKEN")
+        .env_remove("AC_UI_EVENT_SURFACE");
+}
+
+pub fn clear_tokio_event_environment(command: &mut tokio::process::Command) {
+    command
+        .env_remove("AC_UI_EVENT_ADDRESS")
+        .env_remove("AC_UI_EVENT_TOKEN")
+        .env_remove("AC_UI_EVENT_SURFACE");
 }
 /// Reuse a calling terminal for CLI commands; never allocate a new console.
 pub fn attach_parent_console() {

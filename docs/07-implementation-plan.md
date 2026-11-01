@@ -6748,3 +6748,25 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Record formatting, diff, and 300-line checks; refresh Graphify (11,888 nodes / 19,421 edges).
 - [x] Save the completed unit to AgentMemory `mem_mvxehy1e_18717541fc81`; update #257 and PR #294 progress. Signal Claude with the Rust port and verification boundary.
 - [x] Commit and push `846e65b` on `codex/issue-257-rust-draft-preservation`.
+
+### Open Rust PR follow-up inventory — checked 2026-11-01
+
+- [x] Confirm GitHub state: #192, #199, #202, #230, #239, #255, and #260 are all open draft PRs.
+- [ ] #192 — coordinator conversation persistence and reconnect behavior.
+- [ ] #199 — remove fixed authentication/local-first labels.
+- [ ] #202 — native goal optimizer and proposal review.
+- [ ] #230 — reopen the last saved workspace and retire blank placeholders.
+- [ ] #239 — coordinator chat request timeout fix; compare for overlap with #255 before integration.
+- [ ] #255 — current event-driven UI/chat/package work; exact Windows package acceptance and main-branch parity remain open.
+- [ ] #260 — Git HEAD fast path and bounded request/event lanes; this is the base branch for #294 and must be reconciled before #294 can merge.
+
+### 2026-11-01 — Port process events and adaptive recovery — issue #257 / Claude PR #255 parity
+
+- [x] Plan: add an authenticated loopback notification for spawned AgentConductor commands; keep metadata recovery bounded and adaptive; prevent event credentials from reaching provider/MCP processes.
+- [x] Red: event bridge regressions failed to compile before `ProcessEventBridge` and its endpoint API existed.
+- [x] Task / Green: add token validation, surface-scoped child environment, completion/progress notifications, provider environment scrubbing, and a 1-to-30-second fallback observer that fingerprints report/startup plus SQLite/WAL metadata.
+- [x] Verify affected locally: 103 tests pass across library, native UI, and source-layout suites; source-layout confirms every changed source/test file stays at or below 300 lines. `cargo fmt` passes.
+- [x] Verify warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line bound.
+- [x] Update QAS-194/DD-208, implementation plan, LLM Wiki, and Graphify (11,942 nodes / 19,515 edges).
+- [x] Save AgentMemory `mem_mvxf7p2e_e73272420eed`.
+- [ ] Update #257 / PR #294 progress, then commit and push this unit.

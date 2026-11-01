@@ -7,12 +7,32 @@ use std::{
     time::{Duration, SystemTime},
 };
 
-const CHECK_INTERVAL: Duration = Duration::from_millis(500);
+#[cfg(test)]
+#[path = "../../../tests/support/persisted_state_event.rs"]
+mod tests;
+
+const MIN_CHECK_INTERVAL: Duration = Duration::from_secs(1);
+const MAX_CHECK_INTERVAL: Duration = Duration::from_secs(30);
+
+pub(super) fn next_scan_delay(current: Duration, changed: bool) -> Duration {
+    if changed {
+        MIN_CHECK_INTERVAL
+    } else {
+        current.saturating_mul(2).min(MAX_CHECK_INTERVAL)
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+struct FileStamp {
+    length: u64,
+    modified: Option<SystemTime>,
+}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 struct Fingerprint {
-    length: u64,
-    modified: Option<SystemTime>,
+    primary: Option<FileStamp>,
+    database: Option<FileStamp>,
+    wal: Option<FileStamp>,
 }
 
 pub struct RunChangeListener {
@@ -88,16 +108,19 @@ fn listen_report(
     stopped: mpsc::Receiver<()>,
     mut observed: Option<Fingerprint>,
 ) {
+    let mut delay = MIN_CHECK_INTERVAL;
     loop {
-        match stopped.recv_timeout(CHECK_INTERVAL) {
+        match stopped.recv_timeout(delay) {
             Ok(()) | Err(mpsc::RecvTimeoutError::Disconnected) => return,
             Err(mpsc::RecvTimeoutError::Timeout) => {}
         }
         let current = fingerprint(&path);
-        if current != observed {
+        let changed = current != observed;
+        if changed {
             observed = current;
             bus.publish(None, Event::RunChanged);
         }
+        delay = next_scan_delay(delay, changed);
     }
 }
 
@@ -109,8 +132,9 @@ fn listen_startup(
     mut observed_startup: Option<Fingerprint>,
     mut observed_report: Option<Fingerprint>,
 ) {
+    let mut delay = MIN_CHECK_INTERVAL;
     loop {
-        match stopped.recv_timeout(CHECK_INTERVAL) {
+        match stopped.recv_timeout(delay) {
             Ok(()) | Err(mpsc::RecvTimeoutError::Disconnected) => return,
             Err(mpsc::RecvTimeoutError::Timeout) => {}
         }
@@ -120,7 +144,8 @@ fn listen_startup(
         let current_startup = current_watch
             .as_ref()
             .and_then(|current| fingerprint(&current.startup_path));
-        if path_changed || current_startup != observed_startup {
+        let startup_changed = path_changed || current_startup != observed_startup;
+        if startup_changed {
             observed_startup = current_startup;
             bus.publish(None, Event::WorkspaceChanged);
             observed_report = current_watch
@@ -133,17 +158,32 @@ fn listen_startup(
             .as_ref()
             .and_then(|current| current.report_path.as_deref())
             .and_then(fingerprint);
-        if current_report != observed_report {
+        let report_changed = current_report != observed_report;
+        if report_changed {
             observed_report = current_report;
             bus.publish(None, Event::RunChanged);
         }
+        delay = next_scan_delay(delay, startup_changed || report_changed);
     }
 }
 
 fn fingerprint(path: &std::path::Path) -> Option<Fingerprint> {
-    let metadata = fs::metadata(path).ok()?;
+    let parent = path.parent()?;
+    let stamp = |path: &std::path::Path| {
+        fs::metadata(path).ok().map(|metadata| FileStamp {
+            length: metadata.len(),
+            modified: metadata.modified().ok(),
+        })
+    };
+    let primary = stamp(path);
+    let database = stamp(&parent.join("state.sqlite"));
+    let wal = stamp(&parent.join("state.sqlite-wal"));
+    if primary.is_none() && database.is_none() && wal.is_none() {
+        return None;
+    }
     Some(Fingerprint {
-        length: metadata.len(),
-        modified: metadata.modified().ok(),
+        primary,
+        database,
+        wal,
     })
 }

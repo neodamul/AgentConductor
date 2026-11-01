@@ -188,6 +188,8 @@ impl Room {
                             dir,
                             exe: startup.executable().to_owned(),
                             job: Arc::new(Mutex::new(None)),
+                            event_endpoint: startup.event_endpoint(),
+                            event_surface: crate::ui::events::EventSurface::Workspace,
                         });
                         next.automatic(startup.auto_resume())?;
                         *controller = Some(next);

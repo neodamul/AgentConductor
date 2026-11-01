@@ -207,7 +207,9 @@ fn restart(exe: &Path) -> Result<(), String> {
     if let Ok(mut s) = state().lock() {
         s.phase = "restarting";
     }
-    std::process::Command::new(exe)
+    let mut command = std::process::Command::new(exe);
+    crate::subprocess::clear_event_environment(&mut command);
+    command
         .args(std::env::args_os().skip(1))
         .env(WAIT_PID, std::process::id().to_string())
         .spawn()
