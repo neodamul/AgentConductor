@@ -7038,4 +7038,4 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Focused Verify: `plan` 13/13, `planning_schema` 5/5, `planning_empty_scope_retry` 1/1, and existing `planning_overlap_repair` 1/1 pass.
 - [x] Full Verify: `cargo test --all-targets --locked --offline --features native-ui-probe,test-fixtures --no-fail-fast --quiet` passes 1,243 tests, 16 ignored, across 380 suites (279.81s). All-target warning-denied Clippy, rustfmt, public docs, source layout, diff hygiene, and the 300-line guard pass.
 - [x] Assetize: LLM Wiki `planning-empty-scope-correction.md`; AgentMemory `mem_mvy3ai00_9deaa20f5d37`; Graphify refreshed to 12,357 nodes / 18,728 edges. CocoIndex CLI is unavailable in this environment.
-- [ ] Complete: comment on upstream #251 and root issue #9, update PR #22, then commit/push this unit directly to the root branch. Do not create a child PR.
+- [x] Complete: upstream #251 was already closed; the Rust port is tracked on issue #9 and PR #22. Commit `0f78107a` is pushed directly to the existing root branch. No child PR was created.
