@@ -13,10 +13,19 @@ fn plain(text: &str) -> String {
             }
             if bytes[i] == b'[' {
                 i += 1;
+                let first = i;
                 while i < bytes.len() {
                     let b = bytes[i];
                     i += 1;
                     if (0x40..=0x7e).contains(&b) {
+                        // A terminal that draws a space as "cursor forward n" leaves no blank to read.
+                        if b == b'C' {
+                            let count = std::str::from_utf8(&bytes[first..i - 1])
+                                .ok()
+                                .and_then(|n| n.parse::<usize>().ok())
+                                .unwrap_or(1);
+                            out.extend(std::iter::repeat_n(b' ', count.min(200)));
+                        }
                         break;
                     }
                 }
@@ -127,14 +136,19 @@ pub fn claude_usage_ready(text: &str) -> bool {
 /// machine is unaffected because the query ends as soon as `/usage` is parsed.
 pub const CLAUDE_WAIT: std::time::Duration = std::time::Duration::from_secs(60);
 
-fn quota_timeout(sent: bool, wait: std::time::Duration) -> String {
+/// `unread` is the last reason a screen could not be parsed: a screen that was read but not
+/// understood must not look like a CLI that never answered (GitHub #295).
+fn quota_timeout(sent: bool, wait: std::time::Duration, unread: Option<&str>) -> String {
     let stage = if sent {
         "response timed out after /usage"
     } else {
         "prompt timed out before /usage"
     };
+    let unread = unread.map_or(String::new(), |reason| {
+        format!("; screen not understood: {reason}")
+    });
     format!(
-        "Claude quota {stage} after {} s; no generation requested",
+        "Claude quota {stage} after {} s{unread}; no generation requested",
         wait.as_secs()
     )
 }
@@ -146,6 +160,23 @@ pub async fn query_claude(
 ) -> Result<Snapshot, String> {
     query_claude_within(profile, dir, cwd, CLAUDE_WAIT).await
 }
+/// "1,351.23" -> "1351.23". Anything that is not properly grouped is left alone and rejected later.
+fn thousands(amount: &str) -> String {
+    let (whole, fraction) = amount.split_once('.').unwrap_or((amount, ""));
+    let mut groups = whole.split(',');
+    let grouped = groups.next().is_some_and(|g| (1..=3).contains(&g.len()))
+        && groups.all(|g| g.len() == 3 && g.bytes().all(|b| b.is_ascii_digit()));
+    if !whole.contains(',') || !grouped {
+        return amount.to_owned();
+    }
+    let digits = whole.replace(',', "");
+    if fraction.is_empty() && !amount.contains('.') {
+        digits
+    } else {
+        format!("{digits}.{fraction}")
+    }
+}
+
 fn spent_budget(text: &str, at: i64) -> Result<Option<super::Budget>, String> {
     let lines: Vec<_> = text.lines().collect();
     for (index, line) in lines.iter().enumerate() {
@@ -161,6 +192,7 @@ fn spent_budget(text: &str, at: i64) -> Result<Option<super::Budget>, String> {
         let Some(used) = used.trim().strip_suffix('/') else {
             continue;
         };
+        let used = &thousands(used.trim());
         let Some((limit, tail)) = rest.split_once(char::is_whitespace) else {
             continue;
         };
@@ -175,7 +207,8 @@ fn spent_budget(text: &str, at: i64) -> Result<Option<super::Budget>, String> {
                 .filter(|s| s.starts_with("Resets "))
         });
         let resets_at = reset.and_then(|s| super::reset_time::parse(s, at, 44640));
-        return super::budget::from_spent("claude", used.trim(), limit.trim(), resets_at).map(Some);
+        return super::budget::from_spent("claude", used, &thousands(limit.trim()), resets_at)
+            .map(Some);
     }
     Ok(None)
 }
@@ -356,6 +389,7 @@ pub async fn query_claude_within(
         .await
         .map_err(|e| e.to_string())?;
     let mut sent = false;
+    let mut unread: Option<String> = None;
     let collect = async {
         let mut data = Vec::new();
         let mut found = None;
@@ -413,8 +447,9 @@ pub async fn query_claude_within(
                     .duration_since(UNIX_EPOCH)
                     .map_err(|e| e.to_string())?
                     .as_secs() as i64;
-                if let Ok(snapshot) = parse_claude_usage(&text, now) {
-                    found = Some(snapshot);
+                match parse_claude_usage(&text, now) {
+                    Ok(snapshot) => found = Some(snapshot),
+                    Err(reason) => unread = Some(reason),
                 }
             }
         }
@@ -422,7 +457,7 @@ pub async fn query_claude_within(
     let result = tokio::time::timeout(wait, collect).await;
     owner.timed_out = result.is_err();
     let result = result
-        .map_err(|_| quota_timeout(sent, wait))
+        .map_err(|_| quota_timeout(sent, wait, unread.as_deref()))
         .and_then(|r| r);
     drop(input);
     drop(group);

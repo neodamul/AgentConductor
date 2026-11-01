@@ -2446,3 +2446,11 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Task: `tests/request_kinds_runtime.cjs` (76 kinds: 7 refresh, 21 job, 47 direct); no product code changes.
 - [x] Verify (macOS): the node test, `node_runtime`, `source_layout`.
 - [ ] Complete: merge and release only on request (test only, nothing to release).
+
+### Claude usage screen not understood — GitHub #295
+
+- [x] Plan: the company report is `Claude quota response timed out after /usage` on one PC while another PC shows usage. `/usage` was sent, so the start and trust screens worked; the collectors ignored every parse error and reported only the timeout. Related to R-201 / DD-213 (the wait), no new requirement.
+- [x] Red: `tests/claude_prompt.rs` (`$1,351.23 / $5,000.00 spent` and cursor-forward spacing fail; malformed groupings stay rejected), `tests/claude_wait.rs` (a read but rejected screen is named in the timeout; fixture `AC_QUOTA_ENTERPRISE=zero`).
+- [x] Task: `src/quota/terminal.rs` (`thousands`, `plain` turns cursor-forward into spaces, `quota_timeout(.., unread)`), `src/quota/terminal/windows.rs` (same last-reason tracking); CHANGELOG.
+- [x] Verify (macOS): tests above, `claude_usage`, `source_layout`, clippy. The Windows collector is compiled and tested by Windows CI.
+- [ ] Complete: whether the company PC's screen is covered is unknown until it reports; the next failure now carries the reason. Merge and release only on request.
