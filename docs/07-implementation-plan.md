@@ -6718,3 +6718,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Record AgentMemory `mem_mvxa9njl_167fb9020f53` and the LLM Wiki; refresh Graphify to 11,851 nodes / 17,990 edges / 884 communities; update issue #257 and PR #260 before unit commit `f877dcb`.
 - [x] Push `f877dcb` to `codex/issue-9-git-head-fast-path`.
 - [ ] Exact packaged macOS/Windows GUI verification remains open; this source-level test does not change #9 acceptance (22/50).
+
+### 2026-11-01 — Preserve Workspace drafts during event refresh — issue #257
+
+- [x] Plan: implement the existing R-194 / QAS-192 contract without blocking the event snapshot lane; preserve locally changed settings while accepting incoming values for clean fields.
+- [x] Red: `background_snapshot_preserves_unsaved_workspace_drafts` failed because the event snapshot replaced the unsaved Workspace name with the saved value. The older renderer test also assumed a fast metadata poll; update it to exercise the event-driven snapshot path.
+- [x] Task / Green: compare each editable setting against the previous saved config, retain only dirty local values, and refresh unchanged settings plus the authoritative snapshot. Keep the goal optimizer proposal when the goal is dirty.
+- [x] Verify locally: `cargo test --locked --offline --features native-ui-probe --lib --test native_ui_probe --test source_layout` passes 96 tests across three suites. Warning-denied all-target Clippy, rustfmt, diff hygiene, and the ≤300-line source/test limit pass; the largest changed file is 164 lines.
+- [x] Update QAS-192/DD-206, LLM Wiki, and Graphify (11,857 nodes / 19,366 edges). CocoIndex is installed but cannot import `mcp.server.fastmcp`; no dependency was added.
+- [ ] Update AgentMemory and #257/PR #260, then commit and push this issue branch.
+- [ ] Verify packaged macOS/Windows UI behavior; source tests do not satisfy the package acceptance gate.

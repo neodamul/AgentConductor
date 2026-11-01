@@ -38,3 +38,51 @@ fn background_snapshot_updates_visible_state_without_clearing_pending_action() {
     assert_eq!(probe.goal, "unsaved input");
     assert_eq!(probe.error.as_deref(), Some("keep the current message"));
 }
+
+#[test]
+fn background_snapshot_preserves_unsaved_workspace_drafts() {
+    let worker = RequestWorker::with_dispatch_for_test(
+        egui::Context::default(),
+        Arc::new(|_| {
+            Ok(serde_json::json!({
+                "revision":"updated",
+                "config":{
+                    "name":"server name",
+                    "goal":"server goal",
+                    "repository":"server repository"
+                }
+            }))
+        }),
+    )
+    .unwrap();
+    let mut probe = Probe {
+        worker: Some(worker),
+        snapshot: Some(serde_json::json!({
+            "revision":"previous",
+            "config":{
+                "name":"saved name",
+                "goal":"saved goal",
+                "repository":"saved repository"
+            }
+        })),
+        name: "unsaved name".into(),
+        repository: "saved repository".into(),
+        goal: "unsaved goal".into(),
+        ..Probe::default()
+    };
+
+    probe.refresh_background();
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(2);
+    while probe.background_refresh_pending {
+        probe.poll();
+        assert!(
+            std::time::Instant::now() < deadline,
+            "background reply timed out"
+        );
+        std::thread::sleep(std::time::Duration::from_millis(5));
+    }
+
+    assert_eq!(probe.name, "unsaved name");
+    assert_eq!(probe.goal, "unsaved goal");
+    assert_eq!(probe.repository, "server repository");
+}
