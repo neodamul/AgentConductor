@@ -13,16 +13,7 @@ use std::{
 #[path = "../../../tests/support/persisted_state_event.rs"]
 mod tests;
 
-const MIN_CHECK_INTERVAL: Duration = Duration::from_secs(1);
-const MAX_CHECK_INTERVAL: Duration = Duration::from_secs(30);
-
-pub(super) fn next_scan_delay(current: Duration, changed: bool) -> Duration {
-    if changed {
-        MIN_CHECK_INTERVAL
-    } else {
-        current.saturating_mul(2).min(MAX_CHECK_INTERVAL)
-    }
-}
+pub(super) const RECOVERY_INTERVAL: Duration = Duration::from_secs(30);
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 struct FileStamp {
@@ -51,11 +42,19 @@ pub struct StartupWatch {
 
 impl RunChangeListener {
     pub fn spawn(path: PathBuf, bus: Arc<EventBus>) -> Result<Self, String> {
+        Self::spawn_with_interval(path, bus, RECOVERY_INTERVAL)
+    }
+
+    pub(super) fn spawn_with_interval(
+        path: PathBuf,
+        bus: Arc<EventBus>,
+        interval: Duration,
+    ) -> Result<Self, String> {
         let observed = fingerprint(&path);
         let (stop, stopped) = mpsc::channel();
         let thread = thread::Builder::new()
             .name("agentconductor-run-listener".into())
-            .spawn(move || listen_report(path, bus, stopped, observed))
+            .spawn(move || listen_report(path, bus, stopped, observed, interval))
             .map_err(|error| error.to_string())?;
         Ok(Self {
             stop,
@@ -66,6 +65,14 @@ impl RunChangeListener {
     pub fn spawn_startup(
         resolve_watch: impl Fn() -> Option<StartupWatch> + Send + 'static,
         bus: Arc<EventBus>,
+    ) -> Result<Self, String> {
+        Self::spawn_startup_with_interval(resolve_watch, bus, RECOVERY_INTERVAL)
+    }
+
+    pub(super) fn spawn_startup_with_interval(
+        resolve_watch: impl Fn() -> Option<StartupWatch> + Send + 'static,
+        bus: Arc<EventBus>,
+        interval: Duration,
     ) -> Result<Self, String> {
         let observed = resolve_watch();
         let observed_startup = observed
@@ -86,6 +93,7 @@ impl RunChangeListener {
                     stopped,
                     observed_startup,
                     observed_report,
+                    interval,
                 )
             })
             .map_err(|error| error.to_string())?;
@@ -110,10 +118,10 @@ fn listen_report(
     bus: Arc<EventBus>,
     stopped: mpsc::Receiver<()>,
     mut observed: Option<Fingerprint>,
+    interval: Duration,
 ) {
-    let mut delay = MIN_CHECK_INTERVAL;
     loop {
-        match stopped.recv_timeout(delay) {
+        match stopped.recv_timeout(interval) {
             Ok(()) | Err(mpsc::RecvTimeoutError::Disconnected) => return,
             Err(mpsc::RecvTimeoutError::Timeout) => {}
         }
@@ -123,7 +131,6 @@ fn listen_report(
             observed = current;
             bus.publish(None, Event::RunChanged);
         }
-        delay = next_scan_delay(delay, changed);
     }
 }
 
@@ -134,10 +141,10 @@ fn listen_startup(
     stopped: mpsc::Receiver<()>,
     mut observed_startup: Option<Fingerprint>,
     mut observed_report: Option<Fingerprint>,
+    interval: Duration,
 ) {
-    let mut delay = MIN_CHECK_INTERVAL;
     loop {
-        match stopped.recv_timeout(delay) {
+        match stopped.recv_timeout(interval) {
             Ok(()) | Err(mpsc::RecvTimeoutError::Disconnected) => return,
             Err(mpsc::RecvTimeoutError::Timeout) => {}
         }
@@ -166,7 +173,6 @@ fn listen_startup(
             observed_report = current_report;
             bus.publish(None, Event::RunChanged);
         }
-        delay = next_scan_delay(delay, startup_changed || report_changed);
     }
 }
 
