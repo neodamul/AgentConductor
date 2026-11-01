@@ -2454,3 +2454,11 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Task: `src/quota/terminal.rs` (`thousands`, `plain` turns cursor-forward into spaces, `quota_timeout(.., unread)`), `src/quota/terminal/windows.rs` (same last-reason tracking); CHANGELOG.
 - [x] Verify (macOS): tests above, `claude_usage`, `source_layout`, clippy. The Windows collector is compiled and tested by Windows CI.
 - [ ] Complete: whether the company PC's screen is covered is unknown until it reports; the next failure now carries the reason. Merge and release only on request.
+
+### Claude usage wait of three minutes — GitHub #315
+
+- [x] Plan: a user reported usage queries that take longer than the 60 s set in #297 (DD-213 said to revisit then). R-201 / DD-213 stand; only the constant changes, no per-profile setting (custom quota commands already allow up to 300 s).
+- [x] Red: `tests/claude_wait.rs` (`the_default_limit_is_three_minutes_for_both_collectors`).
+- [x] Task: `src/quota/terminal.rs` (`CLAUDE_WAIT` 180 s); CHANGELOG.
+- [x] Verify (macOS): `claude_wait`, `claude_prompt`, `source_layout`, clippy.
+- [ ] Complete: merge and release only on request.
