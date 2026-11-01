@@ -1,5 +1,20 @@
 # Current-main behavior carried into the Rust UI branch
 
+## Latest main commits already represented in Rust — issue #9 / 2026-11-01
+
+Main merge `2570dac8` implements background polling timeout behavior. The Rust requirements
+trace this through R-184/R-186; scheduled native room reads are background operations, keep
+their errors out of user-action toasts, and reset the next deadline after delayed repaint.
+Explicit refresh/action errors remain visible. Local evidence: `cargo test --locked --offline
+--test native_ui_probe` passes 13/13.
+
+Main commit `a8b82b55` strengthens a Rust UI regression by asserting the completed job's
+persisted exit code and terminal process-owner record rather than calling `waitpid` on a child
+already supervised by the UI. That test change is now carried in `tests/ui.rs` and passes
+locally (1/1 targeted; source layout 2/2; rustfmt and diff checks pass). This confirms the
+current implementation contract; the broader main-only commit inventory and root PR
+reconciliation remain open.
+
 ## Windows goal-entry CI regression — issue #9 / #260 / 2026-11-01
 
 Windows package run `41301522543` saved `Windows UIA goa`, dropping the final character.
