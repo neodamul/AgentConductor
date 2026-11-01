@@ -6766,7 +6766,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: strengthen the source contract to require 100 ms per character and a 750 ms settle before Save; it failed against the 40 ms / 250 ms implementation.
 - [x] Green: increase the driver pacing and settle delay. Focused driver, documentation, and source-layout suites pass 22 tests locally; formatting and diff checks pass.
 - [x] Port the readiness/focus/readback fix into the #9 integration branch (`fb1c3156`); local `windows_desktop_driver` and source-layout tests pass.
-- [ ] Verify the latest exact-head macOS/Windows package run before closing #311 as superseded. Do not claim Windows UI acceptance until the packaged default desktop and schedule journeys pass.
+- [x] Correct the Save-driver contract after run `41306779270`: UIA does not expose `InvokePattern`; focus the Save control, wait for keyboard focus, then send Enter. The macOS source-contract test now matches the actual keyboard driver. Red was observed (3 failures); the corrected driver suite passes locally (12/12).
+- [x] Port the Windows schedule driver environment assertion from PR #311 into the #9 branch. `windows_schedule` verifies both `AC_DESKTOP_PID` and `AC_RUN_DIR`; 3 focused tests pass locally.
+- [x] Commit/push the integration units: `6e9e73eb` (#297), `0aa75896` (UIA driver), and `1123a340` (#310 schedule regression).
+- [ ] Verify the latest exact-head platform/package runs `41308897397` (head `0aa75896`, in progress) and `41309025365` (head `1123a340`, queued) before closing #311 as superseded. Do not claim Windows UI acceptance until packaged desktop and schedule journeys pass.
 
 ### GitHub #295 — Surface quota errors across native Rust UI
 - [x] Plan: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214; implement on the #9 integration branch to avoid a stacked issue branch.
@@ -6774,17 +6777,17 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task / Green: show the stored quota error inline on all three surfaces with the full accessible/hover reason.
 - [x] Verify: 27 focused tests pass across new quota error cases and existing quota editor/profile/room render suites; `cargo fmt --check` and `git diff --check` pass; all touched Rust/test files remain below 300 lines.
 - [x] Complete local: warning-denied Clippy, source-layout/public-doc tests, AgentMemory and LLM Wiki updates, Graphify refresh, commit `d4a11db6`, and push to the #9 integration branch.
-- [x] Cross-platform macOS job passed on exact head `d4a11db6` in run `41307850806`.
-- [x] Windows blocker diagnosed from #304 run `41306779270`: the UIA Save button has no `InvokePattern`; run `41307850806` was canceled after macOS passed and before the same known Windows driver failure could waste another run.
-- [ ] Keep #295/#304 open until the corrected keyboard-activation driver and quota behavior pass a new exact-head Windows/macOS run. CocoIndex is installed but blocked by `ModuleNotFoundError: mcp.server.fastmcp`.
+- [x] Commit/push quota error display as `d4a11db6`; its focused tests and local checks pass.
+- [x] Diagnose Windows blocker from #304 run `41306779270` and port the keyboard-activation correction to the #9 integration branch.
+- [x] Update issue #295, PR #304, issue #9, and PR #260 with the root cause, integration commits, and current exact-head run links.
+- [ ] Keep #295/#304 open until quota behavior and corrected UIA driver pass current-head platform/package validation: run `41308897397` (head `0aa75896`, in progress) and `41309025365` (head `1123a340`, queued). CocoIndex is installed but blocked by `ModuleNotFoundError: mcp.server.fastmcp`.
 
 ### GitHub #297 — Wait for slow Claude quota queries
 - [x] Plan: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213; retain existing CLI login and do not request generation.
 - [x] Red: delayed-session tests failed because the collector did not expose an injectable deadline or the shared 60-second production limit.
 - [x] Task / Green: add the shared bounded wait to macOS and Windows collectors, report the limit and prompt/response stage, and display elapsed time only on the active agent card.
 - [x] Verify: 31 focused tests pass across quota wait/elapsed/error/profile/room suites; 13 source-layout/public-doc tests pass; warning-denied Clippy, rustfmt, and diff hygiene pass. The fixture emits a Claude version/prompt and recognized `/usage` sections; its temporary directory is removed on test exit.
-- [x] Update LLM Wiki and raw source observation. Graphify refreshed after this port (11,935 nodes / 18,092 edges / 879 communities). CocoIndex import fails because `mcp.server.fastmcp` is missing.
-- [x] Verify locally: 31 focused quota/editor/profile/room tests, 13 source-layout/public-doc tests, warning-denied Clippy, rustfmt, diff hygiene, <=300-line checks, and the optimized native Rust UI build pass.
-- [x] Assetize: update the Claude quota Wiki/raw source observation and AgentMemory `mem_mvxtzns5_23660b8ac209`; refresh Graphify (11,935 nodes / 18,092 edges / 879 communities). CocoIndex remains unavailable because `mcp.server.fastmcp` is missing.
-- [ ] Commit and push the #297 port on the #9 integration branch; wait for the active Windows job in exact-head run `41307850806` before pushing so its already-running cross-platform check is not discarded.
-- [ ] Cross-platform: confirm exact-head macOS and Windows checks, then close #297 and its stacked #303 only after the behavior is present in the integration branch.
+- [x] Update LLM Wiki/raw observation and AgentMemory; Graphify refreshed to 11,939 nodes / 18,099 edges / 875 communities. CocoIndex remains unavailable because `mcp.server.fastmcp` is missing.
+- [x] Verify locally: 65 focused quota/UI tests, 13 source-layout/public-doc tests, warning-denied Clippy, rustfmt, diff hygiene, ≤300-line checks, and the optimized native Rust UI build pass.
+- [x] Commit/push #297 port as `6e9e73eb`; update issue #295/#297, PR #303/#304, issue #9, and PR #260 with current status.
+- [ ] Cross-platform: confirm exact-head macOS and Windows checks in `41309025365`; then close #297 and stacked PR #303 as superseded only after behavior is verified in the integration branch.
