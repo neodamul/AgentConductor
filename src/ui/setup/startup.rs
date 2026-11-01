@@ -63,12 +63,12 @@ impl Startup {
             quota_broker: Controller {
                 dir: root.join("quota-jobs"),
                 exe: exe.canonicalize().map_err(|e| e.to_string())?,
-                job: Mutex::new(None),
+                job: Arc::new(Mutex::new(None)),
             },
             broker: Controller {
                 dir: root,
                 exe: exe.canonicalize().map_err(|e| e.to_string())?,
-                job: Mutex::new(None),
+                job: Arc::new(Mutex::new(None)),
             },
             heads: crate::git_head::Heads::default(),
             saved: Mutex::new(saved),

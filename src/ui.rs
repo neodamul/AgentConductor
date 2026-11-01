@@ -222,7 +222,7 @@ impl Room {
         let controller = Arc::new(Controller {
             dir,
             exe: exe.canonicalize().map_err(|e| e.to_string())?,
-            job: Mutex::new(None),
+            job: Arc::new(Mutex::new(None)),
         });
         controller.automatic(enabled)?;
         let events = Arc::new(events::EventBus::default());

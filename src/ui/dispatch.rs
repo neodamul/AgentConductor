@@ -187,7 +187,7 @@ impl Room {
                         let next = Arc::new(Controller {
                             dir,
                             exe: startup.executable().to_owned(),
-                            job: Mutex::new(None),
+                            job: Arc::new(Mutex::new(None)),
                         });
                         next.automatic(startup.auto_resume())?;
                         *controller = Some(next);

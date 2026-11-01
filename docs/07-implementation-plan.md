@@ -6738,3 +6738,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: 105 tests across native UI, source-layout, live-progress, and Claude-quota suites pass. Warning-denied all-target Clippy, rustfmt, diff hygiene, and the ≤300-line source/test limit pass; `progress.rs` is 143 lines and the test is 15.
 - [x] Update QAS-194/DD-208, LLM Wiki, and Graphify (11,867 nodes / 19,379 edges). CocoIndex remains unavailable because `mcp.server.fastmcp` cannot import.
 - [x] Complete this unit: AgentMemory `mem_mvxe3g5u_f5672b6bb9e3`; progress updated on #257/PR #260; commit `e7d1a8a` pushed to the #257 issue branch and included in draft PR #294.
+
+### 2026-11-01 — Move coordinator child completion and terminal audit off request polling — issue #257 / Claude PR #255 parity
+
+- [x] Plan: retain the existing UI request lanes and move child waiting plus terminal audit writes to an independent standard-library thread.
+- [x] Red: `controller_poll_stays_responsive_while_terminal_audit_is_locked` failed before the monitor API existed.
+- [x] Task / Green: add a named child monitor; poll reads job state without waiting for the child or SQLite terminal record.
+- [x] Verify affected local suites: `cargo test --locked --offline --features native-ui-probe --lib --test native_ui_probe --test source_layout` passes 98 tests across three suites; warning-denied all-target Clippy passes. The unrestricted all-tests command was stopped after running silently for over a minute.
+- [x] Record formatting, diff, and 300-line checks; refresh Graphify (11,888 nodes / 19,421 edges).
+- [ ] Save the completed unit to AgentMemory and update #257 / PR #294 progress.
+- [ ] Commit and push this unit on the issue branch.

@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 use std::{
     fs,
     path::{Path, PathBuf},
-    sync::Mutex,
+    sync::{Arc, Mutex},
 };
 
 /// Local startup state. Only explicit native requests launch a trusted CLI child.

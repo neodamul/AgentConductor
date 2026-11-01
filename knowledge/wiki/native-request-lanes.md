@@ -36,3 +36,7 @@ Workspace snapshot application compares each local setting draft with the previo
 ## Task-progress spool observation
 
 The task-progress spool observer starts at 100 ms, doubles its delay up to 2 seconds while no bytes arrive, and resets to 100 ms as soon as output resumes. At process completion it continues draining while bytes remain, even when a final JSONL record is partial, then flushes the decoder. This lowers idle file/database reads without adding a runtime or dropping final progress.
+
+## Coordinator process completion
+
+The native request worker must never wait for a coordinator child or for terminal SQLite audit persistence. A named standard-library monitor thread owns `Child::wait`, updates the in-memory job state briefly, then writes the owner record and terminal action event outside the job-state lock. Poll requests read the in-memory state and continue reporting `running` until terminal persistence succeeds; a persistence failure is surfaced as a failed job. If monitor thread creation fails, the existing `try_wait` fallback remains available. Regression: `tests/support/controller_job_monitor.rs` holds a SQLite write lock after the child exits and verifies that `Controller::poll` remains responsive until the audit can be saved.

@@ -24,7 +24,7 @@ impl Startup {
         let controller = Controller {
             dir,
             exe: self.broker.exe.clone(),
-            job: Mutex::new(None),
+            job: Arc::new(Mutex::new(None)),
         };
         controller.automatic(enabled)
     }

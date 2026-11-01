@@ -1,22 +1,28 @@
 use super::*;
 
 mod action;
+mod job_monitor;
+#[cfg(test)]
+#[path = "../../tests/support/controller_job_monitor.rs"]
+mod job_monitor_tests;
 mod review;
 pub(super) use action::{Action, ActionRequest};
 
 pub(super) struct Job {
     pub(super) id: String,
     pub(super) label: String,
-    pub(super) child: Child,
+    pub(super) child: Arc<Mutex<Child>>,
     pub(super) logs: PathBuf,
     pub(super) owner: Ownership,
     pub(super) exit: Option<i32>,
     pub(super) finished: bool,
+    pub(super) monitoring: bool,
+    pub(super) audit_error: Option<String>,
 }
 pub(super) struct Controller {
     pub(super) dir: PathBuf,
     pub(super) exe: PathBuf,
-    pub(super) job: Mutex<Option<Job>>,
+    pub(super) job: Arc<Mutex<Option<Job>>>,
 }
 impl Controller {
     pub(super) fn recovery_preview(
@@ -42,14 +48,27 @@ impl Controller {
         let Some(job) = slot.as_mut() else {
             return Ok(serde_json::Value::Null);
         };
-        if !job.finished
-            && let Some(status) = job.child.try_wait().map_err(|e| e.to_string())?
+        if !job.finished && !job.monitoring {
+            self.poll_unmonitored(job)?;
+        }
+        let failed = job.audit_error.is_some() || job.exit != Some(0);
+        Ok(
+            serde_json::json!({"id":job.id,"kind":job.label,"state":if !job.finished {"running"} else if !failed {"completed"} else {"failed"},"exit_code":job.exit,"termination_signal":job.owner.termination_signal,"error":job.audit_error.clone().unwrap_or(if job.finished && job.exit!=Some(0){tail(&job.logs.join("stderr.log"),4096)?}else{String::new()})}),
+        )
+    }
+
+    fn poll_unmonitored(&self, job: &mut Job) -> Result<(), String> {
+        if let Some(status) = job
+            .child
+            .lock()
+            .map_err(|_| "UI child process lock is poisoned")?
+            .try_wait()
+            .map_err(|error| error.to_string())?
         {
-            let code = status.code();
-            job.exit = code;
+            job.exit = status.code();
             job.finished = true;
             job.owner.phase = "terminal".into();
-            job.owner.exit_code = code;
+            job.owner.exit_code = status.code();
             #[cfg(unix)]
             {
                 use std::os::unix::process::ExitStatusExt;
@@ -58,13 +77,31 @@ impl Controller {
             record_owner(&job.logs, &job.owner)?;
             Store::open(self.dir.join("state.sqlite"))?.record(
                 "ui_action_result",
-                &serde_json::json!({"id":job.id,"kind":job.label,"exit_code":code,"termination_signal":job.owner.termination_signal}),
-                &crate::ui::messages::render("native.ui_action_finished_with_exit_signal", &[("value1", &job.label.to_string()), ("code", &format!("{:?}", code)), ("value2", &format!("{:?}", job.owner.termination_signal))]),
+                &serde_json::json!({"id":job.id,"kind":job.label,"exit_code":job.exit,"termination_signal":job.owner.termination_signal}),
+                &crate::ui::messages::render("native.ui_action_finished_with_exit_signal", &[("value1", &job.label), ("code", &format!("{:?}", job.exit)), ("value2", &format!("{:?}", job.owner.termination_signal))]),
             )?;
         }
-        Ok(
-            serde_json::json!({"id":job.id,"kind":job.label,"state":if !job.finished {"running"} else if job.exit==Some(0) {"completed"} else {"failed"},"exit_code":job.exit,"termination_signal":job.owner.termination_signal,"error":if job.finished && job.exit!=Some(0){tail(&job.logs.join("stderr.log"),4096)?}else{String::new()}}),
+        Ok(())
+    }
+
+    #[cfg(test)]
+    fn start_job_monitor(&self) -> Result<(), String> {
+        let mut slot = self
+            .job
+            .lock()
+            .map_err(|_| "UI job state is poisoned".to_owned())?;
+        let job = slot
+            .as_mut()
+            .ok_or_else(|| "No UI job to monitor".to_owned())?;
+        job_monitor::start(
+            Arc::clone(&job.child),
+            job.id.clone(),
+            Arc::clone(&self.job),
+            self.dir.clone(),
         )
+        .map_err(|error| error.to_string())?;
+        job.monitoring = true;
+        Ok(())
     }
     pub(super) fn action(&self, request: ActionRequest) -> Result<serde_json::Value, String> {
         if let Action::Stop { reason } = &request.action {
@@ -202,11 +239,13 @@ impl Controller {
         *slot = Some(Job {
             id: id.clone(),
             label: label.into(),
-            child,
+            child: Arc::new(Mutex::new(child)),
             logs: logs.clone(),
             owner,
             exit: None,
             finished: false,
+            monitoring: false,
+            audit_error: None,
         });
         record_owner(&logs, &slot.as_ref().unwrap().owner)?;
         Store::open(self.dir.join("state.sqlite"))?.record(
@@ -217,6 +256,18 @@ impl Controller {
                 &[("value1", label)],
             ),
         )?;
+        if let Some(job) = slot.as_mut()
+            && let Err(error) = job_monitor::start(
+                Arc::clone(&job.child),
+                job.id.clone(),
+                Arc::clone(&self.job),
+                self.dir.clone(),
+            )
+        {
+            eprintln!("could not start coordinator process monitor: {error}");
+        } else if let Some(job) = slot.as_mut() {
+            job.monitoring = true;
+        }
         Ok(serde_json::json!({"accepted":true,"id":id,"kind":label}))
     }
 }
