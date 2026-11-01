@@ -1,5 +1,11 @@
 # PR #22 CI Regression Loop
 
+## MacOS screenshot/test failures — 2026-11-02
+
+Exact-head Platform Validation run `41343840698` failed on macOS in `native_ui_sidebar_quota_layout`: the layout-only egui test ignored output textures, so dropping its `TexturesDelta` panicked. Clear the texture sets in the test after extracting the rendered text; this is test-only cleanup and does not change UI behavior. A local all-target run then exposed the screenshot contract treating historical `ui-*-current.png` files as required current documentation. `screenshots-current.txt` now explicitly lists the three Rust Workspace captures; the docs test checks only that list, and the freshness verifier reads the same list. The outdated agent-settings image was removed from both manuals and the embedded manual viewer. Regenerate the bilingual HTML with `cargo run --locked --offline -- manual render` after editing the Markdown.
+
+The exact-head run had Windows validation still in progress at diagnosis. The fixes pass the full local native-feature suite (1,279 passed, 16 ignored across 394 suites), warning-denied Clippy, formatting, diff hygiene, and the 300-line source-layout test. Push to the existing #22 branch, then check the new exact-head run before recording remote success. Packaged Windows UI acceptance remains unverified.
+
 ## Context
 
 On 2026-11-02, Platform Validation run `41337149176` exposed several regressions on the root Rust migration branch. They were not a single platform failure: the run combined stale contracts from the removed JavaScript UI, locale-sensitive tests, missing localized copy, and two real gaps in the native run snapshot.

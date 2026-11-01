@@ -91,7 +91,6 @@ Saving **Use profile** is asynchronous and closes after success; validation erro
 Changing execution settings requires reviewing a plan again. Metadata-only refresh does not invalidate it.
 One metadata collector runs at a time; queued requests do not block unrelated editing.
 
-![Agent profile and refresh settings](assets/ui-agent-settings-current.png)
 
 
 Saving a custom CLI applies the mode in which the CLI approves its own tool use automatically; no checkbox is needed. Plan and final merge approval remain required. Explicit read-only or external-sandbox profiles retain their restrictions.

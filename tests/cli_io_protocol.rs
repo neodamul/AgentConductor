@@ -1,6 +1,6 @@
 //! GitHub #207: captured stream and time rules apply across a complete agent session.
 use agentconductor::cli_io::{self, Rules};
-use std::{fs, process::Command};
+use std::fs;
 
 const DIR: &str = "schemas/cli-io/v1";
 

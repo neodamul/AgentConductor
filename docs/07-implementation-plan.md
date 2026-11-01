@@ -1,3 +1,11 @@
+### Close the PR #22 macOS screenshot/test regressions — 2026-11-02
+
+- [x] Plan: inspect the exact-head run `41343840698`; macOS failed at `native_ui_sidebar_quota_layout`, while Windows was still running. The release-doc test also treated every historical `*-current.png` asset as current.
+- [x] Red / Green: confirmed the egui test dropped unapplied texture deltas; clear test-only deltas after extracting layout text. Replace the screenshot wildcard with the explicit current-capture manifest and cover that contract in `release_docs` and `screenshot_freshness` tests.
+- [x] Task: remove the obsolete agent-settings screenshot from both Markdown manuals, rendered HTML manuals, and the native manual viewer. Regenerate HTML through Rust `manual render`.
+- [x] Verify locally: all-target native-feature suite passes 1,279 tests, 16 ignored across 394 suites; warning-denied Clippy, rustfmt, diff checks, and the explicit 300-line source-layout test pass. Changed Rust files remain under 300 lines.
+- [ ] Complete: commit and push this batch to existing PR #22, then verify its exact-head checks. Do not claim Windows acceptance until the packaged UI journey is verified. Issue #9 stays incomplete.
+
 ### Root PR status and event-driven UI verification — 2026-11-02
 
 - [x] GitHub audit: PR #22 is the only open pull request. The Rust migration is not blocked by a pile of open child PRs; it is concentrated in one oversized root PR.

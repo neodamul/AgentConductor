@@ -26,9 +26,11 @@ fn quota_summary_stays_inside_a_narrow_agent_sidebar() {
         .get_mut(&input.viewport_id)
         .unwrap()
         .inner_rect = Some(bounds);
-    let output = context.run_ui(input, |ui| {
+    let mut output = context.run_ui(input, |ui| {
         sidebar::show(&profiles, &snapshot, "en", true, false, ui);
     });
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
     let rendered = output
         .shapes
         .iter()

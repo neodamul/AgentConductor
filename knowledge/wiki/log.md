@@ -1,3 +1,7 @@
+# [2026-11-02] plan/task/verify | Close PR #22 macOS CI regressions
+
+Run `41343840698` identified an egui texture-delta test panic and screenshot freshness checking historical screenshots. Fixed the test cleanup, added an explicit current-capture manifest used by docs and the freshness checker, and removed an obsolete settings image from both manuals and the embedded viewer. Rust-rendered bilingual HTML manuals. Full local all-target native-feature suite: 1,279 passed, 16 ignored across 394 suites; warning-denied Clippy, formatting, diff and 300-line checks pass. Exact-head Windows run was still in progress; this local batch is not packaged Windows acceptance.
+
 # [2026-11-02] pace Windows package goal input | issue #9 / #310
 
 Exact Windows package run `41309723645` passed platform validation and built/executed the release archive, but `default_native_workspace_is_accessible_and_saves_through_ui_automation` persisted an empty goal after Unicode `SendInput`. Added a source-contract regression that failed before the fix, then paced each Unicode key pair by 100 ms. Focused driver, run-lifecycle, source-layout and desktop-contract suites pass 16 tests (1 ignored); rustfmt and diff checks pass. Full local native suite reached 1,029 passed / 15 ignored across 309 suites before it was stopped for runtime, so the command is not claimed complete. Exact package acceptance is still pending. AgentMemory: `mem_mvxzjvkh_e262c47c9cba`; Graphify: 12,159 nodes / 19,847 edges.

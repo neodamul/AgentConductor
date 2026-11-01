@@ -1,5 +1,6 @@
 use std::{
-    env,
+    env, fs,
+    path::Path,
     process::{Command, ExitCode},
 };
 
@@ -27,19 +28,36 @@ fn check(repo: &str) -> Result<(), String> {
     if interface.is_empty() {
         return Ok(());
     }
-    let captured = git(
-        repo,
-        &[
-            "log",
-            "-1",
-            "--format=%H",
-            "--",
-            "docs/assets/ui-*-current.png",
-            "docs/assets/screenshots-current.txt",
-        ],
-    )?;
+    let manifest = Path::new(repo).join("docs/assets/screenshots-current.txt");
+    let current = fs::read_to_string(&manifest)
+        .map_err(|error| format!("Cannot read current screenshot manifest: {error}"))?
+        .lines()
+        .filter_map(|line| line.strip_prefix("- "))
+        .map(str::to_owned)
+        .collect::<Vec<_>>();
+    if current.is_empty() {
+        return Err("The current screenshot manifest contains no image paths.".into());
+    }
+    for name in &current {
+        if !Path::new(repo).join("docs/assets").join(name).is_file() {
+            return Err(format!("Current screenshot docs/assets/{name} is missing."));
+        }
+    }
+    let mut capture_paths = current.iter().map(String::as_str).collect::<Vec<_>>();
+    capture_paths.push("docs/assets/screenshots-current.txt");
+    let mut command = Command::new("git");
+    command
+        .arg("-C")
+        .arg(repo)
+        .args(["log", "-1", "--format=%H", "--"])
+        .args(capture_paths);
+    let output = command.output().map_err(|error| error.to_string())?;
+    if !output.status.success() {
+        return Err(String::from_utf8_lossy(&output.stderr).trim().to_owned());
+    }
+    let captured = String::from_utf8_lossy(&output.stdout).trim().to_owned();
     if captured.is_empty() {
-        return Err("No captured screen exists under docs/assets/ui-*-current.png.".into());
+        return Err("No current screenshot or manifest change exists in Git history.".into());
     }
     if git(
         repo,
@@ -55,7 +73,7 @@ fn check(repo: &str) -> Result<(), String> {
         .collect::<Vec<_>>()
         .join(", ");
     Err(format!(
-        "The native UI changed in {} ({changed}) after screens were captured or confirmed in {}. Recapture docs/assets/ui-*-current.png, or commit docs/assets/screenshots-current.txt if the screens still match.",
+        "The native UI changed in {} ({changed}) after current screens were captured or confirmed in {}. Recapture the images listed in docs/assets/screenshots-current.txt, or update that manifest if the screens still match.",
         &interface[..interface.len().min(8)],
         &captured[..captured.len().min(8)]
     ))

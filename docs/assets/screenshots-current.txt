@@ -1,2 +1,5 @@
-The captured screens in this folder match the interface of 0.1.51.
-Checked 2026-11-01 against the changes since they were captured (#279, #285): they only add progress text shown while work runs, which is not on a captured screen.
+Current public captures for the Rust-native Workspace UI. The older UI captures in this folder are historical and are not part of the release freshness check.
+
+- ui-workspace-current.png
+- ui-workspace-korean-current.png
+- ui-workspace-dark-current.png

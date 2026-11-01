@@ -55,6 +55,11 @@ fn a_capture_after_the_last_native_ui_change_passes() {
     commit(&root, "native view");
     fs::create_dir_all(root.join("docs/assets")).unwrap();
     fs::write(root.join("docs/assets/ui-test-current.png"), "capture").unwrap();
+    fs::write(
+        root.join("docs/assets/screenshots-current.txt"),
+        "Current screenshots\n- ui-test-current.png\n",
+    )
+    .unwrap();
     commit(&root, "capture screen");
     assert!(check(&root).status.success());
     fs::remove_dir_all(root).unwrap();
@@ -68,13 +73,22 @@ fn a_later_native_ui_change_fails_until_screens_are_confirmed() {
     commit(&root, "native view");
     fs::create_dir_all(root.join("docs/assets")).unwrap();
     fs::write(root.join("docs/assets/ui-test-current.png"), "capture").unwrap();
+    fs::write(
+        root.join("docs/assets/screenshots-current.txt"),
+        "Current screenshots\n- ui-test-current.png\n",
+    )
+    .unwrap();
     commit(&root, "capture screen");
     fs::write(root.join("src/native_ui_probe/view.rs"), "changed screen").unwrap();
     commit(&root, "change native view");
     let stale = check(&root);
     assert!(!stale.status.success());
     assert!(String::from_utf8_lossy(&stale.stderr).contains("native UI changed"));
-    fs::write(root.join("docs/assets/screenshots-current.txt"), "reviewed").unwrap();
+    fs::write(
+        root.join("docs/assets/screenshots-current.txt"),
+        "Reviewed\n- ui-test-current.png\n",
+    )
+    .unwrap();
     commit(&root, "confirm current screenshots");
     assert!(check(&root).status.success());
     fs::remove_dir_all(root).unwrap();
