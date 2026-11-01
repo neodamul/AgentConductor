@@ -23,7 +23,7 @@ When the event bridge is unavailable, the Rust listener now fingerprints files b
 
 ## Coordinator chat timeout PR reconciliation — #234 / #239 / #240
 
-Main bug #234 is closed by merged PR #240. Rust `chat_revision`, chat-before-mutation-revision routing, and bounded request diagnostics are present in the #260 base and current Rust candidate; the `startup_chat` and `request_diagnostics` suites pass 9 tests on the current candidate. PR #239 remains an open, unmergeable draft on an older base. Its dedicated slow-`rev-parse` dispatch regression is not in #260, although equivalent source behavior is present. Keep the PR tracked until this test gap and exact package evidence are reconciled; do not duplicate the source fix. Current PR mergeability states and the follow-up disposition are recorded in `docs/07-implementation-plan.md`.
+Main bug #234 is closed by merged PR #240. Rust `chat_revision`, chat-before-mutation-revision routing, and bounded request diagnostics are present in the #260 base and current Rust candidate; the `startup_chat` and `request_diagnostics` suites pass 9 tests on the current candidate. PR #239 remains an open, unmergeable draft on an older base. Its dedicated slow-`rev-parse` dispatch regression exists on PR head `22c0e889`; `startup_chat`, `request_diagnostics`, and `source_layout` pass 6 tests on that branch. The regression is absent from #260, so port/rebase the test into the current candidate and complete exact package verification before closing the PR. Do not duplicate the source fix. Current PR mergeability states and the follow-up disposition are recorded in `docs/07-implementation-plan.md`.
 
 ## Full local Rust test suite — issue #9 / 2026-10-29
 
