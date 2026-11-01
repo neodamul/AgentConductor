@@ -26,8 +26,9 @@ fn launcher_selection_skips_hidden_and_disabled_buttons() {
 #[test]
 fn chat_edit_lookup_handles_a_window_that_is_not_ready_yet() {
     let chat_edit = script::SCRIPT
-        .split("function ChatEdit() {")
+        .split("function ChatEdit(")
         .nth(1)
+        .and_then(|tail| tail.split(") {\n").nth(1))
         .and_then(|tail| tail.split("\n}").next())
         .expect("chat editor selector in UI automation script");
 

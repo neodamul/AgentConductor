@@ -1,12 +1,19 @@
-### Fix packaged Windows default-workspace input gate — issue #9 / #310 / 2026-11-02
+### Fix packaged Windows default-workspace input gate — issue #9 / 2026-11-02
 
 - [x] Plan: inspect failed exact package run `41309723645`; Windows UI Automation focused the goal field but persisted an empty value after the driver sent `Windows UIA goal`.
 - [x] Red / Green: the new driver contract failed before the fix because Unicode input had no pacing; one 100 ms delay after each character pair now keeps the existing post-entry settle and persisted-value assertion.
 - [x] Verify locally: Windows driver, run-lifecycle, source-layout, and desktop contract suites pass 16 tests with one ignored; rustfmt and diff checks pass; changed test files are 202 and 193 lines. The all-target native suite observed 1,029 passed / 15 ignored across 309 suites before it was stopped for runtime; no test failure was observed, but this is not counted as a completed command.
 - [x] Integrate: commit `70d8f409` is pushed to the active #9 branch and recorded on #9, #310, and PR #260.
-- [ ] Verify package: the previous exact Windows package failed to persist the goal text. Exact-head run `41321569450` was cancelled after more than six minutes in native build/test validation; its native-package job had zero steps and never ran. Rerun package acceptance with the release-level Windows validation before closing #310.
+- [ ] Verify package: the previous exact Windows package failed to persist the goal text. Exact-head run `41321569450` was cancelled after more than six minutes in native build/test validation; its native-package job had zero steps and never ran. Rerun the exact package acceptance before counting this #9 workflow.
 - [x] Assetize: document the packaged-driver boundary in the LLM Wiki and save AgentMemory `mem_mvxzjvkh_e262c47c9cba`; Graphify refreshed to 12,159 nodes / 19,847 edges.
 - [x] Record local-first CI decision in AgentMemory `mem_mvxzuhf9_3fb94bacea78`; do not treat the cancelled workflow as acceptance evidence.
+
+### Pass the run directory to the Windows schedule driver — bug #310 / 2026-11-02
+
+- [x] Plan / Task: the PowerShell driver reads `AC_RUN_DIR`; pass the same package run directory used by the app along with its process ID.
+- [x] TDD / Verify: the current #260 branch contains the helper and regression introduced by `1123a340`; `cargo test --locked --offline --test windows_schedule` passes 3 tests locally.
+- [x] Integrate: the fix is already in the existing #260 Rust branch; no additional PR was opened. The related PR #311 was closed without merge, so its closure alone is not proof of acceptance.
+- [ ] Exact package: the packaged Windows schedule journey has not been run on this head. Keep bug #310 open until that test passes.
 
 ### Port Windows managed-workspace package probe — issue #226 / #9 / 2026-11-02
 
@@ -6837,7 +6844,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Diagnose Windows blocker from #304 run `41306779270` and port the keyboard-activation correction to the #9 integration branch.
 - [x] Update issue #295, PR #304, issue #9, and PR #260 with the root cause, integration commits, and current exact-head run links.
 - [x] Run `41309135388` failed the Windows build step; code inspection found the stale Windows-only timeout-helper call, now covered by a failing-then-passing regression test and fixed locally.
-- [ ] Keep #295/#304 open until quota behavior and corrected UIA driver pass the next exact-head Windows/macOS platform/package run. CocoIndex is installed but blocked by `ModuleNotFoundError: mcp.server.fastmcp`.
+- [x] Status correction: GitHub has closed bug #295 and draft PR #304; do not report either as open. #297 remains open for exact package/runtime acceptance.
 
 ### GitHub #297 — Wait for slow Claude quota queries
 - [x] Plan: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213; retain existing CLI login and do not request generation.
@@ -6849,6 +6856,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Commit/push #297 port as `6e9e73eb`; update issue #295/#297, PR #303/#304, issue #9, and PR #260 with current status.
 - [x] Run `41309135388` exposed the Windows-only stale timeout-helper call; the new regression test failed before the fix and passes after both timeout paths receive the configured deadline.
 - [x] Verify locally after the fix: 36 focused suites/tests, warning-denied Clippy, rustfmt, and diff hygiene pass.
+- [x] Reverify current #260 head `d802a9fa`: `claude_wait` 3/3 and `native_ui_quota_elapsed` 2/2 pass; the bounded 60-second query and elapsed indicator remain in the integration branch.
 - [ ] Cross-platform: confirm the next exact-head Windows and macOS package checks; then close #297 and stacked PR #303 as superseded only after behavior is verified in the integration branch.
 
 ### 2026-11-01 — Keep coordinator chat alive across desktop close — issue #189 / #9
@@ -6858,6 +6866,8 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Follow-up Red: `windows_background_fallback` failed to compile because no policy distinguished host-job membership from a safe fallback.
 - [x] Task: start only `chat` UI jobs with Windows breakaway process flags. On access denied, allow the hidden-child fallback only when `IsProcessInJob` confirms the app is outside any host job; if membership is true or cannot be checked, persist `not_spawned` and return an explicit error. Retain normal ownership for other actions and skip the messenger flush for chat workers.
 - [x] Local Verify: `windows_background_fallback` (1), `chat_worker_lifecycle` (2), library and source-layout suites pass (85 total); rustfmt, diff check, warning-denied all-target Clippy pass. The Windows package harness was added but is not executed on macOS (0 platform tests run).
+- [x] Recheck #189 on the current #260 head: 14 focused chat/lifecycle/accessibility tests pass. TDD exposed that `windows_chat_script_contract` parsed only a zero-argument `ChatEdit()` declaration; update the test parser to accept the script's optional parameter while retaining its null-window assertion. Exact Windows package acceptance remains open.
+- [x] Assetize current bug audit in AgentMemory `mem_mvy0nic1_43f5859b441b`; Graphify refreshed to 12,321 nodes / 20,118 edges. Exact package/runtime gates remain open for #189, #226, #297, and #310.
 - [x] Full local Verify: `cargo test --all-targets --locked --offline --features native-ui-probe -j 2` passed on macOS; the Windows-only package harness compiled with 0 tests selected on this host. `cargo clean` then removed the completed 14.2 GiB build cache.
 - [x] Windows package failure triage: #260 run 41270341316 completed all native validation and macOS package checks, but the Windows run-lifecycle journey could not find the stop-reason editor. Its UIA driver searched hidden/offscreen process windows. Added a red/green contract test and filtered both top-level windows and controls by visibility; timeout diagnostics now list matching process windows.
 - [ ] Re-run exact Windows package journeys on the updated PR head; confirm the stop dialog is found and chat close/reopen still works when breakaway succeeds.
