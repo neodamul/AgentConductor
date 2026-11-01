@@ -41,6 +41,28 @@ fn goal_driver_types_each_character_before_saving() {
 }
 
 #[test]
+fn goal_driver_reports_focused_control_and_text_when_input_is_lost() {
+    let source = include_str!("windows_desktop.rs");
+    assert!(source.contains("[System.Windows.Automation.AutomationElement]::FocusedElement"));
+    assert!(source.contains("[System.Windows.Automation.TextPattern]::Pattern"));
+    assert!(source.contains("GOAL_FOCUS_AFTER_INPUT:"));
+    assert!(source.contains("GOAL_TEXT_AFTER_INPUT:"));
+    assert!(source.contains("driver output: {report}"));
+}
+
+#[test]
+fn goal_driver_waits_for_enabled_controls_and_keyboard_focus_before_typing() {
+    let source = include_str!("windows_desktop.rs");
+    let wait_enabled = source.find("$goal.Current.IsEnabled -or -not $save.Current.IsEnabled");
+    let focus = source.find("$goal.SetFocus()");
+    let wait_focus = source.find("-not $goal.Current.HasKeyboardFocus");
+    let type_goal = source.find("foreach ($character in 'Windows UIA goal'.ToCharArray())");
+    assert!(wait_enabled.is_some_and(|index| Some(index) < focus));
+    assert!(focus.is_some_and(|index| Some(index) < wait_focus));
+    assert!(wait_focus.is_some_and(|index| Some(index) < type_goal));
+}
+
+#[test]
 fn exact_package_includes_the_candidate_review_and_merge_journey() {
     let workflow = include_str!("../.github/workflows/platform-validation.yml");
     let driver = include_str!("support/windows_candidate_review_script.rs");

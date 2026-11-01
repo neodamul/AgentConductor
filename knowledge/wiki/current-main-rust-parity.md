@@ -38,11 +38,16 @@ against the old 40/250 ms implementation, then passed with the fix. Commit
 `b2dfeb576d12096396f19be37126491983a2a0bf` is now pushed to PR #260; PR #311 is synchronized
 at `37569d5c3eb146fa11014f83be3531790b84ec3e`.
 
-Exact-head runs #260 `41304824092` and #311 `41304840330` are active. At the latest poll,
-#260 macOS validation passed and Windows was executing native tests; both #311 platform jobs
-remained active (macOS native UI launch validation, Windows native build/tests). The 22
-focused local tests pass, but neither current Windows packaged journey is verified until its
-run completes.
+Run #311 `41304840330` completed with Windows `default_native_workspace_is_accessible_and_saves_through_ui_automation`
+failing: the persisted goal was only `Win`, expected `Windows UIA goal`, even with 100 ms per
+character and a 750 ms settle. The #310 diagnosis found that the test began typing while the
+Goal/Save controls could still be disabled by initial `Pending::Refresh`. A new red/green
+source-contract now makes the driver wait for both controls to enable, then confirm keyboard
+focus before typing; it emits focused-control and TextPattern readback if persistence fails.
+Local Windows-driver contracts pass 11/11, source-layout 2/2, formatting/diff checks pass;
+the two touched test files total 300 lines. This is driver-only evidence; the exact Windows
+rerun is still required. Background snapshot draft overwrite remains a separate unproven risk.
+Current #260 exact-head run `41306529259` is active; its Windows package acceptance is pending.
 
 ## Enterprise quota parser coverage — bug #295 / 2026-11-01
 

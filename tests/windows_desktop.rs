@@ -36,8 +36,23 @@ while ((Get-Date) -lt $deadline -and -not ($heading -and $goal -and $save)) {
 if (-not $heading) { Write-Output 'NO_HEADING'; $window.FindAll($T::Descendants, $C) | Select-Object -First 30 | ForEach-Object { Write-Output $_.Current.Name }; exit 3 }
 if (-not $goal) { Write-Output 'NO_GOAL'; exit 4 }
 if (-not $save) { Write-Output 'NO_SAVE'; exit 5 }
-Start-Sleep -Milliseconds 300
+$readyDeadline = (Get-Date).AddSeconds(20)
+while ((Get-Date) -lt $readyDeadline -and (-not $goal.Current.IsEnabled -or -not $save.Current.IsEnabled)) {
+  Start-Sleep -Milliseconds 100
+}
+if (-not $goal.Current.IsEnabled -or -not $save.Current.IsEnabled) {
+  Write-Output "CONTROLS_NOT_ENABLED:$($goal.Current.IsEnabled):$($save.Current.IsEnabled)"
+  exit 6
+}
 $goal.SetFocus()
+$focusDeadline = (Get-Date).AddSeconds(3)
+while ((Get-Date) -lt $focusDeadline -and -not $goal.Current.HasKeyboardFocus) {
+  Start-Sleep -Milliseconds 50
+}
+if (-not $goal.Current.HasKeyboardFocus) {
+  Write-Output 'GOAL_FOCUS_FAILED'
+  exit 7
+}
 [System.Windows.Forms.SendKeys]::SendWait('^a')
 Start-Sleep -Milliseconds 100
 foreach ($character in 'Windows UIA goal'.ToCharArray()) {
@@ -45,6 +60,14 @@ foreach ($character in 'Windows UIA goal'.ToCharArray()) {
   Start-Sleep -Milliseconds 100
 }
 Start-Sleep -Milliseconds 750
+$focused = [System.Windows.Automation.AutomationElement]::FocusedElement
+$goalText = 'TEXT_PATTERN_UNAVAILABLE'
+try {
+  $textPattern = $goal.GetCurrentPattern([System.Windows.Automation.TextPattern]::Pattern)
+  $goalText = $textPattern.DocumentRange.GetText(-1) -replace '[\r\n]', ' '
+} catch {}
+Write-Output "GOAL_FOCUS_AFTER_INPUT:$($focused.Current.ProcessId):$($focused.Current.ControlType.ProgrammaticName):$($focused.Current.Name)"
+Write-Output "GOAL_TEXT_AFTER_INPUT:$goalText"
 
 $save.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 Write-Output 'DRIVEN'
@@ -97,6 +120,11 @@ fn default_native_workspace_is_accessible_and_saves_through_ui_automation() {
     let _ = app.kill();
     let _ = app.wait();
     assert!(report.contains("DRIVEN"), "UI Automation driver: {report}");
-    assert_eq!(goal, "Windows UIA goal");
+    assert_eq!(
+        goal,
+        "Windows UIA goal",
+        "driver output: {report}; stderr: {}",
+        String::from_utf8_lossy(&driver.stderr)
+    );
     let _ = std::fs::remove_dir_all(dir);
 }
