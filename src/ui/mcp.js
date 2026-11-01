@@ -1,5 +1,5 @@
 // DD-68: on-demand configuration; DD-138 coordinator-selected document reads.
-function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,showStep}) {
+function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,showStep,stale=()=>''}) {
  let shown=null,review=null,suggestionsStamp=null,sourceCount=0,pendingDiscovery=null,previewing=false,failedShown=null,goalStamp=null,goalRangeStamp=null;const catalogs=new Map(),notes=new Map();
  // Goal references (jira:KEY, confluence:ID) are drawn as tags behind the editable text, so they
  // stay plain text to type or delete; hovering one shows its title and summary once read.
@@ -44,7 +44,9 @@ function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,sh
   const s=state();if(!s)return;const job=s.job,goal=draft()?.goal??s.config.goal;
   // An MCP lookup in progress is visible beside the source buttons and in the open windows.
   const looking=job?.kind==='mcp'&&job.state==='running';q('source-status').classList?.toggle('mcp-busy',looking);
-  if(looking&&pendingDiscovery)AC_I18N.text(q('mcp-tools'),()=>acMessage('mcp.loading_tools'));
+  // GitHub #279: the lookup counts from its start and says when the app sends no new state; the spinner alone keeps turning.
+  const late=looking?stale():'',since=looking?' '+AC_ELAPSED(job.started_ms||Date.now())+(late?' · '+late:''):'';q('mcp-loading-time').textContent=since;
+  if(looking&&pendingDiscovery)AC_I18N.text(q('mcp-tools'),()=>acMessage('mcp.loading_tools')+since);
   if(job?.kind==='mcp'&&['failed','interrupted','stopped'].includes(job.state)&&job.id!==failedShown&&(previewing||pendingDiscovery)){
    failedShown=job.id;const error=String(job.error||'').replace(/^agentconductor:\s*/,'').trim();
    if(previewing){previewing=false;q('mcp-loading').hidden=true;AC_I18N.bind(q('mcp-failures'),()=>acMessage('mcp.lookup_failed',{value1:error||job.state}));q('mcp-failures').hidden=false;}
@@ -52,7 +54,7 @@ function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,sh
   }
   if(goal!==suggestionsStamp)updateSourceSuggestions(goal);
   q('mcp-preview').disabled=job?.state==='running'||!sourceCount;
-  AC_I18N.bind(q('source-status'),()=>looking?acMessage('mcp.lookup_running'):s.imports?acMessage('mcp.applied_sources',{value1:s.imports.selected.length}):sourceCount?acMessage('mcp.references_to_preview',{value1:sourceCount}):'');
+  AC_I18N.bind(q('source-status'),()=>looking?acMessage('mcp.lookup_running')+since:s.imports?acMessage('mcp.applied_sources',{value1:s.imports.selected.length}):sourceCount?acMessage('mcp.references_to_preview',{value1:sourceCount}):'');
   q('mcp-settings').disabled=job?.state==='running';
   if(job?.kind==='mcp'&&job.state==='completed'&&job.id!==shown&&s.mcp_result){
    shown=job.id;const result=s.mcp_result;

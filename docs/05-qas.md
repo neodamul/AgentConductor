@@ -801,3 +801,7 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188 → QAS-194 → DD-208.
 ### QAS-195 The header cannot fall behind again
 `tests/manual_renderer.rs` fails when either manual header differs from `CARGO_PKG_VERSION`; the captures are the same size as before (1280×892).
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209. GitHub #277, user, 2026-10-31.
+
+### QAS-196 The waits keep counting and report silence
+In the bridge simulator: a chat running for 120 s when the page reopens shows about 2:00; with the bridge not answering, the chat line, the rewrite status, the MCP dialog and the source status keep counting and say how long no state came, within 6 s; the update dialog counts while checking and installing. Unit tests cover `AC_ELAPSED`, the chat, rewrite and MCP texts and the timer wiring.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, user, 2026-11-01.

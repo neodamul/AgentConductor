@@ -47,6 +47,13 @@ const line = call('startText', { kind: 'start', state: 'running', started_ms: no
 assert.ok(line.includes('2:05'), line);
 assert.ok(call('startText', null, now, now - 7000).includes('0:07'));
 
+// GitHub #279: waits outside planning and execution count from their start too.
+vm.runInContext(grab(i18n, 'const AC_ELAPSED=') + 'this.AC_ELAPSED=AC_ELAPSED;', context);
+assert.equal(context.AC_ELAPSED(now - 65000, now), '1:05');
+assert.equal(context.AC_ELAPSED(now + 3000, now), '0:00', 'a clock behind the start is not negative');
+for (const phase of ["'checking'", "'installing'"]) assert.ok(startup.includes('updateSince(' + phase), `the update dialog counts the ${phase} time`);
+assert.ok(/setInterval\(\(\)=>\{[^\n]*chat\.tick\(\)[^\n]*optimize\.update\(\)[^\n]*sources\.update\(\)[^\n]*renderUpdate\(\)/.test(startup), 'the 1 s timer redraws chat, rewrite, lookup and update');
+
 // The start is sent to the right element (it threw before sending since #38).
 assert.ok(!startup.includes("'start-run-progress')"), 'q() adds the start- prefix itself');
 console.log('progress runtime: pending reasons, verification, run attention, staleness and start time are shown');

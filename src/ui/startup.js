@@ -9,9 +9,10 @@
  const quotaRefreshed=new Map();const addedAgents=new Set();let workspaceEpoch=0;let queuedInitial=false;let providerChanged=false;let reviewedPlan=null,watchedJob=null,state=null,draft=null,dirty=false,planDirty=false,home=true,polling=false,mutating=false,maintenance=false,profileStamp='',planStamp='',agentIndex=-1,catalogAgent=null,autoOpen=false,initialRouted=false,lastJob=null;
  function notice(text,error=false){if(error&&q('agent-dialog').open){AC_I18N.text(q('agent-error'),text);q('agent-error').className='notice error';}AC_I18N.text(q('notice'),text);q('notice').className='notice'+(error?' error':'');q('notice').hidden=false;clearTimeout(notice.timer);notice.timer=setTimeout(()=>q('notice').hidden=true,error?12000:5000);}
  async function request(packet,limit=15000){const bridge=window.webkit?.messageHandlers?.agentconductor??(window.__acRequest?{postMessage:window.__acRequest}:null);if(!bridge)throw Error(acMessage("startup.native_bridge_unavailable"));let timer,visibility,remaining=limit,started=0;const began=Date.now();try{return JSON.parse(await Promise.race([bridge.postMessage(JSON.stringify(packet)),new Promise((_,reject)=>{const resume=()=>{if(timer||document.hidden)return;started=performance.now();const deadline=started+remaining,grace=Math.min(5000,limit/4);timer=setTimeout(()=>{timer=null;if(document.hidden||performance.now()-deadline>grace){remaining=limit;resume();return;}try{Promise.resolve(bridge.postMessage(JSON.stringify({kind:'client_timeout',of:packet.kind,waited:Date.now()-began,hidden:document.hidden}))).catch(()=>{});}catch(_){}reject(Object.assign(Error(acMessage("startup.native_response_timed_out_refresh_before_retrying",{value1:packet.kind})),{transport:true}));},remaining);};const pause=()=>{if(!timer)return;clearTimeout(timer);timer=null;remaining=Math.max(1,remaining-(performance.now()-started));};visibility=()=>document.hidden?pause():resume();document.addEventListener('visibilitychange',visibility);resume();})]));}finally{clearTimeout(timer);if(visibility)document.removeEventListener('visibilitychange',visibility);}}
- const sources=mcpUi({q,el,request,action,save,mark,capture,poll,state:()=>state,draft:()=>draft,notice,showStep});
- const chat=chatUi({q,request,state:()=>state,notice});
- const optimize=optimizeUi({q,request,state:()=>state,notice,busy:()=>busy(),applyGoal:text=>{q('goal').value=text;q('goal').dispatchEvent(new Event('input'));}});
+ const stale=()=>AC_STALE(lastSnapshotAt);
+ const sources=mcpUi({q,el,request,action,save,mark,capture,poll,state:()=>state,draft:()=>draft,notice,showStep,stale});
+ const chat=chatUi({q,request,state:()=>state,notice,stale});
+ const optimize=optimizeUi({q,request,state:()=>state,notice,stale,busy:()=>busy(),applyGoal:text=>{q('goal').value=text;q('goal').dispatchEvent(new Event('input'));}});
  q('goal-field').after(q('mcp-controls'));q('mcp-controls').after(q('source-suggestions'));q('source-suggestions').after(q('optimize-controls'));
  const busy=()=>mutating||maintenance||!!planStarting||startPending||state?.job?.state==='running';
  const metadataBusy=(kind,agent)=>state?.metadata_job?.state==='running'&&state.metadata_job.kind===`${kind}:${agent}`||(state?.metadata_queue||[]).some(p=>p.kind===kind&&p.agent===agent);
@@ -186,11 +187,13 @@ q('read-plan').onclick=async()=>{if(!await save())return;if(!await ensureBaselin
   document.addEventListener('pointerdown',e=>{if(q('workspace-list').hidden)return;if(q('workspace-list').contains(e.target)||q('workspace-menu').contains(e.target))return;closeWorkspaces();});
   // DD-135: GitHub releases are checked in the background every 10 minutes; a newer one shows
   // the update icon left of Settings. The icon and the menu open the same update dialog.
-  let update=null,updateWatch=null;
-  function renderUpdate(){const u=update;if(!u)return;const b=q('update-button');b.hidden=!u.newer;const label=()=>(acMessage("startup.update_available",{value1:u.latest}));AC_I18N.bind(b,label,"title");AC_I18N.bind(b,label,"aria-label");
-    AC_I18N.bind(q('update-title'),()=>(u.phase==='checking'?acMessage("startup.update_checking"):u.newer?acMessage("startup.update_newer"):u.error?acMessage("startup.update_failed",{value1:u.error}):acMessage("startup.update_up_to_date")));
+  let update=null,updateWatch=null,updatePhase=null,updatePhaseAt=0;
+  // GitHub #279: a check or an install counts from the moment this page first saw its phase.
+  const updateSince=phase=>update?.phase===phase?' '+AC_ELAPSED(updatePhaseAt):'';
+  function renderUpdate(){const u=update;if(!u)return;if(u.phase!==updatePhase){updatePhase=u.phase;updatePhaseAt=Date.now();}const b=q('update-button');b.hidden=!u.newer;const label=()=>(acMessage("startup.update_available",{value1:u.latest}));AC_I18N.bind(b,label,"title");AC_I18N.bind(b,label,"aria-label");
+    AC_I18N.bind(q('update-title'),()=>(u.phase==='checking'?acMessage("startup.update_checking")+updateSince('checking'):u.newer?acMessage("startup.update_newer"):u.error?acMessage("startup.update_failed",{value1:u.error}):acMessage("startup.update_up_to_date")));
     AC_I18N.bind(q('update-versions'),()=>(acMessage("startup.update_installed_version",{value1:u.current})+(u.latest?' · '+acMessage("startup.update_latest_version",{value1:u.latest}):'')));
-    AC_I18N.bind(q('update-state'),()=>(['installing','restarting'].includes(u.phase)?acMessage("startup.update_installing"):u.newer&&u.error?acMessage("startup.update_failed",{value1:u.error}):u.newer&&!u.installable?acMessage("startup.update_unsupported"):''));
+    AC_I18N.bind(q('update-state'),()=>(['installing','restarting'].includes(u.phase)?acMessage("startup.update_installing")+updateSince('installing'):u.newer&&u.error?acMessage("startup.update_failed",{value1:u.error}):u.newer&&!u.installable?acMessage("startup.update_unsupported"):''));
     q('update-notes').hidden=!u.page;AC_I18N.bind(q('update-notes'),()=>(u.page?acMessage("startup.update_release_notes")+': '+u.page:''));
     q('update-body').hidden=!u.notes;AC_I18N.bind(q('update-body'),u.notes||'');
     q('update-apply').hidden=!u.installable;q('update-apply').disabled=u.phase!=='idle';}
@@ -214,6 +217,6 @@ q('read-plan').onclick=async()=>{if(!await save())return;if(!await ensureBaselin
   // GitHub #273 (DD-208): running work and the age of the last snapshot are redrawn every second, without waiting for a reply.
   function renderStatus(){if(!state)return;const stale=AC_STALE(lastSnapshotAt);AC_I18N.bind(q('status'),()=>(stale||(state.job?.state==='running'&&!state.job.kind.startsWith('quota:')?acMessage("startup.in_progress_a0dd34", {value1:state.job.kind}):acMessage("startup.local_workspace")+state.root)));q('status').classList.toggle('stale',!!stale);}
   q('step-progress').onclick=()=>showStep('review');
-  setInterval(()=>{if(document.hidden||!state)return;if(startPending||state.job?.state==='running')planProgress();renderStatus();},1000);
+  setInterval(()=>{if(document.hidden||!state)return;if(startPending||state.job?.state==='running')planProgress();renderStatus();chat.tick();optimize.update();if(state.job?.kind==='mcp')sources.update();if(q('update').open&&['checking','installing'].includes(update?.phase))renderUpdate();},1000);
   poll(true).then(schedule);
 })();

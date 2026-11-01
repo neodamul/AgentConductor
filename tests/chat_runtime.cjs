@@ -13,7 +13,9 @@ const make = () => {
 };
 const tick = () => new Promise(r => setTimeout(r, 0));
 const context = vm.createContext({ document: { createElement: node }, Date, acMessage: (id, v = {}) => id + (v.value1 ? ':' + v.value1 : ''), console });
-vm.runInContext(source + ';this.chatUi=chatUi;', context);
+const elapsed = fs.readFileSync('src/ui/i18n.js', 'utf8').split('\n').find(l => l.startsWith('const AC_ELAPSED='));
+assert.ok(elapsed, 'AC_ELAPSED exists (GitHub #279)');
+vm.runInContext(elapsed + source + ';this.chatUi=chatUi;', context);
 const plain = v => JSON.parse(JSON.stringify(v));
 const key = (q, init) => q('chat-input').handlers.keydown({ preventDefault() {}, isComposing: false, shiftKey: false, altKey: false, ...init });
 (async () => {
@@ -106,10 +108,17 @@ const key = (q, init) => q('chat-input').handlers.keydown({ preventDefault() {},
   assert.equal(q('chat').hidden, true);
   // Reopening while the coordinator is still working picks the running chat up, then shows its answer.
   const q2 = make(); stored = [{ role: 'operator', text: 'Where are results?' }];
-  current = { revision: 'rev', chat_revision: 'chat-rev', chat_job: { id: 'job-9', kind: 'chat', state: 'running' }, chat: null };
-  const ui2 = context.chatUi({ q: q2, request: async p => (p.kind === 'chat_history' ? { turns: stored } : { id: 'x' }), state: () => current, notice() {} });
+  current = { revision: 'rev', chat_revision: 'chat-rev', chat_job: { id: 'job-9', kind: 'chat', state: 'running', started_ms: Date.now() - 120000 }, chat: null };
+  let staleText = '';
+  const ui2 = context.chatUi({ q: q2, request: async p => (p.kind === 'chat_history' ? { turns: stored } : { id: 'x' }), state: () => current, notice() {}, stale: () => staleText });
   ui2.update(); await tick();
   assert.equal(q2('chat-send').disabled, true, 'a running chat is adopted');
+  // GitHub #279: its time counts from the job's start, and the 1 s tick says when the app sends no new state.
+  const working = () => q2('chat-log').children.at(-1).textContent;
+  assert.match(working(), /2:0[0-1]$/, working());
+  staleText = 'no new state for 9s'; ui2.tick();
+  assert.match(working(), /2:0[0-1] · no new state for 9s$/, working());
+  staleText = '';
   current = { revision: 'rev', chat_revision: 'chat-rev', chat_job: { id: 'job-9', kind: 'chat', state: 'completed' }, chat: { job: 'job-9', answer: 'In dist/.' } };
   ui2.update();
   assert.deepEqual(plain(ui2.turns().at(-1)), { role: 'assistant', text: 'In dist/.' });

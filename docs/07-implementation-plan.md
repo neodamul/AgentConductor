@@ -2391,3 +2391,10 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify: manual tests, CI of the release PR.
 - [ ] Complete: shipped with v0.1.49.
 
+### Progress of chat, goal rewrite, MCP lookup and app update — GitHub #279
+
+- [x] Plan: second pass of the user request of 2026-10-31. Replaying the remaining waits in `tests/ui_sim` on `main` found: a reopened chat counted from the reopening (120 s shown as 6 s) and stopped counting without a sign while the app was silent; the rewrite status did the same; the MCP dialog, tool discovery and source line had no time at all; the update dialog had none while checking or installing. R-198 → DD-210.
+- [x] Red: `tests/chat_runtime.cjs`, `tests/optimize_runtime.cjs`, `tests/mcp_bindings_runtime.cjs`, `tests/progress_runtime.cjs`.
+- [x] Task: `src/ui/i18n.js` (`AC_ELAPSED`), `src/ui/chat.js`, `src/ui/optimize.js`, `src/ui/mcp.js`, `src/ui/mcp.html`, `src/ui/startup.js`; CHANGELOG.
+- [x] Verify (macOS): node, Rust and Python tests; simulator replay of the four cases after the change (chat 2:06 after reopening and the silence after 9 s, rewrite, MCP dialog and source line, update checking and installing).
+- [ ] Complete: merge and release only on request.

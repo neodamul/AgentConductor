@@ -1603,3 +1603,7 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188 → QAS-194 → DD-208.
 ### DD-209 Test the header, capture from the real page
 The release steps only updated the version sentence, so the header kept 0.1.30 from that release on; a test against the package version makes the bump part of the release gate. The screenshots are taken from the page served by the real dispatcher in a WKWebView (the app's engine) instead of a mock, so they show what the app shows; window chrome is no longer in the picture.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209. GitHub #277, user, 2026-10-31.
+
+### DD-210 Reuse the DD-208 pattern for the remaining waits
+These waits had text, but it was drawn only when a snapshot arrived (chat, rewrite) or not counted at all (MCP, update), so a slow app or a long lookup looked like a hang; the MCP spinner is CSS and turns even when the app is not answering. The same recorded start times and the same snapshot age as DD-208 are used, so no Rust change is needed (`started_ms` is already in every job). The update phases have no recorded start; the page counts from when it first saw the phase, which is the operator's own wait. One elapsed helper replaces the inline m:ss of the rewrite; the chat changes from seconds to m:ss to match.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, user, 2026-11-01.
