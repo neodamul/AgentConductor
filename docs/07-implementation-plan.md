@@ -6801,3 +6801,17 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Run `41309135388` exposed the Windows-only stale timeout-helper call; the new regression test failed before the fix and passes after both timeout paths receive the configured deadline.
 - [x] Verify locally after the fix: 36 focused suites/tests, warning-denied Clippy, rustfmt, and diff hygiene pass.
 - [ ] Cross-platform: confirm the next exact-head Windows and macOS package checks; then close #297 and stacked PR #303 as superseded only after behavior is verified in the integration branch.
+
+### 2026-11-01 — Keep coordinator chat alive across desktop close — issue #189 / #9
+
+- [x] Plan: use existing R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177. Add DD-210 to keep the one-shot coordinator chat worker independent from the desktop lifetime while preserving the current multi-lane native UI request pool. Do not take #192's single `sync_channel(1)` worker regression.
+- [x] Red: `chat_worker_lifecycle` initially failed to compile because the background-chat policy, maintenance exit classification, and detached command were absent.
+- [x] Follow-up Red: `windows_background_fallback` failed to compile because no policy distinguished host-job membership from a safe fallback.
+- [x] Task: start only `chat` UI jobs with Windows breakaway process flags. On access denied, allow the hidden-child fallback only when `IsProcessInJob` confirms the app is outside any host job; if membership is true or cannot be checked, persist `not_spawned` and return an explicit error. Retain normal ownership for other actions and skip the messenger flush for chat workers.
+- [x] Local Verify: `windows_background_fallback` (1), `chat_worker_lifecycle` (2), library and source-layout suites pass (85 total); rustfmt, diff check, warning-denied all-target Clippy pass. The Windows package harness was added but is not executed on macOS (0 platform tests run).
+- [x] Full local Verify: `cargo test --all-targets --locked --offline --features native-ui-probe -j 2` passed on macOS; the Windows-only package harness compiled with 0 tests selected on this host. `cargo clean` then removed the completed 14.2 GiB build cache.
+- [x] Windows package failure triage: #260 run 41270341316 completed all native validation and macOS package checks, but the Windows run-lifecycle journey could not find the stop-reason editor. Its UIA driver searched hidden/offscreen process windows. Added a red/green contract test and filtered both top-level windows and controls by visibility; timeout diagnostics now list matching process windows.
+- [ ] Re-run exact Windows package journeys on the updated PR head; confirm the stop dialog is found and chat close/reopen still works when breakaway succeeds.
+- [ ] Verify the denied-breakaway branch in the Windows packaged host; confirm the UI reports `not_spawned` and no accepted/running chat is recorded when the desktop runs inside a host job.
+- [ ] Verify exact Windows package: close the desktop during delayed chat, reopen the same workspace, confirm the question and answer restore; also run all tool-decision journeys on this #260-based code.
+- [ ] Complete: keep issue #189 and #9 open, do not increase #9 from 22/50 until exact package evidence.

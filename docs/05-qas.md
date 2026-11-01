@@ -724,8 +724,8 @@ The Settings dialog contains both buttons and their handlers; the workspace menu
 Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
 
 ### QAS-177 The conversation survives and follow-ups work
-Given a stored question and answer, `history` returns both and an unanswered question alone; a 30 KiB earlier answer does not block the next question; the page restores turns, adopts a running chat, recalls earlier questions with Up and clears on New conversation or a workspace change.
-Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
+Given a stored question and answer, `history` returns both and an unanswered question alone; a 30 KiB earlier answer does not block the next question; the page restores turns, adopts a running chat, recalls earlier questions with Up and clears on New conversation or a workspace change. The exact Windows package also proves that a delayed one-shot chat completes after the desktop closes and reopens, restoring the submitted question and answer.
+Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190/DD-210. GitHub #189/#185, 2026-10-27.
 
 ### QAS-178 No dead texts remain
 Given the embedded pages and both message catalogs, none of the removed element classes or keys appears, and every `data-i18n` id used by a page still exists in the catalogs.

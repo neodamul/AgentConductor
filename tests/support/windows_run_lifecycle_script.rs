@@ -10,9 +10,14 @@ $targetPid = [int]$env:AC_DESKTOP_PID
 $deadline = (Get-Date).AddSeconds(30)
 function Find-Control($name, $type) {
   foreach ($window in $A::RootElement.FindAll($T::Children, $C)) {
-    if ($window.Current.ProcessId -ne $targetPid) { continue }
+    $top = $window.Current
+    if ($top.ProcessId -ne $targetPid -or $top.IsOffscreen -or $top.BoundingRectangle.IsEmpty) { continue }
     foreach ($node in $window.FindAll($T::Descendants, $C)) {
-      if ($node.Current.Name -eq $name -and $node.Current.ControlType.ProgrammaticName -eq "ControlType.$type") { return $node }
+      $current = $node.Current
+      if ($current.Name -eq $name -and
+          $current.ControlType.ProgrammaticName -eq "ControlType.$type" -and
+          -not $current.IsOffscreen -and
+          -not $current.BoundingRectangle.IsEmpty) { return $node }
     }
   }
   return $null
@@ -23,7 +28,12 @@ function Wait-Control($name, $type) {
     if ($control) { return $control }
     Start-Sleep -Milliseconds 100
   }
-  throw "CONTROL_NOT_FOUND: $name ($type)"
+  $windows = $A::RootElement.FindAll($T::Children, $C) | Where-Object {
+    $_.Current.ProcessId -eq $targetPid
+  } | ForEach-Object {
+    "name=$($_.Current.Name); offscreen=$($_.Current.IsOffscreen); bounds=$($_.Current.BoundingRectangle)"
+  }
+  throw "CONTROL_NOT_FOUND: $name ($type); windows=$($windows -join ' | ')"
 }
 function Find-EditAfterLabel($name) {
   foreach ($window in $A::RootElement.FindAll($T::Children, $C)) {

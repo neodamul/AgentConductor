@@ -39,7 +39,7 @@
 - [Native Codex subscription and sessions](native-codex-sessions.md): actual stdin/JSONL, exact context resume, concurrent independent sessions and warning evidence.
 
 - [Functional Agent Room](functional-agent-room.md): real fixture interactions, exact-state controls, screenshot and native verification limits.
-- [Native coordinator chat](native-coordinator-chat.md): Workspace chat uses the verified read-only CLI path and Startup's single job slot.
+- [Native coordinator chat](native-coordinator-chat.md): Workspace chat uses the verified read-only CLI path and Startup's single job slot; Windows fallback refuses unsafe or unknown host-job ownership.
 
 - [Native task editor nested selectors](native-task-editor-nested-selectors.md): preserve the task editor across nested egui selectors with independent Area state, accessible labels, and close behavior.
 - [Review task-row visibility](review-task-visibility.md): the full native Review screen displays all three manual-plan task rows at the documented viewport; packaged and Windows confirmation remain open.

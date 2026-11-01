@@ -1,5 +1,17 @@
 use super::*;
 
+fn breakaway_denied(error: &std::io::Error) -> bool {
+    #[cfg(windows)]
+    {
+        error.raw_os_error() == Some(5)
+    }
+    #[cfg(not(windows))]
+    {
+        let _ = error;
+        false
+    }
+}
+
 mod action;
 mod review;
 pub(super) use action::{Action, ActionRequest};
@@ -175,7 +187,14 @@ impl Controller {
             .write(true)
             .open(logs.join("stderr.log"))
             .map_err(|e| e.to_string())?;
-        let mut command = crate::subprocess::command(&self.exe);
+        let background = crate::process::is_background_operation(label);
+        let fallback_out = out.try_clone().map_err(|error| error.to_string())?;
+        let fallback_err = err.try_clone().map_err(|error| error.to_string())?;
+        let mut command = if background {
+            crate::subprocess::background_command(&self.exe)
+        } else {
+            crate::subprocess::command(&self.exe)
+        };
         command
             .args(args)
             .stdin(Stdio::null())
@@ -190,10 +209,48 @@ impl Controller {
         record_owner(&logs, &owner)?;
         let child = match command.spawn() {
             Ok(child) => child,
-            Err(e) => {
+            Err(error) if background && breakaway_denied(&error) => {
+                let is_in_host_job = match crate::subprocess::current_process_is_in_host_job() {
+                    Ok(value) => value,
+                    Err(query_error) => {
+                        owner.phase = "not_spawned".into();
+                        record_owner(&logs, &owner)?;
+                        return Err(format!(
+                            "Windows denied process breakaway ({error}); host-job membership could not be checked ({query_error}), so background work was not started"
+                        ));
+                    }
+                };
+                if !crate::subprocess::background_fallback_allowed(Some(is_in_host_job)) {
+                    owner.phase = "not_spawned".into();
+                    record_owner(&logs, &owner)?;
+                    return Err(format!(
+                        "Windows denied process breakaway ({error}); this app is inside a host job, so background work was not started because survival after app close cannot be guaranteed"
+                    ));
+                }
+                let mut fallback = crate::subprocess::background_fallback_command(&self.exe);
+                fallback
+                    .args(args)
+                    .stdin(Stdio::null())
+                    .stdout(Stdio::from(fallback_out))
+                    .stderr(Stdio::from(fallback_err));
+                #[cfg(unix)]
+                {
+                    use std::os::unix::process::CommandExt;
+                    fallback.process_group(0);
+                }
+                match fallback.spawn() {
+                    Ok(child) => child,
+                    Err(error) => {
+                        owner.phase = "not_spawned".into();
+                        record_owner(&logs, &owner)?;
+                        return Err(error.to_string());
+                    }
+                }
+            }
+            Err(error) => {
                 owner.phase = "not_spawned".into();
                 record_owner(&logs, &owner)?;
-                return Err(e.to_string());
+                return Err(error.to_string());
             }
         };
         owner.pid = Some(child.id());
