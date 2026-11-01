@@ -2,6 +2,15 @@ use super::*;
 
 mod operation;
 
+pub(super) fn with_snapshot_copy<T>(
+    saved: std::sync::MutexGuard<'_, Saved>,
+    work: impl FnOnce(&Saved) -> T,
+) -> T {
+    let snapshot = saved.clone();
+    drop(saved);
+    work(&snapshot)
+}
+
 impl Startup {
     pub fn dispatch(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
         if bytes.len() > 128 * 1024 {
@@ -31,7 +40,9 @@ impl Startup {
         let job = self.job(&saved)?;
         self.settle(&mut saved, &job)?;
         if matches!(&request, Request::Snapshot { .. }) {
-            return self.snapshot_state(&mut saved, &job, &metadata_job, &request);
+            return with_snapshot_copy(saved, |snapshot| {
+                self.snapshot_state(snapshot, &job, &metadata_job, &request)
+            });
         }
         if let Request::BaselineStatus {} = request {
             return self.baseline_status(&saved);

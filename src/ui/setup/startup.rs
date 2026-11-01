@@ -70,6 +70,7 @@ impl Startup {
                 exe: exe.canonicalize().map_err(|e| e.to_string())?,
                 job: Mutex::new(None),
             },
+            heads: crate::git_head::Heads::default(),
             saved: Mutex::new(saved),
             custom_profiles,
             custom_registry_invalid,
@@ -113,11 +114,8 @@ impl Startup {
                 bytes.extend(self::bytes(&path)?);
             }
             if include_head {
-                bytes.extend(
-                    Repository::open(p.workspace.as_deref().unwrap_or(&s.config.repository))?
-                        .head()?
-                        .as_bytes(),
-                );
+                let project = p.workspace.as_deref().unwrap_or(&s.config.repository);
+                bytes.extend(self.heads.get(project).bytes());
             }
         }
         Ok(workflow::digest(&bytes))

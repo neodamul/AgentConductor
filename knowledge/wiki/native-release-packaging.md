@@ -1,5 +1,53 @@
 # Rust native release packaging
 
+## Windows tool-decision package journey timing — 2026-10-30
+
+The Windows UI Automation driver observed `Confirm tool decision` in the final
+accessibility dump after reporting that the expected state had not appeared within
+500 ms. Its activation helper could then send repeated pointer clicks (up to three)
+for one approval action, after UIA and keyboard attempts. The driver now verifies
+the in-window process-owned target, sends one pointer click, and waits up to four
+seconds for the resulting state. It no longer sends alternate approval inputs when
+the outcome is ambiguous. A source-contract regression prevents retries and
+alternate inputs from returning.
+Local static Windows-driver tests pass on macOS, but Windows package acceptance is
+still pending; this change does not claim a successful Windows runtime journey.
+
+## Exact-current macOS package at issue #9 head — 2026-10-30 (source 7a56e372)
+
+The current pushed source `7a56e372e598fff7df593d3ab4933bad62021360` builds an
+Apple Silicon package at
+`dist/agentconductor-aarch64-apple-darwin-7a56e372e598.zip`. Package validation,
+manifest/source identity, the 19,523,904-byte executable checksum, ZIP integrity,
+archive checksum, and packaged `--help` pass. The exact packaged executable passed
+four mock workflows (shared/worktree × Git/folder), including 12 parallel tasks and
+tests, merge refusal before approval, and verified merge after approval. The package
+contains the bilingual manuals, 242 dependency license records, notices, SBOM, and
+README assets. This does not prove GUI or Windows package acceptance and is not a
+GitHub Release. Evidence: `docs/evidence/issue9-7a56e372-macos-package.json` and
+`docs/evidence/issue9-7a56e372-macos-smoke.json`.
+
+## Package at source 043d2ecb — 2026-10-30
+
+Built `codex/issue-9-git-head-fast-path` at source commit
+`043d2ecb13022966d3ee8c09f2fd1ed8c9ae4510` with
+`cargo run --release --locked --offline -j 2 -- package-release`. The Apple
+Silicon archive is `dist/agentconductor-aarch64-apple-darwin-043d2ecb1302.zip`
+with SHA-256
+`e46c2e4973fe82ad494e66756f2a2802728fba8a6ebe99b8046de9dd93c40244`. Its
+manifest records the exact source commit, a 19,523,904-byte executable, and
+binary SHA-256
+`c202e96cd51e21a030080e23e276e2c2b3aa2f37abae9c84ba9f5d065a567a71`.
+`validate-package`, `SHA256SUMS`, ZIP integrity, and packaged `--help` pass. The
+exact packaged executable also passed the four-case shared/worktree × Git/folder
+mock workflow smoke, covering 12 parallel tasks and tests, refusal of merge
+before approval, and verified merge after approval. This package contains
+the bilingual offline manuals, license inventory, notices, SBOM, and README
+assets. It does not prove exact GUI acceptance or Windows behavior and is not
+a GitHub Release. Package evidence:
+`docs/evidence/issue9-043d2ecb-macos-package.json`; workflow evidence:
+`docs/evidence/issue9-043d2ecb-macos-smoke.json`.
+
 ## Exact macOS package for chat-send recovery — issue #9 / 2026-10-29
 
 The optimized Rust release package was built locally from clean source commit

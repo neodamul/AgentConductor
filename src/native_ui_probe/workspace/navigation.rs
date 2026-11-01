@@ -169,7 +169,7 @@ impl Probe {
                 if stop_plan {
                     self.navigation.mark_stop_for_delete();
                     self.workspace_next_refresh =
-                        Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+                        Some(std::time::Instant::now() + std::time::Duration::from_secs(30));
                 }
                 self.pending = Some(if stop_plan {
                     Pending::StopPlanning

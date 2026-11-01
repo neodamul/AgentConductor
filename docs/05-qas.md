@@ -772,3 +772,24 @@ Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202.
 ### QAS-184 Prompt blocks appear once, in order
 Given untrusted evidence containing a `# Format` line, the reviewer prompt has exactly one Document, one Task and one Format block in that order, and the evidence stays inside Document. The worker prompt keeps its `Owned paths:` and `Task:` lines and its rules in Task. A coordinator that first prints text without the requested JSON and then a valid object succeeds on the second attempt and the second prompt names the first error; two bad replies fail after exactly two runs.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### QAS-191 Repository HEAD lookup never blocks a routine request
+Given a repository with loose, packed, or detached HEAD, a request returns the same commit as `git rev-parse HEAD` while `git` is absent from PATH. Given a linked worktree, the first request returns `Pending` without waiting; a later request receives the background Git result. Concurrent requests for one linked worktree start at most one refresh. Given an unrelated slow Git refresh, a foreground request and event publisher still complete. Verify with deterministic local tests for all layouts and the native request path.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
+
+### QAS-192 Scoped state events refresh affected views without request starvation
+Given two open native views, a workspace-only change wakes only Workspace, while a run change wakes both Workspace and Agent Room; the source view is not echoed. A deterministic background snapshot held behind a test barrier must not retain the shared startup-state lock, so an independent interactive request can acquire it before the barrier is released. Given an unrelated interactive response is pending when an event arrives, the affected listener starts one bounded background refresh without waiting for that response; its completed snapshot updates visible state while the pending response, unsaved form value and current error remain intact. An open decision modal pauses refresh only for its view. A burst of state events is coalesced to one snapshot. Active and idle views use a 30-second recovery cadence; no one-second snapshot loop runs for active jobs. Verify these behaviors with EventBus, snapshot-lock, worker-concurrency and native scheduling tests.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, 2026-10-30.
+
+### QAS-193 Slow work does not starve state changes
+Use deterministic barriers to prove that two reads can run on the bounded read lane, a state-changing action completes while a read or network-bound request is blocked, and state-changing actions remain serialized. Verify stale replies are ignored, poll requests remain separate, and event notifications coalesce without blocking publishers.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
+
+### QAS-194 Active state changes refresh without a polling loop
+Given an active run, a persisted report change wakes the relevant view and schedules one background snapshot; a burst of changes coalesces to one in-flight snapshot plus at most one follow-up. Given no new state change, no active 0.5–1 second snapshot is dispatched. Given a missed notification, one recovery snapshot is dispatched within 30 seconds. A deliberately delayed snapshot does not prevent an independent action from being queued or completed.
+Given an approved startup whose first `report.json` appears after the initial start reply, the event-driven background snapshot opens Agent Room immediately and does not wait for the 30-second recovery deadline.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
+
+### QAS-195 Workspace listeners follow switches without retaining leases
+Given an idle Room on workspace A, switching to workspace B releases A's startup lease before the listener stops. A second Room can open A immediately. Changes to B's persisted report still emit a run event, and changes to A do not emit events through the switched Room. Verify with a dynamic-listener test and the workspace deletion/switch integration tests.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.

@@ -1,54 +1,28 @@
 //! Keep native request routing separate from window/surface lifetime.
 use super::*;
+mod navigation;
 mod requests;
+use navigation::Request as Navigation;
 impl Room {
     pub fn dispatch(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
-        crate::ui::request_diagnostics::dispatch(bytes, || self.dispatch_inner(bytes))
+        self.dispatch_from(None, bytes)
+    }
+
+    pub(crate) fn dispatch_from(
+        &self,
+        source: Option<u64>,
+        bytes: &[u8],
+    ) -> Result<serde_json::Value, String> {
+        let result = crate::ui::request_diagnostics::dispatch(bytes, || self.dispatch_inner(bytes));
+        if result.is_ok()
+            && let Some(event) = crate::ui::events::event_for_request(bytes)
+        {
+            self.events.publish(source, event);
+        }
+        result
     }
 
     fn dispatch_inner(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
-        use crate::cooperative::route::Preference;
-        #[derive(Deserialize)]
-        #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
-        enum Navigation {
-            OpenRun {},
-            Home {},
-            PickFolder {},
-            PickFile {},
-            PickExecutable {},
-            ResolveExecutable {
-                executable: String,
-            },
-            Workspaces {},
-            SwitchWorkspace {
-                path: PathBuf,
-            },
-            CreateWorkspace {
-                name: String,
-            },
-            ForgetWorkspace {
-                path: PathBuf,
-            },
-            DeleteWorkspace {
-                path: PathBuf,
-                name: String,
-                replacement: Option<String>,
-            },
-            SavedWorkspaces {},
-            OpenWorkspace {
-                path: PathBuf,
-            },
-            SetLanguage {
-                language: String,
-            },
-            SetTheme {
-                theme: String,
-            },
-            SignalTransport {},
-            SetSignalTransport {
-                preference: Preference,
-            },
-        }
         let kind: serde_json::Value = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
         if bytes.len() > 128 * 1024 || bytes.len() > 64 * 1024 && kind["kind"] != "chat" {
             return Err(crate::ui::messages::text("native.native_request_exceeds_64_kib").into());

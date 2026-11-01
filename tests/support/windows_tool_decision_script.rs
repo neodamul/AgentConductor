@@ -57,6 +57,15 @@ function Wait-EnabledButton($name) {
   $enabled = if ($button) { $button.Current.IsEnabled } else { 'missing' }
   throw "ACTION_BUTTON_NOT_ENABLED: name=$name enabled=$enabled"
 }
+$actionStateTimeoutMs = 4000
+function Wait-ActionState($expected, $visible) {
+  $until = (Get-Date).AddMilliseconds($actionStateTimeoutMs)
+  while ((Get-Date) -lt $until) {
+    if (($null -ne (Find-Button $expected)) -eq $visible) { return $true }
+    Start-Sleep -Milliseconds 50
+  }
+  return (($null -ne (Find-Button $expected)) -eq $visible)
+}
 function PointHitsButton($x, $y, $name) {
   $point = [System.Windows.Point]::new([double]$x, [double]$y)
   $element = $A::FromPoint($point)
@@ -105,8 +114,7 @@ using System.Runtime.InteropServices;
 public static class ToolDecisionMouse {
   [StructLayout(LayoutKind.Sequential)] struct Point { public int x, y; }
   [StructLayout(LayoutKind.Sequential)] struct MouseInput { public int x, y; public uint data, flags, time; public IntPtr extraInfo; }
-  [StructLayout(LayoutKind.Sequential)] struct KeyboardInput { public ushort virtualKey, scan; public uint flags, time; public IntPtr extraInfo; }
-  [StructLayout(LayoutKind.Explicit)] struct InputPayload { [FieldOffset(0)] public MouseInput mouse; [FieldOffset(0)] public KeyboardInput keyboard; }
+  [StructLayout(LayoutKind.Explicit)] struct InputPayload { [FieldOffset(0)] public MouseInput mouse; }
   [StructLayout(LayoutKind.Sequential)] struct Input { public uint type; public InputPayload payload; }
   [DllImport("user32.dll")] static extern bool ShowWindow(IntPtr window, int command);
   [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
@@ -146,15 +154,6 @@ public static class ToolDecisionMouse {
     while (DateTime.UtcNow < deadline && !ForegroundBelongsTo(expectedPid)) System.Threading.Thread.Sleep(50);
     return ForegroundBelongsTo(expectedPid);
   }
-  public static string Key(ushort key) {
-    var size = Marshal.SizeOf(typeof(Input));
-    var down = new Input { type = 1, payload = new InputPayload { keyboard = new KeyboardInput { virtualKey = key } } };
-    var up = new Input { type = 1, payload = new InputPayload { keyboard = new KeyboardInput { virtualKey = key, flags = 2 } } };
-    if (SendInput(1, new[] { down }, size) != 1) return "SEND_INPUT_KEY_DOWN_FAILED: error=" + Marshal.GetLastWin32Error();
-    System.Threading.Thread.Sleep(50);
-    if (SendInput(1, new[] { up }, size) != 1) return "SEND_INPUT_KEY_UP_FAILED: error=" + Marshal.GetLastWin32Error();
-    return "";
-  }
   public static string Click(IntPtr window, int x, int y, uint expectedPid) {
     if (!Focus(window, expectedPid)) return "FOREGROUND_NOT_OWNED: pid=" + ForegroundProcessId() + " hwnd=" + window;
     var pointProcessId = ProcessAt(x, y);
@@ -177,66 +176,22 @@ public static class ToolDecisionMouse {
 "@
 function Activate($button, $expected, $visible) {
   $name = $button.Current.Name
-  $invokeError = $null
-  for ($attempt = 0; $attempt -lt 3; $attempt++) {
-    $button = Wait-EnabledButton $name
-    if ($attempt -eq 0) {
-      try { $button.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke() }
-      catch { $invokeError = $_.Exception.Message }
-      $until = (Get-Date).AddMilliseconds(300)
-      while ((Get-Date) -lt $until) {
-        if (($null -ne (Find-Button $expected)) -eq $visible) {
-          Write-Output "ACTION_STATE_CONFIRMED_AFTER_UIA: expected=$expected visible=$visible"
-          return
-        }
-        Start-Sleep -Milliseconds 50
-      }
-      Write-Output "ACTION_INVOKE_NO_STATE_CHANGE: name=$name expected=$expected visible=$visible invokeError=$invokeError"
-      try {
-        $button = Find-CurrentButton $name
-        $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
-        if ([ToolDecisionMouse]::Focus($hwnd, [uint32]$targetPid)) { $button.SetFocus() }
-        $focused = $A::FocusedElement
-        if ($focused.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $focused.Current.Name -eq $name -and $focused.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' -and $focused.Current.IsEnabled) {
-          $keyFailure = [ToolDecisionMouse]::Key(0x0D)
-          if ($keyFailure) { throw $keyFailure }
-          $until = (Get-Date).AddMilliseconds(500)
-          while ((Get-Date) -lt $until) {
-            if (($null -ne (Find-Button $expected)) -eq $visible) {
-              Write-Output "ACTION_STATE_CONFIRMED_AFTER_KEYBOARD: expected=$expected visible=$visible"
-              return
-            }
-            Start-Sleep -Milliseconds 50
-          }
-          Write-Output "ACTION_KEYBOARD_NO_STATE_CHANGE: name=$name expected=$expected visible=$visible"
-        } else {
-          Write-Output "ACTION_KEYBOARD_TARGET_NOT_FOCUSED: name=$name focused=$($focused.Current.Name) pid=$($focused.Current.ProcessId)"
-        }
-      } catch { Write-Output "ACTION_KEYBOARD_FALLBACK_UNAVAILABLE: $_" }
-    }
-    $button = Ensure-ButtonInsideWindow $name
-    $button = Wait-EnabledButton $name
-    if (($null -ne (Find-Button $expected)) -eq $visible) { return }
-    $point = $button.GetClickablePoint()
-    $x = [int][Math]::Round($point.X)
-    $y = [int][Math]::Round($point.Y)
-    if (-not (PointHitsButton $x $y $name)) {
-      Write-Output "POINTER_NOT_ON_TARGET_BUTTON: name=$name x=$x y=$y"
-      continue
-    }
-    $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
-    $clickFailure = [ToolDecisionMouse]::Click($hwnd, $x, $y, [uint32]$targetPid)
-    if ($clickFailure) { throw "CHECKED_POINTER_CLICK_FAILED: $clickFailure" }
-    Write-Output "ACTION_POINTER_CLICKED: name=$name x=$x y=$y attempt=$attempt"
-    $until = (Get-Date).AddMilliseconds(500)
-    while ((Get-Date) -lt $until) {
-      if (($null -ne (Find-Button $expected)) -eq $visible) {
-        Write-Output "ACTION_STATE_CONFIRMED_AFTER_POINTER: expected=$expected visible=$visible"
-        return
-      }
-      Start-Sleep -Milliseconds 50
-    }
-    if ($attempt -lt 2) { Write-Output "ACTION_RETRYING_AFTER_NO_STATE_CHANGE: name=$name" }
+  $button = Ensure-ButtonInsideWindow $name
+  $button = Wait-EnabledButton $name
+  if (($null -ne (Find-Button $expected)) -eq $visible) { return }
+  $point = $button.GetClickablePoint()
+  $x = [int][Math]::Round($point.X)
+  $y = [int][Math]::Round($point.Y)
+  if (-not (PointHitsButton $x $y $name)) {
+    throw "POINTER_NOT_ON_TARGET_BUTTON: name=$name x=$x y=$y"
+  }
+  $hwnd = [IntPtr]$script:window.Current.NativeWindowHandle
+  $clickFailure = [ToolDecisionMouse]::Click($hwnd, $x, $y, [uint32]$targetPid)
+  if ($clickFailure) { throw "CHECKED_POINTER_CLICK_FAILED: $clickFailure" }
+  Write-Output "ACTION_POINTER_CLICKED: name=$name x=$x y=$y"
+  if (Wait-ActionState $expected $visible) {
+    Write-Output "ACTION_STATE_CONFIRMED_AFTER_POINTER: expected=$expected visible=$visible"
+    return
   }
   throw "ACTION_STATE_NOT_VISIBLE_AFTER_POINTER: expected=$expected visible=$visible"
 }
