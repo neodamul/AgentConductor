@@ -34,6 +34,8 @@ fn lifecycle_driver_exposes_stop_resume_and_recovery_observations() {
         "Confirm stop",
         "Resume run",
         "InvokePattern",
+        "IsOffscreen",
+        "BoundingRectangle.IsEmpty",
     ] {
         assert!(
             script::SCRIPT.contains(required),
