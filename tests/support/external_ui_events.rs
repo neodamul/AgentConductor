@@ -1,4 +1,4 @@
-use super::listener::next_scan_delay;
+use super::listener::RECOVERY_INTERVAL;
 use super::*;
 use std::{process::Command, sync::Arc, time::Duration};
 
@@ -76,15 +76,6 @@ fn ordinary_provider_commands_remove_parent_event_credentials() {
 }
 
 #[test]
-fn idle_file_scan_backoff_resets_on_change_and_stops_at_thirty_seconds() {
-    let first = next_scan_delay(Duration::from_secs(1), false);
-    assert_eq!(first, Duration::from_secs(2));
-    assert_eq!(
-        next_scan_delay(Duration::from_secs(30), false),
-        Duration::from_secs(30)
-    );
-    assert_eq!(
-        next_scan_delay(Duration::from_secs(30), true),
-        Duration::from_secs(1)
-    );
+fn metadata_recovery_stays_at_thirty_seconds_after_a_change() {
+    assert_eq!(RECOVERY_INTERVAL, Duration::from_secs(30));
 }

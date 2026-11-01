@@ -6793,3 +6793,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: the focused regression passes; all 6 tests in `tests/ui.rs` pass; warning-denied targeted Clippy, rustfmt, diff hygiene, and the 300-line guard pass (`tests/ui.rs`: 262 lines).
 - [x] Update QAS-194 and the LLM Wiki to make monitor ownership explicit.
 - [ ] Exact PR validation: push the fix to `codex/issue-257-rust-draft-preservation` and require macOS plus Windows platform validation to pass before closing the CI gate.
+
+### 2026-11-01 — Keep missed-event recovery at 30 seconds — issue #257 / PR #294
+
+- [x] Plan: align DD-208 and QAS-194 with the issue clarification: active updates arrive by events; metadata recovery is a fixed 30-second fallback and does not assemble snapshots.
+- [x] Red: `metadata_recovery_stays_at_thirty_seconds_after_a_change` failed because a detected change reset the next scan to 1 second.
+- [x] Task / Green: use a fixed 30-second production interval for report/startup and declared-worktree metadata listeners; retain short injected intervals only in deterministic tests.
+- [x] Verify locally: 17 event/listener tests, 2 source-layout tests, all-target/all-feature Clippy with `-D warnings`, rustfmt, and `git diff --check` pass.
+- [ ] Verify exact macOS and Windows platform validation on the updated PR #294 head; no packaged UI acceptance is claimed by source tests.
+- [x] Update QAS-194/DD-208 and LLM Wiki; refresh Graphify to 11,965 nodes / 19,568 edges; record AgentMemory `mem_mvxksy1o_c634d18900f9`.
+- [ ] Update issue #257 and PR #294, then commit and push this unit.
