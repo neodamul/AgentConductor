@@ -645,7 +645,7 @@ The server stores the conversation of the latest chat; the panel restores it, re
 Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
 
 ### SF-168 Static labels removed
-The title bar label, the sidebar note and the footer default-mode text are removed from the workspace and Agent Room pages with their styles and message keys.
+The title bar label, the sidebar note and the footer default-mode text are removed from the web workspace, native Rust workspace and Agent Room, along with their styles and message keys.
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
 
 ### SF-169 Resync after a failed send
@@ -689,3 +689,45 @@ Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202.
 ### SF-174 Standard prompt form and bounded format retry
 One shared builder assembles Document, Task and Format; the reviewer and worker prompts use it. The coordinator JSON call retries once when the reply cannot be read as the requested JSON.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### SF-181 Non-blocking repository HEAD resolution
+Read loose, packed, and detached HEAD values from local Git metadata. When a linked worktree or unsupported layout requires Git, return a cached/pending revision immediately and perform a coalesced background refresh. Keep routine revision and render paths free of Git subprocesses.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
+
+### SF-182 Broadcast state invalidations and isolate refresh work
+The shared Room publishes successful state changes to subscribed native views, excluding the originating view. Listeners coalesce notifications and request one asynchronous snapshot through a dedicated background queue and reply channel, even while an unrelated interactive request is pending. A completed snapshot updates visible state without replacing the pending request or dirty form values; a human decision modal may pause refresh for its view. Active child work is notification-driven; all views use a 30-second recovery check.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, user, 2026-10-30.
+
+### SF-183 Dispatch native requests through bounded independent lanes
+Run read-only requests in a small bounded worker pool, serialize state-changing requests in their own bounded lane, route synchronous network-bound requests through a dedicated bounded I/O lane, and keep scheduled snapshots on their existing single-flight background lane. Correlate replies and ignore superseded results. Classify unknown valid request kinds conservatively as state changes so they cannot race mutations or bypass peer-view invalidation.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
+
+### SF-184 Event-driven native refresh
+Publish scoped in-process invalidations after successful state changes and listen for persisted external changes on a separate lightweight thread. Coalesce invalidations into one asynchronous authoritative snapshot; retain only a 30-second recovery check rather than polling active jobs every second.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
+
+### SF-185 Follow the current workspace without owning stale sessions
+Resolve the listener's startup and report paths from the current workspace on each check. Keep only a non-owning reference to `Startup` so a workspace switch releases an idle previous session and its lease.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### SF-189 Wait safely for Claude quota output
+Give the whole interactive Claude quota query up to 60 seconds across CLI startup, project trust, prompt, and `/usage` response. Preserve prompt-stage versus response-stage timeout details and return immediately after parsed quota output. Show elapsed time on the queried agent card while its quota job is active.
+Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, 2026-11-01.
+
+### SF-190 Show quota query errors inline
+On the native agent sidebar and agent settings list, show the stored quota error beside the unavailable quota badge. On the Agent Room run screen, show each stored agent quota error in the run status area. Keep the full error as accessible text and a hover detail. Do not infer an Enterprise response format or alter the captured error.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
+### SF-187 Coordinator run status board
+Render run state and task counts above the coordinator timeline, then show each planned task with its agent, status and available latest-output age. Derive the board from the existing snapshot, and omit repetitive workflow-save rows only from the visible timeline.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → DDR-51 → DD-212. Rust port of JavaScript #267, GitHub #286, 2026-11-01.
+
+### SF-188 Native coordinator Activity parity
+Expose the current run summary, per-task status and available activity age in the Rust Agent Room while retaining the existing coordinator judgment, review and audit actions. Rust consumes the existing snapshot and does not change the JavaScript UI/backend implementation.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.
+### SF-186 Show elapsed time for workspace jobs
+Redraw operator-visible chat, rewrite, MCP, and update status from their recorded or observed start times. Show snapshot age after six seconds of silence and refresh dependent controls immediately after an asynchronous answer.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### SF-187 Acknowledge direct requests across native views
+Both native views mark a user-triggered request immediately and, after one second, display its operation and elapsed time. Exclude routine and background refreshes. Repaint locally while a foreground request is pending; do not introduce recurring snapshots.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. Rust follow-up to GitHub #285, 2026-11-01.

@@ -195,7 +195,14 @@ impl Probe {
                     view.tool_refresh_follow_up = (action == ToolAction::Refresh)
                         .then(|| super::room::ToolRefreshFollowUp::new(id, task));
                 }
-                self.pending = Some(Pending::ToolDecision { resume_after });
+                self.pending = Some(Pending::ToolDecision {
+                    resume_after,
+                    description: match action {
+                        ToolAction::Approve => "Approving tool request…",
+                        ToolAction::Reject => "Rejecting tool request…",
+                        ToolAction::Refresh => "Refreshing tool request…",
+                    },
+                });
             }
             Err(error) => self.error = Some(error),
         }
@@ -216,7 +223,10 @@ impl Probe {
         match result {
             Ok(()) => {
                 self.error = None;
-                self.pending = Some(Pending::Action);
+                self.pending = Some(Pending::Action(match action {
+                    RunAction::Resume => "Resuming the run…",
+                    RunAction::Recover => "Recovering the run…",
+                }));
             }
             Err(error) => self.error = Some(error),
         }

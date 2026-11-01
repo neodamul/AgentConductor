@@ -1,6 +1,27 @@
 use std::{path::PathBuf, time::Duration};
 
-#[derive(serde::Serialize, serde::Deserialize)]
+pub fn is_background_operation(label: &str) -> bool {
+    label == "chat"
+}
+
+pub fn is_maintenance_command(args: &[String]) -> bool {
+    (args.len() == 2 && args[0] == "manual" && args[1] == "render")
+        || matches!(
+            args.first().map(String::as_str),
+            Some(
+                "chat"
+                    | "bundle-macos"
+                    | "archive-package"
+                    | "validate-package"
+                    | "smoke-package"
+                    | "package-release"
+            )
+        )
+        || (args.first().map(String::as_str) == Some("release")
+            && args.get(1).map(String::as_str) == Some("notes"))
+}
+
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
 pub struct Ownership {
     pub coordinator_pid: u32,
     pub pid: Option<u32>,

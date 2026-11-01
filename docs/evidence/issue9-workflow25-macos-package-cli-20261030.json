@@ -1,0 +1,22 @@
+{
+  "issue": 9,
+  "workflow": 25,
+  "date": "2026-10-30",
+  "status": "exact_macos_package_cli_passed_ui_and_windows_pending",
+  "package_archive": "dist/agentconductor-aarch64-apple-darwin-1eb01727932f.zip",
+  "package_archive_sha256": "7f1017b96f11da8584ee45c6b0840861d58f150ea8bfbb957951034f6df4ab55",
+  "tested_binary_sha256": "2c4db7c77e4597aa96f7376834a467962153083f46da9dacc6a4d0bcc2ba5a66",
+  "package_binary_sha256_matches_manifest": true,
+  "test": "tests/package_run_recovery.rs::exact_windows_package_stops_resumes_and_recovers_without_duplicate_work",
+  "result": "passed 1/1 against the exact-source macOS release binary",
+  "assertions": [
+    "active mock worker starts before stop is requested",
+    "stop reaches stopped state and coordinator exits",
+    "explicit resume completes tasks and revalidates",
+    "stale process ownership is recovered before a second explicit resume",
+    "candidate diff contains exactly one change for each of one.txt, two.txt, and three.txt"
+  ],
+  "scope_limit": "This is packaged CLI lifecycle evidence, not a packaged GUI journey.",
+  "windows_package": "pending exact-head validation",
+  "acceptance_credit": false
+}

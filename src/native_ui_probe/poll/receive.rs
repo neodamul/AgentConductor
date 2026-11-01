@@ -1,22 +1,27 @@
 use super::super::{Pending, Probe, cache, room, workspace};
 impl Probe {
     pub(in crate::native_ui_probe) fn poll(&mut self) {
+        self.poll_events();
+        self.dispatch_background_refresh();
+        self.poll_background();
         let Some(worker) = &self.worker else { return };
         let reply = worker.replies.try_recv();
-        let background = matches!(self.pending, Some(Pending::BackgroundRefresh));
         let snapshot_poll = matches!(
             self.pending,
-            Some(Pending::BackgroundRefresh | Pending::Refresh | Pending::PrepareRefresh)
+            Some(Pending::Refresh | Pending::PrepareRefresh)
         );
         if snapshot_poll && matches!(&reply, Ok(Ok(_))) {
             self.poll_succeeded();
+        }
+        if let Ok(Ok(snapshot)) = &reply {
+            self.active_work.observe_current_snapshot(snapshot);
         }
         match reply {
             Ok(Ok(snapshot)) => match self.pending {
                 Some(pending) if pending.handled_by_settings() => {
                     super::settings::apply(self, snapshot)
                 }
-                Some(Pending::Action | Pending::ScopeRecoveryApply) => {
+                Some(Pending::Action(_) | Pending::ScopeRecoveryApply) => {
                     let recovery = matches!(self.pending, Some(Pending::ScopeRecoveryApply));
                     match room::action_reply(self.worker.as_ref().unwrap(), &snapshot) {
                         Ok(message) => {
@@ -41,7 +46,7 @@ impl Probe {
                         }
                     }
                 }
-                Some(Pending::ToolDecision { resume_after }) => {
+                Some(Pending::ToolDecision { resume_after, .. }) => {
                     match room::action_reply(self.worker.as_ref().unwrap(), &snapshot) {
                         Ok(message) => {
                             if let Some(view) = self.room_view.as_mut() {
@@ -136,7 +141,7 @@ impl Probe {
                         self.error = None;
                     } else {
                         self.workspace_next_refresh =
-                            Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+                            Some(std::time::Instant::now() + std::time::Duration::from_secs(30));
                         self.snapshot = Some(snapshot);
                         self.pending = None;
                         self.error = None;
@@ -190,8 +195,7 @@ impl Probe {
                 Some(Pending::TaskDetails | Pending::BackgroundTaskDetails) => {
                     super::task_details::apply(self, snapshot)
                 }
-                Some(Pending::BackgroundRefresh | Pending::Refresh | Pending::PrepareRefresh)
-                | None => {
+                Some(Pending::Refresh | Pending::PrepareRefresh) | None => {
                     if let Some(view) = self.room_view.as_mut() {
                         if view
                             .evidence
@@ -258,7 +262,7 @@ impl Probe {
                         }
                     }
                     if self.pending.is_none() && self.room_view.is_some() {
-                        self.refresh_room_details(background);
+                        self.refresh_room_details(false);
                     }
                 }
                 Some(_) => unreachable!("every pending operation has a response handler"),

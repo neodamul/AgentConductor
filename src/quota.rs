@@ -21,8 +21,8 @@ pub use workspace::stored_for_run;
 pub(crate) use workspace::workspace_cache;
 mod terminal;
 pub use terminal::{
-    claude_blocker, claude_trust_answer, claude_trust_prompt, claude_usage_ready,
-    parse_claude_usage, query_claude,
+    CLAUDE_WAIT, claude_blocker, claude_trust_answer, claude_trust_prompt, claude_usage_ready,
+    parse_claude_usage, query_claude, query_claude_within,
 };
 mod claude;
 pub(crate) use claude::observe_events;
@@ -61,6 +61,7 @@ pub async fn query(
     let executable = crate::executable::resolve(&profile.executable)
         .unwrap_or_else(|| profile.executable.clone().into());
     let mut command = Command::new(executable);
+    crate::subprocess::clear_tokio_event_environment(&mut command);
     command
         .arg("app-server")
         .envs(&profile.environment)

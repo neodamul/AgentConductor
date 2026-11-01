@@ -2,9 +2,19 @@ use super::*;
 
 #[cfg(not(any(target_os = "macos", windows)))]
 pub async fn query_claude(
+    profile: &crate::plan::AgentProfile,
+    dir: &std::path::Path,
+    cwd: &std::path::Path,
+) -> Result<Snapshot, String> {
+    query_claude_within(profile, dir, cwd, super::CLAUDE_WAIT).await
+}
+
+#[cfg(not(any(target_os = "macos", windows)))]
+pub async fn query_claude_within(
     _profile: &crate::plan::AgentProfile,
     _dir: &std::path::Path,
     _cwd: &std::path::Path,
+    _wait: std::time::Duration,
 ) -> Result<Snapshot, String> {
     Err("Claude interactive quota collection is verified on macOS only; use owned stream metadata on this platform".into())
 }
@@ -14,6 +24,16 @@ pub async fn query_claude(
     profile: &crate::plan::AgentProfile,
     dir: &std::path::Path,
     cwd: &std::path::Path,
+) -> Result<Snapshot, String> {
+    query_claude_within(profile, dir, cwd, super::CLAUDE_WAIT).await
+}
+
+#[cfg(target_os = "macos")]
+pub async fn query_claude_within(
+    profile: &crate::plan::AgentProfile,
+    dir: &std::path::Path,
+    cwd: &std::path::Path,
+    wait: std::time::Duration,
 ) -> Result<Snapshot, String> {
     use std::os::unix::fs::PermissionsExt;
     use std::{
@@ -34,6 +54,7 @@ pub async fn query_claude(
     let executable = crate::executable::resolve(&profile.executable)
         .unwrap_or_else(|| profile.executable.clone().into());
     let mut command = Command::new("/usr/bin/script");
+    crate::subprocess::clear_tokio_event_environment(&mut command);
     command
         .args(["-q", "/dev/null"])
         .arg(executable)
@@ -149,10 +170,10 @@ pub async fn query_claude(
             }
         }
     };
-    let result = tokio::time::timeout(Duration::from_secs(20), collect).await;
+    let result = tokio::time::timeout(wait, collect).await;
     owner.timed_out = result.is_err();
     let result = result
-        .map_err(|_| quota_timeout(sent).to_string())
+        .map_err(|_| quota_timeout(sent, wait))
         .and_then(|r| r);
     drop(input);
     drop(group);

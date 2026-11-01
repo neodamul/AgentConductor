@@ -2,6 +2,14 @@ use super::*;
 
 impl Startup {
     pub fn open(root: &Path, exe: &Path) -> Result<Self, String> {
+        Self::open_with_event_endpoint(root, exe, None)
+    }
+
+    pub(crate) fn open_with_event_endpoint(
+        root: &Path,
+        exe: &Path,
+        event_endpoint: Option<crate::ui::events::EventEndpoint>,
+    ) -> Result<Self, String> {
         if !root.exists() {
             fs::create_dir_all(root).map_err(|e| e.to_string())?;
         }
@@ -63,13 +71,18 @@ impl Startup {
             quota_broker: Controller {
                 dir: root.join("quota-jobs"),
                 exe: exe.canonicalize().map_err(|e| e.to_string())?,
-                job: Mutex::new(None),
+                job: Arc::new(Mutex::new(None)),
+                event_endpoint: event_endpoint.clone(),
+                event_surface: crate::ui::events::EventSurface::Workspace,
             },
             broker: Controller {
                 dir: root,
                 exe: exe.canonicalize().map_err(|e| e.to_string())?,
-                job: Mutex::new(None),
+                job: Arc::new(Mutex::new(None)),
+                event_endpoint,
+                event_surface: crate::ui::events::EventSurface::Workspace,
             },
+            heads: crate::git_head::Heads::default(),
             saved: Mutex::new(saved),
             custom_profiles,
             custom_registry_invalid,
@@ -113,11 +126,8 @@ impl Startup {
                 bytes.extend(self::bytes(&path)?);
             }
             if include_head {
-                bytes.extend(
-                    Repository::open(p.workspace.as_deref().unwrap_or(&s.config.repository))?
-                        .head()?
-                        .as_bytes(),
-                );
+                let project = p.workspace.as_deref().unwrap_or(&s.config.repository);
+                bytes.extend(self.heads.get(project).bytes());
             }
         }
         Ok(workflow::digest(&bytes))

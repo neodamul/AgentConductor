@@ -64,6 +64,7 @@ pub(super) fn show(
                 ui.label(RichText::new(text("room.merge_in_progress")).strong());
                 ui.label(text("room.applying_approved_candidate_to_workspace"));
             }
+            crate::native_ui_probe::quota_error::show(snapshot, None, language, ui);
             if let Some(error) = error {
                 ui.colored_label(
                     super::super::render::status_color("failed", ui.input(|input| input.time)),

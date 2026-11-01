@@ -108,18 +108,7 @@ pub(super) fn click(context: &egui::Context, probe: &mut Probe, label: &str) -> 
     );
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
-    for _ in 0..3 {
-        let mut hovered = frame(context, probe, vec![Event::PointerMoved(position)]);
-        let next = button_position(&hovered, label);
-        hovered.textures_delta.set.clear();
-        hovered.textures_delta.free.clear();
-        if next.distance(position) < 1.0 {
-            position = next;
-            break;
-        }
-        position = next;
-    }
-    let mut pressed = frame(
+    frame(
         context,
         probe,
         vec![
@@ -130,19 +119,13 @@ pub(super) fn click(context: &egui::Context, probe: &mut Probe, label: &str) -> 
                 pressed: true,
                 modifiers: Modifiers::NONE,
             },
+            Event::PointerButton {
+                pos: position,
+                button: PointerButton::Primary,
+                pressed: false,
+                modifiers: Modifiers::NONE,
+            },
         ],
-    );
-    pressed.textures_delta.set.clear();
-    pressed.textures_delta.free.clear();
-    frame(
-        context,
-        probe,
-        vec![Event::PointerButton {
-            pos: position,
-            button: PointerButton::Primary,
-            pressed: false,
-            modifiers: Modifiers::NONE,
-        }],
     )
 }
 

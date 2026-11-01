@@ -69,6 +69,14 @@ impl State {
     }
 
     pub(in crate::native_ui_probe) fn restore(&mut self, snapshot: &serde_json::Value) {
+        if snapshot["job"]["kind"] == "optimize"
+            && snapshot["job"]["state"] == "running"
+            && let Some(job) = snapshot["job"]["id"].as_str()
+        {
+            self.goal = snapshot["config"]["goal"].as_str().map(str::to_owned);
+            self.job = Some(job.to_owned());
+            self.requesting = false;
+        }
         if let (Some(goal), Ok(proposal)) = (
             snapshot["optimize"]["goal"].as_str(),
             serde_json::from_value(snapshot["optimize"]["proposal"].clone()),
@@ -84,6 +92,7 @@ impl State {
         language: &str,
         goal: &str,
         enabled: bool,
+        progress: Option<&str>,
         ui: &mut egui::Ui,
     ) -> Option<Event> {
         if self.goal.as_deref().is_some_and(|source| source != goal) && self.proposal.is_some() {
@@ -110,6 +119,9 @@ impl State {
             if self.awaiting() {
                 ui.spinner();
                 ui.label(text(language, "startup.optimizing_goal"));
+                if let Some(progress) = progress {
+                    ui.small(progress);
+                }
             }
         });
         if let Some(error) = &self.error {
@@ -222,10 +234,12 @@ impl super::super::Probe {
         if snapshot["accepted"] == true
             && let Some(job) = snapshot["id"].as_str()
         {
+            self.active_work
+                .begin("optimize", job, std::time::Instant::now());
             self.goal_optimizer.started(job.to_owned());
-            self.workspace_next_refresh =
-                Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+            self.workspace_next_refresh = None;
         } else {
+            self.active_work.clear_kind("optimize");
             self.goal_optimizer
                 .failed("Goal optimizer job was not accepted".into());
         }
@@ -244,8 +258,7 @@ impl super::super::Probe {
             self.workspace_next_refresh = None;
         } else if snapshot["job"]["state"] == "running" {
             self.snapshot = Some(snapshot);
-            self.workspace_next_refresh =
-                Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+            self.workspace_next_refresh = None;
         } else if snapshot["job"]["state"] == "completed" {
             self.goal_optimizer.completed(&job, &snapshot["optimize"]);
             self.snapshot = Some(snapshot);

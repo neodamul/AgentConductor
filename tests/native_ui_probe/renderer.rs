@@ -11,7 +11,7 @@ fn native_renderer_matches_platform_backend() {
 }
 
 #[test]
-fn metadata_completion_is_polled_from_every_workspace_step() {
+fn event_snapshot_clears_completed_metadata_from_every_workspace_step() {
     use std::time::{Duration, Instant};
     for step in 0..3 {
         let root = std::env::temp_dir().join(format!(
@@ -28,22 +28,13 @@ fn metadata_completion_is_polled_from_every_workspace_step() {
             assert!(Instant::now() < deadline);
             std::thread::yield_now();
         }
-        probe.updates.background_action(Instant::now(), false);
         probe.workspace_step = step;
         probe.name = "Unsaved workspace name".into();
         probe.goal = "Unsaved goal".into();
         probe.snapshot.as_mut().unwrap()["metadata_job"] =
             serde_json::json!({"kind":"quota:claude", "state":"running"});
-        probe.workspace_next_refresh = Some(Instant::now() - Duration::from_secs(1));
-        let mut output = context.run_ui(egui::RawInput::default(), |ui| probe.update_ui(ui));
-        output.textures_delta.set.clear();
-        output.textures_delta.free.clear();
-        assert!(
-            matches!(probe.pending, Some(super::super::Pending::MetadataRefresh))
-                || !workspace::profile_tools::metadata_running(probe.snapshot.as_ref().unwrap()),
-            "step {step} must poll the shared sidebar metadata job"
-        );
-        while probe.pending.is_some() {
+        probe.refresh_background();
+        while probe.background_refresh_pending {
             probe.poll();
             assert!(Instant::now() < deadline);
             std::thread::yield_now();
@@ -54,13 +45,19 @@ fn metadata_completion_is_polled_from_every_workspace_step() {
         assert_eq!(probe.name, "Unsaved workspace name");
         assert_eq!(probe.goal, "Unsaved goal");
         assert_eq!(probe.workspace_step, step);
-        probe.workspace_next_refresh = Some(Instant::now() - Duration::from_secs(1));
-        let mut idle = context.run_ui(egui::RawInput::default(), |ui| probe.update_ui(ui));
-        idle.textures_delta.set.clear();
-        idle.textures_delta.free.clear();
-        assert!(probe.pending.is_none(), "idle metadata must not poll");
         drop(probe);
         worker_support::close(room);
         std::fs::remove_dir_all(root).unwrap();
     }
+}
+
+#[test]
+fn foreground_action_does_not_disable_periodic_room_refresh() {
+    let probe = Probe {
+        pending: Some(crate::native_ui_probe::Pending::Action("Running action…")),
+        room_view: Some(Default::default()),
+        ..Probe::default()
+    };
+
+    assert!(!probe.room_refresh_blocked());
 }

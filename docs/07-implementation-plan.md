@@ -1,3 +1,138 @@
+### Fix packaged Windows default-workspace input gate — issue #9 / 2026-11-02
+
+- [x] Plan: inspect failed exact package run `41309723645`; Windows UI Automation focused the goal field but persisted an empty value after the driver sent `Windows UIA goal`.
+- [x] Red / Green: the new driver contract failed before the fix because Unicode input had no pacing; one 100 ms delay after each character pair now keeps the existing post-entry settle and persisted-value assertion.
+- [x] Verify locally: Windows driver, run-lifecycle, source-layout, and desktop contract suites pass 16 tests with one ignored; rustfmt and diff checks pass; changed test files are 202 and 193 lines. The all-target native suite observed 1,029 passed / 15 ignored across 309 suites before it was stopped for runtime; no test failure was observed, but this is not counted as a completed command.
+- [x] Integrate: commit `70d8f409` is pushed to the active #9 branch and recorded on #9, #310, and PR #260.
+- [ ] Verify package: the previous exact Windows package failed to persist the goal text. Exact-head run `41321569450` was cancelled after more than six minutes in native build/test validation; its native-package job had zero steps and never ran. Rerun the exact package acceptance before counting this #9 workflow.
+- [x] Assetize: document the packaged-driver boundary in the LLM Wiki and save AgentMemory `mem_mvxzjvkh_e262c47c9cba`; Graphify refreshed to 12,159 nodes / 19,847 edges.
+- [x] Record local-first CI decision in AgentMemory `mem_mvxzuhf9_3fb94bacea78`; do not treat the cancelled workflow as acceptance evidence.
+
+### Pass the run directory to the Windows schedule driver — bug #310 / 2026-11-02
+
+- [x] Plan / Task: the PowerShell driver reads `AC_RUN_DIR`; pass the same package run directory used by the app along with its process ID.
+- [x] TDD / Verify: the current #260 branch contains the helper and regression introduced by `1123a340`; `cargo test --locked --offline --test windows_schedule` passes 3 tests locally.
+- [x] Integrate: the fix is already in the existing #260 Rust branch; no additional PR was opened. The related PR #311 was closed without merge, so its closure alone is not proof of acceptance.
+- [ ] Exact package: the packaged Windows schedule journey has not been run on this head. Keep bug #310 open until that test passes.
+
+### Port Windows managed-workspace package probe — issue #226 / #9 / 2026-11-02
+
+- [x] Plan: inspect #230 against the active #260 parent. Workspace restore/delete product code is already present in the parent; focused local launch, deletion, registry and source-layout tests pass 5/5.
+- [x] Task: update the exact-package signal-settings journey to resolve the real first-run managed workspace from `workspaces.json`, rather than assuming the requested placeholder path is the persisted workspace.
+- [x] Add bounded registry polling and regressions for exact canonical workspace selection and delayed first-run registry persistence; temporary test homes are removed on drop.
+- [x] Verify locally: registry, signal-settings dispatch/window-refresh and layout suites pass 20 tests; workspace restore/delete suites pass 5/5; all-target native-feature Clippy with warnings denied, formatting, diff hygiene, and the 300-line limit pass.
+- [x] Cleanup: move the unique package probe to #260 and close stale-base PR #230 as superseded. Keep bug #226 open until the current Windows package passes.
+- [x] Assetize: record the test boundary and prior-run caveat in the LLM Wiki; AgentMemory `mem_mvxyyn29_b1fa84d9dd35`; Graphify refresh: 12,154 nodes / 19,842 edges.
+- [ ] Verify package: run the current exact Windows package through workspace restore and signal-settings persistence; do not count the earlier package run on the old PR head as current acceptance.
+
+### Remove static labels from native Rust screens — issue #190 / #9 / 2026-11-02
+
+- [x] Plan: confirm the closed #190 requirement also applies to the Rust Workspace sidebar and Agent Room header.
+- [x] Red: change bilingual render tests to assert the local/login label and static sidebar tagline are absent; add a catalog/view-source regression. The pre-change render suite failed on the visible English label and tagline.
+- [x] Task / Green: remove the fixed text from both native views and delete its unused English/Korean catalog keys; retain actual workspace mode controls and room context.
+- [x] Verify: native label, room header/language, and sidebar suites pass 7/7; source catalogs and view-source test passes; formatting/diff checks pass and changed source/test files stay under 300 lines.
+- [x] Expanded verification: native UI label/header/language/sidebar, source-layout and public-doc suites pass 20/20; all-target native-feature Clippy with `-D warnings` passes.
+- [x] Cleanup: port issue #190's Rust-specific change from stale PR #199 into the active #260 parent; close #199 as superseded after commit. Main issue #190 is already closed; #9 remains gated on exact package parity.
+- [x] Assetize: update the LLM Wiki and AgentMemory `mem_mvxytxcz_f9b83f5ce30d`; Graphify AST refresh reports 12,154 nodes / 19,842 edges. Code commit: `85e283d4`.
+- [ ] Verify package: inspect the updated native layout in a packaged build and retain a screenshot/evidence before counting this as full UI parity.
+
+### Reconcile the stacked #9 pull requests — 2026-11-01
+
+- [x] Task: integrate the completed #305 chat lifecycle, #293 chat accessibility, and #294 event-driven refresh/draft preservation work into the active #9 branch at `9126dfd0`.
+- [x] Audit: PR #255 contains older event-refresh changes and a 500 ms resumed-chat poll. The current QAS-192/DD-206 design uses scoped events plus a fixed 30-second lost-event recovery cadence; the 500 ms poll would violate that resource constraint and is not ported.
+- [x] Port: strengthen the current Windows exact-package reconnect scenario to assert the editor is disabled while a resumed chat is running and enabled after its answer appears. Keep the package test on the #9 parent branch.
+- [x] Local verify: `windows_coordinator_chat` integration target compiles; `cargo fmt --check` passes; both changed test files remain below 300 lines.
+- [x] Cleanup: close PR #255 as superseded after moving its unique Windows acceptance assertions to #260. Issue #189 remains open until exact packaged Windows acceptance passes.
+- [x] Port #239 regression: exercise a chat dispatch while `git rev-parse HEAD` is deliberately delayed by 20 seconds; current Rust `chat_revision` dispatch completes in under two seconds. The initial port caught stale request-field and revision-token assumptions; after adapting to the current `text`/`chat_revision` protocol, the test passes in 0.21 seconds. Existing parent code already provides the behavior, so no product code was copied from the older branch.
+- [x] Cleanup: close PR #239 as superseded after preserving its regression on #260. Issue #234 remains fixed in the Rust parent and main product PR #240.
+- [ ] Verify: run the strengthened reconnect scenario against the exact Windows package and retain its result with issue #189/#9 evidence.
+
+### Unblock Windows packaged UI Automation checks — issue #9 / 2026-11-01
+
+- [x] Plan: inspect Windows package failures in PR #260, #239, and #311 instead of treating the open PRs as approval-waiting. The logs showed two driver issues: `ValuePattern` on egui text inputs and a stop button invoked before its asynchronous state enabled it.
+- [x] Red: source-contract assertions first exposed missing keyboard entry and missing enabled-state polling. Shared validation then failed on a stale contract that still required `ValuePattern.SetValue` after the driver moved to keyboard input.
+- [x] Task / Green: drive text fields through focus plus keyboard input, find the stop-reason edit adjacent to its label, and wait for the `Stop run` button to become enabled before invoking it.
+- [x] Verify locally: pushed both Windows UI automation test fixes and the verification record to PR #260. Focused batch: 15 passed, 1 ignored; formatting, warning-denied Clippy, diff hygiene, and 300-line checks pass.
+- [x] Follow-up Red / Green: Windows run `41294797195` exposed a same-length, rapid report rewrite that could be missed at the Windows filesystem timestamp resolution. Changed the test fixture to increase the report length on update; targeted test passes locally.
+- [x] Follow-up Red / Green: platform runs `41297846153`, `41297870756`, `41298028204`, `41298098982`, and `41298169824` all failed the same macOS `windows_desktop_driver` source-contract test: it still expected `ValuePattern.SetValue`. Replaced that stale expectation with the actual focus → select → type → save order and retained the prohibition on focusing the non-focusable top-level window.
+- [x] Downstream diagnosis: PR #311 run `41297870756` used its old parent head `2c465180`; macOS failed stale `goal_driver_uses_and_confirms_value_pattern_before_saving`. Windows failed `windows_desktop` and `windows_desktop_driver`: the latter contains the same stale assertion; the former runs `default_native_workspace_is_accessible_and_saves_through_ui_automation`, whose failure cause remains unconfirmed because authenticated job-log retrieval returned 502 and GitHub CLI could not connect. The stale driver assertion is fixed in parent head `284ac00b`; rerun #311 after parent validation, then investigate the GUI test separately before crediting #310.
+- [x] Prepare downstream sync: read-only merge-tree for current parent `284ac00b` and #311 head `7867d26f` produces clean tree `c2d649ae` with no conflicts. Synchronize the child after parent validation completes; this does not by itself resolve or verify the Windows GUI test.
+- [x] Verify the correction: `cargo test --locked --test windows_desktop_driver` passes 8/8 locally.
+- [x] Record local environment limit: full all-target runs cannot pass in this sandbox because four AgentMemory tests require loopback TCP bind and three folder-execution tests require filesystem operations denied here (`Operation not permitted`). The CI failure under repair was the stale desktop-driver assertion, not these environment-limited tests.
+- [x] Verify follow-up locally: `cargo test --locked --lib` passes 80 tests; focused listener test passes; `cargo fmt --check`, `git diff --check`, and the 300-line limit pass.
+- [x] Assetize: AgentMemory records `mem_mvxob8f0_92018d2932da` and `mem_mvxod8ne_88e7c8d28622`; Graphify refreshed to 11,854 nodes / 17,993 edges / 867 communities. LLM Wiki records the failure and limits. CocoIndex is unavailable in this Rust-only environment.
+- [x] Local Verify: warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test limit pass for the updated contract. Full all-target execution remains limited by the recorded sandbox restrictions above.
+- [x] Remote diagnosis from completed #304 run `41306779270`: Windows failed because Save has no UIA `InvokePattern`; macOS failed because the source contract expected obsolete `ValuePattern` despite the keyboard driver. This is now a confirmed test-driver problem, not a product save-path failure.
+- [x] New Windows regression evidence: #311 run `41304840330` completed with Windows `default_native_workspace_is_accessible_and_saves_through_ui_automation` failing because only `Win` was saved (expected `Windows UIA goal`) despite the 100 ms per-character / 750 ms settle driver. This disproves the timing-only fix; inspect actual focused control and text after input before changing timing again.
+- [x] Root-cause TDD: the driver found the Goal/Save controls before the initial snapshot finished; `editable()` disables them while `Pending::Refresh` is active. A new source-contract test first failed, then the driver was changed to wait up to 20 seconds for both controls to enable and up to 3 seconds for keyboard focus before typing. Failure output now includes UIA focused-control and TextPattern text diagnostics.
+- [x] Save-action Red/Green: source-contract tests first failed on the InvokePattern-only script; the driver now focuses Save, waits for keyboard focus, and sends Enter. `windows_desktop_driver` passes 12/12 locally.
+- [x] Local Verify: latest integrated suite passes 65 tests across 13 focused quota/UI suites plus 13 source-layout/public-doc tests; warning-denied Clippy, rustfmt, diff hygiene, release UI build, and the 300-line limit pass.
+- [x] Exact-head run `41307850806` for `d4a11db6` passed macOS validation; it was canceled before Windows native tests after the matching #304 log exposed the already-known Save activation failure.
+- [x] TDD root-cause fix: exact-head run `41309723645` showed the Windows UIA focused element was the top-level AgentConductor window and the Goal editor remained empty. The driver regression failed against the old UIA `SetFocus` + `SendKeys` path, then changed to foreground the app, click the owned Goal bounds, enter Unicode through `SendInput`, and activate Save through keyboard input.
+- [x] Local Verify / push: commit `dbfb28c9` on `codex/issue-9-git-head-fast-path`; 14 tests across `windows_desktop`, `windows_desktop_driver`, and `source_layout`; all-target warning-denied Clippy, rustfmt, `git diff --check`, and the 300-line file limit pass.
+- [x] Diagnose exact-head run `41313969180`: macOS failed `windows_run_lifecycle::lifecycle_driver_exposes_stop_resume_and_recovery_observations` because a cross-platform source-contract still required `SendWait` in `windows_desktop.rs`. The Windows run was canceled before its native tests; this run does not verify Windows input behavior.
+- [x] Follow-up Red / Green: replaced the obsolete `SendWait` expectation with the foreground, owned click, Unicode `SendInput`, and Enter contracts. The local `windows_desktop_driver`, `windows_run_lifecycle`, and `source_layout` suites pass 15 tests (1 package-only test ignored); warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line limit pass.
+- [ ] Exact-head rerun: push this corrected cross-platform contract and require macOS/Windows validation plus the exact Windows packaged default-desktop journey before changing PR #260 from draft or closing related issues.
+- [ ] After exact package acceptance: update this checkpoint and LLM Wiki with terminal evidence, then integrate remaining #9 child work sequentially against the current parent; do not close unintegrated child PRs as duplicates.
+
+### Reconcile the root Rust migration with latest main — issue #9 / 2026-11-01
+
+- [x] Plan: inspect PR #22 mergeability before stacking more work or attempting a merge.
+- [x] Verify: latest fetched refs are `main` `a8b82b55` and `codex/issue-9-native-ui-parity` `f123f2ce`; the Rust branch is 135 main-only commits behind and has 1,051 branch-only commits from the common base. Read-only `git merge-tree` reports 110 conflict paths (63 content, 19 add/add, 28 modify/delete); GitHub reports PR #22 `dirty` and draft.
+- [x] Assess: many modify/delete conflicts are expected because Rust intentionally removes the JS UI, but content conflicts span backend code, tests, public/design docs, manuals, and Wiki assets. Do not accept one side wholesale; verify each main-side behavior against the Rust port before resolving.
+- [x] Initial port map: #260 covers nonblocking refresh/revision checks; #311 schedule run-directory verification; #294 event/draft preservation; #303/#304 quota status and errors; #305/#293 coordinator chat; #284 active-progress parity; #289 request feedback; #288 status board; #230 workspace restore; #202 goal optimizer; #199 label parity; #239 chat timeout recovery. These are open stacked PRs, not completed parity. The remaining main-only behavior inventory is still required.
+- [ ] Task: inventory the 135 main-side commits and map product changes to R → BG → SF → UC → FR/NFR → QAS → DD; identify existing Rust ports in dependent PRs and gaps not represented by those branches.
+- [x] Partial inventory: latest main merge `2570dac8` ports the stale idle-poll behavior into requirements R-184/R-186; Rust background reads already suppress automatic errors while explicit refresh/action errors stay visible. The native poll-timeout suite passes 13/13 locally.
+- [x] Partial inventory / regression port: main test change `a8b82b55` replaces `waitpid` with assertions on persisted job and process-owner exit status. The equivalent regression is now in `tests/ui.rs`; targeted test passes 1/1, source layout 2/2, rustfmt and diff checks pass. The file is 267 lines.
+- [x] Partial inventory: main change `02a4e5c4` enables reference preview immediately when a Jira/Confluence key is typed. Rust workspace source controls derive references directly from the goal and expose Preview accessibly in English and Korean; `cargo test --locked --offline --test native_ui_mcp_sources` passes 6/6. The remaining time-accounting behavior from the same main PR is tracked separately in the progress-feedback port.
+- [x] PR-stack audit: #255 is not a duplicate of #294. #255 is based on the older root `f123f2ce`, changes 102 files (+3,774/-508), and contains package evidence plus older event-driven work; #294 is based on the fast-path branch, changes 42 files (+1,219/-147), and carries the current event/draft-preservation port. Their heads have 61 and 33 unique commits respectively. Do not close either until their overlapping Rust changes and package tests are reconciled onto the root branch.
+- [ ] Task: port every missing user-visible behavior to Rust, retain intentionally removed JS UI, then resolve documentation/test conflicts against the verified Rust implementation.
+- [ ] Verify: rerun complete local tests where the sandbox permits, source-layout/Clippy/fmt checks, then exact macOS and Windows packaged journeys against the rebased root candidate.
+- [ ] Complete: PR #22 remains draft/dirty and issue #9 remains 22/50 overall (22/25 packaged workflows, 0/25 shipped/default Rust UI) until parity and package evidence are re-audited. No merge attempted.
+
+### Triage deleted-workspace restore report — bug #226 / 2026-10-30
+
+- [x] Plan: inspect the issue-linked PR #230 without touching the root #9 worktree; distinguish confirmed Delete from Remove-from-menu behavior.
+- [x] Verify: five focused workspace/delete/launch suites pass 20 tests. Confirmed Delete archives the app-owned directory and unregisters it; startup scans registered desktop/workspaces folders only. Remove-from-menu retains the directory as `registered:false`; deleting the default may initialize a new empty desktop workspace.
+- [x] Record: update issue #226 and PR #230 with the evidence; AgentMemory and LLM Wiki record the distinction.
+- [ ] Complete bug: the report does not say which action/default workspace was involved, so no product defect is established. Keep #226 open pending a reproducible path and exact Windows package verification.
+
+### Package and smoke-test the latest pushed Rust head — issue #9 / 2026-10-30
+
+- [x] Plan: package exact source `7a56e372e598fff7df593d3ab4933bad62021360` after the Windows approval-driver correction.
+- [x] Task / Verify: built `dist/agentconductor-aarch64-apple-darwin-7a56e372e598.zip`; exact source manifest, binary checksum, archive checksum, ZIP integrity, packaged `--help`, bilingual manuals, dependency license inventory, notices, and SBOM pass.
+- [x] Packaged workflow: the exact executable passed shared/worktree × Git/folder mock runs (4 cases, 12 parallel tasks/tests total, pre-approval merge refusal, post-approval merge verification). Evidence: `docs/evidence/issue9-7a56e372-macos-package.json` and `docs/evidence/issue9-7a56e372-macos-smoke.json`.
+- [x] Cleanup: removed the superseded 043d2ecb archive and extracted package; retained its machine-readable evidence.
+- [ ] Acceptance: packaged GUI workflow and Windows package remain unverified; local CLI smoke does not add shipped UI acceptance or authorize a release.
+- [x] Assetize: refresh Graphify to 11,754 nodes / 17,855 edges and record exact package and smoke evidence in the LLM Wiki and AgentMemory.
+
+### Prevent duplicate Windows tool-decision inputs during delayed UI updates — issue #9 / 2026-10-30
+
+- [x] Plan: address the Windows package journey where UI Automation reported no state change after 500 ms although the final accessibility dump contained the confirmation button. The script previously retried the same approval by pointer up to three times.
+- [x] Red: add `activation_waits_for_async_state_without_repeating_approval_inputs`; it first failed because the driver had no bounded state-wait helper, then failed again because it still sent UIA and keyboard inputs before its pointer click.
+- [x] Task / Green: activate the verified in-window, process-owned button with one checked pointer click and wait up to 4 seconds for the requested UI state. Remove UIA/keyboard fallbacks and all repeated approval inputs so an ambiguous response cannot trigger duplicate consent.
+- [x] Verify locally: 15 Windows tool-decision and source-layout tests pass; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the 300-line limit pass. The test driver is 238 lines.
+- [x] Assetize: refresh Graphify to 11,751 nodes / 17,852 edges; update this plan and the LLM Wiki with the observed Windows package failure and the test-driver correction.
+- [ ] Windows Verify: rerun the exact Windows packaged UI journey; macOS source tests cannot prove Windows UI Automation timing.
+
+### Verify macOS package and packaged workflow at source 043d2ecb — issue #9 / 2026-10-30
+
+- [x] Plan: package the pushed Rust head `043d2ecb13022966d3ee8c09f2fd1ed8c9ae4510` locally; do not treat command-line smoke as GUI or Windows acceptance.
+- [x] Task: `cargo run --release --locked --offline -j 2 -- package-release` produced `dist/agentconductor-aarch64-apple-darwin-043d2ecb1302.zip` (21.3 MiB).
+- [x] Verify: exact-source manifest, binary and archive SHA-256, ZIP integrity, packaged `--help`, bilingual manuals, license inventory, notices and SBOM passed.
+- [x] Packaged workflow: run the packaged executable against disposable mock repositories. Shared and worktree isolation across Git and folder sources all passed (4 cases; 12 tasks and tests total; parallel execution; unapproved merge refused; approved merge verified). Evidence: `docs/evidence/issue9-043d2ecb-macos-smoke.json`.
+- [x] Assetize: refresh Graphify to 11,748 nodes / 17,849 edges. CocoIndex remains unavailable in this environment; no replacement dependency was added.
+- [ ] Acceptance: exact packaged GUI journey, Windows package, and GitHub Release remain unverified; this package smoke adds no native UI acceptance credit.
+- [x] Complete this package unit: retain machine-readable evidence, update the LLM Wiki and AgentMemory. Keep overall issue #9 open until remaining acceptance gates pass.
+
+### Build an exact-source macOS Rust package — issue #9 / 2026-10-30
+
+- [x] Plan: package the pushed Rust head `91963479be598752d5b39a73780104ea4577cc46` locally; do not treat a package build as UI or Windows acceptance.
+- [x] Task: `cargo run --release --locked --offline -j 2 -- package-release` built `dist/agentconductor-aarch64-apple-darwin-91963479be59.zip`.
+- [x] Verify: package manifest source and binary SHA-256 match; `SHA256SUMS`, `unzip -t`, and the packaged executable's `--help` pass. The Rust package builder's four mock workflow cases pass (shared/worktree × Git/folder; three tasks and tests per case; unapproved merges refused, approved merges verified). Archive SHA-256: `0ee02a02d5464aced3957b7043b31ee491c99301dea18a8a4d98a2c322f41f4c`. Evidence: `docs/evidence/issue9-macos-package-91963479-20261030.json`.
+- [ ] Acceptance: this is a local Apple Silicon package only. Exact packaged GUI acceptance, Windows package validation, current-main parity, and GitHub Release publication remain open.
+- [x] Complete this package unit: record the package evidence in the LLM Wiki and AgentMemory, then commit/push the evidence. Do not publish a release before the remaining acceptance gates pass.
+
 ### Verify the exact macOS package at the pushed Rust head — issue #9 / 2026-10-29
 
 - [x] Plan: rebuild the release archive after the Rust chat fast-path commits so package evidence names the exact pushed source head `f739b4852ee06df6554ec7bf139df8f42ee90106`.
@@ -335,6 +470,11 @@
 - [x] Red: `exact_package_runs_the_stop_resume_recovery_journey` failed because the Windows package job did not include the recovery integration target.
 - [x] Task: add a bounded Rust mock-agent blocker and `tests/package_run_recovery.rs`; register it in the Windows exact-package job. The test uses only a disposable Git repository and mock CLI.
 - [x] Local Verify: the exact journey passes against the local Rust binary; the full offline suite passes 1,103 tests (15 ignored, 350 suites, 269.80s). Focused contracts pass 21 tests with 1 package-only test ignored; warning-denied all-target Clippy, rustfmt, diff checks, and the 300-line guard pass. The final candidate diff contains exactly the three owned fixture files after both resumes.
+- [x] Exact macOS package CLI Verify (2026-10-30): the retained package binary SHA matches its package manifest, and the ignored journey passes 1/1 against that binary. It verifies stop, process exit, explicit resume, interrupted-run recovery, a second resume, and the exact three-file diff. This does not exercise the GUI or Windows package; no workflow credit is added. Evidence: `docs/evidence/issue9-workflow25-macos-package-cli-20261030.json`.
+- [x] Red/Green: add `lifecycle_driver_exposes_stop_resume_and_recovery_observations`; it failed before the UI Automation script defined its action contract, then passes with the bounded Stop, reason-confirmation, and Resume driver.
+- [x] Task: add `tests/windows_run_lifecycle.rs` and its PowerShell UI Automation support. The ignored exact-package Windows journey stops a blocked mock run from the UI, checks coordinator exit, resumes to approval, simulates an interrupted owner, relaunches the packaged UI to recover, resumes again, and checks the exact owned diff and attempt count. Register it in the Windows package job. The journey test body now compiles on macOS too, while remaining ignored there.
+- [x] Local Verify (2026-10-30): native UI worker/event/polling library tests pass 54/54; EventBus tests pass 7/7, including the wake-callback lock-release regression; `windows_run_lifecycle` and `source_layout` report 3 passed, 1 exact-package test ignored. Warning-denied all-target Clippy, rustfmt, `git diff --check` pass. Changed Rust tests are 220, 45, and 121 lines. Graphify refresh: 11,784 nodes / 17,902 edges.
+- [ ] Windows exact-package UI Verify: run the newly registered journey against the Windows release package and require visible Stop/Resume actions, process exit, persisted recovery state, and the exact candidate diff. Until it passes, GUI acceptance receives no credit.
 - [ ] Exact-package Verify: run both platform validation and exact macOS/Windows package jobs on this commit. No acceptance credit until the workflow passes on the packaged binary.
 - [ ] Complete: save exact-head evidence, update issue #9, PR #22, AgentMemory and LLM Wiki. Keep candidate packaged acceptance at 22/25 and shipped Rust replacement at 0/25 until all package gates pass.
 
@@ -6539,3 +6679,330 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: update the reset regression to expect the terminal marker; the test file passes 2/2. Warning-denied all-target Clippy and `cargo fmt --check` pass. A local parallel all-target attempt exposed two timing-sensitive unit tests that pass individually; a serial run passed 331 tests across 77 suites, then stalled in `io_conformance` and was stopped. This is not recorded as a full-suite pass.
 - [x] Exact package: corrected head `3d6fd707` passed exact run `40885718536` on macOS and Windows, including native release packaging and packaged Windows default-desktop UI checks.
 - [x] Complete: squash-merge PR #228 into `codex/issue-9-native-ui-parity` as `f833e522`; close issue #221. The full local all-target test remains unclaimed because the serial run stalled in `io_conformance` after 331 passes / 3 ignored across 77 suites.
+
+### 2026-10-30 — Keep routine repository revision checks off the Git subprocess path — issue #9 / port #234
+
+- [x] Plan: add R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205; keep unsupported layouts compatible and preserve serialized mutation/revision guards.
+- [x] Red: `snapshot_with_a_proposal_succeeds_when_git_is_not_reachable` failed when PATH hid Git, proving snapshot revision still spawned a process.
+- [x] Task: read detached, loose-ref and packed-ref HEAD directly; return a cached/pending state for linked worktrees and coalesce background Git refresh; use the resolver in native state revision checks.
+- [x] Verify affected targets: `source_layout`, `git_head`, and `snapshot_without_git` pass 7/7; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the 300-line source/test audit pass. Graphify refreshed to 11,889 nodes / 19,466 edges and confirms `revision` and `chat_revision` call `state_revision`; CocoIndex CLI unavailable.
+- [x] Full all-target verification follow-up: at pushed branch head `6bbb4254683cb2d147696d98384643d4dea7fc6e`, `cargo test --all-targets --locked --offline -j 2` exited 0: 1,143 passed, 15 ignored across 364 suites (265.54 seconds). This supersedes the earlier interrupted attempt; authenticated provider and exact packaged-binary journeys retain their declared prerequisites.
+- [ ] Verify exact packaged macOS and Windows UI behavior; source tests do not prove package responsiveness.
+- [x] Complete this unit: code commit `363a6f5` is pushed on `codex/issue-9-git-head-fast-path`; draft PR #260 targets `codex/issue-9-native-ui-parity`; issue #9 has the local verification checkpoint. Keep #9 open; no package acceptance is claimed.
+- [ ] Complete issue #9: exact packaged macOS/Windows behavior and the remaining parity gates are still open.
+
+### 2026-10-30 — Broadcast native state changes and isolate polling — issue #9
+
+- [x] Plan: trace R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. Keep the event payload content-free; the snapshot remains authoritative.
+- [x] Red: add a deterministic worker barrier test where a blocked background snapshot must not block an interactive chat dispatch; add event fan-out, source-suppression, and read-only-filter tests.
+- [x] Task: split periodic snapshots onto an independent worker/reply channel; broadcast successful state invalidations to subscribed peer windows; coalesce refreshes and wake listeners; use notification-driven active refresh and a 30-second recovery cadence.
+- [x] Verify locally: 60 library tests and 30 tests across `native_room_render`, `native_ui_profile_refresh`, `native_ui_probe`, and `source_layout`; warning-denied all-target Clippy, `cargo fmt --check --all`, diff check, and 300-line source/test validation pass.
+- [x] Complete unit: commit `153d152f` is pushed to `codex/issue-9-git-head-fast-path`; AgentMemory entry `mem_mvu7a0nj_e1bbe9fa40b8`, LLM Wiki, Graphify, and issue #9 are updated. Keep #9 open until packaged macOS/Windows parity acceptance is complete.
+- [x] Follow-up: bound each subscriber's invalidation queue to one event. A burst of 10,000 state changes now produces one wakeup and one authoritative snapshot request instead of unbounded queued refreshes. Regression proves coalescing; the blocked background-refresh test now uses a generic save dispatch rather than chat-only behavior.
+- [x] Follow-up local checks: event tests 3/3, native start journey and source layout 3/3, warning-denied all-target Clippy, rustfmt, diff hygiene, and changed-file 300-line check pass. Full all-target run was interrupted at the checkpoints target after 372 passed / 4 ignored across 88 suites in 74.90 seconds; no full-suite pass is claimed.
+- [x] Shared-lock fix: add the lock-release regression first (it failed to compile until the detached snapshot boundary existed), then clone `Saved` and release its mutex before snapshot filesystem/quota/revision work. A deterministic barrier test holds snapshot assembly and proves a concurrent operation can acquire the shared state lock. Existing UI pending state still serializes intentional foreground operations per window; this change removes cross-window waiting caused by long snapshot assembly.
+- [x] Shared-lock verification: 62 library tests and four targeted tests across native start journey, chat startup context, and source layout pass; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test check pass.
+- [x] Background-during-interaction regression: reproduce that a completed independent snapshot was discarded whenever an interactive reply was pending. Apply the new authoritative snapshot while preserving the pending operation, dirty form values and current error; targeted regression passes.
+- [x] Worker-level architecture gap: replace the single foreground worker with bounded read and serialized state-change lanes; preserve a separate poll worker and correlate replies. The UI retains one foreground pending presentation slot, while work on independent lanes no longer shares one request thread.
+- [x] Full local regression after this follow-up: `cargo test --all-targets` passed 1,143 tests, 15 ignored, 0 failed across 364 suites in 263.09s (exit 0).
+- [ ] Exact packaged macOS and Windows responsiveness remains unverified.
+
+### 2026-10-30 — Keep independent native requests responsive — issue #9 / #257
+
+- [x] Plan: trace R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207; preserve event broadcast, serialized mutations, and the existing single-flight snapshot worker.
+- [x] Red: add a barrier regression proving a slow snapshot prevents a later independent action from completing; the test timed out on the single foreground worker.
+- [x] Task / Green: route reads to two fixed workers, state-changing and unknown valid requests to one bounded serialized worker, and keep periodic snapshots in their isolated lane. Correlate replies and drop stale completions.
+- [x] Verify focused: a state change completes during a blocked snapshot; two read requests run concurrently; state changes remain serialized; read-only requests do not emit invalidations.
+- [x] Verify locally: 66 library tests, 13 native UI integration tests, and 2 source-layout tests pass; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the 300-line source/test limit pass.
+- [x] Full local regression at product head `460d9b3`: `cargo test --all-targets` passed 1,143 tests, 15 ignored, and 0 failed across 364 suites in 263.09 seconds.
+- [x] Update the LLM Wiki and refresh Graphify to 11,723 nodes / 17,818 edges. CocoIndex is not installed in this environment; no substitute dependency was added.
+- [ ] Verify exact packaged macOS and Windows responsiveness; no UI/package acceptance is claimed from source tests.
+- [x] Update issue #257 and draft PR #260 at product head `460d9b3` and docs head `566145c`; keep both open for exact packaged macOS/Windows responsiveness.
+
+
+### 2026-10-30 — Dispatch event refresh during foreground work — issue #257 / #9
+
+- [x] Plan: close the gap between receiving a snapshot during a pending operation and actually starting an event/recovery refresh while that operation is pending. Keep human decision modals as an explicit per-view pause.
+- [x] Red: `state_change_event_refresh_runs_while_an_interactive_request_is_pending` failed because the pending-action gate prevented the separate refresh worker from starting. `foreground_action_does_not_disable_periodic_room_refresh` first failed because the refresh eligibility policy was not exposed for regression testing.
+- [x] Task: let coalesced state events dispatch through the bounded background worker during foreground work; keep the periodic schedule independent of unrelated pending requests and preserve modal guards. Snapshot replies continue to retain the pending action, dirty input, and current error.
+- [x] Verify focused: 53 native UI tests pass; public-doc/source-layout checks pass 13 tests; warning-denied all-target Clippy, rustfmt, diff hygiene, and changed source/test line limits pass. Graphify re-extracts 11,738 nodes / 19,183 edges; `cocoindex-code` is present but fails import because `mcp.server.fastmcp` is unavailable.
+- [x] Record all-target attempt: the locked/offline run with `native-ui-probe` was stopped after 756 passed, 14 ignored across 231 suites (exit 130, no failure observed); this is not a full-suite pass. Exact packaged responsiveness remains open.
+- [x] Complete unit: commit `be1026e8` is pushed on `codex/issue-9-git-head-fast-path`; progress comments are recorded on [#9](https://github.com/neodamul/AgentConductor/issues/9#issuecomment-6513164786), [#257](https://github.com/neodamul/AgentConductor/issues/257#issuecomment-6513164086), and [PR #260](https://github.com/neodamul/AgentConductor/pull/260#issuecomment-6513165649). AgentMemory: `mem_mvubyrnn_4eadeb64cedf`; Graphify: 11,738 nodes / 19,183 edges. Keep #9 open until exact macOS/Windows package and parity gates pass.
+
+### 2026-10-30 — Scope state invalidations to affected native views — issue #257
+
+- [x] Plan: distinguish Workspace-only changes from run changes so unrelated surfaces do not wake and request snapshots.
+- [x] Red: add EventBus regressions for workspace-only delivery, run delivery to both views, and request-to-scope routing.
+- [x] Task / Green: subscribe each native view with its scope; route workspace mutations to Workspace and run mutations to both views; keep source suppression, bounded coalescing, and repaint callbacks.
+- [x] Verify locally: all 70 native UI library tests pass with `native-ui-probe`; 13 public-doc/source-layout tests pass; warning-denied all-target Clippy reports no issues, and rustfmt/diff checks pass.
+- [ ] Verify complete workspace/package journeys on exact macOS and Windows binaries; source tests do not satisfy packaged acceptance.
+- [ ] Commit and push after focused review; keep #257 and PR #260 open until package acceptance is complete.
+
+### 2026-10-30 — Isolate synchronous network checks from state changes — issue #9 / #257
+
+- [x] Plan: extend R-195 through BG-150, SF-183, UC-186, FR-187/NFR-82, QAS-193, DDR-47, and DD-207. Keep mutation ordering while isolating blocking external I/O and periodic refreshes.
+- [x] Red: add a barrier regression where a blocked `test_messenger` request prevents a later workspace save; it timed out on the shared state-change lane.
+- [x] Task / Green: classify messenger connection checks onto a dedicated bounded I/O worker; keep reads, mutations, and periodic snapshots on their existing lanes.
+- [x] Verify focused: worker concurrency suite passes 5 tests, including state serialization, parallel reads, and a save completing while the messenger check is blocked. Changed Rust source and test files remain under 300 lines.
+- [x] Verify: worker concurrency tests pass (5/5); messenger and source-layout integration tests pass (4/4); idle-footprint passes (1/1); warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test limit pass. Graphify refresh: 11,762 nodes / 17,864 edges.
+- [x] Package verify: exact commit `1eb01727932fa0f623e92ac5a9a160b498701bae` builds and validates locally; archive integrity, package checksum, and packaged `--help` pass. Four packaged mock workflows pass, covering shared/worktree × Git/folder, parallel tasks, and approval-gated merge. Evidence: `docs/evidence/issue9-1eb0172-macos-package.json` and its referenced smoke result.
+- [x] Full-suite attempt: `cargo test --all-targets --locked --offline` was interrupted during linking after 389 tests passed and 4 were ignored across 91 suites (75.46 seconds reported by the runner); no test failure was observed, but this is not a full-suite pass.
+- [x] Complete implementation unit: AgentMemory entries `mem_mvuddx7j_c270fcce8617` and `mem_mvudtjuu_3465b42f1a28` and the LLM Wiki are updated; commits `1eb0172` and `479a8625` are pushed. Progress is recorded on [issue #257](https://github.com/neodamul/AgentConductor/issues/257#issuecomment-6513747301) and PR #260.
+- [ ] Verify latest-head platform run `40993952492`; exact packaged GUI on macOS and Windows remains unverified. Local CLI package smoke is not a GUI acceptance result.
+- [x] Re-run the native UI integration target locally: `cargo test --locked --offline --test native_ui_probe` passes 13/13.
+- [x] Disk cleanup: removed only idle Cargo `target/debug/incremental` and `target/debug/tmp` caches (9.2 GiB and 801 MiB before cleanup); target shrank from 35 GiB to 27 GiB. Source, package archives, dependency outputs, and binaries were preserved.
+
+### 2026-10-30 — Exact current-head Apple Silicon package — issue #9
+
+- [x] Build `043d2ecb13022966d3ee8c09f2fd1ed8c9ae4510` with `cargo run --release --locked --offline -j 2 -- package-release`.
+- [x] Verify package manifest source, embedded executable SHA-256, `SHA256SUMS`, archive integrity, and packaged `--help`; retain evidence in `docs/evidence/issue9-043d2ecb-macos-package.json`.
+- [x] Confirm bilingual manuals, dependency license inventory, third-party notices, and SBOM are in the archive.
+- [ ] Run exact packaged macOS GUI workflow and Windows package workflows; no UI/package acceptance is claimed from the CLI smoke.
+- [ ] Publish no release until the exact platform packages and current #9 acceptance gates pass.
+
+### 2026-10-30 — Listen for persisted Agent Room changes — issue #9 / R-194
+
+- [x] Plan: keep the R-194/R-195 event contract: state-change work remains asynchronous, views receive coalesced invalidations, and snapshots stay on the background worker lane.
+- [x] Red: add a regression that writes a new run report and expects the subscribed view to receive a run-change event.
+- [x] Task / Green: add stoppable standard-library listeners for `startup.json` and the active `report.json`; they check file metadata every 500 ms and broadcast only when length or modification time changes. The 1-second active snapshot fallback is removed; only a 30-second missed-event recovery check remains.
+- [x] Verify focused: native EventBus tests pass 8/8, including startup/run scope routing, persisted-report wakeup, bounded coalescing, and nonblocking subscriber wake callbacks.
+- [x] Verify locally: EventBus tests pass 8/8, native UI integration passes 13/13, source layout passes 2/2, warning-denied all-target Clippy and rustfmt pass, and the 300-line source/test bound holds.
+- [x] Commit the unit locally; save AgentMemory `mem_mvufyvr9_997c8499dc20` and refresh Graphify (11,812 nodes / 17,951 edges).
+- [x] Inspect existing run `40997481871`: it is terminal. macOS/Windows validation and macOS packaging passed; the Windows package failed in the default-desktop UI journey. This is not a pass for the new code.
+- [ ] Verify exact packaged macOS/Windows UI workflows before changing #9 acceptance; current full-denominator progress remains 22/50 (44%).
+
+### Remove the active one-second snapshot loop — issue #257 / 2026-11-01
+
+- [x] Plan: add R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208; amend R-194 to make the persisted-state listener the active refresh path.
+- [x] Red: require a 30-second recovery interval even while run/metadata work is active; the prior one-second interval failed this test.
+- [x] Task / Green: active reports and startup-state changes wake the scoped listener, which coalesces invalidation into the existing asynchronous snapshot lane. The only periodic recovery check is 30 seconds.
+- [x] Local Verify: `native_room_render` 12/12, `native_ui_profile_refresh` 3/3, `native_ui_probe` 13/13, and `source_layout` 2/2 pass. warning-denied all-target Clippy, `cargo fmt --all -- --check`, `git diff --check`, and the ≤300-line changed-file check pass.
+- [x] Complete code/document unit: AgentMemory `mem_mvx7wcvd_1320e99dd054`, LLM Wiki, and Graphify refreshed to 11,822 nodes / 17,961 edges; commit `a17d43d5` pushed. [ ] Verify exact macOS/Windows packaged responsiveness; packaged UI acceptance stays 22/50 until that evidence passes.
+
+### 2026-11-01 — Remove fast polling from active native jobs — issue #257 / #9
+
+- [x] Audit Claude main #273/#274 (v0.1.49) and open follow-up #279; keep the work on its JS track and map its active-job visibility findings to native Rust.
+- [x] Plan: apply R-196/DD-208 to chat, goal optimization, MCP lookup, run startup/stop, and uncertain chat sends; state events are primary and the existing independent 30-second recovery cadence remains.
+- [x] Red: add regressions showing that reopening or refreshing active chat, optimizer, and MCP jobs must not schedule 500ms–1s full snapshots; all four failed before the fix.
+- [x] Task / Green: remove the per-job fast refresh overrides. Event notifications wake the views; the normal 30-second recovery deadline remains owned by the independent refresh path.
+- [x] Verify locally before the workspace-watch follow-up: `cargo test --locked --offline --features native-ui-probe --lib --test native_ui_probe --test source_layout` passed 93 tests across 3 suites; warning-denied all-target Clippy, `cargo fmt --all -- --check`, `git diff --check`, and the 300-line source/test guard pass.
+- [x] Record local verification in AgentMemory (`mem_mvx8bws9_da5214784410`) and the LLM Wiki; Graphify refreshed to 11,829 nodes / 19,326 edges. CocoIndex could not run because `mcp.server.fastmcp` is missing; no app dependency was added. Exact packaged acceptance remains unverified.
+- [ ] Exact packaged macOS/Windows behavior and visual acceptance remain open; issue #9 acceptance stays 22/50 until tested.
+
+### 2026-11-01 — Expose the native coordinator chat editor to UI automation — issue #189
+
+- [x] Plan / Red: add an egui AccessKit regression requiring the coordinator chat multiline editor to expose its localized prompt as an accessible name; it failed on the Rust base before the change.
+- [x] Task / Green: apply the localized prompt as the editor response's accessible name, matching the JS accessibility fix without importing its unrelated backend changes.
+- [x] Verify locally: 17 tests across six focused suites pass; warning-denied Clippy, rustfmt, diff hygiene, and the 300-line source/test limit pass. `view.rs` is 167 lines and the regression test is 37 lines.
+- [ ] Verify the exact Windows package UI Automation path and complete issue #189; source-level AccessKit tests do not satisfy package acceptance.
+
+### 2026-11-01 — Release previous workspace lease when switching — issue #226 / #257
+
+- [x] Plan: add R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. The current workspace listener must follow the selected workspace without strongly retaining an old `Startup` and its lease.
+- [x] Red: reproduce the existing workspace-switch test failure: after switching away from workspace A, opening A in another Room reports its startup lease as held. The remote macOS run also failed five workspace delete/switch tests.
+- [x] Task / Green: resolve watch paths dynamically through a shared `Weak<Startup>` target and update that target with the workspace switch. The listener retains its single thread and check cadence, tracks report changes in the current workspace, and no longer owns the old lease.
+- [x] Verify focused: dynamic listener regression and workspace lease reuse regression pass. The four remote-failure targets pass 9 tests serially; `launch_workspace` passes 1/1.
+- [x] Verify locally: the affected native UI bundle passes 96 tests across 4 suites; the workspace lease/delete/switch bundle passes 11 tests across 6 suites. Warning-denied all-target Clippy, `cargo fmt --all -- --check`, `git diff --check`, and the ≤300-line changed source/test bound pass.
+- [x] Record this combined native follow-up in AgentMemory (`mem_mvxa9njl_167fb9020f53`) and the LLM Wiki; refresh Graphify to 11,851 nodes / 17,990 edges / 884 communities. CocoIndex remains unavailable because `mcp.server.fastmcp` is missing; no application dependency was added.
+- [x] Update #226, #257, and PR #260 with the local evidence. Keep #226 open until its original cross-update persistence report is confirmed and the Rust package gate passes.
+- [ ] Exact packaged macOS/Windows GUI validation remains open; source tests do not pass the package gate.
+
+### 2026-11-01 — Complete run startup from event-driven snapshots — issue #9 / #257
+
+- [x] Plan: extend QAS-194 so the first event-driven snapshot that observes a newly created run report must open Agent Room immediately; keep the 30-second timer only as missed-event recovery.
+- [x] Red: `background_snapshot_opens_a_started_run_without_waiting_for_timer` failed because the background reply updated visible state but did not run the StartRefresh transition.
+- [x] Task / Green: apply the StartRefresh transition rules to an eligible background snapshot; it now requests `open_run` immediately without waiting for the recovery timer.
+- [x] Verify focused: the deterministic worker regression passes, and `review_approval_shows_start_feedback_then_opens_the_started_run` passes end-to-end in 6.19 seconds (previously timed out after 30 seconds).
+- [x] Verify locally: 96 affected native UI tests pass across 4 suites; warning-denied all-target Clippy, formatting, diff hygiene, and the ≤300-line changed source/test bound pass.
+- [x] Record AgentMemory `mem_mvxa9njl_167fb9020f53` and the LLM Wiki; refresh Graphify to 11,851 nodes / 17,990 edges / 884 communities; update issue #257 and PR #260 before unit commit `f877dcb`.
+- [x] Push `f877dcb` to `codex/issue-9-git-head-fast-path`.
+- [ ] Exact packaged macOS/Windows GUI verification remains open; this source-level test does not change #9 acceptance (22/50).
+
+### 2026-11-01 — Pace Windows UI Automation goal entry — issue #9 / #260
+
+- [x] Verify the stale downstream parent assertion fix at `284ac00b`; local `windows_desktop_driver` passed 8/8 before the Windows run.
+- [x] Inspect failed Windows run `41299460959`: the native tests reached `default_native_workspace_is_accessible_and_saves_through_ui_automation`, which saved only `Windows U` instead of `Windows UIA goal`.
+- [x] Red: add a source-contract regression requiring per-character SendKeys pacing before Save; the new test failed against the old whole-string SendWait driver.
+- [x] Verify run `41301522543`: platform validation passed on both systems and the macOS package passed, but the Windows package saved `Windows UIA goa`; the last character was still dropped by the 40 ms driver.
+- [x] Red: strengthen the source contract to require 100 ms per character and a 750 ms settle before Save; it failed against the 40 ms / 250 ms implementation.
+- [x] Green: increase the driver pacing and settle delay. Focused driver, documentation, and source-layout suites pass 22 tests locally; formatting and diff checks pass.
+- [x] Port the readiness/focus/readback fix into the #9 integration branch (`fb1c3156`); local `windows_desktop_driver` and source-layout tests pass.
+- [x] Correct the Save-driver contract after run `41306779270`: UIA does not expose `InvokePattern`; focus the Save control, wait for keyboard focus, then send Enter. The macOS source-contract test now matches the actual keyboard driver. Red was observed (3 failures); the corrected driver suite passes locally (12/12).
+- [x] Port the Windows schedule driver environment assertion from PR #311 into the #9 branch. `windows_schedule` verifies both `AC_DESKTOP_PID` and `AC_RUN_DIR`; 3 focused tests pass locally.
+- [x] Commit/push the integration units: `6e9e73eb` (#297), `0aa75896` (UIA driver), and `1123a340` (#310 schedule regression).
+- [x] Run `41309135388` exposed a Windows-only compile failure in the new 60-second quota timeout path. Add a regression test first; it failed locally because one Windows timeout branch still called the old one-argument helper.
+- [x] Fix both Windows timeout paths to pass the injected wait limit; 36 focused quota/UI/driver/docs/schedule tests, warning-denied Clippy, formatting, and diff checks pass locally.
+- [ ] Verify the next exact-head Windows/macOS platform run after this fix before closing #311 as superseded. Do not claim Windows UI acceptance until packaged desktop and schedule journeys pass.
+
+### GitHub #295 — Surface quota errors across native Rust UI
+- [x] Plan: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214; implement on the #9 integration branch to avoid a stacked issue branch.
+- [x] Red: add English/Korean accessibility-tree tests for the sidebar, settings view, and Agent Room; confirm the run-screen assertion fails before the UI update.
+- [x] Task / Green: show the stored quota error inline on all three surfaces with the full accessible/hover reason.
+- [x] Verify: 27 focused tests pass across new quota error cases and existing quota editor/profile/room render suites; `cargo fmt --check` and `git diff --check` pass; all touched Rust/test files remain below 300 lines.
+- [x] Complete local: warning-denied Clippy, source-layout/public-doc tests, AgentMemory and LLM Wiki updates, Graphify refresh, commit `d4a11db6`, and push to the #9 integration branch.
+- [x] Commit/push quota error display as `d4a11db6`; its focused tests and local checks pass.
+- [x] Diagnose Windows blocker from #304 run `41306779270` and port the keyboard-activation correction to the #9 integration branch.
+- [x] Update issue #295, PR #304, issue #9, and PR #260 with the root cause, integration commits, and current exact-head run links.
+- [x] Run `41309135388` failed the Windows build step; code inspection found the stale Windows-only timeout-helper call, now covered by a failing-then-passing regression test and fixed locally.
+- [x] Status correction: GitHub has closed bug #295 and draft PR #304; do not report either as open. #297 remains open for exact package/runtime acceptance.
+
+### GitHub #297 — Wait for slow Claude quota queries
+- [x] Plan: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213; retain existing CLI login and do not request generation.
+- [x] Red: delayed-session tests failed because the collector did not expose an injectable deadline or the shared 60-second production limit.
+- [x] Task / Green: add the shared bounded wait to macOS and Windows collectors, report the limit and prompt/response stage, and display elapsed time only on the active agent card.
+- [x] Verify: 31 focused tests pass across quota wait/elapsed/error/profile/room suites; 13 source-layout/public-doc tests pass; warning-denied Clippy, rustfmt, and diff hygiene pass. The fixture emits a Claude version/prompt and recognized `/usage` sections; its temporary directory is removed on test exit.
+- [x] Update LLM Wiki/raw observation and AgentMemory; Graphify refreshed to 11,939 nodes / 18,099 edges / 875 communities. CocoIndex remains unavailable because `mcp.server.fastmcp` is missing.
+- [x] Verify locally: 65 focused quota/UI tests, 13 source-layout/public-doc tests, warning-denied Clippy, rustfmt, diff hygiene, ≤300-line checks, and the optimized native Rust UI build pass.
+- [x] Commit/push #297 port as `6e9e73eb`; update issue #295/#297, PR #303/#304, issue #9, and PR #260 with current status.
+- [x] Run `41309135388` exposed the Windows-only stale timeout-helper call; the new regression test failed before the fix and passes after both timeout paths receive the configured deadline.
+- [x] Verify locally after the fix: 36 focused suites/tests, warning-denied Clippy, rustfmt, and diff hygiene pass.
+- [x] Reverify current #260 head `d802a9fa`: `claude_wait` 3/3 and `native_ui_quota_elapsed` 2/2 pass; the bounded 60-second query and elapsed indicator remain in the integration branch.
+- [ ] Cross-platform: confirm the next exact-head Windows and macOS package checks; then close #297 and stacked PR #303 as superseded only after behavior is verified in the integration branch.
+
+### 2026-11-01 — Keep coordinator chat alive across desktop close — issue #189 / #9
+
+- [x] Plan: use existing R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177. Add DD-210 to keep the one-shot coordinator chat worker independent from the desktop lifetime while preserving the current multi-lane native UI request pool. Do not take #192's single `sync_channel(1)` worker regression.
+- [x] Red: `chat_worker_lifecycle` initially failed to compile because the background-chat policy, maintenance exit classification, and detached command were absent.
+- [x] Follow-up Red: `windows_background_fallback` failed to compile because no policy distinguished host-job membership from a safe fallback.
+- [x] Task: start only `chat` UI jobs with Windows breakaway process flags. On access denied, allow the hidden-child fallback only when `IsProcessInJob` confirms the app is outside any host job; if membership is true or cannot be checked, persist `not_spawned` and return an explicit error. Retain normal ownership for other actions and skip the messenger flush for chat workers.
+- [x] Local Verify: `windows_background_fallback` (1), `chat_worker_lifecycle` (2), library and source-layout suites pass (85 total); rustfmt, diff check, warning-denied all-target Clippy pass. The Windows package harness was added but is not executed on macOS (0 platform tests run).
+- [x] Recheck #189 on the current #260 head: 14 focused chat/lifecycle/accessibility tests pass. TDD exposed that `windows_chat_script_contract` parsed only a zero-argument `ChatEdit()` declaration; update the test parser to accept the script's optional parameter while retaining its null-window assertion. Exact Windows package acceptance remains open.
+- [x] Assetize current bug audit in AgentMemory `mem_mvy0nic1_43f5859b441b`; Graphify refreshed to 12,321 nodes / 20,118 edges. Exact package/runtime gates remain open for #189, #226, #297, and #310.
+- [x] Full local Verify: `cargo test --all-targets --locked --offline --features native-ui-probe -j 2` passed on macOS; the Windows-only package harness compiled with 0 tests selected on this host. `cargo clean` then removed the completed 14.2 GiB build cache.
+- [x] Windows package failure triage: #260 run 41270341316 completed all native validation and macOS package checks, but the Windows run-lifecycle journey could not find the stop-reason editor. Its UIA driver searched hidden/offscreen process windows. Added a red/green contract test and filtered both top-level windows and controls by visibility; timeout diagnostics now list matching process windows.
+- [ ] Re-run exact Windows package journeys on the updated PR head; confirm the stop dialog is found and chat close/reopen still works when breakaway succeeds.
+- [ ] Verify the denied-breakaway branch in the Windows packaged host; confirm the UI reports `not_spawned` and no accepted/running chat is recorded when the desktop runs inside a host job.
+- [ ] Verify exact Windows package: close the desktop during delayed chat, reopen the same workspace, confirm the question and answer restore; also run all tool-decision journeys on this #260-based code.
+- [ ] Complete: keep issue #189 and #9 open, do not increase #9 from 22/50 until exact package evidence.
+### 2026-11-01 — Preserve Workspace drafts during event refresh — issue #257
+
+- [x] Plan: implement the existing R-194 / QAS-192 contract without blocking the event snapshot lane; preserve locally changed settings while accepting incoming values for clean fields.
+- [x] Red: `background_snapshot_preserves_unsaved_workspace_drafts` failed because the event snapshot replaced the unsaved Workspace name with the saved value. The older renderer test also assumed a fast metadata poll; update it to exercise the event-driven snapshot path.
+- [x] Task / Green: compare each editable setting against the previous saved config, retain only dirty local values, and refresh unchanged settings plus the authoritative snapshot. Keep the goal optimizer proposal when the goal is dirty.
+- [x] Verify locally: `cargo test --locked --offline --features native-ui-probe --lib --test native_ui_probe --test source_layout` passes 96 tests across three suites. Warning-denied all-target Clippy, rustfmt, diff hygiene, and the ≤300-line source/test limit pass; the largest changed file is 164 lines.
+- [x] Update QAS-192/DD-206, LLM Wiki, and Graphify (11,857 nodes / 19,366 edges). CocoIndex is installed but cannot import `mcp.server.fastmcp`; no dependency was added.
+- [x] Complete the issue unit: AgentMemory `mem_mvxdrsve_6454a5eac748`; progress is posted to #257 and PR #260. Commit `e8cb9400` is pushed on `codex/issue-257-rust-draft-preservation`; draft PR #294 references #257/#9. Keep the packaged macOS/Windows gate open.
+- [ ] Verify packaged macOS/Windows UI behavior; source tests do not satisfy the package acceptance gate.
+
+### 2026-11-01 — Back off idle task-progress spool reads — issue #257
+
+- [x] Plan: apply Claude PR #255's bounded observer cadence to the current Rust branch; retain 100 ms response when output arrives, back off only while the spool is idle, and drain the final partial record after process completion.
+- [x] Red: the observer cadence regression did not compile because the delay policy did not exist.
+- [x] Task / Green: add a 100 ms → 2 s exponential idle delay that resets on output; keep completion draining based on bytes read so partial JSONL records are not dropped.
+- [x] Verify focused: the cadence regression and live progress/quota observer suites pass (9 tests total).
+- [x] Verify locally: 105 tests across native UI, source-layout, live-progress, and Claude-quota suites pass. Warning-denied all-target Clippy, rustfmt, diff hygiene, and the ≤300-line source/test limit pass; `progress.rs` is 143 lines and the test is 15.
+- [x] Update QAS-194/DD-208, LLM Wiki, and Graphify (11,867 nodes / 19,379 edges). CocoIndex remains unavailable because `mcp.server.fastmcp` cannot import.
+- [x] Complete this unit: AgentMemory `mem_mvxe3g5u_f5672b6bb9e3`; progress updated on #257/PR #260; commit `e7d1a8a` pushed to the #257 issue branch and included in draft PR #294.
+
+### 2026-11-01 — Move coordinator child completion and terminal audit off request polling — issue #257 / Claude PR #255 parity
+
+- [x] Plan: retain the existing UI request lanes and move child waiting plus terminal audit writes to an independent standard-library thread.
+- [x] Red: `controller_poll_stays_responsive_while_terminal_audit_is_locked` failed before the monitor API existed.
+- [x] Task / Green: add a named child monitor; poll reads job state without waiting for the child or SQLite terminal record.
+- [x] Verify affected local suites: `cargo test --locked --offline --features native-ui-probe --lib --test native_ui_probe --test source_layout` passes 98 tests across three suites; warning-denied all-target Clippy passes. The unrestricted all-tests command was stopped after running silently for over a minute.
+- [x] Record formatting, diff, and 300-line checks; refresh Graphify (11,888 nodes / 19,421 edges).
+- [x] Save the completed unit to AgentMemory `mem_mvxehy1e_18717541fc81`; update #257 and PR #294 progress. Signal Claude with the Rust port and verification boundary.
+- [x] Commit and push `846e65b` on `codex/issue-257-rust-draft-preservation`.
+
+### Open Rust PR follow-up inventory — refreshed 2026-11-02
+
+- [x] Recheck GitHub state: #202, #260, #284, #288, and #289 are open Rust drafts; #199, #230, #239 and #255 are closed as superseded after their unique requirements/regressions were moved to #260. #22 is the main Rust migration parent; #312 is a separate main-branch Claude PR. #305, #293, and #294 are integrated into the active #9 branch.
+- [x] Refreshed Graphify after this audit: 12,154 nodes / 19,842 edges.
+- [x] #199 — removed static local/login labels from the Rust Workspace and Agent Room, deleted English/Korean keys, and added bilingual rendered/source regressions. Closed as superseded after porting to #260. Exact packaged screenshot remains a #9 gate.
+- [ ] #202 — native goal optimizer and proposal review. GitHub currently reports not mergeable; refresh against the active #9 base before integration.
+- [x] #230 — current #260 already contains workspace restore/delete behavior and local tests. Its unique Windows managed-workspace package probe is ported to the parent; close #230 as superseded and keep #226 open until current exact Windows package acceptance passes. Earlier Windows signal-settings pass was on the older PR head; a later run failed the separate shared tool-decision journey.
+- [x] #239 — its slow-`rev-parse HEAD` chat-dispatch regression is now in `tests/startup_chat.rs` with a scoped helper. It passes locally in 0.21 seconds against the 20-second Git wrapper. PR #239 was closed as superseded by #260; exact package acceptance remains represented on the parent branch where applicable.
+- [x] #255 — closed as superseded by #260 after moving the unique in-flight Windows chat editor acceptance checks. Its 500 ms resumed-chat poll was deliberately not ported because it contradicts QAS-192/DD-206's event-driven design and fixed 30-second fallback.
+- [ ] #260 — active Rust #9 parent with Git HEAD fast path and bounded request/event lanes; GitHub reports mergeable. Exact packaged macOS/Windows gates remain open.
+- [x] #284 — Integrated elapsed/stale task progress and reference preview into #260 at `20c14113`; GitHub closed #284 as merged. Exact package acceptance remains open under #9.
+- [x] #288 — Integrated the coordinator status board into #260 after reviewing its Agent Room scope, requirements, tests, and LLM Wiki entries; exact package acceptance remains open under #9.
+- [x] #289 — Integrated native request feedback and localization coverage into #260 after local regression verification; exact packaged acceptance remains open under #9.
+- [x] #294 — Integrated event-driven refresh, child monitoring, progress backoff, task-worktree recovery scope, and draft preservation into the current #9 branch at `9126dfd0`. Full local all-target/all-feature tests and Clippy pass; exact packaged macOS/Windows UI acceptance remains open.
+- [x] #305 and #293 — Chat lifecycle and Windows UIA accessible-name changes are integrated in `5753ba0d` and `432b3bb6`; GitHub marks both PRs merged. Keep #189 open until exact packaged Windows chat acceptance passes.
+
+### 2026-11-01 — Observe declared task worktree changes during event recovery — issue #257 / Claude PR #255 parity
+
+- [x] Plan: extend the metadata-only recovery listener to task worktree paths declared by `tasks[].cwd` and `plan.tasks[].paths`; preserve bounded host use and never traverse unsafe paths or symlink directories.
+- [x] Red: `run_listener_observes_changes_in_declared_worktree_scope` timed out before the listener fingerprinted worktree paths.
+- [x] Task / Green: include declared-path metadata in the adaptive listener fingerprint; cap traversal at 512 paths and depth 8, and handle Unix and Windows relative/glob separators.
+- [x] Verify focused: the worktree-change regression passes; path tests reject parent traversal, drive paths, and UNC paths and cover glob declarations on both separators.
+- [x] Verify: affected native UI/source-layout suites pass 106 tests; all-target/all-feature Clippy with `-D warnings`, rustfmt, diff hygiene, and changed source/test ≤300-line checks pass.
+- [x] Update QAS-194/DD-208 and LLM Wiki; refresh Graphify to 11,960 nodes / 18,164 edges / 892 communities. CocoIndex CLI is unavailable in this environment.
+- [x] Save AgentMemory `mem_mvxfmjfb_1a22b2a2f701`; update #257 and PR #294; commit `f34137c` pushed to `codex/issue-257-rust-draft-preservation`; signal Claude `sig_mvxfnpz7_c75fb017e0c1`.
+- [ ] Exact packaged macOS/Windows GUI validation remains open; source tests do not satisfy package acceptance.
+
+### 2026-11-01 — Port process events and adaptive recovery — issue #257 / Claude PR #255 parity
+
+- [x] Plan: add an authenticated loopback notification for spawned AgentConductor commands; keep metadata recovery bounded and adaptive; prevent event credentials from reaching provider/MCP processes.
+- [x] Red: event bridge regressions failed to compile before `ProcessEventBridge` and its endpoint API existed.
+- [x] Task / Green: add token validation, surface-scoped child environment, completion/progress notifications, provider environment scrubbing, and a 1-to-30-second fallback observer that fingerprints report/startup plus SQLite/WAL metadata.
+- [x] Verify affected locally: 103 tests pass across library, native UI, and source-layout suites; source-layout confirms every changed source/test file stays at or below 300 lines. `cargo fmt` passes.
+- [x] Verify warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line bound.
+- [x] Update QAS-194/DD-208, implementation plan, LLM Wiki, and Graphify (11,942 nodes / 19,515 edges).
+- [x] Save AgentMemory `mem_mvxf7p2e_e73272420eed`.
+- [x] Update #257 and PR #294; send Claude signal `sig_mvxf94bp_27c4629e7206`.
+- [x] Commit/push `1cfed4e` on `codex/issue-257-rust-draft-preservation`.
+
+### 2026-11-01 — Verify monitor-owned UI child completion — issue #257 / PR #294
+
+- [x] Plan: keep the dedicated monitor as the sole child reaper; assert its persisted terminal owner record and exit code instead of calling `waitpid` after the monitor has reaped the process.
+- [x] Red: macOS Actions run `41281059096` failed `native_review_requires_current_revision_and_exact_candidate_and_keeps_accepted_work_after_close` because the direct `waitpid` returned `-1`; the Windows validation job passed.
+- [x] Task / Green: update the integration test to wait for both workflow completion and the monitor-owned `phase: terminal` record, then assert exit code `0`.
+- [x] Verify locally: the focused regression passes; all 6 tests in `tests/ui.rs` pass; warning-denied targeted Clippy, rustfmt, diff hygiene, and the 300-line guard pass (`tests/ui.rs`: 262 lines).
+- [x] Update QAS-194 and the LLM Wiki to make monitor ownership explicit.
+- [ ] Exact PR validation: push the fix to `codex/issue-257-rust-draft-preservation` and require macOS plus Windows platform validation to pass before closing the CI gate.
+
+### 2026-11-01 — Keep missed-event recovery at 30 seconds — issue #257 / PR #294
+
+- [x] Plan: align DD-208 and QAS-194 with the issue clarification: active updates arrive by events; metadata recovery is a fixed 30-second fallback and does not assemble snapshots.
+- [x] Red: `metadata_recovery_stays_at_thirty_seconds_after_a_change` failed because a detected change reset the next scan to 1 second.
+- [x] Task / Green: use a fixed 30-second production interval for report/startup and declared-worktree metadata listeners; retain short injected intervals only in deterministic tests.
+- [x] Verify locally: 17 event/listener tests, 2 source-layout tests, all-target/all-feature Clippy with `-D warnings`, rustfmt, and `git diff --check` pass.
+- [ ] Verify exact macOS and Windows platform validation on the updated PR #294 head; no packaged UI acceptance is claimed by source tests.
+- [x] Update QAS-194/DD-208 and LLM Wiki; refresh Graphify to 11,965 nodes / 19,568 edges; record AgentMemory `mem_mvxksy1o_c634d18900f9`.
+- [x] Update issue #257 and PR #294; commit and push `c7c7330b`.
+- [ ] Re-run exact-head macOS/Windows platform validation after the follow-up plan checkpoint; no packaged UI acceptance is claimed.
+
+### 2026-11-01 — Integrate event-driven UI and preserve drafts — issue #257 / #9
+
+- [x] Integrate PR #294 on the active #9 branch after comparing its event path with sibling PR #255; preserve the distinct chat lifecycle and accessibility fixes already integrated from #305 and #293.
+- [x] Red: the combined branch failed `source_layout` because `src/ui/controller.rs` grew to 335 lines. Green: move fallback ownership polling and Windows breakaway classification into `src/ui/controller/process.rs`; the controller is now 297 lines and every source/test file meets the 300-line cap.
+- [x] Red: merged `tests/ui.rs` failed to compile because `owner_path` was moved before a later terminal-state check. Green: borrow the path for both reads; focused `ui` and `source_layout` suites pass 8 tests.
+- [x] Verify affected native UI, source-layout, and library targets: 106 tests pass across three suites.
+- [x] Verify full native targets with `native-ui-probe`: 1,192 passed, 16 ignored across 374 suites. Warning-denied all-target Clippy, rustfmt, and diff hygiene pass.
+- [x] Preserve the QAS/DD, implementation plan, LLM Wiki, and AgentMemory history from PR #294; Graphify refreshed after integration.
+- [ ] Verify exact packaged macOS and Windows behavior on the updated branch. Source tests do not satisfy issue #9 platform acceptance; keep progress at 22/50 until that gate passes.
+### Port elapsed and stale wait feedback to the Rust UI — GitHub #283
+
+- [x] Plan: audit merged Claude PR #280 and confirm its elapsed/stale UI changes are JS-only; register enhancement #283 and link branch `codex/issue-283-rust-progress-feedback` to the current Rust issue line.
+- [x] Architecture: trace R-198 → BG-153 → SF-186 → UC-189 → FR-191 → QAS-197 → DDR-50 → DD-211. Reuse persisted job starts and scoped state snapshots; use local repaint-only ticks.
+- [x] Red: add deterministic clock tests for persisted start restoration, elapsed formatting, stale threshold, and observation reset; add surface tests for chat, optimizer, MCP, update, and immediate reference count. The elapsed-format regression failed before implementation.
+- [x] Task / Green: show elapsed and stale status in each owning native UI panel/dialog; restore job clocks from `started_ms`; count update phases from their local start; repaint at one second without sending a worker request. Reference count and prerequisite text now reflect the current goal on the next frame.
+- [x] Verify: 109 targeted tests pass across five suites; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the source-layout 300-line guard pass locally.
+- [x] Complete unit: update the LLM Wiki and AgentMemory, refresh Graphify to 11,914 nodes / 19,478 edges, comment on #283 and PR #260, and push commit `18224cda`; draft PR #284 is open. CocoIndex is unavailable in this environment (`cocoindex` executable not found). Exact packaged macOS/Windows UI acceptance remains a separate #9 gate.
+
+### Follow up the typed-reference preview path from Claude PR #280
+
+- [x] Red: add a UI interaction regression that types a Jira reference into a draft goal and clicks Preview imports; before the fix, the click emitted no event because the saved-goal guard disabled the button.
+- [x] Green: enable preview as soon as references and server/coordinator prerequisites are present. On click, save and refresh an unsaved goal before sending the read-only preview request; clear pending preview state on save/refresh failure.
+- [x] Verify: 112 targeted tests pass across six suites; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the source-layout 300-line guard pass locally.
+- [x] Complete: update AgentMemory `mem_mvxbgd8g_23b654999b54` and LLM Wiki; refresh Graphify to 11,936 nodes / 19,511 edges; update #283 and PR #284; push commit `eda13b5c` to `codex/issue-283-rust-progress-feedback`. Draft PR #284 remains open for review; exact packaged macOS/Windows behavior remains a separate #9 gate.
+### 2026-11-01 — Port coordinator run status board to native Rust — issue #286
+
+- [x] Plan: trace R-199/R-200 → BG-154/BG-155 → SF-187/SF-188 → UC-190/UC-191 → FR-192/FR-193 and NFR-85/NFR-86 → QAS-198/QAS-199 → DDR-51/DDR-52 → DD-212/DD-213. Keep changes limited to the Codex Rust worktree; Claude retains JS and backend work.
+- [x] Red: add deterministic tests for mixed task states and task-ID pairing, latest-output age, workflow-only display filtering with unchanged source data, bilingual accessible output, retained judgments and no request dispatch; the first targeted test build failed because the model and display filter were absent.
+- [x] Task / Green: render the status summary and task rows from the existing run snapshot before the existing judgment/history view; filter only displayed workflow-save rows.
+- [x] Verify locally: 2 coordinator-board tests and 106 Rust library tests; 13 public-doc/source-layout tests; warning-denied all-target Clippy, rustfmt, diff check and the 300-line source/test guard pass after integration.
+- [ ] Broader `cargo test --locked --offline --features native-ui-probe` was stopped after 90 seconds without output; it is not recorded as a pass.
+- [x] Complete source unit: issue #286 updated, AgentMemory `mem_mvxcb2ra_4e1fff7aaa46`, LLM Wiki and Graphify refreshed; implementation commit `85905874` and its documentation were integrated into #260. GitHub closed #288 as merged; exact packaged GUI review stays with #9.
+### 2026-11-01 — Port visible request waits to native Rust — GitHub #285 / #9
+
+- [x] Plan: inspect Claude's #285 JS change and keep its implementation in the Claude-owned worktree. Port the same user-visible contract to Rust without changing the Rust request/backend lanes: immediate spinner, named wait after one second, no progress UI for metadata or snapshot refreshes.
+- [x] Red: add Rust regression tests for a named elapsed wait, immediate request feedback, quiet metadata and snapshot refreshes, timer reset across request kinds, and Agent Room rendering. The elapsed-wait test first failed because `Probe` had no pending start time.
+- [x] Task / Green: track monotonic pending age in `Probe`; repaint locally while foreground work waits; show the wait in Workspace feedback and Agent Room; leave routine refreshes excluded.
+- [x] Verify: feedback tests pass 5/5; Agent Room request feedback tests pass 3/3; native UI library, both UI integration targets and source-layout suites pass 102 tests across 4 suites.
+- [x] Verify locally: warning-denied targeted Clippy (`--lib`, `native_ui_probe`, `native_room_poll`, `source_layout`), rustfmt, diff hygiene, the 300-line changed-file limit, and 102 tests across four suites pass. This is not an all-target Clippy or full-suite claim.
+- [x] Follow-up audit: R-198 job-specific wait and stale-snapshot feedback are already present in the Rust branch through #283 commit `18224cda` / PR #284; no duplicate implementation was added. Current Claude #285 PR #287 remains JS-only and open. The Rust #285 implementation below is isolated from Claude's worktree and preserves the Rust async/event request lanes.
+- [x] Assetize: AgentMemory checkpoint `mem_mvxcyztq_6526beda96cb` and completion record `mem_mvxd1ouz_9e1619a15b11`; LLM Wiki `native-request-feedback.md`; Graphify refreshed to 11,885 nodes / 19,393 edges. CocoIndex is unavailable because the runtime has no `cocoindex` module; no project dependency was added.
+- [x] Complete: original implementation commit `35ec7f4d` is integrated into the existing #260 branch at `d802a9fa`; PR #289 is merged. AgentMemory `mem_mvy0fo8d_bf25df594487`; Graphify 12,318 nodes / 20,115 edges. Verification passed 110 library tests, 29 related integration tests, 13 public-doc/source-layout tests, warning-denied Clippy, rustfmt, diff hygiene, and the 300-line guard.
+- [ ] Acceptance: exact packaged Rust UI screenshots and end-to-end parity remain part of open issue #9; this unit does not change its overall acceptance count.

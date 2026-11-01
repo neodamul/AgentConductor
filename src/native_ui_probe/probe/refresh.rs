@@ -23,8 +23,7 @@ impl Probe {
                 })
             }
             Err(_) if self.coordinator_chat.is_uncertain() => {
-                self.workspace_next_refresh =
-                    Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+                self.workspace_next_refresh = None;
             }
             Err(error) => self.error = Some(error),
         }

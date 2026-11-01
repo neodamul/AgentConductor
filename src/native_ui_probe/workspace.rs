@@ -5,7 +5,7 @@ use serde_json::Value;
 mod actions;
 pub mod chat;
 mod execution;
-mod feedback;
+pub(super) mod feedback;
 mod goal;
 pub mod goals;
 pub mod header;
@@ -21,6 +21,7 @@ pub mod profile_tools;
 mod requests;
 mod review;
 mod room_events;
+mod save_task_edits;
 pub mod sharing;
 pub mod sidebar;
 pub mod signal_settings;
@@ -77,11 +78,21 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             probe.show_navigation(ui);
             if probe.coordinator_chat.is_open() {
                 let language = probe.navigation.appearance.language().to_owned();
+                let progress =
+                    probe
+                        .active_work
+                        .label("chat", &language, std::time::Instant::now());
                 let event = egui::Panel::right("native-coordinator-chat")
                     .resizable(true)
                     .default_size(360.0)
                     .size_range(300.0..=480.0)
-                    .show(ui, |ui| probe.coordinator_chat.show(&language, ui))
+                    .show(ui, |ui| {
+                        probe.coordinator_chat.show_with_progress(
+                            &language,
+                            progress.as_deref(),
+                            ui,
+                        )
+                    })
                     .inner;
                 match event {
                     Some(chat::Event::Send(turns)) => probe.send_coordinator_chat(turns),
@@ -90,10 +101,15 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 }
             }
             probe.show_sharing(ui.ctx());
-            if let Some(mcp::Event::Save(settings)) = probe.mcp_editor.show(
+            let language = probe.navigation.appearance.language().to_owned();
+            let mcp_progress = probe
+                .active_work
+                .label("mcp", &language, std::time::Instant::now());
+            if let Some(mcp::Event::Save(settings)) = probe.mcp_editor.show_with_progress(
                 probe.snapshot.as_ref(),
-                probe.navigation.appearance.language(),
+                &language,
                 permissions::editable(probe) && probe.room_view.is_none(),
+                mcp_progress.as_deref(),
                 ui,
             ) {
                 probe.save_mcp_settings(&settings);
@@ -117,6 +133,10 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 probe.send_signal_settings(event);
             }
             if probe.room_view.is_some() {
+                let waiting_status = feedback::waiting_status(probe);
+                if let Some(room_view) = probe.room_view.as_mut() {
+                    room_view.pending_status = waiting_status;
+                }
                 let event = egui::ScrollArea::vertical()
                     .id_salt("agent-room-content")
                     .show(ui, |ui| {
@@ -258,32 +278,4 @@ pub(super) fn card(ui: &egui::Ui) -> Frame {
         .stroke(ui.visuals().widgets.noninteractive.bg_stroke)
         .corner_radius(CornerRadius::same(10))
         .inner_margin(16.0)
-}
-
-impl Probe {
-    pub(super) fn save_task_edits(
-        &mut self,
-        tasks: Vec<Value>,
-        mode: crate::plan::WorkspaceMode,
-        digest: &str,
-    ) {
-        let result = self
-            .snapshot
-            .as_ref()
-            .ok_or_else(|| "Workspace proposal is unavailable".to_owned())
-            .and_then(|snapshot| task_edit_request(snapshot, &tasks, mode, digest))
-            .and_then(|packet| {
-                self.worker
-                    .as_ref()
-                    .ok_or_else(|| "Workspace controller is unavailable".to_owned())?
-                    .send(&packet)
-            });
-        match result {
-            Ok(()) => {
-                self.error = None;
-                self.pending = Some(Pending::Edit);
-            }
-            Err(error) => self.error = Some(error),
-        }
-    }
 }

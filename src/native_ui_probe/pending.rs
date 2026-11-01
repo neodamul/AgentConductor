@@ -3,12 +3,14 @@ use super::workspace;
 #[derive(Clone, Copy)]
 pub(super) enum Pending {
     Save,
-    BackgroundRefresh,
     BackgroundTaskDetails,
     BackgroundCoordinator,
     Refresh,
-    Action,
-    ToolDecision { resume_after: bool },
+    Action(&'static str),
+    ToolDecision {
+        resume_after: bool,
+        description: &'static str,
+    },
     Briefing,
     Coordinator,
     TaskDetails,

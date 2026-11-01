@@ -79,6 +79,19 @@ pub fn entries(rows: &Value, language: &str, ui: &mut egui::Ui) -> Option<String
 }
 
 pub fn view(data: &Value, language: &str, ui: &mut egui::Ui) -> Option<String> {
+    view_history(data, language, ui, false)
+}
+
+pub fn coordinator_view(data: &Value, language: &str, ui: &mut egui::Ui) -> Option<String> {
+    view_history(data, language, ui, true)
+}
+
+fn view_history(
+    data: &Value,
+    language: &str,
+    ui: &mut egui::Ui,
+    omit_workflow: bool,
+) -> Option<String> {
     let loaded = data["judgments"].as_array().map_or(0, Vec::len);
     if data["decision_count"]
         .as_u64()
@@ -94,6 +107,9 @@ pub fn view(data: &Value, language: &str, ui: &mut egui::Ui) -> Option<String> {
     }
     let undo = entries(&data["judgments"], language, ui);
     for item in data["history"].as_array().into_iter().flatten() {
+        if omit_workflow && item["event"] == "workflow" {
+            continue;
+        }
         if let Some(summary) = item["summary"].as_str().filter(|s| !s.is_empty()) {
             ui.label(summary).accessible_name(summary);
         }
@@ -109,7 +125,9 @@ impl crate::native_ui_probe::Probe {
         }).and_then(|packet| self.worker.as_ref().ok_or_else(|| "Agent Room controller is unavailable".to_owned())?.send(&packet));
         match result {
             Ok(()) => {
-                self.pending = Some(crate::native_ui_probe::Pending::Action);
+                self.pending = Some(crate::native_ui_probe::Pending::Action(
+                    "Undoing the amendment…",
+                ));
                 self.error = None;
             }
             Err(error) => self.error = Some(error),

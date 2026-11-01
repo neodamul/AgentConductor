@@ -40,7 +40,7 @@
   "mcp.read_only_import_your_review": "READ-ONLY IMPORT · YOUR REVIEW",
   "mcp.reading_configured_mcp_sources": "Reading configured MCP sources…",
   "mcp.references_to_preview": "References to preview: {value1}",
-  "mcp.save_goal_before_preview": "Save this workspace goal before previewing its references.",
+  "mcp.save_goal_before_preview": "Previewing will save this workspace goal first.",
   "mcp.register_server_before_preview": "Register and enable an MCP server in Settings before previewing references.",
   "mcp.register_mcp_servers": "Register MCP servers",
   "mcp.review_imported_goal_sources": "Review imported goal sources",

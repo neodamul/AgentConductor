@@ -14,6 +14,7 @@ use std::{
 
 mod cache;
 mod diff;
+pub(crate) mod events;
 pub mod language;
 pub mod messages;
 pub mod native;
@@ -22,6 +23,12 @@ pub mod request_diagnostics;
 pub mod setup;
 mod source_references;
 pub mod workspaces;
+
+pub fn notify_external_event() {
+    events::notify_external_from_environment();
+}
+
+mod room_open;
 
 fn public_report(report: &Report) -> Result<serde_json::Value, String> {
     let mut value = serde_json::to_value(report).map_err(|e| e.to_string())?;
@@ -73,6 +80,7 @@ pub(crate) fn open_artifact(path: &Path) -> Result<fs::File, String> {
         },
         path::Component,
     };
+
     if !path.is_absolute() {
         return Err(crate::ui::messages::text("native.artifact_path_must_be_absolute").into());
     }
@@ -195,54 +203,22 @@ enum Request {
 pub struct Room {
     controller: Mutex<Option<Arc<Controller>>>,
     startup: Mutex<Option<Arc<setup::Startup>>>,
+    workspace_watch: Arc<Mutex<std::sync::Weak<setup::Startup>>>,
     run_lease: Mutex<Option<crate::leases::Lease>>,
     window_lease: Mutex<crate::leases::Lease>,
     parked_workspaces: Mutex<std::collections::BTreeMap<PathBuf, workspaces::ParkedWorkspace>>,
     workspace_navigation: Mutex<()>,
+    events: Arc<events::EventBus>,
+    _event_bridge: Option<events::ProcessEventBridge>,
+    _listeners: Vec<events::listener::RunChangeListener>,
 }
 impl Room {
-    /// A native window holds one kernel lease per canonical run directory.
-    pub fn open(dir: &Path, exe: &Path) -> Result<Self, String> {
-        workflow::load(dir)?;
-        let dir = dir.canonicalize().map_err(|e| e.to_string())?;
-        // A completed phase is recorded even if its goal folder moved after the run.
-        let _ = workflow::sync_phase(&dir);
-        let lease = crate::leases::Lease::acquire(&dir.join("ui-window.lock")).map_err(|e| {
-            if e.starts_with("lease is held:") {
-                crate::ui::messages::text("native.agent_room_is_already_open_for_this_run").into()
-            } else {
-                e
-            }
-        })?;
-        let enabled = workflow::auto_resume_enabled(&dir);
-        let controller = Arc::new(Controller {
-            dir,
-            exe: exe.canonicalize().map_err(|e| e.to_string())?,
-            job: Mutex::new(None),
-        });
-        controller.automatic(enabled)?;
-        Ok(Self {
-            controller: Mutex::new(Some(controller)),
-            startup: Mutex::new(None),
-            run_lease: Mutex::new(None),
-            window_lease: Mutex::new(lease),
-            parked_workspaces: Mutex::new(std::collections::BTreeMap::new()),
-            workspace_navigation: Mutex::new(()),
-        })
-    }
-    pub fn startup(root: &Path, exe: &Path) -> Result<Self, String> {
-        fs::create_dir_all(root).map_err(|e| e.to_string())?;
-        let _navigation = crate::leases::Lease::workspace(root)?;
-        let lease = crate::leases::Lease::acquire(&root.join("ui-window.lock"))?;
-        let startup = setup::Startup::open(root, exe)?;
-        Ok(Self {
-            controller: Mutex::new(None),
-            startup: Mutex::new(Some(Arc::new(startup))),
-            run_lease: Mutex::new(None),
-            window_lease: Mutex::new(lease),
-            parked_workspaces: Mutex::new(std::collections::BTreeMap::new()),
-            workspace_navigation: Mutex::new(()),
-        })
+    pub(crate) fn subscribe_events(
+        &self,
+        surface: events::EventSurface,
+        wake: impl Fn() + Send + Sync + 'static,
+    ) -> Result<events::Subscription, String> {
+        self.events.subscribe_with_wakeup(surface, wake)
     }
     fn surface(&self) -> Result<Option<Arc<setup::Startup>>, String> {
         Ok(self

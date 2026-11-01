@@ -98,7 +98,12 @@ impl Drop for Attributes {
         }
     }
 }
-fn collect(p: AgentProfile, dir: PathBuf, cwd: PathBuf) -> Result<Snapshot, String> {
+fn collect(
+    p: AgentProfile,
+    dir: PathBuf,
+    cwd: PathBuf,
+    wait: Duration,
+) -> Result<Snapshot, String> {
     std::fs::create_dir(&dir).map_err(|e| e.to_string())?;
     let mut s = Session::open(&p, &cwd, &dir)?;
     let mut owner = crate::process::Ownership {
@@ -118,21 +123,22 @@ fn collect(p: AgentProfile, dir: PathBuf, cwd: PathBuf) -> Result<Snapshot, Stri
     let mut found = None;
     // Output before the last trust answer is not read again.
     let (mut start, mut answers) = (0, 0);
-    let end = Instant::now() + Duration::from_secs(20);
+    let end = Instant::now() + wait;
     let result = (|| {
         loop {
             if Instant::now() >= end {
                 owner.timed_out = true;
-                return Err(super::quota_timeout(sent).into());
+                return Err(super::quota_timeout(sent, wait));
             }
             if s.overflow.load(Ordering::Acquire) {
                 return Err("Claude quota output queue exceeded its bound".into());
             }
+            let remaining = end.saturating_duration_since(Instant::now());
             match s
                 .receiver
                 .as_ref()
                 .unwrap()
-                .recv_timeout(Duration::from_millis(1000))
+                .recv_timeout(remaining.min(Duration::from_millis(1000)))
             {
                 Ok(chunk) => {
                     if data.len() + chunk.len() > 1024 * 1024 {
@@ -171,6 +177,10 @@ fn collect(p: AgentProfile, dir: PathBuf, cwd: PathBuf) -> Result<Snapshot, Stri
                         }
                     }
                 }
+                Err(mpsc::RecvTimeoutError::Timeout) if Instant::now() >= end => {
+                    owner.timed_out = true;
+                    return Err(super::quota_timeout(sent, wait));
+                }
                 Err(mpsc::RecvTimeoutError::Timeout) if found.is_some() => {
                     return Ok(found.take().unwrap());
                 }
@@ -187,10 +197,19 @@ fn collect(p: AgentProfile, dir: PathBuf, cwd: PathBuf) -> Result<Snapshot, Stri
     result
 }
 pub async fn query_claude(p: &AgentProfile, dir: &Path, cwd: &Path) -> Result<Snapshot, String> {
+    query_claude_within(p, dir, cwd, super::CLAUDE_WAIT).await
+}
+
+pub async fn query_claude_within(
+    p: &AgentProfile,
+    dir: &Path,
+    cwd: &Path,
+    wait: Duration,
+) -> Result<Snapshot, String> {
     // An empty lpCurrentDirectory is not NULL: CreateProcessW fails with os error 123.
     super::require_project(cwd)?;
     let (p, dir, cwd) = (p.clone(), dir.to_owned(), cwd.to_owned());
-    tokio::task::spawn_blocking(move || collect(p, dir, cwd))
+    tokio::task::spawn_blocking(move || collect(p, dir, cwd, wait))
         .await
         .map_err(|_| "Windows quota collector failed".to_string())?
 }

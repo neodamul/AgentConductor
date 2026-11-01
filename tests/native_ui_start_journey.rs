@@ -21,7 +21,6 @@ mod test_env;
 mod ui_wait;
 
 const CONFIRM_EXECUTION: &str = "Confirm exact reviewed plan and start agent execution";
-
 #[test]
 fn review_approval_shows_start_feedback_then_opens_the_started_run() {
     let (root, plan) = support::setup("shared");
@@ -157,10 +156,18 @@ fn review_approval_shows_start_feedback_then_opens_the_started_run() {
     output = ui_wait::click(&context, &mut probe, "Refresh run");
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
+    ui_wait::wait_for_ui_timeout(&context, &mut probe, Duration::from_secs(5), |labels| {
+        labels
+            .iter()
+            .any(|label| label == "Current stage: 05 Workspace")
+    });
     ui_wait::wait_for_enabled_button(&context, &mut probe, "Return to Workspace");
     output = ui_wait::click(&context, &mut probe, "Return to Workspace");
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
+    ui_wait::wait_for_ui_timeout(&context, &mut probe, Duration::from_secs(5), |labels| {
+        labels.iter().any(|label| label == "1. Workspace settings")
+    });
     let workspace = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     assert_eq!(
         workspace["proposal"]["phase"], "starting",
@@ -170,6 +177,9 @@ fn review_approval_shows_start_feedback_then_opens_the_started_run() {
         workspace["run_available"], true,
         "the merged run remains available"
     );
+    output = ui_wait::click(&context, &mut probe, "3. Review the plan");
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
     ui_wait::wait_for_enabled_button(&context, &mut probe, "Open Agent Room");
     output = ui_wait::click(&context, &mut probe, "Open Agent Room");
     output.textures_delta.set.clear();

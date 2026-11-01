@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-30",
+  "issue": 9,
+  "workflow": 25,
+  "scope": "Windows packaged UI stop, resume, and interrupted-run recovery harness",
+  "red": {
+    "test": "lifecycle_driver_exposes_stop_resume_and_recovery_observations",
+    "result": "failed before driver implementation because AC_RUN_LIFECYCLE_ACTION was absent"
+  },
+  "local_green": {
+    "nonblocking_architecture_tests": {
+      "native_ui_probe_library": "54 passed, including async refresh and independent worker-lane regressions",
+      "event_bus_library": "7 passed, including scoped broadcast, coalescing, read-only suppression, and wake callback outside the registry lock",
+      "graphify": "11,784 nodes and 17,902 edges"
+    },
+    "tests": "windows_run_lifecycle and source_layout: 3 passed, 1 ignored",
+    "ignored_test": "exact_windows_package_ui_stops_resumes_and_recovers_without_duplicate_work",
+    "ignored_reason": "Requires the exact packaged Windows binary and Windows UI Automation",
+    "clippy": "cargo clippy --all-targets --all-features --locked --offline -- -D warnings passed",
+    "format": "cargo fmt --all --check passed",
+    "diff": "git diff --check passed",
+    "rust_file_lines": {
+      "tests/windows_run_lifecycle.rs": 220,
+      "tests/support/windows_run_lifecycle_script.rs": 45,
+      "tests/native_ui_probe/events.rs": 121
+    }
+  },
+  "exact_windows_package": "pending",
+  "acceptance_credit": false,
+  "acceptance_snapshot": {
+    "candidate_packaged_ui": "22/25",
+    "shipped_rust_ui": "0/25"
+  }
+}

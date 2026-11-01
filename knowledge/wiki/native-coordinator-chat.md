@@ -22,3 +22,23 @@ If sending a chat request times out, the Rust UI treats acceptance as unknown. I
 GitHub #189 / R-179 remains in progress. The terminal-style transcript and keyboard controls now pass local egui interaction tests. Do not treat source tests as packaged UI parity.
 
 The regression `tests/native_chat_unknown.rs` verifies accepted and rejected outcomes through egui's accessible UI tree. The five focused suites pass 22 tests; warning-denied all-target Clippy, formatting, diff checks, and the 300-line limit pass locally. Full all-target tests remain unverified: a cold run was interrupted after 130 tests across 24 suites, and a cached retest exited 130 after 58 tests across 5 suites. Exact packaged macOS/Windows interaction remains pending; this feature does not increase the accepted workflow count until those gates pass.
+
+## Desktop-close lifecycle (2026-11-01)
+
+The coordinator still runs as one read-only CLI subprocess per question. Only that `chat` operation is launched independently of the desktop process so a delayed answer can finish after the window closes. On Windows it requests Job Object breakaway, a separate process group, and no console window. If the host denies breakaway with access denied, Rust checks whether the desktop process belongs to any Windows Job Object. It retries as a hidden child only when the process is outside a host job. If membership is true or cannot be queried, the job is persisted as `not_spawned` and the UI receives an explicit error; it must never report the chat as running when survival after app close is uncertain. Other UI actions retain their current owned-process behavior. The worker writes its existing bounded transcript/input/result artifacts; reopening the workspace follows the persisted job and reads the final answer. The `chat` command skips the messenger shutdown flush so completion is not delayed.
+
+The current request-pool lanes must be preserved. PR #192's old `sync_channel(1)` worker implementation is not safe to merge onto the current event-driven UI base. The Windows package harness now covers transcript restore, reconnect after closing the app during a running chat, and late-answer recovery. Local macOS verification passes; exact Windows packaged lifecycle acceptance remains open, so issue #189 and #9 remain open.
+
+## Windows package UI Automation selection (2026-11-01)
+
+Run [41270341316](https://github.com/neodamul/AgentConductor/actions/runs/41270341316) passed validation and the macOS package but failed the Windows stop/resume package journey because its driver could not find the `Stop reason` editor after invoking `Stop run`. The previous driver searched all top-level windows owned by the process, including hidden/offscreen windows. It now filters top-level windows and descendants using `IsOffscreen` and a non-empty `BoundingRectangle`, and prints matching process-window diagnostics on timeout. `lifecycle_driver_exposes_stop_resume_and_recovery_observations` was run red then green locally. The updated exact Windows package journey still needs to pass before #9 acceptance changes.
+
+The native multiline chat editor also exposes its localized placeholder as its AccessKit accessible name. `tests/native_workspace_chat_accessibility.rs` guards this contract for Windows UI Automation; it does not replace exact packaged Windows verification.
+
+## Resumed chat UI acceptance and PR #255 audit (2026-11-01)
+
+The current exact-package Windows reconnect scenario also asserts the accessible editor remains disabled while the persisted chat job is running and becomes enabled after the answer is visible. This assertion lives on the active #9 parent branch so it can be exercised with the current package. PR #255's separate 500 ms status poll was not ported: QAS-192/DD-206 deliberately rely on scoped events and an independent fixed 30-second lost-event recovery check to avoid frequent snapshot polling. Issue #189 stays open until the strengthened scenario passes against the exact Windows package.
+
+## Slow repository lookup regression and PR #239 audit (2026-11-02)
+
+`tests/startup_chat.rs::chat_submission_does_not_wait_for_repository_head` wraps Git so `rev-parse HEAD` sleeps for 20 seconds, then asserts the Rust chat dispatch finishes in under two seconds. The helper scopes the environment override with a restoring lock and removes its temporary repository on drop. The first port exposed an old `turns` request shape and a repository revision token where the current Rust protocol requires `text` and `chat_revision`; the updated test passes in 0.21 seconds. PR #239 was closed as superseded after this regression was preserved on the active #260 parent. The product behavior was already present there; no old source implementation was copied.

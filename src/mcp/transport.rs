@@ -40,6 +40,7 @@ impl Client {
                 ..
             } => {
                 let mut c = Command::new(&command[0]);
+                crate::subprocess::clear_tokio_event_environment(&mut c);
                 c.args(&command[1..])
                     .current_dir(
                         dir.as_ref()

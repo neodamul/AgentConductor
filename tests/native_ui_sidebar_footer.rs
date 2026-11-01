@@ -5,17 +5,21 @@ use eframe::egui;
 use serde_json::json;
 
 #[test]
-fn sidebar_explains_local_first_execution_in_both_languages() {
-    for (language, heading, detail) in [
+fn sidebar_omits_static_local_first_tagline_in_both_languages() {
+    for (language, labels) in [
         (
             "en",
-            "LOCAL BY DEFAULT",
-            "One application. Independent agent sessions. Your approval controls execution and final merge.",
+            [
+                "LOCAL BY DEFAULT",
+                "One application. Independent agent sessions. Your approval controls execution and final merge.",
+            ],
         ),
         (
             "ko",
-            "기본은 로컬",
-            "하나의 앱, 독립된 에이전트 세션. 실행과 최종 병합은 당신의 승인으로 결정됩니다.",
+            [
+                "기본은 로컬",
+                "하나의 앱, 독립된 에이전트 세션. 실행과 최종 병합은 당신의 승인으로 결정됩니다.",
+            ],
         ),
     ] {
         let context = egui::Context::default();
@@ -53,13 +57,11 @@ fn sidebar_explains_local_first_execution_in_both_languages() {
             .join(" ");
         output.textures_delta.set.clear();
         output.textures_delta.free.clear();
-        assert!(
-            rendered_text.contains(heading),
-            "{language}: {rendered_text}"
-        );
-        assert!(
-            rendered_text.contains(detail),
-            "{language}: {rendered_text}"
-        );
+        for label in labels {
+            assert!(
+                !rendered_text.contains(label),
+                "{language}: {rendered_text}"
+            );
+        }
     }
 }

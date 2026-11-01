@@ -3,14 +3,7 @@ use super::super::{Pending, Probe};
 impl Probe {
     pub(in crate::native_ui_probe) fn handle_error(&mut self, error: impl ToString) {
         let error = error.to_string();
-        if matches!(self.pending, Some(Pending::BackgroundRefresh)) {
-            self.background_poll_failures = self.background_poll_failures.saturating_add(1);
-            if self.background_poll_failures >= 3 {
-                self.error = Some(error);
-            }
-            self.pending = None;
-            return;
-        }
+        self.mcp_sources.cancel_preview_after_save(&error);
         if matches!(
             self.pending,
             Some(Pending::BackgroundTaskDetails | Pending::BackgroundCoordinator)
@@ -25,8 +18,7 @@ impl Probe {
         ) {
             if matches!(self.pending, Some(Pending::ChatStart)) {
                 self.coordinator_chat.outcome_unknown(error);
-                self.workspace_next_refresh =
-                    Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+                self.workspace_next_refresh = None;
             } else {
                 self.coordinator_chat.failed(error);
                 self.workspace_next_refresh = None;
@@ -37,8 +29,7 @@ impl Probe {
         }
         if matches!(self.pending, Some(Pending::Refresh)) && self.coordinator_chat.is_uncertain() {
             self.pending = None;
-            self.workspace_next_refresh =
-                Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+            self.workspace_next_refresh = None;
             self.error = None;
             return;
         }

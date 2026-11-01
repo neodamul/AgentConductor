@@ -193,8 +193,6 @@
   "startup.let_listed_approvers_reply_allow_or_deny": "지정한 승인자가 allow 또는 deny로 답할 수 있게 하기",
   "startup.loading_messenger_settings": "메신저 설정을 불러오는 중…",
   "startup.loading_models": "모델 목록 불러오는 중…",
-  "startup.local_by_default": "기본은 로컬",
-  "startup.local_existing_cli_login": "로컬 · 기존 CLI 로그인",
   "startup.local_rust": "로컬 Rust",
   "startup.local_workspace": "로컬 워크스페이스 · ",
   "startup.macos": "macOS:",

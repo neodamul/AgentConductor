@@ -705,11 +705,11 @@ The **Agent tools guide…** and **User manual** entries shall be in the Setting
 Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
 
 ### R-179 The coordinator chat behaves like a CLI session
-The coordinator chat shall keep what the operator typed and what the coordinator answered with the workspace, show it again after the screen or the workspace is reopened, and present it as a terminal-style transcript with prompt-like input, so asking again does not lose the earlier exchange. Amends R-161 (coordinator chat).
+The coordinator chat shall keep what the operator typed and what the coordinator answered with the workspace, show it again after the screen or the workspace is reopened, and present it as a terminal-style transcript with prompt-like input, so asking again does not lose the earlier exchange. The multiline input shall expose its localized prompt as its accessible name so keyboard and UI automation can find it. Amends R-161 (coordinator chat).
 Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
 
 ### R-180 Screens show only information the operator can use
-The workspace and Agent Room screens shall not carry static texts that give no information: the title bar local/login label with its dot, the sidebar tagline under the agent list and the footer line stating the default workspace mode.
+The workspace and Agent Room screens shall not carry static texts that give no information, in either the web UI or native Rust UI: the title bar local/login label with its dot, the sidebar tagline under the agent list and the footer line stating the default workspace mode.
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
 
 ### R-181 The chat keeps going when a reply is slow
@@ -754,3 +754,44 @@ Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202.
 ### R-186 Every agent prompt has one standard form and its reply is checked
 The application shall send every prompt to an agent (coordinator, planner, reviewer, worker) as `# Document`, `# Task` and `# Format` blocks, each once and in that order, and shall check a coordinator reply against the requested JSON shape. No agent CLI, including an in-house one, has to be changed or shown to the application for this. A reply that is not in the requested shape is asked for once more with the reason before the call fails.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### R-193 Routine repository revision reads never spawn Git
+The native UI shall resolve common repository HEAD layouts from Git metadata files when computing routine state revisions, without spawning Git to answer a snapshot or revision request. Linked worktrees and unsupported metadata layouts shall return immediately from a cached result and refresh through at most one background Git process per repository; retries are coalesced and rate-limited. A slow or unavailable Git fallback shall not block rendering, event delivery, or unrelated actions.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
+
+### R-194 State changes wake only the other native views
+The native Workspace and Agent Room shall broadcast successful state changes to other open views, and each listener shall coalesce those events into a targeted asynchronous refresh. The sender shall not refresh itself from its own event. Periodic snapshots shall run on an independent worker and reply channel so a slow refresh cannot reject or delay chat and other interactive requests. A due event-driven or recovery snapshot shall be dispatched even while an unrelated interactive response is pending, except while a human decision modal freezes its view. A completed background snapshot shall update visible state without clearing that response, overwriting unsaved form input, or replacing its error. Active external work is notification-driven; all views use a 30-second recovery check.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, user, 2026-10-30. Amended by R-196: no active one-second fallback.
+
+### R-195 Independent native requests must not wait behind slow work
+Long-running native reads, periodic refreshes, and blocking external I/O (including messenger connection checks) must use bounded workers separate from the state-change request lane and must not block unrelated user actions. State-changing requests remain serialized, and stale responses must not replace the latest visible operation.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
+
+### R-196 Native state updates are event-driven, with no active polling loop
+The native UI shall refresh active run, metadata, and workspace state in response to scoped state-change notifications, not a recurring 0.5–1 second snapshot loop. In-process mutations publish invalidations to subscribed views; external process changes are observed on a lightweight listener thread. Snapshot work remains asynchronous and single-flight per view. A low-frequency 30-second recovery check may detect missed external notifications; it must not block rendering or interactive requests.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01. Amends R-194.
+
+### R-197 A workspace listener must not retain a switched-away workspace lease
+After an idle workspace switch, the previous workspace's startup lease must be released immediately, while the listener follows the new workspace's persisted state and continues broadcasting its changes. The listener must not keep a strong reference to a stale `Startup` instance.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### R-201 A slow Claude usage query is waited for and shown
+The Claude usage query shall be given up only after a minute, not after 20 seconds, so that a machine where the CLI starts or answers slowly still reports usage. When it is given up, the message shall name the limit and the stage it was waiting in. While a usage query runs, the agent card shall show how long it has run.
+Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
+
+### R-202 Quota query failures are visible beside the quota
+When an agent quota query fails, the native agent list, agent settings, and Agent Room run screen shall display the recorded reason as readable text next to the unavailable quota value or run status. The complete reason shall remain available to assistive technology and on hover. The UI shall present the captured reason without guessing or rewriting provider-specific CLI output.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
+### R-199 The coordinator Activity view summarizes the current run
+When the operator selects coordinator Activity, show the run state, task counts, and one status row per planned task with its assigned agent and available latest-output age. Use the current Agent Room snapshot; do not add a request or polling source. Keep judgments and meaningful history below the board while hiding repetitive workflow-save rows from this view only. Preserve the audit records unchanged. Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → DDR-51 → DD-212. Rust port of JavaScript #267, GitHub #286, 2026-11-01.
+
+### R-200 Preserve the coordinator status board in the native application
+The Rust Agent Room shall provide the coordinator run/task status summary available in the current JavaScript UI, using existing run and activity data and preserving the operator's existing review and audit controls. This is a native Rust UI implementation; it does not transfer ownership of JavaScript UI or backend changes from their current author.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.
+### R-198 Workspace waits report elapsed time and stale state
+Operator-started workspace jobs and lookups shall show elapsed time in the panel or dialog where the operator is waiting, including after the view is reopened. If the app has sent no state update for more than six seconds, show the age of the last update. A completed lookup shall enable its dependent control as soon as its response arrives.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### R-199 Every press receives visible acknowledgement
+When the operator presses a control that sends a request, immediately mark that request as running. If the reply takes longer than one second, name the request and show elapsed time where the page reports its status. Keep this feedback after a dialog closes. Do not show routine refreshes as user work, and do not report a normal idle refresh as app silence.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, 2026-11-01.

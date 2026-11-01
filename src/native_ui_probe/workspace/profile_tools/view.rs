@@ -146,6 +146,7 @@ pub fn show_in_language(
                         }
                     });
                 }
+                crate::native_ui_probe::quota_error::show(snapshot, Some(id), language, ui);
                 if catalog_busy {
                     ui.spinner();
                 }

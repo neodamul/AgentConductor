@@ -107,6 +107,27 @@ fn request(value: Value) -> Result<Vec<u8>, String> {
 }
 
 impl crate::native_ui_probe::Probe {
+    pub(in crate::native_ui_probe) fn begin_mcp_preview(&mut self) {
+        let saved_goal = self
+            .snapshot
+            .as_ref()
+            .is_some_and(|snapshot| snapshot["config"]["goal"] == self.goal);
+        if saved_goal {
+            self.preview_mcp_sources();
+            return;
+        }
+        self.mcp_sources.queue_preview_after_save();
+        self.send_workspace();
+        if !matches!(self.pending, Some(super::super::Pending::Save)) {
+            let error = self
+                .error
+                .as_deref()
+                .unwrap_or("Workspace goal was not saved")
+                .to_owned();
+            self.mcp_sources.cancel_preview_after_save(&error);
+        }
+    }
+
     pub(in crate::native_ui_probe) fn preview_mcp_sources(&mut self) {
         let snapshot = self.snapshot.clone();
         let result = snapshot
@@ -179,3 +200,7 @@ impl crate::native_ui_probe::Probe {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "../../../../tests/native_ui_probe/mcp_preview_state.rs"]
+mod preview_state_tests;

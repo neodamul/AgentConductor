@@ -543,7 +543,7 @@ An answer that explains how to run or use the result must still be readable when
 Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
 
 ### BG-135 A quiet interface
-Every line on screen earns its place; fixed slogans that look like status hide the real status.
+Every line on screen earns its place in the web and native Rust interfaces; fixed slogans that look like status hide the real status.
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
 
 ### BG-136 No lost or stuck conversations
@@ -587,3 +587,45 @@ Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202.
 ### BG-141 Fewer errors from the way agents are asked
 Agents that cannot be modified still answer predictably because the application, not the CLI, fixes the prompt layout and the reply shape.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### BG-148 Keep repository revision checks responsive
+Repository metadata lookups must not hold up native input, state events, or unrelated work, including when the repository uses an unusual Git layout.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
+
+### BG-149 Keep native views responsive without idle polling load
+Workspace-only changes wake Workspace, while run changes wake Workspace and Agent Room because both show run progress. Events received while an independent interactive response is pending still trigger a background refresh; idle views do not consume frequent polling resources.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, user, 2026-10-30.
+
+### BG-150 Keep native interaction responsive under slow work
+The app stays responsive when one view is reading slow local state, an agent operation is active, a blocking external I/O request is pending, or another view publishes a state change. It uses bounded standard-library workers and avoids spinning up an async runtime.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
+
+### BG-151 Update active native views only when state changes
+The native UI spends host resources on state reads only after a meaningful state change, while a slow recovery check protects against a missed external notification.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
+
+### BG-152 Release inactive workspace resources during navigation
+Switching away from an idle workspace releases its startup lease promptly, while change notifications continue to follow the workspace currently displayed.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### BG-156 Usage is reported on a slow managed machine
+A company machine that takes longer to start the Claude CLI or return `/usage` still reports quota, and the operator can see that the query is progressing.
+Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, 2026-11-01.
+
+### BG-157 Diagnose quota collection failures from the native UI
+Operators can identify why an agent quota is unavailable without opening logs or relying on a provider-specific screen guess.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
+### BG-154 See coordinator and task progress at a glance
+The operator can understand a run's overall state and each task's assignment, state and recent output from the coordinator Activity view without reading repeated save summaries.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → DDR-51 → DD-212. Rust port of JavaScript #267, GitHub #286, 2026-11-01.
+
+### BG-155 Keep native Rust UI at feature parity with the current product
+Rust UI users can supervise coordinator and task progress with the same essential information available in the current JavaScript UI, without requiring the JavaScript implementation to be taken over or changed.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.
+### BG-153 Make long workspace waits legible
+The operator can tell that a long workspace job is still active, how long it has waited, and whether the app has stopped sending state updates.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### BG-154 Acknowledge every user request
+Every user-initiated request visibly starts when pressed, then reports its operation and elapsed time if the response takes longer than one second.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, 2026-11-01.

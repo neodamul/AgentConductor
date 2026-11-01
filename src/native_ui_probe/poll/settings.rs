@@ -221,6 +221,9 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
             workspace::plan_source::cancel(probe);
             probe.pending = None;
             probe.error = Some("Workspace goal was not saved".into());
+            probe
+                .mcp_sources
+                .cancel_preview_after_save("Workspace goal was not saved");
         }
         Some(Pending::Prepare) => {
             workspace::plan_source::accepted(probe);

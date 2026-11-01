@@ -1,5 +1,7 @@
 # AgentConductor knowledge wiki
 
+- [Windows UI Automation text pacing](windows-uia-text-pacing.md): pace Unicode keystroke injection and verify persisted text in the exact packaged Windows app.
+- [Windows managed-workspace package probe](windows-packaged-signal-settings.md): resolve the workspace created on first launch before checking exact-package signal settings.
 - [Windows packaged schedule interaction](windows-packaged-schedule.md): exact-release UI Automation schedule persistence, failure diagnostics, and acceptance evidence.
 - [Current verification](current-verification.md): latest cross-platform package and workflow checkpoints.
 - [Native inspector and coordinator judgments](native-inspector-and-judgments.md): preference-safe folding, coordinator selection, native judgment views and main/native trace mapping.
@@ -39,7 +41,7 @@
 - [Native Codex subscription and sessions](native-codex-sessions.md): actual stdin/JSONL, exact context resume, concurrent independent sessions and warning evidence.
 
 - [Functional Agent Room](functional-agent-room.md): real fixture interactions, exact-state controls, screenshot and native verification limits.
-- [Native coordinator chat](native-coordinator-chat.md): Workspace chat uses the verified read-only CLI path and Startup's single job slot.
+- [Native coordinator chat](native-coordinator-chat.md): Workspace chat uses the verified read-only CLI path and Startup's single job slot; Windows fallback refuses unsafe or unknown host-job ownership.
 
 - [Native task editor nested selectors](native-task-editor-nested-selectors.md): preserve the task editor across nested egui selectors with independent Area state, accessible labels, and close behavior.
 - [Review task-row visibility](review-task-visibility.md): the full native Review screen displays all three manual-plan task rows at the documented viewport; packaged and Windows confirmation remain open.
@@ -51,9 +53,9 @@
 - [Native startup workspace](native-startup-workspace.md): private CLI registry, goal planning, exact consent and same-window native fixture evidence.
 - [Native Rust UI migration](native-rust-ui-migration.md): dispatch boundary, opt-in prototype evidence, separate revision-bound diff/test review pane, Graphify structure and remaining production acceptance.
 - [Native goal phase labels](native-goal-phase-labels.md): localized numbered phase action and AccessKit regression evidence.
-- [Native sidebar footer](native-sidebar-footer.md): bilingual local-first footer restoration and component verification limits.
+- [Native sidebar static-label removal](native-sidebar-footer.md): issue #190 removal of fixed local/login labels from Rust views and bilingual regression evidence.
 - [Native sidebar card density](native-sidebar-card-density.md): one-line agent detail labels with full AccessKit and hover text retained.
-- [Current-main Rust parity](current-main-rust-parity.md): issue #9 Rust parity and the 2026-10-24 integration of main #169/#172, with full local test evidence and remaining CI/platform gates.
+- [Current-main Rust parity](current-main-rust-parity.md): issue #9 parity inventory, coordinator board #286, root #22 mergeability audit, and remaining platform gates.
 - [Native Room failure feedback](native-room-failure-feedback.md): localized generated guidance with verbatim diagnostic output and explicit verification limits.
 
 - [Quota, fallback and native status](quota-fallback-and-status.md): provider metadata, durable account restrictions, reviewed failover and actual status-light/stop evidence.
@@ -177,6 +179,8 @@
 - [Step lessons](step-lessons.md): bounded run lessons delivered to later tasks, the Agent Room, and the existing agentmemory outbox.
 - [Idle resource budget](idle-resource-budget.md): use macOS physical footprint to avoid shared-page RSS inflation, with an exact packaged Agent Room sample and its limits.
 - [Latest-main Rust feature parity](coordinator-directed-operator-feedback.md): current Rust equivalents and regression evidence for coordinator feedback, amendments, and charter goal-drift gates; packaged UI credit remains unchanged.
+- [Native request lanes](native-request-lanes.md): bounded read concurrency, serialized state changes, correlated replies, and event-driven peer refresh.
+- [Native progress observation](native-request-lanes.md#task-progress-spool-observation): bounded idle spool reads and final progress draining.
 - [Rust review policy](rust-review-policy.md): selected Google Rust Style Guide rules, exclusions, stable checks and the no-churn adoption path for the Rust migration branch.
 - [Rust review policy](rust-review-policy.md): selected Google Rust Style Guide rules, exclusions, stable checks and the no-churn adoption path for the Rust migration branch.
 - [UTM Windows guest access](utm-windows-guest-access.md): post-reset guest-agent evidence, user-session drive-mapping limits, and the remaining Windows validation gate.
@@ -185,3 +189,6 @@
 - [Current local verification](current-verification.md): full locked/offline Rust test results, exact macOS bundle checks, and unresolved package/Windows gates.
 - [Native UI poll timeouts](native-ui-poll-timeouts.md): Rust worker request semantics, background error policy, resumed repaint scheduling, and the explicit distinction from JavaScript client-timeout diagnostics.
 - [Coordinator format correction retry](coordinator-format-retry.md): a single bounded JSON-format retry with retained first-attempt logs and deterministic local CLI tests.
+- [Git HEAD fast path](git-head-fast-path.md): resolve common revisions from metadata and refresh linked-worktree fallbacks asynchronously without blocking native requests.
+- [Native event-driven refresh](current-main-rust-parity.md#native-event-driven-refresh): broadcast state invalidations to peer windows and isolate snapshots from interactive requests.
+- [Native request feedback](native-request-feedback.md): immediate action feedback, elapsed wait text, quiet refreshes, and parity with main #279/#285.

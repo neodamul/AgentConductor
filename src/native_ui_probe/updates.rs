@@ -2,6 +2,7 @@ use eframe::egui;
 use serde_json::{Value, json};
 use std::time::{Duration, Instant};
 
+mod request;
 mod source;
 pub use source::{Action as SourceAction, Editor as SourceEditor};
 
@@ -21,6 +22,7 @@ pub struct State {
     next_poll: Option<Instant>,
     next_check: Instant,
     error: Option<String>,
+    phase_progress: Option<(String, super::progress::WaitClock)>,
 }
 
 impl Default for State {
@@ -31,6 +33,7 @@ impl Default for State {
             next_poll: None,
             next_check: Instant::now(),
             error: None,
+            phase_progress: None,
         }
     }
 }
@@ -71,19 +74,56 @@ impl State {
     }
 
     fn requested(&mut self, action: Action) {
+        self.requested_at(action, Instant::now());
+    }
+
+    fn requested_at(&mut self, action: Action, now: Instant) {
         if action == Action::Check {
-            self.next_check = Instant::now() + CHECK_INTERVAL;
+            self.next_check = now + CHECK_INTERVAL;
+            self.phase_progress = Some(("checking".into(), super::progress::WaitClock::start(now)));
+        } else if action == Action::Apply {
+            self.phase_progress =
+                Some(("installing".into(), super::progress::WaitClock::start(now)));
         }
     }
 
     pub fn apply_status(&mut self, status: Value) {
+        self.apply_status_at(status, Instant::now());
+    }
+
+    fn apply_status_at(&mut self, status: Value, now: Instant) {
         let active = matches!(
             status["phase"].as_str(),
             Some("checking" | "installing" | "restarting")
         );
+        if let Some(phase) = status["phase"].as_str().filter(|_| active) {
+            if let Some((current, clock)) = &mut self.phase_progress {
+                if current != phase {
+                    *clock = super::progress::WaitClock::start(now);
+                } else {
+                    clock.observe(now);
+                }
+                *current = phase.to_owned();
+            } else {
+                self.phase_progress =
+                    Some((phase.to_owned(), super::progress::WaitClock::start(now)));
+            }
+        } else {
+            self.phase_progress = None;
+        }
         self.status = status;
         self.error = None;
-        self.next_poll = active.then(|| Instant::now() + STATUS_INTERVAL);
+        self.next_poll = active.then(|| now + STATUS_INTERVAL);
+    }
+
+    fn wait_label(&self, language: &str, now: Instant) -> Option<String> {
+        self.phase_progress
+            .as_ref()
+            .map(|(_, clock)| super::progress::label(*clock, language, now))
+    }
+
+    pub(super) fn is_waiting(&self) -> bool {
+        self.phase_progress.is_some()
     }
 
     pub fn set_error(&mut self, error: String) {
@@ -151,6 +191,9 @@ impl State {
                         text("startup.update_up_to_date").to_owned()
                     };
                 ui.label(state_label);
+                if let Some(progress) = self.wait_label(language, Instant::now()) {
+                    ui.small(progress);
+                }
                 ui.horizontal(|ui| {
                     if ui
                         .add_enabled(
@@ -211,47 +254,6 @@ pub fn request(action: Action) -> Vec<u8> {
     serde_json::to_vec(&json!({"kind":kind})).expect("update request is serializable")
 }
 
-impl super::Probe {
-    pub(super) fn open_updates(&mut self) {
-        self.updates.open = true;
-        if self.snapshot.is_some() && self.pending.is_none() && self.updates.next_poll.is_none() {
-            self.update_request(Action::Check);
-        }
-    }
-
-    pub(super) fn show_updates(&mut self, ui: &mut egui::Ui) {
-        let action = self.updates.show(
-            self.navigation.appearance.language(),
-            self.pending.is_some(),
-            ui,
-        );
-        if let Some(action) = action {
-            self.update_request(action);
-        }
-    }
-
-    pub(super) fn update_request(&mut self, action: Action) {
-        if self.pending.is_some() {
-            self.updates.set_error(
-                self.navigation
-                    .appearance
-                    .text("native.update_already_in_progress")
-                    .to_owned(),
-            );
-            return;
-        }
-        self.updates.requested(action);
-        let result = self
-            .worker
-            .as_ref()
-            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(&request(action)));
-        match result {
-            Ok(()) => {
-                self.pending = Some(super::Pending::Update);
-                self.error = None;
-            }
-            Err(error) => self.updates.set_error(error),
-        }
-    }
-}
+#[cfg(test)]
+#[path = "../../tests/native_ui_probe/update_progress.rs"]
+mod progress_tests;

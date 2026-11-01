@@ -136,11 +136,13 @@ impl super::super::Probe {
         if snapshot["accepted"] == true
             && let Some(job) = snapshot["id"].as_str()
         {
+            self.active_work
+                .begin("chat", job, std::time::Instant::now());
             self.coordinator_chat.started(job.to_owned());
-            self.workspace_next_refresh =
-                Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+            self.workspace_next_refresh = None;
             self.pending = None;
         } else {
+            self.active_work.clear_kind("chat");
             self.coordinator_chat
                 .rejected("Coordinator chat job was not accepted".into());
             self.pending = None;
@@ -157,8 +159,7 @@ impl super::super::Probe {
                 .failed("Coordinator chat job no longer matches the request".into());
         } else if snapshot["job"]["state"] == "running" {
             self.snapshot = Some(snapshot);
-            self.workspace_next_refresh =
-                Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+            self.workspace_next_refresh = None;
         } else if snapshot["job"]["state"] == "completed" {
             let answer = snapshot["chat"]["answer"].as_str().unwrap_or_default();
             if !self.coordinator_chat.completed(&job, answer.to_owned()) {

@@ -63,6 +63,25 @@ path = "tests/native_room_review_summary.rs"
 required-features = ["native-ui-probe"]
 
 [[test]]
+name = "native_ui_quota_error"
+path = "tests/native_ui_quota_error.rs"
+required-features = ["native-ui-probe"]
+
+[[test]]
+name = "native_room_quota_error"
+path = "tests/native_room_quota_error.rs"
+required-features = ["native-ui-probe"]
+
+[[test]]
+name = "native_ui_quota_elapsed"
+path = "tests/native_ui_quota_elapsed.rs"
+required-features = ["native-ui-probe"]
+
+[[test]]
+name = "claude_wait"
+path = "tests/claude_wait.rs"
+
+[[test]]
 name = "native_ui_profiles"
 path = "tests/native_ui_profiles.rs"
 required-features = ["native-ui-probe"]

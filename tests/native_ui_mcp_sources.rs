@@ -114,6 +114,34 @@ fn native_workspace_exposes_accessible_reference_and_preview_controls() {
     assert!(labels.contains(&"+ Jira story"), "{labels:?}");
     assert!(labels.contains(&"+ Confluence page"), "{labels:?}");
     assert!(labels.contains(&"Preview imports"), "{labels:?}");
+
+    goal.push_str(" confluence:53553565");
+    let mut changed = context.run_ui(Default::default(), |ui| {
+        state.show(&mut goal, Some(&snapshot), "en", true, ui);
+    });
+    let changed_labels = changed
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .filter_map(|(_, node)| node.label())
+        .collect::<Vec<_>>();
+    let painted = changed
+        .shapes
+        .iter()
+        .filter_map(|shape| match &shape.shape {
+            egui::Shape::Text(text) => Some(text.galley.job.text.as_str()),
+            _ => None,
+        })
+        .collect::<Vec<_>>();
+    changed.textures_delta.set.clear();
+    changed.textures_delta.free.clear();
+    assert!(
+        painted.contains(&"References to preview: 2"),
+        "the edited goal updates reference availability on the next UI frame: {changed_labels:?} {painted:?}"
+    );
 }
 
 #[test]

@@ -724,11 +724,11 @@ The Settings dialog contains both buttons and their handlers; the workspace menu
 Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
 
 ### QAS-177 The conversation survives and follow-ups work
-Given a stored question and answer, `history` returns both and an unanswered question alone; a 30 KiB earlier answer does not block the next question; the page restores turns, adopts a running chat, recalls earlier questions with Up and clears on New conversation or a workspace change.
-Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
+Given a stored question and answer, `history` returns both and an unanswered question alone; a 30 KiB earlier answer does not block the next question; the page restores turns, adopts a running chat, recalls earlier questions with Up and clears on New conversation or a workspace change. The exact Windows package also proves that a delayed one-shot chat completes after the desktop closes and reopens, restoring the submitted question and answer. The native multiline editor exposes its localized prompt as its accessible name.
+Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190/DD-210. GitHub #189/#185, 2026-10-27.
 
 ### QAS-178 No dead texts remain
-Given the embedded pages and both message catalogs, none of the removed element classes or keys appears, and every `data-i18n` id used by a page still exists in the catalogs.
+Given the embedded pages, native Rust Workspace/Agent Room render trees and both message catalogs, none of the removed labels or keys appears in English or Korean, and every `data-i18n` id used by a page still exists in the catalogs.
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
 
 ### QAS-179 A late reply is not lost
@@ -772,3 +772,53 @@ Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202.
 ### QAS-184 Prompt blocks appear once, in order
 Given untrusted evidence containing a `# Format` line, the reviewer prompt has exactly one Document, one Task and one Format block in that order, and the evidence stays inside Document. The worker prompt keeps its `Owned paths:` and `Task:` lines and its rules in Task. A coordinator that first prints text without the requested JSON and then a valid object succeeds on the second attempt and the second prompt names the first error; two bad replies fail after exactly two runs.
 Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### QAS-191 Repository HEAD lookup never blocks a routine request
+Given a repository with loose, packed, or detached HEAD, a request returns the same commit as `git rev-parse HEAD` while `git` is absent from PATH. Given a linked worktree, the first request returns `Pending` without waiting; a later request receives the background Git result. Concurrent requests for one linked worktree start at most one refresh. Given an unrelated slow Git refresh, a foreground request and event publisher still complete. Verify with deterministic local tests for all layouts and the native request path.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
+
+### QAS-192 Scoped state events refresh affected views without request starvation
+Given two open native views, a workspace-only change wakes only Workspace, while a run change wakes both Workspace and Agent Room; the source view is not echoed. A deterministic background snapshot held behind a test barrier must not retain the shared startup-state lock, so an independent interactive request can acquire it before the barrier is released. Given an unrelated interactive response is pending when an event arrives, the affected listener starts one bounded background refresh without waiting for that response; its completed snapshot updates visible state while the pending response, unsaved form value and current error remain intact. For Workspace settings, preserve each locally changed value against the previous snapshot while still applying incoming values to fields the operator has not changed. An open decision modal pauses refresh only for its view. A burst of state events is coalesced to one snapshot. Active and idle views use a 30-second recovery cadence; no one-second snapshot loop runs for active jobs. Verify these behaviors with EventBus, snapshot-lock, worker-concurrency and native scheduling tests.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, 2026-10-30.
+
+### QAS-193 Slow work does not starve state changes
+Use deterministic barriers to prove that two reads can run on the bounded read lane, a state-changing action completes while a read or network-bound request is blocked, and state-changing actions remain serialized. Verify stale replies are ignored, poll requests remain separate, and event notifications coalesce without blocking publishers.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
+
+### QAS-194 Active state changes refresh without a polling loop
+Given an active run, a persisted report change wakes the relevant view and schedules one background snapshot; a burst of changes coalesces to one in-flight snapshot plus at most one follow-up. Given no new state change, no active 0.5–1 second snapshot is dispatched. The task-progress spool reader starts at 100 ms and doubles its idle delay up to 2 seconds; any output resets it to 100 ms, and process completion drains all remaining bytes. Given a missed notification, one recovery snapshot is dispatched within 30 seconds. A deliberately delayed snapshot does not prevent an independent action from being queued or completed.
+Given an approved startup whose first `report.json` appears after the initial start reply, the event-driven background snapshot opens Agent Room immediately and does not wait for the 30-second recovery deadline.
+Given a coordinator child exits while terminal SQLite persistence is blocked, UI polling stays responsive and reports the job as running until both the process-owner record and terminal audit are persisted; only then does the state become completed or failed. The wait and terminal persistence run outside the native request worker and shared job-state lock. Tests observe the monitor-owned terminal record and exit code rather than attempting to reap the child a second time.
+Given a spawned AgentConductor UI command reports progress or completion, a token-authenticated loopback event invalidates only its intended UI surface. Invalid tokens and unsupported surfaces are ignored. If the event bridge cannot start or an external process cannot signal, metadata recovery runs on an independent fixed 30-second interval; detecting a change does not shorten or reset the next interval. The metadata listener only publishes an invalidation and never assembles a snapshot. Changes beneath declared task worktree paths are also detected by metadata-only recovery, bounded to 512 paths and depth 8. Unsafe relative paths and symlink directories are not traversed; glob declarations watch their containing directory on Unix and Windows.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
+
+### QAS-195 Workspace listeners follow switches without retaining leases
+Given an idle Room on workspace A, switching to workspace B releases A's startup lease before the listener stops. A second Room can open A immediately. Changes to B's persisted report still emit a run event, and changes to A do not emit events through the switched Room. Verify with a dynamic-listener test and the workspace deletion/switch integration tests.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+### QAS-199 Slow Claude quota refresh remains bounded and observable
+Given a fixture Claude CLI delayed by 2.5 seconds and a 4-second injected deadline, the existing CLI authentication returns parsed quota. Given a fixture that does not present a prompt or finish `/usage`, the collector terminates at an injected 1-second deadline and names the duration and stage without requesting generation. A source contract verifies the shared production limit is 60 seconds and both supported collectors use it. A running quota job shows elapsed time only on its matching native agent card; completion or failure stops the timer. A failed card exposes its reason to keyboard and screen-reader users and on hover. Verify with the local fixture, native UI accessibility tests, source layout, and cross-platform CI.
+Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
+
+### QAS-200 Quota failures are readable without opening logs
+Given a quota record with a stored failure reason, the native agent sidebar, settings view, and Agent Room run screen shall show that reason in both English and Korean, expose the complete text as an accessible label, and preserve the existing appearance when no error exists. Verify with deterministic egui accessibility-tree tests; no provider CLI is required.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
+
+### QAS-197 Native wait status counts without snapshot polling
+With a fixed monotonic clock, a restored running job with `started_ms` two minutes in the past renders about `2:00`; a future or invalid timestamp never yields negative elapsed time. A received snapshot resets the no-state age without resetting elapsed time; silence is omitted through five seconds and shown after that threshold. Chat, goal rewrite, MCP discovery/preview, and update check/install all render elapsed and stale status in their owning UI region. A repaint tick advances visible elapsed text while dispatching zero requests. Typing a Jira or Confluence goal reference immediately updates its count and prerequisite state from the current text and enables preview when the coordinator and MCP server prerequisites are present. Clicking preview saves an unsaved goal, refreshes the saved revision, and only then dispatches the read-only preview request; a save or refresh failure cancels the pending preview.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-191 → QAS-197 → DDR-50 → DD-211. GitHub #283, 2026-11-01.
+
+### QAS-198 Coordinator status board is accurate without extra work
+Given a run with mixed completed, running, failed and pending tasks, selecting coordinator Activity shows the exact run state and counts and one row per planned task with the assigned agent and status. Where the existing activity map has a quiet age, the row shows that age; missing activity is presented as unavailable without inventing a timestamp. The rendered timeline omits `workflow` rows but preserves other history and judgments, and the source snapshot remains unchanged. Rendering with populated coordinator data returns no request event. Verify the model, both localized egui accessibility output, filtering and no-dispatch behavior deterministically.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → DDR-51 → DD-212. GitHub #286, 2026-11-01.
+
+### QAS-199 Native coordinator status remains usable alongside JS/backend work
+Given the current workspace's Agent Room snapshot, the Rust coordinator Activity view presents the current run and task state with the available assignments and output ages, and leaves the established review and audit content accessible. Existing JS/backend ownership and behavior are not changed by this Rust port. Verify mixed states, missing activity, retained judgments, both locales and no additional dispatch with deterministic local tests; use exact packaged review separately under #9.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → DDR-52 → DD-213. GitHub #286, 2026-11-01.
+
+### QAS-196 Workspace waits keep counting and recover dependent controls
+Given a workspace job that remains active, the visible wait count advances without new snapshots and the stale-state age appears after six seconds. Given an MCP lookup reply, its preview control is enabled immediately. Verify the existing elapsed/status helpers and response transition tests.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### QAS-197 A slow foreground request is visible in both native views
+Given a held foreground reply, Workspace and Agent Room show immediate activity and, within two seconds, the request description with a counting `m:ss`; after a reply or error the wait line clears. Given metadata/background refreshes, no user-wait indicator is shown and no periodic full snapshot is added. Verify with deterministic timer and both-view rendering tests.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. Rust follow-up to GitHub #285, 2026-11-01.

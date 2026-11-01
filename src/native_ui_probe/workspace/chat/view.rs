@@ -4,6 +4,15 @@ use egui::text::{CCursor, CCursorRange};
 
 impl State {
     pub fn show(&mut self, language: &str, ui: &mut egui::Ui) -> Option<Event> {
+        self.show_with_progress(language, None, ui)
+    }
+
+    pub(in crate::native_ui_probe) fn show_with_progress(
+        &mut self,
+        language: &str,
+        progress: Option<&str>,
+        ui: &mut egui::Ui,
+    ) -> Option<Event> {
         let mut new_conversation = false;
         ui.horizontal(|ui| {
             ui.heading(text(language, "chat.title"));
@@ -36,6 +45,9 @@ impl State {
                         ui.spinner();
                         ui.label(text(language, "chat.thinking"));
                     });
+                    if let Some(progress) = progress {
+                        ui.small(progress);
+                    }
                 }
                 if let Some(error) = &self.error {
                     ui.colored_label(ui.visuals().error_fg_color, error);
@@ -68,13 +80,17 @@ impl State {
         ui.add_enabled_ui(can_edit, |ui| {
             ui.horizontal(|ui| {
                 ui.label(RichText::new("> ").monospace());
-                editor = Some(
-                    egui::TextEdit::multiline(&mut self.draft)
-                        .desired_rows(3)
-                        .font(egui::TextStyle::Monospace)
-                        .hint_text(text(language, "chat.placeholder"))
-                        .show(ui),
-                );
+                let mut output = egui::TextEdit::multiline(&mut self.draft)
+                    .desired_rows(3)
+                    .font(egui::TextStyle::Monospace)
+                    .hint_text(text(language, "chat.placeholder"))
+                    .show(ui);
+                output.response.response = output
+                    .response
+                    .response
+                    .clone()
+                    .accessible_name(text(language, "chat.placeholder"));
+                editor = Some(output);
             });
         });
         let changed = editor

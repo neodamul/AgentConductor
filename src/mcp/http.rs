@@ -42,6 +42,7 @@ pub(super) async fn request(
         ));
     }
     let mut cmd = Command::new("curl");
+    crate::subprocess::clear_tokio_event_environment(&mut cmd);
     cmd.args([
         "-q",
         "--config",

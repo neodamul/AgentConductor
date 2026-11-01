@@ -1,16 +1,75 @@
 #[test]
-fn goal_driver_uses_and_confirms_value_pattern_before_saving() {
+fn goal_driver_focuses_and_types_before_saving() {
     let source = include_str!("windows_desktop.rs");
     assert!(
         !source.contains("$window.SetFocus()"),
         "desktop UI Automation must not focus a non-focusable top-level window"
     );
-    let set = source.find("$goalPattern.SetValue('Windows UIA goal')");
-    let verify = source.find("while ($goalPattern.Current.Value");
-    let save = source.find("$save.GetCurrentPattern(");
-    assert!(set.is_some_and(|index| Some(index) < verify));
-    assert!(verify.is_some_and(|index| Some(index) < save));
-    assert!(!source.contains("SendKeys]::SendWait"));
+    let focus = source.find("[DesktopInput]::Focus($hwnd, $expectedProcessId)");
+    let click = source.find("[DesktopInput]::Click($hwnd, $centerX, $centerY, $expectedProcessId)");
+    let select = source.find("[DesktopInput]::SelectAll()");
+    let type_goal = source.find("[DesktopInput]::TypeText('Windows UIA goal')");
+    let save = source.find("$save.SetFocus()");
+    assert!(focus.is_some_and(|index| Some(index) < click));
+    assert!(click.is_some_and(|index| Some(index) < select));
+    assert!(select.is_some_and(|index| Some(index) < type_goal));
+    assert!(type_goal.is_some_and(|index| Some(index) < save));
+    assert!(!source.contains("SendKeys"));
+}
+
+#[test]
+fn goal_driver_uses_unicode_keyboard_input_after_clicking_the_edit() {
+    let source = include_str!("windows_desktop.rs");
+    assert!(source.contains("KEYEVENTF_UNICODE = 4"));
+    assert!(source.contains("SendInput(2, new[] { down, up }, Marshal.SizeOf(typeof(Input)))"));
+    assert!(source.contains("$goal.Current.BoundingRectangle"));
+    assert!(source.contains("SetForegroundWindow(window)"));
+}
+
+#[test]
+fn goal_driver_reports_focused_control_and_text_when_input_is_lost() {
+    let source = include_str!("windows_desktop.rs");
+    assert!(source.contains("[System.Windows.Automation.AutomationElement]::FocusedElement"));
+    assert!(source.contains("[System.Windows.Automation.TextPattern]::Pattern"));
+    assert!(source.contains("GOAL_FOCUS_AFTER_INPUT:"));
+    assert!(source.contains("GOAL_TEXT_AFTER_INPUT:"));
+    assert!(source.contains("driver output: {report}"));
+}
+
+#[test]
+fn goal_driver_waits_for_enabled_controls_and_keyboard_focus_before_typing() {
+    let source = include_str!("windows_desktop.rs");
+    let wait_enabled = source.find("$goal.Current.IsEnabled -or -not $save.Current.IsEnabled");
+    let focus = source.find("[DesktopInput]::Focus($hwnd, $expectedProcessId)");
+    let wait_focus = source.find("-not $goal.Current.HasKeyboardFocus");
+    let type_goal = source.find("[DesktopInput]::TypeText('Windows UIA goal')");
+    assert!(wait_enabled.is_some_and(|index| Some(index) < focus));
+    assert!(focus.is_some_and(|index| Some(index) < wait_focus));
+    assert!(wait_focus.is_some_and(|index| Some(index) < type_goal));
+}
+
+#[test]
+fn goal_driver_paces_unicode_input_between_characters() {
+    let source = include_str!("windows_desktop.rs");
+    let type_text = source
+        .split("public static void TypeText(string text) {")
+        .nth(1)
+        .and_then(|body| body.split("public static void PressEnter() {").next())
+        .expect("goal field text input helper");
+    let send = type_text.find("SendInput(2, new[] { down, up }");
+    let pace = type_text.find("System.Threading.Thread.Sleep(100);");
+    assert!(send.is_some_and(|index| pace.is_some_and(|sleep| index < sleep)));
+}
+
+#[test]
+fn save_driver_uses_keyboard_activation_when_invoke_pattern_is_missing() {
+    let source = include_str!("windows_desktop.rs");
+    let focus = source.find("$save.SetFocus()");
+    let wait_focus = source.find("-not $save.Current.HasKeyboardFocus");
+    let enter = source.find("[DesktopInput]::PressEnter()");
+    assert!(focus.is_some_and(|index| Some(index) < wait_focus));
+    assert!(wait_focus.is_some_and(|index| Some(index) < enter));
+    assert!(!source.contains("InvokePattern"));
 }
 
 #[test]

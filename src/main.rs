@@ -27,14 +27,7 @@ fn print_report(report: &workflow::Report) -> Result<(), String> {
 
 fn main() -> std::process::ExitCode {
     let args: Vec<_> = std::env::args().skip(1).collect();
-    let maintenance = args.as_slice() == ["manual", "render"]
-        || args.first().map(String::as_str) == Some("bundle-macos")
-        || args.first().map(String::as_str) == Some("archive-package")
-        || args.first().map(String::as_str) == Some("validate-package")
-        || args.first().map(String::as_str) == Some("smoke-package")
-        || args.first().map(String::as_str) == Some("package-release")
-        || (args.first().map(String::as_str) == Some("release")
-            && args.get(1).map(String::as_str) == Some("notes"));
+    let maintenance = agentconductor::process::is_maintenance_command(&args);
     // A detached watcher must retain its own logs, not attach to the caller console.
     if !maintenance && args.first().map(String::as_str) != Some("availability-watch") {
         agentconductor::subprocess::attach_parent_console();
@@ -44,6 +37,7 @@ fn main() -> std::process::ExitCode {
     } else {
         execute()
     };
+    agentconductor::ui::notify_external_event();
     // DD-79: let queued messenger notifications finish (bounded) before the process exits.
     if !maintenance {
         agentconductor::messenger::flush(std::time::Duration::from_secs(35));

@@ -11,13 +11,14 @@ use serde::{Deserialize, Serialize};
 use std::{
     fs,
     path::{Path, PathBuf},
-    sync::Mutex,
+    sync::{Arc, Mutex},
 };
 
 /// Local startup state. Only explicit native requests launch a trusted CLI child.
 pub struct Startup {
     broker: Controller,
     quota_broker: Controller,
+    heads: crate::git_head::Heads,
     saved: Mutex<Saved>,
     custom_profiles: Vec<AgentProfile>,
     custom_registry_invalid: bool,
@@ -37,6 +38,14 @@ impl Startup {
     }
     pub(crate) fn root(&self) -> &Path {
         &self.broker.dir
+    }
+    pub(crate) fn watched_run(&self) -> Option<PathBuf> {
+        self.saved.lock().ok().and_then(|saved| {
+            saved
+                .last_run
+                .clone()
+                .or_else(|| saved.proposal.as_ref().map(|proposal| proposal.run.clone()))
+        })
     }
     /// DD-48: name a freshly created workspace through the same validated store.
     pub(crate) fn set_name(&self, name: &str) -> Result<(), String> {
@@ -68,6 +77,9 @@ impl Startup {
     }
     pub(crate) fn executable(&self) -> &Path {
         &self.broker.exe
+    }
+    pub(crate) fn event_endpoint(&self) -> Option<crate::ui::events::EventEndpoint> {
+        self.broker.event_endpoint.clone()
     }
     pub(crate) fn active_run(&self) -> Result<Option<PathBuf>, String> {
         let saved = self

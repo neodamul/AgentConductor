@@ -40,7 +40,7 @@
   "mcp.read_only_import_your_review": "읽기 전용 가져오기 · 검토",
   "mcp.reading_configured_mcp_sources": "MCP 문서를 가져오는 중…",
   "mcp.references_to_preview": "미리 볼 참조: {value1}",
-  "mcp.save_goal_before_preview": "참조를 미리 보기 전에 워크스페이스 목표를 저장하세요.",
+  "mcp.save_goal_before_preview": "미리 보기를 시작하면 워크스페이스 목표를 먼저 저장합니다.",
   "mcp.register_server_before_preview": "참조를 미리 보기 전에 설정에서 MCP 서버를 등록하고 활성화하세요.",
   "mcp.register_mcp_servers": "MCP 서버 등록",
   "mcp.review_imported_goal_sources": "가져온 목표 문서 검토",
