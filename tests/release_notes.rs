@@ -35,7 +35,8 @@ fn stable_release_contract_is_verified_in_rust() {
     assert!(validation.contains("workflow_call:"));
     assert!(release.contains("uses: ./.github/workflows/platform-validation.yml"));
     let publish = &release[release.find("  publish:").unwrap()..];
-    assert!(publish.contains("needs: verify"));
+    // GitHub #290: publishing also waits for the screenshot check.
+    assert!(publish.contains("needs: [verify, screenshots]"));
     assert!(publish.contains("contents: write"));
     assert!(publish.contains("gh release create"));
     assert!(!publish.contains("--prerelease"));

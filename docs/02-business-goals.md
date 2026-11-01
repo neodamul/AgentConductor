@@ -625,6 +625,10 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210.
 The operator never wonders whether a click was taken: every press shows at once that it is being handled.
 Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.
 
+### BG-155 The docs a user reads match the release they run
+The manual and the README never again lag the app by many releases without anyone noticing.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-192 → QAS-198 → DD-212. GitHub #290, user, 2026-11-01.
+
 ### BG-156 Usage is reported on a slow managed machine
 A company PC with scanning, managed settings or a proxy shows the account usage like a personal machine does, only a little later.
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.

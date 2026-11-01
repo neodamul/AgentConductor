@@ -791,6 +791,10 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210.
 When the operator presses a control that sends a request to the app, the pressed control shall show that its work is running until the reply, and once the reply has taken more than a second the page shall name the request and count its time where the page shows its status (the workspace status line, the run screen's connection line), also when the control was in a dialog that has closed. Periodic refreshes shall not be shown this way, and a refresh at the normal idle interval shall not be reported as silence of the app.
 Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.
 
+### R-200 The release docs are checked by tests
+A release shall not carry user-facing docs that disagree with it: the README and both manuals shall name the package version, every screenshot they show shall exist and every captured screen shall be shown, and the captured screens shall be as new as the interface. A release whose interface changed after the screens were captured shall be refused unless a later commit confirms the screens still match.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-192 → QAS-198 → DD-212. GitHub #290, user, 2026-11-01.
+
 ### R-201 A slow Claude usage query is waited for and shown
 The Claude usage query shall be given up only after a minute, not after 20 seconds, so that a machine where the CLI starts or answers slowly still reports usage. When it is given up, the message shall name the limit and the stage it was waiting in. While a usage query runs, the agent card shall show how long it has run.
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.

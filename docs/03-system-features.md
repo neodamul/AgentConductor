@@ -727,6 +727,10 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210.
 Both pages send every request through one helper that marks the pressed button and names a request that has waited over 1 s with its time; refreshes are left out.
 Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.
 
+### SF-188 Release doc checks
+Tests for the version sentences and the screenshot references run on every change; a script compares the last interface change with the last capture or confirmation and gates publishing.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-192 → QAS-198 → DD-212. GitHub #290, user, 2026-11-01.
+
 ### SF-189 Wait limit of the Claude usage query and its elapsed time
 One shared limit of 60 s for starting the CLI, the trust screen, the prompt and the `/usage` answer; a timeout names that limit; the agent card counts the running query.
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
