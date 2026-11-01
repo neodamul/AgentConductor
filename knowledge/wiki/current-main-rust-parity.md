@@ -1,13 +1,18 @@
 # Current-main behavior carried into the Rust UI branch
 
-## Current migration reconciliation — 2026-11-02
+## Current migration reconciliation — 2026-11-02 (updated)
 
-GitHub currently shows one open pull request: root PR #22. The latest `main` is
-`13ff88b2`; the Rust root head is `0c764074`, based at `e32295b3`. It is 1,062
-Rust-only commits ahead and 143 main-only commits behind, changes 1,775 files,
-and has 119 read-only merge conflicts (68 content, 23 add/add, 28 modify/delete).
-This is one oversized blocked PR, not a set of open child PRs. Do not merge a
-whole side or open another PR; review and reconcile behavior into the Rust root.
+GitHub currently shows one open pull request: draft root PR #22. Its head is
+`1aed3508`, and GitHub reports it mergeable. The latest `main` (`13ff88b2`) is
+an ancestor of this head: `git merge-base HEAD origin/main` returns
+`13ff88b2`, and `git rev-list --left-right --count HEAD...origin/main` returns
+`1077 0`. The earlier snapshot below, which said this branch was 143 commits
+behind and had 119 merge conflicts, is stale; the current branch has no missing
+`main` ancestry. This ancestry check does not prove user-visible Rust parity.
+PR #22 still changes 1,771 files (+91,563/-25,436) and remains Draft while the
+exact packaged Windows workflow and screen-by-screen UI acceptance are open.
+Keep the work on this root PR and continue auditing behavior against current
+`main`; do not create child PRs for the migration.
 
 The native UI already uses bounded per-surface events and separate request lanes
 for reads, state changes, blocking I/O, and background refresh. Local worker and

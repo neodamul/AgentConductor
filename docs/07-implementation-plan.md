@@ -5,17 +5,18 @@
 - [x] Task: remove the obsolete agent-settings screenshot from both Markdown manuals, rendered HTML manuals, and the native manual viewer. Regenerate HTML through Rust `manual render`.
 - [x] Verify locally: all-target native-feature suite passes 1,279 tests, 16 ignored across 394 suites; warning-denied Clippy, rustfmt, diff checks, and the explicit 300-line source-layout test pass. Changed Rust files remain under 300 lines.
 - [x] Complete this local unit: commit and push `dfbc4edd` to existing PR #22; update the PR and issue #9 progress.
-- [x] Verify: exact-head Platform Validation run `41346377052` is in progress on head `483eed22`; macOS passed and Windows is executing native tests. A new exact-head run is required after the current screenshot/documentation commit. Windows packaged execution and screen-by-screen visual acceptance remain open gates; issue #9 stays incomplete.
+- [x] Verify: exact-head run `41346377052` passed macOS validation; Windows validation and native-package jobs were cancelled by the subsequent push. It does not count as Windows package acceptance. The later correction is under exact-head run `41352601950` on `1aed3508`.
 
 ### Root PR status and event-driven UI verification — 2026-11-02
 
 - [x] GitHub audit: PR #22 is the only open pull request. The Rust migration is not blocked by a pile of open child PRs; it is concentrated in one oversized root PR.
-- [x] Latest PR audit: PR #22 is the only open PR and is still Draft. At head `483eed22`, GitHub reports it mergeable with 1,074 commits and 1,770 changed files. Its size and repeated checkpoint commits are process debt; keep only #22 open, finish its explicit Windows-package and screen-by-screen acceptance gates, and do not add child PRs.
+- [x] Latest PR audit: PR #22 is the only open PR and is still Draft. At head `1aed3508`, GitHub reports it mergeable and the PR changes 1,771 files (+91,563/-25,436). Its size and repeated checkpoint commits are process debt; keep only #22 open, finish its explicit Windows-package and screen-by-screen acceptance gates, and do not add child PRs.
 - [x] Verify #257's existing implementation instead of duplicating it: scoped event subscriptions and coalesced invalidations are present; reads, state changes, blocking I/O, and background refresh use separate bounded lanes. Local Rust worker-concurrency and event tests pass 16/16.
 - [x] Cross-check latest-main Claude quota fixes #297/#315: Rust uses a shared 180-second limit in both collectors and exposes elapsed time. Local quota/wait/parser tests pass 16 with 1 ignored; elapsed UI tests pass 2/2. Exact Windows package/account verification remains open.
 - [x] Integrate current `main` into the existing Rust root: commit `ad11775e` resolves all reported conflicts without restoring web UI/build code; the pushed branch is clean and GitHub reports PR #22 mergeable. No child PR was opened.
 - [x] Verify locally: all-target native-feature suite passes 1,279 tests, 16 ignored across 394 suites; warning-denied Clippy, rustfmt, diff checks, and the 300-line guard pass.
 - [ ] Next: verify the exact packaged Windows workflows and screen-by-screen native UI acceptance. Keep PR #22 draft until the outstanding issue #9 gates pass.
+- [ ] Visual evidence: `ui-workspace-current.png` is labeled v0.1.53, `ui-agent-room-current.png` is v0.1.49 and absent from the current-capture manifest, and `workspace-korean.jpg` is explicitly historical. These are not version-matched proof of parity; compare the actual current default UI screen-by-screen and refresh the captures before counting visual acceptance.
 
 ### Port main #247 complete-document parsing — Rust parity / 2026-11-02
 
@@ -46,10 +47,11 @@
 - [x] Exact Windows evidence: run `41350246764` executed the revised `windows_desktop` input test successfully, then failed the independent `windows_run_lifecycle` contract because it still required the removed `TypeText` call and prohibited `.SetValue`. The package job was skipped.
 - [x] Red / Green: the first full local rerun reproduced the stale lifecycle assertion; update it to require the exact `SetValue` input contract. Focused driver/lifecycle/source-layout/public-doc suites pass 28 tests with one ignored; warning-denied test Clippy, rustfmt, and diff checks pass.
 - [x] Full local Verify: locked/offline all-target native Rust suite passes 1,279 tests, 16 ignored, 0 failed across 394 suites in 290.11s. `windows_desktop.rs` is 170 lines, `windows_desktop_driver.rs` 186 lines, and `windows_run_lifecycle.rs` 233 lines.
+- [x] Local macOS package: exact-head archive `dist/agentconductor-aarch64-apple-darwin-1aed3508a5f1.zip` passed the Rust `package-release` smoke; SHA-256 `0231563b8297b62ff5cd51891f7cfca42991c83ff2547855aa99764bd32b03a5`.
 - [x] Dependency evidence: the locked `egui 0.37.0` text editor sends AccessKit `SetValue`; `accesskit_windows 0.35.1` maps that action to UIA `IValueProvider.SetValue` for value-bearing nodes.
 - [x] Assetize this correction: update LLM Wiki `windows-uia-text-input.md`, AgentMemory, and Graphify after the TDD fix. CocoIndex is unavailable in the current environment.
-- [ ] Integrate: commit and push the lifecycle-contract correction to the existing #9 root branch; do not create a child PR.
-- [ ] Verify package: require a fresh exact-head Windows package run of `windows_desktop`; runs `41347900792` and `41350246764` did not reach native-package acceptance. Keep #9 and related Windows acceptance issues open until the packaged run passes.
+- [x] Integrate: commit `1aed3508` and push the lifecycle-contract correction to the existing #9 root branch; no child PR was created.
+- [ ] Verify package: exact-head run `41352601950` is running on `1aed3508`; the prior Windows UIA test passed, but run `41350246764` stopped later at the stale lifecycle assertion and did not reach native-package acceptance. Keep #9 and related Windows acceptance issues open until the exact packaged run passes.
 - [x] Assetize: document the packaged-driver boundary in the LLM Wiki and save AgentMemory `mem_mvxzjvkh_e262c47c9cba`; Graphify refreshed to 12,159 nodes / 19,847 edges.
 - [x] Record local-first CI decision in AgentMemory `mem_mvxzuhf9_3fb94bacea78`; do not treat the cancelled workflow as acceptance evidence.
 
