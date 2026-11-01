@@ -7039,3 +7039,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Full Verify: `cargo test --all-targets --locked --offline --features native-ui-probe,test-fixtures --no-fail-fast --quiet` passes 1,243 tests, 16 ignored, across 380 suites (279.81s). All-target warning-denied Clippy, rustfmt, public docs, source layout, diff hygiene, and the 300-line guard pass.
 - [x] Assetize: LLM Wiki `planning-empty-scope-correction.md`; AgentMemory `mem_mvy3ai00_9deaa20f5d37`; Graphify refreshed to 12,357 nodes / 18,728 edges. CocoIndex CLI is unavailable in this environment.
 - [x] Complete: upstream #251 was already closed; the Rust port is tracked on issue #9 and PR #22. Commit `0f78107a` is pushed directly to the existing root branch. No child PR was created.
+
+### 2026-11-02 — Root PR integration and storage audit
+
+- [x] Verify the active root worktree: clean `codex/issue-9-native-ui-parity` at `9ab3308c`; current `origin/main` is `13ff88b2`.
+- [x] Recount main integration delta: `main` has 143 commits beyond the merge base; Git's non-mutating merge tree reports 119 conflicts (68 content, 23 add/add, 28 modify/delete). The modify/delete entries include legacy UI assets that must be behavior-mapped to Rust, not restored wholesale.
+- [x] Review PR state: #22 is the only open PR, remains draft/conflicting, and currently has no submitted reviews or review threads. The branch contains 1,056 commits / 1,774 changed files. Do not create a child PR.
+- [x] Storage cleanup: removed the clean, superseded `/private/tmp/AgentConductor-issue-260` worktree and local branch `codex/issue-9-quota-295` after verifying its commit is an ancestor of the active Rust branch; removed its 28 GiB reported directory. `cargo clean` removed 14.1 GiB of generated output from the active Codex target. APFS reported used space decreasing from 410 GiB to 408 GiB; other in-progress worktrees and uncommitted changes were preserved.
+- [ ] Task: reconcile the 119 paths against main's behavior, retaining Rust-native implementations and importing missing semantics. Resolve conflicts in coherent source/test groups and locally verify each group before committing directly to this root branch.
+- [ ] Verify: after reconciliation, confirm the root PR is mergeable and rerun the full local Rust suite plus exact package acceptance gates; do not infer completion from a merge-tree or targeted tests alone.
