@@ -121,13 +121,22 @@ async fn native_review_requires_current_revision_and_exact_candidate_and_keeps_a
         std::thread::sleep(Duration::from_millis(20));
     }
     let owner: agentconductor::process::Ownership =
-        serde_json::from_slice(&fs::read(owner_path).unwrap()).unwrap();
+        serde_json::from_slice(&fs::read(&owner_path).unwrap()).unwrap();
     assert_eq!(owner.phase, "terminal");
     assert_eq!(owner.exit_code, Some(0));
     drop(room);
     let deadline = std::time::Instant::now() + Duration::from_secs(15);
-    while workflow::load(&dir).unwrap().state != "completed" {
-        assert!(std::time::Instant::now() < deadline);
+    loop {
+        let owner: serde_json::Value =
+            serde_json::from_slice(&fs::read(&owner_path).unwrap()).unwrap();
+        if workflow::load(&dir).unwrap().state == "completed" && owner["phase"] == "terminal" {
+            assert_eq!(owner["exit_code"], 0);
+            break;
+        }
+        assert!(
+            std::time::Instant::now() < deadline,
+            "workflow/owner state did not reach terminal: {owner}"
+        );
         std::thread::sleep(Duration::from_millis(20));
     }
     assert_eq!(

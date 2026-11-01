@@ -21,7 +21,7 @@ pub fn is_maintenance_command(args: &[String]) -> bool {
             && args.get(1).map(String::as_str) == Some("notes"))
 }
 
-#[derive(serde::Serialize, serde::Deserialize)]
+#[derive(Clone, serde::Serialize, serde::Deserialize)]
 pub struct Ownership {
     pub coordinator_pid: u32,
     pub pid: Option<u32>,

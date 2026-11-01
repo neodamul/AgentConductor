@@ -61,6 +61,7 @@ pub async fn query(
     let executable = crate::executable::resolve(&profile.executable)
         .unwrap_or_else(|| profile.executable.clone().into());
     let mut command = Command::new(executable);
+    crate::subprocess::clear_tokio_event_environment(&mut command);
     command
         .arg("app-server")
         .envs(&profile.environment)

@@ -30,3 +30,17 @@ The implementation uses Rust standard-library threads and channels. It adds no a
 ## Event and recovery refresh during foreground work
 
 A pending foreground response no longer prevents a peer-view invalidation or due recovery check from dispatching to the bounded snapshot worker. Active human decision modals still pause refresh for their view. The snapshot reply lane remains separate from foreground replies, and application preserves the pending action, dirty form data, and current error. Regressions: `tests/native_ui_probe/poll_events.rs` and `tests/native_ui_probe/renderer.rs`.
+
+Workspace snapshot application compares each local setting draft with the previous saved snapshot. If the draft differs, that field remains local and is not replaced by the incoming event snapshot; fields still matching the previous saved value are refreshed from the new snapshot. The goal optimizer proposal is also retained while the goal draft is dirty. `tests/native_ui_probe/poll_background_pending.rs` verifies unsaved name and goal preservation while a clean repository field accepts the new saved value.
+
+## Task-progress spool observation
+
+The task-progress spool observer starts at 100 ms, doubles its delay up to 2 seconds while no bytes arrive, and resets to 100 ms as soon as output resumes. At process completion it continues draining while bytes remain, even when a final JSONL record is partial, then flushes the decoder. This lowers idle file/database reads without adding a runtime or dropping final progress.
+
+## Coordinator process completion
+
+The native request worker must never wait for a coordinator child or for terminal SQLite audit persistence. A named standard-library monitor thread owns `Child::wait`, updates the in-memory job state briefly, then writes the owner record and terminal action event outside the job-state lock. Integration tests wait for this monitor-owned terminal receipt and exit code; a second `waitpid` races the monitor and is not a valid completion check. Poll requests read the in-memory state and continue reporting `running` until terminal persistence succeeds; a persistence failure is surfaced as a failed job. If monitor thread creation fails, the existing `try_wait` fallback remains available. Regression: `tests/support/controller_job_monitor.rs` holds a SQLite write lock after the child exits and verifies that `Controller::poll` remains responsive until the audit can be saved.
+
+## Cross-process invalidation
+
+The Rust EventBus handles same-process view updates. A spawned AgentConductor command receives an ephemeral loopback UDP address, a per-bridge token, and its target surface through `AC_UI_EVENT_*` variables; progress and command completion send a small authenticated invalidation packet. Provider, MCP, quota, and Git children have these variables removed before spawn. The receiver is bound only to `127.0.0.1`, runs on a named thread, and sleeps in `recv_from` with a 30-second shutdown timeout. When the bridge is unavailable or external code cannot signal, the existing file observer is the recovery path; it checks metadata on a fixed 30-second interval and publishes an invalidation when it detects a change. It does not reset to a shorter cadence or assemble snapshots. It fingerprints the primary report/startup file plus sibling `state.sqlite` and `state.sqlite-wal`. Regressions cover valid-token delivery, wrong-token rejection, target-surface fanout, environment scoping, the fixed recovery interval, and SQLite-only changes.

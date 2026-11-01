@@ -6822,3 +6822,101 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify the denied-breakaway branch in the Windows packaged host; confirm the UI reports `not_spawned` and no accepted/running chat is recorded when the desktop runs inside a host job.
 - [ ] Verify exact Windows package: close the desktop during delayed chat, reopen the same workspace, confirm the question and answer restore; also run all tool-decision journeys on this #260-based code.
 - [ ] Complete: keep issue #189 and #9 open, do not increase #9 from 22/50 until exact package evidence.
+### 2026-11-01 — Preserve Workspace drafts during event refresh — issue #257
+
+- [x] Plan: implement the existing R-194 / QAS-192 contract without blocking the event snapshot lane; preserve locally changed settings while accepting incoming values for clean fields.
+- [x] Red: `background_snapshot_preserves_unsaved_workspace_drafts` failed because the event snapshot replaced the unsaved Workspace name with the saved value. The older renderer test also assumed a fast metadata poll; update it to exercise the event-driven snapshot path.
+- [x] Task / Green: compare each editable setting against the previous saved config, retain only dirty local values, and refresh unchanged settings plus the authoritative snapshot. Keep the goal optimizer proposal when the goal is dirty.
+- [x] Verify locally: `cargo test --locked --offline --features native-ui-probe --lib --test native_ui_probe --test source_layout` passes 96 tests across three suites. Warning-denied all-target Clippy, rustfmt, diff hygiene, and the ≤300-line source/test limit pass; the largest changed file is 164 lines.
+- [x] Update QAS-192/DD-206, LLM Wiki, and Graphify (11,857 nodes / 19,366 edges). CocoIndex is installed but cannot import `mcp.server.fastmcp`; no dependency was added.
+- [x] Complete the issue unit: AgentMemory `mem_mvxdrsve_6454a5eac748`; progress is posted to #257 and PR #260. Commit `e8cb9400` is pushed on `codex/issue-257-rust-draft-preservation`; draft PR #294 references #257/#9. Keep the packaged macOS/Windows gate open.
+- [ ] Verify packaged macOS/Windows UI behavior; source tests do not satisfy the package acceptance gate.
+
+### 2026-11-01 — Back off idle task-progress spool reads — issue #257
+
+- [x] Plan: apply Claude PR #255's bounded observer cadence to the current Rust branch; retain 100 ms response when output arrives, back off only while the spool is idle, and drain the final partial record after process completion.
+- [x] Red: the observer cadence regression did not compile because the delay policy did not exist.
+- [x] Task / Green: add a 100 ms → 2 s exponential idle delay that resets on output; keep completion draining based on bytes read so partial JSONL records are not dropped.
+- [x] Verify focused: the cadence regression and live progress/quota observer suites pass (9 tests total).
+- [x] Verify locally: 105 tests across native UI, source-layout, live-progress, and Claude-quota suites pass. Warning-denied all-target Clippy, rustfmt, diff hygiene, and the ≤300-line source/test limit pass; `progress.rs` is 143 lines and the test is 15.
+- [x] Update QAS-194/DD-208, LLM Wiki, and Graphify (11,867 nodes / 19,379 edges). CocoIndex remains unavailable because `mcp.server.fastmcp` cannot import.
+- [x] Complete this unit: AgentMemory `mem_mvxe3g5u_f5672b6bb9e3`; progress updated on #257/PR #260; commit `e7d1a8a` pushed to the #257 issue branch and included in draft PR #294.
+
+### 2026-11-01 — Move coordinator child completion and terminal audit off request polling — issue #257 / Claude PR #255 parity
+
+- [x] Plan: retain the existing UI request lanes and move child waiting plus terminal audit writes to an independent standard-library thread.
+- [x] Red: `controller_poll_stays_responsive_while_terminal_audit_is_locked` failed before the monitor API existed.
+- [x] Task / Green: add a named child monitor; poll reads job state without waiting for the child or SQLite terminal record.
+- [x] Verify affected local suites: `cargo test --locked --offline --features native-ui-probe --lib --test native_ui_probe --test source_layout` passes 98 tests across three suites; warning-denied all-target Clippy passes. The unrestricted all-tests command was stopped after running silently for over a minute.
+- [x] Record formatting, diff, and 300-line checks; refresh Graphify (11,888 nodes / 19,421 edges).
+- [x] Save the completed unit to AgentMemory `mem_mvxehy1e_18717541fc81`; update #257 and PR #294 progress. Signal Claude with the Rust port and verification boundary.
+- [x] Commit and push `846e65b` on `codex/issue-257-rust-draft-preservation`.
+
+### Open Rust PR follow-up inventory — refreshed 2026-11-01
+
+- [x] Recheck GitHub state: #199, #202, #230, #239, #255, #260, #284, #288, and #289 are open issue drafts; #22 is the main Rust migration parent. #305 and #293 are integrated into the active #9 branch; #294 is being integrated in this unit.
+- [x] Refreshed Graphify after this audit: 12,122 nodes / 19,804 edges.
+- [ ] #199 — remove fixed authentication/local-first labels. GitHub currently reports mergeable; exact native package acceptance remains to be established.
+- [ ] #202 — native goal optimizer and proposal review. GitHub currently reports not mergeable; refresh against the active #9 base before integration.
+- [ ] #230 — reopen the last saved workspace and retire blank placeholders. GitHub currently reports not mergeable; its reported Windows package failure is in the shared tool-decision journey, while the original #226 symptom still lacks a concrete repro.
+- [x] #239 — retargeted to #260 and reduced to a regression-only PR. Commit `0af92d26` preserves the current `chat_revision`/diagnostics implementation and adds the slow-`rev-parse HEAD` dispatch regression plus plan/evidence/Wiki records; the five-file PR diff contains no product-source changes. Twelve focused tests, all-target warning-denied Clippy, rustfmt, and diff checks pass. PR is open, Draft, and mergeable. Exact packaged macOS/Windows UI acceptance remains open. Main fix #234 is already in PR #240; do not reintroduce the old implementation.
+- [ ] #255 — Related event-driven UI/chat/package work. Its branch overlaps #294 on 58 changed files and has distinct package evidence and source files. Audit its remaining unique behavior against the integrated #294 implementation before closing or porting anything.
+- [ ] #260 — Git HEAD fast path and bounded request/event lanes; GitHub reports mergeable and this is the base branch for #294.
+- [ ] #284 — Port elapsed/stale task progress to the Rust UI; review its unique behavior and local tests.
+- [ ] #288 — Port the coordinator status board to Rust; review against current workspace and Agent Room surfaces.
+- [ ] #289 — Port request feedback to the native Rust UI; review its acceptance and localization tests.
+- [x] #294 — Integrated event-driven refresh, child monitoring, progress backoff, task-worktree recovery scope, and draft preservation into the current #9 branch. Full local all-target/all-feature tests and Clippy pass; exact packaged macOS/Windows UI acceptance remains open.
+- [x] #305 and #293 — Chat lifecycle and Windows UIA accessible-name changes are integrated in `5753ba0d` and `432b3bb6`; GitHub marks both PRs merged. Keep #189 open until exact packaged Windows chat acceptance passes.
+
+### 2026-11-01 — Observe declared task worktree changes during event recovery — issue #257 / Claude PR #255 parity
+
+- [x] Plan: extend the metadata-only recovery listener to task worktree paths declared by `tasks[].cwd` and `plan.tasks[].paths`; preserve bounded host use and never traverse unsafe paths or symlink directories.
+- [x] Red: `run_listener_observes_changes_in_declared_worktree_scope` timed out before the listener fingerprinted worktree paths.
+- [x] Task / Green: include declared-path metadata in the adaptive listener fingerprint; cap traversal at 512 paths and depth 8, and handle Unix and Windows relative/glob separators.
+- [x] Verify focused: the worktree-change regression passes; path tests reject parent traversal, drive paths, and UNC paths and cover glob declarations on both separators.
+- [x] Verify: affected native UI/source-layout suites pass 106 tests; all-target/all-feature Clippy with `-D warnings`, rustfmt, diff hygiene, and changed source/test ≤300-line checks pass.
+- [x] Update QAS-194/DD-208 and LLM Wiki; refresh Graphify to 11,960 nodes / 18,164 edges / 892 communities. CocoIndex CLI is unavailable in this environment.
+- [x] Save AgentMemory `mem_mvxfmjfb_1a22b2a2f701`; update #257 and PR #294; commit `f34137c` pushed to `codex/issue-257-rust-draft-preservation`; signal Claude `sig_mvxfnpz7_c75fb017e0c1`.
+- [ ] Exact packaged macOS/Windows GUI validation remains open; source tests do not satisfy package acceptance.
+
+### 2026-11-01 — Port process events and adaptive recovery — issue #257 / Claude PR #255 parity
+
+- [x] Plan: add an authenticated loopback notification for spawned AgentConductor commands; keep metadata recovery bounded and adaptive; prevent event credentials from reaching provider/MCP processes.
+- [x] Red: event bridge regressions failed to compile before `ProcessEventBridge` and its endpoint API existed.
+- [x] Task / Green: add token validation, surface-scoped child environment, completion/progress notifications, provider environment scrubbing, and a 1-to-30-second fallback observer that fingerprints report/startup plus SQLite/WAL metadata.
+- [x] Verify affected locally: 103 tests pass across library, native UI, and source-layout suites; source-layout confirms every changed source/test file stays at or below 300 lines. `cargo fmt` passes.
+- [x] Verify warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line bound.
+- [x] Update QAS-194/DD-208, implementation plan, LLM Wiki, and Graphify (11,942 nodes / 19,515 edges).
+- [x] Save AgentMemory `mem_mvxf7p2e_e73272420eed`.
+- [x] Update #257 and PR #294; send Claude signal `sig_mvxf94bp_27c4629e7206`.
+- [x] Commit/push `1cfed4e` on `codex/issue-257-rust-draft-preservation`.
+
+### 2026-11-01 — Verify monitor-owned UI child completion — issue #257 / PR #294
+
+- [x] Plan: keep the dedicated monitor as the sole child reaper; assert its persisted terminal owner record and exit code instead of calling `waitpid` after the monitor has reaped the process.
+- [x] Red: macOS Actions run `41281059096` failed `native_review_requires_current_revision_and_exact_candidate_and_keeps_accepted_work_after_close` because the direct `waitpid` returned `-1`; the Windows validation job passed.
+- [x] Task / Green: update the integration test to wait for both workflow completion and the monitor-owned `phase: terminal` record, then assert exit code `0`.
+- [x] Verify locally: the focused regression passes; all 6 tests in `tests/ui.rs` pass; warning-denied targeted Clippy, rustfmt, diff hygiene, and the 300-line guard pass (`tests/ui.rs`: 262 lines).
+- [x] Update QAS-194 and the LLM Wiki to make monitor ownership explicit.
+- [ ] Exact PR validation: push the fix to `codex/issue-257-rust-draft-preservation` and require macOS plus Windows platform validation to pass before closing the CI gate.
+
+### 2026-11-01 — Keep missed-event recovery at 30 seconds — issue #257 / PR #294
+
+- [x] Plan: align DD-208 and QAS-194 with the issue clarification: active updates arrive by events; metadata recovery is a fixed 30-second fallback and does not assemble snapshots.
+- [x] Red: `metadata_recovery_stays_at_thirty_seconds_after_a_change` failed because a detected change reset the next scan to 1 second.
+- [x] Task / Green: use a fixed 30-second production interval for report/startup and declared-worktree metadata listeners; retain short injected intervals only in deterministic tests.
+- [x] Verify locally: 17 event/listener tests, 2 source-layout tests, all-target/all-feature Clippy with `-D warnings`, rustfmt, and `git diff --check` pass.
+- [ ] Verify exact macOS and Windows platform validation on the updated PR #294 head; no packaged UI acceptance is claimed by source tests.
+- [x] Update QAS-194/DD-208 and LLM Wiki; refresh Graphify to 11,965 nodes / 19,568 edges; record AgentMemory `mem_mvxksy1o_c634d18900f9`.
+- [x] Update issue #257 and PR #294; commit and push `c7c7330b`.
+- [ ] Re-run exact-head macOS/Windows platform validation after the follow-up plan checkpoint; no packaged UI acceptance is claimed.
+
+### 2026-11-01 — Integrate event-driven UI and preserve drafts — issue #257 / #9
+
+- [x] Integrate PR #294 on the active #9 branch after comparing its event path with sibling PR #255; preserve the distinct chat lifecycle and accessibility fixes already integrated from #305 and #293.
+- [x] Red: the combined branch failed `source_layout` because `src/ui/controller.rs` grew to 335 lines. Green: move fallback ownership polling and Windows breakaway classification into `src/ui/controller/process.rs`; the controller is now 297 lines and every source/test file meets the 300-line cap.
+- [x] Red: merged `tests/ui.rs` failed to compile because `owner_path` was moved before a later terminal-state check. Green: borrow the path for both reads; focused `ui` and `source_layout` suites pass 8 tests.
+- [x] Verify affected native UI, source-layout, and library targets: 106 tests pass across three suites.
+- [x] Verify full native targets with `native-ui-probe`: 1,192 passed, 16 ignored across 374 suites. Warning-denied all-target Clippy, rustfmt, and diff hygiene pass.
+- [x] Preserve the QAS/DD, implementation plan, LLM Wiki, and AgentMemory history from PR #294; Graphify refreshed after integration.
+- [ ] Verify exact packaged macOS and Windows behavior on the updated branch. Source tests do not satisfy issue #9 platform acceptance; keep progress at 22/50 until that gate passes.

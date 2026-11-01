@@ -1,4 +1,6 @@
 use super::{Event, EventBus};
+#[path = "listener/scope.rs"]
+mod scope;
 use std::{
     fs,
     path::PathBuf,
@@ -7,12 +9,24 @@ use std::{
     time::{Duration, SystemTime},
 };
 
-const CHECK_INTERVAL: Duration = Duration::from_millis(500);
+#[cfg(test)]
+#[path = "../../../tests/support/persisted_state_event.rs"]
+mod tests;
+
+pub(super) const RECOVERY_INTERVAL: Duration = Duration::from_secs(30);
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+struct FileStamp {
+    length: u64,
+    modified: Option<SystemTime>,
+}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 struct Fingerprint {
-    length: u64,
-    modified: Option<SystemTime>,
+    primary: Option<FileStamp>,
+    database: Option<FileStamp>,
+    wal: Option<FileStamp>,
+    scope: Vec<(PathBuf, FileStamp)>,
 }
 
 pub struct RunChangeListener {
@@ -28,11 +42,19 @@ pub struct StartupWatch {
 
 impl RunChangeListener {
     pub fn spawn(path: PathBuf, bus: Arc<EventBus>) -> Result<Self, String> {
+        Self::spawn_with_interval(path, bus, RECOVERY_INTERVAL)
+    }
+
+    pub(super) fn spawn_with_interval(
+        path: PathBuf,
+        bus: Arc<EventBus>,
+        interval: Duration,
+    ) -> Result<Self, String> {
         let observed = fingerprint(&path);
         let (stop, stopped) = mpsc::channel();
         let thread = thread::Builder::new()
             .name("agentconductor-run-listener".into())
-            .spawn(move || listen_report(path, bus, stopped, observed))
+            .spawn(move || listen_report(path, bus, stopped, observed, interval))
             .map_err(|error| error.to_string())?;
         Ok(Self {
             stop,
@@ -43,6 +65,14 @@ impl RunChangeListener {
     pub fn spawn_startup(
         resolve_watch: impl Fn() -> Option<StartupWatch> + Send + 'static,
         bus: Arc<EventBus>,
+    ) -> Result<Self, String> {
+        Self::spawn_startup_with_interval(resolve_watch, bus, RECOVERY_INTERVAL)
+    }
+
+    pub(super) fn spawn_startup_with_interval(
+        resolve_watch: impl Fn() -> Option<StartupWatch> + Send + 'static,
+        bus: Arc<EventBus>,
+        interval: Duration,
     ) -> Result<Self, String> {
         let observed = resolve_watch();
         let observed_startup = observed
@@ -63,6 +93,7 @@ impl RunChangeListener {
                     stopped,
                     observed_startup,
                     observed_report,
+                    interval,
                 )
             })
             .map_err(|error| error.to_string())?;
@@ -87,14 +118,16 @@ fn listen_report(
     bus: Arc<EventBus>,
     stopped: mpsc::Receiver<()>,
     mut observed: Option<Fingerprint>,
+    interval: Duration,
 ) {
     loop {
-        match stopped.recv_timeout(CHECK_INTERVAL) {
+        match stopped.recv_timeout(interval) {
             Ok(()) | Err(mpsc::RecvTimeoutError::Disconnected) => return,
             Err(mpsc::RecvTimeoutError::Timeout) => {}
         }
         let current = fingerprint(&path);
-        if current != observed {
+        let changed = current != observed;
+        if changed {
             observed = current;
             bus.publish(None, Event::RunChanged);
         }
@@ -108,9 +141,10 @@ fn listen_startup(
     stopped: mpsc::Receiver<()>,
     mut observed_startup: Option<Fingerprint>,
     mut observed_report: Option<Fingerprint>,
+    interval: Duration,
 ) {
     loop {
-        match stopped.recv_timeout(CHECK_INTERVAL) {
+        match stopped.recv_timeout(interval) {
             Ok(()) | Err(mpsc::RecvTimeoutError::Disconnected) => return,
             Err(mpsc::RecvTimeoutError::Timeout) => {}
         }
@@ -120,7 +154,8 @@ fn listen_startup(
         let current_startup = current_watch
             .as_ref()
             .and_then(|current| fingerprint(&current.startup_path));
-        if path_changed || current_startup != observed_startup {
+        let startup_changed = path_changed || current_startup != observed_startup;
+        if startup_changed {
             observed_startup = current_startup;
             bus.publish(None, Event::WorkspaceChanged);
             observed_report = current_watch
@@ -133,7 +168,8 @@ fn listen_startup(
             .as_ref()
             .and_then(|current| current.report_path.as_deref())
             .and_then(fingerprint);
-        if current_report != observed_report {
+        let report_changed = current_report != observed_report;
+        if report_changed {
             observed_report = current_report;
             bus.publish(None, Event::RunChanged);
         }
@@ -141,9 +177,27 @@ fn listen_startup(
 }
 
 fn fingerprint(path: &std::path::Path) -> Option<Fingerprint> {
-    let metadata = fs::metadata(path).ok()?;
+    let parent = path.parent()?;
+    let stamp = |path: &std::path::Path| {
+        fs::metadata(path).ok().map(|metadata| FileStamp {
+            length: metadata.len(),
+            modified: metadata.modified().ok(),
+        })
+    };
+    let primary = stamp(path);
+    let database = stamp(&parent.join("state.sqlite"));
+    let wal = stamp(&parent.join("state.sqlite-wal"));
+    let scope: Vec<_> = scope::declared_paths(path)
+        .into_iter()
+        .filter_map(|path| scope::stamp(&path).map(|stamp| (path, stamp)))
+        .collect();
+    if primary.is_none() && database.is_none() && wal.is_none() && scope.is_empty() {
+        return None;
+    }
     Some(Fingerprint {
-        length: metadata.len(),
-        modified: metadata.modified().ok(),
+        primary,
+        database,
+        wal,
+        scope,
     })
 }

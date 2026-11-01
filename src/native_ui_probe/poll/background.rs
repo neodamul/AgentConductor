@@ -29,7 +29,7 @@ impl Probe {
                         std::time::Instant::now(),
                     );
                 } else if !interactive_pending {
-                    super::workspace_ops::load_workspace(self, &snapshot);
+                    super::workspace_ops::load_background_workspace(self, &snapshot);
                 }
                 self.snapshot = Some(snapshot);
                 if !interactive_pending {

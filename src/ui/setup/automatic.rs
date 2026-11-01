@@ -24,7 +24,9 @@ impl Startup {
         let controller = Controller {
             dir,
             exe: self.broker.exe.clone(),
-            job: Mutex::new(None),
+            job: Arc::new(Mutex::new(None)),
+            event_endpoint: self.broker.event_endpoint.clone(),
+            event_surface: crate::ui::events::EventSurface::Workspace,
         };
         controller.automatic(enabled)
     }

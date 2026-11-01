@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 use std::{
     fs,
     path::{Path, PathBuf},
-    sync::Mutex,
+    sync::{Arc, Mutex},
 };
 
 /// Local startup state. Only explicit native requests launch a trusted CLI child.
@@ -77,6 +77,9 @@ impl Startup {
     }
     pub(crate) fn executable(&self) -> &Path {
         &self.broker.exe
+    }
+    pub(crate) fn event_endpoint(&self) -> Option<crate::ui::events::EventEndpoint> {
+        self.broker.event_endpoint.clone()
     }
     pub(crate) fn active_run(&self) -> Result<Option<PathBuf>, String> {
         let saved = self

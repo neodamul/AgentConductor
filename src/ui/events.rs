@@ -1,6 +1,8 @@
 use std::sync::{Mutex, mpsc};
 
+mod bridge;
 pub mod listener;
+pub use bridge::{EventEndpoint, ProcessEventBridge};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Event {
@@ -12,6 +14,23 @@ pub enum Event {
 pub enum EventSurface {
     Workspace,
     AgentRoom,
+}
+
+impl EventSurface {
+    pub(super) fn wire_name(self) -> &'static str {
+        match self {
+            Self::Workspace => "workspace",
+            Self::AgentRoom => "agent-room",
+        }
+    }
+
+    pub(super) fn from_wire(value: &str) -> Option<Self> {
+        match value {
+            "workspace" => Some(Self::Workspace),
+            "agent-room" => Some(Self::AgentRoom),
+            _ => None,
+        }
+    }
 }
 
 impl Event {
@@ -121,6 +140,13 @@ pub fn event_for_request(packet: &[u8]) -> Option<Event> {
     }
 }
 
+pub fn notify_external_from_environment() {
+    bridge::notify_from_environment();
+}
+
+#[cfg(test)]
+#[path = "../../tests/support/external_ui_events.rs"]
+mod external_tests;
 #[cfg(test)]
 #[path = "../../tests/native_ui_probe/events.rs"]
 mod tests;
