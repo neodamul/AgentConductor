@@ -124,6 +124,9 @@ pub fn show(
     if pending {
         ui.spinner();
     }
+    if let Some(status) = state.pending_status.as_deref() {
+        ui.label(status);
+    }
     if let Some(notice) = state.notice.as_deref() {
         ui.label(notice);
     }

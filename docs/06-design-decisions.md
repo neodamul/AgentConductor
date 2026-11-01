@@ -1614,3 +1614,10 @@ Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → 
 ### DD-213 Keep #286 scoped to the Rust UI workstream
 Use the existing Agent Room snapshot as the input contract and implement the board with egui in Rust. Preserve the JavaScript and backend implementation under their current ownership; request no new backend data or polling. If snapshot fields are missing, render an explicit unavailable state or omit the optional age rather than changing the other workstream's contract in this branch.
 Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.
+### DD-210 Repaint workspace wait content from recorded starts
+Use existing job start timestamps and the one-second local status repaint for workspace chat, rewrite, MCP, and update waits. Derive stale-state text from snapshot timestamps, and update controls directly from worker replies. No new snapshot loop or asynchronous runtime is needed.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### DD-211 Track native request age in the foreground probe
+Reuse the probe's pending request state instead of wrapping every control separately. A monotonic start is set when foreground pending work begins and reset when its pending kind changes or clears. A bounded one-second repaint updates only the wait label; metadata refreshes and background snapshots stay quiet. This keeps feedback in the native event loop without making request processing synchronous or increasing snapshot polling.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. Rust follow-up to GitHub #285, 2026-11-01.

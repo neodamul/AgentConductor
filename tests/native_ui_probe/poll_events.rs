@@ -26,7 +26,7 @@ fn state_change_event_refresh_runs_while_an_interactive_request_is_pending() {
     .unwrap();
     let mut probe = Probe {
         worker: Some(worker),
-        pending: Some(Pending::Action),
+        pending: Some(Pending::Action("Running action…")),
         refresh_requested: true,
         ..Probe::default()
     };

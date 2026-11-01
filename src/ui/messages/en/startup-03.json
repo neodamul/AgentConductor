@@ -49,6 +49,7 @@
   "startup.wait_for_availability": "Wait for availability",
   "startup.wait_for_the_running_plan_or_execution_before": "Wait for the running plan or execution before switching workspaces.",
   "startup.waiting_for_account_availability": "Waiting for account availability",
+  "startup.waiting_for_app": "Waiting for the app: {value1} · {value2}",
   "startup.waiting_for_the_coordinator_s_first_output": "Waiting for the coordinator's first output.",
   "startup.webhook_url": "Webhook URL",
   "startup.weekly": "Weekly",

@@ -5,7 +5,7 @@ use serde_json::Value;
 mod actions;
 pub mod chat;
 mod execution;
-mod feedback;
+pub(super) mod feedback;
 mod goal;
 pub mod goals;
 pub mod header;
@@ -133,6 +133,10 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 probe.send_signal_settings(event);
             }
             if probe.room_view.is_some() {
+                let waiting_status = feedback::waiting_status(probe);
+                if let Some(room_view) = probe.room_view.as_mut() {
+                    room_view.pending_status = waiting_status;
+                }
                 let event = egui::ScrollArea::vertical()
                     .id_salt("agent-room-content")
                     .show(ui, |ui| {

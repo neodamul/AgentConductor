@@ -6906,7 +6906,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] #260 — active Rust #9 parent with Git HEAD fast path and bounded request/event lanes; GitHub reports mergeable. Exact packaged macOS/Windows gates remain open.
 - [x] #284 — Integrated elapsed/stale task progress and reference preview into #260 at `20c14113`; GitHub closed #284 as merged. Exact package acceptance remains open under #9.
 - [x] #288 — Integrated the coordinator status board into #260 after reviewing its Agent Room scope, requirements, tests, and LLM Wiki entries; exact package acceptance remains open under #9.
-- [ ] #289 — Port request feedback to the native Rust UI; review its acceptance and localization tests.
+- [x] #289 — Integrated native request feedback and localization coverage into #260 after local regression verification; exact packaged acceptance remains open under #9.
 - [x] #294 — Integrated event-driven refresh, child monitoring, progress backoff, task-worktree recovery scope, and draft preservation into the current #9 branch at `9126dfd0`. Full local all-target/all-feature tests and Clippy pass; exact packaged macOS/Windows UI acceptance remains open.
 - [x] #305 and #293 — Chat lifecycle and Windows UIA accessible-name changes are integrated in `5753ba0d` and `432b3bb6`; GitHub marks both PRs merged. Keep #189 open until exact packaged Windows chat acceptance passes.
 
@@ -6985,3 +6985,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify locally: 2 coordinator-board tests and 106 Rust library tests; 13 public-doc/source-layout tests; warning-denied all-target Clippy, rustfmt, diff check and the 300-line source/test guard pass after integration.
 - [ ] Broader `cargo test --locked --offline --features native-ui-probe` was stopped after 90 seconds without output; it is not recorded as a pass.
 - [x] Complete source unit: issue #286 updated, AgentMemory `mem_mvxcb2ra_4e1fff7aaa46`, LLM Wiki and Graphify refreshed; implementation commit `85905874` and its documentation were integrated into #260. GitHub closed #288 as merged; exact packaged GUI review stays with #9.
+### 2026-11-01 — Port visible request waits to native Rust — GitHub #285 / #9
+
+- [x] Plan: inspect Claude's #285 JS change and keep its implementation in the Claude-owned worktree. Port the same user-visible contract to Rust without changing the Rust request/backend lanes: immediate spinner, named wait after one second, no progress UI for metadata or snapshot refreshes.
+- [x] Red: add Rust regression tests for a named elapsed wait, immediate request feedback, quiet metadata and snapshot refreshes, timer reset across request kinds, and Agent Room rendering. The elapsed-wait test first failed because `Probe` had no pending start time.
+- [x] Task / Green: track monotonic pending age in `Probe`; repaint locally while foreground work waits; show the wait in Workspace feedback and Agent Room; leave routine refreshes excluded.
+- [x] Verify: feedback tests pass 5/5; Agent Room request feedback tests pass 3/3; native UI library, both UI integration targets and source-layout suites pass 102 tests across 4 suites.
+- [x] Verify locally: warning-denied targeted Clippy (`--lib`, `native_ui_probe`, `native_room_poll`, `source_layout`), rustfmt, diff hygiene, the 300-line changed-file limit, and 102 tests across four suites pass. This is not an all-target Clippy or full-suite claim.
+- [x] Follow-up audit: R-198 job-specific wait and stale-snapshot feedback are already present in the Rust branch through #283 commit `18224cda` / PR #284; no duplicate implementation was added. Current Claude #285 PR #287 remains JS-only and open. The Rust #285 implementation below is isolated from Claude's worktree and preserves the Rust async/event request lanes.
+- [x] Assetize: AgentMemory checkpoint `mem_mvxcyztq_6526beda96cb` and completion record `mem_mvxd1ouz_9e1619a15b11`; LLM Wiki `native-request-feedback.md`; Graphify refreshed to 11,885 nodes / 19,393 edges. CocoIndex is unavailable because the runtime has no `cocoindex` module; no project dependency was added.
+- [x] Complete: original implementation commit `35ec7f4d` is integrated into the existing #260 branch; local verification passed 110 library tests and 29 related integration tests, plus public-doc/source-layout tests, warning-denied Clippy, rustfmt, diff hygiene, and the 300-line guard. PR #289 closes as merged when the integration commit is pushed.
+- [ ] Acceptance: exact packaged Rust UI screenshots and end-to-end parity remain part of open issue #9; this unit does not change its overall acceptance count.

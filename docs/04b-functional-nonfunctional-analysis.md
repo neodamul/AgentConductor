@@ -743,6 +743,13 @@ Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → 
 ### NFR-86 Native and JavaScript coordinator information is equivalent
 The native coordinator Activity view shall expose the same essential run/task state and retain the same human review and audit access as the current JavaScript view. It shall use the native Rust rendering stack and existing snapshot data without taking ownership of or introducing a parallel change to JS/backend work.
 Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.
+### FR-190 Redraw long-running workspace waits
+Show elapsed job time and stale snapshot age in the active workspace panel or dialog. The MCP source preview and other dependent controls become available on the response event, without waiting for a periodic snapshot.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### FR-191 Acknowledge native requests and show elapsed time
+Every foreground `Pending` request shows immediate busy feedback. After one second, show a localized waiting indicator with the request description and `m:ss` elapsed time in Workspace feedback or Agent Room. Keep the indicator current with a local egui repaint while pending. Reset it on reply or error; exclude metadata refreshes and background snapshots.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. Rust follow-up to GitHub #285, 2026-11-01.
 
 ### NFR-82 Bound native concurrency without blocking independent work
 The native UI shall use a fixed number of standard-library workers and bounded queues. Slow reads, blocking network I/O, and periodic refreshes cannot block the state-change lane; a slow state change cannot block independent reads; state changes stay serialized; and stale replies cannot replace the latest visible action. No unbounded task spawning or async runtime is introduced.

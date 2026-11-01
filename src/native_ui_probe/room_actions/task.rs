@@ -9,6 +9,13 @@ impl Probe {
                 .as_ref()
                 .is_some_and(|snapshot| snapshot["report"]["state"] != "running");
         let coordinator_request = matches!(&action, Action::CoordinatorRequest { .. });
+        let description = match &action {
+            Action::Feedback { .. } => "Sending task feedback…",
+            Action::CoordinatorRequest { .. } => "Sending a coordinator request…",
+            Action::Reassign { .. } => "Reassigning the task…",
+            Action::SetModel { .. } => "Changing the task model…",
+            Action::Schedule { .. } => "Scheduling the task…",
+        };
         let result = self
             .snapshot
             .as_ref()
@@ -28,7 +35,7 @@ impl Probe {
                     view.task_controls.coordinator_feedback.clear();
                 }
                 self.resume_after_task_feedback = resume;
-                self.pending = Some(Pending::Action);
+                self.pending = Some(Pending::Action(description));
                 self.error = None;
             }
             Err(error) => self.error = Some(error),

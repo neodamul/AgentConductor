@@ -788,3 +788,10 @@ When the operator selects coordinator Activity, show the run state, task counts,
 ### R-200 Preserve the coordinator status board in the native application
 The Rust Agent Room shall provide the coordinator run/task status summary available in the current JavaScript UI, using existing run and activity data and preserving the operator's existing review and audit controls. This is a native Rust UI implementation; it does not transfer ownership of JavaScript UI or backend changes from their current author.
 Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.
+### R-198 Workspace waits report elapsed time and stale state
+Operator-started workspace jobs and lookups shall show elapsed time in the panel or dialog where the operator is waiting, including after the view is reopened. If the app has sent no state update for more than six seconds, show the age of the last update. A completed lookup shall enable its dependent control as soon as its response arrives.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### R-199 Every press receives visible acknowledgement
+When the operator presses a control that sends a request, immediately mark that request as running. If the reply takes longer than one second, name the request and show elapsed time where the page reports its status. Keep this feedback after a dialog closes. Do not show routine refreshes as user work, and do not report a normal idle refresh as app silence.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, 2026-11-01.

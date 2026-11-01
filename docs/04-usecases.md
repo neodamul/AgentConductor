@@ -810,3 +810,10 @@ Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → 
 ### UC-191 Supervise a run in the native Rust Agent Room
 The operator opens the Rust Agent Room and selects Coordinator. They can immediately see the run state, task counts, each assignment and status, plus latest output age where the snapshot reports it. They can continue to inspect judgments, approvals and retained useful history below the status board. The Rust view reads the existing snapshot and leaves JS/backend ownership with its current contributor.
 Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.
+### UC-189 Wait for a workspace lookup or update
+The operator opens a workspace job, lookup, or update flow that takes time. The panel or dialog reports elapsed time while it runs; after six seconds without a new snapshot it also reports the snapshot age. A dependent control becomes available as soon as the lookup response arrives.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### UC-190 Wait for a direct request response
+The operator sends a messenger test, deletes or switches a workspace, requests a team briefing, or submits a run action. The control immediately shows activity. If the reply takes over one second, the workspace status or Agent Room connection line names the request and counts its elapsed time until the reply arrives. Background refreshes remain quiet.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, 2026-11-01.

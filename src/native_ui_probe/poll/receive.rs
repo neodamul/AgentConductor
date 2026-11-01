@@ -21,7 +21,7 @@ impl Probe {
                 Some(pending) if pending.handled_by_settings() => {
                     super::settings::apply(self, snapshot)
                 }
-                Some(Pending::Action | Pending::ScopeRecoveryApply) => {
+                Some(Pending::Action(_) | Pending::ScopeRecoveryApply) => {
                     let recovery = matches!(self.pending, Some(Pending::ScopeRecoveryApply));
                     match room::action_reply(self.worker.as_ref().unwrap(), &snapshot) {
                         Ok(message) => {
@@ -46,7 +46,7 @@ impl Probe {
                         }
                     }
                 }
-                Some(Pending::ToolDecision { resume_after }) => {
+                Some(Pending::ToolDecision { resume_after, .. }) => {
                     match room::action_reply(self.worker.as_ref().unwrap(), &snapshot) {
                         Ok(message) => {
                             if let Some(view) = self.room_view.as_mut() {

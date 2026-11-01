@@ -724,3 +724,10 @@ Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → 
 ### SF-188 Native coordinator Activity parity
 Expose the current run summary, per-task status and available activity age in the Rust Agent Room while retaining the existing coordinator judgment, review and audit actions. Rust consumes the existing snapshot and does not change the JavaScript UI/backend implementation.
 Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.
+### SF-186 Show elapsed time for workspace jobs
+Redraw operator-visible chat, rewrite, MCP, and update status from their recorded or observed start times. Show snapshot age after six seconds of silence and refresh dependent controls immediately after an asynchronous answer.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### SF-187 Acknowledge direct requests across native views
+Both native views mark a user-triggered request immediately and, after one second, display its operation and elapsed time. Exclude routine and background refreshes. Repaint locally while a foreground request is pending; do not introduce recurring snapshots.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. Rust follow-up to GitHub #285, 2026-11-01.

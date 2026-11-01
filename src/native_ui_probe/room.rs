@@ -71,6 +71,7 @@ pub struct State {
     reject_reason: String,
     stop_reason: String,
     pub notice: Option<String>,
+    pub pending_status: Option<String>,
     pub evidence: Option<Value>,
     pub diff: String,
     pub task_controls: task_controls::State,
@@ -104,6 +105,7 @@ impl Default for State {
             reject_reason: String::new(),
             stop_reason: String::new(),
             notice: None,
+            pending_status: None,
             evidence: None,
             diff: String::new(),
             task_controls: task_controls::State::default(),
@@ -197,7 +199,11 @@ impl super::Probe {
         match result {
             Ok(()) => {
                 self.error = None;
-                self.pending = Some(super::Pending::Action);
+                self.pending = Some(super::Pending::Action(match decision {
+                    CandidateDecision::Approve => "Approving the candidate…",
+                    CandidateDecision::Reject => "Rejecting the candidate…",
+                    CandidateDecision::Merge => "Merging the candidate…",
+                }));
             }
             Err(error) => self.error = Some(error),
         }
@@ -248,7 +254,7 @@ impl super::Probe {
         match result {
             Ok(()) => {
                 self.error = None;
-                self.pending = Some(super::Pending::Action);
+                self.pending = Some(super::Pending::Action("Stopping the run…"));
             }
             Err(error) => self.error = Some(error),
         }

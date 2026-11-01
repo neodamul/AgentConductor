@@ -622,3 +622,10 @@ Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → 
 ### BG-155 Keep native Rust UI at feature parity with the current product
 Rust UI users can supervise coordinator and task progress with the same essential information available in the current JavaScript UI, without requiring the JavaScript implementation to be taken over or changed.
 Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.
+### BG-153 Make long workspace waits legible
+The operator can tell that a long workspace job is still active, how long it has waited, and whether the app has stopped sending state updates.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### BG-154 Acknowledge every user request
+Every user-initiated request visibly starts when pressed, then reports its operation and elapsed time if the response takes longer than one second.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, 2026-11-01.

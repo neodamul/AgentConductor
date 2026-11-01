@@ -814,3 +814,11 @@ Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → DDR-51 → D
 ### QAS-199 Native coordinator status remains usable alongside JS/backend work
 Given the current workspace's Agent Room snapshot, the Rust coordinator Activity view presents the current run and task state with the available assignments and output ages, and leaves the established review and audit content accessible. Existing JS/backend ownership and behavior are not changed by this Rust port. Verify mixed states, missing activity, retained judgments, both locales and no additional dispatch with deterministic local tests; use exact packaged review separately under #9.
 Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → DDR-52 → DD-213. GitHub #286, 2026-11-01.
+
+### QAS-196 Workspace waits keep counting and recover dependent controls
+Given a workspace job that remains active, the visible wait count advances without new snapshots and the stale-state age appears after six seconds. Given an MCP lookup reply, its preview control is enabled immediately. Verify the existing elapsed/status helpers and response transition tests.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### QAS-197 A slow foreground request is visible in both native views
+Given a held foreground reply, Workspace and Agent Room show immediate activity and, within two seconds, the request description with a counting `m:ss`; after a reply or error the wait line clears. Given metadata/background refreshes, no user-wait indicator is shown and no periodic full snapshot is added. Verify with deterministic timer and both-view rendering tests.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. Rust follow-up to GitHub #285, 2026-11-01.

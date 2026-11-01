@@ -54,6 +54,11 @@ impl Probe {
 
     pub fn show(&mut self, ui: &mut egui::Ui) {
         let now = std::time::Instant::now();
+        workspace::feedback::track_pending(self, now);
+        if self.pending_since.is_some() {
+            ui.ctx()
+                .request_repaint_after(std::time::Duration::from_secs(1));
+        }
         self.navigation
             .appearance
             .set_update_available(self.updates.available_version());
