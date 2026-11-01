@@ -4,16 +4,17 @@
 - [x] Red / Green: confirmed the egui test dropped unapplied texture deltas; clear test-only deltas after extracting layout text. Replace the screenshot wildcard with the explicit current-capture manifest and cover that contract in `release_docs` and `screenshot_freshness` tests.
 - [x] Task: remove the obsolete agent-settings screenshot from both Markdown manuals, rendered HTML manuals, and the native manual viewer. Regenerate HTML through Rust `manual render`.
 - [x] Verify locally: all-target native-feature suite passes 1,279 tests, 16 ignored across 394 suites; warning-denied Clippy, rustfmt, diff checks, and the explicit 300-line source-layout test pass. Changed Rust files remain under 300 lines.
-- [ ] Complete: commit and push this batch to existing PR #22, then verify its exact-head checks. Do not claim Windows acceptance until the packaged UI journey is verified. Issue #9 stays incomplete.
+- [x] Complete this local unit: commit and push `dfbc4edd` to existing PR #22; update the PR and issue #9 progress.
+- [ ] Verify: exact-head Platform Validation run `41346181632` is queued. Windows packaged execution and screen-by-screen visual acceptance remain separate open gates; issue #9 stays incomplete.
 
 ### Root PR status and event-driven UI verification — 2026-11-02
 
 - [x] GitHub audit: PR #22 is the only open pull request. The Rust migration is not blocked by a pile of open child PRs; it is concentrated in one oversized root PR.
-- [x] Latest-main audit: `main` is `13ff88b2`; current Rust head is `4d176e93`; merge base is `e32295b3`. The branch is 1,066 commits ahead and 143 behind; the PR changes 1,776 files. Read-only `git merge-tree` reports 119 conflicts (68 content, 23 add/add, 28 modify/delete).
+- [x] Latest-main audit: `main` is `13ff88b2`; current Rust head is `dfbc4edd`. GitHub reports root PR #22 mergeable; it is the repository's only open PR.
 - [x] Verify #257's existing implementation instead of duplicating it: scoped event subscriptions and coalesced invalidations are present; reads, state changes, blocking I/O, and background refresh use separate bounded lanes. Local Rust worker-concurrency and event tests pass 16/16.
 - [x] Cross-check latest-main Claude quota fixes #297/#315: Rust uses a shared 180-second limit in both collectors and exposes elapsed time. Local quota/wait/parser tests pass 16 with 1 ignored; elapsed UI tests pass 2/2. Exact Windows package/account verification remains open.
 - [x] Integrate current `main` into the existing Rust root: commit `ad11775e` resolves all reported conflicts without restoring web UI/build code; the pushed branch is clean and GitHub reports PR #22 mergeable. No child PR was opened.
-- [x] Verify locally: `cargo test --locked --offline` passes 249 tests, 1 ignored across 43 suites; `cargo build --locked --offline --release --bin agentconductor-native-ui-probe` and the repository screenshot-freshness gate pass. The Rust source/test guard enforces the 300-line limit.
+- [x] Verify locally: all-target native-feature suite passes 1,279 tests, 16 ignored across 394 suites; warning-denied Clippy, rustfmt, diff checks, and the 300-line guard pass.
 - [ ] Next: verify the exact packaged Windows workflows and screen-by-screen native UI acceptance. Keep PR #22 draft until the outstanding issue #9 gates pass.
 
 ### Port main #247 complete-document parsing — Rust parity / 2026-11-02

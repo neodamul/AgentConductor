@@ -4,7 +4,7 @@
 
 Exact-head Platform Validation run `41343840698` failed on macOS in `native_ui_sidebar_quota_layout`: the layout-only egui test ignored output textures, so dropping its `TexturesDelta` panicked. Clear the texture sets in the test after extracting the rendered text; this is test-only cleanup and does not change UI behavior. A local all-target run then exposed the screenshot contract treating historical `ui-*-current.png` files as required current documentation. `screenshots-current.txt` now explicitly lists the three Rust Workspace captures; the docs test checks only that list, and the freshness verifier reads the same list. The outdated agent-settings image was removed from both manuals and the embedded manual viewer. Regenerate the bilingual HTML with `cargo run --locked --offline -- manual render` after editing the Markdown.
 
-The exact-head run had Windows validation still in progress at diagnosis. The fixes pass the full local native-feature suite (1,279 passed, 16 ignored across 394 suites), warning-denied Clippy, formatting, diff hygiene, and the 300-line source-layout test. Push to the existing #22 branch, then check the new exact-head run before recording remote success. Packaged Windows UI acceptance remains unverified.
+The exact-head run had Windows validation still in progress at diagnosis. The fixes pass the full local native-feature suite (1,279 passed, 16 ignored across 394 suites), warning-denied Clippy, formatting, diff hygiene, and the 300-line source-layout test. Commit `dfbc4edd` is pushed to the existing #22 branch, and exact-head run `41346181632` was queued. Packaged Windows UI acceptance remains unverified.
 
 ## Context
 
