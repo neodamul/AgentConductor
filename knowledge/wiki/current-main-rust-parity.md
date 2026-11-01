@@ -14,6 +14,12 @@ exact packaged Windows workflow and screen-by-screen UI acceptance are open.
 Keep the work on this root PR and continue auditing behavior against current
 `main`; do not create child PRs for the migration.
 
+Run `41352601950` exposed a Windows SQLite `locking protocol` error when the
+native UI captured a snapshot during a scheduled task action. The Rust UI now
+retries only transient SQLite lock errors for read-only snapshots, with a
+bounded backoff; action requests are never replayed. Details and remaining
+Windows verification are tracked in [Windows snapshot locking recovery](windows-snapshot-lock-retry.md).
+
 The native UI already uses bounded per-surface events and separate request lanes
 for reads, state changes, blocking I/O, and background refresh. Local worker and
 event-bus regressions pass 16/16.

@@ -8,6 +8,32 @@ use std::{
 };
 
 pub const MAX_BYTES: usize = 256 * 1024;
+const SNAPSHOT_RETRY_DELAYS: [Duration; 4] = [
+    Duration::from_millis(10),
+    Duration::from_millis(25),
+    Duration::from_millis(50),
+    Duration::from_millis(100),
+];
+
+pub fn retry_snapshot<T>(
+    mut execute: impl FnMut() -> Result<T, String>,
+    mut wait: impl FnMut(Duration),
+) -> Result<T, String> {
+    for delay in SNAPSHOT_RETRY_DELAYS {
+        match execute() {
+            Err(error) if transient_sqlite_lock(&error) => wait(delay),
+            result => return result,
+        }
+    }
+    execute()
+}
+
+fn transient_sqlite_lock(error: &str) -> bool {
+    let error = error.to_ascii_lowercase();
+    ["locking protocol", "database is locked", "database is busy"]
+        .iter()
+        .any(|message| error.contains(message))
+}
 
 pub fn dispatch<T>(bytes: &[u8], execute: impl FnOnce() -> Result<T, String>) -> Result<T, String> {
     dispatch_with(bytes, execute, |kind, size, at, elapsed, succeeded| {

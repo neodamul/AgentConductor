@@ -13,7 +13,18 @@ impl Room {
         source: Option<u64>,
         bytes: &[u8],
     ) -> Result<serde_json::Value, String> {
-        let result = crate::ui::request_diagnostics::dispatch(bytes, || self.dispatch_inner(bytes));
+        let is_snapshot = serde_json::from_slice::<serde_json::Value>(bytes)
+            .is_ok_and(|request| request["kind"] == "snapshot");
+        let result = crate::ui::request_diagnostics::dispatch(bytes, || {
+            if is_snapshot {
+                crate::ui::request_diagnostics::retry_snapshot(
+                    || self.dispatch_inner(bytes),
+                    std::thread::sleep,
+                )
+            } else {
+                self.dispatch_inner(bytes)
+            }
+        });
         if result.is_ok()
             && let Some(event) = crate::ui::events::event_for_request(bytes)
         {

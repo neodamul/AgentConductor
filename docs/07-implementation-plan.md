@@ -51,9 +51,21 @@
 - [x] Dependency evidence: the locked `egui 0.37.0` text editor sends AccessKit `SetValue`; `accesskit_windows 0.35.1` maps that action to UIA `IValueProvider.SetValue` for value-bearing nodes.
 - [x] Assetize this correction: update LLM Wiki `windows-uia-text-input.md`, AgentMemory, and Graphify after the TDD fix. CocoIndex is unavailable in the current environment.
 - [x] Integrate: commit `1aed3508` and push the lifecycle-contract correction to the existing #9 root branch; no child PR was created.
-- [ ] Verify package: exact-head run `41352601950` is running on `1aed3508`; the prior Windows UIA test passed, but run `41350246764` stopped later at the stale lifecycle assertion and did not reach native-package acceptance. Keep #9 and related Windows acceptance issues open until the exact packaged run passes.
+- [x] Verify: exact-head run `41352601950` passed macOS validation but failed the Windows all-target suite in `native_schedule_action_reaches_controller_and_persists_manual_time`; the snapshot returned SQLite `locking protocol`. Windows package jobs were skipped.
 - [x] Assetize: document the packaged-driver boundary in the LLM Wiki and save AgentMemory `mem_mvxzjvkh_e262c47c9cba`; Graphify refreshed to 12,159 nodes / 19,847 edges.
 - [x] Record local-first CI decision in AgentMemory `mem_mvxzuhf9_3fb94bacea78`; do not treat the cancelled workflow as acceptance evidence.
+
+### Recover transient Windows snapshot locks — issue #9 / 2026-11-02
+
+- [x] Plan: exact-head Windows run `41352601950` failed when the Room snapshot polled concurrently with a scheduled task action; SQLite returned `locking protocol` at `tests/native_ui_task_scheduling.rs:229`.
+- [x] Red: add recovery, attempt-limit, and unrelated-error cases to `request_diagnostics`; the new tests failed before retry behavior existed.
+- [x] Green: retry only read-only snapshot requests on SQLite lock/protocol messages, with 10/25/50/100 ms delays and five total attempts. Other errors return immediately; action requests are never replayed.
+- [x] Focused Verify: `request_diagnostics` and `native_ui_task_scheduling` pass 11 tests on macOS; `cargo fmt --check` and `git diff --check` pass. Changed source/test files are 287/137/161 lines.
+- [x] Assetize: add the Windows snapshot locking LLM Wiki page, AgentMemory record, and Graphify refresh.
+- [x] Full local Verify: `cargo test --all-targets --locked --offline --features test-fixtures,native-ui-probe --no-fail-fast` passes 1,281 tests, 16 ignored, 0 failed across 394 suites in 289.67s.
+- [x] Cross-platform cleanup: gate the Unix-only `std::fs` test import so Windows builds no longer warn; targeted `cli_io_protocol`, request diagnostics, and task scheduling tests pass 17 tests; warning-denied Clippy, rustfmt, and diff checks pass.
+- [ ] Exact Windows Verify: rerun Platform Validation on this fix and require Windows native-package UI acceptance. The prior Windows failure is not acceptance evidence.
+- [ ] Integrate: commit and push this fix to the existing #9 root PR only after local full-suite verification.
 
 ### Pass the run directory to the Windows schedule driver — bug #310 / 2026-11-02
 

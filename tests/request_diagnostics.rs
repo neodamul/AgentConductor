@@ -86,6 +86,56 @@ fn diagnostics_write_failure_does_not_change_the_request_result() {
     assert_eq!(failure.unwrap_err(), "original request error");
 }
 
+#[test]
+fn snapshot_retries_a_transient_sqlite_locking_protocol_error() {
+    let mut attempts = 0;
+    let mut delays = Vec::new();
+    let value = request_diagnostics::retry_snapshot(
+        || {
+            attempts += 1;
+            if attempts < 3 {
+                Err("locking protocol".into())
+            } else {
+                Ok("snapshot")
+            }
+        },
+        |delay| delays.push(delay),
+    );
+    assert_eq!(value.unwrap(), "snapshot");
+    assert_eq!(attempts, 3);
+    assert_eq!(
+        delays,
+        [Duration::from_millis(10), Duration::from_millis(25)]
+    );
+}
+
+#[test]
+fn snapshot_retries_are_bounded_and_do_not_hide_other_errors() {
+    let mut attempts = 0;
+    let error = request_diagnostics::retry_snapshot(
+        || {
+            attempts += 1;
+            Err::<(), _>("database is locked".into())
+        },
+        |_| {},
+    )
+    .unwrap_err();
+    assert_eq!(error, "database is locked");
+    assert_eq!(attempts, 5);
+
+    attempts = 0;
+    let error = request_diagnostics::retry_snapshot(
+        || {
+            attempts += 1;
+            Err::<(), _>("invalid request".into())
+        },
+        |_| {},
+    )
+    .unwrap_err();
+    assert_eq!(error, "invalid request");
+    assert_eq!(attempts, 1);
+}
+
 fn temp_log(label: &str) -> std::path::PathBuf {
     std::env::temp_dir().join(format!(
         "ac-request-log-{label}-{}-{}.log",
