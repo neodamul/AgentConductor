@@ -7084,3 +7084,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: reconciled the 119 reported paths against `main`, retained Rust-native behavior, removed web-only code/tests, and resolved all conflicts in merge commit `ad11775e`.
 - [x] Verify: PR #22 is now mergeable; full local Rust tests pass 249/1 ignored across 43 suites, the release-profile native binary builds, and the screenshot-freshness gate passes.
 - [ ] Remaining acceptance: exact Windows package execution and screen-by-screen native UI parity are not yet verified; keep issue #9 open and PR #22 draft.
+
+### 2026-11-02 — Repair latest PR #22 validation regressions
+
+- [x] Reconcile the previous Platform Validation failures against the exact CI logs: native snapshot fields and verification-attempt persistence were missing; locale-specific status assertions, translation keys, stale manual/screenshot assets, a removed-JS layout test, and Windows text-input driver contracts also failed.
+- [x] Fix the native snapshot contract and persist the verification phase before starting integration tests. Make the PID fixture deterministic and retain one Agent Room lease throughout each snapshot test.
+- [x] Repair locale-independent metadata assertions, add the missing English/Korean message, refresh generated bilingual manual HTML, remove stale screenshots and the obsolete JS-only layout test, and type Windows UI text with Unicode keyboard input.
+- [x] Add a regression proving quota badges remain within a narrow native sidebar.
+- [x] Verify locally: run-progress snapshots 3/3; focused native/manual/Windows-driver/screenshot regression suites pass; sidebar and quota-layout tests pass; rustfmt and diff checks pass. The interrupted all-target run is not counted as a pass.
+- [x] Assetize: add LLM Wiki `knowledge/wiki/pr-22-ci-regression-loop.md`; refresh Graphify to 12,555 nodes / 20,484 edges; save AgentMemory `mem_mvy8o48o_33f47e47d32f`. CocoIndex is unavailable (`cocoindex` executable not installed).
+- [x] Commit and push `6d1762ca` to the existing `codex/issue-9-native-ui-parity` branch; update PR #22 and issue #9. No additional PR opened.
+- [ ] Exact-head Platform Validation run [41343162485](https://github.com/neodamul/AgentConductor/actions/runs/41343162485) is still building on macOS and Windows. Wait for its terminal result, fix any failures on the same branch, then verify the required packaged UI and screen-by-screen acceptance. Keep PR #22 draft and issue #9 open until those gates pass.
