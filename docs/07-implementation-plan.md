@@ -6712,8 +6712,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 - [x] Plan: extend QAS-194 so the first event-driven snapshot that observes a newly created run report must open Agent Room immediately; keep the 30-second timer only as missed-event recovery.
 - [x] Red: `background_snapshot_opens_a_started_run_without_waiting_for_timer` failed because the background reply updated visible state but did not run the StartRefresh transition.
-- [x] Task / Green: route foreground and background start snapshots through one transition handler; an eligible background snapshot now requests `open_run` immediately.
+- [x] Task / Green: apply the StartRefresh transition rules to an eligible background snapshot; it now requests `open_run` immediately without waiting for the recovery timer.
 - [x] Verify focused: the deterministic worker regression passes, and `review_approval_shows_start_feedback_then_opens_the_started_run` passes end-to-end in 6.19 seconds (previously timed out after 30 seconds).
 - [x] Verify locally: 96 affected native UI tests pass across 4 suites; warning-denied all-target Clippy, formatting, diff hygiene, and the ≤300-line changed source/test bound pass.
-- [x] Record AgentMemory `mem_mvxa9njl_167fb9020f53` and the LLM Wiki; refresh Graphify to 11,851 nodes / 17,990 edges / 884 communities; update issue #257 and PR #260 before the unit commit.
+- [x] Record AgentMemory `mem_mvxa9njl_167fb9020f53` and the LLM Wiki; refresh Graphify to 11,851 nodes / 17,990 edges / 884 communities; update issue #257 and PR #260 before unit commit `f877dcb`.
+- [x] Push `f877dcb` to `codex/issue-9-git-head-fast-path`.
 - [ ] Exact packaged macOS/Windows GUI verification remains open; this source-level test does not change #9 acceptance (22/50).
