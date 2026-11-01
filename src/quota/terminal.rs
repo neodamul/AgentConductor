@@ -1,7 +1,10 @@
+mod amounts;
+
 use super::{
     Snapshot,
     parser::{snapshot, window},
 };
+use amounts::thousands;
 use serde_json::json;
 
 fn plain(text: &str) -> String {
@@ -16,10 +19,18 @@ fn plain(text: &str) -> String {
             }
             if bytes[i] == b'[' {
                 i += 1;
+                let first = i;
                 while i < bytes.len() {
                     let b = bytes[i];
                     i += 1;
                     if (0x40..=0x7e).contains(&b) {
+                        if b == b'C' {
+                            let count = std::str::from_utf8(&bytes[first..i - 1])
+                                .ok()
+                                .and_then(|n| n.parse::<usize>().ok())
+                                .unwrap_or(1);
+                            out.extend(std::iter::repeat_n(b' ', count.min(200)));
+                        }
                         break;
                     }
                 }
@@ -127,17 +138,21 @@ pub fn claude_usage_ready(text: &str) -> bool {
 }
 pub const CLAUDE_WAIT: std::time::Duration = std::time::Duration::from_secs(60);
 
-fn quota_timeout(sent: bool, wait: std::time::Duration) -> String {
+fn quota_timeout(sent: bool, wait: std::time::Duration, unread: Option<&str>) -> String {
     let stage = if sent {
         "response timed out after /usage"
     } else {
         "prompt timed out before /usage"
     };
+    let unread = unread.map_or(String::new(), |reason| {
+        format!("; screen not understood: {reason}")
+    });
     format!(
-        "Claude quota {stage} after {} s; no generation requested",
+        "Claude quota {stage} after {} s{unread}; no generation requested",
         wait.as_secs()
     )
 }
+
 fn spent_budget(text: &str, at: i64) -> Result<Option<super::Budget>, String> {
     let lines: Vec<_> = text.lines().collect();
     for (index, line) in lines.iter().enumerate() {
@@ -167,7 +182,9 @@ fn spent_budget(text: &str, at: i64) -> Result<Option<super::Budget>, String> {
                 .filter(|s| s.starts_with("Resets "))
         });
         let resets_at = reset.and_then(|s| super::reset_time::parse(s, at, 44640));
-        return super::budget::from_spent("claude", used.trim(), limit.trim(), resets_at).map(Some);
+        let used = thousands(used.trim());
+        let limit = thousands(limit.trim());
+        return super::budget::from_spent("claude", &used, &limit, resets_at).map(Some);
     }
     Ok(None)
 }

@@ -800,7 +800,7 @@ Given a fixture Claude CLI delayed by 2.5 seconds and a 4-second injected deadli
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
 
 ### QAS-200 Quota failures are readable without opening logs
-Given a quota record with a stored failure reason, the native agent sidebar, settings view, and Agent Room run screen shall show that reason in both English and Korean, expose the complete text as an accessible label, and preserve the existing appearance when no error exists. Verify with deterministic egui accessibility-tree tests; no provider CLI is required.
+Given a quota record with a stored failure reason, the native agent sidebar, settings view, and Agent Room run screen shall show that reason in both English and Korean, expose the complete text as an accessible label, and preserve the existing appearance when no error exists. Given Claude Enterprise output with valid thousands separators or CSI cursor-forward spacing, the collector shall produce the exact used, allocated, and remaining values; malformed grouping shall fail, and a captured parse failure shall be named in the bounded timeout diagnostic on macOS and Windows. Verify with deterministic parser/CLI fixtures and egui accessibility-tree tests; no provider CLI is required.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
 
 ### QAS-197 Native wait status counts without snapshot polling

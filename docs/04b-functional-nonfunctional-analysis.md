@@ -771,7 +771,7 @@ The Claude quota collector shall accept a bounded wait duration for deterministi
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
 
 ### FR-194 Display quota errors beside unavailable values
-When a quota record contains a non-empty error, the native sidebar and agent settings shall render the error beside the quota badge and Agent Room shall render it in the run status area. All surfaces shall provide the complete text to accessibility clients and retain it on hover. Records without an error shall keep the existing compact badge layout.
+When a quota record contains a non-empty error, the native sidebar and agent settings shall render the error beside the quota badge and Agent Room shall render it in the run status area. All surfaces shall provide the complete text to accessibility clients and retain it on hover. Records without an error shall keep the existing compact badge layout. The Claude collector shall accept correctly grouped thousands in Enterprise amounts, restore bounded spaces encoded as CSI cursor-forward movement, reject malformed grouping, and retain the latest screen parse error for timeout diagnostics.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
 
 ### FR-191 Native wait clocks use persisted starts and observed snapshots

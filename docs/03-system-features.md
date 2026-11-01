@@ -715,7 +715,7 @@ Give the whole interactive Claude quota query up to 60 seconds across CLI startu
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, 2026-11-01.
 
 ### SF-190 Show quota query errors inline
-On the native agent sidebar and agent settings list, show the stored quota error beside the unavailable quota badge. On the Agent Room run screen, show each stored agent quota error in the run status area. Keep the full error as accessible text and a hover detail. Do not infer an Enterprise response format or alter the captured error.
+On the native agent sidebar and agent settings list, show the stored quota error beside the unavailable quota badge. On the Agent Room run screen, show each stored agent quota error in the run status area. Keep the full error as accessible text and a hover detail. Parse valid grouped Enterprise amounts and cursor-forward terminal spacing; retain malformed or unrecognized screen errors for the same inline display.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
 ### SF-187 Coordinator run status board
 Render run state and task counts above the coordinator timeline, then show each planned task with its agent, status and available latest-output age. Derive the board from the existing snapshot, and omit repetitive workflow-save rows only from the visible timeline.

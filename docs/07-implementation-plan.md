@@ -6846,6 +6846,18 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Run `41309135388` failed the Windows build step; code inspection found the stale Windows-only timeout-helper call, now covered by a failing-then-passing regression test and fixed locally.
 - [x] Status correction: GitHub has closed bug #295 and draft PR #304; do not report either as open. #297 remains open for exact package/runtime acceptance.
 
+### Latest-main Enterprise quota parsing parity — GitHub #295
+
+- [x] Plan: refine R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214 with the latest verified Enterprise output format; no new issue or PR is needed.
+- [x] Red: grouped amounts failed with `invalid allocated budget amount`; a readable invalid `/usage` screen timed out without its parser reason.
+- [x] Task: normalize valid thousands groups, restore bounded CSI cursor-forward spaces, reject malformed groups, and retain the last parser error in both macOS and Windows timeout diagnostics.
+- [x] Focused Verify: 41 quota/parser/wait tests pass (1 ignored), plus 6 native quota error/profile/room tests.
+- [x] Verify locally: full `cargo test --all-targets --locked --offline --features native-ui-probe,test-fixtures --no-fail-fast --quiet` passes 1,240 tests across 379 suites (16 ignored); source-layout and the 300-line guard are included. Warning-denied all-target Clippy and `cargo fmt --all -- --check` pass.
+- [x] Stabilize the full-suite regression: share the environment mutex between startup-chat Git tests so the real Git fixture cannot race against a slow fake executable on `PATH`.
+- [ ] Windows Verify: local `cargo check --target x86_64-pc-windows-msvc` cannot start because that standard library is not installed and `rustup` is unavailable; Windows-only collector compilation and package acceptance remain open.
+- [ ] Complete: commit and push the verified local unit to the existing Rust migration branch; update AgentMemory, LLM Wiki, issue #9 and PR #22 with exact results.
+- [ ] Complete: commit and push the tested unit to the existing Rust migration branch; update AgentMemory, LLM Wiki, issue #9 and PR #22 with exact results.
+
 ### GitHub #297 — Wait for slow Claude quota queries
 - [x] Plan: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213; retain existing CLI login and do not request generation.
 - [x] Red: delayed-session tests failed because the collector did not expose an injectable deadline or the shared 60-second production limit.

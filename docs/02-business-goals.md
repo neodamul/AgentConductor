@@ -613,7 +613,7 @@ A company machine that takes longer to start the Claude CLI or return `/usage` s
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, 2026-11-01.
 
 ### BG-157 Diagnose quota collection failures from the native UI
-Operators can identify why an agent quota is unavailable without opening logs or relying on a provider-specific screen guess.
+Operators can identify why an agent quota is unavailable without opening logs or relying on a provider-specific screen guess, while valid Enterprise usage remains readable when its amount is grouped or its terminal output uses cursor movement for spacing.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
 ### BG-154 See coordinator and task progress at a glance
 The operator can understand a run's overall state and each task's assignment, state and recent output from the coordinator Activity view without reading repeated save summaries.

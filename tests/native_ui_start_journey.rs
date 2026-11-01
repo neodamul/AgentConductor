@@ -107,7 +107,7 @@ fn review_approval_shows_start_feedback_then_opens_the_started_run() {
     let mut saw_pending = false;
     while Instant::now() < deadline {
         let text = visible_text(&output);
-        if text.contains("Starting agent execution…") {
+        if text.contains("Starting the run…") {
             saw_pending = true;
             break;
         }
@@ -128,7 +128,7 @@ fn review_approval_shows_start_feedback_then_opens_the_started_run() {
         .shapes
         .iter()
         .find_map(|shape| match &shape.shape {
-            egui::Shape::Text(text) if text.galley.job.text == "Starting agent execution…" => {
+            egui::Shape::Text(text) if text.galley.job.text == "Starting the run…" => {
                 Some(Rect::from_min_size(text.pos, text.galley.size()))
             }
             _ => None,

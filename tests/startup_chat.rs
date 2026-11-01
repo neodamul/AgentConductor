@@ -2,6 +2,9 @@ use agentconductor::ui::setup::Startup;
 use serde_json::json;
 use std::{path::Path, process::Command};
 
+#[path = "support/env.rs"]
+mod test_env;
+
 #[cfg(unix)]
 #[path = "support/startup_chat_timeout.rs"]
 mod startup_chat_timeout;
@@ -175,6 +178,8 @@ fn invalid_chat_artifact_pointer_is_rejected() {
 
 #[test]
 fn chat_revision_ignores_git_head_and_rejects_stale_workspace() {
+    // Another test puts a delayed fake `git` first on PATH while measuring chat latency.
+    let _environment = test_env::lock();
     let root = std::env::temp_dir().join(format!(
         "ac-chat-revision-{}",
         agentconductor::native_guard::session_id().unwrap()

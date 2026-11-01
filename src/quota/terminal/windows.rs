@@ -120,6 +120,7 @@ fn collect(
     let mut spool = File::create(dir.join("stdout.terminal")).map_err(|e| e.to_string())?;
     let mut data = Vec::new();
     let mut sent = false;
+    let mut unread: Option<String> = None;
     let mut found = None;
     // Output before the last trust answer is not read again.
     let (mut start, mut answers) = (0, 0);
@@ -128,7 +129,7 @@ fn collect(
         loop {
             if Instant::now() >= end {
                 owner.timed_out = true;
-                return Err(super::quota_timeout(sent, wait));
+                return Err(super::quota_timeout(sent, wait, unread.as_deref()));
             }
             if s.overflow.load(Ordering::Acquire) {
                 return Err("Claude quota output queue exceeded its bound".into());
@@ -172,14 +173,15 @@ fn collect(
                             .duration_since(UNIX_EPOCH)
                             .map_err(|e| e.to_string())?
                             .as_secs() as i64;
-                        if let Ok(snapshot) = super::parse_claude_usage(&text, now) {
-                            found = Some(snapshot);
+                        match super::parse_claude_usage(&text, now) {
+                            Ok(snapshot) => found = Some(snapshot),
+                            Err(reason) => unread = Some(reason),
                         }
                     }
                 }
                 Err(mpsc::RecvTimeoutError::Timeout) if Instant::now() >= end => {
                     owner.timed_out = true;
-                    return Err(super::quota_timeout(sent, wait));
+                    return Err(super::quota_timeout(sent, wait, unread.as_deref()));
                 }
                 Err(mpsc::RecvTimeoutError::Timeout) if found.is_some() => {
                     return Ok(found.take().unwrap());

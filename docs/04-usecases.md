@@ -802,6 +802,7 @@ Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213.
 1. The operator opens an agent list, agent settings, or Agent Room while quota is unavailable.
 2. The native UI shows the saved query error next to the quota badge or run status.
 3. The operator reads the same full error with a screen reader or by hovering the message.
+4. If the provider returned a supported Enterprise amount, the card shows its parsed allocation; if the screen is unrecognized, the error identifies the parse reason instead of waiting out a generic timeout.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
 ### UC-190 Review coordinator run status
 The operator selects Coordinator in Agent Room. The Activity view shows the run state, completed/running/failed/pending counts, and a row for every task with its assigned agent, status and latest output age when available. Judgments and useful timeline history remain below the board; routine workflow-save summaries are omitted from the display, not deleted from the audit store. The view uses the current snapshot and emits no additional request.

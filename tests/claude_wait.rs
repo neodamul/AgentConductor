@@ -75,6 +75,20 @@ async fn waits_for_slow_start_and_names_both_timeout_stages() {
     .unwrap_err();
     assert!(after_usage.contains("after /usage"), "{after_usage}");
     assert!(after_usage.contains("after 1 s"), "{after_usage}");
+
+    let unread = quota::query_claude_within(
+        &profile(&[("AC_QUOTA_ENTERPRISE", "zero")]),
+        &root.join("unread"),
+        &root,
+        Duration::from_secs(3),
+    )
+    .await
+    .unwrap_err();
+    assert!(unread.contains("after /usage"), "{unread}");
+    assert!(
+        unread.contains("allocated budget must be positive"),
+        "{unread}"
+    );
 }
 
 #[test]
@@ -98,7 +112,10 @@ fn production_wait_is_one_minute_for_both_collectors() {
 fn windows_collector_passes_the_wait_limit_on_each_timeout_path() {
     let source = include_str!("../src/quota/terminal/windows.rs");
     assert!(
-        source.matches("quota_timeout(sent, wait)").count() >= 2,
+        source
+            .matches("quota_timeout(sent, wait, unread.as_deref())")
+            .count()
+            >= 2,
         "both Windows timeout paths must pass the configured wait limit"
     );
     assert!(

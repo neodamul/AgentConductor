@@ -58,7 +58,7 @@ fn main(){
                 std::thread::sleep(std::time::Duration::from_secs(60));
                 return;
             }
-            if std::env::var("AC_QUOTA_ENTERPRISE").as_deref()==Ok("1") { println!("Enterprise plan\n70% used $351.23 / $500.00 spent - Resets Nov 1 (Asia/Seoul)"); } else { println!("Current session\n27% used\nCurrent week\n60% used"); }
+            if std::env::var("AC_QUOTA_ENTERPRISE").as_deref()==Ok("zero") { println!("Enterprise plan\n70% used $351.23 / $0.00 spent"); } else if std::env::var("AC_QUOTA_ENTERPRISE").as_deref()==Ok("1") { println!("Enterprise plan\n70% used $351.23 / $500.00 spent - Resets Nov 1 (Asia/Seoul)"); } else { println!("Current session\n27% used\nCurrent week\n60% used"); }
             std::io::stdout().flush().unwrap();
         }else{panic!("Only usage is allowed");}
     }

@@ -102,3 +102,27 @@ fn banner_or_currency_without_an_input_prompt_does_not_send_usage() {
         assert!(!agentconductor::quota::claude_usage_ready(text));
     }
 }
+
+#[test]
+fn enterprise_amounts_with_thousands_separators_and_cursor_spacing_are_read() {
+    let commas = "Enterprise plan\n>\n70% used $1,351.23 / $5,000.00 spent - Resets Nov 1";
+    let budget = &agentconductor::quota::parse_claude_usage(commas, 1791975600)
+        .unwrap()
+        .budgets[0];
+    assert_eq!(budget.used.as_deref(), Some("1351.23"));
+    assert_eq!(budget.allocated.as_deref(), Some("5000.00"));
+    assert_eq!(budget.remaining.as_deref(), Some("3648.77"));
+
+    let cursor = "Enterprise plan\r\n>\r\n70%\x1b[1Cused\x1b[1C$351.23\x1b[1C/\x1b[1C$500.00\x1b[1Cspent\x1b[1C-\x1b[1CResets\x1b[1CNov\x1b[1C1";
+    let budget = &agentconductor::quota::parse_claude_usage(cursor, 1791975600)
+        .unwrap()
+        .budgets[0];
+    assert_eq!(budget.allocated.as_deref(), Some("500.00"));
+    for malformed in ["$1,35.2", "$,500", "$5,00,0.00"] {
+        let text = format!("70% used $1.00 / {malformed} spent");
+        assert!(
+            agentconductor::quota::parse_claude_usage(&text, 1791975600).is_err(),
+            "{malformed}"
+        );
+    }
+}

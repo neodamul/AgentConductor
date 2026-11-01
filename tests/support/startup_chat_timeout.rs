@@ -7,9 +7,6 @@ use std::{
     time::{Duration, Instant},
 };
 
-#[path = "env.rs"]
-mod env;
-
 struct TempRoot(PathBuf);
 
 impl Drop for TempRoot {
@@ -82,7 +79,7 @@ pub fn dispatch_latency() -> Duration {
     let slow_git = bin.join("git");
     std::fs::write(&slow_git, format!("#!/bin/sh\ncase \"$*\" in *'rev-parse HEAD'*) sleep 20;; esac\nexec \"{real_git}\" \"$@\"\n")).unwrap();
     std::fs::set_permissions(&slow_git, std::fs::Permissions::from_mode(0o755)).unwrap();
-    let mut environment = env::lock();
+    let mut environment = super::test_env::lock();
     environment.set("PATH", format!("{}:/usr/bin:/bin", bin.display()));
 
     let started = Instant::now();

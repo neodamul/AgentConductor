@@ -107,6 +107,7 @@ pub async fn query_claude_within(
         .await
         .map_err(|e| e.to_string())?;
     let mut sent = false;
+    let mut unread: Option<String> = None;
     let collect = async {
         let mut data = Vec::new();
         let mut found = None;
@@ -164,8 +165,9 @@ pub async fn query_claude_within(
                     .duration_since(UNIX_EPOCH)
                     .map_err(|e| e.to_string())?
                     .as_secs() as i64;
-                if let Ok(snapshot) = parse_claude_usage(&text, now) {
-                    found = Some(snapshot);
+                match parse_claude_usage(&text, now) {
+                    Ok(snapshot) => found = Some(snapshot),
+                    Err(reason) => unread = Some(reason),
                 }
             }
         }
@@ -173,7 +175,7 @@ pub async fn query_claude_within(
     let result = tokio::time::timeout(wait, collect).await;
     owner.timed_out = result.is_err();
     let result = result
-        .map_err(|_| quota_timeout(sent, wait))
+        .map_err(|_| quota_timeout(sent, wait, unread.as_deref()))
         .and_then(|r| r);
     drop(input);
     drop(group);
