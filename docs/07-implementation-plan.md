@@ -5,7 +5,7 @@
 - [x] Verify locally: `windows_desktop_driver`, `source_layout`, and `public_docs` pass 27 tests; targeted warning-denied Clippy, rustfmt, diff hygiene pass. `windows_desktop.rs` is 165 lines and its driver tests are 184 lines. This verifies the test contract on macOS, not the Windows package.
 - [x] Dependency evidence: the locked `egui 0.37.0` text editor sends AccessKit `SetValue`; `accesskit_windows 0.35.1` maps that action to UIA `IValueProvider.SetValue` for value-bearing nodes.
 - [x] Assetize: LLM Wiki `windows-uia-text-input.md`; AgentMemory `mem_mvy3og4v_30b25f1436b5`; Graphify refreshed to 12,366 nodes / 18,737 edges. CocoIndex CLI is unavailable.
-- [ ] Integrate: commit the improved driver on the active #9 branch and update issue #9 / PR #22; do not reopen or stack PR #311.
+- [x] Integrate: commit `d84bea12` is pushed directly to the active #9 root branch; issue #9 and PR #22 record the change. PR #311 remains closed unmerged; no child PR was reopened.
 - [ ] Verify package: run the exact Windows package journey after a Windows package build. Prior run `41321569450` was cancelled before its native-package job ran. Do not count this workflow or close related bug #310 from local source tests alone.
 - [x] Assetize: document the packaged-driver boundary in the LLM Wiki and save AgentMemory `mem_mvxzjvkh_e262c47c9cba`; Graphify refreshed to 12,159 nodes / 19,847 edges.
 - [x] Record local-first CI decision in AgentMemory `mem_mvxzuhf9_3fb94bacea78`; do not treat the cancelled workflow as acceptance evidence.
