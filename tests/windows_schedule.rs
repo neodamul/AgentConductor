@@ -65,9 +65,32 @@ async fn exact_windows_package_schedules_a_waiting_agent_room_task() {
     package_schedules_a_waiting_agent_room_task().await;
 }
 
+fn schedule_driver_command(app_pid: u32, run: &Path) -> Command {
+    let mut command = Command::new("powershell.exe");
+    command
+        .env("AC_DESKTOP_PID", app_pid.to_string())
+        .env("AC_RUN_DIR", run);
+    command
+}
+
+#[test]
+fn schedule_driver_receives_app_pid_and_run_directory() {
+    let run = Path::new("C:\\temp\\agentconductor\\run");
+    let command = schedule_driver_command(42, run);
+    let environment = command.get_envs().collect::<Vec<_>>();
+
+    assert!(environment.iter().any(|(key, value)| {
+        *key == "AC_DESKTOP_PID" && *value == Some(std::ffi::OsStr::new("42"))
+    }));
+    assert!(
+        environment
+            .iter()
+            .any(|(key, value)| { *key == "AC_RUN_DIR" && *value == Some(run.as_os_str()) })
+    );
+}
+
 fn drive_and_verify(app: &RunningApp, run: &Path) -> Result<(), String> {
-    let driver = Command::new("powershell.exe")
-        .env("AC_DESKTOP_PID", app.0.id().to_string())
+    let driver = schedule_driver_command(app.0.id(), run)
         .args(["-NoProfile", "-NonInteractive", "-Command", SCRIPT])
         .output()
         .map_err(|error| error.to_string())?;
