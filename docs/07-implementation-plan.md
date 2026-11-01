@@ -1,3 +1,13 @@
+### Remove static labels from native Rust screens — issue #190 / #9 / 2026-11-02
+
+- [x] Plan: confirm the closed #190 requirement also applies to the Rust Workspace sidebar and Agent Room header.
+- [x] Red: change bilingual render tests to assert the local/login label and static sidebar tagline are absent; add a catalog/view-source regression. The pre-change render suite failed on the visible English label and tagline.
+- [x] Task / Green: remove the fixed text from both native views and delete its unused English/Korean catalog keys; retain actual workspace mode controls and room context.
+- [x] Verify: native label, room header/language, and sidebar suites pass 7/7; source catalogs and view-source test passes; formatting/diff checks pass and changed source/test files stay under 300 lines.
+- [x] Expanded verification: native UI label/header/language/sidebar, source-layout and public-doc suites pass 20/20; all-target native-feature Clippy with `-D warnings` passes.
+- [x] Cleanup: port issue #190's Rust-specific change from stale PR #199 into the active #260 parent; close #199 as superseded after commit. Main issue #190 is already closed; #9 remains gated on exact package parity.
+- [ ] Verify package: inspect the updated native layout in a packaged build and retain a screenshot/evidence before counting this as full UI parity.
+
 ### Reconcile the stacked #9 pull requests — 2026-11-01
 
 - [x] Task: integrate the completed #305 chat lifecycle, #293 chat accessibility, and #294 event-driven refresh/draft preservation work into the active #9 branch at `9126dfd0`.
@@ -6865,9 +6875,9 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 ### Open Rust PR follow-up inventory — refreshed 2026-11-02
 
-- [x] Recheck GitHub state: #199, #202, #230, #260, #284, #288, and #289 are open Rust drafts; #22 is the main Rust migration parent. #239 and #255 are closed as superseded after their unique regressions were moved to #260. #305, #293, and #294 are integrated into the active #9 branch; #312 is a separate main-branch Claude PR.
+- [x] Recheck GitHub state: #202, #230, #260, #284, #288, and #289 are open Rust drafts; #199, #239 and #255 are closed as superseded after their unique requirements/regressions were moved to #260. #22 is the main Rust migration parent; #312 is a separate main-branch Claude PR. #305, #293, and #294 are integrated into the active #9 branch.
 - [x] Refreshed Graphify after this audit: 12,122 nodes / 19,804 edges.
-- [ ] #199 — remove fixed authentication/local-first labels. GitHub currently reports mergeable; exact native package acceptance remains to be established.
+- [x] #199 — removed static local/login labels from the Rust Workspace and Agent Room, deleted English/Korean keys, and added bilingual rendered/source regressions. Closed as superseded after porting to #260. Exact packaged screenshot remains a #9 gate.
 - [ ] #202 — native goal optimizer and proposal review. GitHub currently reports not mergeable; refresh against the active #9 base before integration.
 - [ ] #230 — reopen the last saved workspace and retire blank placeholders. GitHub currently reports not mergeable; its reported Windows package failure is in the shared tool-decision journey, while the original #226 symptom still lacks a concrete repro.
 - [x] #239 — its slow-`rev-parse HEAD` chat-dispatch regression is now in `tests/startup_chat.rs` with a scoped helper. It passes locally in 0.21 seconds against the 20-second Git wrapper. PR #239 was closed as superseded by #260; exact package acceptance remains represented on the parent branch where applicable.

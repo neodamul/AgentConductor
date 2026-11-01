@@ -728,7 +728,7 @@ Given a stored question and answer, `history` returns both and an unanswered que
 Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190/DD-210. GitHub #189/#185, 2026-10-27.
 
 ### QAS-178 No dead texts remain
-Given the embedded pages and both message catalogs, none of the removed element classes or keys appears, and every `data-i18n` id used by a page still exists in the catalogs.
+Given the embedded pages, native Rust Workspace/Agent Room render trees and both message catalogs, none of the removed labels or keys appears in English or Korean, and every `data-i18n` id used by a page still exists in the catalogs.
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
 
 ### QAS-179 A late reply is not lost

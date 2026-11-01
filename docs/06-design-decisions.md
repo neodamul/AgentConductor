@@ -1524,7 +1524,7 @@ No mutable chat file is added: the latest `chat_result` already names the artifa
 Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
 
 ### DD-191 Delete rather than replace
-The footer line is deleted, not turned into a live mode display, because the worktree checkbox already shows the current choice (user decision). The other labels were fixed text with no state behind them.
+The footer line is deleted from web and native Rust views, not turned into a live mode display, because the worktree checkbox already shows the current choice (user decision). The other labels were fixed text with no state behind them, so remove them from both implementations and catalogs.
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
 
 ### DD-192 Ask the application instead of guessing

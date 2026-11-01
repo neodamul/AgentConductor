@@ -148,7 +148,6 @@
   "room.load_diff_and_tests": "Load diff & tests",
   "room.load_read_only_team_briefing": "Load read-only team briefing",
   "room.load_review_evidence": "Load review evidence",
-  "room.local_cli_authentication": "Local · CLI authentication",
   "room.local_connection_unavailable": "Local connection unavailable",
   "room.local_workspace": "Local workspace",
   "room.memory_report": "Memory report ({value1}, {value2}): {value3}",

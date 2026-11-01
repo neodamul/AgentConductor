@@ -645,7 +645,7 @@ The server stores the conversation of the latest chat; the panel restores it, re
 Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
 
 ### SF-168 Static labels removed
-The title bar label, the sidebar note and the footer default-mode text are removed from the workspace and Agent Room pages with their styles and message keys.
+The title bar label, the sidebar note and the footer default-mode text are removed from the web workspace, native Rust workspace and Agent Room, along with their styles and message keys.
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
 
 ### SF-169 Resync after a failed send

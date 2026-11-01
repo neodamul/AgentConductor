@@ -87,7 +87,7 @@ fn native_agent_room_controls_follow_the_selected_language() {
     );
     assert!(visible.contains("로컬 워크스페이스"), "{visible}");
     assert!(visible.contains("1/1단계 · 인증"), "{visible}");
-    assert!(visible.contains("로컬 · CLI 인증"), "{visible}");
+    assert!(!visible.contains("로컬 · CLI 인증"), "{visible}");
     assert!(
         !visible.contains("에이전트 작업실"),
         "the Agent Room window title is repeated in its page: {visible}"

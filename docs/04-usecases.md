@@ -718,7 +718,7 @@ The operator asks how to run the project, closes the window, reopens the workspa
 Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
 
 ### UC-171 An operator reads the screen
-The operator opens the workspace screen and sees the agent list, the goal and the job status in the footer without a login slogan or a default-mode line that can disagree with the chosen workspace mode.
+The operator opens the workspace screen and sees the agent list, the goal and the job status without a login slogan or a default-mode line that can disagree with the chosen workspace mode, in both web and native Rust interfaces.
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
 
 ### UC-172 An operator asks something long

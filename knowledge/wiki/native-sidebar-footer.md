@@ -1,13 +1,13 @@
-# Native sidebar local-first footer
+# Native sidebar static-label removal
 
-## Finding
+## Original finding
 
-The Rust CLI-agent sidebar omitted two existing localized messages: the local-first heading and the summary that explains independent agent sessions and human control of execution and final merge. The English and Korean catalog entries already existed.
+The Rust CLI-agent sidebar originally omitted two existing localized messages: the local-first heading and the summary that explains independent agent sessions and human control of execution and final merge. Those labels were later judged static and uninformative under issue #190.
 
-## Change and verification
+## Current status
 
-A rendered-text regression uses the production 248 px egui left panel and checks both languages. It failed before the footer was rendered and passes after it was added below the independently scrolling agent list. The list reserves space for the footer so it remains visible. The native sidebar suite passes 5/5, the footer regression passes 1/1, and the source-layout test passes. Formatting and whitespace checks pass.
+The current implementation removes the fixed tagline from the Rust sidebar and the fixed local/login label from the Agent Room. English and Korean message keys were deleted. Bilingual native render tests assert these strings are absent; a source/catalog test guards against reintroducing them. The issue #190 change passes the focused native suites (7/7). The earlier footer addition is superseded.
 
-Graphify local AST extraction updated the code graph to 6,680 nodes and 11,590 edges. CocoIndex Code's no-index structural grep found the workspace sidebar entry point; project index initialization remains unavailable. AgentMemory record: `mem_mvedynhg_5787cdf797cd`.
+AgentMemory record for the original addition: `mem_mvedynhg_5787cdf797cd`. The removal follow-up is recorded separately with this implementation unit.
 
-This is component-level evidence only. The exact v0.1.24 visual comparison, packaged macOS/Windows validation, constrained-window checks, and full keyboard/screen-reader traversal remain open. The accepted workflow count remains 0/25.
+These are component-render and source/catalog checks, not exact packaged visual evidence. The Rust package and bilingual screenshot audit remain open under issue #9; its aggregate progress has not been increased by this change.
