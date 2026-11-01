@@ -2398,3 +2398,27 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: `src/ui/i18n.js` (`AC_ELAPSED`), `src/ui/chat.js`, `src/ui/optimize.js`, `src/ui/mcp.js`, `src/ui/mcp.html`, `src/ui/startup.js`; CHANGELOG.
 - [x] Verify (macOS): node, Rust and Python tests; simulator replay of the four cases after the change (chat 2:06 after reopening and the silence after 9 s, rewrite, MCP dialog and source line, update checking and installing), and the same cases in a visible WKWebView (WebKit), where `main` shows the rewrite frozen at 0:31 and the preview disabled for 4 s.
 - [ ] Complete: merge and release only on request.
+
+### A waiting sign for every request — GitHub #285
+
+- [x] Plan: third pass of the user request of 2026-10-31, done as a complete list instead of a sample. Every request kind of the pages was extracted from the sources and classified (checklist below). Simulator replays with the reply held for 4 s on v0.1.50: messenger test, delete workspace, switch workspace and the team briefing showed no sign. R-199 → DD-211.
+- [x] Red: `tests/request_wait_runtime.cjs`; the idle-silence case in `tests/progress_runtime.cjs`.
+- [x] Task: `src/ui/i18n.js` (`AC_WAIT`, 6 s silence), `src/ui/startup.js`, `src/ui/room.js`, messages; `tests/idle_poll_timeout_runtime.cjs` follows the new `request` signature; CHANGELOG.
+- [x] Verify (macOS): node, Python and Rust tests; simulator replays of the five presses (button marked, line counting within 2 s, back to normal after the reply) and 16 s of an idle page without a silence line.
+- [ ] Complete: merge and release only on request.
+
+Checklist of what the operator sees, by request (after #273, #279 and #285):
+
+| Requests | Where the wait is shown |
+|---|---|
+| Planning (`prepare`, `plan` job) | Review box and strip under the step tabs: elapsed, coordinator output age, silence; failure box |
+| Run start (`start` job) | Run box and strip: elapsed from the job start, also after reopening; failure kept under the button |
+| Run execution (room snapshot) | Banner progress, per task status and last output age, pending reasons, verification step, stopping, lost runner, silence on the connection line |
+| Room actions (`approve`, `merge`, `recover`, `resume`, `revise`, `stop`, `schedule`, `reassign`, `model`, `coordinator_request`, `scope_recovery`, `reject`) | Pressed button, waiting line after 1 s, then the action job's elapsed time in the banner |
+| Chat (`chat` job) | Working line in the panel, elapsed from the job start, silence |
+| Goal rewrite (`optimize` job) | Status beside the button, elapsed, silence |
+| MCP (`mcp_preview`, `mcp_discover` jobs) | Review dialog, tool list and source line: elapsed, silence |
+| Model and quota queries (`catalog`, `quota`) | Busy Models/refresh buttons and a querying or queued fact |
+| App update (`check_update`, `apply_update`) | Update dialog title and state with elapsed time |
+| Every other direct request (workspace create/open/switch/delete/forget, settings import/export, cache preview/clear, messenger test, plan rules, baseline, briefing, evidence, scope review, undo) | Pressed button; after 1 s the status or connection line names it with its time |
+| Refreshes (`snapshot`, `task`, `coordinator`, `chat_history`, `workspaces`, suggestions, update polling, `quota`) | Not shown as a wait; their absence shows as silence after 6 s |

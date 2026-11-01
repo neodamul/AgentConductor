@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Workspace and run screen: every button that asks the app for something shows that it is working until the answer, and after a second the status line (the connection line in the run screen) names the request with its time, for example while a workspace is deleted, the messenger is tested or the team briefing is read. Before, about 30 of these showed nothing until the answer or a timeout. An idle page no longer risks saying for a moment that the app sent no new state (#285).
+
 ## v0.1.50
 
 - Workspace: the coordinator chat, the goal rewrite, the MCP lookup (review window, tool discovery and source line) and the app update check and install now show how long they have run, and say when the app has sent no new state for a few seconds. A chat that is still running when the workspace reopens counts from its start instead of from the reopening. Typing a `jira:` or `confluence:` reference enables the source preview at once instead of after the next refresh, up to 5 s later (#279).

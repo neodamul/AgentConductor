@@ -805,3 +805,7 @@ Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209.
 ### QAS-196 The waits keep counting and report silence
 In the bridge simulator: a chat running for 120 s when the page reopens shows about 2:00; with the bridge not answering, the chat line, the rewrite status, the MCP dialog and the source status keep counting and say how long no state came, within 6 s; the update dialog counts while checking and installing; typing a reference enables the preview within a second. Unit tests cover `AC_ELAPSED`, the chat, rewrite and MCP texts and the timer wiring.
 Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, user, 2026-11-01.
+
+### QAS-197 A held reply is visible within 2 s
+In the bridge simulator with the reply held: messenger test, delete workspace after its dialog, switch workspace, the team briefing and a stop with its reason mark their button and show the waiting line with a counting time within 2 s, and the line returns to normal after the reply; an idle page sampled every 100 ms for 16 s never shows the silence line. Unit tests cover `AC_WAIT` and the 6 s threshold.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.

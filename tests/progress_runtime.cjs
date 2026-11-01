@@ -39,6 +39,7 @@ assert.equal(call('runAttention', snap('stopped', { stopping: true, runner: null
 
 // The pages say how long no new state came, after 5 s.
 assert.equal(context.AC_STALE(now - 4000, now), '');
+assert.equal(context.AC_STALE(now - 5400, now), '', 'GitHub #285: an idle refresh (every 5 s plus its reply) is not reported as silence');
 assert.equal(context.AC_STALE(0, now), '', 'before the first snapshot nothing is claimed');
 assert.ok(context.AC_STALE(now - 41000, now).includes('41'));
 

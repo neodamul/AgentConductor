@@ -133,10 +133,10 @@ async function backgroundPollTimeoutsAreSilent() {
 }
 
 async function main() {
-  await timeoutPausesWhileHidden('src/ui/startup.js', 'async function request(packet,limit=15000){', '\n', 100);
-  await timeoutPausesWhileHidden('src/ui/room.js', 'async function request(packet) {', '\n}\n', 15000, 2);
-  await lateTimeoutGetsANewDeadline('src/ui/startup.js', 'async function request(packet,limit=15000){', '\n', 100);
-  await lateTimeoutGetsANewDeadline('src/ui/room.js', 'async function request(packet) {', '\n}\n', 15000, 2);
+  await timeoutPausesWhileHidden('src/ui/startup.js', 'async function request(packet,limit=15000,watched){', '\n', 100);
+  await timeoutPausesWhileHidden('src/ui/room.js', 'async function request(packet, watched) {', '\n}\n', 15000, 2);
+  await lateTimeoutGetsANewDeadline('src/ui/startup.js', 'async function request(packet,limit=15000,watched){', '\n', 100);
+  await lateTimeoutGetsANewDeadline('src/ui/room.js', 'async function request(packet, watched) {', '\n}\n', 15000, 2);
   await backgroundPollTimeoutsAreSilent();
   console.log('idle poll timeout regression passed');
 }

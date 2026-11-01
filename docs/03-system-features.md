@@ -722,3 +722,7 @@ Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209.
 ### SF-186 Elapsed time and staleness for chat, rewrite, MCP lookup and update
 The chat working line, the goal rewrite status, the MCP review dialog, the tool discovery text, the source status line and the update dialog show the elapsed time of their job from its recorded start, redrawn every second, with the age of the last snapshot when it is over 5 s.
 Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, user, 2026-11-01.
+
+### SF-187 One waiting sign for every request
+Both pages send every request through one helper that marks the pressed button and names a request that has waited over 1 s with its time; refreshes are left out.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.

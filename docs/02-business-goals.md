@@ -620,3 +620,7 @@ Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209.
 ### BG-153 No panel or dialog looks frozen
 Whatever the operator waits for on the workspace page, the place they are looking at tells whether it is still going on.
 Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, user, 2026-11-01.
+
+### BG-154 No press goes unanswered
+The operator never wonders whether a click was taken: every press shows at once that it is being handled.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.
