@@ -1,19 +1,21 @@
 # Current-main behavior carried into the Rust UI branch
 
-## Stale downstream validation — issue #9 / 2026-11-01
+## Windows goal-entry CI regression — issue #9 / #260 / 2026-11-01
 
-PR #311 run `41297870756` tested head `7867d26f` with the old #260 parent `2c465180`.
-Its macOS job failed the stale source-contract test
-`goal_driver_uses_and_confirms_value_pattern_before_saving`, which expected UIA
-`ValuePattern.SetValue` even though the driver now focuses and types with keyboard input.
-Parent commit `284ac00b` corrects that assertion; the focused driver suite passes 8/8 locally.
-The Windows job failed `windows_desktop` and `windows_desktop_driver`. The driver target
-contains the same stale assertion; the GUI target runs
-`default_native_workspace_is_accessible_and_saves_through_ui_automation`, whose failure
-cause is unconfirmed because authenticated log retrieval returned 502 and GitHub CLI could
-not connect. Re-run the child against the updated parent only after platform validation run
-`41299460959` completes, then investigate the GUI test. Platform validation alone does not
-verify the exact Windows package journey.
+Run `41299460959` passed macOS but failed Windows in
+`default_native_workspace_is_accessible_and_saves_through_ui_automation`: the workspace
+saved only `Windows U` instead of `Windows UIA goal`. The keyboard driver sent the complete
+string in one `SendWait`, outrunning the native editor. A source-contract regression first
+failed against that implementation; the fix sends one character every 40 ms, pauses after
+select-all, and waits before Save. The focused local driver suite now passes 9/9. A new
+Windows run is still required; the exact Windows package journey remains unverified.
+
+PR #311 had previously run `41297870756` against old parent `2c465180` and failed a stale
+source-contract assertion. Parent `284ac00b` fixes that assertion. PR #311 has since been
+synchronized to current #260 by merge commit `20f3f749`; it still requires the updated
+Windows validation and exact package journey. The merge tree was conflict-free, and the
+relevant parent driver suite passed locally 8/8 before this new Windows UI regression was
+found.
 
 ## Enterprise quota parser coverage — bug #295 / 2026-11-01
 

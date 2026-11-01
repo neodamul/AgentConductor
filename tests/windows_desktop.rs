@@ -39,7 +39,12 @@ if (-not $save) { Write-Output 'NO_SAVE'; exit 5 }
 Start-Sleep -Milliseconds 300
 $goal.SetFocus()
 [System.Windows.Forms.SendKeys]::SendWait('^a')
-[System.Windows.Forms.SendKeys]::SendWait('Windows UIA goal')
+Start-Sleep -Milliseconds 100
+foreach ($character in 'Windows UIA goal'.ToCharArray()) {
+  [System.Windows.Forms.SendKeys]::SendWait([string]$character)
+  Start-Sleep -Milliseconds 40
+}
+Start-Sleep -Milliseconds 250
 
 $save.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
 Write-Output 'DRIVEN'

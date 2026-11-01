@@ -6747,3 +6747,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Record AgentMemory `mem_mvxa9njl_167fb9020f53` and the LLM Wiki; refresh Graphify to 11,851 nodes / 17,990 edges / 884 communities; update issue #257 and PR #260 before unit commit `f877dcb`.
 - [x] Push `f877dcb` to `codex/issue-9-git-head-fast-path`.
 - [ ] Exact packaged macOS/Windows GUI verification remains open; this source-level test does not change #9 acceptance (22/50).
+
+### 2026-11-01 — Pace Windows UI Automation goal entry — issue #9 / #260
+
+- [x] Verify the stale downstream parent assertion fix at `284ac00b`; local `windows_desktop_driver` passed 8/8 before the Windows run.
+- [x] Inspect failed Windows run `41299460959`: the native tests reached `default_native_workspace_is_accessible_and_saves_through_ui_automation`, which saved only `Windows U` instead of `Windows UIA goal`.
+- [x] Red: add a source-contract regression requiring per-character SendKeys pacing before Save; the new test failed against the old whole-string SendWait driver.
+- [x] Green: send each character with a 40 ms interval, allow 100 ms after select-all and 250 ms before Save; focused `windows_desktop_driver` passes 9/9 locally.
+- [ ] Re-run the updated head on Windows. Do not claim Windows UI or exact package acceptance until it passes.
