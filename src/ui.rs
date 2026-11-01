@@ -196,6 +196,7 @@ enum Request {
 pub struct Room {
     controller: Mutex<Option<Arc<Controller>>>,
     startup: Mutex<Option<Arc<setup::Startup>>>,
+    workspace_watch: Arc<Mutex<std::sync::Weak<setup::Startup>>>,
     run_lease: Mutex<Option<crate::leases::Lease>>,
     window_lease: Mutex<crate::leases::Lease>,
     parked_workspaces: Mutex<std::collections::BTreeMap<PathBuf, workspaces::ParkedWorkspace>>,
@@ -233,6 +234,7 @@ impl Room {
         Ok(Self {
             controller: Mutex::new(Some(controller)),
             startup: Mutex::new(None),
+            workspace_watch: Arc::new(Mutex::new(std::sync::Weak::new())),
             run_lease: Mutex::new(None),
             window_lease: Mutex::new(lease),
             parked_workspaces: Mutex::new(std::collections::BTreeMap::new()),
@@ -247,16 +249,23 @@ impl Room {
         let lease = crate::leases::Lease::acquire(&root.join("ui-window.lock"))?;
         let startup = Arc::new(setup::Startup::open(root, exe)?);
         let events = Arc::new(events::EventBus::default());
-        let observed_startup = Arc::clone(&startup);
+        let workspace_watch = Arc::new(Mutex::new(Arc::downgrade(&startup)));
+        let watched = Arc::clone(&workspace_watch);
         let workspace_listener = events::listener::RunChangeListener::spawn_startup(
-            startup.root().join("startup.json"),
-            move || observed_startup.watched_run(),
+            move || {
+                let startup = watched.lock().ok()?.upgrade()?;
+                Some(events::listener::StartupWatch {
+                    startup_path: startup.root().join("startup.json"),
+                    report_path: startup.watched_run(),
+                })
+            },
             Arc::clone(&events),
         )
         .ok();
         Ok(Self {
             controller: Mutex::new(None),
             startup: Mutex::new(Some(startup)),
+            workspace_watch,
             run_lease: Mutex::new(None),
             window_lease: Mutex::new(lease),
             parked_workspaces: Mutex::new(std::collections::BTreeMap::new()),

@@ -705,3 +705,7 @@ Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → 
 ### SF-184 Event-driven native refresh
 Publish scoped in-process invalidations after successful state changes and listen for persisted external changes on a separate lightweight thread. Coalesce invalidations into one asynchronous authoritative snapshot; retain only a 30-second recovery check rather than polling active jobs every second.
 Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
+
+### SF-185 Follow the current workspace without owning stale sessions
+Resolve the listener's startup and report paths from the current workspace on each check. Keep only a non-owning reference to `Startup` so a workspace switch releases an idle previous session and its lease.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.

@@ -770,3 +770,7 @@ Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → 
 ### R-196 Native state updates are event-driven, with no active polling loop
 The native UI shall refresh active run, metadata, and workspace state in response to scoped state-change notifications, not a recurring 0.5–1 second snapshot loop. In-process mutations publish invalidations to subscribed views; external process changes are observed on a lightweight listener thread. Snapshot work remains asynchronous and single-flight per view. A low-frequency 30-second recovery check may detect missed external notifications; it must not block rendering or interactive requests.
 Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01. Amends R-194.
+
+### R-197 A workspace listener must not retain a switched-away workspace lease
+After an idle workspace switch, the previous workspace's startup lease must be released immediately, while the listener follows the new workspace's persisted state and continues broadcasting its changes. The listener must not keep a strong reference to a stale `Startup` instance.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.

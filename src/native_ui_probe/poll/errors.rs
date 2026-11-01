@@ -17,8 +17,7 @@ impl Probe {
         ) {
             if matches!(self.pending, Some(Pending::ChatStart)) {
                 self.coordinator_chat.outcome_unknown(error);
-                self.workspace_next_refresh =
-                    Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+                self.workspace_next_refresh = None;
             } else {
                 self.coordinator_chat.failed(error);
                 self.workspace_next_refresh = None;
@@ -29,8 +28,7 @@ impl Probe {
         }
         if matches!(self.pending, Some(Pending::Refresh)) && self.coordinator_chat.is_uncertain() {
             self.pending = None;
-            self.workspace_next_refresh =
-                Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+            self.workspace_next_refresh = None;
             self.error = None;
             return;
         }

@@ -6686,3 +6686,34 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task / Green: active reports and startup-state changes wake the scoped listener, which coalesces invalidation into the existing asynchronous snapshot lane. The only periodic recovery check is 30 seconds.
 - [x] Local Verify: `native_room_render` 12/12, `native_ui_profile_refresh` 3/3, `native_ui_probe` 13/13, and `source_layout` 2/2 pass. warning-denied all-target Clippy, `cargo fmt --all -- --check`, `git diff --check`, and the ≤300-line changed-file check pass.
 - [x] Complete code/document unit: AgentMemory `mem_mvx7wcvd_1320e99dd054`, LLM Wiki, and Graphify refreshed to 11,822 nodes / 17,961 edges; commit `a17d43d5` pushed. [ ] Verify exact macOS/Windows packaged responsiveness; packaged UI acceptance stays 22/50 until that evidence passes.
+
+### 2026-11-01 — Remove fast polling from active native jobs — issue #257 / #9
+
+- [x] Audit Claude main #273/#274 (v0.1.49) and open follow-up #279; keep the work on its JS track and map its active-job visibility findings to native Rust.
+- [x] Plan: apply R-196/DD-208 to chat, goal optimization, MCP lookup, run startup/stop, and uncertain chat sends; state events are primary and the existing independent 30-second recovery cadence remains.
+- [x] Red: add regressions showing that reopening or refreshing active chat, optimizer, and MCP jobs must not schedule 500ms–1s full snapshots; all four failed before the fix.
+- [x] Task / Green: remove the per-job fast refresh overrides. Event notifications wake the views; the normal 30-second recovery deadline remains owned by the independent refresh path.
+- [x] Verify locally before the workspace-watch follow-up: `cargo test --locked --offline --features native-ui-probe --lib --test native_ui_probe --test source_layout` passed 93 tests across 3 suites; warning-denied all-target Clippy, `cargo fmt --all -- --check`, `git diff --check`, and the 300-line source/test guard pass.
+- [x] Record local verification in AgentMemory (`mem_mvx8bws9_da5214784410`) and the LLM Wiki; Graphify refreshed to 11,829 nodes / 19,326 edges. CocoIndex could not run because `mcp.server.fastmcp` is missing; no app dependency was added. Exact packaged acceptance remains unverified.
+- [ ] Exact packaged macOS/Windows behavior and visual acceptance remain open; issue #9 acceptance stays 22/50 until tested.
+
+### 2026-11-01 — Release previous workspace lease when switching — issue #226 / #257
+
+- [x] Plan: add R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. The current workspace listener must follow the selected workspace without strongly retaining an old `Startup` and its lease.
+- [x] Red: reproduce the existing workspace-switch test failure: after switching away from workspace A, opening A in another Room reports its startup lease as held. The remote macOS run also failed five workspace delete/switch tests.
+- [x] Task / Green: resolve watch paths dynamically through a shared `Weak<Startup>` target and update that target with the workspace switch. The listener retains its single thread and check cadence, tracks report changes in the current workspace, and no longer owns the old lease.
+- [x] Verify focused: dynamic listener regression and workspace lease reuse regression pass. The four remote-failure targets pass 9 tests serially; `launch_workspace` passes 1/1.
+- [x] Verify locally: the affected native UI bundle passes 96 tests across 4 suites; the workspace lease/delete/switch bundle passes 11 tests across 6 suites. Warning-denied all-target Clippy, `cargo fmt --all -- --check`, `git diff --check`, and the ≤300-line changed source/test bound pass.
+- [x] Record this combined native follow-up in AgentMemory (`mem_mvxa9njl_167fb9020f53`) and the LLM Wiki; refresh Graphify to 11,851 nodes / 17,990 edges / 884 communities. CocoIndex remains unavailable because `mcp.server.fastmcp` is missing; no application dependency was added.
+- [x] Update #226, #257, and PR #260 with the local evidence. Keep #226 open until its original cross-update persistence report is confirmed and the Rust package gate passes.
+- [ ] Exact packaged macOS/Windows GUI validation remains open; source tests do not pass the package gate.
+
+### 2026-11-01 — Complete run startup from event-driven snapshots — issue #9 / #257
+
+- [x] Plan: extend QAS-194 so the first event-driven snapshot that observes a newly created run report must open Agent Room immediately; keep the 30-second timer only as missed-event recovery.
+- [x] Red: `background_snapshot_opens_a_started_run_without_waiting_for_timer` failed because the background reply updated visible state but did not run the StartRefresh transition.
+- [x] Task / Green: route foreground and background start snapshots through one transition handler; an eligible background snapshot now requests `open_run` immediately.
+- [x] Verify focused: the deterministic worker regression passes, and `review_approval_shows_start_feedback_then_opens_the_started_run` passes end-to-end in 6.19 seconds (previously timed out after 30 seconds).
+- [x] Verify locally: 96 affected native UI tests pass across 4 suites; warning-denied all-target Clippy, formatting, diff hygiene, and the ≤300-line changed source/test bound pass.
+- [x] Record AgentMemory `mem_mvxa9njl_167fb9020f53` and the LLM Wiki; refresh Graphify to 11,851 nodes / 17,990 edges / 884 communities; update issue #257 and PR #260 before the unit commit.
+- [ ] Exact packaged macOS/Windows GUI verification remains open; this source-level test does not change #9 acceptance (22/50).

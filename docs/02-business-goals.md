@@ -603,3 +603,7 @@ Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → 
 ### BG-151 Update active native views only when state changes
 The native UI spends host resources on state reads only after a meaningful state change, while a slow recovery check protects against a missed external notification.
 Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
+
+### BG-152 Release inactive workspace resources during navigation
+Switching away from an idle workspace releases its startup lease promptly, while change notifications continue to follow the workspace currently displayed.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.

@@ -138,7 +138,7 @@ impl Probe {
                         self.error = None;
                     } else {
                         self.workspace_next_refresh =
-                            Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+                            Some(std::time::Instant::now() + std::time::Duration::from_secs(30));
                         self.snapshot = Some(snapshot);
                         self.pending = None;
                         self.error = None;

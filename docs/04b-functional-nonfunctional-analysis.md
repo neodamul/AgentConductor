@@ -721,6 +721,13 @@ Route known read-only requests through a bounded pool of two workers. Route sync
 After an in-process mutation or a detected external persisted-state change, publish or receive a scoped invalidation, coalesce it, and schedule one asynchronous snapshot for the affected view. Retain a 30-second recovery timer for missed notifications; do not schedule 0.5–1 second full snapshots while work is active.
 Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
 
+### FR-189 Resolve persisted-state watches from the current workspace
+The workspace listener shall resolve the active `startup.json` and watched run report from the current workspace target, and shall not strongly own a `Startup` instance. Switching workspaces updates the target and releases the prior idle session.
+
+### NFR-84 Workspace listeners do not extend stale lease lifetimes
+A listener must not hold an inactive workspace's startup lease after a switch. It shall follow the current workspace and use the existing bounded check cadence; it shall not add a worker per workspace.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
 ### NFR-82 Bound native concurrency without blocking independent work
 The native UI shall use a fixed number of standard-library workers and bounded queues. Slow reads, blocking network I/O, and periodic refreshes cannot block the state-change lane; a slow state change cannot block independent reads; state changes stay serialized; and stale replies cannot replace the latest visible action. No unbounded task spawning or async runtime is introduced.
 Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.

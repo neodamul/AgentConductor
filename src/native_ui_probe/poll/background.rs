@@ -10,6 +10,10 @@ impl Probe {
                 self.refresh_requested =
                     self.refresh_generation != self.background_refresh_generation;
                 let interactive_pending = self.pending.is_some();
+                if self.room_view.is_none() && self.starting_run.is_some() && !interactive_pending {
+                    self.start_refresh_received(snapshot);
+                    return;
+                }
                 if let Some(view) = self.room_view.as_mut() {
                     if view
                         .evidence

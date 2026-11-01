@@ -781,3 +781,12 @@ Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → 
 ### UC-187 Refresh active views from state-change notifications
 The operator leaves Workspace and Agent Room open while a coordinator or metadata subprocess is active. A local state change broadcasts an invalidation; an external state-file change wakes its listener. The affected view coalesces notifications and requests one asynchronous snapshot. If a notification is missed, a 30-second recovery check eventually reconciles the view without a frequent active-job snapshot loop.
 Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
+
+When the operator approves a plan, the Workspace follows the persisted run event. The background snapshot that first observes the run report must perform the same start-completion transition as a foreground snapshot and open Agent Room immediately; the 30-second recovery check is only for missed events.
+
+### UC-188 Switch workspaces and release the idle previous lease
+1. The operator switches from an idle workspace to another workspace.
+2. The Room updates its current workspace watch target without transferring ownership of the previous `Startup` to the listener thread.
+3. The previous workspace lease is released, so another Room can open that workspace immediately.
+4. Persisted changes in the newly selected workspace continue to emit scoped notifications.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.

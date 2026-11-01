@@ -5,7 +5,8 @@ use std::sync::{
 };
 
 use crate::ui::events::{
-    Event, EventBus, EventSurface, event_for_request, listener::RunChangeListener,
+    Event, EventBus, EventSurface, event_for_request,
+    listener::{RunChangeListener, StartupWatch},
 };
 
 #[test]
@@ -175,16 +176,15 @@ fn startup_changes_wake_workspace_and_run_changes_wake_both_surfaces() {
     let bus = Arc::new(EventBus::default());
     let workspace = bus.subscribe(EventSurface::Workspace).unwrap();
     let room = bus.subscribe(EventSurface::AgentRoom).unwrap();
-    let watched_report = Arc::new(std::sync::Mutex::new(None::<std::path::PathBuf>));
-    let run_path = Arc::clone(&watched_report);
-    let listener = RunChangeListener::spawn_startup(
-        startup.clone(),
-        move || run_path.lock().unwrap().clone(),
-        bus,
-    )
-    .unwrap();
+    let watched = Arc::new(std::sync::Mutex::new(StartupWatch {
+        startup_path: startup.clone(),
+        report_path: Some(report.clone()),
+    }));
+    let current_watch = Arc::clone(&watched);
+    let listener =
+        RunChangeListener::spawn_startup(move || Some(current_watch.lock().unwrap().clone()), bus)
+            .unwrap();
 
-    *watched_report.lock().unwrap() = Some(report.clone());
     std::fs::write(&startup, br#"{"job":"running","revision":1}"#).unwrap();
     assert_eq!(
         workspace
@@ -206,6 +206,70 @@ fn startup_changes_wake_workspace_and_run_changes_wake_both_surfaces() {
             .unwrap(),
         Event::RunChanged
     );
+    assert_eq!(
+        room.events
+            .recv_timeout(std::time::Duration::from_secs(2))
+            .unwrap(),
+        Event::RunChanged
+    );
+
+    drop(listener);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn startup_listener_follows_workspace_switch_without_owning_old_startup() {
+    let root = std::env::temp_dir().join(format!(
+        "agentconductor-dynamic-listener-{}-{}",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ));
+    let first = root.join("first");
+    let second = root.join("second");
+    std::fs::create_dir_all(&first).unwrap();
+    std::fs::create_dir_all(&second).unwrap();
+    let first_startup = first.join("startup.json");
+    let first_report = first.join("report.json");
+    let second_startup = second.join("startup.json");
+    let second_report = second.join("report.json");
+    std::fs::write(&first_startup, br#"{"goal":"first"}"#).unwrap();
+    std::fs::write(&first_report, br#"{"state":"running","revision":0}"#).unwrap();
+    std::fs::write(&second_startup, br#"{"goal":"second"}"#).unwrap();
+    std::fs::write(&second_report, br#"{"state":"running","revision":0}"#).unwrap();
+
+    let bus = Arc::new(EventBus::default());
+    let workspace = bus.subscribe(EventSurface::Workspace).unwrap();
+    let room = bus.subscribe(EventSurface::AgentRoom).unwrap();
+    let current = Arc::new(std::sync::Mutex::new(StartupWatch {
+        startup_path: first_startup,
+        report_path: Some(first_report.clone()),
+    }));
+    let watched = Arc::clone(&current);
+    let listener =
+        RunChangeListener::spawn_startup(move || Some(watched.lock().unwrap().clone()), bus)
+            .unwrap();
+
+    *current.lock().unwrap() = StartupWatch {
+        startup_path: second_startup,
+        report_path: Some(second_report.clone()),
+    };
+    assert_eq!(
+        workspace
+            .events
+            .recv_timeout(std::time::Duration::from_secs(2))
+            .unwrap(),
+        Event::WorkspaceChanged
+    );
+    std::fs::write(&first_report, br#"{"state":"running","revision":1}"#).unwrap();
+    assert!(matches!(
+        room.events
+            .recv_timeout(std::time::Duration::from_millis(700)),
+        Err(std::sync::mpsc::RecvTimeoutError::Timeout)
+    ));
+    std::fs::write(&second_report, br#"{"state":"running","revision":1}"#).unwrap();
     assert_eq!(
         room.events
             .recv_timeout(std::time::Duration::from_secs(2))

@@ -787,4 +787,9 @@ Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → 
 
 ### QAS-194 Active state changes refresh without a polling loop
 Given an active run, a persisted report change wakes the relevant view and schedules one background snapshot; a burst of changes coalesces to one in-flight snapshot plus at most one follow-up. Given no new state change, no active 0.5–1 second snapshot is dispatched. Given a missed notification, one recovery snapshot is dispatched within 30 seconds. A deliberately delayed snapshot does not prevent an independent action from being queued or completed.
+Given an approved startup whose first `report.json` appears after the initial start reply, the event-driven background snapshot opens Agent Room immediately and does not wait for the 30-second recovery deadline.
 Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
+
+### QAS-195 Workspace listeners follow switches without retaining leases
+Given an idle Room on workspace A, switching to workspace B releases A's startup lease before the listener stops. A second Room can open A immediately. Changes to B's persisted report still emit a run event, and changes to A do not emit events through the switched Room. Verify with a dynamic-listener test and the workspace deletion/switch integration tests.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.

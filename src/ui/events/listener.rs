@@ -20,6 +20,12 @@ pub struct RunChangeListener {
     thread: Option<thread::JoinHandle<()>>,
 }
 
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct StartupWatch {
+    pub startup_path: PathBuf,
+    pub report_path: Option<PathBuf>,
+}
+
 impl RunChangeListener {
     pub fn spawn(path: PathBuf, bus: Arc<EventBus>) -> Result<Self, String> {
         let observed = fingerprint(&path);
@@ -35,21 +41,24 @@ impl RunChangeListener {
     }
 
     pub fn spawn_startup(
-        startup_path: PathBuf,
-        resolve_run: impl Fn() -> Option<PathBuf> + Send + 'static,
+        resolve_watch: impl Fn() -> Option<StartupWatch> + Send + 'static,
         bus: Arc<EventBus>,
     ) -> Result<Self, String> {
-        let observed_startup = fingerprint(&startup_path);
-        let report = resolve_run();
-        let observed_report = report.as_deref().and_then(fingerprint);
+        let observed = resolve_watch();
+        let observed_startup = observed
+            .as_ref()
+            .and_then(|watch| fingerprint(&watch.startup_path));
+        let observed_report = observed
+            .as_ref()
+            .and_then(|watch| watch.report_path.as_deref())
+            .and_then(fingerprint);
         let (stop, stopped) = mpsc::channel();
         let thread = thread::Builder::new()
             .name("agentconductor-workspace-listener".into())
             .spawn(move || {
                 listen_startup(
-                    startup_path,
-                    report,
-                    resolve_run,
+                    observed,
+                    resolve_watch,
                     bus,
                     stopped,
                     observed_startup,
@@ -93,9 +102,8 @@ fn listen_report(
 }
 
 fn listen_startup(
-    startup_path: PathBuf,
-    mut report_path: Option<PathBuf>,
-    resolve_run: impl Fn() -> Option<PathBuf>,
+    mut watch: Option<StartupWatch>,
+    resolve_watch: impl Fn() -> Option<StartupWatch>,
     bus: Arc<EventBus>,
     stopped: mpsc::Receiver<()>,
     mut observed_startup: Option<Fingerprint>,
@@ -106,14 +114,25 @@ fn listen_startup(
             Ok(()) | Err(mpsc::RecvTimeoutError::Disconnected) => return,
             Err(mpsc::RecvTimeoutError::Timeout) => {}
         }
-        let current_startup = fingerprint(&startup_path);
-        if current_startup != observed_startup {
+        let current_watch = resolve_watch();
+        let path_changed = current_watch.as_ref().map(|w| &w.startup_path)
+            != watch.as_ref().map(|w| &w.startup_path);
+        let current_startup = current_watch
+            .as_ref()
+            .and_then(|current| fingerprint(&current.startup_path));
+        if path_changed || current_startup != observed_startup {
             observed_startup = current_startup;
             bus.publish(None, Event::WorkspaceChanged);
-            report_path = resolve_run();
-            observed_report = report_path.as_deref().and_then(fingerprint);
+            observed_report = current_watch
+                .as_ref()
+                .and_then(|current| current.report_path.as_deref())
+                .and_then(fingerprint);
         }
-        let current_report = report_path.as_deref().and_then(fingerprint);
+        watch = current_watch;
+        let current_report = watch
+            .as_ref()
+            .and_then(|current| current.report_path.as_deref())
+            .and_then(fingerprint);
         if current_report != observed_report {
             observed_report = current_report;
             bus.publish(None, Event::RunChanged);

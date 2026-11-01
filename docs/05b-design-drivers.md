@@ -192,3 +192,7 @@ Use a fixed two-worker read lane, a single-worker state-change lane, a dedicated
 ### Driver DDR-48 State notifications drive refresh; recovery checks stay cold
 Use the existing scoped in-process EventBus and a small independent persisted-state listener for external processes. Events are content-free invalidations, coalesced per view, and trigger the existing background snapshot lane. Keep a 30-second recovery check only; remove the active one-second snapshot fallback. Do not add an async runtime or an unbounded watcher pool.
 Trace: QAS-194.
+
+### Driver DDR-49 Make workspace observation follow current ownership
+The listener needs the current workspace paths, not ownership of the workspace session. Store a weak reference to the current `Startup` behind a small shared target; update it atomically with workspace switching. Resolve the startup/report paths per listener check, and let old `Startup` values drop so their leases unlock. Keep one listener thread and its existing cadence.
+Trace: QAS-195.
