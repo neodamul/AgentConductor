@@ -1,8 +1,9 @@
 ### Root PR status and event-driven UI verification — 2026-11-02
 
 - [x] GitHub audit: PR #22 is the only open pull request. The Rust migration is not blocked by a pile of open child PRs; it is concentrated in one oversized root PR.
-- [x] Latest-main audit: `main` is `13ff88b2`; Rust head is `c6c18042`; merge base is `e32295b3`. The branch is 1,060 commits ahead and 143 behind; the PR changes 1,775 files. Read-only `git merge-tree` reports 119 conflicts (68 content, 23 add/add, 28 modify/delete).
+- [x] Latest-main audit: `main` is `13ff88b2`; current Rust head is `0c764074` (product code `c6c18042`); merge base is `e32295b3`. The branch is 1,062 commits ahead and 143 behind; the PR changes 1,775 files. Read-only `git merge-tree` reports 119 conflicts (68 content, 23 add/add, 28 modify/delete).
 - [x] Verify #257's existing implementation instead of duplicating it: scoped event subscriptions and coalesced invalidations are present; reads, state changes, blocking I/O, and background refresh use separate bounded lanes. Local Rust worker-concurrency and event tests pass 16/16.
+- [x] Cross-check latest-main Claude quota fixes #297/#315: Rust uses a shared 180-second limit in both collectors and exposes elapsed time. Local quota/wait/parser tests pass 16 with 1 ignored; elapsed UI tests pass 2/2. Exact Windows package/account verification remains open.
 - [ ] Next: reconcile current-main behavior into the Rust root without restoring the legacy UI; resolve the remaining exact-package Windows workflow 23/24 gates. Do not create another PR for this work.
 
 ### Verify Windows schedule test path — bug #310 / 2026-11-02

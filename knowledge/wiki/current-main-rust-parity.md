@@ -1,5 +1,30 @@
 # Current-main behavior carried into the Rust UI branch
 
+## Current migration reconciliation — 2026-11-02
+
+GitHub currently shows one open pull request: root PR #22. The latest `main` is
+`13ff88b2`; the Rust root head is `0c764074`, based at `e32295b3`. It is 1,062
+Rust-only commits ahead and 143 main-only commits behind, changes 1,775 files,
+and has 119 read-only merge conflicts (68 content, 23 add/add, 28 modify/delete).
+This is one oversized blocked PR, not a set of open child PRs. Do not merge a
+whole side or open another PR; review and reconcile behavior into the Rust root.
+
+The native UI already uses bounded per-surface events and separate request lanes
+for reads, state changes, blocking I/O, and background refresh. Local worker and
+event-bus regressions pass 16/16.
+
+The current Rust root also carries the latest Claude quota wait: one shared
+180-second deadline is used by the macOS and Windows collectors, with elapsed
+time exposed by the native UI. Local quota/wait/parser tests pass 16 tests with
+1 ignored; the elapsed UI tests pass 2/2. This confirms Rust source behavior,
+not the exact Windows package or the reported Enterprise account environment.
+
+For bug #310, the Rust Windows schedule driver passes `AC_RUN_DIR` to the app
+and PowerShell process; local dispatch/layout checks pass 9/9. For bug #189,
+the coordinator-chat editor accessibility and lifecycle checks pass 8/8. Both
+remain open until exact Windows package interaction is verified; the running
+UTM guest currently has no cargo, rustc, or MSBuild.
+
 ## Latest main commits already represented in Rust — issue #9 / 2026-11-01
 
 Main merge `2570dac8` implements background polling timeout behavior. The Rust requirements
@@ -21,14 +46,15 @@ exposes Preview through the localized accessible UI. `native_ui_mcp_sources` pas
 the current branch. The adjacent elapsed-time accounting change is tracked with the separate
 Rust progress-feedback port; this evidence covers the reference-preview portion only.
 
-## PR #255 and #294 relationship — 2026-11-01
+## Historical PR #255 and #294 relationship — 2026-11-01
 
-These open PRs are overlapping but not interchangeable. #255 targets the older root head
+At the time of this snapshot, #255 and #294 were overlapping but not interchangeable. #255 targeted the older root head
 `f123f2ce`, changes 102 files (+3,774/-508), and includes package evidence plus earlier
 event-driven changes. #294 targets the current #9 fast-path branch, changes 42 files
 (+1,219/-147), and carries the event-driven/draft-preservation port. Their heads contain 61
-and 33 unique commits, respectively. Keep both visible until the overlapping code and unique
-package tests are reconciled; do not merge or close either based on title alone.
+and 33 unique commits, respectively. These child PRs are now closed; the current open-PR
+inventory contains only root PR #22. Use this as historical branch context, not as a current
+backlog list.
 
 ## Windows goal-entry CI regression — issue #9 / #260 / 2026-11-01
 
