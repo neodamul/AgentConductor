@@ -42,6 +42,20 @@ async fn a_slow_cli_is_waited_for_and_a_stuck_one_names_the_limit() {
     .unwrap_err();
     assert!(error.contains("before /usage"), "{error}");
     assert!(error.contains("after 2 s"), "{error}");
+    // GitHub #295: a screen that was read but not understood is named, not hidden behind the timeout.
+    let unread = AgentProfile {
+        environment: [("AC_QUOTA_ENTERPRISE".to_string(), "zero".to_string())].into(),
+        ..profile(0)
+    };
+    let error =
+        quota::query_claude_within(&unread, &root.join("unread"), &root, Duration::from_secs(3))
+            .await
+            .unwrap_err();
+    assert!(error.contains("after /usage"), "{error}");
+    assert!(
+        error.contains("allocated budget must be positive"),
+        "{error}"
+    );
     std::fs::remove_dir_all(root).unwrap();
 }
 
