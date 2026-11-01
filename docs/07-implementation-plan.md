@@ -6769,4 +6769,5 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line bound.
 - [x] Update QAS-194/DD-208, implementation plan, LLM Wiki, and Graphify (11,942 nodes / 19,515 edges).
 - [x] Save AgentMemory `mem_mvxf7p2e_e73272420eed`.
-- [ ] Update #257 / PR #294 progress, then commit and push this unit.
+- [x] Update #257 and PR #294; send Claude signal `sig_mvxf94bp_27c4629e7206`.
+- [x] Commit/push `1cfed4e` on `codex/issue-257-rust-draft-preservation`.
