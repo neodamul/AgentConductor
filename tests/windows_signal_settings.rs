@@ -8,6 +8,8 @@ use std::{
 
 #[path = "support/windows_signal_settings_script.rs"]
 mod signal_script;
+#[path = "support/signal_workspace_registry.rs"]
+mod workspace_registry;
 struct RunningApp(Child);
 
 impl Drop for RunningApp {
@@ -49,9 +51,10 @@ fn exact_windows_package_saves_signal_transport_and_retains_port() {
             .spawn()
             .unwrap(),
     );
+    let active_workspace = workspace_registry::active_workspace(&home, &workspace);
     let driver = Command::new("powershell.exe")
         .env("AC_DESKTOP_PID", app.0.id().to_string())
-        .env("AC_SIGNAL_WORKSPACE", &workspace)
+        .env("AC_SIGNAL_WORKSPACE", &active_workspace)
         .args([
             "-NoProfile",
             "-NonInteractive",
@@ -61,8 +64,9 @@ fn exact_windows_package_saves_signal_transport_and_retains_port() {
         .output()
         .unwrap();
     let report = String::from_utf8_lossy(&driver.stdout);
-    let persisted_settings = std::fs::read_to_string(workspace.join("signal-transport.json"))
-        .unwrap_or_else(|error| format!("unavailable: {error}"));
+    let persisted_settings =
+        std::fs::read_to_string(active_workspace.join("signal-transport.json"))
+            .unwrap_or_else(|error| format!("unavailable: {error}"));
     assert!(
         driver.status.success() && report.contains("SIGNAL_SETTINGS_SAVED"),
         "UI Automation exited {}: stdout: {report}; stderr: {}; persisted_settings={persisted_settings}",
@@ -71,7 +75,8 @@ fn exact_windows_package_saves_signal_transport_and_retains_port() {
     );
     let deadline = Instant::now() + Duration::from_secs(5);
     let saved = loop {
-        if let Ok(contents) = std::fs::read_to_string(workspace.join("signal-transport.json"))
+        if let Ok(contents) =
+            std::fs::read_to_string(active_workspace.join("signal-transport.json"))
             && let Ok(settings) = serde_json::from_str::<serde_json::Value>(&contents)
             && settings["preference"]["transport"] == "agentmemory"
             && settings["preference"]["port"] == 7333

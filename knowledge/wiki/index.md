@@ -1,5 +1,6 @@
 # AgentConductor knowledge wiki
 
+- [Windows managed-workspace package probe](windows-packaged-signal-settings.md): resolve the workspace created on first launch before checking exact-package signal settings.
 - [Windows packaged schedule interaction](windows-packaged-schedule.md): exact-release UI Automation schedule persistence, failure diagnostics, and acceptance evidence.
 - [Current verification](current-verification.md): latest cross-platform package and workflow checkpoints.
 - [Native inspector and coordinator judgments](native-inspector-and-judgments.md): preference-safe folding, coordinator selection, native judgment views and main/native trace mapping.
@@ -51,7 +52,7 @@
 - [Native startup workspace](native-startup-workspace.md): private CLI registry, goal planning, exact consent and same-window native fixture evidence.
 - [Native Rust UI migration](native-rust-ui-migration.md): dispatch boundary, opt-in prototype evidence, separate revision-bound diff/test review pane, Graphify structure and remaining production acceptance.
 - [Native goal phase labels](native-goal-phase-labels.md): localized numbered phase action and AccessKit regression evidence.
-- [Native sidebar footer](native-sidebar-footer.md): bilingual local-first footer restoration and component verification limits.
+- [Native sidebar static-label removal](native-sidebar-footer.md): issue #190 removal of fixed local/login labels from Rust views and bilingual regression evidence.
 - [Native sidebar card density](native-sidebar-card-density.md): one-line agent detail labels with full AccessKit and hover text retained.
 - [Current-main Rust parity](current-main-rust-parity.md): requirement-traced Rust parity, active port coverage, and current root #22 mergeability audit.
 - [Native Room failure feedback](native-room-failure-feedback.md): localized generated guidance with verbatim diagnostic output and explicit verification limits.

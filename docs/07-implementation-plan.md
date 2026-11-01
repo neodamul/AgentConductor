@@ -1,3 +1,13 @@
+### Port Windows managed-workspace package probe — issue #226 / #9 / 2026-11-02
+
+- [x] Plan: inspect #230 against the active #260 parent. Workspace restore/delete product code is already present in the parent; focused local launch, deletion, registry and source-layout tests pass 5/5.
+- [x] Task: update the exact-package signal-settings journey to resolve the real first-run managed workspace from `workspaces.json`, rather than assuming the requested placeholder path is the persisted workspace.
+- [x] Add bounded registry polling and regressions for exact canonical workspace selection and delayed first-run registry persistence; temporary test homes are removed on drop.
+- [x] Verify locally: registry, signal-settings dispatch/window-refresh and layout suites pass 20 tests; workspace restore/delete suites pass 5/5; all-target native-feature Clippy with warnings denied, formatting, diff hygiene, and the 300-line limit pass.
+- [x] Cleanup: move the unique package probe to #260 and close stale-base PR #230 as superseded. Keep bug #226 open until the current Windows package passes.
+- [x] Assetize: record the test boundary and prior-run caveat in the LLM Wiki; AgentMemory `mem_mvxyyn29_b1fa84d9dd35`.
+- [ ] Verify package: run the current exact Windows package through workspace restore and signal-settings persistence; do not count the earlier package run on the old PR head as current acceptance.
+
 ### Remove static labels from native Rust screens — issue #190 / #9 / 2026-11-02
 
 - [x] Plan: confirm the closed #190 requirement also applies to the Rust Workspace sidebar and Agent Room header.
@@ -6876,11 +6886,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 ### Open Rust PR follow-up inventory — refreshed 2026-11-02
 
-- [x] Recheck GitHub state: #202, #230, #260, #284, #288, and #289 are open Rust drafts; #199, #239 and #255 are closed as superseded after their unique requirements/regressions were moved to #260. #22 is the main Rust migration parent; #312 is a separate main-branch Claude PR. #305, #293, and #294 are integrated into the active #9 branch.
+- [x] Recheck GitHub state: #202, #260, #284, #288, and #289 are open Rust drafts; #199, #230, #239 and #255 are closed as superseded after their unique requirements/regressions were moved to #260. #22 is the main Rust migration parent; #312 is a separate main-branch Claude PR. #305, #293, and #294 are integrated into the active #9 branch.
 - [x] Refreshed Graphify after this audit: 12,140 nodes / 19,824 edges.
 - [x] #199 — removed static local/login labels from the Rust Workspace and Agent Room, deleted English/Korean keys, and added bilingual rendered/source regressions. Closed as superseded after porting to #260. Exact packaged screenshot remains a #9 gate.
 - [ ] #202 — native goal optimizer and proposal review. GitHub currently reports not mergeable; refresh against the active #9 base before integration.
-- [ ] #230 — reopen the last saved workspace and retire blank placeholders. GitHub currently reports not mergeable; its reported Windows package failure is in the shared tool-decision journey, while the original #226 symptom still lacks a concrete repro.
+- [x] #230 — current #260 already contains workspace restore/delete behavior and local tests. Its unique Windows managed-workspace package probe is ported to the parent; close #230 as superseded and keep #226 open until current exact Windows package acceptance passes. Earlier Windows signal-settings pass was on the older PR head; a later run failed the separate shared tool-decision journey.
 - [x] #239 — its slow-`rev-parse HEAD` chat-dispatch regression is now in `tests/startup_chat.rs` with a scoped helper. It passes locally in 0.21 seconds against the 20-second Git wrapper. PR #239 was closed as superseded by #260; exact package acceptance remains represented on the parent branch where applicable.
 - [x] #255 — closed as superseded by #260 after moving the unique in-flight Windows chat editor acceptance checks. Its 500 ms resumed-chat poll was deliberately not ported because it contradicts QAS-192/DD-206's event-driven design and fixed 30-second fallback.
 - [ ] #260 — active Rust #9 parent with Git HEAD fast path and bounded request/event lanes; GitHub reports mergeable. Exact packaged macOS/Windows gates remain open.
