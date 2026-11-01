@@ -6725,6 +6725,6 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red evidence: the original #234 TDD run failed when a 20-second `rev-parse HEAD` wrapper delayed chat acceptance and produced a stale-revision error; main fix merged as #240.
 - [x] Task: merge the #260 candidate into the issue-specific branch, preserve its current source, and move the existing slow-Git regression into a separate test support file under the 300-line limit.
 - [x] Verify focused chat timeout, diagnostics, source-layout suites on the merged candidate: 12 tests pass; all-target warning-denied Clippy, rustfmt, and diff checks pass.
-- [ ] Reconcile the #239 PR base to #260 only after inspecting the resulting branch diff; preserve issue-specific design notes and package-gate status.
-- [ ] Save AgentMemory, refresh LLM Wiki/Graphify, update #239, and push the issue branch after local verification.
+- [x] Reconcile #239 onto #260 after confirming the resulting five-file PR diff contains no product-source changes; preserve issue-specific design notes and package-gate status.
+- [x] Save AgentMemory, refresh LLM Wiki/Graphify, update #239, and push the issue branch after local verification.
 - [ ] Exact packaged macOS/Windows behavior remains open; do not treat source tests as package acceptance.
