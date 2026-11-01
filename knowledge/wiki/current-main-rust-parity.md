@@ -15,6 +15,12 @@ locally (1/1 targeted; source layout 2/2; rustfmt and diff checks pass). This co
 current implementation contract; the broader main-only commit inventory and root PR
 reconciliation remain open.
 
+Main commit `02a4e5c4` makes Jira/Confluence preview available as soon as a typed reference is
+present in the goal. The Rust workspace derives reference controls from the current goal and
+exposes Preview through the localized accessible UI. `native_ui_mcp_sources` passes 6/6 on
+the current branch. The adjacent elapsed-time accounting change is tracked with the separate
+Rust progress-feedback port; this evidence covers the reference-preview portion only.
+
 ## Windows goal-entry CI regression — issue #9 / #260 / 2026-11-01
 
 Windows package run `41301522543` saved `Windows UIA goa`, dropping the final character.
