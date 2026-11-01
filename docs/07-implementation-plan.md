@@ -13,8 +13,8 @@
 - [x] Verify follow-up locally: `cargo test --locked --lib` passes 80 tests; focused listener test passes; `cargo fmt --check`, `git diff --check`, and the 300-line limit pass.
 - [x] Assetize: AgentMemory records `mem_mvxob8f0_92018d2932da` and `mem_mvxod8ne_88e7c8d28622`; Graphify refreshed to 11,854 nodes / 17,993 edges / 867 communities. LLM Wiki records the failure and limits. CocoIndex is unavailable in this Rust-only environment.
 - [x] Local Verify: warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test limit pass for the updated contract. Full all-target execution remains limited by the recorded sandbox restrictions above.
-- [ ] Platform Verify: Actions run `41299460959` passes macOS validation; the Windows job has passed native build and source-layout checks and is running native tests. Do not claim a Windows pass for the latest head until the job completes.
-- [ ] Complete: keep PR #260 and downstream package failures open until the exact Windows package journey passes; do not convert drafts to review-ready based only on local source checks.
+- [ ] Platform Verify: fix `b2dfeb576d12096396f19be37126491983a2a0bf` is pushed to PR #260; PR #311 is synchronized at `37569d5c3eb146fa11014f83be3531790b84ec3e`. Current exact-head runs are #260 `41304824092` and #311 `41304840330`. Latest poll: #260 macOS validation passed and Windows is executing native tests; both #311 platform jobs remain active (macOS native UI launch validation, Windows native build/tests). Neither run is complete; Windows package acceptance remains unverified.
+- [ ] Complete: keep the #260/#311 package journey open until the exact Windows package tests pass. Do not convert drafts to review-ready based only on local source checks; the current fixes have 22 focused local tests passing, but package validation is still pending.
 
 ### Reconcile the root Rust migration with latest main — issue #9 / 2026-11-01
 

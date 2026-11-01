@@ -2,20 +2,17 @@
 
 ## Windows goal-entry CI regression — issue #9 / #260 / 2026-11-01
 
-Run `41299460959` passed macOS but failed Windows in
-`default_native_workspace_is_accessible_and_saves_through_ui_automation`: the workspace
-saved only `Windows U` instead of `Windows UIA goal`. The first paced fix was insufficient:
-run `41301522543` passed platform validation and the exact macOS package, but the Windows
-package still saved `Windows UIA goa`, dropping the last character. A stricter source
-regression for 100 ms per-character pacing and a 750 ms settle before Save failed against
-the 40/250 ms implementation; the updated focused driver/docs/layout suites pass 22 tests
-locally. The change remains local and needs a fresh exact Windows package run.
+Windows package run `41301522543` saved `Windows UIA goa`, dropping the final character.
+A source regression for 100 ms per-character pacing and a 750 ms settle before Save failed
+against the old 40/250 ms implementation, then passed with the fix. Commit
+`b2dfeb576d12096396f19be37126491983a2a0bf` is now pushed to PR #260; PR #311 is synchronized
+at `37569d5c3eb146fa11014f83be3531790b84ec3e`.
 
-PR #311 run `41301571571` is based on parent `4ee8be59` (`ad6235e3` merge commit). Both
-platform validations and the exact macOS package passed; its exact Windows package is still
-running against the older 40/250 ms UI driver. Synchronize it with the new pacing change and
-rerun before accepting the schedule journey. The original stale assertion was corrected at
-parent commit `284ac00b`.
+Exact-head runs #260 `41304824092` and #311 `41304840330` are active. At the latest poll,
+#260 macOS validation passed and Windows was executing native tests; both #311 platform jobs
+remained active (macOS native UI launch validation, Windows native build/tests). The 22
+focused local tests pass, but neither current Windows packaged journey is verified until its
+run completes.
 
 ## Enterprise quota parser coverage — bug #295 / 2026-11-01
 
