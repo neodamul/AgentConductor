@@ -7,6 +7,7 @@ impl Probe {
             Ok(Ok(snapshot)) => {
                 self.background_refresh_pending = false;
                 self.poll_succeeded();
+                self.active_work.observe_current_snapshot(&snapshot);
                 self.refresh_requested =
                     self.refresh_generation != self.background_refresh_generation;
                 let interactive_pending = self.pending.is_some();

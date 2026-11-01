@@ -21,6 +21,7 @@ pub struct State {
     preview_goal_sources: Value,
     preview_open: bool,
     previewing: bool,
+    preview_after_save: bool,
     applying: bool,
     selected: BTreeSet<String>,
     error: Option<String>,
@@ -33,6 +34,18 @@ impl State {
         snapshot: Option<&Value>,
         language: &str,
         can_edit: bool,
+        ui: &mut egui::Ui,
+    ) -> Option<Event> {
+        self.show_with_progress(goal, snapshot, language, can_edit, None, ui)
+    }
+
+    pub(in crate::native_ui_probe) fn show_with_progress(
+        &mut self,
+        goal: &mut String,
+        snapshot: Option<&Value>,
+        language: &str,
+        can_edit: bool,
+        progress: Option<&str>,
         ui: &mut egui::Ui,
     ) -> Option<Event> {
         let text = |id| crate::ui::messages::in_language(language, id);
@@ -75,7 +88,6 @@ impl State {
             if ui
                 .add_enabled(
                     can_edit
-                        && saved_goal
                         && references > 0
                         && has_servers
                         && has_coordinator
@@ -96,8 +108,8 @@ impl State {
         ui.label(text("mcp.explicit_references_are_kept_in_your_goal_adding"));
         if references > 0 {
             let count = references.to_string();
-            ui.label(crate::ui::messages::render(
-                "mcp.references_to_preview",
+            ui.label(crate::ui::messages::interpolate(
+                text("mcp.references_to_preview"),
                 &[("value1", &count)],
             ));
             if !saved_goal {
@@ -128,6 +140,9 @@ impl State {
                 ui.spinner();
                 ui.label(text("mcp.applying_sources"));
             });
+        }
+        if let Some(progress) = progress {
+            ui.small(progress);
         }
         if let Some(error) = &self.error {
             ui.colored_label(ui.visuals().error_fg_color, error);
@@ -202,6 +217,20 @@ impl State {
         self.error = None;
     }
 
+    pub(in crate::native_ui_probe) fn queue_preview_after_save(&mut self) {
+        self.preview_after_save = true;
+    }
+
+    pub(in crate::native_ui_probe) fn take_preview_after_save(&mut self) -> bool {
+        std::mem::take(&mut self.preview_after_save)
+    }
+
+    pub(in crate::native_ui_probe) fn cancel_preview_after_save(&mut self, error: &str) {
+        if self.take_preview_after_save() {
+            self.preview_failed(error);
+        }
+    }
+
     pub(in crate::native_ui_probe) fn preview_failed(&mut self, error: &str) {
         self.previewing = false;
         self.applying = false;
@@ -225,6 +254,7 @@ impl State {
         self.preview_mcp = Value::Null;
         self.preview_goal_sources = Value::Null;
         self.previewing = false;
+        self.preview_after_save = false;
         self.applying = false;
     }
 }

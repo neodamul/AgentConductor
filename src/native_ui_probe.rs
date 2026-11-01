@@ -14,6 +14,7 @@ mod poll_background_pending_tests;
 #[path = "../tests/native_ui_probe/poll_timeout.rs"]
 mod poll_timeout_tests;
 mod probe;
+mod progress;
 mod quota_error;
 mod quota_refresh;
 mod render;
@@ -68,6 +69,7 @@ pub struct Probe {
     room_view: Option<room::State>,
     workspace_step: usize,
     workspace_next_refresh: Option<std::time::Instant>,
+    active_work: progress::ActiveWork,
     quota_refresh_last: std::collections::BTreeMap<String, u64>,
     name: String,
     repository: String,

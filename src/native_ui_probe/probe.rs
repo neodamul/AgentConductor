@@ -67,6 +67,10 @@ impl Probe {
                 );
             }
         }
+        if self.room_view.is_none() && (self.active_work.is_active() || self.updates.is_waiting()) {
+            ui.ctx()
+                .request_repaint_after(std::time::Duration::from_secs(1));
+        }
         workspace::show(self, ui);
         self.take_mcp_discovery();
         self.show_update_source(ui);

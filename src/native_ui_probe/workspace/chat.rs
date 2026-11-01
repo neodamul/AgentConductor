@@ -136,10 +136,13 @@ impl super::super::Probe {
         if snapshot["accepted"] == true
             && let Some(job) = snapshot["id"].as_str()
         {
+            self.active_work
+                .begin("chat", job, std::time::Instant::now());
             self.coordinator_chat.started(job.to_owned());
             self.workspace_next_refresh = None;
             self.pending = None;
         } else {
+            self.active_work.clear_kind("chat");
             self.coordinator_chat
                 .rejected("Coordinator chat job was not accepted".into());
             self.pending = None;

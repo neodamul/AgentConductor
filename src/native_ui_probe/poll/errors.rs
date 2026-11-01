@@ -3,6 +3,7 @@ use super::super::{Pending, Probe};
 impl Probe {
     pub(in crate::native_ui_probe) fn handle_error(&mut self, error: impl ToString) {
         let error = error.to_string();
+        self.mcp_sources.cancel_preview_after_save(&error);
         if matches!(
             self.pending,
             Some(Pending::BackgroundTaskDetails | Pending::BackgroundCoordinator)

@@ -6962,3 +6962,18 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify full native targets with `native-ui-probe`: 1,192 passed, 16 ignored across 374 suites. Warning-denied all-target Clippy, rustfmt, and diff hygiene pass.
 - [x] Preserve the QAS/DD, implementation plan, LLM Wiki, and AgentMemory history from PR #294; Graphify refreshed after integration.
 - [ ] Verify exact packaged macOS and Windows behavior on the updated branch. Source tests do not satisfy issue #9 platform acceptance; keep progress at 22/50 until that gate passes.
+### Port elapsed and stale wait feedback to the Rust UI — GitHub #283
+
+- [x] Plan: audit merged Claude PR #280 and confirm its elapsed/stale UI changes are JS-only; register enhancement #283 and link branch `codex/issue-283-rust-progress-feedback` to the current Rust issue line.
+- [x] Architecture: trace R-198 → BG-153 → SF-186 → UC-189 → FR-191 → QAS-197 → DDR-50 → DD-211. Reuse persisted job starts and scoped state snapshots; use local repaint-only ticks.
+- [x] Red: add deterministic clock tests for persisted start restoration, elapsed formatting, stale threshold, and observation reset; add surface tests for chat, optimizer, MCP, update, and immediate reference count. The elapsed-format regression failed before implementation.
+- [x] Task / Green: show elapsed and stale status in each owning native UI panel/dialog; restore job clocks from `started_ms`; count update phases from their local start; repaint at one second without sending a worker request. Reference count and prerequisite text now reflect the current goal on the next frame.
+- [x] Verify: 109 targeted tests pass across five suites; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the source-layout 300-line guard pass locally.
+- [x] Complete unit: update the LLM Wiki and AgentMemory, refresh Graphify to 11,914 nodes / 19,478 edges, comment on #283 and PR #260, and push commit `18224cda`; draft PR #284 is open. CocoIndex is unavailable in this environment (`cocoindex` executable not found). Exact packaged macOS/Windows UI acceptance remains a separate #9 gate.
+
+### Follow up the typed-reference preview path from Claude PR #280
+
+- [x] Red: add a UI interaction regression that types a Jira reference into a draft goal and clicks Preview imports; before the fix, the click emitted no event because the saved-goal guard disabled the button.
+- [x] Green: enable preview as soon as references and server/coordinator prerequisites are present. On click, save and refresh an unsaved goal before sending the read-only preview request; clear pending preview state on save/refresh failure.
+- [x] Verify: 112 targeted tests pass across six suites; warning-denied all-target Clippy, rustfmt, `git diff --check`, and the source-layout 300-line guard pass locally.
+- [x] Complete: update AgentMemory `mem_mvxbgd8g_23b654999b54` and LLM Wiki; refresh Graphify to 11,936 nodes / 19,511 edges; update #283 and PR #284; push commit `eda13b5c` to `codex/issue-283-rust-progress-feedback`. Draft PR #284 remains open for review; exact packaged macOS/Windows behavior remains a separate #9 gate.

@@ -16,6 +16,7 @@ impl Probe {
             .send(br#"{"kind":"snapshot","icons":true}"#);
         if let Err(error) = result {
             self.pending = None;
+            self.mcp_sources.cancel_preview_after_save(&error);
             self.error = Some(error);
         } else {
             self.pending = Some(pending);

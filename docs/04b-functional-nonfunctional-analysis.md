@@ -750,3 +750,7 @@ Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213.
 ### FR-194 Display quota errors beside unavailable values
 When a quota record contains a non-empty error, the native sidebar and agent settings shall render the error beside the quota badge and Agent Room shall render it in the run status area. All surfaces shall provide the complete text to accessibility clients and retain it on hover. Records without an error shall keep the existing compact badge layout.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
+
+### FR-191 Native wait clocks use persisted starts and observed snapshots
+For a running chat, goal rewrite, or MCP operation, the Rust workspace shall derive elapsed time from the job's persisted `started_ms` when present and from the local acceptance time otherwise. Each accepted state snapshot refreshes the observation time. The visible status shall show elapsed `m:ss` and, after five seconds without an observed snapshot, the age of that silence. Update checks and installs use a local phase start because their status has no persisted start timestamp. One-second UI repaints may redraw labels only and shall not request snapshots. A typed Jira or Confluence reference shall make preview available immediately; if the goal is unsaved, an operator's preview action saves and refreshes the workspace before dispatching the read-only preview request.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-191 → QAS-197 → DDR-50 → DD-211. GitHub #283, 2026-11-01.
