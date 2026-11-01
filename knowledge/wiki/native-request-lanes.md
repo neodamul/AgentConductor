@@ -32,3 +32,7 @@ The implementation uses Rust standard-library threads and channels. It adds no a
 A pending foreground response no longer prevents a peer-view invalidation or due recovery check from dispatching to the bounded snapshot worker. Active human decision modals still pause refresh for their view. The snapshot reply lane remains separate from foreground replies, and application preserves the pending action, dirty form data, and current error. Regressions: `tests/native_ui_probe/poll_events.rs` and `tests/native_ui_probe/renderer.rs`.
 
 Workspace snapshot application compares each local setting draft with the previous saved snapshot. If the draft differs, that field remains local and is not replaced by the incoming event snapshot; fields still matching the previous saved value are refreshed from the new snapshot. The goal optimizer proposal is also retained while the goal draft is dirty. `tests/native_ui_probe/poll_background_pending.rs` verifies unsaved name and goal preservation while a clean repository field accepts the new saved value.
+
+## Task-progress spool observation
+
+The task-progress spool observer starts at 100 ms, doubles its delay up to 2 seconds while no bytes arrive, and resets to 100 ms as soon as output resumes. At process completion it continues draining while bytes remain, even when a final JSONL record is partial, then flushes the decoder. This lowers idle file/database reads without adding a runtime or dropping final progress.

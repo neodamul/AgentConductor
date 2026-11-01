@@ -786,7 +786,7 @@ Use deterministic barriers to prove that two reads can run on the bounded read l
 Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
 
 ### QAS-194 Active state changes refresh without a polling loop
-Given an active run, a persisted report change wakes the relevant view and schedules one background snapshot; a burst of changes coalesces to one in-flight snapshot plus at most one follow-up. Given no new state change, no active 0.5–1 second snapshot is dispatched. Given a missed notification, one recovery snapshot is dispatched within 30 seconds. A deliberately delayed snapshot does not prevent an independent action from being queued or completed.
+Given an active run, a persisted report change wakes the relevant view and schedules one background snapshot; a burst of changes coalesces to one in-flight snapshot plus at most one follow-up. Given no new state change, no active 0.5–1 second snapshot is dispatched. The task-progress spool reader starts at 100 ms and doubles its idle delay up to 2 seconds; any output resets it to 100 ms, and process completion drains all remaining bytes. Given a missed notification, one recovery snapshot is dispatched within 30 seconds. A deliberately delayed snapshot does not prevent an independent action from being queued or completed.
 Given an approved startup whose first `report.json` appears after the initial start reply, the event-driven background snapshot opens Agent Room immediately and does not wait for the 30-second recovery deadline.
 Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
 

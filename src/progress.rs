@@ -5,6 +5,25 @@ use crate::{
 use std::{future::Future, path::Path, time::Duration};
 use tokio::io::{AsyncReadExt, AsyncSeekExt};
 
+const MIN_POLL_DELAY: Duration = Duration::from_millis(100);
+const MAX_POLL_DELAY: Duration = Duration::from_secs(2);
+
+#[cfg(test)]
+#[path = "../tests/support/progress_observer.rs"]
+mod tests;
+
+fn next_poll_delay(current: Duration, observed_output: bool) -> Duration {
+    if observed_output {
+        MIN_POLL_DELAY
+    } else {
+        current.saturating_mul(2).min(MAX_POLL_DELAY)
+    }
+}
+
+struct PollResult {
+    bytes_read: bool,
+}
+
 struct Reader {
     offset: u64,
     decoder: Decoder,
@@ -19,10 +38,12 @@ impl Reader {
         task: &str,
         attempt: u64,
         finished: bool,
-    ) -> Result<bool, String> {
+    ) -> Result<PollResult, String> {
         let mut file = match tokio::fs::File::open(path).await {
             Ok(file) => file,
-            Err(e) if e.kind() == std::io::ErrorKind::NotFound && !finished => return Ok(false),
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound && !finished => {
+                return Ok(PollResult { bytes_read: false });
+            }
             Err(e) => return Err(format!("read owned task spool: {e}")),
         };
         if file.metadata().await.map_err(|e| e.to_string())?.len() < self.offset {
@@ -46,7 +67,7 @@ impl Reader {
         if let Some(profile) = &self.profile {
             crate::quota::observe_events(&mut self.store, profile, &events)?;
         }
-        Ok(n > 0)
+        Ok(PollResult { bytes_read: n > 0 })
     }
 }
 
@@ -103,18 +124,20 @@ async fn observe_inner<F: Future>(
         store: Store::open(database)?,
     };
     tokio::pin!(future);
-    let mut interval = tokio::time::interval(Duration::from_millis(100));
-    interval.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
+    let mut delay = MIN_POLL_DELAY;
     loop {
         tokio::select! {
             result=&mut future=>{
                 // A launch failure can legitimately have no stdout spool.
                 if spool.exists() {
-                    while reader.poll(spool,task,attempt,true).await? {}
+                    while reader.poll(spool,task,attempt,true).await?.bytes_read {}
                 }
                 return Ok(result);
             },
-            _=interval.tick()=>{reader.poll(spool,task,attempt,false).await?;},
+            _=tokio::time::sleep(delay)=>{
+                let observed=reader.poll(spool,task,attempt,false).await?.bytes_read;
+                delay=next_poll_delay(delay,observed);
+            },
         }
     }
 }

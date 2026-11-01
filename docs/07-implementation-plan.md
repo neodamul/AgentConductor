@@ -6728,3 +6728,13 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Update QAS-192/DD-206, LLM Wiki, and Graphify (11,857 nodes / 19,366 edges). CocoIndex is installed but cannot import `mcp.server.fastmcp`; no dependency was added.
 - [x] Complete the issue unit: AgentMemory `mem_mvxdrsve_6454a5eac748`; progress is posted to #257 and PR #260. Commit `e8cb9400` is pushed on `codex/issue-257-rust-draft-preservation`; draft PR #294 references #257/#9. Keep the packaged macOS/Windows gate open.
 - [ ] Verify packaged macOS/Windows UI behavior; source tests do not satisfy the package acceptance gate.
+
+### 2026-11-01 — Back off idle task-progress spool reads — issue #257
+
+- [x] Plan: apply Claude PR #255's bounded observer cadence to the current Rust branch; retain 100 ms response when output arrives, back off only while the spool is idle, and drain the final partial record after process completion.
+- [x] Red: the observer cadence regression did not compile because the delay policy did not exist.
+- [x] Task / Green: add a 100 ms → 2 s exponential idle delay that resets on output; keep completion draining based on bytes read so partial JSONL records are not dropped.
+- [x] Verify focused: the cadence regression and live progress/quota observer suites pass (9 tests total).
+- [x] Verify locally: 105 tests across native UI, source-layout, live-progress, and Claude-quota suites pass. Warning-denied all-target Clippy, rustfmt, diff hygiene, and the ≤300-line source/test limit pass; `progress.rs` is 143 lines and the test is 15.
+- [x] Update QAS-194/DD-208, LLM Wiki, and Graphify (11,867 nodes / 19,379 edges). CocoIndex remains unavailable because `mcp.server.fastmcp` cannot import.
+- [ ] Update AgentMemory and #257/PR #260, then commit and push this unit.

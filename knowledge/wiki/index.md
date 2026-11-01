@@ -178,6 +178,7 @@
 - [Idle resource budget](idle-resource-budget.md): use macOS physical footprint to avoid shared-page RSS inflation, with an exact packaged Agent Room sample and its limits.
 - [Latest-main Rust feature parity](coordinator-directed-operator-feedback.md): current Rust equivalents and regression evidence for coordinator feedback, amendments, and charter goal-drift gates; packaged UI credit remains unchanged.
 - [Native request lanes](native-request-lanes.md): bounded read concurrency, serialized state changes, correlated replies, and event-driven peer refresh.
+- [Native progress observation](native-request-lanes.md#task-progress-spool-observation): bounded idle spool reads and final progress draining.
 - [Rust review policy](rust-review-policy.md): selected Google Rust Style Guide rules, exclusions, stable checks and the no-churn adoption path for the Rust migration branch.
 - [Rust review policy](rust-review-policy.md): selected Google Rust Style Guide rules, exclusions, stable checks and the no-churn adoption path for the Rust migration branch.
 - [UTM Windows guest access](utm-windows-guest-access.md): post-reset guest-agent evidence, user-session drive-mapping limits, and the remaining Windows validation gate.
