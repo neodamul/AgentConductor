@@ -2423,6 +2423,14 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 | Every other direct request (workspace create/open/switch/delete/forget, settings import/export, cache preview/clear, messenger test, plan rules, baseline, briefing, evidence, scope review, undo) | Pressed button; after 1 s the status or connection line names it with its time |
 | Refreshes (`snapshot`, `task`, `coordinator`, `chat_history`, `workspaces`, suggestions, update polling, `quota`) | Not shown as a wait; their absence shows as silence after 6 s |
 
+### Claude usage query is cut off after 20 s on a slow machine — GitHub #297
+
+- [x] Plan: user report 2026-11-01: the company machine needs more than 20 s for the quota query (related to #295, the card shows only "—"). Both Claude collectors shared a literal 20 s limit for start, trust screen, prompt and `/usage`; the run screen showed nothing while a quota job ran (the banner leaves quota jobs out and the button was only disabled). R-201 → DD-213. Numbered after R-200 of #290, which is not merged yet.
+- [x] Red: `tests/claude_wait.rs` (`query_claude_within`, `CLAUDE_WAIT` missing; a fixture CLI delayed by `AC_QUOTA_DELAY_MS`), `tests/progress_runtime.cjs` (`quotaText`, `quotaRunning`, `quotaWait` missing).
+- [x] Task: `src/quota/terminal.rs` (`CLAUDE_WAIT`, `query_claude_within`, the timeout names its limit), `src/quota/terminal/windows.rs`, `src/quota.rs`, `src/ui/startup.js`, `src/ui/room.js`, messages; fixture delay in `tests/support/terminal_quota_agent.rs`; CHANGELOG.
+- [x] Verify (macOS): tests below; simulator replay of a running `quota` job on the card (counting, only the queried agent, stays correct while the app is silent) and in the run screen (busy button, counting source line, normal again after). The Windows collector was not compiled here (no Windows target); Windows CI compiles it and runs the same fixture test.
+- [ ] Complete: merge and release only on request. The company's real duration is still unknown; with this change the card shows it.
+
 ### Request kind guard — GitHub #301
 
 - [x] Plan: the stop-hook review of the goal of 2026-10-31 pointed out that the coverage checklist (#285) is an assertion; each pass found new gaps by hand. R-202 → DD-214. Numbered after R-200 (#290) and R-201 (#297), both still open; the appended sections need a trivial conflict resolution when they merge.

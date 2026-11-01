@@ -1612,6 +1612,10 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210.
 Listing every request kind (75 kinds across the pages) showed that long work already runs as jobs with their own progress, but about 30 direct requests had no sign at all, and a per-handler fix would miss the next one added. The helper sits in `request()`, the one path every request takes, so a new request is covered without code of its own; refreshes are excluded by kind so they never mark the last pressed button. The 1 s delay keeps quick requests quiet. The silence threshold was 5 s, equal to the idle refresh interval, so a normal idle refresh could be flagged for the time of its reply; 6 s keeps one interval plus a second of reply.
 Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.
 
+### DD-213 A larger shared limit instead of a per-profile setting
+The query ends as soon as `/usage` is parsed, so a larger limit costs nothing on a fast machine; it only lets a stuck CLI hold its process (killed at the limit) for longer. A per-profile setting would touch the profile schema, validation, the editor and both UIs for a value nobody has asked to vary, so the shared limit is raised first and the message now says which limit was hit, so a company that needs more reports a number. Codex keeps its 30 s: it answers with JSON and has not been reported slow.
+Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
+
 ### DD-214 A classification test instead of a longer checklist
 The checklist of #285 states coverage but cannot notice a later addition, and every earlier pass found gaps by hand. Extracting the kinds from the sources makes the list complete by construction and makes the decision explicit at the moment a request is added. The progress renderings are checked by a named string, not by behaviour: this guards removal and forgetting, while the behaviour itself stays covered by the simulator replays and the unit tests of each rendering.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.

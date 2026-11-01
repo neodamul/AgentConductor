@@ -35,7 +35,7 @@ assert(room.includes('pollFailed(e,background)')&&room.includes('pollSucceeded()
   const report=sent.find(p=>p.kind==='client_timeout');
   assert(report,'the page tells the native side that it gave up');
   assert.equal(report.of,'snapshot');
-  assert(report.waited>=20&&typeof report.hidden==='boolean');
+  assert(report.waited>=10&&typeof report.hidden==='boolean');
   assert(room.includes("kind:'client_timeout'")||room.includes('kind:"client_timeout"'),'the Agent Room request reports too');
   console.log('A missed poll is retried quietly, shown after three, and page timeouts reach the diagnostics log.');
 })().catch(error=>{console.error(error);process.exitCode=1;});

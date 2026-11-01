@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Claude usage: the query is given up after 60 s instead of 20 s, so a slow company PC (scanning, managed settings, proxy) can still report usage, and a timeout names the limit and the stage. While a usage query runs, the agent card and the run screen show how long it has run, and the run screen's refresh button is marked busy instead of only disabled (#297).
 - Tests: every kind of request the JS pages send must be classified (job with a progress rendering, refresh, or direct), so a request whose wait shows nothing cannot be added unnoticed (#301).
 
 ## v0.1.51

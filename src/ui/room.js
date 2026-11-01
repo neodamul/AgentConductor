@@ -92,7 +92,7 @@ function renderLive() {
   if (!snapshot) return; const r = snapshot.report, now = Date.now(), extra = now - activityAt;
   for (const el of document.querySelectorAll('.session-note[data-task]')) { const i = r.tasks.findIndex(t => t.id === el.dataset.task), t = r.tasks[i], a = snapshot.activity?.[t?.id]; const text = t?.status === 'running' && a ? (a.quiet_ms == null ? acMessage("room.activity_no_output") : acMessage("room.activity_last_output", { value1: formatAge(a.quiet_ms + extra) })) : i >= 0 ? pendingReason(r, i, now) : ''; if (el.textContent !== text) el.textContent = text; el.hidden = !text; }
   const detail = $('final-detail'); if (detail && snapshot.verification) { const text = verificationText(snapshot.verification, now); if (detail.textContent !== text) detail.textContent = text; }
-  const job = snapshot.job; AC_I18N.bind($('job-state'), () => (busy() && job.kind !== 'quota' ? pretty(job.kind) + acMessage("room.in_progress") + (job.started_ms ? ' · ' + formatAge(now - job.started_ms) : '') : job?.state === 'failed' && job.kind !== 'quota' ? acMessage("room.action_needs_attention") : ''));
+  const job = snapshot.job; if (AC_QUOTA_WAIT(job)) AC_I18N.bind($('quota-source'), () => AC_QUOTA_WAIT(snapshot.job)); AC_I18N.bind($('job-state'), () => (busy() && job.kind !== 'quota' ? pretty(job.kind) + acMessage("room.in_progress") + (job.started_ms ? ' · ' + formatAge(now - job.started_ms) : '') : job?.state === 'failed' && job.kind !== 'quota' ? acMessage("room.action_needs_attention") : ''));
   const stale = AC_STALE(lastSnapshotAt, now), waiting = AC_WAIT.text(now); if (stale || waiting) AC_I18N.bind($('connection'), () => stale || waiting); else if (connectionWaited && !pollFailures) AC_I18N.bind($('connection'), () => acMessage("room.connected_local_run")); connectionWaited = !!waiting && !stale; $('connection').classList.toggle('stale', !!stale);
   let box = $('run-banner-attention'); if (!box) { box = node('p', undefined, 'run-banner-attention'); box.id = 'run-banner-attention'; $('run-banner-progress').parentElement.append(box); } const attention = runAttention(snapshot) || stale; if (box.textContent !== attention) box.textContent = attention; box.hidden = !attention;
 }
@@ -116,8 +116,8 @@ function renderQuota(agent) {
  const windows=quota?.windows||[],labels=snapshot.quota_window_labels?.[agent?.id]||[];
  const resetLabels=snapshot.quota_window_reset_labels?.[agent?.id]||[];
  AC_I18N.replace($('quota-windows'),...budgetRows,...(windows.length?windows.map((w,index)=>{const row=node('p',undefined,'quota-window');const label=labels[index]||w.label;row.append(node('strong',()=>(`${typeof w.remaining_percent==='number'?acMessage("room.remaining", {value1:Math.round(w.remaining_percent)}):acMessage("room.unavailable")} · ${label}`)));if(resetLabels[index])row.append(node('span',resetLabels[index],'small muted'));return row;}):budgetRows.length?[]:[node('p',()=>(quota?.error||acMessage("room.account_quota_not_queried")),'small muted')]));
- AC_I18N.bind($('quota-source'),()=>(quota?.observed_at?acMessage("room.observed_bcdb80", {value1:pretty(quota.status),value2:new Date(quota.observed_at*1000).toLocaleString(),value3:quota.source}):''));
- $('quota-refresh').disabled=busy()||snapshot.report.state==='running'||!agent;
+ AC_I18N.bind($('quota-source'),()=>(AC_QUOTA_WAIT(snapshot.job)||(quota?.observed_at?acMessage("room.observed_bcdb80", {value1:pretty(quota.status),value2:new Date(quota.observed_at*1000).toLocaleString(),value3:quota.source}):'')));
+ if(typeof AC_PRESS!=='undefined')AC_PRESS.hold($('quota-refresh'),!!AC_QUOTA_WAIT(snapshot.job));$('quota-refresh').disabled=busy()||snapshot.report.state==='running'||!agent;
 }
 function selectTask(index) {
   drafts.set(coordinatorView?COORDINATOR_DRAFT:task()?.id,$('feedback').value);
