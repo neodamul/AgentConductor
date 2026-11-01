@@ -47,7 +47,31 @@ focus before typing; it emits focused-control and TextPattern readback if persis
 Local Windows-driver contracts pass 11/11, source-layout 2/2, formatting/diff checks pass;
 the two touched test files total 300 lines. This is driver-only evidence; the exact Windows
 rerun is still required. Background snapshot draft overwrite remains a separate unproven risk.
-Current #260 exact-head run `41306529259` is active; its Windows package acceptance is pending.
+The previously active run `41306529259` was superseded by later exact-head runs.
+
+## Windows default-workspace focus regression — issue #9 / #260 / 2026-11-01
+
+The later exact-head run `41309723645` showed the UI Automation focused element was the
+top-level AgentConductor window and the Goal editor remained empty after `SendKeys`; this
+was a test-driver failure, not evidence that the app's Save action failed. TDD replaced
+that path with a foreground-process check, a click inside the UIA-reported Goal bounds,
+Unicode keyboard events through Win32 `SendInput`, and Enter for Save. The regression
+contract failed before the replacement and 14 focused tests pass locally afterward;
+warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line file limit pass.
+Commit `dbfb28c9` is pushed to PR #260. Exact-head run
+`41313969180` is active; do not claim Windows UI acceptance or mark #260 ready until its
+packaged `windows_desktop` test passes.
+
+## Stale child-PR merge-tree audit — issue #9 / 2026-11-01
+
+Read-only `git merge-tree` checks against the current #260 integration head show why the
+remaining drafts cannot be closed or merged by status alone. PRs #305, #294, #293, #289,
+#288, #284, #230, #202, and #199 all conflict with the current parent. Several conflicts
+are in shared architecture/checklist/wiki files; #294 also conflicts in `tests/ui.rs`, and
+#284 conflicts in `src/native_ui_probe.rs`. These branches were based on older integration
+heads. Do not bulk-merge or close them as duplicates. After the current Windows package
+gate, reconcile one child at a time, bug-first, preserving its unique tests and docs; rerun
+the affected local suites before advancing the parent.
 
 ## Enterprise quota parser coverage — bug #295 / 2026-11-01
 

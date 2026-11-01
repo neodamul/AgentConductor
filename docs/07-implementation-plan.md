@@ -19,7 +19,10 @@
 - [x] Save-action Red/Green: source-contract tests first failed on the InvokePattern-only script; the driver now focuses Save, waits for keyboard focus, and sends Enter. `windows_desktop_driver` passes 12/12 locally.
 - [x] Local Verify: latest integrated suite passes 65 tests across 13 focused quota/UI suites plus 13 source-layout/public-doc tests; warning-denied Clippy, rustfmt, diff hygiene, release UI build, and the 300-line limit pass.
 - [x] Exact-head run `41307850806` for `d4a11db6` passed macOS validation; it was canceled before Windows native tests after the matching #304 log exposed the already-known Save activation failure.
-- [ ] Platform Verify: push the locally verified Save keyboard activation fix with the #297 port, then require a fresh exact-head Windows package/native UI run before closing #310/#311. The 60-second #297 behavior also needs exact-head macOS/Windows checks.
+- [x] TDD root-cause fix: exact-head run `41309723645` showed the Windows UIA focused element was the top-level AgentConductor window and the Goal editor remained empty. The driver regression failed against the old UIA `SetFocus` + `SendKeys` path, then changed to foreground the app, click the owned Goal bounds, enter Unicode through `SendInput`, and activate Save through keyboard input.
+- [x] Local Verify / push: commit `dbfb28c9` on `codex/issue-9-git-head-fast-path`; 14 tests across `windows_desktop`, `windows_desktop_driver`, and `source_layout`; all-target warning-denied Clippy, rustfmt, `git diff --check`, and the 300-line file limit pass.
+- [ ] Exact-head Platform Verify: run `41313969180` for `dbfb28c9` is active. Require both platform validation and the exact Windows packaged default-desktop journey to pass before changing PR #260 from draft or closing related issues.
+- [ ] After exact package acceptance: refresh this checkpoint and LLM Wiki with terminal evidence, then integrate remaining #9 child work sequentially against the current parent; do not close unintegrated child PRs as duplicates.
 
 ### Reconcile the root Rust migration with latest main — issue #9 / 2026-11-01
 
