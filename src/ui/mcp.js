@@ -38,6 +38,8 @@ function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,sh
    sourceCount=Array.isArray(result.references)?result.references.length:0;
    goalTags(goal,Array.isArray(result.reference_ranges)?result.reference_ranges:[]);
    renderSuggestions(Array.isArray(result.suggestions)?result.suggestions:[]);
+   // GitHub #279: the preview button and source line follow the answer at once, not at the next refresh.
+   update();
   }).catch(()=>{if(suggestionsStamp===goal)renderSuggestions([]);});
  }
  function update(){

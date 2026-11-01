@@ -784,5 +784,5 @@ The user manual's header shall name the released version, and the screenshots in
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209. GitHub #277, user, 2026-10-31.
 
 ### R-198 Every wait of the workspace page counts its time
-Besides planning, starting and running, the waits the operator starts on the workspace page (a coordinator chat answer, a goal rewrite, an MCP lookup or tool discovery, an app update check or install) shall show how long they have been running, counted from their start also after the page reopens, and shall say when the app has sent no new state for a while, in the panel or dialog where the wait is shown.
+Besides planning, starting and running, the waits the operator starts on the workspace page (a coordinator chat answer, a goal rewrite, an MCP lookup or tool discovery, an app update check or install) shall show how long they have been running, counted from their start also after the page reopens, and shall say when the app has sent no new state for a while, in the panel or dialog where the wait is shown. A control that a finished request makes available (the source preview after a typed reference) shall become available when that request answers.
 Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, user, 2026-11-01.
