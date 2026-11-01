@@ -1,7 +1,9 @@
 // GitHub #285: a request the operator started marks the pressed button and, after 1 s, is named with
 // its time on the status line; refreshes stay silent. Both pages send every request through it.
 const vm = require('node:vm'), fs = require('node:fs'), assert = require('node:assert/strict');
-const i18n = fs.readFileSync('src/ui/i18n.js', 'utf8'), startup = fs.readFileSync('src/ui/startup.js', 'utf8'), room = fs.readFileSync('src/ui/room.js', 'utf8');
+// Windows checkouts may have CRLF line ends.
+const read = f => fs.readFileSync(f, 'utf8').replace(/\r\n/g, '\n');
+const i18n = read('src/ui/i18n.js'), startup = read('src/ui/startup.js'), room = read('src/ui/room.js');
 const catalog = JSON.parse(fs.readFileSync('src/ui/messages/en.json', 'utf8'));
 assert.ok(catalog['common.waiting_reply'] && JSON.parse(fs.readFileSync('src/ui/messages/ko.json', 'utf8'))['common.waiting_reply'], 'the line is in both catalogs');
 let clickHandler = null, now = 1_000_000;
