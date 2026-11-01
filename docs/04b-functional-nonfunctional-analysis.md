@@ -724,9 +724,25 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → 
 ### FR-189 Resolve persisted-state watches from the current workspace
 The workspace listener shall resolve the active `startup.json` and watched run report from the current workspace target, and shall not strongly own a `Startup` instance. Switching workspaces updates the target and releases the prior idle session.
 
+### FR-192 Show coordinator run and task status
+In coordinator Activity, show run state and counts for completed, running, failed and pending tasks, then each task's assigned agent, status and available latest-output age. Filter workflow-save summaries from this rendered timeline while retaining stored history, judgments and other useful events. Use the existing snapshot without dispatching a request from rendering.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → DDR-51 → DD-212. GitHub #286, Rust port of #267, 2026-11-01.
+
+### FR-193 Keep the native coordinator view at current UI parity
+Present the coordinator board and its retained review/history controls in the Rust Agent Room. Limit this change to Rust UI consumption of the current snapshot; do not alter JavaScript or backend work owned by another contributor.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.
+
 ### NFR-84 Workspace listeners do not extend stale lease lifetimes
 A listener must not hold an inactive workspace's startup lease after a switch. It shall follow the current workspace and use the existing bounded check cadence; it shall not add a worker per workspace.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### NFR-85 Coordinator status is snapshot-derived and side-effect free
+Status summaries shall use the already available Agent Room snapshot and activity map. Rendering must not start a worker request, perform filesystem or network I/O, or create a polling timer. Filtering applies only to the presented timeline; persisted audit history remains unchanged. The view shall label every task and status accessibly in English and Korean.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → DDR-51 → DD-212. GitHub #286, 2026-11-01.
+
+### NFR-86 Native and JavaScript coordinator information is equivalent
+The native coordinator Activity view shall expose the same essential run/task state and retain the same human review and audit access as the current JavaScript view. It shall use the native Rust rendering stack and existing snapshot data without taking ownership of or introducing a parallel change to JS/backend work.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.
 
 ### NFR-82 Bound native concurrency without blocking independent work
 The native UI shall use a fixed number of standard-library workers and bounded queues. Slow reads, blocking network I/O, and periodic refreshes cannot block the state-change lane; a slow state change cannot block independent reads; state changes stay serialized; and stale replies cannot replace the latest visible action. No unbounded task spawning or async runtime is introduced.

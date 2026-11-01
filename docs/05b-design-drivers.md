@@ -196,3 +196,10 @@ Trace: QAS-194.
 ### Driver DDR-49 Make workspace observation follow current ownership
 The listener needs the current workspace paths, not ownership of the workspace session. Store a weak reference to the current `Startup` behind a small shared target; update it atomically with workspace switching. Resolve the startup/report paths per listener check, and let old `Startup` values drop so their leases unlock. Keep one listener thread and its existing cadence.
 Trace: QAS-195.
+
+### Driver DDR-51 Derive the coordinator board from the run snapshot
+Use the existing Agent Room snapshot's report task list, run state and activity map to build a compact coordinator summary and task rows. Keep audit records immutable and filter repeated workflow-save rows only at presentation. Avoid a second request, poll, timer or backend schema. Retain the existing judgment timeline and use localized accessible status labels.
+Trace: QAS-198.
+
+### Driver DDR-52 Port the native surface without crossing workstream ownership
+Implement the coordinator board inside the native Rust Agent Room, reusing the snapshot shape and localized egui components. Preserve existing review controls and stored audit records. Treat the current JS/backend behavior as a reference contract; do not edit or absorb those workstreams. Trace: QAS-199.

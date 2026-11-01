@@ -790,3 +790,11 @@ When the operator approves a plan, the Workspace follows the persisted run event
 3. The previous workspace lease is released, so another Room can open that workspace immediately.
 4. Persisted changes in the newly selected workspace continue to emit scoped notifications.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### UC-190 Review coordinator run status
+The operator selects Coordinator in Agent Room. The Activity view shows the run state, completed/running/failed/pending counts, and a row for every task with its assigned agent, status and latest output age when available. Judgments and useful timeline history remain below the board; routine workflow-save summaries are omitted from the display, not deleted from the audit store. The view uses the current snapshot and emits no additional request.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → DDR-51 → DD-212. Rust port of JavaScript #267, GitHub #286, 2026-11-01.
+
+### UC-191 Supervise a run in the native Rust Agent Room
+The operator opens the Rust Agent Room and selects Coordinator. They can immediately see the run state, task counts, each assignment and status, plus latest output age where the snapshot reports it. They can continue to inspect judgments, approvals and retained useful history below the status board. The Rust view reads the existing snapshot and leaves JS/backend ownership with its current contributor.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.

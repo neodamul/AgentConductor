@@ -793,3 +793,11 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → 
 ### QAS-195 Workspace listeners follow switches without retaining leases
 Given an idle Room on workspace A, switching to workspace B releases A's startup lease before the listener stops. A second Room can open A immediately. Changes to B's persisted report still emit a run event, and changes to A do not emit events through the switched Room. Verify with a dynamic-listener test and the workspace deletion/switch integration tests.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### QAS-198 Coordinator status board is accurate without extra work
+Given a run with mixed completed, running, failed and pending tasks, selecting coordinator Activity shows the exact run state and counts and one row per planned task with the assigned agent and status. Where the existing activity map has a quiet age, the row shows that age; missing activity is presented as unavailable without inventing a timestamp. The rendered timeline omits `workflow` rows but preserves other history and judgments, and the source snapshot remains unchanged. Rendering with populated coordinator data returns no request event. Verify the model, both localized egui accessibility output, filtering and no-dispatch behavior deterministically.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → DDR-51 → DD-212. GitHub #286, 2026-11-01.
+
+### QAS-199 Native coordinator status remains usable alongside JS/backend work
+Given the current workspace's Agent Room snapshot, the Rust coordinator Activity view presents the current run and task state with the available assignments and output ages, and leaves the established review and audit content accessible. Existing JS/backend ownership and behavior are not changed by this Rust port. Verify mixed states, missing activity, retained judgments, both locales and no additional dispatch with deterministic local tests; use exact packaged review separately under #9.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → DDR-52 → DD-213. GitHub #286, 2026-11-01.

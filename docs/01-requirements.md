@@ -774,3 +774,10 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → 
 ### R-197 A workspace listener must not retain a switched-away workspace lease
 After an idle workspace switch, the previous workspace's startup lease must be released immediately, while the listener follows the new workspace's persisted state and continues broadcasting its changes. The listener must not keep a strong reference to a stale `Startup` instance.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### R-199 The coordinator Activity view summarizes the current run
+When the operator selects coordinator Activity, show the run state, task counts, and one status row per planned task with its assigned agent and available latest-output age. Use the current Agent Room snapshot; do not add a request or polling source. Keep judgments and meaningful history below the board while hiding repetitive workflow-save rows from this view only. Preserve the audit records unchanged. Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → DDR-51 → DD-212. Rust port of JavaScript #267, GitHub #286, 2026-11-01.
+
+### R-200 Preserve the coordinator status board in the native application
+The Rust Agent Room shall provide the coordinator run/task status summary available in the current JavaScript UI, using existing run and activity data and preserving the operator's existing review and audit controls. This is a native Rust UI implementation; it does not transfer ownership of JavaScript UI or backend changes from their current author.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.

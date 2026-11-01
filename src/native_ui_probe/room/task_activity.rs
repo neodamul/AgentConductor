@@ -1,5 +1,6 @@
 use eframe::egui::{self, RichText};
 use serde_json::Value;
+mod coordinator_board;
 #[path = "task_activity/details.rs"]
 mod details;
 mod live;
@@ -74,10 +75,14 @@ fn tabs(tab: &mut Tab, language: &str, ui: &mut egui::Ui) {
 pub fn coordinator(
     tab: &mut Tab,
     data: Option<&Value>,
+    run: &Value,
     language: &str,
     ui: &mut egui::Ui,
 ) -> Option<super::Event> {
     tabs(tab, language, ui);
+    if *tab == Tab::Activity {
+        coordinator_board::show(run, language, ui);
+    }
     let Some(data) = data else {
         ui.label(crate::ui::messages::in_language(
             language,
@@ -87,7 +92,7 @@ pub fn coordinator(
     };
     match tab {
         Tab::Activity => {
-            super::judgments::view(data, language, ui).map(super::Event::UndoAmendment)
+            super::judgments::coordinator_view(data, language, ui).map(super::Event::UndoAmendment)
         }
         Tab::Review => None,
         Tab::Logs => {

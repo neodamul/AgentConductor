@@ -6718,3 +6718,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Record AgentMemory `mem_mvxa9njl_167fb9020f53` and the LLM Wiki; refresh Graphify to 11,851 nodes / 17,990 edges / 884 communities; update issue #257 and PR #260 before unit commit `f877dcb`.
 - [x] Push `f877dcb` to `codex/issue-9-git-head-fast-path`.
 - [ ] Exact packaged macOS/Windows GUI verification remains open; this source-level test does not change #9 acceptance (22/50).
+
+### 2026-11-01 — Port coordinator run status board to native Rust — issue #286
+
+- [x] Plan: trace R-199/R-200 → BG-154/BG-155 → SF-187/SF-188 → UC-190/UC-191 → FR-192/FR-193 and NFR-85/NFR-86 → QAS-198/QAS-199 → DDR-51/DDR-52 → DD-212/DD-213. Keep changes limited to the Codex Rust worktree; Claude retains JS and backend work.
+- [x] Red: add deterministic tests for mixed task states and task-ID pairing, latest-output age, workflow-only display filtering with unchanged source data, bilingual accessible output, retained judgments and no request dispatch; the first targeted test build failed because the model and display filter were absent.
+- [x] Task / Green: render the status summary and task rows from the existing run snapshot before the existing judgment/history view; filter only displayed workflow-save rows.
+- [x] Verify locally: 2 coordinator-board tests, 18 Agent Room/language/layout tests, source-layout guard (2), warning-denied all-target Clippy, rustfmt, diff check and the 300-line source/test guard pass.
+- [ ] Broader `cargo test --locked --offline --features native-ui-probe` was stopped after 90 seconds without output; it is not recorded as a pass.
+- [ ] Complete unit: update issue #286, AgentMemory and LLM Wiki; refresh Graphify; commit and push the Rust-only change. Exact packaged GUI review stays with #9.

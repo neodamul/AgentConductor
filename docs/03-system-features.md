@@ -709,3 +709,11 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → 
 ### SF-185 Follow the current workspace without owning stale sessions
 Resolve the listener's startup and report paths from the current workspace on each check. Keep only a non-owning reference to `Startup` so a workspace switch releases an idle previous session and its lease.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### SF-187 Coordinator run status board
+Render run state and task counts above the coordinator timeline, then show each planned task with its agent, status and available latest-output age. Derive the board from the existing snapshot, and omit repetitive workflow-save rows only from the visible timeline.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → DDR-51 → DD-212. Rust port of JavaScript #267, GitHub #286, 2026-11-01.
+
+### SF-188 Native coordinator Activity parity
+Expose the current run summary, per-task status and available activity age in the Rust Agent Room while retaining the existing coordinator judgment, review and audit actions. Rust consumes the existing snapshot and does not change the JavaScript UI/backend implementation.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.

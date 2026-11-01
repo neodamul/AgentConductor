@@ -1592,3 +1592,11 @@ Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → 
 ### DD-209 Resolve the watched workspace dynamically through a weak session reference
 Keep one workspace listener, but give it a shared weak reference to the Room's current `Startup`. Each check resolves the current startup and report paths; switching updates the weak reference alongside the `startup` field. This avoids retaining an old session's lease while still observing the selected workspace. A strong reference in the listener would keep an idle workspace locked after switch; a static path or weak reference to only the initial session would watch stale state.
 Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### DD-212 Render coordinator status from the existing snapshot
+In native Agent Room Coordinator → Activity, derive state counts and task rows from the already delivered run snapshot, pairing planned tasks and task reports by ID. Show `quiet_ms` from the activity map as the last-output age when available. Place the board before the existing judgment/history content, and exclude only history entries whose event is `workflow` from that rendered timeline. Do not change stored history, request another snapshot, add polling, or dispatch work during rendering.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → DDR-51 → DD-212. Rust port of JavaScript #267, 2026-11-01.
+
+### DD-213 Keep #286 scoped to the Rust UI workstream
+Use the existing Agent Room snapshot as the input contract and implement the board with egui in Rust. Preserve the JavaScript and backend implementation under their current ownership; request no new backend data or polling. If snapshot fields are missing, render an explicit unavailable state or omit the optional age rather than changing the other workstream's contract in this branch.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.
