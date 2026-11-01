@@ -1,5 +1,6 @@
 # AgentConductor knowledge wiki
 
+- [Windows UI Automation text pacing](windows-uia-text-pacing.md): pace Unicode keystroke injection and verify persisted text in the exact packaged Windows app.
 - [Windows managed-workspace package probe](windows-packaged-signal-settings.md): resolve the workspace created on first launch before checking exact-package signal settings.
 - [Windows packaged schedule interaction](windows-packaged-schedule.md): exact-release UI Automation schedule persistence, failure diagnostics, and acceptance evidence.
 - [Current verification](current-verification.md): latest cross-platform package and workflow checkpoints.

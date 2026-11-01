@@ -49,6 +49,19 @@ fn goal_driver_waits_for_enabled_controls_and_keyboard_focus_before_typing() {
 }
 
 #[test]
+fn goal_driver_paces_unicode_input_between_characters() {
+    let source = include_str!("windows_desktop.rs");
+    let type_text = source
+        .split("public static void TypeText(string text) {")
+        .nth(1)
+        .and_then(|body| body.split("public static void PressEnter() {").next())
+        .expect("goal field text input helper");
+    let send = type_text.find("SendInput(2, new[] { down, up }");
+    let pace = type_text.find("System.Threading.Thread.Sleep(100);");
+    assert!(send.is_some_and(|index| pace.is_some_and(|sleep| index < sleep)));
+}
+
+#[test]
 fn save_driver_uses_keyboard_activation_when_invoke_pattern_is_missing() {
     let source = include_str!("windows_desktop.rs");
     let focus = source.find("$save.SetFocus()");

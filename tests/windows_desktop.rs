@@ -57,6 +57,7 @@ public static class DesktopInput {
       var up = Key(0, KEYEVENTF_UNICODE | KEYEVENTF_KEYUP);
       up.Payload.Keyboard.Scan = character;
       if (SendInput(2, new[] { down, up }, Marshal.SizeOf(typeof(Input))) != 2) throw new InvalidOperationException("SEND_INPUT_TEXT_FAILED");
+      System.Threading.Thread.Sleep(100);
     }
   }
   public static void PressEnter() {

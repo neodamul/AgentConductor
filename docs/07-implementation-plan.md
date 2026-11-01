@@ -1,3 +1,12 @@
+### Fix packaged Windows default-workspace input gate — issue #9 / #310 / 2026-11-02
+
+- [x] Plan: inspect failed exact package run `41309723645`; Windows UI Automation focused the goal field but persisted an empty value after the driver sent `Windows UIA goal`.
+- [x] Red / Green: the new driver contract failed before the fix because Unicode input had no pacing; one 100 ms delay after each character pair now keeps the existing post-entry settle and persisted-value assertion.
+- [x] Verify locally: Windows driver, run-lifecycle, source-layout, and desktop contract suites pass 16 tests with one ignored; rustfmt and diff checks pass; changed test files are 202 and 193 lines. The all-target native suite observed 1,029 passed / 15 ignored across 309 suites before it was stopped for runtime; no test failure was observed, but this is not counted as a completed command.
+- [ ] Verify package: the previous exact Windows package failed to persist the goal text. Run the current exact Windows package before claiming Windows acceptance or closing #310.
+- [ ] Integrate: commit and push to the active #9 branch; rerun exact Windows package acceptance before closing #310.
+- [x] Assetize: document the packaged-driver boundary in the LLM Wiki and save AgentMemory `mem_mvxzjvkh_e262c47c9cba`; Graphify refreshed to 12,159 nodes / 19,847 edges.
+
 ### Port Windows managed-workspace package probe — issue #226 / #9 / 2026-11-02
 
 - [x] Plan: inspect #230 against the active #260 parent. Workspace restore/delete product code is already present in the parent; focused local launch, deletion, registry and source-layout tests pass 5/5.
