@@ -1158,6 +1158,7 @@
   "startup.task_warning_model_not_suited": "{value1} is not a good fit for: {value2}",
   "startup.model_hint": "Effort: {value1} · Suits: {value2}",
   "common.no_new_state": "No new state from the app for {value1}s",
+  "common.waiting_reply": "Waiting for the app: {value1} {value2}",
   "startup.start_text": "Starting agent execution… {value1}:{value2} elapsed, waiting for the run report",
   "startup.start_failed": "The run did not start: {value1}{value2}. Logs: {value3}",
   "startup.models_querying": "Querying models…",

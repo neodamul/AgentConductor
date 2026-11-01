@@ -19,7 +19,8 @@ function notice(message,error=false) { AC_I18N.text($('notice'),message);$('noti
 // DD-40: installed application icons for built-in agents; custom agents keep letters.
 let iconCache={},iconKinds='';const ICONS=()=>iconCache;
 function avatar(parser,label,cls){const url=parser&&parser!=='custom'?ICONS()[parser]:null;if(url){const img=document.createElement('img');img.src=url;img.alt='';img.className=cls+' app-icon';img.setAttribute('aria-hidden','true');return img;}const span=document.createElement('span');span.className=cls;AC_I18N.bind(span,()=>((label||'?').slice(0,1).toUpperCase()));return span;}
-async function request(packet) {
+async function request(packet, watched) {
+  if (!watched && typeof AC_WAIT !== 'undefined') return AC_WAIT.watch(packet.kind === 'action' ? packet.action.kind : packet.kind, request(packet, true));
   const bridge=window.webkit?.messageHandlers?.agentconductor??(window.__acRequest?{postMessage:window.__acRequest}:null);
   if(!bridge)throw Error(acMessage("startup.native_bridge_unavailable"));
   // A timed-out mutation remains accepted. Never automatically retry it.
@@ -84,7 +85,7 @@ function activityLines(a, extraMs = 0) { if (!a) return []; const lines = []; if
 function pendingReason(r, i, now) { const t = r.tasks[i], p = r.plan.tasks[i]; if (t?.status !== 'pending') return ''; const waits = (p.depends_on || []).filter(id => r.tasks.find(x => x.id === id)?.status !== 'completed'); if (waits.length) return acMessage("room.pending_dependencies", { value1: waits.join(', ') }); if (t.timeouts > 0 && t.retry_not_before * 1000 > now) return acMessage("room.pending_retry", { value1: formatAge(t.retry_not_before * 1000 - now) }); const a = r.plan.agents.find(x => x.id === p.agent); if (a && r.account_restrictions?.[a.quota_group || a.executable]) return acMessage("room.pending_account"); const active = r.tasks.filter((x, j) => x.status === 'running' && r.plan.tasks[j].agent === p.agent).length; if (a?.max_sessions && active >= a.max_sessions) return acMessage("room.pending_session_limit", { value1: a.max_sessions }); return ''; }
 function verificationText(v, now) { if (!v) return ''; if (v.stage !== 'test') return acMessage("room.verification_preparing"); const out = v.output || {}; return acMessage("room.verification_test", { value1: v.index + 1, value2: v.total, value3: v.task, value4: formatAge(now - v.started_ms) }) + ' · ' + (out.updated_ms ? acMessage("room.activity_last_output", { value1: formatAge(now - out.updated_ms) }) : acMessage("room.activity_no_output")); }
 function runAttention(s) { if (s?.report?.state !== 'running') return ''; if (s.stopping) return acMessage("room.stopping_run"); if (s.runner === 'absent' && s.job?.state !== 'running') return acMessage("room.runner_absent"); return ''; }
-let activitySeen = null, activityAt = 0, lastSnapshotAt = 0;
+let activitySeen = null, activityAt = 0, lastSnapshotAt = 0, connectionWaited = false;
 function renderActivity() { const el = $('task-activity'); if (!el) return; const a = snapshot?.activity?.[task()?.id]; if (snapshot !== activitySeen) { activitySeen = snapshot; activityAt = Date.now(); } const lines = coordinatorView ? [] : a ? activityLines(a, Date.now() - activityAt) : [pendingReason(snapshot.report, selected, Date.now())].filter(Boolean); const text = lines.join(' · '); el.style.visibility = text ? 'visible' : 'hidden'; if (el.textContent !== text) { el.textContent = text; el.title = text; } renderLive(); }
 // Live facts are redrawn every second from recorded times, so a slow reply never freezes them; the age of the last snapshot is said after 5 s.
 function renderLive() {
@@ -92,7 +93,7 @@ function renderLive() {
   for (const el of document.querySelectorAll('.session-note[data-task]')) { const i = r.tasks.findIndex(t => t.id === el.dataset.task), t = r.tasks[i], a = snapshot.activity?.[t?.id]; const text = t?.status === 'running' && a ? (a.quiet_ms == null ? acMessage("room.activity_no_output") : acMessage("room.activity_last_output", { value1: formatAge(a.quiet_ms + extra) })) : i >= 0 ? pendingReason(r, i, now) : ''; if (el.textContent !== text) el.textContent = text; el.hidden = !text; }
   const detail = $('final-detail'); if (detail && snapshot.verification) { const text = verificationText(snapshot.verification, now); if (detail.textContent !== text) detail.textContent = text; }
   const job = snapshot.job; AC_I18N.bind($('job-state'), () => (busy() && job.kind !== 'quota' ? pretty(job.kind) + acMessage("room.in_progress") + (job.started_ms ? ' · ' + formatAge(now - job.started_ms) : '') : job?.state === 'failed' && job.kind !== 'quota' ? acMessage("room.action_needs_attention") : ''));
-  const stale = AC_STALE(lastSnapshotAt, now); if (stale) AC_I18N.bind($('connection'), () => stale); $('connection').classList.toggle('stale', !!stale);
+  const stale = AC_STALE(lastSnapshotAt, now), waiting = AC_WAIT.text(now); if (stale || waiting) AC_I18N.bind($('connection'), () => stale || waiting); else if (connectionWaited && !pollFailures) AC_I18N.bind($('connection'), () => acMessage("room.connected_local_run")); connectionWaited = !!waiting && !stale; $('connection').classList.toggle('stale', !!stale);
   let box = $('run-banner-attention'); if (!box) { box = node('p', undefined, 'run-banner-attention'); box.id = 'run-banner-attention'; $('run-banner-progress').parentElement.append(box); } const attention = runAttention(snapshot) || stale; if (box.textContent !== attention) box.textContent = attention; box.hidden = !attention;
 }
 setInterval(() => { if (!document.hidden && !roomStopped) renderActivity(); }, 1000);
@@ -227,7 +228,7 @@ function renderSnapshot() {
   $('merge').disabled=!idle()||r.state!=='approved'||!currentReview;
   AC_I18N.bind($('merge'),()=>(r.direct_workspace?acMessage("room.accept_changes"):r.folder?acMessage("room.apply_changes"):acMessage("room.merge")));
   AC_I18N.bind($('candidate-note'),()=>(r.direct_workspace?(r.state==='completed'?acMessage("room.accepted_complete"):r.state==='approved'?acMessage("room.approved_accept_changes"):acMessage("room.review_diff_and_tests_before_approval")):r.folder?(r.state==='completed'?acMessage("room.changes_applied_this_run_is_complete"):r.state==='approved'?acMessage("room.approved_applying_changes_remains_a_separate_action"):acMessage("room.review_diff_and_tests_before_approval")):r.state==='completed'?acMessage("room.merged_this_run_is_complete"):r.state==='approved'?acMessage("room.approved_merging_remains_a_separate_action"):review&&!currentReview?acMessage("room.state_changed_inspect_the_latest_evidence"):acMessage("room.review_diff_and_tests_before_approval")));
-  nextStep(r,currentReview);renderQuota(a);renderTools();AC_I18N.bind($('run-path'),()=>(snapshot.run_dir));AC_I18N.bind($('connection'),()=>(acMessage("room.connected_local_run")));
+  nextStep(r,currentReview);renderQuota(a);renderTools();AC_I18N.bind($('run-path'),()=>(snapshot.run_dir));AC_I18N.bind($('connection'),()=>((typeof AC_WAIT!=='undefined'&&AC_WAIT.text())||acMessage("room.connected_local_run")));
 }
 // DD-112: provider events read like the CLI transcript; raw JSON stays in the Raw logs tab.
 const clipLines=(text,max=8)=>{const all=String(text??'').replace(/\s+$/,'').split('\n');return all.length>max?all.slice(0,max).join('\n')+acMessage("room.more_lines", {value1:all.length-max}):all.join('\n');};
@@ -366,7 +367,7 @@ function renderTask(data) {
 async function loadTask() {if(!snapshot||roomStopped)return;if(coordinatorView){try{const data=await request({kind:'coordinator'});if(!roomStopped)renderCoordinator(data);}catch(e){notice(e.message,true);}return;}const index=selected;try{const data=await request({kind:'task',index});if(!roomStopped&&index===selected)renderTask(data);}catch(e){notice(e.message,true);}}
 async function act(action,revision=snapshot?.revision) {
   if(roomStopped)return false;
-  try{const pending=request({kind:'action',revision,action}),accepted=await (typeof AC_PRESS!=='undefined'?AC_PRESS.track(pending):pending);if(action.kind!=='quota')notice(()=>(accepted.message||acMessage("room.accepted_waiting_for_the_coordinator", {value1:pretty(accepted.kind)})));await poll();return true;}catch(e){if(action.kind!=='quota')notice(e.message,true);await poll();return false;}
+  try{const accepted=await request({kind:'action',revision,action});if(action.kind!=='quota')notice(()=>(accepted.message||acMessage("room.accepted_waiting_for_the_coordinator", {value1:pretty(accepted.kind)})));await poll();return true;}catch(e){if(action.kind!=='quota')notice(e.message,true);await poll();return false;}
 }
 async function decision(title,description,evidence,needsReason=false,confirm=acMessage("room.confirm")) {
   const dialog=$('decision-dialog');AC_I18N.bind($('dialog-title'),()=>(title));AC_I18N.bind($('dialog-description'),()=>(description));AC_I18N.bind($('dialog-evidence'),()=>(evidence));

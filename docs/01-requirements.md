@@ -786,3 +786,7 @@ Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209.
 ### R-198 Every wait of the workspace page counts its time
 Besides planning, starting and running, the waits the operator starts on the workspace page (a coordinator chat answer, a goal rewrite, an MCP lookup or tool discovery, an app update check or install) shall show how long they have been running, counted from their start also after the page reopens, and shall say when the app has sent no new state for a while, in the panel or dialog where the wait is shown. A control that a finished request makes available (the source preview after a typed reference) shall become available when that request answers.
 Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, user, 2026-11-01.
+
+### R-199 Every press is answered on screen
+When the operator presses a control that sends a request to the app, the pressed control shall show that its work is running until the reply, and once the reply has taken more than a second the page shall name the request and count its time where the page shows its status (the workspace status line, the run screen's connection line), also when the control was in a dialog that has closed. Periodic refreshes shall not be shown this way, and a refresh at the normal idle interval shall not be reported as silence of the app.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.

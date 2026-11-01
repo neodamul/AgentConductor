@@ -63,8 +63,9 @@ const AC_PATHS=(()=>{
 })();
 // GitHub #279: the time since a recorded start as m:ss, never negative.
 const AC_ELAPSED=(from,now=Date.now())=>{const s=Math.max(0,Math.floor((now-from)/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
-// GitHub #273: how long the app has sent no new state, once that is over 5 s (0 = no snapshot yet).
-const AC_STALE=(at,now=Date.now())=>at&&now-at>5000?acMessage('common.no_new_state',{value1:Math.floor((now-at)/1000)}):'';
+// GitHub #273: how long the app has sent no new state, once that is over 6 s (0 = no snapshot yet);
+// GitHub #285: idle pages refresh every 5 s plus the reply, so 5 s would flag a normal refresh.
+const AC_STALE=(at,now=Date.now())=>at&&now-at>6000?acMessage('common.no_new_state',{value1:Math.floor((now-at)/1000)}):'';
 // A pressed button shows that its work is running (user request 2026-10-14): it keeps its own
 // colors with a moving bar and a progress cursor, so it never looks like a disabled button.
 // track() covers a request; hold() keeps the mark while a background job started by it runs.
@@ -75,4 +76,13 @@ const AC_PRESS=(()=>{
   function track(promise){const b=Date.now()-lastAt<2000?last:null;if(!b)return promise;mark(b,true);return Promise.resolve(promise).finally(()=>{if(!b.dataset.held)mark(b,false);});}
   function hold(b,on){if(!b?.classList)return;if(on)b.dataset.held='1';else delete b.dataset.held;mark(b,on);}
   return {track,hold};
+})();
+// GitHub #285: a request the operator started (not a refresh) marks the pressed button and, once it
+// has waited 1 s, is named with its time on the status line, so no press goes unanswered.
+const AC_WAIT=(()=>{
+  const quiet=new Set(['snapshot','client_timeout','update_status','check_update','mcp_source_suggestions','chat_history','workspaces','task','coordinator','quota']);
+  const open=new Map();let next=0;
+  function watch(kind,promise){if(quiet.has(kind))return promise;const id=++next;open.set(id,{kind,at:Date.now()});return AC_PRESS.track(Promise.resolve(promise).finally(()=>open.delete(id)));}
+  function text(now=Date.now()){let first=null;for(const w of open.values())if(!first||w.at<first.at)first=w;return first&&now-first.at>=1000?acMessage('common.waiting_reply',{value1:first.kind.replaceAll('_',' '),value2:AC_ELAPSED(first.at,now)}):'';}
+  return {watch,text};
 })();

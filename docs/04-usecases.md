@@ -795,3 +795,7 @@ Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209.
 ### UC-189 Waiting for an answer, a rewrite, a lookup or an update
 The operator asks the coordinator, closes the workspace and opens it again: the chat line says the coordinator has been reading for 2:06 and keeps counting. The app stops answering for 9 s: the line adds that no new state came for 9 s. The same holds for a goal rewrite, for the MCP review dialog while sources are read, and for the update dialog while it checks or installs.
 Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, user, 2026-11-01.
+
+### UC-190 Pressing a button the app is slow to answer
+The operator presses the messenger test, deletes a workspace or asks for the team briefing; the button shows it is working and after a second the status line reads "Waiting for the app: delete workspace 0:03" until the answer comes, then the line returns to normal.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.
