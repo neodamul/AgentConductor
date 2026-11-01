@@ -1,7 +1,7 @@
 ### Root PR status and event-driven UI verification — 2026-11-02
 
 - [x] GitHub audit: PR #22 is the only open pull request. The Rust migration is not blocked by a pile of open child PRs; it is concentrated in one oversized root PR.
-- [x] Latest-main audit: `main` is `13ff88b2`; current Rust head is `0c764074` (product code `c6c18042`); merge base is `e32295b3`. The branch is 1,062 commits ahead and 143 behind; the PR changes 1,775 files. Read-only `git merge-tree` reports 119 conflicts (68 content, 23 add/add, 28 modify/delete).
+- [x] Latest-main audit: `main` is `13ff88b2`; current Rust head is `4d176e93`; merge base is `e32295b3`. The branch is 1,066 commits ahead and 143 behind; the PR changes 1,776 files. Read-only `git merge-tree` reports 119 conflicts (68 content, 23 add/add, 28 modify/delete).
 - [x] Verify #257's existing implementation instead of duplicating it: scoped event subscriptions and coalesced invalidations are present; reads, state changes, blocking I/O, and background refresh use separate bounded lanes. Local Rust worker-concurrency and event tests pass 16/16.
 - [x] Cross-check latest-main Claude quota fixes #297/#315: Rust uses a shared 180-second limit in both collectors and exposes elapsed time. Local quota/wait/parser tests pass 16 with 1 ignored; elapsed UI tests pass 2/2. Exact Windows package/account verification remains open.
 - [ ] Next: reconcile current-main behavior into the Rust root without restoring the legacy UI; resolve the remaining exact-package Windows workflow 23/24 gates. Do not create another PR for this work.
@@ -12,7 +12,7 @@
 - [x] Red: three provider-JSONL regressions failed on the old behavior: unfinished fence returned no JSON, a 100 KiB reply was rejected, and a 257 KiB reply reported the old 64 KiB limit.
 - [x] Task / Green: scan subsequent fence markers after each malformed candidate; accept a reply of exactly 256 KiB and retain the independent 1 MiB provider event bound.
 - [x] Verify: coordinator, new document, public-doc, and source-layout suites pass 23 tests; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line checks pass (`src/coordinator/document.rs`: 195 lines; new test: 42; coordinator tests: 161).
-- [ ] Complete: update LLM Wiki and AgentMemory; commit/push to existing #22 only; refresh its body/issue #9 progress. This port adds no packaged-workflow credit.
+- [x] Complete: update LLM Wiki and AgentMemory (`mem_mvy4tsgu_679520f8f5f4`); Graphify refreshed to 12,389 nodes / 20,193 edges; implementation commit `4d176e93` pushed to existing #22. GitHub issue #9 and PR #22 receive the exact test result in the current checkpoint. This port adds no packaged-workflow credit.
 
 ### Verify Windows schedule test path — bug #310 / 2026-11-02
 
