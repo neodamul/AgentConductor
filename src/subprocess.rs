@@ -43,6 +43,29 @@ pub fn background_fallback_command(program: impl AsRef<OsStr>) -> Command {
     command
 }
 
+pub fn background_fallback_allowed(is_in_host_job: Option<bool>) -> bool {
+    is_in_host_job == Some(false)
+}
+
+#[cfg(windows)]
+pub fn current_process_is_in_host_job() -> std::io::Result<bool> {
+    use windows_sys::Win32::System::{JobObjects::IsProcessInJob, Threading::GetCurrentProcess};
+    let mut is_in_job = 0;
+    // SAFETY: GetCurrentProcess returns a valid pseudo-handle; the output pointer is writable.
+    let succeeded =
+        unsafe { IsProcessInJob(GetCurrentProcess(), std::ptr::null_mut(), &mut is_in_job) };
+    if succeeded == 0 {
+        Err(std::io::Error::last_os_error())
+    } else {
+        Ok(is_in_job != 0)
+    }
+}
+
+#[cfg(not(windows))]
+pub fn current_process_is_in_host_job() -> std::io::Result<bool> {
+    Ok(false)
+}
+
 /// Reuse a calling terminal for CLI commands; never allocate a new console.
 pub fn attach_parent_console() {
     #[cfg(windows)]

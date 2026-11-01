@@ -1849,3 +1849,7 @@ Source `7a56e372e598fff7df593d3ab4933bad62021360` built an exact Apple Silicon p
 ## 2026-10-30 — Triage bug #226 workspace restore report
 
 Reviewing PR #230 found no reproducible product defect from the current report. Five focused workspace/delete/launch suites pass 20 tests. Confirmed Delete archives and unregisters a folder, while Remove-from-menu deliberately retains the directory; deleting the default may create an empty replacement workspace. The report does not identify which path occurred. Issue #226 remains open for repro details and exact Windows package verification. See `docs/07-implementation-plan.md` and `knowledge/wiki/current-main-rust-parity.md`.
+
+## 2026-11-01 — Refuse unsafe Windows background-chat fallback — issue #189
+
+When Windows denies Job Object breakaway for a detached chat worker, a normal hidden child is not guaranteed to survive desktop shutdown if it inherits a host Job Object. The fallback now calls `IsProcessInJob` and is allowed only when the desktop is outside every host job. Membership or query failure persists `not_spawned` and reports an explicit error, avoiding a false running state. A red/green policy test and local focused tests, formatting, diff hygiene, and warning-denied Clippy pass; exact Windows package execution remains pending.
