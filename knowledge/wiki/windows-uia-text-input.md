@@ -12,7 +12,7 @@ The application's locked UI stack supports this route: `egui 0.37.0` emits Acces
 
 ## Verification Boundary
 
-The regression must assert the driver order (focus, `ValuePattern.SetValue`, value readback, Save) and the test must assert the persisted `startup.json` value. A macOS source-contract test verifies only the driver structure. Exact-head run `41347900792` disproved the earlier claim that the driver used `SetValue`: the Windows driver still used Unicode `SendInput`, focused the Goal field, and read an empty value. The source contract now requires `SetValue` plus bounded readback, but this correction still needs a fresh exact packaged Windows run. Count the Windows workflow only after that package test succeeds.
+The regression must assert the driver order (focus, `ValuePattern.SetValue`, value readback, Save), the related lifecycle-driver contract must agree with that input method, and the test must assert the persisted `startup.json` value. Exact-head run `41347900792` showed the driver still used Unicode `SendInput`, focused the Goal field, and read an empty value. The correction made the Windows debug `windows_desktop` test pass in run `41350246764`, but that run then failed because `windows_run_lifecycle` still required `TypeText` and prohibited `.SetValue`; the package job was skipped. Both source contracts now require `SetValue` and bounded readback. Count the Windows workflow only after a fresh exact packaged run passes.
 
 ## References
 

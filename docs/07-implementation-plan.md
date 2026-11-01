@@ -43,11 +43,13 @@
 - [x] Plan: exact-head run `41347900792` passed macOS validation but Windows failed `default_native_workspace_is_accessible_and_saves_through_ui_automation`; UI Automation focused Goal, while Unicode `SendInput` left its value empty. The earlier plan claim that this driver called `ValuePattern.SetValue` was incorrect; source inspection found it still called `TypeText`.
 - [x] Red: update driver-contract assertions to require `ValuePattern.SetValue`, readback, and save order; `cargo test --locked --offline --test windows_desktop_driver` fails 5 contract tests against the old script.
 - [x] Green: set the value through UI Automation, poll its value for at most three seconds to allow the native UI event to settle, then save only after an exact match. Remove the now-unused Unicode typing helper.
-- [x] Verify locally: `windows_desktop_driver` and `source_layout` pass 16 tests; warning-denied test Clippy, rustfmt, diff hygiene pass. `windows_desktop.rs` is 170 lines and the driver contract tests are 186 lines. This verifies the script contract on macOS, not Windows execution.
+- [x] Exact Windows evidence: run `41350246764` executed the revised `windows_desktop` input test successfully, then failed the independent `windows_run_lifecycle` contract because it still required the removed `TypeText` call and prohibited `.SetValue`. The package job was skipped.
+- [x] Red / Green: the first full local rerun reproduced the stale lifecycle assertion; update it to require the exact `SetValue` input contract. Focused driver/lifecycle/source-layout/public-doc suites pass 28 tests with one ignored; warning-denied test Clippy, rustfmt, and diff checks pass.
+- [x] Full local Verify: locked/offline all-target native Rust suite passes 1,279 tests, 16 ignored, 0 failed across 394 suites in 290.11s. `windows_desktop.rs` is 170 lines, `windows_desktop_driver.rs` 186 lines, and `windows_run_lifecycle.rs` 233 lines.
 - [x] Dependency evidence: the locked `egui 0.37.0` text editor sends AccessKit `SetValue`; `accesskit_windows 0.35.1` maps that action to UIA `IValueProvider.SetValue` for value-bearing nodes.
 - [x] Assetize this correction: update LLM Wiki `windows-uia-text-input.md`, AgentMemory, and Graphify after the TDD fix. CocoIndex is unavailable in the current environment.
-- [ ] Integrate: commit and push this correction to the existing #9 root branch; do not create a child PR.
-- [ ] Verify package: require a fresh exact-head Windows package run of `windows_desktop`; run `41347900792` failed before package jobs, so it is not acceptance evidence. Keep #9 and related Windows acceptance issues open until the packaged run passes.
+- [ ] Integrate: commit and push the lifecycle-contract correction to the existing #9 root branch; do not create a child PR.
+- [ ] Verify package: require a fresh exact-head Windows package run of `windows_desktop`; runs `41347900792` and `41350246764` did not reach native-package acceptance. Keep #9 and related Windows acceptance issues open until the packaged run passes.
 - [x] Assetize: document the packaged-driver boundary in the LLM Wiki and save AgentMemory `mem_mvxzjvkh_e262c47c9cba`; Graphify refreshed to 12,159 nodes / 19,847 edges.
 - [x] Record local-first CI decision in AgentMemory `mem_mvxzuhf9_3fb94bacea78`; do not treat the cancelled workflow as acceptance evidence.
 
