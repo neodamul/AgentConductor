@@ -2,6 +2,7 @@
 
 - [Windows UI Automation text input](windows-uia-text-input.md): set and verify text through UI Automation `ValuePattern` in the exact packaged Windows app.
 - [Windows snapshot locking](windows-snapshot-lock-retry.md): bounded recovery from transient SQLite locking protocol errors during active native UI snapshots.
+- [Windows packaged chat serialization](windows-packaged-chat-serialization.md): serialize UI Automation package tests that share the interactive Windows desktop.
 - [Windows managed-workspace package probe](windows-packaged-signal-settings.md): resolve the workspace created on first launch before checking exact-package signal settings.
 - [Windows packaged schedule interaction](windows-packaged-schedule.md): exact-release UI Automation schedule persistence, failure diagnostics, and acceptance evidence.
 - [Current verification](current-verification.md): latest cross-platform package and workflow checkpoints.

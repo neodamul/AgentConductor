@@ -3,13 +3,13 @@
 ## Current migration reconciliation — 2026-11-02 (updated)
 
 GitHub currently shows one open pull request: draft root PR #22. Its head is
-`1aed3508`, and GitHub reports it mergeable. The latest `main` (`13ff88b2`) is
+`e7c51826`, and GitHub reports it mergeable. The latest `main` (`13ff88b2`) is
 an ancestor of this head: `git merge-base HEAD origin/main` returns
 `13ff88b2`, and `git rev-list --left-right --count HEAD...origin/main` returns
 `1077 0`. The earlier snapshot below, which said this branch was 143 commits
 behind and had 119 merge conflicts, is stale; the current branch has no missing
 `main` ancestry. This ancestry check does not prove user-visible Rust parity.
-PR #22 still changes 1,771 files (+91,563/-25,436) and remains Draft while the
+PR #22 currently changes 1,772 files (+91,712/-25,434) and remains Draft while the
 exact packaged Windows workflow and screen-by-screen UI acceptance are open.
 Keep the work on this root PR and continue auditing behavior against current
 `main`; do not create child PRs for the migration.
@@ -19,6 +19,14 @@ native UI captured a snapshot during a scheduled task action. The Rust UI now
 retries only transient SQLite lock errors for read-only snapshots, with a
 bounded backoff; action requests are never replayed. Details and remaining
 Windows verification are tracked in [Windows snapshot locking recovery](windows-snapshot-lock-retry.md).
+
+The follow-up run `41356140816` passed both platform validations and the exact
+macOS package. The Windows package then exposed three concurrent chat UIA tests
+competing for desktop focus. The package UI workflow now pins these tests to one
+thread; see [Windows packaged chat serialization](windows-packaged-chat-serialization.md).
+The local full Rust suite, warning-denied all-target Clippy, formatting, source
+layout, and public documentation checks pass after the serialization fix. An
+exact Windows package rerun remains pending.
 
 The native UI already uses bounded per-surface events and separate request lanes
 for reads, state changes, blocking I/O, and background refresh. Local worker and

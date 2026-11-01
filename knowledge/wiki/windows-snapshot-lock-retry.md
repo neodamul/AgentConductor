@@ -27,8 +27,13 @@ implemented; the focused test and `native_ui_task_scheduling` suites then
 passed 11 tests on macOS. The locked/offline all-target native suite now passes
 1,281 tests with 16 ignored and 0 failures across 394 suites. Warning-denied
 Clippy, formatting, source layout, and public-doc checks also pass. Exact
-Windows rerun and packaged Windows UI acceptance are still required before
-accepting the fix.
+Platform Validation run `41356140816` now passes macOS and Windows, including
+the Windows schedule regression and native UI launch path. The exact-head local
+macOS package smoke passes at `e7c51826` (SHA-256
+`bbd4f66b15221532525308f096fc3909a9e28823ac675287658ecee8fbfaa93f`). The
+macOS package job passed; the Windows package UI tests then failed while three
+chat journeys competed for desktop focus. The serialization correction and its
+exact Windows rerun are tracked in [Windows packaged chat serialization](windows-packaged-chat-serialization.md).
 
 ## Operational boundary
 
