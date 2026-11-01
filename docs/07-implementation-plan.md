@@ -6784,3 +6784,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Save AgentMemory `mem_mvxf7p2e_e73272420eed`.
 - [x] Update #257 and PR #294; send Claude signal `sig_mvxf94bp_27c4629e7206`.
 - [x] Commit/push `1cfed4e` on `codex/issue-257-rust-draft-preservation`.
+
+### 2026-11-01 — Verify monitor-owned UI child completion — issue #257 / PR #294
+
+- [x] Plan: keep the dedicated monitor as the sole child reaper; assert its persisted terminal owner record and exit code instead of calling `waitpid` after the monitor has reaped the process.
+- [x] Red: macOS Actions run `41281059096` failed `native_review_requires_current_revision_and_exact_candidate_and_keeps_accepted_work_after_close` because the direct `waitpid` returned `-1`; the Windows validation job passed.
+- [x] Task / Green: update the integration test to wait for both workflow completion and the monitor-owned `phase: terminal` record, then assert exit code `0`.
+- [x] Verify locally: the focused regression passes; all 6 tests in `tests/ui.rs` pass; warning-denied targeted Clippy, rustfmt, diff hygiene, and the 300-line guard pass (`tests/ui.rs`: 262 lines).
+- [x] Update QAS-194 and the LLM Wiki to make monitor ownership explicit.
+- [ ] Exact PR validation: push the fix to `codex/issue-257-rust-draft-preservation` and require macOS plus Windows platform validation to pass before closing the CI gate.

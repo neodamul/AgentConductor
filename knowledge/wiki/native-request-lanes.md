@@ -39,7 +39,7 @@ The task-progress spool observer starts at 100 ms, doubles its delay up to 2 sec
 
 ## Coordinator process completion
 
-The native request worker must never wait for a coordinator child or for terminal SQLite audit persistence. A named standard-library monitor thread owns `Child::wait`, updates the in-memory job state briefly, then writes the owner record and terminal action event outside the job-state lock. Poll requests read the in-memory state and continue reporting `running` until terminal persistence succeeds; a persistence failure is surfaced as a failed job. If monitor thread creation fails, the existing `try_wait` fallback remains available. Regression: `tests/support/controller_job_monitor.rs` holds a SQLite write lock after the child exits and verifies that `Controller::poll` remains responsive until the audit can be saved.
+The native request worker must never wait for a coordinator child or for terminal SQLite audit persistence. A named standard-library monitor thread owns `Child::wait`, updates the in-memory job state briefly, then writes the owner record and terminal action event outside the job-state lock. Integration tests wait for this monitor-owned terminal receipt and exit code; a second `waitpid` races the monitor and is not a valid completion check. Poll requests read the in-memory state and continue reporting `running` until terminal persistence succeeds; a persistence failure is surfaced as a failed job. If monitor thread creation fails, the existing `try_wait` fallback remains available. Regression: `tests/support/controller_job_monitor.rs` holds a SQLite write lock after the child exits and verifies that `Controller::poll` remains responsive until the audit can be saved.
 
 ## Cross-process invalidation
 
