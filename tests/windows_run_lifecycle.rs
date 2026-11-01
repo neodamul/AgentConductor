@@ -31,8 +31,10 @@ fn lifecycle_driver_exposes_stop_resume_and_recovery_observations() {
         "AC_RUN_LIFECYCLE_ACTION",
         "Stop run",
         "Stop reason",
+        "Wait-EditAfterLabel",
         "Confirm stop",
         "Resume run",
+        "Wait-Enabled-Control",
         "InvokePattern",
         "IsOffscreen",
         "BoundingRectangle.IsEmpty",
@@ -42,6 +44,13 @@ fn lifecycle_driver_exposes_stop_resume_and_recovery_observations() {
             "missing driver contract: {required}"
         );
     }
+    assert!(script::SCRIPT.contains("SetFocus"));
+    assert!(script::SCRIPT.contains("SendWait"));
+    assert!(!script::SCRIPT.contains("ValuePattern"));
+    let desktop_script = include_str!("windows_desktop.rs");
+    assert!(desktop_script.contains("SetFocus"));
+    assert!(desktop_script.contains("SendWait"));
+    assert!(!desktop_script.contains("ValuePattern"));
 }
 
 #[tokio::test]
