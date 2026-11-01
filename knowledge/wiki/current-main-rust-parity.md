@@ -21,6 +21,10 @@ Successful mutating Room requests publish content-free, scoped invalidations to 
 
 When the event bridge is unavailable, the Rust listener now fingerprints files beneath task worktree paths declared by `tasks[].cwd` and `plan.tasks[].paths`, in addition to report and SQLite/WAL metadata. Traversal is bounded to 512 paths and depth 8, ignores unsafe relative paths, and does not follow symlink directories. Glob roots handle Unix and Windows separators. The TDD regression first timed out, then passed along with cross-platform glob/path-escape cases. The affected native UI/source-layout suites pass 106 tests; all-target/all-feature warning-denied Clippy, rustfmt, diff hygiene, and the 300-line changed-file audit pass. Graphify refreshed to 11,960 nodes / 18,164 edges / 892 communities. CocoIndex CLI is unavailable in this environment. Exact packaged macOS/Windows validation remains open.
 
+## Coordinator chat timeout PR reconciliation — #234 / #239 / #240
+
+Main bug #234 is closed by merged PR #240. Rust `chat_revision`, chat-before-mutation-revision routing, and bounded request diagnostics are present in the #260 base and current Rust candidate; the `startup_chat` and `request_diagnostics` suites pass 9 tests on the current candidate. PR #239 remains an open, unmergeable draft on an older base. Its dedicated slow-`rev-parse` dispatch regression is not in #260, although equivalent source behavior is present. Keep the PR tracked until this test gap and exact package evidence are reconciled; do not duplicate the source fix. Current PR mergeability states and the follow-up disposition are recorded in `docs/07-implementation-plan.md`.
+
 ## Full local Rust test suite — issue #9 / 2026-10-29
 
 At exact branch head `355d6256d358533bfd182712ce1fa99d174b4aa4`, `cargo test --all-targets --locked --offline --features test-fixtures --no-fail-fast --quiet` exited 0 with no failures. The local run is macOS; authenticated provider and exact packaged-binary tests keep their explicit prerequisites. This does not replace the pending exact Windows package check or award packaged UI acceptance. Evidence: `docs/evidence/issue9-full-suite-355d625-20261029.json`.

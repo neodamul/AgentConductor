@@ -6749,16 +6749,18 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Save the completed unit to AgentMemory `mem_mvxehy1e_18717541fc81`; update #257 and PR #294 progress. Signal Claude with the Rust port and verification boundary.
 - [x] Commit and push `846e65b` on `codex/issue-257-rust-draft-preservation`.
 
-### Open Rust PR follow-up inventory — checked 2026-11-01
+### Open Rust PR follow-up inventory — refreshed 2026-11-01
 
-- [x] Confirm GitHub state: #192, #199, #202, #230, #239, #255, and #260 are all open draft PRs.
-- [ ] #192 — coordinator conversation persistence and reconnect behavior.
-- [ ] #199 — remove fixed authentication/local-first labels.
-- [ ] #202 — native goal optimizer and proposal review.
-- [ ] #230 — reopen the last saved workspace and retire blank placeholders.
-- [ ] #239 — coordinator chat request timeout fix; compare for overlap with #255 before integration.
-- [ ] #255 — current event-driven UI/chat/package work; exact Windows package acceptance and main-branch parity remain open.
-- [ ] #260 — Git HEAD fast path and bounded request/event lanes; this is the base branch for #294 and must be reconciled before #294 can merge.
+- [x] Recheck GitHub state: #192, #199, #202, #230, #239, #255, and #260 are open drafts; #294 is also open as a draft.
+- [x] Refreshed Graphify after this audit: 11,962 nodes / 18,166 edges / 902 communities.
+- [ ] #192 — coordinator conversation persistence/reconnect. Exact chat journeys passed, but the Windows package job failed later in the unrelated tool-decision journey; PR head/base have advanced from the evidence recorded in its body.
+- [ ] #199 — remove fixed authentication/local-first labels. GitHub currently reports mergeable; exact native package acceptance remains to be established.
+- [ ] #202 — native goal optimizer and proposal review. GitHub currently reports not mergeable; refresh against the active #9 base before integration.
+- [ ] #230 — reopen the last saved workspace and retire blank placeholders. GitHub currently reports not mergeable; its reported Windows package failure is in the shared tool-decision journey, while the original #226 symptom still lacks a concrete repro.
+- [x] #239 — audit overlap: main bug #234 was closed by merged PR #240. Rust `chat_revision` and bounded request diagnostics are already present on #260's base and current #294 source; `startup_chat` and `request_diagnostics` pass locally (9 tests). The dedicated slow-`rev-parse` dispatch regression from #239 is not in #260, and GitHub reports PR #239 not mergeable. Keep this draft tracked until that regression/package evidence is reconciled; do not reimplement the same source behavior.
+- [ ] #255 — Claude's event-driven UI/chat/package work; GitHub reports mergeable, but exact Windows package acceptance and current-main parity remain open.
+- [ ] #260 — Git HEAD fast path and bounded request/event lanes; GitHub reports mergeable and this is the base branch for #294.
+- [ ] #294 — Rust port/follow-up against #260; head `4282b858`, mergeable draft. Exact packaged macOS/Windows UI acceptance remains open.
 
 ### 2026-11-01 — Observe declared task worktree changes during event recovery — issue #257 / Claude PR #255 parity
 
