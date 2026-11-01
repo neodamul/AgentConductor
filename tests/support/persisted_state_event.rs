@@ -13,7 +13,9 @@ fn run_listener_observes_sqlite_changes_when_the_report_is_unchanged() {
     std::fs::write(&report, "unchanged").unwrap();
     let bus = Arc::new(EventBus::default());
     let subscription = bus.subscribe(EventSurface::AgentRoom).unwrap();
-    let _listener = RunChangeListener::spawn(report, bus).unwrap();
+    let _listener =
+        RunChangeListener::spawn_with_interval(report, bus, std::time::Duration::from_millis(20))
+            .unwrap();
     std::fs::write(root.join("state.sqlite"), "quota updated").unwrap();
 
     assert_eq!(
@@ -48,7 +50,12 @@ fn run_listener_observes_changes_in_declared_worktree_scope() {
     .unwrap();
     let bus = Arc::new(EventBus::default());
     let subscription = bus.subscribe(EventSurface::AgentRoom).unwrap();
-    let _listener = RunChangeListener::spawn(run.join("report.json"), bus).unwrap();
+    let _listener = RunChangeListener::spawn_with_interval(
+        run.join("report.json"),
+        bus,
+        std::time::Duration::from_millis(20),
+    )
+    .unwrap();
     std::fs::write(file, "updated contents").unwrap();
 
     assert_eq!(

@@ -6792,3 +6792,23 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task / Green: set a shared 60-second production wait for macOS and Windows; expose an injected deadline for tests; report limit and pre/post `/usage` stage; show elapsed time in the native quota card while its asynchronous job runs.
 - [x] Verify locally: 26 targeted tests passed, 1 ignored; source-layout suite passed; warning-denied Clippy, `cargo fmt --check`, `git diff --check`, and the 300-line limit passed. Windows cross-target compile was unavailable because `x86_64-pc-windows-gnu` is not installed here.
 - [x] Complete: issue #297 labeled `bug` and updated; Rust draft PR #303 is stacked on PR #294; AgentMemory `mem_mvxh8c3a_13b6f650bf06`; Claude signal `sig_mvxh8c41_92e4daa1feb3`; Graphify updated (11,990 nodes / 18,212 edges); commit `b438d6e3` pushed. Keep #297 open until Rust integration and Windows package validation.
+
+### 2026-11-01 — Verify monitor-owned UI child completion — issue #257 / PR #294
+
+- [x] Plan: keep the dedicated monitor as the sole child reaper; assert its persisted terminal owner record and exit code instead of calling `waitpid` after the monitor has reaped the process.
+- [x] Red: macOS Actions run `41281059096` failed `native_review_requires_current_revision_and_exact_candidate_and_keeps_accepted_work_after_close` because the direct `waitpid` returned `-1`; the Windows validation job passed.
+- [x] Task / Green: update the integration test to wait for both workflow completion and the monitor-owned `phase: terminal` record, then assert exit code `0`.
+- [x] Verify locally: the focused regression passes; all 6 tests in `tests/ui.rs` pass; warning-denied targeted Clippy, rustfmt, diff hygiene, and the 300-line guard pass (`tests/ui.rs`: 262 lines).
+- [x] Update QAS-194 and the LLM Wiki to make monitor ownership explicit.
+- [ ] Exact PR validation: push the fix to `codex/issue-257-rust-draft-preservation` and require macOS plus Windows platform validation to pass before closing the CI gate.
+
+### 2026-11-01 — Keep missed-event recovery at 30 seconds — issue #257 / PR #294
+
+- [x] Plan: align DD-208 and QAS-194 with the issue clarification: active updates arrive by events; metadata recovery is a fixed 30-second fallback and does not assemble snapshots.
+- [x] Red: `metadata_recovery_stays_at_thirty_seconds_after_a_change` failed because a detected change reset the next scan to 1 second.
+- [x] Task / Green: use a fixed 30-second production interval for report/startup and declared-worktree metadata listeners; retain short injected intervals only in deterministic tests.
+- [x] Verify locally: 17 event/listener tests, 2 source-layout tests, all-target/all-feature Clippy with `-D warnings`, rustfmt, and `git diff --check` pass.
+- [ ] Verify exact macOS and Windows platform validation on the updated PR #294 head; no packaged UI acceptance is claimed by source tests.
+- [x] Update QAS-194/DD-208 and LLM Wiki; refresh Graphify to 11,965 nodes / 19,568 edges; record AgentMemory `mem_mvxksy1o_c634d18900f9`.
+- [x] Update issue #257 and PR #294; commit and push `c7c7330b`.
+- [ ] Re-run exact-head macOS/Windows platform validation after the follow-up plan checkpoint; no packaged UI acceptance is claimed.

@@ -135,7 +135,12 @@ fn persisted_report_changes_emit_a_run_event() {
     ));
     let bus = Arc::new(EventBus::default());
     let subscription = bus.subscribe(EventSurface::AgentRoom).unwrap();
-    let listener = RunChangeListener::spawn(path.clone(), bus).unwrap();
+    let listener = RunChangeListener::spawn_with_interval(
+        path.clone(),
+        bus,
+        std::time::Duration::from_millis(20),
+    )
+    .unwrap();
 
     std::fs::write(&path, br#"{"state":"running","completed":0}"#).unwrap();
 
@@ -181,9 +186,12 @@ fn startup_changes_wake_workspace_and_run_changes_wake_both_surfaces() {
         report_path: Some(report.clone()),
     }));
     let current_watch = Arc::clone(&watched);
-    let listener =
-        RunChangeListener::spawn_startup(move || Some(current_watch.lock().unwrap().clone()), bus)
-            .unwrap();
+    let listener = RunChangeListener::spawn_startup_with_interval(
+        move || Some(current_watch.lock().unwrap().clone()),
+        bus,
+        std::time::Duration::from_millis(20),
+    )
+    .unwrap();
 
     std::fs::write(&startup, br#"{"job":"running","revision":1}"#).unwrap();
     assert_eq!(
@@ -248,9 +256,12 @@ fn startup_listener_follows_workspace_switch_without_owning_old_startup() {
         report_path: Some(first_report.clone()),
     }));
     let watched = Arc::clone(&current);
-    let listener =
-        RunChangeListener::spawn_startup(move || Some(watched.lock().unwrap().clone()), bus)
-            .unwrap();
+    let listener = RunChangeListener::spawn_startup_with_interval(
+        move || Some(watched.lock().unwrap().clone()),
+        bus,
+        std::time::Duration::from_millis(20),
+    )
+    .unwrap();
 
     *current.lock().unwrap() = StartupWatch {
         startup_path: second_startup,
