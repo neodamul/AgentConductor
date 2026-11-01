@@ -741,6 +741,52 @@ Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → 
 The operator deletes the default workspace while another saved workspace exists. After the app restarts or updates, the last used saved workspace opens and the default workspace is not in the list. With no saved workspace at all (first run, or after the last one was deleted) the app asks for a workspace name before anything else; no workspace named "desktop" is shown.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
 
+### UC-177 Keep native background supervision quiet
+The operator leaves Workspace or Agent Room open. Initial snapshot failures stay visible; existing scheduled Agent Room snapshots and automatic detail/coordinator reads use the quiet background path. A failure clears pending and is retried at the next normal schedule. If eframe repaints after multiple intervals, at most one Agent Room poll is sent and the next interval starts from the resumed monotonic time. Explicit Workspace refreshes and state-changing actions continue to show errors and are never replayed. An idle Workspace remains event-driven.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198. GitHub #221, 2026-10-29.
+
 ### UC-178 Run a task with an ACIO-enabled CLI
 The coordinator assigns a task to a profile that declares protocol ACIO, sends structured input with its owned workspace scope and session ID, records validated progress/result events, and resumes the worker only after the operator decides a requested tool action. A profile without ACIO follows its existing CLI path.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.
+### UC-179 Ask what the workspace planned or ran
+After a run, the operator asks coordinator chat what changed or how to run the result. The coordinator uses the quoted task states, errors, tests, changed files and bounded diff; it reads named project files when useful and does not guess from inaccessible run storage. Before a run, it reports that no run has started.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### UC-180 Open coordinator chat from its icon
+The operator sees the bubble icon in the native Workspace, identifies its purpose through the accessible name or hover label, and activates it to open the coordinator chat drawer.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
+
+### UC-181 A chat send times out before the operator knows whether it was accepted
+The operator sends a question. The controller request and the immediate conversation read both time out, so the question stays visible as pending and the input stays empty. When a later workspace snapshot succeeds, an accepted question is followed through its job; if absent from stored history, the question returns to the input with the original error.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.
+
+### UC-177 A reviewer or worker is asked in the standard form
+The operator runs a plan with an agent CLI that only reads a prompt and prints text. The worker receives the task, its rules and its evidence as Document, Task and Format; the reviewer receives the frozen evidence as Document, its instructions as Task and the JSON verdict shape as Format. A reviewer reply that is not valid JSON is asked for again once with the parse error, then reported.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### UC-184 Check a repository revision without waiting for Git
+An operator opens a workspace or confirms an action while repository state is being checked. For standard `.git` layouts, the native UI reads HEAD from metadata files. For linked worktrees or unsupported layouts, the request receives the last cached or pending revision immediately, while one background worker runs Git. Repeated checks coalesce; a slow Git process cannot block the view or unrelated controls.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
+
+### UC-185 Keep two native views synchronized while an operation runs
+The operator has Workspace and Agent Room open. A successful action in one view emits one state-change event to the other; the listener requests a single snapshot without echoing another event. A slow background refresh does not block an interactive request. When a peer-view event arrives during an unrelated pending response, the listener starts one bounded snapshot without waiting; the view applies it while preserving the pending action, unsaved form values, and current error. An open human decision modal can pause refresh for its view. Snapshot assembly releases the shared lock before filesystem and revision reads. Active and idle views both use events as the primary refresh path; a 30-second recovery check catches missed changes from outside the application.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, user, 2026-10-30.
+
+### UC-186 Continue an independent action during slow native work
+1. A view starts a slow snapshot, read, or blocking external I/O request.
+2. The operator starts an independent state-changing action or another view publishes a state change.
+3. Read, external-I/O, state-change, and periodic-refresh workers progress independently; mutations remain ordered.
+4. The UI listens for a coalesced invalidation, requests an asynchronous authoritative snapshot, and discards replies superseded by a newer foreground request.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
+
+### UC-187 Refresh active views from state-change notifications
+The operator leaves Workspace and Agent Room open while a coordinator or metadata subprocess is active. A local state change broadcasts an invalidation; an external state-file change wakes its listener. The affected view coalesces notifications and requests one asynchronous snapshot. If a notification is missed, a 30-second recovery check eventually reconciles the view without a frequent active-job snapshot loop.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
+
+When the operator approves a plan, the Workspace follows the persisted run event. The background snapshot that first observes the run report must perform the same start-completion transition as a foreground snapshot and open Agent Room immediately; the 30-second recovery check is only for missed events.
+
+### UC-188 Switch workspaces and release the idle previous lease
+1. The operator switches from an idle workspace to another workspace.
+2. The Room updates its current workspace watch target without transferring ownership of the previous `Startup` to the listener thread.
+3. The previous workspace lease is released, so another Room can open that workspace immediately.
+4. Persisted changes in the newly selected workspace continue to emit scoped notifications.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.

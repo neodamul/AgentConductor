@@ -4,7 +4,9 @@ use std::sync::Arc;
 
 use super::{Pending, Probe, RequestWorker, Surface, render, room, workspace};
 
+mod background;
 mod catalog;
+mod refresh;
 
 impl Probe {
     pub fn connect_surface(
@@ -40,12 +42,12 @@ impl Probe {
         } else {
             RequestWorker::new(room, context)?
         };
-        worker.send(br#"{"kind":"snapshot","icons":true}"#)?;
+        worker.send(super::worker::initial_snapshot(room_view))?;
         Ok(Self {
             motion,
             worker: Some(worker),
             room_view: room_view.then(room::State::default),
-            pending: room_view.then_some(Pending::Refresh),
+            pending: Some(Pending::Refresh),
             ..Self::default()
         })
     }
@@ -139,26 +141,6 @@ impl Probe {
                 self.error = None;
                 self.workspace_next_refresh = None;
                 self.pending = Some(Pending::Start);
-            }
-            Err(error) => self.error = Some(error),
-        }
-    }
-
-    pub(super) fn refresh_workspace(&mut self) {
-        let result = self
-            .worker
-            .as_ref()
-            .ok_or_else(|| "Workspace controller is unavailable".to_owned())
-            .and_then(|worker| worker.send(br#"{"kind":"snapshot","icons":true}"#));
-        match result {
-            Ok(()) => {
-                self.pending = Some(if self.navigation.stop_for_delete() {
-                    Pending::StopPlanningRefresh
-                } else if self.starting_run.is_some() {
-                    Pending::StartRefresh
-                } else {
-                    Pending::Refresh
-                })
             }
             Err(error) => self.error = Some(error),
         }

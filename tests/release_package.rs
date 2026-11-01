@@ -64,6 +64,17 @@ fn assembles_macos_and_windows_packages_with_reviewed_dependencies() {
         assert!(destination.join("SBOM.cdx.json").is_file());
         assert!(destination.join("DEPENDENCY-LICENSES.md").is_file());
         assert!(destination.join("THIRD-PARTY-NOTICES.md").is_file());
+        assert_eq!(
+            fs::read(destination.join("licenses/prompt-optimizer/LICENSE")).unwrap(),
+            b"Apache fixture\n"
+        );
+        assert!(
+            destination
+                .join("licenses/prompt-optimizer/SOURCE.md")
+                .is_file()
+        );
+        let notices = fs::read_to_string(destination.join("THIRD-PARTY-NOTICES.md")).unwrap();
+        assert!(notices.contains("prompt-optimizer") && notices.contains("getsentry/skills"));
         assert!(
             fs::read(destination.join("SHA256SUMS"))
                 .unwrap()

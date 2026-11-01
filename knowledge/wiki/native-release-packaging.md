@@ -1,5 +1,68 @@
 # Rust native release packaging
 
+## Windows tool-decision package journey timing — 2026-10-30
+
+The Windows UI Automation driver observed `Confirm tool decision` in the final
+accessibility dump after reporting that the expected state had not appeared within
+500 ms. Its activation helper could then send repeated pointer clicks (up to three)
+for one approval action, after UIA and keyboard attempts. The driver now verifies
+the in-window process-owned target, sends one pointer click, and waits up to four
+seconds for the resulting state. It no longer sends alternate approval inputs when
+the outcome is ambiguous. A source-contract regression prevents retries and
+alternate inputs from returning.
+Local static Windows-driver tests pass on macOS, but Windows package acceptance is
+still pending; this change does not claim a successful Windows runtime journey.
+
+## Exact-current macOS package at issue #9 head — 2026-10-30 (source 7a56e372)
+
+The current pushed source `7a56e372e598fff7df593d3ab4933bad62021360` builds an
+Apple Silicon package at
+`dist/agentconductor-aarch64-apple-darwin-7a56e372e598.zip`. Package validation,
+manifest/source identity, the 19,523,904-byte executable checksum, ZIP integrity,
+archive checksum, and packaged `--help` pass. The exact packaged executable passed
+four mock workflows (shared/worktree × Git/folder), including 12 parallel tasks and
+tests, merge refusal before approval, and verified merge after approval. The package
+contains the bilingual manuals, 242 dependency license records, notices, SBOM, and
+README assets. This does not prove GUI or Windows package acceptance and is not a
+GitHub Release. Evidence: `docs/evidence/issue9-7a56e372-macos-package.json` and
+`docs/evidence/issue9-7a56e372-macos-smoke.json`.
+
+## Package at source 043d2ecb — 2026-10-30
+
+Built `codex/issue-9-git-head-fast-path` at source commit
+`043d2ecb13022966d3ee8c09f2fd1ed8c9ae4510` with
+`cargo run --release --locked --offline -j 2 -- package-release`. The Apple
+Silicon archive is `dist/agentconductor-aarch64-apple-darwin-043d2ecb1302.zip`
+with SHA-256
+`e46c2e4973fe82ad494e66756f2a2802728fba8a6ebe99b8046de9dd93c40244`. Its
+manifest records the exact source commit, a 19,523,904-byte executable, and
+binary SHA-256
+`c202e96cd51e21a030080e23e276e2c2b3aa2f37abae9c84ba9f5d065a567a71`.
+`validate-package`, `SHA256SUMS`, ZIP integrity, and packaged `--help` pass. The
+exact packaged executable also passed the four-case shared/worktree × Git/folder
+mock workflow smoke, covering 12 parallel tasks and tests, refusal of merge
+before approval, and verified merge after approval. This package contains
+the bilingual offline manuals, license inventory, notices, SBOM, and README
+assets. It does not prove exact GUI acceptance or Windows behavior and is not
+a GitHub Release. Package evidence:
+`docs/evidence/issue9-043d2ecb-macos-package.json`; workflow evidence:
+`docs/evidence/issue9-043d2ecb-macos-smoke.json`.
+
+## Exact macOS package for chat-send recovery — issue #9 / 2026-10-29
+
+The optimized Rust release package was built locally from clean source commit
+`f83c5fb15fb088eebd2d622357d719c074da4572` using
+`cargo run --release --locked -- package-release`. The `aarch64-apple-darwin`
+archive SHA-256 is
+`ba37d5215b584b0a776c2942045796dc3918a5b6b6e82b82d487c268e8997423`.
+Its manifest names the exact source commit; the embedded binary digest
+`d7ab72c2a2523a080c790d3e9e1b4891af417717559e4423a415bcd82ead7c21` matches
+the package `SHA256SUMS`. The ZIP includes both offline HTML manuals, license
+inventory, notices, and SBOM. This verifies the local Apple Silicon package
+only. Windows package recovery, the stopped full test suite, overall UI
+acceptance, and PR #22 mergeability remain unresolved. Evidence and checklist:
+`docs/07-implementation-plan.md`.
+
 ## Cross-platform package artifacts — issue #9 / 2026-10-24
 
 Run `40011350882` on source `db568c3f59fea29b15c8d60829e7fd41857fc62e` passed all macOS and Windows validation gates, release executable builds, bilingual manual rendering, exact-package execution/smoke, and artifact retention. macOS artifact `12527489015` is 21,164,379 bytes (artifact SHA-256 `faf6d2a0acea970638e4c59697d77175737c44e8dd79fc51ccc8971ca0703a79`; ZIP SHA-256 `47075ce7a6908926d14d049e8613a02bce862170ff58bf3992b1c17f41ef7629`). Windows artifact `12528158860` is 15,301,355 bytes (artifact SHA-256 `02bc04f6cd86b4e9bdaa96c6d05bac58d46a94b5ee6b377dbaa1adf546b7e856`; ZIP SHA-256 `9927f872a25505804c3f07ccff70ef33e318c49fdab83d2e15fe599c5a19e8d1`). These are temporary GitHub Actions artifacts expiring 2026-11-06, not a published release. Issue #9 remains open at 16/25 exact-package UI workflows; shipped/default Rust UI remains 0/25. Evidence: `docs/evidence/issue9-platform-packages-40011350882-20261024.json`.

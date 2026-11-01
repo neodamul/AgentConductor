@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-29",
+  "source_commit": "f739b4852ee06df6554ec7bf139df8f42ee90106",
+  "target": "aarch64-apple-darwin",
+  "archive": "agentconductor-aarch64-apple-darwin-f739b4852ee0.zip",
+  "archive_sha256": "8a4637b31553d095d8a27906ea84d549e0bb836236bd4246e94d22eecb8890cd",
+  "package_validation": {
+    "exit_code": 0,
+    "binary_sha256": "e2be4f7152301c25613e403de7eb42df1e6ce84df0dd598065cb95ea2a506189",
+    "binary_bytes": 19456032,
+    "dependency_count": 242,
+    "archive_integrity": "passed",
+    "packaged_help": "passed"
+  },
+  "package_smoke": {
+    "exit_code": 0,
+    "cases": [
+      {"workspace": "shared", "repository": "git", "tasks": 3, "tests": 3, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"workspace": "shared", "repository": "folder", "tasks": 3, "tests": 3, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"workspace": "worktree", "repository": "git", "tasks": 3, "tests": 3, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"workspace": "worktree", "repository": "folder", "tasks": 3, "tests": 3, "unapproved_merge_refused": true, "approved_merge_verified": true}
+    ]
+  },
+  "full_local_suite": {
+    "command": "cargo test --locked --offline --features test-fixtures -- --quiet",
+    "exit_code": 0,
+    "failures": 0,
+    "environment_dependent_tests": "remain ignored according to repository prerequisites"
+  },
+  "ui_acceptance_credit": false,
+  "windows_package_verification": "pending"
+}

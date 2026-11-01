@@ -14,10 +14,12 @@ use std::{
 
 mod cache;
 mod diff;
+pub(crate) mod events;
 pub mod language;
 pub mod messages;
 pub mod native;
 pub mod picker;
+pub mod request_diagnostics;
 pub mod setup;
 mod source_references;
 pub mod workspaces;
@@ -194,10 +196,13 @@ enum Request {
 pub struct Room {
     controller: Mutex<Option<Arc<Controller>>>,
     startup: Mutex<Option<Arc<setup::Startup>>>,
+    workspace_watch: Arc<Mutex<std::sync::Weak<setup::Startup>>>,
     run_lease: Mutex<Option<crate::leases::Lease>>,
     window_lease: Mutex<crate::leases::Lease>,
     parked_workspaces: Mutex<std::collections::BTreeMap<PathBuf, workspaces::ParkedWorkspace>>,
     workspace_navigation: Mutex<()>,
+    events: Arc<events::EventBus>,
+    _listeners: Vec<events::listener::RunChangeListener>,
 }
 impl Room {
     /// A native window holds one kernel lease per canonical run directory.
@@ -220,28 +225,61 @@ impl Room {
             job: Mutex::new(None),
         });
         controller.automatic(enabled)?;
+        let events = Arc::new(events::EventBus::default());
+        let run_listener = events::listener::RunChangeListener::spawn(
+            controller.dir.join("report.json"),
+            Arc::clone(&events),
+        )
+        .ok();
         Ok(Self {
             controller: Mutex::new(Some(controller)),
             startup: Mutex::new(None),
+            workspace_watch: Arc::new(Mutex::new(std::sync::Weak::new())),
             run_lease: Mutex::new(None),
             window_lease: Mutex::new(lease),
             parked_workspaces: Mutex::new(std::collections::BTreeMap::new()),
             workspace_navigation: Mutex::new(()),
+            events,
+            _listeners: run_listener.into_iter().collect(),
         })
     }
     pub fn startup(root: &Path, exe: &Path) -> Result<Self, String> {
         fs::create_dir_all(root).map_err(|e| e.to_string())?;
         let _navigation = crate::leases::Lease::workspace(root)?;
         let lease = crate::leases::Lease::acquire(&root.join("ui-window.lock"))?;
-        let startup = setup::Startup::open(root, exe)?;
+        let startup = Arc::new(setup::Startup::open(root, exe)?);
+        let events = Arc::new(events::EventBus::default());
+        let workspace_watch = Arc::new(Mutex::new(Arc::downgrade(&startup)));
+        let watched = Arc::clone(&workspace_watch);
+        let workspace_listener = events::listener::RunChangeListener::spawn_startup(
+            move || {
+                let startup = watched.lock().ok()?.upgrade()?;
+                Some(events::listener::StartupWatch {
+                    startup_path: startup.root().join("startup.json"),
+                    report_path: startup.watched_run(),
+                })
+            },
+            Arc::clone(&events),
+        )
+        .ok();
         Ok(Self {
             controller: Mutex::new(None),
-            startup: Mutex::new(Some(Arc::new(startup))),
+            startup: Mutex::new(Some(startup)),
+            workspace_watch,
             run_lease: Mutex::new(None),
             window_lease: Mutex::new(lease),
             parked_workspaces: Mutex::new(std::collections::BTreeMap::new()),
             workspace_navigation: Mutex::new(()),
+            events,
+            _listeners: workspace_listener.into_iter().collect(),
         })
+    }
+    pub(crate) fn subscribe_events(
+        &self,
+        surface: events::EventSurface,
+        wake: impl Fn() + Send + Sync + 'static,
+    ) -> Result<events::Subscription, String> {
+        self.events.subscribe_with_wakeup(surface, wake)
     }
     fn surface(&self) -> Result<Option<Arc<setup::Startup>>, String> {
         Ok(self
@@ -256,8 +294,6 @@ mod controller;
 use controller::*;
 
 mod automatic;
-mod diagnostics;
-mod diagnostics_dispatch;
 mod update;
 
 mod dispatch;

@@ -215,5 +215,15 @@
   "startup.model_query_failed_inspect_retained_metadata_logs": "모델 조회 실패; 보존된 메타데이터 로그를 확인하세요",
   "startup.models": "모델",
   "startup.models_dee84b": "모델 {value1}개",
-  "startup.models_loading": "모델을 불러오는 중…"
+  "startup.models_loading": "모델을 불러오는 중…",
+  "startup.optimize_goal": "목표 다듬기",
+  "startup.optimizing_goal": "목표를 다듬는 중…",
+  "startup.review_optimized_goal": "다듬은 목표 검토",
+  "startup.optimized_goal_title": "다듬은 목표 검토",
+  "startup.proposed_goal": "제안된 목표",
+  "startup.optimization_changes": "제안된 변경 사항",
+  "startup.optimization_questions": "확인할 질문",
+  "startup.optimization_credit": "포함된 prompt-optimizer skill을 사용합니다.",
+  "startup.use_optimized_goal": "다듬은 목표 사용",
+  "startup.keep_original_goal": "원래 목표 유지"
 }

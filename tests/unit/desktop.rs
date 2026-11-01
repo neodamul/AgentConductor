@@ -1,6 +1,13 @@
 use super::*;
 
 #[test]
+fn only_an_empty_argument_list_opens_the_workspace_ui() {
+    assert!(is_workspace_launch(&[]));
+    assert!(!is_workspace_launch(&["--help".into()]));
+    assert!(!is_workspace_launch(&["run".into(), "plan.json".into()]));
+}
+
+#[test]
 fn windows_falls_back_to_profile_when_home_is_missing_or_empty() {
     let profile = std::env::temp_dir().join("desktop-profile");
     for home in [None, Some(OsString::new())] {

@@ -566,6 +566,44 @@ Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → 
 A workspace the operator deleted does not come back after a restart or an update, and the list shows only workspaces the operator created or used.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
 
+### BG-141 Native supervision stays quiet while idle or suspended
+Operators can leave the native Workspace and Agent Room open without background refresh errors interrupting them or a late repaint creating duplicate polls.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198. GitHub #221, 2026-10-29.
+
 ### BG-142 Connect an in-house CLI without bypassing human control
 An ACIO-enabled CLI can take part in a real supervised task while the Rust coordinator owns session identity, task scope, event collection, and human decisions.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.
+### BG-143 Answer questions about work from the same chat
+The operator can ask what the workspace planned or ran and receive an answer grounded in visible run evidence, without granting the chat coordinator access to private run storage.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### BG-144 Recognize chat at a glance
+The operator can identify and open coordinator chat from the native Workspace without reading an extra text button in the primary work area.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
+
+### BG-145 Slow coordinator replies do not duplicate operator messages
+The operator can trust that a timed-out native chat send is still being reconciled instead of resending the same question.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.
+
+### BG-141 Fewer errors from the way agents are asked
+Agents that cannot be modified still answer predictably because the application, not the CLI, fixes the prompt layout and the reply shape.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### BG-148 Keep repository revision checks responsive
+Repository metadata lookups must not hold up native input, state events, or unrelated work, including when the repository uses an unusual Git layout.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
+
+### BG-149 Keep native views responsive without idle polling load
+Workspace-only changes wake Workspace, while run changes wake Workspace and Agent Room because both show run progress. Events received while an independent interactive response is pending still trigger a background refresh; idle views do not consume frequent polling resources.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, user, 2026-10-30.
+
+### BG-150 Keep native interaction responsive under slow work
+The app stays responsive when one view is reading slow local state, an agent operation is active, a blocking external I/O request is pending, or another view publishes a state change. It uses bounded standard-library workers and avoids spinning up an async runtime.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
+
+### BG-151 Update active native views only when state changes
+The native UI spends host resources on state reads only after a meaningful state change, while a slow recovery check protects against a missed external notification.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
+
+### BG-152 Release inactive workspace resources during navigation
+Switching away from an idle workspace releases its startup lease promptly, while change notifications continue to follow the workspace currently displayed.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.

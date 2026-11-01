@@ -151,6 +151,8 @@ pub enum SettingsAction {
     Cache,
     Mcp,
     Messenger,
+    ToolsGuide,
+    UserManual,
     SignalTransport,
     WorkspaceSharing,
     UpdateRepository,
@@ -217,6 +219,14 @@ pub fn show_with_cache(
         }
         if ui.button(state.text("mcp.settings_mcp_servers")).clicked() {
             action = Some(SettingsAction::Mcp);
+            ui.close();
+        }
+        if ui.button(state.text("startup.agent_tools_guide")).clicked() {
+            action = Some(SettingsAction::ToolsGuide);
+            ui.close();
+        }
+        if ui.button(state.text("startup.user_manual")).clicked() {
+            action = Some(SettingsAction::UserManual);
             ui.close();
         }
         if ui.button(state.text("startup.signal_transport")).clicked() {

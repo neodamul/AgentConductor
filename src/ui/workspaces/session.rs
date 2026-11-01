@@ -61,6 +61,10 @@ impl Room {
             .parked_workspaces
             .lock()
             .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))?;
+        let mut workspace_watch = self
+            .workspace_watch
+            .lock()
+            .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))?;
         let keep = active(&current, controller.as_ref());
         let cached = parked.contains_key(&root);
         let next = match parked.remove(&root) {
@@ -101,6 +105,7 @@ impl Room {
             run_lease: std::mem::replace(&mut *run_lease, next.run_lease),
             window_lease: std::mem::replace(&mut *window_lease, next.window_lease),
         };
+        *workspace_watch = Arc::downgrade(startup.as_ref().expect("switched startup exists"));
         if keep {
             parked.insert(current.root().to_path_buf(), previous);
         }

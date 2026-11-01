@@ -1,7 +1,7 @@
 #![cfg(feature = "native-ui-probe")]
 
 use agentconductor::native_ui_probe::workspace::header;
-use eframe::egui::{self, accesskit::Role};
+use eframe::egui::{self, Event, Modifiers, PointerButton, Pos2, Rect, accesskit::Role};
 
 #[test]
 fn workspace_header_keeps_the_goal_prompt_and_all_steps_accessible_in_both_languages() {
@@ -218,4 +218,70 @@ fn all_step_buttons_fit_the_content_column_in_both_languages() {
             }
         }
     }
+}
+
+#[test]
+fn review_stage_button_accepts_a_pointer_click() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let screen = Rect::from_min_size(Pos2::ZERO, egui::vec2(1200.0, 1800.0));
+    let mut selected = 0;
+    let mut output = context.run_ui(
+        egui::RawInput {
+            screen_rect: Some(screen),
+            ..Default::default()
+        },
+        |ui| {
+            if let Some(step) = header::show(selected, "en", ui) {
+                selected = step;
+            }
+        },
+    );
+    let position = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .find(|(_, node)| node.role() == Role::Button && node.label() == Some("3. Review the plan"))
+        .and_then(|(_, node)| node.bounds())
+        .map(|bounds| {
+            Pos2::new(
+                ((bounds.x0 + bounds.x1) / 2.0) as f32,
+                ((bounds.y0 + bounds.y1) / 2.0) as f32,
+            )
+        })
+        .unwrap();
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    output = context.run_ui(
+        egui::RawInput {
+            screen_rect: Some(screen),
+            events: vec![
+                Event::PointerMoved(position),
+                Event::PointerButton {
+                    pos: position,
+                    button: PointerButton::Primary,
+                    pressed: true,
+                    modifiers: Modifiers::NONE,
+                },
+                Event::PointerButton {
+                    pos: position,
+                    button: PointerButton::Primary,
+                    pressed: false,
+                    modifiers: Modifiers::NONE,
+                },
+            ],
+            ..Default::default()
+        },
+        |ui| {
+            if let Some(step) = header::show(selected, "en", ui) {
+                selected = step;
+            }
+        },
+    );
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert_eq!(selected, 2);
 }

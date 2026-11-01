@@ -198,6 +198,14 @@ fn activity(
 
 impl super::super::Probe {
     pub(in crate::native_ui_probe) fn load_task_details(&mut self, index: usize) {
+        self.load_task_details_with_visibility(index, false);
+    }
+
+    pub(in crate::native_ui_probe) fn load_task_details_with_visibility(
+        &mut self,
+        index: usize,
+        background: bool,
+    ) {
         let Some(task_id) = self
             .snapshot
             .as_ref()
@@ -218,14 +226,19 @@ impl super::super::Probe {
                     view.details_task = Some(task_id);
                     view.task_details = None;
                 }
-                self.pending = Some(super::super::Pending::TaskDetails);
+                self.pending = Some(if background {
+                    super::super::Pending::BackgroundTaskDetails
+                } else {
+                    super::super::Pending::TaskDetails
+                });
                 self.error = None;
             }
-            Err(error) => self.error = Some(error),
+            Err(error) if !background => self.error = Some(error),
+            Err(_) => {}
         }
     }
 
-    pub(in crate::native_ui_probe) fn refresh_selected_task_details(&mut self) {
+    pub(in crate::native_ui_probe) fn refresh_selected_task_details(&mut self, background: bool) {
         let Some(snapshot) = self.snapshot.as_ref() else {
             return;
         };
@@ -238,6 +251,6 @@ impl super::super::Probe {
             .as_ref()
             .and_then(|view| view.task_controls.selected_index(snapshot))
             .unwrap_or(0);
-        self.load_task_details(index);
+        self.load_task_details_with_visibility(index, background);
     }
 }

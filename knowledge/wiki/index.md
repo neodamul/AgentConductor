@@ -129,6 +129,7 @@
 - [Native window ownership](native-window-ownership.md)
 
 - [Native Rust UI migration](native-rust-ui-migration.md): Rust UI prototype, snapshot integration boundary, diff/test evidence, migration gates, and remaining production parity.
+- [Native goal optimization](native-goal-optimization.md): bounded read-only coordinator request, explicit native proposal review, snapshot compatibility and package evidence boundary.
 - [Native screenshot provenance](native-screenshot-provenance.md): distinguish rendered-image evidence from filenames and retain the exact-build capture gate.
 
 - [Fresh project settings](fresh-project-settings.md)
@@ -176,9 +177,14 @@
 - [Step lessons](step-lessons.md): bounded run lessons delivered to later tasks, the Agent Room, and the existing agentmemory outbox.
 - [Idle resource budget](idle-resource-budget.md): use macOS physical footprint to avoid shared-page RSS inflation, with an exact packaged Agent Room sample and its limits.
 - [Latest-main Rust feature parity](coordinator-directed-operator-feedback.md): current Rust equivalents and regression evidence for coordinator feedback, amendments, and charter goal-drift gates; packaged UI credit remains unchanged.
+- [Native request lanes](native-request-lanes.md): bounded read concurrency, serialized state changes, correlated replies, and event-driven peer refresh.
 - [Rust review policy](rust-review-policy.md): selected Google Rust Style Guide rules, exclusions, stable checks and the no-churn adoption path for the Rust migration branch.
 - [Rust review policy](rust-review-policy.md): selected Google Rust Style Guide rules, exclusions, stable checks and the no-churn adoption path for the Rust migration branch.
 - [UTM Windows guest access](utm-windows-guest-access.md): post-reset guest-agent evidence, user-session drive-mapping limits, and the remaining Windows validation gate.
 - [UTM Windows guest access](utm-windows-guest-access.md): post-reset guest-agent evidence, user-session drive-mapping limits, and the remaining Windows validation gate.
 
 - [Current local verification](current-verification.md): full locked/offline Rust test results, exact macOS bundle checks, and unresolved package/Windows gates.
+- [Native UI poll timeouts](native-ui-poll-timeouts.md): Rust worker request semantics, background error policy, resumed repaint scheduling, and the explicit distinction from JavaScript client-timeout diagnostics.
+- [Coordinator format correction retry](coordinator-format-retry.md): a single bounded JSON-format retry with retained first-attempt logs and deterministic local CLI tests.
+- [Git HEAD fast path](git-head-fast-path.md): resolve common revisions from metadata and refresh linked-worktree fallbacks asynchronously without blocking native requests.
+- [Native event-driven refresh](current-main-rust-parity.md#native-event-driven-refresh): broadcast state invalidations to peer windows and isolate snapshots from interactive requests.

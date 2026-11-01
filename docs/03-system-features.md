@@ -668,6 +668,44 @@ Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → 
 The launch path chooses a workspace from the saved list (last used first) instead of always opening the default folder. With none, an unused placeholder opens, is hidden from every list, and the page asks for the first workspace name; creating it retires the placeholder.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
 
+### SF-174 Quiet native background reads and rebase delayed polls
+Classify existing scheduled Agent Room snapshots and their automatic detail/coordinator reads as background work; keep their failures out of action toasts and let the next normal schedule retry. Keep initial reads, explicit refreshes, approvals and mutations visible. On a delayed eframe repaint, issue at most one due snapshot and set the next deadline from the current `Instant`. Do not add a Workspace polling loop or retry state-changing requests.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198. GitHub #221, 2026-10-29.
+
 ### SF-175 Supervised ACIO worker execution
 For opted-in profiles, build and schema-check the ACIO task input, run it through the existing process supervisor, normalize live events and sessions, and pause for the existing exact human approval when an ACIO tool requests a decision. Keep non-ACIO profiles unchanged.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.
+### SF-176 Coordinator workspace evidence
+Build a bounded Workspace prompt section from saved settings and the latest workflow report, then place it between the manual and earlier conversation. Include a clear no-run state and keep untrusted text inside neutralized evidence values.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### SF-177 Native chat-bubble launcher
+Render a compact theme-colored bubble/robot glyph inside the existing coordinator-chat button; retain its localized accessible name, tooltip and click behavior.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
+
+### SF-178 Reconcile native chat sends with the stored conversation
+The Rust chat panel keeps a send pending while its result is unknown, then resolves it from the next readable workspace conversation snapshot.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.
+
+### SF-174 Standard prompt form and bounded format retry
+One shared builder assembles Document, Task and Format; the reviewer and worker prompts use it. The coordinator JSON call retries once when the reply cannot be read as the requested JSON.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### SF-181 Non-blocking repository HEAD resolution
+Read loose, packed, and detached HEAD values from local Git metadata. When a linked worktree or unsupported layout requires Git, return a cached/pending revision immediately and perform a coalesced background refresh. Keep routine revision and render paths free of Git subprocesses.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
+
+### SF-182 Broadcast state invalidations and isolate refresh work
+The shared Room publishes successful state changes to subscribed native views, excluding the originating view. Listeners coalesce notifications and request one asynchronous snapshot through a dedicated background queue and reply channel, even while an unrelated interactive request is pending. A completed snapshot updates visible state without replacing the pending request or dirty form values; a human decision modal may pause refresh for its view. Active child work is notification-driven; all views use a 30-second recovery check.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, user, 2026-10-30.
+
+### SF-183 Dispatch native requests through bounded independent lanes
+Run read-only requests in a small bounded worker pool, serialize state-changing requests in their own bounded lane, route synchronous network-bound requests through a dedicated bounded I/O lane, and keep scheduled snapshots on their existing single-flight background lane. Correlate replies and ignore superseded results. Classify unknown valid request kinds conservatively as state changes so they cannot race mutations or bypass peer-view invalidation.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
+
+### SF-184 Event-driven native refresh
+Publish scoped in-process invalidations after successful state changes and listen for persisted external changes on a separate lightweight thread. Coalesce invalidations into one asynchronous authoritative snapshot; retain only a 30-second recovery check rather than polling active jobs every second.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
+
+### SF-185 Follow the current workspace without owning stale sessions
+Resolve the listener's startup and report paths from the current workspace on each check. Keep only a non-owning reference to `Startup` so a workspace switch releases an idle previous session and its lease.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.

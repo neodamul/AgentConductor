@@ -1,50 +1,30 @@
 # Native coordinator chat
 
-The Workspace chat is an optional side panel, opened explicitly and held only for the current window. It asks the selected coordinator to answer questions about the project, its plans, and the offline manual. It does not persist conversation history.
+The Workspace chat is an optional side panel that asks the selected coordinator to answer questions about the project, its plans, and the offline manual. The transcript is stored with the workspace's bounded chat artifacts, restored from the next snapshot after reopening, and includes a running chat job so the UI can resume following it. The retained transcript is capped at the latest 40 turns.
 
-The Rust UI sends the request through the existing Startup operation slot; planning and chat cannot occupy it at the same time. Requests and answers use bounded temporary artifacts, and consumed prompt/answer artifacts are removed. A new request cleans artifacts from a previous chat while preserving diagnostic logs for a failed run until cleanup.
+The Rust UI sends the request through the existing Startup operation slot; planning and chat cannot occupy it at the same time. Only the latest question crosses Startup IPC; the worker rebuilds earlier turns from the bounded transcript artifact stored with the workspace. The worker keeps that input artifact so a completed transcript can be restored after restart; the next accepted question or an explicit reset removes older chat artifacts. A workspace from an older build that has only an answer artifact remains readable, although its deleted question cannot be recovered. Prompt context clips older turns at a UTF-8 boundary and clips older answers instead of rejecting a follow-up because one answer exceeded the per-question bound.
 
 The coordinator invocation uses `coordinator::read_only_args`, which verifies the configured CLI profile's read-only mode and applies provider-specific restrictions. The prompt also tells the coordinator not to write files or run commands and to give the operator commands to run. This is a CLI subprocess using the profile's existing authentication, not an API-key service or a second polling process.
 
+If sending a chat request times out, the Rust UI treats acceptance as unknown. It keeps the message pending and disables another send while reading coordinator history through the normal workspace snapshot. A matching history entry follows the accepted job; unchanged history restores the original draft and timeout. A failed history read is retried without showing a false rejection. This prevents duplicate prompts when the coordinator accepted a request but its acknowledgement was lost.
+
+## Rust request latency guard — issue #234 / PR #239
+
+The main chat timeout fix is merged in PR #240. The Rust candidate skips the Git `HEAD` lookup for chat by validating the saved-state `chat_revision`; mutating requests retain the full repository-bound revision check. The #260 base already contains this implementation and bounded request diagnostics, so PR #239 must not reintroduce its older copies of those modules.
+
+The dedicated regression wraps `git` so `rev-parse HEAD` sleeps for 20 seconds and requires chat dispatch to return within two seconds. Keep the regression on its own support file so the integration-test source remains below 300 lines. Exact packaged Windows/macOS validation is still required after this branch is reconciled with #260.
+
 ## Source map
 
-- `src/native_ui_probe/workspace/chat.rs`: panel controls and current-window conversation state.
+- `src/native_ui_probe/workspace/chat.rs`, `src/native_ui_probe/workspace/chat/view.rs`: panel state and terminal-style transcript/input. Questions and answers use monospace `> ` / `< ` markers; Enter sends, Shift+Enter inserts a newline at the cursor, and Up/Down recalls operator questions while preserving an unsent draft.
+- `src/native_ui_probe/workspace/chat/{outcome,reset,send}.rs`: distinguish unknown transport outcomes, reconcile the pending turn against history, and retry snapshots.
+- `src/native_ui_probe/probe/refresh.rs`, `src/native_ui_probe/poll/errors.rs`, `src/native_ui_probe/app.rs`: request history while reconciling, retry failed snapshots, and schedule the reconciliation refresh.
 - `src/ui/setup/chat.rs`: bounded request artifact and Startup job submission/result consumption.
 - `src/chat.rs`: prompt/answer bounds and read-only coordinator request.
 - `src/coordinator.rs`: verified provider-specific read-only invocation.
-- `tests/chat_prompt.rs`, `tests/native_workspace_chat.rs`, `tests/startup_chat.rs`: prompt, UI, and dispatch regressions.
+- `tests/chat_prompt.rs`, `tests/native_workspace_chat.rs`, `tests/native_chat_terminal.rs`, `tests/startup_chat.rs`, `tests/chat_startup_context.rs`: prompt, keyboard, UI, restart, and dispatch regressions.
 - `docs/user-manual.md`, `docs/user-manual.ko.md`: operator-facing limits and usage.
 
-Packaged macOS/Windows UI interaction remains unverified; this feature does not increase the accepted workflow count until the exact packages are reviewed.
+GitHub #189 / R-179 remains in progress. The terminal-style transcript and keyboard controls now pass local egui interaction tests. Do not treat source tests as packaged UI parity.
 
-## Request-timeout handling (#234)
-
-The native Rust request worker keeps the UI responsive for coordinator chat by taking a
-read-only fast path. It checks the existing job and retained process ownership, then starts
-the chat worker without running the Git `HEAD` lookup used by mutation revision guards. The
-request revision is retained in the audit record, but chat does not mutate the reviewed
-workspace and therefore does not reject a send because a repository lookup is slow.
-
-`Room::dispatch` writes bounded timing evidence to
-`~/.agentconductor/request-diagnostics.log`: every chat request has `start` and `done` lines;
-other requests are recorded only when they take at least one second. A client timeout notice
-can be recorded without changing the request result. The log contains request kind, byte size,
-elapsed time, success, and a bounded error—not prompt contents—and rotates at 256 KiB.
-
-The focused regression uses a Git wrapper that sleeps for 20 seconds on `rev-parse HEAD`; the
-chat request must still be accepted in under two seconds. Exact packaged Windows/macOS
-behavior and the user's failing `start kind=chat` / `done kind=chat ms=...` evidence remain
-separate verification gates.
-
-PR #239 was rebased onto the latest #9 head `69887bab4732aba50d8649951ce153bf20a042dd`.
-The overlapping implementation-plan text was the only conflict; both issue checklists were
-preserved. Focused startup-chat, diagnostics, and source-layout tests pass after rebase, as do
-warning-denied all-target Clippy and formatting. Exact macOS/Windows package verification is
-still required to confirm the packaged request path; the affected user's diagnostics log is also
-needed to distinguish native dispatch delay from external coordinator delay.
-
-## Saved-state freshness without a Git lookup
-
-The chat fast path must skip only the repository `HEAD` subprocess, not the stale saved-context check. The Rust port now exposes a `chat_revision` derived from normalized saved state and review evidence without Git. The native chat request sends that token, and startup dispatch compares it before checking or launching the coordinator. This rejects a stale coordinator, profile, goal, repository, or proposal while preserving the low-latency path; repository mutations still use the complete HEAD-bound revision.
-
-TDD coverage checks that a saved goal change invalidates the old chat token and that chat submission still avoids a slow `rev-parse HEAD`. The native UI packet test verifies it sends `chat_revision`. Main-target PR #240 introduced this behavior in commit `642a428d`; Rust PR #239 ported it in commit `7492291`. Exact package validation on the updated heads is still required.
+The regression `tests/native_chat_unknown.rs` verifies accepted and rejected outcomes through egui's accessible UI tree. The five focused suites pass 22 tests; warning-denied all-target Clippy, formatting, diff checks, and the 300-line limit pass locally. Full all-target tests remain unverified: a cold run was interrupted after 130 tests across 24 suites, and a cached retest exited 130 after 58 tests across 5 suites. Exact packaged macOS/Windows interaction remains pending; this feature does not increase the accepted workflow count until those gates pass.

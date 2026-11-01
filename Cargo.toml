@@ -113,6 +113,11 @@ path = "tests/native_ui_manual.rs"
 required-features = ["native-ui-probe"]
 
 [[test]]
+name = "native_ui_settings_help"
+path = "tests/native_ui_settings_help.rs"
+required-features = ["native-ui-probe"]
+
+[[test]]
 name = "native_ui_manual_screenshot"
 path = "tests/native_ui_manual_screenshot.rs"
 required-features = ["manual-screenshot-capture"]

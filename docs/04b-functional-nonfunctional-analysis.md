@@ -676,6 +676,14 @@ Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 �
 `launch_root` returns the first registry entry that is a saved, non-blank app-owned workspace, else the first saved non-blank workspace, else the default folder as a placeholder. A workspace is blank when it has no name, goal, project folder, plan or run; blank workspaces are left out of the menu and the saved list, the snapshot carries `workspace_blank`, the page opens a required "name your first workspace" dialog, and `create_workspace` moves a blank previous workspace to the recovery folder. The `agentconductor` launch command opens it. Deleting a workspace removes it from the registry, so it can no longer be chosen. The native probe window keeps its own launch rule (Codex track, GitHub #9).
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
 
+### FR-178 Native scheduled background read policy
+The Rust UI classifies existing scheduled Agent Room snapshots and their automatic detail/coordinator reads as background. Their failures clear pending without user-action feedback; the next normal scheduled read may retry. Initial Workspace/Agent Room snapshots, explicit Workspace refreshes, approvals and mutations retain visible errors. A delayed repaint uses the current `Instant`, emits no more than one due Agent Room poll, and rebases its next deadline from that instant. Native requests have no page-side deadline; no idle Workspace polling or automatic mutation retry is introduced.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198. GitHub #221, 2026-10-29.
+
+### NFR-76 Native background supervision is bounded and single-shot
+The change reuses the existing worker and Agent Room schedule, adds no request timeout, timer thread, idle Workspace poll or mutation retry, and keeps all changed Rust files within the 300-line limit. Delayed repaint can dispatch at most one scheduled snapshot.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198. GitHub #221, 2026-10-29.
+
 ### FR-179 Live ACIO worker contract
 When AgentProfile.protocol is ACIO, the scheduler assigns the owned session ID before spawn; the worker validates a bounded ACIO input document, sends it as the first stdin line, and uses the existing process supervisor to decode and persist ordered JSONL events. The returned session ID must equal the supervisor-owned ID. A tool event that needs a decision creates an exact workspace/task/session-bound human approval request and pauses task timeout accounting; a missing or expired decision never grants access. Once established, the same session ID is supplied as resume_id. Profiles without the opt-in field keep their prior adapter.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.
@@ -683,3 +691,55 @@ Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → 
 ### NFR-77 ACIO execution preserves existing safety boundaries
 ACIO input remains schema-bounded; process timeout, cancellation, stdout/stderr capture, task ownership, and candidate review remain coordinator-owned. A protocol declaration is not an OS sandbox: filesystem containment is limited to the existing isolated workspace and its scoped task contract, and privileged tool execution requires the existing human decision ledger. Non-ACIO profiles remain backward compatible.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.
+### FR-180 Bounded coordinator workspace evidence
+`chat_context::workspace(saved, project)` reads the latest run through `workflow::load`, quotes bounded plan and report fields, and includes the candidate diff with a 12 KiB cap. It limits task/test evidence to 40 entries and emits an explicit no-run statement. `chat::build_prompt_in` places this section between the manual and earlier conversation; all user-controlled values pass through `prompt_form::neutral` so they cannot add prompt headings. Startup stores the resulting context with the chat input artifact, and the read-only worker uses it without expanding CLI filesystem permissions.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### FR-181 Native coordinator-chat launcher
+The workspace chat launcher renders an icon-only button, paints its speech bubble and robot face with egui primitives using widget visuals, and preserves the localized chat.open accessible name and tooltip. The button continues to toggle the existing chat state.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
+
+### FR-182 Reconcile an unknown native chat outcome
+On a transport error during `ChatStart`, retain the pending operator turn and its original error while the chat awaits a readable workspace snapshot. If the stored conversation contains the new turn, replace local history and follow the matching chat job. Otherwise remove the unaccepted turn, restore its text to the input, and show the original error. A later snapshot, not a guessed timeout, resolves the state.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.
+
+### FR-178 Prompt assembly and reply check
+`prompt_form::assemble(document, task, format)` returns the three blocks in order; heading lines inside the document that look like a block heading are neutralized so untrusted evidence cannot add a block. `prompt_form::review` and `prompt_form::worker_task` build the reviewer and worker prompts while retaining task ownership rules. `coordinator::run_json_within` reruns the agent once, adding the parse error to the prompt, when the reply has no usable JSON for the requested field; capacity retries are unchanged.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### FR-185 Resolve repository HEAD without request-time subprocesses
+For a standard Git directory, derive HEAD from detached, loose-ref, or packed-ref metadata. For a linked worktree or unsupported layout, return a cached or pending answer immediately and schedule one background Git refresh per repository. Coalesce concurrent refresh requests and retry failed or stale answers after the bounded refresh interval.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
+
+### FR-186 Broadcast committed state changes to peer views
+After a successful state-changing Room request, publish a small invalidation event to every subscribed native view except its origin. A listener shall coalesce queued events and fetch one current snapshot on its background lane, even while an unrelated foreground request is pending. Read-only snapshot requests shall not publish invalidations; a human decision modal may pause refresh for its view.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, 2026-10-30.
+
+### FR-187 Dispatch native requests through independent bounded lanes
+Route known read-only requests through a bounded pool of two workers. Route synchronous network-bound requests, including messenger connection checks, through a dedicated bounded I/O worker. Route state-changing requests, picker operations, and unknown valid request kinds through one serialized state-change worker. Keep periodic snapshots on the dedicated single-flight lane and tag foreground replies so superseded work is ignored.
+
+### FR-188 Refresh active views from invalidation events
+After an in-process mutation or a detected external persisted-state change, publish or receive a scoped invalidation, coalesce it, and schedule one asynchronous snapshot for the affected view. Retain a 30-second recovery timer for missed notifications; do not schedule 0.5–1 second full snapshots while work is active.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
+
+### FR-189 Resolve persisted-state watches from the current workspace
+The workspace listener shall resolve the active `startup.json` and watched run report from the current workspace target, and shall not strongly own a `Startup` instance. Switching workspaces updates the target and releases the prior idle session.
+
+### NFR-84 Workspace listeners do not extend stale lease lifetimes
+A listener must not hold an inactive workspace's startup lease after a switch. It shall follow the current workspace and use the existing bounded check cadence; it shall not add a worker per workspace.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+
+### NFR-82 Bound native concurrency without blocking independent work
+The native UI shall use a fixed number of standard-library workers and bounded queues. Slow reads, blocking network I/O, and periodic refreshes cannot block the state-change lane; a slow state change cannot block independent reads; state changes stay serialized; and stale replies cannot replace the latest visible action. No unbounded task spawning or async runtime is introduced.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
+
+### NFR-83 Active native refresh uses change notifications
+While work is active, the view shall not assemble snapshots on a recurring 0.5–1 second timer. State-change listeners run independently, coalesce bursts, and wake only affected views. A missed notification is recovered within 30 seconds; notification delivery and refresh scheduling never wait on the UI thread or foreground request queue.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
+
+### NFR-81 Background refresh cannot occupy interactive request handling
+Periodic snapshots shall use a separate worker and response channel from interactive requests. A due event or recovery refresh shall not be suppressed by an unrelated pending request; an open human decision modal may pause refresh for its view. A slow or failed snapshot must not fill the interactive queue or block rendering. A completed snapshot shall refresh visible state while preserving the pending action, unsaved form values, and current error. State changes wake peer views immediately; all views use a 30-second recovery cadence.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, 2026-10-30.
+
+### NFR-80 Routine Git revision fallback cannot block native requests
+No routine revision request or render callback may wait for a Git process. The unsupported-layout fallback may use one short-lived worker per active repository; repeated lookups must not create additional processes until the fallback entry becomes stale. File reads on the common metadata path remain bounded to the repository's HEAD, relevant ref, and packed-ref files. Explicit repository mutations retain their existing serialized, revision-checked validation.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.

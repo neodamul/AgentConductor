@@ -70,7 +70,19 @@ function Test-ScheduleActionAccepted {
   do {
     $currentWindow = $A::RootElement.FindAll($T::Children, $C) | Where-Object { $_.Current.ProcessId -eq [int]$env:AC_DESKTOP_PID -and $_.Current.Name -like 'AgentConductor*' } | Select-Object -First 1
     $currentButton = if ($currentWindow) { $currentWindow.FindAll($T::Descendants, $C) | Where-Object { $_.Current.Name -eq 'Schedule retry' -and $_.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' } | Select-Object -First 1 }
-    if ($currentButton -and -not $currentButton.Current.IsEnabled) { return $true }
+    if ($currentButton -and -not $currentButton.Current.IsEnabled) {
+      Write-Output 'SCHEDULE_ACTION_BUTTON_DISABLED'
+      return $true
+    }
+    foreach ($action in (Get-ChildItem -LiteralPath $env:AC_RUN_DIR -Directory -Filter 'coordinator-ui-*' -ErrorAction SilentlyContinue)) {
+      $ownerPath = Join-Path $action.FullName 'process/owner.json'
+      if (-not (Test-Path -LiteralPath $ownerPath)) { continue }
+      $owner = Get-Content -LiteralPath $ownerPath -Raw | ConvertFrom-Json
+      if ($owner.coordinator_pid -eq [int]$env:AC_DESKTOP_PID -and $owner.phase -in @('launching', 'running', 'terminal')) {
+        Write-Output 'SCHEDULE_ACTION_CONTROLLER_DISPATCHED'
+        return $true
+      }
+    }
     Start-Sleep -Milliseconds 100
   } while ((Get-Date) -lt $until)
   return $false

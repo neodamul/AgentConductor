@@ -160,3 +160,15 @@ fn schedule_falls_back_to_pointer_when_uia_invoke_leaves_button_enabled() {
     assert!(source.contains("if ($currentButton -and -not $currentButton.Current.IsEnabled)"));
     assert!(source.contains("$buttonFocused = $false"));
 }
+
+#[test]
+fn schedule_acceptance_checks_controller_dispatch_not_only_button_state() {
+    let source = include_str!("support/windows_schedule_script.rs");
+    let package_test = include_str!("windows_schedule.rs");
+
+    assert!(package_test.contains(".env(\"AC_RUN_DIR\", &run)"));
+    assert!(source.contains("$env:AC_RUN_DIR"));
+    assert!(source.contains("coordinator-ui-*"));
+    assert!(source.contains("SCHEDULE_ACTION_CONTROLLER_DISPATCHED"));
+    assert!(source.contains("SCHEDULE_ACTION_BUTTON_DISABLED"));
+}

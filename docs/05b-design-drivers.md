@@ -171,5 +171,28 @@ Bidirectional control is needed, but plain control lines with acks need no reque
 ### Driver DDR-39 Distinguish observation from operator action
 An automatic snapshot and an explicit user action share the request bridge but have different feedback requirements. Mark only scheduled and visibility-resume polls as background, and pause the same request deadline while the document is hidden instead of adding a second transport or retry policy. Trace: QAS-182.
 
+### Driver DDR-40 Reuse the native monotonic poll schedule
+The native worker has no request deadline, so a second timeout mechanism would create stale-reply handling with no benefit. Keep scheduled Agent Room reads quiet, explicit operations visible, and let the existing monotonic scheduler send one poll after a delayed repaint. Trace: QAS-184.
+
 ### Driver DDR-41 Reuse the process supervisor and approval ledger for ACIO
 The existing worker owns child lifetime, output capture, persistence, and workspace scope; the existing tool ledger owns exact human decisions. Route opted-in ACIO input/events through those paths instead of adding a second runner, event store, or authorization mechanism. Trace: R-187, QAS-185.
+
+### Driver DDR-42 Keep prompt correction bounded and CLI-independent
+Build the requested answer shape in the orchestrator and allow at most one correction attempt when the process succeeds but its output lacks the requested JSON document. Preserve the first attempt's logs, include only the bounded parse reason in the retry prompt, and leave timeout, stop, capacity and provider-error behavior on their existing paths. Do not require CLI changes or add a protocol for prompt correction. Trace: QAS-184.
+
+### Driver DDR-45 Use metadata first, process fallback off-path
+Common Git HEAD layouts are directly readable, so spawning Git on every revision check adds latency and contention without adding information. Linked worktrees and unsupported layouts still require Git; a single-flight background fallback preserves compatibility without blocking request or render paths. Trace: R-193 → QAS-191.
+
+### Driver DDR-46 Let events wake peer views; keep snapshots off the command lane
+The native app has two views sharing one Room. Use a small in-process broadcast bus with per-view subscriptions and source suppression, a separate bounded background snapshot lane, and one coalesced invalidation flag. Keep the event payload content-free; the receiving view reads authoritative state from the existing snapshot API. Do not suppress a due event or recovery snapshot merely because an unrelated interactive operation is pending; a human decision modal may pause refresh for its view. Apply completed snapshots without clearing pending state or replacing unsaved inputs. A lightweight persisted-state listener covers external CLI changes; keep only a 30-second recovery timer. Trace: R-194 → QAS-192.
+
+### Driver DDR-47 Isolate reads, mutations, external I/O, and recovery work
+Use a fixed two-worker read lane, a single-worker state-change lane, a dedicated bounded worker for synchronous network I/O, and the existing single-flight background poll lane. Keep each queue bounded, tag foreground responses, and ignore superseded replies. Unknown valid request kinds default to the state-change lane. Keep event messages content-free and coalesce refresh requests; do not add an async runtime or unbounded task spawning. Trace: QAS-193.
+
+### Driver DDR-48 State notifications drive refresh; recovery checks stay cold
+Use the existing scoped in-process EventBus and a small independent persisted-state listener for external processes. Events are content-free invalidations, coalesced per view, and trigger the existing background snapshot lane. Keep a 30-second recovery check only; remove the active one-second snapshot fallback. Do not add an async runtime or an unbounded watcher pool.
+Trace: QAS-194.
+
+### Driver DDR-49 Make workspace observation follow current ownership
+The listener needs the current workspace paths, not ownership of the workspace session. Store a weak reference to the current `Startup` behind a small shared target; update it atomically with workspace switching. Resolve the startup/report paths per listener check, and let old `Startup` values drop so their leases unlock. Keep one listener thread and its existing cadence.
+Trace: QAS-195.

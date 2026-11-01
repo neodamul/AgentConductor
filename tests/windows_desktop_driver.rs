@@ -32,6 +32,13 @@ fn exact_package_includes_the_candidate_review_and_merge_journey() {
 }
 
 #[test]
+fn exact_package_runs_the_stop_resume_recovery_journey() {
+    let workflow = include_str!("../.github/workflows/platform-validation.yml");
+
+    assert!(workflow.contains("--test package_run_recovery"));
+}
+
+#[test]
 fn candidate_review_driver_rebinds_the_window_before_reading_controls() {
     let driver = include_str!("support/windows_candidate_review_script.rs").replace("\r\n", "\n");
     assert!(driver.contains("function Find-Window"));

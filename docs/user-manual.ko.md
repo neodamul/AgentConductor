@@ -47,7 +47,7 @@ Agent Room에서도 같은 제목 표시줄을 사용합니다. 기존 실행이
 이력은 `~/.agentconductor/workspace-trash/<id>`에 옮겨져 복구할 수 있습니다.
 **최근 목록에서 숨기기**는 데이터 삭제가 아닙니다.
 
-워크스페이스 화면에서 **코디네이터에 질문**을 선택하면 대화 패널이 열립니다. 등록한 코디네이터의 검증된 읽기 전용 CLI 프로필로 프로젝트와 이 매뉴얼을 확인하며, 파일을 수정하거나 명령을 실행하지 않습니다. 채팅은 계획 생성과 단일 백그라운드 작업 슬롯을 공유하고 대화 내용은 현재 창에만 유지됩니다.
+워크스페이스 화면에서 **코디네이터에 질문**을 선택하면 대화 패널이 열립니다. 등록한 코디네이터의 검증된 읽기 전용 CLI 프로필로 프로젝트와 이 매뉴얼을 확인하며, 파일을 수정하거나 명령을 실행하지 않습니다. 채팅은 계획 생성과 단일 백그라운드 작업 슬롯을 공유합니다. 마지막 대화는 워크스페이스를 다시 열어도 복원되며 **새 대화**로 지울 수 있습니다.
 
 ![워크스페이스와 목표 설정](assets/ui-workspace-korean-current.png)
 
@@ -360,6 +360,8 @@ Cargo 빌드 캐시는 앱 캐시와 별개입니다.
 | `agentconductor io conformance <executable>` | ACIO 설명, 읽기 전용 응답, 잘못된 입력 처리를 검사합니다. |
 
 `io conformance`는 현재 사용자의 OS 권한으로 선택한 실행 파일을 실행합니다. 읽기 전용 요청과 임시 작업 경로는 프로토콜 입력일 뿐 OS 샌드박스가 아니므로 신뢰하는 CLI에만 사용하세요. 아직 작업 실행 모드, 취소 타이밍, 최대 크기 초과 출력을 검사하지 않습니다.
+
+네이티브 UI 요청 진단은 `~/.agentconductor/request-diagnostics.log`에 기록합니다(Windows: `%USERPROFILE%\.agentconductor\request-diagnostics.log`). JSONL에 모든 `chat` 요청과 1초 이상 걸린 요청을 남깁니다. 요청마다 `start` 기록(`kind`, `at_unix_ms`, `bytes`)과 `done` 기록(`duration_ms`, `outcome`)이 있습니다. 요청 내용은 기록하지 않습니다. 현재 파일은 256 KiB로 제한하고 이전 파일은 `request-diagnostics.log.1`로 보관합니다. 기록 실패는 요청 결과에 영향을 주지 않습니다.
 
 협력 CLI는 `cooperative: checkpoint_v1`과 정확한 `{session_id}` 인자를 사용합니다.
 `AC_CHECKPOINT_RUN_DIR`, `AC_CHECKPOINT_ADDRESS_FILE`, `AC_CHECKPOINT_EXECUTABLE`이 전달됩니다.

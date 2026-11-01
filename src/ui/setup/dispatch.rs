@@ -2,35 +2,28 @@ use super::*;
 
 mod operation;
 
+pub(super) fn with_snapshot_copy<T>(
+    saved: std::sync::MutexGuard<'_, Saved>,
+    work: impl FnOnce(&Saved) -> T,
+) -> T {
+    let snapshot = saved.clone();
+    drop(saved);
+    work(&snapshot)
+}
+
 impl Startup {
     pub fn dispatch(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
         if bytes.len() > 128 * 1024 {
             return Err(crate::ui::messages::text("native.native_request_exceeds_128_kib").into());
         }
         let request: Request = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
-        if bytes.len() > 64 * 1024 && !matches!(&request, Request::Chat { .. }) {
+        if bytes.len() > 64 * 1024 {
             return Err(crate::ui::messages::text("native.native_request_exceeds_64_kib").into());
         }
         let mut saved = self
             .saved
             .lock()
             .map_err(|_| crate::ui::messages::text("native.startup_settings_poisoned"))?;
-        if let Request::Chat { revision, turns } = request {
-            if revision != self.chat_revision(&saved)? {
-                return Err(crate::ui::messages::text(
-                    "native.startup_state_changed_since_review_refresh_before_acting",
-                )
-                .into());
-            }
-            let job = self.job(&saved)?;
-            if job["state"] == "running" {
-                return Err(
-                    crate::ui::messages::text("native.startup_operation_still_running").into(),
-                );
-            }
-            self.ensure_no_live_jobs()?;
-            return self.launch_chat(&mut saved, turns, revision);
-        }
         if matches!(request, Request::StopPlanning {}) {
             return self.stop_planning(&mut saved);
         }
@@ -40,11 +33,16 @@ impl Startup {
         if let Request::CacheClear { digest } = &request {
             return self.clear_cache(&saved, Some(digest), 0);
         }
+        if let Request::Chat { revision, text } = &request {
+            return self.dispatch_chat(&mut saved, revision, text.clone());
+        }
         let metadata_job = self.metadata_tick(&mut saved)?;
         let job = self.job(&saved)?;
         self.settle(&mut saved, &job)?;
         if matches!(&request, Request::Snapshot { .. }) {
-            return self.snapshot_state(&saved, &job, &metadata_job, &request);
+            return with_snapshot_copy(saved, |snapshot| {
+                self.snapshot_state(snapshot, &job, &metadata_job, &request)
+            });
         }
         if let Request::BaselineStatus {} = request {
             return self.baseline_status(&saved);
@@ -102,6 +100,8 @@ impl Startup {
             | Request::McpDiscover { revision, .. }
             | Request::McpPreview { revision, .. }
             | Request::Chat { revision, .. }
+            | Request::ChatReset { revision }
+            | Request::OptimizeGoal { revision, .. }
             | Request::McpApply { revision, .. }
             | Request::Save { revision, .. }
             | Request::Quota { revision, .. }

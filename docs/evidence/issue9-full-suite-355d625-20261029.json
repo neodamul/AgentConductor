@@ -1,0 +1,10 @@
+{
+  "issue": 9,
+  "pull_request": 22,
+  "source_commit": "355d6256d358533bfd182712ce1fa99d174b4aa4",
+  "command": "cargo test --all-targets --locked --offline --features test-fixtures --no-fail-fast --quiet",
+  "exit_code": 0,
+  "result": "passed",
+  "failures": 0,
+  "scope": "Local macOS full Rust all-target test suite; authenticated provider and packaged-binary tests remain ignored unless their explicit prerequisites are met."
+}

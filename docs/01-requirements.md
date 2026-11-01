@@ -732,6 +732,45 @@ Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → 
 The application shall not show a default workspace the operator never created, and shall not bring one back after it was deleted. A workspace that has no name, goal, project, plan or run is only a placeholder: it is never listed, and while it is the only one the application asks the operator to name a workspace (the question cannot be skipped). At launch the application opens the most recently used saved workspace.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
 
+### R-186 Native scheduled reads stay quiet across suspension
+The native Rust UI shall keep errors from existing scheduled Agent Room snapshots and their automatic task-detail/coordinator reads out of user-action toasts. Initial Workspace/Agent Room reads, explicit Workspace refreshes, approval and mutation failures remain visible. A delayed repaint performs at most one due Agent Room snapshot and schedules the next poll from the current monotonic time; no idle Workspace poll or automatic mutation retry is added.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198. GitHub #221, 2026-10-29.
+
 ### R-187 ACIO profiles run through the supervised worker
 When an agent profile opts into protocol ACIO, the coordinator shall send the versioned structured task input over stdin, collect and validate its live JSONL events, retain the supervisor-owned session identity, and route any tool request that needs a decision through the existing human approval gate. Profiles without ACIO remain on their existing execution path.
 Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, user, 2026-10-29.
+
+### R-188 Coordinator chat has bounded workspace and run evidence
+When the operator asks about work from coordinator chat, the prompt shall include a bounded Workspace section derived from saved workspace settings and the latest run: project folder, mode and goal; plan task IDs, assigned agents, owned paths and first prompt lines; run state and errors; task states; test exit codes; changed files; and a candidate diff capped at 12 KiB. If no run exists, the prompt shall say so. Untrusted values must not create prompt headings. The coordinator is told to use this quoted evidence because it cannot read the run folder.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### R-189 Native coordinator chat has a recognizable, accessible launcher
+The native Workspace shall show the coordinator-chat launcher as a compact chat-bubble robot icon rather than a text-only action. It shall retain a localized accessible name and hover label so the icon remains discoverable without relying on its shape alone.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
+
+### R-190 An uncertain native chat send stays pending until reconciled
+If a native chat send fails before its acceptance is known and the current conversation cannot be read, the Rust UI shall keep the message visible as pending, keep the input empty, and disable another send. A later successful workspace snapshot decides whether the controller accepted the message: follow an accepted job, or restore the text and show the original error when the conversation did not change.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.
+
+### R-186 Every agent prompt has one standard form and its reply is checked
+The application shall send every prompt to an agent (coordinator, planner, reviewer, worker) as `# Document`, `# Task` and `# Format` blocks, each once and in that order, and shall check a coordinator reply against the requested JSON shape. No agent CLI, including an in-house one, has to be changed or shown to the application for this. A reply that is not in the requested shape is asked for once more with the reason before the call fails.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
+
+### R-193 Routine repository revision reads never spawn Git
+The native UI shall resolve common repository HEAD layouts from Git metadata files when computing routine state revisions, without spawning Git to answer a snapshot or revision request. Linked worktrees and unsupported metadata layouts shall return immediately from a cached result and refresh through at most one background Git process per repository; retries are coalesced and rate-limited. A slow or unavailable Git fallback shall not block rendering, event delivery, or unrelated actions.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
+
+### R-194 State changes wake only the other native views
+The native Workspace and Agent Room shall broadcast successful state changes to other open views, and each listener shall coalesce those events into a targeted asynchronous refresh. The sender shall not refresh itself from its own event. Periodic snapshots shall run on an independent worker and reply channel so a slow refresh cannot reject or delay chat and other interactive requests. A due event-driven or recovery snapshot shall be dispatched even while an unrelated interactive response is pending, except while a human decision modal freezes its view. A completed background snapshot shall update visible state without clearing that response, overwriting unsaved form input, or replacing its error. Active external work is notification-driven; all views use a 30-second recovery check.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, user, 2026-10-30. Amended by R-196: no active one-second fallback.
+
+### R-195 Independent native requests must not wait behind slow work
+Long-running native reads, periodic refreshes, and blocking external I/O (including messenger connection checks) must use bounded workers separate from the state-change request lane and must not block unrelated user actions. State-changing requests remain serialized, and stale responses must not replace the latest visible operation.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
+
+### R-196 Native state updates are event-driven, with no active polling loop
+The native UI shall refresh active run, metadata, and workspace state in response to scoped state-change notifications, not a recurring 0.5–1 second snapshot loop. In-process mutations publish invalidations to subscribed views; external process changes are observed on a lightweight listener thread. Snapshot work remains asynchronous and single-flight per view. A low-frequency 30-second recovery check may detect missed external notifications; it must not block rendering or interactive requests.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01. Amends R-194.
+
+### R-197 A workspace listener must not retain a switched-away workspace lease
+After an idle workspace switch, the previous workspace's startup lease must be released immediately, while the listener follows the new workspace's persisted state and continues broadcasting its changes. The listener must not keep a strong reference to a stale `Startup` instance.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.

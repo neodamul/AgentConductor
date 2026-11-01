@@ -74,31 +74,49 @@ impl Probe {
             self.open_signal_settings();
         }
         self.navigation.appearance.apply(ui.ctx());
+        if self.pending.is_none() {
+            let now = std::time::Instant::now();
+            let follow_up_due = self
+                .room_view
+                .as_mut()
+                .is_some_and(|view| room::refresh_follow_up::refresh_due(view, now));
+            if follow_up_due {
+                self.refresh_background();
+            } else if let Some(deadline) = self
+                .room_view
+                .as_ref()
+                .and_then(room::refresh_follow_up::next_deadline)
+            {
+                ui.ctx()
+                    .request_repaint_after(deadline.saturating_duration_since(now));
+            }
+        }
         if self.room_view.is_none() && self.navigation.stop_for_delete() && self.pending.is_none() {
             let now = std::time::Instant::now();
             if let Some(deadline) = self.workspace_next_refresh.filter(|due| *due > now) {
                 ui.ctx().request_repaint_after(deadline - now);
             } else {
-                self.workspace_next_refresh = Some(now + std::time::Duration::from_millis(500));
+                self.workspace_next_refresh = Some(now + std::time::Duration::from_secs(30));
                 self.refresh_workspace();
             }
         }
+        let room_refresh_blocked = self.room_refresh_blocked();
         if self.room_view.as_mut().is_some_and(|room_view| {
             room::refresh_due(
                 ui.ctx(),
                 self.snapshot.as_ref(),
-                self.pending.is_some(),
+                room_refresh_blocked,
                 &mut room_view.next_refresh,
             )
         }) {
-            self.refresh_room();
+            self.refresh_background();
         }
         if self.room_view.is_none() && self.starting_run.is_some() && self.pending.is_none() {
             let now = std::time::Instant::now();
             if let Some(deadline) = self.workspace_next_refresh.filter(|due| *due > now) {
                 ui.ctx().request_repaint_after(deadline - now);
             } else {
-                self.workspace_next_refresh = Some(now + std::time::Duration::from_millis(500));
+                self.workspace_next_refresh = Some(now + std::time::Duration::from_secs(30));
                 self.refresh_workspace();
             }
         }
@@ -129,7 +147,23 @@ impl Probe {
                 &mut self.workspace_next_refresh,
             )
         {
-            self.refresh_coordinator_chat();
+            if self.coordinator_chat.is_uncertain() {
+                self.refresh_workspace();
+            } else {
+                self.refresh_coordinator_chat();
+            }
+        }
+        if self.room_view.is_none()
+            && self.goal_optimizer.awaiting()
+            && self.pending.is_none()
+            && room::refresh_due(
+                ui.ctx(),
+                self.snapshot.as_ref(),
+                self.pending.is_some(),
+                &mut self.workspace_next_refresh,
+            )
+        {
+            self.refresh_goal_optimizer();
         }
         if self.room_view.is_none()
             && self
@@ -161,6 +195,14 @@ impl Probe {
         }
         self.refresh_quotas(ui.ctx(), super::quota_refresh::now());
         self.show(ui);
+    }
+
+    fn room_refresh_blocked(&self) -> bool {
+        self.background_refresh_pending
+            || self
+                .room_view
+                .as_ref()
+                .is_some_and(room::State::blocks_background_refresh)
     }
 }
 

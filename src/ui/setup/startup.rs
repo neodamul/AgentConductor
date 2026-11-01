@@ -21,6 +21,8 @@ impl Startup {
                 imports: None,
                 mcp_result: None,
                 chat_result: None,
+                optimize_result: None,
+                optimize_goal: None,
                 // DD-72: no pre-registered agents; templates stay available in + Add.
                 config: Config {
                     profiles: vec![],
@@ -68,6 +70,7 @@ impl Startup {
                 exe: exe.canonicalize().map_err(|e| e.to_string())?,
                 job: Mutex::new(None),
             },
+            heads: crate::git_head::Heads::default(),
             saved: Mutex::new(saved),
             custom_profiles,
             custom_registry_invalid,
@@ -79,6 +82,43 @@ impl Startup {
         }
         startup.recover_last_run()?;
         Ok(startup)
+    }
+    pub(super) fn revision(&self, s: &Saved) -> Result<String, String> {
+        self.state_revision(s, true)
+    }
+    pub(super) fn chat_revision(&self, s: &Saved) -> Result<String, String> {
+        self.state_revision(s, false)
+    }
+    fn state_revision(&self, s: &Saved, include_head: bool) -> Result<String, String> {
+        // Observations and scheduler progress cannot invalidate an unrelated edit.
+        let mut context = serde_json::to_value(s).map_err(|e| e.to_string())?;
+        for key in [
+            "quota_job",
+            "metadata_queue",
+            "metadata_input",
+            "metadata_settled",
+            "metadata_error",
+            "chat_result",
+        ] {
+            context.as_object_mut().unwrap().remove(key);
+        }
+        if let Some(profiles) = context["config"]["profiles"].as_array_mut() {
+            for profile in profiles {
+                profile.as_object_mut().unwrap().remove("catalog");
+            }
+        }
+        let mut bytes = serde_json::to_vec(&context).map_err(|e| e.to_string())?;
+        if let Some(p) = &s.proposal {
+            let path = p.directory.join("review.json");
+            if path.exists() {
+                bytes.extend(self::bytes(&path)?);
+            }
+            if include_head {
+                let project = p.workspace.as_deref().unwrap_or(&s.config.repository);
+                bytes.extend(self.heads.get(project).bytes());
+            }
+        }
+        Ok(workflow::digest(&bytes))
     }
     pub(super) fn quota_job(&self, s: &Saved) -> Result<serde_json::Value, String> {
         jobs::state(&self.quota_broker, &s.quota_job)
@@ -156,14 +196,14 @@ impl Startup {
         args: Vec<String>,
     ) -> Result<serde_json::Value, String> {
         let revision = self.revision(s)?;
-        self.launch_with_revision(s, operation, args, revision)
+        self.launch_with_revision(s, operation, args, &revision)
     }
     pub(super) fn launch_with_revision(
         &self,
         s: &mut Saved,
         operation: &str,
         args: Vec<String>,
-        revision: String,
+        revision: &str,
     ) -> Result<serde_json::Value, String> {
         let mut slot = self
             .broker
@@ -175,7 +215,7 @@ impl Startup {
         }
         let result = self
             .broker
-            .launch_locked(operation, &args, &revision, &mut slot)?;
+            .launch_locked(operation, &args, revision, &mut slot)?;
         s.job = Some(StoredJob {
             id: result["id"]
                 .as_str()

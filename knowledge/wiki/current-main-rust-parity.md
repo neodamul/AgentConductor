@@ -1,5 +1,66 @@
 # Current-main behavior carried into the Rust UI branch
 
+## Triage workspace reappearing report — bug #226 / 2026-10-30
+
+Review of PR #230 head `10927906` found no product-source changes in the PR and
+no reproducible data-restore defect in the base behavior. Confirmed Delete moves
+the app-owned directory to `workspace-trash` and removes its registry entry;
+startup scans only the active desktop and registered workspace directories.
+Remove-from-menu is intentionally different: it retains the directory and lists
+it as `registered:false`. Deleting the default workspace can initialize a fresh
+empty desktop on next launch, not restore the old data. Five focused workspace,
+delete, and launch suites pass 20 tests. The issue report does not identify which
+action/default workspace was involved; keep #226 open for a reproducible path and
+exact Windows package verification.
+
+## Native event-driven refresh
+
+Successful mutating Room requests publish content-free, scoped invalidations to subscribed peer views; the source view is suppressed. Separate native processes now listen for atomic `startup.json` replacement and active `report.json` changes on stoppable standard-library threads. The listener checks only file metadata every 500 ms and emits an invalidation on change; it does not build a snapshot. Workspace changes wake only Workspace; run changes wake both Workspace and Agent Room. Each listener has a one-event bounded queue, so repeated invalidations coalesce to one wakeup; the view then requests an authoritative asynchronous snapshot and wakes the native renderer. Periodic snapshots run on a dedicated worker and reply lane, separate from interactive dispatch. A snapshot that completes during an interactive request updates the displayed state without clearing that request, replacing the user's unsaved form value, or erasing its current error. Snapshot assembly clones the small saved state and releases its shared mutex before filesystem, quota, and revision reads. The fallback cadence is thirty seconds for both active and idle views; active snapshots are notification-driven. Tests cover burst coalescing, persisted state-file wakeup, scoped delivery, source suppression, read-only filtering, lock release, and snapshot application during a pending request. The bounded worker and targeted refresh changes are source-verified; exact packaged macOS/Windows and visual acceptance remain separate gates.
+
+## Full local Rust test suite — issue #9 / 2026-10-29
+
+At exact branch head `355d6256d358533bfd182712ce1fa99d174b4aa4`, `cargo test --all-targets --locked --offline --features test-fixtures --no-fail-fast --quiet` exited 0 with no failures. The local run is macOS; authenticated provider and exact packaged-binary tests keep their explicit prerequisites. This does not replace the pending exact Windows package check or award packaged UI acceptance. Evidence: `docs/evidence/issue9-full-suite-355d625-20261029.json`.
+
+## Exact-current-head macOS package — issue #9 / 2026-10-29
+
+Built the optimized Apple Silicon archive from source `355d6256d358533bfd182712ce1fa99d174b4aa4`. The archive CRC passed; its manifest identifies that exact commit and a 19,456,032-byte binary, whose SHA-256 matches the embedded `SHA256SUMS`. The packaged binary's `--help` ran successfully. Bilingual HTML manuals, licenses, SBOM, and UI screenshot assets are present. Archive SHA-256: `560e138b9ce2543157caed57fedda16e73fa92000295b96e16f2f26fba2cd73e`. GUI launch and visual acceptance were not performed, so this adds no packaged UI workflow credit. Exact Windows package is still pending. Evidence: `docs/evidence/issue9-macos-package-355d625-20261029.json`.
+
+## Verify Windows scheduled retries through controller dispatch and persistence — issue #9 / 2026-10-29
+
+Exact run `40821720696` passed both platform validation jobs and the macOS package, but the Windows package stopped in the schedule journey after UI Automation focus and invoke failed. A foreground-checked pointer click was sent, but the test driver treated the still-enabled Schedule button as proof that no action was accepted and exited before inspecting the controller owner record or persisted timestamp. The driver now receives the isolated run directory and treats either the button's disabled transition or a process-owned `coordinator-ui-*` owner record as an action transition; the package test still requires the controller dispatch record and exact persisted `manual_schedule` time. The source-contract regression was red before the change. Local verification passes: schedule driver 7/7, source layout 2/2, native schedule/action tests 6/6, warning-denied Clippy, rustfmt, diff check, and the 300-line source/test limit. Exact package rerun is pending. No acceptance credit is added; issue #9 remains **22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate**.
+
+## Reacquire Windows Signal Settings automation windows — issue #9 / 2026-10-29
+
+Exact package run `40817071475` passed macOS and Windows validation plus the macOS package, then failed in the Windows Signal Settings journey. The `agentmemory preferred` control was present in a second top-level window owned by the packaged process, while the test driver kept searching only the window captured at startup. The driver now enumerates current process-owned top-level windows on each control lookup and uses the matched window handle for focus and pointer input. The regression was red before this change; focused local verification passes 35/35 tests across six suites, warning-denied Clippy, rustfmt, diff check, and the 300-line source/test limit. Exact packaged rerun is pending. Acceptance remains **22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate**.
+
+## Keep Windows tool-decision confirmation actionable — issue #9 / 2026-10-29
+
+Exact package run `40811281029` passed the macOS native archive and both platform validation jobs, but the Windows package reached `Deny this exact tool request?` with both confirmation controls disabled. The active-run one-second background snapshot poll could overlap the human decision; a pending tool receipt now suppresses that poll until the operator decides or defers, and Cancel remains available if an earlier refresh is already in flight. The new state/poll and modal regressions pass in the focused native-room suites (20/20); warning-denied all-target Clippy and formatting pass. The first full local test attempt caught that the new test file lacked the `native-ui-probe` feature gate; the gate was added and the targeted source-contract suite passes. Exact Windows package verification is still required. No packaged UI acceptance credit is added; current issue #9 acceptance remains **22/25 packaged workflows, 0/25 shipped Rust replacements, 22/50 aggregate**.
+
+## Refresh Windows UI Automation controls for modal tool confirmation — 2026-10-29
+
+Exact package runs `40803567094` and `40805049482` both passed validation and preceding Windows journeys, then failed to observe the `Confirm tool decision` control after activating `Allow once`. The failure dump showed that the confirmation prompt and button were present, while the approval request remained pending. The test driver retained a UI Automation element from before the modal state change and searched only that window subtree. It now enumerates the current top-level UI Automation windows owned by the packaged process and looks up the exact accessible button in each. The new red/green source-contract test passes with the 12 existing dispatch regressions; source-layout, warning-denied Clippy, rustfmt, diff checks, and the 300-line limit pass. Exact Windows package rerun is pending, so workflow 23 gets no acceptance credit yet. Evidence: `docs/evidence/issue9-tool-confirmation-live-uia-20261029.json`.
+
+## Default executable opens the native Workspace — 2026-10-29
+
+The `agentconductor` binary now routes an empty argument list to the native desktop flow and keeps explicit CLI commands on their existing path. The optimized binary was assembled as a temporary macOS `.app` and launched from the current Rust branch. CUA confirmed one standard window and rendered Workspace, Agent Roles, and Plan Review; navigation did not save or execute any workspace action. The screenshot was shown in-session and intentionally not retained because it contains private workspace details. This local bundle is not the GitHub Release archive; Windows exact-package verification and packaged workflow acceptance remain pending.
+
+## Main #226 launch behavior in the Rust desktop — 2026-10-29
+
+The Rust default app now calls `ui::workspaces::launch_root()` before creating `Room`. It reopens the most recently registered, still-saved workspace, falls back to another saved workspace if that entry is stale, and uses the default data folder only when no workspace has been saved. An isolated regression failed before the function existed, then passed after implementation. The test covers a fresh install, creating two workspaces, deleting the default workspace, and reopening the surviving one without recreating the deleted folder. Verification: launch regression 1/1; native-default, workspace-settings, and source-layout tests 6/6; desktop routing 3/3; warning-denied Clippy and rustfmt pass. The regression is platform-neutral and awaits exact Windows package execution.
+
+## Main #184 help entries in Rust Settings — 2026-10-29
+
+The Rust Settings menu now exposes both the agent tools guide and user manual. Selecting them opens the existing native dialogs; the workspace menu keeps its existing shortcuts. The UI regression failed before the Settings actions existed and passes after routing. Verification: settings help 1/1, appearance 5/5, manual 7/7, workspace menu 6/6, source layout 2/2; warning-denied Clippy and rustfmt pass. A locally packaged Rust app opened both dialogs in a single macOS window. Windows exact-package behavior remains pending.
+
+## Coordinator plan prompt structure — 2026-10-29
+
+Rust planner prompts now persist one ordered `# Document`, `# Task`, and `# Format` sequence. Existing plan material and approved Jira/Confluence source evidence are untrusted Document content; the goal, agent catalog, role and plan rules, phase instructions, task types, repository capabilities, and cooperation guidance stay in Task; the bound response JSON Schema is last in Format. Exact heading lines inside evidence are escaped. Invalid-scope repair uses the same structure and places its validation feedback in Task. Existing source-plan/context sidecar files and schema-constrained CLI arguments are unchanged. Verification: coordinator planning contracts 15/15 over eight suites, worker/review/recovery regressions 50/50 over ten, Claude quota 6/6, timeout resume and stop 1/1 each, focused warning-denied Clippy and rustfmt pass. This does not claim chat prompt parity, full-suite verification, or packaged UI acceptance.
+
+## Worker prompt structure — 2026-10-29
+
+The Rust worker persists every CLI prompt with exactly one `# Document`, `# Task`, and `# Format` section in that order. Declared dependency evidence, checkpoint continuation, reviewed lessons, and step lessons are document material; task scope, human feedback, direct-folder rules, cooperative context, and checkpoint instructions stay in the task; evidence reporting is the output format. Heading-like lines in supplied material are escaped so they cannot create extra structural sections. The focused suite checks ordering, neutralization, worker scope, retained `.aipro/plans/` cache guidance, and the prompt written by a real workflow fixture. Local evidence: 4 focused tests pass, focused Clippy and rustfmt pass. This covers worker prompts only; it makes no packaged UI acceptance claim and does not establish planner/chat prompt parity or full-suite status.
+
 ## Candidate confirmation outside the main-window rectangle — issue #9 / 2026-10-29
 
 Run `40745298702` passed the briefing journey after the bounded retry update and reached the Windows candidate approve/merge flow. The final `Confirm candidate decision` control was rejected because its UIA bounds fell outside the primary app window rectangle. The driver now permits an enabled, visible confirmation control at those coordinates only if the foreground window and `WindowFromPoint` both belong to the expected AgentConductor process. Empty or offscreen controls still fail closed. Local candidate-driver, briefing-driver, and source-layout contracts pass 9 tests; exact packaged Windows confirmation and persisted Git/run assertions remain required. No issue #9 acceptance credit is added.
@@ -182,3 +243,33 @@ The merge-era runs `39999933920`, `40000373810`, and exact-doc-head run `4000172
 ## Settings gear existing-package spot-check — 2026-10-24
 
 The already-running exact bundle for source `f23381cf` was bound without launching another process. The v0.1.37 screenshot and accessibility tree confirmed the gear-only control named `설정` and Settings menu actions. Its renderer/test are unchanged in the current source. Since saved workspace/profile data was visible, the check stopped before any mutation; it earns no workflow acceptance. See `docs/evidence/issue9-settings-gear-existing-package-20261024.json`. Current-head Actions run `40003966004` is in progress; it is validation only, not acceptance evidence.
+
+## Stop, resume, and recover a run — issue #9 / workflow 25 / 2026-10-29
+
+`tests/package_run_recovery.rs` exercises the Rust executable through a disposable Git repository and three mock tasks. A bounded mock blocks until the coordinator stops it; explicit resume completes the work; a simulated stale owner record then exercises recovery followed by another explicit resume. The candidate diff is asserted to contain exactly the three owned file paths, once each. The exact local binary journey passes. Full offline regression passes 1,103 tests (15 ignored across 350 suites); focused source/layout tests, formatting, and warning-denied all-target Clippy pass. The exact-package Windows and macOS run is pending; this gives no workflow acceptance credit. Evidence: `docs/evidence/issue9-package-stop-resume-recovery-20261029.json`.
+
+On 2026-10-30, the same ignored lifecycle journey also passed 1/1 against the retained exact-source macOS package binary (SHA-256 `2c4db7c77e4597aa96f7376834a467962153083f46da9dacc6a4d0bcc2ba5a66`, matching its package manifest). This exercises CLI stop/resume/recovery, process exit, persisted state, and duplicate-output assertions; it does not exercise GUI controls or Windows process ownership, so it earns no packaged UI acceptance. Evidence: `docs/evidence/issue9-workflow25-macos-package-cli-20261030.json`.
+
+The next UI slice adds `tests/windows_run_lifecycle.rs` and a bounded PowerShell UI Automation driver to the Windows exact-package job. The ignored journey starts one blocking mock task, stops it through the packaged UI with a required reason, checks that the coordinator exits, resumes to approval, simulates a stale owner, relaunches the UI to recover, then resumes and asserts the exact owned diff and attempt count. Native UI worker/event/polling library tests pass 54/54; EventBus tests pass 7/7, including the wake-callback lock-release regression. The driver contract plus source-layout checks pass locally (3 passed, 1 package-only test ignored); warning-denied all-target Clippy, formatting, and diff checks pass. The test body compiles on macOS but only runs against the Windows package. Graphify refresh: 11,784 nodes / 17,902 edges. This is local verification, not package acceptance. Windows package execution is pending; workflow 25 remains uncredited. Evidence: `docs/evidence/issue9-workflow25-windows-ui-harness-20261030.json`.
+
+## Full regression and current main conflict checkpoint — issue #9 / 2026-10-29
+
+At Rust head `09fa3482daae68f5728e1610eec9b77b632cd736`, the complete command `cargo test --all-targets --locked --offline --features test-fixtures --no-fail-fast` exited successfully, including the coordinator-format-retry regression. Warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test guard pass. Authenticated live CLI tests and exact-package acceptance tests are explicitly ignored in this local run and remain separate.
+
+Against fetched `origin/main` `9a8b3258169a0e5834bc141f1bf5941660deb7a1` (merge base `e32295b3bdb0d056adb7e40ec6b04a0adb01957e`), a read-only merge-tree reports 88 conflicted paths. The branch has 1,037 Rust-only and 73 main-only commits, with 1,675 changed paths from the merge base. Conflicts span shared Rust implementation/tests and architecture documents, plus legacy JavaScript UI paths intentionally removed on Rust. PR #22 is still open, draft, and conflicting. No merge, package, or workflow acceptance is claimed. AgentMemory: `mem_mvtee8n7_19ec20ce2bae`.
+
+## Exact macOS package at current Rust head — issue #9 / 2026-10-29
+
+Built `87239f6a68e5b7e4ccc3efc8c0efffc5d11b1407` with `cargo run --release --locked --offline -- package-release`. The package manifest names that exact source commit and its binary SHA matches the extracted executable; `unzip -t` validates the complete archive, and the packaged executable's `--help` exits successfully. Archive SHA-256: `f2200d0db44d6e926505ef0ce806cc936d4bb65644863fee00194d688d03dcc4`; binary SHA-256: `081136f7ab226b91373ee196150b0923f86e11ad210db603eb7c51103566888b`. Evidence: `docs/evidence/issue9-macos-package-87239f6-20261029.json`. No GUI launch or screenshot was captured; Windows exact-package verification and all acceptance credit remain pending.
+
+## Port the active-progress audit to Rust — issue #9 / #257 / 2026-11-01
+
+Claude's #273/#274 fixed JS start/progress feedback in v0.1.49. Its open follow-up #279 found additional waits that lack elapsed and last-response visibility. During the independent Rust parity audit, a separate event-architecture mismatch surfaced: chat restore, chat/optimizer status replies, MCP lookup, and run-start completion each replaced the 30-second recovery cadence with a 500ms–1s full snapshot loop. The Rust fix removes those per-operation deadlines; scoped persisted-state invalidations wake the view, while the independent 30-second missed-event recovery remains. Four regressions were first run red against the fast deadlines. This is source-level progress only; packaged UI and elapsed-time parity for the four #279 cases remain unverified.
+
+## Workspace listener lease follow-up — 2026-11-01
+
+The macOS validation for PR #260 failed five workspace deletion/switch tests. Local reproduction narrowed the failure to the workspace listener's resolver closure holding a strong `Arc<Startup>` for the original workspace. After a switch, the listener therefore kept the old startup lease alive. The listener now resolves a dynamic `StartupWatch` from a shared weak reference updated during switching. It follows the new workspace's startup/report paths while allowing the old idle startup and lease to drop. The new dynamic-listener regression and the existing lease-reuse, delete, and switch tests pass locally. This is a lease-lifecycle correction discovered while validating #226; the original cross-update report is still unresolved pending the reporting PC's workspace details, and no package acceptance is claimed.
+
+## Open Agent Room when its report arrives — 2026-11-01
+
+The exact approval journey timed out at the old 30-second recovery boundary even though the child coordinator had created `report.json` and the three mock tasks had reached `waiting_approval`. The persisted-state listener had delivered the report change and the background snapshot had observed it, but only foreground `StartRefresh` responses performed the transition that sends `open_run`. Both response paths now share that transition, so a delivered event opens Agent Room immediately; a deterministic worker regression failed before and passed after the fix, and the full native start journey passed in 6.96 seconds. No packaged macOS/Windows acceptance is claimed.

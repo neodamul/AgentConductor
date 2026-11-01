@@ -159,10 +159,7 @@ pub(in crate::native_ui_probe) fn tool_controls(
         ));
         ui.horizontal(|ui| {
             if ui
-                .add_enabled(
-                    !pending,
-                    egui::Button::new(text("room.cancel_tool_decision")),
-                )
+                .button(text("room.cancel_tool_decision"))
                 .accessible_name(text("room.cancel_tool_decision"))
                 .clicked()
             {
@@ -230,10 +227,7 @@ pub(in crate::native_ui_probe) fn tool_controls(
                 });
                 ui.horizontal(|ui| {
                     if ui
-                        .add_enabled(
-                            !pending,
-                            egui::Button::new(text("room.cancel_tool_decision")),
-                        )
+                        .button(text("room.cancel_tool_decision"))
                         .accessible_name(text("room.cancel_tool_decision"))
                         .clicked()
                     {

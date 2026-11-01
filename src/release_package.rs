@@ -29,6 +29,11 @@ Git, selected agent CLIs, provider artwork, RTK, Ponytail, Graphify, CocoIndex,
 agentmemory and its optional services are not bundled. Their licenses and account
 terms require separate review if redistributed. The desktop UI uses Rust eframe;
 no WebView runtime or local UI server is required.
+
+The bundled prompt-optimizer skill and references are from
+https://github.com/getsentry/skills and licensed under Apache-2.0, Copyright
+2025 Functional Software, Inc. dba Sentry. Its license and source commit are in
+licenses/prompt-optimizer.
 ";
 
 fn validate_company_suffix(file: &str, built: &str, cargo: &str) -> Result<(), String> {
