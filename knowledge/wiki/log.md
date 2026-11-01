@@ -1,6 +1,6 @@
 # [2026-11-02] plan/task/verify | Remove static labels from native Rust screens — issue #190
 
-PR #199's issue #190 port still existed only on the old parity base. Red bilingual render assertions failed on the visible Room label and Workspace sidebar tagline. Removed those strings from the native views and deleted five English/Korean catalog keys; retained the Room phase/workspace context and the actual workspace-mode control. Focused native UI, source-layout and public-doc suites pass 20/20; all-target native-feature Clippy with `-D warnings`, rustfmt, diff hygiene and the 300-line limit pass. Closed #199 as superseded after porting to #260. Exact packaged screenshot/visual parity remains a #9 gate.
+PR #199's issue #190 port still existed only on the old parity base. Red bilingual render assertions failed on the visible Room label and Workspace sidebar tagline. Removed those strings from the native views and deleted five English/Korean catalog keys; retained the Room phase/workspace context and the actual workspace-mode control. Focused native UI, source-layout and public-doc suites pass 20/20; all-target native-feature Clippy with `-D warnings`, rustfmt, diff hygiene and the 300-line limit pass. Closed #199 as superseded after porting to #260 in `85e283d4`. Graphify refreshed to 12,140 nodes / 19,824 edges. AgentMemory: `mem_mvxytxcz_f9b83f5ce30d`. Exact packaged screenshot/visual parity remains a #9 gate.
 
 # [2026-11-02] task/verify | Reconcile chat-timeout PR #239
 
