@@ -6685,4 +6685,4 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red: require a 30-second recovery interval even while run/metadata work is active; the prior one-second interval failed this test.
 - [x] Task / Green: active reports and startup-state changes wake the scoped listener, which coalesces invalidation into the existing asynchronous snapshot lane. The only periodic recovery check is 30 seconds.
 - [x] Local Verify: `native_room_render` 12/12, `native_ui_profile_refresh` 3/3, `native_ui_probe` 13/13, and `source_layout` 2/2 pass. warning-denied all-target Clippy, `cargo fmt --all -- --check`, `git diff --check`, and the ≤300-line changed-file check pass.
-- [ ] Complete: record in AgentMemory and LLM Wiki, commit/push this unit, then verify exact macOS/Windows packaged responsiveness; packaged UI acceptance stays 22/50 until that evidence passes.
+- [x] Complete code/document unit: AgentMemory `mem_mvx7wcvd_1320e99dd054`, LLM Wiki, and Graphify refreshed to 11,822 nodes / 17,961 edges; commit `a17d43d5` pushed. [ ] Verify exact macOS/Windows packaged responsiveness; packaged UI acceptance stays 22/50 until that evidence passes.
