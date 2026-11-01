@@ -5,6 +5,13 @@
 - [x] Verify #257's existing implementation instead of duplicating it: scoped event subscriptions and coalesced invalidations are present; reads, state changes, blocking I/O, and background refresh use separate bounded lanes. Local Rust worker-concurrency and event tests pass 16/16.
 - [ ] Next: reconcile current-main behavior into the Rust root without restoring the legacy UI; resolve the remaining exact-package Windows workflow 23/24 gates. Do not create another PR for this work.
 
+### Verify Windows schedule test path — bug #310 / 2026-11-02
+
+- [x] Task: confirm the existing Rust root passes `AC_RUN_DIR` to both the packaged app and PowerShell driver; retain the run-directory assertion in the driver.
+- [x] Local Verify: `cargo test --locked --offline --test windows_schedule_dispatch --test source_layout` passes 9 tests.
+- [x] Environment check: the running UTM Windows guest has no `cargo`, `rustc`, or `msbuild.exe`; the temporary probe files were removed, and no VM settings changed.
+- [ ] Complete: run the exact packaged Windows schedule journey. Keep #310 open until that package verification passes.
+
 ### Fix packaged Windows default-workspace input gate — issue #9 / 2026-11-02
 
 - [x] Plan: inspect failed exact package run `41309723645`; Windows UI Automation focused the goal field but persisted an empty value after the driver sent `Windows UIA goal`.
