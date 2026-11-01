@@ -5,7 +5,7 @@
 - [x] Add bounded registry polling and regressions for exact canonical workspace selection and delayed first-run registry persistence; temporary test homes are removed on drop.
 - [x] Verify locally: registry, signal-settings dispatch/window-refresh and layout suites pass 20 tests; workspace restore/delete suites pass 5/5; all-target native-feature Clippy with warnings denied, formatting, diff hygiene, and the 300-line limit pass.
 - [x] Cleanup: move the unique package probe to #260 and close stale-base PR #230 as superseded. Keep bug #226 open until the current Windows package passes.
-- [x] Assetize: record the test boundary and prior-run caveat in the LLM Wiki; AgentMemory `mem_mvxyyn29_b1fa84d9dd35`.
+- [x] Assetize: record the test boundary and prior-run caveat in the LLM Wiki; AgentMemory `mem_mvxyyn29_b1fa84d9dd35`; Graphify refresh: 12,154 nodes / 19,842 edges.
 - [ ] Verify package: run the current exact Windows package through workspace restore and signal-settings persistence; do not count the earlier package run on the old PR head as current acceptance.
 
 ### Remove static labels from native Rust screens — issue #190 / #9 / 2026-11-02
@@ -16,7 +16,7 @@
 - [x] Verify: native label, room header/language, and sidebar suites pass 7/7; source catalogs and view-source test passes; formatting/diff checks pass and changed source/test files stay under 300 lines.
 - [x] Expanded verification: native UI label/header/language/sidebar, source-layout and public-doc suites pass 20/20; all-target native-feature Clippy with `-D warnings` passes.
 - [x] Cleanup: port issue #190's Rust-specific change from stale PR #199 into the active #260 parent; close #199 as superseded after commit. Main issue #190 is already closed; #9 remains gated on exact package parity.
-- [x] Assetize: update the LLM Wiki and AgentMemory `mem_mvxytxcz_f9b83f5ce30d`; Graphify AST refresh reports 12,140 nodes / 19,824 edges. Code commit: `85e283d4`.
+- [x] Assetize: update the LLM Wiki and AgentMemory `mem_mvxytxcz_f9b83f5ce30d`; Graphify AST refresh reports 12,154 nodes / 19,842 edges. Code commit: `85e283d4`.
 - [ ] Verify package: inspect the updated native layout in a packaged build and retain a screenshot/evidence before counting this as full UI parity.
 
 ### Reconcile the stacked #9 pull requests — 2026-11-01
@@ -6887,7 +6887,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 ### Open Rust PR follow-up inventory — refreshed 2026-11-02
 
 - [x] Recheck GitHub state: #202, #260, #284, #288, and #289 are open Rust drafts; #199, #230, #239 and #255 are closed as superseded after their unique requirements/regressions were moved to #260. #22 is the main Rust migration parent; #312 is a separate main-branch Claude PR. #305, #293, and #294 are integrated into the active #9 branch.
-- [x] Refreshed Graphify after this audit: 12,140 nodes / 19,824 edges.
+- [x] Refreshed Graphify after this audit: 12,154 nodes / 19,842 edges.
 - [x] #199 — removed static local/login labels from the Rust Workspace and Agent Room, deleted English/Korean keys, and added bilingual rendered/source regressions. Closed as superseded after porting to #260. Exact packaged screenshot remains a #9 gate.
 - [ ] #202 — native goal optimizer and proposal review. GitHub currently reports not mergeable; refresh against the active #9 base before integration.
 - [x] #230 — current #260 already contains workspace restore/delete behavior and local tests. Its unique Windows managed-workspace package probe is ported to the parent; close #230 as superseded and keep #226 open until current exact Windows package acceptance passes. Earlier Windows signal-settings pass was on the older PR head; a later run failed the separate shared tool-decision journey.
