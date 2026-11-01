@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Docs and release: tests now fail when the README or a manual sentence does not name the package version, when a screenshot they show is missing or a captured screen is not shown, and the release workflow refuses to publish when the interface changed after the screens were captured, unless a commit confirms they still match (#290).
+
 ## v0.1.51
 
 - Workspace and run screen: every button that asks the app for something shows that it is working until the answer, and after a second the status line (the connection line in the run screen) names the request with its time, for example while a workspace is deleted, the messenger is tested or the team briefing is read. Before, about 30 of these showed nothing until the answer or a timeout. An idle page no longer risks saying for a moment that the app sent no new state (#285).

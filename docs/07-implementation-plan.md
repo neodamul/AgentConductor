@@ -2422,3 +2422,11 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 | App update (`check_update`, `apply_update`) | Update dialog title and state with elapsed time |
 | Every other direct request (workspace create/open/switch/delete/forget, settings import/export, cache preview/clear, messenger test, plan rules, baseline, briefing, evidence, scope review, undo) | Pressed button; after 1 s the status or connection line names it with its time |
 | Refreshes (`snapshot`, `task`, `coordinator`, `chat_history`, `workspaces`, suggestions, update polling, `quota`) | Not shown as a wait; their absence shows as silence after 6 s |
+
+### Release checks for the user-facing docs — GitHub #290
+
+- [x] Plan: user request 2026-11-01 after the manual header stayed at 0.1.30 for 19 releases and the screenshots showed v0.1.21 (#277). R-200 → DD-212.
+- [x] Red: `tests/release_docs.rs` (a stale README version, an unused capture and a release workflow without the check fail), `tests/test_screenshot_freshness.py` (the script did not exist).
+- [x] Task: `tests/release_docs.rs`, `scripts/check_screenshots.py`, the `screenshots` job in `.github/workflows/release.yml`, `docs/assets/screenshots-current.txt`.
+- [x] Verify (macOS): the new tests, the script on this repository (it flagged the v0.1.50 change of `src/ui/mcp.html` until the confirmation file was committed), full test suite.
+- [ ] Complete: merge and release only on request. Releases run `python3 scripts/check_screenshots.py` before tagging, because the release workflow runs it only after the tag exists.

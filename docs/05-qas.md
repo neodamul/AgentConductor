@@ -809,3 +809,7 @@ Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210.
 ### QAS-197 A held reply is visible within 2 s
 In the bridge simulator with the reply held: messenger test, delete workspace after its dialog, switch workspace, the team briefing and a stop with its reason mark their button and show the waiting line with a counting time within 2 s, and the line returns to normal after the reply; an idle page sampled every 100 ms for 16 s never shows the silence line. Unit tests cover `AC_WAIT` and the 6 s threshold.
 Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.
+
+### QAS-198 A stale doc stops the release
+A version bump without the README or manual sentence fails the tests naming the file; a shown screenshot that is missing, or a captured screen that is not shown, fails them. In temporary repositories the script passes when the screens are newer, fails when an interface change follows them and names `docs/assets/screenshots-current.txt`, passes when that file is committed after the change, ignores script and message changes, refuses a shallow checkout and fails when no capture exists.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-192 → QAS-198 → DD-212. GitHub #290, user, 2026-11-01.
