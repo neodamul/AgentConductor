@@ -21,8 +21,10 @@
 - [x] Exact-head run `41307850806` for `d4a11db6` passed macOS validation; it was canceled before Windows native tests after the matching #304 log exposed the already-known Save activation failure.
 - [x] TDD root-cause fix: exact-head run `41309723645` showed the Windows UIA focused element was the top-level AgentConductor window and the Goal editor remained empty. The driver regression failed against the old UIA `SetFocus` + `SendKeys` path, then changed to foreground the app, click the owned Goal bounds, enter Unicode through `SendInput`, and activate Save through keyboard input.
 - [x] Local Verify / push: commit `dbfb28c9` on `codex/issue-9-git-head-fast-path`; 14 tests across `windows_desktop`, `windows_desktop_driver`, and `source_layout`; all-target warning-denied Clippy, rustfmt, `git diff --check`, and the 300-line file limit pass.
-- [ ] Exact-head Platform Verify: run `41313969180` for `dbfb28c9` is active. Require both platform validation and the exact Windows packaged default-desktop journey to pass before changing PR #260 from draft or closing related issues.
-- [ ] After exact package acceptance: refresh this checkpoint and LLM Wiki with terminal evidence, then integrate remaining #9 child work sequentially against the current parent; do not close unintegrated child PRs as duplicates.
+- [x] Diagnose exact-head run `41313969180`: macOS failed `windows_run_lifecycle::lifecycle_driver_exposes_stop_resume_and_recovery_observations` because a cross-platform source-contract still required `SendWait` in `windows_desktop.rs`. The Windows run was canceled before its native tests; this run does not verify Windows input behavior.
+- [x] Follow-up Red / Green: replaced the obsolete `SendWait` expectation with the foreground, owned click, Unicode `SendInput`, and Enter contracts. The local `windows_desktop_driver`, `windows_run_lifecycle`, and `source_layout` suites pass 15 tests (1 package-only test ignored); warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line limit pass.
+- [ ] Exact-head rerun: push this corrected cross-platform contract and require macOS/Windows validation plus the exact Windows packaged default-desktop journey before changing PR #260 from draft or closing related issues.
+- [ ] After exact package acceptance: update this checkpoint and LLM Wiki with terminal evidence, then integrate remaining #9 child work sequentially against the current parent; do not close unintegrated child PRs as duplicates.
 
 ### Reconcile the root Rust migration with latest main — issue #9 / 2026-11-01
 

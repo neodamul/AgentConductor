@@ -58,9 +58,15 @@ that path with a foreground-process check, a click inside the UIA-reported Goal 
 Unicode keyboard events through Win32 `SendInput`, and Enter for Save. The regression
 contract failed before the replacement and 14 focused tests pass locally afterward;
 warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line file limit pass.
-Commit `dbfb28c9` is pushed to PR #260. Exact-head run
-`41313969180` is active; do not claim Windows UI acceptance or mark #260 ready until its
-packaged `windows_desktop` test passes.
+Commit `dbfb28c9` is pushed to PR #260. Run `41313969180` then failed on macOS because
+`windows_run_lifecycle.rs` still required the desktop driver to contain `SendWait`; the
+Windows job was canceled before native tests. This was a stale cross-platform source
+contract, not a result for the UI automation. The contract now requires the foreground,
+owned click, Unicode `SendInput`, and Enter path. Local Windows-driver/lifecycle/source-layout
+tests pass 15 tests (one package-only test ignored); warning-denied all-target Clippy,
+rustfmt, diff hygiene, and the 300-line file limit pass. Exact-head validation and the
+packaged Windows `windows_desktop` test remain required before claiming UI acceptance or
+marking #260 ready.
 
 ## Stale child-PR merge-tree audit — issue #9 / 2026-11-01
 
