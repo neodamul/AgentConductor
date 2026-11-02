@@ -7859,3 +7859,15 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Verify (local): `windows_run_lifecycle` and `source_layout` pass 3 tests with 1 exact-package test ignored; the test file is 259 lines, below 300.
 - [ ] Verify (Windows): rerun the exact packaged UI journey and use the new report details to identify and fix the underlying resume failure.
 - [ ] Complete: keep acceptance at 22/50 and PR #22 Draft until the lifecycle test and the remaining package/UI parity gates pass.
+
+### 2026-11-02 — Preserve Windows UI action process evidence — issue #9
+
+- [x] Plan: inspect failed run `41456152913`; the test discarded UI action logs when its fixture was cleaned up, hiding whether Resume was rejected before spawn or failed in its child process.
+- [x] Red: extend the lifecycle timeout assertion to include `coordinator-ui-*/process/owner.json` and the stdout/stderr tails.
+- [x] Verify locally: focused lifecycle contract test passes; warning-denied test Clippy, rustfmt, and diff checks pass. `tests/windows_run_lifecycle.rs` is 298 lines.
+- [x] Local path isolation: `ui_resume::agent_room_resume_action_restarts_a_stopped_task_through_its_ui_child` passes; `Room::dispatch` plus the broker child reaches `waiting_approval` on task attempt 2 on macOS.
+- [x] Task / push: commit `45f65ed7` is pushed to the existing PR #22 branch. No product behavior changed and no acceptance credit is added.
+- [x] Verify (macOS): exact-head run `41465909814` passed platform validation.
+- [x] Verify (Windows build/layout): exact-head run `41465909814` passed the all-target build and source/test layout check; applicable Windows native tests are running.
+- [ ] Verify (Windows package): exact-head run `41465909814` must pass remaining validation, build the release package, and emit preserved action evidence if the lifecycle journey still fails.
+- [ ] Complete: diagnose and fix the product failure, then pass the exact package journey. Keep acceptance at 22/50 and PR #22 Draft meanwhile.

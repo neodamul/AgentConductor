@@ -17,3 +17,12 @@ This disproves the theory that the earlier cancelled run was only a Windows job-
 ## TDD diagnostic follow-up
 
 The old failure message gave only the expected state and discarded the observed report before temporary cleanup. `tests/windows_run_lifecycle.rs` now prints the saved run state, error, and task status/attempt counts when the expected state times out. Local `windows_run_lifecycle` and `source_layout` suites pass 3 tests, with the exact-package test ignored on macOS. This change does not alter production code or establish Windows acceptance. The next exact Windows package run must reveal the persisted failure reason before a product fix is selected.
+
+## UI-action process diagnostic follow-up
+
+- Run `41456152913` showed `stopped`, no report error, and task attempt 1 after Resume. The test still could not tell whether the UI rejected the request before spawning a child or the child failed.
+- Commit `45f65ed71516c1d932f7d457122cc1f37eaa4316` makes a timeout print persisted `coordinator-ui-*/process/owner.json` and stdout/stderr tails before test cleanup.
+- Local focused test contract, warning-denied test Clippy, rustfmt, diff check, and the 298-line limit pass. No product acceptance credit is added.
+- A new local `ui_resume` integration test drives `Room::dispatch` through the broker child and passes on macOS: the stopped task resumes to `waiting_approval` at attempt 2. This rules out the general controller/child path on macOS, but does not test Windows UI Automation or the Windows release package.
+- The test waits for its matching UI child job to reach `completed`/exit code 0 before deleting the fixture. The run report can reach `waiting_approval` just before the child writes its audit result; removing the fixture earlier caused a `DirectoryNotEmpty` race. The strengthened test passed three consecutive focused runs.
+- Exact-head run `41465909814` is validating commit `45f65ed7`; inspect its Windows package result before selecting a behavior change.
