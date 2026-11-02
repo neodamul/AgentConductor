@@ -2462,3 +2462,11 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Task: `src/quota/terminal.rs` (`CLAUDE_WAIT` 180 s); CHANGELOG.
 - [x] Verify (macOS): `claude_wait`, `claude_prompt`, `source_layout`, clippy.
 - [ ] Complete: merge and release only on request.
+
+### Signed-out or expired login — GitHub #317
+
+- [x] Plan: #295 was an expired Claude login shown only as "timed out after /usage". R-201 stands; a never-signed-in CLI and an expired login are one case for Claude and Codex (user, 2026-11-02). Claude: `claude_blocker` recognises the signed-out screens (`Not logged in`, `Please run /login`, `Select login method`, `OAuth token has expired`) and stops at once. Codex: `codex_rate_limit_error` maps the app-server "authentication required", 401/unauthorized and token errors to the same sign-in message; the API-key message is kept. The exact screens/messages were not available from a signed-out PC, so the phrases follow the CLIs' known wording and are widened when a real one differs.
+- [x] Red: `tests/claude_usage.rs` (two tests), `tests/claude_wait.rs` (`signed_out` fixture case ends within seconds).
+- [x] Task: `src/quota/terminal.rs`, `src/quota/query.rs`, `src/quota.rs`; CHANGELOG.
+- [x] Verify (macOS): full suite (762 passed), clippy.
+- [x] Complete: release requested by the user.

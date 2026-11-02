@@ -90,8 +90,22 @@ pub fn claude_blocker(text: &str) -> Option<&'static str> {
             "Claude CLI first-run setup is not finished on this computer; run claude once in a terminal, complete setup and sign in, then refresh",
         );
     }
+    if [
+        "Not logged in",
+        "Please run /login",
+        "Select login method",
+        "OAuth token has expired",
+    ]
+    .iter()
+    .any(|screen| text.contains(screen))
+    {
+        return Some(SIGNED_OUT);
+    }
     None
 }
+
+/// GitHub #317: a login that expired and one never made are told the same way.
+const SIGNED_OUT: &str = "Claude is not signed in or the login expired; run claude in a terminal, sign in with /login, then refresh";
 
 /// "Current week (all models)" is the shared window; a named model gets its own label so
 /// a later per-model line (e.g. "Current week (Fable)") never overwrites the shared one.

@@ -106,7 +106,7 @@ pub use parse::{parse_claude, parse_codex};
 pub(super) use parse::{snapshot, window};
 
 mod query;
-pub use query::query;
+pub use query::{codex_rate_limit_error, query};
 
 fn profile_digest(profile: &crate::plan::AgentProfile) -> Result<String, String> {
     let mut profile = profile.clone();
