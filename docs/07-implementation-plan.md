@@ -1,3 +1,5 @@
+# Implementation plan and TDD
+
 ### 2026-11-02 — Remove redundant quota-query text — issue #321
 
 - [x] Plan: keep the running spinner/refresh control and remove the duplicate elapsed-time label from both agent-card UIs; retain the run-screen status.
@@ -20,7 +22,8 @@
 - [x] Package Verify Windows: release build, bilingual manual rendering, package smoke, and default-desktop save journey passed.
 - [ ] Package Verify Windows lifecycle: the stop/resume/recovery journey failed to locate the stop-reason edit; its driver now filters offscreen windows/controls and passes local contract tests. Rerun the exact package after pushing.
 - [ ] UI acceptance: full screen-by-screen parity and shipped/default Rust UI acceptance remain open; counts stay 22/50 overall, 22/25 packaged workflows, and 0/25 shipped/default Rust UI.
-- [ ] Complete: commit current local docs and TDD fixes, merge latest `main` (`d406f60b`) into the root branch, run focused local verification, push once, then verify the resulting exact head.
+- [x] Complete: committed the Rust quota-card port and Windows lifecycle-driver fix on the existing #22 branch; merged `main` at `d406f60b`, retaining the changelog/docs update and resolving the web UI delete/modify conflict in favor of the Rust-only app tree.
+- [ ] Next: rerun focused local verification after integration, push the existing root branch once, and verify the exact-head Windows package lifecycle journey.
 
 ### Close the PR #22 macOS screenshot/test regressions — 2026-11-02
 
@@ -7229,3 +7232,489 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Green: prefix manifest entries with `docs/assets/` before passing them to `git log`.
 - [x] Verify: the focused regression and existing stale/updated-manifest tests pass; `check_screenshots` passes on the current committed captures; changed source/test files remain under 300 lines.
 - [ ] Package gate: this release-tool bug fix does not count as product UI acceptance. Re-run exact macOS/Windows package validation on the updated #22 head.
+
+## Main-branch task history reconciled during root PR #22 sync (2026-11-02)
+
+These entries retain their original main-branch scope and verification dates. The current issue #9 status is recorded above.
+
+### Stable release 0.1.30 checklist (2026-10-19)
+
+- [x] Plan: confirm the latest main commit and verify that `v0.1.30` is unused remotely.
+- [x] Task: update the public README, English/Korean Markdown manuals and release notes for the changes since `v0.1.24`.
+- [x] Verify: render both offline HTML manuals with the Rust CLI; run local all-target tests (serial run passed), Clippy, formatting and release-package tests. The first parallel run hit a transient document-edit race and test contention; isolated targets and the final serial run passed.
+- [x] Verify: local Python packaging suite (38 tests) and macOS optional native UI tests/checks/Clippy passed.
+- [x] Verify: macOS and Windows release workflow builds and publishes both checksummed packages from the exact tagged source (run [39235764717](https://github.com/neodamul/AgentConductor/actions/runs/39235764717); both validation and native-package jobs passed).
+- [x] Complete: publish stable [v0.1.30](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.30) with macOS and Windows archives and `SHA256SUMS`; packaged manuals include both Markdown and rendered English/Korean HTML. GitHub asset SHA-256 values: macOS `4b10601eccbd70ef4e7b5d8bf9868d1f3c6f2955764f9a4686231abc1c777fc9`, Windows `4d159d7cbd2719e3dbd5a6a466558677d4bb1c466b524599e5ca1e94192d4bee`.
+
+Release scope: the published app is the current `main` desktop product. The separate Rust-native UI migration remains in progress and is not represented as complete by this release.
+
+### GitHub #7 — custom CLI JSONL stream prefix
+
+- [x] Plan: trace custom profile argv through subprocess stdout spooling, `Decoder::finish`, and the terminal `Result` gate. Keep JSON object/schema validation and successful-result requirements unchanged.
+- [x] Red: a split-BOM custom JSONL fixture reproduced the same decoder error reported by the issue: `invalid JSONL at offset 0: expected value at line 1 column 1`.
+- [x] Green: strip one optional UTF-8 BOM only at absolute stream offset zero; later BOMs, malformed text, invalid UTF-8, non-object JSON, and missing terminal results remain failures.
+- [x] Verify: protocol tests, source-layout, formatting and warning-free Clippy pass locally; touched Rust files remain below 300 lines.
+- [ ] Full all-features suite: local sandbox denies loopback binding in cooperative-memory fixtures and filesystem operations in folder-execution fixtures (`Operation not permitted`); rerun these environmental cases in the authorized CI runner.
+- [ ] Optional follow-up: capture the registered CLI's sanitized first stdout line if the error persists, then verify the behavior in a packaged cross-platform run; provider-specific output was not available during this decoder-level fix.
+
+### GitHub #32 — duplicate native-worker permission receipts
+
+- [x] Plan: reproduce the macOS assertion that one guarded Claude task leaves two requests after parallel sibling tasks finish; trace receipt creation in `native_guard::coordinated_decision` and scheduler finalization.
+- [x] Red: `cargo test --offline --locked --test native_worker compiled_native_worker_stops_before_the_command_and_retains_its_session_and_exact_request -- --exact --nocapture` failed with `requests.len() == 2` where the regression expected one actionable request.
+- [x] Green: identify the native tool-call ID before recording the live request; on scheduler return, reuse the pending content-addressed receipt if its context is unchanged, or supersede it and create one fresh receipt when only the shared-workspace fingerprint changed.
+- [x] Verify: assert a single active pending request, retain superseded history, reject approval using its stale ID, and approve only the current receipt. Focused native worker, live decision, coordinator request, Claude control and ledger suites pass locally; formatter and diff checks pass.
+- [x] Complete: source-layout, all-target Clippy (`-D warnings`), formatting and diff checks pass locally; issue #32 progress and AgentMemory/wiki are updated. Existing modified source files `src/native_guard.rs` (312 lines) and `src/workflow/scheduler.rs` (472 lines) were already over the current 300-line target at this branch base; the responsibility-based module split remains outstanding under #9.
+
+### GitHub #36 — failed plan retry timeout recovery
+
+- [x] Plan: trace the “native response timed out; refresh” message to the interactive 15-second request default and inspect planning startup, baseline checks, polling, and retained-job feedback.
+- [x] Task / Red: `planning_preparation_polls_use_the_plan_timeout` failed because snapshots used the 15-second timeout while planning progress was active.
+- [x] Task / Green: use the existing five-minute bound for planning save, baseline inspection/actions, and snapshots while plan startup is active; keep automatic polling and replace the nonexistent manual-refresh instruction with localized recovery guidance.
+- [x] Verify: Rust `planning_progress` (5/5), full `cargo test --all-targets`, source-layout, all-target Clippy (`-D warnings`), rustfmt and diff checks pass locally. The first macOS CI run exposed two Python harnesses coupled to old `ensureBaseline()` and `poll()` lexical context; updated the harnesses for the timeout parameter and `planStarting` state. Exact regressions (2/2) and the full Python suite (38/38) pass locally. Actions run 39203396990 passed all four macOS/Windows validation and native-package jobs. Live slow-filesystem behavior remains unverified.
+- [x] Complete: update #36, LLM Wiki and AgentMemory; commit/push the issue branch and open draft PR #37 (`Fixes #36`). The issue stays open for review and later integration into the Rust-native UI branch.
+
+### GitHub #13 — local company build label
+
+- [x] Plan: keep `Cargo.toml` numeric; use a tracked empty suffix file for local builds, display through `update::current()`, and reject non-empty suffixes at Rust package assembly. Preserve numeric update comparison and protocol client versions.
+- [x] Task / Red: add unit coverage for `0.1.25.company_name`, invalid labels, and package refusal; initial focused test failed because the suffix formatter was not implemented.
+- [x] Task / Green: wire the validated compile-time suffix into both titlebars and keep release artifacts unsuffixed by construction.
+- [x] Verify: version helper and package-safety unit tests pass; update (4), titlebar (1), package (8), UI (5), and source-layout tests pass; formatting and all-target Clippy pass. A temporary `company_name` compile confirmed both titlebars and numeric update comparison; suffix file was restored empty.
+- [x] Complete: update AgentMemory/LLM Wiki, commit/push issue branch `codex/issue-13-company-version`, and open PR #46 referencing #13; keep issue open until merge review completes.
+
+### GitHub #12 — per-agent declarative custom CLI settings
+
+- [x] Plan: audit `AgentProfile`, JSON workspace export/import, event decoding and quota callers first. Existing argv/environment/parser settings already are per profile; the remaining custom-agent gaps were fixed event-name/session fields and quota's Claude/Codex-only eligibility/query branches. Keep native provider defaults and avoid a parser DSL.
+- [x] Red: add JSON profile mapping tests for event names/session pointers and a quota Snapshot JSON Pointer test; confirm failure before adding profile-aware parsing and quota support.
+- [x] Task / Green: add backward-compatible `event_types`, `session_id_pointer` and optional `quota_command` (`args`, bounded timeout, output pointer). Route execution, streaming progress, recovery and coordinator plan parsing through the profile decoder. Run configured quota argv without a shell and validate retained JSON output. Rust quota due/status and `quota-refresh` include configured custom CLIs; current WebView quota controls remain Claude/Codex-only pending the R-151 Rust UI migration.
+- [x] Verify: after merging current `origin/main` (including #44), `cargo test --locked --all-targets -- --quiet --test-threads=1` passes locally (180 suites, 542 passed, 0 failed, 14 ignored); focused issue/regression tests 47/47, all-target Clippy, rustfmt, diff checks, and the source-layout 300-line ceiling pass. The full suite needed local loopback access for cooperative-memory fixtures; serial execution avoids shared temporary-workspace collisions. Changed Rust source/test modules are split to 300 lines or fewer. Cross-platform CI remains required before merge.
+- [x] Complete: document the normalized Snapshot contract and JSON example; update AgentMemory and LLM Wiki (`knowledge/wiki/custom-cli-profiles.md`); merge latest `origin/main` without rewriting the issue branch and push PR #48. Existing native CLI parsers and provider-specific quota formats remain built-in defaults; custom quota output must be normalized to Snapshot by the CLI or a local wrapper. Rust quota scheduling and CLI refresh support custom profiles; the current WebView quota controls remain limited to Claude/Codex pending R-151. No JavaScript or Python changes are included relative to `origin/main`. Keep issue #12 and PR #48 open for review.
+
+### GitHub #44 — blocked task timeout feedback and automatic resume
+
+- [x] Plan: trace the repeated wall-timeout path, run report/error banner, retained per-attempt artifacts, scheduler stop gate and terminal blocked status.
+- [x] Task / Red: add a one-time timeout worker fixture and assert automatic retry; confirm the test failed because the task was `blocked` instead of reaching review.
+- [x] Task / Green: preserve timeout count and attempt artifacts; retry as pending after `min(timeout, 60s)`, audit and surface timeout feedback, report terminal blocked causes, and honor Stop before relaunch.
+- [x] Verify: focused timeout/stop regressions, full local Rust tests (180 suites, 542 passed, 0 failed, 14 ignored), source-layout (300-line ceiling), rustfmt and all-target Clippy pass on the integrated branch. The existing JavaScript run banner remains unchanged from `origin/main`; inspect final diff before pushing. Port the same behavior and trace to the issue-linked Rust-native branch.
+- [ ] Complete: push issue-linked main PR, integrate it before porting to the issue-linked Rust branch, locally verify and open the Rust PR; update #44 and LLM Wiki/AgentMemory only after both branches are complete.
+
+#### Run-screen feedback while running — GitHub #95
+
+#### Quota reset time zones — GitHub #82
+
+#### Update download cleanup — GitHub #80
+
+#### MCP header references — GitHub #84
+
+#### Case-insensitive task scopes — GitHub #79
+
+#### Command policy fail-closed forms — GitHub #83
+
+- [x] Red: `tests/guard_command_forms.rs` — obfuscated network commands and inline interpreter code must ask; ordinary commands stay automatic.
+- [x] Green: `src/guard/forms.rs` (glued quotes, `$` expansion, inline-code interpreters).
+- [x] Verify: guard suites, full suite, fmt, clippy `-D warnings`.
+
+#### Messenger explicit approval parsing — GitHub #81
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+#### Pending-task edits during a run — GitHub #103
+
+#### Live agent activity — GitHub #100
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+#### Coordinator chat — GitHub #115
+
+#### Room focus follows progress — GitHub #109
+
+#### Activity line fixed slot — GitHub #117
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+#### Downward update arrow — GitHub #127
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+#### Update repository setting — GitHub #130
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+#### Step lessons — GitHub #138
+
+- [x] Requirement chain R-164 to DD-174, red tests, recording, prompt delivery, Agent Room list (verified in the browser), manual.
+
+#### Worktree cleanup — GitHub #143
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+#### Coordinator guardrail step 3: typed amendments — GitHub #149
+
+- [x] R-169 to DD-179, red tests, validator, budget, undo, decision rows, Undo button.
+- [ ] Step 4 charter and goal-drift check.
+
+#### Coordinator guardrail step 4: charter and goal drift — GitHub #149
+
+- [x] R-170 to DD-180, red tests, charter record, drift limit, evidence, scope-recovery update.
+- [x] All four steps done; the issue closes with this change.
+
+#### Round credit display — GitHub #162
+
+- [x] Red-first tests, green fix, verify (suite, fmt, clippy).
+
+#### Feedback to the coordinator — GitHub #165
+
+- [x] R-172 to DD-182, red tests, request module, review operator note, action and room wiring (clicked in a browser).
+
+#### Rust review policy — GitHub #169
+
+- [x] Plan: review the Google Rust Style Guide against the repository (read-only measurements on `main` at `b7fa27a9`); adopt sixteen review rules for new and changed code, exclude Chrome/Fuchsia-specific, unstable and library-only rules, add no executable gate (every candidate lint fails on many existing sites).
+- [x] R-174 to DD-185 added to documents 01 to 06 and the new `docs/13-rust-review-policy.md`; README map and traceability row; CHANGELOG. No source or test file changes, so there is no Red test; the measured baseline is recorded in the policy.
+- [x] Verify: `cargo fmt --check`, `cargo test --test source_layout --test public_docs` and `git diff --check` pass locally.
+- [x] Complete: merged into `main` (pull request #170) and ported to the Rust migration line (pull request #171, `Related to #169`). Open follow-up (not part of #169): the `SAFETY:` comment pass became GitHub #172.
+
+#### Test environment mutation — GitHub #176
+
+- [x] Plan: R-176 to DD-187 added; red baseline on macOS with `-W clippy::undocumented_unsafe_blocks` over `--tests`: 30 violations in 22 files (26 environment-mutation blocks in 18 files, 4 other `unsafe` calls); `tests/windows_icons.rs` and other Windows-only sites are counted by Windows CI.
+- [x] Red: `tests/env_guard.rs` for the helper (restore on drop, serialization, panic does not poison); failed to compile before `tests/support/env.rs` existed, passes after.
+- [x] Task: `tests/support/env.rs`; the 19 test files use it (`HOME_LOCK` and `PICKER_ENV` removed); `SAFETY:` comments on the other test `unsafe` calls (`kill`, `waitpid`, `mkfifo`, `signal`, `TerminateProcess`).
+- [x] Task: CI gate and `docs/10` command cover `--tests`; `docs/13` exclusion paragraph replaced by the helper description; CHANGELOG entry.
+- [x] Verify (macOS): the gate with `--tests` reports zero; `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, the full `cargo test --all-targets` (228 suites) and six repeated runs of the 23 changed suites pass. `git grep` finds `set_var` / `remove_var` only in the helper and `src/update.rs`.
+- [x] Verify (Windows): Windows CI covers `tests/windows_icons.rs` and the Windows branch of `tests/availability_watcher.rs`, which cannot be compiled locally.
+- [x] Complete: merged into `main` (#177) and ported to the Rust migration line (#178, `Related to #176`).
+
+#### Prompt optimizer skill — GitHub #180
+
+- [x] Plan: R-177 to DD-188 added; upstream skill pinned at `getsentry/skills@d18b7aa8` (Apache-2.0), vendored unmodified under `third_party/prompt-optimizer/`.
+- [x] Red: `tests/prompt_optimizer.rs` (prompt, bounds, vendored sums; failed to compile before `src/prompt_optimizer.rs`), `tests/prompt_optimizer_ask.rs`, `tests/startup_optimize.rs`, `tests/optimize_ui.rs` with `tests/optimize_runtime.cjs`, and package license assertions in `tests/release_package.rs` (failed before the package copied the license).
+- [x] Task: `src/prompt_optimizer.rs`, `optimize` worker command, `Request::OptimizeGoal`, snapshot result, page button and dialog (`optimize.html`, `optimize.js`, `optimize.css`), English and Korean texts, package license and notice, manuals (Markdown and regenerated HTML), CHANGELOG, `.gitattributes` keeps the vendored bytes unconverted.
+- [x] Verify (macOS): `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, the unsafe-comment gate and `cargo test --all-targets --no-fail-fast` report no failure. Not verified: the dialog's appearance in a real window and a run against a real coordinator.
+- [x] Verify (Windows): CI on #181 and #182 passed on windows-latest.
+- [x] Complete: merged into `main` (#181) and ported to the Rust migration line (#182, `Related to #180`).
+
+#### Guide and manual in Settings — GitHub #184
+
+- [x] Plan: R-178 to DD-189 added.
+- [x] Red: `tests/agent_tools_guide.rs` expects both buttons in the Settings dialog and neither in the workspace menu script.
+- [x] Task: buttons in `startup.html`, handlers and menu removal in `startup.js`, manuals, CHANGELOG.
+- [x] Verify (macOS): fmt, clippy, the Rust suite and the Python tests report no failure (CI first caught the Python UI contract).
+- [x] Verify (Windows): CI on #186 passed on windows-latest.
+- [x] Complete: merged into `main` (#186); the Rust line port is tracked in #188.
+
+#### Coordinator chat as a CLI transcript — GitHub #185
+
+- [x] Plan: R-179 to DD-190 added; scope chosen by the user: kept conversation and terminal-style screen (no long-lived stdin session).
+- [x] Red: `tests/chat_history.rs`, `tests/chat_prompt.rs` (clipping, `next_turns`), `tests/startup_chat.rs`, `tests/chat_runtime.cjs`, `tests/chat_ui.rs`.
+- [x] Task: `chat::history/next_turns`, `chat`/`chat_history`/`chat_reset` requests, `chat.js` transcript, New conversation, messages, manuals, CHANGELOG.
+- [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure. Not verified: the panel's look in a real window and a run against a real coordinator.
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge into `main`. The `rust` branch has no coordinator chat; the native chat is on Codex's #9 branch and is tracked in #189.
+
+- [ ] Complete: merge into `main`, then port to the Rust migration line with `Related to #184`.
+
+#### Remove static labels — GitHub #190
+
+- [x] Plan: R-180 to DD-191 added; footer line deleted per user decision.
+- [x] Test: `tests/static_labels.rs` asserts the markup, styles and keys are gone (written with the removal, not run red first).
+- [x] Task: markup, styles and keys removed from both pages and catalogs; CHANGELOG.
+- [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure. Not verified: the screens in a real window.
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge into `main`, then port to the Rust migration line with `Related to #190`.
+
+#### Chat survives a request timeout — GitHub #197
+
+- [x] Plan: R-181 to DD-192 added.
+- [x] Red: `tests/chat_runtime.cjs` timeout cases failed with the question rolled back.
+- [x] Task: `resync` in `src/ui/chat.js` reloads the stored conversation after a failed send; `tests/chat_async.rs` drives a slow fake coordinator through the application (send returns at once, second send refused, late answer, follow-up carries history).
+- [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure. Not verified: a real window and a real coordinator; why a native reply takes more than 15 s is not found.
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge into `main`. The Rust line has no coordinator chat; Codex's native chat is #189.
+
+#### Request diagnostics log and guide — GitHub #200
+
+- [x] Plan: R-182 to DD-193 added.
+- [x] Red: `tests/request_diagnostics.rs` failed (no log existed).
+- [x] Task: `src/ui/diagnostics.rs`, `Room::dispatch` wrapper, request kind in the timeout notice, decision table in both manuals (HTML regenerated).
+- [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure. Not verified: a log from a real timeout; the cause of the 15 s delay is still unknown.
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge into `main`, then release v0.1.39.
+
+#### Coordinator chat avoids repository revision lookup — GitHub #234
+
+- [x] Plan: apply existing R-181 / QAS-179 / DD-192; keep the 15-second UI behavior and preserve active-job checks.
+- [x] Red: a temporary Git shim delayed `rev-parse HEAD` by 4 seconds; chat dispatch waited 8.17 seconds because the request and launcher each repeated the lookup. A stale saved-context regression also failed because the fast path accepted a request after the goal changed; the chat UI contract test failed because it sent the general revision instead of a chat-specific token.
+- [x] Task: keep chat ahead of the Git HEAD check, but require a separate `chat_revision` over saved state and proposal evidence (excluding only repository HEAD). Snapshot exposes it and the chat UI sends it. Reject stale chat before checking/launching the coordinator; mutation requests retain the full HEAD-bound revision.
+- [x] Verify: stale saved goal is rejected; the slow-`rev-parse` acceptance regression remains green; `startup_chat`, `request_diagnostics`, and source layout pass 8 tests; `chat_runtime.cjs`, Clippy, rustfmt, diff check, and 300-line limits pass locally.
+- [ ] Verify: exact packaged macOS/Windows checks for updated PR #240 and ported PR #239. Obtain the affected installation's request log to distinguish native dispatch delay from an external coordinator delay.
+- [ ] Complete: merge the main fix and confirm the corresponding implementation in the Rust migration PR before closing #234.
+
+#### CLI I/O protocol (acio) design — GitHub #205
+
+- [x] Plan: R-183 to DD-194 and DDR-38 added; `docs/cli-io-protocol.md` is the specification.
+- [x] Task: `schemas/cli-io/v1` input, event and describe schemas with the valid and invalid examples and a minimal CLI example; task types (`extract`, `summarize`, `analyze`, `code`, `agentic`, `creative`) with per-model resolution.
+- [x] Verify: every example is accepted or rejected as expected by a draft 2020-12 validator (run locally with python `jsonschema`; no Rust checker exists yet); the minimal CLI's output validates.
+- [x] Review: the user answered the open questions on 2026-10-28 (decisions in §14: bidirectional in v1, per-agent settings for in-house CLIs, coordinator sets `task.type`, roles table shows effort and fit).
+- [ ] Next: implementation phases 1 to 6 of the document, each as its own issue and PR.
+
+#### acio 1/6: schemas in the binary, checker, io commands — GitHub #207
+
+- [x] Plan: R-183 to DD-195 (design PR #206); this step is phase 1 of `docs/cli-io-protocol.md` §13.
+- [x] Red: `tests/cli_io.rs` did not compile before `src/cli_io.rs` existed.
+- [x] Task: `src/cli_io.rs` (embedded schemas, `validate`), `src/cli_io/{check,pattern,timestamp,stream}.rs` (JSON Schema subset checker, regex subset, RFC 3339, stream rules), `src/commands/io.rs` (`io schema|validate`), manual command rows, CHANGELOG.
+- [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure.
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge after the design PR #206 (this branch is stacked on it).
+
+#### acio 2/6: runtime, protocol setting, control channel — GitHub #208
+
+- [x] Plan: phase 2 of `docs/cli-io-protocol.md` §13; the setting is `protocol: acio` on a custom profile (not a new `Provider`, which would have touched 25 match sites).
+- [x] Red: `tests/acio_runtime.rs` did not compile before `src/acio.rs` existed.
+- [x] Task: `AgentProfile.protocol`, `Decoder` mapping, `acio::run` (event validation, decisions with a timeout that denies, ordered control queue, user message, cancel line), `process::run_controlled_outbound`, `acio::describe`, `io describe`, manual rows, CHANGELOG.
+- [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure.
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge into `main` after #213. Not yet connected: nothing in the UI or the workflow starts an acio run; that is phases 3 and 4.
+
+#### acio 3/6: agent characteristics as settings — GitHub #209
+
+- [x] Plan: phase 3 of `docs/cli-io-protocol.md` §13; R-183 / FR-173 / DD-195.
+- [x] Red: `tests/adapter_golden.rs` recorded the argument lists of every built-in CLI from the old code first (`tests/data/adapter_golden.json`); `tests/agent_settings.rs` did not compile before `src/agent_settings.rs`.
+- [x] Task: `src/agent_settings.rs` (types, embedded presets for claude, codex, opencode, merge patch, `settings_for`), `src/adapters.rs` rebuilt on the presets (no provider branches), `AgentProfile.agent_settings`, agent schema extended (`executable`, `full_access`, `resume.bare_argv`, `model_aliases`, `selectors`, `direct_folder`, `label`), presets rewritten to match the old behavior exactly, CHANGELOG.
+- [x] Verify (macOS): the golden file and all existing adapter tests pass unchanged; fmt, clippy, the unsafe-comment gate, the Rust suite and the Python tests report no failure.
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge into `main`. Not yet consumed: `options`, `response_schema`, `control` and `capabilities` settings (phases 4 and 5); Claude and Codex event decoding stays code.
+
+#### acio 4/6: task types in plans, per-model resolution, review display — GitHub #210
+
+- [x] Plan: phase 4 of `docs/cli-io-protocol.md` §13 (FR-172 implemented as FR-174); decisions of 2026-10-28: the coordinator sets `task.type`, no operator control for now, the roles table shows efforts and fit.
+- [x] Red: `tests/task_types.rs` and `tests/task_profile_ui.rs` did not compile or failed before the code existed.
+- [x] Task: `plan::TaskType` and `Task.task_type`, planner schema and prompt, `src/task_profile.rs` (resolution and warnings), worker applies the result and records `task_profile`, snapshot `task_profiles`, page (task kind and effort, type kept on edit, model hint), messages EN/KO, manuals, CHANGELOG.
+- [x] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite, the Python and node tests report no failure.
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge into `main` after #215 (stacked). Not changed: `execution_options` are still dropped when the page rebuilds a task on edit (existing behavior); the native UI (Codex #9 track) does not show task kinds.
+
+#### acio 5/6: prompts assembled as Document, Task, Format — GitHub #211
+
+- [x] Plan: phase 5 of `docs/cli-io-protocol.md` §13 (FR-175); the user's order "Document - Task - Format".
+- [x] Red: `tests/prompt_order.rs` failed to compile before `planner::plan_prompt` existed and asserted the old order.
+- [x] Task: `chat::build_prompt`, `prompt_optimizer::build_prompt` and the planner prompt (now `src/planner/prompt.rs`, a pure function) rebuilt in the new order with their wording kept; CHANGELOG.
+- [x] Verify (macOS): the existing chat and optimizer prompt tests pass unchanged; fmt, clippy, the unsafe-comment gate, the Rust suite, the Python and node tests report no failure. Not verified: answer quality with a real coordinator (only the placement changed).
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge into `main` after #216 (stacked).
+
+#### acio 6/6: `io conformance` and the "Integrating a CLI" chapter — GitHub #212
+
+- [x] Plan: phase 6 of `docs/cli-io-protocol.md` §13 (FR-171, DD-194); checks describe, versions, a read-only ask run (stream rules, success, exit 0) and an invalid input (exit 2); `--task`, cancel and oversize-line checks are left out until a CLI declares them.
+- [x] Red: `tests/io_conformance.rs` failed to compile before `cli_io::conformance` existed.
+- [x] Task: `src/cli_io/conformance.rs` and `agentconductor io conformance <exe>`; manual chapter 2.9 (EN/KO) and the command table row; protocol doc §11; CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite, the Python and node tests.
+- [ ] Verify (Windows): CI (the conformance tests are Unix-only because they use shell scripts).
+- [ ] Complete: merge into `main` after #217 (stacked); then the v0.1.40 release.
+
+#### #221 Quiet idle-poll timeouts and pause deadlines while hidden
+
+- [x] Plan: issue branch `221-idle-workspace-timeout-toast` from current `main`; trace R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → DDR-39 → DD-196.
+- [x] Red: `tests/idle_poll_timeout_runtime.cjs` and `tests/test_idle_poll_timeout.py` fail before the bridge pauses request deadlines while hidden.
+- [x] Task: mark scheduled and visibility-resume workspace/room polls as background; suppress only their timeout toasts; pause visible-time deadlines in both request bridges and restart materially late timer callbacks without retrying the request.
+- [x] Verify: deterministic timer regression covers startup and room deadlines, long hidden intervals, late timer restart, listener cleanup, background-poll silence, and visible errors on explicit refresh.
+- [x] Verify: the full Python suite passes 39 tests, focused Node regression passes, both UI scripts pass `node --check`, `git diff --check` passes, and Cargo `public_docs` + `source_layout` pass 4 tests.
+- [ ] Task: commit and push the issue branch; open draft PR with `Fixes #221`.
+- [ ] Complete: merge the verified issue PR into `main`, then port the behavior and native Rust regression coverage to the Rust migration branch.
+
+#### Chat button icon — GitHub #229
+
+- [x] Plan: user request 2026-10-28: the coordinator chat is a conversation now, so the "?" button should look like a chatbot. An inline SVG (bubble with two eyes and an antenna, `currentColor`) keeps the theme color and needs no emoji font.
+- [x] Red: `the_chat_button_is_a_chatbot_icon_not_a_question_mark` in `tests/chat_ui.rs` failed before the change.
+- [x] Task: `src/ui/startup.html`; README and manual wording (EN/KO, HTML regenerated); CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, unsafe gate, Rust suite (710 passed), Python, node. Not verified: how the icon looks in the real window (drawn at 96 px and 16 px in a preview only).
+- [ ] Verify (Windows): CI.
+- [ ] Complete: merge, then the next release. The native UI (Codex track, #9) keeps its own button.
+
+#### #221 Follow-up diagnostics and quiet retries
+
+- [x] Task: report page-side timeout duration to the local diagnostics log, and show a transport timeout only after three consecutive misses on scheduled background polls. Explicit refresh and non-timeout errors remain visible immediately.
+- [x] Verify: `tests/poll_failure_runtime.cjs` covers retry threshold, reset after success, immediate non-timeout errors, and timeout diagnostics from both UI entrypoints.
+- [x] Verify: exact workflow `40684867733` passed macOS and Windows platform validation and both native-package jobs. Client timeout log review and Rust UI parity remain open in the related follow-up.
+
+#### The deleted default workspace comes back — GitHub #226
+
+- [x] Plan: user report 2026-10-28 (v0.1.38): the deleted workspace is back after updating; it was the default one, which the launch path always opened (and recreated). R-185 → DD-197: open the last used saved workspace; an unused placeholder is never listed and the page asks for the first workspace name (user clarification the same day: with no workspace the app asks to add one, so no default "desktop" should exist). The native probe window keeps its launch rule (Codex track, #9).
+- [x] Red: `tests/launch_workspace.rs` did not compile before `workspaces::launch_root` existed.
+- [x] Task: `ui::workspaces::launch_root`, `is_blank`, blank workspaces left out of the menu/saved list, `workspace_blank` in the snapshot, placeholder retired by `create_workspace`; the page's required first-workspace dialog (`tests/first_workspace_runtime.cjs`); the `agentconductor` launch command uses `launch_root`; manual (EN/KO) and CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, the unsafe-comment gate, the Rust suite, Python and node tests. Not verified: a real relaunch of the packaged app.
+- [ ] Verify (Windows): CI (the new test is Unix-only).
+- [ ] Complete: merge, then the next release.
+
+#### Standard prompt form and reply check — GitHub #235
+
+- [x] Plan: user request 2026-10-29: CLIs (also in-house ones) cannot be changed and no sample output exists, so the application fixes the prompt layout and checks the reply itself. Chat, planning and the optimizer already use Document/Task/Format (#211); the reviewer, the worker and the MCP prompts do not. Chain R-186 → DD-198.
+- [ ] Red: `tests/prompt_form.rs` (assemble order and once-only blocks, untrusted heading neutralized, reviewer and worker layout, `Owned paths:` kept) and `tests/coordinator_format_retry.rs` (second attempt after a malformed reply).
+- [ ] Task: `src/prompt_form.rs`; `workflow/review.rs` and `workflow/execution/worker.rs` use it; one bounded format retry in `coordinator::run_json_within`; manual 2.9 rewritten for CLIs that cannot be changed (example path fixed); CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI.
+- [ ] Complete: merge; release only on request. MCP select/preview prompts and the orchestrator prompt are a follow-up if the first change is accepted.
+
+#### Chat knows the workspace and the latest run — GitHub #243
+
+- [x] Plan: user report 2026-10-29: the coordinator cannot read project documents and does not know the run results. R-188 → DD-200. Checked with real Claude and Codex: project files are readable; the prompt lacked the plan and results and the run folder is outside the project.
+- [x] Red: `tests/chat_context.rs` did not compile before `chat_context` and `build_prompt_in` existed.
+- [x] Task: `src/chat_context.rs`, `chat::build_prompt_in`/`ask_in`, `commands/chat.rs`; manual EN/KO and CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI. Not verified: a real coordinator answering with the new section; Codex read-only on Windows.
+- [ ] Complete: merge; release only on request.
+
+#### Chat send whose outcome is unknown — GitHub #241
+
+- [x] Plan: user report 2026-10-29: chat timed out, the text went back into the input, a snapshot also timed out, and much later the answer arrived while the same text was still in the input. R-187 → DD-199: keep the message pending while the stored conversation cannot be read, decide when it can.
+- [x] Red: a case in `tests/chat_runtime.cjs` (timeout + failing history, then accepted / not accepted) failed before the change.
+- [x] Task: `src/ui/chat.js`; CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI. Not verified: a real stalled application.
+- [ ] Complete: merge; release only on request. Related: Codex PR #240 shortens the stall (#234) and does not change this rollback.
+
+#### Fenced JSON after an unfinished draft — GitHub #247
+
+- [x] Plan: user report: `json_reply` skipped the complete second block when an unfinished fenced draft came first, and the 64 KiB reply limit is too small. R-189 → DD-201: advance past the opening marker only; limit 256 KiB.
+- [x] Red: `tests/coordinator_document.rs` (draft then valid, two valid, malformed only, size limits).
+- [x] Task: `src/coordinator/document.rs`; CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI.
+- [ ] Complete: merge; release only on request.
+
+#### Empty task paths in planning — GitHub #251
+
+- [x] Plan: user report: verification tasks with `paths: []` failed planning with one combined message, the schema allowed it, and no retry covered it. R-190 → DD-202.
+- [x] Red: `a_rejected_task_is_named_with_its_field` (tests/plan.rs), `a_task_must_own_a_path_and_name_a_test_command` (tests/planning_schema.rs), `retries_phase_scopes_once_after_a_task_has_no_path`.
+- [x] Task: `src/plan.rs`, `src/planner.rs`, `src/planner/schema.rs`, `src/planner/prompt.rs`; CHANGELOG.
+- [x] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI. Not verified: a real coordinator that returns empty paths.
+- [ ] Complete: merge; release only on request.
+
+#### Non-blocking state revision and snapshot — GitHub #234
+
+- [x] Plan: user data 2026-10-30: `snapshot` and `quota` take over 15 s on a PC where one Git call takes 2.5 s, and the chat waits behind them on the settings lock. R-191 → DD-203: no Git process on the request path, the snapshot answer built outside the lock, slow steps logged.
+- [x] Red: `tests/git_head.rs` and `tests/snapshot_without_git.rs` (fails on the old revision code with `git` unreachable); the step line in `src/ui/diagnostics.rs`.
+- [x] Task: `src/git_head.rs`, `src/ui/setup/revision.rs`, `src/ui/setup/dispatch.rs`, `src/ui/setup.rs`, `src/ui/diagnostics.rs`; manuals EN/KO; CHANGELOG.
+- [x] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI. Not verified: the user's PC after the change; a snapshot that is slow for another reason (the step log will say which).
+- [ ] Complete: merge; release only on request. Related: Codex PR #239 changes the same files for the Rust UI.
+
+#### Coordinator chat during planning — GitHub #261
+
+- [x] Plan: user report 2026-10-30 (v0.1.45): the chat during plan review showed only the toast "startup operation still running", rolled the message back, and learned nothing. R-192 → DD-204: chat in its own slot, a Running work section in the prompt, a rejected send shown in the conversation.
+- [x] Red: `tests/chat_slot.rs` (refused with "startup operation still running" before), `tests/chat_running.rs`, `tests/chat_runtime.cjs` (chat_job and the error turn).
+- [x] Task: `src/ui/setup/*` (chat slot, snapshot), `src/chat_context.rs`, `src/commands/chat.rs`, `src/ui/chat.js`, `src/ui/startup.js` (1 s polling while a chat runs), `src/ui/cache.rs`; manuals EN/KO; CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, unsafe gate, Rust suite, Python, node. Windows: CI. Not verified: a real planner and coordinator on the user's PC.
+- [ ] Complete: merge; release only on request. Related: Codex's Rust chat (#189) must read `chat_job`.
+
+#### Task facts line layout — GitHub #262
+
+- [x] Plan: user report 2026-10-30 (v0.1.45): the task type / effort line of a task in the plan review is a one-character-wide column. R-193 → DD-205: place it explicitly in the summary grid.
+- [ ] Red: `tests/task_profile_layout.rs`.
+- [ ] Task: `src/ui/startup.css`; CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, Rust suite, a browser check of the real stylesheet. Windows: CI.
+- [ ] Complete: merge; release only on request.
+
+#### Coordinator Activity tab status board — GitHub #267
+
+- [x] Plan: user report 2026-10-30: the coordinator Activity tab repeats `AgentConductor run=… phase=running completed=0 failed=0`; a dashboard is wanted. R-194 → DD-206: a status board, and the `workflow` rows left out of the drawn history, in the page only.
+- [x] Red: `tests/coordinator_board.cjs` (the helpers did not exist).
+- [x] Task: `src/ui/room.js`, `src/ui/room.css`, `src/ui/messages/*.json`; CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, Rust suite, Python, node, a browser check of the real room page if feasible. Windows: CI.
+- [ ] Complete: merge; release only on request. The Rust UI has its own room (Codex, out of quota): not changed.
+
+#### Phase hand-over stuck in "starting" — GitHub #269
+
+- [x] Plan: user report 2026-10-30: after phase 1 (and phase 2) the workspace keeps "starting agent execution" with every button disabled until the app restarts. R-195 → DD-207: the page's `startPending` mark has no owner for its end when the report is not visible at the first poll.
+- [x] Red: `tests/start_pending_runtime.cjs`.
+- [x] Task: `src/ui/startup.js` (`startEnded`, `enter`, poll); CHANGELOG.
+- [ ] Verify (macOS): fmt, clippy, Rust suite, Python, node. Windows: CI. Not verified: the user's slow PC; a real multi-phase run.
+- [ ] Complete: merge and release on the user's request (given 2026-10-30).
+
+#### Progress on every step of the JS pages — GitHub #273
+
+- [x] Plan: user request 2026-10-31: steps look frozen during planning and execution. Code analysis plus a simulator of the native bridge (page assembled as in `document.rs`, scenario snapshots) found: start never sent (wrong element id since #38); planning progress only on the Review tab; frozen text while the app is slow; start without elapsed time, lost after reopening, failure only in a toast; optimize lost after reopening; model discovery not shown; pending tasks without a reason; silent running tasks only visible when selected; integration verification shown as "agents are working"; no sign of a stop in progress or of a dead run process; UI actions without elapsed time. R-196 → DD-208.
+- [x] Red: `tests/progress_runtime.cjs` (helpers missing), `tests/run_progress_snapshot.rs` (fields missing), the started time in `tests/coordinator_request.rs`; `tests/start_feedback_runtime.cjs` was already red and unrun.
+- [x] Task: `src/ui/startup.js`, `src/ui/startup.html`, `src/ui/startup.css`, `src/ui/room.js`, `src/ui/room.css`, `src/ui/optimize.js`, `src/ui/i18n.js`, messages; `src/ui/controller.rs`, `src/briefing.rs`, `src/workflow/scheduler.rs` (`runner.pid`), `src/workflow/scheduler/finalize.rs`; `tests/node_runtime.rs` runs every `tests/*.cjs` (13 had no runner); `tests/ui_sim` (the simulator); CHANGELOG. The run lease's PID was not usable for liveness: the availability watcher takes the lease and writes its own PID, so the scheduler records `runner.pid`.
+- [ ] Verify (macOS): gates, simulator replay of every case (done: start sent, progress on other tabs, counting while the bridge hangs, start after reopening and its failure, optimize after reopening, model query, pending reasons, silent rows, verification step, lost runner, stopping, action time, room staleness). Also replayed over the real dispatcher with `tests/ui_live_bridge.rs` (ignored test serving the real page; real plan job with a stalling coordinator, real start, run with mock agents, verification, a killed run process, a stop, and a paused app): every line above appeared as expected. The same scenario with real button clicks also ran in a visible WKWebView (the native app's engine) over the live bridge: all lines appeared, and the same check on `origin/main` reproduced the start defect (`TypeError: null is not an object (evaluating 'node.nodeType')`, no run opened). Windows: CI. Not verified: the user's machine.
+- [ ] Complete: merge and release only on request.
+
+#### Manual header version and screenshots — GitHub #277
+
+- [x] Plan: user report 2026-10-31: the manual says 0.1.30 and the captures are old (v0.1.21). R-197 → DD-209.
+- [x] Red: `tests/manual_renderer.rs` header test.
+- [x] Task: header 0.1.49 (EN/KO), rendered HTML, six captures recaptured with `tests/ui_live_bridge.rs` demo mode in WKWebView, unused `ui-manual-current.png` removed; CHANGELOG.
+- [ ] Verify: manual tests, CI of the release PR.
+- [ ] Complete: shipped with v0.1.49.
+
+#### Progress of chat, goal rewrite, MCP lookup and app update — GitHub #279
+
+- [x] Plan: second pass of the user request of 2026-10-31. Replaying the remaining waits in `tests/ui_sim` on `main` found: a reopened chat counted from the reopening (120 s shown as 6 s) and stopped counting without a sign while the app was silent; the rewrite status did the same; the MCP dialog, tool discovery and source line had no time at all; the update dialog had none while checking or installing. A replay in a visible WKWebView also found that a typed `jira:KEY` left the source preview disabled and the source line empty until the next refresh (up to 5 s), because the suggestions answer did not redraw them (also on `main`). R-198 → DD-210.
+- [x] Red: `tests/chat_runtime.cjs`, `tests/optimize_runtime.cjs`, `tests/mcp_bindings_runtime.cjs`, `tests/progress_runtime.cjs`.
+- [x] Task: `src/ui/i18n.js` (`AC_ELAPSED`), `src/ui/chat.js`, `src/ui/optimize.js`, `src/ui/mcp.js`, `src/ui/mcp.html`, `src/ui/startup.js`; CHANGELOG.
+- [x] Verify (macOS): node, Rust and Python tests; simulator replay of the four cases after the change (chat 2:06 after reopening and the silence after 9 s, rewrite, MCP dialog and source line, update checking and installing), and the same cases in a visible WKWebView (WebKit), where `main` shows the rewrite frozen at 0:31 and the preview disabled for 4 s.
+- [ ] Complete: merge and release only on request.
+
+#### A waiting sign for every request — GitHub #285
+
+- [x] Plan: third pass of the user request of 2026-10-31, done as a complete list instead of a sample. Every request kind of the pages was extracted from the sources and classified (checklist below). Simulator replays with the reply held for 4 s on v0.1.50: messenger test, delete workspace, switch workspace and the team briefing showed no sign. R-199 → DD-211.
+- [x] Red: `tests/request_wait_runtime.cjs`; the idle-silence case in `tests/progress_runtime.cjs`.
+- [x] Task: `src/ui/i18n.js` (`AC_WAIT`, 6 s silence), `src/ui/startup.js`, `src/ui/room.js`, messages; `tests/idle_poll_timeout_runtime.cjs` follows the new `request` signature; CHANGELOG.
+- [x] Verify (macOS): node, Python and Rust tests; simulator replays of the five presses (button marked, line counting within 2 s, back to normal after the reply) and 16 s of an idle page without a silence line.
+- [ ] Complete: merge and release only on request.
+
+Checklist of what the operator sees, by request (after #273, #279 and #285):
+
+| Requests | Where the wait is shown |
+|---|---|
+| Planning (`prepare`, `plan` job) | Review box and strip under the step tabs: elapsed, coordinator output age, silence; failure box |
+| Run start (`start` job) | Run box and strip: elapsed from the job start, also after reopening; failure kept under the button |
+| Run execution (room snapshot) | Banner progress, per task status and last output age, pending reasons, verification step, stopping, lost runner, silence on the connection line |
+| Room actions (`approve`, `merge`, `recover`, `resume`, `revise`, `stop`, `schedule`, `reassign`, `model`, `coordinator_request`, `scope_recovery`, `reject`) | Pressed button, waiting line after 1 s, then the action job's elapsed time in the banner |
+| Chat (`chat` job) | Working line in the panel, elapsed from the job start, silence |
+| Goal rewrite (`optimize` job) | Status beside the button, elapsed, silence |
+| MCP (`mcp_preview`, `mcp_discover` jobs) | Review dialog, tool list and source line: elapsed, silence |
+| Model and quota queries (`catalog`, `quota`) | Busy Models/refresh buttons and a querying or queued fact |
+| App update (`check_update`, `apply_update`) | Update dialog title and state with elapsed time |
+| Every other direct request (workspace create/open/switch/delete/forget, settings import/export, cache preview/clear, messenger test, plan rules, baseline, briefing, evidence, scope review, undo) | Pressed button; after 1 s the status or connection line names it with its time |
+| Refreshes (`snapshot`, `task`, `coordinator`, `chat_history`, `workspaces`, suggestions, update polling, `quota`) | Not shown as a wait; their absence shows as silence after 6 s |
+
+#### Release checks for the user-facing docs — GitHub #290
+
+- [x] Plan: user request 2026-11-01 after the manual header stayed at 0.1.30 for 19 releases and the screenshots showed v0.1.21 (#277). R-200 → DD-212.
+- [x] Red: `tests/release_docs.rs` (a stale README version, an unused capture and a release workflow without the check fail), `tests/test_screenshot_freshness.py` (the script did not exist).
+- [x] Task: `tests/release_docs.rs`, `scripts/check_screenshots.py`, the `screenshots` job in `.github/workflows/release.yml`, `docs/assets/screenshots-current.txt`.
+- [x] Verify (macOS): the new tests, the script on this repository (it flagged the v0.1.50 change of `src/ui/mcp.html` until the confirmation file was committed), full test suite.
+- [ ] Complete: merge and release only on request. Releases run `python3 scripts/check_screenshots.py` before tagging, because the release workflow runs it only after the tag exists.
+
+#### Claude usage query is cut off after 20 s on a slow machine — GitHub #297
+
+- [x] Plan: user report 2026-11-01: the company machine needs more than 20 s for the quota query (related to #295, the card shows only "—"). Both Claude collectors shared a literal 20 s limit for start, trust screen, prompt and `/usage`; the run screen showed nothing while a quota job ran (the banner leaves quota jobs out and the button was only disabled). R-201 → DD-213. Numbered after R-200 of #290, which is not merged yet.
+- [x] Red: `tests/claude_wait.rs` (`query_claude_within`, `CLAUDE_WAIT` missing; a fixture CLI delayed by `AC_QUOTA_DELAY_MS`), `tests/progress_runtime.cjs` (`quotaText`, `quotaRunning`, `quotaWait` missing).
+- [x] Task: `src/quota/terminal.rs` (`CLAUDE_WAIT`, `query_claude_within`, the timeout names its limit), `src/quota/terminal/windows.rs`, `src/quota.rs`, `src/ui/startup.js`, `src/ui/room.js`, messages; fixture delay in `tests/support/terminal_quota_agent.rs`; CHANGELOG.
+- [x] Verify (macOS): tests below; simulator replay of a running `quota` job on the card (counting, only the queried agent, stays correct while the app is silent) and in the run screen (busy button, counting source line, normal again after). The Windows collector was not compiled here (no Windows target); Windows CI compiles it and runs the same fixture test.
+- [ ] Complete: merge and release only on request. The company's real duration is still unknown; with this change the card shows it.
+
+#### Request kind guard — GitHub #301
+
+- [x] Plan: the stop-hook review of the goal of 2026-10-31 pointed out that the coverage checklist (#285) is an assertion; each pass found new gaps by hand. R-202 → DD-214. Numbered after R-200 (#290) and R-201 (#297), both still open; the appended sections need a trivial conflict resolution when they merge.
+- [x] Red: a request kind added to a page script and a direct kind added to the quiet list both fail the new test (checked by temporarily editing the sources).
+- [x] Task: `tests/request_kinds_runtime.cjs` (76 kinds: 7 refresh, 21 job, 47 direct); no product code changes.
+- [x] Verify (macOS): the node test, `node_runtime`, `source_layout`.
+- [ ] Complete: merge and release only on request (test only, nothing to release).
+
+#### Claude usage screen not understood — GitHub #295
+
+- [x] Plan: the company report is `Claude quota response timed out after /usage` on one PC while another PC shows usage. `/usage` was sent, so the start and trust screens worked; the collectors ignored every parse error and reported only the timeout. Related to R-201 / DD-213 (the wait), no new requirement.
+- [x] Red: `tests/claude_prompt.rs` (`$1,351.23 / $5,000.00 spent` and cursor-forward spacing fail; malformed groupings stay rejected), `tests/claude_wait.rs` (a read but rejected screen is named in the timeout; fixture `AC_QUOTA_ENTERPRISE=zero`).
+- [x] Task: `src/quota/terminal.rs` (`thousands`, `plain` turns cursor-forward into spaces, `quota_timeout(.., unread)`), `src/quota/terminal/windows.rs` (same last-reason tracking); CHANGELOG.
+- [x] Verify (macOS): tests above, `claude_usage`, `source_layout`, clippy. The Windows collector is compiled and tested by Windows CI.
+- [ ] Complete: whether the company PC's screen is covered is unknown until it reports; the next failure now carries the reason. Merge and release only on request.
+
+#### Claude usage wait of three minutes — GitHub #315
+
+- [x] Plan: a user reported usage queries that take longer than the 60 s set in #297 (DD-213 said to revisit then). R-201 / DD-213 stand; only the constant changes, no per-profile setting (custom quota commands already allow up to 300 s).
+- [x] Red: `tests/claude_wait.rs` (`the_default_limit_is_three_minutes_for_both_collectors`).
+- [x] Task: `src/quota/terminal.rs` (`CLAUDE_WAIT` 180 s); CHANGELOG.
+- [x] Verify (macOS): `claude_wait`, `claude_prompt`, `source_layout`, clippy.
+- [ ] Complete: merge and release only on request.
+
+#### Signed-out or expired login — GitHub #317
+
+- [x] Plan: #295 was an expired Claude login shown only as "timed out after /usage". R-201 stands; a never-signed-in CLI and an expired login are one case for Claude and Codex (user, 2026-11-02). Claude: `claude_blocker` recognises the signed-out screens (`Not logged in`, `Please run /login`, `Select login method`, `OAuth token has expired`) and stops at once. Codex: `codex_rate_limit_error` maps the app-server "authentication required", 401/unauthorized and token errors to the same sign-in message; the API-key message is kept. The exact screens/messages were not available from a signed-out PC, so the phrases follow the CLIs' known wording and are widened when a real one differs.
+- [x] Red: `tests/claude_usage.rs` (two tests), `tests/claude_wait.rs` (`signed_out` fixture case ends within seconds).
+- [x] Task: `src/quota/terminal.rs`, `src/quota/query.rs`, `src/quota.rs`; CHANGELOG.
+- [x] Verify (macOS): full suite (762 passed), clippy.
+- [x] Complete: release requested by the user.
