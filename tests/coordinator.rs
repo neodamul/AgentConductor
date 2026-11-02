@@ -164,10 +164,6 @@ fn guarded_claude_coordinator_runs_with_read_only_tools_only() {
         error.contains("claude") && error.contains("unverified"),
         "{error}"
     );
-    assert!(
-        error.contains("full access") && error.contains("another coordinator"),
-        "{error}"
-    );
 }
 
 #[test]
@@ -208,10 +204,7 @@ fn a_custom_cli_coordinates_read_only_through_arguments_its_operator_declares() 
         }))
         .unwrap();
     let error = coordinator::read_only_args(&profile, "prompt.txt").unwrap_err();
-    assert!(
-        error.contains("aipro") && error.contains("read-only arguments"),
-        "{error}"
-    );
+    assert!(error.contains("aipro"), "{error}");
     profile.read_only_args = Some(vec![
         "run".into(),
         "--read-only".into(),
@@ -226,4 +219,30 @@ fn a_custom_cli_coordinates_read_only_through_arguments_its_operator_declares() 
     assert!(coordinator::read_only_args(&profile, "prompt.txt").is_err());
     profile.read_only_args = Some(vec![]);
     assert!(coordinator::read_only_args(&profile, "prompt.txt").is_err());
+}
+
+#[test]
+fn the_refusals_are_in_both_message_catalogs() {
+    // GitHub #333: the Korean interface shows the reason in Korean (the language is the machine's, so each catalog is read directly).
+    use agentconductor::ui::messages::{in_language, interpolate};
+    for id in [
+        "native.coordinator_not_read_only",
+        "native.coordinator_bad_read_only_args",
+    ] {
+        let (en, ko) = (in_language("en", id), in_language("ko", id));
+        assert_ne!(en, ko, "{id}");
+        assert!(en.contains("{id}") && ko.contains("{id}"), "{id}");
+        assert!(
+            ko.chars().any(|c| ('\u{AC00}'..='\u{D7A3}').contains(&c)),
+            "{id}"
+        );
+    }
+    let en = interpolate(
+        in_language("en", "native.coordinator_not_read_only"),
+        &[("id", "claude"), ("mode", "unverified")],
+    );
+    assert!(
+        en.contains("full access") && en.contains("another coordinator"),
+        "{en}"
+    );
 }

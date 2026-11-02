@@ -809,8 +809,8 @@ When integration verification fails, the operator-facing report shall retain use
 Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197 → QAS-203 → DDR-54 → DD-217. GitHub #323, 2026-11-02.
 
 ### R-206 Configure a coordinator model and explicit read-only CLI invocation
-The operator shall be able to select a workspace coordinator and a model from that agent's observed model catalog, identify the coordinator in the agent list, and know before sending chat whether its CLI supports a safe read-only invocation. A custom CLI may declare separate read-only arguments; coordinator chat shall use those arguments and shall never silently reuse its normal write-capable arguments.
-Trace: R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-198/FR-199/FR-200 → NFR-88/NFR-89 → QAS-204/QAS-205 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #325/#326, 2026-11-02.
+The operator shall be able to select a workspace coordinator and a model from that agent's observed model catalog, identify the coordinator in the agent list, and know before sending chat whether its CLI supports a safe read-only invocation. A custom CLI may declare separate read-only arguments; coordinator chat shall use those arguments and shall never silently reuse its normal write-capable arguments. If the invocation is refused, the reason and corrective action shall be shown in the active UI language.
+Trace: R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-198/FR-199/FR-200 → NFR-88/NFR-89 → QAS-204/QAS-205 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #325/#326/#333, 2026-11-02.
 
 ### R-207 Refuse application updates while work is active
 An application update shall not start while a workspace operation is active. The operator shall see which work prevents the update and why a readiness check failed, with the two conditions distinguishable in the native interface.

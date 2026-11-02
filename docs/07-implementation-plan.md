@@ -7792,3 +7792,26 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Verify: manual renderer (4), public docs (11), README screenshot (1), source layout (2), and workspace screenshot assets (1) pass locally; 19 tests total.
 - [x] Verify: integrated and pushed main `fa4b37d9` as `2a495357`; PR #22 now targets current main and GitHub reports it mergeable by graph.
 - [ ] Complete: keep #9 and #22 open; packaged Windows UI and remaining Rust UI parity acceptance remain outstanding (22/50 overall).
+
+### Custom CLI coordinator chat — GitHub #326
+
+- [x] Plan: a custom CLI (`operator_auto_approve`) could plan through the `planning_args` fallback but chat needs `read_only_args`, which only trusts verified templates (DD-131). The app cannot verify a custom CLI, so `AgentProfile.read_only_args` lets the operator declare how it runs without writing; `read_only_args()` uses them (never the normal arguments, never an empty list) and the enforcement stays: no declaration, no chat. The snapshot carries `chat_blockers` (agent → reason) so the settings warn under the coordinator selector when such an agent is chosen, instead of failing when the first question is sent. Stacked on #325 (same refusal text and selector).
+- [x] Red: `tests/coordinator.rs` (declared arguments, refusals), `tests/coordinator_chat_check.rs` (snapshot blockers), `tests/progress_runtime.cjs` (form field, note, messages).
+- [x] Task: `src/plan/profile.rs`, `src/coordinator.rs`, `src/ui/setup/snapshot.rs`, `src/ui/startup.{html,js}`, messages; CHANGELOG.
+- [x] Verify (macOS): full suite (768 passed), clippy.
+- [ ] Complete: merge and release only on request.
+
+### Korean text for the coordinator refusal — GitHub #333
+
+- [x] Plan: the two refusal texts of `coordinator::read_only_args` (#325, #326) were built with `format!` and so were English in the Korean interface. They are catalog messages (`native.coordinator_not_read_only`, `native.coordinator_bad_read_only_args`) rendered in the machine's language; tests read each catalog directly because the language is a machine setting.
+- [x] Red/Verify: `tests/coordinator.rs` (both catalogs, Korean has Hangul and the same placeholders), full suite.
+- [x] Task: retain custom-profile validation and render both refusal paths from the native English/Korean message catalogs; never restore the web-only JSON catalogs.
+- [x] Verify (local, 2026-11-02): `coordinator`, `coordinator_chat_check`, `native_update_blocker_messages`, and the 300-line `source_layout` suite pass; warning-denied all-target Clippy and rustfmt pass.
+- [ ] Complete: merge main, push the Rust port, and pass exact-platform validation; this local port does not independently complete issue #9.
+### Update blocker names the work and tells it from a failed check — GitHub #331
+
+- [x] Plan: `Room::ensure_update_idle` turned every error of the startup check, the run job and the runs of every workspace into "Finish or stop running work", so a finished run still marked `running`, a background usage query and an unreadable job record all looked the same. `ui::update_guard` now collects `Blocker::Active` (workspace, kind, elapsed) and `Blocker::Unknown` (what, error); a run blocks only while its coordinator holds `coordinator.lock` (the kernel releases it when the coordinator is gone), a retained startup job only while its process is present. The text lists running work first with how to wait or stop, then failed checks as not running work; it keeps its line breaks in the notice. Update itself is unchanged: it starts once no blocker is left.
+- [x] Red: `tests/update_blockers.rs` (message, failed check, stale versus live run), `tests/progress_runtime.cjs` (notice line breaks).
+- [x] Task: `src/ui/update_guard.rs`, `src/ui/setup/update_blockers.rs`, `src/ui/update.rs`, messages, `startup.css`; CHANGELOG.
+- [x] Verify (macOS): full suite, Python tests, clippy.
+- [ ] Complete: merge and release only on request. Elapsed time is not known for a run's blocker on every platform (creation time of the run folder is used when the file system has it).

@@ -1635,8 +1635,8 @@ Continue reading each failed test's existing 2 KiB tail. When both tails contain
 Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197/NFR-87 → QAS-203 → DDR-54 → DD-217. GitHub #323, 2026-11-02.
 
 ### DD-218 Keep coordinator model and read-only capability on the agent profile
-Add optional, backwards-compatible `coordinator_model` and `read_only_args` profile fields. Validate a selected model against the observed catalog. For custom CLIs, use only explicitly declared read-only argv and reject empty or normal-command duplicates; retain existing verified built-in templates for supported providers. Compute compatibility and coordinator labels from current workspace/profile state, and keep chat on the existing CLI subprocess/authentication path.
-Trace: R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-198/FR-199/FR-200 → NFR-88/NFR-89 → QAS-204/QAS-205 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #325/#326, 2026-11-02.
+Add optional, backwards-compatible `coordinator_model` and `read_only_args` profile fields. Validate a selected model against the observed catalog. For custom CLIs, use only explicitly declared read-only argv and reject empty or normal-command duplicates; retain existing verified built-in templates for supported providers. Render refusal reasons from the active language's native message catalog. Compute compatibility and coordinator labels from current workspace/profile state, and keep chat on the existing CLI subprocess/authentication path.
+Trace: R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-198/FR-199/FR-200 → NFR-88/NFR-89 → QAS-204/QAS-205 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #325/#326/#333, 2026-11-02.
 
 ### DD-219 Guard updates before spawn and preserve structured refusal details
 Run the existing update-readiness guard before starting an update. Report active work and failed checks separately, retain known elapsed time, and show the refusal in the native update dialog with localized next-step guidance. Do not add a background poll or duplicate the backend check in the UI.

@@ -116,9 +116,9 @@ pub fn read_only_args_with_model(
     let model = model.or(profile.coordinator_model.as_deref());
     if let Some(declared) = &profile.read_only_args {
         if profile.parser != Provider::Custom || declared.is_empty() || declared == &profile.args {
-            return Err(format!(
-                "coordinator {} has invalid read-only arguments; provide a separate nonempty custom CLI invocation",
-                profile.id
+            return Err(crate::ui::messages::render(
+                "native.coordinator_bad_read_only_args",
+                &[("id", &profile.id)],
             ));
         }
         let mut read_only = profile.clone();
@@ -165,9 +165,9 @@ pub fn read_only_args_with_model(
             .map(String::from),
         );
     } else if profile.permission_mode != "read_only" {
-        return Err(format!(
-            "coordinator {} cannot be run read-only while its permission is {}; set its permission to full access or native callback in the team settings, give it read-only arguments in its agent settings, or choose another coordinator",
-            profile.id, profile.permission_mode
+        return Err(crate::ui::messages::render(
+            "native.coordinator_not_read_only",
+            &[("id", &profile.id), ("mode", &profile.permission_mode)],
         ));
     }
     Ok(args)

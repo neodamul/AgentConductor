@@ -23,11 +23,10 @@ fn the_snapshot_names_agents_that_cannot_answer_chat() {
     startup.dispatch(packet.to_string().as_bytes()).unwrap();
     let state = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     let blockers = state["chat_blockers"].as_object().unwrap();
+    // The reason is in the machine's language; it names the agent and its permission either way.
+    let reason = blockers["plain"].as_str().unwrap();
     assert!(
-        blockers["plain"]
-            .as_str()
-            .unwrap()
-            .contains("read-only arguments"),
+        reason.contains("plain") && reason.contains("operator_auto_approve"),
         "{blockers:?}"
     );
     assert!(!blockers.contains_key("declared"), "{blockers:?}");

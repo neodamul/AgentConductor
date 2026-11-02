@@ -41,6 +41,8 @@
   "native.close_window": "Close Window",
   "native.coordinator_is_not_registered": "coordinator is not registered",
   "native.coordinator_not_registered": "coordinator not registered",
+  "native.coordinator_not_read_only": "coordinator {id} cannot be run read-only while its permission is {mode}; set its permission to full access or native callback in the team settings, give it read-only arguments in its agent settings, or choose another coordinator",
+  "native.coordinator_bad_read_only_args": "coordinator {id} has read-only arguments that are empty or equal to its normal arguments; give the arguments that run it without writing",
   "native.copy": "Copy",
   "native.create_an_initial_commit_in_the_git_repository": "create an initial commit in the Git repository before planning",
   "native.custom_agents_import_an_observed_catalog": "custom agents import an observed catalog",

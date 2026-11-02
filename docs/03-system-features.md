@@ -745,8 +745,8 @@ For a failed integration check, the run report and retry-feedback source shall c
 Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197 → QAS-203 → DDR-54 → DD-217. GitHub #323, 2026-11-02.
 
 ### SF-194 Configure and identify a safe workspace coordinator
-Workspace settings select a coordinator profile and an optional model from its observed CLI catalog. The agent list identifies the selected coordinator for the active workspace. Custom profiles may declare a separate read-only argument list, and the UI explains when a selected profile cannot serve coordinator chat.
-Trace: R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-198/FR-199/FR-200 → NFR-88/NFR-89 → QAS-204/QAS-205 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #325/#326, 2026-11-02.
+Workspace settings select a coordinator profile and an optional model from its observed CLI catalog. The agent list identifies the selected coordinator for the active workspace. Custom profiles may declare a separate read-only argument list, and the UI explains in the active language when a selected profile cannot serve coordinator chat.
+Trace: R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-198/FR-199/FR-200 → NFR-88/NFR-89 → QAS-204/QAS-205 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #325/#326/#333, 2026-11-02.
 
 ### SF-195 Explain why an application update cannot proceed
 Before an update starts, report active workspace work and readiness-check failures as distinct, localized conditions. Include enough context and elapsed time for the operator to identify the blocker and decide when to retry.

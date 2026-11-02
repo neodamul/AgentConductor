@@ -643,8 +643,8 @@ Operators need the failing test's actual error to review or pass into a correcti
 Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197 → QAS-203 → DDR-54 → DD-217. GitHub #323, 2026-11-02.
 
 ### BG-161 Make coordinator chat usable with registered CLI agents
-Operators need a coordinator that is visible in the workspace and can answer through its existing CLI authentication while preserving the read-only safety boundary, including for custom CLI profiles.
-Trace: R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-198/FR-199/FR-200 → NFR-88/NFR-89 → QAS-204/QAS-205 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #325/#326, 2026-11-02.
+Operators need a coordinator that is visible in the workspace and can answer through its existing CLI authentication while preserving the read-only safety boundary, including for custom CLI profiles. When the boundary blocks chat, the operator needs a clear reason and remedy in the active UI language.
+Trace: R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-198/FR-199/FR-200 → NFR-88/NFR-89 → QAS-204/QAS-205 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #325/#326/#333, 2026-11-02.
 
 ### BG-162 Prevent updates from interrupting active work
 Operators need a clear explanation when an update is blocked by running work or a failed readiness check, so they can protect work and decide what to do next.
