@@ -7,11 +7,11 @@ mod view;
 pub fn coordinator_chat_issue(snapshot: &serde_json::Value) -> Option<String> {
     let config = &snapshot["config"];
     let id = config["coordinator"].as_str()?;
-    let Some(profile) = config["profiles"]
-        .as_array()?
-        .iter()
-        .find(|profile| profile["id"] == id)
-    else {
+    coordinator_issue(config["profiles"].as_array()?, id)
+}
+
+pub fn coordinator_issue(profiles: &[serde_json::Value], id: &str) -> Option<String> {
+    let Some(profile) = profiles.iter().find(|profile| profile["id"] == id) else {
         return Some(format!("coordinator {id} profile is missing"));
     };
     let profile = match serde_json::from_value::<crate::plan::AgentProfile>(profile.clone()) {

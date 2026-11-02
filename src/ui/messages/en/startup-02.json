@@ -184,6 +184,7 @@
   "startup.saving_profile": "Saving profile…",
   "startup.semantic_code_search_for_agents_needs_uv": "Semantic code search for agents. Needs uv.",
   "startup.coordinator_model": "Coordinator model",
+  "startup.coordinator_cannot_chat": "This coordinator cannot start a conversation: {value1}",
   "startup.profile_settings": "Coordinator and agent settings",
   "startup.read_only_arguments_json_array": "Read-only arguments · JSON array",
   "startup.select_agent": "Select agent",

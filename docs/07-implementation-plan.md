@@ -7991,3 +7991,12 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Verify (Windows package smoke): exact-head run `41465909814` built the release executable and passed `package-release` with the packaged smoke workflows.
 - [ ] Verify (Windows package UI): exact-head run `41465909814` is exercising UI Automation against the exact packaged executable; inspect action diagnostics after completion.
 - [ ] Complete: diagnose and fix the product failure, then pass the exact package journey. Keep acceptance at 22/50 and PR #22 Draft meanwhile.
+
+### 2026-11-03 — Make coordinator readiness visible before chat — issue #9 / R-206
+
+- [x] Plan: trace R-206/UC-197/DD-218 to the Workspace setup screen; the observed coordinator model selector was missing there, and read-only chat compatibility was only discoverable after opening chat.
+- [x] Red: add egui interaction coverage for selecting a catalog model and for showing a localized read-only blocker before opening chat.
+- [x] Task / Green: show the observed model selector beside the coordinator, persist selection through the existing profile save request, and render the compatibility reason inline in the active UI language.
+- [x] Assetize: update DD-218 and the coordinator chat LLM Wiki page to document the placement and pre-chat warning.
+- [x] Verify (local, 2026-11-03): all 113 library tests and every all-target integration suite pass (only authentication/package-only tests are marked ignored); focused Workspace tests pass 20/20, coordinator profile passes 3/3, source layout passes 2/2, warning-denied all-target Clippy, rustfmt, and diff checks pass.
+- [ ] Complete: commit and push the finished unit to the existing #9 branch; update #9, PR #22, AgentMemory, and LLM Wiki evidence. Overall acceptance remains 22/50 until package workflows and shipped Rust UI parity pass.
