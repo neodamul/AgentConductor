@@ -16,5 +16,18 @@
       {"path": "docs/assets/ui-workspace-dark-current.png", "sha256": "cb1bd29c7c933e4df73651e5454fbf642f0fbb4f29a4a975235dec591b26fd6f"}
     ]
   },
-  "verification_scope": "Current Rust Workspace screen capture and documentation asset freshness only; not exact packaged UI acceptance or full JavaScript-to-Rust parity."
+  "local_macos_package": {
+    "source_commit": "2fa033bcd257cd0f3b718b6a8d49d84e039e48d7",
+    "target": "aarch64-apple-darwin",
+    "archive": "dist/agentconductor-aarch64-apple-darwin-2fa033bcd257.zip",
+    "archive_sha256": "2a31bf72e8a13785969e1abe74af80873f5dd1819a5424b791c7146d0076ea71",
+    "binary_sha256": "0c29d637c557a636c4f2a66167c138cc39c1a893db02cb5fda7925835fee84d0",
+    "checks": {
+      "validate_package": "passed",
+      "zip_integrity": "passed",
+      "packaged_cli_help": "passed",
+      "packaged_workspace_asset_hashes_match_capture": "passed"
+    }
+  },
+  "verification_scope": "Current Rust Workspace screenshots and local macOS package contents only; not exact packaged UI acceptance, Windows package acceptance, or full JavaScript-to-Rust parity."
 }

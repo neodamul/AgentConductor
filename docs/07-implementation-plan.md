@@ -7195,7 +7195,8 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: build the current Rust `agentconductor-native-ui-probe` with `manual-screenshot-capture`; capture English, Korean, and Korean dark screens from source `880cd78d` using isolated temporary homes.
 - [x] Verify visually: inspect all three native framebuffer captures at 1140×740 and confirm version v0.1.54, language, dark theme, labels, and contrast.
 - [x] Complete: replace the three existing manifest assets without changing their README/manual paths; retain capture provenance and SHA-256 values in `docs/evidence/issue9-workspace-screenshots-v0.1.54-20261102.json` and LLM Wiki.
-- [ ] Package gate: the capture refresh does not count toward issue #9 workflow acceptance. Exact cross-platform package run `41387582039` remains required.
+- [x] Local macOS package verify: build from `2fa033bc`; `validate-package`, ZIP integrity, packaged CLI help, and all three embedded Workspace image hashes pass. Record archive and binary digests in the evidence file.
+- [ ] Exact cross-platform verify: run `41389544894` on head `2fa033bc` remains active. The screenshot/package-content work does not add issue #9 workflow acceptance.
 
 ### Fix the native screenshot freshness pathspec — issue #9 / 2026-11-02
 

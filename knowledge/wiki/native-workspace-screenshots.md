@@ -6,6 +6,10 @@ The current screenshot manifest contains three captures from the Rust native Wor
 
 Capture hashes and the exact method are recorded in `docs/evidence/issue9-workspace-screenshots-v0.1.54-20261102.json`.
 
+## Local macOS package
+
+The v0.1.54 arm64 archive built from `2fa033bcd257cd0f3b718b6a8d49d84e039e48d7` passed `validate-package`, ZIP integrity, and packaged CLI help. SHA-256 checks of the three images extracted from the archive match the capture evidence. This validates package contents only; it does not establish interactive package UI acceptance or Windows acceptance.
+
 ## Scope
 
 These images establish that the current Rust Workspace screen was captured in each shipped language/theme variant. They do not verify the packaged executable, Agent Room, agent settings, all JavaScript UI parity requirements, or issue #9 package acceptance.
