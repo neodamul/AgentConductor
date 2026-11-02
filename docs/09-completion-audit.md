@@ -815,3 +815,7 @@ The native `SetForegroundWindow` helper had already confirmed the exact package 
 - Exact Windows package rerun is required. Signal settings have not yet been saved by the patched driver. Keep packaged acceptance at **22/25**; issue #9 stays open.
 
 ## Previous issue #9 checkpoint — Windows schedule persistence / 2026-10-27
+
+## Windows packaged default UI Save activation — 2026-11-02
+
+Exact Windows run [41402275923](https://github.com/neodamul/AgentConductor/actions/runs/41402275923) failed after SendKeys changed the Goal UIA value but did not persist it in `startup.json`. The driver now requires the Save control to be visible, focuses the expected app process, and clicks the control center with Win32 `SetCursorPos`/`SendInput`. Local driver, lifecycle, and source-layout tests pass (18 passed, 1 ignored), as do warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line guard. The exact packaged Windows rerun remains pending; issue #9 and PR #22 remain open.

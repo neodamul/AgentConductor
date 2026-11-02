@@ -64,7 +64,7 @@ fn lifecycle_driver_exposes_stop_resume_and_recovery_observations() {
         desktop_script.contains("[System.Windows.Forms.SendKeys]::SendWait('Windows UIA goal')")
     );
     assert!(!desktop_script.contains("[DesktopInput]::TypeText('Windows UIA goal')"));
-    assert!(desktop_script.contains("[DesktopInput]::PressEnter()"));
+    assert!(desktop_script.contains("[DesktopInput]::Click("));
     assert!(!desktop_script.contains("$goalValue.SetValue"));
 }
 

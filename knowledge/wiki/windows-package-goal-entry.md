@@ -14,6 +14,10 @@ Send Ctrl+A and the ASCII goal through `System.Windows.Forms.SendKeys.SendWait`,
 
 A passing macOS package does not establish Windows package acceptance. Re-run the exact packaged Windows journey on the repaired head. The prior run 41396276498 failed this default-desktop journey; its chat worker-lifetime checks were skipped because the hosted Windows runner denied Job Object breakaway.
 
+## Save activation follow-up — 2026-11-02
+
+Exact Windows CI showed SendKeys correctly changed the accessible Goal value, but focusing Save and pressing Enter still did not persist it. The driver now checks that Save is visible, focuses the expected app process, and clicks the center of the Save control through Win32 `SetCursorPos`/`SendInput`. Local regression, lifecycle, and source-layout suites pass (18 passed, 1 ignored); warning-denied all-target Clippy, rustfmt, diff hygiene, and the source-layout guard pass. Exact packaged Windows verification remains pending.
+
 ## Source
 
 See `knowledge/raw/2026-11-02-issue9-windows-goal-entry.md` and `docs/09-completion-audit.md`.

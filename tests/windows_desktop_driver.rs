@@ -4,7 +4,7 @@ fn goal_driver_focuses_and_types_into_the_goal_before_saving() {
     let focus = source.find("[DesktopInput]::Focus($hwnd, $expectedProcessId)");
     let goal_focus = source.find("$goal.SetFocus()");
     let type_text = source.find("[System.Windows.Forms.SendKeys]::SendWait('Windows UIA goal')");
-    let save = source.find("$save.SetFocus()");
+    let save = source.find("$saveBounds = $save.Current.BoundingRectangle");
     assert!(focus.is_some_and(|index| goal_focus.is_some_and(|goal| index < goal)));
     assert!(goal_focus.is_some_and(|index| type_text.is_some_and(|typed| index < typed)));
     assert!(type_text.is_some_and(|index| Some(index) < save));
@@ -22,7 +22,7 @@ fn goal_driver_uses_keyboard_input_and_reads_back_the_uia_value() {
     );
     assert!(source.contains("$goalValue.Current.Value"));
     assert!(source.contains("SetForegroundWindow(window)"));
-    assert!(source.contains("[DesktopInput]::PressEnter()"));
+    assert!(source.contains("[DesktopInput]::Click($saveX, $saveY)"));
 }
 
 #[test]
@@ -63,7 +63,7 @@ fn goal_driver_types_and_reads_back_text_through_the_uia_value_pattern() {
     let type_text = source.find("[System.Windows.Forms.SendKeys]::SendWait('Windows UIA goal')");
     let read_value = source.find("$goalValue.Current.Value");
     let wait_for_value = source.find("while ($goalText -ne 'Windows UIA goal'");
-    let save = source.find("$save.SetFocus()");
+    let save = source.find("$saveBounds = $save.Current.BoundingRectangle");
     assert!(pattern.is_some());
     assert!(pattern.is_some_and(|index| type_text.is_some_and(|typed| index < typed)));
     assert!(type_text.is_some_and(|typed| read_value.is_some_and(|read| typed < read)));
@@ -82,13 +82,16 @@ fn desktop_app_is_killed_before_driver_failure_can_panic() {
 }
 
 #[test]
-fn save_driver_uses_keyboard_activation_when_invoke_pattern_is_missing() {
+fn save_driver_clicks_the_visible_save_button_when_invoke_pattern_is_missing() {
     let source = include_str!("windows_desktop.rs");
-    let focus = source.find("$save.SetFocus()");
-    let wait_focus = source.find("-not $save.Current.HasKeyboardFocus");
-    let enter = source.find("[DesktopInput]::PressEnter()");
-    assert!(focus.is_some_and(|index| Some(index) < wait_focus));
-    assert!(wait_focus.is_some_and(|index| Some(index) < enter));
+    let bounds = source.find("$saveBounds = $save.Current.BoundingRectangle");
+    let click = source.find("[DesktopInput]::Click(");
+    assert!(bounds.is_some_and(|index| click.is_some_and(|click| index < click)));
+    assert!(source.contains("$save.Current.IsOffscreen"));
+    assert!(source.contains("$saveBounds.IsEmpty"));
+    assert!(source.contains("SetCursorPos(int x, int y)"));
+    assert!(source.contains("SEND_INPUT_MOUSE_CLICK_FAILED"));
+    assert!(!source.contains("PressEnter"));
     assert!(!source.contains("InvokePattern"));
 }
 

@@ -7749,3 +7749,11 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Task: `src/quota/terminal.rs`, `src/quota/query.rs`, `src/quota.rs`; CHANGELOG.
 - [x] Verify (macOS): full suite (762 passed), clippy.
 - [x] Complete: release requested by the user.
+
+### 2026-11-02 — Windows packaged default UI Save activation — issue #9
+
+- [x] Red: the exact Windows run `41402275923` showed SendKeys populated the Goal UIA value, but the goal remained empty in `startup.json` after Save received keyboard focus.
+- [x] Task: the packaged Windows driver now requires the Save control to be visible, focuses the expected app process, and clicks its center through Win32 `SetCursorPos` and `SendInput`; it waits for persisted goal state only after a successful driver run and always terminates the process before assertions.
+- [x] Verify (local): 18 passed, 1 ignored across the Windows driver, lifecycle, and source-layout suites; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line guard pass.
+- [ ] Verify (Windows): rerun package workflow on the repaired source; only that exact packaged run can establish Windows acceptance.
+- [ ] Complete: keep issue #9 and PR #22 open until packaged Windows acceptance and remaining UI parity gates pass.
