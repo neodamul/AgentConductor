@@ -14,7 +14,7 @@
 - [x] Red: English/Korean catalog tests failed on absent native keys; the first direct egui probe also exposed an uninitialized texture-delta test harness, which was corrected to use the established warmup pattern.
 - [x] Task: merge main's update-blocker guard and localize all added messages in the Rust catalogs. Add regression tests for catalog completeness, error distinction, and the actual update dialog's multiline blocker notice.
 - [x] Verify: focused blocker, dialog, manual, docs, and source-layout tests pass (19 total); `cargo fmt --check`, warning-denied all-target Clippy, and diff hygiene pass locally.
-- [ ] Complete: resolve the plan conflict, commit and push the integration, then validate the latest PR #22 head. This source-level port does not change packaged workflow acceptance.
+- [x] Complete: integrated main and pushed `a86ec103`, then assetized the behavior in `ee54f5da`. PR #22 is mergeable. Exact-head run `41422775771` for `ee54f5da` has macOS validation in progress and Windows queued; no hosted pass is claimed yet. This source-level port does not change packaged workflow acceptance.
 
 ### 2026-11-02 — Local macOS release package evidence — issue #9
 
