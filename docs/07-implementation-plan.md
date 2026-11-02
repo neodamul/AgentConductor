@@ -7806,7 +7806,7 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Plan: the two refusal texts of `coordinator::read_only_args` (#325, #326) were built with `format!` and so were English in the Korean interface. They are catalog messages (`native.coordinator_not_read_only`, `native.coordinator_bad_read_only_args`) rendered in the machine's language; tests read each catalog directly because the language is a machine setting.
 - [x] Red/Verify: `tests/coordinator.rs` (both catalogs, Korean has Hangul and the same placeholders), full suite.
 - [x] Task: retain custom-profile validation and render both refusal paths from the native English/Korean message catalogs; never restore the web-only JSON catalogs.
-- [x] Verify (local, 2026-11-02): `coordinator`, `coordinator_chat_check`, `native_update_blocker_messages`, and the 300-line `source_layout` suite pass; warning-denied all-target Clippy and rustfmt pass.
+- [x] Verify (local, 2026-11-02): full locked/offline all-target suite passes, including `coordinator`, `coordinator_chat_check`, `native_update_blocker_messages`, the language-aware native chat compatibility test, and the 300-line `source_layout` suite; warning-denied all-target Clippy, rustfmt, and diff checks pass.
 - [ ] Complete: merge main, push the Rust port, and pass exact-platform validation; this local port does not independently complete issue #9.
 ### Update blocker names the work and tells it from a failed check — GitHub #331
 

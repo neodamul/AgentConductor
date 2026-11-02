@@ -1,5 +1,6 @@
 # AgentConductor knowledge wiki
 
+- [Native test gates and localized assertions](native-test-gates-and-localized-expectations.md): gate Cargo auto-discovered native UI tests and keep runtime localization assertions language-aware.
 - [Windows UI Automation text input](windows-uia-text-input.md): set and verify text through UI Automation `ValuePattern` in the exact packaged Windows app.
 - [Windows snapshot locking](windows-snapshot-lock-retry.md): bounded recovery from transient SQLite locking protocol errors during active native UI snapshots.
 - [Windows packaged chat isolation](windows-packaged-chat-serialization.md): serialize shared-desktop journeys; exact package logs establish host-job breakaway as the failure cause.
