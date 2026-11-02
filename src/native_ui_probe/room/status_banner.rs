@@ -118,7 +118,9 @@ pub(super) fn show(
                 if let Some((label, confirmation)) = control
                     && ui
                         .add_enabled(
-                            !pending && snapshot["job"]["state"] != "running",
+                            !pending
+                                && (action == NextAction::Review
+                                    || snapshot["job"]["state"] != "running"),
                             egui::Button::new(text(label)),
                         )
                         .accessible_name(text(label))

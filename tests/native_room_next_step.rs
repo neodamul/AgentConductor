@@ -88,6 +88,43 @@ fn running_run_also_offers_return_to_workspace_without_stopping_it() {
 }
 
 #[test]
+fn active_run_keeps_the_read_only_review_action_enabled_after_approval() {
+    let snapshot = json!({
+        "revision":"rev-live",
+        "job":{"kind":"start","state":"running"},
+        "report":{"state":"approved","candidate":{"commit":"abc"},
+            "plan":{"goal":"Review changes","tasks":[{"id":"tests"}]},
+            "tasks":[{"id":"tests","status":"completed"}]}
+    });
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut state = State::default();
+    let mut output = render(&context, &mut state, &snapshot, Vec::new());
+    let review_disabled = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .find(|(_, node)| node.role() == Role::Button && node.label() == Some("Review changes"))
+        .map(|(_, node)| node.is_disabled());
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert_eq!(
+        review_disabled,
+        Some(false),
+        "read-only evidence review must remain available"
+    );
+
+    let button = next_button(&context, &mut state, &snapshot, "Review changes");
+    assert_eq!(
+        click(&context, &mut state, &snapshot, button),
+        Some(RoomEvent::Evidence)
+    );
+}
+
+#[test]
 fn running_run_disables_return_while_a_request_is_pending() {
     let snapshot = json!({
         "job":{"kind":"start","state":"running"},
