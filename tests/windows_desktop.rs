@@ -17,20 +17,15 @@ using System;
 using System.Runtime.InteropServices;
 public static class DesktopInput {
   const uint MOUSEEVENTF_LEFTDOWN = 2, MOUSEEVENTF_LEFTUP = 4;
-  const uint KEYEVENTF_KEYUP = 2, KEYEVENTF_UNICODE = 4;
-  const uint INPUT_KEYBOARD = 1;
   [StructLayout(LayoutKind.Sequential)] struct MouseInput { public int X, Y; public uint Data, Flags, Time; public IntPtr ExtraInfo; }
-  [StructLayout(LayoutKind.Sequential)] struct KeyboardInput { public ushort VirtualKey, ScanCode; public uint Flags, Time; public IntPtr ExtraInfo; }
-  [StructLayout(LayoutKind.Explicit)] struct Payload { [FieldOffset(0)] public MouseInput Mouse; [FieldOffset(0)] public KeyboardInput Keyboard; }
-  [StructLayout(LayoutKind.Sequential)] struct Input { public uint Type; public Payload Payload; }
+  [StructLayout(LayoutKind.Sequential)] struct Input { public uint Type; public MouseInput Mouse; }
   [DllImport("user32.dll")] static extern bool SetForegroundWindow(IntPtr window);
   [DllImport("user32.dll")] static extern IntPtr GetForegroundWindow();
   [DllImport("user32.dll")] static extern uint GetWindowThreadProcessId(IntPtr window, out uint processId);
   [DllImport("user32.dll", SetLastError=true)] static extern bool SetCursorPos(int x, int y);
   [DllImport("user32.dll", SetLastError=true)] static extern uint SendInput(uint count, Input[] inputs, int size);
   static uint ProcessId(IntPtr window) { uint processId; GetWindowThreadProcessId(window, out processId); return processId; }
-  static Input Mouse(uint flags) { return new Input { Type = 0, Payload = new Payload { Mouse = new MouseInput { Flags = flags } } }; }
-  static Input Key(ushort key, uint flags) { return new Input { Type = INPUT_KEYBOARD, Payload = new Payload { Keyboard = new KeyboardInput { VirtualKey = key, Flags = flags } } }; }
+  static Input Mouse(uint flags) { return new Input { Type = 0, Mouse = new MouseInput { Flags = flags } }; }
   public static bool Focus(IntPtr window, uint pid) {
     SetForegroundWindow(window);
     var until = DateTime.UtcNow.AddSeconds(3);
@@ -41,18 +36,6 @@ public static class DesktopInput {
     if (!SetCursorPos(x, y)) throw new InvalidOperationException("SET_CURSOR_POS_FAILED");
     var clicks = new[] { Mouse(MOUSEEVENTF_LEFTDOWN), Mouse(MOUSEEVENTF_LEFTUP) };
     if (SendInput(2, clicks, Marshal.SizeOf(typeof(Input))) != 2) throw new InvalidOperationException("SEND_INPUT_MOUSE_CLICK_FAILED");
-  }
-  public static void SelectAll() {
-    var keys = new[] { Key(0x11, 0), Key(0x41, 0), Key(0x41, KEYEVENTF_KEYUP), Key(0x11, KEYEVENTF_KEYUP) };
-    if (SendInput((uint)keys.Length, keys, Marshal.SizeOf(typeof(Input))) != (uint)keys.Length) throw new InvalidOperationException("SEND_INPUT_SELECT_ALL_FAILED");
-  }
-  public static void TypeText(string text) {
-    var keys = new Input[text.Length * 2];
-    for (var i = 0; i < text.Length; i++) {
-      keys[i * 2] = new Input { Type = INPUT_KEYBOARD, Payload = new Payload { Keyboard = new KeyboardInput { ScanCode = text[i], Flags = KEYEVENTF_UNICODE } } };
-      keys[i * 2 + 1] = new Input { Type = INPUT_KEYBOARD, Payload = new Payload { Keyboard = new KeyboardInput { ScanCode = text[i], Flags = KEYEVENTF_UNICODE | KEYEVENTF_KEYUP } } };
-    }
-    if (keys.Length > 0 && SendInput((uint)keys.Length, keys, Marshal.SizeOf(typeof(Input))) != (uint)keys.Length) throw new InvalidOperationException("SEND_INPUT_UNICODE_TEXT_FAILED");
   }
 }
 "@
@@ -94,11 +77,7 @@ if (-not [DesktopInput]::Focus($hwnd, $expectedProcessId)) {
   Write-Output 'GOAL_WINDOW_NOT_FOREGROUND'
   exit 7
 }
-$goalBounds = $goal.Current.BoundingRectangle
-if ($goal.Current.IsOffscreen -or $goalBounds.IsEmpty) { Write-Output 'GOAL_NOT_VISIBLE'; exit 7 }
-$goalX = [int]($goalBounds.Left + ($goalBounds.Width / 2))
-$goalY = [int]($goalBounds.Top + ($goalBounds.Height / 2))
-[DesktopInput]::Click($goalX, $goalY)
+$goal.SetFocus()
 $focusDeadline = (Get-Date).AddSeconds(3)
 while ((Get-Date) -lt $focusDeadline -and -not $goal.Current.HasKeyboardFocus) {
   Start-Sleep -Milliseconds 50
@@ -109,8 +88,7 @@ if (-not $goal.Current.HasKeyboardFocus) {
 }
 $goalValue = $goal.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
 if ($goalValue.Current.IsReadOnly) { Write-Output 'GOAL_VALUE_READ_ONLY'; exit 7 }
-[DesktopInput]::SelectAll()
-[DesktopInput]::TypeText('Windows UIA goal')
+$goalValue.SetValue('Windows UIA goal')
 $goalValueDeadline = (Get-Date).AddSeconds(3)
 $goalText = ''
 while ($goalText -ne 'Windows UIA goal' -and (Get-Date) -lt $goalValueDeadline) {
@@ -128,8 +106,8 @@ while ($goalText -ne 'Windows UIA goal' -and (Get-Date) -lt $goalValueDeadline) 
   if ($goalText -ne 'Windows UIA goal') { Start-Sleep -Milliseconds 50 }
 }
 $focused = [System.Windows.Automation.AutomationElement]::FocusedElement
-Write-Output "GOAL_FOCUS_AFTER_INPUT:$($focused.Current.ProcessId):$($focused.Current.ControlType.ProgrammaticName):$($focused.Current.Name)"
-Write-Output "GOAL_TEXT_AFTER_INPUT:$goalText"
+Write-Output "GOAL_FOCUS_AFTER_SET_VALUE:$($focused.Current.ProcessId):$($focused.Current.ControlType.ProgrammaticName):$($focused.Current.Name)"
+Write-Output "GOAL_TEXT_AFTER_SET_VALUE:$goalText"
 if ($goalText -ne 'Windows UIA goal') { Write-Output "GOAL_VALUE_MISMATCH:$goalText"; exit 7 }
 
 # Text edits may rebuild the UI Automation tree; never invoke a button captured before editing.

@@ -21,11 +21,14 @@
 
 - [x] Plan: exact package run `41520505534` failed before Save: after keyboard input, UIA focus had returned to the top-level window and the Goal value remained empty.
 - [x] Red: replace source contracts that required `SendKeys` with assertions for a real pointer click, Unicode `SendInput`, select-all input, and UIA value readback. They failed against the old driver.
-- [x] Task: click the Goal edit bounds, inject Ctrl+A and Unicode text through `SendInput`, then re-find the Goal edit while polling its current UIA value. Save is still re-acquired after the edit.
+- [x] First correction (superseded): click the Goal edit and inject Unicode text through `SendInput`; the source contracts passed, but the exact Windows package run below proved the approach did not persist the value.
 - [x] Local Verify: the Windows desktop/lifecycle/schedule drivers, public docs and source layout pass 41 tests with 1 ignored; rustfmt and diff checks pass. The embedded C# helper also compiles with .NET SDK 9.0.303.
 - [x] Previous exact-head Verify: run `41520505534` passed macOS/Windows validation and macOS packaging. Windows build, manual rendering, and package launch passed; its default-desktop UIA save journey failed with an empty Goal value.
-- [x] Regression correction: run `41529527647` exposed a second stale contract in `windows_run_lifecycle`, which still required `SendKeys` for the desktop driver. Reproduced it locally (1 failed), then updated the contract to require pointer-focused Unicode `SendInput`; all focused suites now pass.
-- [ ] Exact-head Verify: push this contract correction and pass platform validation; then rebuild and pass the packaged default-desktop journey with the updated input driver, requiring `startup.json` to contain the edited goal.
+- [x] Failure analysis: run `41520505534` reported the top-level window as focused and an empty Goal after Unicode `SendInput`. The current `windows-uia-text-input.md` decision already specifies `ValuePattern.SetValue`; the source and lifecycle contracts had drifted back to keyboard injection.
+- [x] Red / Green: changed the desktop and lifecycle contracts to require focus → `ValuePattern.SetValue` → bounded UIA value readback → Save. The new assertions failed 5 times against the old keyboard driver; after changing the driver, the desktop-driver, lifecycle, and source-layout targets pass 19 tests with 1 ignored.
+- [x] Task: foreground the packaged window, call the Goal edit's UIA `SetFocus`, set the exact fixture string through `ValuePattern.SetValue`, poll the current UIA value, then reacquire Save. Removed the now-unused Unicode keyboard injection helper; retained mouse input for the Save fallback.
+- [x] Local Verify: `cargo test --locked --offline --test windows_desktop_driver --test windows_run_lifecycle --test source_layout` passes 19 tests with 1 ignored; `cargo fmt --all -- --check` and `git diff --check` pass. The Windows desktop journey itself cannot execute on this macOS host.
+- [ ] Exact-head Verify: workflow `41545058701` was triggered on pre-correction head `21eb66f4`; it cannot validate this SetValue change. Push the correction, then require a new Windows package run to persist the exact Goal in `startup.json` before counting acceptance.
 - [ ] Complete: only count a packaged workflow after the exact package persists the goal. Overall acceptance remains **22/50** (packaged workflows **22/25**; shipped/default Rust UI **0/25**).
 
 

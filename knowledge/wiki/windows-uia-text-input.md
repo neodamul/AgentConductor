@@ -12,7 +12,9 @@ The application's locked UI stack supports this route: `egui 0.37.0` emits Acces
 
 ## Verification Boundary
 
-The regression must assert the driver order (focus, `ValuePattern.SetValue`, value readback, Save), the related lifecycle-driver contract must agree with that input method, and the test must assert the persisted `startup.json` value. Exact-head run `41347900792` showed the driver still used Unicode `SendInput`, focused the Goal field, and read an empty value. The correction made the Windows debug `windows_desktop` test pass in run `41350246764`, but that run then failed because `windows_run_lifecycle` still required `TypeText` and prohibited `.SetValue`; the package job was skipped. Both source contracts now require `SetValue` and bounded readback. Count the Windows workflow only after a fresh exact packaged run passes.
+The regression asserts the driver order (foreground, edit `SetFocus`, `ValuePattern.SetValue`, bounded value readback, Save), requires the related lifecycle-driver contract to use the same input method, and checks the persisted `startup.json` value on Windows. The current local red test failed five assertions against the reverted Unicode `SendInput` implementation; after restoring `SetValue`, the Windows desktop-driver, lifecycle, and source-layout targets pass 19 tests with one ignored. Formatting and diff checks pass. The Windows-specific package journey was not run locally.
+
+Exact package run `41520505534` failed because the Goal value remained empty and UI Automation focus had returned to the top-level window after keyboard input. Platform validation and the macOS package passed, but this Windows failure blocks package acceptance. Run `41545058701` was triggered on the pre-correction head `21eb66f4` and cannot validate the restored `SetValue` route. Count the Windows workflow only after a new exact-head package run passes and `startup.json` contains the full fixture goal.
 
 ## References
 
