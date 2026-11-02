@@ -6,7 +6,9 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
-- Claude and Codex usage: an unsigned-in or expired login now gets a sign-in message immediately instead of a quota timeout or generic failure; Codex API-key login keeps its separate guidance (#317).
+## v0.1.54
+
+- Claude and Codex usage: a login that expired and a CLI never signed in are now told the same way ("not signed in or the login expired" with the command to sign in again) instead of ending as a timeout or a generic failure; a Codex API-key login keeps its own advice (#317).
 
 ## v0.1.53
 
