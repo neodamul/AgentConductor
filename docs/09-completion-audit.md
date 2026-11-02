@@ -14,8 +14,13 @@
 - On Windows, package recovery, briefing, and candidate review passed. Three coordinator-chat lifetime cases were explicitly skipped because the hosted runner denied process breakaway from its Job Object.
 - The packaged default-desktop test failed: UI Automation's ValuePattern.SetValue left the Goal field empty. The test asserted before killing its spawned app, so the package job later timed out and was cancelled.
 - TDD repair: regression contracts first failed on the old driver; the driver now focuses the actual Goal edit, sends Ctrl+A and the goal through Windows SendKeys, reads the value back through UI Automation, then terminates and waits for the app before any assertions.
+- Cleanup refinement: keep the app alive until startup.json confirms the successful save; on driver failure, skip the save wait and terminate/wait before asserting. This avoids both a lost-save race and an orphaned app on failure.
 - Local verification after the repair: 29 passed, 1 ignored across four suites; warning-denied all-target Clippy, rustfmt, diff hygiene, and source-layout checks pass.
 - Exact packaged Windows verification is still pending on the repaired source. Do not count the failed run as Windows package acceptance; the count remains 22/50 overall (22/25 packaged workflows; 0/25 shipped/default Rust UI).
+
+## Bug #323 closure — 2026-11-02
+
+- Closed after its regression tests (20 across six suites) and exact Windows platform validation passed. The packaged desktop failure in the same run was the independent workspace Goal UIA driver issue tracked above.
 
 ## Issue #9 current checkpoint — 2026-11-02, pushed root-PR verification
 

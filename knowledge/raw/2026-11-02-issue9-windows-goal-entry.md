@@ -8,7 +8,7 @@ The packaged default-desktop UI journey failed at the Goal edit. UI Automation's
 
 ## Test-first repair
 
-The source-contract tests were changed first and failed against the old driver. The driver now focuses the Goal edit, sends Ctrl+A and the goal with Windows Forms SendKeys, waits for and reads back the UI Automation ValuePattern value, and kills/waits for the desktop process before asserting on driver status.
+The source-contract tests were changed first and failed against the old driver. The driver now focuses the Goal edit, sends Ctrl+A and the goal with Windows Forms SendKeys, waits for and reads back the UI Automation ValuePattern value, and waits for `startup.json` to confirm persistence after success. On failure it skips the save wait. In either case it kills/waits for the desktop process before assertions.
 
 Local verification on the repaired source passed 29 tests with 1 ignored across four suites, warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line layout guard.
 

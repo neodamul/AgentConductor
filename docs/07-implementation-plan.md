@@ -12,7 +12,7 @@
 
 - [x] Plan: investigate exact-head run 41396276498 after its Windows package journey failed; keep all work on the existing root PR #22.
 - [x] Red: new source-contract tests failed on the old UIA ValuePattern.SetValue path and on missing process cleanup before assertions.
-- [x] Task: enter the default workspace goal through focused Windows SendKeys input, read the resulting UIA value, and kill/wait for the app before asserting on driver failure.
+- [x] Task: enter the default workspace goal through focused Windows SendKeys input and read its UIA value. On failure, kill/wait immediately; on success, wait for startup.json persistence before killing/waiting, then assert.
 - [x] Local Verify: 29 passed and 1 ignored across four suites; warning-denied all-target Clippy, rustfmt, diff hygiene, and the source-layout guard pass.
 - [x] Exact-head diagnosis: macOS package verification passed; Windows build/manual/package smoke passed; recovery, briefing, and candidate review passed; chat lifetime journeys were skipped because the hosted runner denied Job Object breakaway. The packaged default-desktop journey failed because SetValue left the goal empty, then the app process was not reaped before panic.
 - [ ] Windows package acceptance: rerun the packaged UI journey on a new exact head. The local macOS host cannot execute this Windows UI test.
@@ -25,7 +25,7 @@
 - [x] Task: failed reports now show labeled stderr and stdout tails when both are present; a single nonempty stream remains unchanged. Retry feedback consumes the combined snapshot output.
 - [x] Verify: 20 tests pass across six focused suites, including the real Room snapshot and failed-task feedback journey; warning-denied Clippy, rustfmt, diff hygiene, and the 300-line source/test guard pass (`src/ui.rs` 245 lines; affected tests under 300).
 - [x] Complete: commit `0f5f5112` is pushed on the existing #22 root branch; no child PR was created.
-- [ ] Package Verify: the #323 Rust behavior has local snapshot/retry-feedback coverage; exact packaged Windows verification remains pending. Keep #323 open until that gate passes.
+- [x] Verify: exact Windows platform validation at run 41396276498 passed the Rust behavior tests for #323; the issue was closed with regression evidence. The same run's separate packaged desktop journey failed at the Goal-input driver, fixed under issue #9 below.
 
 ### 2026-11-02 — Remove redundant quota-query text — issue #321
 

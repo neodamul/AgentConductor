@@ -75,7 +75,9 @@ fn goal_driver_types_and_reads_back_text_through_the_uia_value_pattern() {
 fn desktop_app_is_killed_before_driver_failure_can_panic() {
     let source = include_str!("windows_desktop.rs");
     let kill = source.find("let _ = app.kill()");
-    let assert_driver = source.find("driver.status.success()");
+    let assert_driver = source.find("driver.status.success(),");
+    let saved_goal_wait = source.find("while Instant::now() < saved");
+    assert!(saved_goal_wait.is_some_and(|wait| kill.is_some_and(|kill| wait < kill)));
     assert!(kill.is_some_and(|index| assert_driver.is_some_and(|assert| index < assert)));
 }
 

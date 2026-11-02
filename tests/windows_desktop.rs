@@ -137,15 +137,12 @@ fn default_native_workspace_is_accessible_and_saves_through_ui_automation() {
         .unwrap();
     let report = String::from_utf8_lossy(&driver.stdout).to_string();
     let driver_stderr = String::from_utf8_lossy(&driver.stderr).to_string();
-    let _ = app.kill();
-    let _ = app.wait();
-    assert!(
-        driver.status.success(),
-        "UI Automation driver exited {}: stdout: {report}; stderr: {}",
-        driver.status,
-        driver_stderr
-    );
-    let saved = Instant::now() + Duration::from_secs(10);
+    let saved = Instant::now()
+        + if driver.status.success() {
+            Duration::from_secs(10)
+        } else {
+            Duration::ZERO
+        };
     let mut goal = String::new();
     while Instant::now() < saved {
         if let Ok(text) = std::fs::read_to_string(workspace.join("startup.json"))
@@ -161,6 +158,14 @@ fn default_native_workspace_is_accessible_and_saves_through_ui_automation() {
         }
         std::thread::sleep(Duration::from_millis(200));
     }
+    let _ = app.kill();
+    let _ = app.wait();
+    assert!(
+        driver.status.success(),
+        "UI Automation driver exited {}: stdout: {report}; stderr: {}",
+        driver.status,
+        driver_stderr
+    );
     assert!(report.contains("DRIVEN"), "UI Automation driver: {report}");
     assert_eq!(
         goal, "Windows UIA goal",

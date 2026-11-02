@@ -8,7 +8,7 @@ The test also must kill and wait for its spawned desktop process before assertin
 
 ## Verified repair
 
-Send Ctrl+A and the ASCII goal through `System.Windows.Forms.SendKeys.SendWait`, then poll the UI Automation value for the entered text. Capture stdout/stderr, kill and wait for the app, and only then assert. The TDD source-contract suites passed locally after this change.
+Send Ctrl+A and the ASCII goal through `System.Windows.Forms.SendKeys.SendWait`, then poll the UI Automation value for the entered text. On successful driver exit, keep the app alive until `startup.json` confirms the saved goal; on driver failure, skip that wait. In both cases, kill and wait for the app before asserting so the save is not lost and failed tests do not orphan a GUI process. The TDD source-contract suites pass locally.
 
 ## Current limit
 
