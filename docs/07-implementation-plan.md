@@ -7175,3 +7175,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] macOS package: build the current head locally; package manifest and `SHA256SUMS` match the executable, ZIP integrity passes, and the extracted packaged executable runs `--help`. Archive SHA-256 `d6f135fd63678a010c0acb1da0c4b40abb77d7296af8c71f7214c59d61b37db4`; evidence `docs/evidence/issue9-macos-package-97cc327-20261102.json`.
 - [ ] Exact platform Verify: run `41379344543` is in progress for the code tree at `97cc3277`; the package evidence and plan/wiki notes added afterward are docs-only. Do not claim current-head validation until the post-push run completes and its Windows package summary confirms the exact host-Job-Object skip behavior.
 - [ ] Completion: finish exact packaged Windows chat acceptance on a normal interactive Windows host and screen-by-screen native UI parity before marking #9 complete or changing PR #22 from Draft.
+
+### Explain PR backlog and surface uncertain chat failures — 2026-11-02
+
+- [x] Plan: confirm GitHub state. Only PR #22 is open; #320 was merged to main. The stale #22 description still listed #320 as open.
+- [x] Diagnose blockers: PR #22 had `DIRTY` from v0.1.54 documentation changes on main, and its exact Windows package run failed two coordinator-chat journeys after the runner denied Job Object breakaway.
+- [x] Red / Green: a focused chat UI regression failed because `uncertain_error` was not available to the view. Add `State::visible_error()`, render it, and add an interaction test for the uncertain chat-start path.
+- [x] Verify locally: 8 focused chat/UI tests pass; warning-denied Clippy, rustfmt, diff checks, and the 300-line source/test limit pass. Changed files are 194, 179, and 104 lines.
+- [x] Complete unit: commit `5a318acf` and push to the existing #22 branch.
+- [x] Integrate current main and resolve the docs conflict by retaining the published v0.1.54 README and English/Korean manuals. Commit `00b39c5a` pushed; exact-head Platform Validation run `41385932410` is in progress.
+- [ ] Verify: confirm Windows package journeys now report the explicit host-job limitation instead of timing out; review exact-head CI before considering any acceptance claim.
+- [ ] Close: PR #22 remains Draft until Rust UI parity and issue #9 acceptance are complete. This chat fix does not increase packaged workflow or replacement counts.
