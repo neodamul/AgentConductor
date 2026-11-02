@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-02",
+  "kind": "local-macos-native-package",
+  "issue": 9,
+  "source_commit": "97cc3277c488d3825c898daccc3603a54d55932c",
+  "target": "aarch64-apple-darwin",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-97cc3277c488.zip",
+  "archive_sha256": "d6f135fd63678a010c0acb1da0c4b40abb77d7296af8c71f7214c59d61b37db4",
+  "manifest": {
+    "binary_bytes": 19230656,
+    "binary_sha256": "7dae4bad6e6f9f7622fa7af20a2163ec69b61a2f4ae86b14888c3ce3a6dd0ae9",
+    "dependency_count": 242
+  },
+  "verification": [
+    "cargo build --release --locked --offline --features native-ui-probe",
+    "cargo run --release --locked --offline -- package-release",
+    "archive ZIP integrity",
+    "manifest and SHA256SUMS binary hash match",
+    "packaged executable --help"
+  ],
+  "limitations": [
+    "This is a local Apple Silicon package, not a GitHub Release.",
+    "It does not establish Windows package acceptance or complete native UI parity."
+  ]
+}

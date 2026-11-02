@@ -1,5 +1,19 @@
 # Rust native release packaging
 
+## Local Apple Silicon package at issue #9 head — 2026-11-02
+
+Source `97cc3277c488d3825c898daccc3603a54d55932c` built a local package with
+`cargo run --release --locked --offline -- package-release`. The manifest and
+`SHA256SUMS` record the same 19,230,656-byte ARM64 executable
+(`7dae4bad6e6f9f7622fa7af20a2163ec69b61a2f4ae86b14888c3ce3a6dd0ae9`). ZIP
+integrity passed, and the extracted packaged executable ran `--help`. Archive
+SHA-256 is
+`d6f135fd63678a010c0acb1da0c4b40abb77d7296af8c71f7214c59d61b37db4`.
+Evidence: `docs/evidence/issue9-macos-package-97cc327-20261102.json`.
+
+This is a local Apple Silicon package, not a GitHub Release. It does not verify
+Windows packaging, GUI interaction, or full issue #9 screen parity.
+
 ## Windows tool-decision package journey timing — 2026-10-30
 
 The Windows UI Automation driver observed `Confirm tool decision` in the final
