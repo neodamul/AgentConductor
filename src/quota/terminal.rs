@@ -1,4 +1,5 @@
 mod amounts;
+mod blocker;
 
 use super::{
     Snapshot,
@@ -87,16 +88,7 @@ pub fn claude_trust_answer(text: &str) -> &'static [u8] {
 pub(crate) const TRUST_ANSWERS: u8 = 2;
 pub(crate) const TRUST_REFUSED: &str =
     "Claude kept asking to trust the project folder; open claude there once and accept it";
-
-/// DD-94: screens that need the operator; the collector does not answer them.
-pub fn claude_blocker(text: &str) -> Option<&'static str> {
-    if text.contains("Let's get started.") || text.contains("Choose the text style") {
-        return Some(
-            "Claude CLI first-run setup is not finished on this computer; run claude once in a terminal, complete setup and sign in, then refresh",
-        );
-    }
-    None
-}
+pub use blocker::claude_blocker;
 
 /// "Current week (all models)" is the shared window; a named model gets its own label so
 /// a later per-model line (e.g. "Current week (Fable)") never overwrites the shared one.

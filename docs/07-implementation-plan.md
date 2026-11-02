@@ -7146,3 +7146,14 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Regenerate the English and Korean HTML manuals; record image hashes and limitations in `knowledge/wiki/native-screenshot-provenance.md` and `docs/evidence/issue9-current-native-screenshots-20261102.json`.
 - [x] Verify locally: documentation, screenshot freshness, native UI manual, and release-doc suites pass 15 tests across 4 suites; source-layout passes 2 tests; rustfmt and diff checks pass.
 - [ ] Commit and push this unit to the existing #22 branch; verify the resulting exact-head macOS and Windows workflow. Screenshot refresh does not complete Windows package acceptance or full screen-by-screen legacy UI parity.
+
+### 2026-11-02 — Close signed-out quota bug and port to Rust — #317 / #9
+
+- [x] Review: Claude's PR #318 fixes Claude/Codex quota errors after sign-out or token expiry. Independent source review found no blocking defect; the exact PR head passed macOS and Windows validation and package execution.
+- [x] Complete the main bug: squash-merge #318 at `11603b34` as `db0da0b`; verify #317 is closed by the merge.
+- [x] Red / Green: added Rust regressions for Claude signed-out, login-selection, expired-token screens, Codex authentication/401/expired-token errors, and preserved API-key-specific guidance. The regressions failed before implementation and pass after.
+- [x] Task: port the classifiers to the existing #9 Rust branch. Keep quota subprocess behavior unchanged; classify the observed CLI messages before they become timeouts or generic errors.
+- [x] Verify locally: `claude_usage` passes 9 tests (1 ignored); warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line Rust source/test limit pass.
+- [x] Assetize: add the LLM Wiki entry and save the implementation checkpoint in AgentMemory. Graphify/CocoIndex tool availability is checked separately; no unavailable result is reported as completed.
+- [ ] Complete #9 unit: commit and push to the existing root branch; verify the new exact-head checks. No additional stacked PR or release is created.
+- [ ] Acceptance: issue #9 remains open. Packaged Rust Windows/UI parity is not implied by the main PR's passing Windows package run.

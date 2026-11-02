@@ -7,6 +7,7 @@
 - [Windows managed-workspace package probe](windows-packaged-signal-settings.md): resolve the workspace created on first launch before checking exact-package signal settings.
 - [Windows packaged schedule interaction](windows-packaged-schedule.md): exact-release UI Automation schedule persistence, failure diagnostics, and acceptance evidence.
 - [Current verification](current-verification.md): latest cross-platform package and workflow checkpoints.
+- [Signed-out quota recovery](claude-signed-out-quota.md): actionable Claude/Codex sign-in guidance instead of quota timeouts, with the API-key-specific Codex path preserved.
 - [Native inspector and coordinator judgments](native-inspector-and-judgments.md): preference-safe folding, coordinator selection, native judgment views and main/native trace mapping.
 - [Agent Room review layout](agent-room-layout.md): balanced summary/review/inspector columns and full-width activity cards, with exact-package evidence.
 - [Native settings dialogs](native-settings-dialogs.md): bilingual section eyebrow, task heading, distinct window title, and exact-package verification boundary.

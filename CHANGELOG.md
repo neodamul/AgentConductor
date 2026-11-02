@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Claude and Codex usage: an unsigned-in or expired login now gets a sign-in message immediately instead of a quota timeout or generic failure; Codex API-key login keeps its separate guidance (#317).
+
 ## v0.1.53
 
 - Claude usage: the query is given up after 3 minutes instead of 1, for PCs where it takes longer than a minute; a fast PC is unaffected because the query ends as soon as the usage is read (#315).

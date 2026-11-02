@@ -27,6 +27,29 @@ pub use terminal::{
 mod claude;
 pub(crate) use claude::observe_events;
 pub use claude::parse_claude_event;
+
+/// Classify Codex quota authentication errors without changing the CLI login method.
+pub fn codex_rate_limit_error(detail: &str) -> &'static str {
+    let detail = detail.to_ascii_lowercase();
+    if detail.contains("chatgpt authentication required") {
+        "Codex is signed in with an API key; usage windows are reported only for ChatGPT sign-in (run codex login and choose ChatGPT)"
+    } else if [
+        "authentication required",
+        "401",
+        "unauthorized",
+        "token",
+        "sign in again",
+        "log in again",
+    ]
+    .iter()
+    .any(|signed_out| detail.contains(signed_out))
+    {
+        "Codex is not signed in or the login expired; run codex login, then refresh"
+    } else {
+        "account quota query failed; inspect local query logs"
+    }
+}
+
 use serde_json::Value;
 pub async fn query(
     profile: &crate::plan::AgentProfile,
@@ -133,10 +156,7 @@ pub async fn query(
             } else if message["id"] == 2 && initialized {
                 if let Some(error) = message.get("error") {
                     let detail = error["message"].as_str().unwrap_or_default();
-                    if detail.contains("chatgpt authentication required") {
-                        return Err("Codex is signed in with an API key; usage windows are reported only for ChatGPT sign-in (run codex login and choose ChatGPT)".into());
-                    }
-                    return Err("account quota query failed; inspect local query logs".into());
+                    return Err(codex_rate_limit_error(detail).into());
                 }
                 let now = SystemTime::now()
                     .duration_since(UNIX_EPOCH)

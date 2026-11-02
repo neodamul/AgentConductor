@@ -127,6 +127,42 @@ fn first_run_stops_the_query_and_trust_is_recognised() {
 }
 
 #[test]
+fn signed_out_and_expired_claude_screens_stop_the_query_with_one_message() {
+    for screen in [
+        "Claude Code v2.1.296\nNot logged in · Please run /login\n$",
+        "Welcome to Claude Code v2.1.296\nSelect login method:\n1. Claude account",
+        "Claude Code v2.1.296\n$ /usage\nOAuth token has expired. Please run /login",
+    ] {
+        let blocker = quota::claude_blocker(screen).unwrap();
+        assert!(
+            blocker.contains("not signed in or the login expired"),
+            "{screen}"
+        );
+        assert!(blocker.contains("/login"));
+        assert!(!quota::claude_usage_ready(screen), "{screen}");
+    }
+    assert!(quota::claude_blocker("Claude Code v2\n$\nCurrent session\n27% used").is_none());
+}
+
+#[test]
+fn codex_signed_out_or_expired_errors_share_one_message_but_api_key_keeps_its_own() {
+    for detail in [
+        "codex account authentication required to read rate limits",
+        "failed to fetch codex rate limits: 401 Unauthorized",
+        "Your access token could not be refreshed because your refresh token has expired. Please log out and sign in again.",
+    ] {
+        let message = quota::codex_rate_limit_error(detail);
+        assert!(
+            message.contains("not signed in or the login expired"),
+            "{detail}"
+        );
+        assert!(message.contains("codex login"));
+    }
+    let api_key = quota::codex_rate_limit_error("chatgpt authentication required");
+    assert!(api_key.contains("API key"));
+}
+
+#[test]
 fn screen_reader_reset_time_retains_timezone_and_next_day() {
     use agentconductor::availability::parse_time;
     let observed = parse_time("2026-10-14T01:50:00+09:00").unwrap();
