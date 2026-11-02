@@ -229,8 +229,44 @@ async fn wait_state(run: &std::path::Path, expected: &str) {
                 )
             })
             .unwrap_or_else(|error| format!("report unavailable: {error}"));
-        panic!("packaged UI run did not reach {expected}; observed {observed}");
+        panic!(
+            "packaged UI run did not reach {expected}; observed {observed}; UI actions=[{}]",
+            ui_action_evidence(run)
+        );
     });
+}
+
+fn ui_action_evidence(run: &std::path::Path) -> String {
+    let Ok(entries) = std::fs::read_dir(run) else {
+        return "unavailable".into();
+    };
+    let mut actions = entries
+        .flatten()
+        .filter(|entry| {
+            entry
+                .file_name()
+                .to_string_lossy()
+                .starts_with("coordinator-ui-")
+        })
+        .map(|entry| {
+            let path = entry.path().join("process");
+            let owner = std::fs::read_to_string(path.join("owner.json"))
+                .unwrap_or_else(|error| format!("owner unavailable: {error}"));
+            let stdout = diagnostic_tail(&path.join("stdout.log"));
+            let stderr = diagnostic_tail(&path.join("stderr.log"));
+            format!("owner={owner}; stdout={stdout}; stderr={stderr}")
+        })
+        .collect::<Vec<_>>();
+    actions.sort();
+    actions.join(" | ")
+}
+
+fn diagnostic_tail(path: &std::path::Path) -> String {
+    let Ok(bytes) = std::fs::read(path) else {
+        return "unavailable".into();
+    };
+    let tail = &bytes[bytes.len().saturating_sub(2048)..];
+    String::from_utf8_lossy(tail).replace(['\r', '\n'], " ")
 }
 
 fn assert_candidate(run: &std::path::Path, repo: &std::path::Path, attempt: u32) {
