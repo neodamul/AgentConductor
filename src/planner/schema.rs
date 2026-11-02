@@ -1,4 +1,5 @@
 //! Explicit planning output contracts; provider flags constrain generation before decoding.
+//! GitHub #337: every object lists all of its properties as required (Codex Structured Outputs).
 use crate::protocol::Provider;
 use serde_json::{Value, json};
 use std::path::Path;
@@ -21,13 +22,12 @@ pub fn for_plan(agents: &[String], roles: &[String], phased: bool) -> Value {
     } else {
         json!({"type":"string","enum":roles})
     };
-    let mut task = object(
-        json!({"id":{"type":"string"},"agent":{"type":"string","enum":agents},"prompt":{"type":"string"},"paths":at_least_one,"depends_on":strings,"test_command":at_least_one,"role":role,"model":{"type":["string","null"]},"execution_options":{"type":"object","additionalProperties":{"type":"string"}},"task_type":{"enum":["extract","summarize","analyze","code","agentic","creative",null]}}),
+    // Strict structured outputs (Codex) accept neither optional fields nor free-form maps, so a task states
+    // the one option the application applies, `effort`, and null means none.
+    let options = object(json!({"effort":{"type":["string","null"]}}));
+    let task = object(
+        json!({"id":{"type":"string"},"agent":{"type":"string","enum":agents},"prompt":{"type":"string"},"paths":at_least_one,"depends_on":strings,"test_command":at_least_one,"role":role,"model":{"type":["string","null"]},"execution_options":options,"task_type":{"type":["string","null"],"enum":["extract","summarize","analyze","code","agentic","creative",null]}}),
     );
-    task["required"]
-        .as_array_mut()
-        .unwrap()
-        .retain(|key| key != "execution_options" && key != "task_type");
     let tasks = json!({"type":"array","items":task});
     if phased {
         let phase = object(json!({"id":{"type":"string"},"name":{"type":"string"},"tasks":tasks}));

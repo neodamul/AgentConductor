@@ -132,14 +132,11 @@ pub fn failure(label: &str, result: &process::ProcessResult) -> String {
             result.exit_code.map_or("none".into(), |c| c.to_string())
         )
     };
-    let stderr = log_tail(&result.stderr, 1500);
-    let stdout = log_tail(&result.stdout, 1500);
-    let detail = if !stderr.is_empty() {
-        stderr
-    } else {
-        // Without stderr, the last output line (often a JSON error event) carries the cause.
-        stdout.lines().last().unwrap_or_default().to_string()
-    };
+    // GitHub #337: both streams, because a CLI may log unrelated errors on stderr and the real rejection on stdout.
+    let detail = crate::ui::failure_output::failure_output(
+        &log_tail(&result.stderr, 1500),
+        &log_tail(&result.stdout, 1500),
+    );
     let logs = result.stdout.parent().unwrap_or(Path::new("")).display();
     if detail.is_empty() {
         format!("{label} failed ({status}); logs: {logs}")

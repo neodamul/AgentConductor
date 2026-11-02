@@ -16,12 +16,57 @@ fn phase_contract_requires_arrays_and_registered_agents() {
         assert_eq!(t["properties"][n]["type"], "array");
     }
     assert_eq!(t["properties"]["execution_options"]["type"], "object");
-    assert!(
-        !t["required"]
+}
+
+/// Codex Structured Outputs (strict): every object lists all its properties as required and closes itself;
+/// optional values are nullable, and no object is a free-form map.
+fn assert_strict(node: &Value, at: &str) {
+    if let Some(properties) = node.get("properties").and_then(Value::as_object) {
+        let mut required: Vec<_> = node["required"]
             .as_array()
-            .unwrap()
-            .contains(&"execution_options".into())
-    );
+            .unwrap_or_else(|| panic!("{at}: no required list"))
+            .iter()
+            .map(|k| k.as_str().unwrap())
+            .collect();
+        let mut keys: Vec<_> = properties.keys().map(String::as_str).collect();
+        required.sort();
+        keys.sort();
+        assert_eq!(required, keys, "{at}");
+        assert_eq!(node["additionalProperties"], false, "{at}");
+        for (name, child) in properties {
+            assert_strict(child, &format!("{at}.{name}"));
+        }
+    } else if node["type"] == "object" {
+        panic!("{at}: a free-form object is not allowed");
+    }
+    if let Some(items) = node.get("items") {
+        assert_strict(items, &format!("{at}[]"));
+    }
+    if node.get("enum").is_some() {
+        assert!(node.get("type").is_some(), "{at}: an enum needs a type");
+    }
+}
+
+#[test]
+fn the_contract_is_accepted_by_strict_structured_outputs() {
+    // GitHub #337: Codex rejected the plan schema with `Missing 'task_type'` (invalid_json_schema).
+    for phased in [false, true] {
+        for roles in [vec![], vec!["development".to_string()]] {
+            assert_strict(&schema::for_plan(&["claude".into()], &roles, phased), "$");
+        }
+    }
+}
+
+#[test]
+fn a_plan_with_null_options_still_reads_as_a_task() {
+    // Strict outputs cannot omit a field, so "no effort" and "no kind of work" arrive as null.
+    let task: agentconductor::plan::Task = serde_json::from_value(serde_json::json!({
+        "id": "a", "agent": "claude", "prompt": "p", "paths": ["a"], "depends_on": [],
+        "test_command": ["true"], "role": null, "model": null,
+        "execution_options": {"effort": null}, "task_type": null
+    }))
+    .unwrap();
+    assert!(task.execution_options.is_empty() && task.task_type.is_none());
 }
 #[test]
 fn native_cli_arguments_bind_the_exact_contract() {
