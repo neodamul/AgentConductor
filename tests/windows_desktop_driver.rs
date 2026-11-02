@@ -82,17 +82,19 @@ fn desktop_app_is_killed_before_driver_failure_can_panic() {
 }
 
 #[test]
-fn save_driver_clicks_the_visible_save_button_when_invoke_pattern_is_missing() {
+fn save_driver_invokes_the_save_button_with_a_visible_pointer_fallback() {
     let source = include_str!("windows_desktop.rs");
     let bounds = source.find("$saveBounds = $save.Current.BoundingRectangle");
     let click = source.find("[DesktopInput]::Click(");
-    assert!(bounds.is_some_and(|index| click.is_some_and(|click| index < click)));
+    let invoke = source.find("$saveInvoke.Invoke()");
+    assert!(source.contains("[System.Windows.Automation.InvokePattern]::Pattern"));
+    assert!(bounds.is_some_and(|index| invoke.is_some_and(|invoke| index < invoke)));
+    assert!(invoke.is_some_and(|index| click.is_some_and(|click| index < click)));
     assert!(source.contains("$save.Current.IsOffscreen"));
     assert!(source.contains("$saveBounds.IsEmpty"));
     assert!(source.contains("SetCursorPos(int x, int y)"));
     assert!(source.contains("SEND_INPUT_MOUSE_CLICK_FAILED"));
     assert!(!source.contains("PressEnter"));
-    assert!(!source.contains("InvokePattern"));
 }
 
 #[test]

@@ -111,9 +111,17 @@ if (-not [DesktopInput]::Focus($hwnd, $expectedProcessId)) {
   Write-Output 'SAVE_WINDOW_NOT_FOREGROUND'
   exit 8
 }
-$saveX = [int]($saveBounds.Left + ($saveBounds.Width / 2))
-$saveY = [int]($saveBounds.Top + ($saveBounds.Height / 2))
-[DesktopInput]::Click($saveX, $saveY)
+$saveInvoke = $null
+try { $saveInvoke = $save.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern) } catch {}
+if ($saveInvoke) {
+  $saveInvoke.Invoke()
+  Write-Output 'SAVE_INVOKED'
+} else {
+  $saveX = [int]($saveBounds.Left + ($saveBounds.Width / 2))
+  $saveY = [int]($saveBounds.Top + ($saveBounds.Height / 2))
+  [DesktopInput]::Click($saveX, $saveY)
+  Write-Output 'SAVE_CLICKED'
+}
 Write-Output 'DRIVEN'
 "#;
 
