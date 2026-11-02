@@ -7165,3 +7165,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Test harness: recognize only the exact `breakaway denied + OS error 5 + inside a host job` diagnostic and report the affected journeys as skipped in GitHub Step Summary. Near-match/unknown errors remain failures. Production code and safety checks are unchanged. Local focused contracts pass 8/8, focused Clippy, rustfmt, diff hygiene, and the 300-line guard pass.
 - [ ] Windows chat acceptance: rerun the root head to verify other package journeys and the explicit skip reporting; run the three chat lifecycle journeys on an interactive Windows host outside the restrictive runner Job Object before counting them accepted.
 - [ ] Acceptance: issue #9 remains open. Packaged Rust Windows/UI parity is not implied by the main PR's passing Windows package run.
+
+### 2026-11-02 — Reconcile latest main and diagnose the open-PR backlog
+
+- [x] GitHub inventory: #22 is the only open PR; the older Rust work is already integrated or closed as superseded. Do not open child PRs for #9.
+- [x] Compare the root branch with current `main` (`db0da0b`, PR #318): it is one upstream commit ahead of the merge base and produced eight conflicts. The signed-out quota behavior and regressions were already ported in `dc0cf13d`; retain the Rust module layout and tests, and do not resurrect deleted `src/quota/query.rs`.
+- [x] Merge current `main` into the existing root as `ecc5c21e`. GitHub now reports the root PR mergeable; the root remains Draft for incomplete package/UI acceptance, not because other PRs are stacked.
+- [x] Local Verify: signed-out quota, quota-wait, and source-layout suites pass 14 tests with 1 ignored; formatting and diff checks pass.
+- [ ] Exact platform Verify: run `41379047095` is still in progress. Its checked-out tree is identical to the merge commit tree, but wait for macOS/Windows results and confirm the host-Job-Object chat skip summary before using it as current evidence.
+- [ ] Completion: finish exact packaged Windows chat acceptance on a normal interactive Windows host and screen-by-screen native UI parity before marking #9 complete or changing PR #22 from Draft.
