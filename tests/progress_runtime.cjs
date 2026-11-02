@@ -68,7 +68,25 @@ assert.ok(room.includes("AC_I18N.bind($('quota-source'), () => AC_QUOTA_WAIT(sna
 
 // The start is sent to the right element (it threw before sending since #38).
 assert.ok(!startup.includes("'start-run-progress')"), 'q() adds the start- prefix itself');
+// GitHub #325: the agent list marks the workspace's coordinator and redraws when the coordinator changes (another workspace, or the selector).
+assert.ok(startup.includes("p.id===draft.coordinator?facts.append(el('span',()=>acMessage('startup.coordinator_badge'),'fact coordinator-fact')):0"), 'the coordinator card says so');
+assert.ok(/const stamp=JSON\.stringify\(\[draft\.profiles,draft\.coordinator,/.test(startup), 'the agent list redraws when the coordinator changes');
+for (const lang of ['en', 'ko']) assert.ok(JSON.parse(fs.readFileSync(`src/ui/messages/${lang}.json`, 'utf8'))['startup.coordinator_badge'], `${lang} has the badge text`);
+// GitHub #325: the coordinator chat opens from the run screen too: its panel sits outside the hidden workspace screen and the answer is polled there.
+assert.ok(/document\.body\.append\(document\.getElementById\('start-chat'\)\);const chat=chatUi\(/.test(startup), 'the chat panel is moved out of the workspace screen');
+assert.ok(/setInterval\(async\(\)=>\{if\(home\|\|document\.hidden\|\|!chat\.busy\(\)/.test(startup), 'a waiting chat is followed on the run screen');
+assert.ok(fs.readFileSync('src/ui/chat.js', 'utf8').includes('busy:()=>!!waiting'), 'the chat reports that it waits for an answer');
+// GitHub #325: the coordinator's model is chosen next to the coordinator, from that agent's model catalog, and stored on its profile.
+assert.ok(fs.readFileSync('src/ui/startup.html', 'utf8').includes('<select id="start-coordinator-model"'), 'the workspace settings have a coordinator model selector');
+assert.ok(startup.includes('coordinator_model') && startup.includes('function coordinatorModels('), 'the selector reads and writes the coordinator profile');
+assert.ok(/q\('coordinator'\)\.classList\.toggle\('missing'[^\n]*coordinatorModels\(\)/.test(startup), 'the selector follows the coordinator selector');
+for (const lang of ['en', 'ko']) assert.ok(JSON.parse(fs.readFileSync(`src/ui/messages/${lang}.json`, 'utf8'))['startup.coordinator_model'], `${lang} names the selector`);
 // GitHub #323: the failure banner and the drafted retry feedback show the whole bounded output (both streams), not its first lines.
 assert.ok(!room.includes('clipLines(broken.output') && !room.includes('clipLines(test.output'), 'the integration failure text is not cut to its first lines');
 assert.ok(room.includes('value2:broken.output||') && room.includes('value1:test.output||acMessage("common.no_output")'), 'the banner and the feedback use the labeled output');
+// GitHub #326: a custom CLI declares its read-only arguments in the agent form, and the settings warn when the coordinator cannot answer chat.
+assert.ok(fs.readFileSync('src/ui/startup.html', 'utf8').includes('<textarea id="start-read-only-args"'), 'the agent form has the read-only arguments field');
+assert.ok(startup.includes('read_only_args') && startup.includes('state?.chat_blockers?.[draft.coordinator]'), 'the form saves them and the coordinator warning reads the snapshot');
+assert.ok(fs.readFileSync('src/ui/startup.html', 'utf8').includes('id="start-coordinator-note"'), 'the warning has a place under the coordinator selector');
+for (const lang of ['en', 'ko']) for (const key of ['startup.read_only_args', 'startup.coordinator_cannot_chat']) assert.ok(JSON.parse(fs.readFileSync(`src/ui/messages/${lang}.json`, 'utf8'))[key], `${lang} has ${key}`);
 console.log('progress runtime: pending reasons, verification, run attention, staleness and start time are shown');

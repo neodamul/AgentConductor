@@ -2479,6 +2479,13 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Verify (macOS): full suite.
 - [ ] Complete: merge and release only on request.
 
+### Coordinator chat on the run screen, coordinator badge and model — GitHub #325
+
+- [x] Plan: (1) the chat button sits in the shared header but its panel was inside the workspace screen, which is hidden on the run screen — the panel moves to the page body and a pending answer is followed by a 2 s snapshot while the run screen is shown. (2) `read_only_args` still refuses a coordinator that is neither verified nor full access with the pinned template (DD-131 unchanged), but names the agent, its permission and the remedy. (3) the agent card of the workspace coordinator carries a "Coordinator" fact; the list stamp includes `draft.coordinator`, so another workspace or selector change redraws it. (4) `AgentProfile.coordinator_model` (omitted = CLI default) is passed to the coordinator invocation through the one choke point `read_only_args`/`planning_args`, validated against the observed catalog; the verified Codex template is compared without the model.
+- [x] Red: `tests/coordinator.rs` (refusal text; model passed and validated), `tests/progress_runtime.cjs` (panel outside the workspace screen, chat polling, badge and redraw, selector).
+- [x] Task: `src/coordinator.rs`, `src/plan/profile.rs`, `src/ui/startup.{html,js}`, `src/ui/chat.js`, messages; CHANGELOG.
+- [x] Verify (macOS): live page checked (panel opens on the run screen, badge, selector); full suite.
+- [ ] Complete: merge and release only on request.
 ### Integration failure shows both streams — GitHub #323
 
 - [x] Plan: `public_report` picked the first non-empty stream (stderr first) and the room cut it to its first 4 or 12 lines, so a stderr warning hid the stdout failure. The pass/fail decision is unchanged (exit code and timeout). `ui::failure_output::failure_output` gives each stream its own last 8 lines with an "earlier lines" count, labels them only when both exist, and puts stdout last; full logs stay in the evidence tab. Reported on a corporate Windows build.
@@ -2486,3 +2493,11 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Task: `src/ui/failure_output.rs`, `src/ui.rs`, `src/ui/room.js`; CHANGELOG.
 - [x] Verify (macOS): full suite (765 passed), clippy.
 - [ ] Complete: merge and release only on request. The Rust line (PR #22) has its own port.
+
+### Custom CLI coordinator chat — GitHub #326
+
+- [x] Plan: a custom CLI (`operator_auto_approve`) could plan through the `planning_args` fallback but chat needs `read_only_args`, which only trusts verified templates (DD-131). The app cannot verify a custom CLI, so `AgentProfile.read_only_args` lets the operator declare how it runs without writing; `read_only_args()` uses them (never the normal arguments, never an empty list) and the enforcement stays: no declaration, no chat. The snapshot carries `chat_blockers` (agent → reason) so the settings warn under the coordinator selector when such an agent is chosen, instead of failing when the first question is sent. Stacked on #325 (same refusal text and selector).
+- [x] Red: `tests/coordinator.rs` (declared arguments, refusals), `tests/coordinator_chat_check.rs` (snapshot blockers), `tests/progress_runtime.cjs` (form field, note, messages).
+- [x] Task: `src/plan/profile.rs`, `src/coordinator.rs`, `src/ui/setup/snapshot.rs`, `src/ui/startup.{html,js}`, messages; CHANGELOG.
+- [x] Verify (macOS): full suite (768 passed), clippy.
+- [ ] Complete: merge and release only on request.

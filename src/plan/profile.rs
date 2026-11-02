@@ -49,6 +49,12 @@ pub struct AgentProfile {
     /// Optional quota command for custom CLIs; stdout follows the normalized Snapshot schema.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub quota_command: Option<QuotaCommand>,
+    /// GitHub #325: the model this agent uses when it is the workspace coordinator; omitted means the CLI default.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub coordinator_model: Option<String>,
+    /// GitHub #326: how the operator runs this CLI read-only (for the coordinator chat); the app cannot verify a custom CLI itself.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub read_only_args: Option<Vec<String>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
