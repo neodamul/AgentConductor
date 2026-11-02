@@ -17,9 +17,9 @@ When testing the broker child, wait for the matching snapshot job to reach `comp
 
 ## Current trace
 
-Run `41456152913` failed after Resume with state `stopped`, no report error, and task attempt 1. A local integration test now drives `Room::dispatch` through the broker child and reaches `waiting_approval` on attempt 2 on macOS. This rules out the general controller/child resume path on macOS; Windows UI Automation and the packaged Windows executable remain unverified.
+Run `41456152913` failed after Resume with state `stopped`, no report error, and task attempt 1. Run `41465909814` passed Windows build and package smoke but failed its exact-package UI test with the same stopped state; the timeout reported `UI actions=[]`, proving no action child was spawned. Artifact `13157855546` has digest `sha256:34ad3f466abf4d50c24d692e305bcb38d78d61d53492b187912f0c6d31422799`.
 
-Commit `45f65ed7` adds action-process evidence to the Windows timeout assertion. Run `41465909814` passed macOS and Windows platform validation, including Windows all-target native tests, opt-in Rust UI launch, formatting, Clippy, and unsafe-block checks. Its macOS arm64 package passed with archive SHA-256 `5a1815c2ac7b044db467414459c38b0f0b4f6df459f7d773e7af9bbe4cd424ca`; Windows release build and `package-release` smoke passed. UI Automation against the exact Windows package is running. This diagnostic update is not a product fix and adds no Windows acceptance credit.
+The root cause was a stale revision precondition: the coordinator can finalize the stopped report after the UI snapshot was rendered, and Resume was rejected before launching its child. A new integration regression reproduces this by updating the report after snapshot creation. The fix rebases only a Resume action against a freshly loaded `stopped` report; other stale actions remain rejected, and the child validates the current stop digest. Local focused tests pass, but the updated Windows package has not yet been verified. No Windows package acceptance credit is added.
 
 ## Evidence
 

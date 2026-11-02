@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Rebase stopped-run Resume after coordinator finalization — issue #9
+
+- [x] Plan: exact-head run `41465909814` passed Windows build/package smoke, but the packaged UI lifecycle test still ended `stopped` at attempt 1 with `UI actions=[]`; inspect the process boundary rather than treating it as a child failure.
+- [x] Red: after the UI snapshot, persist a coordinator-finalization update and dispatch Resume with the old revision. The controller rejects it before creating a UI child. A stale Reject action remains rejected.
+- [x] Task: allow only Resume against a currently `stopped` report to rebase to its freshly loaded revision; pass that current revision and stop digest to the child. Preserve strict revision checks for other actions and all other run states.
+- [x] Verify locally: `ui_resume`, `source_layout`, and `knowledge` pass (7 tests); all-target Clippy with `-D warnings`, formatting, and diff hygiene pass.
+- [ ] Verify packaged Windows UI: repeat the exact package lifecycle journey against the updated executable; acceptance remains unchanged until this passes.
+- [ ] Complete: commit and push the fix/progress, inspect Windows package evidence, then update #9/PR #22 without closing either before UI parity gates pass.
+
 ### 2026-11-02 — Reconcile open PRs and release screenshot evidence — issue #9
 
 - [x] Plan: inspect the authoritative GitHub PR list and exact-head validation jobs before reporting progress. Only root Rust migration PR #22 is open; #336 has merged into main as `0c050741`.

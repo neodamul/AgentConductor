@@ -176,6 +176,10 @@ impl Action {
     }
 }
 
+pub(super) fn can_rebase_stopped_resume(action: &Action, report: &Report) -> bool {
+    matches!(action, Action::Resume {}) && report.state == "stopped"
+}
+
 fn scope_recovery_args(
     task: &str,
     paths: &[String],
