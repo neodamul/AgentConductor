@@ -1,10 +1,11 @@
 ## Issue #9 current checkpoint — 2026-11-02, pushed root-PR verification
 
 - Open-PR inventory: PR #22 is the only open pull request and remains the root Rust UI migration. PR #322 for main issue #321 merged as `d406f60b`; #321 is closed. No child PRs are stacked.
-- Latest pushed #22 head: `0f5f5112f9059f5c0d669380ff8e718ff5b0551c`. It includes Rust quota-card parity, the Windows lifecycle UIA visibility fix, and the Rust fix for #323; main's changelog/docs were integrated without restoring the JavaScript app files.
-- Local #323 verification: 20 passed across six suites, including the real Room snapshot and retry-feedback UI journey; warning-denied focused Clippy, rustfmt, diff hygiene, and the 300-line source/test guard pass. The six-suite run is local evidence, not packaged Windows acceptance.
+- Latest pushed #22 head: `37ab04d19f091249c27d800d453d81f5eab35819` (documentation follow-up after code head `0f5f5112`). It includes Rust quota-card parity, the Windows lifecycle UIA visibility fix, and the Rust fix for #323; main's changelog/docs were integrated without restoring the JavaScript app files.
+- Local #323 verification: 20 passed across six suites, including the real Room snapshot and retry-feedback UI journey; warning-denied focused Clippy, rustfmt, diff hygiene, and the 300-line source/test guard pass.
+- Full local regression at product head `37ab04d1`: **1,294 passed, 16 ignored across 397 suites**; all-target warning-denied Clippy and `cargo fmt --check` pass. The exact Windows-package lifecycle UI test remains unverified. The six-suite run is local evidence, not packaged Windows acceptance.
 - Earlier exact package run [41389544894](https://github.com/neodamul/AgentConductor/actions/runs/41389544894) failed the Windows stop/resume/recovery journey because UI Automation could not find the visible stop-reason edit. The test-first driver fix now filters offscreen windows and controls.
-- Platform run [41395131647](https://github.com/neodamul/AgentConductor/actions/runs/41395131647) covers earlier code head `842260b4`: macOS validation passed; Windows validation remains in progress. It does not verify later issue #323 code `0f5f5112`; exact-current-head and packaged Windows results remain outstanding.
+- Exact-current-head Platform Validation run [41396276498](https://github.com/neodamul/AgentConductor/actions/runs/41396276498) is in progress: macOS build, source/test layout, and native tests have advanced; Windows is still building. Exact packaged Windows lifecycle acceptance remains outstanding.
 - Acceptance remains **22/50 overall**: packaged workflows **22/25**; shipped/default Rust UI **0/25**. Full screen-by-screen parity remains open.
 
 ## PR #22 CI regression closure — 2026-11-02

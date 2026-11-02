@@ -20,21 +20,23 @@
 
 ### 2026-11-02 — Exact-head validation checkpoint — issue #9
 
-- [x] Plan: keep the existing root PR #22; do not open child PRs. Latest pushed head is `0f5f5112f9059f5c0d669380ff8e718ff5b0551c`; latest-main integration is complete.
+- [x] Plan: keep the existing root PR #22; do not open child PRs. Latest pushed head is `37ab04d19f091249c27d800d453d81f5eab35819`; latest-main integration is complete.
 - [x] Local Verify: the focused docs/layout rerun passes 22 tests across four suites. The broader screenshot/docs checks and package evidence are recorded below.
 - [x] Record partial full-suite attempt accurately: the all-target run was stopped after 1,059 passed and 15 ignored across 312 suites while another test suite was still running; this is not a complete-suite pass.
+- [x] Full local Verify at product head `37ab04d1`: 1,294 passed, 16 ignored across 397 suites; warning-denied all-target Clippy and `cargo fmt --check` pass. The Windows lifecycle driver contract test passes 1/1; its packaged Windows UI test is ignored on macOS.
 - [x] macOS Verify: exact-head run `41389544894` passed native build, source/test layout, applicable native tests, opt-in Rust UI launch, formatting, Clippy, and unsafe-comment checks.
 - [x] Windows Verify: exact-head run `41389544894` passed native build, source/test layout, and applicable native tests.
 - [x] Windows Verify: exact-head run `41389544894` passed the opt-in native Rust UI launch path, formatting, lint, and unsafe-comment checks.
 - [x] Package Verify macOS: exact-head release executable, Rust-rendered manuals, package smoke, and artifact retention passed in `41389544894`.
 - [x] Package staging Windows: exact-head release executable built and bilingual manuals rendered.
 - [x] Package Verify Windows: release build, bilingual manual rendering, package smoke, and default-desktop save journey passed.
-- [ ] Package Verify Windows lifecycle: prior run `41389544894` failed to locate the stop-reason edit. The driver now filters offscreen windows/controls and passes local tests; exact-head packaged rerun remains pending.
+- [x] Local Windows lifecycle driver contract test: `cargo test --locked --offline --features test-fixtures,native-ui-probe --test windows_run_lifecycle` passes 1 source-contract test; 1 exact-package Windows UI journey is ignored on macOS. This does not count as Windows package acceptance.
+- [ ] Package Verify Windows lifecycle: run `41389544894` failed to locate the stop-reason edit; the driver now filters offscreen windows/controls. Exact-head packaged rerun is pending in `41396276498`.
 - [ ] UI acceptance: full screen-by-screen parity and shipped/default Rust UI acceptance remain open; counts stay 22/50 overall, 22/25 packaged workflows, and 0/25 shipped/default Rust UI.
 - [x] Complete: committed the Rust quota-card port and Windows lifecycle-driver fix on the existing #22 branch; merged `main` at `d406f60b`, retaining the changelog/docs update and resolving the web UI delete/modify conflict in favor of the Rust-only app tree.
 - [x] Next: focused local verification passed and the existing root branch was pushed once.
 - [x] Next: fix issue #323 in Rust by retaining both bounded failed-test streams; commit `0f5f5112` is pushed.
-- [ ] Next: finish run `41395131647` for prior code head `842260b4`; run current-head Windows validation/package journeys and continue the screen-by-screen Rust UI audit.
+- [ ] Next: inspect exact-current-head run `41396276498`; complete current-head Windows validation/package journeys and continue the screen-by-screen Rust UI audit.
 
 ### Close the PR #22 macOS screenshot/test regressions — 2026-11-02
 
