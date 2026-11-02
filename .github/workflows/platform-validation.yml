@@ -82,7 +82,7 @@ jobs:
           $package = "dist/agentconductor-x86_64-pc-windows-msvc-$($env:GITHUB_SHA.Substring(0, 12))/agentconductor.exe"
           $env:AGENTCONDUCTOR_DESKTOP_BINARY = (Resolve-Path $package).Path
           $testLog = Join-Path $env:RUNNER_TEMP "windows-package-ui-tests.log"
-          cargo test --locked --test windows_desktop --test windows_schedule --test windows_briefing --test windows_signal_settings --test windows_tool_decision --test windows_coordinator_chat --test windows_candidate_review --test windows_run_lifecycle --test package_run_recovery -- --include-ignored --nocapture --test-threads=1 2>&1 | Tee-Object -FilePath $testLog
+          cargo test --locked --test windows_desktop --test windows_schedule --test windows_briefing --test windows_signal_settings --test windows_tool_decision --test windows_coordinator_chat --test windows_candidate_review --test windows_run_lifecycle --test windows_workspace_reopen --test package_run_recovery -- --include-ignored --nocapture --test-threads=1 2>&1 | Tee-Object -FilePath $testLog
           $testExitCode = $LASTEXITCODE
           $chatSkips = Select-String -Path $testLog -Pattern 'EXACT_WINDOWS_CHAT_SKIPPED'
           if ($chatSkips) {

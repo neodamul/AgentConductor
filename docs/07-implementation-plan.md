@@ -62,8 +62,9 @@
 
 - [x] Plan: inspect the open bug queue before enhancements; confirm #226 workspace restore and #310 schedule-path changes are already on the root #9 branch.
 - [x] Verify: `cargo test --locked --offline --test launch_workspace --test workspace_delete_default --test workspace_registry --test windows_schedule_dispatch --test windows_schedule_marker --test stop_resume --test source_layout` passes 15 tests across seven suites.
+- [x] TDD: added a package-job contract for a Windows exact-package regression that deletes the default workspace, retains a second workspace, and verifies the package opens the retained path without recreating the default. The contract failed before wiring the test into the workflow and now passes; the existing source-level launch test also passes.
 - [x] Record: link the exact source revision and local-only scope in the LLM Wiki. #226/#310 remain open until current-head Windows package behavior is observed; source tests alone do not satisfy package acceptance.
-- [ ] Exact package: inspect Windows job results in Platform Validation `41500210315`; do not count a skipped UI journey as a pass.
+- [ ] Exact package: inspect Platform Validation `41532047819` for the existing schedule/chat package journeys. After the new workspace regression is pushed, require a current-head Windows `native-package` run to compile and pass that regression too. Do not count a skipped UI journey as a pass.
 
 ### 2026-11-03 — Integrate v0.1.57 docs and recover build disk — issue #9
 
