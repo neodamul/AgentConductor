@@ -49,7 +49,7 @@ impl State {
                         ui.small(progress);
                     }
                 }
-                if let Some(error) = &self.error {
+                if let Some(error) = self.visible_error() {
                     ui.colored_label(ui.visuals().error_fg_color, error);
                 }
             });

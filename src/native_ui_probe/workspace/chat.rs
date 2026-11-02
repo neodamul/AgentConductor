@@ -40,6 +40,10 @@ impl State {
         self.uncertain_error.is_some()
     }
 
+    pub fn visible_error(&self) -> Option<&str> {
+        self.uncertain_error.as_deref().or(self.error.as_deref())
+    }
+
     pub fn open(&mut self) {
         self.open = true;
     }
