@@ -5,6 +5,8 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 the GitHub Release notes for its tag.
 
 ## Unreleased
+
+## v0.1.57
 - Codex planning no longer fails with `invalid_json_schema: Missing 'task_type'`: the plan contract now lists every task field as required (a task states `task_type` and `execution_options.effort` as null when it has none), so Codex Structured Outputs accepts it.
 - A failed planning step shows both what the CLI wrote to stderr and to stdout, so an unrelated warning (a skill that failed to load) can no longer hide the API's rejection.
 
