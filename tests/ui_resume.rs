@@ -103,6 +103,7 @@ async fn agent_room_resume_action_restarts_a_stopped_task_through_its_ui_child()
         "kind":"action",
         "room":true,
         "revision":snapshot["revision"],
+        "stop_digest":snapshot["stop_digest"],
         "action":{"kind":"resume"}
     });
     let accepted = room
@@ -115,6 +116,72 @@ async fn agent_room_resume_action_restarts_a_stopped_task_through_its_ui_child()
     let report = workflow::load(&dir).unwrap();
     assert!(report.tasks[0].attempt >= 2);
     assert_eq!(report.tasks[0].status, "completed");
+    drop(room);
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn stale_resume_cannot_clear_a_newer_stop_request() {
+    let (root, mut plan) = support::setup("shared");
+    let dir = root.join("run");
+    let repo = root.join("repo");
+    let started = root.join("worker.started");
+    let release = root.join("worker.release");
+    plan.agents[0].args = vec!["task-blocking".into()];
+    plan.agents[0].environment.insert(
+        "AC_TEST_BLOCKING_STARTED".into(),
+        started.to_string_lossy().into_owned(),
+    );
+    plan.agents[0].environment.insert(
+        "AC_TEST_BLOCKING_RELEASE".into(),
+        release.to_string_lossy().into_owned(),
+    );
+    let bytes = serde_json::to_vec(&plan).unwrap();
+    let plan_path = root.join("plan.json");
+    fs::write(&plan_path, &bytes).unwrap();
+    let mut coordinator = ChildProcess(
+        Command::new(env!("CARGO_BIN_EXE_agentconductor"))
+            .args(["run"])
+            .arg(&plan_path)
+            .arg(&repo)
+            .arg(&dir)
+            .arg(workflow::digest(&bytes))
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .spawn()
+            .unwrap(),
+    );
+    wait_for_file(&started).await;
+    workflow::stop(&dir, "First review").unwrap();
+    wait_for_state(&dir, "stopped").await;
+    wait_for_exit(&mut coordinator.0).await;
+    fs::write(&release, "continue").unwrap();
+
+    let room = Room::open(
+        &dir,
+        std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+    )
+    .unwrap();
+    let snapshot = room
+        .dispatch(br#"{"kind":"snapshot","room":true}"#)
+        .unwrap();
+    workflow::stop(&dir, "Second review").unwrap();
+    let stale_resume = serde_json::json!({
+        "kind":"action",
+        "room":true,
+        "revision":snapshot["revision"],
+        "stop_digest":snapshot["stop_digest"],
+        "action":{"kind":"resume"}
+    });
+    assert!(
+        room.dispatch(&serde_json::to_vec(&stale_resume).unwrap())
+            .is_err()
+    );
+    let report = workflow::load(&dir).unwrap();
+    assert_eq!(report.state, "stopped");
+    let marker: serde_json::Value =
+        serde_json::from_slice(&fs::read(dir.join("stop.request")).unwrap()).unwrap();
+    assert_eq!(marker["reason"], "Second review");
     drop(room);
     fs::remove_dir_all(root).unwrap();
 }

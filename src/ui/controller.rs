@@ -135,27 +135,14 @@ impl Controller {
         }
         let report = workflow::load(&self.dir)?;
         let current_revision = workflow::revision(&report)?;
-        let stale_resume = current_revision != request.revision
-            && action::can_rebase_stopped_resume(&request.action, &report);
-        if current_revision != request.revision && !stale_resume {
-            return Err(crate::ui::messages::text(
-                "native.run_changed_since_review_refresh_before_acting",
-            )
-            .into());
-        }
-        let args = request.action.args(&report, &self.dir)?;
-        let revision = if stale_resume {
-            current_revision.as_str()
-        } else {
-            request.revision.as_str()
-        };
+        let (revision, args) = request.command(&report, &current_revision, &self.dir)?;
         let mut command = vec![
             "ui-action".into(),
             self.dir.to_string_lossy().into_owned(),
-            revision.into(),
+            revision.clone(),
         ];
         command.extend(args);
-        self.launch_locked(request.action.label(), &command, revision, &mut slot)
+        self.launch_locked(request.action.label(), &command, &revision, &mut slot)
     }
     pub(super) fn launch_locked(
         &self,

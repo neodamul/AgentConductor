@@ -1,5 +1,15 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Bind UI Resume to the reviewed stop marker — issue #9
+
+- [x] Plan / DD-22: the stale-revision fix could rebase an old Resume request onto a newer stop marker. Explicit Resume must remain bound to the stop marker displayed in its UI snapshot.
+- [x] Red: `stale_resume_cannot_clear_a_newer_stop_request` failed against the prior controller because the stale Resume was accepted and cleared the newer stop.
+- [x] Task: return the stop digest in stopped-run snapshots, echo it in Resume requests, reject a digest mismatch, and pass the originally reviewed digest to the child so a later marker change cannot be cleared.
+- [x] Local Verify: full `cargo test --offline --all-targets` passes (1,296 passed, 16 ignored across 403 suites); focused UI-resume/native-launch/layout tests pass (16); warning-denied all-target Clippy passes. Formatting, diff hygiene, and the 300-line guard are checked before commit.
+- [x] PR inventory: #22 is the large issue #9 Draft (1,136 commits, 1,816 files); #338 is a separate 8-file Codex planning fix whose macOS/Windows validation and package checks all pass. The #338 diff has been inspected; it is ready for its merge decision and integration into #22.
+- [ ] Exact-head Verify: commit and push this fix, then pass macOS and Windows validation plus the exact packaged Windows stop/resume journey. Run `41481282001` used head `fda175a5` and does not contain this fix.
+- [ ] Complete: record exact-head evidence in the LLM Wiki and AgentMemory; keep #9 open and PR #22 Draft until all UI parity gates pass.
+
 ### 2026-11-03 — Rebase stopped-run Resume after coordinator finalization — issue #9
 
 - [x] Plan: exact-head run `41465909814` passed Windows build/package smoke, but the packaged UI lifecycle test still ended `stopped` at attempt 1 with `UI actions=[]`; inspect the process boundary rather than treating it as a child failure.
@@ -7,7 +17,7 @@
 - [x] Task: allow only Resume against a currently `stopped` report to rebase to its freshly loaded revision; pass that current revision and stop digest to the child. Preserve strict revision checks for other actions and all other run states.
 - [x] Verify locally: full `cargo test --offline --all-targets` passes (1,295 passed, 16 ignored across 403 suites in 290.93s); focused UI-resume/layout/knowledge tests pass (7); all-target Clippy with `-D warnings`, formatting, and diff hygiene pass.
 - [x] Portability correction: exact-head run `41476532897` exposed a locale-dependent test assertion (the English runner returned “run changed since review; refresh before acting” while the test expected Korean text). The regression now asserts rejection without matching localized copy; focused tests and all-target warning-denied Clippy pass locally.
-- [x] Complete: fix and progress records are committed and pushed to PR #22 (`812c5e33`, `cc575ddf`, `f3e04fb7`). Exact-head macOS/Windows validation run `41480002744` is in progress; Windows package UI evidence remains pending.
+- [x] Complete: fix and progress records are committed and pushed to PR #22 (`812c5e33`, `cc575ddf`, `f3e04fb7`). Run `41480002744` was canceled after the docs-only head update. Run `41481282001` validates `fda175a5`, not the stop-digest fix above; it has not produced exact Windows package evidence.
 - [ ] Verify packaged Windows UI: review exact-head package evidence from run `41480002744` and resolve any remaining failure.
 - [ ] Complete: update #9/PR #22 with exact package evidence, finish UI parity and screenshot gates, then close #9/merge #22 only after full acceptance.
 

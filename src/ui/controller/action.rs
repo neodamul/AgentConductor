@@ -4,7 +4,55 @@ use super::*;
 #[serde(deny_unknown_fields)]
 pub(crate) struct ActionRequest {
     pub(crate) revision: String,
+    #[serde(default)]
+    pub(crate) stop_digest: Option<String>,
     pub(crate) action: Action,
+}
+
+impl ActionRequest {
+    pub(crate) fn command(
+        &self,
+        report: &Report,
+        revision: &str,
+        dir: &Path,
+    ) -> Result<(String, Vec<String>), String> {
+        let reviewed_stop = self.reviewed_stop_digest(report, dir)?;
+        let stale_resume = revision != self.revision && reviewed_stop.is_some();
+        if revision != self.revision && !stale_resume {
+            return Err(crate::ui::messages::text(
+                "native.run_changed_since_review_refresh_before_acting",
+            )
+            .into());
+        }
+        let mut args = self.action.args(report, dir)?;
+        if let Some(digest) = reviewed_stop {
+            args[1] = digest;
+        }
+        Ok((
+            if stale_resume {
+                revision.to_owned()
+            } else {
+                self.revision.clone()
+            },
+            args,
+        ))
+    }
+
+    fn reviewed_stop_digest(&self, report: &Report, dir: &Path) -> Result<Option<String>, String> {
+        if !can_rebase_stopped_resume(&self.action, report) {
+            return Ok(None);
+        }
+        let reviewed = self.stop_digest.as_deref().ok_or_else(|| {
+            crate::ui::messages::text("native.run_changed_since_review_refresh_before_acting")
+        })?;
+        if workflow::stop_digest(dir)? != reviewed {
+            return Err(crate::ui::messages::text(
+                "native.run_changed_since_review_refresh_before_acting",
+            )
+            .into());
+        }
+        Ok(Some(reviewed.to_owned()))
+    }
 }
 
 #[derive(Deserialize, Serialize)]

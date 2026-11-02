@@ -373,7 +373,9 @@ runtime evidence or pretend an asynchronous action finished when merely accepted
 Coordinator launch is a separate owned CLI process so closing the window does not
 abandon native workers. Serialize launches, retain coordinator stdout/stderr/ownership,
 and include their process groups in crash recovery. Explicit resume binds the previously
-reviewed stop marker; a newer stop request during launch must not be cleared.
+reviewed stop marker; a newer stop request during launch must not be cleared. A stopped-run
+snapshot exposes the stop-marker digest, the Resume request echoes it, and the controller
+checks it before dispatch while passing that same reviewed digest to the child process.
 
 ## DD-23 — Direct native Room transport
 

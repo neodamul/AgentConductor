@@ -54,10 +54,14 @@ fn workspace_launch_surface_connects_to_workspace_controls() {
 }
 
 fn candidate(state: &str) -> serde_json::Value {
-    serde_json::json!({
+    let mut snapshot = serde_json::json!({
         "revision":"run-rev-1",
         "report":{"state":state,"candidate":{"commit":"candidate-sha"}}
-    })
+    });
+    if state == "stopped" {
+        snapshot["stop_digest"] = "reviewed-stop".into();
+    }
+    snapshot
 }
 
 #[test]

@@ -17,8 +17,14 @@ pub(super) fn dispatch(
         Request::ScopeRecoveryPreview { task, paths, test } => {
             controller.recovery_preview(task, paths, test)
         }
-        Request::Action { revision, action } => {
-            controller.action(ActionRequest { revision, action })
-        }
+        Request::Action {
+            revision,
+            stop_digest,
+            action,
+        } => controller.action(ActionRequest {
+            revision,
+            stop_digest,
+            action,
+        }),
     }
 }

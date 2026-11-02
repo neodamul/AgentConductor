@@ -204,6 +204,8 @@ enum Request {
     },
     Action {
         revision: String,
+        #[serde(default)]
+        stop_digest: Option<String>,
         action: Action,
     },
 }

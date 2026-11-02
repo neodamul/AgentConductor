@@ -134,6 +134,15 @@ pub fn run_action_request(snapshot: &Value, action: RunAction) -> Result<Vec<u8>
     let state = snapshot["report"]["state"]
         .as_str()
         .ok_or("current run state is unavailable")?;
+    let stop_digest = if state == "stopped" {
+        Some(
+            snapshot["stop_digest"]
+                .as_str()
+                .ok_or("reviewed stop digest is unavailable")?,
+        )
+    } else {
+        None
+    };
     let kind = match action {
         RunAction::Resume
             if !matches!(
@@ -147,10 +156,13 @@ pub fn run_action_request(snapshot: &Value, action: RunAction) -> Result<Vec<u8>
         RunAction::Resume => return Err("this run cannot be resumed in its current state".into()),
         RunAction::Recover => return Err("only a running run can be recovered".into()),
     };
-    serde_json::to_vec(&serde_json::json!({
+    let mut request = serde_json::json!({
         "kind":"action", "revision":revision, "action":{"kind":kind}
-    }))
-    .map_err(|error| error.to_string())
+    });
+    if let Some(digest) = stop_digest {
+        request["stop_digest"] = digest.into();
+    }
+    serde_json::to_vec(&request).map_err(|error| error.to_string())
 }
 
 impl Probe {
