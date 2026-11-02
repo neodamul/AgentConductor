@@ -1,5 +1,17 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Integrate v0.1.57 docs and recover build disk — issue #9
+
+- [x] Plan: inspect the only open PRs, validate exact package gates, and compare the current Rust branch with the newly merged v0.1.57 release commit before touching issue #9.
+- [x] Task: review and squash-merge PR #340 after macOS and Windows exact package checks passed. Main is `f3b81902`; linked release issue #339 closed. Existing `v0.1.57` tag starts release run `41490878861`.
+- [x] Red: a read-only three-way merge check identified README and screenshot-manifest conflicts; the main manifest described release screenshots while the Rust branch images are from the native source build.
+- [x] Task: merge latest main locally as `2c9b76c`; retain only the Rust-native Workspace image in README, remove internal design-document links, and preserve explicit screenshot provenance. Versioned manuals, changelog, lockfile and package metadata now say 0.1.57.
+- [x] Verify: no conflict markers; `git diff --cached --check` passes; native screenshot freshness check passes after confirming `2b0cbb8c` only adds the reviewed stop digest to Resume requests and does not change rendering. README does not describe the source-build image as a v0.1.57 package capture.
+- [x] Cleanup: with no Cargo or AgentConductor process active, removed only generated `target/debug` (14 GiB); retained `target/release`, `dist`, `/private/tmp`, source, and UTM files. Free space increased from 15 GiB to 26 GiB; Git worktree is clean after the merge commit.
+- [ ] Push merge `2c9b76c` after exact-head run `41488647552` finishes; that active run validates pre-merge commit `6f407a2c` and must not be represented as validating the new head.
+- [ ] Release: verify tag run `41490878861` completes both platform validation and publishing before calling v0.1.57 released.
+- [ ] Continue #9: verify the exact Windows package stop/resume journey; complete native screen parity, accessibility, and version-matched Rust screenshots before promoting PR #22 from Draft or closing issue #9.
+
 ### 2026-11-03 — Bind UI Resume to the reviewed stop marker — issue #9
 
 - [x] Plan / DD-22: the stale-revision fix could rebase an old Resume request onto a newer stop marker. Explicit Resume must remain bound to the stop marker displayed in its UI snapshot.
