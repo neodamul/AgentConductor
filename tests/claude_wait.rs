@@ -56,6 +56,25 @@ async fn a_slow_cli_is_waited_for_and_a_stuck_one_names_the_limit() {
         error.contains("allocated budget must be positive"),
         "{error}"
     );
+    // GitHub #317: an expired or missing login is named at once instead of waiting for the limit.
+    let signed_out = AgentProfile {
+        environment: [("AC_QUOTA_CASE".to_string(), "signed_out".to_string())].into(),
+        ..profile(0)
+    };
+    let started = std::time::Instant::now();
+    let error = quota::query_claude_within(
+        &signed_out,
+        &root.join("signed-out"),
+        &root,
+        Duration::from_secs(30),
+    )
+    .await
+    .unwrap_err();
+    assert!(
+        error.contains("not signed in or the login expired"),
+        "{error}"
+    );
+    assert!(started.elapsed() < Duration::from_secs(20));
     std::fs::remove_dir_all(root).unwrap();
 }
 

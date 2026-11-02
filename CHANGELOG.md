@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Claude and Codex usage: a login that expired and a CLI never signed in are now told the same way ("not signed in or the login expired" with the command to sign in again) instead of ending as a timeout or a generic failure; a Codex API-key login keeps its own advice (#317).
+
 ## v0.1.53
 
 - Claude usage: the query is given up after 3 minutes instead of 1, for PCs where it takes longer than a minute; a fast PC is unaffected because the query ends as soon as the usage is read (#315).

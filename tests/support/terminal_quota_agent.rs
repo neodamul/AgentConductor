@@ -39,6 +39,12 @@ fn main(){
         std::io::stdout().flush().unwrap();
         std::thread::sleep(std::time::Duration::from_secs(60)); return;
     }
+    if std::env::var("AC_QUOTA_CASE").as_deref()==Ok("signed_out"){
+        // GitHub #317: a CLI whose login expired (or was never made) says so at the prompt.
+        println!("Claude Code v2.1.296\nNot logged in · Please run /login\n$");
+        std::io::stdout().flush().unwrap();
+        std::thread::sleep(std::time::Duration::from_secs(60)); return;
+    }
     // GitHub #297: a CLI that starts slowly (scanning, managed settings, proxy).
     if let Some(ms)=std::env::var("AC_QUOTA_DELAY_MS").ok().and_then(|v|v.parse().ok()){std::thread::sleep(std::time::Duration::from_millis(ms));}
     if let Some(expected)=std::env::var_os("AC_EXPECT_CWD"){
