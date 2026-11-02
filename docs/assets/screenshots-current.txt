@@ -1,8 +1,7 @@
-The English and Korean Workspace captures are from the Rust-native UI source build. They are not
-screenshots of the v0.1.57 release package. The English capture visibly identifies v0.1.54, so
-refresh it before claiming these images are version-matched to a release.
-Checked 2026-11-03 against 2b0cbb8c: Resume carries the reviewed stop digest in its request; the
-UI rendering did not change.
+Captured 2026-11-03 from the Rust-native v0.1.57 source-build app using its built-in egui
+framebuffer capture. These are not screenshots captured from the packaged release binaries.
+English light, Korean light, and Korean dark Workspace views are shown. The recent Resume change
+only binds the reviewed stop digest to its request and does not change the rendered screen.
 
 - ui-workspace-current.png
 - ui-workspace-korean-current.png
