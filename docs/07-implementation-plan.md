@@ -7831,3 +7831,12 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Verify: `cargo test --release --locked --offline --test public_docs --test source_layout --test knowledge` passed 16 tests; Cargo metadata reports v0.1.56; `git diff --check` passed.
 - [x] Verify: the complete Rust source/test inventory is 927 files and remains within the 300-line limit (the `source_layout` suite passed).
 - [ ] Complete: commit and push the main reconciliation, update PR #22's stale status, and refresh version-matched native screenshots. Keep #9 open and #22 Draft until exact Windows package/UI and remaining native parity gates pass.
+
+### 2026-11-02 — Do not swallow a run event during workspace wakeup — issue #9 / #257
+
+- [x] Plan: trace the Windows-only timeout in run `41431944692` to `RunChangeListener::listen_startup`; a workspace wake callback can change `report.json` before the listener records its baseline.
+- [x] Red: add `report_change_during_workspace_wakeup_is_not_swallowed`, which changes the report synchronously from the WorkspaceChanged wake callback. It fails on the old order with `Err(Timeout)` while waiting for `RunChanged`.
+- [x] Task / Green: record the report fingerprint before publishing WorkspaceChanged, so any report update during the wake callback is observed by the next comparison.
+- [x] Verify locally: 111 library tests, 13 native UI probe tests, and 2 source-layout tests pass; rustfmt and warning-denied all-target release Clippy pass. The source/test limit remains 300 lines.
+- [ ] Verify: push this fix and rerun exact-head Windows validation; packaged Windows UI acceptance is still a separate gate.
+- [ ] Complete: update issue #257, PR #22, AgentMemory, and the LLM Wiki after the current-head run; keep #9 open and #22 Draft until the full parity and package gates pass.

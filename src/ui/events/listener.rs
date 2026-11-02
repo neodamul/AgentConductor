@@ -157,11 +157,11 @@ fn listen_startup(
         let startup_changed = path_changed || current_startup != observed_startup;
         if startup_changed {
             observed_startup = current_startup;
-            bus.publish(None, Event::WorkspaceChanged);
             observed_report = current_watch
                 .as_ref()
                 .and_then(|current| current.report_path.as_deref())
                 .and_then(fingerprint);
+            bus.publish(None, Event::WorkspaceChanged);
         }
         watch = current_watch;
         let current_report = watch

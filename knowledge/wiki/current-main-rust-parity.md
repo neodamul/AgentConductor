@@ -456,3 +456,7 @@ Claude PR #280 merged elapsed and stale feedback for JavaScript chat, goal rewri
 ## Coordinator run status board in the Rust Agent Room — issue #286 / 2026-11-01
 
 Claude's merged #267 (PR #268) added the coordinator run/task status board to the JavaScript Activity view. The Rust egui board derives run state, task counts, task/agent/status rows and latest-output age from the existing Agent Room snapshot; its local repaint dispatches no extra request. It filters repetitive workflow summaries only in presentation, preserving audit records and judgments, and adds bilingual accessible labels. Tests cover the board and native library; public-doc/source-layout tests, warning-denied all-target Clippy, rustfmt and diff checks pass. All changed Rust files remain at or below 300 lines. The board is integrated into #260; exact packaged screenshot/UI verification remains part of #9.
+
+## Preserve report changes during workspace wakeup — 2026-11-02 / #257
+
+The startup listener captures the report fingerprint before publishing `WorkspaceChanged`. Publishing invokes subscriber wake callbacks synchronously; taking the fingerprint afterward could absorb a `report.json` write performed by that callback and lose the subsequent `RunChanged` event. `tests/native_ui_probe/events_listener_race.rs` fixes the ordering with a deterministic regression. The pre-fix Windows run `41431944692` reproduced the timeout; the local post-fix library, native UI probe, source-layout, formatting, and warning-denied Clippy checks pass. A fresh exact-head Windows run is still required.

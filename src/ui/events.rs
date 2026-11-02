@@ -148,5 +148,8 @@ pub fn notify_external_from_environment() {
 #[path = "../../tests/support/external_ui_events.rs"]
 mod external_tests;
 #[cfg(test)]
+#[path = "../../tests/native_ui_probe/events_listener_race.rs"]
+mod listener_race_tests;
+#[cfg(test)]
 #[path = "../../tests/native_ui_probe/events.rs"]
 mod tests;
