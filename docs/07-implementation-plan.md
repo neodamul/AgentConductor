@@ -7839,5 +7839,5 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Task / Green: record the report fingerprint before publishing WorkspaceChanged, so any report update during the wake callback is observed by the next comparison.
 - [x] Verify locally: 111 library tests, 13 native UI probe tests, and 2 source-layout tests pass; rustfmt and warning-denied all-target release Clippy pass. The source/test limit remains 300 lines.
 - [x] Record: commit `fdf83c64` is pushed to #22; PR #22 and issues #9/#257 were updated; AgentMemory `mem_mvz6idls_525815ce0e09` and the LLM Wiki/raw evidence record the fix.
-- [x] Verify: exact-head platform validation run `41437445551` started for pushed head `fdf83c64`; Windows result is pending. Packaged Windows UI acceptance remains a separate gate.
+- [x] Verify: exact-head run `41437912566` passed on macOS and Windows at `a27f2d6a`; packaged Windows UI acceptance remains a separate gate.
 - [ ] Complete: keep #257 and #9 open and PR #22 Draft until current-head CI, exact packaged Windows UI, screenshots, and remaining parity gates pass.
