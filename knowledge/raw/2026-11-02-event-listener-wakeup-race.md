@@ -25,6 +25,6 @@ Date: 2026-11-02
 
 ## Remaining
 
-The exact Windows head run failed on the pre-fix commit. The fix is pushed and exact-head platform validation run `41437912566` passed on macOS and Windows at `a27f2d6a`. This does not establish Windows packaged UI acceptance or complete issue #9. The follow-up is recorded in issue #257 and root PR #22.
+The exact Windows head run failed on the pre-fix commit. The fix is pushed and exact-head platform validation run `41437912566` passed on macOS at `a27f2d6a`; Windows validation is still running. This does not establish Windows packaged UI acceptance or complete issue #9. The follow-up is recorded in issue #257 and root PR #22.
 
 The fix was pushed in commit `fdf83c64`, and both issue #9 and issue #257 plus PR #22 were updated. AgentMemory record: `mem_mvz6idls_525815ce0e09`.
