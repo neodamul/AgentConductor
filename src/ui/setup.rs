@@ -241,6 +241,7 @@ mod revision;
 mod share;
 mod slug;
 mod snapshot;
+mod update_blockers;
 pub(crate) use profiles::{validate_catalog, validate_name, validate_profiles};
 
 mod chat;

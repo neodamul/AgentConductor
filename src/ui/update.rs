@@ -22,37 +22,72 @@ impl Room {
         Ok(crate::update_source::settings())
     }
 
+    /// GitHub #331: running work (workspace, kind, time) and failed checks are named apart; a run
+    /// whose coordinator is gone does not count.
     fn ensure_update_idle(&self) -> Result<(), String> {
-        let busy = || crate::ui::messages::text("native.finish_or_stop_runs_before_updating");
-        if let Some(startup) = self.surface()? {
-            startup.ensure_idle().map_err(|_| busy())?;
+        use crate::ui::update_guard::{Blocker, job_label, message, run_blocker};
+        let language = crate::ui::language::load();
+        let mut blockers = Vec::new();
+        match self.surface() {
+            Ok(Some(startup)) => blockers.extend(startup.update_blockers()),
+            Ok(None) => {}
+            Err(error) => blockers.push(Blocker::Unknown {
+                what: "workspace".into(),
+                error,
+            }),
         }
-        if let Some(controller) = self
-            .controller
-            .lock()
-            .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))?
-            .clone()
-            && controller.busy()
-        {
-            return Err(busy().into());
-        }
-        // Runs of every saved workspace, not only the open one.
-        for workspace in workspaces::saved()? {
-            let Ok(entries) = fs::read_dir(&workspace) else {
-                continue;
-            };
-            for run in entries.flatten().map(|e| e.path()) {
-                if !run.join("report.json").is_file() {
-                    continue;
-                }
-                if let Ok(report) = workflow::load(&run)
-                    && (report.state == "running"
-                        || report.tasks.iter().any(|t| t.status == "running"))
-                {
-                    return Err(busy().into());
+        match self.controller.lock() {
+            Ok(slot) => {
+                if let Some(controller) = slot.clone() {
+                    match controller.poll() {
+                        Ok(job) if job["state"] == "running" => blockers.push(Blocker::Active {
+                            workspace: controller
+                                .dir
+                                .parent()
+                                .and_then(|p| p.file_name())
+                                .map_or_else(String::new, |n| n.to_string_lossy().into_owned()),
+                            what: job_label(&language, job["kind"].as_str().unwrap_or("")),
+                            elapsed_ms: None,
+                        }),
+                        Ok(_) => {}
+                        Err(error) => blockers.push(Blocker::Unknown {
+                            what: "run job".into(),
+                            error,
+                        }),
+                    }
                 }
             }
+            Err(_) => blockers.push(Blocker::Unknown {
+                what: "run job".into(),
+                error: crate::ui::messages::text("native.surface_state_poisoned").into(),
+            }),
         }
-        Ok(())
+        // Runs of every saved workspace, not only the open one.
+        match workspaces::saved() {
+            Ok(saved) => {
+                for workspace in saved {
+                    let Ok(entries) = fs::read_dir(&workspace) else {
+                        continue;
+                    };
+                    let name = workspace
+                        .file_name()
+                        .map_or_else(String::new, |n| n.to_string_lossy().into_owned());
+                    for run in entries.flatten().map(|e| e.path()) {
+                        if run.join("report.json").is_file() {
+                            blockers.extend(run_blocker(&language, &name, &run));
+                        }
+                    }
+                }
+            }
+            Err(error) => blockers.push(Blocker::Unknown {
+                what: "workspace list".into(),
+                error,
+            }),
+        }
+        if blockers.is_empty() {
+            Ok(())
+        } else {
+            Err(message(&language, &blockers))
+        }
     }
 }

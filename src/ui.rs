@@ -33,6 +33,7 @@ pub mod native;
 pub mod picker;
 pub mod setup;
 mod source_references;
+pub mod update_guard;
 pub mod workspaces;
 
 fn public_report(report: &Report) -> Result<serde_json::Value, String> {

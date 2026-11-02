@@ -7,6 +7,7 @@ the GitHub Release notes for its tag.
 ## Unreleased
 
 - Korean interface: the reason a coordinator cannot chat (shown under the coordinator selector and in the chat) is now in Korean (#333).
+- App update: when work blocks an update, the message now names each blocking workspace, kind of work and how long it has run, and says to wait or to stop it; a check that failed (state could not be read or a process could not be proven gone) is listed apart as "not running work". A run still marked "running" whose coordinator is gone no longer blocks the update (#331).
 
 ## v0.1.55
 
