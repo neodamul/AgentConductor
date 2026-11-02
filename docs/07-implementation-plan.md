@@ -5,9 +5,10 @@
 - [x] Plan: exact package run `41520505534` failed before Save: after keyboard input, UIA focus had returned to the top-level window and the Goal value remained empty.
 - [x] Red: replace source contracts that required `SendKeys` with assertions for a real pointer click, Unicode `SendInput`, select-all input, and UIA value readback. They failed against the old driver.
 - [x] Task: click the Goal edit bounds, inject Ctrl+A and Unicode text through `SendInput`, then re-find the Goal edit while polling its current UIA value. Save is still re-acquired after the edit.
-- [x] Local Verify: `cargo test --test windows_desktop_driver` passes 16 tests; formatting and diff checks pass. The Windows packaged interaction still needs exact Windows runner verification.
+- [x] Local Verify: the Windows desktop/lifecycle/schedule drivers, public docs and source layout pass 41 tests with 1 ignored; rustfmt and diff checks pass. The embedded C# helper also compiles with .NET SDK 9.0.303.
 - [x] Previous exact-head Verify: run `41520505534` passed macOS/Windows validation and macOS packaging. Windows build, manual rendering, and package launch passed; its default-desktop UIA save journey failed with an empty Goal value.
-- [ ] Exact Windows Verify: rebuild and run the packaged default-desktop journey with the updated input driver; require startup.json to contain the edited goal.
+- [x] Regression correction: run `41529527647` exposed a second stale contract in `windows_run_lifecycle`, which still required `SendKeys` for the desktop driver. Reproduced it locally (1 failed), then updated the contract to require pointer-focused Unicode `SendInput`; all focused suites now pass.
+- [ ] Exact-head Verify: push this contract correction and pass platform validation; then rebuild and pass the packaged default-desktop journey with the updated input driver, requiring `startup.json` to contain the edited goal.
 - [ ] Complete: only count a packaged workflow after the exact package persists the goal. Overall acceptance remains **22/50** (packaged workflows **22/25**; shipped/default Rust UI **0/25**).
 
 

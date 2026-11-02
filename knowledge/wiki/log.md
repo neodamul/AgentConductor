@@ -1,6 +1,6 @@
 # [2026-11-03] task/verify | Repair Windows packaged workspace-save UIA input — issue #9
 
-Exact package run `41520505534` disproved the stale Save-element diagnosis: after `SendKeys`, UIA focus was the top-level window and the Goal value remained empty before Save. Updated driver contracts red-first, then changed the Windows harness to click the Goal bounds and use `SendInput` Ctrl+A/Unicode text, re-finding Goal during value polling. Local contracts pass 16/16; exact Windows package rerun is still required. Acceptance remains 22/25 package workflows and 0/25 shipped/default Rust UI parity (22/50 total). The Rust product UI did not change.
+Exact package run `41520505534` disproved the stale Save-element diagnosis: after `SendKeys`, UIA focus was the top-level window and the Goal value remained empty before Save. Updated driver contracts red-first, then changed the Windows harness to click Goal bounds and use `SendInput` Ctrl+A/Unicode text, re-finding Goal during value polling. Run `41529527647` then found a second stale `windows_run_lifecycle` assertion still requiring `SendKeys`; reproduced locally red, corrected it to require Unicode input, and verified 41 tests/1 ignored across eight suites. The embedded C# helper also compiles under .NET 9. New exact-head package verification is required; acceptance stays 22/25 packaged and 0/25 shipped/default Rust UI (22/50 overall). Product UI did not change.
 
 # [2026-11-03] verify | Recheck current-head Rust UI migration and CocoIndex evidence
 

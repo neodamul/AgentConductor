@@ -60,10 +60,10 @@ fn lifecycle_driver_exposes_stop_resume_and_recovery_observations() {
     assert!(!script::SCRIPT.contains("ValuePattern"));
     let desktop_script = include_str!("windows_desktop.rs");
     assert!(desktop_script.contains("[DesktopInput]::Focus($hwnd, $expectedProcessId)"));
-    assert!(
-        desktop_script.contains("[System.Windows.Forms.SendKeys]::SendWait('Windows UIA goal')")
-    );
-    assert!(!desktop_script.contains("[DesktopInput]::TypeText('Windows UIA goal')"));
+    assert!(desktop_script.contains("[DesktopInput]::SelectAll()"));
+    assert!(desktop_script.contains("[DesktopInput]::TypeText('Windows UIA goal')"));
+    assert!(desktop_script.contains("KEYEVENTF_UNICODE = 4"));
+    assert!(!desktop_script.contains("SendKeys]::SendWait('Windows UIA goal')"));
     assert!(desktop_script.contains("[DesktopInput]::Click("));
     assert!(!desktop_script.contains("$goalValue.SetValue"));
 }

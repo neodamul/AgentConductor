@@ -2,7 +2,8 @@
 
 - Exact package run `41520505534` falsified the stale-Save-element hypothesis as the immediate failure: after `SendKeys`, the focused element was the top-level AgentConductor window and the Goal value stayed empty; Save was never reached.
 - TDD driver repair replaces `SendKeys` with a pointer click on the Goal edit and `SendInput` Ctrl+A/Unicode text; it re-finds the edit while polling UIA value because the accessibility tree may refresh during typing. Local UIA driver contracts pass 16/16; formatting and diff checks pass.
-- Run `41520505534` passed macOS/Windows validation, macOS packaging, and Windows release build/manual/package launch. Its Windows packaged default-desktop journey failed on Goal input. The repaired driver requires a new exact Windows package run; no package acceptance credit is added yet.
+- Run `41529527647` then exposed a stale assertion in `windows_run_lifecycle` that still required `SendKeys` in the desktop driver; the red failure was reproduced locally and the contract now requires Unicode `SendInput`. Current local verification passes 41 tests with 1 ignored across eight suites; the embedded C# helper compiles with .NET SDK 9.0.303.
+- Run `41520505534` passed macOS/Windows validation, macOS packaging, and Windows release build/manual/package launch. Its Windows packaged default-desktop journey failed on Goal input. Run `41529527647` failed macOS validation on the stale test contract before the new Windows package journey could be credited. A new exact-head run is required; no package acceptance credit is added yet.
 - This is test-driver stabilization, not product parity evidence. Acceptance remains 22/50 (packaged 22/25; shipped/default Rust 0/25). Do not close #189/#226/#310 or mark PR #22 ready based on this checkpoint.
 
 ## Stopped-run Resume local recheck — 2026-11-03
