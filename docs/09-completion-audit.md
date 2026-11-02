@@ -8,6 +8,15 @@
 - The archive contains the macOS app bundle, executable, English and Korean HTML manuals, dependency license notices, and CycloneDX SBOM.
 - This is local macOS package smoke evidence only; it does not establish Windows package acceptance or shipped/default UI parity.
 
+## Windows package failure and test-first repair — 2026-11-02
+
+- Exact-head run [41396276498](https://github.com/neodamul/AgentConductor/actions/runs/41396276498) passed macOS validation and packaged execution. Windows validation, release build, manual rendering, and package smoke also passed.
+- On Windows, package recovery, briefing, and candidate review passed. Three coordinator-chat lifetime cases were explicitly skipped because the hosted runner denied process breakaway from its Job Object.
+- The packaged default-desktop test failed: UI Automation's ValuePattern.SetValue left the Goal field empty. The test asserted before killing its spawned app, so the package job later timed out and was cancelled.
+- TDD repair: regression contracts first failed on the old driver; the driver now focuses the actual Goal edit, sends Ctrl+A and the goal through Windows SendKeys, reads the value back through UI Automation, then terminates and waits for the app before any assertions.
+- Local verification after the repair: 29 passed, 1 ignored across four suites; warning-denied all-target Clippy, rustfmt, diff hygiene, and source-layout checks pass.
+- Exact packaged Windows verification is still pending on the repaired source. Do not count the failed run as Windows package acceptance; the count remains 22/50 overall (22/25 packaged workflows; 0/25 shipped/default Rust UI).
+
 ## Issue #9 current checkpoint — 2026-11-02, pushed root-PR verification
 
 - Open-PR inventory: PR #22 is the only open pull request and remains the root Rust UI migration. PR #322 for main issue #321 merged as `d406f60b`; #321 is closed. No child PRs are stacked.

@@ -1,22 +1,26 @@
 #[test]
-fn goal_driver_focuses_and_sets_value_before_saving() {
+fn goal_driver_focuses_and_types_into_the_goal_before_saving() {
     let source = include_str!("windows_desktop.rs");
     let focus = source.find("[DesktopInput]::Focus($hwnd, $expectedProcessId)");
     let goal_focus = source.find("$goal.SetFocus()");
-    let set_value = source.find("$goalPattern.SetValue('Windows UIA goal')");
+    let type_text = source.find("[System.Windows.Forms.SendKeys]::SendWait('Windows UIA goal')");
     let save = source.find("$save.SetFocus()");
     assert!(focus.is_some_and(|index| goal_focus.is_some_and(|goal| index < goal)));
-    assert!(goal_focus.is_some_and(|index| set_value.is_some_and(|set| index < set)));
-    assert!(set_value.is_some_and(|index| Some(index) < save));
+    assert!(goal_focus.is_some_and(|index| type_text.is_some_and(|typed| index < typed)));
+    assert!(type_text.is_some_and(|index| Some(index) < save));
 }
 
 #[test]
-fn goal_driver_uses_uia_value_pattern_and_reads_back_the_value() {
+fn goal_driver_uses_keyboard_input_and_reads_back_the_uia_value() {
     let source = include_str!("windows_desktop.rs");
-    assert!(source.contains("[System.Windows.Automation.ValuePattern]::Pattern"));
-    assert!(source.contains("$goalPattern.SetValue('Windows UIA goal')"));
+    assert!(source.contains("[System.Windows.Forms.SendKeys]::SendWait('^a')"));
+    assert!(source.contains("[System.Windows.Forms.SendKeys]::SendWait('Windows UIA goal')"));
     assert!(!source.contains("[DesktopInput]::TypeText('Windows UIA goal')"));
-    assert!(source.contains("$goalPattern.Current.Value"));
+    assert!(
+        source
+            .contains("$goal.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)")
+    );
+    assert!(source.contains("$goalValue.Current.Value"));
     assert!(source.contains("SetForegroundWindow(window)"));
     assert!(source.contains("[DesktopInput]::PressEnter()"));
 }
@@ -37,10 +41,10 @@ fn goal_driver_waits_for_enabled_controls_and_focus_before_setting_value() {
     let wait_enabled = source.find("$goal.Current.IsEnabled -or -not $save.Current.IsEnabled");
     let focus = source.find("[DesktopInput]::Focus($hwnd, $expectedProcessId)");
     let wait_focus = source.find("-not $goal.Current.HasKeyboardFocus");
-    let set_value = source.find("$goalPattern.SetValue('Windows UIA goal')");
+    let type_text = source.find("[System.Windows.Forms.SendKeys]::SendWait('Windows UIA goal')");
     assert!(wait_enabled.is_some_and(|index| Some(index) < focus));
     assert!(focus.is_some_and(|index| Some(index) < wait_focus));
-    assert!(wait_focus.is_some_and(|index| Some(index) < set_value));
+    assert!(wait_focus.is_some_and(|index| Some(index) < type_text));
 }
 
 #[test]
@@ -52,19 +56,27 @@ fn goal_driver_does_not_type_text_through_unicode_keyboard_input() {
 }
 
 #[test]
-fn goal_driver_sets_and_reads_back_text_through_the_uia_value_pattern() {
+fn goal_driver_types_and_reads_back_text_through_the_uia_value_pattern() {
     let source = include_str!("windows_desktop.rs");
     let pattern =
         source.find("$goal.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)");
-    let set_value = source.find("$goalPattern.SetValue('Windows UIA goal')");
-    let read_value = source.find("$goalPattern.Current.Value");
+    let type_text = source.find("[System.Windows.Forms.SendKeys]::SendWait('Windows UIA goal')");
+    let read_value = source.find("$goalValue.Current.Value");
     let wait_for_value = source.find("while ($goalText -ne 'Windows UIA goal'");
     let save = source.find("$save.SetFocus()");
     assert!(pattern.is_some());
-    assert!(pattern.is_some_and(|index| set_value.is_some_and(|set| index < set)));
-    assert!(set_value.is_some_and(|set| read_value.is_some_and(|read| set < read)));
+    assert!(pattern.is_some_and(|index| type_text.is_some_and(|typed| index < typed)));
+    assert!(type_text.is_some_and(|typed| read_value.is_some_and(|read| typed < read)));
     assert!(read_value.is_some_and(|read| wait_for_value.is_some_and(|wait| read < wait)));
     assert!(wait_for_value.is_some_and(|wait| save.is_some_and(|save| wait < save)));
+}
+
+#[test]
+fn desktop_app_is_killed_before_driver_failure_can_panic() {
+    let source = include_str!("windows_desktop.rs");
+    let kill = source.find("let _ = app.kill()");
+    let assert_driver = source.find("driver.status.success()");
+    assert!(kill.is_some_and(|index| assert_driver.is_some_and(|assert| index < assert)));
 }
 
 #[test]

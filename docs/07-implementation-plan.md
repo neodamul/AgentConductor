@@ -8,6 +8,16 @@
 - [x] Verify: archive SHA-256 52b6fe6294bec4b92e709b206fd82cb7aa3b0011d420f9976a8b481f0092a29e; executable SHA-256 2abb5df4c8ad03bb0b04ed08635b2f9fd1d7a4eb34b2a655f62b15073f24dcb6. Archive contains the app bundle, binary, bilingual manuals, license notices, and SBOM.
 - [ ] Windows package acceptance and screen-by-screen Rust UI parity remain open; this local macOS package result does not change the 22/50 acceptance count.
 
+### 2026-11-02 — Repair packaged Windows goal entry — issue #9
+
+- [x] Plan: investigate exact-head run 41396276498 after its Windows package journey failed; keep all work on the existing root PR #22.
+- [x] Red: new source-contract tests failed on the old UIA ValuePattern.SetValue path and on missing process cleanup before assertions.
+- [x] Task: enter the default workspace goal through focused Windows SendKeys input, read the resulting UIA value, and kill/wait for the app before asserting on driver failure.
+- [x] Local Verify: 29 passed and 1 ignored across four suites; warning-denied all-target Clippy, rustfmt, diff hygiene, and the source-layout guard pass.
+- [x] Exact-head diagnosis: macOS package verification passed; Windows build/manual/package smoke passed; recovery, briefing, and candidate review passed; chat lifetime journeys were skipped because the hosted runner denied Job Object breakaway. The packaged default-desktop journey failed because SetValue left the goal empty, then the app process was not reaped before panic.
+- [ ] Windows package acceptance: rerun the packaged UI journey on a new exact head. The local macOS host cannot execute this Windows UI test.
+- [ ] UI acceptance remains 22/50 overall: packaged workflows 22/25; shipped/default Rust UI 0/25.
+
 ### 2026-11-02 — Fix integration failure output visibility — GitHub #323
 
 - [x] Plan: R-205 → BG-160 → SF-193 → UC-196 → FR-197/NFR-87 → QAS-203 → DDR-54 → DD-217; preserve both bounded log tails instead of selecting stderr first.

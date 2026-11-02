@@ -86,14 +86,15 @@ if (-not $goal.Current.HasKeyboardFocus) {
   Write-Output 'GOAL_FOCUS_FAILED'
   exit 7
 }
-$goalPattern = $goal.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
-if ($goalPattern.Current.IsReadOnly) { Write-Output 'GOAL_VALUE_READ_ONLY'; exit 7 }
-$goalPattern.SetValue('Windows UIA goal')
+$goalValue = $goal.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
+if ($goalValue.Current.IsReadOnly) { Write-Output 'GOAL_VALUE_READ_ONLY'; exit 7 }
+[System.Windows.Forms.SendKeys]::SendWait('^a')
+[System.Windows.Forms.SendKeys]::SendWait('Windows UIA goal')
 $goalValueDeadline = (Get-Date).AddSeconds(3)
-$goalText = $goalPattern.Current.Value
+$goalText = $goalValue.Current.Value
 while ($goalText -ne 'Windows UIA goal' -and (Get-Date) -lt $goalValueDeadline) {
   Start-Sleep -Milliseconds 50
-  $goalText = $goalPattern.Current.Value
+  $goalText = $goalValue.Current.Value
 }
 $focused = [System.Windows.Automation.AutomationElement]::FocusedElement
 Write-Output "GOAL_FOCUS_AFTER_INPUT:$($focused.Current.ProcessId):$($focused.Current.ControlType.ProgrammaticName):$($focused.Current.Name)"
@@ -135,11 +136,14 @@ fn default_native_workspace_is_accessible_and_saves_through_ui_automation() {
         .output()
         .unwrap();
     let report = String::from_utf8_lossy(&driver.stdout).to_string();
+    let driver_stderr = String::from_utf8_lossy(&driver.stderr).to_string();
+    let _ = app.kill();
+    let _ = app.wait();
     assert!(
         driver.status.success(),
         "UI Automation driver exited {}: stdout: {report}; stderr: {}",
         driver.status,
-        String::from_utf8_lossy(&driver.stderr)
+        driver_stderr
     );
     let saved = Instant::now() + Duration::from_secs(10);
     let mut goal = String::new();
@@ -157,14 +161,11 @@ fn default_native_workspace_is_accessible_and_saves_through_ui_automation() {
         }
         std::thread::sleep(Duration::from_millis(200));
     }
-    let _ = app.kill();
-    let _ = app.wait();
     assert!(report.contains("DRIVEN"), "UI Automation driver: {report}");
     assert_eq!(
-        goal,
-        "Windows UIA goal",
+        goal, "Windows UIA goal",
         "driver output: {report}; stderr: {}",
-        String::from_utf8_lossy(&driver.stderr)
+        driver_stderr
     );
     let _ = std::fs::remove_dir_all(dir);
 }
