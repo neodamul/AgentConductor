@@ -152,6 +152,25 @@ mod document;
 pub use document::{read_document, read_profile_document};
 
 pub fn read_only_args(profile: &AgentProfile, task_file: &str) -> Result<Vec<String>, String> {
+    // GitHub #326: an operator who declares how the CLI runs read-only is trusted for that CLI; the
+    // normal arguments are never accepted as the read-only ones.
+    if let Some(declared) = &profile.read_only_args {
+        if declared.is_empty() || *declared == profile.args {
+            return Err(format!(
+                "coordinator {} has read-only arguments that are empty or equal to its normal arguments; give the arguments that run it without writing",
+                profile.id
+            ));
+        }
+        let mut readonly = profile.clone();
+        readonly.args = declared.clone();
+        readonly.read_only_args = None;
+        return adapters::session_args(
+            &readonly,
+            profile.coordinator_model.as_deref(),
+            None,
+            task_file,
+        );
+    }
     // DD-131: a full-access agent still coordinates read-only, through its CLI's verified
     // sandboxed template restricted below.
     if profile.permission_mode == "full_access"
@@ -199,7 +218,7 @@ pub fn read_only_args(profile: &AgentProfile, task_file: &str) -> Result<Vec<Str
         );
     } else if profile.permission_mode != "read_only" {
         return Err(format!(
-            "coordinator {} cannot be run read-only while its permission is {}; set its permission to full access or native callback in the team settings, or choose another coordinator",
+            "coordinator {} cannot be run read-only while its permission is {}; set its permission to full access or native callback in the team settings, give it read-only arguments in its agent settings, or choose another coordinator",
             profile.id, profile.permission_mode
         ));
     }

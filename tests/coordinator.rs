@@ -191,3 +191,33 @@ fn the_coordinator_model_is_passed_and_must_come_from_the_catalog() {
         serde_json::from_value(serde_json::to_value(&profile).unwrap()).unwrap();
     assert_eq!(saved.coordinator_model.as_deref(), Some("not-in-catalog"));
 }
+
+#[test]
+fn a_custom_cli_coordinates_read_only_through_arguments_its_operator_declares() {
+    // GitHub #326: the app cannot verify a custom CLI, so the operator names the read-only invocation.
+    let mut profile: agentconductor::plan::AgentProfile =
+        serde_json::from_value(serde_json::json!({
+            "id": "aipro", "executable": "aipro", "args": ["run", "--auto-approve", "{task_file}"],
+            "parser": "custom", "permission_mode": "operator_auto_approve"
+        }))
+        .unwrap();
+    let error = coordinator::read_only_args(&profile, "prompt.txt").unwrap_err();
+    assert!(
+        error.contains("aipro") && error.contains("read-only arguments"),
+        "{error}"
+    );
+    profile.read_only_args = Some(vec![
+        "run".into(),
+        "--read-only".into(),
+        "{task_file}".into(),
+    ]);
+    assert_eq!(
+        coordinator::read_only_args(&profile, "prompt.txt").unwrap(),
+        ["run", "--read-only", "prompt.txt"]
+    );
+    // Declaring the normal arguments again would run unrestricted, so it is refused.
+    profile.read_only_args = Some(profile.args.clone());
+    assert!(coordinator::read_only_args(&profile, "prompt.txt").is_err());
+    profile.read_only_args = Some(vec![]);
+    assert!(coordinator::read_only_args(&profile, "prompt.txt").is_err());
+}

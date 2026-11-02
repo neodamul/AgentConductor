@@ -1166,6 +1166,8 @@
   "startup.quota_querying": "사용량 조회 중…",
   "startup.coordinator_badge": "코디네이터",
   "startup.coordinator_model": "코디네이터 모델",
+  "startup.read_only_args": "읽기 전용 인수 (JSON 배열, 선택): 이 CLI를 쓰기 없이 실행하는 인수. 사용자 지정 CLI를 코디네이터 대화에 쓰려면 필요합니다",
+  "startup.coordinator_cannot_chat": "이 코디네이터와는 대화할 수 없습니다: {reason}",
   "room.pending_dependencies": "{value1} 완료를 기다리는 중",
   "room.pending_retry": "{value1} 후 자동 재시도",
   "room.pending_session_limit": "빈 세션을 기다리는 중 (동시에 최대 {value1}개)",

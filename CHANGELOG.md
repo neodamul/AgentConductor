@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Custom CLI coordinator: an agent can declare read-only arguments (agent form, JSON array); the coordinator chat then runs the CLI with them, so a custom CLI that plans can also answer chat. Without them the chat is still refused, and the workspace settings now warn under the coordinator selector with the reason as soon as such an agent is chosen (#326).
+
 - Coordinator chat: the chat icon now works on the run screen too (its panel was hidden with the workspace screen), and an answer that is still pending is followed there (#325).
 - Coordinator chat: a coordinator whose permission cannot be run read-only is refused with the agent's name and what to change (full access or native callback in the team settings, or another coordinator) instead of "coordinator requires read-only capabilities" (#325).
 - Agent list: the coordinator's card says "Coordinator" and the list redraws when the workspace or the coordinator changes (#325).
