@@ -81,7 +81,15 @@ jobs:
         run: |
           $package = "dist/agentconductor-x86_64-pc-windows-msvc-$($env:GITHUB_SHA.Substring(0, 12))/agentconductor.exe"
           $env:AGENTCONDUCTOR_DESKTOP_BINARY = (Resolve-Path $package).Path
-          cargo test --locked --test windows_desktop --test windows_schedule --test windows_briefing --test windows_signal_settings --test windows_tool_decision --test windows_coordinator_chat --test windows_candidate_review --test windows_run_lifecycle --test package_run_recovery -- --include-ignored --nocapture --test-threads=1
+          $testLog = Join-Path $env:RUNNER_TEMP "windows-package-ui-tests.log"
+          cargo test --locked --test windows_desktop --test windows_schedule --test windows_briefing --test windows_signal_settings --test windows_tool_decision --test windows_coordinator_chat --test windows_candidate_review --test windows_run_lifecycle --test package_run_recovery -- --include-ignored --nocapture --test-threads=1 2>&1 | Tee-Object -FilePath $testLog
+          $testExitCode = $LASTEXITCODE
+          $chatSkips = Select-String -Path $testLog -Pattern 'EXACT_WINDOWS_CHAT_SKIPPED'
+          if ($chatSkips) {
+            Add-Content $env:GITHUB_STEP_SUMMARY "### Windows packaged chat journeys skipped`n`nThe runner's Windows Job Object explicitly denied process breakaway, so these journeys could not verify background-worker survival after app close. Production safety checks remained enabled. Run this package test on a Windows host that permits breakaway to execute the journeys.`n"
+            $chatSkips | ForEach-Object { Add-Content $env:GITHUB_STEP_SUMMARY ("- " + $_.Line) }
+          }
+          if ($testExitCode -ne 0) { exit $testExitCode }
       - name: Retain verified package and execution evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2, MIT

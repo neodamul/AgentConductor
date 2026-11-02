@@ -1,5 +1,7 @@
 #[path = "support/windows_chat_script.rs"]
 mod script;
+#[path = "support/windows_chat_status_script.rs"]
+mod status_script;
 
 #[test]
 fn launcher_selection_skips_hidden_and_disabled_buttons() {
@@ -33,4 +35,12 @@ fn chat_edit_lookup_handles_a_window_that_is_not_ready_yet() {
         .expect("chat editor selector in UI automation script");
 
     assert!(chat_edit.contains("if (-not $window) { return $null }"));
+}
+
+#[test]
+fn status_probe_only_reads_the_packaged_apps_accessible_text() {
+    assert!(status_script::SCRIPT.contains("FindAll($T::Descendants, $C)"));
+    assert!(status_script::SCRIPT.contains("$_.Current.Name"));
+    assert!(!status_script::SCRIPT.contains("Invoke()"));
+    assert!(!status_script::SCRIPT.contains("SetValue"));
 }

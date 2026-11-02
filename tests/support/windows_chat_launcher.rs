@@ -6,6 +6,10 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
+#[path = "windows_job_diagnostic.rs"]
+mod job_diagnostic;
+pub use job_diagnostic::host_job_breakaway_denied;
+
 const APP_SCRIPT: &str = r#"
 param([string]$ConfigPath)
 $ErrorActionPreference = 'Stop'
@@ -65,6 +69,15 @@ pub struct RunningApp {
     task_name: String,
     root: PathBuf,
     stopped: bool,
+}
+
+pub fn host_job_denial_visible(pid: u32, status_script: &str) -> bool {
+    Command::new("powershell.exe")
+        .args(["-NoProfile", "-NonInteractive", "-Command", status_script])
+        .env("AC_DESKTOP_PID", pid.to_string())
+        .output()
+        .ok()
+        .is_some_and(|output| host_job_breakaway_denied(&String::from_utf8_lossy(&output.stdout)))
 }
 
 impl RunningApp {
@@ -154,7 +167,7 @@ mod tests {
     use super::{APP_SCRIPT, REGISTER_TASK};
 
     #[test]
-    fn launches_interactively_outside_the_test_runner_job() {
+    fn launches_interactively_from_a_scheduled_task() {
         assert!(REGISTER_TASK.contains("New-ScheduledTaskPrincipal"));
         assert!(REGISTER_TASK.contains("-LogonType Interactive"));
         assert!(APP_SCRIPT.contains("Start-Process -FilePath $config.binary"));

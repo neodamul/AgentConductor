@@ -275,12 +275,16 @@ if ($env:AC_CHAT_MODE -in @('send', 'verify')) {
   }
 }
 $visible = $false
+$hostJobDenied = $false
 while (-not $visible -and (Get-Date) -lt $deadline) {
   $window = RefreshWindow
   $names = ($window.FindAll($T::Descendants, $C) | ForEach-Object { $_.Current.Name }) -join "`n"
   $visible = $names.Contains($env:AC_CHAT_QUESTION) -and $names.Contains($env:AC_CHAT_ANSWER)
+  $hostJobDenied = $names -match '(?is)windows denied process breakaway.*access is denied\. \(os error 5\).*this app is inside a host job'
+  if ($hostJobDenied) { break }
   if (-not $visible) { Start-Sleep -Milliseconds 250 }
 }
+if ($hostJobDenied) { Write-Output $names; exit 0 }
 if (-not $visible) {
   Write-Output "CHAT_TRANSCRIPT_INCOMPLETE`n$names"
   exit 6
