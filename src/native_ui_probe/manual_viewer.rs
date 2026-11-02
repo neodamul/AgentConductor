@@ -146,6 +146,9 @@ fn screenshot(context: &egui::Context, source: &str) -> Option<egui::TextureHand
         "assets/ui-workspace-dark-current.png" => {
             include_bytes!("../../docs/assets/ui-workspace-dark-current.png")
         }
+        "assets/ui-agent-settings-current.png" => {
+            include_bytes!("../../docs/assets/ui-agent-settings-current.png")
+        }
         "assets/ui-agent-room-native.png" => {
             include_bytes!("../../docs/assets/ui-agent-room-native.png")
         }

@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### 2026-11-02 — Restore native manual Agent Roles screenshot — issue #9
+
+- [x] Plan: the exact PR head's macOS validation failed `native_manual_renders_bundled_screenshots`. The English and Korean manuals reference the verified Rust Agent Roles image, but the native viewer did not embed that asset.
+- [x] Red: GitHub run `41418016116` failed only `--test native_ui_manual`; the failing assertion named `assets/ui-agent-settings-current.png`. Screenshot provenance confirms hash `b9d68874b7a47aa3fdfa3fb40cdaf2faf03fbf6bdd09403bde15814e495ea866` was captured from the Rust process.
+- [x] Task: add the existing verified screenshot to `manual_viewer::screenshot`; no new asset or web UI image was introduced.
+- [x] Verify: local `native_ui_manual` (7), `release_docs` (4), and `source_layout` (2) pass; rustfmt, warning-denied all-target Clippy, and diff hygiene pass.
+- [ ] Complete: commit and push the renderer fix; validate the new exact head. Packaged UI acceptance stays 22/25 and shipped/default Rust UI stays 0/25 until their separate gates pass.
+
 ### 2026-11-02 — Local macOS release package evidence — issue #9
 
 - [x] Build: cargo build --release --locked completed for source head 6eb2ca9f.

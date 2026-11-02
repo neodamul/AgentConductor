@@ -190,3 +190,13 @@ The Agent Room run remained `waiting_approval`; no approval or merge was perform
 | `docs/assets/ui-workspace-dark-current.png` | `d9b529cadd3570ef05da13cf1d63bfbc95b60872e0047e9951d1ae9d169d90db` |
 
 The Markdown and generated bilingual HTML manuals reference these assets. See `docs/evidence/issue9-current-native-screenshots-20261102.json`. These source-build captures are not exact release-package evidence and do not establish Windows acceptance or complete legacy UI parity.
+
+## 2026-11-02 native manual image registry repair
+
+The English and Korean manuals also reference `docs/assets/ui-agent-settings-current.png`, the
+verified Rust Agent Roles capture with SHA-256
+`b9d68874b7a47aa3fdfa3fb40cdaf2faf03fbf6bdd09403bde15814e495ea866`. The native manual renderer's
+embedded image registry omitted this path, so the content parsed but the screenshot rendered as
+empty space. `src/native_ui_probe/manual_viewer.rs` now embeds the existing asset. The regression
+test `native_manual_renders_bundled_screenshots` failed on the exact PR head before the fix and
+passes locally afterward; this does not increase packaged-workflow acceptance.
