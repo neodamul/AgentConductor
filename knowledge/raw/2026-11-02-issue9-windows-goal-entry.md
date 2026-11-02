@@ -8,10 +8,14 @@ The packaged default-desktop UI journey failed at the Goal edit. UI Automation's
 
 ## Test-first repair
 
-The source-contract tests were changed first and failed against the old driver. The exact Windows CI run showed that keyboard input changed the UI Automation Goal value but did not persist it, even after the Save button received focus. The driver now reads the Save button's visible bounds, verifies it is on-screen, focuses the expected app process, and clicks the button center through Win32 `SetCursorPos`/`SendInput`. After success it waits for `startup.json` to confirm persistence; on failure it skips that wait. In either case it terminates and waits for the desktop process before assertions.
+The source-contract tests failed against the old driver. Exact Windows run `41402275923` showed that keyboard input changed the UI Automation Goal value but did not persist it. Run `41405965619` also failed after the follow-up used Win32 `SetCursorPos`/`SendInput` to click the visible Save control. The current unverified attempt invokes the control through UI Automation `InvokePattern` first, with the checked pointer click as fallback. The driver still waits for `startup.json` only after successful activation and terminates the desktop process before assertions.
 
-Local verification after the follow-up passed 18 tests with 1 ignored across three focused suites, warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line layout guard.
+The 1,295-pass full local suite belongs to earlier source `76e0c39b`; it does not cover the current UIA Invoke or coordinator-port changes. Current coordinator-focused tests, source-layout check, and warning-denied all-target Clippy pass. Full local tests and exact packaged Windows validation remain pending.
 
 ## Remaining verification
 
-The repaired Windows package journey has not yet run on an exact new source head. Do not treat the failed run as Windows package acceptance. Current Issue 9 acceptance remains 22/50 overall, with 22/25 packaged workflows and 0/25 shipped/default Rust UI.
+The UIA Invoke source has not yet run on Windows. Do not treat either failed run as Windows package acceptance. Current Issue 9 acceptance remains 22/50 overall, with 22/25 packaged workflows and 0/25 shipped/default Rust UI.
+
+## Coordinator profile and chat port — 2026-11-02
+
+Merged main issues #325/#326 are being ported into the existing Rust #9 branch, not a child PR. New tests first failed, then passed for catalog-validated coordinator model selection, custom read-only argv, profile edit persistence, compatibility reasons, and blocked chat submission. The profile form exposes the model selector and readonly argv field. Chat now shows the coordinator's read-only incompatibility and disables sending. Focused tests and warning-denied all-target Clippy pass; full local verification and branch integration remain open.

@@ -1633,3 +1633,7 @@ Trace: R-204 → BG-159 → SF-192 → UC-195 → FR-196 → QAS-202 → DDR-53 
 ### DD-217 Combine both bounded streams only when both are present
 Continue reading each failed test's existing 2 KiB tail. When both tails contain non-whitespace text, format them as labeled stderr and stdout sections, with stdout last; when only one tail is available, return it exactly as before. This avoids warning/error classification heuristics and preserves diagnostics from both process streams without extra I/O.
 Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197/NFR-87 → QAS-203 → DDR-54 → DD-217. GitHub #323, 2026-11-02.
+
+### DD-218 Keep coordinator model and read-only capability on the agent profile
+Add optional, backwards-compatible `coordinator_model` and `read_only_args` profile fields. Validate a selected model against the observed catalog. For custom CLIs, use only explicitly declared read-only argv and reject empty or normal-command duplicates; retain existing verified built-in templates for supported providers. Compute compatibility and coordinator labels from current workspace/profile state, and keep chat on the existing CLI subprocess/authentication path.
+Trace: R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-198/FR-199/FR-200 → NFR-88/NFR-89 → QAS-204/QAS-205 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #325/#326, 2026-11-02.

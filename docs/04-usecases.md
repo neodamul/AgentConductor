@@ -830,3 +830,11 @@ Trace: R-204 → BG-159 → SF-192 → UC-195 → FR-196 → QAS-202 → DDR-53 
 ### UC-196 Review a failed integration with warnings in the other stream
 An operator opens a failed integration result whose stderr contains a tooling warning and whose stdout contains the test failure. The report shows both labeled tails; the operator can use the same combined evidence to request a scoped retry.
 Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197 → QAS-203 → DDR-54 → DD-217. GitHub #323, 2026-11-02.
+
+### UC-197 Select and identify the workspace coordinator model
+The operator chooses a registered coordinator and, when available, selects a model from that profile's observed catalog. The native agent list marks the coordinator for the active workspace, and changing workspace or coordinator updates the marker and available model.
+Trace: R-206 → BG-161 → SF-194 → UC-197 → FR-198/FR-200 → QAS-205 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #325, 2026-11-02.
+
+### UC-198 Chat with a custom CLI coordinator in declared read-only mode
+The operator selects a custom CLI as coordinator and configures arguments that invoke the CLI read-only. Chat invokes those declared arguments with the profile's existing authentication. If the arguments are empty, equal to normal arguments, or otherwise unusable, the UI explains the blocker and does not launch the normal write-capable command.
+Trace: R-206 → BG-161 → SF-194 → UC-198 → FR-199/FR-200 → NFR-88/NFR-89 → QAS-204 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #326, 2026-11-02.

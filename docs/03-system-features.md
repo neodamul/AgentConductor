@@ -743,3 +743,7 @@ Trace: R-204 → BG-159 → SF-192 → UC-195 → FR-196 → QAS-202 → DDR-53 
 ### SF-193 Present bounded stdout and stderr evidence on failure
 For a failed integration check, the run report and retry-feedback source shall carry the readable tails of both process streams when available; keep the existing behavior when only one stream has output.
 Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197 → QAS-203 → DDR-54 → DD-217. GitHub #323, 2026-11-02.
+
+### SF-194 Configure and identify a safe workspace coordinator
+Workspace settings select a coordinator profile and an optional model from its observed CLI catalog. The agent list identifies the selected coordinator for the active workspace. Custom profiles may declare a separate read-only argument list, and the UI explains when a selected profile cannot serve coordinator chat.
+Trace: R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-198/FR-199/FR-200 → NFR-88/NFR-89 → QAS-204/QAS-205 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #325/#326, 2026-11-02.

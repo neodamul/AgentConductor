@@ -3,6 +3,7 @@ use crate::native_ui_probe::workspace::profile_tools::{Editor, Event};
 use eframe::egui;
 use serde_json::Value;
 
+mod coordinator;
 mod fallback;
 mod fields;
 
@@ -72,8 +73,11 @@ pub(super) fn show(
             }
             args.accessible_name(args_label);
 
-            ui.menu_button(text(language, "startup.profile_rules_json"), |ui| {
+            ui.menu_button(text(language, "startup.profile_settings"), |ui| {
                 ui.set_max_width(560.0);
+                coordinator::show(editable, editor, language, ui);
+                ui.separator();
+                ui.label(text(language, "startup.profile_rules_json"));
                 egui::ScrollArea::vertical()
                     .max_height(400.0)
                     .show(ui, |ui| {

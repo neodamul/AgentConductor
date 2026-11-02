@@ -107,6 +107,8 @@ pub fn defaults() -> Result<Config, String> {
                 .map(|p| p.to_string_lossy().into_owned())
                 .unwrap_or(invocation.executable),
             args: invocation.args,
+            coordinator_model: None,
+            read_only_args: None,
             parser: provider,
             protocol: None,
             agent_settings: None,

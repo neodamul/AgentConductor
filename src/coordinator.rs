@@ -113,6 +113,19 @@ pub fn read_only_args_with_model(
     model: Option<&str>,
     task_file: &str,
 ) -> Result<Vec<String>, String> {
+    let model = model.or(profile.coordinator_model.as_deref());
+    if let Some(declared) = &profile.read_only_args {
+        if profile.parser != Provider::Custom || declared.is_empty() || declared == &profile.args {
+            return Err(format!(
+                "coordinator {} has invalid read-only arguments; provide a separate nonempty custom CLI invocation",
+                profile.id
+            ));
+        }
+        let mut read_only = profile.clone();
+        read_only.args = declared.clone();
+        read_only.read_only_args = None;
+        return adapters::session_args(&read_only, model, None, task_file);
+    }
     // DD-131: a full-access agent still coordinates read-only, through its CLI's verified
     // sandboxed template restricted below.
     if profile.permission_mode == "full_access"

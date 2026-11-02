@@ -211,3 +211,6 @@ Keep provider event framing separate from requested-document parsing. Scan compl
 
 ### Driver DDR-54 Preserve context without guessing which stream contains the error
 Retain both bounded streams rather than choosing one based on severity heuristics. Add labels only when both are present, put stdout last for the reported test-run pattern, and leave single-stream text untouched. Trace: QAS-203.
+
+### Driver DDR-55 Keep coordinator safety in the invocation boundary
+Validate coordinator model choice against the persisted observed catalog and pass it through the existing adapter. Use explicit custom read-only argv only when it is nonempty and distinct from normal arguments; otherwise require a verified provider template or expose a blocker before spawn. Derive workspace badge and compatibility text from the active snapshot rather than adding another polling path. Trace: QAS-204, QAS-205.

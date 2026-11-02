@@ -793,3 +793,23 @@ Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197 → QAS-203 → DDR-54 
 ### NFR-87 Keep failure-output collection bounded and passive
 Read no more than the existing 2 KiB tail per stream. Do not launch another process, poll, or reread an entire log to assemble the report or retry feedback.
 Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197/NFR-87 → QAS-203 → DDR-54 → DD-217. GitHub #323, 2026-11-02.
+
+### FR-198 Validate and apply an optional coordinator model
+Persist an optional coordinator model on the selected agent profile. When present, require it to match the profile's observed catalog and pass it through the existing CLI adapter invocation path; when absent, retain the CLI default.
+Trace: R-206 → BG-161 → SF-194 → UC-197 → FR-198 → QAS-205 → DDR-55 → DD-218. GitHub #325, 2026-11-02.
+
+### FR-199 Use explicitly declared custom read-only arguments
+Allow a custom profile to declare a separate read-only argv. Reject empty argv and argv identical to the normal command. Coordinator chat must use the declared argv or a verified built-in read-only template, and must not fall back to the normal command.
+Trace: R-206 → BG-161 → SF-194 → UC-198 → FR-199 → NFR-88/NFR-89 → QAS-204 → DDR-55 → DD-218. GitHub #326, 2026-11-02.
+
+### FR-200 Explain coordinator chat compatibility before sending
+Include a localized compatibility reason in the workspace snapshot when the selected coordinator cannot run safely in read-only mode. Keep the coordinator marker tied to the active workspace and refresh it when that selection changes.
+Trace: R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-200 → QAS-204 → DDR-55 → DD-218. GitHub #325/#326, 2026-11-02.
+
+### NFR-88 Preserve the profile's existing CLI authentication
+Coordinator model selection and read-only arguments shall continue to invoke the registered executable as a subprocess with its existing environment and login. They shall not require an API key or another endpoint.
+Trace: R-206 → BG-161 → SF-194 → UC-198 → FR-199/NFR-88 → QAS-204 → DDR-55 → DD-218.
+
+### NFR-89 Fail closed on unsafe coordinator invocation
+Missing, empty, or normal write-capable custom arguments shall never be interpreted as read-only. Incompatible coordinator chat must stop before process launch and provide an actionable reason.
+Trace: R-206 → BG-161 → SF-194 → UC-198 → FR-199/FR-200/NFR-89 → QAS-204 → DDR-55 → DD-218.

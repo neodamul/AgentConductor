@@ -24,7 +24,7 @@ fn opening_profile_rules_popup_does_not_push_editor_actions_down() {
     editor.open(&profile);
     editor.set_extensions("{\"rule\":\"visible in popup\"}");
     let snapshot = json!({"config":{"profiles":[profile]}});
-    let menu_label = agentconductor::ui::messages::in_language("en", "startup.profile_rules_json");
+    let menu_label = agentconductor::ui::messages::in_language("en", "startup.profile_settings");
     let save_label = agentconductor::ui::messages::in_language("en", "startup.save_profile");
     clear(frame(
         &context,

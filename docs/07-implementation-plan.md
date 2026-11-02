@@ -7753,7 +7753,17 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 ### 2026-11-02 — Windows packaged default UI Save activation — issue #9
 
 - [x] Red: the exact Windows run `41402275923` showed SendKeys populated the Goal UIA value, but the goal remained empty in `startup.json` after Save received keyboard focus.
-- [x] Task: the packaged Windows driver now requires the Save control to be visible, focuses the expected app process, and clicks its center through Win32 `SetCursorPos` and `SendInput`; it waits for persisted goal state only after a successful driver run and always terminates the process before assertions.
-- [x] Verify (local): 18 passed, 1 ignored across the Windows driver, lifecycle, and source-layout suites; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line guard pass.
-- [ ] Verify (Windows): rerun package workflow on the repaired source; only that exact packaged run can establish Windows acceptance.
+- [ ] Task: pointer-click activation did not persist the goal in exact run `41405965619`. The driver now tries the Windows UI Automation `InvokePattern` first and retains the checked pointer fallback; this source is not yet Windows-verified.
+- [ ] Verify (local): rerun focused Windows driver/lifecycle/source-layout tests, warning-denied Clippy, rustfmt, diff hygiene, and the 300-line guard against the current source.
+- [ ] Verify (full local): the 1,295-pass full-suite result belongs to the earlier `76e0c39b` source and does not cover the current changes.
+- [ ] Verify (Windows): both `41402275923` (keyboard activation) and `41405965619` (pointer activation) failed. Rerun package workflow after current changes; only that exact packaged run can establish Windows acceptance.
 - [ ] Complete: keep issue #9 and PR #22 open until packaged Windows acceptance and remaining UI parity gates pass.
+
+### Rust port of merged coordinator issues #325/#326 — issue #9 parity
+
+- [x] Plan: audit the two successful main merges and current native coordinator flow. Record R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-198/FR-199/FR-200 → NFR-88/NFR-89 → QAS-204/QAS-205 → DDR-55 → DD-218.
+- [x] Red: new profile, chat blocker, and argv regressions failed before implementation; they now cover model catalog validation, separate custom read-only argv, visible rejection reasons, and disabled chat submission.
+- [x] Task: port coordinator model and readonly settings into the Rust profile editor; fail closed on incompatible profiles, show the reason/remedy, and disable chat send. Preserve CLI subprocess authentication and the 300-line file limit.
+- [x] Verify (focused): profile editor, coordinator argv, chat compatibility, source-layout, and warning-denied all-target Clippy pass locally.
+- [ ] Verify (full local): run locked/offline all-target tests against the current source; then rerun exact Windows package validation.
+- [ ] Complete: update #9/PR #22, issue progress, AgentMemory and LLM Wiki; commit/push the port as one reviewable unit.

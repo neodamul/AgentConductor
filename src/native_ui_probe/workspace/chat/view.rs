@@ -32,6 +32,11 @@ impl State {
             return Some(Event::NewConversation);
         }
         ui.separator();
+        if let Some(issue) = &self.compatibility_issue {
+            let warning = message(language, "chat.read_only_unavailable", &[("value1", issue)]);
+            ui.colored_label(ui.visuals().error_fg_color, &warning)
+                .accessible_name(warning);
+        }
         egui::ScrollArea::vertical()
             .stick_to_bottom(true)
             .show(ui, |ui| {
@@ -54,7 +59,7 @@ impl State {
                 }
             });
         ui.separator();
-        let can_edit = !self.awaiting();
+        let can_edit = !self.awaiting() && self.compatibility_issue.is_none();
         let (send_key, newline, previous, next) = if can_edit && self.editor_focused {
             ui.input_mut(|input| {
                 let newline = input.consume_key(Modifiers::SHIFT, Key::Enter);
@@ -176,4 +181,8 @@ impl State {
 
 fn text(language: &str, id: &'static str) -> &'static str {
     crate::ui::messages::in_language(language, id)
+}
+
+fn message(language: &str, id: &'static str, params: &[(&str, &str)]) -> String {
+    crate::ui::messages::interpolate(text(language, id), params)
 }

@@ -77,6 +77,12 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         .show(ui, |ui| {
             probe.show_navigation(ui);
             if probe.coordinator_chat.is_open() {
+                probe.coordinator_chat.set_compatibility_issue(
+                    probe
+                        .snapshot
+                        .as_ref()
+                        .and_then(chat::coordinator_chat_issue),
+                );
                 let language = probe.navigation.appearance.language().to_owned();
                 let progress =
                     probe

@@ -16,7 +16,11 @@ A passing macOS package does not establish Windows package acceptance. Re-run th
 
 ## Save activation follow-up — 2026-11-02
 
-Exact Windows CI showed SendKeys correctly changed the accessible Goal value, but focusing Save and pressing Enter still did not persist it. The driver now checks that Save is visible, focuses the expected app process, and clicks the center of the Save control through Win32 `SetCursorPos`/`SendInput`. Local regression, lifecycle, and source-layout suites pass (18 passed, 1 ignored); warning-denied all-target Clippy, rustfmt, diff hygiene, and the source-layout guard pass. Exact packaged Windows verification remains pending.
+Exact Windows run `41402275923` showed SendKeys changed the accessible Goal value but did not persist it. Run `41405965619` also failed after the driver clicked Save through Win32 `SetCursorPos`/`SendInput`. Current source tries UI Automation `InvokePattern` before the checked pointer fallback; this has not yet been verified on Windows. The 1,295-pass full suite was run on earlier source `76e0c39b`, so it does not cover this change. Current coordinator-focused tests, source layout, and warning-denied Clippy pass; full local and exact packaged Windows verification remain pending.
+
+## Coordinator profile and chat port — 2026-11-02
+
+The #325/#326 Rust port is being integrated in the existing #9 branch. Agent profile editing now exposes an observed-catalog coordinator model and separate custom read-only argv. Invalid compatibility fails closed; the chat panel displays the reason and remediation and disables sending. Focused tests and all-target Clippy pass. Full local verification and Windows packaged acceptance remain pending.
 
 ## Source
 

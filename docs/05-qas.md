@@ -834,3 +834,11 @@ Trace: R-204 → BG-159 → SF-192 → UC-195 → FR-196 → QAS-202 → DDR-53 
 ### QAS-203 Both integration streams remain visible in failure feedback
 Given a failed integration with a warning in stderr and an error in stdout, the report output contains both exact messages, labels each stream, and keeps the stdout error last. Given only one nonempty stream, its output remains unchanged. Verify through the real Room snapshot and ensure the regression fails before the fix. Keep the source and test files within 300 lines.
 Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197/NFR-87 → QAS-203 → DDR-54 → DD-217. GitHub #323, 2026-11-02.
+
+### QAS-204 Unsafe custom coordinator invocation is refused
+Given a custom coordinator whose read-only arguments are missing, empty, or equal to its normal arguments, when the operator submits chat, the system shall report why the coordinator is incompatible and shall not spawn the normal command. A configured read-only invocation shall preserve the profile's existing executable, environment, and CLI login.
+Trace: R-206 → BG-161 → SF-194 → UC-198 → FR-199/FR-200/NFR-88/NFR-89 → QAS-204 → DDR-55 → DD-218.
+
+### QAS-205 Coordinator model selection uses current observed options
+Given a coordinator profile with an observed model catalog, the UI shall offer only those models; a selected model shall reach the CLI adapter, and omitting the selection shall preserve the CLI default. Changing the active workspace shall show that workspace's coordinator marker and model selection.
+Trace: R-206 → BG-161 → SF-194 → UC-197 → FR-198/FR-200 → QAS-205 → DDR-55 → DD-218.

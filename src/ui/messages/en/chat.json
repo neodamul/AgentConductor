@@ -6,5 +6,6 @@
   "chat.you": "You",
   "chat.placeholder": "Ask about this workspace or its project…",
   "chat.send": "Send",
-  "chat.thinking": "Checking the project…"
+  "chat.thinking": "Checking the project…",
+  "chat.read_only_unavailable": "Coordinator cannot run read-only chat: {value1}. Configure separate read-only arguments in Agent settings or choose a coordinator with verified support."
 }

@@ -11,6 +11,8 @@ fn plan() -> Plan {
                 id: id.into(),
                 executable: id.into(),
                 args: vec![],
+                coordinator_model: None,
+                read_only_args: None,
                 parser: Default::default(),
                 protocol: None,
                 agent_settings: None,

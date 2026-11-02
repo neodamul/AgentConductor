@@ -4,6 +4,23 @@ mod reset;
 mod send;
 mod view;
 
+pub fn coordinator_chat_issue(snapshot: &serde_json::Value) -> Option<String> {
+    let config = &snapshot["config"];
+    let id = config["coordinator"].as_str()?;
+    let Some(profile) = config["profiles"]
+        .as_array()?
+        .iter()
+        .find(|profile| profile["id"] == id)
+    else {
+        return Some(format!("coordinator {id} profile is missing"));
+    };
+    let profile = match serde_json::from_value::<crate::plan::AgentProfile>(profile.clone()) {
+        Ok(profile) => profile,
+        Err(error) => return Some(format!("coordinator {id} profile is invalid: {error}")),
+    };
+    crate::coordinator::read_only_args(&profile, "prompt.json").err()
+}
+
 pub enum Event {
     Send(Vec<crate::chat::Turn>),
     NewConversation,
@@ -25,11 +42,16 @@ pub struct State {
     history_draft: String,
     editor_focused: bool,
     editor_cursor: usize,
+    compatibility_issue: Option<String>,
 }
 
 impl State {
     pub fn is_open(&self) -> bool {
         self.open
+    }
+
+    pub fn set_compatibility_issue(&mut self, issue: Option<String>) {
+        self.compatibility_issue = issue;
     }
 
     pub fn awaiting(&self) -> bool {

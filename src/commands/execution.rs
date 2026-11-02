@@ -56,6 +56,8 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                     id: id.into(),
                     executable: invocation.executable,
                     args: invocation.args,
+                    coordinator_model: None,
+                    read_only_args: None,
                     parser: provider,
                     protocol: None,
                     agent_settings: None,

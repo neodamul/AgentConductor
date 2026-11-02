@@ -14,6 +14,8 @@ pub struct Editor {
     pub(super) agent_id: String,
     pub(super) fallback_agent: Option<String>,
     pub(super) fallback_model: Option<String>,
+    pub(super) coordinator_model: Option<String>,
+    pub(super) read_only_args: String,
     fallback_catalog_requested: Option<String>,
     pub(super) applied: bool,
     new_profile: bool,
@@ -210,6 +212,15 @@ impl Editor {
         candidate["input_mode"] = self.input_mode.clone().into();
         candidate["max_sessions"] = self.max_sessions.into();
         candidate["quota_refresh_minutes"] = self.quota_refresh_minutes.into();
+        candidate["coordinator_model"] = self
+            .coordinator_model
+            .as_deref()
+            .map_or(Value::Null, Value::from);
+        candidate["read_only_args"] = if self.read_only_args.trim().is_empty() {
+            Value::Null
+        } else {
+            serde_json::from_str(&self.read_only_args).map_err(|error| error.to_string())?
+        };
         candidate["fallback"] = self.fallback_agent.as_ref().map_or(
             Value::Null,
             |agent| serde_json::json!({"agent":agent,"model":self.fallback_model}),
@@ -248,6 +259,11 @@ impl Editor {
         self.agent_id = profile["id"].as_str().unwrap_or_default().into();
         self.fallback_agent = profile["fallback"]["agent"].as_str().map(str::to_owned);
         self.fallback_model = profile["fallback"]["model"].as_str().map(str::to_owned);
+        self.coordinator_model = profile["coordinator_model"].as_str().map(str::to_owned);
+        self.read_only_args = serde_json::to_string_pretty(&profile["read_only_args"])
+            .ok()
+            .filter(|value| value != "null")
+            .unwrap_or_default();
         self.fallback_catalog_requested = None;
         self.base_profile = profile.clone();
         self.executable = profile["executable"].as_str().unwrap_or_default().into();
