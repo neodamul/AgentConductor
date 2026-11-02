@@ -1,3 +1,9 @@
+# [2026-11-03] verify | Recheck current-head Rust UI migration and CocoIndex evidence
+
+On exact head `85f0f82e099f7b7c9b410e8986121fcd97a933d4`, run `41520505534` passed both macOS and Windows platform-validation jobs. Windows release packaging is running and macOS packaging is queued; no exact-package UI acceptance has been recorded. The aggregate remains 22/50 (22/25 package workflows; 0/25 shipped/default Rust UI parity). Updated PR #22 and issue #9 progress without changing acceptance.
+
+Repaired the local CocoIndex Code tool environment by adding its missing MCP SDK and `sentence-transformers` dependencies to the pinned `cocoindex-code==0.2.42` uv tool. Stopped the stale temporary daemon, then indexed 1,651 files into 12,871 chunks with CPU-only offline local embeddings and queried the index for parity evidence. The result surfaced the current screenshot manifest and its explicit limitation: current native screenshots do not prove full legacy UI parity or Windows package acceptance. No external embedding API was used. Memory lesson: `lsn_83b3b942c616ae7f` records the vertical-slice PR rule.
+
 # [2026-11-03] task/verify | Stabilize native run-completion refresh journey
 
 Exact-head run `41511209951` failed macOS `native_ui_start_journey` after Refresh run left the test accessibility snapshot at stage `02 Tasks` instead of `05 Workspace`. The failure did not reproduce in five local baseline runs. Hardened only the test helper: wait for an enabled control before clicking and allow 30 seconds for the asynchronous completed-stage refresh. The affected five-suite set passes 19 tests; the journey passes five additional consecutive runs; all-target warning-denied Clippy, rustfmt, diff hygiene, and source-layout pass. No product code or UI acceptance changed. Exact-head macOS rerun and Windows package evidence remain required.

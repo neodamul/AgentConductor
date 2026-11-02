@@ -2,7 +2,7 @@
 
 - Commit `85f0f82e099f7b7c9b410e8986121fcd97a933d4` refreshes the Save AutomationElement after goal editing. The stale-element explanation remains a hypothesis until the exact package result.
 - Local UIA driver contracts pass 16/16; formatting and diff checks pass. The issue #9 and PR #22 progress records now point to the current head and active verification.
-- Exact-head Platform Validation run `41520505534`: macOS validation passed, including all-target/native UI tests, formatting, and Clippy. Windows build and source layout passed; all-target tests are in progress. No exact package journey has started.
+- Exact-head Platform Validation run `41520505534`: macOS and Windows validation passed, including build, source/test layout, applicable tests, native UI launch, formatting, Clippy, and unsafe-block checks. Exact macOS and Windows native package jobs have started; both release builds are running. Package UI journeys remain pending.
 - This is test-driver stabilization, not product parity evidence. Acceptance remains 22/50 (packaged 22/25; shipped/default Rust 0/25). Do not close #189/#226/#310 or mark PR #22 ready based on this checkpoint.
 
 ## Stopped-run Resume local recheck — 2026-11-03

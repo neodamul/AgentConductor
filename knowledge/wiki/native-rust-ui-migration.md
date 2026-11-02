@@ -1,5 +1,11 @@
 # Native Rust UI migration
 
+## Exact-head platform validation — 2026-11-03
+
+At source head `85f0f82e099f7b7c9b410e8986121fcd97a933d4`, Platform Validation run `41520505534` passed both macOS and Windows validation jobs, including native build, source/test layout, applicable tests, native UI launch, formatting, Clippy, and unsafe-block checks. The same workflow then started exact native packaging: Windows release build is in progress and macOS packaging is queued. Exact-package UI workflows have not completed, so acceptance remains 22/50 (22/25 packaged workflows and 0/25 shipped/default Rust UI parity).
+
+The local CocoIndex Code index was repaired and exercised against this worktree using CPU-only, offline local embeddings. It indexed 1,651 source and documentation files into 12,871 chunks; semantic search surfaced the current screenshot evidence, CI regression ledger, and the explicit limitation that current native screenshots do not establish full legacy UI parity. The index and model cache were stored outside the repository. This is repository search evidence, not product acceptance.
+
 ## Run-completion refresh test — 2026-11-03
 
 Platform Validation run `41511209951` failed on macOS in `native_ui_start_journey`: after the candidate was merged, the test clicked Refresh run and timed out waiting for `Current stage: 05 Workspace`; its final accessibility tree still reported `02 Tasks`. The product transition passed locally before the change, including five consecutive test runs, so the hosted timing failure was not reproduced on this Mac.

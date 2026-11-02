@@ -6,7 +6,8 @@
 - [x] Red: add a source contract requiring a fresh Save lookup after the goal edit; it failed because the driver reused the earlier element.
 - [x] Task: reacquire the visible, enabled Save button from the current window tree after editing, then invoke it with the existing UIA/pointer behavior.
 - [x] Local Verify: `cargo test --test windows_desktop_driver` passes 16 tests; `cargo fmt --check` and `git diff --check` pass. Commit `85f0f82e` is pushed.
-- [ ] Exact-head Verify: Platform Validation run `41520505534` must pass Windows validation and proceed to the exact Windows package UI journey. macOS validation passed (all-target/native UI tests, formatting, and Clippy); Windows build and source layout passed, with all-target tests running.
+- [x] Exact-head Verify: Platform Validation run `41520505534` passed macOS and Windows validation, including build, source/test layout, applicable tests, native UI launch, formatting, Clippy, and unsafe-block checks.
+- [ ] Package Verify: in the same run, Windows release build is running and macOS packaging is queued; exact package UI journeys have not completed.
 - [ ] Complete: only count a packaged workflow after the exact package persists the goal. Overall acceptance remains **22/50** (packaged workflows **22/25**; shipped/default Rust UI **0/25**).
 
 
