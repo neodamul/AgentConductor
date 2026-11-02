@@ -2502,6 +2502,11 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Verify (macOS): full suite (768 passed), clippy.
 - [ ] Complete: merge and release only on request.
 
+### Korean text for the coordinator refusal — GitHub #333
+
+- [x] Plan: the two refusal texts of `coordinator::read_only_args` (#325, #326) were built with `format!` and so were English in the Korean interface. They are catalog messages (`native.coordinator_not_read_only`, `native.coordinator_bad_read_only_args`) rendered in the machine's language; tests read each catalog directly because the language is a machine setting.
+- [x] Red/Verify: `tests/coordinator.rs` (both catalogs, Korean has Hangul and the same placeholders), full suite.
+- [ ] Complete: released with #331 as v0.1.56.
 ### Update blocker names the work and tells it from a failed check — GitHub #331
 
 - [x] Plan: `Room::ensure_update_idle` turned every error of the startup check, the run job and the runs of every workspace into "Finish or stop running work", so a finished run still marked `running`, a background usage query and an unreadable job record all looked the same. `ui::update_guard` now collects `Blocker::Active` (workspace, kind, elapsed) and `Blocker::Unknown` (what, error); a run blocks only while its coordinator holds `coordinator.lock` (the kernel releases it when the coordinator is gone), a retained startup job only while its process is present. The text lists running work first with how to wait or stop, then failed checks as not running work; it keeps its line breaks in the notice. Update itself is unchanged: it starts once no blocker is left.
