@@ -27,14 +27,14 @@ fn manuals_explain_workspace_coordinator_chat_and_its_safety_boundary() {
     let korean = include_str!("../docs/user-manual.ko.md");
     let korean_html = include_str!("../docs/user-manual.ko.html");
     for manual in [english, english_html] {
-        assert!(manual.contains("Ask coordinator"));
+        assert!(manual.contains("Ask the coordinator"));
         assert!(manual.contains("read-only"));
-        assert!(manual.contains("single background-operation slot"));
+        assert!(manual.contains("its own slot"));
     }
     for manual in [korean, korean_html] {
-        assert!(manual.contains("코디네이터에 질문"));
+        assert!(manual.contains("코디네이터에게 질문"));
         assert!(manual.contains("읽기 전용"));
-        assert!(manual.contains("단일 백그라운드 작업 슬롯"));
+        assert!(manual.contains("자기만의 슬롯"));
     }
 }
 

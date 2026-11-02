@@ -7767,3 +7767,12 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Verify (focused): profile editor, coordinator argv, chat compatibility, source-layout, and warning-denied all-target Clippy pass locally.
 - [x] Verify (full local): locked/offline all-target tests pass against the main-integrated current source. Exact Windows package validation remains separate.
 - [ ] Complete: update #9/PR #22, issue progress, AgentMemory and LLM Wiki; commit/push the port as one reviewable unit.
+
+### 2026-11-02 — Reconcile v0.1.55 main with Rust migration — issue #9
+
+- [x] Plan: GitHub reported the pushed Rust branch four commits behind main after v0.1.55 released. Fetch `fa4b37d9`; preserve Rust-only UI sources and branch-owned screenshots while integrating the current public manual and release metadata.
+- [x] Red: docs tests caught main's six web-UI README screenshots and web Agent Room captures conflicting with the Rust branch's single verified Workspace README image and native Agent Room captures. They also exposed stale coordinator-slot assertions and missing timeout/retry copy.
+- [x] Task: retain the one verified Rust Workspace capture, update README to 0.1.55, use the native Agent Room screenshots, retain current English/Korean release manual text, and regenerate both HTML manuals with the Rust renderer. Update docs assertions to match the separate coordinator-chat slot.
+- [x] Verify: manual renderer (4), public docs (11), README screenshot (1), source layout (2), and workspace screenshot assets (1) pass locally; 19 tests total.
+- [ ] Verify: finish integrating fetched main `fa4b37d9`, push, and confirm PR #22 no longer reports a behind/conflict state.
+- [ ] Complete: keep #9 and #22 open; packaged Windows UI and remaining Rust UI parity acceptance remain outstanding (22/50 overall).

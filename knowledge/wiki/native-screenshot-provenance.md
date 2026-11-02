@@ -12,6 +12,14 @@ the current Rust app exposes that feature from Settings. The current captures sh
 form without that panel. Settings → Workspace settings sharing opens the separate Export/Import
 window. No settings were saved during inspection.
 
+## v0.1.55 documentation reconciliation — 2026-11-02
+
+Main's v0.1.55 release updated its README with six screenshots from the shipped web UI. Do not copy
+those screenshots to the Rust migration branch: the README retains only the verified Rust Workspace
+capture, and the offline manuals reference the Rust-native Agent Room captures. The release manuals'
+feature text and version were carried forward; their HTML was regenerated with `agentconductor manual
+render`. This source-build documentation does not establish packaged UI acceptance.
+
 ## Historical Workspace captures — superseded 2026-10-23
 
 All three images are 1140×772 PNG captures from CUA's screenshot API while attached to the exact
