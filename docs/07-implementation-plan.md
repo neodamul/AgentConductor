@@ -5,7 +5,7 @@
 - [x] Plan: exact-head run `41465909814` passed Windows build/package smoke, but the packaged UI lifecycle test still ended `stopped` at attempt 1 with `UI actions=[]`; inspect the process boundary rather than treating it as a child failure.
 - [x] Red: after the UI snapshot, persist a coordinator-finalization update and dispatch Resume with the old revision. The controller rejects it before creating a UI child. A stale Reject action remains rejected.
 - [x] Task: allow only Resume against a currently `stopped` report to rebase to its freshly loaded revision; pass that current revision and stop digest to the child. Preserve strict revision checks for other actions and all other run states.
-- [x] Verify locally: `ui_resume`, `source_layout`, and `knowledge` pass (7 tests); all-target Clippy with `-D warnings`, formatting, and diff hygiene pass.
+- [x] Verify locally: full `cargo test --offline --all-targets` passes (1,295 passed, 16 ignored across 403 suites in 290.93s); focused UI-resume/layout/knowledge tests pass (7); all-target Clippy with `-D warnings`, formatting, and diff hygiene pass.
 - [ ] Verify packaged Windows UI: repeat the exact package lifecycle journey against the updated executable; acceptance remains unchanged until this passes.
 - [ ] Complete: commit and push the fix/progress, inspect Windows package evidence, then update #9/PR #22 without closing either before UI parity gates pass.
 
