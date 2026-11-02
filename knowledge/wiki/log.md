@@ -1,3 +1,7 @@
+# [2026-11-02] plan/task/verify | Reconcile PR status and screenshot provenance
+
+There are two open PRs: #22 (Rust migration, Draft) and #336 (v0.1.56 docs/release prep). Exact-head CI is still running on Windows for both. Image inspection found the README's unchanged screenshot PNGs display v0.1.54, v0.1.49, and v0.1.24 even though #336's capture manifest claims v0.1.56/current captures. Commented on #336 and updated the #9 checkpoint; do not merge/release #336 until provenance is corrected. #22 remains 22/25 packaged workflows and 0/25 shipped/default Rust UI parity. AgentMemory: `mem_mvz4v8yx_e447332f640e`.
+
 # [2026-11-02] plan/task/verify | Close PR #22 macOS CI regressions
 
 Run `41343840698` identified an egui texture-delta test panic and screenshot freshness checking historical screenshots. Fixed the test cleanup, added an explicit current-capture manifest used by docs and the freshness checker, and removed an obsolete settings image from both manuals and the embedded viewer. Rust-rendered bilingual HTML manuals. Full local all-target native-feature suite: 1,279 passed, 16 ignored across 394 suites; warning-denied Clippy, formatting, diff and 300-line checks pass. Exact-head Windows run was still in progress; this local batch is not packaged Windows acceptance.

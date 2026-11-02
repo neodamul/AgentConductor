@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### 2026-11-02 — Reconcile open PRs and release screenshot evidence — issue #9
+
+- [x] Plan: inspect the authoritative GitHub PR list and exact-head validation jobs before reporting progress. There are two open PRs: Rust migration #22 (Draft) and v0.1.56 release documentation #336.
+- [x] Verify #22 head `ac541416`: local locked/offline all-target tests, warning-denied Clippy, rustfmt, source-layout, and diff checks pass. Exact-head run `41429882802` has macOS validation passed through UI launch checks with Clippy still running; Windows native build is running. No full hosted pass is claimed.
+- [x] Review #336: run `41429140698` has macOS validation passed; Windows build, source layout, and native tests passed, while native UI launch validation is running.
+- [x] Review screenshot provenance: README-linked assets visibly show v0.1.54 (`ui-workspace-current.png`), v0.1.49 (`ui-agent-room-current.png`), and v0.1.24 (`ui-agent-settings-current.png`), while #336's manifest claims v0.1.56/current captures. Commented on #336; do not mark its release docs complete until assets are refreshed or accurately labeled.
+- [ ] Complete: keep #22 Draft at 22/25 packaged workflows and 0/25 shipped/default Rust UI parity. Finish exact Windows package evidence, remaining UI parity/accessibility checks, and correct #336 screenshot provenance before release.
+
 ### 2026-11-02 — Restore native manual Agent Roles screenshot — issue #9
 
 - [x] Plan: the exact PR head's macOS validation failed `native_manual_renders_bundled_screenshots`. The English and Korean manuals reference the verified Rust Agent Roles image, but the native viewer did not embed that asset.

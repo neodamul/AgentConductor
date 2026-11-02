@@ -12,6 +12,15 @@ the current Rust app exposes that feature from Settings. The current captures sh
 form without that panel. Settings → Workspace settings sharing opens the separate Export/Import
 window. No settings were saved during inspection.
 
+## v0.1.56 release screenshot audit — 2026-11-02
+
+The release-preparation PR #336 updates `screenshots-current.txt` to claim that the README captures
+match v0.1.56 and were recaptured on 2026-11-02, but it does not change the referenced PNGs. Visual
+inspection shows `ui-workspace-current.png` labeled v0.1.54, `ui-agent-room-current.png` v0.1.49,
+and `ui-agent-settings-current.png` v0.1.24. These are older source-build captures, not verified
+v0.1.56 screenshots. The claim was reported on #336; refresh the exact release captures and verify
+their provenance before merging release documentation.
+
 ## v0.1.55 documentation reconciliation — 2026-11-02
 
 Main's v0.1.55 release updated its README with six screenshots from the shipped web UI. Do not copy
