@@ -1,3 +1,12 @@
+## Issue #9 current checkpoint — 2026-11-02, exact-head verification
+
+- Open-PR inventory: PR #22 is the only open PR and remains the root Rust UI migration. Main PR #322 was squash-merged as `d406f60b`; its exact macOS/Windows validation and package jobs passed, and issue #321 is closed. No child PRs are stacked.
+- PR #22 pushed head at the failed run: `2fa033bcd257cd0f3b718b6a8d49d84e039e48d7`; current local branch includes unpushed documentation and issue #321 Rust parity work.
+- Exact-head run [41389544894](https://github.com/neodamul/AgentConductor/actions/runs/41389544894): both validation jobs and the macOS package job passed. Windows package build, Rust manual render, package smoke, and default desktop journey passed. The stop/resume/recovery UI journey failed because the UIA helper could not find the visible stop-reason edit; inspecting the script found it searched same-process hidden/offscreen windows and controls. A test-first visibility filter fix now passes the focused local suites; Windows packaged rerun is still required.
+- Local focused docs/layout regression passes 22/22 tests across four suites. The all-target local run was stopped after 1,059 passed and 15 ignored across 312 suites while another test suite was still running; this is not a full-suite pass.
+- Exact-head run `41389544894` is terminal with a Windows stop/resume/recovery UI journey failure. Local package-evidence commit `c8676802` and current Rust/UIA fixes remain unpushed; next integrate merged `main` and rerun local checks before one push.
+- Acceptance remains **22/50 overall**: packaged workflows **22/25**; shipped/default Rust UI **0/25**. Full visual parity and Windows packaged workflow acceptance remain outstanding.
+
 ## PR #22 CI regression closure — 2026-11-02
 
 - Exact head `1340a970db15f634bc504bd39d1665be8468ee28` run `41343840698` failed macOS in `native_ui_sidebar_quota_layout` because the test dropped unapplied egui texture deltas. Its Windows validation job was still running at the time of this checkpoint.

@@ -44,6 +44,17 @@ fn lifecycle_driver_exposes_stop_resume_and_recovery_observations() {
             "missing driver contract: {required}"
         );
     }
+    let edit_lookup = script::SCRIPT
+        .split("function Find-EditAfterLabel")
+        .nth(1)
+        .unwrap()
+        .split("function Wait-EditAfterLabel")
+        .next()
+        .unwrap();
+    assert!(edit_lookup.contains("$top.IsOffscreen"));
+    assert!(edit_lookup.contains("$top.BoundingRectangle.IsEmpty"));
+    assert!(edit_lookup.contains("$current.IsOffscreen"));
+    assert!(edit_lookup.contains("$current.BoundingRectangle.IsEmpty"));
     assert!(script::SCRIPT.contains("SetFocus"));
     assert!(script::SCRIPT.contains("SendWait"));
     assert!(!script::SCRIPT.contains("ValuePattern"));

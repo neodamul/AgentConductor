@@ -37,13 +37,17 @@ function Wait-Control($name, $type) {
 }
 function Find-EditAfterLabel($name) {
   foreach ($window in $A::RootElement.FindAll($T::Children, $C)) {
-    if ($window.Current.ProcessId -ne $targetPid) { continue }
+    $top = $window.Current
+    if ($top.ProcessId -ne $targetPid -or $top.IsOffscreen -or $top.BoundingRectangle.IsEmpty) { continue }
     $nodes = $window.FindAll($T::Descendants, $C)
     for ($i = 0; $i -lt $nodes.Count; $i++) {
-      if ($nodes[$i].Current.Name -ne $name) { continue }
-      if ($nodes[$i].Current.ControlType.ProgrammaticName -eq 'ControlType.Edit') { return $nodes[$i] }
+      $current = $nodes[$i].Current
+      if ($current.IsOffscreen -or $current.BoundingRectangle.IsEmpty -or $current.Name -ne $name) { continue }
+      if ($current.ControlType.ProgrammaticName -eq 'ControlType.Edit') { return $nodes[$i] }
       for ($j = $i + 1; $j -lt $nodes.Count; $j++) {
-        if ($nodes[$j].Current.ControlType.ProgrammaticName -eq 'ControlType.Edit') { return $nodes[$j] }
+        $candidate = $nodes[$j].Current
+        if ($candidate.ControlType.ProgrammaticName -eq 'ControlType.Edit' -and
+            -not $candidate.IsOffscreen -and -not $candidate.BoundingRectangle.IsEmpty) { return $nodes[$j] }
       }
     }
   }
