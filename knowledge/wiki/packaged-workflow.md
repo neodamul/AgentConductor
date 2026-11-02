@@ -1,5 +1,11 @@
 # Exact packaged workflow acceptance
 
+## Exact Windows package run 41446760915 — 2026-11-02
+
+The exact head `05a2fd74` passed macOS/Windows platform validation and macOS packaging. On Windows, package build, manual render, exact-binary startup, default workspace save, briefing, candidate review, and run recovery passed. Three coordinator-chat lifetime cases were explicitly skipped because the hosted runner denied Job Object breakaway. The stop/resume lifecycle test failed after Resume because the persisted run did not reach `waiting_approval` within 30 seconds. The 45-minute package job completed normally; this was not the earlier timeout.
+
+Artifact `13145767282` (`sha256:c123fdc30dc7016b4f2eb04b667e30107a8d371f45e763e7451e362a76bb29ba`) is retained for 14 days. The test failure message now includes report state, error, and task attempts/statuses for the next exact run. This provides diagnosis only; it adds no acceptance credit. Packaged workflows remain **22/25**, shipped/default Rust UI remains **0/25**, total **22/50**.
+
 ## Current issue #9 checkpoint — 2026-10-27
 
 Exact-head run [`40455732953`](https://github.com/neodamul/AgentConductor/actions/runs/40455732953) passed macOS and Windows source validation and the macOS release package. The exact Windows package failed in the existing read-only Team Briefing UIA driver before it reached the newly added signal-settings test. `InvokePattern.Invoke()` returned an unrecognized error, then the fallback click failed to open the menu. This test passed in earlier exact-package run `40431084361`, so the evidence identifies intermittent driver input handling rather than a deterministic product failure. The failed Windows package artifact is `12713663734`, archive SHA-256 `b6fa9d9ada4cb9229293f822dc345d6fe19cc495a280cd8661b81d18cbe48a1c`; detailed evidence is `docs/evidence/issue9-windows-briefing-404557-failure-20261027.json`.

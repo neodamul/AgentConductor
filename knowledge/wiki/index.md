@@ -97,6 +97,7 @@
 - [Cross-agent development continuity](development-continuity.md): exact checkout reconciliation, durable handoff and Windows cleanup evidence.
 
 - [Bounded source and test modules](source-layout.md): DD-41 split, preserved API paths and CI limit.
+- [Exact packaged workflow acceptance](packaged-workflow.md): exact Windows package outcomes, evidence limits, and packaged workflow count.
 
 - [Native release package contract](native-release-packaging.md): platform executable names, license closure and byte-exact evidence.
 

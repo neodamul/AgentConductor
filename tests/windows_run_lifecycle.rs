@@ -214,7 +214,23 @@ async fn wait_state(run: &std::path::Path, expected: &str) {
         }
     })
     .await
-    .unwrap_or_else(|_| panic!("packaged UI run did not reach {expected}"));
+    .unwrap_or_else(|_| {
+        let observed = workflow::load(run)
+            .map(|report| {
+                let tasks = report
+                    .tasks
+                    .iter()
+                    .map(|task| format!("{}:{}:{}", task.id, task.status, task.attempt))
+                    .collect::<Vec<_>>()
+                    .join(",");
+                format!(
+                    "state={}, error={:?}, tasks=[{tasks}]",
+                    report.state, report.error
+                )
+            })
+            .unwrap_or_else(|error| format!("report unavailable: {error}"));
+        panic!("packaged UI run did not reach {expected}; observed {observed}");
+    });
 }
 
 fn assert_candidate(run: &std::path::Path, repo: &std::path::Path, attempt: u32) {

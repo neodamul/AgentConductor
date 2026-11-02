@@ -1,5 +1,11 @@
 # Native Rust UI migration
 
+## Exact Windows package lifecycle result — 2026-11-02
+
+Run [`41446760915`](https://github.com/neodamul/AgentConductor/actions/runs/41446760915) validated head `05a2fd74`: both platform validation jobs and the macOS package passed. The Windows package completed under the 45-minute limit, and its default desktop-save, briefing, candidate-review, and recovery journeys passed. The stop/resume lifecycle journey failed because the saved run did not reach `waiting_approval` after Resume. The hosted runner explicitly skipped three coordinator-chat lifetime tests after refusing Job Object breakaway; production safety refusal remained on. Artifact `13145767282` has digest `sha256:c123fdc30dc7016b4f2eb04b667e30107a8d371f45e763e7451e362a76bb29ba`.
+
+The lifecycle timeout previously omitted the persisted workflow state and task errors. `tests/windows_run_lifecycle.rs` now includes those values in the failure text so the next exact Windows run can identify whether Resume was rejected or the resumed worker failed. This is test diagnostics only, not a product fix or acceptance credit. Local focused lifecycle and source-layout checks pass; acceptance remains **22/50 (22/25 packaged, 0/25 shipped/default Rust UI)** until the resume failure and remaining parity gates pass.
+
 ## Current main integration — 2026-11-02
 
 The Rust migration remains consolidated in root PR #22. Commit `ad11775e` merges current `main` into the issue branch and resolves the 119 reported merge conflicts without restoring legacy HTML, JavaScript, CSS, Python, or Node UI/build code. Native Rust tests cover the retained behavior. Screenshot freshness is checked by the Rust `check_screenshots` executable.

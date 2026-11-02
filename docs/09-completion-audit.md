@@ -8,6 +8,14 @@
 - The archive contains the macOS app bundle, executable, English and Korean HTML manuals, dependency license notices, and CycloneDX SBOM.
 - This is local macOS package smoke evidence only; it does not establish Windows package acceptance or shipped/default UI parity.
 
+## Exact Windows package lifecycle result — 2026-11-02
+
+- Exact-head run [41446760915](https://github.com/neodamul/AgentConductor/actions/runs/41446760915) tested PR #22 head `05a2fd748455d5eaa877c4694fefef9c130e6bc0`. macOS/Windows validation and macOS packaging passed. Windows built, packaged, launched the exact binary, and passed desktop-save, briefing, candidate-review, and recovery journeys.
+- The 45-minute Windows package job reached a terminal result rather than timing out. The exact stop/resume lifecycle journey failed after its Resume action because the persisted run did not reach `waiting_approval` within 30 seconds. Three coordinator-chat lifetime cases were skipped because the hosted runner denied Job Object breakaway; its production refusal remained enabled.
+- Windows artifact: `13145767282` (`sha256:c123fdc30dc7016b4f2eb04b667e30107a8d371f45e763e7451e362a76bb29ba`).
+- The old timeout assertion hid the saved workflow state and error. A diagnostic change now includes workflow state, error, and task status/attempts in the failure output. Local `windows_run_lifecycle` and `source_layout` pass 3 tests with 1 exact-package test ignored; the diagnostic does not change product behavior.
+- Acceptance remains **22/50 overall**: packaged workflows **22/25**; shipped/default Rust UI **0/25**. The underlying resume failure and remaining UI parity gates are open.
+
 ## Windows package failure and test-first repair — 2026-11-02
 
 - Exact-head run [41396276498](https://github.com/neodamul/AgentConductor/actions/runs/41396276498) passed macOS validation and packaged execution. Windows validation, release build, manual rendering, and package smoke also passed.

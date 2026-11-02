@@ -2,11 +2,10 @@
 
 ### 2026-11-02 — Reconcile open PRs and release screenshot evidence — issue #9
 
-- [x] Plan: inspect the authoritative GitHub PR list and exact-head validation jobs before reporting progress. There are two open PRs: Rust migration #22 (Draft) and v0.1.56 release documentation #336.
-- [x] Verify #22 head `ac541416`: local locked/offline all-target tests, warning-denied Clippy, rustfmt, source-layout, and diff checks pass. Exact-head run `41429882802` has macOS validation passed through UI launch checks with Clippy still running; Windows native build is running. No full hosted pass is claimed.
-- [x] Review #336: run `41429140698` has macOS validation passed; Windows build, source layout, and native tests passed, while native UI launch validation is running.
+- [x] Plan: inspect the authoritative GitHub PR list and exact-head validation jobs before reporting progress. Only root Rust migration PR #22 is open; #336 has merged into main as `0c050741`.
+- [x] Verify #22 head `05a2fd74`: macOS and Windows validation jobs and macOS package passed in run `41446760915`. The Windows package reached the UI suite and failed the stop/resume lifecycle journey after Resume did not reach `waiting_approval`; the 45-minute job limit did not cancel it. Do not count this as package acceptance.
 - [x] Review screenshot provenance: README-linked assets visibly show v0.1.54 (`ui-workspace-current.png`), v0.1.49 (`ui-agent-room-current.png`), and v0.1.24 (`ui-agent-settings-current.png`), while #336's manifest claims v0.1.56/current captures. Commented on #336; do not mark its release docs complete until assets are refreshed or accurately labeled.
-- [ ] Complete: keep #22 Draft at 22/25 packaged workflows and 0/25 shipped/default Rust UI parity. Finish exact Windows package evidence, remaining UI parity/accessibility checks, and correct #336 screenshot provenance before release.
+- [ ] Complete: keep #22 Draft at 22/25 packaged workflows and 0/25 shipped/default Rust UI parity. Diagnose the lifecycle failure, finish exact Windows package evidence, refresh version-matched screenshots, and complete remaining UI parity/accessibility checks before release.
 
 ### 2026-11-02 — Restore native manual Agent Roles screenshot — issue #9
 
@@ -7851,3 +7850,12 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Record: raw Actions evidence and the LLM Wiki are updated; Graphify refreshed to 12,991 nodes / 19,469 edges / 966 communities. CocoIndex remains unavailable because its CLI and Python module are absent; no application dependencies were added.
 - [ ] Verify remotely: rerun both platforms and require the exact Windows package test job to reach its terminal result under the 45-minute limit. Run `41438654168` cannot establish full Windows UI acceptance.
 - [ ] Complete: update #9/PR #22, AgentMemory and LLM Wiki with the terminal package result; keep #9 open and PR #22 Draft until the remaining native UI parity gates pass.
+
+### 2026-11-02 — Expose Windows lifecycle state on package-test timeout — issue #9
+
+- [x] Plan: inspect exact-head Windows package run `41446760915`. The 45-minute job completed its package UI suite instead of timing out; the stop/resume test failed because the run did not reach `waiting_approval` after Resume.
+- [x] Red: the failure only reported the expected state and hid the persisted run error/task states, so the Windows log could not distinguish a rejected UI action from a resumed worker failure.
+- [x] Task: include the latest persisted workflow state, error, task statuses, and attempts in the timeout assertion in `tests/windows_run_lifecycle.rs`; no production behavior changed.
+- [x] Verify (local): `windows_run_lifecycle` and `source_layout` pass 3 tests with 1 exact-package test ignored; the test file is 259 lines, below 300.
+- [ ] Verify (Windows): rerun the exact packaged UI journey and use the new report details to identify and fix the underlying resume failure.
+- [ ] Complete: keep acceptance at 22/50 and PR #22 Draft until the lifecycle test and the remaining package/UI parity gates pass.
