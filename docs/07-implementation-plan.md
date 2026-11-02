@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Verify event and request-lane regressions — issue #9 / PR #255
+
+- [x] Plan: compare the closed PR's event fanout, independent request lanes, chat persistence, and timeout assertions with the current refactored modules and tests.
+- [x] Verify locally: `cargo test --locked --offline --features native-ui-probe --test native_ui_probe --test ui --test startup_chat --test windows_coordinator_chat --test launch_workspace --test native_ui_static_labels` — 27 passed across 6 test targets.
+- [x] Integration map: EventBus assertions are in `tests/native_ui_probe/events.rs`; bounded worker and serialized mutation assertions are in `worker_concurrency.rs`; chat persistence/timeout and saved-workspace reopening remain covered under consolidated current test paths. The closed PR's old module paths were refactored.
+- [ ] Package evidence: the historical exact-package artifacts and some package-specific regressions from PR #255 are absent from this branch. This local source test run does not verify a packaged Windows/macOS build or advance package acceptance.
+- [ ] Complete issue #9: remains 22/50 overall, packaged workflows 22/25, shipped/default Rust UI parity 0/25. Keep root PR #22 Draft.
+
 ### 2026-11-03 — Keep same-state screenshot capture isolated — issue #9
 
 - [x] Plan: compare the documented blank Workspace capture with the populated v0.1.55 main screenshot; prepare a disposable saved workspace with the same name, goal, three profiles, and 1280×892 viewport.
