@@ -13,6 +13,7 @@
 - [Agent Room review layout](agent-room-layout.md): balanced summary/review/inspector columns and full-width activity cards, with exact-package evidence.
 - [Native settings dialogs](native-settings-dialogs.md): bilingual section eyebrow, task heading, distinct window title, and exact-package verification boundary.
 - [Current native UI screenshot provenance](native-screenshot-provenance.md): v0.1.53 Workspace and Agent Room manual captures, fixture limits, and image hashes.
+- [Native update blockers](native-update-blockers.md): guard update launch before subprocess start and render localized, distinct blocker reasons in the native dialog.
 
 - [Native Agent Room request routing](native-room-routing.md): worker routing must follow the live surface through Workspace-to-Room transitions.
 - [OSS comparison](oss-comparison.md): reuse candidates and missing capabilities.
