@@ -18,6 +18,20 @@ fn packaged_windows_ui_automation_tests_run_serially() {
 }
 
 #[test]
+fn windows_package_timeout_covers_the_full_release_build_and_gui_suite() {
+    let timeout = WORKFLOW
+        .split("  native-package:")
+        .nth(1)
+        .unwrap()
+        .lines()
+        .find_map(|line| line.strip_prefix("    timeout-minutes: "));
+    assert!(
+        timeout == Some("45"),
+        "release builds and serialized package UI tests need the same 45-minute budget as validation"
+    );
+}
+
+#[test]
 fn packaged_chat_app_uses_an_interactive_scheduled_task_launcher() {
     assert!(CHAT_LAUNCHER.contains("New-ScheduledTaskPrincipal"));
     assert!(CHAT_LAUNCHER.contains("LogonType Interactive"));

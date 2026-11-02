@@ -7839,5 +7839,15 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Task / Green: record the report fingerprint before publishing WorkspaceChanged, so any report update during the wake callback is observed by the next comparison.
 - [x] Verify locally: 111 library tests, 13 native UI probe tests, and 2 source-layout tests pass; rustfmt and warning-denied all-target release Clippy pass. The source/test limit remains 300 lines.
 - [x] Record: commit `fdf83c64` is pushed to #22; PR #22 and issues #9/#257 were updated; AgentMemory `mem_mvz6idls_525815ce0e09` and the LLM Wiki/raw evidence record the fix.
-- [x] Verify: exact-head run `41437912566` passed on macOS at `a27f2d6a`; Windows validation is still running. Packaged Windows UI acceptance remains a separate gate.
+- [x] Verify: run `41437912566` was cancelled when a newer docs commit superseded it. Run `41438654168` passed macOS and Windows validation and the macOS package job, but its Windows package job ended `cancelled` at the existing 25-minute limit while running UI tests; a partial test log shows lifecycle, briefing, and candidate-review cases passed before cancellation. Exact package acceptance is not complete.
 - [ ] Complete: keep #257 and #9 open and PR #22 Draft until current-head CI, exact packaged Windows UI, screenshots, and remaining parity gates pass.
+
+### 2026-11-02 — Allow the Windows package UI suite to finish — issue #9
+
+- [x] Plan: inspect Windows package job `125267738777` from run `41438654168`. The job started at 12:10:47Z with `timeout-minutes: 25`; logs show cancellation at 12:36Z during the serialized package UI test command. The workflow did not reach artifact retention or a terminal test result.
+- [x] Red: add `windows_package_timeout_covers_the_full_release_build_and_gui_suite`; it fails against the 25-minute package-job limit.
+- [x] Task / Green: raise the `native-package` job timeout to 45 minutes, matching the validate job. Preserve serialized exact-binary Windows UI tests and existing host-job skip evidence.
+- [x] Verify locally: `windows_package_workflow` passes 6/6; `source_layout` passes 2/2; formatting and `git diff --check` pass. The 300-line source/test limit remains satisfied.
+- [x] Record: raw Actions evidence and the LLM Wiki are updated; Graphify refreshed to 12,991 nodes / 19,469 edges / 966 communities. CocoIndex remains unavailable because its CLI and Python module are absent; no application dependencies were added.
+- [ ] Verify remotely: rerun both platforms and require the exact Windows package test job to reach its terminal result under the 45-minute limit. Run `41438654168` cannot establish full Windows UI acceptance.
+- [ ] Complete: update #9/PR #22, AgentMemory and LLM Wiki with the terminal package result; keep #9 open and PR #22 Draft until the remaining native UI parity gates pass.

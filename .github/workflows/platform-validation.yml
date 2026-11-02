@@ -61,7 +61,7 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 25
+    timeout-minutes: 45
     env:
       CARGO_TERM_COLOR: never
     steps:
