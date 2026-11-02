@@ -2501,3 +2501,11 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Task: `src/plan/profile.rs`, `src/coordinator.rs`, `src/ui/setup/snapshot.rs`, `src/ui/startup.{html,js}`, messages; CHANGELOG.
 - [x] Verify (macOS): full suite (768 passed), clippy.
 - [ ] Complete: merge and release only on request.
+
+### Update blocker names the work and tells it from a failed check — GitHub #331
+
+- [x] Plan: `Room::ensure_update_idle` turned every error of the startup check, the run job and the runs of every workspace into "Finish or stop running work", so a finished run still marked `running`, a background usage query and an unreadable job record all looked the same. `ui::update_guard` now collects `Blocker::Active` (workspace, kind, elapsed) and `Blocker::Unknown` (what, error); a run blocks only while its coordinator holds `coordinator.lock` (the kernel releases it when the coordinator is gone), a retained startup job only while its process is present. The text lists running work first with how to wait or stop, then failed checks as not running work; it keeps its line breaks in the notice. Update itself is unchanged: it starts once no blocker is left.
+- [x] Red: `tests/update_blockers.rs` (message, failed check, stale versus live run), `tests/progress_runtime.cjs` (notice line breaks).
+- [x] Task: `src/ui/update_guard.rs`, `src/ui/setup/update_blockers.rs`, `src/ui/update.rs`, messages, `startup.css`; CHANGELOG.
+- [x] Verify (macOS): full suite, Python tests, clippy.
+- [ ] Complete: merge and release only on request. Elapsed time is not known for a run's blocker on every platform (creation time of the run folder is used when the file system has it).
