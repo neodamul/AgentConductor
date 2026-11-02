@@ -6,7 +6,8 @@
 - [x] Red: `ui_failure_report` fails against a real `Room::snapshot`; stderr warning is shown while the stdout `MODULE_NOT_FOUND` error disappears.
 - [x] Task: failed reports now show labeled stderr and stdout tails when both are present; a single nonempty stream remains unchanged. Retry feedback consumes the combined snapshot output.
 - [x] Verify: 20 tests pass across six focused suites, including the real Room snapshot and failed-task feedback journey; warning-denied Clippy, rustfmt, diff hygiene, and the 300-line source/test guard pass (`src/ui.rs` 245 lines; affected tests under 300).
-- [ ] Complete: commit/push the fix on the existing #22 root branch; keep #323 open until the exact packaged Windows behavior is verified.
+- [x] Complete: commit `0f5f5112` is pushed on the existing #22 root branch; no child PR was created.
+- [ ] Package Verify: the #323 Rust behavior has local snapshot/retry-feedback coverage; exact packaged Windows verification remains pending. Keep #323 open until that gate passes.
 
 ### 2026-11-02 — Remove redundant quota-query text — issue #321
 
@@ -15,11 +16,11 @@
 - [x] Verify locally: focused native UI suite 2/2; warning-denied Clippy, rustfmt, and `git diff --check` pass.
 - [x] Integrate main UI fix: PR #322 merged as `d406f60b`; exact macOS and Windows validate/package jobs passed. GitHub closed issue #321.
 - [x] Port and push Rust counterpart on root PR #22 at `4752e4b2`; the duplicate elapsed label is gone, while the spinner and refresh control remain. Post-integration verification passes 39 tests with 1 ignored across eight focused suites, warning-denied Clippy, rustfmt, and diff checks.
-- [ ] Verify package: exact-head Windows validation run `41394902190` is in progress; its current jobs show platform validation only. Repeat the packaged stop/resume/recovery journey before closing this item. Source tests do not establish shipped/default Rust UI acceptance.
+- [ ] Verify package: run `41395131647` covers earlier code head `842260b4`; macOS validation passed and Windows validation is still active. It cannot verify later #323 code `0f5f5112`. Repeat the packaged Windows lifecycle journey on a verified current head. Source tests do not establish shipped/default Rust UI acceptance.
 
 ### 2026-11-02 — Exact-head validation checkpoint — issue #9
 
-- [x] Plan: keep the existing root PR #22; do not open child PRs. Latest pushed head is `4752e4b2ebfa9485534423e56a080ba84710cbd6`; latest-main integration is complete.
+- [x] Plan: keep the existing root PR #22; do not open child PRs. Latest pushed head is `0f5f5112f9059f5c0d669380ff8e718ff5b0551c`; latest-main integration is complete.
 - [x] Local Verify: the focused docs/layout rerun passes 22 tests across four suites. The broader screenshot/docs checks and package evidence are recorded below.
 - [x] Record partial full-suite attempt accurately: the all-target run was stopped after 1,059 passed and 15 ignored across 312 suites while another test suite was still running; this is not a complete-suite pass.
 - [x] macOS Verify: exact-head run `41389544894` passed native build, source/test layout, applicable native tests, opt-in Rust UI launch, formatting, Clippy, and unsafe-comment checks.
@@ -32,7 +33,8 @@
 - [ ] UI acceptance: full screen-by-screen parity and shipped/default Rust UI acceptance remain open; counts stay 22/50 overall, 22/25 packaged workflows, and 0/25 shipped/default Rust UI.
 - [x] Complete: committed the Rust quota-card port and Windows lifecycle-driver fix on the existing #22 branch; merged `main` at `d406f60b`, retaining the changelog/docs update and resolving the web UI delete/modify conflict in favor of the Rust-only app tree.
 - [x] Next: focused local verification passed and the existing root branch was pushed once.
-- [ ] Next: inspect the outcome of run `41394902190`, then obtain exact-head packaged Windows lifecycle evidence before counting it as accepted.
+- [x] Next: fix issue #323 in Rust by retaining both bounded failed-test streams; commit `0f5f5112` is pushed.
+- [ ] Next: finish run `41395131647` for prior code head `842260b4`; run current-head Windows validation/package journeys and continue the screen-by-screen Rust UI audit.
 
 ### Close the PR #22 macOS screenshot/test regressions — 2026-11-02
 
