@@ -1,3 +1,27 @@
+### 2026-11-02 — Remove redundant quota-query text — issue #321
+
+- [x] Plan: keep the running spinner/refresh control and remove the duplicate elapsed-time label from both agent-card UIs; retain the run-screen status.
+- [x] Red / Green (Rust): `native_ui_quota_elapsed` failed on the old card label, then passed after removing the label, one-second repaint timer, unused elapsed helper, and locale strings.
+- [x] Verify locally: focused native UI suite 2/2; warning-denied Clippy, rustfmt, and `git diff --check` pass.
+- [x] Integrate main UI fix: PR #322 merged as `d406f60b`; exact macOS and Windows validate/package jobs passed. GitHub closed issue #321.
+- [x] Port Rust counterpart locally on root PR #22: redundant elapsed label removed; spinner and refresh control remain. Focused native UI regression passes 2/2; warning-denied Clippy and rustfmt pass.
+- [ ] Complete Rust integration: verify the port on a pushed exact #22 head after synchronizing latest `main`; do not claim shipped/default Rust UI acceptance from source tests.
+
+### 2026-11-02 — Exact-head validation checkpoint — issue #9
+
+- [x] Plan: keep the existing root PR #22; do not open child PRs. Exact source head tested in run `41389544894` is `2fa033bcd257cd0f3b718b6a8d49d84e039e48d7`; local changes are awaiting integration.
+- [x] Local Verify: the focused docs/layout rerun passes 22 tests across four suites. The broader screenshot/docs checks and package evidence are recorded below.
+- [x] Record partial full-suite attempt accurately: the all-target run was stopped after 1,059 passed and 15 ignored across 312 suites while another test suite was still running; this is not a complete-suite pass.
+- [x] macOS Verify: exact-head run `41389544894` passed native build, source/test layout, applicable native tests, opt-in Rust UI launch, formatting, Clippy, and unsafe-comment checks.
+- [x] Windows Verify: exact-head run `41389544894` passed native build, source/test layout, and applicable native tests.
+- [x] Windows Verify: exact-head run `41389544894` passed the opt-in native Rust UI launch path, formatting, lint, and unsafe-comment checks.
+- [x] Package Verify macOS: exact-head release executable, Rust-rendered manuals, package smoke, and artifact retention passed in `41389544894`.
+- [x] Package staging Windows: exact-head release executable built and bilingual manuals rendered.
+- [x] Package Verify Windows: release build, bilingual manual rendering, package smoke, and default-desktop save journey passed.
+- [ ] Package Verify Windows lifecycle: the stop/resume/recovery journey failed to locate the stop-reason edit; its driver now filters offscreen windows/controls and passes local contract tests. Rerun the exact package after pushing.
+- [ ] UI acceptance: full screen-by-screen parity and shipped/default Rust UI acceptance remain open; counts stay 22/50 overall, 22/25 packaged workflows, and 0/25 shipped/default Rust UI.
+- [ ] Complete: commit current local docs and TDD fixes, merge latest `main` (`d406f60b`) into the root branch, run focused local verification, push once, then verify the resulting exact head.
+
 ### Close the PR #22 macOS screenshot/test regressions — 2026-11-02
 
 - [x] Plan: inspect the exact-head run `41343840698`; macOS failed at `native_ui_sidebar_quota_layout`, while Windows was still running. The release-doc test also treated every historical `*-current.png` asset as current.

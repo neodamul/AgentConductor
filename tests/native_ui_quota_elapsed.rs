@@ -5,7 +5,7 @@ use eframe::egui::{self, accesskit::Role};
 use serde_json::json;
 
 #[test]
-fn only_the_running_agents_quota_card_shows_elapsed_time() {
+fn running_agent_quota_card_does_not_show_elapsed_query_text() {
     let now_ms = std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap()
@@ -39,13 +39,11 @@ fn only_the_running_agents_quota_card_shows_elapsed_time() {
         .collect::<Vec<_>>();
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
-    assert_eq!(
+    assert!(
         labels
             .iter()
-            .filter(|label| label.contains("Quota query running for 00:1"))
-            .count(),
-        1,
-        "elapsed time must appear once, on Claude's card: {labels:?}"
+            .all(|label| !label.contains("Quota query running")),
+        "the refresh spinner already shows progress; do not add card text: {labels:?}"
     );
 }
 

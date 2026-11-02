@@ -30,22 +30,6 @@ pub(super) fn show(
         });
         if super::super::profile_tools::metadata_active(snapshot, "quota", agent) {
             ui.spinner();
-            let now = std::time::SystemTime::now()
-                .duration_since(std::time::UNIX_EPOCH)
-                .unwrap_or_default()
-                .as_millis() as u64;
-            if let Some(elapsed) = super::super::profile_tools::quota_elapsed(snapshot, agent, now)
-            {
-                let running = crate::ui::messages::interpolate(
-                    crate::ui::messages::in_language(language, "native.quota_query_running_for"),
-                    &[("value1", &elapsed)],
-                );
-                ui.label(RichText::new(elapsed).small().monospace())
-                    .accessible_name(running.clone())
-                    .on_hover_text(running);
-                ui.ctx()
-                    .request_repaint_after(std::time::Duration::from_secs(1));
-            }
         } else {
             let refresh = crate::ui::messages::interpolate(
                 crate::ui::messages::in_language(language, "startup.refresh_quota"),

@@ -13,8 +13,8 @@ pub use helpers::{
     merge_catalogs, metadata_request, profile_save_request, remove_profile, remove_references,
     rename_references, switch_profile,
 };
+pub(super) use metadata::metadata_active;
 pub use metadata::metadata_running;
-pub(super) use metadata::{metadata_active, quota_elapsed};
 pub use view::{RenderContext, show_in_language};
 
 #[derive(Debug, PartialEq, Eq)]
