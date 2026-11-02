@@ -7188,3 +7188,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Verify: rerun exact-head macOS and Windows validation plus Windows package journeys after this docs correction; run `41385932410` cannot validate the corrected docs because it used the initial resolution.
 - [ ] Verify: confirm Windows package journeys now report the explicit host-job limitation instead of timing out; review exact-head CI before considering any acceptance claim.
 - [ ] Close: PR #22 remains Draft until Rust UI parity and issue #9 acceptance are complete. This chat fix does not increase packaged workflow or replacement counts.
+
+### Refresh current native Workspace screenshots — issue #9 / 2026-11-02
+
+- [x] Plan: confirm the explicit current screenshot manifest and identify that all three retained Workspace captures showed v0.1.53.
+- [x] Task: build the current Rust `agentconductor-native-ui-probe` with `manual-screenshot-capture`; capture English, Korean, and Korean dark screens from source `880cd78d` using isolated temporary homes.
+- [x] Verify visually: inspect all three native framebuffer captures at 1140×740 and confirm version v0.1.54, language, dark theme, labels, and contrast.
+- [x] Complete: replace the three existing manifest assets without changing their README/manual paths; retain capture provenance and SHA-256 values in `docs/evidence/issue9-workspace-screenshots-v0.1.54-20261102.json` and LLM Wiki.
+- [ ] Package gate: the capture refresh does not count toward issue #9 workflow acceptance. Exact cross-platform package run `41387582039` remains required.

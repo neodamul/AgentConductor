@@ -201,3 +201,4 @@
 - [Native request feedback](native-request-feedback.md): immediate action feedback, elapsed wait text, quiet refreshes, and parity with main #279/#285.
 - [Planning empty-scope correction](planning-empty-scope-correction.md): task-specific validation, non-empty schema paths, and one phased-plan retry for a missing scope.
 - [Reliable Windows UI Automation text input](windows-uia-text-input.md): use UIA `ValuePattern.SetValue` and read back the exact value in packaged desktop tests instead of lossy synthetic Unicode typing.
+- [Current Native Workspace screenshots](native-workspace-screenshots.md): provenance, hash record, and limits for the v0.1.54 Rust Workspace captures.
