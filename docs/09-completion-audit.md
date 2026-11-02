@@ -1,8 +1,8 @@
-## Windows desktop Save UIA refresh — 2026-11-03
+## Windows desktop Goal input recovery — 2026-11-03
 
-- Commit `85f0f82e099f7b7c9b410e8986121fcd97a933d4` refreshes the Save AutomationElement after goal editing. The stale-element explanation remains a hypothesis until the exact package result.
-- Local UIA driver contracts pass 16/16; formatting and diff checks pass. The issue #9 and PR #22 progress records now point to the current head and active verification.
-- Exact-head Platform Validation run `41520505534`: macOS and Windows validation passed, including build, source/test layout, applicable tests, native UI launch, formatting, Clippy, and unsafe-block checks. Exact macOS and Windows native package jobs have started; both release builds are running. Package UI journeys remain pending.
+- Exact package run `41520505534` falsified the stale-Save-element hypothesis as the immediate failure: after `SendKeys`, the focused element was the top-level AgentConductor window and the Goal value stayed empty; Save was never reached.
+- TDD driver repair replaces `SendKeys` with a pointer click on the Goal edit and `SendInput` Ctrl+A/Unicode text; it re-finds the edit while polling UIA value because the accessibility tree may refresh during typing. Local UIA driver contracts pass 16/16; formatting and diff checks pass.
+- Run `41520505534` passed macOS/Windows validation, macOS packaging, and Windows release build/manual/package launch. Its Windows packaged default-desktop journey failed on Goal input. The repaired driver requires a new exact Windows package run; no package acceptance credit is added yet.
 - This is test-driver stabilization, not product parity evidence. Acceptance remains 22/50 (packaged 22/25; shipped/default Rust 0/25). Do not close #189/#226/#310 or mark PR #22 ready based on this checkpoint.
 
 ## Stopped-run Resume local recheck — 2026-11-03

@@ -1,13 +1,13 @@
 # Implementation plan and TDD
 
-### 2026-11-03 — Reacquire Windows desktop Save control after editing — issue #9
+### 2026-11-03 — Stabilize Windows desktop goal input — issue #9
 
-- [x] Plan: exact-head run `41515280203` showed that UI Automation read back the edited goal and invoked Save, but the isolated startup file remained unchanged. The driver kept the Save AutomationElement captured before editing; stale-element reuse is the working hypothesis to verify on Windows.
-- [x] Red: add a source contract requiring a fresh Save lookup after the goal edit; it failed because the driver reused the earlier element.
-- [x] Task: reacquire the visible, enabled Save button from the current window tree after editing, then invoke it with the existing UIA/pointer behavior.
-- [x] Local Verify: `cargo test --test windows_desktop_driver` passes 16 tests; `cargo fmt --check` and `git diff --check` pass. Commit `85f0f82e` is pushed.
-- [x] Exact-head Verify: Platform Validation run `41520505534` passed macOS and Windows validation, including build, source/test layout, applicable tests, native UI launch, formatting, Clippy, and unsafe-block checks.
-- [ ] Package Verify: in the same run, Windows release build is running and macOS packaging is queued; exact package UI journeys have not completed.
+- [x] Plan: exact package run `41520505534` failed before Save: after keyboard input, UIA focus had returned to the top-level window and the Goal value remained empty.
+- [x] Red: replace source contracts that required `SendKeys` with assertions for a real pointer click, Unicode `SendInput`, select-all input, and UIA value readback. They failed against the old driver.
+- [x] Task: click the Goal edit bounds, inject Ctrl+A and Unicode text through `SendInput`, then re-find the Goal edit while polling its current UIA value. Save is still re-acquired after the edit.
+- [x] Local Verify: `cargo test --test windows_desktop_driver` passes 16 tests; formatting and diff checks pass. The Windows packaged interaction still needs exact Windows runner verification.
+- [x] Previous exact-head Verify: run `41520505534` passed macOS/Windows validation and macOS packaging. Windows build, manual rendering, and package launch passed; its default-desktop UIA save journey failed with an empty Goal value.
+- [ ] Exact Windows Verify: rebuild and run the packaged default-desktop journey with the updated input driver; require startup.json to contain the edited goal.
 - [ ] Complete: only count a packaged workflow after the exact package persists the goal. Overall acceptance remains **22/50** (packaged workflows **22/25**; shipped/default Rust UI **0/25**).
 
 

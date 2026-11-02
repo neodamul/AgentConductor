@@ -1,6 +1,10 @@
+# [2026-11-03] task/verify | Repair Windows packaged workspace-save UIA input — issue #9
+
+Exact package run `41520505534` disproved the stale Save-element diagnosis: after `SendKeys`, UIA focus was the top-level window and the Goal value remained empty before Save. Updated driver contracts red-first, then changed the Windows harness to click the Goal bounds and use `SendInput` Ctrl+A/Unicode text, re-finding Goal during value polling. Local contracts pass 16/16; exact Windows package rerun is still required. Acceptance remains 22/25 package workflows and 0/25 shipped/default Rust UI parity (22/50 total). The Rust product UI did not change.
+
 # [2026-11-03] verify | Recheck current-head Rust UI migration and CocoIndex evidence
 
-On exact head `85f0f82e099f7b7c9b410e8986121fcd97a933d4`, run `41520505534` passed both macOS and Windows platform-validation jobs. Windows release packaging is running and macOS packaging is queued; no exact-package UI acceptance has been recorded. The aggregate remains 22/50 (22/25 package workflows; 0/25 shipped/default Rust UI parity). Updated PR #22 and issue #9 progress without changing acceptance.
+On exact head `85f0f82e099f7b7c9b410e8986121fcd97a933d4`, run `41520505534` passed both macOS and Windows platform-validation jobs, and the macOS native-package job passed. Windows release build, bilingual manual rendering, and exact release-binary packaging/execution passed; its packaged default-desktop journey failed on Goal input. The aggregate remains 22/50 (22/25 package workflows; 0/25 shipped/default Rust UI parity). Updated PR #22 and issue #9 progress without changing acceptance.
 
 Repaired the local CocoIndex Code tool environment by adding its missing MCP SDK and `sentence-transformers` dependencies to the pinned `cocoindex-code==0.2.42` uv tool. Stopped the stale temporary daemon, then indexed 1,651 files into 12,871 chunks with CPU-only offline local embeddings and queried the index for parity evidence. The result surfaced the current screenshot manifest and its explicit limitation: current native screenshots do not prove full legacy UI parity or Windows package acceptance. No external embedding API was used. Memory lesson: `lsn_83b3b942c616ae7f` records the vertical-slice PR rule.
 

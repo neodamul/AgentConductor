@@ -2,7 +2,7 @@
 
 ## Exact-head platform validation — 2026-11-03
 
-At source head `85f0f82e099f7b7c9b410e8986121fcd97a933d4`, Platform Validation run `41520505534` passed both macOS and Windows validation jobs, including native build, source/test layout, applicable tests, native UI launch, formatting, Clippy, and unsafe-block checks. The same workflow then started exact native packaging: Windows release build is in progress and macOS packaging is queued. Exact-package UI workflows have not completed, so acceptance remains 22/50 (22/25 packaged workflows and 0/25 shipped/default Rust UI parity).
+Platform Validation run `41520505534` passed macOS and Windows validation, macOS packaging, and the Windows release build/manual/package launch. The exact Windows packaged default-desktop journey failed before Save: after `SendKeys`, UIA focus reported the top-level window and Goal remained empty. This disproves the prior stale-Save-element diagnosis as the immediate cause. The working-tree TDD repair now pointer-focuses Goal and uses Unicode `SendInput`, then re-finds Goal while polling its value. Its local driver contracts pass 16/16; exact Windows packaged rerun is pending. Acceptance remains 22/50 (22/25 packaged workflows and 0/25 shipped/default Rust UI parity).
 
 The local CocoIndex Code index was repaired and exercised against this worktree using CPU-only, offline local embeddings. It indexed 1,651 source and documentation files into 12,871 chunks; semantic search surfaced the current screenshot evidence, CI regression ledger, and the explicit limitation that current native screenshots do not establish full legacy UI parity. The index and model cache were stored outside the repository. This is repository search evidence, not product acceptance.
 
