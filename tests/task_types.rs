@@ -58,7 +58,7 @@ fn unknown_task_types_are_rejected() {
 }
 
 #[test]
-fn planning_schema_accepts_supported_task_types_without_requiring_them() {
+fn planning_schema_requires_task_type_as_a_nullable_field() {
     let schema = agentconductor::planner::schema::for_plan(&["worker".into()], &[], false);
     let task = &schema["properties"]["tasks"]["items"];
     assert_eq!(
@@ -74,7 +74,7 @@ fn planning_schema_accepts_supported_task_types_without_requiring_them() {
         ])
     );
     assert!(
-        !task["required"]
+        task["required"]
             .as_array()
             .unwrap()
             .iter()

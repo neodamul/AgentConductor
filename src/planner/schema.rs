@@ -20,13 +20,12 @@ pub fn for_plan(agents: &[String], roles: &[String], phased: bool) -> Value {
     } else {
         json!({"type":"string","enum":roles})
     };
-    let mut task = object(
-        json!({"id":{"type":"string"},"agent":{"type":"string","enum":agents},"prompt":{"type":"string"},"paths":non_empty_strings,"depends_on":strings,"test_command":non_empty_strings,"role":role,"model":{"type":["string","null"]},"execution_options":{"type":"object","additionalProperties":{"type":"string"}},"task_type":{"type":["string","null"],"enum":["extract","summarize","analyze","code","agentic","creative",null]}}),
+    // Codex strict structured outputs reject optional keys and free-form maps.
+    // `effort` is the option the task-profile resolver consumes; null means unset.
+    let options = object(json!({"effort":{"type":["string","null"]}}));
+    let task = object(
+        json!({"id":{"type":"string"},"agent":{"type":"string","enum":agents},"prompt":{"type":"string"},"paths":non_empty_strings,"depends_on":strings,"test_command":non_empty_strings,"role":role,"model":{"type":["string","null"]},"execution_options":options,"task_type":{"type":["string","null"],"enum":["extract","summarize","analyze","code","agentic","creative",null]}}),
     );
-    task["required"]
-        .as_array_mut()
-        .unwrap()
-        .retain(|key| key != "execution_options" && key != "task_type");
     let tasks = json!({"type":"array","items":task});
     if phased {
         let phase = object(json!({"id":{"type":"string"},"name":{"type":"string"},"tasks":tasks}));

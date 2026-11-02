@@ -43,6 +43,21 @@ fn log_tail(path: &Path, limit: u64) -> String {
     String::from_utf8_lossy(&bytes).trim().to_string()
 }
 
+fn failure_output(stderr: &str, stdout: &str) -> String {
+    let streams: Vec<(&str, &str)> = [("stderr", stderr), ("stdout", stdout)]
+        .into_iter()
+        .filter(|(_, text)| !text.trim().is_empty())
+        .collect();
+    match streams.as_slice() {
+        [(_, only)] => (*only).to_owned(),
+        _ => streams
+            .iter()
+            .map(|(name, text)| format!("{name}:\n{text}"))
+            .collect::<Vec<_>>()
+            .join("\n\n"),
+    }
+}
+
 /// The text of an error event, bounded, for the operator.
 fn event_error(payload: &Value) -> String {
     let text = [
@@ -80,12 +95,7 @@ pub fn failure(label: &str, result: &process::ProcessResult) -> String {
     };
     let stderr = log_tail(&result.stderr, 1500);
     let stdout = log_tail(&result.stdout, 1500);
-    let detail = if !stderr.is_empty() {
-        stderr
-    } else {
-        // Without stderr, the last output line (often a JSON error event) carries the cause.
-        stdout.lines().last().unwrap_or_default().to_string()
-    };
+    let detail = failure_output(&stderr, &stdout);
     let logs = result.stdout.parent().unwrap_or(Path::new("")).display();
     if detail.is_empty() {
         format!("{label} failed ({status}); logs: {logs}")

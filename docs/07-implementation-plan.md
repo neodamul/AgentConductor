@@ -6,9 +6,17 @@
 - [x] Red: `stale_resume_cannot_clear_a_newer_stop_request` failed against the prior controller because the stale Resume was accepted and cleared the newer stop.
 - [x] Task: return the stop digest in stopped-run snapshots, echo it in Resume requests, reject a digest mismatch, and pass the originally reviewed digest to the child so a later marker change cannot be cleared.
 - [x] Local Verify: full `cargo test --offline --all-targets` passes (1,296 passed, 16 ignored across 403 suites); focused UI-resume/native-launch/layout tests pass (16); warning-denied all-target Clippy passes. Formatting, diff hygiene, and the 300-line guard are checked before commit.
-- [x] PR inventory: #22 is the large issue #9 Draft (1,136 commits, 1,816 files); #338 is a separate 8-file Codex planning fix whose macOS/Windows validation and package checks all pass. The #338 diff has been inspected; it is ready for its merge decision and integration into #22.
+- [x] PR inventory: #22 is the large issue #9 Draft (1,137 commits, 1,817 files at the last GitHub audit); #338 was a separate 8-file Codex planning fix whose macOS/Windows validation and package checks all passed. Its diff was inspected; it was squash-merged as `75456ae4` and ported into #22.
 - [ ] Exact-head Verify: commit and push this fix, then pass macOS and Windows validation plus the exact packaged Windows stop/resume journey. Run `41481282001` used head `fda175a5` and does not contain this fix.
 - [ ] Complete: record exact-head evidence in the LLM Wiki and AgentMemory; keep #9 open and PR #22 Draft until all UI parity gates pass.
+
+### Port merged Codex planning fix into the Rust migration — issue #337 / #9
+
+- [x] Review: PR #338 changes the strict planning schema and coordinator failure details. All four macOS/Windows validation/package checks passed; diff inspected.
+- [x] Main integration: squash-merge PR #338 as `75456ae4`.
+- [x] Port: preserve the Rust branch's modular `Task`/coordinator layout; require every schema field, use a closed `effort` object with nullable value, deserialize null options as absent, and retain both bounded failure streams.
+- [x] Verify: focused planning schema/failure/task-type/UI-failure/source-layout suites pass (17); full `cargo test --offline --all-targets` passes (1,299 passed, 16 ignored across 403 suites); warning-denied Clippy, formatting, diff hygiene, and the 300-line guard pass.
+- [x] Complete: update the English LLM Wiki and raw evidence; commit the merge and port to existing PR #22, then update issue #337.
 
 ### 2026-11-03 — Rebase stopped-run Resume after coordinator finalization — issue #9
 
