@@ -7774,5 +7774,5 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Red: docs tests caught main's six web-UI README screenshots and web Agent Room captures conflicting with the Rust branch's single verified Workspace README image and native Agent Room captures. They also exposed stale coordinator-slot assertions and missing timeout/retry copy.
 - [x] Task: retain the one verified Rust Workspace capture, update README to 0.1.55, use the native Agent Room screenshots, retain current English/Korean release manual text, and regenerate both HTML manuals with the Rust renderer. Update docs assertions to match the separate coordinator-chat slot.
 - [x] Verify: manual renderer (4), public docs (11), README screenshot (1), source layout (2), and workspace screenshot assets (1) pass locally; 19 tests total.
-- [ ] Verify: finish integrating fetched main `fa4b37d9`, push, and confirm PR #22 no longer reports a behind/conflict state.
+- [x] Verify: integrated and pushed main `fa4b37d9` as `2a495357`; PR #22 now targets current main and GitHub reports it mergeable by graph.
 - [ ] Complete: keep #9 and #22 open; packaged Windows UI and remaining Rust UI parity acceptance remain outstanding (22/50 overall).
