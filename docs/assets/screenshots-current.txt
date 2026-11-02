@@ -1,8 +1,12 @@
 Captured 2026-11-03 from the Rust-native v0.1.57 source-build app using its built-in egui
 framebuffer capture. These are not screenshots captured from the packaged release binaries.
-English light, Korean light, and Korean dark Workspace views are shown. The recent Resume change
-only binds the reviewed stop digest to its request and does not change the rendered screen.
+The set includes English and Korean light Workspace views and English and Korean light Agent Room
+views. The Agent Room fixture shows three completed tasks, successful integration tests, and the
+human approval gate before merge. The recent Resume change only binds the reviewed stop digest to
+its request and does not change the rendered screen.
 
 - ui-workspace-current.png
 - ui-workspace-korean-current.png
 - ui-workspace-dark-current.png
+- ui-agent-room-native.png
+- ui-agent-room-native-ko.png

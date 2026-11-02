@@ -42,6 +42,13 @@
 - [ ] Verify packaged Windows UI: review exact-head package evidence from run `41480002744` and resolve any remaining failure.
 - [ ] Complete: update #9/PR #22 with exact package evidence, finish UI parity and screenshot gates, then close #9/merge #22 only after full acceptance.
 
+### 2026-11-03 — Refresh Agent Room manual screenshots — issue #9
+
+- [x] Plan: replace the stale v0.1.53 Agent Room images in both manuals with screenshots from the current Rust-native v0.1.57 source build.
+- [x] Task: create a deterministic three-task run that reaches human approval, then capture English and Korean light-theme views through the app's egui framebuffer capture.
+- [x] Verify: inspected both captures; they show all tasks complete, 3/3 integration tests passing, and approval required before merge. `check_screenshots` and `git diff --check` pass. The fixture and Cargo test mock files were removed after capture.
+- [x] Complete: refreshed `ui-agent-room-native.png` and `ui-agent-room-native-ko.png`; updated `screenshots-current.txt`. These are source-build screenshots, not packaged-release evidence.
+
 ### 2026-11-02 — Reconcile open PRs and release screenshot evidence — issue #9
 
 - [x] Plan: inspect the authoritative GitHub PR list and exact-head validation jobs before reporting progress. Only root Rust migration PR #22 is open; #336 has merged into main as `0c050741`.
