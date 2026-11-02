@@ -1147,7 +1147,7 @@ The startup page tracks a local planning-start time and renders it until the pre
 Trace: R-98 -> BG-53 -> SF-85 -> UC-88 -> FR-83 -> QAS-94 -> DD-106. Source: user request, 2026-10-13.
 
 ### DD-107 Run and task status at a glance
-One status-to-tone map (ok, bad, run, wait, idle) drives the banner, run label, task pill and session rows through CSS custom properties; status words are capitalised and translated; Resume switches from quiet to primary when enabled and is mirrored in the banner.
+In the native Rust Agent Room, one status-to-tone map drives the banner, run label, task pill and session rows. Show the selected workspace mode and branch in the room context, and render a localized session heading with the task count. Translate status labels; make Resume prominent when enabled and mirror resumability in the banner. Waiting and failure indicators respect reduced-motion settings.
 Trace: R-99 -> BG-54 -> SF-86 -> UC-89 -> FR-84 -> QAS-95 -> DD-107. Source: user request, 2026-10-13.
 
 ### DD-108 Goal folders directly in the project folder

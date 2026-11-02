@@ -164,6 +164,26 @@ fn window_bar(
             );
             ui.label(name).on_hover_text(path);
         }
+        if let Some(mode) =
+            snapshot.and_then(|value| value["report"]["plan"]["workspace_mode"].as_str())
+        {
+            let label = match mode {
+                "shared" => Some(text("room.shared_directory")),
+                "worktree" => Some(text("room.isolated_worktrees")),
+                _ => None,
+            };
+            if let Some(label) = label {
+                ui.separator();
+                ui.label(label);
+            }
+        }
+        if let Some(branch) = snapshot
+            .and_then(|value| value["report"]["branch"].as_str())
+            .filter(|branch| !branch.is_empty())
+        {
+            ui.separator();
+            ui.label(format!("{}{branch}", text("room.branch")));
+        }
         if let Some(phase) = snapshot.and_then(|value| value["phase"].as_object()) {
             let phases = phase.get("phases").and_then(Value::as_array);
             let active = phase

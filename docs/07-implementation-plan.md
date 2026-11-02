@@ -1,5 +1,16 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Restore Agent Room context and session navigation — issue #9 / QAS-95
+
+- [x] Plan: compare the shipped Agent Room context and session rail with the native room, then trace the missing workspace mode, branch, session heading and count to QAS-95.
+- [x] Red: `native_room_sessions_heading` failed because the native accessibility tree had no localized heading; `native_ui_room_header::the_room_context_shows_workspace_mode_and_branch` failed because mode and branch were absent.
+- [x] Task / Green: show localized shared/worktree mode and branch beside the repository context; render the localized session heading and `report.tasks.len()` above the existing task selector, including pending tasks without a session ID.
+- [x] Verify locally: focused native room header, session heading, layout, session-row, verification and source-layout suites pass (12 tests); warning-denied all-target Clippy, `cargo fmt --check`, `git diff --check`, and the 300-line source/test guard pass. Changed Rust/test files are 251, 270, 175 and 60 lines.
+- [x] Architecture trace: add workspace context and session navigation detail to R-99/BG-54/SF-86/UC-89/FR-84/QAS-95/DD-107; retain the existing trace.
+- [x] Assetize: update the LLM Wiki; Graphify now maps the native room modules (13,068 nodes / 19,582 edges). CocoIndex CLI is unavailable in this host.
+- [ ] Complete visual acceptance: refresh English/Korean Agent Room manual screenshots from the updated app. This component port does not raise the 22/25 packaged or 0/25 shipped/default Rust UI acceptance counts.
+- [ ] Complete issue #9: continue the full screen-by-screen parity audit and exact Windows package journeys before marking PR #22 ready.
+
 ### 2026-11-03 — Recheck coordinator chat bug #189 on current Rust head
 
 - [x] Plan: re-open the bug and trace the exact Windows package chat editor locator to the Rust AccessKit node; distinguish source-contract verification from packaged UI acceptance.

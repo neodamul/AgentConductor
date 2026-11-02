@@ -4,6 +4,10 @@ The exact v0.1.37 macOS arm64 package displayed normalized task activity separat
 
 # Functional Agent Room evidence
 
+## Native workspace context and session navigation — 2026-11-03
+
+The shipped Agent Room shows workspace mode, current branch, a localized `YOUR SESSIONS` heading and task count. The Rust header omitted mode/branch, and the native selectable task list omitted the heading/count, contrary to the R-99 → BG-54 → SF-86 → UC-89 → FR-84 → QAS-95 → DD-107 trace. Both regressions failed before the change. Native Rust now shows the selected shared/worktree mode and branch beside the repository context, then the localized heading and `report.tasks.len()` above the task rows, including pending tasks without a session ID. Focused header, session heading, room layout, session-row, verification and source-layout tests pass (12 tests); warning-denied Clippy, formatting and the 300-line source/test limit pass. The local screenshot refresh and packaged Windows acceptance remain pending; this component port does not increase workflow acceptance or establish complete UI parity.
+
 ## Scheduling a quota-waiting task while the coordinator remains active — 2026-10-24
 
 When an agent task is `waiting_availability`, its schedule timestamp field and Schedule retry action must remain usable even if the top-level workflow job is still `running`. Global `editable` also locks unrelated task controls, so do not reuse it for this wait-state action. Gate scheduling on the room having no pending action, then allow `Action::Schedule` through the active-job request guard; the existing request validation still requires a waiting task and a timezone-qualified timestamp. The exact Windows test found this second guard after UI Automation input was corrected. The new regression failed before the guard fix and passed afterward; focused tests, layout, Clippy, and formatting pass. The exact Windows package rerun remains pending. Graphify refreshed to 9,404 nodes / 15,859 edges; CocoIndex CLI is unavailable. See [schedule regression evidence](../../docs/evidence/issue9-windows-schedule-regression-20261024.json).

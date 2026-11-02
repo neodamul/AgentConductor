@@ -130,3 +130,46 @@ fn the_room_context_header_fits_both_locales_at_supported_widths() {
         }
     }
 }
+
+#[test]
+fn the_room_context_shows_workspace_mode_and_branch() {
+    for (mode, expected_mode) in [
+        ("shared", "Shared directory"),
+        ("worktree", "Isolated worktrees"),
+    ] {
+        let snapshot = serde_json::json!({
+            "report": {
+                "state": "running",
+                "repo": "/tmp/project",
+                "branch": "refs/heads/main",
+                "plan": {"goal": "Rotate tokens", "workspace_mode": mode}
+            }
+        });
+        let context = egui::Context::default();
+        let mut output = context.run_ui(Default::default(), |ui| {
+            room::show(
+                &mut State::default(),
+                Some(&snapshot),
+                false,
+                None,
+                "en",
+                ui,
+            );
+        });
+        let texts = output
+            .shapes
+            .iter()
+            .filter_map(|shape| match &shape.shape {
+                Shape::Text(text) => Some(text.galley.job.text.clone()),
+                _ => None,
+            })
+            .collect::<Vec<_>>();
+        output.textures_delta.set.clear();
+        output.textures_delta.free.clear();
+        assert!(texts.iter().any(|text| text == expected_mode), "{texts:?}");
+        assert!(
+            texts.iter().any(|text| text == "Branch: refs/heads/main"),
+            "{texts:?}"
+        );
+    }
+}

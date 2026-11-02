@@ -1,5 +1,5 @@
 use super::super::{Event, State, task_activity, task_controls};
-use eframe::egui::{self, Ui};
+use eframe::egui::{self, RichText, Ui};
 use serde_json::Value;
 mod decision;
 
@@ -35,6 +35,25 @@ pub(super) fn show(
                     .id_salt("room-summary")
                     .show(ui, |ui| {
                         ui.set_width(summary_width);
+                        ui.horizontal(|ui| {
+                            ui.label(
+                                RichText::new(crate::ui::messages::in_language(
+                                    language,
+                                    "room.your_sessions",
+                                ))
+                                .small()
+                                .strong()
+                                .weak(),
+                            );
+                            let count = snapshot["report"]["tasks"].as_array().map_or(0, Vec::len);
+                            ui.with_layout(
+                                egui::Layout::right_to_left(egui::Align::Center),
+                                |ui| {
+                                    ui.label(count.to_string());
+                                },
+                            );
+                        });
+                        ui.add_space(6.0);
                         let selected = state
                             .task_controls
                             .selected_index(snapshot)
