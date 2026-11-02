@@ -166,8 +166,8 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             }
             let event = egui::Panel::left("native-agent-roster")
                 .resizable(true)
-                .default_size(248.0)
-                .size_range(210.0..=320.0)
+                .default_size(sidebar::DEFAULT_PANEL_WIDTH)
+                .size_range(210.0..=400.0)
                 .show(ui, |ui| {
                     sidebar::show(
                         &probe.profiles,

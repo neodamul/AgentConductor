@@ -1531,3 +1531,22 @@ Planning failures must retain both bounded streams. Codex may write an unrelated
 ### Windows desktop Save automation refresh — 2026-11-03
 
 The Windows desktop-save driver now reacquires the Save button from the current UI Automation tree after editing the goal. Local source-contract tests pass. A stale AutomationElement is the working hypothesis for the prior non-persistence result, not a confirmed product root cause; exact Windows package verification remains pending. See [raw evidence](../raw/2026-11-03-windows-save-uia-refresh.md).
+## Native Workspace agent-card parity — 2026-11-03
+
+The same-state 1280×892 comparison against the populated main-branch Workspace showed that Rust
+agent cards were too narrow and exposed executable/permission details only through hover metadata.
+The default left roster width is now 298 px, and each card displays a truncated executable path
+with a localized permission label. The full value remains in the hover text and accessible label.
+
+The regression first failed because the visible details row did not exist; the old density test also
+asserted that a details row must stay hidden. The updated card/detail, density, sidebar, quota-layout,
+and bilingual tests pass (12 tests across five targets). Source-layout passes 2/2, warning-denied
+all-target Clippy, rustfmt, and diff hygiene pass. Touched Rust source and test files remain at or
+below 300 lines.
+
+The review image is `docs/evidence/issue9-native-workspace-sidebar-parity-20261103.png`. It uses
+synthetic Claude/Codex quota and model observations and a disposable workspace; no provider CLI or
+user workspace was used. The comparison still shows missing page-header “New goal” and “Prepared”
+controls and the chat launcher in the wrong location. This source-level visual improvement earns
+no workflow acceptance credit: issue #9 remains 22/50 overall, with shipped/default Rust UI parity
+at 0/25 until the complete screen-by-screen gate passes.

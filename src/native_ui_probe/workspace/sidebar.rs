@@ -2,6 +2,8 @@ use super::profile_tools;
 use eframe::egui::{self, CornerRadius, Frame, RichText, Stroke, vec2};
 use serde_json::Value;
 
+pub(super) const DEFAULT_PANEL_WIDTH: f32 = 298.0;
+
 pub(in crate::native_ui_probe::workspace) mod controls;
 mod header;
 pub(crate) mod icons;
@@ -69,6 +71,8 @@ pub fn show(
                 let executable = profile["executable"].as_str().unwrap_or(parser);
                 let permission = profile["permission_mode"].as_str().unwrap_or("default");
                 let details = format!("{executable} · {permission}");
+                let visible_details =
+                    format!("{executable} · {}", permission_label(permission, language));
                 let status = status(id, parser, snapshot, now);
                 let dot_status = if status == "ready" {
                     "completed"
@@ -124,6 +128,16 @@ pub fn show(
                                         .color(ui.visuals().weak_text_color()),
                                 )
                                 .accessible_name(meta);
+                                ui.add(
+                                    egui::Label::new(
+                                        RichText::new(visible_details.clone())
+                                            .small()
+                                            .color(ui.visuals().weak_text_color()),
+                                    )
+                                    .truncate(),
+                                )
+                                .on_hover_text(details.clone())
+                                .accessible_name(visible_details);
                             });
                         });
                         let saved = snapshot["config"]["profiles"]
@@ -229,6 +243,16 @@ fn status(id: &str, parser: &str, snapshot: &Value, now: i64) -> &'static str {
 
 fn text(language: &str, id: &'static str) -> &'static str {
     crate::ui::messages::in_language(language, id)
+}
+
+fn permission_label(mode: &str, language: &str) -> String {
+    match mode {
+        "full_access" => text(language, "state.full_access").to_owned(),
+        "operator_auto_approve" => text(language, "state.operator_auto_approve").to_owned(),
+        "external_sandbox" => text(language, "state.external_sandbox").to_owned(),
+        "unverified" => text(language, "state.unverified").to_owned(),
+        _ => mode.to_owned(),
+    }
 }
 
 fn message(language: &str, id: &'static str, agent: &str) -> String {

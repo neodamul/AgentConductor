@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Restore visible agent details in native Workspace — issue #9
+
+- [x] Plan: compare the populated `origin/main` Workspace screenshot with a Rust capture using the same 1280×892 viewport, workspace name, goal, repository field, three agent profiles, model counts, and synthetic retained quota observations.
+- [x] Red: the new accessibility regression failed because executable and permission details were only available through hover metadata; an older density assertion also required those details to remain invisible.
+- [x] Task / Green: widen the default agent roster from 248 px to 298 px; render a truncated executable and localized permission line on every agent card; keep full executable and permission details available to assistive technology and hover text.
+- [x] Verify locally: 12 sidebar/layout/bilingual tests pass across five targets, source-layout passes 2/2, warning-denied all-target Clippy passes, rustfmt and `git diff --check` pass. All touched Rust source and test files are at or below 300 lines.
+- [x] Visual check: `docs/evidence/issue9-native-workspace-sidebar-parity-20261103.png` was rendered by the Rust framebuffer callback. Model counts and quota readings are synthetic fixtures; no provider CLI or user workspace was accessed.
+- [ ] Remaining parity: the Rust Workspace still lacks the legacy “New goal” action and “Prepared” state in the page header, and places the coordinator-chat launcher at the far edge of the content area. This unit adds no UI acceptance credit; overall remains 22/50 and shipped/default Rust UI parity remains 0/25.
+
 ### 2026-11-03 — Verify event and request-lane regressions — issue #9 / PR #255
 
 - [x] Plan: compare the closed PR's event fanout, independent request lanes, chat persistence, and timeout assertions with the current refactored modules and tests.

@@ -57,7 +57,9 @@ fn sidebar_keeps_agent_command_accessible_on_the_name_row() {
         node.height() <= 16.0,
         "agent name should stay one line: {node:?}"
     );
-    assert!(!nodes.iter().any(|(_, node)| node.label() == Some(&details)));
+    assert!(nodes.iter().any(|(_, node)| {
+        node.role() == Role::Label && node.label() == Some(&format!("{executable} · Full access"))
+    }));
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
 }
