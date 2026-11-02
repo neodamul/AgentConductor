@@ -102,6 +102,26 @@ Write-Output "GOAL_FOCUS_AFTER_INPUT:$($focused.Current.ProcessId):$($focused.Cu
 Write-Output "GOAL_TEXT_AFTER_INPUT:$goalText"
 if ($goalText -ne 'Windows UIA goal') { Write-Output "GOAL_VALUE_MISMATCH:$goalText"; exit 7 }
 
+# Text edits may rebuild the UI Automation tree; never invoke a button captured before editing.
+$save = $null
+$saveDeadline = (Get-Date).AddSeconds(5)
+while (-not $save -and (Get-Date) -lt $saveDeadline) {
+  $all = $window.FindAll($T::Descendants, $C)
+  foreach ($e in $all) {
+    if ($e.Current.Name -eq 'Save workspace' -and $e.Current.ControlType.ProgrammaticName -eq 'ControlType.Button') {
+      $save = $e
+      break
+    }
+  }
+  if (-not $save) { Start-Sleep -Milliseconds 100 }
+}
+if (-not $save) { Write-Output 'SAVE_NOT_FOUND_AFTER_GOAL_EDIT'; exit 8 }
+$saveReadyDeadline = (Get-Date).AddSeconds(5)
+while ((Get-Date) -lt $saveReadyDeadline -and -not $save.Current.IsEnabled) {
+  Start-Sleep -Milliseconds 100
+}
+if (-not $save.Current.IsEnabled) { Write-Output 'SAVE_NOT_ENABLED_AFTER_GOAL_EDIT'; exit 8 }
+
 $saveBounds = $save.Current.BoundingRectangle
 if ($save.Current.IsOffscreen -or $saveBounds.IsEmpty) {
   Write-Output 'SAVE_NOT_VISIBLE'

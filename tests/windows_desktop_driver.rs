@@ -72,6 +72,21 @@ fn goal_driver_types_and_reads_back_text_through_the_uia_value_pattern() {
 }
 
 #[test]
+fn goal_driver_reacquires_save_after_the_edit_control_changes() {
+    let source = include_str!("windows_desktop.rs");
+    let read_goal = source.find("if ($goalText -ne 'Windows UIA goal')");
+    let refresh_anchor = source.find("# Text edits may rebuild the UI Automation tree");
+    let refresh_tree = refresh_anchor.and_then(|index| {
+        source[index..]
+            .find("$all = $window.FindAll($T::Descendants, $C)")
+            .map(|offset| index + offset)
+    });
+    let save_bounds = source.find("$saveBounds = $save.Current.BoundingRectangle");
+    assert!(read_goal.is_some_and(|index| refresh_anchor.is_some_and(|next| index < next)));
+    assert!(refresh_tree.is_some_and(|index| save_bounds.is_some_and(|next| index < next)));
+}
+
+#[test]
 fn desktop_app_is_killed_before_driver_failure_can_panic() {
     let source = include_str!("windows_desktop.rs");
     let kill = source.find("let _ = app.kill()");
