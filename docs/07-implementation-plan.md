@@ -7,8 +7,9 @@
 - [x] Task: allow only Resume against a currently `stopped` report to rebase to its freshly loaded revision; pass that current revision and stop digest to the child. Preserve strict revision checks for other actions and all other run states.
 - [x] Verify locally: full `cargo test --offline --all-targets` passes (1,295 passed, 16 ignored across 403 suites in 290.93s); focused UI-resume/layout/knowledge tests pass (7); all-target Clippy with `-D warnings`, formatting, and diff hygiene pass.
 - [x] Portability correction: exact-head run `41476532897` exposed a locale-dependent test assertion (the English runner returned “run changed since review; refresh before acting” while the test expected Korean text). The regression now asserts rejection without matching localized copy; focused tests and all-target warning-denied Clippy pass locally.
-- [ ] Verify packaged Windows UI: repeat the exact package lifecycle journey against the updated executable; acceptance remains unchanged until this passes.
-- [ ] Complete: commit and push the fix/progress, inspect Windows package evidence, then update #9/PR #22 without closing either before UI parity gates pass.
+- [x] Complete: fix and progress records are committed and pushed to PR #22 (`812c5e33`, `cc575ddf`, `f3e04fb7`). Exact-head macOS/Windows validation run `41480002744` is in progress; Windows package UI evidence remains pending.
+- [ ] Verify packaged Windows UI: review exact-head package evidence from run `41480002744` and resolve any remaining failure.
+- [ ] Complete: update #9/PR #22 with exact package evidence, finish UI parity and screenshot gates, then close #9/merge #22 only after full acceptance.
 
 ### 2026-11-02 — Reconcile open PRs and release screenshot evidence — issue #9
 
