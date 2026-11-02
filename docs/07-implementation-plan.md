@@ -1,5 +1,15 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Reacquire Windows desktop Save control after editing — issue #9
+
+- [x] Plan: exact-head run `41515280203` showed that UI Automation read back the edited goal and invoked Save, but the isolated startup file remained unchanged. The driver kept the Save AutomationElement captured before editing; stale-element reuse is the working hypothesis to verify on Windows.
+- [x] Red: add a source contract requiring a fresh Save lookup after the goal edit; it failed because the driver reused the earlier element.
+- [x] Task: reacquire the visible, enabled Save button from the current window tree after editing, then invoke it with the existing UIA/pointer behavior.
+- [x] Local Verify: `cargo test --test windows_desktop_driver` passes 16 tests; `cargo fmt --check` and `git diff --check` pass. Commit `85f0f82e` is pushed.
+- [ ] Exact-head Verify: Platform Validation run `41520505534` must pass Windows validation and proceed to the exact Windows package UI journey. macOS validation passed (all-target/native UI tests, formatting, and Clippy); Windows build and source layout passed, with all-target tests running.
+- [ ] Complete: only count a packaged workflow after the exact package persists the goal. Overall acceptance remains **22/50** (packaged workflows **22/25**; shipped/default Rust UI **0/25**).
+
+
 ### 2026-11-03 — Stabilize native run-completion refresh journey — issue #9
 
 - [x] Plan: exact-head Platform Validation run `41511209951` failed `native_ui_start_journey` after candidate merge; UI Automation remained on stage `02 Tasks` when the test expected `05 Workspace` after Refresh run.

@@ -1518,3 +1518,8 @@ Regression `stale_resume_cannot_clear_a_newer_stop_request` first failed because
 Codex Structured Outputs rejects planner schemas that omit a declared task property or leave an object open. Make every property required and represent absence with nullable values. Keep `execution_options` a closed object containing the supported `effort` option; decode `null` options as absent from the runtime map so existing task resolution stays unchanged. Preserve non-empty task paths and test commands in the schema.
 
 Planning failures must retain both bounded streams. Codex may write an unrelated skill warning to stderr while emitting the actual `invalid_json_schema` rejection on stdout. Label both streams when both exist; keep a single stream unchanged. PR #338 was squash-merged into `main` as `75456ae4` after all four macOS/Windows validation and package checks passed. Its Rust port was integrated into the issue #9 branch. Local verification passes: 17 focused tests, 1,299 all-target tests (16 ignored across 403 suites), warning-denied Clippy, formatting, and the 300-line guard. No live Codex planning request was run.
+
+
+### Windows desktop Save automation refresh — 2026-11-03
+
+The Windows desktop-save driver now reacquires the Save button from the current UI Automation tree after editing the goal. Local source-contract tests pass. A stale AutomationElement is the working hypothesis for the prior non-persistence result, not a confirmed product root cause; exact Windows package verification remains pending. See [raw evidence](../raw/2026-11-03-windows-save-uia-refresh.md).
