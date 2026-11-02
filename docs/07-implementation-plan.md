@@ -2514,3 +2514,9 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Task: `src/ui/update_guard.rs`, `src/ui/setup/update_blockers.rs`, `src/ui/update.rs`, messages, `startup.css`; CHANGELOG.
 - [x] Verify (macOS): full suite, Python tests, clippy.
 - [ ] Complete: merge and release only on request. Elapsed time is not known for a run's blocker on every platform (creation time of the run folder is used when the file system has it).
+
+### Codex planning schema and the hidden API error — GitHub #337
+
+- [x] Plan: `planner::schema::for_plan` removed `execution_options` and `task_type` from `required`, and `execution_options` was a free-form map; Codex Structured Outputs (strict) rejects both with `invalid_json_schema: Missing 'task_type'`. Every object now lists all its properties as required and is closed: `execution_options` is `{effort: string|null}` (the one option the application applies) and `task_type` is a typed nullable enum. `Task` reads null option values as absent. `coordinator::failure` shows stderr and stdout together through `failure_output` (#323) instead of stderr alone, since Codex logs skill-loading errors on stderr and the rejection as a stdout event.
+- [x] Red/Verify: `tests/planning_schema.rs` (strict-shape walk over flat/phased/role variants, null options read as a task), `tests/planning_failure_detail.rs` (both streams), full suite.
+- [ ] Complete: merge and release only on request.

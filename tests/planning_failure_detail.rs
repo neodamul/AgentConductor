@@ -45,6 +45,27 @@ fn a_failed_coordinator_reports_its_status_and_own_error_output() {
 }
 
 #[test]
+fn a_stderr_warning_does_not_hide_the_api_rejection_on_stdout() {
+    // GitHub #337: Codex logs skill-loading errors on stderr and the API rejection as an event on stdout.
+    let dir = std::env::temp_dir().join(format!(
+        "ac-plan-failure-both-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    let both = result(
+        &dir,
+        "ERROR failed to load skill /x/SKILL.md: missing field `description`\n",
+        "{\"type\":\"turn.started\"}\n{\"type\":\"error\",\"message\":\"invalid_json_schema: Missing 'task_type'\"}\n",
+        Some(1),
+    );
+    let text = coordinator::failure("planning coordinator", &both);
+    assert!(
+        text.contains("failed to load skill") && text.contains("invalid_json_schema"),
+        "{text}"
+    );
+    std::fs::remove_dir_all(dir).unwrap();
+}
+
+#[test]
 fn the_plan_review_shows_the_error_text() {
     let script = include_str!("../src/ui/startup.js");
     assert!(script.contains("'plan-failure-detail'"));

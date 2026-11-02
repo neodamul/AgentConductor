@@ -54,6 +54,7 @@ fn a_task_type_is_optional_and_does_not_change_older_digests() {
 
 #[test]
 fn the_coordinator_may_set_the_type_but_does_not_have_to() {
+    // GitHub #337: strict outputs cannot omit a field, so "does not have to" is a null, not a missing key.
     let contract = schema::for_plan(&["a".into()], &[], false);
     let task = &contract["properties"]["tasks"]["items"];
     assert_eq!(
@@ -69,7 +70,7 @@ fn the_coordinator_may_set_the_type_but_does_not_have_to() {
         ])
     );
     assert!(
-        !task["required"]
+        task["required"]
             .as_array()
             .unwrap()
             .iter()
