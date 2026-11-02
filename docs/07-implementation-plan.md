@@ -7823,3 +7823,11 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Task: `src/ui/update_guard.rs`, `src/ui/setup/update_blockers.rs`, `src/ui/update.rs`, messages, `startup.css`; CHANGELOG.
 - [x] Verify (macOS): full suite, Python tests, clippy.
 - [ ] Complete: merge and release only on request. Elapsed time is not known for a run's blocker on every platform (creation time of the run folder is used when the file system has it).
+
+### 2026-11-02 — Reconcile v0.1.56 main into Rust migration — issue #9
+
+- [x] Plan: inspect the exact `main` delta after PR #336. It contains only the v0.1.56 version, changelog, and bilingual manual/documentation updates; no Rust product source changed.
+- [x] Task: merge main commit `0c050741`; preserve the Rust-native README capture and reject main's extra screenshots with stale UI-version labels. Record that the remaining Rust Workspace images are source-build captures from v0.1.54, not v0.1.56 package evidence.
+- [x] Verify: `cargo test --release --locked --offline --test public_docs --test source_layout --test knowledge` passed 16 tests; Cargo metadata reports v0.1.56; `git diff --check` passed.
+- [x] Verify: the complete Rust source/test inventory is 927 files and remains within the 300-line limit (the `source_layout` suite passed).
+- [ ] Complete: commit and push the main reconciliation, update PR #22's stale status, and refresh version-matched native screenshots. Keep #9 open and #22 Draft until exact Windows package/UI and remaining native parity gates pass.

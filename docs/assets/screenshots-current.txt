@@ -1,4 +1,6 @@
-Current public captures for the Rust-native Workspace UI. The older UI captures in this folder are historical and are not part of the release freshness check.
+The English and Korean Workspace captures are from the Rust-native UI. They are source-build
+screenshots, not evidence from the v0.1.56 release package. The English capture visibly identifies
+v0.1.54, so it must be refreshed before the README or manuals claim version-matched v0.1.56 images.
 
 - ui-workspace-current.png
 - ui-workspace-korean-current.png

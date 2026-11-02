@@ -205,3 +205,4 @@
 - [Reliable Windows UI Automation text input](windows-uia-text-input.md): use UIA `ValuePattern.SetValue` and read back the exact value in packaged desktop tests instead of lossy synthetic Unicode typing.
 - [Current Native Workspace screenshots](native-workspace-screenshots.md): provenance, hash record, and limits for the v0.1.54 Rust Workspace captures.
 - [Integration failure output streams](failed-integration-output.md): preserve bounded stderr and stdout evidence in Rust failure reports and retry feedback.
+- [Main v0.1.56 Rust sync](../raw/2026-11-02-main-v0.1.56-rust-sync.md): exact main delta, Rust-only screenshot handling, local documentation checks, and remaining release/UI gates.
