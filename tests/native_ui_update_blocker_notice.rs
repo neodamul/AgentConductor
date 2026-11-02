@@ -1,3 +1,5 @@
+#![cfg(feature = "native-ui-probe")]
+
 use agentconductor::{
     native_ui_probe::updates::State,
     ui::update_guard::{Blocker, job_label, message},
