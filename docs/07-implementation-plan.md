@@ -7872,5 +7872,6 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Verify (Windows UI launch): exact-head run `41465909814` passed the opt-in native Rust UI launch validation.
 - [x] Verify (Windows formatting/lint/safety): exact-head run `41465909814` passed rustfmt, warning-denied Clippy, and unsafe-block checks.
 - [x] Verify (macOS package): exact-head run `41465909814` built and validated the arm64 package; archive SHA-256 is `5a1815c2ac7b044db467414459c38b0f0b4f6df459f7d773e7af9bbe4cd424ca` (workflow artifact `13157010142`).
-- [ ] Verify (Windows package): exact-head run `41465909814` is still building the release executable; then render manuals, run the package lifecycle UI test, and inspect action diagnostics.
+- [x] Verify (Windows package smoke): exact-head run `41465909814` built the release executable and passed `package-release` with the packaged smoke workflows.
+- [ ] Verify (Windows package UI): exact-head run `41465909814` is exercising UI Automation against the exact packaged executable; inspect action diagnostics after completion.
 - [ ] Complete: diagnose and fix the product failure, then pass the exact package journey. Keep acceptance at 22/50 and PR #22 Draft meanwhile.

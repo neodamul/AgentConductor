@@ -19,7 +19,7 @@ When testing the broker child, wait for the matching snapshot job to reach `comp
 
 Run `41456152913` failed after Resume with state `stopped`, no report error, and task attempt 1. A local integration test now drives `Room::dispatch` through the broker child and reaches `waiting_approval` on attempt 2 on macOS. This rules out the general controller/child resume path on macOS; Windows UI Automation and the packaged Windows executable remain unverified.
 
-Commit `45f65ed7` adds action-process evidence to the Windows timeout assertion. Run `41465909814` passed macOS and Windows platform validation, including Windows all-target native tests, opt-in Rust UI launch, formatting, Clippy, and unsafe-block checks. Its macOS arm64 package passed with archive SHA-256 `5a1815c2ac7b044db467414459c38b0f0b4f6df459f7d773e7af9bbe4cd424ca`; the Windows release executable build remains in progress. This diagnostic update is not a product fix and adds no Windows acceptance credit.
+Commit `45f65ed7` adds action-process evidence to the Windows timeout assertion. Run `41465909814` passed macOS and Windows platform validation, including Windows all-target native tests, opt-in Rust UI launch, formatting, Clippy, and unsafe-block checks. Its macOS arm64 package passed with archive SHA-256 `5a1815c2ac7b044db467414459c38b0f0b4f6df459f7d773e7af9bbe4cd424ca`; Windows release build and `package-release` smoke passed. UI Automation against the exact Windows package is running. This diagnostic update is not a product fix and adds no Windows acceptance credit.
 
 ## Evidence
 
