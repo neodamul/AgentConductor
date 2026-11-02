@@ -2501,3 +2501,9 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Task: `src/plan/profile.rs`, `src/coordinator.rs`, `src/ui/setup/snapshot.rs`, `src/ui/startup.{html,js}`, messages; CHANGELOG.
 - [x] Verify (macOS): full suite (768 passed), clippy.
 - [ ] Complete: merge and release only on request.
+
+### Korean text for the coordinator refusal — GitHub #333
+
+- [x] Plan: the two refusal texts of `coordinator::read_only_args` (#325, #326) were built with `format!` and so were English in the Korean interface. They are catalog messages (`native.coordinator_not_read_only`, `native.coordinator_bad_read_only_args`) rendered in the machine's language; tests read each catalog directly because the language is a machine setting.
+- [x] Red/Verify: `tests/coordinator.rs` (both catalogs, Korean has Hangul and the same placeholders), full suite.
+- [ ] Complete: released with #331 as v0.1.56.

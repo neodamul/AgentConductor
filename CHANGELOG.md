@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Korean interface: the reason a coordinator cannot chat (shown under the coordinator selector and in the chat) is now in Korean (#333).
+
 ## v0.1.55
 
 - Custom CLI coordinator: an agent can declare read-only arguments (agent form, JSON array); the coordinator chat then runs the CLI with them, so a custom CLI that plans can also answer chat. Without them the chat is still refused, and the workspace settings now warn under the coordinator selector with the reason as soon as such an agent is chosen (#326).

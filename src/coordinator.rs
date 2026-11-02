@@ -156,9 +156,9 @@ pub fn read_only_args(profile: &AgentProfile, task_file: &str) -> Result<Vec<Str
     // normal arguments are never accepted as the read-only ones.
     if let Some(declared) = &profile.read_only_args {
         if declared.is_empty() || *declared == profile.args {
-            return Err(format!(
-                "coordinator {} has read-only arguments that are empty or equal to its normal arguments; give the arguments that run it without writing",
-                profile.id
+            return Err(crate::ui::messages::render(
+                "native.coordinator_bad_read_only_args",
+                &[("id", &profile.id)],
             ));
         }
         let mut readonly = profile.clone();
@@ -217,9 +217,9 @@ pub fn read_only_args(profile: &AgentProfile, task_file: &str) -> Result<Vec<Str
             .map(String::from),
         );
     } else if profile.permission_mode != "read_only" {
-        return Err(format!(
-            "coordinator {} cannot be run read-only while its permission is {}; set its permission to full access or native callback in the team settings, give it read-only arguments in its agent settings, or choose another coordinator",
-            profile.id, profile.permission_mode
+        return Err(crate::ui::messages::render(
+            "native.coordinator_not_read_only",
+            &[("id", &profile.id), ("mode", &profile.permission_mode)],
         ));
     }
     Ok(args)
