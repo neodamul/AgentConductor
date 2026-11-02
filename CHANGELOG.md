@@ -10,6 +10,7 @@ the GitHub Release notes for its tag.
 - Coordinator chat: a coordinator whose permission cannot be run read-only is refused with the agent's name and what to change (full access or native callback in the team settings, or another coordinator) instead of "coordinator requires read-only capabilities" (#325).
 - Agent list: the coordinator's card says "Coordinator" and the list redraws when the workspace or the coordinator changes (#325).
 - Workspace settings: the coordinator's model is chosen next to the coordinator, from that agent's queried models; "CLI default" keeps the previous behavior (#325).
+- Integration failure: the failure banner and the drafted retry feedback show both stderr and stdout (labeled, stdout last, each limited to its last 8 lines with the skipped count), so a warning on stderr no longer hides the real error on stdout; a single stream is shown as before (#323).
 
 - Agent cards no longer say "Querying usage" with a running clock; the refresh icon already shows that the query runs. The run screen still counts it (#321).
 

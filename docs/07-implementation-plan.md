@@ -2486,3 +2486,10 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Task: `src/coordinator.rs`, `src/plan/profile.rs`, `src/ui/startup.{html,js}`, `src/ui/chat.js`, messages; CHANGELOG.
 - [x] Verify (macOS): live page checked (panel opens on the run screen, badge, selector); full suite.
 - [ ] Complete: merge and release only on request.
+### Integration failure shows both streams — GitHub #323
+
+- [x] Plan: `public_report` picked the first non-empty stream (stderr first) and the room cut it to its first 4 or 12 lines, so a stderr warning hid the stdout failure. The pass/fail decision is unchanged (exit code and timeout). `ui::failure_output::failure_output` gives each stream its own last 8 lines with an "earlier lines" count, labels them only when both exist, and puts stdout last; full logs stay in the evidence tab. Reported on a corporate Windows build.
+- [x] Red: `tests/failure_output.rs` (three tests), `tests/progress_runtime.cjs` (banner and feedback are not cut to the first lines).
+- [x] Task: `src/ui/failure_output.rs`, `src/ui.rs`, `src/ui/room.js`; CHANGELOG.
+- [x] Verify (macOS): full suite (765 passed), clippy.
+- [ ] Complete: merge and release only on request. The Rust line (PR #22) has its own port.

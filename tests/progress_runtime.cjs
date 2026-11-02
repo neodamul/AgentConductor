@@ -81,4 +81,7 @@ assert.ok(fs.readFileSync('src/ui/startup.html', 'utf8').includes('<select id="s
 assert.ok(startup.includes('coordinator_model') && startup.includes('function coordinatorModels('), 'the selector reads and writes the coordinator profile');
 assert.ok(/q\('coordinator'\)\.classList\.toggle\('missing'[^\n]*coordinatorModels\(\)/.test(startup), 'the selector follows the coordinator selector');
 for (const lang of ['en', 'ko']) assert.ok(JSON.parse(fs.readFileSync(`src/ui/messages/${lang}.json`, 'utf8'))['startup.coordinator_model'], `${lang} names the selector`);
+// GitHub #323: the failure banner and the drafted retry feedback show the whole bounded output (both streams), not its first lines.
+assert.ok(!room.includes('clipLines(broken.output') && !room.includes('clipLines(test.output'), 'the integration failure text is not cut to its first lines');
+assert.ok(room.includes('value2:broken.output||') && room.includes('value1:test.output||acMessage("common.no_output")'), 'the banner and the feedback use the labeled output');
 console.log('progress runtime: pending reasons, verification, run attention, staleness and start time are shown');
