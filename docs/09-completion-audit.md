@@ -1,11 +1,11 @@
-## Issue #9 current checkpoint — 2026-11-02, exact-head verification
+## Issue #9 current checkpoint — 2026-11-02, pushed root-PR verification
 
-- Open-PR inventory: PR #22 is the only open PR and remains the root Rust UI migration. Main PR #322 was squash-merged as `d406f60b`; its exact macOS/Windows validation and package jobs passed, and issue #321 is closed. No child PRs are stacked.
-- PR #22 pushed head at the failed run: `2fa033bcd257cd0f3b718b6a8d49d84e039e48d7`; current local branch includes unpushed documentation and issue #321 Rust parity work.
-- Exact-head run [41389544894](https://github.com/neodamul/AgentConductor/actions/runs/41389544894): both validation jobs and the macOS package job passed. Windows package build, Rust manual render, package smoke, and default desktop journey passed. The stop/resume/recovery UI journey failed because the UIA helper could not find the visible stop-reason edit; inspecting the script found it searched same-process hidden/offscreen windows and controls. A test-first visibility filter fix now passes the focused local suites; Windows packaged rerun is still required.
-- Local focused docs/layout regression passes 22/22 tests across four suites. The all-target local run was stopped after 1,059 passed and 15 ignored across 312 suites while another test suite was still running; this is not a full-suite pass.
-- Exact-head run `41389544894` is terminal with a Windows stop/resume/recovery UI journey failure. Local package-evidence commit `c8676802` and current Rust/UIA fixes remain unpushed; next integrate merged `main` and rerun local checks before one push.
-- Acceptance remains **22/50 overall**: packaged workflows **22/25**; shipped/default Rust UI **0/25**. Full visual parity and Windows packaged workflow acceptance remain outstanding.
+- Open-PR inventory: PR #22 is the only open pull request and remains the root Rust UI migration. PR #322 was merged to `main` as `d406f60b`; issue #321 is closed. No child PRs are stacked.
+- Latest pushed #22 head: `4752e4b2ebfa9485534423e56a080ba84710cbd6`. The merge carries main's changelog and plan updates while preserving the Rust-only app tree.
+- Rust parity for #321 and the Windows lifecycle UIA fix were committed to #22. Focused local verification after integration: 39 passed, 1 ignored across eight suites; warning-denied focused Clippy, rustfmt, and diff checks pass.
+- Prior exact-head run [41389544894](https://github.com/neodamul/AgentConductor/actions/runs/41389544894) failed the packaged Windows stop/resume/recovery journey because UI Automation could not find the visible stop-reason edit. The test-first driver change now filters offscreen windows and controls.
+- Latest exact-head platform validation [41394902190](https://github.com/neodamul/AgentConductor/actions/runs/41394902190) is in progress. Its current job list contains macOS and Windows validation only; a new packaged Windows lifecycle result is still pending.
+- Acceptance remains **22/50 overall**: packaged workflows **22/25**; shipped/default Rust UI **0/25**. Full screen-by-screen parity and packaged Windows lifecycle acceptance remain open.
 
 ## PR #22 CI regression closure — 2026-11-02
 

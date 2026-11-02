@@ -35,7 +35,7 @@ removed. Two Python/Node display suites were replaced by Rust integration tests.
 
 ## Remove redundant query text — issue #321
 
-When quota refresh is active, the agent card keeps the spinner/refresh indicator and no longer repeats the state as an elapsed-time sentence. The run screen retains its own status line. Main UI change: PR #322; Rust parity change: `src/native_ui_probe/workspace/sidebar/quota.rs`, with the elapsed-only helper and unused EN/KO strings removed. TDD first reproduced the extra accessible label, then verified its absence. Focused Rust regression passes 2/2, warning-denied Clippy and rustfmt pass. These are source checks only; packaged verification and integration remain pending.
+When quota refresh is active, the agent card keeps the spinner/refresh indicator and no longer repeats the state as an elapsed-time sentence. The run screen retains its own status line. Main UI change: PR #322; Rust parity change: `src/native_ui_probe/workspace/sidebar/quota.rs`, with the elapsed-only helper and unused EN/KO strings removed. TDD first reproduced the extra accessible label, then verified its absence. Focused Rust regression passes 2/2; after integration, eight focused suites pass 39 tests with 1 ignored, plus warning-denied Clippy, rustfmt, and diff checks. The parity change is pushed to root PR #22 at `4752e4b2`. Packaged verification remains pending; source checks do not establish shipped/default Rust UI acceptance.
 
 ## Current source fingerprints
 
