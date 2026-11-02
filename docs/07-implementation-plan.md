@@ -9,6 +9,13 @@
 - [ ] Exact package: Platform Validation run `41500210315` is still executing on current head `397069af`. Check whether the Windows chat journeys actually run or report an explicit host Job Object skip; a skip is not acceptance evidence.
 - [ ] Complete: keep bug #189 open until exact Windows packaged chat persistence/reconnect journeys pass; update issue #9 acceptance only from that evidence.
 
+### 2026-11-03 — Verify remaining Rust bug ports locally — issues #226 and #310
+
+- [x] Plan: inspect the open bug queue before enhancements; confirm #226 workspace restore and #310 schedule-path changes are already on the root #9 branch.
+- [x] Verify: `cargo test --locked --offline --test launch_workspace --test workspace_delete_default --test workspace_registry --test windows_schedule_dispatch --test windows_schedule_marker --test stop_resume --test source_layout` passes 15 tests across seven suites.
+- [x] Record: link the exact source revision and local-only scope in the LLM Wiki. #226/#310 remain open until current-head Windows package behavior is observed; source tests alone do not satisfy package acceptance.
+- [ ] Exact package: inspect Windows job results in Platform Validation `41500210315`; do not count a skipped UI journey as a pass.
+
 ### 2026-11-03 — Integrate v0.1.57 docs and recover build disk — issue #9
 
 - [x] Plan: inspect the only open PRs, validate exact package gates, and compare the current Rust branch with the newly merged v0.1.57 release commit before touching issue #9.
