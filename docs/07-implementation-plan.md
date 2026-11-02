@@ -7155,5 +7155,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task: port the classifiers to the existing #9 Rust branch. Keep quota subprocess behavior unchanged; classify the observed CLI messages before they become timeouts or generic errors.
 - [x] Verify locally: `claude_usage` passes 9 tests (1 ignored); warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line Rust source/test limit pass.
 - [x] Assetize: add the LLM Wiki entry and save the implementation checkpoint in AgentMemory. Graphify/CocoIndex tool availability is checked separately; no unavailable result is reported as completed.
-- [ ] Complete #9 unit: commit and push to the existing root branch; verify the new exact-head checks. No additional stacked PR or release is created.
+- [x] Complete #9 source unit: commit `dc0cf13d` pushed to the existing root branch; no additional stacked PR or release was created.
+- [x] Local root-cause correction: remove unused `Stdio` from `tests/windows_coordinator_chat.rs` and unused `Duration`/`thread` from `tests/support/windows_chat_launcher.rs`. Focused quota tests, local all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test limit pass after correction.
+- [ ] Exact-head verification: run `41366107716` on the prior root head passed Windows integrated tests but failed Windows all-target Clippy on those unused imports; macOS validation passed. The fix is now on the working branch; push it and verify the new exact head. Windows target Clippy cannot run locally on this Mac.
 - [ ] Acceptance: issue #9 remains open. Packaged Rust Windows/UI parity is not implied by the main PR's passing Windows package run.
