@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Reverify stopped-run Resume — issue #9 / workflow 25
+
+- [x] Plan: the prior exact-package failure was traced to a stale report revision rejecting Resume before its UI action child started; commits `812c5e33` and `2b0cbb8c` now rebase only a stopped-run Resume and bind it to the reviewed stop marker.
+- [x] Local Verify: `ui_resume`, `native_ui_launch`, and `package_run_recovery` pass 14 tests with 1 exact-package test ignored; explicitly running the locally executable package recovery test passes 1/1. This verifies controller and workflow behavior on macOS, not the Windows UI package.
+- [x] Environment check: the existing UTM Windows VM is running and has 52 GB free, but its guest has no Rust/Cargo or MSVC toolchain. No VM reset, setting change, or toolchain installation was performed.
+- [x] Current hosted check: Platform Validation run `41511209951` is building macOS and Windows test targets; it is not the exact packaged UI workflow.
+- [ ] Exact Windows package Verify: run the updated `windows_run_lifecycle` UI journey against the current release package and confirm persisted `waiting_approval`, no duplicate work, and recovery.
+- [ ] Acceptance remains unchanged at **22/50 overall** (packaged workflows **22/25**, shipped/default Rust UI **0/25**); workflow 25 remains uncredited until exact-package evidence passes.
+
 ### 2026-11-03 — Gate the Agent Room session test behind native-ui-probe
 
 - [x] Plan: the full all-target run exposed that the new session-heading integration test was auto-discovered without the optional native UI feature gate.

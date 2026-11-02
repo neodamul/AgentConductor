@@ -17,6 +17,19 @@ When testing the broker child, wait for the matching snapshot job to reach `comp
 
 ## Current trace
 
+### 2026-11-03 recheck
+
+The source head `42df638a` includes the stale-Resume fix (`812c5e33`, `2b0cbb8c`). On macOS,
+`ui_resume`, `native_ui_launch`, and `package_run_recovery` passed 14 tests with one exact-package
+test ignored; explicitly running the local package recovery test passed 1/1. This checks the
+controller/backend route, not Windows UI Automation or a Windows release package. Platform
+Validation run `41511209951` is building test targets and is not the exact package journey.
+
+The existing UTM Windows guest is running with 52 GB free and `Z:` mapped, but has no Rust/Cargo or
+MSVC toolchain. It was not reset or reconfigured. Do not count workflow 25 until the current exact
+Windows package UI test proves stopped Resume, `waiting_approval`, no duplicate work, and recovery.
+Acceptance remains 22/50 overall (22/25 packaged workflows, 0/25 shipped/default Rust UI).
+
 Run `41456152913` failed after Resume with state `stopped`, no report error, and task attempt 1. Run `41465909814` passed Windows build and package smoke but failed its exact-package UI test with the same stopped state; the timeout reported `UI actions=[]`, proving no action child was spawned. Artifact `13157855546` has digest `sha256:34ad3f466abf4d50c24d692e305bcb38d78d61d53492b187912f0c6d31422799`.
 
 The root cause was a stale revision precondition: the coordinator can finalize the stopped report after the UI snapshot was rendered, and Resume was rejected before launching its child. A new integration regression reproduces this by updating the report after snapshot creation. The fix rebases only a Resume action against a freshly loaded `stopped` report; other stale actions remain rejected, and the child validates the current stop digest. Local `cargo test --offline --all-targets` passes (1,295 passed, 16 ignored across 403 suites in 290.93s), as do all-target Clippy with warnings denied, formatting, and diff checks. The updated Windows package has not yet been verified. No Windows package acceptance credit is added.

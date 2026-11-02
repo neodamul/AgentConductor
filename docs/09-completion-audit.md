@@ -1,3 +1,9 @@
+## Stopped-run Resume local recheck — 2026-11-03
+
+- Current Rust head `42df638a` contains the stale stopped-Resume revision fix from `812c5e33` and stop-marker binding from `2b0cbb8c`. Local UI/controller and recovery tests pass **14 tests with 1 exact-package test ignored**; explicitly running the locally executable package recovery test passes **1/1**.
+- UTM's Windows guest is running, has 52 GB free, and exposes `Z:`; Rust/Cargo and MSVC are not installed. The VM was not reset or reconfigured. Platform Validation run [41511209951](https://github.com/neodamul/AgentConductor/actions/runs/41511209951) is building source tests, not the exact packaged UI journey.
+- Workflow 25 remains uncredited until current Windows package UI evidence passes. Acceptance remains **22/50 overall**: packaged workflows **22/25**; shipped/default Rust UI **0/25**.
+
 ## Agent Room manual screenshot refresh — 2026-11-03
 
 - Recaptured and visually inspected the English and Korean 1140×960 Agent Room screens from Rust source head `01f7cc69` using a disposable deterministic mock workflow. Three tasks and three integration tests completed; the candidate remained at the human `waiting_approval` gate.

@@ -1,5 +1,15 @@
 # Native Rust UI migration
 
+## Stopped-run Resume follow-up — 2026-11-03
+
+The stale-report-revision fix for stopped-run Resume is present on the current issue branch
+(`812c5e33`, `2b0cbb8c`). Local `ui_resume`, `native_ui_launch`, and `package_run_recovery` pass 14
+tests with one exact-package test ignored; the locally executable package-recovery test passes
+when explicitly run. This is not Windows package UI evidence. The current UTM guest has no
+Rust/Cargo or MSVC toolchain, so no local exact Windows package build was performed. Workflow 25 is
+still uncredited and aggregate acceptance remains 22/50. Details are in
+`knowledge/wiki/windows-packaged-run-lifecycle-diagnostics.md`.
+
 ## Test-target feature isolation — 2026-11-03
 
 The 2026-11-03 full Rust regression found that `tests/native_room_sessions_heading.rs` lacked the optional `native-ui-probe` feature gate. The test suite that scans auto-discovered native UI integration targets failed on head `c4548da`, both locally and on exact-head Platform Validation run `41505975582`. Adding the crate-level feature attribute restored isolation. Focused UI tests passed 6/6, the all-target suite passed 1,301 with 16 ignored across 404 suites, all-target warning-denied Clippy passed, and the source-layout check passed. This harness-only repair does not change UI behavior or the audited 22/50 acceptance (22/25 packaged workflows; 0/25 shipped/default Rust UI). Exact Windows packaged acceptance remains open.
