@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Recheck coordinator chat bug #189 on current Rust head
+
+- [x] Plan: re-open the bug and trace the exact Windows package chat editor locator to the Rust AccessKit node; distinguish source-contract verification from packaged UI acceptance.
+- [x] Task: the current root branch exposes the localized chat placeholder as the multiline editor's accessible name, and the Windows driver locates that visible, enabled editor by its UIA name. No duplicate code change was needed.
+- [x] Verify: chat/accessibility/lifecycle/source-layout checks pass 11 tests across five suites; after writing the English LLM Wiki entry, `public_docs` and `source_layout` pass 13 tests across two suites. Graphify trace confirms the `chat/view.rs` source node and its imports/callees.
+- [x] Record: added `knowledge/raw/2026-11-03-issue189-current-head-chat-verification.md` and updated `knowledge/wiki/native-coordinator-chat.md`; CocoIndex CLI is not installed in this host, so no CocoIndex run is claimed.
+- [ ] Exact package: Platform Validation run `41500210315` is still executing on current head `397069af`. Check whether the Windows chat journeys actually run or report an explicit host Job Object skip; a skip is not acceptance evidence.
+- [ ] Complete: keep bug #189 open until exact Windows packaged chat persistence/reconnect journeys pass; update issue #9 acceptance only from that evidence.
+
 ### 2026-11-03 — Integrate v0.1.57 docs and recover build disk — issue #9
 
 - [x] Plan: inspect the only open PRs, validate exact package gates, and compare the current Rust branch with the newly merged v0.1.57 release commit before touching issue #9.

@@ -42,3 +42,7 @@ The current exact-package Windows reconnect scenario also asserts the accessible
 ## Slow repository lookup regression and PR #239 audit (2026-11-02)
 
 `tests/startup_chat.rs::chat_submission_does_not_wait_for_repository_head` wraps Git so `rev-parse HEAD` sleeps for 20 seconds, then asserts the Rust chat dispatch finishes in under two seconds. The helper scopes the environment override with a restoring lock and removes its temporary repository on drop. The first port exposed an old `turns` request shape and a repository revision token where the current Rust protocol requires `text` and `chat_revision`; the updated test passes in 0.21 seconds. PR #239 was closed as superseded after this regression was preserved on the active #260 parent. The product behavior was already present there; no old source implementation was copied.
+
+## Current-head accessibility verification (2026-11-03)
+
+At root PR #22 head `397069af`, the coordinator chat editor's localized placeholder is its AccessKit name. The Windows UI Automation driver filters to a visible, enabled multiline edit with that localized name. Local verification passes 11 tests across the AccessKit rendering, Windows script contract, worker lifecycle, transcript interaction, and source-layout suites. The exact Windows package remains the acceptance boundary: if the host Job Object prevents the chat worker from surviving app close, the test reports an explicit skip and must not be counted as a pass.
