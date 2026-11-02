@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+## Test-target feature isolation — 2026-11-03
+
+The 2026-11-03 full Rust regression found that `tests/native_room_sessions_heading.rs` lacked the optional `native-ui-probe` feature gate. The test suite that scans auto-discovered native UI integration targets failed on head `c4548da`, both locally and on exact-head Platform Validation run `41505975582`. Adding the crate-level feature attribute restored isolation. Focused UI tests passed 6/6, the all-target suite passed 1,301 with 16 ignored across 404 suites, all-target warning-denied Clippy passed, and the source-layout check passed. This harness-only repair does not change UI behavior or the audited 22/50 acceptance (22/25 packaged workflows; 0/25 shipped/default Rust UI). Exact Windows packaged acceptance remains open.
+
 ## Exact Windows package lifecycle result — 2026-11-02
 
 Run [`41446760915`](https://github.com/neodamul/AgentConductor/actions/runs/41446760915) validated head `05a2fd74`: both platform validation jobs and the macOS package passed. The Windows package completed under the 45-minute limit, and its default desktop-save, briefing, candidate-review, and recovery journeys passed. The stop/resume lifecycle journey failed because the saved run did not reach `waiting_approval` after Resume. The hosted runner explicitly skipped three coordinator-chat lifetime tests after refusing Job Object breakaway; production safety refusal remained on. Artifact `13145767282` has digest `sha256:c123fdc30dc7016b4f2eb04b667e30107a8d371f45e763e7451e362a76bb29ba`.

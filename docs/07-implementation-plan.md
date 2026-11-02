@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Gate the Agent Room session test behind native-ui-probe
+
+- [x] Plan: the full all-target run exposed that the new session-heading integration test was auto-discovered without the optional native UI feature gate.
+- [x] Red: `native_ui_targets::auto_discovered_native_ui_tests_are_feature_gated` failed locally and in exact-head run `41505975582` because `tests/native_room_sessions_heading.rs` lacked the crate-level gate.
+- [x] Task / Green: add `#![cfg(feature = "native-ui-probe")]` to the test file; product behavior is unchanged.
+- [x] Verify locally: focused native target/session/header suites pass 6 tests; all targets pass 1,301 tests with 16 ignored across 404 suites; warning-denied all-target Clippy passes; source layout passes 2 tests; rustfmt and diff checks pass.
+- [x] Assetize: record the regression and the unchanged 22/50 issue #9 acceptance in the LLM Wiki and AgentMemory. This test-harness fix adds no product acceptance.
+- [ ] Complete: push this verified repair and inspect the new exact-head validation. Keep issue #9 open and PR #22 Draft.
+
 ### 2026-11-03 — Restore Agent Room context and session navigation — issue #9 / QAS-95
 
 - [x] Plan: compare the shipped Agent Room context and session rail with the native room, then trace the missing workspace mode, branch, session heading and count to QAS-95.

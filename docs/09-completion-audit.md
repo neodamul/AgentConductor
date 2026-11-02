@@ -1,3 +1,10 @@
+## Native test-target feature-gate regression — 2026-11-03
+
+- Exact-head Platform Validation run [41505975582](https://github.com/neodamul/AgentConductor/actions/runs/41505975582) failed macOS native tests because `tests/native_room_sessions_heading.rs` lacked the `native-ui-probe` feature gate.
+- TDD repair: local full all-target testing reproduced the failure; adding the crate-level gate made focused target/session/header tests pass 6/6.
+- Local verification on the repaired worktree: **1,301 passed, 16 ignored across 404 suites**; warning-denied all-target Clippy and source-layout pass, with rustfmt and diff checks clean.
+- This test-harness fix does not change product behavior or acceptance: **22/50 overall** (packaged workflows **22/25**; shipped/default Rust UI **0/25**). The exact Windows packaged lifecycle and full visual parity gates remain open.
+
 ## Local macOS package evidence — 2026-11-02
 
 - Built and packaged local source head 6eb2ca9f using the repository's Rust release pipeline.
