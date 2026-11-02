@@ -68,4 +68,7 @@ assert.ok(room.includes("AC_I18N.bind($('quota-source'), () => AC_QUOTA_WAIT(sna
 
 // The start is sent to the right element (it threw before sending since #38).
 assert.ok(!startup.includes("'start-run-progress')"), 'q() adds the start- prefix itself');
+// GitHub #323: the failure banner and the drafted retry feedback show the whole bounded output (both streams), not its first lines.
+assert.ok(!room.includes('clipLines(broken.output') && !room.includes('clipLines(test.output'), 'the integration failure text is not cut to its first lines');
+assert.ok(room.includes('value2:broken.output||') && room.includes('value1:test.output||acMessage("common.no_output")'), 'the banner and the feedback use the labeled output');
 console.log('progress runtime: pending reasons, verification, run attention, staleness and start time are shown');

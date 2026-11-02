@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Integration failure: the failure banner and the drafted retry feedback show both stderr and stdout (labeled, stdout last, each limited to its last 8 lines with the skipped count), so a warning on stderr no longer hides the real error on stdout; a single stream is shown as before (#323).
+
 - Agent cards no longer say "Querying usage" with a running clock; the refresh icon already shows that the query runs. The run screen still counts it (#321).
 
 ## v0.1.54
