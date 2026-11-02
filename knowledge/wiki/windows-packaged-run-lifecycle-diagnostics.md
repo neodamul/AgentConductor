@@ -21,6 +21,8 @@ Run `41456152913` failed after Resume with state `stopped`, no report error, and
 
 The root cause was a stale revision precondition: the coordinator can finalize the stopped report after the UI snapshot was rendered, and Resume was rejected before launching its child. A new integration regression reproduces this by updating the report after snapshot creation. The fix rebases only a Resume action against a freshly loaded `stopped` report; other stale actions remain rejected, and the child validates the current stop digest. Local `cargo test --offline --all-targets` passes (1,295 passed, 16 ignored across 403 suites in 290.93s), as do all-target Clippy with warnings denied, formatting, and diff checks. The updated Windows package has not yet been verified. No Windows package acceptance credit is added.
 
+Run `41476532897` found that the stale-Reject test compared Korean localized error copy, while the macOS CI runner returned the English message `run changed since review; refresh before acting`. The test now asserts rejection without depending on locale; focused tests pass locally. This is test portability only and does not change the product behavior or package acceptance.
+
 ## Evidence
 
 - [Raw lifecycle finding](../raw/2026-11-02-windows-lifecycle-resume-state.md)

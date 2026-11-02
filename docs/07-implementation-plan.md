@@ -6,6 +6,7 @@
 - [x] Red: after the UI snapshot, persist a coordinator-finalization update and dispatch Resume with the old revision. The controller rejects it before creating a UI child. A stale Reject action remains rejected.
 - [x] Task: allow only Resume against a currently `stopped` report to rebase to its freshly loaded revision; pass that current revision and stop digest to the child. Preserve strict revision checks for other actions and all other run states.
 - [x] Verify locally: full `cargo test --offline --all-targets` passes (1,295 passed, 16 ignored across 403 suites in 290.93s); focused UI-resume/layout/knowledge tests pass (7); all-target Clippy with `-D warnings`, formatting, and diff hygiene pass.
+- [x] Portability correction: exact-head run `41476532897` exposed a locale-dependent test assertion (the English runner returned “run changed since review; refresh before acting” while the test expected Korean text). The regression now asserts rejection without matching localized copy; focused tests and all-target warning-denied Clippy pass locally.
 - [ ] Verify packaged Windows UI: repeat the exact package lifecycle journey against the updated executable; acceptance remains unchanged until this passes.
 - [ ] Complete: commit and push the fix/progress, inspect Windows package evidence, then update #9/PR #22 without closing either before UI parity gates pass.
 
