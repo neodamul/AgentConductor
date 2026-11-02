@@ -1,2 +1,2 @@
-The captured screens in this folder match the interface of 0.1.51.
-Checked 2026-11-01 against the changes since they were captured (#279, #285): they only add progress text shown while work runs, which is not on a captured screen.
+The captured screens in this folder match the interface of 0.1.55.
+Recaptured 2026-11-02 for the workspace screens (light, dark, Korean) and the agent settings dialog, which gained the coordinator badge, model selector, chat warning and the folded read-only arguments (#325, #326). The agent room screens are unchanged by these releases and were checked, not recaptured. A later id on the folded section changes nothing visible.
