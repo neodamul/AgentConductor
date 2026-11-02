@@ -28,6 +28,7 @@ Priority: business importance / technical risk (H, M, L).
 | DDR-14 (planned) | Remote awareness and decisions without weakening local authority | Quality (security) + integration | FR-28, NFR-17, QAS-35, QAS-36 | H/H | DD-51 (proposed) |
 | DDR-10 | Recognizable providers without redistributing their artwork | Quality (usability) + constraint | FR-20, NFR-10, NFR-12, QAS-27 | M/L | DD-40 |
 | DDR-53 | Recover complete coordinator JSON from bounded provider output | Quality (robustness) | FR-196, QAS-202 | M/M | DD-216 |
+| DDR-54 | Preserve complete failed-test evidence from both streams | Quality (usability + robustness) | FR-197, NFR-87, QAS-203 | M/M | DD-217 |
 
 ## Architecture
 
@@ -207,3 +208,6 @@ Implement the coordinator board inside the native Rust Agent Room, reusing the s
 
 ### Driver DDR-53 Bound and recover coordinator document parsing
 Keep provider event framing separate from requested-document parsing. Scan completed fenced JSON candidates in order, continue after malformed/incomplete candidates, require the requested field, and cap accepted reply text at 256 KiB. Preserve the existing 1 MiB event-decoder bound and actionable errors. Trace: QAS-202.
+
+### Driver DDR-54 Preserve context without guessing which stream contains the error
+Retain both bounded streams rather than choosing one based on severity heuristics. Add labels only when both are present, put stdout last for the reported test-run pattern, and leave single-stream text untouched. Trace: QAS-203.

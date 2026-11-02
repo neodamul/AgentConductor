@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### 2026-11-02 — Fix integration failure output visibility — GitHub #323
+
+- [x] Plan: R-205 → BG-160 → SF-193 → UC-196 → FR-197/NFR-87 → QAS-203 → DDR-54 → DD-217; preserve both bounded log tails instead of selecting stderr first.
+- [x] Red: `ui_failure_report` fails against a real `Room::snapshot`; stderr warning is shown while the stdout `MODULE_NOT_FOUND` error disappears.
+- [x] Task: failed reports now show labeled stderr and stdout tails when both are present; a single nonempty stream remains unchanged. Retry feedback consumes the combined snapshot output.
+- [x] Verify: 20 tests pass across six focused suites, including the real Room snapshot and failed-task feedback journey; warning-denied Clippy, rustfmt, diff hygiene, and the 300-line source/test guard pass (`src/ui.rs` 245 lines; affected tests under 300).
+- [ ] Complete: commit/push the fix on the existing #22 root branch; keep #323 open until the exact packaged Windows behavior is verified.
+
 ### 2026-11-02 — Remove redundant quota-query text — issue #321
 
 - [x] Plan: keep the running spinner/refresh control and remove the duplicate elapsed-time label from both agent-card UIs; retain the run-screen status.

@@ -637,3 +637,7 @@ Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215.
 ### BG-159 Keep planning resilient to imperfect coordinator drafts
 Operators can review a complete plan even when a model emitted an unfinished JSON draft before its final structured answer.
 Trace: R-204 → BG-159 → SF-192 → UC-195 → FR-196 → QAS-202 → DDR-53 → DD-216. Rust parity port of main #247, 2026-11-02.
+
+### BG-160 Show the actionable integration failure
+Operators need the failing test's actual error to review or pass into a corrective retry while retaining related process warnings for context.
+Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197 → QAS-203 → DDR-54 → DD-217. GitHub #323, 2026-11-02.

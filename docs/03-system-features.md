@@ -739,3 +739,7 @@ Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215.
 ### SF-192 Extract a bounded complete coordinator document
 Scan provider output for the first complete valid JSON object containing the requested field, continuing after an unfinished fenced draft. Enforce a 256 KiB document limit and report oversize or missing-document failures.
 Trace: R-204 → BG-159 → SF-192 → UC-195 → FR-196 → QAS-202 → DDR-53 → DD-216. Rust parity port of main #247, 2026-11-02.
+
+### SF-193 Present bounded stdout and stderr evidence on failure
+For a failed integration check, the run report and retry-feedback source shall carry the readable tails of both process streams when available; keep the existing behavior when only one stream has output.
+Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197 → QAS-203 → DDR-54 → DD-217. GitHub #323, 2026-11-02.

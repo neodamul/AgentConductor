@@ -803,3 +803,7 @@ Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215.
 ### R-204 Recover complete coordinator JSON from bounded replies
 The coordinator shall select the first complete JSON object containing the requested field, even when an earlier fenced draft is unfinished. Replies up to 256 KiB are accepted; larger replies and replies without a valid object fail with an actionable error.
 Trace: R-204 → BG-159 → SF-192 → UC-195 → FR-196 → QAS-202 → DDR-53 → DD-216. Rust parity port of main #247, 2026-11-02.
+
+### R-205 Preserve both integration-test output streams
+When integration verification fails, the operator-facing report shall retain useful output from both stdout and stderr. A warning in either stream shall not hide an error in the other.
+Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197 → QAS-203 → DDR-54 → DD-217. GitHub #323, 2026-11-02.

@@ -826,3 +826,7 @@ Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215.
 ### UC-195 Review a plan after an unfinished coordinator draft
 The coordinator emits an incomplete fenced JSON draft followed by a complete plan. The application continues scanning, selects the first complete object with the requested field, and presents it for review. A reply over 256 KiB or without a valid object is rejected with an actionable diagnostic.
 Trace: R-204 → BG-159 → SF-192 → UC-195 → FR-196 → QAS-202 → DDR-53 → DD-216. Rust parity port of main #247, 2026-11-02.
+
+### UC-196 Review a failed integration with warnings in the other stream
+An operator opens a failed integration result whose stderr contains a tooling warning and whose stdout contains the test failure. The report shows both labeled tails; the operator can use the same combined evidence to request a scoped retry.
+Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197 → QAS-203 → DDR-54 → DD-217. GitHub #323, 2026-11-02.

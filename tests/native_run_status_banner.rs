@@ -61,7 +61,7 @@ fn fix_with_feedback_selects_failed_task_and_drafts_its_test_output() {
                 {"id":"integration","status":"failed","error":"assertion failed"}
             ],
             "tests":[{"task":"integration","exit_code":1,"timed_out":false,
-                "output":"refresh token was reused"}]
+                "output":"stderr: [UNDICI-EHPA] warning\n\nstdout: Error: Cannot find module tests\\service"}]
         }
     });
     let context = egui::Context::default();
@@ -119,7 +119,11 @@ fn fix_with_feedback_selects_failed_task_and_drafts_its_test_output() {
         })
         .collect::<Vec<_>>()
         .join(" ");
-    assert!(visible.contains("refresh token was reused"), "{visible}");
+    assert!(visible.contains("[UNDICI-EHPA] warning"), "{visible}");
+    assert!(
+        visible.contains("Cannot find module tests\\service"),
+        "{visible}"
+    );
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
 }
