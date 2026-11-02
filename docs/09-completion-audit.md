@@ -1,3 +1,13 @@
+## Local macOS package evidence — 2026-11-02
+
+- Built and packaged local source head 6eb2ca9f using the repository's Rust release pipeline.
+- Regenerated the English and Korean HTML manuals before packaging.
+- package-release exited successfully and produced agentconductor-aarch64-apple-darwin-6eb2ca9fa8f6.zip.
+- Archive SHA-256: 52b6fe6294bec4b92e709b206fd82cb7aa3b0011d420f9976a8b481f0092a29e.
+- Executable SHA-256: 2abb5df4c8ad03bb0b04ed08635b2f9fd1d7a4eb34b2a655f62b15073f24dcb6.
+- The archive contains the macOS app bundle, executable, English and Korean HTML manuals, dependency license notices, and CycloneDX SBOM.
+- This is local macOS package smoke evidence only; it does not establish Windows package acceptance or shipped/default UI parity.
+
 ## Issue #9 current checkpoint — 2026-11-02, pushed root-PR verification
 
 - Open-PR inventory: PR #22 is the only open pull request and remains the root Rust UI migration. PR #322 for main issue #321 merged as `d406f60b`; #321 is closed. No child PRs are stacked.

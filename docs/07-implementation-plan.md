@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### 2026-11-02 — Local macOS release package evidence — issue #9
+
+- [x] Build: cargo build --release --locked completed for source head 6eb2ca9f.
+- [x] Manual: regenerated English and Korean HTML manuals with the Rust manual render command.
+- [x] Package: package-release completed and emitted dist/agentconductor-aarch64-apple-darwin-6eb2ca9fa8f6.zip.
+- [x] Verify: archive SHA-256 52b6fe6294bec4b92e709b206fd82cb7aa3b0011d420f9976a8b481f0092a29e; executable SHA-256 2abb5df4c8ad03bb0b04ed08635b2f9fd1d7a4eb34b2a655f62b15073f24dcb6. Archive contains the app bundle, binary, bilingual manuals, license notices, and SBOM.
+- [ ] Windows package acceptance and screen-by-screen Rust UI parity remain open; this local macOS package result does not change the 22/50 acceptance count.
+
 ### 2026-11-02 — Fix integration failure output visibility — GitHub #323
 
 - [x] Plan: R-205 → BG-160 → SF-193 → UC-196 → FR-197/NFR-87 → QAS-203 → DDR-54 → DD-217; preserve both bounded log tails instead of selecting stderr first.
