@@ -7869,6 +7869,7 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Task / push: commit `45f65ed7` is pushed to the existing PR #22 branch. No product behavior changed and no acceptance credit is added.
 - [x] Verify (macOS): exact-head run `41465909814` passed platform validation.
 - [x] Verify (Windows native tests): exact-head run `41465909814` passed all applicable native tests.
-- [ ] Verify (Windows UI launch): exact-head run `41465909814` is running the opt-in native Rust UI launch validation.
-- [ ] Verify (Windows package): exact-head run `41465909814` must pass remaining validation, build the release package, and emit preserved action evidence if the lifecycle journey still fails.
+- [x] Verify (Windows UI launch): exact-head run `41465909814` passed the opt-in native Rust UI launch validation.
+- [x] Verify (Windows formatting/lint/safety): exact-head run `41465909814` passed rustfmt, warning-denied Clippy, and unsafe-block checks.
+- [ ] Verify (macOS/Windows package): exact-head run `41465909814` is building and validating both platform packages; inspect preserved Windows action evidence if the lifecycle journey still fails.
 - [ ] Complete: diagnose and fix the product failure, then pass the exact package journey. Keep acceptance at 22/50 and PR #22 Draft meanwhile.
