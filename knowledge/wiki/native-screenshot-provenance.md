@@ -220,3 +220,9 @@ embedded image registry omitted this path, so the content parsed but the screens
 empty space. `src/native_ui_probe/manual_viewer.rs` now embeds the existing asset. The regression
 test `native_manual_renders_bundled_screenshots` failed on the exact PR head before the fix and
 passes locally afterward; this does not increase packaged-workflow acceptance.
+
+## Same-state Workspace capture follow-up — 2026-11-03
+
+The blank first-run screenshot cannot be compared to the populated legacy Workspace image. A disposable Rust fixture now uses a saved workspace, three agent profiles, matching goal text, and the same 1280×892 viewport. Manual screenshot capture suppresses automatic quota scheduling so capture does not spawn provider CLIs. The temporary Rust image still has no retained quota observation and is not promoted to README/manual assets; its differing quota/status content is an open #9 parity item. This capture-only change adds no acceptance credit.
+
+Graphify code-only extraction on the follow-up head produced 9,052 nodes and 17,032 edges; the `refresh_quotas` call graph points through the capture-aware `due_quota` guard. CocoIndex CLI is unavailable in this host.

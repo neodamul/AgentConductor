@@ -35,11 +35,17 @@ fn next(profiles: &Value, last: &BTreeMap<String, u64>, now: u64) -> (Option<Str
 }
 
 impl Probe {
-    fn due_quota(&self, now: u64, minimized: bool) -> (Option<String>, Option<u64>) {
+    fn due_quota(
+        &self,
+        now: u64,
+        minimized: bool,
+        screenshot_capture: bool,
+    ) -> (Option<String>, Option<u64>) {
         let Some(snapshot) = self.snapshot.as_ref() else {
             return (None, None);
         };
-        if minimized
+        if screenshot_capture
+            || minimized
             || self.room_view.is_some()
             || self.pending.is_some()
             || self.starting_run.is_some()
@@ -62,7 +68,11 @@ impl Probe {
             return;
         }
         let minimized = context.input(|input| input.viewport().minimized == Some(true));
-        let (agent, delay) = self.due_quota(now, minimized);
+        #[cfg(feature = "manual-screenshot-capture")]
+        let screenshot_capture = std::env::var_os("AGENTCONDUCTOR_MANUAL_SCREENSHOT_TO").is_some();
+        #[cfg(not(feature = "manual-screenshot-capture"))]
+        let screenshot_capture = false;
+        let (agent, delay) = self.due_quota(now, minimized, screenshot_capture);
         if let Some(agent) = agent {
             self.request_metadata(workspace::profile_tools::Event::Quota(agent.clone()));
             // A rejected enqueue also waits for the next interval instead of spinning.

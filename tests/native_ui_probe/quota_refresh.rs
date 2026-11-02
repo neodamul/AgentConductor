@@ -40,11 +40,14 @@ fn automatic_refresh_defers_busy_hidden_and_unsaved_profiles() {
         profiles: vec![json!({"id":"unsaved","parser":"claude"})],
         ..Default::default()
     };
-    assert_eq!(probe.due_quota(1000, false), (None, None));
+    assert_eq!(probe.due_quota(1000, false, false), (None, None));
     probe.snapshot.as_mut().unwrap()["config"]["profiles"] =
         json!([{"id":"saved","parser":"claude"}]);
-    assert_eq!(probe.due_quota(1000, false).0.as_deref(), Some("saved"));
-    assert_eq!(probe.due_quota(1000, true), (None, None));
+    assert_eq!(
+        probe.due_quota(1000, false, false).0.as_deref(),
+        Some("saved")
+    );
+    assert_eq!(probe.due_quota(1000, true, false), (None, None));
     for (field, value) in [
         ("job", json!({"state":"running"})),
         ("metadata_job", json!({"state":"running"})),
@@ -52,11 +55,11 @@ fn automatic_refresh_defers_busy_hidden_and_unsaved_profiles() {
         ("run_state", json!("running")),
     ] {
         probe.snapshot.as_mut().unwrap()[field] = value;
-        assert_eq!(probe.due_quota(1000, false), (None, None), "{field}");
+        assert_eq!(probe.due_quota(1000, false, false), (None, None), "{field}");
         probe.snapshot.as_mut().unwrap()[field] = Value::Null;
     }
     probe.pending = Some(Pending::Save);
-    assert_eq!(probe.due_quota(1000, false), (None, None));
+    assert_eq!(probe.due_quota(1000, false, false), (None, None));
 }
 
 #[test]
@@ -100,7 +103,10 @@ fn native_worker_failure_is_rate_limited_and_preserves_drafts() {
         probe.error.is_some(),
         "the controller must reject the absent agent"
     );
-    assert_eq!(probe.due_quota(attempted + 1, false), (None, Some(299_999)));
+    assert_eq!(
+        probe.due_quota(attempted + 1, false, false),
+        (None, Some(299_999))
+    );
     assert_eq!(probe.name, "Unsaved name");
     assert_eq!(probe.goal, "Unsaved goal");
     assert_eq!(probe.workspace_step, 2);
@@ -142,4 +148,19 @@ fn native_worker_failure_is_rate_limited_and_preserves_drafts() {
     drop(probe);
     crate::native_ui_probe::worker_test_support::close(room);
     std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn manual_screenshot_capture_suppresses_automatic_quota_processes() {
+    let probe = Probe {
+        snapshot: Some(json!({
+            "config": {"profiles": [{"id": "claude", "parser": "claude"}]}
+        })),
+        ..Default::default()
+    };
+    assert_eq!(probe.due_quota(1_000, false, true), (None, None));
+    assert_eq!(
+        probe.due_quota(1_000, false, false).0.as_deref(),
+        Some("claude")
+    );
 }

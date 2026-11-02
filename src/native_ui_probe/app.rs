@@ -16,12 +16,11 @@ fn renderer() -> eframe::Renderer {
 
 fn initial_size(room_view: bool) -> [f32; 2] {
     #[cfg(feature = "manual-screenshot-capture")]
-    if std::env::var_os("AGENTCONDUCTOR_MANUAL_SCREENSHOT_TO").is_some() {
-        if let Ok(value) = std::env::var("AGENTCONDUCTOR_MANUAL_SCREENSHOT_SIZE") {
-            if let Some(size) = parse_capture_size(&value) {
-                return size;
-            }
-        }
+    if std::env::var_os("AGENTCONDUCTOR_MANUAL_SCREENSHOT_TO").is_some()
+        && let Ok(value) = std::env::var("AGENTCONDUCTOR_MANUAL_SCREENSHOT_SIZE")
+        && let Some(size) = parse_capture_size(&value)
+    {
+        return size;
     }
     if cfg!(feature = "manual-screenshot-capture")
         && room_view

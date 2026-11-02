@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Keep same-state screenshot capture isolated — issue #9
+
+- [x] Plan: compare the documented blank Workspace capture with the populated v0.1.55 main screenshot; prepare a disposable saved workspace with the same name, goal, three profiles, and 1280×892 viewport.
+- [x] Red: the new regression did not compile because automatic quota scheduling had no screenshot-capture guard.
+- [x] Task / Green: skip automatic quota refresh only when the opt-in `manual-screenshot-capture` output path is set; normal app scheduling is unchanged.
+- [x] Verify locally: quota scheduling tests pass 5/5 with the capture feature; source-layout passes 2/2; rustfmt, diff hygiene, and the 300-line check pass. The captured app exits automatically, and its isolated workspace created no quota-query process directory.
+- [x] Additional local regression: the all-target suite reached 897 passed and 14 ignored across 268 suites, then was interrupted to avoid a long serialized run; this is partial evidence, not a full-suite pass. Warning-denied Clippy passes for all targets with the capture feature.
+- [ ] Parity: the populated Rust capture still differs from the legacy screen in quota/status content; it does not replace the README/manual screenshot and earns no UI acceptance. Issue #9 remains 22/50, with shipped/default Rust UI parity 0/25. Continue screen-by-screen review.
+
 ### 2026-11-03 — Stabilize Windows desktop goal input — issue #9
 
 - [x] Plan: exact package run `41520505534` failed before Save: after keyboard input, UIA focus had returned to the top-level window and the Goal value remained empty.
