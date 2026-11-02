@@ -7868,6 +7868,7 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Local path isolation: `ui_resume::agent_room_resume_action_restarts_a_stopped_task_through_its_ui_child` passes; `Room::dispatch` plus the broker child reaches `waiting_approval` on task attempt 2 on macOS.
 - [x] Task / push: commit `45f65ed7` is pushed to the existing PR #22 branch. No product behavior changed and no acceptance credit is added.
 - [x] Verify (macOS): exact-head run `41465909814` passed platform validation.
-- [x] Verify (Windows build/layout): exact-head run `41465909814` passed the all-target build and source/test layout check; applicable Windows native tests are running.
+- [x] Verify (Windows native tests): exact-head run `41465909814` passed all applicable native tests.
+- [ ] Verify (Windows UI launch): exact-head run `41465909814` is running the opt-in native Rust UI launch validation.
 - [ ] Verify (Windows package): exact-head run `41465909814` must pass remaining validation, build the release package, and emit preserved action evidence if the lifecycle journey still fails.
 - [ ] Complete: diagnose and fix the product failure, then pass the exact package journey. Keep acceptance at 22/50 and PR #22 Draft meanwhile.
