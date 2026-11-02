@@ -16,11 +16,11 @@ A passing macOS package does not establish Windows package acceptance. Re-run th
 
 ## Save activation follow-up — 2026-11-02
 
-Exact Windows run `41402275923` showed SendKeys changed the accessible Goal value but did not persist it. Run `41405965619` also failed after the driver clicked Save through Win32 `SetCursorPos`/`SendInput`. Current source tries UI Automation `InvokePattern` before the checked pointer fallback; this has not yet been verified on Windows. The 1,295-pass full suite was run on earlier source `76e0c39b`, so it does not cover this change. Current coordinator-focused tests, source layout, and warning-denied Clippy pass; full local and exact packaged Windows verification remain pending.
+Exact Windows run `41402275923` showed SendKeys changed the accessible Goal value but did not persist it. Run `41405965619` also failed after the driver clicked Save through Win32 `SetCursorPos`/`SendInput`. Current source tries UI Automation `InvokePattern` before the checked pointer fallback; this has not yet been verified on Windows. The final local verification passes the locked/offline all-target suite, warning-denied all-target Clippy, rustfmt, diff hygiene, and source-layout guard. Those macOS checks do not exercise Windows UI Automation at runtime.
 
 ## Coordinator profile and chat port — 2026-11-02
 
-The #325/#326 Rust port is being integrated in the existing #9 branch. Agent profile editing now exposes an observed-catalog coordinator model and separate custom read-only argv. Invalid compatibility fails closed; the chat panel displays the reason and remediation and disables sending. Focused tests and all-target Clippy pass. Full local verification and Windows packaged acceptance remain pending.
+The #325/#326 Rust port is integrated in the existing #9 branch. Agent profile editing exposes an observed-catalog coordinator model and separate custom read-only argv. Invalid compatibility fails closed; the chat panel displays the reason and remediation and disables sending. Mainline snapshot blockers and actionable refusal messages are included. Full local verification passes; exact Windows packaged acceptance remains pending.
 
 ## Source
 

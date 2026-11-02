@@ -62,13 +62,12 @@ fn existing_custom_quota_config_is_visible_in_the_profile_editor() {
     let button = nodes
         .iter()
         .find(|(_, node)| {
-            node.role() == Role::Button
-                && node.label() == Some("Catalog, quota and execution rules · JSON")
+            node.role() == Role::Button && node.label() == Some("Coordinator and agent settings")
         })
         .and_then(|(_, node)| node.bounds())
         .unwrap_or_else(|| {
             panic!(
-                "missing quota rules disclosure; labels: {:?}",
+                "missing coordinator settings disclosure; labels: {:?}",
                 nodes
                     .iter()
                     .map(|(_, node)| (node.role(), node.label().map(str::to_owned)))

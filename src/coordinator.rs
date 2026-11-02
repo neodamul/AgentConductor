@@ -165,7 +165,10 @@ pub fn read_only_args_with_model(
             .map(String::from),
         );
     } else if profile.permission_mode != "read_only" {
-        return Err("coordinator requires read-only capabilities".into());
+        return Err(format!(
+            "coordinator {} cannot be run read-only while its permission is {}; set its permission to full access or native callback in the team settings, give it read-only arguments in its agent settings, or choose another coordinator",
+            profile.id, profile.permission_mode
+        ));
     }
     Ok(args)
 }

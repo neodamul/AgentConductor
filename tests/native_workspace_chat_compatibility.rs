@@ -57,5 +57,5 @@ fn compatibility_reason_uses_the_selected_coordinator_profile() {
         }
     });
     let issue = coordinator_chat_issue(&snapshot).unwrap();
-    assert!(issue.contains("read-only capabilities"));
+    assert!(issue.contains("aipro") && issue.contains("read-only"));
 }

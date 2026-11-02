@@ -7754,8 +7754,8 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 
 - [x] Red: the exact Windows run `41402275923` showed SendKeys populated the Goal UIA value, but the goal remained empty in `startup.json` after Save received keyboard focus.
 - [ ] Task: pointer-click activation did not persist the goal in exact run `41405965619`. The driver now tries the Windows UI Automation `InvokePattern` first and retains the checked pointer fallback; this source is not yet Windows-verified.
-- [ ] Verify (local): rerun focused Windows driver/lifecycle/source-layout tests, warning-denied Clippy, rustfmt, diff hygiene, and the 300-line guard against the current source.
-- [ ] Verify (full local): the 1,295-pass full-suite result belongs to the earlier `76e0c39b` source and does not cover the current changes.
+- [x] Verify (local, 2026-11-02): Windows driver/lifecycle source coverage, source-layout guard, warning-denied all-target Clippy, rustfmt, and diff hygiene pass on the current source. The Windows-specific packaged GUI behavior itself is not run by macOS tests.
+- [x] Verify (full local, 2026-11-02): `cargo test --locked --offline --all-targets --features test-fixtures,native-ui-probe` passes after merging current main and the coordinator UI port.
 - [ ] Verify (Windows): both `41402275923` (keyboard activation) and `41405965619` (pointer activation) failed. Rerun package workflow after current changes; only that exact packaged run can establish Windows acceptance.
 - [ ] Complete: keep issue #9 and PR #22 open until packaged Windows acceptance and remaining UI parity gates pass.
 
@@ -7765,5 +7765,5 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Red: new profile, chat blocker, and argv regressions failed before implementation; they now cover model catalog validation, separate custom read-only argv, visible rejection reasons, and disabled chat submission.
 - [x] Task: port coordinator model and readonly settings into the Rust profile editor; fail closed on incompatible profiles, show the reason/remedy, and disable chat send. Preserve CLI subprocess authentication and the 300-line file limit.
 - [x] Verify (focused): profile editor, coordinator argv, chat compatibility, source-layout, and warning-denied all-target Clippy pass locally.
-- [ ] Verify (full local): run locked/offline all-target tests against the current source; then rerun exact Windows package validation.
+- [x] Verify (full local): locked/offline all-target tests pass against the main-integrated current source. Exact Windows package validation remains separate.
 - [ ] Complete: update #9/PR #22, issue progress, AgentMemory and LLM Wiki; commit/push the port as one reviewable unit.

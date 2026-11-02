@@ -10,7 +10,7 @@ The packaged default-desktop UI journey failed at the Goal edit. UI Automation's
 
 The source-contract tests failed against the old driver. Exact Windows run `41402275923` showed that keyboard input changed the UI Automation Goal value but did not persist it. Run `41405965619` also failed after the follow-up used Win32 `SetCursorPos`/`SendInput` to click the visible Save control. The current unverified attempt invokes the control through UI Automation `InvokePattern` first, with the checked pointer click as fallback. The driver still waits for `startup.json` only after successful activation and terminates the desktop process before assertions.
 
-The 1,295-pass full local suite belongs to earlier source `76e0c39b`; it does not cover the current UIA Invoke or coordinator-port changes. Current coordinator-focused tests, source-layout check, and warning-denied all-target Clippy pass. Full local tests and exact packaged Windows validation remain pending.
+The final local verification on 2026-11-02 passes the locked/offline all-target suite, warning-denied all-target Clippy, rustfmt, diff hygiene, and source-layout guard on the main-integrated source. These macOS checks do not exercise Windows UI Automation at runtime.
 
 ## Remaining verification
 
@@ -18,4 +18,4 @@ The UIA Invoke source has not yet run on Windows. Do not treat either failed run
 
 ## Coordinator profile and chat port — 2026-11-02
 
-Merged main issues #325/#326 are being ported into the existing Rust #9 branch, not a child PR. New tests first failed, then passed for catalog-validated coordinator model selection, custom read-only argv, profile edit persistence, compatibility reasons, and blocked chat submission. The profile form exposes the model selector and readonly argv field. Chat now shows the coordinator's read-only incompatibility and disables sending. Focused tests and warning-denied all-target Clippy pass; full local verification and branch integration remain open.
+Merged main issues #325/#326 are integrated into the existing Rust #9 branch, not a child PR. Tests cover catalog-validated coordinator model selection, custom read-only argv, profile edit persistence, compatibility reasons, and blocked chat submission. The profile form exposes the model selector and read-only argv field. Chat shows the coordinator's read-only incompatibility and disables sending. The full local all-target suite, warning-denied Clippy, rustfmt, diff hygiene, and source-layout guard pass; exact Windows packaged acceptance remains open.
