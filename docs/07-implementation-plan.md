@@ -213,7 +213,8 @@
 - [x] Integrate current `main` into the existing Rust root: commit `ad11775e` resolves all reported conflicts without restoring web UI/build code; the pushed branch is clean and GitHub reports PR #22 mergeable. No child PR was opened.
 - [x] Verify locally: all-target native-feature suite passes 1,279 tests, 16 ignored across 394 suites; warning-denied Clippy, rustfmt, diff checks, and the 300-line guard pass.
 - [ ] Next: verify the exact packaged Windows workflows and screen-by-screen native UI acceptance. Keep PR #22 draft until the outstanding issue #9 gates pass.
-- [ ] Visual evidence: `ui-workspace-current.png` is labeled v0.1.53, `ui-agent-room-current.png` is v0.1.49 and absent from the current-capture manifest, and `workspace-korean.jpg` is explicitly historical. These are not version-matched proof of parity; compare the actual current default UI screen-by-screen and refresh the captures before counting visual acceptance.
+- [x] Verify current-source Workspace capture: isolated-home eframe capture from head `85f0f82e` (v0.1.57), SHA-256 `daaddc7e2b21e142a47119d09f12954986c6c439492a5906429e18f8dcbfe828`, matches `ui-workspace-current.png`.
+- [ ] Visual parity: the available main-branch v0.1.55 screenshot shows a populated saved workspace, while the current Rust capture shows a blank first-run workspace. Build the same deterministic saved-workspace/agent fixture in both implementations and compare each screen before counting parity; neither image alone proves it.
 
 ### Port main #247 complete-document parsing — Rust parity / 2026-11-02
 

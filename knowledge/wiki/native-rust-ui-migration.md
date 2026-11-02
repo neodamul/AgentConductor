@@ -6,6 +6,8 @@ At source head `85f0f82e099f7b7c9b410e8986121fcd97a933d4`, Platform Validation r
 
 The local CocoIndex Code index was repaired and exercised against this worktree using CPU-only, offline local embeddings. It indexed 1,651 source and documentation files into 12,871 chunks; semantic search surfaced the current screenshot evidence, CI regression ledger, and the explicit limitation that current native screenshots do not establish full legacy UI parity. The index and model cache were stored outside the repository. This is repository search evidence, not product acceptance.
 
+Graphify was rebuilt for the current tree: 13,093 nodes, 19,608 edges, and 990 communities. A visual check confirmed that the checked-in v0.1.57 Rust Workspace capture matches a fresh current-source capture, but the available main-branch v0.1.55 screenshot shows a populated saved workspace while the Rust capture shows a blank first-run workspace. Because those states differ, they cannot establish visual parity; compare both implementations with the same deterministic workspace and agent fixture before accepting the screen.
+
 ## Run-completion refresh test — 2026-11-03
 
 Platform Validation run `41511209951` failed on macOS in `native_ui_start_journey`: after the candidate was merged, the test clicked Refresh run and timed out waiting for `Current stage: 05 Workspace`; its final accessibility tree still reported `02 Tasks`. The product transition passed locally before the change, including five consecutive test runs, so the hosted timing failure was not reproduced on this Mac.
