@@ -89,4 +89,6 @@ assert.ok(fs.readFileSync('src/ui/startup.html', 'utf8').includes('<textarea id=
 assert.ok(startup.includes('read_only_args') && startup.includes('state?.chat_blockers?.[draft.coordinator]'), 'the form saves them and the coordinator warning reads the snapshot');
 assert.ok(fs.readFileSync('src/ui/startup.html', 'utf8').includes('id="start-coordinator-note"'), 'the warning has a place under the coordinator selector');
 for (const lang of ['en', 'ko']) for (const key of ['startup.read_only_args', 'startup.coordinator_cannot_chat']) assert.ok(JSON.parse(fs.readFileSync(`src/ui/messages/${lang}.json`, 'utf8'))[key], `${lang} has ${key}`);
+// GitHub #331: a refusal that lists the blocking work keeps its line breaks and scrolls instead of growing off the screen.
+assert.ok(fs.readFileSync('src/ui/startup.css', 'utf8').includes('.notice{white-space:pre-line;max-height:60vh;overflow:auto}'), 'the notice keeps line breaks');
 console.log('progress runtime: pending reasons, verification, run attention, staleness and start time are shown');
