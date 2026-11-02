@@ -1,3 +1,9 @@
+## Agent Room manual screenshot refresh — 2026-11-03
+
+- Recaptured and visually inspected the English and Korean 1140×960 Agent Room screens from Rust source head `01f7cc69` using a disposable deterministic mock workflow. Three tasks and three integration tests completed; the candidate remained at the human `waiting_approval` gate.
+- Regenerated both offline HTML manuals from their Markdown sources; recorded image hashes and capture limits in `docs/evidence/issue9-agent-room-screenshots-20261103.json`.
+- No provider CLI, external service, user workspace, approval, or merge was involved. This documentation refresh does not raise issue #9 acceptance: **22/50 overall** (packaged workflows **22/25**; shipped/default Rust UI **0/25**). Windows package lifecycle and full visual parity remain open.
+
 ## Native test-target feature-gate regression — 2026-11-03
 
 - Exact-head Platform Validation run [41505975582](https://github.com/neodamul/AgentConductor/actions/runs/41505975582) failed macOS native tests because `tests/native_room_sessions_heading.rs` lacked the `native-ui-probe` feature gate.

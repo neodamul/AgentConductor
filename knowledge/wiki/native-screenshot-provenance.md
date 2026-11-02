@@ -7,6 +7,17 @@ empty Workspace without agent or demo-task data. They are documentation assets, 
 parity evidence. The Agent Room manuals now use matching English and Korean source-build captures;
 exact-package verification remains open.
 
+## Agent Room refresh — 2026-11-03
+
+The English and Korean Agent Room assets were recaptured from Rust source head `01f7cc69`
+(`v0.1.57`) using the opt-in `manual-screenshot-capture` framebuffer path. Both 1140×960 captures
+show the localized workspace context and three session rows. A disposable deterministic Rust mock
+completed three tasks and three integration tests and left the candidate at `waiting_approval`.
+No provider CLI ran; no user workspace was touched; no approval or merge occurred. Both offline
+HTML manuals were regenerated from their Markdown sources. The captures do not establish packaged
+Windows acceptance or full parity with the shipped legacy UI. Evidence:
+`docs/evidence/issue9-agent-room-screenshots-20261103.json`.
+
 The earlier Workspace images are superseded. They showed the workspace-sharing panel even though
 the current Rust app exposes that feature from Settings. The current captures show the Workspace
 form without that panel. Settings → Workspace settings sharing opens the separate Export/Import

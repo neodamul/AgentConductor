@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-03",
+  "kind": "issue-9-agent-room-manual-screenshots",
+  "issue": 9,
+  "source_commit": "01f7cc6932d13f5aafe46c9c07b03639dfa3a72f",
+  "app_version": "0.1.57",
+  "capture_feature": "manual-screenshot-capture",
+  "capture": {
+    "method": "native eframe framebuffer capture after deterministic workflow completion",
+    "dimensions": "1140x960",
+    "assets": [
+      {
+        "path": "docs/assets/ui-agent-room-native.png",
+        "language": "English",
+        "sha256": "40410c229afe783964b7104105f0ca2ed17312c1b5e30befafed286f138d241f"
+      },
+      {
+        "path": "docs/assets/ui-agent-room-native-ko.png",
+        "language": "Korean",
+        "sha256": "5c2013f91d36c56a6dce0c0e67a58060433a33b0146755a7dbe5ba9c10b79b42"
+      }
+    ]
+  },
+  "fixture": {
+    "executor": "disposable deterministic local Rust mock",
+    "tasks_completed": 3,
+    "tests_passed": 3,
+    "state": "waiting_approval",
+    "approved": false,
+    "merged": false,
+    "user_workspace_touched": false,
+    "provider_cli_or_external_service_used": false
+  },
+  "manuals_regenerated": [
+    "docs/user-manual.html",
+    "docs/user-manual.ko.html"
+  ],
+  "limitations": [
+    "Source-build documentation evidence only; not captured from packaged release binaries.",
+    "Does not establish Windows package acceptance or full visual parity with the shipped legacy UI."
+  ]
+}

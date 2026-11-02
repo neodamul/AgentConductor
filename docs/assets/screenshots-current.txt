@@ -1,9 +1,9 @@
-Captured 2026-11-03 from the Rust-native v0.1.57 source-build app using its built-in egui
-framebuffer capture. These are not screenshots captured from the packaged release binaries.
-The set includes English and Korean light Workspace views and English and Korean light Agent Room
-views. The Agent Room fixture shows three completed tasks, successful integration tests, and the
-human approval gate before merge. The recent Resume change only binds the reviewed stop digest to
-its request and does not change the rendered screen.
+Workspace screenshots were captured 2026-11-03 from the Rust-native v0.1.57 source-build app.
+English and Korean Agent Room screenshots were recaptured from source commit `01f7cc69` on
+2026-11-03 with the built-in egui framebuffer capture. These are not screenshots captured from
+packaged release binaries. The disposable Agent Room fixture used a deterministic local Rust mock,
+completed three tasks and three integration tests, and stopped at `waiting_approval`. No provider
+CLI ran; no user workspace was touched; the candidate was neither approved nor merged.
 
 - ui-workspace-current.png
 - ui-workspace-korean-current.png
