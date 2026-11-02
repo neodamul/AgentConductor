@@ -14,21 +14,40 @@ fn renderer() -> eframe::Renderer {
     }
 }
 
+fn initial_size(room_view: bool) -> [f32; 2] {
+    #[cfg(feature = "manual-screenshot-capture")]
+    if std::env::var_os("AGENTCONDUCTOR_MANUAL_SCREENSHOT_TO").is_some() {
+        if let Ok(value) = std::env::var("AGENTCONDUCTOR_MANUAL_SCREENSHOT_SIZE") {
+            if let Some(size) = parse_capture_size(&value) {
+                return size;
+            }
+        }
+    }
+    if cfg!(feature = "manual-screenshot-capture")
+        && room_view
+        && std::env::var_os("AGENTCONDUCTOR_MANUAL_SCREENSHOT_TO").is_some()
+    {
+        [1140.0, 960.0]
+    } else {
+        [1140.0, 740.0]
+    }
+}
+
+#[cfg(feature = "manual-screenshot-capture")]
+fn parse_capture_size(value: &str) -> Option<[f32; 2]> {
+    let (width, height) = value.split_once('x')?;
+    let width = width.parse::<u16>().ok()?;
+    let height = height.parse::<u16>().ok()?;
+    (width >= 840 && (580..=2160).contains(&height) && width <= 4096)
+        .then_some([f32::from(width), f32::from(height)])
+}
+
 pub fn open_window(room: Arc<crate::ui::Room>, surface: Surface) -> Result<(), String> {
     let room_view = surface == Surface::AgentRoom;
     let options = eframe::NativeOptions {
         renderer: renderer(),
         viewport: eframe::egui::ViewportBuilder::default()
-            .with_inner_size(
-                if cfg!(feature = "manual-screenshot-capture")
-                    && room_view
-                    && std::env::var_os("AGENTCONDUCTOR_MANUAL_SCREENSHOT_TO").is_some()
-                {
-                    [1140.0, 960.0]
-                } else {
-                    [1140.0, 740.0]
-                },
-            )
+            .with_inner_size(initial_size(room_view))
             .with_min_inner_size([840.0, 580.0])
             .with_icon(Arc::new(egui::IconData {
                 rgba: include_bytes!("../ui/assets/ac-64.rgba").to_vec(),

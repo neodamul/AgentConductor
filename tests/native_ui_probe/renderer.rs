@@ -10,6 +10,14 @@ fn native_renderer_matches_platform_backend() {
     assert!(matches!(renderer(), eframe::Renderer::Glow));
 }
 
+#[cfg(feature = "manual-screenshot-capture")]
+#[test]
+fn manual_screenshot_viewport_accepts_matching_desktop_dimensions() {
+    assert_eq!(parse_capture_size("1280x892"), Some([1280.0, 892.0]));
+    assert_eq!(parse_capture_size("839x579"), None);
+    assert_eq!(parse_capture_size("wide"), None);
+}
+
 #[test]
 fn event_snapshot_clears_completed_metadata_from_every_workspace_step() {
     use std::time::{Duration, Instant};
