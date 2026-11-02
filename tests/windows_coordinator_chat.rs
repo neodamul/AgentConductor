@@ -4,34 +4,17 @@ use agentconductor::ui::setup::Startup;
 use serde_json::{Value, json};
 use std::{
     fs,
-    io::Read,
     path::{Path, PathBuf},
-    process::{Child, Command, Stdio},
+    process::{Command, Stdio},
     thread,
     time::{Duration, Instant},
 };
 
+#[path = "support/windows_chat_launcher.rs"]
+mod launcher;
 #[path = "support/windows_chat_script.rs"]
 mod script;
-
-struct RunningApp(Child);
-impl Drop for RunningApp {
-    fn drop(&mut self) {
-        let _ = self.0.kill();
-        let _ = self.0.wait();
-    }
-}
-impl RunningApp {
-    fn stderr_report(&mut self) -> String {
-        let _ = self.0.kill();
-        let _ = self.0.wait();
-        let mut report = String::new();
-        if let Some(mut stderr) = self.0.stderr.take() {
-            let _ = stderr.read_to_string(&mut report);
-        }
-        report
-    }
-}
+use launcher::RunningApp;
 
 struct TestDirectory(PathBuf);
 impl Drop for TestDirectory {
@@ -85,20 +68,12 @@ fn launch(root: &Path) -> RunningApp {
     let binary = std::env::var_os("AGENTCONDUCTOR_DESKTOP_BINARY")
         .map(PathBuf::from)
         .expect("package job must supply AGENTCONDUCTOR_DESKTOP_BINARY");
-    RunningApp(
-        Command::new(binary)
-            .args(["ui-new", root.to_str().unwrap()])
-            .env("HOME", root.join("home"))
-            .env("USERPROFILE", root.join("home"))
-            .stderr(Stdio::piped())
-            .spawn()
-            .unwrap(),
-    )
+    launcher::launch(&binary, root)
 }
 
 fn drive(root: &Path, app: &mut RunningApp, question: &str, mode: &str) -> String {
     let driver = Command::new("powershell.exe")
-        .env("AC_DESKTOP_PID", app.0.id().to_string())
+        .env("AC_DESKTOP_PID", app.pid().to_string())
         .env("AC_CHAT_MODE", mode)
         .env("AC_CHAT_WAIT", "1")
         .env("AC_CHAT_QUESTION", question)
@@ -217,7 +192,7 @@ fn prepare_workspace(name: &str, delay_ms: Option<u64>) -> (TestDirectory, PathB
 
 fn send_without_wait(root: &Path, app: &mut RunningApp, question: &str) {
     let driver = Command::new("powershell.exe")
-        .env("AC_DESKTOP_PID", app.0.id().to_string())
+        .env("AC_DESKTOP_PID", app.pid().to_string())
         .env("AC_CHAT_MODE", "send")
         // AC_CHAT_WAIT=0 models the UI request timeout boundary: the worker remains active.
         .env("AC_CHAT_WAIT", "0")

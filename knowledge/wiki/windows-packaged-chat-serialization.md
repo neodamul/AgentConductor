@@ -1,31 +1,28 @@
-# Windows packaged chat test serialization
+# Windows packaged chat test isolation
 
 ## Failure
 
-Run `41356140816` passed both platform validation jobs and the exact macOS
-package, but the Windows `Verify the packaged Windows default desktop` step
-failed all three tests in `windows_coordinator_chat`. The failures included a
-chat job never reaching running state and UI Automation reporting
-`CHAT_TRANSCRIPT_INCOMPLETE`. The three tests run in one Rust test binary and
-each controls the same interactive Windows desktop.
+Run `41356140816` first showed the three coordinator-chat journeys failing.
+The follow-up exact-head run `41360959648` repeated all three failures
+sequentially, which disproved concurrency as their root cause. The packaged
+app's stderr said Windows denied process breakaway inside the GitHub Actions
+host Job Object. The product then correctly refused to start background work
+because survival after app closure was not guaranteed.
 
 ## Cause and correction
 
-Cargo's default test-thread pool ran the Windows UI Automation tests
-concurrently. They competed for desktop focus and typed into the wrong app
-window. Keep these package tests in the existing integration test binary and
-run that package UI test invocation with `--test-threads=1`. Do not serialize
-unrelated platform validation tests or change the product UI to accommodate a
-test-harness race.
+The coordinator-chat journeys control one interactive Windows desktop, so the
+package test invocation keeps `--test-threads=1` to prevent competing UI
+Automation instances. This is necessary desktop-test isolation, not the fix for
+run `41360959648`.
 
-`tests/windows_package_workflow.rs` locks this workflow contract. Its test
-failed before the package command was serialized, then passed after adding the
-single-thread flag.
+The updated test harness launches the exact packaged executable through an
+interactive Task Scheduler task, outside the Cargo test process tree, while
+retaining serial UI Automation. See [interactive package launcher](windows-packaged-chat-launch-context.md).
 
 ## Verification boundary
 
-The full local Rust suite passed, as did the workflow-contract, source-layout,
-and public-doc suites (14 focused tests), warning-denied all-target Clippy,
-rustfmt, and `git diff --check`. The Windows package run must pass again on an
-exact pushed head before counting package acceptance. Local contract coverage
-does not substitute for Windows UI Automation evidence.
+The workflow-contract test checks for the interactive scheduled-task launcher,
+and the local focused suite passes. Windows compilation and all three exact
+package journeys must pass on a pushed head before packaged chat acceptance is
+counted. Do not weaken the product's host-job safety check to make CI green.

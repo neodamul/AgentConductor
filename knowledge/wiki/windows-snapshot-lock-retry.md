@@ -31,9 +31,12 @@ Platform Validation run `41356140816` now passes macOS and Windows, including
 the Windows schedule regression and native UI launch path. The exact-head local
 macOS package smoke passes at `e7c51826` (SHA-256
 `bbd4f66b15221532525308f096fc3909a9e28823ac675287658ecee8fbfaa93f`). The
-macOS package job passed; the Windows package UI tests then failed while three
-chat journeys competed for desktop focus. The serialization correction and its
-exact Windows rerun are tracked in [Windows packaged chat serialization](windows-packaged-chat-serialization.md).
+macOS package job passed. Windows run `41360959648` then showed that the chat
+journeys still failed when serialized: Windows denied process breakaway inside
+the GitHub host Job Object. Test serialization is retained for shared desktop
+focus, while the exact package now uses an interactive scheduled-task launcher.
+See [Windows packaged chat isolation](windows-packaged-chat-serialization.md)
+and [the launch-context diagnosis](windows-packaged-chat-launch-context.md).
 
 ## Operational boundary
 

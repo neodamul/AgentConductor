@@ -10,7 +10,10 @@
 ### Root PR status and event-driven UI verification — 2026-11-02
 
 - [x] GitHub audit: PR #22 is the only open pull request. The Rust migration is not blocked by a pile of open child PRs; it is concentrated in one oversized root PR.
-- [x] Latest PR audit: PR #22 is the only open PR and is still Draft. At head `e7c51826`, GitHub reports it mergeable and the PR changes 1,772 files (+91,712/-25,434). Its size and repeated checkpoint commits are process debt; keep only #22 open, finish its explicit Windows-package and screen-by-screen acceptance gates, and do not add child PRs.
+- [x] Latest PR audit: PR #22 is the only open PR and is still Draft. At head `80dcb4fb`, GitHub reports it mergeable and the PR changes 1,774 files (+91,777/-25,434). Its size and repeated checkpoint commits are process debt; keep only #22 open, finish its explicit Windows-package and screen-by-screen acceptance gates, and do not add child PRs.
+- [x] Correct the Windows failure diagnosis: run `41360959648` failed all three exact-package chat journeys even with `--test-threads=1`; the packaged app reported that the GitHub host job denied process breakaway. Test serialization was not a root-cause fix.
+- [x] Red / Green: require the Windows package harness to launch the exact binary through an interactive Task Scheduler principal outside the Cargo runner process tree. The workflow contract failed before the launcher existed and passes with the scheduled-task launcher contract.
+- [ ] Verify: compile and run the exact Windows package journeys on the updated head; the scheduled-task approach must prove interactive UI Automation works and background chat survives closing/reopening the app.
 - [x] Verify #257's existing implementation instead of duplicating it: scoped event subscriptions and coalesced invalidations are present; reads, state changes, blocking I/O, and background refresh use separate bounded lanes. Local Rust worker-concurrency and event tests pass 16/16.
 - [x] Cross-check latest-main Claude quota fixes #297/#315: Rust uses a shared 180-second limit in both collectors and exposes elapsed time. Local quota/wait/parser tests pass 16 with 1 ignored; elapsed UI tests pass 2/2. Exact Windows package/account verification remains open.
 - [x] Integrate current `main` into the existing Rust root: commit `ad11775e` resolves all reported conflicts without restoring web UI/build code; the pushed branch is clean and GitHub reports PR #22 mergeable. No child PR was opened.
@@ -67,12 +70,18 @@
 - [x] Integrate: commit `e7c51826` and push this fix to the existing #9 root PR.
 - [x] Exact-head macOS package: `dist/agentconductor-aarch64-apple-darwin-e7c51826fa8b.zip` passed `package-release` smoke; SHA-256 `bbd4f66b15221532525308f096fc3909a9e28823ac675287658ecee8fbfaa93f`.
 - [x] Exact-head Platform Validation run `41356140816`: macOS and Windows validation passed, including the Windows snapshot regression and native UI launch path.
-- [x] Package Verify: run `41356140816` passed macOS package execution and Windows package smoke, then exposed concurrent failures in all three packaged Windows coordinator-chat UI tests; Windows package acceptance failed.
+- [x] Package Verify: run `41356140816` passed macOS package execution and Windows package smoke, then exposed three packaged Windows coordinator-chat failures. Run `41360959648` repeated all three sequentially, proving concurrency was not the root cause; logs showed host-job breakaway denial. Windows package acceptance remains failed.
 - [x] Red: add a workflow contract test that requires serialized Windows package UI automation; it failed before the workflow change.
 - [x] Green: add `--test-threads=1` to the Windows package UI test invocation.
-- [ ] Exact Windows package Verify: rerun the packaged journey on this pushed fix; the failure in run `41356140816` is not acceptance evidence.
+- [x] Platform Verify: exact-head run `41360959648` passed macOS and Windows validation, including Windows all-target tests, source layout, and opt-in native UI launch.
+- [x] macOS package Verify: exact-head package creation and execution passed in run `41360959648`.
+- [x] Windows package build/smoke: exact-head release executable packaged and its smoke passed in run `41360959648`.
+- [x] Windows package UI Verify: exact-head run `41360959648` completed and all three coordinator-chat journeys failed sequentially. Logs show the runner Job Object denied `CREATE_BREAKAWAY_FROM_JOB`; the product correctly refused to start background chat without a survival guarantee.
+- [x] Task: add `tests/support/windows_chat_launcher.rs` to start the exact packaged binary from an interactive scheduled task, outside the Cargo test runner's process tree; retain sequential desktop automation. Preserve the production host-job denial behavior.
+- [x] Local Verify: the packaged-workflow contract suite passes 2 tests and rustfmt passes; the launcher source is 158 lines and the Windows chat test is 260 lines.
+- [ ] Exact Windows Verify: build and run all three package journeys using the task-scheduler launcher; do not claim acceptance based on the local source contract.
 - [x] Local Verify: full `cargo test --all-targets --locked --offline --features test-fixtures,native-ui-probe --no-fail-fast` passed; warning-denied all-target Clippy, rustfmt, and 14 focused workflow/layout/docs tests passed.
-- [ ] Plan/Wiki checkpoint: commit and push the UIA serialization fix, then require a fresh exact Windows package pass.
+- [x] Integrate: commit `80dcb4fb` is pushed to existing PR #22; issue #9 and PR #22 record the exact failed run, TDD correction, and current verification. No child PR was created.
 
 ### Pass the run directory to the Windows schedule driver — bug #310 / 2026-11-02
 
