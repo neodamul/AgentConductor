@@ -55,17 +55,14 @@ assert.equal(context.AC_ELAPSED(now + 3000, now), '0:00', 'a clock behind the st
 for (const phase of ["'checking'", "'installing'"]) assert.ok(startup.includes('updateSince(' + phase), `the update dialog counts the ${phase} time`);
 assert.ok(/setInterval\(\(\)=>\{[^\n]*chat\.tick\(\)[^\n]*optimize\.update\(\)[^\n]*sources\.update\(\)[^\n]*renderUpdate\(\)/.test(startup), 'the 1 s timer redraws chat, rewrite, lookup and update');
 
-// GitHub #297: a running usage query counts its time (on one agent's card, or any in the run screen).
+// GitHub #297 / #321: the run screen counts a running usage query; the agent cards say nothing (the refresh icon is enough).
 vm.runInContext(grab(i18n, 'const AC_QUOTA_WAIT=') + 'this.AC_QUOTA_WAIT=AC_QUOTA_WAIT;', context);
-const running = { kind: 'quota:claude', state: 'running', started_ms: now - 35000 };
 const quotaWait = (...a) => context.AC_QUOTA_WAIT(...a);
-assert.equal(quotaWait(running, now, 'claude'), acMessage('startup.quota_querying') + ' 0:35');
-assert.equal(quotaWait(running, now, 'codex'), '', 'another agent shows nothing');
-assert.equal(quotaWait({ ...running, state: 'completed' }, now, 'claude'), '');
-assert.equal(quotaWait(null, now, 'claude'), '');
 assert.equal(quotaWait({ kind: 'quota', state: 'running', started_ms: now - 45000 }, now), acMessage('startup.quota_querying') + ' 0:45');
+assert.equal(quotaWait({ kind: 'quota', state: 'completed' }, now), '');
+assert.equal(quotaWait(null, now), '');
 assert.equal(quotaWait({ kind: 'resume', state: 'running' }, now), '', 'another job is not a usage query');
-assert.ok(/setInterval\(\(\)=>\{[^\n]*quotaAgent/.test(startup), 'the 1 s timer redraws the card fact');
+assert.ok(!startup.includes('AC_QUOTA_WAIT') && !startup.includes('quotaAgent'), 'the agent cards show no usage-query text');
 assert.ok(room.includes("AC_PRESS.hold($('quota-refresh'),!!AC_QUOTA_WAIT(snapshot.job))"), 'the refresh button is marked while the query runs');
 assert.ok(room.includes("AC_I18N.bind($('quota-source'), () => AC_QUOTA_WAIT(snapshot.job))"), 'the source line counts it every second');
 
