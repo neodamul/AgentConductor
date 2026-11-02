@@ -7183,6 +7183,8 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Red / Green: a focused chat UI regression failed because `uncertain_error` was not available to the view. Add `State::visible_error()`, render it, and add an interaction test for the uncertain chat-start path.
 - [x] Verify locally: 8 focused chat/UI tests pass; warning-denied Clippy, rustfmt, diff checks, and the 300-line source/test limit pass. Changed files are 194, 179, and 104 lines.
 - [x] Complete unit: commit `5a318acf` and push to the existing #22 branch.
-- [x] Integrate current main and resolve the docs conflict by retaining the published v0.1.54 README and English/Korean manuals. Commit `00b39c5a` pushed; exact-head Platform Validation run `41385932410` is in progress.
+- [x] Integrate current main in commit `00b39c5a`; retain the Rust-branch README/manual structure and native screenshot references, then apply the v0.1.54 version and sign-in guidance from the published release. Regenerate both HTML manuals from their Markdown sources.
+- [x] Red / Green: the first docs resolution caused six macOS manual/screenshot suites to fail. Restore the Rust-branch content, merge the release wording, and verify locally: all six affected suites pass (25 tests).
+- [ ] Verify: rerun exact-head macOS and Windows validation plus Windows package journeys after this docs correction; run `41385932410` cannot validate the corrected docs because it used the initial resolution.
 - [ ] Verify: confirm Windows package journeys now report the explicit host-job limitation instead of timing out; review exact-head CI before considering any acceptance claim.
 - [ ] Close: PR #22 remains Draft until Rust UI parity and issue #9 acceptance are complete. This chat fix does not increase packaged workflow or replacement counts.

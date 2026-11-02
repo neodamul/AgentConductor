@@ -9,4 +9,4 @@ When a submitted chat request reaches the controller but its response cannot be 
 - Bug context: #189 and exact package run `41380213230` on #22.
 - Fix commit: `5a318acf`; current branch includes main integration commit `00b39c5a`.
 - Focused chat suites: 8 tests pass; warning-denied Clippy and rustfmt pass; relevant source/test files stay below 300 lines.
-- Exact packaged Windows confirmation is pending run `41385932410`; this fix does not count toward packaged workflow parity.
+- Exact packaged Windows confirmation remains pending. The initial main-docs resolution caused six macOS documentation and screenshot suites to fail. Restoring Rust-branch manuals and screenshots, applying v0.1.54 release guidance, and regenerating HTML made all six suites pass locally. This fix does not count toward packaged workflow parity.

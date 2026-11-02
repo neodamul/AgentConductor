@@ -6,7 +6,7 @@ Version **0.1.54** · [한국어](user-manual.ko.md) · [Short introduction](../
 
 ### 1.1 Requirements and installation
 
-Use macOS 11+ on Apple silicon, or Windows x86_64 with WebView2 Runtime. Install Git and
+Use macOS 11+ on Apple silicon, or Windows x86_64. Install Git and
 at least one coding CLI, already signed in: Claude Code, Codex, OpenCode or your company CLI.
 Projects can be ordinary folders; a Git repository and initial commit are optional.
 There is no model API key registration or local UI web server.
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.1.54 tells you when the Claude or Codex login has expired or was never made ("not signed in or the login expired", with the command to sign in again) instead of ending as a timeout or a generic failure; a Codex API-key login keeps its own advice. Version 0.1.53 reads a company usage allocation written with thousands separators (for example `$1,351.23 / $5,000.00 spent`) and a usage screen whose spaces are drawn as cursor moves, and a usage screen that was read but not understood is named in the error (`screen not understood: ...`) instead of ending as a bare timeout. It also waits up to three minutes for Claude to report usage (one minute before), for PCs where the query is slower. Version 0.1.52 waits up to a minute (it was 20 seconds) for Claude to report usage, so a slow company PC with scanning, managed settings or a proxy can still show it; a timeout names the limit and the stage it was waiting in. While a usage query runs, the agent card and the run screen show how long it has run, and the run screen's refresh button is marked busy instead of only disabled. Version 0.1.51 shows that the app is working when you press a button: the button is marked until the answer comes, and after a second the status line (the connection line in the run screen) names the request and counts its time, for example while a workspace is deleted, the messenger is tested or the team briefing is read. A normal idle refresh is no longer reported as "no new state" (that now needs 6 seconds). Version 0.1.50 shows how long a coordinator chat answer, a goal rewrite, an MCP lookup and an app update check or install have run, and says when the app has sent no new state for a few seconds; a chat still running when the workspace reopens counts from its start, and a typed `jira:` or `confluence:` reference enables the source preview at once. Version 0.1.49 sends the start again when you confirm "Approve plan and run" (it stopped with an error since 0.1.30). It also shows on every tab how long planning or starting has run and how long ago the coordinator last wrote, and says when the app has sent no new state for a few seconds. A start that fails keeps its cause under the run button, a goal rewrite and a model query show that they are running, and in the run screen a waiting task says what it waits for. A running task shows its last output age, and the integration step names the test in progress. A stop in progress and a run whose process is gone are also said. Version 0.1.48 starts the coordinator Activity tab of the run screen with a status board (run state, completed, running, failed and pending counts, and one row per task) and no longer repeats the workflow status line, and fixes the workspace staying on "starting agent execution" with every button disabled after a phase finished, which needed an app restart. Version 0.1.47 lets you ask the coordinator while a plan is being made or a run is starting (the chat has its own slot), tells it which job runs, for how long and how much output it has written so it can say why a plan takes long, and shows a question that cannot be accepted in the conversation; the line with a task's type and effort in the plan review no longer collapses into a one-character column. Version 0.1.46 stops the periodic state request, quota refresh and chat from queueing behind a slow Git call: the repository HEAD is read from the Git files instead of starting `git`, the state answer is built after the settings lock is released, and the request diagnostics log names a wait for the lock or a step of half a second or more. Version 0.1.45 tells the coordinator that every plan task, a verification task too, needs at least one owned path and a test command, names the task and field when a plan is rejected, and asks once for a correction when a task has no path. Version 0.1.44 finds a complete JSON answer from the coordinator even when an unfinished draft comes before it, and accepts coordinator answers up to 256 KiB instead of 64 KiB. Version 0.1.43 keeps a chat message you sent as pending while the app cannot tell whether it arrived, instead of putting the text back into the input and showing it twice later, and gives the coordinator the workspace goal and the latest run's tasks, tests, changed files and diff with every question so it can say what was built and how to run it. Version 0.1.42 sends the reviewer and worker the same Document, Task, Format prompt layout as the chat and planning prompts and asks once more when a coordinator reply is not the requested JSON; a CLI that cannot be changed needs nothing for this (see 2.9). Version 0.1.41 stops showing an unused default workspace: the app opens the workspace you used last, and with none left it asks you to add one. Idle windows no longer flash a timeout toast, and the coordinator chat button is a chat-bubble icon. Version 0.1.40 added the acio protocol for command-line agents: `agentconductor io schema|validate|describe|conformance`, a control channel with cancel, user messages and tool decisions, per-agent settings shipped as preset data, a task kind with its own effort for each plan task, and prompts assembled as material, task and answer format; see 2.9 Integrating a CLI. Public release packages keep the numeric version and reject local labels.
+The app version is beside the title. Version 0.1.54 identifies a missing or expired Claude or Codex login immediately and gives the sign-in command; Codex API-key login keeps its separate guidance. Version 0.1.53 improves Claude usage reporting for company allocations and slow terminals. Coordinator guardrails include: every coordinator judgment is listed and cannot be hidden, a launch gate refuses runs whose agents or test commands cannot be found, the coordinator amends plans within limits (typed amendments with an Undo button, a charter and a goal-drift stop) and decides scope escapes first. You can send feedback to the coordinator itself, the task details column folds and opens by itself when a decision is needed, worktrees of merged or rejected runs are removed, and credit balances are shown as whole numbers. Public release packages keep the numeric version and reject local labels.
 
 ### 1.1a Application updates
 
@@ -42,14 +42,16 @@ Workspace does not start a new plan. Unsaved changes require a choice before nav
 
 **Delete** is available for the current workspace too. If planning is active,
 **Stop planning and delete** waits for its owned process and admitted metadata.
-Deleting the current workspace opens the most recently used remaining workspace; if none remains, the app creates an empty one. A deleted workspace, including the first (default) one, does not come back after a restart or an update: the app opens the most recently used saved workspace. With no workspace at all, the app asks you to name one before showing anything; there is no hidden "desktop" workspace. Active implementation requires **Stop run** first.
+Deleting the current workspace opens the most recently used remaining workspace; if none remains, the app creates an empty one. Active implementation requires **Stop run** first.
 Only saved app-owned workspace data can be removed; the project is preserved.
 Data moves to `~/.agentconductor/workspace-trash/<id>` for recovery.
 **Remove from recents** hides an entry without deleting it.
 
+Choose **Ask coordinator** on the Workspace screen to open a side chat. It reads the project and this manual with the coordinator's verified read-only CLI profile; it cannot write files or run commands. A coordinator must be registered. Chat uses the single background-operation slot shared with planning. Its latest conversation is restored when the workspace reopens; choose **New chat** to clear it.
+
 ![Workspace and goal configuration](assets/ui-workspace-current.png)
 
-Use **⚙ Settings → User manual** for offline help in the current interface language. HTML manuals preserve tables, code, links and screenshots. The [standalone HTML manual](user-manual.html) can also be opened separately.
+Use **Workspace ▾ → User manual** for offline help in the current interface language. HTML manuals preserve tables, code, links and screenshots. The [standalone HTML manual](user-manual.html) can also be opened separately.
 
 **Settings** includes:
 - **Interface language**: English or 한국어. Typed goals, prompts and raw evidence are never translated.
@@ -59,7 +61,7 @@ Use **⚙ Settings → User manual** for offline help in the current interface l
 - **Signal transport**: Local Rust (default) or agentmemory preferred, with local fallback. The server port appears only for agentmemory; switching to Local Rust preserves its value.
 - **Clear cache…**: review paths and sizes before permanently removing eligible disposable metadata.
 
-Settings has **Agent tools guide…** for optional agentmemory, RTK, Ponytail, Graphify and CocoIndex installation instructions. These tools are not bundled or required by the app.
+The workspace menu includes **Agent tools guide…** for optional agentmemory, RTK, Ponytail, Graphify and CocoIndex installation instructions. These tools are not bundled or required by the app.
 
 ![Korean workspace](assets/ui-workspace-korean-current.png)
 
@@ -89,7 +91,6 @@ Saving **Use profile** is asynchronous and closes after success; validation erro
 Changing execution settings requires reviewing a plan again. Metadata-only refresh does not invalidate it.
 One metadata collector runs at a time; queued requests do not block unrelated editing.
 
-![Agent profile and refresh settings](assets/ui-agent-settings-current.png)
 
 
 Saving a custom CLI applies the mode in which the CLI approves its own tool use automatically; no checkbox is needed. Plan and final merge approval remain required. Explicit read-only or external-sandbox profiles retain their restrictions.
@@ -134,7 +135,7 @@ Generate plan clears the previous visible failure immediately and selects Review
 Review every proposed phase up front. Phase headings identify its order and stage;
 expand folded task details to edit instructions, agent/model, owned files, dependencies and tests.
 Use **Save plan edits**, then **Approve plan & run** for the current phase. Before anything starts, a launch gate checks that every agent and every task's test command can be found (on PATH, as an absolute path, or inside the project); if not, the run is refused with each problem listed by code (`tool_missing`, `test_unrunnable`), the task and the missing name, so you can install the tool or fix the plan. A script that a task is asked to write inside its own paths is not counted as missing. A passed gate appears among the coordinator's judgments.
-Each task shows the kind of work the coordinator chose (classify or extract, summarize, analyze, code, long agent work, creative) and the effort it will run with: your choice first, then the agent's default for that kind, lowered with a warning when the selected model does not honor it. Hover a role's model to see the efforts it honors. Unfilled/overlapping tasks, a changed baseline or stale digest prevent approval. If the coordinator returns overlapping file scopes inside a generated phase, planning retries once with the exact validation feedback; overlap is still rejected if the corrected plan is invalid.
+Unfilled/overlapping tasks, a changed baseline or stale digest prevent approval. If the coordinator returns overlapping file scopes inside a generated phase, planning retries once with the exact validation feedback; overlap is still rejected if the corrected plan is invalid.
 
 **Goals & progress** shows each goal's phase tags and description.
 After integrating a phase, **Plan phase n** loads the next saved phase without another planning call.
@@ -165,14 +166,12 @@ The coordinator is a selectable entry after tasks, showing integration steps, de
 - Reassign agents or change observed models through the task inspector; existing work/logs remain. A task that has not started yet can be changed while other tasks run; the change is queued and applied just before the task starts.
 - **Resume at** schedules an unavailable session. **Stop run**, **Resume** and **Recover** manage owned work.
 - **Brief team** summarizes assigned work, latest activity, freshness, restrictions and next actions.
-- **Ask the coordinator** (the chat-bubble button in the title bar) opens a side chat on the workspace screen. Ask how to run or use what was built, where results are, or how to use the screen; the coordinator reads the project folder and this manual, and every question also carries the workspace goal, the latest run's tasks, test results, changed files and diff (cut when long), so it can describe the results and tell you how to run them from that. If no run has started it says so. It answers with commands for you to run. It is read-only: it never changes files or runs commands, it needs a registered coordinator, and it has its own slot, so you can ask while a plan is being made or a run is starting. While a job runs, the coordinator is also told which one, how long it has run, how much output its process has written and when it last wrote, so you can ask why a plan takes so long. One question is answered at a time; if a question cannot be accepted, the reason appears in the conversation and your text stays in the input. The conversation is kept with the workspace and shown again when you reopen it; press Enter to send, Shift+Enter for a new line, Up to recall an earlier question, and **New conversation** to start over.
-- **Optimize prompt** (below the goal field) asks the coordinator to rewrite the goal with the bundled `prompt-optimizer` skill (Sentry, Apache-2.0). It reads the project folder read-only, then shows the proposed goal, what changed and what it needs you to confirm. **Use this goal** puts the proposal in the goal field; **Keep mine** leaves your text unchanged. Nothing is saved, planned or run until you save the workspace yourself. It needs a saved coordinator and project folder and shares the single background-operation slot with planning.
+- **Optimize goal** asks the selected coordinator to rewrite the goal with the bundled Apache-2.0 `prompt-optimizer` skill. It reads the project folder without modifying it, then shows the proposed goal, changes and questions in a native review dialog. **Use optimized goal** updates the unsaved goal field; **Keep original goal** leaves it unchanged. Neither option saves workspace settings or starts planning. This action requires a saved coordinator and project folder and shares the single background-operation slot.
+- **Ask the coordinator** (the ? button in the title bar) opens a side chat on the workspace screen. Ask how to run or use what was built, where results are, or how to use the screen; the coordinator reads the project, its plans and this manual, and answers with commands for you to run. It is read-only: it never changes files or runs commands, it needs a registered coordinator, and it shares the single background-operation slot with planning.
 
 On reopening, automatic recovery checks that the interrupted run and its owned processes are quiescent before continuing unchanged work. It permits at most two attempts without new task progress. Explicitly stopped runs stay stopped, unknown ownership prevents recovery, and candidate approvals are revoked. Inspect the retained evidence if recovery cannot proceed.
 
-![Agent Room showing an offline verification run](assets/ui-agent-room-current.png)
-
-![Dark Korean Agent Room](assets/ui-agent-room-dark-current.png)
+![English Agent Room with three completed tasks and tests, awaiting human review](assets/ui-agent-room-native.png)
 
 In ordinary-folder projects, new files outside every owned task scope are moved to `<RUN>/stray-files/` before integration and recorded, for example a CLI’s `.aipro/plans`. Existing operator files are preserved. Git repositories do not use this automatic move.
 
@@ -191,7 +190,8 @@ The coordinator uses existing CLI authentication; it is not a new API service.
 The tool request window shows a readable action, exact input under Raw input, live activity and the deadline.
 **Allow once**, **Deny** or **Decide later** controls pending human decisions.
 Approvals bind task, session, plan, workspace and input, expire within 900 seconds and are consumed once.
-Waiting for a tool decision is excluded from the task time limit; a timed-out task is blocked for Resume.
+Waiting for a tool decision is excluded from the task time limit. A timed-out task retries automatically
+after a bounded backoff; Stop cancels a pending retry. Use Resume for a stopped or terminally blocked run.
 Tool decisions do not approve integration.
 
 Review **Diff & tests**. A changed verification report containing a Blocking/차단 section fails integration
@@ -268,7 +268,7 @@ Run directories must be outside the repository, and the repository must start cl
 
 | Command | Purpose |
 |---|---|
-| `agentconductor` | Open the most recently used saved workspace. With none saved, the app asks you to name the first one. |
+| `agentconductor` | Open the default desktop workspace. |
 | `agentconductor ui-new <workspace-dir>` | Open a desktop workspace in a chosen directory. |
 | `agentconductor ui <run-dir>` | Open the Agent Room for an existing run (one window per run). |
 | `agentconductor profiles <profiles.json>` | Write provider profile templates to review. |
@@ -377,23 +377,14 @@ one `{session_id}` argument. The engine supplies `AC_CHECKPOINT_RUN_DIR`,
 | Command | Purpose |
 |---|---|
 | `agentconductor normalize <claude\|codex\|opencode\|custom> <stdout.jsonl>` | Normalize a CLI's JSONL output into events. |
-| `agentconductor io schema <input\|event\|describe\|control\|agent>` | Print an acio schema (the CLI I/O protocol, `docs/cli-io-protocol.md`). |
-| `agentconductor io describe <executable>` | Run `<executable> --acio-describe` and print the validated capability document of an acio CLI. |
-| `agentconductor io validate <kind> <file\|-> [--coordinator]` | Check a document (`input`, `describe`, `agent`, `control`, `event`) or a captured stream (`events`, `controls`) against the schemas and the stream rules. |
-| `agentconductor io conformance <executable>` | Run an acio CLI through the contract and print a pass/fail table (see 2.9). |
+| `agentconductor io schema <kind>` | Print an ACIO JSON Schema (`input`, `event`, `describe`, `control` or `agent`). |
+| `agentconductor io describe <executable>` | Validate and print a custom CLI's `--acio-describe` response. |
+| `agentconductor io validate <kind> <file\|-> [--coordinator]` | Validate one ACIO JSON document or JSONL stream. |
+| `agentconductor io conformance <executable>` | Check ACIO description, a read-only response and invalid-input handling. |
 
-### 2.9 Integrating a CLI
+`io conformance` starts the selected executable using the current user's OS permissions. Its read-only request and temporary workspace are protocol inputs, not an OS sandbox; only run it against a CLI you trust. It does not yet check task-mode runs, cancellation timing or oversized output.
 
-A CLI you cannot change needs nothing here. Register it as a custom agent (its command line and, if it prints JSON, where its result and session ID are). AgentConductor sends it every prompt in one fixed layout: a Document block with the material, a Task block with the instructions and rules, and a Format block with the shape of the answer. It also checks the answer itself: a coordinator reply that is not the requested JSON is asked for once more, with the reason, before the run reports an error. The steps below are only for a CLI whose owner can change it and wants richer data (streaming text, usage, typed results). The contract is in `docs/cli-io-protocol.md`; `schemas/cli-io/v1/examples/minimal-cli.sh` shows a conforming CLI in 25 lines.
-
-1. **Read the input.** The first stdin line is an `acio.input/1` document (`agentconductor io schema input` prints its schema). Anything else on stdin later is a control line (cancel, user message, tool decision).
-2. **Write events.** Print one `acio.event/1` JSON line per event on stdout (`seq` from 1, a `session` event first, a `result` event last). Diagnostics go to stderr only.
-3. **Describe yourself.** `<executable> --acio-describe` prints an `acio.describe/1` document: name, version, `acio.versions`, whether the CLI can run read-only, and which controls it honors.
-4. **Exit codes.** 0 on success, 2 for an input it rejects, 1 for a failed run (see the protocol for the full list).
-5. **Check it.** Run `agentconductor io conformance ./my-cli`. It describes the CLI, asks it a read-only question and validates the event stream, then feeds it an invalid input and expects exit code 2. A failed check prints why; the command exits with an error unless every check passes. Use `io validate events <file>` on a captured stream to find the first bad line.
-6. **Register it.** Add a custom agent profile with `protocol: acio` and the CLI's command line; `agentconductor io describe <executable>` prints the capability document to copy from. Per-agent differences (arguments, effort, response schema) belong in `agent_settings`, not in code.
-
-The conformance run uses a temporary read-only workspace root and never asks the CLI to change a file. It does not test cancellation or oversized lines yet.
+Native UI request diagnostics are written to `~/.agentconductor/request-diagnostics.log` (`%USERPROFILE%\.agentconductor\request-diagnostics.log` on Windows). The JSONL log records every `chat` request and other requests that take at least one second. Each request has a `start` record (`kind`, `at_unix_ms`, `bytes`) and a `done` record (`duration_ms`, `outcome`). Request contents are never logged. The active file is limited to 256 KiB and the previous file is kept as `request-diagnostics.log.1`; log write failures do not change the request result.
 
 ## Part 3 — Validation and troubleshooting
 
@@ -414,27 +405,6 @@ Installed provider versions may differ. Unknown output stays unavailable or fail
 - **Changed source/approval**: plan or verify again. Ordinary-folder application has backups and a receipt; interrupted application is not replayed blindly.
 - **MCP timeout**: inspect the registered command/server and its bounded timeout; keep raw logs private.
 - **Window already open**: use or close the existing window rather than opening another.
-- **Request timed out (kind)**: see “Diagnosing "Request timed out"” below; the log is `~/.agentconductor/request-diagnostics.log`.
-
-### Diagnosing "Request timed out"
-
-The page waits 15 seconds for each reply from the application. The toast names the request kind, for example `Request timed out (chat)`. A request only starts work: a coordinator answer that takes minutes is a running job, not a timed-out request.
-
-**Where to look.** `~/.agentconductor/request-diagnostics.log` (Windows: `%USERPROFILE%\.agentconductor\request-diagnostics.log`); the previous log is `request-diagnostics.log.1`. Each file holds at most 256 KiB. Lines are `<unix milliseconds> start kind=<kind> bytes=<n>` and `<unix milliseconds> done kind=<kind> ms=<n> ok=<true|false> [error="<reason>"]`. `start` is written only for `chat`; `done` is written for every `chat` request and for any request that took 1000 ms or more. A line `step name=<lock|advance|snapshot> ms=<n>` is written when waiting for the settings lock (`lock`), advancing the state (`advance`) or building a snapshot (`snapshot`) took 500 ms or more; `lock` is the time a request spent queued behind another one. Nothing is written for fast requests. Convert the toast time with `date -r <seconds>` (macOS) and compare it with the line times.
-
-**How to decide.** Take the lines around the toast (30 seconds before it):
-
-| What the log shows | Meaning | Next step |
-|---|---|---|
-| No `start kind=chat` near the toast | The request never reached the application. The delay is in the window or its web view (hidden or throttled page, busy web view), not in the request handling. | Ask whether the window was in the background; try again in front. Report the operating system and web view version. |
-| `start` without a later `done` | The handler is still running or blocked. | Wait a minute and read the log again. If `done` never comes, collect the running processes of the application and its children and report them. |
-| `done ... ok=true ms=` 15000 or more | The application answered, but too late. | Look at other `done` lines in the same period: a slow `snapshot`, `baseline_status` or `quota` holds the shared state and delays the others. That kind is the cause; report its `ms`. |
-| `done ... ok=true ms=` under 15000, toast still shown | The reply was produced in time but reached the page late. | Treat it like the first row (window or web view). |
-| `done ... ok=false error="..."` | The request was refused or failed; this is not a timeout. | Read the reason. "startup operation still running" means the previous job has not finished. |
-
-Include the last 50 lines of both files, the request kind from the toast and the time of the toast when you report a timeout.
-
-**Page-side timeouts.** Whenever the page gives up on a reply it also writes `<unix milliseconds> client-timeout of=<kind> waited=<ms> hidden=<true|false>`. `waited` is what the page's own clock measured: about 15000 is a real 15-second wait with no reply; a much larger value, or `hidden=true`, means the page itself was suspended (window in the background, display or machine sleep) and the timeout says nothing about the request. A `client-timeout` with no slow `done` line for the same kind means the application was not slow: the reply never reached the page. The background refresh that keeps the screen current retries a missed reply quietly and shows the toast only after three misses in a row (about 45 seconds), so a toast for `snapshot` means three consecutive misses.
 
 ## Optional tool commands
 
