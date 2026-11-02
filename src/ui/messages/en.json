@@ -1164,6 +1164,8 @@
   "startup.models_querying": "Querying models…",
   "startup.models_queued": "Model query queued",
   "startup.quota_querying": "Querying usage…",
+  "startup.coordinator_badge": "Coordinator",
+  "startup.coordinator_model": "Coordinator model",
   "room.pending_dependencies": "Waiting for {value1} to complete",
   "room.pending_retry": "Automatic retry in {value1}",
   "room.pending_session_limit": "Waiting for a free session (at most {value1} at a time)",

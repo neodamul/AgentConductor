@@ -30,5 +30,5 @@ function chatUi({q,request,state,notice,stale=()=>''}) {
  q('chat-form').onsubmit=e=>{e.preventDefault();send();};
  // Enter sends and Shift+Enter breaks the line, like a terminal prompt; Up/Down recall earlier questions.
  q('chat-input').addEventListener('keydown',e=>{if(e.isComposing)return;if(e.key==='Enter'&&!e.shiftKey&&!e.altKey){e.preventDefault();send();}else if(e.key==='Escape')setOpen(false);else if(e.key==='ArrowUp'&&(recall>=0||!q('chat-input').value)){e.preventDefault();step(-1);}else if(e.key==='ArrowDown'&&recall>=0){e.preventDefault();step(1);}});
- return {update,reset,tick,turns:()=>turns.slice()};
+ return {update,reset,tick,busy:()=>!!waiting,turns:()=>turns.slice()};
 }

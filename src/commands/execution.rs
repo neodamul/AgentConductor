@@ -72,6 +72,7 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                     event_types: Default::default(),
                     session_id_pointer: None,
                     quota_command: None,
+                    coordinator_model: None,
                     protocol: None,
                     agent_settings: None,
                     permission_mode: if id == "codex" {

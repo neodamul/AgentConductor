@@ -6,6 +6,11 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Coordinator chat: the chat icon now works on the run screen too (its panel was hidden with the workspace screen), and an answer that is still pending is followed there (#325).
+- Coordinator chat: a coordinator whose permission cannot be run read-only is refused with the agent's name and what to change (full access or native callback in the team settings, or another coordinator) instead of "coordinator requires read-only capabilities" (#325).
+- Agent list: the coordinator's card says "Coordinator" and the list redraws when the workspace or the coordinator changes (#325).
+- Workspace settings: the coordinator's model is chosen next to the coordinator, from that agent's queried models; "CLI default" keeps the previous behavior (#325).
+
 - Agent cards no longer say "Querying usage" with a running clock; the refresh icon already shows that the query runs. The run screen still counts it (#321).
 
 ## v0.1.54

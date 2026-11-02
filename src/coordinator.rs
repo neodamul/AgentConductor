@@ -166,12 +166,19 @@ pub fn read_only_args(profile: &AgentProfile, task_file: &str) -> Result<Vec<Str
         .into();
         return read_only_args(&restricted, task_file);
     }
-    let mut args = adapters::session_args(profile, None, None, task_file)?;
+    let mut args = adapters::session_args(
+        profile,
+        profile.coordinator_model.as_deref(),
+        None,
+        task_file,
+    )?;
     if profile.permission_mode == "native_sandbox"
         && profile.parser == Provider::Codex
         && crate::executable::program_name(&profile.executable) == "codex"
     {
-        if args != adapters::invocation(Provider::Codex, None, task_file)?.args {
+        if adapters::session_args(profile, None, None, task_file)?
+            != adapters::invocation(Provider::Codex, None, task_file)?.args
+        {
             return Err("coordinator requires the verified native Codex template".into());
         }
         args[4] = "read-only".into();
@@ -191,7 +198,10 @@ pub fn read_only_args(profile: &AgentProfile, task_file: &str) -> Result<Vec<Str
             .map(String::from),
         );
     } else if profile.permission_mode != "read_only" {
-        return Err("coordinator requires read-only capabilities".into());
+        return Err(format!(
+            "coordinator {} cannot be run read-only while its permission is {}; set its permission to full access or native callback in the team settings, or choose another coordinator",
+            profile.id, profile.permission_mode
+        ));
     }
     Ok(args)
 }
@@ -199,8 +209,14 @@ pub fn read_only_args(profile: &AgentProfile, task_file: &str) -> Result<Vec<Str
 /// Planning runs in a disposable snapshot, so a coordinator whose read-only behavior
 /// cannot be verified may plan; verified templates keep their own restrictions.
 pub fn planning_args(profile: &AgentProfile, task_file: &str) -> Result<Vec<String>, String> {
-    read_only_args(profile, task_file)
-        .or_else(|_| adapters::session_args(profile, None, None, task_file))
+    read_only_args(profile, task_file).or_else(|_| {
+        adapters::session_args(
+            profile,
+            profile.coordinator_model.as_deref(),
+            None,
+            task_file,
+        )
+    })
 }
 
 pub async fn run_json(

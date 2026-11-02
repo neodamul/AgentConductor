@@ -152,5 +152,42 @@ fn guarded_claude_coordinator_runs_with_read_only_tools_only() {
     assert!(coordinator::read_only_args(&altered, "prompt.txt").is_err());
     let mut unverified = profile.clone();
     unverified.permission_mode = "unverified".into();
-    assert!(coordinator::read_only_args(&unverified, "prompt.txt").is_err());
+    // GitHub #325: the refusal names the agent and what to change instead of a bare "read-only capabilities".
+    let error = coordinator::read_only_args(&unverified, "prompt.txt").unwrap_err();
+    assert!(
+        error.contains("claude") && error.contains("unverified"),
+        "{error}"
+    );
+    assert!(
+        error.contains("full access") && error.contains("another coordinator"),
+        "{error}"
+    );
+}
+
+#[test]
+fn the_coordinator_model_is_passed_and_must_come_from_the_catalog() {
+    // GitHub #325: a workspace picks the model its coordinator uses; the read-only template stays verified.
+    let invocation =
+        agentconductor::adapters::invocation(Provider::Codex, None, "{task_file}").unwrap();
+    let mut profile: agentconductor::plan::AgentProfile = serde_json::from_value(serde_json::json!({
+        "id": "codex", "executable": "codex", "args": invocation.args, "parser": "codex",
+        "permission_mode": "native_sandbox",
+        "catalog": {"models": ["gpt-a", "gpt-b"], "source": "codex debug models", "queried_at": 1, "cli_version": "1"}
+    }))
+    .unwrap();
+    let plain = coordinator::read_only_args(&profile, "prompt.txt").unwrap();
+    assert!(!plain.iter().any(|a| a == "gpt-b"));
+    profile.coordinator_model = Some("gpt-b".into());
+    let args = coordinator::read_only_args(&profile, "prompt.txt").unwrap();
+    assert!(args.iter().any(|a| a == "gpt-b"), "{args:?}");
+    assert_eq!(args[4], "read-only");
+    profile.coordinator_model = Some("not-in-catalog".into());
+    assert!(
+        coordinator::read_only_args(&profile, "prompt.txt")
+            .unwrap_err()
+            .contains("catalog")
+    );
+    let saved: agentconductor::plan::AgentProfile =
+        serde_json::from_value(serde_json::to_value(&profile).unwrap()).unwrap();
+    assert_eq!(saved.coordinator_model.as_deref(), Some("not-in-catalog"));
 }
