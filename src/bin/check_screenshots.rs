@@ -43,14 +43,17 @@ fn check(repo: &str) -> Result<(), String> {
             return Err(format!("Current screenshot docs/assets/{name} is missing."));
         }
     }
-    let mut capture_paths = current.iter().map(String::as_str).collect::<Vec<_>>();
-    capture_paths.push("docs/assets/screenshots-current.txt");
+    let mut capture_paths = current
+        .iter()
+        .map(|name| format!("docs/assets/{name}"))
+        .collect::<Vec<_>>();
+    capture_paths.push("docs/assets/screenshots-current.txt".into());
     let mut command = Command::new("git");
     command
         .arg("-C")
         .arg(repo)
         .args(["log", "-1", "--format=%H", "--"])
-        .args(capture_paths);
+        .args(&capture_paths);
     let output = command.output().map_err(|error| error.to_string())?;
     if !output.status.success() {
         return Err(String::from_utf8_lossy(&output.stderr).trim().to_owned());

@@ -66,6 +66,28 @@ fn a_capture_after_the_last_native_ui_change_passes() {
 }
 
 #[test]
+fn a_recaptured_image_after_a_native_ui_change_passes_without_manifest_edit() {
+    let root = repo();
+    fs::create_dir_all(root.join("src/native_ui_probe")).unwrap();
+    fs::write(root.join("src/native_ui_probe/view.rs"), "first screen").unwrap();
+    commit(&root, "native view");
+    fs::create_dir_all(root.join("docs/assets")).unwrap();
+    fs::write(root.join("docs/assets/ui-test-current.png"), "capture").unwrap();
+    fs::write(
+        root.join("docs/assets/screenshots-current.txt"),
+        "Current screenshots\n- ui-test-current.png\n",
+    )
+    .unwrap();
+    commit(&root, "capture screen");
+    fs::write(root.join("src/native_ui_probe/view.rs"), "changed screen").unwrap();
+    commit(&root, "change native view");
+    fs::write(root.join("docs/assets/ui-test-current.png"), "recaptured").unwrap();
+    commit(&root, "recapture screen without manifest edit");
+    assert!(check(&root).status.success());
+    fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
 fn a_later_native_ui_change_fails_until_screens_are_confirmed() {
     let root = repo();
     fs::create_dir_all(root.join("src/native_ui_probe")).unwrap();

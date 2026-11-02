@@ -9,3 +9,7 @@ Capture hashes and the exact method are recorded in `docs/evidence/issue9-worksp
 ## Scope
 
 These images establish that the current Rust Workspace screen was captured in each shipped language/theme variant. They do not verify the packaged executable, Agent Room, agent settings, all JavaScript UI parity requirements, or issue #9 package acceptance.
+
+## Freshness-check path handling
+
+Manifest entries are basenames relative to `docs/assets/`. The Rust release checker must prefix that directory when asking Git for the newest screenshot commit. Otherwise, Git ignores the image paths and the checker falls back to the older manifest commit, incorrectly rejecting a valid recapture. `tests/screenshot_freshness.rs` covers image-only recapture after a later UI commit.

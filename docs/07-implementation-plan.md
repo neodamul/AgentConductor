@@ -7196,3 +7196,11 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify visually: inspect all three native framebuffer captures at 1140×740 and confirm version v0.1.54, language, dark theme, labels, and contrast.
 - [x] Complete: replace the three existing manifest assets without changing their README/manual paths; retain capture provenance and SHA-256 values in `docs/evidence/issue9-workspace-screenshots-v0.1.54-20261102.json` and LLM Wiki.
 - [ ] Package gate: the capture refresh does not count toward issue #9 workflow acceptance. Exact cross-platform package run `41387582039` remains required.
+
+### Fix the native screenshot freshness pathspec — issue #9 / 2026-11-02
+
+- [x] Plan: reproduce the release check rejecting screenshots recaptured after a native UI change when only the image files changed and the manifest did not.
+- [x] Red: add a Git-history regression where a new image commit follows the UI change but leaves `screenshots-current.txt` unchanged; the check failed because manifest entries are asset basenames, not repository-root paths.
+- [x] Green: prefix manifest entries with `docs/assets/` before passing them to `git log`.
+- [x] Verify: the focused regression and existing stale/updated-manifest tests pass; `check_screenshots` passes on the current committed captures; changed source/test files remain under 300 lines.
+- [ ] Package gate: this release-tool bug fix does not count as product UI acceptance. Re-run exact macOS/Windows package validation on the updated #22 head.
