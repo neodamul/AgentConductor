@@ -747,3 +747,7 @@ Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197 → QAS-203 → DDR-54 
 ### SF-194 Configure and identify a safe workspace coordinator
 Workspace settings select a coordinator profile and an optional model from its observed CLI catalog. The agent list identifies the selected coordinator for the active workspace. Custom profiles may declare a separate read-only argument list, and the UI explains when a selected profile cannot serve coordinator chat.
 Trace: R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-198/FR-199/FR-200 → NFR-88/NFR-89 → QAS-204/QAS-205 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #325/#326, 2026-11-02.
+
+### SF-195 Explain why an application update cannot proceed
+Before an update starts, report active workspace work and readiness-check failures as distinct, localized conditions. Include enough context and elapsed time for the operator to identify the blocker and decide when to retry.
+Trace: R-207 → BG-162 → SF-195 → UC-199 → FR-201/NFR-90 → QAS-206 → DDR-56 → DD-219. Rust parity port of merged GitHub #332/#331, 2026-11-02.

@@ -6,7 +6,15 @@
 - [x] Red: GitHub run `41418016116` failed only `--test native_ui_manual`; the failing assertion named `assets/ui-agent-settings-current.png`. Screenshot provenance confirms hash `b9d68874b7a47aa3fdfa3fb40cdaf2faf03fbf6bdd09403bde15814e495ea866` was captured from the Rust process.
 - [x] Task: add the existing verified screenshot to `manual_viewer::screenshot`; no new asset or web UI image was introduced.
 - [x] Verify: local `native_ui_manual` (7), `release_docs` (4), and `source_layout` (2) pass; rustfmt, warning-denied all-target Clippy, and diff hygiene pass.
-- [ ] Complete: commit and push the renderer fix; validate the new exact head. Packaged UI acceptance stays 22/25 and shipped/default Rust UI stays 0/25 until their separate gates pass.
+- [x] Complete: renderer fix `86e9fbaf` is pushed to PR #22. The latest exact-head run is pending; packaged UI acceptance stays 22/25 and shipped/default Rust UI stays 0/25 until their separate gates pass.
+
+### 2026-11-02 — Port update refusal blockers to the native Rust UI — issue #9 / #331
+
+- [x] Plan: port main's active-work update refusal into the native UI, keeping active workspace work distinct from update-check failures and preserving the operator's next action. Trace: R-207 → BG-162 → SF-195 → UC-199 → FR-201/NFR-90 → QAS-206 → DDR-56 → DD-219.
+- [x] Red: English/Korean catalog tests failed on absent native keys; the first direct egui probe also exposed an uninitialized texture-delta test harness, which was corrected to use the established warmup pattern.
+- [x] Task: merge main's update-blocker guard and localize all added messages in the Rust catalogs. Add regression tests for catalog completeness, error distinction, and the actual update dialog's multiline blocker notice.
+- [x] Verify: focused blocker, dialog, manual, docs, and source-layout tests pass (19 total); `cargo fmt --check`, warning-denied all-target Clippy, and diff hygiene pass locally.
+- [ ] Complete: resolve the plan conflict, commit and push the integration, then validate the latest PR #22 head. This source-level port does not change packaged workflow acceptance.
 
 ### 2026-11-02 — Local macOS release package evidence — issue #9
 

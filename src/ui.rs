@@ -22,6 +22,7 @@ pub mod picker;
 pub mod request_diagnostics;
 pub mod setup;
 mod source_references;
+pub mod update_guard;
 pub mod workspaces;
 
 pub fn notify_external_event() {

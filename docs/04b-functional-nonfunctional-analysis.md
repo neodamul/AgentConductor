@@ -813,3 +813,11 @@ Trace: R-206 → BG-161 → SF-194 → UC-198 → FR-199/NFR-88 → QAS-204 → 
 ### NFR-89 Fail closed on unsafe coordinator invocation
 Missing, empty, or normal write-capable custom arguments shall never be interpreted as read-only. Incompatible coordinator chat must stop before process launch and provide an actionable reason.
 Trace: R-206 → BG-161 → SF-194 → UC-198 → FR-199/FR-200/NFR-89 → QAS-204 → DDR-55 → DD-218.
+
+### FR-201 Show update blockers in the native dialog
+When update progress is refused, display active work, elapsed time when available, and readiness-check errors in the update dialog. Localize the message and retain section boundaries.
+Trace: R-207 → BG-162 → SF-195 → UC-199 → FR-201 → QAS-206 → DDR-56 → DD-219.
+
+### NFR-90 Keep update refusals safe and actionable
+Do not start an update when a blocker is present. Keep active work distinct from failed checks, and show the explanation in a bounded, readable native dialog without additional polling or process launches.
+Trace: R-207 → BG-162 → SF-195 → UC-199 → FR-201/NFR-90 → QAS-206 → DDR-56 → DD-219.

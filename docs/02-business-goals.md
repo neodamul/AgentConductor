@@ -645,3 +645,7 @@ Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197 → QAS-203 → DDR-54 
 ### BG-161 Make coordinator chat usable with registered CLI agents
 Operators need a coordinator that is visible in the workspace and can answer through its existing CLI authentication while preserving the read-only safety boundary, including for custom CLI profiles.
 Trace: R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-198/FR-199/FR-200 → NFR-88/NFR-89 → QAS-204/QAS-205 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #325/#326, 2026-11-02.
+
+### BG-162 Prevent updates from interrupting active work
+Operators need a clear explanation when an update is blocked by running work or a failed readiness check, so they can protect work and decide what to do next.
+Trace: R-207 → BG-162 → SF-195 → UC-199 → FR-201/NFR-90 → QAS-206 → DDR-56 → DD-219.

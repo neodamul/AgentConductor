@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- App update: when work blocks an update, the message now names each blocking workspace, kind of work and how long it has run, and says to wait or to stop it; a check that failed (state could not be read or a process could not be proven gone) is listed apart as "not running work". A run still marked "running" whose coordinator is gone no longer blocks the update (#331).
+
 ## v0.1.55
 
 - Custom CLI coordinator: an agent can declare read-only arguments (agent form, JSON array); the coordinator chat then runs the CLI with them, so a custom CLI that plans can also answer chat. Without them the chat is still refused, and the workspace settings now warn under the coordinator selector with the reason as soon as such an agent is chosen (#326).

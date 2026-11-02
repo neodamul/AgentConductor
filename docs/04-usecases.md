@@ -838,3 +838,7 @@ Trace: R-206 → BG-161 → SF-194 → UC-197 → FR-198/FR-200 → QAS-205 → 
 ### UC-198 Chat with a custom CLI coordinator in declared read-only mode
 The operator selects a custom CLI as coordinator and configures arguments that invoke the CLI read-only. Chat invokes those declared arguments with the profile's existing authentication. If the arguments are empty, equal to normal arguments, or otherwise unusable, the UI explains the blocker and does not launch the normal write-capable command.
 Trace: R-206 → BG-161 → SF-194 → UC-198 → FR-199/FR-200 → NFR-88/NFR-89 → QAS-204 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #326, 2026-11-02.
+
+### UC-199 Review an update blocked by active work
+The operator checks for an application update while workspace work or a failed readiness check prevents progress. The UI names active work, separates it from check failures, and offers a clear next step without launching the update.
+Trace: R-207 → BG-162 → SF-195 → UC-199 → FR-201/NFR-90 → QAS-206 → DDR-56 → DD-219.

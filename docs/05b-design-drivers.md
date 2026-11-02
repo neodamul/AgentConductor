@@ -214,3 +214,6 @@ Retain both bounded streams rather than choosing one based on severity heuristic
 
 ### Driver DDR-55 Keep coordinator safety in the invocation boundary
 Validate coordinator model choice against the persisted observed catalog and pass it through the existing adapter. Use explicit custom read-only argv only when it is nonempty and distinct from normal arguments; otherwise require a verified provider template or expose a blocker before spawn. Derive workspace badge and compatibility text from the active snapshot rather than adding another polling path. Trace: QAS-204, QAS-205.
+
+### Driver DDR-56 Refuse updates before launch and report each blocker
+Keep the update guard at the backend dispatch boundary. Return structured active-work and failed-check details; localize them in the native dialog and preserve separate sections, elapsed time, and next-step guidance. Do not launch an updater or add a polling path when a blocker is present. Trace: QAS-206.

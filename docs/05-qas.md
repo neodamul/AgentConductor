@@ -842,3 +842,7 @@ Trace: R-206 → BG-161 → SF-194 → UC-198 → FR-199/FR-200/NFR-88/NFR-89 �
 ### QAS-205 Coordinator model selection uses current observed options
 Given a coordinator profile with an observed model catalog, the UI shall offer only those models; a selected model shall reach the CLI adapter, and omitting the selection shall preserve the CLI default. Changing the active workspace shall show that workspace's coordinator marker and model selection.
 Trace: R-206 → BG-161 → SF-194 → UC-197 → FR-198/FR-200 → QAS-205 → DDR-55 → DD-218.
+
+### QAS-206 An update refusal identifies its blocker
+Given an update attempt while workspace work is active and a readiness check has failed, the native dialog shall identify the active work, show elapsed time when recorded, and display the check failure separately in English and Korean. The update process shall not start. Verify catalog completeness, message separation, and rendered multiline text with deterministic Rust tests; the dialog shall remain readable without introducing polling.
+Trace: R-207 → BG-162 → SF-195 → UC-199 → FR-201/NFR-90 → QAS-206 → DDR-56 → DD-219.
