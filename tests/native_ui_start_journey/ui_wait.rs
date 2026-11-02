@@ -78,6 +78,7 @@ pub(super) fn wait_for_enabled_button(context: &egui::Context, probe: &mut Probe
 }
 
 pub(super) fn click(context: &egui::Context, probe: &mut Probe, label: &str) -> egui::FullOutput {
+    wait_for_enabled_button(context, probe, label);
     let mut output = frame(context, probe, Vec::new());
     let mut position = button_position(&output, label);
     for _ in 0..6 {

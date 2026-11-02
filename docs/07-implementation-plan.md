@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Stabilize native run-completion refresh journey — issue #9
+
+- [x] Plan: exact-head Platform Validation run `41511209951` failed `native_ui_start_journey` after candidate merge; UI Automation remained on stage `02 Tasks` when the test expected `05 Workspace` after Refresh run.
+- [x] Red: local macOS reruns did not reproduce the hosted timing failure (five consecutive baseline passes); the hosted failure remains the reproduced red evidence.
+- [x] Task: make the UI journey helper wait for the accessible button to be enabled before sending input, and allow 30 seconds for the asynchronous refresh to publish the completed Workspace stage instead of timing out after five seconds. Product code is unchanged.
+- [x] Local Verify: the start journey passes five consecutive runs after the change; affected UI, candidate-review, Windows-driver, renderer, and source-layout suites pass 19 tests; warning-denied all-target Clippy, rustfmt, and diff checks pass.
+- [ ] Exact-head Verify: rerun macOS Platform Validation and the Windows package journey. This test-harness stabilization adds no packaged UI acceptance; current acceptance remains **22/50**.
+
 ### 2026-11-03 — Reverify stopped-run Resume — issue #9 / workflow 25
 
 - [x] Plan: the prior exact-package failure was traced to a stale report revision rejecting Resume before its UI action child started; commits `812c5e33` and `2b0cbb8c` now rebase only a stopped-run Resume and bind it to the reviewed stop marker.

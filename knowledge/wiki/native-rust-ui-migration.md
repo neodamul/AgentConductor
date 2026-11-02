@@ -1,5 +1,11 @@
 # Native Rust UI migration
 
+## Run-completion refresh test — 2026-11-03
+
+Platform Validation run `41511209951` failed on macOS in `native_ui_start_journey`: after the candidate was merged, the test clicked Refresh run and timed out waiting for `Current stage: 05 Workspace`; its final accessibility tree still reported `02 Tasks`. The product transition passed locally before the change, including five consecutive test runs, so the hosted timing failure was not reproduced on this Mac.
+
+The Rust UI itself is unchanged. The shared journey test helper now waits until the requested accessible button is enabled before injecting a click, and the completed-stage wait is 30 seconds rather than 5 to accommodate asynchronous refresh on a loaded runner. After the change, the journey passed five consecutive local runs. The affected five-suite set passed 19 tests; warning-denied all-target Clippy, formatting, diff hygiene, and the 300-line source-layout test passed. This is a harness timing correction, not packaged acceptance. Workflow count remains 22/25, shipped/default Rust UI 0/25. An exact-head rerun is required.
+
 ## Stopped-run Resume follow-up — 2026-11-03
 
 The stale-report-revision fix for stopped-run Resume is present on the current issue branch

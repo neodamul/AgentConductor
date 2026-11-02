@@ -156,7 +156,7 @@ fn review_approval_shows_start_feedback_then_opens_the_started_run() {
     output = ui_wait::click(&context, &mut probe, "Refresh run");
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
-    ui_wait::wait_for_ui_timeout(&context, &mut probe, Duration::from_secs(5), |labels| {
+    ui_wait::wait_for_ui_timeout(&context, &mut probe, Duration::from_secs(30), |labels| {
         labels
             .iter()
             .any(|label| label == "Current stage: 05 Workspace")

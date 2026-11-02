@@ -61,6 +61,7 @@
 
 - [Native startup workspace](native-startup-workspace.md): private CLI registry, goal planning, exact consent and same-window native fixture evidence.
 - [Native Rust UI migration](native-rust-ui-migration.md): dispatch boundary, opt-in prototype evidence, separate revision-bound diff/test review pane, Graphify structure and remaining production acceptance.
+- [Native run-completion refresh test](native-rust-ui-migration.md#run-completion-refresh-test--2026-11-03): hosted macOS refresh wait failure, enabled-control click precondition, repeated local verification, and remaining exact-head gate.
 - [Native goal phase labels](native-goal-phase-labels.md): localized numbered phase action and AccessKit regression evidence.
 - [Native sidebar static-label removal](native-sidebar-footer.md): issue #190 removal of fixed local/login labels from Rust views and bilingual regression evidence.
 - [Native sidebar card density](native-sidebar-card-density.md): one-line agent detail labels with full AccessKit and hover text retained.

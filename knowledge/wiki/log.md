@@ -1,3 +1,7 @@
+# [2026-11-03] task/verify | Stabilize native run-completion refresh journey
+
+Exact-head run `41511209951` failed macOS `native_ui_start_journey` after Refresh run left the test accessibility snapshot at stage `02 Tasks` instead of `05 Workspace`. The failure did not reproduce in five local baseline runs. Hardened only the test helper: wait for an enabled control before clicking and allow 30 seconds for the asynchronous completed-stage refresh. The affected five-suite set passes 19 tests; the journey passes five additional consecutive runs; all-target warning-denied Clippy, rustfmt, diff hygiene, and source-layout pass. No product code or UI acceptance changed. Exact-head macOS rerun and Windows package evidence remain required.
+
 # [2026-11-02] plan/task/verify | Reconcile PR status and screenshot provenance
 
 At the start of this review, open PRs were #22 (Rust migration, Draft) and #336 (v0.1.56 docs/release prep). #336 was subsequently merged to main as `0c050741`; only #22 remains open. Its scope is still 22/25 packaged workflows and 0/25 shipped/default Rust UI parity. The README captures were confirmed stale (v0.1.54, v0.1.49, v0.1.24), and the current manual/README status records that evidence rather than claiming fresh captures. AgentMemory: `mem_mvz4v8yx_e447332f640e`.
