@@ -64,7 +64,7 @@ const AC_PATHS=(()=>{
 // GitHub #279: the time since a recorded start as m:ss, never negative.
 const AC_ELAPSED=(from,now=Date.now())=>{const s=Math.max(0,Math.floor((now-from)/1000));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');};
 // GitHub #297: a running usage query (`quota`, or `quota:<agent>` for one agent) with its time, else ''.
-const AC_QUOTA_WAIT=(job,now=Date.now(),agent)=>job?.state==='running'&&job.kind===(agent?`quota:${agent}`:'quota')?acMessage('startup.quota_querying')+' '+AC_ELAPSED(job.started_ms||now,now):'';
+const AC_QUOTA_WAIT=(job,now=Date.now())=>job?.state==='running'&&job.kind==='quota'?acMessage('startup.quota_querying')+' '+AC_ELAPSED(job.started_ms||now,now):'';
 // GitHub #273: how long the app has sent no new state, once that is over 6 s (0 = no snapshot yet);
 // GitHub #285: idle pages refresh every 5 s plus the reply, so 5 s would flag a normal refresh.
 const AC_STALE=(at,now=Date.now())=>at&&now-at>6000?acMessage('common.no_new_state',{value1:Math.floor((now-at)/1000)}):'';

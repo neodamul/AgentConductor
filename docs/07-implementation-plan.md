@@ -2470,3 +2470,11 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Task: `src/quota/terminal.rs`, `src/quota/query.rs`, `src/quota.rs`; CHANGELOG.
 - [x] Verify (macOS): full suite (762 passed), clippy.
 - [x] Complete: release requested by the user.
+
+### Agent cards without the usage-query text — GitHub #321
+
+- [x] Plan: the card fact "Querying usage… m:ss" added with #297 is dropped at the user's request (2026-11-02): the refresh icon already marks a running query and the company PC now shows usage. Only the cards change; the run screen keeps its source line and busy refresh button.
+- [x] Red: `tests/progress_runtime.cjs` (cards contain no `AC_QUOTA_WAIT`/`quotaAgent`).
+- [x] Task: `src/ui/startup.js`, `src/ui/i18n.js` (`AC_QUOTA_WAIT` loses its agent argument); CHANGELOG.
+- [x] Verify (macOS): full suite.
+- [ ] Complete: merge and release only on request.
