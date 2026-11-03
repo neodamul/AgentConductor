@@ -635,3 +635,7 @@ workflow::coordinator_request runs the recorded coordinator through the evidence
 ## 2026-10-28 Quiet idle-poll timeouts (#221)
 
 Scheduled workspace and room polls are marked as background observation and suppress their own timeout toast. Shared page request deadlines pause while hidden, resume with remaining visible time, and restart when a callback is materially late after suspension. Explicit refreshes keep visible errors; no native request is automatically retried. Rust native parity and its regression test follow after the verified main issue branch is merged.
+
+## 2026-11-04 Approved Goal UI (#387)
+
+Recorded the reviewed behavior/visual contract, local light/dark images, source fingerprints, and Claude handoff in `approved-goal-ui.md`. Design evidence remains separate from product implementation acceptance; Rust work remains paused.

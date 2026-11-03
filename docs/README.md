@@ -32,6 +32,7 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 | — | [13-rust-review-policy.md](13-rust-review-policy.md) | Rust review rules adopted from the Google Rust Style Guide, exclusions and measured baseline |
 | — | [interface-messages.md](interface-messages.md) | Stable UI message IDs, language catalogs and localization checks |
 | — | [interface-gallery.md](interface-gallery.md) | Interface evidence |
+| — | [Approved unified Goal UI](design/approved-goal-ui/README.md) | 2026-11-04 behavior, visual contract, both themes, images and Claude handoff (#387) |
 | — | [../knowledge/wiki/index.md](../knowledge/wiki/index.md) | Source-fingerprinted knowledge assets per verified slice |
 
 ## Identifier and consolidation rules
