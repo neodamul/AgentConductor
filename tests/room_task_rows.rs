@@ -17,15 +17,14 @@ fn the_task_name_leads_and_icon_name_and_status_share_one_line() {
 
 #[test]
 fn approval_and_merge_are_separate_visible_stages_and_merge_keeps_progress_in_the_banner() {
-    let html = include_str!("../src/ui/room.html");
-    for stage in [
-        "data-stage=\"verify\"",
-        "data-stage=\"merge\"",
-        "data-stage=\"complete\"",
-    ] {
-        assert!(html.contains(stage), "missing workflow stage {stage}");
+    // GitHub #390: the stages are steps 4-6 of the one stepper (startup.html), marked from the Room.
+    let html = include_str!("../src/ui/startup.html");
+    for step in ["start-tab-tasks", "start-tab-verify", "start-tab-merge"] {
+        assert!(html.contains(step), "missing workflow step {step}");
     }
     assert!(ROOM.contains("snapshot.job?.state==='running'&&snapshot.job.kind==='merge'"));
     assert!(ROOM.contains("room.merge_in_progress"));
-    assert!(CSS.contains(".workflow .running"));
+    assert!(
+        include_str!("../src/ui/startup.css").contains(r#".startup-tabs [role="tab"].running"#)
+    );
 }

@@ -500,6 +500,10 @@ Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source
 Deleting a workspace asks for no new workspace name. When the current workspace is deleted, the most recently used other workspace opens, so several workspaces can be deleted in a row; only when none is left does one empty workspace start.
 Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Source: user request, 2026-10-13.
 
+### UC-202 One goal screen with a single six-step stepper
+The operator prepares a goal in steps 1-3, starts the run, and sees steps 4-6 advance in the same stepper; from the Room, a step 1-3 tab returns to that Workspace panel, and a step 4-6 tab is available only while a run exists.
+Trace: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. Source: user, approved design #387, 2026-11-04.
+
 ### UC-115 Read the current application manual
 Status: Amended by UC-134, UC-188, UC-191 (R-144, R-197, R-200).
 Open either manual, follow workspace tabs, register CLIs and review a candidate. Match displayed labels, permissions, folder execution and recovery behavior to the documented version.

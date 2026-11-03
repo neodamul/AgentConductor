@@ -487,6 +487,10 @@ Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source
 Deleting a workspace asks for no new workspace name. When the current workspace is deleted, the most recently used other workspace opens, so several workspaces can be deleted in a row; only when none is left does one empty workspace start.
 Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Source: user request, 2026-10-13.
 
+### R-210 One goal screen with a single six-step stepper
+One stepper of six steps (Workspace, Agent roles, Plan, Tasks, Verify, Review and merge), grouped Prepare / Run / Finish, serves the Workspace settings and the Agent Room. Tabs 1-3 open the Workspace panels; tabs 4-6 open the Agent Room when a run is available, and the Room marks the step of the run's current stage. The Workspace screen and the Room no longer show separate step strips.
+Trace: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. Source: user, approved design #387, 2026-11-04.
+
 ### R-125 Release-matched English and Korean manuals
 Status: Amended by R-144, R-197, R-200: manuals ship as offline HTML and tests check the version, screenshots and their age.
 Publish English and Korean operator manuals, a concise public README and genuine native screenshots matched to the shipped version. Keep implementation plans and internal decisions out of the README.

@@ -339,6 +339,10 @@ Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source
 Deleting a workspace asks for no new workspace name. When the current workspace is deleted, the most recently used other workspace opens, so several workspaces can be deleted in a row; only when none is left does one empty workspace start.
 Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Source: user request, 2026-10-13.
 
+### FR-204 One goal screen with a single six-step stepper
+The stepper has six tabs with single-line labels and the group names Prepare / Run / Finish as accessible names; the Room maps task states to steps 4 (tasks), 5 (verify) and 6 (review, merge, complete); tabs 1-3 keep arrow, Home and End navigation; tabs 4-6 are reached with Tab and activated with Enter or Space and are disabled while no run exists.
+Trace: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. Source: user, approved design #387, 2026-11-04.
+
 ### FR-110 Validate both language references
 Check each manual against executable help; require real linked screenshot files and README packaging references. Assert runtime errors through current message catalog entries rather than English literals.
 Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.

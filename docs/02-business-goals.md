@@ -320,6 +320,10 @@ Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source
 Cleaning up several workspaces takes one confirmation each, without inventing names.
 Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Source: user request, 2026-10-13.
 
+### BG-165 One goal screen with a single six-step stepper
+Following one goal from its description to the merged result reads as one path, not two screens.
+Trace: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. Source: user, approved design #387, 2026-11-04.
+
 ### BG-80 Operate the same release in either language
 Let English and Korean operators configure and review the current application without relying on stale screenshots or undocumented behavior.
 Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.
