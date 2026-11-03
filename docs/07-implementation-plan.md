@@ -23,13 +23,12 @@
 
 ### 2026-11-03 — Current PR integration follow-up — issue #9 / bug priority
 
-- [x] Query the live PR list: #22 is the Rust migration root; #342 is an independent main-branch PR for bug #341, not a child PR of #22.
-- [x] Confirm the Rust branch includes current `origin/main` at `f3b81902` (0 commits behind); do not import unmerged PR #342 code prematurely.
-- [x] Inspect #341's acceptance and #342's description: the PR reports that a distinct permission-denied task status is not implemented, although #341 requires one. Keep the bug open and do not merge/close it based on passing checks alone.
-- [ ] After #342 merges, port its backend and user-visible behavior into the Rust-native #9 path, add Rust regression coverage, and preserve issue #9's single root PR.
-- [x] Review the live Platform Validation run `41576022811`: macOS fails two `custom_cli_denials` end-to-end tests with `write agent input: Broken pipe`; the fixture scripts exit without reading stdin. The Windows validation job was still running at inspection.
-- [x] Reported both the fixture failure and the missing distinct permission-denied task status (required by #341) on PR #342. Do not merge/close #341 until both are fixed and verified.
-- [ ] After PR #342 is corrected and merged to main, port its completed backend behavior into the Rust-native #9 path and cover the distinct status in Rust UI/tests.
+- [x] Query the live PR list: #22 is the single Rust migration root; #342 was the independent main PR for #341.
+- [x] Verify PR #342 merged at `a133f31d` on 2026-11-03 and issue #341 is closed. Main's follow-up `84e3a9d1` makes the fake CLI consume stdin before responding.
+- [x] Merge current main `b747e392` into the Rust root at `42ead92e`; the Rust branch is now 0 commits behind main. Intentional JavaScript deletions and split Rust modules are preserved.
+- [x] Port denial classification, invalid-JSON policy, bounded output excerpts, profile-editor fields, localized warning, and snapshot `config_hints`; add Rust regression coverage.
+- [x] Verify locally: 1,357 tests pass across 412 suites with zero failures; warning-denied Clippy, rustfmt, diff hygiene, and the 300-line guard pass. See [custom CLI evidence](evidence/issue9-custom-cli-denials-20261103.json).
+- [x] Update the custom CLI LLM Wiki, Graphify, PR #22, and issue #9. The issue #9 root remains Draft at 22/50; source tests do not verify exact macOS/Windows package behavior.
 
 ### 2026-11-03 — Match legacy Workspace header distribution — issue #9
 
