@@ -8050,3 +8050,10 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Assetize: update DD-218 and the coordinator chat LLM Wiki page to document the placement and pre-chat warning.
 - [x] Verify (local, 2026-11-03): all 113 library tests and every all-target integration suite pass (only authentication/package-only tests are marked ignored); focused Workspace tests pass 20/20, coordinator profile passes 3/3, source layout passes 2/2, warning-denied all-target Clippy, rustfmt, and diff checks pass.
 - [x] Complete: code commit `8aa46c96` is pushed to the existing #9 branch; issue #9 and PR #22 have matching checkpoint comments; AgentMemory and LLM Wiki are updated. Overall acceptance remains 22/50 until package workflows and shipped Rust UI parity pass.
+
+### 2026-11-03 — Re-run the full local Rust suite at current #9 head
+
+- [x] Plan: verify the exact current branch head `ef0bc07fcfe670019b939ce13181ad64c1a9e07c` locally after the prior platform run was cancelled; keep the test scope separate from package/UI acceptance.
+- [x] Verify (macOS, local): `cargo test --locked --offline --all-targets` passed **1,314 tests, 16 ignored, across 409 suites** in 283.30 seconds.
+- [x] Resource check: the existing `target` stayed at 17 GiB; available disk space remained 14 GiB after the run.
+- [ ] Complete: this verifies Rust source tests on macOS only. It does not verify the exact Windows package, packaged UI journeys, screenshot parity, or shipped/default Rust UI acceptance. Keep issue #9 at 22/50 and PR #22 Draft.

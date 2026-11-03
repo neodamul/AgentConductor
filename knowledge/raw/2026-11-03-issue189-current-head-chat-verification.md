@@ -22,3 +22,11 @@ Platform Validation run `41500210315` is cancelled. Current-head run `4155362940
 Graphify was refreshed after this verification: 13,202 nodes, 19,775 edges, 967 communities. CocoIndex CLI is not installed in this host.
 
 Read-only UTM inspection found `Z:\issue9-windows-package-ac3f8b.zip`, SHA-256 `57d45e14390264bd471855220238afd0b6e86421401f89efd8387d97355f64bc`. Its embedded package manifest names source commit `ac3f8b327bd8c076f53c6198b1fd14e8a3f6f5bb` (2026-10-26), which predates the chat accessible-name fix `fbc2280a1f2f3c919f051d512f4f56a24fa11e74` (2026-10-30). Its smoke summary covers four CLI merge cases, not chat UI. The guest has no `cargo` or `rustc`, and the host has no Windows cross-linker/toolchain. The old archive was not launched and is not current-head package evidence.
+
+# Current full-suite recheck — 2026-11-03
+
+- Exact branch head: `ef0bc07fcfe670019b939ce13181ad64c1a9e07c`.
+- Local macOS command: `cargo test --locked --offline --all-targets`.
+- Result: 1,314 passed, 16 ignored, 409 suites, 283.30 seconds.
+- This confirms the Rust source test suite at this head. It does not establish packaged Windows coordinator-chat persistence/reconnect or UI Automation acceptance.
+- The exact Windows archive audit above remains unchanged: the Z: ZIP is stale and its embedded smoke cases cover CLI merges, not chat UI.

@@ -48,3 +48,7 @@ The current exact-package Windows reconnect scenario also asserts the accessible
 ## Current-head accessibility verification (2026-11-03)
 
 At root PR #22 head `397069af`, the coordinator chat editor's localized placeholder is its AccessKit name. The Windows UI Automation driver filters to a visible, enabled multiline edit with that localized name. Local verification passes 11 tests across the AccessKit rendering, Windows script contract, worker lifecycle, transcript interaction, and source-layout suites. The exact Windows package remains the acceptance boundary: if the host Job Object prevents the chat worker from surviving app close, the test reports an explicit skip and must not be counted as a pass.
+
+# Current verification checkpoint — 2026-11-03
+
+At Rust branch head `ef0bc07fcfe670019b939ce13181ad64c1a9e07c`, the complete local macOS command `cargo test --locked --offline --all-targets` passed 1,314 tests with 16 ignored across 409 suites (283.30 seconds). This is source-level regression evidence only. It does not prove exact packaged Windows transcript persistence, reconnect, or interactive UI automation; retain those as explicit package acceptance gates.
