@@ -53,10 +53,12 @@ pub fn show(
     if !stoppable {
         state.confirming_stop = false;
     }
-    if !state.confirming_stop
-        && stoppable
+    if stoppable
         && ui
-            .add_enabled(!pending, egui::Button::new(text("room.stop_run")))
+            .add_enabled(
+                !pending && !state.confirming_stop,
+                egui::Button::new(text("room.stop_run")),
+            )
             .accessible_name(text("room.stop_run"))
             .clicked()
     {
@@ -66,37 +68,44 @@ pub fn show(
         }
     }
     if state.confirming_stop && stoppable {
-        ui.separator();
-        ui.label(text("room.stop_all_active_tasks_and_tests_retain_their"));
-        let label = ui.label(text("room.stop_reason"));
-        ui.add_enabled(
-            !pending,
-            egui::TextEdit::singleline(&mut state.stop_reason).desired_width(ui.available_width()),
-        )
-        .labelled_by(label.id)
-        .accessible_name(text("room.stop_reason"));
-        ui.horizontal(|ui| {
-            if ui
-                .add_enabled(!pending, egui::Button::new(text("room.cancel_stop")))
-                .accessible_name(text("room.cancel_stop"))
-                .clicked()
-            {
-                state.confirming_stop = false;
-            }
-            if ui
-                .add_enabled(
-                    !pending
-                        && !state.stop_reason.trim().is_empty()
-                        && state.stop_reason.len() <= 16 * 1024,
-                    egui::Button::new(text("room.confirm_stop")),
+        let modal =
+            egui::Modal::new(egui::Id::unique("native-confirm-run-stop")).show(ui.ctx(), |ui| {
+                ui.set_max_width(520.0);
+                ui.label(text("room.stop_all_active_tasks_and_tests_retain_their"));
+                let label = ui.label(text("room.stop_reason"));
+                ui.add_enabled(
+                    !pending,
+                    egui::TextEdit::singleline(&mut state.stop_reason)
+                        .desired_width(ui.available_width()),
                 )
-                .accessible_name(text("room.confirm_stop"))
-                .clicked()
-            {
-                state.confirming_stop = false;
-                event = Some(Event::Stop(state.stop_reason.clone()));
-            }
-        });
+                .labelled_by(label.id)
+                .accessible_name(text("room.stop_reason"));
+                ui.horizontal(|ui| {
+                    if ui
+                        .add_enabled(!pending, egui::Button::new(text("room.cancel_stop")))
+                        .accessible_name(text("room.cancel_stop"))
+                        .clicked()
+                    {
+                        state.confirming_stop = false;
+                    }
+                    if ui
+                        .add_enabled(
+                            !pending
+                                && !state.stop_reason.trim().is_empty()
+                                && state.stop_reason.len() <= 16 * 1024,
+                            egui::Button::new(text("room.confirm_stop")),
+                        )
+                        .accessible_name(text("room.confirm_stop"))
+                        .clicked()
+                    {
+                        state.confirming_stop = false;
+                        event = Some(Event::Stop(state.stop_reason.clone()));
+                    }
+                });
+            });
+        if modal.should_close() {
+            state.confirming_stop = false;
+        }
     }
     if let Some(action) =
         super::super::room_actions::controls(state, snapshot, pending, language, ui)

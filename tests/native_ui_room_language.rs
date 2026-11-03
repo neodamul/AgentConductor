@@ -51,6 +51,7 @@ fn native_agent_room_controls_follow_the_selected_language() {
         );
     }
     state.confirming_stop = true;
+    labels(&mut state);
     let confirming = labels(&mut state);
     for label in ["중지 사유", "중지 취소", "중지 확인"] {
         assert!(
@@ -58,7 +59,9 @@ fn native_agent_room_controls_follow_the_selected_language() {
             "{label}; {confirming:?}"
         );
     }
+    state.confirming_stop = false;
     state.confirming_recover = true;
+    labels(&mut state);
     let confirming_recovery = labels(&mut state);
     for label in ["복구 취소", "복구 확인"] {
         assert!(

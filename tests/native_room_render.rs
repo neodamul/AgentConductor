@@ -249,6 +249,7 @@ fn native_room_recovery_requires_confirmation_and_clears_when_run_state_changes(
     output.textures_delta.free.clear();
 
     state.confirming_recover = true;
+    action_tests::settle_confirmation(&context, &mut state, &running, "en");
     let mut output = context.run_ui(Default::default(), |ui| {
         room::show(&mut state, Some(&running), false, None, "en", ui);
     });

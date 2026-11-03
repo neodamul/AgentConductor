@@ -72,7 +72,7 @@ pub(super) fn controls(
     if run_state != "running" {
         state.confirming_recover = false;
     }
-    if !state.confirming_recover {
+    {
         let mut event = None;
         ui.horizontal(|ui| {
             let resumable = !matches!(
@@ -81,7 +81,7 @@ pub(super) fn controls(
             );
             if ui
                 .add_enabled(
-                    !busy && resumable,
+                    !busy && !state.confirming_recover && resumable,
                     egui::Button::new(text("room.resume_run")),
                 )
                 .accessible_name(text("room.resume_run"))
@@ -91,7 +91,7 @@ pub(super) fn controls(
             }
             if ui
                 .add_enabled(
-                    !busy && run_state == "running",
+                    !busy && !state.confirming_recover && run_state == "running",
                     egui::Button::new(text("room.recover_interrupted_run")),
                 )
                 .accessible_name(text("room.recover_interrupted_run"))
@@ -100,30 +100,39 @@ pub(super) fn controls(
                 state.confirming_recover = true;
             }
         });
-        return event;
+        if !state.confirming_recover {
+            return event;
+        }
     }
-    ui.separator();
-    ui.label(text(
-        "room.recovery_refuses_any_live_or_unknown_recorded_process",
-    ));
     let mut event = None;
-    ui.horizontal(|ui| {
-        if ui
-            .add_enabled(!busy, egui::Button::new(text("room.cancel_recovery")))
-            .accessible_name(text("room.cancel_recovery"))
-            .clicked()
-        {
-            state.confirming_recover = false;
-        }
-        if ui
-            .add_enabled(!busy, egui::Button::new(text("room.confirm_recovery")))
-            .accessible_name(text("room.confirm_recovery"))
-            .clicked()
-        {
-            state.confirming_recover = false;
-            event = Some(super::room::Event::Recover);
-        }
-    });
+    let modal =
+        egui::Modal::new(egui::Id::unique("native-confirm-run-recovery")).show(ui.ctx(), |ui| {
+            ui.set_max_width(520.0);
+            ui.label(text(
+                "room.recovery_refuses_any_live_or_unknown_recorded_process",
+            ));
+            ui.horizontal(|ui| {
+                if ui
+                    .add_enabled(!busy, egui::Button::new(text("room.cancel_recovery")))
+                    .accessible_name(text("room.cancel_recovery"))
+                    .clicked()
+                {
+                    state.confirming_recover = false;
+                }
+                if ui
+                    .add_enabled(!busy, egui::Button::new(text("room.confirm_recovery")))
+                    .accessible_name(text("room.confirm_recovery"))
+                    .clicked()
+                {
+                    state.confirming_recover = false;
+                    event = Some(super::room::Event::Recover);
+                }
+            });
+        });
+    if modal.should_close() {
+        state.confirming_recover = false;
+    }
+
     event
 }
 
