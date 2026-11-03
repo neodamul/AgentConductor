@@ -190,7 +190,7 @@ the tests that exercise it and says whether the behavior is present on `main`.
 | R-113 A blocking verification finding fails integration verificati | current | `verification_blockers.rs` | passes |
 | R-118 A run survives closing or losing the desktop app | current | `close_window.rs`, `close_dialog_runtime.cjs` (GitHub #377) | passes |
 | R-119 Interrupted runs recover and resume automatically | current | `crash_recovery.rs`, `recovery.rs`, `stop_resume.rs` | passes |
-| R-210 One goal screen with a single six-step stepper | current | `unified_stepper_runtime.cjs`, `rail_tabs_runtime.cjs`, `inspector_fold_runtime.cjs`, `goal_panel_runtime.cjs`, `result_popup_runtime.cjs`, `room_task_rows.rs`, `claude_code_and_codex_use_the_pinned_color_brand_marks`, `brand_marks_sit_in_a_bordered_container_with_the_specified_mark_size`, `the_ui_matches_the_approved_design_mock_to_the_pixel` (GitHub #390, #392, #394, #396, #398, #400, #406; steps 1-2 of the approved goal-screen design #387) | passes |
+| R-210 One goal screen with a single six-step stepper | current | `unified_stepper_runtime.cjs`, `rail_tabs_runtime.cjs`, `inspector_fold_runtime.cjs`, `goal_panel_runtime.cjs`, `result_popup_runtime.cjs`, `room_task_rows.rs`, `claude_code_and_codex_use_the_pinned_color_brand_marks`, `brand_marks_sit_in_a_bordered_container_with_the_specified_mark_size`, `briefing_and_settings_use_the_slide_over_panel`, `the_chat_panel_slides_in_and_yields_to_any_other_slide_over`, `the_ui_matches_the_approved_design_mock_to_the_pixel` (GitHub #390, #392, #394, #396, #398, #400, #406; steps 1-2 of the approved goal-screen design #387) | passes |
 | R-120 Interruptions and silent workers are visible | amended by R-159 | `interruption_history.rs`, `thinking_collapse_runtime.cjs` (GitHub #385) | passes |
 | R-121 Reassign tasks that have not started while the run is workin | current | `pending_edit.rs` | passes |
 | R-122 Agents run with the highest permission by default | current | `coordinator.rs`, `coordinator_chat_check.rs`, `full_access_profiles.rs`, `progress_runtime.cjs` | passes |
@@ -322,3 +322,11 @@ the tests that exercise it and says whether the behavior is present on `main`.
 | R-174 New Rust code follows a short, evidence-based review policy | current | — | policy |
 | R-175 Every unsafe operation states why it is sound | current | `icons.rs`, `leases.rs` | passes |
 | R-176 Tests do not mutate the process environment unsoundly | current | `availability_watcher.rs`, `env_guard.rs`, `support/env.rs`, `windows_icons.rs` | passes |
+
+## Workspace/Goal model audit — GitHub #411
+
+| Requirement | Evidence | Remaining acceptance |
+|---|---|---|
+| R-213 | `workspace_goal_rules.rs`, `startup_folder_plan.rs`, `folder_workflow.rs`, `slug_flow.rs`, `slug_folder.rs`, `slugs.rs`; with architecture trace, 24 tests in seven local suites | Actual Windows reparse-point/package checks; Claude webview dialog dimensions/focus/scroll and step-6 result/continuation rendering |
+
+Existing backend behavior was retained after audit. The correction exclusively reserves a new Goal root before writing ownership markers or Git exclusions; new allocation performs no legacy migration. Non-Git projects remain free of `.git`; private external change history still requires the Git executable. Display edits preserve existing folder IDs/paths, and New Goal retains Workspace directory/coordinator/profiles/roles. These tests do not establish native modal geometry.
