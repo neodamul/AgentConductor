@@ -38,7 +38,7 @@ Issue #9 remains at 22/50 until the same-state screenshot review and full accept
 - [x] Task / Green: use the localized `startup.browse` label for the button; keep `startup.choose_your_project_folder` for the repository field hint.
 - [x] Verify: 16 tests pass across native UI, project-picker, and workspace-isolation targets.
 - [ ] Full screen parity and package acceptance remain open; issue #9 stays 22/50. This label correction adds no acceptance point.
-- [ ] PR #22 remains Draft. Its current diff spans 1,178 commits and 1,847 files against `main`; keep this branch limited to issue #9 and record the branch size as a reviewability risk.
+- [ ] PR #22 remains Draft. At head `6a8148b8`, its diff spans 1,179 commits and 1,851 files (+97,156/−25,391 lines) against `main`; this accumulated root-issue branch is a reviewability risk.
 
 ### 2026-11-03 — Restore Workspace header actions and coordinator placement — issue #9
 

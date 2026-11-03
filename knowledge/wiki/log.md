@@ -1,6 +1,6 @@
 # [2026-11-03] plan/task/verify | Restore the legacy project-folder button label — issue #9
 
-`origin/main:src/ui/startup.html` uses the localized “Browse…” text for the project-folder button and keeps “Choose your project folder” as the input placeholder. The new AccessKit test failed because Rust used the placeholder text on the button. Switching the button to `startup.browse` and leaving the placeholder unchanged made the affected native Workspace, project-picker, and isolation suites pass 16 tests. Issue #9 stays at 22/50 with no UI acceptance credit. PR #22 remains the only open PR, but its branch currently spans 1,178 commits and 1,847 files against `main`, a reviewability risk.
+`origin/main:src/ui/startup.html` uses the localized “Browse…” text for the project-folder button and keeps “Choose your project folder” as the input placeholder. The new AccessKit test failed because Rust used the placeholder text on the button. Switching the button to `startup.browse` and leaving the placeholder unchanged made the affected native Workspace, project-picker, and isolation suites pass 16 tests. Issue #9 stays at 22/50 with no UI acceptance credit. PR #22 remains the only open PR, but its branch currently spans 1,179 commits and 1,851 files (+97,156/−25,391 lines) against `main`, a reviewability risk.
 
 # [2026-11-03] correction | Match worktree control to latest Workspace source — issue #9
 
