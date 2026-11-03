@@ -2,7 +2,19 @@ use super::profile_tools;
 use eframe::egui::{self, CornerRadius, Frame, RichText, Stroke, vec2};
 use serde_json::Value;
 
-pub(super) const DEFAULT_PANEL_WIDTH: f32 = 236.0;
+pub fn default_panel_width(viewport_width: f32) -> f32 {
+    if viewport_width <= 1000.0 {
+        227.0
+    } else {
+        277.0
+    }
+}
+
+pub fn panel_id(capture_path: Option<&std::ffi::OsStr>) -> egui::Id {
+    capture_path
+        .map(|path| egui::Id::unique(("native-agent-roster-capture", path)))
+        .unwrap_or_else(|| egui::Id::unique("native-agent-roster"))
+}
 
 mod badges;
 pub(in crate::native_ui_probe::workspace) mod controls;

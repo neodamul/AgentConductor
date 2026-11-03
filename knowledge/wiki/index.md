@@ -1,5 +1,6 @@
 # AgentConductor knowledge wiki
 
+- [Issue #9 acceptance tracking](issue9-acceptance-tracking.md): parent closure semantics, 22/50 checkpoint, and canonical labeled follow-up issues.
 - [Windows package timeout](../raw/2026-11-02-windows-package-timeout.md): exact-package UI tests exceeded the 25-minute job budget; regression test and timeout increase to 45 minutes.
 - [Native test gates and localized assertions](native-test-gates-and-localized-expectations.md): gate Cargo auto-discovered native UI tests and keep runtime localization assertions language-aware.
 - [Native sidebar card density](native-sidebar-card-density.md): keep agent metadata compact and wrap reorder controls at the supported minimum sidebar width.

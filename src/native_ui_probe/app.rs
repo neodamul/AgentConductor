@@ -2,6 +2,8 @@ use eframe::egui;
 use std::sync::Arc;
 
 use super::{Probe, Surface, room, workspace};
+mod storage;
+pub use storage::app_storage_key;
 
 fn renderer() -> eframe::Renderer {
     #[cfg(windows)]
@@ -60,10 +62,12 @@ pub fn open_window(room: Arc<crate::ui::Room>, surface: Surface) -> Result<(), S
             }),
         ..Default::default()
     };
-    let screenshot_capture = cfg!(feature = "manual-screenshot-capture")
-        && std::env::var_os("AGENTCONDUCTOR_MANUAL_SCREENSHOT_TO").is_some();
+    let screenshot_path = std::env::var_os("AGENTCONDUCTOR_MANUAL_SCREENSHOT_TO");
+    let screenshot_capture =
+        cfg!(feature = "manual-screenshot-capture") && screenshot_path.is_some();
+    let storage_key = app_storage_key(screenshot_capture, screenshot_path.as_deref());
     eframe::run_native(
-        app_storage_key(screenshot_capture),
+        &storage_key,
         options,
         Box::new(move |context| {
             Probe::connect_surface(room, context.egui_ctx.clone(), surface)
@@ -72,14 +76,6 @@ pub fn open_window(room: Arc<crate::ui::Room>, surface: Surface) -> Result<(), S
         }),
     )
     .map_err(|error| error.to_string())
-}
-
-pub fn app_storage_key(screenshot_capture: bool) -> &'static str {
-    if screenshot_capture {
-        "AgentConductor screenshot capture"
-    } else {
-        "AgentConductor"
-    }
 }
 
 #[cfg(test)]

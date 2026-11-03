@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+## Live issue tracker — 2026-11-03
+
+The parent migration issue [#9](https://github.com/neodamul/AgentConductor/issues/9) is closed as a tracking transfer only; migration acceptance remains **22/50** (packaged workflows 22/25, shipped/default Rust UI parity 0/25). Follow-up requirements and current acceptance evidence are maintained in the labeled [Rust migration issue index](issue9-acceptance-tracking.md). Older dated notes below are historical implementation evidence and do not supersede those issue bodies.
+
 ## Workspace sidebar width and card insets — 2026-11-03
 
 The available legacy source screenshot uses a 290 px left rail; the native Workspace had a wider default egui panel. The Rust rail now has an explicit default width and frame margins. Workspace content cards also use the intended padding. The root Workspace frame, reusable content-card frame, and plan-configuration predicate live in separate modules to keep `workspace.rs` below 300 lines. A Red/Green AccessKit regression checks that the folder and goal controls begin at x=314 in a 1280-point raw viewport. Four focused suites pass 9 tests; warning-denied all-target Clippy, rustfmt, diff checks, and the source/test 300-line guard pass. The local GUI capture attempt did not produce a screenshot because the app host reported an XPC connection error, so this is component geometry evidence only and earns no full-screen parity credit. Graphify refreshed to 13,369 nodes / 21,515 edges. CocoIndex is unavailable in this runtime. Issue #9 remains 22/50.

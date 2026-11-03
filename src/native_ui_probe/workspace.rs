@@ -155,10 +155,17 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 return;
             }
         }
-        let event = egui::Panel::left("native-agent-roster")
+        let viewport_width = ui.ctx().content_rect().width();
+        let panel_width = sidebar::default_panel_width(viewport_width);
+        #[cfg(feature = "manual-screenshot-capture")]
+        let capture_path = std::env::var_os("AGENTCONDUCTOR_MANUAL_SCREENSHOT_TO");
+        #[cfg(not(feature = "manual-screenshot-capture"))]
+        let capture_path: Option<std::ffi::OsString> = None;
+        let panel_id = sidebar::panel_id(capture_path.as_deref());
+        let event = egui::Panel::left(panel_id)
             .resizable(true)
-            .default_size(sidebar::DEFAULT_PANEL_WIDTH)
-            .size_range(210.0..=400.0)
+            .default_size(panel_width)
+            .size_range(184.0..=400.0)
             .frame(
                 Frame::side_top_panel(ui.style()).inner_margin(egui::Margin {
                     left: 8,

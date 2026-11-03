@@ -1,5 +1,32 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Track each Rust UI acceptance workflow separately
+
+- [x] Plan: make one GitHub issue for each of the 25 operator workflows in the canonical migration inventory. Keep the candidate-package counter (22/25) separate from shipped/default Rust conversion (0/25).
+- [x] Task: create workflow issues #350–#374 with the `rust-ui-workflow` label. Each issue records the package gate and shipped-default gate separately. Workflows 23–25 are the uncredited candidate-package items.
+- [x] Task: close #9 as a tracking transfer, replace its oversized body with the 25-item issue index and separate quality-gate links; keep root PR #22 Draft.
+- [x] Task: close aggregate parity issue #347 as superseded and move its local screenshot diagnostics to workflow #1 (#351). Label #345, #346, and #348 as cross-cutting `rust-migration-quality-gate` items outside the 50-point denominator.
+- [x] Verify: GitHub confirms 25 individually numbered workflow issues, #9 closed as tracking transfer, #347 closed as superseded, and the counters unchanged at 22/50. No score credit was added.
+- [x] Complete: item-level tracking is established. Product acceptance remains incomplete until workflow and cross-cutting gates are verified.
+
+The 25 issue bodies are the live per-workflow records. Cross-cutting platform/resource/release gates use a separate label and are not counted as additional workflow items. Older dated entries below are historical implementation evidence; do not treat their pending checkboxes or scores as a newer status than the GitHub tracker.
+
+### 2026-11-03 — Isolate manual screenshot persistence — issue #9
+
+- [x] Plan: repeated manual screenshots must not reuse eframe storage or egui panel state, or saved geometry overrides configured defaults and makes comparison unreliable.
+- [x] Red: require output paths to produce distinct storage keys and sidebar IDs while keeping the regular app ID stable. The boolean-only storage helper and fixed `Panel::left("native-agent-roster")` do not satisfy this contract.
+- [x] Task / Green: derive the capture-only storage key from a hash of its output path while keeping the normal app key unchanged.
+- [x] Verify: storage-key and sidebar-ID tests pass; focused geometry/sidebar tests pass 6/6. Two repeated captures render consistently after per-output eframe storage and egui panel state are isolated.
+- [ ] Complete: this is capture reliability only. Exact-revision parity is tracked in [#347](https://github.com/neodamul/AgentConductor/issues/347); the available reference is v0.1.57 while the Rust capture is v0.1.58, so no parity credit is claimed.
+
+### 2026-11-03 — Match populated Workspace form geometry — issue #9
+
+- [x] Plan: compare populated Rust and current-main Workspace captures at 1280×892. The main sidebar is 290 px versus Rust's effective 259 px; Rust also divides the coordinator row evenly where main gives the workspace name more width and keeps coordinator/model fields balanced.
+- [x] Red: the initial geometry test exposed x=314 and equal 237 px name/coordinator columns. With isolated persistence, logical width 234 painted the divider at x=259 and project field at x=323; the main reference is x=290 / x=355. The calibrated contract (logical 250 / 224 at the two breakpoints and x=328 in the raw test viewport) fails before updating the source.
+- [x] Task / Green: set responsive sidebar defaults and split Workspace form fields into a separate module with 47.5/26.25/26.25 wide-view proportions; preserve narrow-window fit.
+- [x] Focused Verify: frame geometry/sidebar tests pass 6/6; capture storage test passes 1/1; coordinator form viewport test passes 1/1; rustfmt check and diff hygiene pass.
+- [ ] Complete: screenshot review still shows material differences in card density, central content inset, and field proportions. The available Rust/main captures are v0.1.58/v0.1.57, respectively. Full same-revision, control-by-control parity remains tracked in [#347](https://github.com/neodamul/AgentConductor/issues/347); no parity credit is claimed.
+
 ### 2026-11-03 — Match Workspace app-bar action order — issue #9
 
 - [x] Plan: compare the native Workspace navigation row with `origin/main:src/ui/startup.html`; main orders coordinator chat, Settings, Discard changes, then Back to run.

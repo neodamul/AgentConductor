@@ -1,6 +1,7 @@
 use super::{Probe, card, header, permissions::editable};
 use eframe::egui::{self, RichText};
 
+mod fields;
 mod warning;
 
 pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
@@ -8,33 +9,26 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
     let (
         settings_title,
         settings_description,
-        name,
-        name_hint,
         project,
         project_hint,
         browse,
         goal,
         goal_hint,
         save,
-        coordinator_label,
-        coordinator_none,
     ) = {
         let locale = &probe.navigation.appearance;
         (
             locale.text("startup.workspace_settings_5ebc59"),
             locale.text("startup.saves_the_workspace_name_goal_coordinator_repository_and"),
-            locale.text("startup.workspace_name"),
-            locale.text("startup.workspace_name_hint"),
             locale.text("startup.project_folder"),
             locale.text("startup.project_folder_hint"),
             locale.text("startup.browse"),
             locale.text("startup.goal"),
             locale.text("startup.goal_hint"),
             locale.text("startup.save_workspace"),
-            locale.text("startup.planning_coordinator"),
-            locale.text("startup.coordinator_none"),
         )
     };
+    let language = probe.navigation.appearance.language().to_owned();
     card(ui).show(ui, |ui| {
         header::show_card_eyebrow(0, probe.navigation.appearance.language(), ui);
         ui.heading(
@@ -48,55 +42,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 .color(ui.visuals().weak_text_color()),
         );
         ui.add_space(8.0);
-        let selected = probe
-            .profiles
-            .iter()
-            .find(|profile| profile["id"] == probe.coordinator)
-            .and_then(|profile| profile["id"].as_str())
-            .unwrap_or(coordinator_none)
-            .to_owned();
-        let language = probe.navigation.appearance.language().to_owned();
-        let coordinator = probe.coordinator.clone();
-        ui.scope(|ui| {
-            ui.spacing_mut().interact_size.y = 40.0;
-            ui.columns(3, |columns| {
-                columns[0].vertical(|ui| {
-                    ui.label(name);
-                    ui.add_enabled(
-                        can_edit,
-                        egui::TextEdit::singleline(&mut probe.name)
-                            .desired_width(ui.available_width())
-                            .margin(egui::vec2(8.0, 6.0))
-                            .hint_text(name_hint),
-                    )
-                    .accessible_name(name);
-                });
-                columns[1].vertical(|ui| {
-                    ui.label(coordinator_label);
-                    ui.add_enabled_ui(can_edit && !probe.profiles.is_empty(), |ui| {
-                        egui::ComboBox::from_id_salt("native-workspace-coordinator")
-                            .selected_text(selected)
-                            .width(ui.available_width().min(280.0))
-                            .show_ui(ui, |ui| {
-                                for profile in &probe.profiles {
-                                    if let Some(id) = profile["id"].as_str() {
-                                        ui.selectable_value(&mut probe.coordinator, id.into(), id);
-                                    }
-                                }
-                            })
-                            .response
-                            .accessible_name(coordinator_label);
-                    });
-                });
-                if let Some(profile) = probe
-                    .profiles
-                    .iter_mut()
-                    .find(|profile| profile["id"] == coordinator)
-                {
-                    coordinator_model_selector(profile, &language, can_edit, &mut columns[2]);
-                }
-            });
-        });
+        fields::show(probe, can_edit, ui);
         if let Some(reason) = super::chat::coordinator_issue(&probe.profiles, &probe.coordinator) {
             let template =
                 crate::ui::messages::in_language(&language, "startup.coordinator_cannot_chat");
@@ -206,58 +152,6 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             }
         });
     });
-}
-
-fn coordinator_model_selector(
-    profile: &mut serde_json::Value,
-    language: &str,
-    can_edit: bool,
-    ui: &mut egui::Ui,
-) {
-    let model_label = crate::ui::messages::in_language(language, "startup.coordinator_model");
-    let cli_default = crate::ui::messages::in_language(language, "startup.cli_default");
-    let models = profile["catalog"]["models"]
-        .as_array()
-        .map(Vec::as_slice)
-        .unwrap_or_default();
-    let mut selected = profile["coordinator_model"]
-        .as_str()
-        .filter(|selected| models.iter().any(|model| model.as_str() == Some(selected)))
-        .unwrap_or_default()
-        .to_owned();
-    let previous = selected.clone();
-    ui.vertical(|ui| {
-        let label = ui.label(model_label);
-        ui.add_enabled_ui(can_edit && !models.is_empty(), |ui| {
-            egui::ComboBox::from_id_salt("native-coordinator-model-choice")
-                .selected_text(if selected.is_empty() {
-                    cli_default
-                } else {
-                    &selected
-                })
-                .width(190.0)
-                .show_ui(ui, |ui| {
-                    ui.selectable_value(&mut selected, String::new(), cli_default);
-                    for model in models {
-                        if let Some(model) = model.as_str() {
-                            ui.selectable_value(&mut selected, model.to_owned(), model);
-                        }
-                    }
-                })
-                .response
-                .labelled_by(label.id)
-                .accessible_name(model_label);
-        });
-    });
-    if selected != previous
-        && let Some(profile) = profile.as_object_mut()
-    {
-        if selected.is_empty() {
-            profile.remove("coordinator_model");
-        } else {
-            profile.insert("coordinator_model".into(), selected.into());
-        }
-    }
 }
 
 #[cfg(test)]

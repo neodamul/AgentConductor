@@ -34,8 +34,8 @@ fn workspace_frame_reserves_legacy_insets_in_the_raw_viewport() {
     let folder = bounds(Role::TextInput, locale.text("startup.project_folder"));
     let goal = bounds(Role::MultilineTextInput, locale.text("startup.goal"));
     assert!((roster.x0 - 22.0).abs() <= 2.0, "roster inset: {roster:?}");
-    assert!((folder.x0 - 314.0).abs() <= 2.0, "folder inset: {folder:?}");
-    assert!((goal.x0 - 314.0).abs() <= 2.0, "goal inset: {goal:?}");
+    assert!((folder.x0 - 356.0).abs() <= 2.0, "folder inset: {folder:?}");
+    assert!((goal.x0 - 356.0).abs() <= 2.0, "goal inset: {goal:?}");
     assert!(
         (goal.x1 - 1215.0).abs() <= 2.0,
         "goal right inset: {goal:?}"

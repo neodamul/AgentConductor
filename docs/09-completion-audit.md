@@ -1,3 +1,11 @@
+## Live acceptance status — 2026-11-03
+
+- Parent issue [#9](https://github.com/neodamul/AgentConductor/issues/9) is **closed as a tracking transfer only**. Rust migration acceptance is not complete.
+- Tracked acceptance remains **22/50**: packaged workflows 22/25; shipped/default Rust UI parity 0/25. Candidate-package workflows 01–22 are individually marked completed in the aggregate; 23–25 are pending. All 25 shipped-default issues remain pending.
+- Root PR [#22](https://github.com/neodamul/AgentConductor/pull/22) is Draft. Each workflow is tracked individually in #350–#374 under `rust-ui-workflow`. Cross-cutting gates #345, #346, and #348 use `rust-migration-quality-gate`; existing implementation/bug follow-ups #189, #226, #257, #283, and #310 are separate from the 50-point score.
+- The issue bodies are the authoritative live requirements and acceptance records. Historical entries below preserve test/artifact provenance; their old “open” statements and scores are superseded by the issue tracker and must not be read as current status.
+- The current local UI geometry work has focused verification only; it does not raise acceptance. Full local suite, line-count guard, exact-head Windows package validation, and exact-revision full-screen comparison remain unverified for this worktree.
+
 ## Workspace app-bar action order — 2026-11-03
 
 - Comparing Rust navigation with the current `main` startup header exposed an action-order mismatch: Rust placed Discard changes before coordinator Chat and Settings; main places Chat, Settings, Discard changes, then Back to run.

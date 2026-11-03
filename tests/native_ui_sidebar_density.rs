@@ -5,6 +5,21 @@ use eframe::egui::{self, Rect, accesskit::Role};
 use serde_json::json;
 
 #[test]
+fn default_sidebar_width_matches_the_main_workspace_breakpoint() {
+    assert_eq!(sidebar::default_panel_width(1280.0), 277.0);
+    assert_eq!(sidebar::default_panel_width(1000.0), 227.0);
+}
+
+#[test]
+fn screenshot_sidebar_state_isolated_by_output_path() {
+    let first = sidebar::panel_id(Some(std::ffi::OsStr::new("first.png")));
+    let second = sidebar::panel_id(Some(std::ffi::OsStr::new("second.png")));
+    let normal = sidebar::panel_id(None);
+    assert_ne!(first, second);
+    assert_eq!(normal, egui::Id::unique("native-agent-roster"));
+}
+
+#[test]
 fn sidebar_keeps_agent_command_accessible_on_the_name_row() {
     let executable = "/opt/company/agents/installation/claude-code";
     let details = format!("{executable} · full_access");

@@ -1,6 +1,16 @@
 use super::*;
 
 #[test]
+fn screenshot_capture_uses_separate_eframe_persistence_per_output() {
+    let default_key = native::app_storage_key(false, None);
+    let first_capture = native::app_storage_key(true, Some(std::ffi::OsStr::new("first.png")));
+    let second_capture = native::app_storage_key(true, Some(std::ffi::OsStr::new("second.png")));
+    assert_eq!(default_key, "AgentConductor");
+    assert_ne!(first_capture, default_key);
+    assert_ne!(first_capture, second_capture);
+}
+
+#[test]
 fn native_workspace_save_uses_the_async_worker_and_refreshes_persisted_state() {
     let root = std::env::temp_dir().join(format!(
         "agentconductor-native-ui-save-{}-{}",

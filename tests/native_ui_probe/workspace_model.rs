@@ -94,25 +94,56 @@ fn workspace_coordinator_fields_fit_the_default_native_viewport() {
         },
         |ui| probe.update_ui(ui),
     );
-    let nodes = &output
-        .platform_output
-        .accesskit_update
-        .as_ref()
-        .unwrap()
-        .nodes;
-    for label in [model_label, isolation_label] {
-        let bounds = nodes
-            .iter()
-            .find(|(_, node)| node.label() == Some(label))
-            .and_then(|(_, node)| node.bounds())
-            .unwrap_or_else(|| panic!("missing {label}: {:?}", labels(&output)));
+    let (name_width, coordinator_width, model_width, model_bounds, isolation_bounds) = {
+        let nodes = &output
+            .platform_output
+            .accesskit_update
+            .as_ref()
+            .unwrap()
+            .nodes;
+        let field_width = |label: &str| {
+            nodes
+                .iter()
+                .filter(|(_, node)| node.label() == Some(label))
+                .filter_map(|(_, node)| node.bounds())
+                .map(|bounds| bounds.x1 - bounds.x0)
+                .max_by(f64::total_cmp)
+                .unwrap_or_else(|| panic!("missing field {label:?}"))
+        };
+        let field_bounds = |label: &str| {
+            nodes
+                .iter()
+                .find(|(_, node)| node.label() == Some(label))
+                .and_then(|(_, node)| node.bounds())
+        };
+        (
+            field_width(locale.text("startup.workspace_name")),
+            field_width(locale.text("startup.planning_coordinator")),
+            field_width(model_label),
+            field_bounds(model_label),
+            field_bounds(isolation_label),
+        )
+    };
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(
+        name_width >= coordinator_width * 1.5,
+        "workspace name should receive the wider legacy column: name={name_width}, coordinator={coordinator_width}"
+    );
+    assert!(
+        (coordinator_width - model_width).abs() <= 10.0,
+        "coordinator and model columns should be balanced: coordinator={coordinator_width}, model={model_width}"
+    );
+    for (label, bounds) in [
+        (model_label, model_bounds),
+        (isolation_label, isolation_bounds),
+    ] {
+        let bounds = bounds.unwrap_or_else(|| panic!("missing {label}"));
         assert!(
             bounds.x1 <= 1132.0,
             "{label} overflows the viewport: {bounds:?}"
         );
     }
-    output.textures_delta.set.clear();
-    output.textures_delta.free.clear();
 }
 
 #[test]
