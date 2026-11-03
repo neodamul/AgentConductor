@@ -8,7 +8,7 @@ tests the combined result and asks for your approval before merging. It runs on 
 
 ![Rust-native Workspace and goal configuration](docs/assets/ui-workspace-current.png)
 
-> **Version:** 0.1.57 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **⚙ Settings → User manual** opens the offline manual.
+> **Version:** 0.1.58 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **⚙ Settings → User manual** opens the offline manual.
 
 ## What it does
 

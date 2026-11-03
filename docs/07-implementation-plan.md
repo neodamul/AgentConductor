@@ -8181,4 +8181,13 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Focused verify: custom CLI denial suite passes 10 tests; native profile editor suite passes 7 tests, including legacy-profile `fail` defaults, configuration round-trip, and warning-state checks.
 - [x] Full verify: locked/offline all-target suite passed with test threads serialized after one parallel run stalled; `ui_resume` passed 3/3. Warning-denied all-target Clippy, rustfmt, diff checks, and the ≤300-line `src`/`tests` guard pass.
 - [x] Assetize: update the custom CLI LLM Wiki and evidence; refresh Graphify (13,342 nodes / 21,482 edges, no clustering). CocoIndex is unavailable in this runtime.
-- [x] Commit/push: pushed `76d920f3` to the single #9 branch and updated PR #22 and issue #9 with exact verification and integration status. PR #22 stays Draft; acceptance remains 22/50. The branch is five commits behind `main`, with conflicts reported by a read-only merge-tree check; reconcile those before further integration claims.
+- [x] Commit/push: pushed `76d920f3` and evidence follow-up `ef4fe8a7` to the single #9 branch and updated PR #22 and issue #9. PR #22 stays Draft; acceptance remains 22/50.
+
+### 2026-11-03 — synchronize merged custom CLI work from main
+
+- [x] Plan: compare main's #341 implementation and v0.1.58 docs to the Rust-native branch; keep native module splits and intentional JavaScript deletions.
+- [x] Red: retain main's `coordinator_chat_check` regression; it failed because the snapshot omitted the localized configuration-hint message ID.
+- [x] Task / Green: expose `config_hints` in the Rust snapshot using the message ID expected by the UI contract.
+- [x] Verify: custom CLI, native profile editor, coordinator snapshot, and chat blocker suites pass (19 tests). Locked/offline full target coverage passes in two batches: 1,218 tests across 359 suites, then 139 tests across the remaining 53 suites; zero failures. The all-target command exceeded its 600-second wrapper before the last batch, which was then run separately.
+- [x] Quality: warning-denied all-target Clippy, rustfmt, diff hygiene, and the ≤300-line guard pass. Graphify refreshed without clustering (13,344 nodes / 21,484 edges); CocoIndex remains unavailable in this runtime.
+- [ ] Commit/push: commit the main synchronization and snapshot fix, then update PR #22 and issue #9 with the new head. No packaged-workflow or UI parity credit is added; #9 remains 22/50.
