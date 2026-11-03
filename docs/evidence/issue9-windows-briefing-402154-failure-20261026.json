@@ -1,0 +1,22 @@
+{
+  "issue": 9,
+  "run_id": 40215446452,
+  "head": "141a595ff8e99cd1277687b7b147a61311842f42",
+  "platform": "windows-latest",
+  "result": "failed-before-schedule-journey",
+  "passed": [
+    "macOS platform validation",
+    "Windows platform validation",
+    "macOS release package and smoke",
+    "Windows release package and smoke"
+  ],
+  "failed_step": "Verify the packaged Windows default desktop / windows_briefing",
+  "observation": "UIA InvokePattern.Invoke returned without exception, but the read-only briefing menu did not appear within the test deadline. The original briefing button remained visible and enabled. The schedule journey did not run.",
+  "change": "Wait two seconds for the briefing menu after UIA Invoke; if absent, send a real mouse click to the original button and keep the existing bounded menu wait.",
+  "local_verification": {
+    "regression_docs_layout_tests": "14 passed",
+    "all_target_clippy_warnings_denied": "passed",
+    "cargo_fmt": "passed"
+  },
+  "acceptance": "Exact Windows package retest required; do not count the schedule workflow until manual_schedule persists at 2099-01-01T09:00:00+09:00."
+}

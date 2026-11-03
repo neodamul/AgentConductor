@@ -1,0 +1,45 @@
+{
+  "date": "2026-11-03",
+  "kind": "native-workspace-header-actions-and-chat-placement",
+  "issue": 9,
+  "source_branch": "codex/issue-9-native-ui-parity",
+  "source_commit": "ea8f3caaf00b8df1f14ec7f848f3761d0e0a2432",
+  "reference": "origin/main Workspace header and app-bar screenshot comparison",
+  "change": {
+    "page_header": [
+      "Show localized Prepared, Preparing, Starting, Ready, or Unsaved status.",
+      "Show the localized New goal button and route it through the revisioned asynchronous worker.",
+      "Disable New goal while requests or jobs are active, no repository is configured, or a run is nonterminal; require explicit discard confirmation for unsaved edits."
+    ],
+    "coordinator_chat": "Render the existing chat launcher in the application bar immediately before Settings."
+  },
+  "verification": {
+    "red": "New header accessibility and pointer tests failed before the title-controls API existed.",
+    "focused": "17 tests passed across six targets.",
+    "all_targets": "1313 passed, 16 ignored across 408 test targets using cargo test --locked --offline --all-targets --features native-ui-probe.",
+    "clippy": "All targets passed with warnings denied.",
+    "source_layout": "Passed the 300-line source/test and test separation guard.",
+    "rustfmt_and_diff": "Passed."
+  },
+  "follow_up": {
+    "source_commit": "8a537972880c7eecadc61e3517a0b1055673606e",
+    "behavior": "Keep New goal enabled with unsaved edits; show localized discard confirmation; enqueue the revisioned request only after approval; cancel preserves edits.",
+    "focused_tests": "23 passed across seven targets: native_ui_header, native_ui_header_actions, native_ui_header_chat, native_ui_navigation_language, native_ui_new_goal_confirmation, native_ui_workspace_menu_layout, and source_layout.",
+    "public_docs": "11 passed.",
+    "source_layout": "2 passed, including the 300-line and test-separation guard.",
+    "clippy": "All targets passed with warnings denied.",
+    "format_and_diff": "cargo fmt --check and git diff --check passed.",
+    "graphify": "13,202 nodes, 19,775 edges, 967 communities."
+  },
+  "graphify": {
+    "nodes": 13197,
+    "edges": 19769,
+    "communities": 983
+  },
+  "limitations": [
+    "No fresh full-window screenshot has been captured or visually reviewed yet.",
+    "No exact-head macOS/Windows package validation has run for this unit yet.",
+    "No screen-parity or aggregate acceptance credit is claimed; issue #9 remains 22/50 and shipped/default Rust UI parity remains 0/25.",
+    "CocoIndex CLI is not installed in this host environment."
+  ]
+}

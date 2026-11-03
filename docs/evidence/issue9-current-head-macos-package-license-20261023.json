@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "branch": "codex/issue-9-native-ui-parity",
+  "source_commit": "88e372e95a8c2507e15c1c8b24743bf7d1f9b38a",
+  "latest_product_code_commit": "eb0bfce73ba25db817436c591daea0c6bd90630b",
+  "package": {
+    "target": "aarch64-apple-darwin",
+    "version": "0.1.36",
+    "archive": "dist/agentconductor-aarch64-apple-darwin-88e372e95a8c.zip",
+    "archive_sha256": "6019a0ff883c5713e519c9932153c14bc1e793918265a80aa1c773efc5868894",
+    "binary_bytes": 18606512,
+    "binary_sha256": "0c4e1fa888cc18d13da40f81683032686829a79ea5411250a2b4ab59c8397a23"
+  },
+  "license_review": {
+    "sbom_components": 214,
+    "components_missing_license_expression": 0,
+    "package_validation": "passed",
+    "dependency_license_texts_bundled": true,
+    "self_cell": {
+      "version": "1.3.0",
+      "expression": "Apache-2.0 OR GPL-2.0-only",
+      "included_texts": ["LICENSE-APACHE", "LICENSE-GPLv2"]
+    }
+  },
+  "smoke": {
+    "command": "cargo run --offline --locked --release -- smoke-package <package> /private/tmp/ac-issue9-88e372e9-smoke",
+    "result": "passed",
+    "isolated_cases": 4,
+    "tasks_per_case": 3,
+    "tests_per_case": 3,
+    "approved_merge_verified": true,
+    "unapproved_merge_refused": true,
+    "provider_cli_invoked": false,
+    "external_service_contacted": false
+  },
+  "focused_tests": {
+    "suites": 9,
+    "passed": 26,
+    "failed": 0,
+    "command": "cargo test --offline --locked --release --test release_smoke --test project_license --test release_license_spdx --test release_archive --test release_package_licenses --test release_license_gl --test release_license_policy --test native_ui_license_provenance --test release_package"
+  },
+  "limitations": [
+    "The package reports v0.1.36 while main has released v0.1.37; this is not a release candidate.",
+    "The bundled Agent Room screenshots remain historical and were not replaced.",
+    "This verifies macOS ARM64 only; Windows package and license verification remain open."
+  ]
+}

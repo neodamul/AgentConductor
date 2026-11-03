@@ -1,15 +1,44 @@
-//! DD-182: feedback the operator sends to the coordinator. It runs as a review round of the
-//! run's recorded coordinator with the operator's text added, and each state is an audit record.
+//! DD-184: coordinator-directed feedback reuses evidence review and its validated amendments.
 use super::*;
 use serde_json::{Value, json};
 
 const MAX_BYTES: usize = 8 * 1024;
-/// How long a request waits for the run lock before it fails (500 ms steps).
 const LOCK_WAIT_STEPS: u32 = 240;
 
+#[cfg(test)]
+#[path = "../../tests/support/coordinator_request_retry.rs"]
+mod retry_tests;
+
+async fn retry_review<T, F, Fut>(
+    deadline: std::time::Instant,
+    retry_budget: u32,
+    mut review: F,
+) -> Result<T, String>
+where
+    F: FnMut() -> Fut,
+    Fut: std::future::Future<Output = Result<T, String>>,
+{
+    let mut retries = 0;
+    loop {
+        if std::time::Instant::now() >= deadline {
+            return Err("coordinator request timed out while waiting for the active run".into());
+        }
+        match review().await {
+            Err(error)
+                if error.contains("lease is held")
+                    && retries < retry_budget
+                    && std::time::Instant::now() < deadline =>
+            {
+                retries += 1;
+                tokio::time::sleep(Duration::from_millis(100)).await;
+            }
+            result => return result,
+        }
+    }
+}
+
 fn note(dir: &Path, id: &str, status: &str, message: &str, extra: Value) -> Result<(), String> {
-    let mut payload =
-        json!({"id":id,"status":status,"message":message.chars().take(2000).collect::<String>()});
+    let mut payload = json!({"id":id,"status":status,"message":message});
     if let (Some(map), Some(more)) = (payload.as_object_mut(), extra.as_object()) {
         map.extend(more.clone());
     }
@@ -20,7 +49,7 @@ fn note(dir: &Path, id: &str, status: &str, message: &str, extra: Value) -> Resu
     )
 }
 
-/// Sends `message` to the run's coordinator and acts on its typed answer.
+/// Sends a bounded operator request to the recorded coordinator and applies only validated revisions.
 pub async fn coordinator_request(
     dir: &Path,
     timeout: u64,
@@ -37,36 +66,50 @@ pub async fn coordinator_request(
         &digest(format!("{message}{}", now()).as_bytes())[..10]
     );
     note(dir, &id, "queued", message, Value::Null)?;
-    // Waiting for the run lock is the queued state: another step holds the run.
-    for _ in 0..LOCK_WAIT_STEPS {
-        match Lock::acquire(dir) {
+    let deadline = std::time::Instant::now() + Duration::from_secs(timeout.clamp(1, 1800));
+    let mut available = false;
+    while std::time::Instant::now() < deadline {
+        match crate::leases::Lease::acquire(&dir.join("coordinator.lock")) {
             Ok(lock) => {
                 drop(lock);
+                available = true;
                 break;
             }
-            Err(e) if e.contains("lease is held") => {
-                tokio::time::sleep(std::time::Duration::from_millis(500)).await;
+            Err(error) if error.contains("lease is held") => {
+                tokio::time::sleep(Duration::from_millis(500)).await;
             }
-            Err(e) => {
-                note(dir, &id, "failed", message, json!({"error":e}))?;
-                return Err(e);
+            Err(error) => {
+                note(dir, &id, "failed", message, json!({"error":error}))?;
+                return Err(error);
             }
         }
     }
+    if !available {
+        let error = "coordinator request timed out while waiting for the active run";
+        note(dir, &id, "failed", message, json!({"error":error}))?;
+        return Err(error.into());
+    }
     note(dir, &id, "processing", message, Value::Null)?;
-    // The room polls the run and may hold the lock between the wait above and the review.
-    let mut retries = 0;
-    let outcome = loop {
-        match super::review::review_request(dir, profile.clone(), message).await {
-            Err(e) if e.contains("lease is held") && retries < LOCK_WAIT_STEPS => {
-                retries += 1;
-                tokio::time::sleep(std::time::Duration::from_millis(100)).await;
-            }
-            other => break other,
-        }
-    };
+    let outcome = retry_review(deadline, LOCK_WAIT_STEPS, || {
+        super::review::review_request(dir, profile.clone(), message)
+    })
+    .await;
     match outcome {
         Ok(proposal) => {
+            if proposal.verdict == crate::coordinator::Verdict::Revise
+                && load(dir)?.state != "blocked"
+            {
+                let current = (now() / 1000) as i64;
+                let result = async {
+                    let report = resume_due(dir, current, timeout).await?;
+                    repair(dir, timeout, report).await.map(|_| ())
+                }
+                .await;
+                if let Err(error) = result {
+                    note(dir, &id, "failed", message, json!({"error":error}))?;
+                    return Err(error);
+                }
+            }
             note(
                 dir,
                 &id,
@@ -74,13 +117,6 @@ pub async fn coordinator_request(
                 message,
                 json!({"verdict":proposal.verdict,"summary":proposal.summary}),
             )?;
-            if proposal.verdict == crate::coordinator::Verdict::Revise
-                && load(dir)?.state != "blocked"
-            {
-                let current = (now() / 1000) as i64;
-                let report = super::resume_due(dir, current, timeout).await?;
-                super::repair(dir, timeout, report).await?;
-            }
             Ok(proposal)
         }
         Err(error) => {

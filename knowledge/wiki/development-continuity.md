@@ -2,6 +2,31 @@
 
 ## Evidence
 
+### Exact-package native manual link check — 2026-10-23
+
+On package source `6b9641a1f6e47c9601618747a2b842b6e1b96da9`, open the bundled manual and click its visible official configuration-reference link. It should dispatch the HTTPS URL to Safari. This confirms one component interaction only; it adds no workflow acceptance. Close the app without saving the displayed workspace and close only the browser tab created by the check. Startup can refresh quota metadata, and screenshots of the saved workspace must not be retained.
+
+### Issue #9 audit-head synchronization — 2026-10-23
+
+`tests/issue9_current_status.rs` pins the PR head observed before an audit synchronization. When that guard fails, check the live PR and branch first; update the recorded observed head and the audit checkpoint together, then run the focused docs/status tests and the complete offline native-feature suite. A documentation-only synchronization does not change packaged workflow acceptance.
+
+### GitHub issue-linked branches — 2026-10-18
+
+Create issue work branches through `gh issue develop <number> --name <branch>
+--base main`, then verify the exact local branch and `gh issue develop --list`
+before editing. A branch name containing the issue number, or a PR that mentions the
+issue, is not sufficient evidence of a GitHub Development-linked branch. Push the
+verified branch and keep its PR draft while acceptance is incomplete. After merging
+to `main`, apply the merge to `rust` with a verified fast-forward when histories allow;
+preserve and explicitly integrate existing work if the branch histories have diverged.
+
+For issue #9, `codex/issue-9-native-ui-parity` was created from `main` through this
+flow. Its 141 existing implementation commits were preserved; because `main` had
+advanced, the histories were explicitly merged and one accessibility-test conflict
+was resolved from the richer issue-9 test coverage. The branch is pushed and tracked
+by draft PR [#22](https://github.com/neodamul/AgentConductor/pull/22). The migration
+remains incomplete and issue #9 stays open.
+
 GitHub main at `2211ba3` contains 19 commits after Codex checkpoint `3eb669c`.
 Claude used a different checkout; the first continuation commit `cff4646` already
 incorporated pending Codex source changes. Preserve local work before synchronizing;

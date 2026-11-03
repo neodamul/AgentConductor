@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "workflow": 11,
+  "verification_type": "exact packaged native Agent Room language switching and status localization",
+  "date": "2026-10-23",
+  "application_version": "0.1.36",
+  "source_commit": "6f1111c5ae61c91933e03a20fb04a4df513193de",
+  "target": "aarch64-apple-darwin",
+  "package_sha256": "6ae1d923a7af0485d47314325197bef0d96f9a4cd724c5d07b9df851be4d9be4",
+  "current_rust_source_verification": {
+    "commit": "43463f4b6c943b4a70ef56fa2666a2db795805cf",
+    "all_targets": "948 passed, 14 ignored, 0 failed across 310 suites",
+    "clippy_warnings_denied": "passed",
+    "rustfmt": "passed",
+    "public_docs_and_source_layout": "13 passed across 2 suites",
+    "git_diff_check": "passed"
+  },
+  "fixture": "/private/tmp/ac-issue9-workflow.UhlaPo/project",
+  "environment": {
+    "single_agentconductor_process": true,
+    "single_window": true,
+    "provider_cli_invoked": false,
+    "external_services_called": false,
+    "user_repository_modified": false
+  },
+  "ui_actions": {
+    "initial_language": "ko",
+    "selected_language": "en",
+    "restored_language": "ko",
+    "english_labels_verified": [
+      "Interface language",
+      "Waiting approval",
+      "Current stage: 03 Verify",
+      "Task task-0 status: Completed",
+      "Review evidence",
+      "Approve verified candidate",
+      "Reject candidate",
+      "Merge approved candidate"
+    ],
+    "korean_labels_verified_after_restore": [
+      "화면 언어",
+      "승인 대기",
+      "현재 단계: 03 검증",
+      "작업 task-0 상태: 완료",
+      "검토 증거",
+      "검증된 후보 승인",
+      "후보 반려",
+      "승인된 후보 병합"
+    ],
+    "screenshot_captured_in_verification_session": true,
+    "screenshot_committed_to_repository": false
+  },
+  "candidate_after_language_cycle": {
+    "state": "waiting_approval",
+    "tasks_completed": 3,
+    "tests_passed": "3/3",
+    "candidate_commit": "3db8840b02ce28558701698c327a5820b7dc7311",
+    "approval_clicked": false,
+    "rejection_clicked": false,
+    "merge_performed": false
+  },
+  "acceptance": {
+    "previous": "10/25 (40%)",
+    "current": "11/25 (44%)",
+    "adds_distinct_packaged_ui_workflow": true,
+    "workflow_name": "Switch Agent Room interface language while preserving task status and pending approval",
+    "remaining": 14
+  },
+  "knowledge_graph": "Graphify refreshed to 8,879 nodes and 15,210 edges; CocoIndex CLI/MCP is unavailable in this environment.",
+  "limitations": [
+    "The verification used the exact v0.1.36 package identified above; Windows UI, Korean IME, and accessibility parity remain open.",
+    "This opt-in native package workflow does not mean the native UI has replaced the shipped default UI."
+  ]
+}

@@ -81,6 +81,21 @@ pub fn icon(provider: Provider) -> Option<String> {
     result
 }
 
+pub(super) fn reduced_motion_preference() -> Option<bool> {
+    let workspace = send0(class("NSWorkspace"), "sharedWorkspace");
+    (!workspace.is_null()).then(|| send_bool0(workspace, "accessibilityDisplayShouldReduceMotion"))
+}
+
+fn send_bool0(object: Id, name: &str) -> bool {
+    // SAFETY: objc_msgSend is cast to the BOOL-returning no-argument selector used here; `object` is a live object or nil.
+    unsafe {
+        transmute::<unsafe extern "C" fn(), extern "C" fn(Id, Id) -> bool>(objc_msgSend)(
+            object,
+            sel(name),
+        )
+    }
+}
+
 fn render(bundle: &str) -> Option<String> {
     let workspace = send0(class("NSWorkspace"), "sharedWorkspace");
     let url = send1(

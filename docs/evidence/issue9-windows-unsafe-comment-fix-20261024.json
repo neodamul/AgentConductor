@@ -1,0 +1,31 @@
+{
+  "issue": 9,
+  "date": "2026-10-24",
+  "failed_run": 40008320185,
+  "failed_head": "278ad6de798e73e2a71502af03117c0004d61e92",
+  "platform": "windows-latest",
+  "failed_gate": "cargo clippy --lib --bins --locked --features native-ui-probe -- -D clippy::undocumented_unsafe_blocks",
+  "diagnostic": {
+    "file": "src/native_ui_probe/motion.rs",
+    "line": 54,
+    "reason": "The Windows SystemParametersInfoW call had no safety comment."
+  },
+  "fix_commit": "c6c6052",
+  "change": "Documented that SPI_GETCLIENTAREAANIMATION writes one BOOL result to a valid writable local value.",
+  "behavior_changed": false,
+  "verification": {
+    "local_rustfmt": "passed",
+    "local_host_unsafe_comment_clippy": "passed; Windows cfg is not compiled on macOS",
+    "source_layout": "passed, 2 tests",
+    "windows_run_before_fix": {
+      "build": "passed",
+      "source_test_layout": "passed",
+      "all_target_tests": "passed",
+      "native_ui_validation": "passed",
+      "rustfmt": "passed",
+      "warning_denied_clippy": "passed",
+      "unsafe_comment_gate": "failed at the documented call"
+    }
+  },
+  "next": "Push the fix and require a fresh macOS/Windows Platform Validation run before closing this validation unit."
+}

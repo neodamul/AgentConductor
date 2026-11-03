@@ -1,57 +1,37 @@
 use std::{fs, path::Path};
 
-fn python_sources() -> Vec<std::path::PathBuf> {
-    ["tests", "scripts"]
-        .into_iter()
-        .filter_map(|directory| fs::read_dir(directory).ok())
-        .flat_map(|entries| {
-            entries
-                .flatten()
-                .map(|entry| entry.path())
-                .collect::<Vec<_>>()
+fn source_files(root: &Path) -> Vec<std::path::PathBuf> {
+    let Ok(entries) = fs::read_dir(root) else {
+        return Vec::new();
+    };
+    entries
+        .flatten()
+        .flat_map(|entry| {
+            let path = entry.path();
+            if path.is_dir() {
+                source_files(&path)
+            } else {
+                vec![path]
+            }
         })
-        .filter(|path| path.extension().is_some_and(|extension| extension == "py"))
         .collect()
 }
 
 #[test]
-fn existing_python_text_io_declares_utf8() {
-    let mut offenders = Vec::new();
-    for path in python_sources() {
-        let text = fs::read_to_string(&path).unwrap();
-        for (line_number, line) in text.lines().enumerate() {
-            let text_io = [".read_text(", ".write_text(", "open(", ".open("]
-                .iter()
-                .any(|pattern| line.contains(pattern));
-            let binary = [
-                "'rb'", "\"rb\"", "'wb'", "\"wb\"", "zipfile", "ZipFile", "tarfile",
-            ]
-            .iter()
-            .any(|pattern| line.contains(pattern));
-            if text_io && !binary && !line.contains("encoding") && !line.contains("re.search") {
-                offenders.push(format!(
-                    "{}:{}: {}",
-                    path.display(),
-                    line_number + 1,
-                    line.trim()
-                ));
-            }
+fn application_and_verification_sources_use_rust_only() {
+    for directory in ["src", "tests", "scripts"] {
+        for path in source_files(Path::new(directory)) {
+            assert!(
+                !matches!(
+                    path.extension().and_then(|value| value.to_str()),
+                    Some("py" | "js" | "cjs")
+                ),
+                "legacy source remains: {}",
+                path.display()
+            );
         }
     }
-    assert!(offenders.is_empty(), "{}", offenders.join("\n"));
-    assert!(!Path::new("tests/test_utf8_sources.py").exists());
-}
-
-#[test]
-fn ui_assets_are_utf8_and_html_declares_it() {
-    for entry in fs::read_dir("src/ui").unwrap().flatten() {
-        let path = entry.path();
-        if path
-            .extension()
-            .is_some_and(|extension| ["html", "js", "css"].contains(&extension.to_str().unwrap()))
-        {
-            String::from_utf8(fs::read(path).unwrap()).unwrap();
-        }
-    }
-    assert!(include_str!("../src/ui/room.html").contains("<meta charset=\"utf-8\">"));
+    let workflow = fs::read_to_string(".github/workflows/platform-validation.yml").unwrap();
+    assert!(!workflow.contains("python -m unittest"));
+    assert!(!workflow.contains("node "));
 }

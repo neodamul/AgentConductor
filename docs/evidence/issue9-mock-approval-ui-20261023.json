@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-23",
+  "package_version": "0.1.36",
+  "source_commit": "f43882095aa0308dc2870bd34269e0ea240bab8d",
+  "binary_sha256": "f804e8c8406408f901c7103fed4f341fc0ceedfb1a1e44506d2e9ba5457fc3ec",
+  "workspace_mode": "worktree",
+  "repository_base": "fa953237d32bfbe2b77cab3a956d2ce32f617fcc",
+  "coordinator": "fixture-planner",
+  "agent": "mock",
+  "tasks": ["one.txt", "two.txt", "three.txt"],
+  "candidate": "94fe3ada21bddf9086c1bd12679bf066b3fd22e6",
+  "reviewed_files": ["one.txt", "two.txt", "three.txt"],
+  "test_results": [0, 0, 0],
+  "result": "waiting_approval",
+  "approved_or_merged": false,
+  "provider_cli_or_network_used": false,
+  "ui_screenshot_persisted": false,
+  "notes": "The exact packaged UI was visually inspected with the CUA screenshot API. The macOS screencapture command failed with 'could not create image from display'; no screenshot file was retained. This duplicate mock run does not count as a distinct packaged workflow; acceptance remains 14/25."
+}

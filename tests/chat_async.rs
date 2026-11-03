@@ -8,7 +8,9 @@ use std::{os::unix::fs::PermissionsExt, path::Path, time::Duration};
 mod support;
 
 fn snapshot(startup: &Startup) -> Value {
-    startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap()
+    startup
+        .dispatch(br#"{"kind":"snapshot","chat_result":true}"#)
+        .unwrap()
 }
 fn mutate(startup: &Startup, mut packet: Value) -> Result<Value, String> {
     packet["revision"] = snapshot(startup)["revision"].clone();
@@ -72,7 +74,10 @@ fn a_slow_coordinator_answers_later_and_the_conversation_continues() {
     assert!(seen.contains(root.join("repo").to_str().unwrap()));
     mutate(&startup, json!({"kind":"chat","text":"second question"})).unwrap();
     assert_eq!(wait_for_answer(&startup)["chat"]["answer"], "Answer-2");
-    let turns = startup.dispatch(br#"{"kind":"chat_history"}"#).unwrap()["turns"].clone();
+    let turns = startup
+        .dispatch(br#"{"kind":"snapshot","chat_history":true}"#)
+        .unwrap()["chat_history"]
+        .clone();
     let text: Vec<_> = turns
         .as_array()
         .unwrap()

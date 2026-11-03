@@ -1,0 +1,41 @@
+{
+  "run_id": 40119945464,
+  "head_sha": "fc5a1f8b97a343a5e0b7f7a2f038cbee9062e5b0",
+  "workflow": "Platform validation",
+  "result": "success",
+  "validation": {
+    "windows": "success",
+    "macos": "success"
+  },
+  "packages": {
+    "windows": {
+      "result": "success",
+      "exact_package_binary_tested": true,
+      "tests": {
+        "windows_desktop": {
+          "passed": 1,
+          "failed": 0
+        },
+        "windows_schedule": {
+          "passed": 2,
+          "failed": 0,
+          "schedule_persisted": true,
+          "restriction_source": "manual_schedule",
+          "timestamp": "2099-01-01T09:00:00+09:00"
+        }
+      },
+      "artifact_id": 12572455474,
+      "artifact_sha256": "5536970a8cfca8fb6d7084cbc1ab6e85ba717c62d619dbfc519a6657110b6e0f"
+    },
+    "macos": {
+      "result": "success",
+      "artifact_id": 12571846892,
+      "artifact_sha256": "89297cadced4be867d89aaf2b9cd88679ad30371879095c56de0ea8718653fb4"
+    }
+  },
+  "packaged_ui_acceptance": {
+    "previous": "20/25",
+    "current": "21/25"
+  },
+  "note": "The earlier schedule failure did not reproduce on this exact-head package rerun; no product-code fix is claimed."
+}

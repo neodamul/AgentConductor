@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-22",
+  "source_commit": "83f8e619b0fe3197aca91d58f3f6baa94730cebb",
+  "target": "aarch64-apple-darwin",
+  "package_dir": "dist/agentconductor-aarch64-apple-darwin-83f8e619b0fe",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-83f8e619b0fe.zip",
+  "archive_sha256": "59e04d1475f44dc3a4d7abffab98842bc4d773a8beb2b7e5d67638e8675f67b3",
+  "binary": "agentconductor",
+  "binary_bytes": 18257568,
+  "binary_sha256": "8acd1cd96944a9d288e13f933225599203d3a1b75bbbeb124e9c7a6ca3db15c6",
+  "dependency_count": 214,
+  "checks": {
+    "package_manifest": "passed",
+    "packaged_help": "passed",
+    "zip_integrity": "passed",
+    "smoke_cases": [
+      {"mode": "shared", "source_mode": "git", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"mode": "shared", "source_mode": "folder", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"mode": "worktree", "source_mode": "git", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"mode": "worktree", "source_mode": "folder", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true}
+    ]
+  },
+  "mcp_preview_layout": {
+    "red_anchor_y": 61,
+    "red_after_preview_y": 177,
+    "red_shift_px": 116,
+    "green": "Centered scrollable review window; workspace anchor remains fixed",
+    "focused_tests": 14,
+    "suites": 8,
+    "settings_journey_local_runs": 5
+  },
+  "actions_run": {
+    "id": 39687975008,
+    "head": "d23c3c2956dfa3189844dbdff930b4e65fb7650c",
+    "windows": "passed",
+    "macos": "failed at a one-frame AccessKit dialog-dismissal assertion; the journey passes locally with bounded close-state polling"
+  },
+  "acceptance_note": "The popup fix is component evidence only. Native packaged workflow acceptance remains 8/25 and issue #9 remains open. The current all-target test run was not completed."
+}

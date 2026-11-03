@@ -1,0 +1,29 @@
+{
+  "issue": 9,
+  "date": "2026-10-28",
+  "failed_head": "e1a8b052c95c6eeaea15e43829ed545b23df6321",
+  "failed_workflow_run": "https://github.com/neodamul/AgentConductor/actions/runs/40602847814",
+  "result": "failed_exact_windows_schedule_acceptance",
+  "observed": {
+    "windows_briefing": "passed",
+    "windows_desktop": "passed",
+    "schedule_driver": "UIA InvokePattern returned and emitted method=uia; the button remained enabled",
+    "persisted_workflow": "waiting_availability / manual_required / available_at null",
+    "coordinator_action": "no coordinator-ui action directory was recorded"
+  },
+  "diagnosis": "The driver treated a successful InvokePattern call as activation without checking whether the app accepted the action. The exact package log shows the UI remained unchanged.",
+  "red": "schedule_falls_back_to_pointer_when_uia_invoke_leaves_button_enabled failed before the driver's post-invoke state check existed.",
+  "change": "After UIA or keyboard input, wait for the schedule button to become disabled. When it remains enabled, continue to the foreground- and process-checked pointer fallback. The Rust harness continues to require persisted manual_schedule as its success oracle.",
+  "local_verification": {
+    "windows_schedule_dispatch": "6 passed",
+    "windows_schedule_marker": "1 passed",
+    "source_layout": "2 passed",
+    "native_schedule_and_interaction": "6 passed",
+    "windows_schedule_diagnostics": "1 passed",
+    "cargo_fmt_check": "passed",
+    "git_diff_check": "passed",
+    "line_limit_300": "all touched source/test files are under 300 lines"
+  },
+  "acceptance": "unchanged at 22/25",
+  "next_check": "Rerun the exact Windows package on the corrected head and verify persisted manual_schedule=2099-01-01T09:00:00+09:00 before crediting the workflow."
+}

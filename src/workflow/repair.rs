@@ -4,9 +4,8 @@
 use super::*;
 
 /// A failure the coordinator may decide: integration verification failed after every task
-/// completed, a task failed (including one that stalled or exited without a result), or a task
-/// left its owned paths (the coordinator may amend the plan within limits, #149). Waits for an
-/// account and approvals need a person and are never triaged.
+/// completed, a task failed, or a task wrote outside its scope. Availability waits and approvals
+/// still require a person and are never triaged.
 pub fn repairable(report: &Report) -> bool {
     let error = report.error.as_deref().unwrap_or_default();
     let all_completed = report.tasks.iter().all(|t| t.status == "completed");
@@ -43,7 +42,6 @@ pub async fn repair(dir: &Path, timeout: u64, mut report: Report) -> Result<Repo
             Ok(proposal) if proposal.verdict == crate::coordinator::Verdict::Revise => {}
             _ => return load(dir),
         }
-        // An escalated amendment stops the loop: a person decides.
         let latest = load(dir)?;
         if latest.state == "blocked" {
             return Ok(latest);

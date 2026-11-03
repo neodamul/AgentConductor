@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "date": "2026-10-20",
+  "application_version": "0.1.31",
+  "source_commit": "7419557168ddc3ffe76c446cf292152cc9fc1932",
+  "target": "aarch64-apple-darwin",
+  "binary_sha256": "6988a2dd852b23665be6f43f4d2d7e20092dbef5e20db49574cd6d1982aa6836",
+  "environment": "one native app window, isolated HOME, disposable workspace and repository",
+  "visual_screens": [
+    "Workspace settings",
+    "Settings menu",
+    "MCP server registration",
+    "Agent profile registration",
+    "Agent roles"
+  ],
+  "verified_interactions": [
+    "Register and save a local custom CLI profile",
+    "Assign development, testing, and documentation roles",
+    "Create two named workspaces and archive an inactive workspace",
+    "Save a shared-folder workspace and generate a plan with a Rust-only delayed mock coordinator",
+    "Observe planning progress and the active-workspace Stop planning and delete action",
+    "Confirm stop and archive; verify coordinator returns to Ready and the workspace list switches to a fresh workspace"
+  ],
+  "verification": {
+    "package_binary_identity_confirmed": true,
+    "active_plan_stop_and_archive_confirmed": true,
+    "inactive_workspace_archive_confirmed": true,
+    "workspace_creation_confirmed": true,
+    "agent_registration_and_role_assignment_confirmed": true,
+    "provider_cli_invoked": false,
+    "external_service_called": false,
+    "agent_task_executed": false,
+    "screenshot_asset_persisted": false,
+    "windows_packaged_ui_verified": false
+  },
+  "acceptance": {
+    "packaged_native_ui_workflows": "2/25",
+    "adds_distinct_complete_workflow": false,
+    "shipped_rust_replacement": false
+  }
+}

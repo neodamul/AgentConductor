@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "observed_on": "2026-10-22",
+  "source_base": "5a98ccc3607d42d67a588844d7c4c063259c6768",
+  "screen": {
+    "surface": "full native Workspace Review screen",
+    "viewport_points": [1140, 772],
+    "locale_source": "active native appearance setting"
+  },
+  "test": {
+    "path": "tests/native_ui_probe/review_task_rows.rs",
+    "name": "full_review_screen_exposes_all_three_manual_plan_task_rows",
+    "result": "passed",
+    "assertions": [
+      "manual-1 disclosure control is present and within viewport",
+      "manual-2 disclosure control is present and within viewport",
+      "manual-3 disclosure control is present and within viewport"
+    ]
+  },
+  "verification": {
+    "focused_test": "1 passed",
+    "source_layout": "2 passed, including the 300-line source/test guard",
+    "public_docs": "11 passed",
+    "clippy": "--lib --tests --features native-ui-probe -- -D warnings passed",
+    "rustfmt": "cargo fmt --all -- --check passed",
+    "diff_check": "git diff --check passed"
+  },
+  "finding": "The reported two-row issue was not reproduced in the current rendered source. The initial English-only test assertion failed because the host locale was Korean; the test now resolves labels through the active locale.",
+  "agentmemory": "mem_mvj9ir18_d2d731bb14ab",
+  "graphify": {
+    "nodes": 8492,
+    "edges": 13471,
+    "communities": 649
+  },
+  "cocoindex": "CLI unavailable; no results claimed",
+  "product_behavior_changed": false,
+  "packaged_workflow_acceptance": "8/25, unchanged",
+  "package_or_windows_runtime_verified": false
+}

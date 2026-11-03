@@ -86,6 +86,16 @@ open.
 
 ## Source fingerprints
 
+## Whole-number credit amounts in Rust
+
+GitHub #162's merged correction is ported to the shared Rust quota display helper. Finite
+numeric strings with absolute value below `1e15` are rounded for the Agent Room budget
+amounts and badge details; invalid, non-finite, and out-of-range strings retain their
+original display. This affects presentation only; persisted quota values and percentage
+calculations retain their source precision. TDD reproduces the long fractional credit
+amount, checks rounding and invalid input behavior, and confirms both display callers.
+
+
 - `src/quota.rs` SHA-256 `99c508d7d2c9b6cdf982bc3f88b8ee8c9a88a5ea27d1c9729c759706d3c9a223`
 - `src/quota/display.rs` SHA-256 `dd52690689afa1eddb07fb2c18e21ca6cbfda27b432457b4127f7a28161e75ff`
 - `src/quota/terminal.rs` SHA-256 `9acfe18358b811a62d7b99763eb26e77400f9c0091d1ea1ed01ec50cd36bbe51`
@@ -100,3 +110,14 @@ open.
 - `tests/claude_usage.rs` SHA-256 `4e17456510f93ba602b7c375dcfdfda8fd9a3ac5a3915bf90058827f115fdc99`
 - `tests/startup_quota.rs` SHA-256 `3866da64e0711ed1826bf0a7f139ce715244365d6f397508e83d18b49167376b`
 - `tests/test_quota_badge.py` SHA-256 `55cc11611bf2c22a07bf3bbd17070f7b4b8d27b111fb8e771e76cfc5e000e934`
+
+Current #162 Rust port fingerprints:
+- `src/quota/display/labels.rs` SHA-256 `fd60cd5610aa0c70592253b10237352339fa6d1be385dcd75bac6fd88fe325b3`
+- `tests/quota_display.rs` SHA-256 `d8c958981ab2afbae2a6eb7cd9ffeb8900500f9d00bde1db15917f9f67a9e4cc`
+
+Exact-source package checkpoint `97876887c26d`: the arm64 macOS release manifest and binary
+checksums validate. The packaged executable passed all four deterministic mock smoke cases, each
+covering three parallel tasks, passing task tests, refusal before operator approval, and verified
+merge after approval. This is CLI/package evidence only; no native screen interaction or Windows
+acceptance is claimed. Workflow acceptance remains 8/25. See
+[`issue9-97876887-macos-package.json`](../../docs/evidence/issue9-97876887-macos-package.json).

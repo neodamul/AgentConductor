@@ -1,5 +1,8 @@
 use std::io::{BufRead,Write};
 fn main(){
+    if let Ok(expected) = std::env::var("AC_EXPECT_TERM") {
+        assert_eq!(std::env::var("TERM").unwrap_or_default(), expected);
+    }
     if std::env::var("AC_QUOTA_CASE").as_deref()==Ok("trust_choice") {
         println!("Claude Code vfixture\nIs this a project you created or trust?\n> Yes, I trust this folder\nNo, exit");
         std::io::stdout().flush().unwrap();
@@ -39,21 +42,22 @@ fn main(){
         std::io::stdout().flush().unwrap();
         std::thread::sleep(std::time::Duration::from_secs(60)); return;
     }
-    if std::env::var("AC_QUOTA_CASE").as_deref()==Ok("signed_out"){
-        // GitHub #317: a CLI whose login expired (or was never made) says so at the prompt.
-        println!("Claude Code v2.1.296\nNot logged in · Please run /login\n$");
-        std::io::stdout().flush().unwrap();
-        std::thread::sleep(std::time::Duration::from_secs(60)); return;
-    }
-    // GitHub #297: a CLI that starts slowly (scanning, managed settings, proxy).
-    if let Some(ms)=std::env::var("AC_QUOTA_DELAY_MS").ok().and_then(|v|v.parse().ok()){std::thread::sleep(std::time::Duration::from_millis(ms));}
     if let Some(expected)=std::env::var_os("AC_EXPECT_CWD"){
         let same=std::env::current_dir().ok().and_then(|d|d.canonicalize().ok())==std::path::Path::new(&expected).canonicalize().ok();
         if !same {println!("wrong cwd {:?}",std::env::current_dir()); std::io::stdout().flush().unwrap(); return;}
     }
+    if let Some(ms)=std::env::var("AC_QUOTA_DELAY_MS").ok().and_then(|v|v.parse::<u64>().ok()){
+        std::thread::sleep(std::time::Duration::from_millis(ms));
+    }
     println!("Claude Code vfixture\n{}",std::env::var("AC_QUOTA_PROMPT").unwrap_or("$".into())); std::io::stdout().flush().unwrap();
     for line in std::io::stdin().lock().lines(){
         if line.unwrap().trim()=="/usage"{
+            if std::env::var("AC_QUOTA_HANG_AFTER_USAGE").as_deref()==Ok("1") {
+                println!("Current session");
+                std::io::stdout().flush().unwrap();
+                std::thread::sleep(std::time::Duration::from_secs(60));
+                return;
+            }
             if std::env::var("AC_QUOTA_ENTERPRISE").as_deref()==Ok("zero") { println!("Enterprise plan\n70% used $351.23 / $0.00 spent"); } else if std::env::var("AC_QUOTA_ENTERPRISE").as_deref()==Ok("1") { println!("Enterprise plan\n70% used $351.23 / $500.00 spent - Resets Nov 1 (Asia/Seoul)"); } else { println!("Current session\n27% used\nCurrent week\n60% used"); }
             std::io::stdout().flush().unwrap();
         }else{panic!("Only usage is allowed");}

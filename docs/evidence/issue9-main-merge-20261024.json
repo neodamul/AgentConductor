@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-24",
+  "kind": "issue9-current-main-merge-and-validation",
+  "repository": "neodamul/AgentConductor",
+  "branch": "codex/issue-9-native-ui-parity",
+  "pull_request": 22,
+  "shared_base": "602ec1182145c59eac402c39558af05af6ebe1e1",
+  "main_commit": "3bcfebf219087c423565f96e1ea3bea9464093da",
+  "merge_commit": "4a53cf66516eda9a78432b1a05bec574816e7aaf",
+  "mergeability_after_push": "mergeable",
+  "merge_resolution": {
+    "latest_main_work": ["#169 Rust review policy", "#172 safety comments on unsafe sites", "Windows quota and picker updates"],
+    "preserved": ["Rust provider-icon decoder", "reduced-motion preference", "300-line source/test split", "native Rust UI entrypoint"],
+    "removed_legacy_source": "src/ui/native/cocoa.rs",
+    "initial_red_errors": ["missing icons::decode_data_url", "picker call sites used the old title argument"],
+    "green_changes": ["restored bounded PNG data URL decoder", "updated picker callers to the current API"]
+  },
+  "local_verification": {
+    "command": "cargo test --offline --locked --features native-ui-probe",
+    "passed": 959,
+    "ignored": 14,
+    "suites": 319,
+    "exit_code": 0,
+    "focused_native_journey_docs_layout": "14 passed",
+    "public_docs_source_layout": "13 passed",
+    "rustfmt": "passed",
+    "clippy_undocumented_unsafe_blocks_and_warnings_denied": "passed",
+    "git_diff_check": "passed"
+  },
+  "graphify": {
+    "status": "updated",
+    "nodes": 9201,
+    "edges": 14401,
+    "communities": 701,
+    "llm_labels_refreshed": false
+  },
+  "cocoindex": {
+    "status": "unavailable",
+    "reason": "No CocoIndex CLI or plugin is installed in this environment."
+  },
+  "current_head_ci": {
+    "run_id": 39999933920,
+    "status": "in_progress",
+    "windows": "Build native target and tests",
+    "macos": "Build native target and tests",
+    "note": "Previous run 39994106814 predates this merge; its Windows job passed and macOS Step 3 UI journey failed."
+  },
+  "acceptance": {
+    "packaged_native_ui_workflows": "15/25",
+    "shipped_default_rust_ui": "0/25",
+    "issue9_closed": false
+  }
+}

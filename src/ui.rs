@@ -12,29 +12,24 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-const HTML: &str = include_str!("ui/room.html");
-const CSS: &str = include_str!("ui/room.css");
-const JS: &str = include_str!("ui/room.js");
-/// ID catalogs and translation runtime, loaded before either page script.
-const I18N: &str = concat!(
-    "const AC_MESSAGES={en:",
-    include_str!("ui/messages/en.json"),
-    ",ko:",
-    include_str!("ui/messages/ko.json"),
-    "};\n",
-    include_str!("ui/i18n.js")
-);
 mod cache;
 mod diff;
-pub mod failure_output;
+pub(crate) mod events;
 pub mod language;
 pub mod messages;
 pub mod native;
 pub mod picker;
+pub mod request_diagnostics;
 pub mod setup;
 mod source_references;
 pub mod update_guard;
 pub mod workspaces;
+
+pub fn notify_external_event() {
+    events::notify_external_from_environment();
+}
+
+mod room_open;
 
 fn public_report(report: &Report) -> Result<serde_json::Value, String> {
     let mut value = serde_json::to_value(report).map_err(|e| e.to_string())?;
@@ -63,9 +58,18 @@ fn public_report(report: &Report) -> Result<serde_json::Value, String> {
     if let Some(tests) = value.get_mut("tests").and_then(|t| t.as_array_mut()) {
         for (test, source) in tests.iter_mut().zip(&report.tests) {
             if source.exit_code != Some(0) || source.timed_out {
-                let read = |path| tail(path, 2048).unwrap_or_default();
-                let output =
-                    failure_output::failure_output(&read(&source.stderr), &read(&source.stdout));
+                let stderr = tail(&source.stderr, 2048).unwrap_or_default();
+                let stdout = tail(&source.stdout, 2048).unwrap_or_default();
+                let output = match (stderr.trim().is_empty(), stdout.trim().is_empty()) {
+                    (false, false) => format!(
+                        "stderr:\n{}\n\nstdout:\n{}",
+                        stderr.trim_end(),
+                        stdout.trim_end()
+                    ),
+                    (false, true) => stderr,
+                    (true, false) => stdout,
+                    (true, true) => String::new(),
+                };
                 test["output"] = serde_json::json!(output);
             }
         }
@@ -84,6 +88,7 @@ pub(crate) fn open_artifact(path: &Path) -> Result<fs::File, String> {
         },
         path::Component,
     };
+
     if !path.is_absolute() {
         return Err(crate::ui::messages::text("native.artifact_path_must_be_absolute").into());
     }
@@ -178,17 +183,6 @@ fn clip_strings(value: &serde_json::Value, limit: usize) -> serde_json::Value {
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 enum Request {
     Briefing {},
-    /// GitHub #122: read-only recovery review of an out-of-scope failure.
-    ScopeFailure {},
-    UndoAmendment {
-        id: String,
-    },
-    ScopePreview {
-        task: String,
-        paths: Vec<String>,
-        #[serde(default)]
-        test_command: Option<Vec<String>>,
-    },
     Snapshot {
         /// DD-71: icon data URLs only on request.
         #[serde(default)]
@@ -202,8 +196,16 @@ enum Request {
     },
     /// DD-117: the coordinator's own work history, shown like a task's activity.
     Coordinator {},
+    ScopeFailure {},
+    ScopeRecoveryPreview {
+        task: String,
+        paths: Vec<String>,
+        test: Option<Vec<String>>,
+    },
     Action {
         revision: String,
+        #[serde(default)]
+        stop_digest: Option<String>,
         action: Action,
     },
 }
@@ -211,54 +213,22 @@ enum Request {
 pub struct Room {
     controller: Mutex<Option<Arc<Controller>>>,
     startup: Mutex<Option<Arc<setup::Startup>>>,
+    workspace_watch: Arc<Mutex<std::sync::Weak<setup::Startup>>>,
     run_lease: Mutex<Option<crate::leases::Lease>>,
     window_lease: Mutex<crate::leases::Lease>,
     parked_workspaces: Mutex<std::collections::BTreeMap<PathBuf, workspaces::ParkedWorkspace>>,
     workspace_navigation: Mutex<()>,
+    events: Arc<events::EventBus>,
+    _event_bridge: Option<events::ProcessEventBridge>,
+    _listeners: Vec<events::listener::RunChangeListener>,
 }
 impl Room {
-    /// A native window holds one kernel lease per canonical run directory.
-    pub fn open(dir: &Path, exe: &Path) -> Result<Self, String> {
-        workflow::load(dir)?;
-        let dir = dir.canonicalize().map_err(|e| e.to_string())?;
-        // A completed phase is recorded even if its goal folder moved after the run.
-        let _ = workflow::sync_phase(&dir);
-        let lease = crate::leases::Lease::acquire(&dir.join("ui-window.lock")).map_err(|e| {
-            if e.starts_with("lease is held:") {
-                crate::ui::messages::text("native.agent_room_is_already_open_for_this_run").into()
-            } else {
-                e
-            }
-        })?;
-        let enabled = workflow::auto_resume_enabled(&dir);
-        let controller = Arc::new(Controller {
-            dir,
-            exe: exe.canonicalize().map_err(|e| e.to_string())?,
-            job: Mutex::new(None),
-        });
-        controller.automatic(enabled)?;
-        Ok(Self {
-            controller: Mutex::new(Some(controller)),
-            startup: Mutex::new(None),
-            run_lease: Mutex::new(None),
-            window_lease: Mutex::new(lease),
-            parked_workspaces: Mutex::new(std::collections::BTreeMap::new()),
-            workspace_navigation: Mutex::new(()),
-        })
-    }
-    pub fn startup(root: &Path, exe: &Path) -> Result<Self, String> {
-        fs::create_dir_all(root).map_err(|e| e.to_string())?;
-        let _navigation = crate::leases::Lease::workspace(root)?;
-        let lease = crate::leases::Lease::acquire(&root.join("ui-window.lock"))?;
-        let startup = setup::Startup::open(root, exe)?;
-        Ok(Self {
-            controller: Mutex::new(None),
-            startup: Mutex::new(Some(Arc::new(startup))),
-            run_lease: Mutex::new(None),
-            window_lease: Mutex::new(lease),
-            parked_workspaces: Mutex::new(std::collections::BTreeMap::new()),
-            workspace_navigation: Mutex::new(()),
-        })
+    pub(crate) fn subscribe_events(
+        &self,
+        surface: events::EventSurface,
+        wake: impl Fn() + Send + Sync + 'static,
+    ) -> Result<events::Subscription, String> {
+        self.events.subscribe_with_wakeup(surface, wake)
     }
     fn surface(&self) -> Result<Option<Arc<setup::Startup>>, String> {
         Ok(self
@@ -266,25 +236,6 @@ impl Room {
             .lock()
             .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))?
             .clone())
-    }
-    pub fn document(&self) -> Result<String, String> {
-        if self.surface()?.is_some() {
-            return setup::document();
-        }
-        let nonce = crate::native_guard::session_id()?;
-        let policy = format!(
-            "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; script-src 'nonce-{nonce}'; style-src 'nonce-{nonce}'; connect-src 'none'; img-src data:; base-uri 'none'; form-action 'none'\">"
-        );
-        Ok(language::embed(HTML)
-            .replace(
-                "<link rel=\"stylesheet\" href=\"/ui.css\"><script src=\"/ui.js\" defer></script>",
-                &format!("{policy}<style nonce=\"{nonce}\">{CSS}</style>"),
-            )
-            .replace(
-                "</body>",
-                &format!("<script nonce=\"{nonce}\">{I18N}\n{JS}</script></body>"),
-            )
-            .replace("{{APP_VERSION}}", &crate::update::current()))
     }
 }
 
@@ -294,5 +245,4 @@ use controller::*;
 mod automatic;
 mod update;
 
-mod diagnostics;
 mod dispatch;

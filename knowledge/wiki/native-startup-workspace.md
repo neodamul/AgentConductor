@@ -8,6 +8,8 @@ The native application previously required pre-existing CLI-created runs. DD-25 
 
 ## Verified contracts
 
+The optional worktree setting is grouped under its own localized `Execution isolation` heading after goal and import controls. Keep it below the project picker so the project path and browse action stay together; the toggle remains unchecked by default and continues to map to shared-folder mode until selected.
+
 Registry values persist locally while private environment values are omitted from UI snapshots. Stale revisions, shell executables, unregistered replacement profiles and altered approval digests are rejected. Execution rechecks the approved repository baseline under its workspace lease before creating the run. Unused registered profiles do not block a plan. A canonical-path regression reproduces and fixes oversized settings leaving an orphan pending file.
 
 Opening a run accepts no arbitrary path and acquires its window lease. Returning home releases that lease while retaining the original startup job broker for reaping. The native fixture exercised empty startup, custom worker/planner registration, goal entry, planning, editing all three test commands, explicit plan consent, automatic same-window run opening, diff/tests, candidate approval, final merge and returning home. Three independently identified fixture sessions and three exit-zero tests were collected. Repository HEAD equals candidate `128fc14b461f84d633e793c98a22eb8acc22c772`. Owned native process 54885 exited zero; a kernel probe confirmed absence. A rebuilt follow-up window (PID 85343) verified persisted setup and literal JSON typing after disabling smart quote substitution, then exited zero.
@@ -16,7 +18,7 @@ The complete suite passed 148 tests, with four ignored and zero failures, in 88.
 
 ## Limits
 
-Fixture output is deterministic; it does not prove authenticated provider planning, entitlement, native tool containment or all-provider execution. External sandbox/read-only profile labels alone do not enforce OS isolation. Native dialogs were visually operable but their accessibility contents disappeared when opened after the page scrolled; accessibility remediation remains open. The public README contains actual runtime images only.
+Fixture output is deterministic; it does not prove authenticated provider planning, entitlement, native tool containment or all-provider execution. External sandbox/read-only profile labels alone do not enforce OS isolation. Native dialog accessibility was rechecked in the app: with the discard dialog open, accessibility automation focused the Keep editing button inside the labelled dialog group. The earlier missing-content report came from a traversal-tool artifact over inert background content, not a reproduced app defect. See the 2026-10-10 verification in docs/07-implementation-plan.md. The public README contains actual runtime images only.
 
 ## Source hashes
 

@@ -1,0 +1,20 @@
+{
+  "issue": 9,
+  "pull_request": 22,
+  "source_commit": "87239f6a68e5b7e4ccc3efc8c0efffc5d11b1407",
+  "target": "aarch64-apple-darwin",
+  "binary_bytes": 19456032,
+  "binary_sha256": "081136f7ab226b91373ee196150b0923f86e11ad210db603eb7c51103566888b",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-87239f6a68e5.zip",
+  "archive_sha256": "f2200d0db44d6e926505ef0ce806cc936d4bb65644863fee00194d688d03dcc4",
+  "checks": {
+    "release_build": "passed",
+    "manifest_source_commit_and_binary_hash": "passed",
+    "archive_crc": "passed",
+    "packaged_binary_help": "passed",
+    "dependency_licenses_and_manuals_in_archive": "present",
+    "gui_launch_and_visual_acceptance": "not_run"
+  },
+  "windows_exact_package": "pending",
+  "workflow_acceptance_credit": false
+}

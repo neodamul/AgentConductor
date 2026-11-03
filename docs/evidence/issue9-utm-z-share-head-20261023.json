@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "branch_head": "d1e1b3746b3ea08cbaa09c1ac167e0c569c9810d",
+  "source_archive": "AgentConductor-d1e1b374.tar.gz",
+  "source_sha256": "6ead3cd60551fa1a9682a3eeb3420ca034005614680db0a63aa2ab3e06e272cd",
+  "host_share_path": "/Users/neodamul/Downloads/UTM",
+  "host_copy_sha256": "6ead3cd60551fa1a9682a3eeb3420ca034005614680db0a63aa2ab3e06e272cd",
+  "guest_path": "Z:\\AgentConductor-d1e1b374.tar.gz",
+  "guest_access_verified": false,
+  "utm_state": "started",
+  "restart_confirmation_visible": true,
+  "restart_or_shutdown_selected": false,
+  "windows_build_attempted": false
+}

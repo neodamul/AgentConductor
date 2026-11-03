@@ -1,0 +1,44 @@
+{
+  "date": "2026-11-03",
+  "issue": 9,
+  "reference": {
+    "source": "origin/main:src/ui/startup.html and src/ui/startup.css",
+    "source_commit": "f3b819020d97d141daf6b03d979fb36ef9b1cd9d",
+    "contract": "Planning coordinator label; 40 px single-line controls; 380 px project-folder field at 1280 px; separate Browse button."
+  },
+  "tdd": {
+    "red": {
+      "test": "workspace_fields_match_legacy_control_geometry",
+      "results": [
+        "failed: workspace-name control measured 28 px instead of 40 px",
+        "failed: project-folder field measured 420 px instead of 380 px"
+      ]
+    },
+    "green": {
+      "command": "cargo test --locked --offline --features native-ui-probe --test native_ui_probe --test native_ui_probe_project_layout --test native_ui_workspace_isolation_layout --test native_ui_language --test source_layout",
+      "result": "20 tests passed across five targets"
+    }
+  },
+  "visual": {
+    "path": "docs/evidence/issue9-workspace-form-geometry-20261103.png",
+    "viewport": "1280x892",
+    "sha256": "339a8c2ff0008c8032d08289b42ce6bf04f58a7a332566a0bb6d8cf5bf61f626",
+    "fixture": "Source-built first-run screen in disposable HOME; no agents, provider CLI, credentials, or user repository."
+  },
+  "verification": {
+    "clippy": "cargo clippy --all-targets --locked --offline --features test-fixtures -- -D warnings passed",
+    "rustfmt": "cargo fmt --all -- --check passed",
+    "diff_check": "git diff --check passed",
+    "line_counts": {
+      "src/native_ui_probe/workspace/goal.rs": 265,
+      "tests/native_ui_workspace_isolation_layout.rs": 127,
+      "tests/native_ui_probe.rs": 285
+    }
+  },
+  "acceptance": {
+    "issue_9_overall": "22/50",
+    "shipped_default_rust_ui": "0/25",
+    "credit_added": false
+  },
+  "limitations": "The first-run capture verifies only visible form labels and geometry; it is not a same-state full-screen parity or packaged macOS/Windows acceptance result."
+}

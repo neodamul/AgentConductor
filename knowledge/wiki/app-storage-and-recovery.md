@@ -15,6 +15,8 @@ Preview is read-only and binds paths, sizes and filesystem fingerprints. Manual 
 
 Idle startup and settled metadata reuse the same cleanup with an eight-eligible-folder retention budget plus protected references. The scanner bounds candidates and tree visits, does not read large output bodies, and does not run a resident daemon. Private snapshots use the existing referenced-history lifecycle. Old unverified metadata folders may remain until ownership can be established; broad deletion would risk evidence or active readers.
 
+The native Settings menu exposes this policy as Preview and clear local cache. Preview lists exact paths and totals together with protected/uncertain counts; the UI clears only the reviewed digest through the existing background dispatcher. Exact v0.1.36 macOS package workflow 14 used an isolated HOME, showed one disposable fixture and zero protected entries, removed that fixture after review, and preserved `startup.json`. The package check adds no Windows runtime evidence. See `docs/evidence/issue9-9845db79-cache-cleanup-ui.json`.
+
 ## Blocked planning recovery
 
 Planning now passes an exact per-proposal stop marker to the existing process supervisor. The UI can issue the stop before normal snapshot settlement, including when a proposal is malformed. Queued metadata is dropped, while an admitted collector finishes under its existing bound. The supervisor stops its owned process group/job and removes the disposable planning snapshot; no arbitrary PID is terminated.
@@ -28,3 +30,7 @@ Red: build labels absent, stop_planning/cache requests unknown, current deletion
 Resource lesson: full debug artifacts accumulated 22 GiB and exhausted local storage during regression compilation. Only this project's generated target output was cleaned; use low debug information and bounded build concurrency for local verification. Cargo artifacts are separate from application cache and workspace evidence.
 
 Revalidate when process ownership, metadata producers, CLI cancellation, cache references or native navigation leases change.
+
+## Workspace launch recovery — issue #226
+
+After the default `~/.agentconductor/desktop` workspace is deleted, launch selection uses the last saved, app-managed workspace from `workspaces.json`; it creates a new default only when no saved workspace remains. The source integration regression verifies this selection. A separate exact Windows package journey now holds a lease on the surviving workspace while launching the packaged app, so the test proves the package selects that saved workspace without recreating the deleted default. Keep issue #226 open until that package journey passes. See the [2026-11-03 test record](../raw/2026-11-03-issue226-package-regression.md).

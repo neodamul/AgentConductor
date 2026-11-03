@@ -1,0 +1,41 @@
+{
+  "source_commit": "97876887c26dcb5775523425d45a103f41c040cc",
+  "target": "aarch64-apple-darwin",
+  "commands": [
+    "cargo test --locked --offline --all-targets --features native-ui-probe,test-fixtures",
+    "cargo run --release --locked --offline -- manual render",
+    "cargo run --release --locked --offline -- package-release"
+  ],
+  "all_target_tests": {
+    "passed": 933,
+    "ignored": 14,
+    "suites": 307,
+    "failed": 0
+  },
+  "package": {
+    "archive": "dist/agentconductor-aarch64-apple-darwin-97876887c26d.zip",
+    "archive_sha256": "aaa589fed0356853a367628c668da5a64bf4c43369c219491a4df9d231833187",
+    "binary": "agentconductor",
+    "binary_bytes": 18556656,
+    "binary_sha256": "2f73ef23f9f7e9e3469a0e7443e042185a4726c21185c6b9e8fb988707a2b2f0",
+    "dependency_count": 214,
+    "external_requirements": ["Git", "selected authenticated agent CLIs"],
+    "runtime": "one native executable; SQLite bundled"
+  },
+  "smoke": {
+    "exit_code": 0,
+    "cases": 4,
+    "each_case": {
+      "tasks": 3,
+      "tests": 3,
+      "parallel": true,
+      "unapproved_merge_refused": true,
+      "approved_merge_verified": true
+    }
+  },
+  "acceptance": {
+    "packaged_ui_workflows": "8/25 (unchanged)",
+    "windows": "not verified",
+    "native_screen_interaction": "not verified"
+  }
+}

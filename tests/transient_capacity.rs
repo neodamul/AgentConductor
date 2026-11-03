@@ -21,7 +21,7 @@ fn a_model_at_capacity_is_a_short_transient_restriction() {
 
 #[test]
 fn the_coordinator_asks_again_after_a_capacity_reply() {
-    let source = include_str!("../src/coordinator.rs");
+    let source = include_str!("../src/coordinator/run.rs");
     assert!(source.contains("retries < 3"));
     assert!(source.contains("crate::availability::transient_capacity(&error)"));
 }

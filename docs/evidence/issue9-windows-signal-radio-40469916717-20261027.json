@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-27",
+  "issue": 9,
+  "pull_request": 22,
+  "tested_commit": "4a746fa2762112fd6793b9838b0b15a51ed8405a",
+  "workflow_run": 40469916717,
+  "windows_artifact": {
+    "id": 12719508980,
+    "sha256": "21f79156b07238be65c1ebe7e943b667c4855acea216cb957644a5dd8e1e7199",
+    "size_bytes": 15313416
+  },
+  "windows_package": {
+    "build": "passed",
+    "manual_render": "passed",
+    "binary_execution": "passed",
+    "briefing": "passed",
+    "default_desktop_save": "passed",
+    "manual_schedule_persistence": "passed: 2099-01-01T09:00:00+09:00",
+    "signal_settings": "failed_before_preference_change"
+  },
+  "signal_failure": "UI Automation waited for Local Rust as ControlType.Button, but egui selectable_value exposes transport choices as RadioButton controls.",
+  "fix": "Resolve and click action controls whose UIA type is Button or RadioButton; preserve exact process ownership checks.",
+  "local_red_green": "The new transport-choice source-contract test failed before the fix and passes afterward. Native signal-settings, driver, and source-layout tests pass 8/8; rustfmt, warning-denied Clippy, and diff checks pass.",
+  "acceptance": "22/25; exact Windows package rerun must persist signal transport=agentmemory and port=7333."
+}

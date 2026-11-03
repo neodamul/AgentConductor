@@ -1,0 +1,12 @@
+{
+  "source_commit": "147c0daa93ab145da20433ab82b96456834894bb",
+  "package_version": "0.1.33",
+  "target": "aarch64-apple-darwin",
+  "profile": "release",
+  "binary": "target/release/agentconductor",
+  "binary_sha256": "842ddf7302bce32e6c92189e8ad8804dd5fd840ba1410572d42412cad63a2c84",
+  "build": "cargo build --release --bin agentconductor",
+  "cli_smoke": "agentconductor --help exited successfully",
+  "visual_runtime": "not launched; the active window contains the user's workspace",
+  "package_distribution": "not built; exact UI visual verification and Windows package checks remain open"
+}

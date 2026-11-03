@@ -208,6 +208,12 @@ impl Startup {
             ))?;
         let base = Plan {
             goal: saved.config.goal.clone(),
+            plan_rules: std::fs::read_to_string(root.join("plan/plan-rules.md")).unwrap_or(
+                crate::plan_rules::for_repository(
+                    saved.config.plan_rules.as_deref(),
+                    &saved.config.repository,
+                )?,
+            ),
             agents: saved.config.profiles.clone(),
             tasks: vec![],
             workspace_mode: saved.config.workspace_mode,

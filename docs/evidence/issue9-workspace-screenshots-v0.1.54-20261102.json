@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-02",
+  "kind": "current-native-workspace-screenshots",
+  "issue": 9,
+  "source_commit": "880cd78d05e89c81f5150d479b32f69f91b24027",
+  "app_version": "0.1.54",
+  "capture_feature": "manual-screenshot-capture",
+  "surface": "Workspace",
+  "capture": {
+    "method": "native eframe framebuffer callback after the initial Workspace snapshot",
+    "dimensions": "1140x740",
+    "environment": "separate temporary HOME per language/theme under /private/tmp; no user workspace, agent profile, provider CLI, or external service",
+    "assets": [
+      {"path": "docs/assets/ui-workspace-current.png", "sha256": "61734c267373d33be4ef421bfd83780fac4ce9350a6b4b2137018269485cea0c"},
+      {"path": "docs/assets/ui-workspace-korean-current.png", "sha256": "0387bac36379caa03ec4403d516ccfa2606ef95a3a945beb7a98518238ee6518"},
+      {"path": "docs/assets/ui-workspace-dark-current.png", "sha256": "cb1bd29c7c933e4df73651e5454fbf642f0fbb4f29a4a975235dec591b26fd6f"}
+    ]
+  },
+  "local_macos_package": {
+    "source_commit": "2fa033bcd257cd0f3b718b6a8d49d84e039e48d7",
+    "target": "aarch64-apple-darwin",
+    "archive": "dist/agentconductor-aarch64-apple-darwin-2fa033bcd257.zip",
+    "archive_sha256": "2a31bf72e8a13785969e1abe74af80873f5dd1819a5424b791c7146d0076ea71",
+    "binary_sha256": "0c29d637c557a636c4f2a66167c138cc39c1a893db02cb5fda7925835fee84d0",
+    "checks": {
+      "validate_package": "passed",
+      "zip_integrity": "passed",
+      "packaged_cli_help": "passed",
+      "packaged_workspace_asset_hashes_match_capture": "passed"
+    }
+  },
+  "verification_scope": "Current Rust Workspace screenshots and local macOS package contents only; not exact packaged UI acceptance, Windows package acceptance, or full JavaScript-to-Rust parity."
+}

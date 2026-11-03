@@ -1,13 +1,70 @@
-//! Coordinator chat from the workspace screen (GitHub #115): a worker job like MCP preview,
-//! with the answer stored as an artifact and returned in the next snapshots.
+//! Bounded coordinator chat jobs, using the configured CLI and its normal login.
 use super::*;
 
 impl Startup {
+    pub(super) fn launch_chat(
+        &self,
+        saved: &mut Saved,
+        question: String,
+        revision: &str,
+    ) -> Result<serde_json::Value, String> {
+        crate::chat::validate_question(&question)?;
+        let mut turns = self.stored_chat_turns(saved)?;
+        turns.push(crate::chat::Turn {
+            role: "operator".into(),
+            text: question,
+        });
+        let turns = crate::chat::recent_history(&turns);
+        let language = if crate::ui::language::load() == "ko" {
+            "Korean"
+        } else {
+            "English"
+        };
+        let saved_value = serde_json::to_value(&*saved).map_err(|error| error.to_string())?;
+        let workspace = crate::chat_context::workspace(&saved_value, &saved.config.repository);
+        let now_ms = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_err(|error| error.to_string())?
+            .as_millis() as u64;
+        let running = crate::chat_context::running(&saved_value, &self.broker.dir, now_ms);
+        let context = format!("{workspace}\n\n{running}");
+        crate::chat::build_prompt_in(&turns, language, &context)?;
+        crate::mcp::coordinator_profile(&saved.config.profiles, &saved.config.coordinator)?;
+        let id = crate::native_guard::session_id()?;
+        crate::mcp::store(
+            &self.broker.dir,
+            &format!("chat-input-{id}.json"),
+            &serde_json::to_vec(&serde_json::json!({
+                "turns": turns,
+                "language": language,
+                "workspace": context
+            }))
+            .map_err(|e| e.to_string())?,
+        )?;
+        let old_result = saved.chat_result.clone();
+        saved.chat_result = Some(format!("chat-{id}.json"));
+        let result = self.launch_chat_worker(
+            saved,
+            vec![
+                "chat".into(),
+                self.broker.dir.to_string_lossy().into(),
+                id.clone(),
+            ],
+            revision,
+        );
+        if result.is_err() {
+            saved.chat_result = old_result;
+        } else {
+            let _ = clear_previous_chat_artifacts(&self.broker.dir, Some(&id));
+        }
+        result
+    }
+
     pub(super) fn dispatch_chat(
         &self,
         saved: &mut Saved,
         revision: &str,
-        text: &str,
+        text: String,
     ) -> Result<serde_json::Value, String> {
         if revision != self.chat_revision(saved)? {
             return Err(crate::ui::messages::text(
@@ -15,81 +72,124 @@ impl Startup {
             )
             .into());
         }
-        // GitHub #261: a chat is read-only; a plan or start job running beside it is no reason to refuse it.
         if self.chat_job(saved)?["state"] == "running" {
             return Err(crate::ui::messages::text("native.chat_still_answering").into());
         }
-        self.launch_chat(saved, text.to_owned(), revision)
+        self.launch_chat(saved, text, revision)
     }
 
-    pub(super) fn launch_chat(
+    pub(super) fn chat_history(
         &self,
-        s: &mut Saved,
-        text: String,
-        revision: &str,
+        saved: &Saved,
+        _job: &serde_json::Value,
     ) -> Result<serde_json::Value, String> {
-        let language = if crate::ui::language::load() == "ko" {
-            "Korean"
-        } else {
-            "English"
-        };
-        let history = s
-            .chat_result
-            .as_deref()
-            .map(|name| crate::chat::history(&self.broker.dir, name))
-            .unwrap_or_default();
-        let turns = crate::chat::next_turns(history, &text)?;
-        crate::chat::build_prompt(&turns, language)?;
-        crate::mcp::coordinator_profile(&s.config.profiles, &s.config.coordinator)?;
-        let id = crate::native_guard::session_id()?;
-        crate::mcp::store(
-            &self.broker.dir,
-            &format!("chat-input-{id}.json"),
-            &serde_json::to_vec(&serde_json::json!({"turns": turns, "language": language}))
-                .map_err(|e| e.to_string())?,
-        )?;
-        s.chat_result = Some(format!("chat-{id}.json"));
-        self.launch_chat_worker(
-            s,
-            vec!["chat".into(), self.broker.dir.to_string_lossy().into(), id],
-            revision,
-        )
+        serde_json::to_value(self.stored_chat_turns(saved)?).map_err(|e| e.to_string())
     }
 
-    /// The stored conversation of this workspace, so a reopened screen shows it again.
-    pub(super) fn chat_history(&self, s: &Saved) -> serde_json::Value {
-        let turns = s
-            .chat_result
-            .as_deref()
-            .map(|name| crate::chat::history(&self.broker.dir, name))
-            .unwrap_or_default();
-        serde_json::json!({"turns": turns})
-    }
-
-    /// Starts a new conversation; the old artifacts stay in the private folder.
-    pub(super) fn chat_reset(&self, s: &mut Saved) -> Result<serde_json::Value, String> {
-        if self.chat_job(s)?["state"] == "running" {
-            return Err(crate::ui::messages::text("native.chat_still_answering").into());
-        }
-        s.chat_result = None;
-        self.store(s)?;
-        Ok(serde_json::json!({"turns": []}))
-    }
-
-    /// The finished answer, tagged with its job so the page shows each answer once.
-    pub(super) fn chat_snapshot(&self, s: &Saved, job: &serde_json::Value) -> serde_json::Value {
-        if job["kind"] != "chat" || job["state"] != "completed" {
+    pub(super) fn chat_snapshot(
+        &self,
+        saved: &Saved,
+        chat_job: &serde_json::Value,
+    ) -> serde_json::Value {
+        if chat_job["state"] != "completed" {
             return serde_json::Value::Null;
         }
-        let Some(name) = &s.chat_result else {
+        let Some(name) = &saved.chat_result else {
             return serde_json::Value::Null;
         };
-        crate::mcp::load(&self.broker.dir.join("mcp").join(name))
+        let answer = self.chat_answer(name);
+        let Some(answer) = answer else {
+            return serde_json::Value::Null;
+        };
+        serde_json::json!({"job":chat_job["id"],"answer":answer})
+    }
+
+    pub(super) fn reset_chat(&self, saved: &mut Saved) -> Result<serde_json::Value, String> {
+        saved.chat_result = None;
+        self.store(saved)?;
+        let _ = clear_previous_chat_artifacts(&self.broker.dir, None);
+        Ok(serde_json::json!({"reset":true}))
+    }
+
+    fn chat_answer(&self, name: &str) -> Option<String> {
+        let id = chat_id(name)?;
+        let path = self.broker.dir.join("mcp").join(format!("chat-{id}.json"));
+        crate::mcp::load(&path)
             .ok()
             .and_then(|data| serde_json::from_slice::<serde_json::Value>(&data).ok())
-            .map_or(
-                serde_json::Value::Null,
-                |v| serde_json::json!({"job": job["id"], "answer": v["answer"]}),
-            )
+            .and_then(|value| value["answer"].as_str().map(str::to_owned))
     }
+
+    fn stored_chat_turns(&self, saved: &Saved) -> Result<Vec<crate::chat::Turn>, String> {
+        let Some(name) = &saved.chat_result else {
+            return Ok(Vec::new());
+        };
+        let id = chat_id(name).ok_or("stored coordinator chat reference is invalid")?;
+        let input = self
+            .broker
+            .dir
+            .join("mcp")
+            .join(format!("chat-input-{id}.json"));
+        let mut turns = if input.exists() {
+            let bytes = crate::mcp::load(&input).map_err(|error| error.to_string())?;
+            let value: serde_json::Value =
+                serde_json::from_slice(&bytes).map_err(|e| e.to_string())?;
+            serde_json::from_value(value["turns"].clone()).map_err(|e| e.to_string())?
+        } else {
+            Vec::new()
+        };
+        if let Some(answer) = self.chat_answer(name) {
+            turns.push(crate::chat::Turn {
+                role: "assistant".into(),
+                text: answer,
+            });
+        }
+        Ok(crate::chat::recent_history(&turns))
+    }
+}
+
+fn chat_id(name: &str) -> Option<&str> {
+    let id = name.strip_prefix("chat-")?.strip_suffix(".json")?;
+    (!id.is_empty()
+        && id
+            .bytes()
+            .all(|byte| byte.is_ascii_hexdigit() || byte == b'-'))
+    .then_some(id)
+}
+
+fn clear_previous_chat_artifacts(root: &Path, keep: Option<&str>) -> Result<(), String> {
+    for entry in fs::read_dir(root).map_err(|error| error.to_string())? {
+        let entry = entry.map_err(|error| error.to_string())?;
+        if entry.file_name().to_string_lossy().starts_with("chat-run-")
+            && !keep
+                .is_some_and(|id| entry.file_name().to_string_lossy() == format!("chat-run-{id}"))
+            && entry
+                .file_type()
+                .map_err(|error| error.to_string())?
+                .is_dir()
+        {
+            fs::remove_dir_all(entry.path()).map_err(|error| error.to_string())?;
+        }
+    }
+    let artifacts = root.join("mcp");
+    if let Ok(entries) = fs::read_dir(artifacts) {
+        for entry in entries {
+            let entry = entry.map_err(|error| error.to_string())?;
+            let name = entry.file_name();
+            if name.to_string_lossy().starts_with("chat-")
+                && name.to_string_lossy().ends_with(".json")
+                && !keep.is_some_and(|id| {
+                    name.to_string_lossy() == format!("chat-{id}.json")
+                        || name.to_string_lossy() == format!("chat-input-{id}.json")
+                })
+                && entry
+                    .file_type()
+                    .map_err(|error| error.to_string())?
+                    .is_file()
+            {
+                fs::remove_file(entry.path()).map_err(|error| error.to_string())?;
+            }
+        }
+    }
+    Ok(())
 }

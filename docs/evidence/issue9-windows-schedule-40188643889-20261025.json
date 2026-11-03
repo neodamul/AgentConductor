@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "issue": 9,
+  "run_id": 40188643889,
+  "commit": "0acecee8a2293304aa3641d4d9e20d66f4570979",
+  "windows_package_artifact": 12597783374,
+  "windows_package_sha256": "b9a8f3aa6fe2c178fbf9362be0ffc13564353593b40fbfc5f779b30cdac1f266",
+  "result": "failed",
+  "passed": [
+    "Windows and macOS platform validation",
+    "Windows and macOS package builds and exact package execution",
+    "Windows default desktop save and team briefing UI tests"
+  ],
+  "failed": "The packaged Windows schedule test invoked the visible UIA button but no coordinator action process appeared; the report remained waiting_availability with restriction source manual_required and no available_at.",
+  "known_passing_baseline": "Run 40119945464 passed the exact package schedule test while invoking the button element captured before editing the timestamp.",
+  "next_check": "Keep the pre-edit UIA button element, wait for it to become enabled, and require persisted manual_schedule with the requested timezone-qualified timestamp."
+}

@@ -1,0 +1,81 @@
+{
+  "kind": "exact-macos-package-ui-checkpoint",
+  "source_commit": "34ca477fefa746541444621124a018a1f85f0321",
+  "worktree_branch": "codex/issue-9-native-ui-parity",
+  "target": "aarch64-apple-darwin",
+  "archive": "agentconductor-aarch64-apple-darwin-34ca477fefa7.zip",
+  "archive_sha256": "bbe281d5928549496df98812853eb88b4882df3b4d044bd7776baa6940162629",
+  "binary": "agentconductor",
+  "binary_bytes": 18091968,
+  "binary_sha256": "86c72bf263fa32b4affe652b38b7d4d80d8125d754372252ae84509b63993d30",
+  "dependency_count": 214,
+  "package_checks": {
+    "manifest_source_commit_matches": true,
+    "binary_help_exit_code": 0,
+    "archive_integrity": true,
+    "packaged_workflow_exit_code": 0,
+    "packaged_workflow_cases": [
+      {
+        "workspace_mode": "shared",
+        "source_mode": "git",
+        "tasks": 3,
+        "tests": 3,
+        "unapproved_merge_refused": true,
+        "approved_merge_verified": true
+      },
+      {
+        "workspace_mode": "shared",
+        "source_mode": "folder",
+        "tasks": 3,
+        "tests": 3,
+        "unapproved_merge_refused": true,
+        "approved_merge_verified": true
+      },
+      {
+        "workspace_mode": "worktree",
+        "source_mode": "git",
+        "tasks": 3,
+        "tests": 3,
+        "unapproved_merge_refused": true,
+        "approved_merge_verified": true
+      },
+      {
+        "workspace_mode": "worktree",
+        "source_mode": "folder",
+        "tasks": 3,
+        "tests": 3,
+        "unapproved_merge_refused": true,
+        "approved_merge_verified": true
+      }
+    ]
+  },
+  "packaged_ui_check": {
+    "application": "dist/agentconductor-aarch64-apple-darwin-34ca477fefa7/AgentConductor.app",
+    "version": "0.1.33",
+    "isolated_home": "/private/tmp/ac-rust-ui-home",
+    "test_agent": "test-agent",
+    "project_folder": "/private/tmp/ac-rust-ui-project",
+    "screenshot_shown_in_session": true,
+    "screenshot_asset_retained": false,
+    "provider_or_test_cli_invoked": false,
+    "visible_surfaces": [
+      "Workspace settings",
+      "Agent roles",
+      "Review the plan"
+    ],
+    "workspace_save": {
+      "startup_file": "/private/tmp/ac-rust-ui-workspace/startup.json",
+      "persisted_name": "Rust preview workspace",
+      "persisted_project": "/private/tmp/ac-rust-ui-project",
+      "persisted_goal": "Verify saving a workspace on a plain folder without Git.",
+      "workspace_mode": "shared",
+      "plain_non_git_folder": true
+    }
+  },
+  "not_verified": [
+    "Windows validation and package for this source commit; exact-head Windows CI is still running on ff79d16",
+    "Full packaged UI workflow acceptance",
+    "All 25 issue #9 end-to-end workflows"
+  ],
+  "acceptance_effect": "No packaged UI workflow acceptance added; issue #9 remains 8/25."
+}

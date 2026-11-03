@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "date": "2026-10-23",
+  "verification_type": "exact macOS package quota fallback, review, approval, and merge through native UI",
+  "application_version": "0.1.36",
+  "source_commit": "ca9495b21c77886df2f75b1672f965dfe75d53fc",
+  "target": "aarch64-apple-darwin",
+  "package_archive": "dist/agentconductor-aarch64-apple-darwin-ca9495b21c77.zip",
+  "package_sha256": "1f9b49bfcae1be68d6d816fcb87ca30af573092c809c53f04addb37ef6347eac",
+  "fixture": {
+    "repository": "/private/tmp/ac-issue9-quota-fallback-20261023",
+    "base_commit": "03a638f507b17a0cc90a75d3e2ece7c64d3ddaab",
+    "mode": "shared Git folder",
+    "primary_profile": "quota-agent",
+    "fallback_profile": "mock",
+    "quota_event": "usage_limit_reached with resetsAt 4102444800",
+    "tasks": ["task-0", "task-1", "task-2"],
+    "owned_paths": ["one.txt", "two.txt", "three.txt"],
+    "handoffs": [
+      "task-0 quota-agent -> mock, attempt 2",
+      "task-1 quota-agent -> mock, attempt 2",
+      "task-2 quota-agent -> mock, attempt 2"
+    ],
+    "test_results": [
+      {"task": "task-0", "command": ["git", "diff", "--check"], "exit_code": 0},
+      {"task": "task-1", "command": ["git", "diff", "--check"], "exit_code": 0},
+      {"task": "task-2", "command": ["git", "diff", "--check"], "exit_code": 0}
+    ],
+    "candidate": "9ca548243128d007e8678d64cf4df6654d1a9230",
+    "approval_evidence_revision": "a32439e55d7d4d50cbce2d082b7f65bd27485dd489beebc85f69a44a378aae38",
+    "merge_commit": "9ca548243128d007e8678d64cf4df6654d1a9230",
+    "final_status": "clean"
+  },
+  "ui_result": {
+    "tasks_completed": "3/3",
+    "tests_passed": "3/3",
+    "approval": "confirmed for the exact candidate after reviewing the diff and tests",
+    "merge": "confirmed in the native UI after refreshing the approval-bound evidence",
+    "final_run_state": "completed",
+    "final_stage": "workspace"
+  },
+  "environment": {
+    "real_provider_cli_invoked": false,
+    "external_services_called": false,
+    "user_repository_modified": false,
+    "screenshot_retained": false
+  },
+  "acceptance": {
+    "previous": "11/25 (44%)",
+    "current": "12/25 (48%)",
+    "adds_distinct_packaged_ui_workflow": true,
+    "remaining": 13
+  },
+  "limitations": [
+    "This verifies the macOS package with deterministic local Rust mock CLIs, not real paid providers.",
+    "Windows GUI acceptance, Korean IME, accessibility parity, resource measurements, current manual screenshots, and final-source license review remain open.",
+    "The native Rust UI is not the shipped default UI."
+  ]
+}

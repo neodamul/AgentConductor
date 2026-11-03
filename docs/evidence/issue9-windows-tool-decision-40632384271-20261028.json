@@ -1,0 +1,28 @@
+{
+  "run_id": 40632384271,
+  "head_sha": "6fce6e4f187e3649ca401f539039683b0b830735",
+  "windows_package_job_id": 122639444710,
+  "result": "failed",
+  "passing_journeys": [
+    "read-only team briefing",
+    "workspace save",
+    "waiting-agent schedule persistence",
+    "signal settings and port persistence"
+  ],
+  "failing_journey": "exact_windows_package_refreshes_approves_and_rejects_tool_requests",
+  "failure": "NO_CONFIRMATION_BUTTON",
+  "observed_state": {
+    "receipt": "Pending",
+    "run": "Running",
+    "allow_once_enabled": true,
+    "deny_enabled": true,
+    "refresh_enabled": true,
+    "buttons_offscreen": false
+  },
+  "interpretation": "The package driver did not observe the confirmation state after invoking/clicking the visible action. This does not yet prove a product-side receipt transition defect.",
+  "related_runs": {
+    "40629524284": "schedule interaction failed on dependent PR #199; root cause not established",
+    "40630455271": "schedule passed; tool-decision reported disabled action buttons"
+  },
+  "next_step": "Use the test-driver activation journal to distinguish UIA no-op, pointer delivery, and product state transition, then rerun the exact package gate."
+}

@@ -5,67 +5,12 @@ use std::path::Path;
 #[path = "support/workflow.rs"]
 mod support;
 
-const HTML: &str = include_str!("../src/ui/startup.html");
-const SCRIPT: &str = include_str!("../src/ui/startup.js");
-
 fn snapshot(startup: &Startup) -> serde_json::Value {
     startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap()
 }
 fn mutate(startup: &Startup, mut packet: serde_json::Value) -> Result<serde_json::Value, String> {
     packet["revision"] = snapshot(startup)["revision"].clone();
     startup.dispatch(packet.to_string().as_bytes())
-}
-
-#[test]
-fn permission_follows_the_cli_and_is_not_chosen() {
-    // User decision 2026-10-13: the profile dialog has no permission-level menu.
-    assert!(!HTML.contains("id=\"start-permission\""));
-    assert!(!SCRIPT.contains("q('permission')"));
-}
-
-#[test]
-fn provider_comes_before_agent_id() {
-    let dialog = &HTML[HTML.find("<dialog id=\"start-agent-dialog\"").unwrap()..];
-    let provider = dialog.find("id=\"start-provider\"").unwrap();
-    let id = dialog.find("id=\"start-agent-id\"").unwrap();
-    assert!(provider < id, "Provider is the first field");
-}
-
-#[test]
-fn provider_change_replaces_every_template_field() {
-    let change = &SCRIPT[SCRIPT.find("q('provider').onchange=").unwrap()..];
-    let change = &change[..change.find('\n').unwrap()];
-    for key in [
-        "q('agent-id').value=uniqueId(",
-        "resolve_executable",
-        "q('sessions').value",
-        "q('quota-minutes').value",
-        "q('args').value",
-        "q('input').value",
-    ] {
-        assert!(change.contains(key), "provider change misses {key}");
-    }
-    // The previous CLI's models never follow the agent to another provider.
-    assert!(SCRIPT.contains("delete p.catalog"));
-    assert!(
-        SCRIPT.contains("renames"),
-        "a changed ID is sent as a rename"
-    );
-}
-
-#[test]
-fn unique_id_appends_a_suffix() {
-    let start = SCRIPT.find("function uniqueId(").unwrap();
-    let body = &SCRIPT[start..];
-    let body = &body[..body.find('\n').unwrap()];
-    let script = format!(
-        "{body}\nconst a=require('node:assert/strict');a.equal(uniqueId('codex',[]),'codex');a.equal(uniqueId('codex',['codex']),'codex-2');a.equal(uniqueId('codex',['codex','codex-2']),'codex-3');"
-    );
-    let status = std::process::Command::new("node")
-        .args(["-e", &script])
-        .status()
-        .unwrap();
-    assert!(status.success());
 }
 
 #[test]

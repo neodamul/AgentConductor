@@ -1,0 +1,49 @@
+{
+  "issue": 9,
+  "branch": "codex/issue-9-native-ui-parity",
+  "base_commit": "fbad6370804cd5b45add00c7784729dd452dd0eb",
+  "date": "2026-10-24",
+  "scope": "Rust native Workspace navigation source tests and Windows current-head package staging",
+  "tests": {
+    "native_ui_probe_library": "47 passed",
+    "all_targets_test_fixtures": "989 passed, 14 ignored; 321 suites; 263.15s",
+    "source_layout": "2 passed",
+    "clippy": "all targets, native-ui-probe, warnings denied; passed",
+    "format": "cargo fmt --all -- --check; passed",
+    "diff_check": "passed",
+    "navigation_test_lines": 216
+  },
+  "ui_interactions_tested": [
+    "Keep editing cancels discard and preserves draft fields",
+    "Confirmed discard restores saved fields and clears pending worker state",
+    "Back to run emits the open-run event"
+  ],
+  "utm_observation": {
+    "method": "read-only CUA screenshot and utmctl list",
+    "vm_status": "started",
+    "display": "Windows desktop visible",
+    "z_drive": "opened Z:\\AgentConductor in File Explorer; the exact-head ZIP is visible alongside the existing files and older ZIP",
+    "existing_windows_zip": "not used; its manifest targets 70db73e, not current head",
+    "current_head_zip": "agentconductor-x86_64-pc-windows-msvc-3b367a287582.zip; visible in the Z: share",
+    "current_head_zip_sha256": "9d9b4ff65efb7a1a8aedd1da7bfdf4df2cebf93032768792830bcc157d7a7c49",
+    "windows_executable_sha256": "c02438f3639b5a6eb85211f0276cf15c3bfda3fad4977260d337c4b2fe40e5f4",
+    "windows_executable_bytes": 31278080,
+    "current_guest_ui": "Z:\\AgentConductor remains visible; a Windows Browse/Open file picker is open. Escape and close clicks did not dismiss it through current CUA input.",
+    "power_or_configuration_changed": false
+  },
+  "limits": [
+    "Source pointer tests do not count as packaged UI acceptance.",
+    "Exact-head release binary execution passed in the Windows Actions package job, but direct launch and visual interaction in the UTM guest are not verified.",
+    "Current CUA input did not activate Explorer extraction or launch; no claim of guest runtime acceptance is made.",
+    "A temporary Windows file-picker dialog remains open; cancellation attempts did not register.",
+    "The UTM guest was not reset or reconfigured."
+  ],
+  "current_head_workflow": {
+    "run_id": 40078615551,
+    "head": "3b367a28758248661a12d9897da6e72e25574900",
+    "status_at_record": "completed_success",
+    "validation_jobs": "macOS and Windows passed",
+    "package_jobs": "macOS and Windows passed; exact release binaries executed successfully in CI",
+    "url": "https://github.com/neodamul/AgentConductor/actions/runs/40078615551"
+  }
+}

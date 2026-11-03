@@ -1,109 +1,161 @@
-#![cfg(unix)]
-//! GitHub #200: every `chat` request and every request that takes a second or more is recorded in a bounded log,
-//! so a timeout toast can be traced to the request that caused it.
-use agentconductor::ui::Room;
-use std::path::Path;
-#[path = "support/env.rs"]
-mod env;
+use agentconductor::ui::request_diagnostics;
+use serde_json::Value;
+use std::{fs, time::Duration};
 
 #[test]
-fn chat_requests_are_logged_fast_ones_are_not_and_the_log_is_bounded() {
-    let root = std::env::temp_dir().join(format!("ac-diagnostics-{}", std::process::id()));
-    let home = root.join("home");
-    std::fs::create_dir_all(&home).unwrap();
-    let mut env = env::lock();
-    env.set("HOME", &home);
-    let room = Room::startup(
-        &root.join("desktop"),
-        Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+fn logs_all_chat_requests_without_recording_request_contents() {
+    let path = temp_log("chat");
+    assert!(request_diagnostics::record_at(
+        &path,
+        "chat",
+        12,
+        42,
+        Duration::from_millis(5),
+        true,
+    ));
+    let records = read_records(&path);
+    assert_eq!(records.len(), 2);
+    assert_eq!(records[0]["event"], "start");
+    assert_eq!(records[0]["kind"], "chat");
+    assert_eq!(records[0]["at_unix_ms"], 42);
+    assert_eq!(records[0]["bytes"], 12);
+    assert_eq!(records[1]["event"], "done");
+    assert_eq!(records[1]["duration_ms"], 5);
+    assert_eq!(records[1]["outcome"], "ok");
+    assert!(!fs::read_to_string(&path).unwrap().contains("secret"));
+    remove_log(&path);
+}
+
+#[test]
+fn logs_non_chat_requests_only_after_one_second() {
+    let path = temp_log("fast");
+    assert!(!request_diagnostics::record_at(
+        &path,
+        "snapshot",
+        10,
+        42,
+        Duration::from_millis(999),
+        true,
+    ));
+    assert!(!path.exists());
+    assert!(request_diagnostics::record_at(
+        &path,
+        "snapshot",
+        10,
+        42,
+        Duration::from_secs(1),
+        false,
+    ));
+    let records = read_records(&path);
+    assert_eq!(records.len(), 2);
+    assert_eq!(records[1]["outcome"], "error");
+    remove_log(&path);
+}
+
+#[test]
+fn rotates_the_log_at_the_size_limit() {
+    let path = temp_log("rotate");
+    fs::write(&path, vec![b'x'; request_diagnostics::MAX_BYTES]).unwrap();
+    assert!(request_diagnostics::record_at(
+        &path,
+        "chat",
+        1,
+        42,
+        Duration::from_millis(1),
+        true,
+    ));
+    assert!(path.with_extension("log.1").metadata().unwrap().len() > 0);
+    assert!(fs::metadata(&path).unwrap().len() < request_diagnostics::MAX_BYTES as u64);
+    remove_log(&path);
+}
+
+#[test]
+fn diagnostics_write_failure_does_not_change_the_request_result() {
+    let success = request_diagnostics::dispatch_with(
+        br#"{"kind":"chat"}"#,
+        || Ok("accepted"),
+        |_, _, _, _, _| Err("disk unavailable"),
+    );
+    assert_eq!(success.unwrap(), "accepted");
+
+    let failure = request_diagnostics::dispatch_with::<(), _>(
+        br#"{"kind":"chat"}"#,
+        || Err("original request error".into()),
+        |_, _, _, _, _| Err("disk unavailable"),
+    );
+    assert_eq!(failure.unwrap_err(), "original request error");
+}
+
+#[test]
+fn snapshot_retries_a_transient_sqlite_locking_protocol_error() {
+    let mut attempts = 0;
+    let mut delays = Vec::new();
+    let value = request_diagnostics::retry_snapshot(
+        || {
+            attempts += 1;
+            if attempts < 3 {
+                Err("locking protocol".into())
+            } else {
+                Ok("snapshot")
+            }
+        },
+        |delay| delays.push(delay),
+    );
+    assert_eq!(value.unwrap(), "snapshot");
+    assert_eq!(attempts, 3);
+    assert_eq!(
+        delays,
+        [Duration::from_millis(10), Duration::from_millis(25)]
+    );
+}
+
+#[test]
+fn snapshot_retries_are_bounded_and_do_not_hide_other_errors() {
+    let mut attempts = 0;
+    let error = request_diagnostics::retry_snapshot(
+        || {
+            attempts += 1;
+            Err::<(), _>("database is locked".into())
+        },
+        |_| {},
     )
-    .unwrap();
-    let log = home.join(".agentconductor/request-diagnostics.log");
-    room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-    assert!(!log.exists(), "a fast snapshot leaves no trace");
-    let revision = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap()["chat_revision"].clone();
-    let packet = serde_json::json!({"kind":"chat","revision":revision,"text":"hello"}).to_string();
-    assert!(room.dispatch(packet.as_bytes()).is_err());
-    let text = std::fs::read_to_string(&log).unwrap();
-    let lines: Vec<_> = text.lines().collect();
-    assert_eq!(lines.len(), 2, "{text}");
-    assert!(lines[0].contains(" start kind=chat "), "{text}");
-    assert!(
-        lines[1].contains(" done kind=chat ") && lines[1].contains(" ok=false "),
-        "{text}"
-    );
-    assert!(lines[1].contains("error="), "the reason is kept: {text}");
-    std::fs::write(&log, "x".repeat(300 * 1024)).unwrap();
-    assert!(room.dispatch(packet.as_bytes()).is_err());
-    assert!(
-        log.metadata().unwrap().len() < 4096,
-        "the log restarts after the limit"
-    );
-    assert!(
-        log.with_extension("log.1").exists(),
-        "the previous log is kept once"
-    );
-    drop(room);
-    drop(env);
-    std::fs::remove_dir_all(root).unwrap();
-}
+    .unwrap_err();
+    assert_eq!(error, "database is locked");
+    assert_eq!(attempts, 5);
 
-#[test]
-fn both_shipped_manuals_tell_an_agent_how_to_read_the_log() {
-    for file in ["docs/user-manual.html", "docs/user-manual.ko.html"] {
-        let manual = std::fs::read_to_string(file).unwrap();
-        for needle in [
-            "request-diagnostics.log",
-            "start kind=",
-            "done kind=",
-            "ok=false",
-            "256 KiB",
-        ] {
-            assert!(manual.contains(needle), "{file} lacks {needle}");
-        }
-    }
-}
-
-#[test]
-fn a_timeout_reported_by_the_page_is_logged_with_how_long_it_really_waited() {
-    let root = std::env::temp_dir().join(format!("ac-client-timeout-{}", std::process::id()));
-    let home = root.join("home");
-    std::fs::create_dir_all(&home).unwrap();
-    let mut env = env::lock();
-    env.set("HOME", &home);
-    let room = Room::startup(
-        &root.join("desktop"),
-        Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+    attempts = 0;
+    let error = request_diagnostics::retry_snapshot(
+        || {
+            attempts += 1;
+            Err::<(), _>("invalid request".into())
+        },
+        |_| {},
     )
-    .unwrap();
-    let report = br#"{"kind":"client_timeout","of":"snapshot","waited":15031,"hidden":true}"#;
-    assert!(room.dispatch(report).is_ok());
-    let text =
-        std::fs::read_to_string(home.join(".agentconductor/request-diagnostics.log")).unwrap();
-    assert!(
-        text.contains("client-timeout of=snapshot waited=15031 hidden=true"),
-        "{text}"
-    );
-    let hostile = br#"{"kind":"client_timeout","of":"a b\nc=d","waited":1,"hidden":false}"#;
-    room.dispatch(hostile).unwrap();
-    let text =
-        std::fs::read_to_string(home.join(".agentconductor/request-diagnostics.log")).unwrap();
-    assert_eq!(text.lines().count(), 2, "one line per report: {text}");
-    drop(room);
-    std::fs::remove_dir_all(root).unwrap();
+    .unwrap_err();
+    assert_eq!(error, "invalid request");
+    assert_eq!(attempts, 1);
 }
 
-#[test]
-fn the_page_retries_missed_polls_quietly_and_reports_its_timeouts() {
-    let result = std::process::Command::new("node")
-        .current_dir(env!("CARGO_MANIFEST_DIR"))
-        .arg("tests/poll_failure_runtime.cjs")
-        .output()
-        .expect("Node runs UI behavior tests");
-    assert!(
-        result.status.success(),
-        "{}{}",
-        String::from_utf8_lossy(&result.stdout),
-        String::from_utf8_lossy(&result.stderr)
-    );
+fn temp_log(label: &str) -> std::path::PathBuf {
+    std::env::temp_dir().join(format!(
+        "ac-request-log-{label}-{}-{}.log",
+        std::process::id(),
+        std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ))
+}
+
+fn read_records(path: &std::path::Path) -> Vec<Value> {
+    fs::read_to_string(path)
+        .unwrap()
+        .lines()
+        .map(|line| serde_json::from_str(line).unwrap())
+        .collect()
+}
+
+fn remove_log(path: &std::path::Path) {
+    let _ = fs::remove_file(path);
+    let _ = fs::remove_file(path.with_extension("log.1"));
 }

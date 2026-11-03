@@ -1,5 +1,7 @@
-use crate::agent_settings::{ArgsEdit, Resume, preset, settings_for};
-use crate::protocol::Provider;
+use crate::{
+    agent_settings::{Resume, full_access_args as settings_full_access_args, preset, settings_for},
+    protocol::Provider,
+};
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -114,14 +116,10 @@ fn base_session_args(
                 .replace("{session_id}", session.unwrap_or(""))
         })
         .collect();
-    // A custom profile is declarative: its own placeholders already say where model and session go.
     let Some(settings) = settings_for(profile.parser, profile.agent_settings.as_ref())? else {
         return Ok(args);
     };
     let flags = &settings.invocation.session;
-    let fill = |template: &[String], key: &str, value: &str| -> Vec<String> {
-        template.iter().map(|a| a.replace(key, value)).collect()
-    };
     if let Some(model) = model {
         let flag = flags.model_args.first();
         if args.iter().any(|a| {
@@ -130,32 +128,46 @@ fn base_session_args(
         }) {
             return Err("duplicate model selector in profile".into());
         }
-        args.extend(fill(&flags.model_args, "{model}", model));
+        args.extend(
+            flags
+                .model_args
+                .iter()
+                .map(|arg| arg.replace("{model}", model)),
+        );
     }
     let Some(session) = session else {
         return Ok(args);
     };
-    if args.iter().any(|a| flags.selectors.contains(a)) {
+    if args.iter().any(|arg| flags.selectors.contains(arg)) {
         return Err("ambiguous session selector in profile".into());
     }
     match &flags.resume {
-        Some(Resume::Append { args: extra }) => args.extend(fill(extra, "{session_id}", session)),
-        // The resume subcommand takes the place of the whole argv, so the profile must still be a verified template.
+        Some(Resume::Append { args: extra }) => {
+            args.extend(extra.iter().map(|arg| arg.replace("{session_id}", session)))
+        }
         Some(Resume::ReplaceArgv {
             argv,
             full_access_argv,
             ..
         }) => {
-            let full = full_access_of(&settings);
-            let initial = fill(&settings.invocation.args, "{task_file}", task_file);
+            let full = settings_full_access_args(&settings);
+            let initial = settings
+                .invocation
+                .args
+                .iter()
+                .map(|arg| arg.replace("{task_file}", task_file))
+                .collect::<Vec<_>>();
             args = if full_access_argv.is_some() && full.as_ref() == Some(&profile.args) {
-                fill(
-                    full_access_argv.as_deref().unwrap_or_default(),
-                    "{session_id}",
-                    session,
-                )
+                full_access_argv
+                    .as_deref()
+                    .unwrap_or_default()
+                    .iter()
+                    .map(|arg| arg.replace("{session_id}", session))
+                    .collect()
             } else if profile.args == initial {
-                fill(argv, "{session_id}", session)
+                argv.iter()
+                    .map(|arg| arg.replace("{session_id}", session))
+                    .collect()
             } else {
                 let label = settings.label.as_deref().unwrap_or("This agent");
                 return Err(format!(
@@ -163,7 +175,12 @@ fn base_session_args(
                 ));
             };
             if let Some(model) = model {
-                args.extend(fill(&flags.model_args, "{model}", model));
+                args.extend(
+                    flags
+                        .model_args
+                        .iter()
+                        .map(|arg| arg.replace("{model}", model)),
+                );
             }
         }
         None => return Err("this agent cannot resume a session".into()),
@@ -171,22 +188,13 @@ fn base_session_args(
     Ok(args)
 }
 
-fn full_access_of(settings: &crate::agent_settings::AgentSettings) -> Option<Vec<String>> {
-    Some(match settings.invocation.full_access.as_ref()? {
-        ArgsEdit::Append { args } => settings
-            .invocation
-            .args
-            .iter()
-            .chain(args)
-            .cloned()
-            .collect(),
-        ArgsEdit::ReplaceArgv { argv } => argv.clone(),
-    })
-}
-
-/// The argument list that gives a built-in agent full access (DD-131), from its preset.
+/// Builds provider argv only. Permission capabilities must be checked before execution.
+/// In particular, a resumed session may inherit different permissions from a new session.
+/// DD-131 (operator decision 2026-10-13): agent CLIs run with full access by default —
+/// Claude bypasses its permission prompts and loads the operator's own MCP servers (for
+/// example Playwright for browser checks); Codex runs without approvals or sandbox.
 pub fn full_access_args(provider: Provider) -> Option<Vec<String>> {
-    full_access_of(preset(provider)?)
+    settings_full_access_args(preset(provider)?)
 }
 
 pub fn invocation(
@@ -203,68 +211,68 @@ pub fn invocation(
     }) {
         return Err("invalid explicit session ID".into());
     }
-    let settings =
-        preset(provider).ok_or("custom agents require an explicitly registered CLI profile")?;
-    let plan = &settings.invocation;
-    if plan.input == InputMode::File && (task_file.is_empty() || task_file.starts_with('-')) {
-        return Err("invalid task file argument".into());
-    }
-    let fill = |template: &[String], key: &str, value: &str| -> Vec<String> {
-        template.iter().map(|a| a.replace(key, value)).collect()
+    let (executable, mut args, input) = match provider {
+        Provider::Claude => (
+            "claude",
+            vec!["-p", "--output-format", "stream-json", "--verbose"],
+            InputMode::Stdin,
+        ),
+        Provider::Codex if session.is_some() => (
+            "codex",
+            vec!["exec", "resume", session.unwrap(), "-", "--json"],
+            InputMode::Stdin,
+        ),
+        Provider::Codex => (
+            "codex",
+            vec!["exec", "-", "--json", "--sandbox", "workspace-write"],
+            InputMode::Stdin,
+        ),
+        Provider::OpenCode => {
+            if task_file.is_empty() || task_file.starts_with('-') {
+                return Err("invalid task file argument".into());
+            }
+            (
+                "opencode",
+                vec![
+                    "run",
+                    "--format",
+                    "json",
+                    "--file",
+                    task_file,
+                    "Follow the attached task scope and completion conditions",
+                ],
+                InputMode::File,
+            )
+        }
+        Provider::Custom => {
+            return Err("custom agents require an explicitly registered CLI profile".into());
+        }
     };
-    let mut args = fill(&plan.args, "{task_file}", task_file);
     if let Some(session) = session {
-        match &plan.session.resume {
-            Some(Resume::Append { args: extra }) => {
-                args.extend(fill(extra, "{session_id}", session))
-            }
-            Some(Resume::ReplaceArgv {
-                argv, bare_argv, ..
-            }) => {
-                args = fill(
-                    bare_argv.as_deref().unwrap_or(argv),
-                    "{session_id}",
-                    session,
-                );
-            }
-            None => {}
+        match provider {
+            Provider::Claude => args.extend(["--resume", session]),
+            Provider::OpenCode => args.extend(["--session", session]),
+            _ => {}
         }
     }
     Ok(Invocation {
-        executable: plan.executable.clone().unwrap_or_default(),
-        args,
-        input: plan.input,
+        executable: executable.into(),
+        args: args.into_iter().map(String::from).collect(),
+        input,
     })
 }
 
-/// DD-133: only app-bound ordinary folders bypass a CLI's Git-root prerequisite (the agent's `direct_folder` setting).
+/// DD-133: only app-bound ordinary folders bypass Codex's Git-root prerequisite.
 pub fn direct_folder_args(
     provider: Provider,
     mut args: Vec<String>,
 ) -> Result<Vec<String>, String> {
-    let Some(folder) = preset(provider).and_then(|s| s.invocation.direct_folder.as_ref()) else {
-        return Ok(args);
-    };
-    if !folder
-        .skip_if_present
-        .iter()
-        .any(|flag| args.contains(flag))
-    {
-        let anchor = args
+    if provider == Provider::Codex && !args.iter().any(|arg| arg == "--skip-git-repo-check") {
+        let exec = args
             .iter()
-            .position(|arg| *arg == folder.after)
-            .ok_or_else(|| {
-                crate::ui::messages::text(
-                    folder
-                        .missing_anchor_message
-                        .as_deref()
-                        .unwrap_or("folder.codex_exec_required"),
-                )
-                .to_string()
-            })?;
-        for (offset, extra) in folder.args.iter().enumerate() {
-            args.insert(anchor + 1 + offset, extra.clone());
-        }
+            .position(|arg| arg == "exec")
+            .ok_or(crate::ui::messages::text("folder.codex_exec_required"))?;
+        args.insert(exec + 1, "--skip-git-repo-check".into());
     }
     Ok(args)
 }

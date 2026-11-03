@@ -70,15 +70,16 @@ pub struct Saved {
     #[serde(default)]
     pub(super) chat_result: Option<String>,
     #[serde(default)]
+    pub(super) chat_job: Option<StoredJob>,
+    #[serde(default)]
     pub(super) optimize_result: Option<String>,
+    #[serde(default)]
+    pub(super) optimize_goal: Option<String>,
     pub(super) config: Config,
     pub(super) proposal: Option<Proposal>,
     pub(super) job: Option<StoredJob>,
     #[serde(default)]
     pub(super) quota_job: Option<StoredJob>,
-    /// GitHub #261 (DD-204): the coordinator chat has its own slot, so it runs next to a plan or start job.
-    #[serde(default)]
-    pub(super) chat_job: Option<StoredJob>,
     #[serde(default)]
     pub(super) metadata_queue: Vec<metadata::Pending>,
     #[serde(default)]
@@ -106,7 +107,11 @@ pub fn defaults() -> Result<Config, String> {
                 .map(|p| p.to_string_lossy().into_owned())
                 .unwrap_or(invocation.executable),
             args: invocation.args,
+            coordinator_model: None,
+            read_only_args: None,
             parser: provider,
+            protocol: None,
+            agent_settings: None,
             input_mode: invocation.input,
             environment: Default::default(),
             permission_mode: "unverified".into(),
@@ -123,12 +128,9 @@ pub fn defaults() -> Result<Config, String> {
             fallback: None,
             cooperative: Default::default(),
             event_types: Default::default(),
+            quota_rules: vec![],
             session_id_pointer: None,
             quota_command: None,
-            coordinator_model: None,
-            read_only_args: None,
-            protocol: None,
-            agent_settings: None,
         });
     }
     profiles.iter_mut().for_each(profiles::derive_permission);

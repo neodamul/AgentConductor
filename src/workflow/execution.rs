@@ -1,26 +1,8 @@
 use super::*;
-mod permissions;
+mod lock;
 mod worker;
-pub(crate) use permissions::validate_permissions;
+pub(crate) use lock::{Lock, validate_permissions};
 pub(super) use worker::worker;
-
-pub(super) struct Lock {
-    _lease: crate::leases::Lease,
-}
-impl Lock {
-    pub(super) fn acquire(dir: &Path) -> Result<Self, String> {
-        let lock = Self {
-            _lease: crate::leases::Lease::acquire(&dir.join("coordinator.lock"))?,
-        };
-        if let Some((root, expected)) = REVIEWED_REVISION.get()
-            && (&dir.canonicalize().map_err(|e| e.to_string())? != root
-                || &revision(&load(dir)?)? != expected)
-        {
-            return Err("run changed since review; refresh before acting".into());
-        }
-        Ok(lock)
-    }
-}
 
 pub async fn run(
     plan: Plan,
@@ -81,6 +63,7 @@ pub(super) async fn run_inner(
     if !violations.is_empty() {
         return Err(super::guardrail::refusal(&violations));
     }
+    let charter = super::guardrail::Charter::from_plan(&plan);
     fs::create_dir(run_dir).map_err(|e| format!("create new run directory: {e}"))?;
     let dir = run_dir.canonicalize().map_err(|e| e.to_string())?;
     if dir.starts_with(&git.root) {
@@ -101,7 +84,11 @@ pub(super) async fn run_inner(
     )?;
     store.record(
         "charter",
-        &super::guardrail::charter(&plan),
+        &{
+            let mut value = serde_json::to_value(&charter).map_err(|e| e.to_string())?;
+            value["status"] = "recorded".into();
+            value
+        },
         &format!(
             "Charter recorded: the goal and the original scopes, tests and dependencies of {} tasks",
             plan.tasks.len()
@@ -118,6 +105,7 @@ pub(super) async fn run_inner(
         repo: git.root.clone(),
         base: base.clone(),
         branch,
+        charter: Some(charter),
         plan: plan.clone(),
         tasks: vec![],
         candidate: None,

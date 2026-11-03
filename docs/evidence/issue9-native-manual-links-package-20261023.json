@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "requirement": "R-144",
+  "source_commit": "8c8a08a8dfbe52598cf13e3e7be2e2bd6e82f65e",
+  "package": {
+    "target": "aarch64-apple-darwin",
+    "version": "0.1.36",
+    "binary_sha256": "60c1295a7cae1d4341ceb0370e6654a64ff7144eef12533c74e394d5e56b111d",
+    "archive_sha256": "0b05c48941b7e5de6910b8506932d1c459046ec8136a140dbb1cc61716b4bea2",
+    "dependency_count": 214,
+    "missing_license_expression_components": 0,
+    "license_files_present": true,
+    "validation": "passed"
+  },
+  "smoke": {
+    "command": "agentconductor smoke-package dist/agentconductor-aarch64-apple-darwin-8c8a08a8dfbe docs/evidence/issue9-native-manual-links-package-20261023",
+    "passed_cases": 4,
+    "failed_cases": 0,
+    "case_matrix": ["shared/git", "shared/folder", "worktree/git", "worktree/folder"],
+    "tasks_per_case": 3,
+    "tests_per_case": 3,
+    "approved_merge_verified": true,
+    "unapproved_merge_refused": true,
+    "detailed_output": "docs/evidence/issue9-native-manual-links-package-20261023/run-40035-1792734866361588000-0/smoke.json"
+  },
+  "manual_ui_interaction": "not_run; the only visible AgentConductor window had switched to the user's saved workspace and was left untouched",
+  "acceptance": {
+    "packaged_ui_workflows": "14/25",
+    "shipped_default_rust_ui": "0/25"
+  },
+  "limitations": [
+    "This package build and isolated smoke matrix do not verify the native manual link interaction.",
+    "The v0.1.36 package is not a release candidate; Windows and screenshot gates remain open."
+  ]
+}

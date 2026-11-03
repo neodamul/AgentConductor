@@ -168,11 +168,11 @@ The coordinator is a selectable entry after tasks, showing integration steps, de
 - **Ask the coordinator** (the chat-bubble button in the title bar) opens a side chat on the workspace screen. Ask how to run or use what was built, where results are, or how to use the screen; the coordinator reads the project folder and this manual, and every question also carries the workspace goal, the latest run's tasks, test results, changed files and diff (cut when long), so it can describe the results and tell you how to run them from that. If no run has started it says so. It answers with commands for you to run. It is read-only: it never changes files or runs commands, it needs a registered coordinator, and it has its own slot, so you can ask while a plan is being made or a run is starting. While a job runs, the coordinator is also told which one, how long it has run, how much output its process has written and when it last wrote, so you can ask why a plan takes so long. One question is answered at a time; if a question cannot be accepted, the reason appears in the conversation and your text stays in the input. The conversation is kept with the workspace and shown again when you reopen it; press Enter to send, Shift+Enter for a new line, Up to recall an earlier question, and **New conversation** to start over.
 - **Optimize prompt** (below the goal field) asks the coordinator to rewrite the goal with the bundled `prompt-optimizer` skill (Sentry, Apache-2.0). It reads the project folder read-only, then shows the proposed goal, what changed and what it needs you to confirm. **Use this goal** puts the proposal in the goal field; **Keep mine** leaves your text unchanged. Nothing is saved, planned or run until you save the workspace yourself. It needs a saved coordinator and project folder and shares the single background-operation slot with planning.
 
+Wall-timeouts retry automatically after a bounded backoff. Stop cancels a pending retry; resume a stopped or terminally blocked run when you are ready.
+
 On reopening, automatic recovery checks that the interrupted run and its owned processes are quiescent before continuing unchanged work. It permits at most two attempts without new task progress. Explicitly stopped runs stay stopped, unknown ownership prevents recovery, and candidate approvals are revoked. Inspect the retained evidence if recovery cannot proceed.
 
-![Agent Room showing an offline verification run](assets/ui-agent-room-current.png)
-
-![Dark Korean Agent Room](assets/ui-agent-room-dark-current.png)
+![Agent Room showing an offline verification run](assets/ui-agent-room-native.png)
 
 In ordinary-folder projects, new files outside every owned task scope are moved to `<RUN>/stray-files/` before integration and recorded, for example a CLI’s `.aipro/plans`. Existing operator files are preserved. Git repositories do not use this automatic move.
 

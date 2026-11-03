@@ -9,8 +9,6 @@ mod support;
 #[path = "support/env.rs"]
 mod test_env;
 
-const HTML: &str = include_str!("../src/ui/startup.html");
-const SCRIPT: &str = include_str!("../src/ui/startup.js");
 const URL: &str = "https://hooks.example.test/services/T000/B000/secret-token";
 
 fn settings(kind: Kind) -> Settings {
@@ -175,26 +173,6 @@ fn webhook_urls_are_https_local_secrets_and_runs_notify_once_per_state() {
     messenger::save_secret(&workspace, None).unwrap();
     assert!(messenger::secret(&workspace).is_none());
     std::fs::remove_dir_all(root).unwrap();
-}
-
-#[test]
-fn workspace_menu_opens_the_messenger_dialog() {
-    assert!(SCRIPT.contains("\"startup.messenger\""));
-    let dialog = &HTML[HTML.find("<dialog id=\"start-messenger\"").expect("dialog")..];
-    let dialog = &dialog[..dialog.find("</dialog>").unwrap()];
-    for id in [
-        "start-messenger-enabled",
-        "start-messenger-kind",
-        "start-messenger-url",
-        "start-messenger-events",
-        "start-messenger-template",
-        "start-messenger-goal",
-        "start-messenger-test",
-    ] {
-        assert!(dialog.contains(&format!("id=\"{id}\"")), "missing {id}");
-    }
-    assert!(dialog.contains("type=\"password\""), "the URL is masked");
-    assert!(SCRIPT.contains("kind:'save_messenger'") && SCRIPT.contains("kind:'test_messenger'"));
 }
 
 /// Live check against a local HTTPS receiver: `LIVE_MESSENGER_URL=https://localhost:8443/hook

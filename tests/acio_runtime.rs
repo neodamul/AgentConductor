@@ -58,7 +58,7 @@ emit result '{{"status":"success","summary":"done"}}'
     let log = seen.clone();
     let decide = move |request: acio::ToolRequest| {
         log.lock().unwrap().push(request.name.clone());
-        async move { Decision::Allow }
+        async move { Ok(Decision::Allow) }
     };
     let run = acio::run(spec(&dir, exe), decide, acio::Options::default())
         .await
@@ -81,23 +81,21 @@ async fn no_decision_in_time_means_denied() {
         &format!(
             r#"{EMIT}emit tool '{{"call_id":"c1","name":"shell","status":"requested","needs_decision":true}}'
 IFS= read -r control
-case "$control" in *'"decision":"deny"'*) emit tool '{{"call_id":"c1","name":"shell","status":"denied"}}';; *) emit tool '{{"call_id":"c1","name":"shell","status":"completed"}}';; esac
+case "$control" in *'"decision":"allow"'*) : > accidentally-allowed; emit tool '{{"call_id":"c1","name":"shell","status":"completed"}}';; *) emit tool '{{"call_id":"c1","name":"shell","status":"denied"}}';; esac
 emit result '{{"status":"success","summary":"done"}}'
 "#
         ),
     );
     let slow = |_: acio::ToolRequest| async {
         tokio::time::sleep(Duration::from_secs(10)).await;
-        Decision::Allow
+        Ok(Decision::Allow)
     };
-    let run = acio::run(spec(&dir, exe), slow, acio::Options::default())
+    let error = acio::run(spec(&dir, exe), slow, acio::Options::default())
         .await
+        .err()
         .unwrap();
-    let stdout = std::fs::read_to_string(&run.result.stdout).unwrap();
-    assert!(
-        stdout.contains(r#""status":"denied""#),
-        "a silent supervisor never grants: {stdout}"
-    );
+    assert!(error.contains("no decision in time"), "{error}");
+    assert!(!dir.join("accidentally-allowed").exists());
     std::fs::remove_dir_all(dir).unwrap();
 }
 
@@ -119,7 +117,7 @@ case "$second" in *'"cancel"'*) emit ack '{{"control_seq":2,"status":"applied"}}
     let sender = handle.clone();
     let task = tokio::spawn(acio::run(
         spec(&dir, exe),
-        |_| async { Decision::Deny },
+        |_| async { Ok(Decision::Deny) },
         acio::Options {
             control: Some(handle),
             ..Default::default()
@@ -151,7 +149,7 @@ sleep 5
     );
     let error = acio::run(
         spec(&dir, exe),
-        |_| async { Decision::Deny },
+        |_| async { Ok(Decision::Deny) },
         acio::Options::default(),
     )
     .await

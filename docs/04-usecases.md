@@ -376,7 +376,7 @@ Generate plan shows progress with elapsed time from the moment it is pressed, in
 Trace: R-98 -> BG-53 -> SF-85 -> UC-88 -> FR-83 -> QAS-94 -> DD-106. Source: user request, 2026-10-13.
 
 ### UC-89 Run and task status at a glance
-The Agent Room shows the run's current final state immediately: a run status banner with the state in bold colour, task progress and the last error, and a prominent Resume button whenever the run can continue. Task states (failed, completed, pending, waiting, running) are bold and colour-coded in the session heading and in the left session list. In the left list a failed task is red, a task waiting for a decision or tool request has a blinking border, pending tasks use a strong colour, and the Tool requests count turns red and blinks while requests wait.
+The Agent Room shows the run's current final state immediately: a run status banner with the state in bold colour, task progress and the last error, and a prominent Resume button whenever the run can continue. Show the selected workspace mode and current branch with the repository context. The left session list has a localized heading and task count; task states (failed, completed, pending, waiting, running) are bold and colour-coded in the session heading and list. In the left list a failed task is red, a task waiting for a decision or tool request has a blinking border, pending tasks use a strong colour, and the Tool requests count turns red and blinks while requests wait.
 Trace: R-99 -> BG-54 -> SF-86 -> UC-89 -> FR-84 -> QAS-95 -> DD-107. Source: user request, 2026-10-13.
 
 ### UC-90 Goal folders directly in the project folder
@@ -619,11 +619,9 @@ Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162.
 ### UC-145 Identify a local company build
 The developer writes a short label such as `company_name` in `company-suffix.txt` and rebuilds. Workspace and Agent Room show the numeric package version followed by the label. Before preparing a public release, packaging refuses any non-empty label; the developer clears the file and rebuilds.
 Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #13.
-
 ### UC-144 Configure a custom CLI's event and quota behavior
 Actor: workspace operator. Export workspace settings, add a custom profile's `event_types`, optional `session_id_pointer`, and optional `quota_command`, then import and review the settings. Run a goal and verify mapped progress/result/session events. Request account metadata only when a quota command is configured; validate its bounded JSON Snapshot and retain stdout/stderr logs. Invalid pointers, event values, timeouts, or output fields are rejected or reported without affecting built-in CLI behavior.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
-
 ### UC-143 Recover from an agent task timeout
 An agent exceeds the configured execution limit. The coordinator retains its attempt logs and partial workspace, displays the timeout reason, waits for a bounded backoff and resumes automatically. The operator may stop during backoff; if the task later becomes blocked, the report explains the cause and retained evidence for recovery.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
@@ -647,7 +645,6 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### UC-151 Ask how to run what the team built
 An operator returns to the workspace after a completed run, opens the chat from the title bar, asks how to run the result, and receives the project-specific commands. Another question about the current screen is answered from the manual. Closing the panel keeps the conversation for the session.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
-
 ### UC-150 Watch a multi-session run without re-selecting
 An operator watches the running session. When it completes and another starts, the activity panel moves to the new one. When all sessions finish and the run waits for approval, the integration entry opens with the tests and decisions to review.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
@@ -721,7 +718,7 @@ The operator asks how to run the project, closes the window, reopens the workspa
 Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
 
 ### UC-171 An operator reads the screen
-The operator opens the workspace screen and sees the agent list, the goal and the job status in the footer without a login slogan or a default-mode line that can disagree with the chosen workspace mode.
+The operator opens the workspace screen and sees the agent list, the goal and the job status without a login slogan or a default-mode line that can disagree with the chosen workspace mode, in both web and native Rust interfaces.
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
 
 ### UC-172 An operator asks something long
@@ -744,70 +741,108 @@ Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → 
 The operator deletes the default workspace while another saved workspace exists. After the app restarts or updates, the last used saved workspace opens and the default workspace is not in the list. With no saved workspace at all (first run, or after the last one was deleted) the app asks for a workspace name before anything else; no workspace named "desktop" is shown.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
 
+### UC-177 Keep native background supervision quiet
+The operator leaves Workspace or Agent Room open. Initial snapshot failures stay visible; existing scheduled Agent Room snapshots and automatic detail/coordinator reads use the quiet background path. A failure clears pending and is retried at the next normal schedule. If eframe repaints after multiple intervals, at most one Agent Room poll is sent and the next interval starts from the resumed monotonic time. Explicit Workspace refreshes and state-changing actions continue to show errors and are never replayed. An idle Workspace remains event-driven.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198. GitHub #221, 2026-10-29.
+
+### UC-178 Run a task with an ACIO-enabled CLI
+The coordinator assigns a task to a profile that declares protocol ACIO, sends structured input with its owned workspace scope and session ID, records validated progress/result events, and resumes the worker only after the operator decides a requested tool action. A profile without ACIO follows its existing CLI path.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.
+### UC-179 Ask what the workspace planned or ran
+After a run, the operator asks coordinator chat what changed or how to run the result. The coordinator uses the quoted task states, errors, tests, changed files and bounded diff; it reads named project files when useful and does not guess from inaccessible run storage. Before a run, it reports that no run has started.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### UC-180 Open coordinator chat from its icon
+The operator sees the bubble icon in the native Workspace, identifies its purpose through the accessible name or hover label, and activates it to open the coordinator chat drawer.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
+
+### UC-181 A chat send times out before the operator knows whether it was accepted
+The operator sends a question. The controller request and the immediate conversation read both time out, so the question stays visible as pending and the input stays empty. When a later workspace snapshot succeeds, an accepted question is followed through its job; if absent from stored history, the question returns to the input with the original error.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.
+
 ### UC-177 A reviewer or worker is asked in the standard form
 The operator runs a plan with an agent CLI that only reads a prompt and prints text. The worker receives the task, its rules and its evidence as Document, Task and Format; the reviewer receives the frozen evidence as Document, its instructions as Task and the JSON verdict shape as Format. A reviewer reply that is not valid JSON is asked for again once with the parse error, then reported.
-Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
 
-### UC-179 Ask what was built and how to run it
-After a run reached review or completion the operator asks the coordinator what was built and how to run it. The answer names the changed files and gives the command, from the quoted tasks, tests and diff and from project files the coordinator can read; where the evidence is missing it says so.
-Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### UC-184 Check a repository revision without waiting for Git
+An operator opens a workspace or confirms an action while repository state is being checked. For standard `.git` layouts, the native UI reads HEAD from metadata files. For linked worktrees or unsupported layouts, the request receives the last cached or pending revision immediately, while one background worker runs Git. Repeated checks coalesce; a slow Git process cannot block the view or unrelated controls.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
 
-### UC-178 The application stalls while the operator chats
-The operator sends a message, the page reports a timeout and a later snapshot also times out. The message stays in the conversation as working. When the application recovers, the answer appears and the input stays empty; had the application never received the message, the text would return to the input with the error.
-Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.
+### UC-185 Keep two native views synchronized while an operation runs
+The operator has Workspace and Agent Room open. A successful action in one view emits one state-change event to the other; the listener requests a single snapshot without echoing another event. A slow background refresh does not block an interactive request. When a peer-view event arrives during an unrelated pending response, the listener starts one bounded snapshot without waiting; the view applies it while preserving the pending action, unsaved form values, and current error. An open human decision modal can pause refresh for its view. Snapshot assembly releases the shared lock before filesystem and revision reads. Active and idle views both use events as the primary refresh path; a 30-second recovery check catches missed changes from outside the application.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, user, 2026-10-30.
 
-### UC-180 Plan from a reply with an unfinished draft first
-A custom adapter prints an incomplete JSON draft and then the complete document; the plan is presented for review.
-Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.
+### UC-186 Continue an independent action during slow native work
+1. A view starts a slow snapshot, read, or blocking external I/O request.
+2. The operator starts an independent state-changing action or another view publishes a state change.
+3. Read, external-I/O, state-change, and periodic-refresh workers progress independently; mutations remain ordered.
+4. The UI listens for a coalesced invalidation, requests an asynchronous authoritative snapshot, and discards replies superseded by a newer foreground request.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
 
-### UC-181 Plan whose verification tasks have no paths
-The coordinator returns valid phases JSON with `paths: []` on verification tasks; the application asks once for a corrected plan naming the task, and the corrected plan is presented for review.
-Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. GitHub #251, user, 2026-10-29.
+### UC-187 Refresh active views from state-change notifications
+The operator leaves Workspace and Agent Room open while a coordinator or metadata subprocess is active. A local state change broadcasts an invalidation; an external state-file change wakes its listener. The affected view coalesces notifications and requests one asynchronous snapshot. If a notification is missed, a 30-second recovery check eventually reconciles the view without a frequent active-job snapshot loop.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
 
-### UC-182 Chat on a PC where starting a process is slow
-The operator keeps the window open on a PC where Git needs seconds per call; snapshots return quickly, the chat is accepted at once, and a slow step, if any, is named in the log.
-Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203. GitHub #234, user, 2026-10-30.
+When the operator approves a plan, the Workspace follows the persisted run event. The background snapshot that first observes the run report must perform the same start-completion transition as a foreground snapshot and open Agent Room immediately; the 30-second recovery check is only for missed events.
 
-### UC-183 Asking why the plan is slow
-While the plan is being made the operator opens the chat and asks why it takes so long; the question is accepted at once, the planner keeps running, and the answer names the running job, its elapsed time, the size and age of its output and the last lines it wrote.
-Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204. GitHub #261, user, 2026-10-30.
+### UC-188 Switch workspaces and release the idle previous lease
+1. The operator switches from an idle workspace to another workspace.
+2. The Room updates its current workspace watch target without transferring ownership of the previous `Startup` to the listener thread.
+3. The previous workspace lease is released, so another Room can open that workspace immediately.
+4. Persisted changes in the newly selected workspace continue to emit scoped notifications.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
 
-### UC-184 Opening the review of a finished plan
-The plan is ready; the operator sees each task as three readable lines and opens one to edit it.
-Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.
-
-### UC-185 Watching a run in the coordinator Activity tab
-Three tasks run; the operator opens the coordinator tab and sees `running · 0 of 3 completed · 3 running` with one row per task, and between the availability timer and task profile entries no `workflow` lines.
-Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206. GitHub #267, user, 2026-10-30.
-
-### UC-186 Going on with phase 2
-Phase 1 finishes; the operator returns to the workspace and the review of phase 2 is offered with its buttons enabled, also when the run's report appeared a moment after the start was accepted.
-Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187 → QAS-193 → DD-207. GitHub #269, user, 2026-10-30.
-
-### UC-187 Following a long plan and run
-The operator starts planning and switches to the Team tab: a line under the step tabs keeps counting the planning time. The app is busy for a minute: the line says no new state came for 40 s. The operator confirms the run: the start is sent and its line counts the time until the run report exists; after reopening the workspace the line is still there; when the start fails its cause stays under the run button. In the run, a pending task says it waits for task-1, a running task row shows its last output age, after the last task the banner names the integration test that is running, a stop shows "stopping", and a run whose process died says so and points at Recover.
-Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188 → QAS-194 → DD-208. GitHub #273, user, 2026-10-31.
-
-### UC-188 Reading the manual of the installed version
-The operator opens ⚙ Settings → User manual in 0.1.49 and reads "Version 0.1.49" above screenshots that look like the app.
-Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209. GitHub #277, user, 2026-10-31.
-
-### UC-189 Waiting for an answer, a rewrite, a lookup or an update
-The operator asks the coordinator, closes the workspace and opens it again: the chat line says the coordinator has been reading for 2:06 and keeps counting. The app stops answering for 9 s: the line adds that no new state came for 9 s. The same holds for a goal rewrite, for the MCP review dialog while sources are read, and for the update dialog while it checks or installs.
-Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, user, 2026-11-01.
-
-### UC-190 Pressing a button the app is slow to answer
-The operator presses the messenger test, deletes a workspace or asks for the team briefing; the button shows it is working and after a second the status line reads "Waiting for the app: delete workspace 0:03" until the answer comes, then the line returns to normal.
-Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.
-
-### UC-191 Releasing after a change of the interface
-The release PR bumps the version but not the README sentence: CI fails and names the file and the sentence. A release follows a change of a stylesheet and the screens were not recaptured: the release workflow stops before publishing and tells the releaser to recapture them or to commit the confirmation file when the captured screens did not change.
-Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-192 → QAS-198 → DD-212. GitHub #290, user, 2026-11-01.
-
-### UC-192 Usage on a company PC
-The CLI needs 35 s before it answers `/usage`. The operator presses refresh: the card says "Querying usage… 0:35" and then shows the percentages. A CLI that never answers ends after 60 s with "Claude quota prompt timed out before /usage after 60 s".
+### UC-192 Refresh Claude quota on a slow machine
+1. The operator refreshes Claude quota from its agent card.
+2. The application starts the existing CLI session-based quota query asynchronously and shows elapsed time only on that agent card.
+3. The query returns as soon as quota is parsed, or after 60 seconds reports the elapsed limit and whether it was waiting before or after `/usage`.
+4. The UI stops the elapsed timer when the metadata job completes or fails.
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
 
-### UC-193 Adding a request
-A developer adds `request({kind:'export_report'})`; the guard fails and names it. They classify it (direct, so the pressed button and the waiting line already cover it), or, if it starts a background job, name the progress rendering the page has for it.
-Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.
+### UC-193 Inspect an unavailable quota reason
+1. The operator opens an agent list, agent settings, or Agent Room while quota is unavailable.
+2. The native UI shows the saved query error next to the quota badge or run status.
+3. The operator reads the same full error with a screen reader or by hovering the message.
+4. If the provider returned a supported Enterprise amount, the card shows its parsed allocation; if the screen is unrecognized, the error identifies the parse reason instead of waiting out a generic timeout.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
+### UC-190 Review coordinator run status
+The operator selects Coordinator in Agent Room. The Activity view shows the run state, completed/running/failed/pending counts, and a row for every task with its assigned agent, status and latest output age when available. Judgments and useful timeline history remain below the board; routine workflow-save summaries are omitted from the display, not deleted from the audit store. The view uses the current snapshot and emits no additional request.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → DDR-51 → DD-212. Rust port of JavaScript #267, GitHub #286, 2026-11-01.
+
+### UC-191 Supervise a run in the native Rust Agent Room
+The operator opens the Rust Agent Room and selects Coordinator. They can immediately see the run state, task counts, each assignment and status, plus latest output age where the snapshot reports it. They can continue to inspect judgments, approvals and retained useful history below the status board. The Rust view reads the existing snapshot and leaves JS/backend ownership with its current contributor.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.
+### UC-189 Wait for a workspace lookup or update
+The operator opens a workspace job, lookup, or update flow that takes time. The panel or dialog reports elapsed time while it runs; after six seconds without a new snapshot it also reports the snapshot age. A dependent control becomes available as soon as the lookup response arrives.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### UC-190 Wait for a direct request response
+The operator sends a messenger test, deletes or switches a workspace, requests a team briefing, or submits a run action. The control immediately shows activity. If the reply takes over one second, the workspace status or Agent Room connection line names the request and counts its elapsed time until the reply arrives. Background refreshes remain quiet.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, 2026-11-01.
+
+### UC-194 Correct a verification task that has no owned path
+The coordinator returns a phased plan containing `paths: []` for a verification task. The application identifies the task and missing field, requests one corrected plan, and presents the corrected result for review.
+Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215. GitHub #251, 2026-11-02.
+
+### UC-195 Review a plan after an unfinished coordinator draft
+The coordinator emits an incomplete fenced JSON draft followed by a complete plan. The application continues scanning, selects the first complete object with the requested field, and presents it for review. A reply over 256 KiB or without a valid object is rejected with an actionable diagnostic.
+Trace: R-204 → BG-159 → SF-192 → UC-195 → FR-196 → QAS-202 → DDR-53 → DD-216. Rust parity port of main #247, 2026-11-02.
+
+### UC-196 Review a failed integration with warnings in the other stream
+An operator opens a failed integration result whose stderr contains a tooling warning and whose stdout contains the test failure. The report shows both labeled tails; the operator can use the same combined evidence to request a scoped retry.
+Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197 → QAS-203 → DDR-54 → DD-217. GitHub #323, 2026-11-02.
+
+### UC-197 Select and identify the workspace coordinator model
+The operator chooses a registered coordinator and, when available, selects a model from that profile's observed catalog. The native agent list marks the coordinator for the active workspace, and changing workspace or coordinator updates the marker and available model.
+Trace: R-206 → BG-161 → SF-194 → UC-197 → FR-198/FR-200 → QAS-205 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #325, 2026-11-02.
+
+### UC-198 Chat with a custom CLI coordinator in declared read-only mode
+The operator selects a custom CLI as coordinator and configures arguments that invoke the CLI read-only. Chat invokes those declared arguments with the profile's existing authentication. If the arguments are empty, equal to normal arguments, or otherwise unusable, the UI explains the blocker and corrective action in the active UI language and does not launch the normal write-capable command.
+Trace: R-206 → BG-161 → SF-194 → UC-198 → FR-199/FR-200 → NFR-88/NFR-89 → QAS-204 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #326/#333, 2026-11-02.
+
+### UC-199 Review an update blocked by active work
+The operator checks for an application update while workspace work or a failed readiness check prevents progress. The UI names active work, separates it from check failures, and offers a clear next step without launching the update.
+Trace: R-207 → BG-162 → SF-195 → UC-199 → FR-201/NFR-90 → QAS-206 → DDR-56 → DD-219.
+
+### UC-200 Configure and diagnose a custom CLI permission denial
+An operator edits a custom profile and may choose `on_invalid_json: text` to retain ordinary output as progress, while success still requires exit code zero and a result event. The operator may declare a denial event by event type, JSON Pointer and expected value, or by a case-insensitive message match, and may identify the tool and message pointers. When automatic tool approval is declared without a denial mapping, the native profile editor shows a non-blocking localized hint. During a run, a matched event is retained as denied and fails the task with its tool and reason; malformed JSON failures include a bounded, separately labeled stdout/stderr excerpt.
+Trace: R-208 → BG-163 → SF-196 → UC-200 → FR-202/NFR-91 → QAS-207 → DDR-57 → DD-220.

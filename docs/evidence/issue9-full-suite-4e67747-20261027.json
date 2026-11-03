@@ -1,0 +1,12 @@
+{
+  "branch": "codex/issue-9-native-ui-parity",
+  "commit": "4e67747bc4657d49611576f679c125ec473f34c0",
+  "command": "cargo test --locked --offline --all-targets --features test-fixtures --no-fail-fast",
+  "failed": 0,
+  "ignored": 14,
+  "passed": 1001,
+  "scope": "Local source and test verification; does not verify exact Windows package UI behavior.",
+  "suites": 329,
+  "duration_seconds": 252.37,
+  "windows_schedule_persistence_verified": false
+}

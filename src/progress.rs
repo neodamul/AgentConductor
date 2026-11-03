@@ -5,6 +5,25 @@ use crate::{
 use std::{future::Future, path::Path, time::Duration};
 use tokio::io::{AsyncReadExt, AsyncSeekExt};
 
+const MIN_POLL_DELAY: Duration = Duration::from_millis(100);
+const MAX_POLL_DELAY: Duration = Duration::from_secs(2);
+
+#[cfg(test)]
+#[path = "../tests/support/progress_observer.rs"]
+mod tests;
+
+fn next_poll_delay(current: Duration, observed_output: bool) -> Duration {
+    if observed_output {
+        MIN_POLL_DELAY
+    } else {
+        current.saturating_mul(2).min(MAX_POLL_DELAY)
+    }
+}
+
+struct PollResult {
+    bytes_read: bool,
+}
+
 struct Reader {
     offset: u64,
     decoder: Decoder,
@@ -19,10 +38,12 @@ impl Reader {
         task: &str,
         attempt: u64,
         finished: bool,
-    ) -> Result<bool, String> {
+    ) -> Result<PollResult, String> {
         let mut file = match tokio::fs::File::open(path).await {
             Ok(file) => file,
-            Err(e) if e.kind() == std::io::ErrorKind::NotFound && !finished => return Ok(false),
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound && !finished => {
+                return Ok(PollResult { bytes_read: false });
+            }
             Err(e) => return Err(format!("read owned task spool: {e}")),
         };
         if file.metadata().await.map_err(|e| e.to_string())?.len() < self.offset {
@@ -42,25 +63,27 @@ impl Reader {
         } else {
             self.decoder.push(&bytes[..n])?
         };
+        if n > 0 {
+            crate::ui::events::notify_external_from_environment();
+        }
         self.store.append_task_events(task, attempt, &events)?;
         if let Some(profile) = &self.profile {
             crate::quota::observe_events(&mut self.store, profile, &events)?;
         }
-        Ok(n > 0)
-    }
-}
-
-/// GitHub #341: a stopped reading says what the CLI had printed, not only where the parser gave up.
-fn with_output(spool: &Path, error: String) -> String {
-    let raw = crate::coordinator::output_excerpt(spool, &spool.with_file_name("stderr.log"));
-    if raw.is_empty() {
-        error
-    } else {
-        format!("{error}\nthe CLI's own output:\n{raw}")
+        Ok(PollResult { bytes_read: n > 0 })
     }
 }
 
 /// Owns the worker future so observation failure/cancellation drops its process group.
+fn with_output(spool: &Path, error: String) -> String {
+    let output = crate::coordinator::output_excerpt(spool, &spool.with_file_name("stderr.log"));
+    if output.is_empty() {
+        error
+    } else {
+        format!("{error}\nthe CLI's own output:\n{output}")
+    }
+}
+
 pub async fn observe<F: Future>(
     future: F,
     spool: &Path,
@@ -102,10 +125,10 @@ async fn observe_inner<F: Future>(
     provider: Provider,
     profile: Option<crate::plan::AgentProfile>,
 ) -> Result<F::Output, String> {
-    let decoder = profile
-        .as_ref()
-        .map(|profile| Decoder::for_profile(profile, 1024 * 1024))
-        .unwrap_or_else(|| Decoder::new(provider, 1024 * 1024));
+    let decoder = profile.as_ref().map_or_else(
+        || Decoder::new(provider, 1024 * 1024),
+        |profile| Decoder::for_profile(profile, 1024 * 1024),
+    );
     let mut reader = Reader {
         profile,
         offset: 0,
@@ -113,18 +136,20 @@ async fn observe_inner<F: Future>(
         store: Store::open(database)?,
     };
     tokio::pin!(future);
-    let mut interval = tokio::time::interval(Duration::from_millis(100));
-    interval.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Skip);
+    let mut delay = MIN_POLL_DELAY;
     loop {
         tokio::select! {
             result=&mut future=>{
                 // A launch failure can legitimately have no stdout spool.
                 if spool.exists() {
-                    while reader.poll(spool,task,attempt,true).await.map_err(|e| with_output(spool, e))? {}
+                    while reader.poll(spool,task,attempt,true).await.map_err(|e| with_output(spool, e))?.bytes_read {}
                 }
                 return Ok(result);
             },
-            _=interval.tick()=>{reader.poll(spool,task,attempt,false).await.map_err(|e| with_output(spool, e))?;},
+            _=tokio::time::sleep(delay)=>{
+                let observed=reader.poll(spool,task,attempt,false).await.map_err(|e| with_output(spool, e))?.bytes_read;
+                delay=next_poll_delay(delay,observed);
+            },
         }
     }
 }

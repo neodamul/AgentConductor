@@ -1,0 +1,19 @@
+{
+  "issue": 9,
+  "run_id": 40223438114,
+  "head": "919f40c9d6528dab73e936730f0a80ec24ada088",
+  "platform": "windows-latest",
+  "validation": "passed",
+  "package_build_and_smoke": "passed",
+  "desktop_save": "passed",
+  "briefing": "passed",
+  "schedule": {
+    "result": "failed_before_dispatch",
+    "button_bounds": [748, 792, 847, 812],
+    "window_bounds": [-8, -8, 1032, 728],
+    "wheel_delta": -360,
+    "observation": "The button remained clipped; the native wheel message did not move it. No schedule action was dispatched and no manual_schedule timestamp was persisted."
+  },
+  "next_change": "Use the exposed vertical UIA scrollbar RangeValuePattern at its maximum, log whether the provider supports it, then retain the geometry guard.",
+  "acceptance": "Do not count the schedule workflow until manual_schedule persists at 2099-01-01T09:00:00+09:00."
+}

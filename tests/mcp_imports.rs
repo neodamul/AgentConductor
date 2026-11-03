@@ -1,3 +1,4 @@
+#![cfg(feature = "test-fixtures")]
 use agentconductor::mcp::{self, Settings};
 use serde_json::json;
 use std::path::PathBuf;
@@ -10,8 +11,7 @@ fn root() -> PathBuf {
     p.canonicalize().unwrap()
 }
 fn settings(mode: &str, root: &std::path::Path) -> Settings {
-    let python = if cfg!(windows) { "python" } else { "python3" };
-    Settings::parse(&json!({"mcp":{"company":{"type":"local","command":[python,concat!(env!("CARGO_MANIFEST_DIR"),"/tests/support/mcp_server.py"),mode,root.join("trace.jsonl")],"timeout":if mode == "hang" { 500 } else { 5000 }}},"goal_sources":{"jira":{"server":"company","tool":"get_issue","arguments":{"id":"{id}"},"read_only":true},"confluence":{"server":"company","tool":"get_issue","arguments":{"id":"{id}"},"read_only":true}}}).to_string()).unwrap()
+    Settings::parse(&json!({"mcp":{"company":{"type":"local","command":[env!("CARGO_BIN_EXE_test_agent_fixture"),"mcp-server",mode,root.join("trace.jsonl")],"timeout":if mode == "hang" { 500 } else { 5000 }}},"goal_sources":{"jira":{"server":"company","tool":"get_issue","arguments":{"id":"{id}"},"read_only":true},"confluence":{"server":"company","tool":"get_issue","arguments":{"id":"{id}"},"read_only":true}}}).to_string()).unwrap()
 }
 #[tokio::test]
 async fn preview_is_read_only_partial_and_approval_is_goal_and_content_bound() {

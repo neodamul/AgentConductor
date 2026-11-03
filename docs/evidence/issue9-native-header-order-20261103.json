@@ -1,0 +1,35 @@
+{
+  "date": "2026-11-03",
+  "issue": 9,
+  "reference": {
+    "source": "origin/main:src/ui/startup.html and src/ui/startup.css",
+    "source_commit": "f3b819020d97d141daf6b03d979fb36ef9b1cd9d",
+    "contract": "Header order is title, New goal, then phase, with visible separation between the action and phase."
+  },
+  "tdd": {
+    "red": {
+      "test": "workspace_title_actions_follow_the_legacy_title_button_status_order",
+      "result": "failed: New goal rendered to the right of Prepared phase text"
+    },
+    "green": {
+      "change": "Reverse the right-to-left action group order and add spacing between phase and button.",
+      "result": "Both compact-header tests passed."
+    }
+  },
+  "verification": {
+    "tests": "cargo test --locked --offline --features native-ui-probe --test native_ui_compact_header: 2 passed",
+    "clippy": "cargo clippy --locked --offline --features native-ui-probe --test native_ui_compact_header -- -D warnings passed",
+    "rustfmt": "cargo fmt --check passed",
+    "diff_check": "git diff --check passed",
+    "line_counts": {
+      "src/native_ui_probe/workspace/header.rs": 170,
+      "tests/native_ui_compact_header.rs": 115
+    }
+  },
+  "acceptance": {
+    "issue_9_overall": "22/50",
+    "shipped_default_rust_ui": "0/25",
+    "credit_added": false
+  },
+  "limitations": "Local component geometry only. Same-state full-screen parity and exact macOS/Windows package validation remain open."
+}

@@ -54,7 +54,10 @@ pub fn metadata_request(event: &Event, revision: &str) -> Vec<u8> {
     let (kind, agent) = match event {
         Event::Discover(agent) => ("discover", agent),
         Event::Quota(agent) => ("quota", agent),
-        Event::SaveProfiles | Event::BrowseExecutable | Event::ResolveExecutable(_) => {
+        Event::SaveProfiles
+        | Event::BrowseExecutable
+        | Event::ResolveExecutable(_)
+        | Event::SetCatalog { .. } => {
             unreachable!()
         }
     };
@@ -136,22 +139,5 @@ pub fn merge_catalogs(local: &mut [Value], saved: &[Value]) {
     }
 }
 
-pub fn metadata_running(snapshot: &Value) -> bool {
-    snapshot["metadata_job"]["state"] == "running"
-        || snapshot["metadata_queue"]
-            .as_array()
-            .is_some_and(|queue| !queue.is_empty())
-}
-
-pub(super) fn metadata_active(snapshot: &Value, kind: &str, agent: &str) -> bool {
-    let operation = format!("{kind}:{agent}");
-    (snapshot["metadata_job"]["kind"] == operation
-        && snapshot["metadata_job"]["state"] == "running")
-        || snapshot["metadata_queue"].as_array().is_some_and(|queue| {
-            queue
-                .iter()
-                .any(|item| item["kind"] == kind && item["agent"] == agent)
-        })
-}
 use super::{Editor, Event};
 use serde_json::Value;

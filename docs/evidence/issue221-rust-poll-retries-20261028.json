@@ -1,0 +1,42 @@
+{
+  "issue": 221,
+  "pull_request": 228,
+  "branch": "codex/issue-221-rust-poll-timeout",
+  "base_branch": "codex/issue-9-native-ui-parity",
+  "base_commit": "a828a2f480c79d3bd617add00b8e83aa5082ff33",
+  "javascript_source_commits": [
+    "2570dac8bcd0a0678dd5d4abf30029bd5a8eafe3",
+    "d476b7929f3ea024083434f2f09ade82f209d609"
+  ],
+  "behavior": {
+    "native_client_deadline": false,
+    "hidden_window_deadline_pause": "not applicable; the native worker has no page-side request deadline",
+    "scheduled_room_snapshot_failures": "quiet and retried on the next normal poll; no retry-streak counter",
+    "pending_tool_decision": "pause periodic snapshots while a human tool receipt is pending; explicit refresh and decision actions remain available",
+    "initial_explicit_and_action_failures": "remain immediately visible",
+    "late_repaint": "at most one due snapshot is sent and the next monotonic deadline is rebased; no state-changing request is replayed",
+    "automatic_background_detail_and_coordinator_failures": "stay quiet",
+    "workspace_idle_poll": "none added"
+  },
+  "local_verification": {
+    "focused": "pass after rebase on current #9 base: poll regressions 5/5; native probe 43/43; native UI launch actions 11/11; tool dialog 4/4; Windows driver contract 7/7; source layout 2/2",
+    "clippy": "pass: cargo clippy --locked --offline --all-targets -- -D warnings",
+    "format": "pass: cargo fmt --all -- --check",
+    "diff_check": "pass: git diff --check",
+    "changed_rust_file_limit": "pass: all changed Rust files are below 300 lines"
+  },
+  "knowledge_tools": {
+    "graphify": "refreshed: 9799 nodes, 15197 edges, 742 communities",
+    "cocoindex": "unavailable: command is not installed"
+  },
+  "remote_validation": {
+    "superseded_run": 40782630380,
+    "superseded_failure": "macOS native launch parity test failed at native_worker_starts_only_the_exact_approved_plan; fixed in the #9 base before the next run",
+    "latest_exact_run": 40800446089,
+    "latest_run_result": "both platform validation jobs and macOS package passed; Windows binary build, manual rendering and exact binary package execution passed; packaged Windows candidate review/workspace/schedule/signal journeys passed, but tool-decision failed because Allow once remained disabled with ACTION_BUTTON_NOT_ENABLED while a scheduled background snapshot was pending; request stayed pending",
+    "shared_driver_followup": "root run 40796746962 passed macOS/Windows validation but both package jobs were cancelled; current #9 base advanced to 69887bab4732aba50d8649951ce153bf20a042dd with the Windows signal-port readiness fix",
+    "candidate_rejection_fix": "bounded rejection-reason readiness retry is inherited from the #9 base; no duplicate UI-driver change is included in the #221 diff",
+    "periodic_poll_gate_fix": "RED regression confirmed room::refresh_due still dispatched a periodic snapshot with an actionable pending tool receipt; implementation now skips that scheduled read. Explicit refresh/action routes are unchanged and covered by existing tests",
+    "new_exact_head_run": "pending after push of the pending-receipt polling fix"
+  }
+}

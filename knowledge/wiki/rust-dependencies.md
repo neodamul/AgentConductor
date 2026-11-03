@@ -5,6 +5,8 @@ Target: aarch64-apple-darwin. Lockfile-resolved runtime/build dependency closure
 License declarations and bundled texts were checked against the reviewed permissive allowlist.
 This inventory does not grant a license to the private root project or certify provider terms.
 
+The optional `native-ui-probe` feature adds `image` 0.25.10 (MIT OR Apache-2.0) and its selected JPEG decoder, `zune-core` 0.5.3 and `zune-jpeg` 0.5.15 (both MIT OR Apache-2.0 OR Zlib). Their MIT, Apache-2.0, and Zlib texts are present in the crate sources. These are excluded from the default application feature and release dependency closure.
+
 | Package | Version | Declared SPDX expression |
 |---|---|---|
 | bitflags | 2.13.2 | MIT OR Apache-2.0 |

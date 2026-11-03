@@ -1,0 +1,49 @@
+{
+  "issue":9,
+  "date":"2026-10-22",
+  "trace":["R-63","R-67","BG-22","SF-53","UC-53","FR-49","NFR-23","QAS-56","DDR-07","DD-69","DD-73"],
+  "red":"Native scheduler tests failed to compile before next-deadline and due-profile implementation.",
+  "local_verification":{
+    "library_tests_passed":34,
+    "integration_tests_passed":20,
+    "integration_suites":6,
+    "clippy_warnings_denied":"passed",
+    "rustfmt":"passed",
+    "source_layout":"passed"
+  },
+  "test_boundary":"Simulated clocks and a real Room/RequestWorker rejection for an unregistered agent; no provider CLI, inference, external update query, approval or merge.",
+  "runtime_added":"none; reuse existing worker and delayed native repaint",
+  "macos_package":{
+    "source_commit":"017b51c68af31dd181a56586503d92f11ffaae74",
+    "archive_sha256":"adbedf3b137eea69d09d65397574d4b4ae23fd295a686480d4451f606cef7b1b",
+    "binary_sha256":"bd2d218cfb0d624e067f8a2e18864460bddf17a8c77a9eccd2a3c2edef7e3332",
+    "validation":"passed",
+    "first_open":"No refresh button clicked. Claude automatic query started at 21:33:59 KST; bounded failure before ready prompt. Codex then automatically returned 14%/8%, observed 21:34:21 KST.",
+    "claude_diagnostic":"CLI 2.1.292 emitted only the screen-reader-mode line before its 20-second ready-prompt deadline; no /usage or generation sent.",
+    "workspace":"Saved name/goal/repository and selected Workspace step retained.",
+    "real_time_cadence":"At 21:39 KST a second Claude query started without a refresh click, following its 21:33:59 first attempt by five minutes. Workspace input and other-agent edit controls remained enabled while the CLI query ran.",
+    "codex_cadence":{"first_started_ms":1792672460122,"second_started_ms":1792672760139,"elapsed_ms":300017,"second_observed_at":"2026-10-22 21:39:21 Asia/Seoul","second_display":"9%/7%"},
+    "ui_followup":"Transient global metadata loading banner reproduced by a rendered failing test; correction passes 35 native library tests and warning-denied Clippy, keeping actual errors and foreground save progress visible."
+  },
+  "quiet_metadata_package":{
+    "source_commit":"dab1e502a9e6a6778fd584a3c92fd50184d21243",
+    "archive_sha256":"0ba9292aaa4eff99e0590bb80c0f11dd6705af0b789231e576020292339cf667",
+    "binary_sha256":"82cb02a04ea353a4225a8c2c860ef533fffe8cf419504ea1985095445f217a28",
+    "validation":"passed; four packaged workflow smoke cases passed",
+    "screen":"Exact app replaced the previous idle package. During automatic Claude collection, only the agent-row progress indicator appeared; Workspace remained selected and editable, icons and saved fields retained. No global metadata loading banner appeared.",
+    "followup_tests":"35 library tests, 5 source-layout/pending tests, warning-denied Clippy and formatting passed"
+  },
+  "claude_term_fix_package":{
+    "source_commit":"b437519131d353219a6f21916a50ff61d526e27e",
+    "archive_sha256":"ba7791af819209454fd853f48e2a845c1a54ef191b6188aba6910eef8e88c7e4",
+    "binary_sha256":"25614cbce3cd0d4f021d3980aa84a7434c4edad1294d5ad67ef063352bb10427",
+    "validation":"passed",
+    "regressions":"12 passed, 1 ignored across claude_prompt, claude_usage and source_layout; warning-denied Clippy, rustfmt and git diff check passed",
+    "gui_launch":"Replaced only the idle prior process. The saved workspace, goal and Workspace step loaded. Automatic Claude /usage completed without a generation request (API duration 0s, zero input/output/cache tokens) and returned session/week usage; Codex then returned a fresh JSONL quota result. metadata_error remained null.",
+    "claude_cli":"2.1.292",
+    "environment":"Inherited dumb TERM was replaced only for the collector child; explicit usable profile TERM remains preserved.",
+    "ui_capture":"Accessibility capture timed out; process, saved startup state and actual terminal/JSONL collector output were inspected instead."
+  },
+  "pending":["Windows verification"],
+  "packaged_workflow_acceptance":"8/25"
+}

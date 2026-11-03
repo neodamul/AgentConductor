@@ -1,0 +1,24 @@
+{
+  "issue": 9,
+  "workflow": 24,
+  "run_id": 40683626949,
+  "head_sha": "829e58eeade6e22bb153bb481f0dde5d0d7cc857",
+  "windows_job_id": 122800337204,
+  "windows_conclusion": "failure",
+  "failure_stage": "cargo build --all-targets",
+  "diagnostics": [
+    "tests/windows_candidate_review.rs:88: E0600, assert! applied to unit returned by Repository::clean()",
+    "tests/windows_candidate_review.rs:95: E0600, assert! applied to unit returned by Repository::clean()"
+  ],
+  "package_ui_started": false,
+  "root_cause": "Repository::clean() returns Result<(), String>; it returns Ok only for a clean worktree and cannot be used as a boolean.",
+  "fix": "Replace both assert!(git.clean().unwrap()) calls with git.clean().unwrap().",
+  "local_verification": {
+    "cargo_test": "cargo test --locked --offline --test windows_desktop_driver --test source_layout",
+    "tests_passed": 4,
+    "rustfmt": "passed",
+    "git_diff_check": "passed",
+    "changed_test_lines": 97
+  },
+  "next_step": "Push the compile fix and dispatch exact-head Platform Validation; do not credit workflow 24 before packaged Windows UI approval/merge and rejection paths pass."
+}

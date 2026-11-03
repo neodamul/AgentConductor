@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-03",
+  "issue": 9,
+  "commit": "e2419db3",
+  "reference": {
+    "source": "Issue #9 native Workspace layout contract",
+    "test": "tests/native_ui_header.rs::all_step_buttons_fit_the_content_column_in_both_languages",
+    "locales": ["en", "ko"],
+    "viewports_px": [480, 836]
+  },
+  "tdd": {
+    "red": "The 480 px English case failed: the third stage tab ended at x=559.",
+    "green": "Bound the equal tab widths by the smaller of available layout width and clipped viewport width, reserving 16 px for the content inset.",
+    "result": "All six native_ui_header tests pass."
+  },
+  "verification": {
+    "full_local": "cargo test --locked --offline --all-targets --quiet passed.",
+    "source_layout": "cargo test --locked --offline --test source_layout passed 2/2.",
+    "format": "cargo fmt --all -- --check passed.",
+    "external_tests": "Provider-login and exact Windows packaged tests remain ignored by environment guards."
+  },
+  "acceptance": {
+    "issue_9_overall": "22/50",
+    "packaged_workflows": "22/25",
+    "shipped_default_rust_ui": "0/25",
+    "credit_added": false
+  },
+  "limitations": "Component geometry and local source tests do not establish exact package acceptance or full screen parity."
+}

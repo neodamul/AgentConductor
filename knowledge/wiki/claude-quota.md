@@ -56,3 +56,37 @@ approval evidence. Codex retains its independent authenticated metadata query.
 - `src/workflow/execution.rs` SHA-256 `e6723dd74f4825c4bb59271a7cb55ae8be888114b400740660c1ad026f4b9bdf`
 - `src/ui/room.js` SHA-256 `6f45a070079f6cc06f982661be7145ede102327f21a95139553b773ce2439604`
 - `tests/claude_quota.rs` SHA-256 `7f3a9e8ba0b08ca71ed8033bdcadf5cc9ae9c763e67579d3d3a6a39aeb5bb9a2`
+
+## Native macOS quota command lookup
+
+The native `/usage` collector resolves the configured executable through the shared
+filesystem-only executable resolver before passing it to `/usr/bin/script`. This matters
+when a desktop app starts with a shorter `PATH` than a login shell; common install folders
+such as `/opt/homebrew/bin` remain discoverable. The configured executable string is kept
+as a fallback for names the resolver cannot find, preserving the child's normal PATH lookup.
+
+The regression test uses a local fixture executable and gives the application and child
+incompatible PATH values. It fails before resolution and passes afterward. It does not start
+a provider CLI, read account credentials, or generate a response. A v0.1.36 macOS arm64 candidate from source `f4388209` passes package validation and the
+four built-in isolated mock-agent smoke cases. Its binary SHA-256 is
+`f804e8c8406408f901c7103fed4f341fc0ceedfb1a1e44506d2e9ba5457fc3ec`. Its matching-hash executable queried the signed-in Claude CLI with a desktop-style
+`PATH=/usr/bin:/bin`; the command exited successfully and persisted two windows without
+recording their usage values. In the exact package UI, clicking the Claude refresh button
+showed an active progress indicator, then refreshed the observation timestamp and returned
+the button to its enabled state. The screenshot was not retained because it exposed account
+usage and a local project path. This component check does not add a distinct #9 workflow.
+See
+`docs/evidence/issue9-claude-quota-f438820-macos-package-20261023.json`.
+
+## Rust native UI: slow query wait and elapsed display — GitHub #297
+
+The native Rust collector uses one injected deadline with a 60-second production value on macOS and Windows. Timeout diagnostics identify whether the collector was waiting for the CLI prompt or the `/usage` response and include the configured duration. Successful parsing still returns after the terminal becomes quiet. The agent sidebar reads the quota job's persisted `started_ms` and repaints locally once per second while that one agent's query is active; it does not poll the coordinator.
+
+The deterministic terminal fixture emits a Claude version and a `>` prompt, delays startup when requested, and can hang after `/usage` without producing usage. This keeps prompt detection and parser tests aligned with real CLI interaction and ensures temporary files are removed when tests fail.
+
+## Trace and verification
+
+- Requirement/design trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297.
+- `tests/claude_wait.rs` verifies slow startup, pre/post-`/usage` timeout details, and the shared production deadline; `tests/native_ui_quota_elapsed.rs` verifies elapsed-time scope and visible failure details.
+- Local targeted tests passed on macOS. Windows package validation is still required before integration is complete.
+- The first exact-head Windows build found a stale one-argument `quota_timeout` call in the Windows-only outer deadline branch. A source regression failed before the correction; both Windows timeout paths now pass the injected wait duration. The next exact-head platform run must confirm the Windows build before this port is complete.

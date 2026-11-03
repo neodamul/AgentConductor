@@ -188,6 +188,8 @@ impl Startup {
         next.job = None;
         next.imports = None;
         next.mcp_result = None;
+        next.optimize_result = None;
+        next.optimize_goal = None;
         self.store(&next)?;
         *saved = next;
         Ok(serde_json::json!({"changed":true}))

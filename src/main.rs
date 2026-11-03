@@ -27,14 +27,7 @@ fn print_report(report: &workflow::Report) -> Result<(), String> {
 
 fn main() -> std::process::ExitCode {
     let args: Vec<_> = std::env::args().skip(1).collect();
-    let maintenance = args.as_slice() == ["manual", "render"]
-        || args.first().map(String::as_str) == Some("bundle-macos")
-        || args.first().map(String::as_str) == Some("archive-package")
-        || args.first().map(String::as_str) == Some("validate-package")
-        || args.first().map(String::as_str) == Some("smoke-package")
-        || args.first().map(String::as_str) == Some("package-release")
-        || (args.first().map(String::as_str) == Some("release")
-            && args.get(1).map(String::as_str) == Some("notes"));
+    let maintenance = agentconductor::process::is_maintenance_command(&args);
     // A detached watcher must retain its own logs, not attach to the caller console.
     if !maintenance && args.first().map(String::as_str) != Some("availability-watch") {
         agentconductor::subprocess::attach_parent_console();
@@ -44,6 +37,7 @@ fn main() -> std::process::ExitCode {
     } else {
         execute()
     };
+    agentconductor::ui::notify_external_event();
     // DD-79: let queued messenger notifications finish (bounded) before the process exits.
     if !maintenance {
         agentconductor::messenger::flush(std::time::Duration::from_secs(35));
@@ -73,6 +67,9 @@ fn execute() -> Result<(), String> {
     // DD-135: a process started by an update waits for the one it replaced.
     agentconductor::update::after_restart();
     let args: Vec<_> = std::env::args().skip(1).collect();
+    if agentconductor::desktop::is_workspace_launch(&args) {
+        return agentconductor::desktop::launch_default();
+    }
     execute_args(&args)
 }
 
@@ -105,13 +102,13 @@ mod memory_ui;
 #[path = "commands/sessions_review.rs"]
 mod sessions_review;
 
-#[path = "commands/quota.rs"]
-mod quota_commands;
-
 #[path = "commands/chat.rs"]
 mod chat_commands;
 #[path = "commands/io.rs"]
 mod io_commands;
+#[path = "commands/quota.rs"]
+mod quota_commands;
+
 #[path = "commands/manual.rs"]
 mod manual_commands;
 #[path = "commands/mcp.rs"]
@@ -129,10 +126,10 @@ fn execute_args(args: &[String]) -> Result<(), String> {
     if let Some(result) = mcp_commands::execute(args) {
         return result;
     }
-    if let Some(result) = chat_commands::execute(args) {
+    if let Some(result) = optimize_commands::execute(args) {
         return result;
     }
-    if let Some(result) = optimize_commands::execute(args) {
+    if let Some(result) = chat_commands::execute(args) {
         return result;
     }
     if let Some(result) = quota_commands::execute(args) {

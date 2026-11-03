@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "source_commit": "a1ea942da9db94d68aca81dea7790cf0997d897a",
+  "package": {
+    "version": "0.1.31",
+    "target": "aarch64-apple-darwin",
+    "binary_sha256": "8c918bbfaa7a72c075333ee3cc5732dfbbd304ab5d984b755e03746900642980",
+    "archive_sha256": "36a7085d82aacf8fdb5e9bac869c82687752894e9322a763f041f2c306a085eb",
+    "dependency_count": 214,
+    "sqlite_bundled": true
+  },
+  "app_processes": 1,
+  "environment": "disposable Git repository and isolated HOME under /private/tmp/agentconductor-issue9-isolated",
+  "regression": {
+    "same_goal_preserved": true,
+    "repository_changed": true,
+    "old_active_slug_cleared": true,
+    "historical_slug_retained": true,
+    "new_goal_metadata_excluded_from_git": true
+  },
+  "workflow": {
+    "workspace_mode": "worktree",
+    "base_commit": "e41ff3546ca5759f9f6628db4815ce04219931fa",
+    "run_id": "02881a2a-d54e-4f35-a6d6-7b2cc65e9663",
+    "tasks": [
+      { "id": "write-one", "owned_path": "one.txt", "status": "completed", "test_exit_code": 0 },
+      { "id": "write-two", "owned_path": "two.txt", "status": "completed", "test_exit_code": 0 },
+      { "id": "write-three", "owned_path": "three.txt", "status": "completed", "test_exit_code": 0 }
+    ],
+    "reviewed_diff_files": ["one.txt", "two.txt", "three.txt"],
+    "candidate_commit": "c158f0ebe9dd8e1a9bd99697e2d21ce604ef8e0a",
+    "human_approval": true,
+    "merge_confirmed": true,
+    "final_branch": "main",
+    "final_head": "c158f0e AgentConductor integration candidate",
+    "final_worktree_clean": true
+  },
+  "local_validation": {
+    "all_targets_passed": 771,
+    "ignored": 14,
+    "suites": 260,
+    "failed": 0,
+    "clippy": "passed with -D warnings",
+    "format": "passed",
+    "git_diff_check": "passed",
+    "package_release_smoke": "passed"
+  },
+  "acceptance": {
+    "packaged_workflows_accepted": 5,
+    "packaged_workflow_total": 25,
+    "percentage": 20,
+    "shipped_rust_replacement_accepted": 0
+  },
+  "limitations": [
+    "This is a deterministic mock-agent workflow, not an authenticated Claude, Codex, or OpenCode session.",
+    "Windows UI, accessibility and Korean IME acceptance remain open.",
+    "The temporary repository is ahead by the candidate merge commit and contains only the three intended files."
+  ]
+}

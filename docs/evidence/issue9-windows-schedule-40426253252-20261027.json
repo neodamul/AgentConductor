@@ -1,0 +1,30 @@
+{
+  "issue": 9,
+  "date": "2026-10-27",
+  "workflow_run": "https://github.com/neodamul/AgentConductor/actions/runs/40426253252",
+  "tested_commit": "fbbb9d443cbb3a4bbc9a2311f5abf895317dfe8d",
+  "result": "failed",
+  "passed": [
+    "macOS source validation",
+    "Windows source validation",
+    "macOS package execution",
+    "Windows package build and smoke",
+    "Windows desktop save",
+    "Windows briefing"
+  ],
+  "failed": "UI Automation InvokePattern.Invoke returned without error, but the task remained waiting_availability/manual_required; available_at and manual_schedule were absent and no coordinator-ui-* action directory was created.",
+  "windows_artifact": "12701647324",
+  "windows_artifact_sha256": "d170dd5dd94508dbb2a48e090ae34b2749ef9824a0fdc893cfc130ca38c798c7",
+  "follow_up": {
+    "test_first": true,
+    "change": "Reassert UIA window focus after Win32 foregrounding and log post-invoke focus state.",
+    "local_focused_tests": "16 passed",
+    "file_line_counts": {
+      "tests/windows_schedule.rs": 294,
+      "tests/windows_schedule_dispatch.rs": 70
+    },
+    "exact_windows_package_reverification": "pending"
+  },
+  "acceptance": "20/25; do not increase until the exact Windows package persists manual_schedule=2099-01-01T09:00:00+09:00",
+  "agentmemory": "mem_mvpzm7og_eff67d35c230"
+}

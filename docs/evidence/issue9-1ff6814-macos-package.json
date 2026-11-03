@@ -1,0 +1,36 @@
+{
+  "source_commit": "1ff6814fa0f6bce185e3f03fa1e5ce7b894a2cdd",
+  "target": "aarch64-apple-darwin",
+  "archive": "agentconductor-aarch64-apple-darwin-1ff6814fa0f6.zip",
+  "archive_sha256": "398218d123869d9a3ec01f9dfb84f0188c1f4c6ad71b09500bb57db3ea19a979",
+  "binary": "agentconductor",
+  "binary_bytes": 17892640,
+  "binary_sha256": "f9654d2799175d058c5951579fed429a4810b007203f7a2ce25ba0c50f6712bd",
+  "dependency_count": 214,
+  "verification": {
+    "package_release_exit_code": 0,
+    "validate_package_exit_code": 0,
+    "binary_help_exit_code": 0,
+    "packaged_smoke_exit_code": 0
+  },
+  "smoke": {
+    "cases": [
+      "shared-git",
+      "shared-folder",
+      "worktree-git",
+      "worktree-folder"
+    ],
+    "parallel_tasks_per_case": 3,
+    "tests_per_case": 3,
+    "unapproved_merge_refused": true,
+    "approved_merge_verified": true,
+    "external_agent_cli_or_service_called": false
+  },
+  "not_verified": [
+    "exact-head Windows package and UI",
+    "native UI parity against the shipped JavaScript application",
+    "real authenticated agent CLI workflow",
+    "exportable exact-head screenshot",
+    "remaining 24 packaged UI workflows"
+  ]
+}

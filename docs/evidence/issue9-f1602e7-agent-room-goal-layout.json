@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "source_commit": "f1602e7d32022fac377a168bd2bfb6686593db02",
+  "target": "aarch64-apple-darwin",
+  "package": "dist/agentconductor-aarch64-apple-darwin-f1602e7d3202",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-f1602e7d3202.zip",
+  "archive_sha256": "578b811a1d5d68839da4e45a41b0ab54831e06795f8f5241747a63a31978f724",
+  "binary_sha256": "81eb7748974954aaecf29b57b7e88c6247572e8d75ec91a3809cf8bfde22fffa",
+  "manifest_dependencies": 214,
+  "manifest_external_requirements": [
+    "Git",
+    "selected authenticated agent CLIs"
+  ],
+  "verification": {
+    "all_target_tests_passed": 929,
+    "all_target_tests_ignored": 14,
+    "all_target_test_suites": 310,
+    "clippy_warnings_denied": "passed",
+    "rustfmt": "passed",
+    "source_test_300_line_guard": "passed",
+    "optimized_build": "passed",
+    "package_manifest_validation": "passed",
+    "package_smoke": "passed"
+  },
+  "visual_inspection": {
+    "package_opened_in_single_window": true,
+    "agent_room_goal_visible_once_in_wide_header": true,
+    "task_list_keeps_task_status_and_verification": true,
+    "candidate": "3db8840b02ce28558701698c327a5820b7dc7311",
+    "candidate_state": "waiting_approval",
+    "tasks_complete": 3,
+    "tests_passed": 3,
+    "approval_or_merge_performed": false,
+    "screenshot_retained": false
+  },
+  "acceptance_count": "11/25",
+  "acceptance_increment": false,
+  "graphify": {
+    "nodes": 8893,
+    "edges": 14043,
+    "communities": 683
+  },
+  "cocoindex": "CLI unavailable; no index result claimed",
+  "agentmemory_id": "mem_mvk4r2u5_d3f75533fb77",
+  "windows_ui_verified": false
+}

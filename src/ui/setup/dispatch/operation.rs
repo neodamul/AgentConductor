@@ -1,5 +1,10 @@
 use super::*;
 
+#[path = "draft.rs"]
+mod draft;
+#[path = "save.rs"]
+mod save;
+
 impl Startup {
     pub(super) fn dispatch_operation(
         &self,
@@ -7,94 +12,21 @@ impl Startup {
         saved: &mut Saved,
     ) -> Result<serde_json::Value, String> {
         match request {
-            Request::StopPlanning {}
-            | Request::CachePreview {}
-            | Request::Chat { .. }
-            | Request::ChatHistory {}
-            | Request::ChatReset {}
-            | Request::CacheClear { .. } => unreachable!(),
+            Request::StopPlanning {} | Request::CachePreview {} | Request::CacheClear { .. } => {
+                unreachable!()
+            }
             Request::McpSave { settings, .. } => self.save_mcp(saved, &settings),
             Request::McpDiscover { server, .. } => self.launch_mcp(saved, Some(&server)),
             Request::McpPreview { .. } => self.launch_mcp(saved, None),
+            Request::Chat { text, revision } => self.dispatch_chat(saved, &revision, text),
+            Request::ChatReset { .. } => self.reset_chat(saved),
             Request::OptimizeGoal { goal, .. } => self.launch_optimize(saved, goal),
             Request::McpApply {
                 preview_id,
                 selected,
                 ..
             } => self.apply_mcp(saved, &preview_id, &selected),
-            Request::Save { config, .. } => {
-                let mut config = *config;
-                // DD-131: a changed executable drops full access before validation.
-                super::super::profiles::derive_permissions(&mut config.profiles);
-                validate_profiles(&config.profiles)?;
-                // DD-72: an empty workspace has no coordinator yet.
-                let empty = config.profiles.is_empty() && config.coordinator.is_empty();
-                if !empty && !config.profiles.iter().any(|p| p.id == config.coordinator) {
-                    return Err(
-                        crate::ui::messages::text("native.coordinator_is_not_registered").into(),
-                    );
-                }
-                validate_name(&config.name)?;
-                crate::roles::validate(&config.roles, &config.profiles)?;
-                if config.goal.len() > 16 * 1024 {
-                    return Err(crate::ui::messages::text("native.goal_exceeds_16_kib").into());
-                }
-                if !config.repository.as_os_str().is_empty() {
-                    config.repository = project::directory(&config.repository)?;
-                    if self.broker.dir.starts_with(&config.repository) {
-                        return Err(crate::ui::messages::text(
-                            "native.startup_artifacts_must_be_outside_repository",
-                        )
-                        .into());
-                    }
-                }
-                config.mcp = saved.config.mcp.clone();
-                config.goal_sources = saved.config.goal_sources.clone();
-                profiles::carry_over(&mut config.profiles, &saved.config.profiles);
-                config
-                    .profiles
-                    .iter_mut()
-                    .for_each(profiles::derive_permission);
-                // DD-61: slugs are work records, changed only by slug operations.
-                config.slugs = saved.config.slugs.clone();
-                config.plan_rules = saved.config.plan_rules.clone();
-                config.active_slug = saved.config.active_slug.clone();
-                config.messenger = saved.config.messenger.clone();
-                // DD-58: keep a reviewed plan unless what it was reviewed against changed.
-                let keep = config.goal == saved.config.goal
-                    && config.repository == saved.config.repository
-                    && serde_json::to_value(config.workspace_mode).ok()
-                        == serde_json::to_value(saved.config.workspace_mode).ok()
-                    && profiles::execution_view(&config.profiles)?
-                        == profiles::execution_view(&saved.config.profiles)?;
-                let next = Saved {
-                    imports: if config.goal == saved.config.goal {
-                        saved.imports.clone()
-                    } else {
-                        None
-                    },
-                    mcp_result: if config.goal == saved.config.goal {
-                        saved.mcp_result.clone()
-                    } else {
-                        None
-                    },
-                    chat_result: saved.chat_result.clone(),
-                    optimize_result: saved.optimize_result.clone(),
-                    config,
-                    proposal: if keep { saved.proposal.clone() } else { None },
-                    job: if keep { saved.job.clone() } else { None },
-                    quota_job: saved.quota_job.clone(),
-                    chat_job: saved.chat_job.clone(),
-                    metadata_queue: saved.metadata_queue.clone(),
-                    metadata_input: saved.metadata_input.clone(),
-                    metadata_settled: saved.metadata_settled.clone(),
-                    metadata_error: saved.metadata_error.clone(),
-                    last_run: saved.last_run.clone(),
-                };
-                self.store(&next)?;
-                *saved = next;
-                Ok(serde_json::json!({"saved":true}))
-            }
+            Request::Save { config, .. } => self.save_config(saved, config),
             Request::Catalog {
                 agent, mut catalog, ..
             } => {
@@ -148,13 +80,165 @@ impl Startup {
                 workspace_mode,
                 digest,
                 ..
-            } => self.edit_plan(saved, tasks, workspace_mode, digest),
-            Request::Start { digest, revision } => self.start_plan(saved, digest, revision),
+            } => {
+                let p = saved
+                    .proposal
+                    .as_ref()
+                    .ok_or(crate::ui::messages::text("native.no_generated_plan"))?;
+                if p.phase != "ready" {
+                    return Err(
+                        crate::ui::messages::text("native.plan_is_not_ready_for_review").into(),
+                    );
+                }
+                let current: Plan = read(&p.directory.join("review.json"))?;
+                if let Some(expected) = digest {
+                    let actual = workflow::digest(
+                        &serde_json::to_vec(&current).map_err(|error| error.to_string())?,
+                    );
+                    if expected != actual {
+                        return Err("the reviewed plan changed; refresh before saving edits".into());
+                    }
+                }
+                let plan = Plan {
+                    goal: saved.config.goal.clone(),
+                    plan_rules: current.plan_rules,
+                    agents: saved.config.profiles.clone(),
+                    tasks,
+                    workspace_mode,
+                };
+                plan.validate()?;
+                write(&p.directory.join("review.json"), &plan)?;
+                saved.config.workspace_mode = workspace_mode;
+                self.store(saved)?;
+                Ok(serde_json::json!({"saved":true}))
+            }
+            Request::Start { digest, revision } => {
+                let p = saved
+                    .proposal
+                    .as_ref()
+                    .ok_or(crate::ui::messages::text("native.no_generated_plan"))?;
+                if p.phase != "ready" {
+                    return Err(crate::ui::messages::text(
+                        "native.plan_is_not_ready_for_execution_consent",
+                    )
+                    .into());
+                }
+                let path = p.directory.join("review.json");
+                let plan: Plan = read(&path)?;
+                plan.validate()?;
+                // Goal folders (<project>/<slug>/) hold plans and progress, never task work.
+                if !saved.config.repository.as_os_str().is_empty()
+                    && let Some(path) = plan.tasks.iter().flat_map(|t| &t.paths).find(|p| {
+                        p.split('/').next().is_some_and(|first| {
+                            saved
+                                .config
+                                .slugs
+                                .iter()
+                                .any(|s| first.eq_ignore_ascii_case(&s.slug))
+                        })
+                    })
+                {
+                    return Err(crate::ui::messages::render(
+                        "native.task_scope_is_inside_a_goal_folder",
+                        &[("path", &path.to_string())],
+                    ));
+                }
+                // Executables, arguments and permissions must match; catalogs may be newer.
+                if plan.goal != saved.config.goal
+                    || profiles::execution_view(&plan.agents)?
+                        != profiles::execution_view(&saved.config.profiles)?
+                {
+                    return Err(crate::ui::messages::text(
+                        "native.reviewed_plan_changed_the_registered_profiles_or_goal",
+                    )
+                    .into());
+                }
+                if workflow::digest(&serde_json::to_vec(&plan).map_err(|e| e.to_string())?)
+                    != digest
+                {
+                    return Err(crate::ui::messages::text(
+                        "native.approve_the_exact_reviewed_plan_digest",
+                    )
+                    .into());
+                }
+                self.source_context(saved)?;
+                workflow::validate_permissions(&plan)?;
+                let repo =
+                    Repository::open(p.workspace.as_deref().unwrap_or(&saved.config.repository))?;
+                if let Some(source) = crate::folder::load(&repo.root)? {
+                    source.validate()?;
+                }
+                repo.clean()?;
+                if repo.head()? != p.repository_base {
+                    return Err(crate::ui::messages::text(
+                        "native.repository_changed_since_planning_generate_a_new_plan",
+                    )
+                    .into());
+                }
+                crate::state::Store::open(self.broker.dir.join("state.sqlite"))?.record("plan_execution_consent",&serde_json::json!({"digest":digest,"revision":revision,"repository_base":p.repository_base,"plan":path}),crate::ui::messages::text("native.human_approved_the_exact_reviewed_startup_plan"))?;
+                let repo = crate::folder::activate(&repo, &saved.config.repository)?;
+                let run = p.run.clone();
+                workflow::set_auto_resume(&run, saved.config.auto_resume)?;
+                let mut args = vec![
+                    "startup-run".into(),
+                    path.to_string_lossy().into(),
+                    repo.root.to_string_lossy().into(),
+                    run.to_string_lossy().into(),
+                    digest,
+                    p.repository_base.clone(),
+                ];
+                // DD-62: a phased proposal links its run to the slug phase.
+                if let (Some(slug), Some(phase)) = (&p.slug, &p.slug_phase) {
+                    let root = crate::slugs::root(
+                        &saved.config.repository,
+                        &self.broker.dir,
+                        &saved.config.name,
+                        slug,
+                    );
+                    workflow::link_phase_at_launch(&run, &root, phase)?;
+                    args.extend([
+                        "--phase".into(),
+                        root.to_string_lossy().into(),
+                        phase.clone(),
+                    ]);
+                }
+                if saved.config.messenger.enabled {
+                    crate::messenger::link_run(
+                        &run,
+                        &self.broker.dir,
+                        &saved.config.name,
+                        &saved.config.goal,
+                        &saved.config.messenger,
+                    )?;
+                }
+                // The coordinator orchestrates the run, including tool requests that the
+                // workspace sandbox cannot permit by itself.
+                if let Some(coordinator) = saved
+                    .config
+                    .profiles
+                    .iter()
+                    .find(|p| p.id == saved.config.coordinator)
+                {
+                    std::fs::write(
+                        crate::native_guard::orchestrator_path(&run),
+                        serde_json::to_vec_pretty(coordinator).map_err(|e| e.to_string())?,
+                    )
+                    .map_err(|e| e.to_string())?;
+                }
+                saved.proposal.as_mut().unwrap().phase = "starting".into();
+                saved.last_run = Some(run.clone());
+                self.store(saved)?;
+                let mut result = self.launch(saved, "start", args)?;
+                result["run"] = serde_json::json!(run);
+                Ok(result)
+            }
             Request::Snapshot { .. }
             | Request::BaselineStatus {}
             | Request::Messenger {}
             | Request::TestMessenger { .. }
-            | Request::PreviewSettings { .. } => unreachable!(),
+            | Request::PreviewSettings { .. } => {
+                unreachable!()
+            }
         }
     }
 }

@@ -1,7 +1,8 @@
+mod provider;
+mod text_output;
 use serde::Serialize;
 use serde_json::Value;
 
-/// A wire protocol a custom profile speaks instead of a hand-written event mapping (GitHub #208).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Protocol {
@@ -29,7 +30,6 @@ pub enum EventKind {
     Usage,
     Warning,
     Error,
-    /// GitHub #341: the CLI refused a tool (a profile's `denial_condition` matched).
     Denied,
     Unknown,
 }
@@ -41,84 +41,6 @@ pub struct Event {
     pub session_id: Option<String>,
     pub kind: EventKind,
     pub payload: Value,
-}
-
-// DD-146: Codex emits recoverable transport notices as top-level error events.
-// Only explicit retry/fallback announcements are nonterminal; final turn failures stay errors.
-fn codex_reconnecting(payload: &Value) -> bool {
-    if payload["will_retry"] == false {
-        return false;
-    }
-    let Some(message) = payload
-        .get("message")
-        .and_then(Value::as_str)
-        .or_else(|| payload.pointer("/error/message").and_then(Value::as_str))
-    else {
-        return false;
-    };
-    let message = message.trim();
-    if let Some(attempt) = message.strip_prefix("Reconnecting... ") {
-        let counter = attempt
-            .split_whitespace()
-            .next()
-            .unwrap_or("")
-            .trim_end_matches(':');
-        let Some((n, max)) = counter.split_once('/') else {
-            return false;
-        };
-        return matches!((n.parse::<u32>(),max.parse::<u32>()),(Ok(n),Ok(max)) if n>0 && n<=max && max<=1000);
-    }
-    message.starts_with("Falling back from WebSockets to HTTPS transport")
-        || message.starts_with("Falling back from WebSocket to HTTP transport")
-}
-
-/// The normalized kind of one `acio.event/1` line; a failed or cancelled result is an error.
-fn acio_kind(payload: &Value) -> EventKind {
-    match payload["type"].as_str().unwrap_or("") {
-        "session" => EventKind::Session,
-        "progress" | "message" | "heartbeat" | "ack" => EventKind::Progress,
-        "tool" => EventKind::Tool,
-        "usage" => EventKind::Usage,
-        "warning" => EventKind::Warning,
-        "error" => EventKind::Error,
-        "result"
-            if matches!(
-                payload["data"]["status"].as_str(),
-                Some("failure" | "cancelled")
-            ) =>
-        {
-            EventKind::Error
-        }
-        "result" => EventKind::Result,
-        _ => EventKind::Unknown,
-    }
-}
-
-/// A bounded, single-line quote of raw output for a failure message.
-fn excerpt(bytes: &[u8]) -> String {
-    let text = String::from_utf8_lossy(bytes);
-    let line: String = text.trim().chars().take(200).collect();
-    let line = line.replace(['\n', '\r'], " ");
-    if text.trim().chars().count() > 200 {
-        format!("{line}…")
-    } else {
-        line
-    }
-}
-
-/// Words a CLI uses when it refuses to run a tool; text like this is a configuration problem, not progress.
-fn reads_as_refusal(text: &str) -> bool {
-    let text = text.to_lowercase();
-    [
-        "permission denied",
-        "denied by",
-        "not permitted",
-        "not allowed",
-        "approval required",
-        "requires approval",
-    ]
-    .iter()
-    .any(|phrase| text.contains(phrase))
 }
 
 pub struct Decoder {
@@ -189,32 +111,6 @@ impl Decoder {
         Ok(events)
     }
 
-    /// GitHub #341: a line that is not JSON, kept as text. It never makes a success by itself: the worker still
-    /// needs a result event and a zero exit, and a line that reads as a refusal fails the run.
-    fn text_event(&mut self, start: u64, line: &[u8]) -> Event {
-        let text = excerpt(line);
-        let (kind, payload) = if reads_as_refusal(&text) {
-            (
-                EventKind::Error,
-                serde_json::json!({"type":"error","message":format!("check the CLI configuration: the CLI printed what reads as a refusal: {text}")}),
-            )
-        } else {
-            (
-                EventKind::Progress,
-                serde_json::json!({"type":"text","text":text}),
-            )
-        };
-        let event = Event {
-            seq: self.seq,
-            raw_offset: start,
-            session_id: self.session_id.clone(),
-            kind,
-            payload,
-        };
-        self.seq += 1;
-        event
-    }
-
     pub fn finish(&mut self) -> Result<Vec<Event>, String> {
         if self.buffer.is_empty() {
             return Ok(vec![]);
@@ -237,12 +133,14 @@ impl Decoder {
         let payload: Value = match serde_json::from_slice(json) {
             Ok(payload) => payload,
             Err(_) if self.text_mode && self.provider == Provider::Custom => {
-                return Ok(vec![self.text_event(start, json)]);
+                let event = text_output::event(self.seq, start, self.session_id.clone(), json);
+                self.seq += 1;
+                return Ok(vec![event]);
             }
-            Err(e) => {
+            Err(error) => {
                 return Err(format!(
-                    "invalid JSONL at offset {start}: {e}; the line was: {}",
-                    excerpt(json)
+                    "invalid JSONL at offset {start}: {error}; the line was: {}",
+                    text_output::excerpt(json)
                 ));
             }
         };
@@ -253,19 +151,23 @@ impl Decoder {
             payload
                 .get("session_id")
                 .or_else(|| payload.pointer("/data/session_id"))
-        } else if self.provider == Provider::Custom {
-            self.session_id_pointer
-                .as_deref()
-                .and_then(|pointer| payload.pointer(pointer))
-                .or_else(|| payload.get("session_id"))
         } else {
-            match self.provider {
-                Provider::Codex => payload.get("thread_id"),
-                Provider::OpenCode => payload
-                    .get("sessionID")
-                    .or_else(|| payload.pointer("/part/sessionID")),
-                _ => payload.get("session_id"),
-            }
+            self.session_id_pointer.as_deref().map_or_else(
+                || match self.provider {
+                    Provider::Codex => payload.get("thread_id"),
+                    Provider::OpenCode => payload
+                        .get("sessionID")
+                        .or_else(|| payload.pointer("/part/sessionID")),
+                    _ => payload.get("session_id"),
+                },
+                |pointer| {
+                    if pointer.is_empty() {
+                        Some(&payload)
+                    } else {
+                        payload.pointer(pointer)
+                    }
+                },
+            )
         };
         if let Some(id) = session.and_then(Value::as_str) {
             self.session_id = Some(id.into());
@@ -277,9 +179,12 @@ impl Decoder {
             });
         let denied = self.provider == Provider::Custom
             && !self.acio
-            && self.denial.as_ref().is_some_and(|d| d.matches(&payload));
+            && self
+                .denial
+                .as_ref()
+                .is_some_and(|condition| condition.matches(&payload));
         let kind = if self.acio {
-            acio_kind(&payload)
+            provider::acio_kind(&payload)
         } else if denied {
             EventKind::Denied
         } else if configured_error {
@@ -310,7 +215,7 @@ impl Decoder {
                     _ => EventKind::Unknown,
                 },
                 Provider::Codex => match event_type {
-                    "error" if codex_reconnecting(&payload) => EventKind::Warning,
+                    "error" if provider::codex_reconnecting(&payload) => EventKind::Warning,
                     "item.completed"
                         if payload.pointer("/item/type").and_then(Value::as_str)
                             == Some("error") =>

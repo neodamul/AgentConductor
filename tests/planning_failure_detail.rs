@@ -45,8 +45,7 @@ fn a_failed_coordinator_reports_its_status_and_own_error_output() {
 }
 
 #[test]
-fn a_stderr_warning_does_not_hide_the_api_rejection_on_stdout() {
-    // GitHub #337: Codex logs skill-loading errors on stderr and the API rejection as an event on stdout.
+fn a_stderr_warning_does_not_hide_the_codex_rejection_on_stdout() {
     let dir = std::env::temp_dir().join(format!(
         "ac-plan-failure-both-{}",
         agentconductor::native_guard::session_id().unwrap()
@@ -63,11 +62,4 @@ fn a_stderr_warning_does_not_hide_the_api_rejection_on_stdout() {
         "{text}"
     );
     std::fs::remove_dir_all(dir).unwrap();
-}
-
-#[test]
-fn the_plan_review_shows_the_error_text() {
-    let script = include_str!("../src/ui/startup.js");
-    assert!(script.contains("'plan-failure-detail'"));
-    assert!(script.contains("job.error"));
 }

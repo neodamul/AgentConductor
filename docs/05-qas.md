@@ -359,7 +359,7 @@ Trace: R-98 -> BG-53 -> SF-85 -> UC-88 -> FR-83 -> QAS-94 -> DD-106. Source: use
 Measure: The plan progress box shows "Preparing the project folder for planning…" before the job exists; a delete with replacement " Fresh start " opens a workspace named "Fresh start"; the titlebar shows a renamed workspace after Save without reopening the menu.
 
 ### QAS-95 Run and task status at a glance
-The Agent Room shows the run's current final state immediately: a run status banner with the state in bold colour, task progress and the last error, and a prominent Resume button whenever the run can continue. Task states (failed, completed, pending, waiting, running) are bold and colour-coded in the session heading and in the left session list. In the left list a failed task is red, a task waiting for a decision or tool request has a blinking border, pending tasks use a strong colour, and the Tool requests count turns red and blinks while requests wait.
+The Agent Room shows the run's current final state immediately: a run status banner with the state in bold colour, task progress and the last error, and a prominent Resume button whenever the run can continue. Show the selected workspace mode and current branch with the repository context. The left session list has a localized heading and task count; task states (failed, completed, pending, waiting, running) are bold and colour-coded in the session heading and list. In the left list a failed task is red, a task waiting for a decision or tool request has a blinking border, pending tasks use a strong colour, and the Tool requests count turns red and blinks while requests wait.
 Trace: R-99 -> BG-54 -> SF-86 -> UC-89 -> FR-84 -> QAS-95 -> DD-107. Source: user request, 2026-10-13.
 Measure: For a failed run the banner reads Failed with "Tasks completed: n/m" and the last error, Resume is a primary button, the failed session row has a red border, a waiting_tool_approval row blinks (static border under reduced motion) and the tool count is red.
 
@@ -626,13 +626,11 @@ Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162.
 ### QAS-151 Company suffix is visible locally and excluded from releases
 Given an empty suffix file, both titlebars show the numeric Cargo version. Given `company_name`, both show `<numeric-version>.company_name`, while update comparison still uses numeric components. Package assembly fails before writing an archive for any non-empty suffix. Invalid labels do not alter the displayed version.
 Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #13.
-
 ### QAS-150 Custom CLI profile extension is bounded and backward compatible
 Given an existing workspace profile without custom event or quota settings, deserialize and execute it with the previous wire behavior. Given a custom profile, map configured event names and session pointers, invoke only its configured argv quota command within 1–300 seconds, retain process logs, reject output over 1 MiB or outside the normalized Snapshot bounds, and preserve the configuration through workspace export/import. A profile without a quota command is not queried. Verify with Rust tests on macOS and Windows; built-in Claude/Codex/OpenCode fixtures must remain unchanged.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
-
 ### QAS-149 Timeout recovery preserves evidence, honors Stop, and informs operators
-Given a worker times out once then succeeds, the run retries after a bounded delay, reaches review, and retains the first attempt's timeout logs and audit record. Given a stop request during the retry delay, no new attempt starts and the run ends stopped. When the final state is blocked, the report's top-level error identifies the cause. Regression tests cover automatic retry, Stop during backoff, and the existing JavaScript run-banner contract consuming `Report.error` without suppressing it for blocked state.
+Wall-timeouts retry automatically with bounded backoff. Given a worker times out once then succeeds, the run retries after a bounded delay, reaches review, and retains the first attempt's timeout logs and audit record. Given a stop request during the retry delay, no new attempt starts and the run ends stopped. When the final state is blocked, the report's top-level error identifies the cause. Regression tests cover automatic retry, Stop during backoff, and the existing JavaScript run-banner contract consuming `Report.error` without suppressing it for blocked state.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
 
 ### QAS-152 Approval and merge progress remains continuous and visible
@@ -654,7 +652,6 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### QAS-157 A question yields an answer or a visible error, never a file change
 Given a coordinator that answers `{"answer": ...}`, the chat shows that answer once; given a failing coordinator it shows the error and keeps the conversation usable; invalid conversations (empty, ending with the assistant, over-long, unknown role) are refused before any job starts; the prompt stays under the coordinator limit.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
-
 ### QAS-156 The selection follows a completed session to the next running one
 Given sessions a (running) and b (pending), when a completes and b starts, the selection moves to b; when a completes and the run waits for approval, the integration entry opens; a finished session selected for review stays selected.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
@@ -727,11 +724,11 @@ The Settings dialog contains both buttons and their handlers; the workspace menu
 Trace: R-178 → BG-133 → SF-166 → UC-169 → FR-165 → QAS-176 → DD-189. GitHub #184, user, 2026-10-27.
 
 ### QAS-177 The conversation survives and follow-ups work
-Given a stored question and answer, `history` returns both and an unanswered question alone; a 30 KiB earlier answer does not block the next question; the page restores turns, adopts a running chat, recalls earlier questions with Up and clears on New conversation or a workspace change.
-Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
+Given a stored question and answer, `history` returns both and an unanswered question alone; a 30 KiB earlier answer does not block the next question; the page restores turns, adopts a running chat, recalls earlier questions with Up and clears on New conversation or a workspace change. The exact Windows package also proves that a delayed one-shot chat completes after the desktop closes and reopens, restoring the submitted question and answer. The native multiline editor exposes its localized prompt as its accessible name.
+Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190/DD-210. GitHub #189/#185, 2026-10-27.
 
 ### QAS-178 No dead texts remain
-Given the embedded pages and both message catalogs, none of the removed element classes or keys appears, and every `data-i18n` id used by a page still exists in the catalogs.
+Given the embedded pages, native Rust Workspace/Agent Room render trees and both message catalogs, none of the removed labels or keys appears in English or Korean, and every `data-i18n` id used by a page still exists in the catalogs.
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
 
 ### QAS-179 A late reply is not lost
@@ -754,70 +751,102 @@ Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → 
 Given the default workspace and a second saved workspace, when the default is deleted and the app launches again, then `launch_root` is the second workspace and no `desktop` folder exists. Given no saved workspace, the placeholder opens with `workspace_blank` true, is in neither list, and creating a first workspace removes it. A default folder that has a name or goal is real and stays listed. The page shows a first-workspace question that Escape and Cancel cannot dismiss. Tests use a temporary HOME.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
 
-### QAS-184 Prompt blocks appear once, in order
-Given untrusted evidence containing a `# Format` line, the reviewer prompt has exactly one Document, one Task and one Format block in that order, and the evidence stays inside Document. The worker prompt keeps the `Owned paths:` and `Task:` lines and its rules in Task. A coordinator that first prints text without the requested JSON and then a valid object succeeds on the second attempt and the second prompt names the first error; two bad replies fail with the parse error.
-Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
+### QAS-184 Native scheduled reads do not interrupt or duplicate work
+Given an existing scheduled Agent Room snapshot or its automatic detail/coordinator read fails, the native UI shows no action toast and the next normal schedule may retry. Initial snapshots, explicit refreshes, approval and mutation failures remain visible and state-changing requests are not replayed. Given a delayed repaint beyond multiple intervals, one poll is emitted and the next deadline is based on the resumed `Instant`. Tests cover visible initial errors, quiet scheduled failures, explicit errors, stale detail replies and late repaint behavior; no idle Workspace poll is created.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198. GitHub #221, 2026-10-29.
 
-### QAS-186 Results questions have evidence in the prompt
-Given a run with a failed task, a failing test, changed files and a diff, the prompt contains each of them and the section stays under 24 KiB with a 60 KiB diff; a diff containing `# Task` or `# Format` lines adds no block; with no run the section says no run has started; the coordinator launched from the workspace screen receives the goal and project folder.
+### QAS-185 An opted-in worker receives structured input and gated decisions
+Given a profile with protocol ACIO, a deterministic CLI receives one schema-valid input line containing its assigned session and only the task's scoped paths, emits an ordered session/progress/result stream, and the coordinator persists those events and completes the task only on a valid terminal result. Given a tool event that needs a decision, the task waits with a pending receipt; approval sends an allow control bound to that request, while rejection or expiry does not execute the requested action. Given a profile without ACIO, its existing prompt path and behavior remain unchanged. Verify with deterministic subprocess fixtures and the locked/offline regression suite.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.
+### QAS-186 Coordinator answers are grounded in bounded run evidence
+Given saved workspace settings and a latest run containing failed tasks/tests, changed files and a candidate diff, when the operator submits a coordinator question, the actual CLI stdin contains the goal, project folder, task/error/test evidence and diff; the assembled section stays bounded and the diff is capped at 12 KiB. Untrusted values that look like `# Task` or `# Format` cannot create prompt sections. With no run, the prompt explicitly says none has started. A deterministic subprocess test verifies the startup-to-stdin path; renderer tests cover report contents and limits.
 Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### QAS-187 Native chat launcher is visible and accessible
+Given the native Workspace, the coordinator-chat launcher is a compact button with painted bubble/robot shapes and no visible “Ask coordinator” text. Its accessibility tree exposes the localized “Ask coordinator” name, and activating its bounds opens chat. The icon uses theme widget colors and adds no image/font dependency. Verify using egui output/accessibility tests and the exact native app render.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
 
-### QAS-185 No message in both the conversation and the input
-Given a send that times out and a history request that fails, the message stays in the conversation, the input stays empty and sending is disabled. When the history then contains the message, the conversation equals the stored one and the late answer is shown once with the input still empty. When the history then lacks the message, the turn is removed, the text is back in the input and the error is shown.
-Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.
+### QAS-188 A native chat message appears in only one place after a timeout
+Given a chat send whose outcome is unknown, the message stays in the conversation, the input stays empty, and sending remains disabled. When stored history contains the message, the matching job is followed and the answer appears once. When stored history does not contain it, the pending turn is removed, the input receives the text once, and the original error is shown.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.
 
-### QAS-187 Incomplete draft then valid JSON parses
-An incomplete draft followed by a valid block returns the valid block; two valid blocks return the first; malformed-only replies fail with the no-valid-JSON error; a 100 KiB reply is accepted and a reply above 256 KiB is refused.
-Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.
+### QAS-184 Prompt blocks appear once, in order
+Given untrusted evidence containing a `# Format` line, the reviewer prompt has exactly one Document, one Task and one Format block in that order, and the evidence stays inside Document. The worker prompt keeps its `Owned paths:` and `Task:` lines and its rules in Task. A coordinator that first prints text without the requested JSON and then a valid object succeeds on the second attempt and the second prompt names the first error; two bad replies fail after exactly two runs.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
 
-### QAS-188 Empty scope is described and corrected
-Each of empty paths, prompt, agent, test command and duplicate or empty id yields an error naming the task and field; the schema requires one path; a phase with an empty scope is corrected by exactly one retry whose prompt carries the error.
-Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. GitHub #251, user, 2026-10-29.
+### QAS-191 Repository HEAD lookup never blocks a routine request
+Given a repository with loose, packed, or detached HEAD, a request returns the same commit as `git rev-parse HEAD` while `git` is absent from PATH. Given a linked worktree, the first request returns `Pending` without waiting; a later request receives the background Git result. Concurrent requests for one linked worktree start at most one refresh. Given an unrelated slow Git refresh, a foreground request and event publisher still complete. Verify with deterministic local tests for all layouts and the native request path.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
 
-### QAS-189 No Git process on the request path
-With `git` unreachable (empty PATH), a snapshot of a workspace that has a proposal succeeds and its revision is unchanged; the file-read HEAD equals `git rev-parse HEAD` for a loose ref, packed refs and a detached HEAD and follows a new commit at once; a layout the files cannot answer returns `pending` without waiting for Git and then the real commit; an unborn branch or a plain folder still fails where it failed before; a step of 500 ms or more is logged and a faster one is not.
-Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203. GitHub #234, user, 2026-10-30.
+### QAS-192 Scoped state events refresh affected views without request starvation
+Given two open native views, a workspace-only change wakes only Workspace, while a run change wakes both Workspace and Agent Room; the source view is not echoed. A deterministic background snapshot held behind a test barrier must not retain the shared startup-state lock, so an independent interactive request can acquire it before the barrier is released. Given an unrelated interactive response is pending when an event arrives, the affected listener starts one bounded background refresh without waiting for that response; its completed snapshot updates visible state while the pending response, unsaved form value and current error remain intact. For Workspace settings, preserve each locally changed value against the previous snapshot while still applying incoming values to fields the operator has not changed. An open decision modal pauses refresh only for its view. A burst of state events is coalesced to one snapshot. Active and idle views use a 30-second recovery cadence; no one-second snapshot loop runs for active jobs. Verify these behaviors with EventBus, snapshot-lock, worker-concurrency and native scheduling tests.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, 2026-10-30.
 
-### QAS-190 Chat next to a running job
-With a planning job running, a chat request is accepted, starts its own worker and does not change `job`; a second chat is refused while one runs; `chat_job` follows the chat to completion and the answer is returned with its id. The Running work section names the job, its elapsed time and the age of its last output, is bounded, and is empty when nothing runs. A rejected send leaves an error turn in the conversation and its text in the input, with no toast.
-Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204. GitHub #261, user, 2026-10-30.
+### QAS-193 Slow work does not starve state changes
+Use deterministic barriers to prove that two reads can run on the bounded read lane, a state-changing action completes while a read or network-bound request is blocked, and state-changing actions remain serialized. Verify stale replies are ignored, poll requests remain separate, and event notifications coalesce without blocking publishers.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
 
-### QAS-191 The facts line is not in the arrow column
-The stylesheet places `.task-profile` in the task summary grid explicitly (row 3, from column 2); in a browser the line is as wide as the text column and one line tall for a short text.
-Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.
+### QAS-194 Active state changes refresh without a polling loop
+Given an active run, a persisted report change wakes the relevant view and schedules one background snapshot; a burst of changes coalesces to one in-flight snapshot plus at most one follow-up. Given no new state change, no active 0.5–1 second snapshot is dispatched. The task-progress spool reader starts at 100 ms and doubles its idle delay up to 2 seconds; any output resets it to 100 ms, and process completion drains all remaining bytes. Given a missed notification, one recovery snapshot is dispatched within 30 seconds. A deliberately delayed snapshot does not prevent an independent action from being queued or completed.
+Given an approved startup whose first `report.json` appears after the initial start reply, the event-driven background snapshot opens Agent Room immediately and does not wait for the 30-second recovery deadline.
+Given a coordinator child exits while terminal SQLite persistence is blocked, UI polling stays responsive and reports the job as running until both the process-owner record and terminal audit are persisted; only then does the state become completed or failed. The wait and terminal persistence run outside the native request worker and shared job-state lock. Tests observe the monitor-owned terminal record and exit code rather than attempting to reap the child a second time.
+Given a spawned AgentConductor UI command reports progress or completion, a token-authenticated loopback event invalidates only its intended UI surface. Invalid tokens and unsupported surfaces are ignored. If the event bridge cannot start or an external process cannot signal, metadata recovery runs on an independent fixed 30-second interval; detecting a change does not shorten or reset the next interval. The metadata listener only publishes an invalidation and never assembles a snapshot. Changes beneath declared task worktree paths are also detected by metadata-only recovery, bounded to 512 paths and depth 8. Unsafe relative paths and symlink directories are not traversed; glob declarations watch their containing directory on Unix and Windows.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
 
-### QAS-192 The shown history and the counts are exact
-Rows of the kinds `workflow`, `availability_timer`, `task_profile` and `tool_orchestrator_decision` in any order give only the last three, in order, whatever the `workflow` summaries are; the stored rows are not changed; the counts equal the number of tasks per status.
-Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206. GitHub #267, user, 2026-10-30.
+### QAS-195 Workspace listeners follow switches without retaining leases
+Given an idle Room on workspace A, switching to workspace B releases A's startup lease before the listener stops. A second Room can open A immediately. Changes to B's persisted report still emit a run event, and changes to A do not emit events through the switched Room. Verify with a dynamic-listener test and the workspace deletion/switch integration tests.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
+### QAS-199 Slow Claude quota refresh remains bounded and observable
+Given a fixture Claude CLI delayed by 2.5 seconds and a 4-second injected deadline, the existing CLI authentication returns parsed quota. Given a fixture that does not present a prompt or finish `/usage`, the collector terminates at an injected 1-second deadline and names the duration and stage without requesting generation. A source contract verifies the shared 180-second production limit and both supported collectors use it; this stays below configured custom quota commands' 300-second maximum. A running quota job shows elapsed time only on its matching native agent card; completion or failure stops the timer. A failed card exposes its reason to keyboard and screen-reader users and on hover. Verify with the local fixture, native UI accessibility tests, source layout, and cross-platform CI.
+Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297/#315, user, 2026-11-02.
 
-### QAS-193 The starting mark does not outlive its start
-With `startPending` and `autoOpen` set and `home` true (the first poll after the start saw no report), a later `enter()` that opens the run leaves `startPending` false and redraws; `startEnded()` clears it on its own.
-Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187 → QAS-193 → DD-207. GitHub #269, user, 2026-10-30.
+### QAS-200 Quota failures are readable without opening logs
+Given a quota record with a stored failure reason, the native agent sidebar, settings view, and Agent Room run screen shall show that reason in both English and Korean, expose the complete text as an accessible label, and preserve the existing appearance when no error exists. Given Claude Enterprise output with valid thousands separators or CSI cursor-forward spacing, the collector shall produce the exact used, allocated, and remaining values; malformed grouping shall fail, and a captured parse failure shall be named in the bounded timeout diagnostic on macOS and Windows. Verify with deterministic parser/CLI fixtures and egui accessibility-tree tests; no provider CLI is required.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
 
-### QAS-194 Every waiting state has a visible, current sign
-In a simulator of the native bridge: confirming the run sends `start`; a plan running while the Workspace tab is shown has a visible line with its elapsed time; with the bridge not answering, the elapsed time keeps counting and the line says how long no state came, within 6 s; a start job shows elapsed time also after reopening, and a failed one keeps its cause after the toast is gone; in the run, a pending task with an unfinished dependency names it, the verification names the test in progress, `runner: absent` and `stopping` are shown. Unit tests cover the helpers and the snapshot fields.
-Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188 → QAS-194 → DD-208. GitHub #273, user, 2026-10-31.
+### QAS-197 Native wait status counts without snapshot polling
+With a fixed monotonic clock, a restored running job with `started_ms` two minutes in the past renders about `2:00`; a future or invalid timestamp never yields negative elapsed time. A received snapshot resets the no-state age without resetting elapsed time; silence is omitted through five seconds and shown after that threshold. Chat, goal rewrite, MCP discovery/preview, and update check/install all render elapsed and stale status in their owning UI region. A repaint tick advances visible elapsed text while dispatching zero requests. Typing a Jira or Confluence goal reference immediately updates its count and prerequisite state from the current text and enables preview when the coordinator and MCP server prerequisites are present. Clicking preview saves an unsaved goal, refreshes the saved revision, and only then dispatches the read-only preview request; a save or refresh failure cancels the pending preview.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-191 → QAS-197 → DDR-50 → DD-211. GitHub #283, 2026-11-01.
 
-### QAS-195 The header cannot fall behind again
-`tests/manual_renderer.rs` fails when either manual header differs from `CARGO_PKG_VERSION`; the captures are the same size as before (1280×892).
-Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209. GitHub #277, user, 2026-10-31.
+### QAS-198 Coordinator status board is accurate without extra work
+Given a run with mixed completed, running, failed and pending tasks, selecting coordinator Activity shows the exact run state and counts and one row per planned task with the assigned agent and status. Where the existing activity map has a quiet age, the row shows that age; missing activity is presented as unavailable without inventing a timestamp. The rendered timeline omits `workflow` rows but preserves other history and judgments, and the source snapshot remains unchanged. Rendering with populated coordinator data returns no request event. Verify the model, both localized egui accessibility output, filtering and no-dispatch behavior deterministically.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → DDR-51 → DD-212. GitHub #286, 2026-11-01.
 
-### QAS-196 The waits keep counting and report silence
-In the bridge simulator: a chat running for 120 s when the page reopens shows about 2:00; with the bridge not answering, the chat line, the rewrite status, the MCP dialog and the source status keep counting and say how long no state came, within 6 s; the update dialog counts while checking and installing; typing a reference enables the preview within a second. Unit tests cover `AC_ELAPSED`, the chat, rewrite and MCP texts and the timer wiring.
-Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, user, 2026-11-01.
+### QAS-199 Native coordinator status remains usable alongside JS/backend work
+Given the current workspace's Agent Room snapshot, the Rust coordinator Activity view presents the current run and task state with the available assignments and output ages, and leaves the established review and audit content accessible. Existing JS/backend ownership and behavior are not changed by this Rust port. Verify mixed states, missing activity, retained judgments, both locales and no additional dispatch with deterministic local tests; use exact packaged review separately under #9.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → DDR-52 → DD-213. GitHub #286, 2026-11-01.
 
-### QAS-197 A held reply is visible within 2 s
-In the bridge simulator with the reply held: messenger test, delete workspace after its dialog, switch workspace, the team briefing and a stop with its reason mark their button and show the waiting line with a counting time within 2 s, and the line returns to normal after the reply; an idle page sampled every 100 ms for 16 s never shows the silence line. Unit tests cover `AC_WAIT` and the 6 s threshold.
-Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.
+### QAS-196 Workspace waits keep counting and recover dependent controls
+Given a workspace job that remains active, the visible wait count advances without new snapshots and the stale-state age appears after six seconds. Given an MCP lookup reply, its preview control is enabled immediately. Verify the existing elapsed/status helpers and response transition tests.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
 
-### QAS-198 A stale doc stops the release
-A version bump without the README or manual sentence fails the tests naming the file; a shown screenshot that is missing, or a captured screen that is not shown, fails them. In temporary repositories the script passes when the screens are newer, fails when an interface change follows them and names `docs/assets/screenshots-current.txt`, passes when that file is committed after the change, ignores script and message changes, refuses a shallow checkout and fails when no capture exists.
-Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-192 → QAS-198 → DD-212. GitHub #290, user, 2026-11-01.
+### QAS-197 A slow foreground request is visible in both native views
+Given a held foreground reply, Workspace and Agent Room show immediate activity and, within two seconds, the request description with a counting `m:ss`; after a reply or error the wait line clears. Given metadata/background refreshes, no user-wait indicator is shown and no periodic full snapshot is added. Verify with deterministic timer and both-view rendering tests.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. Rust follow-up to GitHub #285, 2026-11-01.
 
-### QAS-199 A slow CLI is waited for, a stuck one is named
-A fixture CLI that prints its prompt 3 s late is collected when the wait is 10 s; one that is 5 s late with a wait of 2 s fails with `before /usage` and `after 2 s`; the default wait is 60 s and neither collector contains a literal 20 s. In the simulator a running `quota:<agent>` job shows `Querying usage…` with a counting time on that agent's card and nothing on the others; in the run screen a running `quota` job marks the refresh button busy and the source line counts its time, and both return to normal when the job ends.
-Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
+### QAS-201 An empty phased task scope is corrected with actionable feedback
+Given a phased plan whose task has `paths: []`, validation names the task and missing field, the coordinator receives exactly one retry containing that reason, and the corrected plan is saved. Given a valid task, schema constraints require at least one path and executable test command; dependencies may remain empty. Verify task-field errors, flat and phased schemas, one retry for empty scope, and preservation of the existing overlap retry.
+Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215. GitHub #251, 2026-11-02.
 
-### QAS-200 A new or wrongly quiet request fails
-Adding an unclassified kind to a page script, or a direct kind to the quiet list, fails `tests/request_kinds_runtime.cjs` with a message naming it; removing a job's progress rendering fails it too. It passes on the current pages (76 kinds: 7 refresh, 21 job, 47 direct).
-Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.
+### QAS-202 An unfinished draft does not hide a complete coordinator response
+Given a reply with an unfinished fenced JSON draft followed by a complete requested document, select the complete document. Given multiple valid documents, select the first. Accept a response of 256 KiB or less and reject a larger one; reject replies with no complete object or malformed objects only. Verify these cases with provider JSONL fixtures and keep source/test files within 300 lines.
+Trace: R-204 → BG-159 → SF-192 → UC-195 → FR-196 → QAS-202 → DDR-53 → DD-216. Rust parity port of main #247, 2026-11-02.
+
+### QAS-203 Both integration streams remain visible in failure feedback
+Given a failed integration with a warning in stderr and an error in stdout, the report output contains both exact messages, labels each stream, and keeps the stdout error last. Given only one nonempty stream, its output remains unchanged. Verify through the real Room snapshot and ensure the regression fails before the fix. Keep the source and test files within 300 lines.
+Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197/NFR-87 → QAS-203 → DDR-54 → DD-217. GitHub #323, 2026-11-02.
+
+### QAS-204 Unsafe custom coordinator invocation is refused
+Given a custom coordinator whose read-only arguments are missing, empty, or equal to its normal arguments, when the operator submits chat, the system shall report the reason and corrective action in the active UI language and shall not spawn the normal command. A configured read-only invocation shall preserve the profile's existing executable, environment, and CLI login.
+Trace: R-206 → BG-161 → SF-194 → UC-198 → FR-199/FR-200/NFR-88/NFR-89 → QAS-204 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #333, 2026-11-02.
+
+### QAS-205 Coordinator model selection uses current observed options
+Given a coordinator profile with an observed model catalog, the UI shall offer only those models; a selected model shall reach the CLI adapter, and omitting the selection shall preserve the CLI default. Changing the active workspace shall show that workspace's coordinator marker and model selection.
+Trace: R-206 → BG-161 → SF-194 → UC-197 → FR-198/FR-200 → QAS-205 → DDR-55 → DD-218.
+
+### QAS-206 An update refusal identifies its blocker
+Given an update attempt while workspace work is active and a readiness check has failed, the native dialog shall identify the active work, show elapsed time when recorded, and display the check failure separately in English and Korean. The update process shall not start. Verify catalog completeness, message separation, and rendered multiline text with deterministic Rust tests; the dialog shall remain readable without introducing polling.
+Trace: R-207 → BG-162 → SF-195 → UC-199 → FR-201/NFR-90 → QAS-206 → DDR-56 → DD-219.
+
+### QAS-207 Preserve the reason for custom CLI refusal and invalid output
+Given invalid JSONL in default mode, the failure includes a bounded excerpt labeled by stdout/stderr and retains the parser offset. Given valid custom text mode, ordinary text is progress only; a zero exit plus a result event is required for success. Refusal-like text still fails with a configuration hint. Given a matching configured denial event, the event is stored as `denied`, and the task error names the tool and reason even when the CLI exits zero and emits a result. The native profile editor round-trips these settings and shows its non-blocking warning only when no denial mapping is present. Built-in providers and old profiles retain their prior decoding.
+Trace: R-208 → BG-163 → SF-196 → UC-200 → FR-202/NFR-91 → QAS-207 → DDR-57 → DD-220. Verify through JSONL decoder, workflow worker, and native profile editor tests; keep every source/test file at or below 300 lines.

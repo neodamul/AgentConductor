@@ -1,0 +1,32 @@
+{
+  "source_commit": "ca17284b68e531bfb16476981d80844b53bbaab2",
+  "target": "aarch64-apple-darwin",
+  "archive": "agentconductor-aarch64-apple-darwin-ca17284b68e5.zip",
+  "archive_sha256": "786e83c54de8194bbda019f96aaac62d70a5583498638ad3a0b535254d5de933",
+  "binary": "agentconductor",
+  "binary_bytes": 17627872,
+  "binary_sha256": "0652485f9bbf9d2964e50b9b7585194889898f94acb2f21b7d235f8d31aed85a",
+  "dependency_count": 214,
+  "manuals_verified": [
+    "README.md",
+    "design-guide.md",
+    "mcp-sources.md",
+    "user-manual.md",
+    "user-manual.ko.md",
+    "user-manual.html",
+    "user-manual.ko.html"
+  ],
+  "package_smoke": {
+    "exit_code": 0,
+    "cases": [
+      { "workspace_mode": "shared", "source_mode": "git", "tasks": 3, "tests": 3, "unapproved_merge_refused": true, "approved_merge_verified": true },
+      { "workspace_mode": "shared", "source_mode": "folder", "tasks": 3, "tests": 3, "unapproved_merge_refused": true, "approved_merge_verified": true },
+      { "workspace_mode": "worktree", "source_mode": "git", "tasks": 3, "tests": 3, "unapproved_merge_refused": true, "approved_merge_verified": true },
+      { "workspace_mode": "worktree", "source_mode": "folder", "tasks": 3, "tests": 3, "unapproved_merge_refused": true, "approved_merge_verified": true }
+    ]
+  },
+  "not_verified": [
+    "Windows package for this source commit",
+    "visual native desktop workflow acceptance"
+  ]
+}

@@ -1,0 +1,192 @@
+use eframe::egui::{self, Align2, Color32, FontId, Pos2, RichText, Stroke, vec2};
+
+const TITLES: [&str; 3] = [
+    "startup.workspace_settings_5ebc59",
+    "startup.agent_roles",
+    "startup.review_the_plan",
+];
+const EYEBROWS: [&str; 3] = [
+    "startup.step_1_workspace",
+    "startup.step_2_team",
+    "startup.step_3_your_execution_decision",
+];
+
+pub fn workspace_phase(snapshot: &serde_json::Value, dirty: bool) -> &'static str {
+    if snapshot["job"]["state"] == "running" {
+        return if snapshot["job"]["kind"] == "start" {
+            "startup.starting"
+        } else {
+            "startup.preparing"
+        };
+    }
+    match snapshot["proposal"]["phase"].as_str() {
+        Some("ready") => "startup.ready",
+        Some("starting") => "startup.starting",
+        _ if dirty => "startup.unsaved",
+        _ => "startup.prepared",
+    }
+}
+pub fn show(current: usize, language: &str, ui: &mut egui::Ui) -> Option<usize> {
+    show_title_controls(current, language, "startup.prepared", false, ui);
+    show_steps(current, language, ui)
+}
+
+pub fn show_title_controls(
+    current: usize,
+    language: &str,
+    phase: &'static str,
+    can_start_new_goal: bool,
+    ui: &mut egui::Ui,
+) -> bool {
+    let eyebrow = step_eyebrow(current, language);
+    let title = text(language, "startup.what_should_the_team_work_on");
+    let mut clicked = false;
+    ui.horizontal(|ui| {
+        ui.spacing_mut().item_spacing.x = 0.0;
+        ui.vertical(|ui| {
+            ui.label(
+                RichText::new(eyebrow)
+                    .small()
+                    .strong()
+                    .color(ui.visuals().hyperlink_color),
+            );
+            ui.heading(
+                RichText::new(title)
+                    .size(26.0)
+                    .strong()
+                    .color(ui.visuals().text_color()),
+            )
+            .accessible_name(title);
+        });
+        let goal_action = text(language, "startup.new_goal");
+        let status = text(language, phase);
+        let goal_width = ui
+            .painter()
+            .layout_no_wrap(
+                goal_action.to_owned(),
+                egui::TextStyle::Button.resolve(ui.style()),
+                Color32::PLACEHOLDER,
+            )
+            .size()
+            .x
+            + ui.spacing().button_padding.x * 2.0;
+        let status_width = ui
+            .painter()
+            .layout_no_wrap(
+                status.to_owned(),
+                egui::TextStyle::Small.resolve(ui.style()),
+                Color32::PLACEHOLDER,
+            )
+            .size()
+            .x
+            + 16.0;
+        let gap = ((ui.available_width() - goal_width - status_width) / 2.0).max(0.0);
+        ui.add_space(gap);
+        clicked = ui
+            .add_enabled(can_start_new_goal, egui::Button::new(goal_action))
+            .clicked();
+        ui.add_space(gap);
+        egui::Frame::new()
+            .fill(ui.visuals().faint_bg_color)
+            .corner_radius(egui::CornerRadius::same(5))
+            .inner_margin(egui::Margin::symmetric(8, 4))
+            .show(ui, |ui| {
+                ui.label(RichText::new(status).small());
+            })
+            .response
+            .accessible_name(status);
+    });
+    ui.add_space(12.0);
+    clicked
+}
+
+pub fn show_steps(current: usize, language: &str, ui: &mut egui::Ui) -> Option<usize> {
+    let mut selected = current;
+    let content_width = ui
+        .available_width()
+        .min((ui.clip_rect().width() - 16.0).max(0.0));
+    let step_width =
+        ((content_width - ui.spacing().item_spacing.x * 2.0) / TITLES.len() as f32).floor();
+    ui.horizontal(|ui| {
+        for (index, id) in TITLES.iter().enumerate() {
+            let label = format!("{}. {}", index + 1, text(language, id));
+            let active = selected == index;
+            let visuals = ui.visuals();
+            let accent = visuals.selection.stroke.color;
+            let dark_mode = visuals.dark_mode;
+            let inactive_fill = visuals.widgets.inactive.bg_fill;
+            let text_color = visuals.text_color();
+            let panel_fill = visuals.panel_fill;
+            let badge_fill = if active { accent } else { inactive_fill };
+            let badge_ink = if active && !dark_mode {
+                Color32::WHITE
+            } else {
+                text_color
+            };
+            let background = if active {
+                visuals.selection.bg_fill
+            } else {
+                panel_fill
+            };
+            let response = ui.add_sized(
+                vec2(step_width, 50.0),
+                egui::Button::new("").fill(background).stroke(Stroke::NONE),
+            );
+            let rect = response.rect;
+            ui.painter().line_segment(
+                [rect.left_bottom(), rect.right_bottom()],
+                Stroke::new(if active { 3.0 } else { 1.0 }, accent),
+            );
+            let badge_center = Pos2::new(rect.left() + 24.0, rect.center().y);
+            ui.painter().circle_filled(badge_center, 11.0, badge_fill);
+            ui.painter().text(
+                badge_center,
+                Align2::CENTER_CENTER,
+                (index + 1).to_string(),
+                FontId::proportional(12.0),
+                badge_ink,
+            );
+            ui.painter().text(
+                Pos2::new(rect.left() + 42.0, rect.center().y),
+                Align2::LEFT_CENTER,
+                text(language, id),
+                FontId::proportional(13.0),
+                text_color,
+            );
+            response.widget_info(|| {
+                egui::WidgetInfo::selected(
+                    egui::Role::Button,
+                    ui.is_enabled(),
+                    active,
+                    label.clone(),
+                )
+            });
+            if response.clicked()
+                || (response.has_focus()
+                    && ui.input(|input| {
+                        input.key_pressed(egui::Key::Enter) || input.key_pressed(egui::Key::Space)
+                    }))
+            {
+                selected = index;
+            }
+        }
+    });
+    (selected != current).then_some(selected)
+}
+
+fn text(language: &str, id: &'static str) -> &'static str {
+    crate::ui::messages::in_language(language, id)
+}
+
+pub fn step_eyebrow(step: usize, language: &str) -> &'static str {
+    text(language, EYEBROWS.get(step).copied().unwrap_or(EYEBROWS[0]))
+}
+
+pub fn show_card_eyebrow(step: usize, language: &str, ui: &mut egui::Ui) {
+    ui.label(
+        RichText::new(step_eyebrow(step, language))
+            .small()
+            .strong()
+            .color(ui.visuals().hyperlink_color),
+    );
+}

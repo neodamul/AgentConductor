@@ -156,3 +156,16 @@ pub fn settings_for(
         .map(Some)
         .map_err(|e| format!("invalid agent settings: {e}"))
 }
+
+pub fn full_access_args(settings: &AgentSettings) -> Option<Vec<String>> {
+    Some(match settings.invocation.full_access.as_ref()? {
+        ArgsEdit::Append { args } => settings
+            .invocation
+            .args
+            .iter()
+            .chain(args)
+            .cloned()
+            .collect(),
+        ArgsEdit::ReplaceArgv { argv } => argv.clone(),
+    })
+}

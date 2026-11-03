@@ -1,8 +1,32 @@
 # AgentConductor knowledge wiki
 
+- [Issue #9 acceptance tracking](issue9-acceptance-tracking.md): parent closure semantics, 22/50 checkpoint, and canonical labeled follow-up issues.
+- [Windows package timeout](../raw/2026-11-02-windows-package-timeout.md): exact-package UI tests exceeded the 25-minute job budget; regression test and timeout increase to 45 minutes.
+- [Native test gates and localized assertions](native-test-gates-and-localized-expectations.md): gate Cargo auto-discovered native UI tests and keep runtime localization assertions language-aware.
+- [Native sidebar card density](native-sidebar-card-density.md): keep agent metadata compact and wrap reorder controls at the supported minimum sidebar width.
+- [Coordinator controls and locale-safe UI tests](native-test-gates-and-localized-expectations.md): keep workspace selectors inside the viewport and use the active locale in interaction tests.
+- [Workspace isolation and coordinator warnings](native-test-gates-and-localized-expectations.md): preserve the reference checkbox interaction and visible accessible blocker panel.
+- [Windows UI Automation text input](windows-uia-text-input.md): set and verify text through UI Automation `ValuePattern` in the exact packaged Windows app.
+- [Windows snapshot locking](windows-snapshot-lock-retry.md): bounded recovery from transient SQLite locking protocol errors during active native UI snapshots.
+- [Windows packaged chat isolation](windows-packaged-chat-serialization.md): serialize shared-desktop journeys; exact package logs establish host-job breakaway as the failure cause.
+- [Windows packaged chat launch context](windows-packaged-chat-launch-context.md): interactive scheduled-task harness and the exact Windows verification boundary.
+- [Windows managed-workspace package probe](windows-packaged-signal-settings.md): resolve the workspace created on first launch before checking exact-package signal settings.
+- [Windows packaged schedule interaction](windows-packaged-schedule.md): exact-release UI Automation schedule persistence, failure diagnostics, and acceptance evidence.
+- [Current verification](current-verification.md): latest cross-platform package and workflow checkpoints.
+- [Signed-out quota recovery](claude-signed-out-quota.md): actionable Claude/Codex sign-in guidance instead of quota timeouts, with the API-key-specific Codex path preserved.
+- [Review while a run is active](native-review-during-run.md): keep read-only diff/test evidence available while an approved coordinator job is still running, without enabling state-changing actions.
+- [Native inspector and coordinator judgments](native-inspector-and-judgments.md): preference-safe folding, coordinator selection, native judgment views and main/native trace mapping.
+- [Agent Room review layout](agent-room-layout.md): balanced summary/review/inspector columns and full-width activity cards, with exact-package evidence.
+- [Native settings dialogs](native-settings-dialogs.md): bilingual section eyebrow, task heading, distinct window title, and exact-package verification boundary.
+- [Native UI screenshot provenance](native-screenshot-provenance.md): source-build capture hashes, version-label verification, and the exact-build capture gate.
+- [Native update blockers](native-update-blockers.md): guard update launch before subprocess start and render localized, distinct blocker reasons in the native dialog.
+
+- [Native Agent Room request routing](native-room-routing.md): worker routing must follow the live surface through Workspace-to-Room transitions.
 - [OSS comparison](oss-comparison.md): reuse candidates and missing capabilities.
 - [CLI protocols](cli-protocols.md): headless commands, parsing, resume contracts.
+- [Custom CLI JSONL normalization](custom-cli-jsonl-normalization.md): profile-declared event names and session identifiers.
 - [Custom CLI profiles](custom-cli-profiles.md): declarative model catalogs, execution arguments, result events, JSONL mappings, and bounded normalized quota commands.
+- [Task types and effort resolution](task-type-effort-resolution.md): optional task categories, bounded model-specific effort defaults, and remaining FR-172 porting work.
 - [License review](license-review.md): preliminary internal-distribution review.
 - [Progress log](log.md): research and development records.
 - [Research observations](../raw/2026-10-09-research.md): dates, revisions, tools.
@@ -20,19 +44,35 @@
 - [Live intermediate task reports](live-progress.md): bounded spool observation, per-attempt evidence and SQLite concurrency lesson.
 
 - [Planning retry timeout](planning-retry-timeout.md): one timeout bound and actionable recovery during delayed plan startup.
+- [Packaged Rust candidate review](native-candidate-review.md): exact diff/test/SHA inspection and confirmed approve/reject/merge UI journey.
+- [Planning overlap repair](planning-overlap-repair.md): keep scope validation and allow one bounded coordinator correction for overlapping phase paths.
+- [Coordinator failed-task triage](coordinator-failed-task-triage.md): bounded task repair plus quota-aware manual review through registered coordinator fallbacks.
+- [SQLite writer contention](sqlite-writer-contention.md): bounded busy-timeout behavior for parallel task-state writes.
 
 - [Reviewed runtime lesson assets](runtime-lessons.md): exact promotion, source fingerprints, offline session context and mirror failure semantics.
 
 - [Native Codex subscription and sessions](native-codex-sessions.md): actual stdin/JSONL, exact context resume, concurrent independent sessions and warning evidence.
 
 - [Functional Agent Room](functional-agent-room.md): real fixture interactions, exact-state controls, screenshot and native verification limits.
+- [Native coordinator chat](native-coordinator-chat.md): Workspace chat uses the verified read-only CLI path and Startup's single job slot; Windows fallback refuses unsafe or unknown host-job ownership.
+
+- [Native task editor nested selectors](native-task-editor-nested-selectors.md): preserve the task editor across nested egui selectors with independent Area state, accessible labels, and close behavior.
+- [Review task-row visibility](review-task-visibility.md): the full native Review screen displays all three manual-plan task rows at the documented viewport; packaged and Windows confirmation remain open.
 
 - [Direct native transport](direct-native-transport.md): no HTTP UI server, typed native messages, exact review and real desktop verification.
 
 - [Unix process outcomes](process-outcomes.md): distinct exit/signal evidence, completed coordinator state and authoritative descendant probes.
 
 - [Native startup workspace](native-startup-workspace.md): private CLI registry, goal planning, exact consent and same-window native fixture evidence.
-- [Native Rust UI migration](native-rust-ui-migration.md): dispatch boundary, opt-in prototype evidence, read-only diff/test evidence view, Graphify structure and remaining production acceptance.
+- [Native Rust UI migration](native-rust-ui-migration.md): dispatch boundary, current macOS/Windows validation and package status, CocoIndex-backed parity evidence, and remaining full UI/package acceptance.
+- [Native run-completion refresh test](native-rust-ui-migration.md#run-completion-refresh-test--2026-11-03): hosted macOS refresh wait failure, enabled-control click precondition, repeated local verification, and remaining exact-head gate.
+- [Native goal phase labels](native-goal-phase-labels.md): localized numbered phase action and AccessKit regression evidence.
+- [Native sidebar static-label removal](native-sidebar-footer.md): issue #190 removal of fixed local/login labels from Rust views and bilingual regression evidence.
+- [Native sidebar card density](native-sidebar-card-density.md): one-line agent detail labels with full AccessKit and hover text retained.
+- [Current-main Rust parity](current-main-rust-parity.md): issue #9 parity inventory, coordinator board #286, root #22 mergeability audit, and remaining platform gates.
+- [Native event wakeup race](current-main-rust-parity.md): capture the report baseline before waking Workspace subscribers so a synchronous concurrent update is not lost.
+- [Claude Enterprise quota screen parsing](enterprise-quota-screen-parsing.md): grouped allocation amounts, terminal cursor spacing, malformed-screen diagnostics, and deterministic regression coverage.
+- [Native Room failure feedback](native-room-failure-feedback.md): localized generated guidance with verbatim diagnostic output and explicit verification limits.
 
 - [Quota, fallback and native status](quota-fallback-and-status.md): provider metadata, durable account restrictions, reviewed failover and actual status-light/stop evidence.
 
@@ -57,10 +97,12 @@
 - [Korean input](korean-input.md): composition-safe polling and shortcuts in native forms.
 
 - [Workspace back navigation](workspace-navigation.md): side-effect-free Back to run / Discard changes and the persistent run link.
+- [Native UI interaction tests](native-ui-interaction-tests.md): real egui pointer/keyboard events, popup closure semantics, and texture-delta cleanup.
 
 - [Cross-agent development continuity](development-continuity.md): exact checkout reconciliation, durable handoff and Windows cleanup evidence.
 
 - [Bounded source and test modules](source-layout.md): DD-41 split, preserved API paths and CI limit.
+- [Exact packaged workflow acceptance](packaged-workflow.md): exact Windows package outcomes, evidence limits, and packaged workflow count.
 
 - [Native release package contract](native-release-packaging.md): platform executable names, license closure and byte-exact evidence.
 
@@ -84,7 +126,7 @@
 
 - [Workspace quota collection](workspace-quota-refresh.md): fresh-workspace correction, authenticated evidence and per-agent controls.
 
-- [Compact quota windows](compact-quota-windows.md): plan-aware independent values and adjacent refresh controls.
+- [Compact quota windows](compact-quota-windows.md): plan-aware independent values, adjacent refresh controls, and rounded Rust credit display.
 
 - [Resource budget](resource-budget.md): primary product purpose, bounded async work and measurement discipline.
 - [messenger-notifications](messenger-notifications.md) — Slack/company webhook notifications, local secret, curl stdin delivery (DD-79)
@@ -106,15 +148,19 @@
 - [Native window ownership](native-window-ownership.md)
 
 - [Native Rust UI migration](native-rust-ui-migration.md): Rust UI prototype, snapshot integration boundary, diff/test evidence, migration gates, and remaining production parity.
+- [Native goal optimization](native-goal-optimization.md): bounded read-only coordinator request, explicit native proposal review, snapshot compatibility and package evidence boundary.
+- [Native screenshot provenance](native-screenshot-provenance.md): distinguish rendered-image evidence from filenames and retain the exact-build capture gate.
 
 - [Fresh project settings](fresh-project-settings.md)
 
 - [Asynchronous metadata](asynchronous-metadata.md)
 
 - [CI test readiness](ci-test-readiness.md): marker and state synchronization for loaded runners, bounded process startup, and exact Windows process-tree fixtures (DD-181).
+- [Typed coordinator amendments](typed-coordinator-amendments.md): bounded path/dependency proposals, deterministic scope checks, risk escalation, audit and undo in the Rust Agent Room.
 
 
 - [Ordinary project folders](ordinary-folders.md)
+- [Native role table layout](native-role-table-layout.md): bounded role columns, compact identifiers with full-value tooltips, and width regression evidence.
 
 
 - [Agent tools guide](agent-tools-guide.md)
@@ -133,10 +179,39 @@
 
 - [Signal transport](signal-transport.md)
 
+- [Custom CLI profile registry](custom-cli-registry.md): bounded, versioned JSON profile loading and remaining UI/quota integration.
+
 - [Release-matched bilingual manuals](release-matched-manuals.md): actual native capture provenance, translated test contracts and v0.1.15 Windows save failure.
+- [Offline HTML manual](offline-html-manual.md): Rust-rendered bilingual manuals, bundled screenshot assets, and current-package verification limits.
 - [Update release-note safety](update-notes-safety.md): literal-text rendering contract and Rust test migration.
+- [Native update-source settings](native-update-source-settings.md): local async Settings control, HTTPS host validation, and shared release source.
 - [interface-themes](interface-themes.md) — light/dark tokens, theme preference, session status line (DD-137)
-- [Timeout retry and blocked feedback](timeout-retry.md): retained timed-out attempts, bounded automatic resume, stop handling and run-level error visibility (GitHub #44, DD-163).
+- [Timeout retry and Stop-aware backoff](timeout-retry.md): retained timed-out attempts, bounded automatic retry, Stop handling and run-level error visibility (GitHub #44, DD-163).
 - [SQLite writer contention](sqlite-writer-contention.md): bounded Windows parallel-task database waits, deterministic lock regression, and transaction preservation (GitHub #56, DD-167).
 - [Reduced-motion native status indicators](reduced-motion-native-status.md): static running-state feedback and animation-only repaint suppression in the native UI (GitHub #59, DD-17).
-- [Idle polling and suspended-page timeouts](idle-poll-timeouts.md): silent scheduled polls, visibility-paused request deadlines and deterministic timeout coverage (GitHub #221, DD-196).
+- [Native plan after execution starts](native-started-plan-review.md): localize the started state and hide stale approval task rows after returning to Workspace.
+- [Locale-independent test assertions](locale-independent-test-assertions.md): validate localized errors without tying CI tests to a user's saved language preference.
+- [Reviewed scope-failure recovery](scope-failure-recovery.md): digest-bound recovery proposals, exclusive restores, retained evidence, and explicit resume.
+- [Typed coordinator amendments](typed-coordinator-amendments.md): bounded revisions, undo, charter persistence and deterministic goal-drift gates.
+- [Step lessons](step-lessons.md): bounded run lessons delivered to later tasks, the Agent Room, and the existing agentmemory outbox.
+- [Idle resource budget](idle-resource-budget.md): use macOS physical footprint to avoid shared-page RSS inflation, with an exact packaged Agent Room sample and its limits.
+- [Latest-main Rust feature parity](coordinator-directed-operator-feedback.md): current Rust equivalents and regression evidence for coordinator feedback, amendments, and charter goal-drift gates; packaged UI credit remains unchanged.
+- [Native request lanes](native-request-lanes.md): bounded read concurrency, serialized state changes, correlated replies, and event-driven peer refresh.
+- [Native progress observation](native-request-lanes.md#task-progress-spool-observation): bounded idle spool reads and final progress draining.
+- [Rust review policy](rust-review-policy.md): selected Google Rust Style Guide rules, exclusions, stable checks and the no-churn adoption path for the Rust migration branch.
+- [Rust review policy](rust-review-policy.md): selected Google Rust Style Guide rules, exclusions, stable checks and the no-churn adoption path for the Rust migration branch.
+- [UTM Windows guest access](utm-windows-guest-access.md): post-reset guest-agent evidence, user-session drive-mapping limits, and the remaining Windows validation gate.
+- [UTM Windows guest access](utm-windows-guest-access.md): post-reset guest-agent evidence, user-session drive-mapping limits, and the remaining Windows validation gate.
+
+- [Current local verification](current-verification.md): full locked/offline Rust test results, exact macOS bundle checks, and unresolved package/Windows gates.
+- [Native UI poll timeouts](native-ui-poll-timeouts.md): Rust worker request semantics, background error policy, resumed repaint scheduling, and the explicit distinction from JavaScript client-timeout diagnostics.
+- [Coordinator format correction retry](coordinator-format-retry.md): a single bounded JSON-format retry with retained first-attempt logs and deterministic local CLI tests.
+- [Git HEAD fast path](git-head-fast-path.md): resolve common revisions from metadata and refresh linked-worktree fallbacks asynchronously without blocking native requests.
+- [Native event-driven refresh](current-main-rust-parity.md#native-event-driven-refresh): broadcast state invalidations to peer windows and isolate snapshots from interactive requests.
+- [Native request feedback](native-request-feedback.md): immediate action feedback, elapsed wait text, quiet refreshes, and parity with main #279/#285.
+- [Planning empty-scope correction](planning-empty-scope-correction.md): task-specific validation, non-empty schema paths, and one phased-plan retry for a missing scope.
+- [Reliable Windows UI Automation text input](windows-uia-text-input.md): use UIA `ValuePattern.SetValue` and read back the exact value in packaged desktop tests instead of lossy synthetic Unicode typing.
+- [Current Native Workspace screenshots](native-workspace-screenshots.md): provenance, hash record, and limits for the v0.1.54 Rust Workspace captures.
+- [Integration failure output streams](failed-integration-output.md): preserve bounded stderr and stdout evidence in Rust failure reports and retry feedback.
+- [Main v0.1.56 Rust sync](../raw/2026-11-02-main-v0.1.56-rust-sync.md): exact main delta, Rust-only screenshot handling, local documentation checks, and remaining release/UI gates.
+- [Windows desktop Save UIA refresh](native-rust-ui-migration.md#windows-desktop-save-automation-refresh): post-edit Save control lookup and exact-package verification status.

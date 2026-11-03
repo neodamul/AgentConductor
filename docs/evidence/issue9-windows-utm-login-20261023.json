@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "date": "2026-10-23",
+  "verification_type": "Windows UTM guest transfer readiness probe",
+  "branch_head": "0766176bf3fc47879c93b9030dc93559ddcbb997",
+  "host": "macOS arm64",
+  "windows_app_connection": {
+    "device": "neodamul-PC",
+    "result": "failed",
+    "error_code": "0x104",
+    "message": "Remote PC could not be found; local network access may also prevent discovery."
+  },
+  "virtual_machine": {
+    "provider": "UTM",
+    "guest": "Windows ARM64",
+    "configured_memory_gb": 10,
+    "state": "started",
+    "desktop_session_reached": true,
+    "guest_agent": "not installed or not running",
+    "utmctl_ip_address": "failed: OSStatus -2700"
+  },
+  "shared_folder": {
+    "host_path": "/private/tmp/agentconductor-windows-0766176b",
+    "scope": "temporary source archive only",
+    "guest_access_verified": false
+  },
+  "credentials_entered": false,
+  "project_files_accessed": false,
+  "windows_build_attempted": false,
+  "windows_package_verified": false,
+  "windows_ui_verified": false,
+  "result": "The VM is logged in and running, but guest file transfer/control is unavailable. UTM reports that QEMU Guest Agent is not installed or running. Windows input and Explorer did not provide a reliable transfer path. No build or UI verification was performed; VM was not stopped or reset."
+}

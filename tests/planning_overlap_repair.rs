@@ -90,5 +90,7 @@ async fn repair(name: &str, extra: &[(&str, &str)]) {
             .contains("2")
     );
     assert!(slug.join("plan/plan.json").exists());
+    assert!(root.join("planning/process/stdout.jsonl").exists());
+    assert!(root.join("planning/process-retry/stdout.jsonl").exists());
     fs::remove_dir_all(root).unwrap();
 }

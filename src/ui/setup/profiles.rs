@@ -175,6 +175,7 @@ pub(super) fn carry_over(profiles: &mut [AgentProfile], stored: &[AgentProfile])
 /// What a plan was reviewed against: every agent setting except its observed catalog.
 pub(super) fn execution_view(agents: &[AgentProfile]) -> Result<Vec<u8>, String> {
     let mut agents = agents.to_vec();
+    agents.sort_by(|left, right| left.id.cmp(&right.id));
     agents.iter_mut().for_each(|a| {
         a.catalog = None;
         a.quota_refresh_minutes = 5;
@@ -192,6 +193,7 @@ pub(crate) fn validate_profiles(profiles: &[AgentProfile]) -> Result<(), String>
     }
     let probe = Plan {
         goal: "validate registration".into(),
+        plan_rules: String::new(),
         workspace_mode: WorkspaceMode::Shared,
         agents: profiles.to_vec(),
         tasks: (0..3)

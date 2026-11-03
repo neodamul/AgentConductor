@@ -1,0 +1,52 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "requirement": "R-144",
+  "use_case": "UC-134",
+  "qas": "QAS-140",
+  "design_decision": "DD-153",
+  "root_cause": "The native manual emitted safe egui OpenUrl commands, but eframe's links feature was disabled. egui-winit therefore logged that browser opening was disabled and dropped the command.",
+  "tdd": {
+    "red": "tests/native_ui_link_backend.rs failed before the Cargo feature change because the shared eframe dependency omitted links.",
+    "green": "Enabling eframe links dispatches native OpenUrl commands through egui-winit's webbrowser integration. The existing manual renderer allowlist still limits links to HTTP(S)."
+  },
+  "verification": {
+    "command": "cargo test --offline --locked --release --test native_ui_link_backend --test native_ui_manual --test manual_renderer --test source_layout",
+    "passed": 14,
+    "failed": 0,
+    "clippy": "cargo clippy --offline --locked --release --test native_ui_link_backend --test native_ui_manual --test manual_renderer --test source_layout -- -D warnings: passed",
+    "format": "cargo fmt --all -- --check: passed",
+    "diff_check": "git diff --check: passed",
+    "release_build": "cargo build --offline --locked --release --bin agentconductor: passed",
+    "exact_package": {
+      "source_commit": "d539e86f1d099279e7a80fe8f9753b9065621631",
+      "target": "aarch64-apple-darwin",
+      "version": "0.1.36",
+      "binary_sha256": "574851db0b8db321cc26d9a307b2cc34cd4e37e0bc66c703d8196d85ee661f91",
+      "archive_sha256": "c6d74baf015881d95a8f97c1f881383bcd35f2cf0a2b27972c7a8d2fa057ef4a",
+      "dependency_count": 242,
+      "package_release_smoke": "all four shared/worktree × Git/folder cases passed",
+      "license_bundle": "webbrowser 1.2.5 MIT and Apache texts included; validate-package passed"
+    },
+    "binary_size_comparison": {
+      "before_bytes": 18705600,
+      "after_bytes": 18940736,
+      "delta_bytes": 235136
+    },
+    "dependency": {
+      "name": "webbrowser",
+      "version": "1.2.5",
+      "license": "MIT OR Apache-2.0",
+      "license_policy": "already allowed"
+    }
+  },
+  "acceptance": {
+    "packaged_ui_workflows": "14/25",
+    "shipped_default_rust_ui": "0/25"
+  },
+  "limitations": [
+    "The exact package was built and validated, but has not been launched in the UI.",
+    "No real OS browser launch has been performed; exact-package safe and unsafe link interaction remains open.",
+    "This backend fix adds no distinct operator workflow acceptance."
+  ]
+}

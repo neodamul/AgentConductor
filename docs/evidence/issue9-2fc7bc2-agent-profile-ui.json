@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "workflow": 3,
+  "workflow_name": "packaged agent profile management",
+  "date": "2026-10-20",
+  "application_version": "0.1.31",
+  "source_commit": "2fc7bc22264724219f36c0e9a1c3858ffdc38025",
+  "target": "aarch64-apple-darwin",
+  "binary_sha256": "04325483569c54cf2359c002e4066e7b6899280f45d38030bf4b66ceacc267bd",
+  "environment": "one native app window, disposable HOME and workspace",
+  "steps": [
+    "Register custom profile ui-smoke with executable /usr/bin/true; saved profile appears in the Agent Roles list.",
+    "Edit the profile ID to ui-smoke-edited; the saved sidebar row and accessible name update.",
+    "Remove the profile; the app shows an explicit confirmation naming the profile and assignment effects.",
+    "Confirm removal; the profile disappears and the empty-agent state is shown."
+  ],
+  "verification": {
+    "packaged_binary_identity_confirmed": true,
+    "profile_create_and_save": true,
+    "profile_edit_and_save": true,
+    "remove_confirmation_present": true,
+    "profile_removed_and_empty_state_visible": true,
+    "agent_task_started": false,
+    "provider_cli_invoked": false,
+    "windows_packaged_ui_verified": false
+  },
+  "acceptance": {
+    "packaged_native_ui_workflows": "2/25",
+    "adds_distinct_workflow": true,
+    "shipped_rust_replacement": false
+  }
+}

@@ -26,7 +26,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Captured screens are as new as the interface
-        run: python3 scripts/check_screenshots.py
+        run: cargo run --locked --bin check_screenshots
 
   publish:
     needs: [verify, screenshots]

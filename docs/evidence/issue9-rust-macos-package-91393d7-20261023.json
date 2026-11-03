@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "source_commit": "91393d7b82c92b0c3e4891b4730fc8475aa250fd",
+  "target": "aarch64-apple-darwin",
+  "version": "0.1.37",
+  "package_directory": "dist/agentconductor-aarch64-apple-darwin-91393d7b82c9",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-91393d7b82c9.zip",
+  "archive_bytes": 21672395,
+  "archive_sha256": "9c068e85d2610f3736b935f3bcdc49dfeb7194a34c73141c568b8ae831c369c6",
+  "binary_bytes": 18858304,
+  "binary_sha256": "3fa44f63193cdb47ec6d06db450a090804b1241eddb4938e3c2da4451beeaa65",
+  "dependency_count": 242,
+  "validation": "validate-package passed; package-release smoke passed; ZIP integrity passed",
+  "tracked_js_ts_python_files": 0,
+  "superseded_dist_artifacts_removed": true,
+  "github_release_uploaded": false,
+  "windows_package_and_ui_verified": false,
+  "packaged_ui_workflows_accepted": 15,
+  "shipped_main_rust_workflows_accepted": 0
+}

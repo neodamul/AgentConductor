@@ -6,6 +6,9 @@ use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
 use serde::{Deserialize, Serialize};
 use std::{path::Path, time::Duration};
 
+mod refresh;
+mod request_reconciliation;
+
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Context {
@@ -116,6 +119,7 @@ impl Ledger {
         )?;
         tx.commit().map_err(|e| e.to_string())
     }
+
     pub fn open(path: &Path) -> Result<Self, String> {
         drop(Store::open(path)?);
         let db = Connection::open(path).map_err(|e| e.to_string())?;

@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-23",
+  "kind": "exact-package-workflow-acceptance",
+  "issue": 9,
+  "workflow": 15,
+  "source_commit": "b282fca47792890bbe85169652164f4ee56c7e42",
+  "version": "0.1.36",
+  "target": "aarch64-apple-darwin",
+  "package": {
+    "binary_sha256": "574851db0b8db321cc26d9a307b2cc34cd4e37e0bc66c703d8196d85ee661f91",
+    "archive_sha256": "d988bf064fc1252e94a4212dfef65085d75dfc3aaf93bc461f2e376a518feb61",
+    "dependency_count": 242
+  },
+  "launch": {
+    "executable": "dist/agentconductor-aarch64-apple-darwin-b282fca47792/AgentConductor.app/Contents/MacOS/agentconductor",
+    "arguments": [
+      "ui-new",
+      "/private/tmp/agentconductor-issue9-isolation-b282fca-20261023/.agentconductor/desktop"
+    ],
+    "home": "/private/tmp/agentconductor-issue9-isolation-b282fca-20261023"
+  },
+  "observed": {
+    "workspace_menu_root": "/private/tmp/agentconductor-issue9-isolation-b282fca-20261023/.agentconductor/desktop",
+    "registered_agents": 0,
+    "user_workspace_visible": false,
+    "manual_opened": true,
+    "embedded_agent_room_image_rendered": true,
+    "installed_version": "0.1.36",
+    "latest_version": "0.1.37",
+    "release_notes_scrolled_to_final_entry": true,
+    "last_release_note": "GitHub #156",
+    "settings_saved": false,
+    "task_started": false,
+    "approval_performed": false,
+    "update_installed_or_restarted": false,
+    "agent_quota_cli_invoked": false
+  },
+  "cleanup": {
+    "app_exited": true,
+    "temporary_home_removed": true,
+    "package_directory_and_archive_removed": true
+  },
+  "acceptance_credit": 1,
+  "packaged_workflow_acceptance": "15/25",
+  "shipped_default_rust_ui": "0/25",
+  "limitations": [
+    "macOS arm64 only; Windows verification remains open.",
+    "The embedded Agent Room screenshot is stale and has a separate open task.",
+    "Other packaged workflows remain incomplete."
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "upstream_main": "b7fa27a9f033b91df5787e05833c30db471645e5",
+  "shared_base": "e9d1f1ff966403b56eee6f6ae9eebd01a1b4e9f4",
+  "previously_audited_main": "c9c575a7479db0812a6d43a9f80709082958450e",
+  "upstream_commits_since_base": 15,
+  "upstream_commits_since_previous_audit": 4,
+  "behavior_delta": {
+    "commit": "4195f64cf9aafde05355b46c09561a41430f934b",
+    "summary": "Bound transient coordinator-request lease-conflict retries to 240 attempts with 100 ms delay within the request deadline.",
+    "rust_equivalent": "f7dccadb"
+  },
+  "release_metadata": {
+    "main_version": "0.1.37",
+    "rust_branch_version": "0.1.36",
+    "action": "Do not import the release-only version/manual/changelog updates before migration acceptance; choose the next release version when the Rust package is release-ready."
+  },
+  "verification": {
+    "source_head": "2fed27cc",
+    "command": "cargo test --offline --locked --release --test coordinator_amendment_contract --test charter_contract --test coordinator_request --test native_coordinator_feedback --test quota_display --test source_layout",
+    "passed": 24,
+    "failed": 0,
+    "suites": 6
+  },
+  "scope": "Selective Rust behavior parity only. No source behavior changed, no packaged UI workflow was added, and Windows or release acceptance is not claimed."
+}

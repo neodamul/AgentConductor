@@ -45,7 +45,6 @@ pub(super) async fn control_io(
                     None => std::future::pending().await,
                 }
             } => {
-                // A line queued after the input was closed (a cancel after the result) has nowhere to go.
                 if let Some(stdin) = input.as_mut() {
                     stdin.write_all(&line).await.map_err(|e| e.to_string())?;
                     stdin.flush().await.map_err(|e| e.to_string())?;

@@ -1,0 +1,47 @@
+{
+  "date": "2026-11-03",
+  "kind": "issue-9-native-run-completion-refresh-journey",
+  "issue": 9,
+  "head_commit": "42df638a965ff63504236f9b32012749354f6c1b",
+  "platform_validation_run": 41511209951,
+  "platform_validation_merge_commit": "cef7c6f6a180a79008c05f3875b05c827702c44d",
+  "failure": {
+    "job": "validate (macos-latest)",
+    "test": "native_ui_start_journey::review_approval_shows_start_feedback_then_opens_the_started_run",
+    "expected_accessibility_label": "Current stage: 05 Workspace",
+    "observed_accessibility_label": "Current stage: 02 Tasks",
+    "context": "The workflow report had completed after the test's direct approval and merge; the UI journey's Refresh run click did not reach the completed Workspace stage within the prior five-second deadline."
+  },
+  "change": {
+    "scope": "test harness only",
+    "files": [
+      "tests/native_ui_start_journey.rs",
+      "tests/native_ui_start_journey/ui_wait.rs"
+    ],
+    "details": [
+      "Wait for an accessible control to be enabled before injecting pointer input.",
+      "Extend the asynchronous completed-stage refresh wait from five to thirty seconds."
+    ]
+  },
+  "local_verification": {
+    "baseline_runs_before_change": 5,
+    "journey_runs_after_change": 5,
+    "focused_tests_passed": 19,
+    "focused_suites": 5,
+    "warning_denied_all_target_clippy": "passed",
+    "rustfmt": "passed",
+    "diff_check": "passed",
+    "source_layout_300_line_guard": "passed"
+  },
+  "acceptance": {
+    "packaged_ui_workflows": "22/25",
+    "shipped_default_rust_ui": "0/25",
+    "aggregate": "22/50",
+    "credit_added": false
+  },
+  "limitations": [
+    "The hosted macOS timing failure was not reproduced locally.",
+    "The test-only change requires an exact-head hosted validation rerun.",
+    "No exact Windows package UI result is claimed."
+  ]
+}

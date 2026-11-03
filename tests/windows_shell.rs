@@ -1,5 +1,5 @@
 #![cfg(windows)]
-//! DD-38: explicit and default startup open a WebView2 window sequentially.
+//! Explicit and default startup open a native Rust desktop window sequentially.
 use std::{
     path::Path,
     process::Command,
@@ -32,7 +32,7 @@ fn verify_window(mut command: Command, workspace: &Path) {
 }
 
 #[test]
-fn startup_workspace_opens_a_webview2_window() {
+fn startup_workspace_opens_a_native_window() {
     let dir = std::env::temp_dir().join(format!("ac-win-shell-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&dir);
     let binary = env!("CARGO_BIN_EXE_agentconductor");

@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "date": "2026-10-24",
+  "kind": "macos-native-ui-launch-crash-triage",
+  "host": {
+    "model": "Mac16,11",
+    "os": "macOS 27.2 (26B118)",
+    "architecture": "arm64"
+  },
+  "reports": [
+    {
+      "file": "agentconductor-2026-10-24-151241.ips",
+      "bundle_id": "dev.agentconductor.workflow20",
+      "bundle_path": "temporary Workflow20 app under /private/tmp",
+      "signal": "SIGABRT",
+      "faulting_stack": [
+        "___RegisterApplication_block_invoke",
+        "_RegisterApplication",
+        "GetCurrentProcess",
+        "-[NSApplication init]",
+        "+[NSApplication sharedApplication]"
+      ]
+    },
+    {
+      "file": "agentconductor-2026-10-24-151435.ips",
+      "bundle_id": "dev.agentconductor.desktop",
+      "bundle_path": "AgentConductor.app under the user workspace",
+      "signal": "SIGABRT",
+      "faulting_stack": [
+        "___RegisterApplication_block_invoke",
+        "_RegisterApplication",
+        "GetCurrentProcess",
+        "-[NSApplication init]",
+        "+[NSApplication sharedApplication]"
+      ]
+    }
+  ],
+  "corroborating_thread": "Both reports also show LaunchServices _LSCopyLocalDatabase on a background thread while NSApplication registration aborts on the main thread.",
+  "finding": "The observed failure occurs during host AppKit/LaunchServices application registration, before the eframe app callback can render a window. This points to a host launch-registration failure rather than a demonstrated product rendering defect; the exact LaunchServices failure cause is not present in the report.",
+  "package_checks": {
+    "Info_plist": "valid",
+    "CFBundleExecutable": "agentconductor",
+    "executable": "present, mode 0755, arm64 Mach-O"
+  },
+  "scope": {
+    "product_code_changed": false,
+    "launch_retried": false,
+    "launchservices_database_modified": false,
+    "utm_touched": false,
+    "packaged_ui_acceptance": "20/25",
+    "shipped_default_rust_ui": "0/25"
+  },
+  "next": "Retry exact-package UI verification only when the host can register a native app successfully or from a verified macOS host; do not clear/rebuild the host LaunchServices database as part of this product task."
+}

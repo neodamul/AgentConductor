@@ -1,0 +1,55 @@
+{
+  "issue": 9,
+  "workflow": 24,
+  "diagnostic_run": "https://github.com/neodamul/AgentConductor/actions/runs/40697161465",
+  "diagnostic_head": "a907b615e0f389860cfeccca87b13ff38a73134b",
+  "diagnostic_job_id": 122861846422,
+  "source_branch": "issue-221 Rust PR including the shared candidate-review test",
+  "platform_validation": {
+    "macos": "passed",
+    "windows": "passed"
+  },
+  "packaged_execution": {
+    "macos": "passed",
+    "windows": "failed",
+    "failure": "BUTTON_NOT_READY: Merge approved candidate",
+    "observed_ui": [
+      "Confirm candidate decision remained visible",
+      "Run status remained Waiting approval",
+      "Approve candidate remained enabled",
+      "All three fixture tasks and tests completed"
+    ]
+  },
+  "diagnosis": "The UIA InvokePattern call returned without applying the confirmation. The driver did not verify a state transition and continued to wait for the merge button.",
+  "change": "The driver now checks for the expected visible state after each decisive UI action. If UIA leaves the button and dialog unchanged, it uses SendInput only after verifying foreground and WindowFromPoint process ownership.",
+  "tdd": {
+    "red": "candidate_decision_driver_falls_back_to_owned_input_and_checks_state failed before the driver had state-aware activation and process-checked pointer fallback",
+    "green": "the regression and existing windows_desktop_driver tests pass after the driver change"
+  },
+  "local_verification": {
+    "command": "cargo test --locked --offline --test windows_desktop_driver --test source_layout; cargo fmt --all -- --check; git diff --check",
+    "result": "passed; 6 tests across windows_desktop_driver and source_layout",
+    "line_counts": {
+      "tests/support/windows_candidate_review_script.rs": 178,
+      "tests/windows_desktop_driver.rs": 60
+    },
+    "line_limit": 300
+  },
+  "exact_source_validation": {
+    "run": "https://github.com/neodamul/AgentConductor/actions/runs/40701439500",
+    "windows": "failed before package jobs: candidate_review_driver_rebinds_the_window_before_reading_controls",
+    "cause": "The test asserted an LF-only embedded PowerShell sequence; Windows checkout supplied CRLF through include_str!.",
+    "correction": "Normalize CRLF to LF in the driver-source contract before matching."
+  },
+  "exact_head_revalidation": {
+    "run": "https://github.com/neodamul/AgentConductor/actions/runs/40701439500",
+    "tested_head": "c51998cb5f588228daad16af45185827c1225eb1",
+    "status_at_evidence_capture": "Windows validation failed at the newline-sensitive source assertion; this run does not contain the unpushed activation or CRLF test fix"
+  },
+  "acceptance": {
+    "candidate_packaged_ui": "22/25; unchanged",
+    "shipped_rust_replacement": "0/25",
+    "aggregate": "22/50",
+    "next": "Push the state-aware activation fix and require exact Windows approval, merge, rejection, persisted report, and Git HEAD assertions before crediting workflow 24."
+  }
+}

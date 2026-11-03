@@ -33,10 +33,17 @@ and missing observations, unlimited credits, reset-unknown, localized labels,
 and startup snapshot wiring. The duplicate room formatter was unused and was
 removed. Two Python/Node display suites were replaced by Rust integration tests.
 
+## Remove redundant query text — issue #321
+
+When quota refresh is active, the agent card keeps the spinner/refresh indicator and no longer repeats the state as an elapsed-time sentence. The run screen retains its own status line. Main UI change: PR #322; Rust parity change: `src/native_ui_probe/workspace/sidebar/quota.rs`, with the elapsed-only helper and unused EN/KO strings removed. TDD first reproduced the extra accessible label, then verified its absence. Focused Rust regression passes 2/2; after integration, eight focused suites pass 39 tests with 1 ignored, plus warning-denied Clippy, rustfmt, and diff checks. The parity change is pushed to root PR #22 at `4752e4b2`. Packaged verification remains pending; source checks do not establish shipped/default Rust UI acceptance.
+
 ## Current source fingerprints
 
 - `src/quota/display.rs` SHA-256 `9bdcb9f7e5ac436844d13f6eed1ab9cc70e1c0ec9f0de54618d3dee7aa1ea2ab`
 - `src/quota.rs` SHA-256 `06cf95decc348aca51f86eda609cb04014335df864e83c0ab1e53f80f871afe8`
+- `src/native_ui_probe/workspace/sidebar/quota.rs` SHA-256 `2b0d1718ba01e7ac684814c0358d37b12ab48833d702ffabc49a38fd26f3bc04`
+- `src/native_ui_probe/workspace/profile_tools/metadata.rs` SHA-256 `2b053e07f19680340c520bb316670ec12033062000bc88a0a52739f5f0c83b5c`
+- `tests/native_ui_quota_elapsed.rs` SHA-256 `ee3e2c51dce9b6015d1701af67339a8c29e2e4ec95612f6c6d0a64c3b52407e8`
 - `src/ui/startup.js` SHA-256 `de14dde8f50d549f9677f172b0b8a54a7b444831493a788cc19d7f3bf6277173`
 - `src/ui/room.js` SHA-256 `221853084e1e12e97c39e47926d2566b31ca2f946b43fd411647eb0f6cc9f66c`
 - `src/ui/setup/snapshot.rs` SHA-256 `209cba09a547fddf8f89bdbde0b6b5c70df4c143451f23aa53d151a0123d9ccf`

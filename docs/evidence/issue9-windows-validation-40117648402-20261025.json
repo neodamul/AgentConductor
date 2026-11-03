@@ -1,0 +1,53 @@
+{
+  "issue": 9,
+  "branch": "codex/issue-9-native-ui-parity",
+  "tested_commit": "31663dcf8bd3d1051917250d1d1f8f965d819d2d",
+  "date": "2026-10-25",
+  "workflow_run": "40117648402",
+  "macos_validation": "passed",
+  "windows_validation": {
+    "build": "passed",
+    "source_layout": "passed",
+    "native_tests": "failed",
+    "failures": [
+      {
+        "test": "exact_windows_package_schedules_a_waiting_agent_room_task",
+        "observation": "UI Automation set the timezone-qualified timestamp and invoked Schedule retry, but the task remained waiting_availability with restriction manual_required and no available_at. No coordinator-ui action directory was recorded.",
+        "diagnostic_gap": "The PowerShell stdout contained the post-click accessibility snapshot but was not included in the later persistence assertion."
+      },
+      {
+        "test": "settings_dialogs_remain_accessible_across_sequential_open_close",
+        "observation": "Cache cleanup remained present in the accessible tree after its Close button was clicked.",
+        "diagnostic_gap": "The test selected the button bounds before the asynchronous cache preview settled."
+      }
+    ]
+  },
+  "changes": [
+    "Retain the post-click UI Automation output in schedule persistence failure diagnostics and assert the diagnostic includes it.",
+    "Wait for asynchronous cache preview completion and reacquire the Close button bounds from the settled layout."
+  ],
+  "corrected_tree_local_verification": {
+    "focused_tests": "windows_schedule, native_ui_settings_journey, and source_layout: 4 passed across 3 suites",
+    "full_suite": "cargo test --locked --offline: 973 passed, 14 ignored across 323 suites; exit 0",
+    "format": "cargo fmt --all -- --check: passed",
+    "source_layout": "2 passed",
+    "clippy": "all-target warning-denied Clippy: passed",
+    "unsafe_block_gate": "passed",
+    "diff_check": "passed",
+    "test_file_lines": {
+      "tests/windows_schedule.rs": 224,
+      "tests/native_ui_settings_journey.rs": 294
+    }
+  },
+  "acceptance": "Packaged UI acceptance remains 20/25; Workflow 20 is unaccepted until exact Windows package interaction passes.",
+  "next": "Push the tested checkpoint, rerun exact Windows validation and package UI tests, inspect the post-click snapshot, and only then fix a proven product interaction cause.",
+  "agentmemory": [
+    "mem_mvmpqm64_317e0aa316bf"
+  ],
+  "graphify": {
+    "command": "graphify update . --no-cluster",
+    "nodes": 9412,
+    "edges": 15871
+  },
+  "cocoindex": "Unavailable on this host; CLI was not run for this checkpoint"
+}

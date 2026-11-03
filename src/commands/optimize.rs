@@ -16,10 +16,11 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
         let saved: serde_json::Value =
             serde_json::from_slice(&agentconductor::mcp::load(&root.join("startup.json"))?)
                 .map_err(|_| "invalid workspace settings")?;
-        let input: serde_json::Value = serde_json::from_slice(&agentconductor::mcp::load(
-            &root.join("mcp").join(format!("optimize-input-{id}.json")),
-        )?)
-        .map_err(|_| "invalid optimize input")?;
+        let input_path = root.join("mcp").join(format!("optimize-input-{id}.json"));
+        let bytes = agentconductor::mcp::load(&input_path)?;
+        let _ = std::fs::remove_file(&input_path);
+        let input: serde_json::Value =
+            serde_json::from_slice(&bytes).map_err(|_| "invalid optimize input")?;
         let profiles: Vec<agentconductor::plan::AgentProfile> =
             serde_json::from_value(saved["config"]["profiles"].clone())
                 .map_err(|_| "invalid coordinator profiles")?;
@@ -36,13 +37,16 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
             .enable_all()
             .build()
             .map_err(|e| e.to_string())?;
-        let proposal = runtime.block_on(agentconductor::prompt_optimizer::optimize(
+        let run_dir = root.join(format!("optimize-run-{id}"));
+        let result = runtime.block_on(agentconductor::prompt_optimizer::optimize(
             profile,
             &project,
-            &root.join(format!("optimize-run-{id}")),
+            &run_dir,
             input["goal"].as_str().unwrap_or(""),
             input["language"].as_str().unwrap_or("English"),
-        ))?;
+        ));
+        let _ = std::fs::remove_dir_all(&run_dir);
+        let proposal = result?;
         agentconductor::mcp::store(
             root,
             &format!("optimize-{id}.json"),

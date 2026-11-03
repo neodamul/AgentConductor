@@ -1,67 +1,43 @@
 //! Keep native request routing separate from window/surface lifetime.
 use super::*;
+mod navigation;
+mod requests;
+use navigation::Request as Navigation;
 impl Room {
     pub fn dispatch(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
-        let kind = diagnostics::kind(bytes);
-        if kind == "client_timeout" {
-            if let Ok(report) = serde_json::from_slice(bytes) {
-                diagnostics::client_timeout(&report);
+        self.dispatch_from(None, bytes)
+    }
+
+    pub(crate) fn dispatch_from(
+        &self,
+        source: Option<u64>,
+        bytes: &[u8],
+    ) -> Result<serde_json::Value, String> {
+        let is_snapshot = serde_json::from_slice::<serde_json::Value>(bytes)
+            .is_ok_and(|request| request["kind"] == "snapshot");
+        let result = crate::ui::request_diagnostics::dispatch(bytes, || {
+            if is_snapshot {
+                crate::ui::request_diagnostics::retry_snapshot(
+                    || self.dispatch_inner(bytes),
+                    std::thread::sleep,
+                )
+            } else {
+                self.dispatch_inner(bytes)
             }
-            return Ok(serde_json::json!({}));
+        });
+        if result.is_ok()
+            && let Some(event) = crate::ui::events::event_for_request(bytes)
+        {
+            self.events.publish(source, event);
         }
-        diagnostics::start(&kind, bytes.len());
-        let started = std::time::Instant::now();
-        let result = self.route(bytes);
-        diagnostics::done(&kind, started.elapsed(), result.as_ref().err());
         result
     }
-    fn route(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
-        if bytes.len() > 64 * 1024 {
+
+    fn dispatch_inner(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
+        let kind: serde_json::Value = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
+        if bytes.len() > 128 * 1024 || bytes.len() > 64 * 1024 && kind["kind"] != "chat" {
             return Err(crate::ui::messages::text("native.native_request_exceeds_64_kib").into());
         }
-        use crate::cooperative::route::Preference;
-        #[derive(Deserialize)]
-        #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
-        enum Navigation {
-            OpenRun {},
-            Home {},
-            PickFolder {},
-            PickFile {},
-            PickExecutable {},
-            ResolveExecutable {
-                executable: String,
-            },
-            Workspaces {},
-            SwitchWorkspace {
-                path: PathBuf,
-            },
-            CreateWorkspace {
-                name: String,
-            },
-            ForgetWorkspace {
-                path: PathBuf,
-            },
-            DeleteWorkspace {
-                path: PathBuf,
-                name: String,
-                replacement: Option<String>,
-            },
-            SavedWorkspaces {},
-            OpenWorkspace {
-                path: PathBuf,
-            },
-            SetLanguage {
-                language: String,
-            },
-            SetTheme {
-                theme: String,
-            },
-            SignalTransport {},
-            SetSignalTransport {
-                preference: Preference,
-            },
-        }
-        let kind: serde_json::Value = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
         if kind["kind"] == "mcp_source_suggestions" {
             let goal = kind["goal"]
                 .as_str()
@@ -150,7 +126,8 @@ impl Room {
             ))?;
             match serde_json::from_slice::<Navigation>(bytes).map_err(|e| e.to_string())? {
                 Navigation::PickFolder {} => {
-                    return Ok(serde_json::json!({"path":picker::pick_folder()?}));
+                    let path = picker::pick_folder(picker::FolderPurpose::Project)?;
+                    return Ok(serde_json::json!({"path":path}));
                 }
                 Navigation::PickFile {} => {
                     return Ok(serde_json::json!({"path":picker::pick_file()?}));
@@ -221,7 +198,9 @@ impl Room {
                         let next = Arc::new(Controller {
                             dir,
                             exe: startup.executable().to_owned(),
-                            job: Mutex::new(None),
+                            job: Arc::new(Mutex::new(None)),
+                            event_endpoint: startup.event_endpoint(),
+                            event_surface: crate::ui::events::EventSurface::Workspace,
                         });
                         next.automatic(startup.auto_resume())?;
                         *controller = Some(next);
@@ -300,41 +279,9 @@ impl Room {
                     .map_err(|_| crate::ui::messages::text("native.briefing_clock_overflow"))?,
             );
         }
-        if let Request::UndoAmendment { id } = &request {
-            workflow::amendment_undo(&controller.dir, id)?;
-            return Ok(serde_json::json!({"undone":id}));
-        }
-        if let Request::ScopeFailure {} = &request {
-            return workflow::scope_failure(&controller.dir);
-        }
-        if let Request::ScopePreview {
-            task,
-            paths,
-            test_command,
-        } = &request
-        {
-            return workflow::recovery_preview(&controller.dir, task, paths, test_command.clone());
-        }
         if let Some(startup) = self.surface()? {
             startup.poll_job()?;
         }
-        match request {
-            Request::Briefing {} => unreachable!("briefing returned before polling mutations"),
-            Request::ScopeFailure {}
-            | Request::ScopePreview { .. }
-            | Request::UndoAmendment { .. } => {
-                unreachable!("scope review returned before polling mutations")
-            }
-            Request::Snapshot {
-                icons,
-                quota_refresh_last,
-            } => controller.snapshot(icons, &quota_refresh_last),
-            Request::Evidence {} => controller.evidence(),
-            Request::Task { index } => controller.task(index),
-            Request::Coordinator {} => controller.coordinator(),
-            Request::Action { revision, action } => {
-                controller.action(ActionRequest { revision, action })
-            }
-        }
+        requests::dispatch(&controller, request)
     }
 }

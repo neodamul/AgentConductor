@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "product_code_commit": "f43882095aa0308dc2870bd34269e0ea240bab8d",
+  "checked_out_head": "8a46c8a0181a5d27440a309d9f68e9420037c858",
+  "platform": "macOS arm64",
+  "profile": "release",
+  "command": "cargo test --offline --locked --release --all-targets --features native-ui-probe -- --test-threads=1",
+  "result": "938 passed, 14 ignored, 0 failed across 310 test binaries in 351.22 seconds",
+  "windows": "not verified on this host"
+}

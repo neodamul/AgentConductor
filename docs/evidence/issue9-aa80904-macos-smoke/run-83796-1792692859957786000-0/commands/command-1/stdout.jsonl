@@ -1,0 +1,56 @@
+AgentConductor
+
+Commands:
+  ui-new <workspace-dir>
+  ui <run-dir>
+  profiles <profiles.json>
+  models-discover <profiles.json> <agent-id> <new-discovery-dir>
+  catalog-import <profiles.json> <agent-id> <observed-catalog.json>
+  plan <profiles.json> <coordinator-id> <repo> <new-plan-dir> <goal> [roles.json] [--from plan.md] [--rules rules.md] [--phases slug-dir]
+  sessions <run-dir>
+  briefing <run-dir>
+  checkpoint-issue <run-dir> <issue.json>
+  checkpoint-poll <run-dir> <address.json>
+  checkpoint-ack <run-dir> <ack.json>
+  checkpoint-report <run-dir> <progress.json>
+  quota-refresh <run-dir> <agent-id>
+  schedule <run-dir> <task-id> <YYYY-MM-DDTHH:MM:SS+HH:MM>
+  reassign <run-dir> <task-id> <agent-id> [model]
+  session-model <run-dir> <task-id> <model>
+  stop <run-dir> <reason>
+  resume <run-dir>
+  recover <run-dir>
+  resume-due <run-dir>
+  watch <run-dir>
+  validate <plan.json>
+  run <plan.json> <repo> <new-run-dir> <approved-plan-digest> [--phase slug-dir phase-id]
+  status <run-dir>
+  update
+  logs <run-dir> <task-id>
+  progress <run-dir> <task-id>
+  diff <run-dir>
+  tool-requests <run-dir>
+  tool-refresh <run-dir> <exact-request-sha256>
+  tool-approve <run-dir> <exact-request-sha256> [lifetime-seconds]
+  tool-reject <run-dir> <exact-request-sha256>
+  approve <run-dir> <exact-candidate-sha>
+  reject <run-dir> <reason>
+  revise <run-dir> <task-id> <feedback>
+  review <run-dir> <coordinator-id>
+  review-apply <run-dir> <coordinator-id>
+  apply-review <run-dir> <exact-proposal-sha256>
+  merge <run-dir>
+  knowledge-digest <lesson.json>
+  knowledge-accept <run-dir> <lesson.json> <exact-digest>
+  knowledge-status <run-dir>
+  recall <run-dir> <query>
+  memory-sync <run-dir> <local-port>
+  memory-publish <local-port> <envelope.json>
+  memory-read <local-port> <memory-id>
+  memory-import <run-dir> <local-port> <memory-id>
+  memory-discover <run-dir> <local-port>
+  normalize <claude|codex|opencode|custom> <stdout.jsonl>
+
+Shared workspace is default; worktrees are optional. Run directories must be outside the repository.
+Review profiles, scopes and test commands before passing the validate command's plan digest.
+Profiles need an operator-verified sandbox/permission configuration before execution.

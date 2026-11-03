@@ -31,6 +31,36 @@ fn request() -> ToolRequest {
 }
 
 #[test]
+fn read_only_snapshot_reads_existing_approvals_and_skips_uninitialized_ledgers() {
+    let dir = std::env::temp_dir().join(format!(
+        "ac-gates-read-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    std::fs::create_dir_all(&dir).unwrap();
+    let path = dir.join("state.sqlite");
+    drop(rusqlite::Connection::open(&path).unwrap());
+    assert!(Ledger::read_only_snapshot(&path).unwrap().is_none());
+
+    let mut ledger = Ledger::open(&path).unwrap();
+    let context = Context {
+        epoch: 0,
+        task: "task".into(),
+        session: "session".into(),
+        workspace: "/workspace".into(),
+        plan_sha256: "plan".into(),
+        workspace_sha256: "tree".into(),
+    };
+    let request = request();
+    let id = ledger.request(&context, &request, 100).unwrap();
+    drop(ledger);
+    let snapshot = Ledger::read_only_snapshot(&path).unwrap().unwrap();
+    assert_eq!(snapshot.receipt(&id).unwrap().unwrap().id, id);
+    assert_eq!(snapshot.requests().unwrap().len(), 1);
+    drop(snapshot);
+    std::fs::remove_dir_all(dir).unwrap();
+}
+
+#[test]
 fn active_receipts_remain_addressable_after_the_listing_limit_and_detect_tampering() {
     let (dir, mut ledger, mut context) = setup();
     let oldest = ledger.request(&context, &request(), 100).unwrap();
@@ -93,6 +123,42 @@ fn no_implicit_approval_expiry_and_single_consumption_survive_reopen() {
 }
 
 #[test]
+fn refresh_atomically_supersedes_the_exact_receipt_and_creates_fresh_pending_permission() {
+    let (dir, mut ledger, context) = setup();
+    let old = ledger.request(&context, &request(), 100).unwrap();
+    let mut next_context = context.clone();
+    next_context.epoch += 1;
+
+    let fresh = ledger
+        .refresh(&old, &next_context, &request(), 101)
+        .unwrap();
+
+    assert_ne!(old, fresh);
+    assert_eq!(ledger.receipt(&old).unwrap().unwrap().status, "superseded");
+    let replacement = ledger.receipt(&fresh).unwrap().unwrap();
+    assert_eq!(replacement.status, "pending");
+    assert_eq!(replacement.context, next_context);
+    assert_eq!(ledger.requests().unwrap().len(), 2);
+    drop(ledger);
+    cleanup(dir);
+}
+
+#[test]
+fn refresh_rejects_a_decided_receipt_without_creating_a_replacement() {
+    let (dir, mut ledger, context) = setup();
+    let id = ledger.request(&context, &request(), 100).unwrap();
+    ledger.decide(&id, &id, false, &context, 101, 101).unwrap();
+    let mut next_context = context.clone();
+    next_context.epoch += 1;
+
+    assert!(ledger.refresh(&id, &next_context, &request(), 102).is_err());
+    assert_eq!(ledger.requests().unwrap().len(), 1);
+    assert_eq!(ledger.receipt(&id).unwrap().unwrap().status, "denied");
+    drop(ledger);
+    cleanup(dir);
+}
+
+#[test]
 fn changed_workspace_session_action_and_explicit_rejection_never_allow_execution() {
     let (dir, mut ledger, context) = setup();
     let id = ledger.request(&context, &request(), 100).unwrap();
@@ -127,6 +193,51 @@ fn changed_workspace_session_action_and_explicit_rejection_never_allow_execution
 }
 
 #[test]
+fn replacing_a_request_with_changed_context_keeps_only_the_latest_one_active() {
+    let (dir, mut ledger, context) = setup();
+    let old = ledger.request(&context, &request(), 100).unwrap();
+    let mut other_task = context.clone();
+    other_task.task = "another-task".into();
+    let other_task_id = ledger.request(&other_task, &request(), 100).unwrap();
+    let mut other_request = request();
+    other_request.input = json!({"command":"git status"});
+    let other_request_id = ledger.request(&context, &other_request, 100).unwrap();
+    let mut changed = context.clone();
+    changed.workspace_sha256 = "changed-tree".into();
+    let fresh = ledger
+        .request_replacing_changed_context(&changed, &request(), 101)
+        .unwrap();
+    assert_ne!(fresh, old);
+    assert_eq!(ledger.receipt(&old).unwrap().unwrap().status, "superseded");
+    assert_eq!(ledger.receipt(&fresh).unwrap().unwrap().status, "pending");
+    assert!(ledger.decide(&old, &old, true, &changed, 102, 202).is_err());
+    assert_eq!(
+        ledger.receipt(&other_task_id).unwrap().unwrap().status,
+        "pending"
+    );
+    assert_eq!(
+        ledger.receipt(&other_request_id).unwrap().unwrap().status,
+        "pending"
+    );
+    assert_eq!(
+        ledger
+            .requests()
+            .unwrap()
+            .iter()
+            .filter(|receipt| {
+                receipt.context.task == changed.task
+                    && receipt.context.session == changed.session
+                    && receipt.request == request()
+                    && matches!(receipt.status.as_str(), "pending" | "approved")
+            })
+            .count(),
+        1
+    );
+    drop(ledger);
+    cleanup(dir);
+}
+
+#[test]
 fn simultaneous_callbacks_cannot_consume_one_human_approval_twice() {
     let (dir, mut ledger, context) = setup();
     let id = ledger.request(&context, &request(), 100).unwrap();
@@ -134,11 +245,12 @@ fn simultaneous_callbacks_cannot_consume_one_human_approval_twice() {
     drop(ledger);
     let barrier = std::sync::Arc::new(std::sync::Barrier::new(3));
     let mut jobs = vec![];
-    for _ in 0..2 {
-        let (dir, context, id, barrier) =
-            (dir.clone(), context.clone(), id.clone(), barrier.clone());
+    for mut ledger in [
+        Ledger::open(&dir.join("state.sqlite")).unwrap(),
+        Ledger::open(&dir.join("state.sqlite")).unwrap(),
+    ] {
+        let (context, id, barrier) = (context.clone(), id.clone(), barrier.clone());
         jobs.push(std::thread::spawn(move || {
-            let mut ledger = Ledger::open(&dir.join("state.sqlite")).unwrap();
             barrier.wait();
             ledger.consume(&id, &context, &request(), 102).unwrap()
         }));

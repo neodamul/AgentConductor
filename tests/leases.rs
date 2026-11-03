@@ -44,7 +44,8 @@ fn exclusive_lease_is_released_without_deleting_its_file() {
     let path = dir.join("coordinator.lock");
     std::fs::write(&path, "stale owner record\n").unwrap();
     let lease = Lease::acquire(&path).unwrap();
-    assert!(Lease::acquire(&path).is_err());
+    let error = Lease::acquire(&path).err().unwrap();
+    assert!(error.contains(&path.display().to_string()));
     drop(lease);
     assert!(path.exists());
     let lease = Lease::acquire(&path).unwrap();

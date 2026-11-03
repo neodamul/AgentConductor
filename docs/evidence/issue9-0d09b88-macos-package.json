@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-21",
+  "source_commit": "0d09b8843fd66bdd55c7fce2f43e5780c1b2dc6a",
+  "target": "aarch64-apple-darwin",
+  "package_dir": "dist/agentconductor-aarch64-apple-darwin-0d09b8843fd6",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-0d09b8843fd6.zip",
+  "archive_sha256": "3c06a3d3ea4407359a0fdc48fdfb04341a3627ad892c2b7872f81701fd81f009",
+  "binary": "agentconductor",
+  "binary_bytes": 17942384,
+  "binary_sha256": "1425a6384fd7b24382acc91226de007fe8646c6b579e5d9d632d4b3f427b51db",
+  "dependency_count": 214,
+  "runtime": "one native executable; SQLite bundled",
+  "checks": {
+    "package_release": "passed",
+    "validate_package": "passed; manifest source commit, target, binary size/hash, and dependency count verified",
+    "packaged_help": "passed",
+    "zip_crc": "passed; no compressed-data errors",
+    "archive_contains_javascript_or_python_files": false,
+    "packaged_html_contains_inline_javascript": false,
+    "gui_launched": false
+  },
+  "notes": "Package/runtime evidence only. It does not add a packaged UI workflow or establish Windows parity."
+}

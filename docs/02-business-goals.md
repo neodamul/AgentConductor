@@ -215,7 +215,7 @@ Generate plan shows progress with elapsed time from the moment it is pressed, in
 Trace: R-98 -> BG-53 -> SF-85 -> UC-88 -> FR-83 -> QAS-94 -> DD-106. Source: user request, 2026-10-13.
 
 ### BG-54 Run and task status at a glance
-The Agent Room shows the run's current final state immediately: a run status banner with the state in bold colour, task progress and the last error, and a prominent Resume button whenever the run can continue. Task states (failed, completed, pending, waiting, running) are bold and colour-coded in the session heading and in the left session list. In the left list a failed task is red, a task waiting for a decision or tool request has a blinking border, pending tasks use a strong colour, and the Tool requests count turns red and blinks while requests wait.
+The Agent Room shows the run's current final state immediately: a run status banner with the state in bold colour, task progress and the last error, and a prominent Resume button whenever the run can continue. Show the selected workspace mode and current branch with the repository context. The left session list has a localized heading and task count; task states (failed, completed, pending, waiting, running) are bold and colour-coded in the session heading and list. In the left list a failed task is red, a task waiting for a decision or tool request has a blinking border, pending tasks use a strong colour, and the Tool requests count turns red and blinks while requests wait.
 Trace: R-99 -> BG-54 -> SF-86 -> UC-89 -> FR-84 -> QAS-95 -> DD-107. Source: user request, 2026-10-13.
 
 ### BG-55 Goal folders directly in the project folder
@@ -456,11 +456,9 @@ Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162.
 ### BG-110 Distinguish company builds from public releases
 Company developers can label local builds without changing the numeric package version or publishing the label accidentally.
 Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #13.
-
 ### BG-109 Add custom CLI integrations without provider code branches
 Operators can describe supported custom CLI event and quota behavior in a shared agent profile while retaining existing native CLI authentication and defaults.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
-
 ### BG-108 Recover from slow or unresponsive agents with visible evidence
 Operators can distinguish a slow agent from a terminal failure, retain useful work, stop automatic retries when needed, and understand why the task remains blocked.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
@@ -484,7 +482,6 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### BG-116 Operators can get guidance without opening every output
 After a run returns to the workspace, an operator learns how to use the result and the screen by asking, not by inspecting every generated file.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
-
 ### BG-115 Make the run state and the visible activity agree
 Operators can tell what a waiting approval refers to because the activity panel shows the part of the run that is current.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
@@ -546,7 +543,7 @@ An answer that explains how to run or use the result must still be readable when
 Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
 
 ### BG-135 A quiet interface
-Every line on screen earns its place; fixed slogans that look like status hide the real status.
+Every line on screen earns its place in the web and native Rust interfaces; fixed slogans that look like status hide the real status.
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
 
 ### BG-136 No lost or stuck conversations
@@ -569,70 +566,90 @@ Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → 
 A workspace the operator deleted does not come back after a restart or an update, and the list shows only workspaces the operator created or used.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
 
+### BG-141 Native supervision stays quiet while idle or suspended
+Operators can leave the native Workspace and Agent Room open without background refresh errors interrupting them or a late repaint creating duplicate polls.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198. GitHub #221, 2026-10-29.
+
+### BG-142 Connect an in-house CLI without bypassing human control
+An ACIO-enabled CLI can take part in a real supervised task while the Rust coordinator owns session identity, task scope, event collection, and human decisions.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.
+### BG-143 Answer questions about work from the same chat
+The operator can ask what the workspace planned or ran and receive an answer grounded in visible run evidence, without granting the chat coordinator access to private run storage.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### BG-144 Recognize chat at a glance
+The operator can identify and open coordinator chat from the native Workspace without reading an extra text button in the primary work area.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
+
+### BG-145 Slow coordinator replies do not duplicate operator messages
+The operator can trust that a timed-out native chat send is still being reconciled instead of resending the same question.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.
+
 ### BG-141 Fewer errors from the way agents are asked
 Agents that cannot be modified still answer predictably because the application, not the CLI, fixes the prompt layout and the reply shape.
-Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
 
-### BG-143 The coordinator is worth asking
-The operator gets answers about results and how to run them from the same chat that answers questions about the screen.
-Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### BG-148 Keep repository revision checks responsive
+Repository metadata lookups must not hold up native input, state events, or unrelated work, including when the repository uses an unusual Git layout.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
 
-### BG-142 Slow requests do not duplicate what the operator typed
-A stalled application never makes the operator think a message was lost and send it again.
-Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.
+### BG-149 Keep native views responsive without idle polling load
+Workspace-only changes wake Workspace, while run changes wake Workspace and Agent Room because both show run progress. Events received while an independent interactive response is pending still trigger a background refresh; idle views do not consume frequent polling resources.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, user, 2026-10-30.
 
-### BG-144 A finished plan is never lost to a draft before it
-The operator sees the plan the coordinator produced, even when the coordinator printed a broken draft first.
-Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.
+### BG-150 Keep native interaction responsive under slow work
+The app stays responsive when one view is reading slow local state, an agent operation is active, a blocking external I/O request is pending, or another view publishes a state change. It uses bounded standard-library workers and avoids spinning up an async runtime.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
 
-### BG-145 A plan that can be corrected is corrected, not abandoned
-A coordinator slip that the application can describe precisely costs one more round, not the whole planning run.
-Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. GitHub #251, user, 2026-10-29.
+### BG-151 Update active native views only when state changes
+The native UI spends host resources on state reads only after a meaningful state change, while a slow recovery check protects against a missed external notification.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
 
-### BG-146 The coordinator chat answers while the window keeps refreshing
-A slow machine does not turn the periodic refresh into a queue that stops the operator from asking.
-Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203. GitHub #234, user, 2026-10-30.
-
-### BG-147 A slow plan can be questioned instead of waited out
-The operator who sees a plan running for minutes asks the coordinator about it and gets an answer based on what the planner is doing.
-Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204. GitHub #261, user, 2026-10-30.
-
-### BG-148 The plan review can be read after a long analysis
-The operator who waited for a long analysis sees every task in full, not a column of single letters.
-Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.
-
-### BG-149 The operator sees progress at a glance during a run
-Watching a long run, the operator reads a status board instead of scrolling through repeated lines between the entries that matter.
-Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206. GitHub #267, user, 2026-10-30.
-
-### BG-150 A long plan is not stopped by a stale screen state
-A plan of several phases can be carried through in one session; the operator never has to restart the app to continue.
-Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187 → QAS-193 → DD-207. GitHub #269, user, 2026-10-30.
-
-### BG-151 The operator never has to guess whether work stopped
-At any moment of planning and execution the operator can tell from the screen whether work is going on, has ended, has failed, or whether the app is not answering, without restarting the app or opening log folders.
-Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188 → QAS-194 → DD-208. GitHub #273, user, 2026-10-31.
-
-### BG-152 Documentation matches the app the reader has
-A reader comparing the manual with the app sees the same version and the same screens.
-Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209. GitHub #277, user, 2026-10-31.
-
-### BG-153 No panel or dialog looks frozen
-Whatever the operator waits for on the workspace page, the place they are looking at tells whether it is still going on.
-Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, user, 2026-11-01.
-
-### BG-154 No press goes unanswered
-The operator never wonders whether a click was taken: every press shows at once that it is being handled.
-Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.
-
-### BG-155 The docs a user reads match the release they run
-The manual and the README never again lag the app by many releases without anyone noticing.
-Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-192 → QAS-198 → DD-212. GitHub #290, user, 2026-11-01.
+### BG-152 Release inactive workspace resources during navigation
+Switching away from an idle workspace releases its startup lease promptly, while change notifications continue to follow the workspace currently displayed.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
 
 ### BG-156 Usage is reported on a slow managed machine
-A company PC with scanning, managed settings or a proxy shows the account usage like a personal machine does, only a little later.
-Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
+A company machine that takes longer to start the Claude CLI or return `/usage` still reports quota, and the operator can see that the query is progressing.
+Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, 2026-11-01.
 
-### BG-157 The absence of silent waits is enforced
-The coverage reached by the progress work does not erode when a request is added later.
-Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.
+### BG-157 Diagnose quota collection failures from the native UI
+Operators can identify why an agent quota is unavailable without opening logs or relying on a provider-specific screen guess, while valid Enterprise usage remains readable when its amount is grouped or its terminal output uses cursor movement for spacing.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
+### BG-154 See coordinator and task progress at a glance
+The operator can understand a run's overall state and each task's assignment, state and recent output from the coordinator Activity view without reading repeated save summaries.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → DDR-51 → DD-212. Rust port of JavaScript #267, GitHub #286, 2026-11-01.
+
+### BG-155 Keep native Rust UI at feature parity with the current product
+Rust UI users can supervise coordinator and task progress with the same essential information available in the current JavaScript UI, without requiring the JavaScript implementation to be taken over or changed.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.
+### BG-153 Make long workspace waits legible
+The operator can tell that a long workspace job is still active, how long it has waited, and whether the app has stopped sending state updates.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
+
+### BG-154 Acknowledge every user request
+Every user-initiated request visibly starts when pressed, then reports its operation and elapsed time if the response takes longer than one second.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, 2026-11-01.
+
+### BG-158 Correct an empty task scope instead of losing the plan
+An actionable, field-specific correction gives the coordinator one chance to fix a phased plan whose task omitted its owned files.
+Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215. GitHub #251, 2026-11-02.
+
+### BG-159 Keep planning resilient to imperfect coordinator drafts
+Operators can review a complete plan even when a model emitted an unfinished JSON draft before its final structured answer.
+Trace: R-204 → BG-159 → SF-192 → UC-195 → FR-196 → QAS-202 → DDR-53 → DD-216. Rust parity port of main #247, 2026-11-02.
+
+### BG-160 Show the actionable integration failure
+Operators need the failing test's actual error to review or pass into a corrective retry while retaining related process warnings for context.
+Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197 → QAS-203 → DDR-54 → DD-217. GitHub #323, 2026-11-02.
+
+### BG-161 Make coordinator chat usable with registered CLI agents
+Operators need a coordinator that is visible in the workspace and can answer through its existing CLI authentication while preserving the read-only safety boundary, including for custom CLI profiles. When the boundary blocks chat, the operator needs a clear reason and remedy in the active UI language.
+Trace: R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-198/FR-199/FR-200 → NFR-88/NFR-89 → QAS-204/QAS-205 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #325/#326/#333, 2026-11-02.
+
+### BG-162 Prevent updates from interrupting active work
+Operators need a clear explanation when an update is blocked by running work or a failed readiness check, so they can protect work and decide what to do next.
+Trace: R-207 → BG-162 → SF-195 → UC-199 → FR-201/NFR-90 → QAS-206 → DDR-56 → DD-219.
+
+### BG-163 Diagnose custom CLI permission refusal without hiding the cause
+Operators can tell when a custom CLI refused a tool or emitted non-JSON output, see the bounded evidence that explains it, and correct an auto-approval profile before trusting a run.
+Trace: R-208 → BG-163 → SF-196 → UC-200 → FR-202/NFR-91 → QAS-207 → DDR-57 → DD-220. GitHub #341, 2026-11-03.

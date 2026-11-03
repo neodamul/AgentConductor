@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "date": "2026-10-20",
+  "application_version": "0.1.31",
+  "source_commit": "4a114ec6a76141c48ebe8138694398572cae1acd",
+  "binary_sha256": "f288ff81542870c49a40a73824a5fe70b0d10fe917370dfa66c3f13251d2ec11",
+  "target": "aarch64-apple-darwin",
+  "environment": "one packaged app process, isolated HOME, disposable non-Git shared-folder project",
+  "run_id": "run-0c80f04f-135a-4f4b-8f65-93873419cba8",
+  "plan_digest": "b70ad314626af25354b20c3e27ae4af05aaa1571bfc89aa0058b3d5534b15f48",
+  "candidate_revision": "807791e56ea52bdc4b436731f09f194d84e96044",
+  "tasks": [
+    {"id": "write-one", "agent": "issue9-fixture", "role": "development", "owned_paths": ["one.txt"], "dependencies": [], "started_ms": 1792504113905, "finished_ms": 1792504113951},
+    {"id": "write-two", "agent": "issue9-fixture", "role": "development", "owned_paths": ["two.txt"], "dependencies": [], "started_ms": 1792504113914, "finished_ms": 1792504113980},
+    {"id": "write-three", "agent": "issue9-fixture", "role": "development", "owned_paths": ["three.txt"], "dependencies": [], "started_ms": 1792504113926, "finished_ms": 1792504113982}
+  ],
+  "verification": {
+    "coordinator_registered_in_ui": true,
+    "profile_max_sessions": 3,
+    "task_execution_intervals_overlap": true,
+    "tasks_completed": 3,
+    "task_tests": {"write-one": 0, "write-two": 0, "write-three": 0},
+    "candidate_diff_paths": ["one.txt", "three.txt", "two.txt"],
+    "candidate_approved": true,
+    "workspace_integration_confirmed": true,
+    "final_run_state": "completed",
+    "dark_theme_active_approval_button_readable": true,
+    "light_theme_restored": true,
+    "provider_cli_invoked": false,
+    "external_service_called": false,
+    "original_workspace_modified": false,
+    "windows_packaged_ui_verified": false
+  },
+  "agent_room_audit": {
+    "activity": "Each of the three selected tasks showed its own instructions and result summary.",
+    "raw_logs": "The selected task exposed its JSON result event and reported no stderr errors.",
+    "lessons": "The empty state explains that draft observations require explicit promotion.",
+    "team_briefing": "Read-only briefing showed all three tasks Completed and No action required.",
+    "custom_cli_session_metadata": "Native session ID and model are unknown for this mock CLI, as expected; provider-session integration is not established by this fixture."
+  },
+  "local_validation": {
+    "command": "cargo test --offline --locked --all-targets --features native-ui-probe --no-fail-fast",
+    "passed": 770,
+    "ignored": 14,
+    "failed": 0,
+    "suites": 260,
+    "duration_seconds": 216.85,
+    "clippy": "cargo clippy --offline --locked --all-targets --features native-ui-probe -- -D warnings: passed"
+  },
+  "scope_note": "The project folder was not a Git repository. The app's separate approved-candidate integration into the disposable shared folder completed; this is not evidence of a Git commit or branch merge.",
+  "fixture_note": "The first coordinator fixture output used pretty-printed multi-line JSON, which the JSONL parser correctly rejected. The second omitted required task roles. After correcting the test-only Rust fixture to emit one compact result event per line with a valid role, plan generation and the full workflow passed. These failures were fixture-contract mistakes, not product failures.",
+  "acceptance": {
+    "packaged_native_ui_workflows": "4/25",
+    "adds_distinct_workflow": false,
+    "reason": "Rechecks the already-counted parallel shared-folder plan-to-merge workflow on the exact packaged build; it strengthens concurrency and dark-theme evidence without inflating the denominator.",
+    "shipped_rust_replacement": false
+  },
+  "screenshot_artifact": null
+}

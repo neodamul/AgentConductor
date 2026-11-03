@@ -1,0 +1,55 @@
+{
+  "source_commit": "cd9935de0d598612af1f52c1a11b699c1714de26",
+  "source_branch": "codex/issue-9-native-ui-parity",
+  "target": "aarch64-apple-darwin",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-cd9935de0d59.zip",
+  "archive_sha256": "7c85872c53352f2c072dbf5bc4d76c026dcbef00bf700f0af4d2f32a52323167",
+  "binary_sha256": "50fd0bfbf5ff474d80c9c53428ef1c055d4337c6063dc31395cb584ec3e6b43a",
+  "binary_bytes": 18390272,
+  "dependency_count": 214,
+  "validation": {
+    "package_manifest": true,
+    "packaged_help": true,
+    "packaged_binary_sha256": true,
+    "archive_sha256": true,
+    "fixture_workflow_smoke": true,
+    "exact_head_windows_ci": true,
+    "packaged_gui_review": false,
+    "exact_head_macos_ci": true
+  },
+  "smoke": {
+    "workspace_cases": [
+      "shared/git",
+      "shared/folder",
+      "worktree/git",
+      "worktree/folder"
+    ],
+    "tasks_per_case": 3,
+    "tests_per_case": 3,
+    "parallel_execution": true,
+    "unapproved_merge_refused": true,
+    "approved_merge_verified": true,
+    "real_agent_cli_invoked": false
+  },
+  "acceptance_note": "Exact pushed-head macOS and Windows validation and package execution passed. Both platform artifacts were retained. Fixture smoke is deterministic; no GUI review or real agent CLI was used. Issue #9 remains 8/25 packaged UI workflows.",
+  "remote_validation": {
+    "run_id": 39740270740,
+    "macos": "passed",
+    "windows": "passed",
+    "conclusion": "success",
+    "artifacts": {
+      "macos": {
+        "id": 12409469483,
+        "name": "native-package-macos-latest-eff9f44858ada378ac230a71dbf040f4c47455bc",
+        "size_bytes": 21609758,
+        "sha256": "c1a1b6efda2c88180815aafb38f07b05c94dbd6f9298dbf61236083f4104724f"
+      },
+      "windows": {
+        "id": 12409824890,
+        "name": "native-package-windows-latest-eff9f44858ada378ac230a71dbf040f4c47455bc",
+        "size_bytes": 15720573,
+        "sha256": "5d2e0cf637a586cf1b3a05cbed2d4c93a509917e00074533d1515b7a357d18ed"
+      }
+    }
+  }
+}

@@ -7,13 +7,24 @@ provider icon is bundled or copied into this wiki. macOS resolves bundle identif
 through NSWorkspace and renders a bounded PNG. Windows searches per-user executable
 locations and extracts an icon. Built-in providers receive image avatars only when
 resolution succeeds; custom providers and missing applications retain letter avatars.
-The process caches the results. PNG data URLs are capped at 64 KiB.
+The process caches the results. PNG data URLs are capped at 64 KiB. Native eframe
+snapshots carry those URLs only when requested; the sidebar decodes them with the
+existing image dependency, caches egui textures by provider URL and falls back to
+monograms when decoding or discovery yields no icon.
 
 On 2026-10-10, all five icon tests passed, including the normally ignored test
 against actually installed Claude, Codex and OpenCode macOS applications. The
 encoded-PNG contract checks chunk CRCs, size bounds and malformed pixels. Native
 page visibility remains supported by the earlier Claude acceptance record; this
 run verifies extraction and encoding rather than a new visual interaction.
+
+On 2026-10-18, a native rendered-widget regression failed before sidebar artwork
+rendering and passed after adding the bounded decoder and texture cache. The focused
+suite passed 22 tests; one installed-app icon test was ignored. An optimized macOS
+Rust build showed the installed Claude and Codex icons in actual sidebar cards while
+a custom agent kept its monogram. The UI snapshots explicitly request icons. The
+Windows app was not available for runtime confirmation, so Windows path discovery
+and eframe rendering remain unverified.
 Local extracted PNGs and their hashes are retained outside tracked assets in
 .agentconductor/verification/icons/manifest.json. Native Windows executable
 path discovery, extraction and rendering remain unverified; do not infer them
@@ -21,7 +32,6 @@ from successful Windows compilation or the macOS icon tests. Revalidate on new
 provider install locations, bundle identifiers or operating-system versions.
 
 Sources:
-- [src/icons.rs](../../src/icons.rs): SHA-256 `29473114092662cff0a2da8870bf4f7d6209105275024d0e50240bc5f97ad301`.
-- [tests/icons.rs](../../tests/icons.rs): SHA-256 `68c05979a8f7642ce752166c3d2fbffc6f22895ee92fd48eacfd8618d56b3762`.
-- [src/ui/startup.js](../../src/ui/startup.js): SHA-256 `ea873078f3bac5d1f7114aea8d07f9735b539636653a6633f85a926c54ac6969`.
-- [src/ui/room.js](../../src/ui/room.js): SHA-256 `ae66c80564d4db7322064e9054c7dfcb1e6afc3a5eb6e2670484ce92fa4351eb`.
+- [Provider resolution and bounded PNG data URLs](../../src/icons.rs).
+- [Native texture rendering](../../src/native_ui_probe/workspace/sidebar/icons.rs).
+- [Decoder and rendering contracts](../../tests/icons.rs) and [native rendered-widget regression](../../tests/native_ui_sidebar_icons.rs).

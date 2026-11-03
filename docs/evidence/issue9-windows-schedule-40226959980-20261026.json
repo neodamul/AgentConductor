@@ -1,0 +1,22 @@
+{
+  "workflow_run": 40226959980,
+  "commit": "47cdacfe",
+  "date": "2026-10-26",
+  "result": "failed_exact_windows_schedule_acceptance",
+  "passed": [
+    "macOS and Windows platform validation",
+    "macOS and Windows package builds and smoke checks",
+    "Windows default desktop save",
+    "Windows briefing UI journey"
+  ],
+  "failed": {
+    "test": "exact_windows_package_schedules_a_waiting_agent_room_task",
+    "reason": "The schedule button remained clipped below the maximized window; the UI Automation scrollbar did not support RangeValuePattern.",
+    "geometry": "button=(748,792)-(847,812); window_bottom=728",
+    "effect": "No schedule action ran and no manual_schedule value was persisted."
+  },
+  "root_cause_found": "The WM_MOUSEWHEEL pointer coordinates were at the window center, over the activity column, while the schedule control is in the right-side inspector column.",
+  "local_fix": "Target the visible lower-right inspector area for the wheel event and remove the unsupported scrollbar-range probe.",
+  "local_verification": "The regression contract failed before the coordinate fix; 15 focused tests, warning-denied all-target Clippy, rustfmt, and diff checks pass after the fix.",
+  "acceptance": "Windows exact-package scheduling remains unverified until manual_schedule=2099-01-01T09:00:00+09:00 is persisted."
+}

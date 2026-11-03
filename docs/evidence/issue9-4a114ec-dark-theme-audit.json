@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "kind": "packaged_component_visual_audit",
+  "date": "2026-10-20",
+  "application_version": "0.1.31",
+  "source_commit": "4a114ec6a76141c48ebe8138694398572cae1acd",
+  "target": "aarch64-apple-darwin",
+  "binary_sha256": "f288ff81542870c49a40a73824a5fe70b0d10fe917370dfa66c3f13251d2ec11",
+  "screen": "Agent Room completed run at 1140x772",
+  "inspection": {
+    "process_reused": true,
+    "additional_app_process_started": false,
+    "theme_before": "light",
+    "theme_checked": "dark",
+    "theme_restored": "light",
+    "visible_elements": [
+      "Completed status and its green-tinted status panel",
+      "Task completion count and passing integration test",
+      "Selected Diff & tests tab and readable candidate diff",
+      "Task inspector fields and disabled state"
+    ],
+    "visual_issue_reproduced": false,
+    "enabled_primary_green_button_checked": false,
+    "screenshot_artifact": null
+  },
+  "verification": {
+    "targets": [
+      "interface_theme",
+      "native_ui_appearance",
+      "native_ui_profile_contrast",
+      "native_ui_workspace_style",
+      "native_room_layout"
+    ],
+    "passed": 15,
+    "failed": 0,
+    "fmt_passed": true,
+    "diff_check_passed": true
+  },
+  "acceptance": {
+    "packaged_native_ui_workflows": "4/25",
+    "adds_distinct_workflow": false,
+    "shipped_rust_replacement": false
+  }
+}

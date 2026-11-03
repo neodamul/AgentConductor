@@ -1,0 +1,39 @@
+{
+  "source_commit": "4b0a928f65c00fece86a42992602bd7e945ae51d",
+  "target": "aarch64-apple-darwin",
+  "host_build_note": "A temporary Z3 soname compatibility symlink in /private/tmp was used for the host LLVM tool and removed after packaging.",
+  "archive": "agentconductor-aarch64-apple-darwin-4b0a928f65c0.zip",
+  "archive_sha256": "8db25928b98f8ccd0c858f9fc3c32f3789d7ec201579c2d247d16e976f4217df",
+  "binary": "agentconductor",
+  "binary_bytes": 17644416,
+  "binary_sha256": "150dfe6f8473ba38c28606c1b0d2e248761022ec5b7d7225199584a3d94666cb",
+  "dependency_count": 214,
+  "manuals_verified": [
+    "README.md",
+    "docs/user-manual.md",
+    "docs/user-manual.ko.md",
+    "docs/user-manual.html",
+    "docs/user-manual.ko.html"
+  ],
+  "package_smoke": {
+    "exit_code": 0,
+    "evidence": ".agentconductor/verification/packaged-workflow/run-6522-1792451304545878000-0/smoke.json",
+    "cases": [
+      {"workspace_mode": "shared", "source_mode": "git", "tasks": 3, "tests": 3, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"workspace_mode": "shared", "source_mode": "folder", "tasks": 3, "tests": 3, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"workspace_mode": "worktree", "source_mode": "git", "tasks": 3, "tests": 3, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"workspace_mode": "worktree", "source_mode": "folder", "tasks": 3, "tests": 3, "unapproved_merge_refused": true, "approved_merge_verified": true}
+    ]
+  },
+  "verification": {
+    "validate_package_exit_code": 0,
+    "binary_help_exit_code": 0,
+    "archive_integrity": true,
+    "all_archive_checksums_verified": true
+  },
+  "not_verified": [
+    "Windows package for this source commit",
+    "packaged native UI visual acceptance",
+    "all 25 end-to-end workflows"
+  ]
+}

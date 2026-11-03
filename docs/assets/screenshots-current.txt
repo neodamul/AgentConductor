@@ -1,4 +1,12 @@
-The captured screens in this folder match the interface of 0.1.58.
-Recaptured 2026-11-02 for the workspace screens (light, dark, Korean) and the agent settings dialog (#325, #326). Checked 2026-11-02 against the changes since (#331): a notice style that keeps line breaks and scrolls, which is not on a captured screen. The agent room screens are unchanged and were checked, not recaptured.
-Checked 2026-11-03 against the changes since (#337): no interface change.
-Checked 2026-11-03 against the changes since (#341): a badge on the agent card built from existing styles, which is not on a captured screen.
+Workspace screenshots were captured 2026-11-03 from the Rust-native v0.1.57 source-build app.
+English and Korean Agent Room screenshots were recaptured from source commit `01f7cc69` on
+2026-11-03 with the built-in egui framebuffer capture. These are not screenshots captured from
+packaged release binaries. The disposable Agent Room fixture used a deterministic local Rust mock,
+completed three tasks and three integration tests, and stopped at `waiting_approval`. No provider
+CLI ran; no user workspace was touched; the candidate was neither approved nor merged.
+
+- ui-workspace-current.png
+- ui-workspace-korean-current.png
+- ui-workspace-dark-current.png
+- ui-agent-room-native.png
+- ui-agent-room-native-ko.png

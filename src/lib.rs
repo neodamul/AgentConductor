@@ -4,10 +4,13 @@ pub mod adapters;
 pub mod agent_settings;
 pub mod archive;
 pub mod availability;
+pub mod chat;
+pub mod chat_context;
 pub mod claude_control;
 pub mod cli_io;
 pub mod cooperative;
 pub mod coordinator;
+pub mod custom_profile_registry;
 pub mod gates;
 pub mod git;
 pub mod git_head;
@@ -37,7 +40,6 @@ pub mod release_archive;
 pub mod release_notes;
 pub mod release_package;
 pub mod release_smoke;
-pub mod request_steps;
 pub mod roles;
 pub mod slug_progress;
 pub mod slugs;
@@ -47,8 +49,6 @@ pub mod ui;
 pub mod workflow;
 
 pub mod briefing;
-pub mod chat;
-pub mod chat_context;
 
 pub mod desktop;
 

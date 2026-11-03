@@ -109,7 +109,6 @@ pub fn render(config: &Value, project: &Path, run: Option<(&Report, &str)>) -> S
 
 const MAX_TAIL: usize = 1500;
 
-/// The end of a log, as text, starting at a line boundary when the log was cut.
 fn tail(path: &Path, max: usize) -> String {
     let Ok(bytes) = std::fs::read(path) else {
         return String::new();
@@ -123,14 +122,15 @@ fn tail(path: &Path, max: usize) -> String {
     text.trim().to_owned()
 }
 
-/// GitHub #261 (DD-204): which plan or start job is running or has finished, for how long, and how much output its
-/// process has written and when it last wrote, so the coordinator can say why a plan takes long. It only reads files.
+/// Describe active work from persisted metadata and bounded log tails; this is read-only.
 pub fn running(saved: &Value, root: &Path, now_ms: u64) -> String {
     let mut out = String::from("## Running work\n\n");
-    let Some(id) = saved["job"]["id"]
-        .as_str()
-        .filter(|id| !id.is_empty() && id.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-'))
-    else {
+    let Some(id) = saved["job"]["id"].as_str().filter(|id| {
+        !id.is_empty()
+            && id
+                .bytes()
+                .all(|byte| byte.is_ascii_alphanumeric() || byte == b'-')
+    }) else {
         out.push_str("Nothing is running: no plan or start job is active.\n");
         return crate::prompt_form::neutral(&out);
     };
@@ -144,9 +144,8 @@ pub fn running(saved: &Value, root: &Path, now_ms: u64) -> String {
     } else {
         "running".into()
     };
-    let started = saved["job"]["started_ms"].as_u64().filter(|ms| *ms > 0);
     let _ = write!(out, "The {kind} job is {state}");
-    if let Some(started) = started {
+    if let Some(started) = saved["job"]["started_ms"].as_u64().filter(|ms| *ms > 0) {
         let _ = write!(
             out,
             "; it started {} s ago",
@@ -157,7 +156,6 @@ pub fn running(saved: &Value, root: &Path, now_ms: u64) -> String {
     if let Some(phase) = saved["proposal"]["slug_phase"].as_str() {
         let _ = writeln!(out, "Planning phase: {}", cut(phase, PROMPT_LINE));
     }
-    // The planner's own output is in the proposal folder; any other job writes into its process folder.
     let (dir, output) = match (kind, saved["proposal"]["directory"].as_str()) {
         ("plan", Some(proposal)) => (Path::new(proposal).join("process"), "stdout.jsonl"),
         _ => (
@@ -169,12 +167,13 @@ pub fn running(saved: &Value, root: &Path, now_ms: u64) -> String {
     for name in [output, "stderr.log"] {
         if let Ok(metadata) = std::fs::metadata(dir.join(name)) {
             bytes += metadata.len();
-            let ms = metadata
-                .modified()
-                .ok()
-                .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
-                .map_or(0, |d| d.as_millis() as u64);
-            last = last.max(ms);
+            last = last.max(
+                metadata
+                    .modified()
+                    .ok()
+                    .and_then(|time| time.duration_since(std::time::UNIX_EPOCH).ok())
+                    .map_or(0, |duration| duration.as_millis() as u64),
+            );
         }
     }
     if last == 0 {

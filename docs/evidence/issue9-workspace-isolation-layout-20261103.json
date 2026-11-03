@@ -1,0 +1,46 @@
+{
+  "date": "2026-11-03",
+  "issue": 9,
+  "candidate_commit_before_correction": "30e30e80",
+  "reference": {
+    "source": "origin/main:docs/assets/ui-workspace-current.png",
+    "source_commit": "f3b819020d97d141daf6b03d979fb36ef9b1cd9d",
+    "image_sha256": "daaddc7e2b21e142a47119d09f12954986c6c439492a5906429e18f8dcbfe828",
+    "visible_version": "v0.1.55",
+    "limitation": "Used only to check worktree-checkbox placement; the screenshot is stale for full-screen parity."
+  },
+  "change": "Restore the optional Git-worktree checkbox beside the project-folder picker, matching the latest available legacy Workspace source and screenshot.",
+  "tdd": {
+    "red": {
+      "command": "cargo test --locked --offline --features native-ui-probe --test native_ui_workspace_isolation_layout",
+      "result": "failed as expected: Browse bounds y=449..469; checkbox bounds y=709..729 after the prior placement change"
+    },
+    "green": {
+      "command": "cargo test --locked --offline --features native-ui-probe --test native_ui_workspace_isolation_layout",
+      "result": "passed: Browse and checkbox centers are aligned within 2 px"
+    }
+  },
+  "rust_capture": {
+    "path": "docs/evidence/issue9-workspace-isolation-current-main-reference-20261103.png",
+    "viewport": "1280x892",
+    "sha256": "b363c436a6bafbfb7e71284b0b44601d2cc79d8894f3ea04bad3e83966610afe",
+    "fixture": "Disposable saved workspace with three synthetic agents and synthetic Claude/Codex quotas; no CLI, credential, or user repository access."
+  },
+  "verification": {
+    "focused_tests": "16 passed across native_ui_language, native_ui_probe, native_ui_probe_project_layout, and native_ui_workspace_isolation_layout",
+    "source_layout": "2 passed",
+    "clippy": "cargo clippy --all-targets --locked --offline --features test-fixtures -- -D warnings passed",
+    "rustfmt": "cargo fmt --all -- --check passed",
+    "diff_check": "git diff --check passed",
+    "line_counts": {
+      "src/native_ui_probe/workspace/goal.rs": 259,
+      "tests/native_ui_workspace_isolation_layout.rs": 57
+    }
+  },
+  "supersedes": "The earlier claim that a separate execution-isolation section matched the reference was based on an outdated Rust capture and was incorrect.",
+  "acceptance": {
+    "issue_9_overall": "22/50",
+    "shipped_default_rust_ui": "0/25",
+    "credit_added": false
+  }
+}

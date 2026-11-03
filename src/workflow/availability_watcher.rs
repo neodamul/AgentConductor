@@ -24,13 +24,14 @@ fn owner() -> process::Ownership {
 }
 pub fn ensure_availability_watcher(dir: &Path, exe: &Path) -> Result<bool, String> {
     // Review/completed runs have no timer work; snapshots must not claim the approving child's lock.
+    let report = load(dir)?;
     if matches!(
-        load(dir)?.state.as_str(),
+        report.state.as_str(),
         "waiting_approval" | "approved" | "completed" | "rejected"
     ) {
         return Ok(false);
     }
-    let entries = refresh_availability(dir, clock()?)?;
+    let entries = availability_timer(&report, clock()?);
     if entries.is_empty() || dir.join("stop.request").exists() {
         return Ok(false);
     }
@@ -90,11 +91,6 @@ pub fn ensure_availability_watcher(dir: &Path, exe: &Path) -> Result<bool, Strin
     ownership.pid = Some(child.id());
     ownership.process_group = Some(child.id() as i32);
     process::record_owner(&log, &ownership)?;
-    Store::open(dir.join("state.sqlite"))?.record(
-        "availability_coordinator",
-        &serde_json::json!({"pid":child.id(),"status":"started","entries":entries}),
-        "Independent coordinator owns the durable availability reservation",
-    )?;
     let reaper_log = log.clone();
     std::thread::spawn(move || {
         if let Ok(status) = child.wait() {

@@ -1,0 +1,22 @@
+{
+  "issue": 374,
+  "source": "28986ee20a600f27508488c3ee09dec65ce225b0",
+  "scope": "local macOS current binary and native UI controller; not Windows package acceptance",
+  "verified": {
+    "package_run_recovery": "1 passed; explicitly ran ignored CLI binary lifecycle test",
+    "ui_resume_and_native_ui_launch": "14 passed; real UI child Resume, stop-digest binding, stale decision rejection and newer-stop protection"
+  },
+  "historical_windows_failure": {
+    "run": 41446760915,
+    "artifact": 13145767282,
+    "source": "ed93e9056c26c8d8e881c0794a7db286e4fa0245",
+    "result": "UI Resume did not reach waiting_approval within 30 seconds",
+    "limitation": "artifact contains packaged smoke evidence but no lifecycle run directory; cannot infer persisted state or definitive cause"
+  },
+  "subsequent_fixes": [
+    "812c5e33",
+    "2b0cbb8c"
+  ],
+  "pending": "post-fix exact Windows packaged UI lifecycle verification",
+  "acceptance_credit": false
+}

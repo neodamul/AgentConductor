@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "date": "2026-10-23",
+  "verification_type": "Windows VM access probe",
+  "branch_head": "f0d5ed92eb824f68716d91909a8133ddd655ea0f",
+  "host": "macOS arm64",
+  "virtual_machine": {
+    "provider": "UTM",
+    "guest": "Windows ARM64",
+    "configured_memory_gb": 10,
+    "initial_state": "stopped",
+    "observed_state": "booted to Windows lock screen; no authenticated desktop",
+    "final_state": "stopped"
+  },
+  "credentials_entered": false,
+  "project_files_accessed": false,
+  "windows_build_attempted": false,
+  "windows_package_verified": false,
+  "windows_ui_verified": false,
+  "result": "Windows validation requires an authorized guest login or another Windows build host. The VM was stopped after the lock-screen probe to return its configured memory to the host."
+}

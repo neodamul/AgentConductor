@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-24",
+  "issue": 9,
+  "pull_request": 22,
+  "head_sha": "95fe85dde121ba0fb1fdc1020c301e53baba103d",
+  "workflow_run_id": 40089756382,
+  "validation": {
+    "macos": "success",
+    "windows": "success",
+    "checks": [
+      "native build",
+      "source/test layout",
+      "all-target tests",
+      "native UI checks",
+      "format",
+      "clippy -D warnings",
+      "unsafe comment gate"
+    ]
+  },
+  "macos_package": {
+    "job": "native-package (macos-latest)",
+    "conclusion": "success",
+    "archive_sha256": "cef8d2001c1bf87188f4f86b2da96587b7a18ec4262386575bd8eb5857e0907e",
+    "workflow_artifact_id": 12558817898,
+    "workflow_artifact_sha256": "bef12d7e6646c1589732aa4daaef6435133f923f7dff4ecc4046efa9f5add38d"
+  },
+  "windows_package": {
+    "job": "native-package (windows-latest)",
+    "conclusion": "success",
+    "archive_sha256": "84b60521ae534a69349776763c2e1e9db0e14401f59f0f73cdff3b48d279bdc1",
+    "workflow_artifact_id": 12560105056,
+    "workflow_artifact_sha256": "916871c50c4332f62002bbd7575a810aa0ee3d27aef4e14b4e3bbc8497db4582",
+    "test": {
+      "command": "cargo test --locked --test windows_desktop -- --nocapture",
+      "name": "default_native_workspace_is_accessible_and_saves_through_ui_automation",
+      "result": "1 passed, 0 failed",
+      "observation": "The exact packaged binary saved the expected goal into the isolated default workspace startup file."
+    }
+  },
+  "scope": {
+    "counts_toward_exact_packaged_default_save_verification": true,
+    "aggregate_ui_acceptance_count_changed": false,
+    "reason": "Map against the tracked 25-workflow acceptance inventory before changing its aggregate.",
+    "direct_utm_visual_interaction_verified": false,
+    "issue_9_complete": false
+  },
+  "local_documentation_validation": {
+    "command": "cargo test --locked --offline --test public_docs --test source_layout --no-fail-fast",
+    "result": "13 passed across 2 suites, 0 failed"
+  },
+  "knowledge_assets": {
+    "graphify": {
+      "nodes": 9362,
+      "edges": 15785
+    },
+    "cocoindex": "CLI unavailable in this environment"
+  }
+}

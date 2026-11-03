@@ -1,0 +1,38 @@
+{
+  "date": "2026-10-20",
+  "issue": 9,
+  "source_commit": "7419557168ddc3ffe76c446cf292152cc9fc1932",
+  "target": "aarch64-apple-darwin",
+  "archive": {
+    "path": "dist/agentconductor-aarch64-apple-darwin-7419557168dd.zip",
+    "bytes": 21580718,
+    "sha256": "610f3987658acd5e8c319d827539ab0fe2745d45ee28d2dced754c50365becfb",
+    "zip_crc": "passed",
+    "sha256sum": "passed"
+  },
+  "binary": {
+    "path": "dist/agentconductor-aarch64-apple-darwin-7419557168dd/agentconductor",
+    "bytes": 17925856,
+    "sha256": "6988a2dd852b23665be6f43f4d2d7e20092dbef5e20db49574cd6d1982aa6836",
+    "packaged_help": "passed"
+  },
+  "dependency_count": 214,
+  "runtime": "one native executable; SQLite bundled",
+  "external_requirements": ["Git", "selected authenticated agent CLIs"],
+  "package_release": "passed",
+  "validate_package": "passed",
+  "smoke": {
+    "exit_code": 0,
+    "cases": 4,
+    "tasks_per_case": 3,
+    "tests_per_case": 3,
+    "all_cases_parallel": true,
+    "unapproved_merge_refused": true,
+    "approved_merge_verified": true,
+    "evidence": "docs/evidence/issue9-7419557-macos-smoke.json"
+  },
+  "native_ui_acceptance": "2/25; unchanged",
+  "gui_opened": false,
+  "windows_package_verified": false,
+  "github_release_published": false
+}

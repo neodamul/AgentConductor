@@ -1,0 +1,92 @@
+{
+  "opencode": {
+    "direct_folder_no_exec": [
+      "-p"
+    ],
+    "direct_folder_plain": [
+      "exec",
+      "-",
+      "--json"
+    ],
+    "direct_folder_with_skip": [
+      "exec",
+      "--skip-git-repo-check"
+    ],
+    "full_access_args": null,
+    "invocation": {
+      "args": [
+        "run",
+        "--format",
+        "json",
+        "--file",
+        "task.txt",
+        "Follow the attached task scope and completion conditions"
+      ],
+      "executable": "opencode",
+      "input": "file"
+    },
+    "invocation_bad_session": {
+      "error": "invalid explicit session ID"
+    },
+    "invocation_resume": {
+      "args": [
+        "run",
+        "--format",
+        "json",
+        "--file",
+        "task.txt",
+        "Follow the attached task scope and completion conditions",
+        "--session",
+        "sess-1"
+      ],
+      "executable": "opencode",
+      "input": "file"
+    },
+    "session_initial_bad_model": {
+      "error": "model must belong to an observed CLI catalog"
+    },
+    "session_initial_bad_session": {
+      "error": "invalid explicit session ID"
+    },
+    "session_initial_both": [
+      "run",
+      "--format",
+      "json",
+      "--file",
+      "task file.md",
+      "Follow the attached task scope and completion conditions",
+      "--model",
+      "m1",
+      "--session",
+      "sess-1"
+    ],
+    "session_initial_model": [
+      "run",
+      "--format",
+      "json",
+      "--file",
+      "task file.md",
+      "Follow the attached task scope and completion conditions",
+      "--model",
+      "m1"
+    ],
+    "session_initial_none": [
+      "run",
+      "--format",
+      "json",
+      "--file",
+      "task file.md",
+      "Follow the attached task scope and completion conditions"
+    ],
+    "session_initial_session": [
+      "run",
+      "--format",
+      "json",
+      "--file",
+      "task file.md",
+      "Follow the attached task scope and completion conditions",
+      "--session",
+      "sess-1"
+    ]
+  }
+}

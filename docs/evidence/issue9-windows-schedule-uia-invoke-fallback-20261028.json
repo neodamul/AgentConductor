@@ -1,0 +1,19 @@
+{
+  "issue": 9,
+  "date": "2026-10-28",
+  "source_head": "f53ad68150ee8f27eba0cee1407a3eb6d84466ea",
+  "workflow_run": "https://github.com/neodamul/AgentConductor/actions/runs/40518621889",
+  "result": "failed",
+  "failed_journey": "The exact packaged Windows UI displayed and accepted the requested schedule timestamp, but the schedule button could not receive UIA keyboard focus. The guarded keyboard path did not confirm its target; the process-checked pointer fallback was sent, but persisted manual_schedule stayed absent.",
+  "red": "schedule_tries_uia_invoke_before_unchecked_pointer_fallback failed before the fallback was added.",
+  "change": "After the guarded keyboard attempt, call the button InvokePattern before the foreground- and process-checked pointer fallback.",
+  "local_verification": {
+    "command": "cargo test --locked --test windows_schedule_dispatch",
+    "result": "5 passed",
+    "cargo_fmt_check": "passed",
+    "git_diff_check": "passed",
+    "changed_source_and_test_lines": [140, 197]
+  },
+  "acceptance": "unchanged at 22/25",
+  "next_check": "Rerun the exact Windows package. Persisted manual_schedule=2099-01-01T09:00:00+09:00 is required before counting the schedule workflow."
+}

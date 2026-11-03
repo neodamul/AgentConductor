@@ -128,6 +128,44 @@ fn goals_accumulate_as_slugs_with_trees_outside_git_status() {
 }
 
 #[test]
+fn changing_repository_detaches_the_active_goal_before_planning_again() {
+    let (root, plan) = support::setup("worktree");
+    let (other_root, _) = support::setup("worktree");
+    let repo = root.join("repo").canonicalize().unwrap();
+    let other_repo = other_root.join("repo").canonicalize().unwrap();
+    let startup = Startup::open(
+        &root.join("desktop"),
+        Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+    )
+    .unwrap();
+    mutate(&startup, serde_json::json!({"kind":"save","config":{"name":"Health","profiles":plan.agents,"repository":repo,"goal":"Add the health check","coordinator":"mock","workspace_mode":"worktree"}})).unwrap();
+    mutate(
+        &startup,
+        serde_json::json!({"kind":"create_slug","slug":"add_the_health_check"}),
+    )
+    .unwrap();
+    let before = snapshot(&startup);
+    assert_eq!(before["config"]["active_slug"], "add_the_health_check");
+
+    let mut config = before["config"].clone();
+    config["repository"] = serde_json::json!(other_repo);
+    mutate(&startup, serde_json::json!({"kind":"save","config":config})).unwrap();
+    let switched = snapshot(&startup);
+    assert!(switched["config"]["active_slug"].is_null());
+    assert_eq!(switched["config"]["slugs"].as_array().unwrap().len(), 1);
+
+    let created = mutate(&startup, serde_json::json!({"kind":"create_slug"})).unwrap();
+    assert_eq!(created["slug"], "add_the_health_check_2");
+    assert!(
+        Repository::open(&other_repo).unwrap().clean().is_ok(),
+        "the new goal folder must be excluded from the selected repository's baseline"
+    );
+    drop(startup);
+    std::fs::remove_dir_all(root).unwrap();
+    std::fs::remove_dir_all(other_root).unwrap();
+}
+
+#[test]
 fn tasks_cannot_own_the_slug_work_trees() {
     let (root, mut plan) = support::setup("shared");
     plan.tasks[0].paths = vec![".agentconductor/healthcheck_feature/plan/plan.json".into()];

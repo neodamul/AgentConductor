@@ -114,13 +114,23 @@ pub(super) fn transfer_role(
 fn unrestricted_fallback(
     report: &Report,
     source: &str,
+    current: i64,
 ) -> Result<Option<(String, Option<String>)>, String> {
-    let mut profile = report
+    let profile = report
         .plan
         .agents
         .iter()
         .find(|agent| agent.id == source)
         .ok_or("unknown task agent")?;
+    unrestricted_fallback_from(report, profile, current)
+}
+
+pub(super) fn unrestricted_fallback_from(
+    report: &Report,
+    source: &crate::plan::AgentProfile,
+    current: i64,
+) -> Result<Option<(String, Option<String>)>, String> {
+    let mut profile = source;
     let mut tried = std::collections::HashSet::from([profile.id.as_str()]);
     while let Some(policy) = &profile.fallback {
         let target = report
@@ -132,7 +142,11 @@ fn unrestricted_fallback(
         if !tried.insert(target.id.as_str()) {
             return Ok(None);
         }
-        if !report.account_restrictions.contains_key(target.quota_key()) {
+        if !report
+            .account_restrictions
+            .get(target.quota_key())
+            .is_some_and(|r| r.available_at.is_none_or(|at| at > current))
+        {
             return Ok(Some((target.id.clone(), policy.model.clone())));
         }
         profile = target;
@@ -209,7 +223,7 @@ pub(super) fn apply_fallbacks_at(
         ) {
             continue;
         }
-        if let Some((agent, model)) = unrestricted_fallback(report, &source)? {
+        if let Some((agent, model)) = unrestricted_fallback(report, &source, current)? {
             transfer_role(
                 report,
                 dir,
@@ -256,7 +270,8 @@ pub(super) fn apply_handoffs(
             continue;
         }
         let source = report.plan.tasks[index].agent.clone();
-        if let Some((agent, model)) = unrestricted_fallback(report, &source)? {
+        if let Some((agent, model)) = unrestricted_fallback(report, &source, (now() / 1000) as i64)?
+        {
             transfer_role(
                 report,
                 dir,

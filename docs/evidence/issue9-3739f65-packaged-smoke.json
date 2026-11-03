@@ -1,0 +1,115 @@
+{
+  "cases": [
+    {
+      "approved_merge_verified": true,
+      "base": "f23ca4260c574832fac397706730049e9e1e19df",
+      "candidate": "8335728c91da7a38c7322bf0ad3f37974a3b1bc1",
+      "mode": "shared",
+      "parallel_ranges": [
+        [
+          1792525981200,
+          1792525983314
+        ],
+        [
+          1792525981205,
+          1792525983317
+        ],
+        [
+          1792525981214,
+          1792525983323
+        ]
+      ],
+      "source_mode": "git",
+      "tasks": 3,
+      "tests": 3,
+      "unapproved_merge_refused": true
+    },
+    {
+      "approved_merge_verified": true,
+      "base": null,
+      "candidate": "d540bb093f60dfa7878afdbaabe50b41f1fd6fcb",
+      "mode": "shared",
+      "parallel_ranges": [
+        [
+          1792525984100,
+          1792525986152
+        ],
+        [
+          1792525984107,
+          1792525986165
+        ],
+        [
+          1792525984116,
+          1792525986190
+        ]
+      ],
+      "source_mode": "folder",
+      "tasks": 3,
+      "tests": 3,
+      "unapproved_merge_refused": true
+    },
+    {
+      "approved_merge_verified": true,
+      "base": "10ccf18d9a6c37fc361387921c460193ca914bec",
+      "candidate": "8c071aebd840658f8ca38a11c0fe16776e10ac2e",
+      "mode": "worktree",
+      "parallel_ranges": [
+        [
+          1792525987015,
+          1792525989109
+        ],
+        [
+          1792525987026,
+          1792525989118
+        ],
+        [
+          1792525987038,
+          1792525989153
+        ]
+      ],
+      "source_mode": "git",
+      "tasks": 3,
+      "tests": 3,
+      "unapproved_merge_refused": true
+    },
+    {
+      "approved_merge_verified": true,
+      "base": null,
+      "candidate": "5d6771bbd4ecdcc157ea58ac1e54de334d0b6894",
+      "mode": "worktree",
+      "parallel_ranges": [
+        [
+          1792525990170,
+          1792525992293
+        ],
+        [
+          1792525990184,
+          1792525992293
+        ],
+        [
+          1792525990201,
+          1792525992336
+        ]
+      ],
+      "source_mode": "folder",
+      "tasks": 3,
+      "tests": 3,
+      "unapproved_merge_refused": true
+    }
+  ],
+  "exit_code": 0,
+  "manifest": {
+    "binary": "agentconductor",
+    "binary_bytes": 18008720,
+    "binary_sha256": "1a7831dc567c5fc93859d5949dcb6cb9d7643fb26e0fe65ea65d81894805f741",
+    "dependency_count": 214,
+    "external_requirements": [
+      "Git",
+      "selected authenticated agent CLIs"
+    ],
+    "name": "agentconductor",
+    "runtime": "one native executable; SQLite bundled",
+    "source_commit": "3739f654309e5c34e1d5d02788f0318a6c30ddad",
+    "target": "aarch64-apple-darwin"
+  }
+}

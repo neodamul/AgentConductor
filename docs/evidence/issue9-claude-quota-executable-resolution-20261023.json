@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "branch": "codex/issue-9-native-ui-parity",
+  "baseline_head": "67937604",
+  "symptom": "Packaged Claude quota refresh reported No such file or directory for the configured bare executable name.",
+  "red": "claude_prompt_variants_collect_usage_and_reap_the_owned_process failed with Claude closed before reporting quota when the app PATH included the fixture but the CLI PATH omitted it.",
+  "fix": "Resolve the configured Claude executable through the shared filesystem-only resolver before passing it to /usr/bin/script; retain the original configured value as fallback.",
+  "green": "cargo test --offline --locked --release --test claude_prompt claude_prompt_variants_collect_usage_and_reap_the_owned_process -- --exact: 1 passed.",
+  "other_checks": [
+    "cargo fmt --all -- --check",
+    "git diff --check",
+    "src/quota/terminal/query.rs: 168 lines",
+    "tests/claude_prompt.rs: 121 lines"
+  ],
+  "provider_access": "No real Claude CLI, account, credentials, or generation request was used.",
+  "acceptance": "Source-only regression fix. Exact macOS package rebuild and UI quota refresh remain required; packaged workflow acceptance remains 14/25."
+}

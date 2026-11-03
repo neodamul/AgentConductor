@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-03",
+  "kind": "native-workspace-appbar-order-parity",
+  "issue": 9,
+  "reference": {
+    "source": "origin/main:src/ui/startup.html",
+    "action_order": ["Coordinator chat", "Settings", "Discard changes", "Back to run"]
+  },
+  "red": "The native accessibility geometry regression failed because Discard changes appeared before coordinator chat and Settings.",
+  "change": "Move the existing Discard changes and Back to run controls after the chat launcher and Settings; preserve their current enablement and confirmation behavior.",
+  "verification": {
+    "suites": [
+      "native_ui_header_chat",
+      "native_ui_navigation_language",
+      "native_ui_new_goal_confirmation",
+      "native_ui_appearance",
+      "source_layout"
+    ],
+    "result": "15 passed",
+    "rustfmt": "passed",
+    "git_diff_check": "passed",
+    "source_lines": 171,
+    "test_lines": 79
+  },
+  "acceptance_credit": 0,
+  "remaining": "Capture exact current builds in matching workspace state and review all app-bar controls."
+}

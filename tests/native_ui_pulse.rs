@@ -61,3 +61,51 @@ fn running_status_is_static_green_when_motion_is_disabled() {
     assert_eq!(at(0.0), at(0.8));
     assert_eq!(at(0.8), status_color("completed", 0.0));
 }
+
+#[test]
+fn quota_observation_refresh_does_not_restart_the_running_pulse() {
+    let context = egui::Context::default();
+    let snapshot = |remaining| {
+        json!({
+            "quota_observations": [{"agent_id": "claude", "remaining_percent": remaining}],
+            "report": {
+                "state": "running",
+                "plan": {"tasks": [{"id": "task-1", "agent": "claude"}]},
+                "tasks": [{"id": "task-1", "status": "running"}]
+            }
+        })
+    };
+    let render = |time, remaining| {
+        let data = snapshot(remaining);
+        let mut output = context.run_ui(
+            egui::RawInput {
+                time: Some(time),
+                ..Default::default()
+            },
+            |ui| Probe::render_snapshot(&data, ui),
+        );
+        let color = output
+            .shapes
+            .iter()
+            .find_map(|shape| match &shape.shape {
+                egui::epaint::Shape::Text(text) if text.galley.job.text == "●" => text
+                    .galley
+                    .job
+                    .sections
+                    .first()
+                    .map(|section| section.format.color),
+                _ => None,
+            })
+            .expect("running status pulse dot");
+        output.textures_delta.set.clear();
+        output.textures_delta.free.clear();
+        color
+    };
+
+    let before_refresh = render(0.4, 64);
+    let after_refresh = render(0.8, 63);
+
+    assert_eq!(before_refresh, status_color("running", 0.4));
+    assert_eq!(after_refresh, status_color("running", 0.8));
+    assert_ne!(before_refresh, after_refresh);
+}

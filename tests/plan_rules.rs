@@ -22,7 +22,7 @@ fn global_rules_are_created_once_and_workspace_text_overrides_them() {
     }
     assert!(
         !rules.contains("500 lines"),
-        "default rules use the current limit"
+        "the old file limit is removed"
     );
     std::fs::write(&path, "# Team rules\n- Keep files under 300 lines\n").unwrap();
     assert!(

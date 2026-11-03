@@ -27,6 +27,8 @@ Priority: business importance / technical risk (H, M, L).
 | DDR-17 | Extend custom CLI event and quota behavior through reviewable data | Modifiability + availability | FR-139, QAS-150, NFR-06/07 | H/M | DD-03, DD-04, DD-164 |
 | DDR-14 (planned) | Remote awareness and decisions without weakening local authority | Quality (security) + integration | FR-28, NFR-17, QAS-35, QAS-36 | H/H | DD-51 (proposed) |
 | DDR-10 | Recognizable providers without redistributing their artwork | Quality (usability) + constraint | FR-20, NFR-10, NFR-12, QAS-27 | M/L | DD-40 |
+| DDR-53 | Recover complete coordinator JSON from bounded provider output | Quality (robustness) | FR-196, QAS-202 | M/M | DD-216 |
+| DDR-54 | Preserve complete failed-test evidence from both streams | Quality (usability + robustness) | FR-197, NFR-87, QAS-203 | M/M | DD-217 |
 
 ## Architecture
 
@@ -170,3 +172,51 @@ Bidirectional control is needed, but plain control lines with acks need no reque
 
 ### Driver DDR-39 Distinguish observation from operator action
 An automatic snapshot and an explicit user action share the request bridge but have different feedback requirements. Mark only scheduled and visibility-resume polls as background, and pause the same request deadline while the document is hidden instead of adding a second transport or retry policy. Trace: QAS-182.
+
+### Driver DDR-40 Reuse the native monotonic poll schedule
+The native worker has no request deadline, so a second timeout mechanism would create stale-reply handling with no benefit. Keep scheduled Agent Room reads quiet, explicit operations visible, and let the existing monotonic scheduler send one poll after a delayed repaint. Trace: QAS-184.
+
+### Driver DDR-41 Reuse the process supervisor and approval ledger for ACIO
+The existing worker owns child lifetime, output capture, persistence, and workspace scope; the existing tool ledger owns exact human decisions. Route opted-in ACIO input/events through those paths instead of adding a second runner, event store, or authorization mechanism. Trace: R-187, QAS-185.
+
+### Driver DDR-42 Keep prompt correction bounded and CLI-independent
+Build the requested answer shape in the orchestrator and allow at most one correction attempt when the process succeeds but its output lacks the requested JSON document. Preserve the first attempt's logs, include only the bounded parse reason in the retry prompt, and leave timeout, stop, capacity and provider-error behavior on their existing paths. Do not require CLI changes or add a protocol for prompt correction. Trace: QAS-184.
+
+### Driver DDR-45 Use metadata first, process fallback off-path
+Common Git HEAD layouts are directly readable, so spawning Git on every revision check adds latency and contention without adding information. Linked worktrees and unsupported layouts still require Git; a single-flight background fallback preserves compatibility without blocking request or render paths. Trace: R-193 → QAS-191.
+
+### Driver DDR-46 Let events wake peer views; keep snapshots off the command lane
+The native app has two views sharing one Room. Use a small in-process broadcast bus with per-view subscriptions and source suppression, a separate bounded background snapshot lane, and one coalesced invalidation flag. Keep the event payload content-free; the receiving view reads authoritative state from the existing snapshot API. Do not suppress a due event or recovery snapshot merely because an unrelated interactive operation is pending; a human decision modal may pause refresh for its view. Apply completed snapshots without clearing pending state or replacing unsaved inputs. A lightweight persisted-state listener covers external CLI changes; keep only a 30-second recovery timer. Trace: R-194 → QAS-192.
+
+### Driver DDR-47 Isolate reads, mutations, external I/O, and recovery work
+Use a fixed two-worker read lane, a single-worker state-change lane, a dedicated bounded worker for synchronous network I/O, and the existing single-flight background poll lane. Keep each queue bounded, tag foreground responses, and ignore superseded replies. Unknown valid request kinds default to the state-change lane. Keep event messages content-free and coalesce refresh requests; do not add an async runtime or unbounded task spawning. Trace: QAS-193.
+
+### Driver DDR-48 State notifications drive refresh; recovery checks stay cold
+Use the existing scoped in-process EventBus and a small independent persisted-state listener for external processes. Events are content-free invalidations, coalesced per view, and trigger the existing background snapshot lane. Keep a 30-second recovery check only; remove the active one-second snapshot fallback. Do not add an async runtime or an unbounded watcher pool.
+Trace: QAS-194.
+
+### Driver DDR-49 Make workspace observation follow current ownership
+The listener needs the current workspace paths, not ownership of the workspace session. Store a weak reference to the current `Startup` behind a small shared target; update it atomically with workspace switching. Resolve the startup/report paths per listener check, and let old `Startup` values drop so their leases unlock. Keep one listener thread and its existing cadence.
+Trace: QAS-195.
+
+### Driver DDR-51 Derive the coordinator board from the run snapshot
+Use the existing Agent Room snapshot's report task list, run state and activity map to build a compact coordinator summary and task rows. Keep audit records immutable and filter repeated workflow-save rows only at presentation. Avoid a second request, poll, timer or backend schema. Retain the existing judgment timeline and use localized accessible status labels.
+Trace: QAS-198.
+
+### Driver DDR-52 Port the native surface without crossing workstream ownership
+Implement the coordinator board inside the native Rust Agent Room, reusing the snapshot shape and localized egui components. Preserve existing review controls and stored audit records. Treat the current JS/backend behavior as a reference contract; do not edit or absorb those workstreams. Trace: QAS-199.
+
+### Driver DDR-53 Bound and recover coordinator document parsing
+Keep provider event framing separate from requested-document parsing. Scan completed fenced JSON candidates in order, continue after malformed/incomplete candidates, require the requested field, and cap accepted reply text at 256 KiB. Preserve the existing 1 MiB event-decoder bound and actionable errors. Trace: QAS-202.
+
+### Driver DDR-54 Preserve context without guessing which stream contains the error
+Retain both bounded streams rather than choosing one based on severity heuristics. Add labels only when both are present, put stdout last for the reported test-run pattern, and leave single-stream text untouched. Trace: QAS-203.
+
+### Driver DDR-55 Keep coordinator safety in the invocation boundary
+Validate coordinator model choice against the persisted observed catalog and pass it through the existing adapter. Use explicit custom read-only argv only when it is nonempty and distinct from normal arguments; otherwise require a verified provider template or expose a blocker before spawn. Derive workspace badge and compatibility text from the active snapshot rather than adding another polling path. Trace: QAS-204, QAS-205.
+
+### Driver DDR-56 Refuse updates before launch and report each blocker
+Keep the update guard at the backend dispatch boundary. Return structured active-work and failed-check details; localize them in the native dialog and preserve separate sections, elapsed time, and next-step guidance. Do not launch an updater or add a polling path when a blocker is present. Trace: QAS-206.
+
+### Driver DDR-57 Make generic CLI denial evidence visible without provider-specific flags
+Use declarative event types, JSON Pointers and bounded output excerpts. Keep profile validation generic, surface denial evidence as a distinct event, and never infer a vendor approval flag. Keep malformed-text mode from satisfying the result/exit success gate. Trace: QAS-207 → DD-220.

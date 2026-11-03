@@ -1,10 +1,9 @@
-use rusqlite::{Connection, OptionalExtension, params};
+use rusqlite::{Connection, OptionalExtension, TransactionBehavior, params};
 use serde::{Deserialize, Serialize};
 
 const SQLITE_BUSY_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(10);
 
-mod records;
-pub(crate) use records::record_transaction;
+mod history;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -171,4 +170,74 @@ impl Store {
             .map(|v| serde_json::from_str(&v).map_err(|e| e.to_string()))
             .transpose()
     }
+
+    /// Next 128 pending observations; remaining rows stay durable for a later sync.
+    pub fn pending_memory(&self) -> Result<Vec<(i64, String)>, String> {
+        let mut query = self
+            .0
+            .prepare("SELECT id,content FROM memory_outbox WHERE delivered=0 ORDER BY id LIMIT 128")
+            .map_err(|e| e.to_string())?;
+        query
+            .query_map([], |r| Ok((r.get(0)?, r.get(1)?)))
+            .map_err(|e| e.to_string())?
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(|e| e.to_string())
+    }
+    pub fn memory_delivered(&self, id: i64) -> Result<(), String> {
+        let changed = self
+            .0
+            .execute("UPDATE memory_outbox SET delivered=1 WHERE id=?1", [id])
+            .map_err(|e| e.to_string())?;
+        if changed == 0 {
+            return Err("unknown memory outbox item".into());
+        }
+        Ok(())
+    }
+    pub fn recall(&self, query: &str) -> Result<Vec<String>, String> {
+        let query = query
+            .split_whitespace()
+            .map(|word| format!("\"{}\"", word.replace('"', "\"\"")))
+            .collect::<Vec<_>>()
+            .join(" OR ");
+        if query.is_empty() {
+            return Ok(vec![]);
+        }
+        let mut statement=self.0.prepare("SELECT content FROM memory_search WHERE memory_search MATCH ?1 ORDER BY rank LIMIT 20").map_err(|e|e.to_string())?;
+        statement
+            .query_map([query], |r| r.get(0))
+            .map_err(|e| e.to_string())?
+            .collect::<Result<Vec<_>, _>>()
+            .map_err(|e| e.to_string())
+    }
+}
+
+pub(crate) fn record_transaction(
+    tx: &rusqlite::Transaction<'_>,
+    key: &str,
+    value: &serde_json::Value,
+    summary: &str,
+) -> Result<(), String> {
+    let json = serde_json::to_string(value).map_err(|e| e.to_string())?;
+    tx.execute(
+        "INSERT INTO documents VALUES(?1,?2) ON CONFLICT(key) DO UPDATE SET value=excluded.value",
+        params![key, json],
+    )
+    .map_err(|e| e.to_string())?;
+    tx.execute(
+        "INSERT INTO audit(event,payload) VALUES(?1,?2)",
+        params![key, json],
+    )
+    .map_err(|e| e.to_string())?;
+    let id = tx.last_insert_rowid();
+    tx.execute(
+        "INSERT INTO memory_outbox(id,content) VALUES(?1,?2)",
+        params![id, summary],
+    )
+    .map_err(|e| e.to_string())?;
+    tx.execute(
+        "INSERT INTO memory_search(memory_id,content) VALUES(?1,?2)",
+        params![id, summary],
+    )
+    .map_err(|e| e.to_string())?;
+    Ok(())
 }

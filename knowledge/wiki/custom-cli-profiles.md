@@ -80,10 +80,26 @@ tracked by R-151. This PR adds no JavaScript or Python source/test changes. Buil
 regressions and cross-platform process behavior remain subject to regular platform CI
 before merge. No claim is made about an untested private quota CLI.
 
-Design trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164.
+Design trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145/NFR-55 → QAS-156 → DDR-20 → DD-170.
 
 The model/argument/result contract extends the profile fields under GitHub #62. Its Rust
 fixtures cover JSON persistence, model restrictions, omitted optional argv groups, resume,
 reassignment validation, result extraction and conditional errors. See the requirement and
 implementation checklist in [docs/01](../../docs/01-requirements.md) and [docs/07](../../docs/07-implementation-plan.md).
 Implementation checklist and evidence: [docs/07](../../docs/07-implementation-plan.md).
+
+On the issue #9 Rust parity branch, the declarative profile editor and task-option controls
+are integrated into the existing modular native UI. Profile edits are validated before they
+replace the saved candidate; task model selection resolves planner overrides before profile
+defaults, and model-specific option lists use that effective model. Local verification is
+tracked in the issue #9 implementation checklist.
+
+## Permission denials and non-JSON output (Rust port of GitHub #341)
+
+A custom profile may set `on_invalid_json` to `fail` (the default) or `text`. In `text` mode, non-JSON lines become progress events; success still requires a zero exit and a result event. Text that resembles a permission refusal remains a failure and asks the operator to check the CLI configuration. A malformed JSONL failure includes a bounded raw excerpt with stdout and stderr labeled separately.
+
+To identify structured refusals, a profile may declare `denial_condition` with an optional `event_type`, a JSON Pointer, exactly one of `equals` or case-insensitive `contains`, and optional JSON Pointers for the tool name and message. The decoder records a distinct `denied` event; the task remains failed and its error carries the configured tool and reason. The Rust profile editor preserves these fields and shows a localized non-blocking hint if `operator_auto_approve` is configured without any denial mapping. No vendor-specific approval flag is inferred.
+
+The native port is covered by deterministic decoder/worker and profile-editor tests. Exact macOS/Windows package behavior remains part of issue #9 packaged-workflow verification; these source tests do not add acceptance credit.
+
+The startup snapshot retains the shared `chat_blockers` contract and exposes `config_hints` by profile ID, using the message key `startup.auto_approve_unconfigured` when automatic approval has no denial mapping. The Rust editor renders its corresponding localized warning directly; the snapshot key keeps the coordinator configuration contract consistent across UI implementations.

@@ -1,0 +1,30 @@
+{
+  "date": "2026-10-27",
+  "issue": 9,
+  "branch": "codex/issue-9-native-ui-parity",
+  "base_head": "9b7e3b5700bbae8d68e8eba8deec878d71a88382",
+  "result": "local_regression_pass_exact_package_pending",
+  "historical_evidence": {
+    "passing_run": "40119945464",
+    "failed_run": "40141766034",
+    "failure_call": "$time.SetFocus()",
+    "failure": "Expecting object to be local"
+  },
+  "change": "Restore top-level $window.SetFocus() before setting the schedule timestamp; retain foreground and target-process checks before UIA Invoke.",
+  "tdd": {
+    "red": "windows_schedule_dispatch failed because the window focus call was absent",
+    "green": "2 dispatch tests passed; 10 focused schedule, marker, native interaction, and source layout tests passed"
+  },
+  "clippy": "warning-denied focused test targets passed",
+  "format": "cargo fmt --check passed",
+  "diff_check": "passed",
+  "line_counts": {
+    "tests/windows_schedule.rs": 257,
+    "tests/windows_schedule_dispatch.rs": 39,
+    "tests/support/windows_schedule.rs": 31
+  },
+  "graphify": "9495 nodes / 15967 edges",
+  "cocoindex": "not run; no CocoIndex CLI available in the current host environment",
+  "packaged_ui_acceptance": "unchanged at 20/25 until exact packaged Windows persistence is verified",
+  "utm_accessed": false
+}

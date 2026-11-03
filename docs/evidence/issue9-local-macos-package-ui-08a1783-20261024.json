@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-24",
+  "issue": 9,
+  "source_commit": "08a1783476756a7b79b4823a91a370fcfd943135",
+  "package": {
+    "version": "0.1.37",
+    "target": "aarch64-apple-darwin",
+    "path": "dist/agentconductor-aarch64-apple-darwin-08a178347675.zip",
+    "binary_bytes": 18858304,
+    "binary_sha256": "5e3fd1dfe84aa0cb7bec6e50918849b3b56bfc676ebda034dfe5df536fe9fd42",
+    "archive_sha256": "7cb20690d605ecbf79425d06ec885a08e39c78df58a43ed2d4bb722ac1f4272d",
+    "dependency_count": 242
+  },
+  "verification": {
+    "command": "cargo run --offline --locked --release -- package-release",
+    "package_validation": "passed",
+    "zip_integrity": "passed",
+    "embedded_smoke": {
+      "exit_code": 0,
+      "cases": [
+        {"mode":"shared","source_mode":"git","tasks":3,"tests":3,"approved_merge_verified":true,"unapproved_merge_refused":true},
+        {"mode":"shared","source_mode":"folder","tasks":3,"tests":3,"approved_merge_verified":true,"unapproved_merge_refused":true},
+        {"mode":"worktree","source_mode":"git","tasks":3,"tests":3,"approved_merge_verified":true,"unapproved_merge_refused":true},
+        {"mode":"worktree","source_mode":"folder","tasks":3,"tests":3,"approved_merge_verified":true,"unapproved_merge_refused":true}
+      ]
+    },
+    "package_contents": ["README.md","docs/user-manual.md","docs/user-manual.ko.md","docs/user-manual.html","docs/user-manual.ko.html","docs/assets/ui-workspace-current.png","docs/assets/ui-workspace-korean-current.png","docs/assets/ui-workspace-dark-current.png","DEPENDENCY-LICENSES.md","SBOM.cdx.json","THIRD-PARTY-NOTICES.md","licenses/"]
+  },
+  "exact_package_ui": {
+    "isolated_home": "/private/tmp/agentconductor-package-ui-08a1783/home",
+    "observed": ["v0.1.37 Workspace screen","six role rows and model/fallback columns","empty Review screen with save/run controls disabled","Settings menu actions","Workspace menu and isolated workspace path"],
+    "mutations": "none; no settings saved, agents registered, goal created, MCP accessed, plan/task started, approval, or merge",
+    "process": "one app process; exited cleanly; temporary HOME removed",
+    "screenshot_retained": false
+  },
+  "cleanup": {
+    "removed_prior_generated_package_archives": 4,
+    "retained_latest_candidate": true,
+    "estimated_dist_space_recovered": "190 MB"
+  },
+  "acceptance": {
+    "packaged_native_ui_workflows": "15/25",
+    "shipped_default_rust_ui": "0/25",
+    "new_ui_workflow_credit": 0,
+    "github_release": false,
+    "windows_runtime_verified": false
+  }
+}

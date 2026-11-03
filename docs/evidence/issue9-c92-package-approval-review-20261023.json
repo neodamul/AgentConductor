@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "source_commit": "c92e2b49658b26da2153cc743fb99b23e0aa7e28",
+  "package": {
+    "target": "aarch64-apple-darwin",
+    "version": "0.1.36",
+    "binary_sha256": "60c1295a7cae1d4341ceb0370e6654a64ff7144eef12533c74e394d5e56b111d",
+    "archive_sha256": "8f39e33e7d68ff96a73f5dc1530da3ac8a84d5b068e065a44f3508020c979829"
+  },
+  "fixture": {
+    "isolation": "git worktree",
+    "tasks": 3,
+    "completed_tasks": 3,
+    "tests": 3,
+    "passed_tests": 3,
+    "timed_out": 0,
+    "candidate_commit": "cb180bde36e446ab70ad41ecab242cb74c2d3464",
+    "candidate_files": ["one.txt", "three.txt", "two.txt"],
+    "final_state": "waiting_approval"
+  },
+  "packaged_ui": {
+    "review_evidence_loaded": true,
+    "candidate_hash_visible": true,
+    "test_receipts_and_stdout_visible": true,
+    "scoped_diff_visible": true,
+    "approval_available": true,
+    "merge_disabled_before_approval": true,
+    "approval_performed": false,
+    "merge_performed": false
+  },
+  "acceptance": {
+    "packaged_ui_workflows": "14/25",
+    "shipped_default_rust_ui": "0/25",
+    "credit_added": false
+  },
+  "limitations": [
+    "The UI screenshot was displayed via CUA but was not retained in the repository.",
+    "This repeat journey does not add distinct workflow acceptance.",
+    "Windows, screenshot/manual refresh, and remaining issue #9 gates remain open."
+  ]
+}

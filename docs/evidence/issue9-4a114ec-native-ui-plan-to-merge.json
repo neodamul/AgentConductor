@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "workflow": 4,
+  "workflow_name": "packaged native UI plan-to-merge",
+  "use_cases": ["UC-01", "UC-02", "UC-03", "UC-04"],
+  "date": "2026-10-20",
+  "application_version": "0.1.31",
+  "source_commit": "4a114ec6a76141c48ebe8138694398572cae1acd",
+  "target": "aarch64-apple-darwin",
+  "binary_sha256": "f288ff81542870c49a40a73824a5fe70b0d10fe917370dfa66c3f13251d2ec11",
+  "environment": "one exact packaged app process, isolated HOME and disposable shared-folder project",
+  "run_id": "run-98b33a32-b6e8-443d-b304-eedac4773bb0",
+  "plan_digest": "87166bd87abcefc96fd37e809840ec223d916eee5daf3e7a769b6c4ac475f05e",
+  "candidate_commit": "dbf647e68eef4d40211861d9792ac656e63d2351",
+  "task_count": 1,
+  "steps": [
+    "Register the local Rust fixture CLI from the app's profile editor and assign it as the workspace coordinator.",
+    "Save a non-empty goal and isolated project folder; generate a plan in the packaged UI.",
+    "Review the exact plan, executable, permission mode, writable path and test command; approve execution.",
+    "Observe the task complete, its integration test pass, and inspect the exact candidate diff in Agent Room.",
+    "Approve the candidate and confirm the merge; verify the run reaches Completed and one.txt exists in the disposable project."
+  ],
+  "verification": {
+    "coordinator_registered_in_ui": true,
+    "plan_generated_and_reviewed": true,
+    "exact_plan_execution_approved": true,
+    "tasks_completed": 1,
+    "tests_passed": 1,
+    "candidate_diff_reviewed": true,
+    "candidate_approved": true,
+    "merge_confirmed": true,
+    "final_run_state": "completed",
+    "output_file": "one.txt",
+    "app_process_count": 1,
+    "provider_cli_invoked": false,
+    "external_service_called": false,
+    "original_workspace_modified": false,
+    "windows_packaged_ui_verified": false
+  },
+  "fixture_note": "The first fixture attempt used /usr/bin/test, which is absent on macOS; that fixture-only error was corrected to /bin/test and the full flow was repeated in a fresh disposable folder. The corrected run passed.",
+  "acceptance": {
+    "packaged_native_ui_workflows": "4/25",
+    "adds_distinct_workflow": true,
+    "shipped_rust_replacement": false
+  },
+  "screenshot_artifact": null
+}

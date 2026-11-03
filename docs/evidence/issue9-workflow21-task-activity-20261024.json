@@ -1,0 +1,42 @@
+{
+  "issue": 9,
+  "workflow": 21,
+  "date": "2026-10-24",
+  "source_commit": "6ca19965a324db55f24015fb84bdf91f2523501e",
+  "package": {
+    "version": "0.1.37",
+    "target": "aarch64-apple-darwin",
+    "archive": "dist/agentconductor-aarch64-apple-darwin-6ca19965a324.zip",
+    "archive_sha256": "f955398590bcbaa29e175cf8f8a11ba404daa0077e17bad249e161a7b9185aa0",
+    "binary_sha256": "a95efb41a19bf6ddd7d9102cd7f150d42b2d089926ef161826180410fb4dc32a"
+  },
+  "fixture": {
+    "source": "Existing deterministic local Rust workflow test output, copied to a disposable path outside the repository",
+    "root": "/private/tmp/ac-issue9-workflow21-6ca19965",
+    "agent": "mock",
+    "state": "waiting_approval",
+    "external_cli_or_service_called": false,
+    "operator_actions": "Read-only tab inspection; no approval, rejection, feedback, reassignment, or merge"
+  },
+  "ui_observation": {
+    "surface": "Agent Room in the exact v0.1.37 macOS arm64 package, selected by bundle path",
+    "task": "one.txt",
+    "activity": "Displayed normalized result and coordinator review/lesson activity",
+    "raw_logs": "Displayed JSONL session/result stdout and empty stderr independently from Activity",
+    "lessons": "Displayed task-specific cause and corrective action",
+    "screenshot": "Captured in the interactive verification session, not retained as a file",
+    "run_disposition": "Window closed; fixture copy removed; approval gate left untouched"
+  },
+  "verification": {
+    "focused_tests": "9 passed across native_ui_task_activity, native_step_lessons, and native_ui_task_activity_layout",
+    "package_binary_hash": "matches workflow 19 package evidence",
+    "packaged_ui_acceptance_before": "19/25",
+    "packaged_ui_acceptance_after": "20/25 (80%)",
+    "shipped_default_rust_ui": "0/25"
+  },
+  "limits": [
+    "The fixture used deterministic mock data; no provider CLI or live provider session was tested.",
+    "This macOS package check does not establish Windows guest boot, display, package execution, Korean IME, or screen-reader acceptance.",
+    "No retained screenshot file was produced."
+  ]
+}

@@ -10,7 +10,23 @@ use std::path::PathBuf;
 #[cfg(not(any(target_os = "macos", windows)))]
 use std::process::Command;
 
-pub fn pick_folder() -> Result<Option<PathBuf>, String> {
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum FolderPurpose {
+    Project,
+    WorkspaceSettingsExport,
+    WorkspaceSettingsImport,
+}
+
+pub fn folder_picker_title(purpose: FolderPurpose, language: &str) -> &'static str {
+    let key = match purpose {
+        FolderPurpose::Project => "native.choose_a_project_folder",
+        FolderPurpose::WorkspaceSettingsExport => "native.choose_folder_for_settings_export",
+        FolderPurpose::WorkspaceSettingsImport => "native.choose_folder_for_settings_import",
+    };
+    crate::ui::messages::in_language(language, key)
+}
+
+pub fn pick_folder(_purpose: FolderPurpose) -> Result<Option<PathBuf>, String> {
     if let Some(answer) = std::env::var_os("AGENTCONDUCTOR_PICK_FOLDER") {
         return Ok((!answer.is_empty()).then(|| PathBuf::from(answer)));
     }

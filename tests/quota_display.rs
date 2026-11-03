@@ -61,18 +61,6 @@ fn quota_badges_cover_stale_unavailable_unlimited_reset_and_localized_labels() {
 }
 
 #[test]
-fn quota_badge_rendering_is_native_snapshot_data() {
-    let startup = include_str!("../src/ui/startup.js");
-    let room = include_str!("../src/ui/room.js");
-    assert!(!startup.contains("function quotaBadge"));
-    assert!(!room.contains("function quotaBadge"));
-    assert!(startup.contains("state?.quota_badges?.[p.id]"));
-    assert!(!room.contains("quotaBadge("));
-    assert!(startup.contains("quota-controls"));
-    assert!(startup.contains("quota-refresh"));
-}
-
-#[test]
 fn badge_labels_errors_and_reset_unknown_are_preserved() {
     let result = badge(
         &json!({"error":"ChatGPT sign-in","source":"provider","windows":[
@@ -112,14 +100,6 @@ fn room_window_labels_use_rust_localized_agent_intervals() {
 }
 
 #[test]
-fn room_uses_rust_window_labels_instead_of_javascript_formatters() {
-    let room = include_str!("../src/ui/room.js");
-    assert!(!room.contains("function quotaWindowLabel"));
-    assert!(!room.contains("function quotaSummary"));
-    assert!(room.contains("snapshot.quota_window_labels?.[agent?.id]"));
-}
-
-#[test]
 fn room_budget_rows_are_localized_rust_snapshot_data() {
     let quotas = json!({
         "enterprise": {"budgets":[
@@ -154,12 +134,29 @@ fn room_budget_rows_are_localized_rust_snapshot_data() {
     assert_eq!(rows["stale"][0]["headline"], "Stale · Credit balance");
     let ko = budget_rows(&quotas, "ko");
     assert_eq!(ko["enterprise"][0]["headline"], "64% 남음 · 개인 할당량");
+}
 
-    let room = include_str!("../src/ui/room.js");
-    let controller = include_str!("../src/ui/controller.rs");
-    assert!(controller.contains("\"quota_budget_rows\""));
-    assert!(room.contains("snapshot.quota_budget_rows?.[agent?.id]"));
-    assert!(!room.contains("const share=b=>"));
+#[test]
+fn quota_credit_amounts_are_rounded_to_whole_numbers_for_display() {
+    let quotas = json!({"credits":{"budgets":[
+        {"scope":"credits","remaining":"6667.28056954845","allocated":"12500"},
+        {"scope":"credits","remaining":"0.5","allocated":"1234.4"},
+        {"scope":"credits","remaining":"unavailable","allocated":"1e999"}
+    ]}});
+    let rows = budget_rows(&quotas, "en");
+    assert_eq!(rows["credits"][0]["amounts"], "6667/12500");
+    assert_eq!(rows["credits"][1]["amounts"], "1/1234");
+    assert_eq!(
+        rows["credits"][2]["headline"],
+        "unavailable/1e999 · Credit balance"
+    );
+
+    let badge = badge(
+        &json!({"budgets":[{"scope":"credits","remaining":"6667.28056954845","allocated":"12500"}]}),
+        "en",
+        1_800_000_000,
+    );
+    assert!(badge.title.contains("Credit balance: 6667/12500"));
 }
 
 #[test]
@@ -200,12 +197,6 @@ fn room_quota_reset_times_are_localized_rust_snapshot_data() {
             .unwrap()
             .starts_with("재설정 2027-")
     );
-    let room = include_str!("../src/ui/room.js");
-    let controller = include_str!("../src/ui/controller.rs");
-    assert!(controller.contains("\"quota_window_reset_labels\""));
-    assert!(room.contains("snapshot.quota_window_reset_labels?.[agent?.id]"));
-    assert!(!room.contains("new Date(b.resets_at*1000)"));
-    assert!(!room.contains("new Date(w.resets_at*1000)"));
 }
 
 /// #162: credit amounts are shown as whole numbers; the stored values keep their precision.

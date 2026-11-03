@@ -2,77 +2,25 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
 mod profile;
+mod task;
+mod task_validation;
 pub use profile::{
     AgentProfile, CatalogOrigin, CooperativeMode, DenialCondition, ExecutionOption, Fallback,
     InvalidJson, JsonCondition, ModelCatalog, ModelDiscovery, QuotaCommand,
 };
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(deny_unknown_fields)]
-pub struct Task {
-    pub id: String,
-    pub agent: String,
-    pub prompt: String,
-    pub paths: Vec<String>,
-    #[serde(default)]
-    pub depends_on: Vec<String>,
-    pub test_command: Vec<String>,
-    #[serde(default)]
-    pub model: Option<String>,
-    /// DD-55: role from the operator's rules; omitted when absent so older digests hold.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub role: Option<String>,
-    /// Operator-selected values for profile-declared argument groups.
-    #[serde(
-        default,
-        skip_serializing_if = "std::collections::BTreeMap::is_empty",
-        deserialize_with = "without_null_options"
-    )]
-    pub execution_options: std::collections::BTreeMap<String, String>,
-    /// GitHub #210: the kind of work, set by the coordinator; omitted when absent so older digests hold.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub task_type: Option<TaskType>,
-}
-
-/// A strict output schema cannot omit an option, so a coordinator states "none" as null.
-fn without_null_options<'de, D: serde::Deserializer<'de>>(
-    deserializer: D,
-) -> Result<std::collections::BTreeMap<String, String>, D::Error> {
-    let options = std::collections::BTreeMap::<String, Option<String>>::deserialize(deserializer)?;
-    Ok(options
-        .into_iter()
-        .filter_map(|(k, v)| Some((k, v?)))
-        .collect())
-}
-
-/// The kinds of work a task can be; model, effort and prompt conditions are chosen per kind (docs/cli-io-protocol.md §2.1).
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum TaskType {
-    Extract,
-    Summarize,
-    Analyze,
-    Code,
-    Agentic,
-    Creative,
-}
+pub use task::{Task, TaskType, WorkspaceMode};
+pub use task_validation::EMPTY_PATHS;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Plan {
     pub goal: String,
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub plan_rules: String,
     #[serde(default)]
     pub workspace_mode: WorkspaceMode,
     pub agents: Vec<AgentProfile>,
     pub tasks: Vec<Task>,
-}
-
-#[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "snake_case")]
-pub enum WorkspaceMode {
-    #[default]
-    Shared,
-    Worktree,
 }
 
 impl Plan {
@@ -81,24 +29,36 @@ impl Plan {
         if self.goal.trim().is_empty() || !(1..=12).contains(&self.tasks.len()) {
             return Err("a nonempty goal and one to twelve tasks are required".into());
         }
+        if self.plan_rules.len() > 64 * 1024 || self.plan_rules.contains('\0') {
+            return Err("planning rules must be at most 64 KiB and contain no NUL".into());
+        }
         let mut agents = HashSet::new();
         for agent in &self.agents {
+            crate::quota::custom::validate_custom_rules(&agent.quota_rules)?;
             agent.validate_custom_configuration()?;
             if agent.parser != crate::protocol::Provider::Custom
-                && (!agent.event_types.is_empty() || agent.session_id_pointer.is_some())
+                && (!agent.event_types.is_empty()
+                    || agent.session_id_pointer.is_some()
+                    || !agent.quota_rules.is_empty())
             {
                 return Err("custom event mappings require a custom CLI profile".into());
             }
-            if agent
-                .event_types
-                .iter()
-                .any(|(name, _)| name.is_empty() || name.chars().any(char::is_control))
-                || agent
-                    .session_id_pointer
-                    .as_ref()
-                    .is_some_and(|pointer| !pointer.is_empty() && !pointer.starts_with('/'))
+            if agent.protocol.is_some()
+                && (!agent.event_types.is_empty()
+                    || agent.session_id_pointer.is_some()
+                    || !agent.quota_rules.is_empty())
             {
-                return Err("invalid custom event mapping or session JSON Pointer".into());
+                return Err("the acio protocol defines its own event mapping; remove the custom event mappings".into());
+            }
+            if agent.quota_rules.iter().any(|rule| {
+                agent
+                    .event_types
+                    .get(&rule.event_type)
+                    .map_or(rule.event_type != "usage", |kind| {
+                        *kind != crate::protocol::EventKind::Usage
+                    })
+            }) {
+                return Err("custom quota events must be mapped to usage".into());
             }
             if let Some(quota) = &agent.quota_command
                 && (agent.parser != crate::protocol::Provider::Custom
@@ -114,6 +74,21 @@ impl Plan {
                         .is_some_and(|pointer| !pointer.is_empty() && !pointer.starts_with('/')))
             {
                 return Err("invalid custom quota command configuration".into());
+            }
+            if agent.event_types.len() > 64
+                || agent.event_types.iter().any(|(name, _)| {
+                    name.is_empty() || name.len() > 128 || name.chars().any(char::is_control)
+                })
+                || agent.session_id_pointer.as_ref().is_some_and(|pointer| {
+                    pointer.len() > 256
+                        || (!pointer.is_empty() && !pointer.starts_with('/'))
+                        || pointer
+                            .split('~')
+                            .skip(1)
+                            .any(|tail| !matches!(tail.chars().next(), Some('0' | '1')))
+                })
+            {
+                return Err("invalid custom event mapping or session JSON Pointer".into());
             }
             if agent
                 .environment
@@ -170,32 +145,7 @@ impl Plan {
         let mut ids = HashSet::new();
         let mut scopes: Vec<&str> = vec![];
         for task in &self.tasks {
-            // GitHub #251: name the task and the field, so a coordinator (or a person) can correct exactly that.
-            let id = &task.id;
-            if id.trim().is_empty() {
-                return Err("task id is empty".into());
-            }
-            if !ids.insert(&task.id) {
-                return Err(format!("task {id}: duplicate task id"));
-            }
-            if !agents.contains(&task.agent) {
-                return Err(format!("task {id}: unknown agent {}", task.agent));
-            }
-            if task.prompt.trim().is_empty() {
-                return Err(format!("task {id}: prompt is empty"));
-            }
-            if task.paths.is_empty() {
-                return Err(format!("task {id}: {EMPTY_PATHS}"));
-            }
-            if task
-                .test_command
-                .first()
-                .is_none_or(|executable| executable.is_empty())
-            {
-                return Err(format!(
-                    "task {id}: test_command must be an executable plus argv, and the executable is missing"
-                ));
-            }
+            task_validation::identity(task, &agents, &mut ids)?;
             if let Some(model) = &task.model {
                 self.agents
                     .iter()
@@ -311,9 +261,6 @@ impl Plan {
         Ok(())
     }
 }
-
-/// A task, a verification task too, owns at least one path; the planner's scope correction retry keys on this text.
-pub const EMPTY_PATHS: &str = "paths is empty; every task, a verification task too, must own at least one literal repo-relative file or directory";
 
 /// Coordinators often write a directory scope as `docs/`. A slash-free directory path
 /// already covers everything inside it (see `overlaps`), so trailing slashes are trimmed

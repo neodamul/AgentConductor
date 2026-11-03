@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "source_commit": "f43882095aa0308dc2870bd34269e0ea240bab8d",
+  "package_version": "0.1.36",
+  "target": "aarch64-apple-darwin",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-f43882095aa0.zip",
+  "archive_sha256": "8355d7bf0a86c7497ec9cc9775e095e5294133607defca07a1a5820a88887972",
+  "binary_sha256": "f804e8c8406408f901c7103fed4f341fc0ceedfb1a1e44506d2e9ba5457fc3ec",
+  "binary_bytes": 18606512,
+  "dependency_count": 214,
+  "package_validation": "passed; no missing license expressions",
+  "smoke": {
+    "exit_code": 0,
+    "cases": 4,
+    "each_case": "three parallel local mock tasks and tests; approved merge succeeded; unapproved merge was refused",
+    "modes": [
+      "shared Git",
+      "shared folder",
+      "worktree Git",
+      "worktree folder"
+    ]
+  },
+  "help_smoke": "packaged executable --help exited successfully",
+  "ui_quota_refresh": "verified in the exact package UI: click showed progress, advanced the observation timestamp from 13:21:10 to 13:22:30, refreshed the summary, and restored the enabled control",
+  "ui_screenshot": "not retained because the visible screen contained account usage and a local project path",
+  "workflow_acceptance": "remains 14/25; this is quota-control component evidence, not a distinct workflow",
+  "manuals": "package still contains historical screenshots; not release-ready",
+  "provider_access": "No authenticated Claude account or provider generation request was used.",
+  "provider_cli_quota_query": {
+    "binary": "target/release/agentconductor",
+    "binary_sha256_matches_package": true,
+    "application_path": "/usr/bin:/bin",
+    "command": "workspace-quota <disposable-workspace> claude",
+    "result": "exit 0; snapshot persisted; no error; two quota windows reported",
+    "quota_values_recorded": false,
+    "user_workspace_modified": false,
+    "generation_or_tools": false
+  }
+}

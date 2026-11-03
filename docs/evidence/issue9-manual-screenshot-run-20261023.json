@@ -1,0 +1,29 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "package_version": "0.1.36",
+  "package_source": "9845db79af260b631bde7ade2104bae2400cc649",
+  "workflow": {
+    "fixture": "Issue 9 Manual Screenshot 2026-10-23",
+    "repository": "/private/tmp/ac-manual-shot-20261023",
+    "base": "3e71b09b799eb9c962e150619ec0945efa3f76e6",
+    "candidate": "1e263295ee0a1e2b0c4ae17690613bd45d3b831d",
+    "changed_files": ["one.txt", "two.txt", "three.txt"],
+    "tests": {"command": "git diff --check", "passed": 3, "failed": 0},
+    "human_reviewed": true,
+    "approved_and_merged_into_disposable_repository": true,
+    "temporary_repository_removed": true,
+    "original_user_workspace_restored": true
+  },
+  "screenshot": {
+    "visually_inspected_in_exact_package": true,
+    "file_retained": false,
+    "system_capture_probe_file_created": false,
+    "manual_replacement_verified": false
+  },
+  "acceptance": {
+    "packaged_ui": "14/25",
+    "increment": 0,
+    "reason": "The run duplicates an existing packaged workflow; the current screenshot was not retained."
+  }
+}

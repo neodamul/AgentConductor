@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "verification_type": "exact packaged post-approval charter-drift refusal and Agent Room judgment",
+  "date": "2026-10-23",
+  "application_version": "0.1.36",
+  "source_commit": "aa8090405239cd67cf741bd02f977059cdb38071",
+  "target": "aarch64-apple-darwin",
+  "binary_sha256": "5fc0dd3db29d07f002d7c44a325c11952b680802ff93c1fd69f0a65857b9de31",
+  "archive_sha256": "0087cdfb52bab74ab19e19eb811b2b58c58543762c5a5d6e01fcb52f1e071f30",
+  "run_id": "ce0b5973-2152-4d99-bbe3-ec123288786d",
+  "environment": {
+    "disposable_run_copy": "/private/tmp/ac-issue9-charter-guard-check",
+    "source_workspace_modified": false,
+    "source_repository_modified": false,
+    "external_services_called": false,
+    "provider_cli_invoked": false
+  },
+  "baseline": {
+    "source_fixture_predates_charter_persistence": true,
+    "matching_charter_added_only_to_disposable_copy": true,
+    "charter_matches_original_plan": true,
+    "candidate_commit": "3db8840b02ce28558701698c327a5820b7dc7311",
+    "source_repository_head": "0f7e88708f8f967b165fd081ce58224139dd6df6"
+  },
+  "actions": {
+    "exact_candidate_approval_exit_code": 0,
+    "plan_goal_changed_only_in_disposable_run_copy": true,
+    "exact_package_merge_exit_code": 1,
+    "merge_stderr": "[goal_drift] the goal, planning rules, or task contract changed without a recorded amendment",
+    "goal_drift_audit_rows": 1,
+    "run_state_after_refusal": "approved",
+    "repository_head_after_refusal": "0f7e88708f8f967b165fd081ce58224139dd6df6",
+    "candidate_merged": false
+  },
+  "agent_room": {
+    "single_package_process": true,
+    "version_visible": "0.1.36",
+    "tasks_completed": 3,
+    "tests_passed": 3,
+    "coordinator_judgment_count": 1,
+    "localized_label_observed_ko": "승인된 작업 기준이 변경되어 코디네이터가 실행을 차단했습니다",
+    "merge_button_disabled": true,
+    "approval_or_merge_of_original_candidate": false
+  },
+  "cleanup": {
+    "original_workspace_restored": true,
+    "original_state_still_waiting_approval": true,
+    "original_goal_drift_rows": 0,
+    "temporary_run_copy_removed": true
+  },
+  "acceptance": {
+    "previous": "8/25",
+    "current": "9/25",
+    "adds_distinct_workflow": true,
+    "workflow": "Post-approval charter drift refusal",
+    "reason": "The exact package accepted the exact candidate before drift, then rejected merge, recorded the judgment, and exposed the blocked reason in the native UI. This is a separate safety outcome from accepted happy-path plan-to-merge workflows.",
+    "remaining": 16
+  },
+  "windows_package_ui_verification": "open"
+}

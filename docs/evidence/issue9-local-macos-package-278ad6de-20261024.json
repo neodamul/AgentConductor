@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-24",
+  "issue": 9,
+  "source_commit": "278ad6de798e73e2a71502af03117c0004d61e92",
+  "package": {
+    "version": "0.1.37",
+    "target": "aarch64-apple-darwin",
+    "directory": "dist/agentconductor-aarch64-apple-darwin-278ad6de798e",
+    "archive": "dist/agentconductor-aarch64-apple-darwin-278ad6de798e.zip",
+    "archive_bytes": 21566381,
+    "archive_sha256": "6b3771dbb6343a2874251da678880a2c5df33b1a3ec79be0b0fb44246c4f1c0e",
+    "binary_bytes": 18858304,
+    "binary_sha256": "5e3fd1dfe84aa0cb7bec6e50918849b3b56bfc676ebda034dfe5df536fe9fd42",
+    "dependency_count": 242
+  },
+  "verification": {
+    "command": "cargo run --offline --locked --release -- package-release",
+    "manifest_validation": "passed",
+    "zip_integrity": "passed: 482 files",
+    "embedded_smoke": {
+      "evidence": ".agentconductor/verification/packaged-workflow/run-67449-1792782322757456000-0/smoke.json",
+      "exit_code": 0,
+      "cases": 4,
+      "tasks_per_case": 3,
+      "tests_per_case": 3,
+      "approved_merge_verified": true,
+      "unapproved_merge_refused": true
+    },
+    "local_format": "passed",
+    "local_warning_denied_clippy": "passed",
+    "local_all_target_tests": "378 passed, 13 ignored across 110 suites",
+    "exact_package_ui_reinspection": "not repeated; executable SHA-256 matches the previously inspected candidate"
+  },
+  "cleanup": {
+    "superseded_package": "08a1783",
+    "superseded_smoke_run_removed": true,
+    "current_candidate_retained": true
+  },
+  "acceptance": {
+    "packaged_native_ui_workflows": "15/25",
+    "shipped_default_rust_ui": "0/25",
+    "new_ui_workflow_credit": 0,
+    "github_release": false,
+    "windows_runtime_verified": false,
+    "platform_validation_run": "40008320185",
+    "platform_validation_status": "in_progress"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "workflow_run": 40230530142,
+  "commit": "64d562145276c3c2644a423c5b1e50a93c81bcff",
+  "date": "2026-10-26",
+  "result": "failed_exact_windows_schedule_acceptance",
+  "passed": [
+    "macOS platform validation",
+    "Windows platform validation",
+    "macOS exact release package and smoke",
+    "Windows exact release package build and smoke",
+    "Windows default desktop save"
+  ],
+  "failed": {
+    "test": "exact_windows_package_schedules_a_waiting_agent_room_task",
+    "reason": "The schedule button remained clipped below the maximized window even when WM_MOUSEWHEEL was sent to the HWND with screen coordinates inside the inspector.",
+    "geometry": "button=(748,792)-(847,812); window=(-8,-8)-(1032,728)",
+    "effect": "No schedule action ran and no manual_schedule value was persisted."
+  },
+  "root_cause_found": "Sending WM_MOUSEWHEEL with SendMessage to the top-level HWND did not produce a scroll event in this Windows package UI.",
+  "fix_under_test": "Move the cursor into the inspector and emit a native mouse wheel event at that position.",
+  "local_verification": "The new driver contract failed before replacing SendMessage; 15 focused tests, warning-denied all-target Clippy, rustfmt, and diff checks pass after the change.",
+  "acceptance": "Windows exact-package scheduling remains unverified until manual_schedule=2099-01-01T09:00:00+09:00 is persisted."
+}

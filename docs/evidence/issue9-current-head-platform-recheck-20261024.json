@@ -1,0 +1,34 @@
+{
+  "date": "2026-10-24",
+  "issue": 9,
+  "source": {
+    "local_head": "86781d1d",
+    "remote_ci_head": "bc9b7d3c0f3c986b54389b02da5c77d631260029",
+    "difference": "The two local commits are documentation-only; Rust product/test source is identical."
+  },
+  "local": {
+    "test": "cargo test --offline --locked --features native-ui-probe --test native_ui_start_journey review_approval_shows_start_feedback_then_opens_the_started_run -- --nocapture",
+    "result": "1 passed in 5.31 seconds",
+    "format": "cargo fmt --all -- --check passed",
+    "docs_and_layout": "source_layout + public_docs: 13 passed"
+  },
+  "github_actions": {
+    "run_id": 40003966004,
+    "url": "https://github.com/neodamul/AgentConductor/actions/runs/40003966004",
+    "macos": "success: build, source layout, all native tests, opt-in Rust UI launch, formatting, Clippy, unsafe-comment gate",
+    "windows": "build and source layout passed; all-target native tests still in progress at observation time; remaining checks pending"
+  },
+  "utm": {
+    "status": "started",
+    "ipv4": "192.168.64.6",
+    "read_only_guest_command": "utmctl exec Windows --cmd C:\\Windows\\System32\\cmd.exe /c ver",
+    "result": "OSStatus -2700: Failed to execute child process (No such file or directory)",
+    "share_or_power_changed": false
+  },
+  "acceptance": {
+    "packaged_native_ui_workflows": "15/25",
+    "shipped_default_rust_ui": "0/25",
+    "windows_interactive_runtime_verified": false
+  },
+  "decision": "No product fix was made for the older macOS test failure because the current local and remote macOS checks pass."
+}

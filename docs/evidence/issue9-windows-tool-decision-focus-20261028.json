@@ -1,0 +1,43 @@
+{
+  "issue": 9,
+  "pull_request": 22,
+  "failed_run": 40594521592,
+  "failed_head": "db9820a95cad69187ba8e054b2c8450e2ccab4b2",
+  "observed": {
+    "signal_settings_save": "passed; transport=agentmemory and port=7333 persisted",
+    "tool_decision": "failed at CHECKED_POINTER_CLICK_FAILED in exact_windows_package_refreshes_approves_and_rejects_tool_requests",
+    "ui_automation": "the decision modal was exposed as a separate Window node while the main window remained present"
+  },
+  "diagnosis": "The helper can fail on exact foreground-HWND equality, a different-process hit-test, or cursor positioning. The log does not isolate which guard rejected the click; the separate modal HWND makes the exact-HWND check a concrete hypothesis.",
+  "revalidation": {
+    "run_id": 40613250892,
+    "result": "The same-process foreground change did not fix the packaged journey. Both Allow once and Deny controls were enabled and onscreen; UIA Invoke produced no confirmation dialog, then the checked pointer helper failed.",
+    "root_cause": "Not yet identified: previous helper reported only CHECKED_POINTER_CLICK_FAILED without identifying the failed foreground, hit-test, cursor, or foreground-retention guard.",
+    "next": "Add per-guard diagnostics, rerun the exact Windows package, and fix the measured failure condition."
+  },
+  "tdd": {
+    "red": "tests/windows_tool_decision_dispatch.rs failed before the focus check changed",
+    "green": "windows_tool_decision_dispatch and source_layout passed 3 tests; all-target warning-denied Clippy, rustfmt, git diff --check, and the 300-line guard passed"
+  },
+  "change": "The fallback maximizes the app, bounded-scrolls each action into the app window, verifies full UIA rectangle containment, and retains process-owned hit tests for scroll and click input.",
+  "diagnostic_run": {
+    "run_id": 40617964910,
+    "result": "Failed in the exact Windows package tool-decision journey after desktop, briefing, schedule, and signal-settings package tests passed.",
+    "guard": "POINT_NOT_OWNED",
+    "hit_process_id": 928,
+    "expected_app_process_id": 5380,
+    "screen_point": [394, 757],
+    "root_cause": "The test driver trusted IsOffscreen=False without confirming that the action button's UIA rectangle was inside the app window, so it attempted a click outside the viewport.",
+    "fix": "Maximize the app, bounded-scroll each action into the app window, verify rectangle containment, and retain foreground and WindowFromPoint process ownership checks for every scroll and click."
+  },
+  "refresh_timeout_run": {
+    "run_id": 40622684398,
+    "result": "The exact Windows package passed earlier interactions and reached refresh, but the original receipt did not become superseded within the existing 10-second test wait.",
+    "diagnosis": "Unknown. The test fixture removed its temporary run on panic, so the child action owner record, stdout/stderr, workflow report, and receipt state were not retained in CI output.",
+    "instrumentation": "Timeout failures now include the receipt, serialized workflow report, and bounded owner.json/stdout.log/stderr.log contents for coordinator-ui child actions. The timeout duration is unchanged.",
+    "local_verification": "windows_tool_decision_dispatch and source_layout passed 7 tests; warning-denied all-target Clippy, rustfmt, and git diff --check passed. The Receipt summary is type-checked by a shared cross-platform test because this host has no installed Windows Rust target. Changed files are 244, 98, and 16 lines."
+  },
+  "exact_package_revalidation": "run 40627667365 validates prior head 3a037b61 and cannot validate the corrected Receipt formatter; rerun the exact Windows package on 61b5f722 after that run concludes",
+  "workflow_23_credit": false,
+  "candidate_packaged_ui_acceptance": "22/25"
+}

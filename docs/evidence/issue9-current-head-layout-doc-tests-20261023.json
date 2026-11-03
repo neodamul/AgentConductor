@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "branch": "codex/issue-9-native-ui-parity",
+  "source_head": "acf2c322f0087a684703263114902bb7e07a49f7",
+  "verification": {
+    "command": "cargo test --offline --locked --release --test public_docs --test source_layout",
+    "passed": 13,
+    "failed": 0,
+    "suites": ["public_docs", "source_layout"],
+    "result": "passed"
+  },
+  "format": {
+    "command": "cargo fmt --all -- --check",
+    "result": "passed"
+  },
+  "scope": "Current-head public documentation and source/test layout checks only; no product code, package, UI workflow, Windows, accessibility, IME, resource, or license acceptance is claimed."
+}

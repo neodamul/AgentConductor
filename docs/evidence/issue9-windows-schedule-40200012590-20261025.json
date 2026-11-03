@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "issue": 9,
+  "run_id": 40200012590,
+  "commit": "51fd7885",
+  "result": "failed",
+  "passed": [
+    "macOS and Windows platform validation",
+    "macOS release package execution",
+    "Windows release build and package execution",
+    "Windows default desktop save and read-only team briefing"
+  ],
+  "failed": "The packaged Windows schedule acceptance stopped when UI Automation requested ScrollItemPattern from the Schedule retry button; the provider returned Unsupported Pattern.",
+  "fix_under_test": "Walk the UI Automation control ancestors to find the supported ScrollPattern and advance the vertical scroll until the schedule button bounds are inside the native window.",
+  "next_check": "Run exact Windows package acceptance and require persisted manual_schedule with 2099-01-01T09:00:00+09:00."
+}

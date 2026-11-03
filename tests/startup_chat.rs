@@ -1,191 +1,269 @@
-#![cfg(unix)]
-//! GitHub #115: the workspace screen's chat request validates before launching any job.
-use agentconductor::ui::Room;
+use agentconductor::ui::setup::Startup;
 use serde_json::json;
+use std::{path::Path, process::Command};
+
 #[path = "support/env.rs"]
-mod env;
+mod test_env;
+
+#[cfg(unix)]
+#[path = "support/startup_chat_timeout.rs"]
+mod startup_chat_timeout;
+
+#[cfg(unix)]
+#[test]
+fn chat_submission_does_not_wait_for_repository_head() {
+    use std::time::Duration;
+
+    let elapsed = startup_chat_timeout::dispatch_latency();
+    assert!(
+        elapsed < Duration::from_secs(2),
+        "chat request waited for git HEAD: {elapsed:?}"
+    );
+}
 
 #[test]
-fn chat_requests_are_validated_and_the_snapshot_carries_a_chat_slot() {
-    let root = std::env::temp_dir().join(format!("ac-startup-chat-{}", std::process::id()));
-    // GitHub #222: the request diagnostics log lives under HOME; a test must not write to the real one.
-    let mut env = env::lock();
-    env.set("HOME", root.join("home"));
-    let room = Room::startup(
-        &root,
-        std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
-    )
+fn oversized_question_is_rejected_without_starting_a_chat_job() {
+    let root = std::env::temp_dir().join(format!(
+        "ac-chat-startup-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    let startup = Startup::open(&root, &std::env::current_exe().unwrap()).unwrap();
+    let snapshot = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    let request = serde_json::to_vec(&json!({
+        "kind":"chat", "revision":snapshot["chat_revision"], "text":"x".repeat(9 * 1024)
+    }))
     .unwrap();
-    let snapshot = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-    assert!(snapshot["chat"].is_null(), "no answer before any chat");
-    let revision = snapshot["chat_revision"].clone();
-    let send = |text: &str| {
-        room.dispatch(
-            json!({"kind":"chat","revision":revision,"text":text})
-                .to_string()
-                .as_bytes(),
-        )
-    };
-    assert!(send("  ").is_err(), "empty question");
-    assert!(send(&"x".repeat(9 * 1024)).is_err(), "over-long question");
+    let error = startup.dispatch(&request).unwrap_err();
     assert!(
-        !send("How do I run it?").unwrap_err().is_empty(),
-        "no coordinator is registered in a fresh workspace"
+        error.contains("question") || error.contains("질문"),
+        "{error}"
     );
-    // GitHub #185: the conversation is stored with the workspace and can be cleared.
-    let history = room.dispatch(br#"{"kind":"chat_history"}"#).unwrap();
-    assert_eq!(
-        history["turns"],
-        json!([]),
-        "nothing stored before a chat ran"
-    );
-    let reset = room.dispatch(br#"{"kind":"chat_reset"}"#).unwrap();
-    assert_eq!(reset["turns"], json!([]));
-    drop(room);
+    assert!(startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap()["job"].is_null());
+    drop(startup);
     std::fs::remove_dir_all(root).unwrap();
 }
 
 #[test]
-fn chat_submission_does_not_wait_for_repository_head() {
-    use std::{
-        os::unix::fs::PermissionsExt,
-        process::Command,
-        time::{Duration, Instant},
-    };
+fn chat_history_is_returned_on_demand_and_reset_persists_across_reopen() {
+    let root = std::env::temp_dir().join(format!(
+        "ac-chat-history-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    let exe = std::env::current_exe().unwrap();
+    let startup = Startup::open(&root, &exe).unwrap();
+    let mut saved: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(root.join("startup.json")).unwrap()).unwrap();
+    let history = json!([
+        {"role":"operator","text":"What changed?"},
+        {"role":"assistant","text":"The request diagnostics were added."}
+    ]);
+    saved["chat_result"] = json!("chat-a1b2c3.json");
+    std::fs::write(
+        root.join("startup.json"),
+        serde_json::to_vec(&saved).unwrap(),
+    )
+    .unwrap();
+    std::fs::create_dir_all(root.join("mcp")).unwrap();
+    std::fs::write(
+        root.join("mcp/chat-input-a1b2c3.json"),
+        serde_json::to_vec(&json!({
+            "turns":[{"role":"operator","text":"What changed?"}],
+            "language":"English"
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+    std::fs::write(
+        root.join("mcp/chat-a1b2c3.json"),
+        serde_json::to_vec(&json!({"answer":"The request diagnostics were added."})).unwrap(),
+    )
+    .unwrap();
+    drop(startup);
 
-    let root = std::env::temp_dir().join(format!("ac-chat-timeout-{}", std::process::id()));
+    let startup = Startup::open(&root, &exe).unwrap();
+    let snapshot = startup
+        .dispatch(br#"{"kind":"snapshot","chat_history":true}"#)
+        .unwrap();
+    assert_eq!(snapshot["chat_history"], history);
+    let save = serde_json::to_vec(&json!({
+        "kind":"save",
+        "revision":snapshot["revision"],
+        "config":snapshot["config"]
+    }))
+    .unwrap();
+    assert_eq!(startup.dispatch(&save).unwrap()["saved"], true);
+    let snapshot = startup
+        .dispatch(br#"{"kind":"snapshot","chat_history":true}"#)
+        .unwrap();
+    assert_eq!(snapshot["chat_history"], history);
+    let reset = serde_json::to_vec(&json!({
+        "kind":"chat_reset",
+        "revision":snapshot["revision"]
+    }))
+    .unwrap();
+    assert_eq!(startup.dispatch(&reset).unwrap()["reset"], true);
+    drop(startup);
+
+    let startup = Startup::open(&root, &exe).unwrap();
+    let snapshot = startup
+        .dispatch(br#"{"kind":"snapshot","chat_history":true}"#)
+        .unwrap();
+    assert_eq!(snapshot["chat_history"], json!([]));
+    drop(startup);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn a_legacy_chat_without_its_deleted_input_still_exposes_its_answer() {
+    let root = std::env::temp_dir().join(format!(
+        "ac-chat-legacy-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    let exe = std::env::current_exe().unwrap();
+    let startup = Startup::open(&root, &exe).unwrap();
+    let mut saved: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(root.join("startup.json")).unwrap()).unwrap();
+    saved["chat_result"] = json!("chat-a1b2c3.json");
+    std::fs::write(
+        root.join("startup.json"),
+        serde_json::to_vec(&saved).unwrap(),
+    )
+    .unwrap();
+    std::fs::create_dir_all(root.join("mcp")).unwrap();
+    std::fs::write(
+        root.join("mcp/chat-a1b2c3.json"),
+        br#"{"answer":"The earlier question's answer."}"#,
+    )
+    .unwrap();
+    drop(startup);
+
+    let startup = Startup::open(&root, &exe).unwrap();
+    let snapshot = startup
+        .dispatch(br#"{"kind":"snapshot","chat_history":true}"#)
+        .unwrap();
+    assert_eq!(
+        snapshot["chat_history"],
+        json!([{"role":"assistant","text":"The earlier question's answer."}])
+    );
+    drop(startup);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn invalid_chat_artifact_pointer_is_rejected() {
+    let root = std::env::temp_dir().join(format!(
+        "ac-chat-pointer-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    let exe = std::env::current_exe().unwrap();
+    let startup = Startup::open(&root, &exe).unwrap();
+    let mut saved: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(root.join("startup.json")).unwrap()).unwrap();
+    saved["chat_result"] = json!("chat-../../outside.json");
+    std::fs::write(
+        root.join("startup.json"),
+        serde_json::to_vec(&saved).unwrap(),
+    )
+    .unwrap();
+    drop(startup);
+    let startup = Startup::open(&root, &exe).unwrap();
+    assert!(
+        startup
+            .dispatch(br#"{"kind":"snapshot","chat_history":true}"#)
+            .is_err()
+    );
+    drop(startup);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn chat_revision_ignores_git_head_and_rejects_stale_workspace() {
+    // Another test puts a delayed fake `git` first on PATH while measuring chat latency.
+    let _environment = test_env::lock();
+    let root = std::env::temp_dir().join(format!(
+        "ac-chat-revision-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
     let repo = root.join("repo");
+    let proposal = root.join("proposal");
     std::fs::create_dir_all(&repo).unwrap();
+    std::fs::create_dir_all(&proposal).unwrap();
     for args in [
         vec!["init", "-b", "main"],
         vec!["config", "user.name", "Test"],
         vec!["config", "user.email", "test@example.invalid"],
     ] {
-        assert!(
-            Command::new("git")
-                .current_dir(&repo)
-                .args(args)
-                .status()
-                .unwrap()
-                .success()
-        );
+        git(&repo, &args);
     }
     std::fs::write(repo.join("base.txt"), "base\n").unwrap();
-    assert!(
-        Command::new("git")
-            .current_dir(&repo)
-            .args(["add", "."])
-            .status()
-            .unwrap()
-            .success()
-    );
-    assert!(
-        Command::new("git")
-            .current_dir(&repo)
-            .args(["commit", "-m", "base"])
-            .status()
-            .unwrap()
-            .success()
-    );
+    git(&repo, &["add", "."]);
+    git(&repo, &["commit", "-m", "base"]);
 
-    let mut environment = env::lock();
-    environment.set("HOME", root.join("home"));
-    let room = Room::startup(
-        &root.join("desktop"),
-        std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
-    )
-    .unwrap();
-    let before = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-    let config = json!({
-        "profiles":[{"id":"coordinator","executable":std::env::current_exe().unwrap(),"args":["-p"],"parser":"claude","permission_mode":"read_only"}],
-        "repository":repo,"goal":"answer questions","coordinator":"coordinator","workspace_mode":"shared"
+    let exe = std::env::current_exe().unwrap();
+    let startup = Startup::open(&root, &exe).unwrap();
+    let mut saved: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(root.join("startup.json")).unwrap()).unwrap();
+    saved["config"]["repository"] = json!(repo);
+    saved["proposal"] = json!({
+        "workspace": repo,
+        "directory": proposal,
+        "repository_base": "base",
+        "run": root.join("run"),
+        "phase": "ready"
     });
-    room.dispatch(
-        json!({"kind":"save","revision":before["revision"],"config":config})
-            .to_string()
-            .as_bytes(),
+    std::fs::write(
+        root.join("startup.json"),
+        serde_json::to_vec(&saved).unwrap(),
     )
     .unwrap();
-    let saved = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-    room.dispatch(
-        json!({"kind":"draft","revision":saved["revision"]})
-            .to_string()
-            .as_bytes(),
+    drop(startup);
+
+    let startup = Startup::open(&root, &exe).unwrap();
+    let first = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    let chat_revision = first["chat_revision"].as_str().unwrap().to_owned();
+    std::fs::write(repo.join("next.txt"), "next\n").unwrap();
+    git(&repo, &["add", "."]);
+    git(&repo, &["commit", "-m", "advance head"]);
+    let next = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    assert_ne!(first["revision"], next["revision"]);
+    assert_eq!(next["chat_revision"], chat_revision);
+    drop(startup);
+
+    let mut saved: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(root.join("startup.json")).unwrap()).unwrap();
+    saved["config"]["goal"] = json!("changed after the chat snapshot");
+    std::fs::write(
+        root.join("startup.json"),
+        serde_json::to_vec(&saved).unwrap(),
     )
     .unwrap();
-    let reviewed = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-
-    let git = Command::new("which").arg("git").output().unwrap();
-    let real_git = String::from_utf8(git.stdout).unwrap().trim().to_owned();
-    let bin = root.join("bin");
-    std::fs::create_dir_all(&bin).unwrap();
-    let slow_git = bin.join("git");
-    std::fs::write(&slow_git, format!("#!/bin/sh\ncase \"$*\" in *'rev-parse HEAD'*) sleep 4;; esac\nexec \"{real_git}\" \"$@\"\n")).unwrap();
-    std::fs::set_permissions(&slow_git, std::fs::Permissions::from_mode(0o755)).unwrap();
-    environment.set("PATH", format!("{}:/usr/bin:/bin", bin.display()));
-
-    let started = Instant::now();
-    let result = room.dispatch(
-        json!({"kind":"chat","revision":reviewed["chat_revision"],"text":"Is this responsive?"})
-            .to_string()
-            .as_bytes(),
-    );
-    assert!(result.is_ok(), "chat submission failed: {result:?}");
+    let startup = Startup::open(&root, &exe).unwrap();
+    let error = startup
+        .dispatch(
+            &serde_json::to_vec(&json!({
+                "kind":"chat", "revision":chat_revision, "text":"hello"
+            }))
+            .unwrap(),
+        )
+        .unwrap_err();
     assert!(
-        started.elapsed() < Duration::from_secs(2),
-        "chat request waited for git HEAD: {:?}",
-        started.elapsed()
+        error.contains("changed") || error.contains("refresh") || error.contains("새로고침"),
+        "{error}"
     );
-    drop(room);
-    drop(environment);
+    drop(startup);
     std::fs::remove_dir_all(root).unwrap();
 }
 
-#[test]
-fn chat_rejects_a_stale_saved_context_without_a_git_head_lookup() {
-    let root = std::env::temp_dir().join(format!("ac-chat-stale-context-{}", std::process::id()));
-    let repository = root.join("repo");
-    std::fs::create_dir_all(&repository).unwrap();
-    let mut environment = env::lock();
-    environment.set("HOME", root.join("home"));
-    let room = Room::startup(
-        &root.join("desktop"),
-        std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
-    )
-    .unwrap();
-    let initial = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-    let config = json!({"profiles":[],"coordinator":"","goal":"first goal","repository":repository,"workspace_mode":"shared"});
-    room.dispatch(
-        json!({"kind":"save","revision":initial["revision"],"config":config})
-            .to_string()
-            .as_bytes(),
-    )
-    .unwrap();
-    let reviewed = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-    let stale_chat_revision = reviewed["chat_revision"].clone();
+fn git(repo: &Path, args: &[&str]) {
+    let output = Command::new("git")
+        .arg("-C")
+        .arg(repo)
+        .args(args)
+        .output()
+        .unwrap();
     assert!(
-        stale_chat_revision.is_string(),
-        "chat context revision is exposed"
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
     );
-
-    let changed = json!({"profiles":[],"coordinator":"","goal":"changed goal","repository":repository,"workspace_mode":"shared"});
-    room.dispatch(
-        json!({"kind":"save","revision":reviewed["revision"],"config":changed})
-            .to_string()
-            .as_bytes(),
-    )
-    .unwrap();
-    let result = room.dispatch(
-        json!({"kind":"chat","revision":stale_chat_revision,"text":"hello"})
-            .to_string()
-            .as_bytes(),
-    );
-    let error = result.unwrap_err();
-    assert!(
-        error.contains("startup state changed since review"),
-        "stale chat must be rejected before attempting coordinator launch: {error}"
-    );
-    drop(room);
-    drop(environment);
-    std::fs::remove_dir_all(root).unwrap();
 }

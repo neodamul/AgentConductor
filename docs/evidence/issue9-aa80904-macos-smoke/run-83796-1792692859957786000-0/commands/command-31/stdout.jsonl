@@ -1,0 +1,21 @@
+diff --git a/one.txt b/one.txt
+new file mode 100644
+index 0000000..978dddd
+--- /dev/null
++++ b/one.txt
+@@ -0,0 +1 @@
++implemented
+diff --git a/three.txt b/three.txt
+new file mode 100644
+index 0000000..978dddd
+--- /dev/null
++++ b/three.txt
+@@ -0,0 +1 @@
++implemented
+diff --git a/two.txt b/two.txt
+new file mode 100644
+index 0000000..978dddd
+--- /dev/null
++++ b/two.txt
+@@ -0,0 +1 @@
++implemented

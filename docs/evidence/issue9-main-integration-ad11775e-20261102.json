@@ -1,0 +1,37 @@
+{
+  "issue": 9,
+  "date": "2026-11-02",
+  "pr": 22,
+  "branch": "codex/issue-9-native-ui-parity",
+  "source_commit": "ad11775e593eb454299eda5e9180b06a73dbbaaf",
+  "integration": {
+    "base": "origin/main",
+    "reported_conflicts_before_merge": 119,
+    "unresolved_conflicts_after_merge": 0,
+    "github_mergeable": true,
+    "open_pull_request_count": 1,
+    "child_pull_requests_opened": 0,
+    "legacy_web_ui_restored": false
+  },
+  "local_verification": {
+    "command": "cargo test --locked --offline",
+    "passed": 249,
+    "ignored": 1,
+    "suites": 43,
+    "release_binary": "cargo build --locked --offline --release --bin agentconductor-native-ui-probe",
+    "release_binary_result": "passed",
+    "screenshot_freshness": "passed",
+    "source_layout": "passed; Rust-only project-owned UI/build source and 300-line maximum"
+  },
+  "remote_verification": {
+    "workflow_run": 41336821290,
+    "status_at_recording": "in_progress",
+    "result_claimed": false
+  },
+  "remaining_acceptance": [
+    "Exact packaged Windows workflows",
+    "Screen-by-screen native UI acceptance",
+    "Windows UI Automation, accessibility, and Korean IME"
+  ],
+  "acceptance_note": "Local tests/build and GitHub mergeability do not count as packaged or visual UI acceptance. Keep issue #9 open and PR #22 draft."
+}

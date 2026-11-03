@@ -35,9 +35,18 @@ waive license review. Use SQLite FTS5/Markdown memory if internal policy disallo
 - Separately inspect legacy Graphify MIT code, model weights, installers, CLI service terms.
 - Complete a release candidate only when the reviewed inventory matches the bundled inventory.
 
-Cargo.lock now exists. A [host-target declaration inventory](rust-dependencies.md) now covers 33 packages.
-The initial macOS release binary links only libiconv/libSystem; no dynamic SQLite library.
-Full source/license-text and multi-platform distribution review remain **not performed**.
+The locked `aarch64-apple-darwin` package resolves 182 dependencies. Thirty-four crate
+archives omit a root license file; `licenses/upstream/sources.json` now pins their
+package identity, declared SPDX expression, Cargo VCS revision, selected MIT text,
+and SHA-256. The package contains dependency licenses, notices, and a CycloneDX SBOM.
+
+Exact macOS package evidence for source commit `1ddbfa88b35be8928b45db0e432672367d468ccb`:
+`dist/agentconductor-aarch64-apple-darwin-1ddbfa88b35b.zip`, SHA-256
+`56682ee6ca2a1d2d0810a652c1b7a92fd9346a8e1130841bbe623ca483981da1`. Its packaged
+workflow smoke passed all four Git/folder and shared/worktree combinations. This
+does not establish Windows package acceptance or final company legal clearance; the
+retained SPDX MIT template has placeholder copyright fields where crate archives
+provided no license text, so attribution still needs internal review before release.
 
 ## 2026-10-10 optional REST interoperation check
 

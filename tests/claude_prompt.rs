@@ -1,10 +1,16 @@
 //! Metadata collection must recognize interactive prompt variants without a generation request.
+#[cfg(target_os = "macos")]
+#[path = "support/env.rs"]
+mod test_env;
+
 #[cfg(any(target_os = "macos", windows))]
 #[tokio::test]
 async fn claude_prompt_variants_collect_usage_and_reap_the_owned_process() {
     use agentconductor::{plan::AgentProfile, quota};
     let root = std::env::temp_dir().join(agentconductor::native_guard::session_id().unwrap());
     std::fs::create_dir(&root).unwrap();
+    #[cfg(target_os = "macos")]
+    let mut env = test_env::lock();
     let exe = root.join(if cfg!(windows) {
         "terminal.exe"
     } else {
@@ -18,8 +24,26 @@ async fn claude_prompt_variants_collect_usage_and_reap_the_owned_process() {
             .unwrap()
             .success()
     );
+    #[cfg(target_os = "macos")]
+    env.set("PATH", &root);
     for (index, prompt) in ["❯", ">", "$"].iter().enumerate() {
-        let profile: AgentProfile = serde_json::from_value(serde_json::json!({"id":"claude","parser":"claude","executable":exe,"args":[],"environment":{"AC_QUOTA_PROMPT":prompt,"AC_QUOTA_CASE":if index==1{"trust_choice"}else{"normal"},"AC_QUOTA_ENTERPRISE":if index==1{"1"}else{"0"}}})).unwrap();
+        let executable = if cfg!(target_os = "macos") {
+            "terminal".to_owned()
+        } else {
+            exe.to_string_lossy().into_owned()
+        };
+        let profile: AgentProfile = serde_json::from_value(serde_json::json!({"id":"claude","parser":"claude","executable":executable,"args":[],"environment":{"AC_QUOTA_PROMPT":prompt,"AC_QUOTA_CASE":if index==1{"trust_choice"}else{"normal"},"AC_QUOTA_ENTERPRISE":if index==1{"1"}else{"0"},"PATH":if cfg!(target_os = "macos"){"/definitely/missing"}else{""}}})).unwrap();
+        #[cfg(target_os = "macos")]
+        let profile = {
+            let mut profile = profile;
+            let term = ["dumb", "screen-256color", ""][index];
+            profile.environment.insert("TERM".into(), term.into());
+            profile.environment.insert(
+                "AC_EXPECT_TERM".into(),
+                if index == 1 { term } else { "xterm-256color" }.into(),
+            );
+            profile
+        };
         let dir = root.join(index.to_string());
         let result = quota::query_claude(&profile, &dir, &root).await.unwrap();
         if index == 1 {
@@ -81,8 +105,6 @@ fn banner_or_currency_without_an_input_prompt_does_not_send_usage() {
 
 #[test]
 fn enterprise_amounts_with_thousands_separators_and_cursor_spacing_are_read() {
-    // GitHub #295: a company allocation over $999 is written with commas, and a terminal that draws
-    // spaces as cursor-forward moves leaves no whitespace between the words.
     let commas = "Enterprise plan\n>\n70% used $1,351.23 / $5,000.00 spent - Resets Nov 1";
     let budget = &agentconductor::quota::parse_claude_usage(commas, 1791975600)
         .unwrap()
@@ -90,16 +112,17 @@ fn enterprise_amounts_with_thousands_separators_and_cursor_spacing_are_read() {
     assert_eq!(budget.used.as_deref(), Some("1351.23"));
     assert_eq!(budget.allocated.as_deref(), Some("5000.00"));
     assert_eq!(budget.remaining.as_deref(), Some("3648.77"));
+
     let cursor = "Enterprise plan\r\n>\r\n70%\x1b[1Cused\x1b[1C$351.23\x1b[1C/\x1b[1C$500.00\x1b[1Cspent\x1b[1C-\x1b[1CResets\x1b[1CNov\x1b[1C1";
     let budget = &agentconductor::quota::parse_claude_usage(cursor, 1791975600)
         .unwrap()
         .budgets[0];
     assert_eq!(budget.allocated.as_deref(), Some("500.00"));
-    for bad in ["$1,35.2", "$,500", "$5,00,0.00"] {
-        let text = format!("70% used $1.00 / {bad} spent");
+    for malformed in ["$1,35.2", "$,500", "$5,00,0.00"] {
+        let text = format!("70% used $1.00 / {malformed} spent");
         assert!(
             agentconductor::quota::parse_claude_usage(&text, 1791975600).is_err(),
-            "{bad}"
+            "{malformed}"
         );
     }
 }

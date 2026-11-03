@@ -1,7 +1,7 @@
 //! GitHub #290 (R-200 / DD-212): the user-facing docs of a release are checked by tests, not by a
 //! checklist. The README and the manuals name the package version, and every screenshot they
 //! show exists and every captured screen is used. (Screenshot freshness needs git history and is
-//! checked by `scripts/check_screenshots.py` when a release is published.)
+//! checked by the Rust `check_screenshots` binary when a release is published.)
 use std::{collections::BTreeSet, fs, path::Path};
 
 fn read(path: &str) -> String {
@@ -40,7 +40,7 @@ fn images(text: &str) -> BTreeSet<String> {
 }
 
 #[test]
-fn every_shown_screenshot_exists_and_every_captured_screen_is_shown() {
+fn every_shown_screenshot_exists_and_every_current_capture_is_shown() {
     let shown: BTreeSet<String> = ["README.md", "docs/user-manual.md", "docs/user-manual.ko.md"]
         .iter()
         .flat_map(|path| images(&read(path)))
@@ -52,14 +52,24 @@ fn every_shown_screenshot_exists_and_every_captured_screen_is_shown() {
             "docs/assets/{name} is shown but missing"
         );
     }
-    for entry in fs::read_dir(&root).unwrap() {
-        let name = entry.unwrap().file_name().to_string_lossy().into_owned();
-        if name.starts_with("ui-") && name.ends_with("-current.png") {
-            assert!(
-                shown.contains(&name),
-                "docs/assets/{name} is not shown in the README or a manual"
-            );
-        }
+    let current: BTreeSet<_> = read("docs/assets/screenshots-current.txt")
+        .lines()
+        .filter_map(|line| line.strip_prefix("- "))
+        .map(str::to_owned)
+        .collect();
+    assert!(
+        !current.is_empty(),
+        "current screenshot manifest is explicit"
+    );
+    for name in current {
+        assert!(
+            root.join(&name).is_file(),
+            "current docs/assets/{name} is missing"
+        );
+        assert!(
+            shown.contains(&name),
+            "current docs/assets/{name} is not shown in the README or a manual"
+        );
     }
 }
 
@@ -75,7 +85,7 @@ fn image_targets_are_read_from_markdown() {
 #[test]
 fn publishing_waits_for_the_screenshot_check_with_full_history() {
     let workflow = read(".github/workflows/release.yml");
-    assert!(workflow.contains("python3 scripts/check_screenshots.py"));
+    assert!(workflow.contains("cargo run --locked --bin check_screenshots"));
     assert!(
         workflow.contains("fetch-depth: 0"),
         "the check needs the full history"

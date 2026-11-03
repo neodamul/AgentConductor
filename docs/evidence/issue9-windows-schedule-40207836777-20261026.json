@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "issue": 9,
+  "run_id": 40207836777,
+  "commit": "793eae88",
+  "result": "failed",
+  "passed": [
+    "macOS and Windows platform validation",
+    "macOS release package execution",
+    "Windows release build and package execution",
+    "Windows default desktop save and read-only team briefing"
+  ],
+  "failed": "The Windows schedule test sent bounded global mouse-wheel input, but the button bounds remained (748,792)-(847,812) outside the maximized window ending at y=728.",
+  "fix_under_test": "Send WM_MOUSEWHEEL directly to the foreground Agent Room HWND using the screen coordinates of the scroll point; verify bounds after each tick.",
+  "next_check": "Run exact Windows package acceptance and require persisted manual_schedule with 2099-01-01T09:00:00+09:00."
+}

@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "issue": 9,
+  "run_id": 40211646053,
+  "commit": "dee52666557c9dda3480ef3afcbe07908fd12f53",
+  "result": "failed",
+  "passed": [
+    "macOS and Windows platform validation",
+    "macOS and Windows release package builds and smoke checks",
+    "Windows default desktop save and read-only team briefing"
+  ],
+  "failed": "The exact Windows package schedule test found the button at (748,792)-(847,812) below the maximized window bottom y=728. The driver sent a positive WM_MOUSEWHEEL delta, which scrolls upward instead of revealing the button below the viewport.",
+  "fix_under_test": "Send a negative WM_MOUSEWHEEL delta to scroll downward, retaining bounded ticks and the window-bounds guard.",
+  "next_check": "Run exact Windows package acceptance and require persisted manual_schedule with 2099-01-01T09:00:00+09:00."
+}

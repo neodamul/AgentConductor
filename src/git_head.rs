@@ -1,7 +1,4 @@
-//! GitHub #234 (DD-203): the repository HEAD for the state revision, without a Git process on the request path.
-//! `read` takes it from the files Git itself reads (`HEAD`, the loose ref, `packed-refs`). A layout those files cannot
-//! answer (a `.git` file, a reftable, an unborn branch) is asked of Git by a background task, never by a request:
-//! `Heads::get` returns the last known value at once and refreshes it off the request path only when it is stale.
+//! Read common Git HEAD layouts without starting a process; refresh unusual layouts in background.
 use std::{
     collections::HashMap,
     fs,
@@ -10,24 +7,21 @@ use std::{
     time::{Duration, Instant},
 };
 
-/// A fallback answer older than this is asked of Git again, in the background, the next time it is wanted.
 const STALE: Duration = Duration::from_secs(5);
 
 fn is_commit(text: &str) -> bool {
-    matches!(text.len(), 40 | 64) && text.bytes().all(|b| b.is_ascii_hexdigit())
+    matches!(text.len(), 40 | 64) && text.bytes().all(|byte| byte.is_ascii_hexdigit())
 }
 
-/// A ref name that stays inside `refs/`; anything else is not trusted to be joined to a path.
 pub fn resolve_ref_name(name: &str) -> Option<&str> {
-    let ok = name.starts_with("refs/")
+    let valid = name.starts_with("refs/")
         && !name.contains(['\\', ':', '\0'])
         && name
             .split('/')
             .all(|part| !part.is_empty() && part != ".." && part != "." && !part.starts_with('.'));
-    ok.then_some(name)
+    valid.then_some(name)
 }
 
-/// The Git directory of a project: its own `.git` directory, or the history kept outside a project that has none.
 fn git_dir(root: &Path) -> Option<PathBuf> {
     let own = root.join(".git");
     if fs::symlink_metadata(&own).ok()?.is_dir() {
@@ -36,7 +30,6 @@ fn git_dir(root: &Path) -> Option<PathBuf> {
     crate::folder::external_metadata(root).ok().flatten()
 }
 
-/// `git rev-parse HEAD` answered from files, or `None` when they cannot answer it.
 pub fn read(project: &Path) -> Option<String> {
     let dir = git_dir(&project.canonicalize().ok()?)?;
     let head = fs::read_to_string(dir.join("HEAD")).ok()?;
@@ -57,7 +50,6 @@ pub fn read(project: &Path) -> Option<String> {
     })
 }
 
-/// The HEAD for code that may wait for it: from the files, else from Git.
 pub fn head(project: &Path) -> Result<String, String> {
     match read(project) {
         Some(commit) => Ok(commit),
@@ -65,11 +57,9 @@ pub fn head(project: &Path) -> Result<String, String> {
     }
 }
 
-/// What a request learns about HEAD.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Head {
     Known(String),
-    /// Git has not answered yet (the first request for this folder); the next request will know.
     Pending,
     Failed,
 }
@@ -77,9 +67,9 @@ pub enum Head {
 impl Head {
     pub fn bytes(&self) -> Vec<u8> {
         match self {
-            Head::Known(commit) => commit.as_bytes().to_vec(),
-            Head::Pending => b"head-pending".to_vec(),
-            Head::Failed => b"head-unavailable".to_vec(),
+            Self::Known(commit) => commit.as_bytes().to_vec(),
+            Self::Pending => b"head-pending".to_vec(),
+            Self::Failed => b"head-unavailable".to_vec(),
         }
     }
 }
@@ -90,14 +80,12 @@ struct Entry {
     refreshing: bool,
 }
 
-/// Per-project fallback answers, refreshed by short background tasks (at most one per folder at a time).
 #[derive(Clone, Default)]
 pub struct Heads {
     entries: Arc<Mutex<HashMap<PathBuf, Entry>>>,
 }
 
 impl Heads {
-    /// Never waits for a process: a file read, a lock held for a lookup, and at most one spawned refresh.
     pub fn get(&self, project: &Path) -> Head {
         if let Some(commit) = read(project) {
             return Head::Known(commit);

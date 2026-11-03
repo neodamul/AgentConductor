@@ -63,6 +63,19 @@ fn malformed_or_oversized_pixels_are_refused() {
 }
 
 #[test]
+fn bounded_png_data_url_can_be_decoded_for_native_rendering() {
+    let png = decode(
+        icons::png_data_url(2, 2, &[255; 16])
+            .unwrap()
+            .strip_prefix("data:image/png;base64,")
+            .unwrap(),
+    );
+    let url = icons::data_url(&png).unwrap();
+    assert_eq!(icons::decode_data_url(&url).unwrap(), png);
+    assert!(icons::decode_data_url("data:image/png;base64,%%%=").is_err());
+}
+
+#[test]
 fn custom_agents_never_receive_an_application_icon() {
     assert!(icons::provider_icon(Provider::Custom).is_none());
 }
@@ -83,18 +96,6 @@ fn installed_macos_applications_provide_their_icons() {
             )
             .unwrap();
         }
-    }
-}
-
-#[test]
-fn pages_render_application_icons_only_for_built_in_agents() {
-    for script in [
-        include_str!("../src/ui/startup.js"),
-        include_str!("../src/ui/room.js"),
-    ] {
-        assert!(script.contains("function avatar("));
-        assert!(script.contains("app-icon"));
-        assert!(script.contains("!=='custom'"));
     }
 }
 

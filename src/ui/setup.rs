@@ -5,129 +5,49 @@ use crate::{
     plan::{AgentProfile, ModelCatalog, Plan, Task, WorkspaceMode},
     workflow,
 };
+mod model;
+pub use model::{Config, Proposal, Saved, StoredJob};
 use serde::{Deserialize, Serialize};
 use std::{
     fs,
     path::{Path, PathBuf},
-    sync::Mutex,
+    sync::{Arc, Mutex},
 };
 
 /// Local startup state. Only explicit native requests launch a trusted CLI child.
 pub struct Startup {
     broker: Controller,
     quota_broker: Controller,
-    /// GitHub #261: logs of the chat worker, apart from the planning slot.
     chat_broker: Controller,
-    saved: Mutex<Saved>,
-    /// GitHub #234: the repository HEAD for the state revision, never fetched by a request through a Git process.
     heads: crate::git_head::Heads,
+    saved: Mutex<Saved>,
+    custom_profiles: Vec<AgentProfile>,
+    custom_registry_invalid: bool,
     _lease: crate::leases::Lease,
 }
-mod model;
-pub use model::Config;
-pub(super) use model::{Proposal, Saved, StoredJob, defaults};
-
-mod launch;
-mod settle;
+fn defaults() -> Result<Config, String> {
+    model::defaults()
+}
+mod startup;
 mod storage;
 use storage::{bytes, read, write};
 
 impl Startup {
-    pub fn open(root: &Path, exe: &Path) -> Result<Self, String> {
-        if !root.exists() {
-            fs::create_dir_all(root).map_err(|e| e.to_string())?;
-        }
-        let root = root.canonicalize().map_err(|e| e.to_string())?;
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::PermissionsExt;
-            fs::set_permissions(&root, fs::Permissions::from_mode(0o700))
-                .map_err(|e| e.to_string())?;
-        }
-        let lease = crate::leases::Lease::acquire(&root.join("startup.lock"))?;
-        let settings = root.join("startup.json");
-        let mut saved: Saved = if settings.exists() {
-            read(&settings)?
-        } else {
-            let s = Saved {
-                imports: None,
-                mcp_result: None,
-                chat_result: None,
-                optimize_result: None,
-                // DD-72: no pre-registered agents; templates stay available in + Add.
-                config: Config {
-                    profiles: vec![],
-                    coordinator: String::new(),
-                    ..defaults()?
-                },
-                proposal: None,
-                job: None,
-                quota_job: None,
-                chat_job: None,
-                metadata_queue: Vec::new(),
-                metadata_input: None,
-                metadata_settled: None,
-                metadata_error: None,
-                last_run: None,
-            };
-            write(&settings, &s)?;
-            s
-        };
-        master::adopt(&root, &mut saved.config.profiles);
-        saved.last_run.as_deref().map(crate::workflow::sync_phase);
-        // A reviewed plan whose private folder copy is gone (for example after the legacy
-        // folder-history copies were removed) can no longer start; it is finished history.
-        if saved
-            .proposal
-            .as_ref()
-            .and_then(|p| p.workspace.as_ref())
-            .is_some_and(|w| !w.exists())
-        {
-            saved.proposal = None;
-            write(&settings, &saved)?;
-        }
-        let startup = Self {
-            quota_broker: Controller {
-                dir: root.join("quota-jobs"),
-                exe: exe.canonicalize().map_err(|e| e.to_string())?,
-                job: Mutex::new(None),
-            },
-            chat_broker: Controller {
-                dir: root.join("chat-jobs"),
-                exe: exe.canonicalize().map_err(|e| e.to_string())?,
-                job: Mutex::new(None),
-            },
-            broker: Controller {
-                dir: root,
-                exe: exe.canonicalize().map_err(|e| e.to_string())?,
-                job: Mutex::new(None),
-            },
-            saved: Mutex::new(saved),
-            heads: Default::default(),
-            _lease: lease,
-        };
-        if let Ok(saved) = startup.saved.lock() {
-            let _ = startup.clear_cache(&saved, None, 8);
-            let _ = startup.prune_history(&saved);
-        }
-        startup.recover_last_run()?;
-        Ok(startup)
-    }
-    fn quota_job(&self, s: &Saved) -> Result<serde_json::Value, String> {
-        jobs::state(&self.quota_broker, &s.quota_job)
-    }
-
-    fn chat_job(&self, s: &Saved) -> Result<serde_json::Value, String> {
-        jobs::state(&self.chat_broker, &s.chat_job)
-    }
-
     pub(crate) fn poll_job(&self) -> Result<(), String> {
         self.broker.poll()?;
-        self.chat_broker.poll()?;
-        self.quota_broker.poll().map(|_| ())
+        self.quota_broker.poll()?;
+        self.chat_broker.poll().map(|_| ())
     }
     pub(crate) fn root(&self) -> &Path {
         &self.broker.dir
+    }
+    pub(crate) fn watched_run(&self) -> Option<PathBuf> {
+        self.saved.lock().ok().and_then(|saved| {
+            saved
+                .last_run
+                .clone()
+                .or_else(|| saved.proposal.as_ref().map(|proposal| proposal.run.clone()))
+        })
     }
     /// DD-48: name a freshly created workspace through the same validated store.
     pub(crate) fn set_name(&self, name: &str) -> Result<(), String> {
@@ -161,6 +81,9 @@ impl Startup {
     }
     pub(crate) fn executable(&self) -> &Path {
         &self.broker.exe
+    }
+    pub(crate) fn event_endpoint(&self) -> Option<crate::ui::events::EventEndpoint> {
+        self.broker.event_endpoint.clone()
     }
     pub(crate) fn active_run(&self) -> Result<Option<PathBuf>, String> {
         let saved = self
@@ -224,10 +147,9 @@ impl Startup {
     }
 }
 
-mod document;
-pub(crate) use document::document;
-
 mod baseline;
+mod chat;
+mod launch;
 mod messenger;
 mod request;
 #[cfg(test)]
@@ -237,14 +159,12 @@ use request::Request;
 mod dispatch;
 mod planning;
 mod profiles;
-mod revision;
 mod share;
 mod slug;
 mod snapshot;
 mod update_blockers;
 pub(crate) use profiles::{validate_catalog, validate_name, validate_profiles};
 
-mod chat;
 mod jobs;
 mod lifecycle;
 mod master;

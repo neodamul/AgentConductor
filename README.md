@@ -6,8 +6,7 @@ company's own CLI — work on one repository as a team, while you stay in contro
 You describe a goal. AgentConductor splits it into scoped tasks, runs agents in parallel,
 tests the combined result and asks for your approval before merging. It runs on your computer and reuses signed-in agent CLIs — no API keys, no cloud service.
 
-![Workspace](docs/assets/ui-workspace-current.png) ![Workspace in Korean](docs/assets/ui-workspace-korean-current.png) ![Dark workspace](docs/assets/ui-workspace-dark-current.png)
-![Agent Room](docs/assets/ui-agent-room-current.png) ![Dark Agent Room in Korean](docs/assets/ui-agent-room-dark-current.png) ![Agent settings](docs/assets/ui-agent-settings-current.png)
+![Rust-native Workspace and goal configuration](docs/assets/ui-workspace-current.png)
 
 > **Version:** 0.1.58 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **⚙ Settings → User manual** opens the offline manual.
 
@@ -49,6 +48,5 @@ Agents sharing one subscription form a quota group. Work moves to a fallback age
 ## Learn more
 
 - Manuals: [English](docs/user-manual.md) / [한국어](docs/user-manual.ko.md); offline HTML: [English](docs/user-manual.html) / [한국어](docs/user-manual.ko.html).
-- [Design documents](docs/README.md) / [UI design guide](docs/design-guide.md) — requirements, use cases and visual rules.
 
 **License:** MIT — see [LICENSE](LICENSE).

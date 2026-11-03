@@ -1,8 +1,14 @@
-//! DD-176 / DD-178: checks that decide before work starts whether a run can work. They only
+//! DD-180 / DD-182: checks that decide before work starts whether a run can work. They only
 //! resolve names; nothing is executed and nothing is written.
 use crate::plan::Plan;
 use serde_json::{Value, json};
 use std::path::Path;
+
+mod charter;
+pub use charter::{Charter, charter_drift, record_charter_drift};
+
+pub const DRIFT_LIMIT: usize = 8;
+pub use charter::scope_growth;
 
 /// One reason a run cannot start: a code, the task it concerns (if any) and the detail.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -88,24 +94,23 @@ pub fn refusal(violations: &[Violation]) -> String {
     )
 }
 
-/// An amendment adds at most eight short entries of each kind.
-pub fn bounded(add_paths: &[String], add_dependencies: &[String]) -> bool {
-    add_paths.len() <= 8
-        && add_dependencies.len() <= 8
-        && add_paths
-            .iter()
-            .chain(add_dependencies)
-            .all(|v| v.len() <= 1024 && !v.contains('\0'))
-}
-
-/// A validated amendment: the changed plan, what changed, and why it needs a person (if it does).
+/// A validated amendment and the risk that requires human review, if any.
 pub struct Amended {
     pub plan: Plan,
     pub changes: Vec<Value>,
     pub risk: Option<String>,
 }
 
-/// Names that hold secrets or keys; adding them to a task's scope always needs a person.
+/// Keep coordinator-authored amendment payloads small at both parsing and application boundaries.
+pub fn bounded(paths: &[String], dependencies: &[String]) -> bool {
+    paths.len() <= 8
+        && dependencies.len() <= 8
+        && paths
+            .iter()
+            .chain(dependencies)
+            .all(|value| value.len() <= 1024 && !value.contains('\0'))
+}
+
 fn sensitive(path: &str) -> bool {
     path.to_ascii_lowercase().split('/').any(|part| {
         part.starts_with(".env")
@@ -128,28 +133,41 @@ fn sensitive(path: &str) -> bool {
     })
 }
 
-/// A single-component path without an extension looks like a whole top-level directory.
-fn broad(path: &str) -> bool {
-    !path.contains('/') && !path.contains('.')
-}
-
-/// DD-179: validates `add_paths` and `add_dependencies` for one task. `Err` means the change
-/// is unsafe, overlapping, unknown or cyclic; `risk` is set when it is valid but needs a person.
+/// Validates coordinator-proposed paths and dependencies through the existing plan rules.
 pub fn amend(
     plan: &Plan,
     task: usize,
-    add_paths: &[String],
-    add_dependencies: &[String],
+    paths: &[String],
+    dependencies: &[String],
 ) -> Result<Amended, String> {
-    if add_paths.is_empty() && add_dependencies.is_empty() {
-        return Err("an amendment adds at least one path or dependency".into());
+    amend_contract(plan, Path::new("."), task, paths, dependencies, None)
+}
+
+/// Validates scoped additions and an optional replacement test command.
+pub fn amend_contract(
+    plan: &Plan,
+    root: &Path,
+    task: usize,
+    paths: &[String],
+    dependencies: &[String],
+    test_command: Option<&[String]>,
+) -> Result<Amended, String> {
+    if task >= plan.tasks.len() {
+        return Err("unknown task for amendment".into());
+    }
+    if !bounded(paths, dependencies) {
+        return Err("an amendment adds at most eight bounded paths and dependencies".into());
+    }
+    if paths.is_empty() && dependencies.is_empty() && test_command.is_none() {
+        return Err("an amendment must change a path, dependency, or test command".into());
     }
     let mut amended = plan.clone();
     let mut changes = Vec::new();
     let mut risks = Vec::new();
-    for raw in add_paths {
+    for raw in paths {
+        let raw = raw.trim().trim_start_matches("./");
+        let directory_scope = raw.ends_with('/');
         let path = raw
-            .trim()
             .trim_start_matches("./")
             .trim_end_matches('/')
             .to_owned();
@@ -158,60 +176,50 @@ pub fn amend(
         }
         if sensitive(&path) {
             risks.push(format!("{path} is a sensitive path"));
-        } else if broad(&path) {
+        } else if !path.contains('/') && (directory_scope || !path.contains('.')) {
             risks.push(format!("{path} would own a whole top-level directory"));
         }
         amended.tasks[task].paths.push(path.clone());
         changes.push(json!({"kind":"add_path","path":path}));
     }
-    for id in add_dependencies {
-        if !amended.tasks[task].depends_on.contains(id) {
-            amended.tasks[task].depends_on.push(id.clone());
-        }
-        if *id == amended.tasks[task].id {
+    for id in dependencies {
+        if id == &amended.tasks[task].id {
             return Err(format!("task {id} cannot depend on itself"));
         }
+        if amended.tasks[task].depends_on.contains(id) {
+            return Err(format!(
+                "task {} already depends on {id}",
+                amended.tasks[task].id
+            ));
+        }
+        amended.tasks[task].depends_on.push(id.clone());
         changes.push(json!({"kind":"add_dependency","on":id}));
     }
-    // Safe, non-overlapping scopes and known, acyclic dependencies are the plan's own rules.
+    if let Some(command) = test_command {
+        if command.is_empty()
+            || command.len() > 32
+            || command
+                .iter()
+                .any(|part| part.is_empty() || part.len() > 4096 || part.contains('\0'))
+        {
+            return Err("replacement test command must contain one to 32 bounded arguments".into());
+        }
+        if !resolvable(&command[0], root) && !created_by_a_task(&amended, &command[0]) {
+            return Err(format!(
+                "replacement test command {:?} was not found",
+                command[0]
+            ));
+        }
+        if command == amended.tasks[task].test_command {
+            return Err("replacement test command must differ from the current command".into());
+        }
+        amended.tasks[task].test_command = command.to_vec();
+        changes.push(json!({"kind":"replace_test_command","test_command":command}));
+    }
     amended.validate()?;
     Ok(Amended {
         plan: amended,
         changes,
         risk: (!risks.is_empty()).then(|| risks.join("; ")),
     })
-}
-
-/// Paths a task may own beyond its charter entry, in total, before a person decides.
-pub const DRIFT_LIMIT: usize = 8;
-
-/// DD-180: the fixed baseline of a run: its goal and, per task, the original scope, test
-/// command and dependencies.
-pub fn charter(plan: &Plan) -> Value {
-    json!({
-        "status": "recorded",
-        "goal": plan.goal,
-        "tasks": plan.tasks.iter().map(|t| json!({
-            "id": t.id, "paths": t.paths, "test_command": t.test_command, "depends_on": t.depends_on,
-        })).collect::<Vec<_>>(),
-    })
-}
-
-/// How many task-owned paths the plan has that the charter did not give that task.
-pub fn drift(charter: &Value, plan: &Plan) -> usize {
-    plan.tasks
-        .iter()
-        .map(|task| {
-            let original: Vec<&str> = charter["tasks"]
-                .as_array()
-                .and_then(|tasks| tasks.iter().find(|t| t["id"] == task.id.as_str()))
-                .and_then(|t| t["paths"].as_array())
-                .map(|paths| paths.iter().filter_map(Value::as_str).collect())
-                .unwrap_or_default();
-            task.paths
-                .iter()
-                .filter(|p| !original.contains(&p.as_str()))
-                .count()
-        })
-        .sum()
 }

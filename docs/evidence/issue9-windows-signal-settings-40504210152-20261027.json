@@ -1,0 +1,45 @@
+{
+  "run_id": 40504210152,
+  "run_url": "https://github.com/neodamul/AgentConductor/actions/runs/40504210152",
+  "tested_commit": "59b0bc2611a497621467579045973b960e1ed790",
+  "package_version": "0.1.37",
+  "platform_validation": {
+    "macos": "passed",
+    "windows": "passed"
+  },
+  "macos_package": {
+    "status": "passed",
+    "artifact_id": 12735449276,
+    "artifact_sha256": "c1c684731e33e4b9628e2d760c01586c878f7d3315653c2874fe3b05cdf0a37e"
+  },
+  "windows_package": {
+    "build": "passed",
+    "manual_render": "passed",
+    "package_smoke": "passed",
+    "artifact_id": 12736697666,
+    "artifact_sha256": "f332ac9b28ea8a2aa96549a3f4946171680a6a4789d81e15d917d28d98d6e7b3",
+    "ui_journeys": {
+      "team_briefing": "passed",
+      "default_desktop_save": "passed",
+      "schedule": "passed: exact scheduled retry persisted",
+      "signal_settings": "failed: Signal transport click left the app on the Settings page; Local Rust was absent"
+    },
+    "signal_driver_state": {
+      "settings_page_visible": true,
+      "signal_transport_menu_visible": true,
+      "signal_dialog_opened": false,
+      "local_rust_control_found": false,
+      "preference_persistence_checked": false
+    }
+  },
+  "red_green": {
+    "red": "Two windows_signal_settings_dispatch contracts failed before the guarded keyboard activation and expected-destination checks were added.",
+    "green": "Signal dispatch, schedule dispatch/marker, native settings, source-layout, and public-doc suites pass 27 tests across six suites; warning-denied Clippy, rustfmt, and diff checks pass.",
+    "line_counts": {
+      "tests/windows_signal_settings.rs": 237,
+      "tests/windows_signal_settings_dispatch.rs": 73
+    }
+  },
+  "acceptance": "22/25; unchanged until the patched exact Windows package saves transport=agentmemory and port=7333",
+  "follow_up": "Push the driver fix and rerun exact Windows packaging; require save-close-reopen persistence of transport=agentmemory and port=7333."
+}

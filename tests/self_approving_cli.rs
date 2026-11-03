@@ -36,7 +36,6 @@ fn a_custom_cli_is_saved_as_approving_its_own_tools() {
         saved["config"]["profiles"][0]["permission_mode"],
         "operator_auto_approve"
     );
-    assert!(!include_str!("../src/ui/startup.html").contains("start-self-approve"));
     std::fs::remove_dir_all(root).unwrap();
 }
 

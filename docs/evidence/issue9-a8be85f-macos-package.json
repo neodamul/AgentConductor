@@ -1,0 +1,29 @@
+{
+  "source_commit": "a8be85fc2392821fab345d3e1b879a6aa9bc6714",
+  "target": "aarch64-apple-darwin",
+  "binary": {
+    "bytes": 17942384,
+    "sha256": "74204cbc9492379a71769a6f679d19ee28012b823e280e8a6fdd03af89300057"
+  },
+  "archive": {
+    "file": "agentconductor-aarch64-apple-darwin-a8be85fc2392.zip",
+    "bytes": 21605741,
+    "sha256": "1965a123dcd5988c24ffeee4d88bfc2b84a62696faf16e6c893c6d49e9c60547"
+  },
+  "dependency_count": 214,
+  "checks": {
+    "release_build": "passed",
+    "package_release": "passed",
+    "validate_package": "passed",
+    "packaged_help": "passed",
+    "zip_integrity": "passed",
+    "mock_workflow_cases": 4,
+    "mock_tasks": 12,
+    "mock_task_tests": 12,
+    "unapproved_merge_refused_in_each_case": true,
+    "approved_merge_verified_in_each_case": true
+  },
+  "packaged_ui_acceptance": "unchanged: 2/25",
+  "gui_launched": false,
+  "external_agent_or_service_called": false
+}

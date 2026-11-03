@@ -1,0 +1,35 @@
+{
+  "source_commit": "733852eec59345f7cd5b9b9766b5d6438bce6c79",
+  "target": "aarch64-apple-darwin",
+  "archive": "dist/agentconductor-aarch64-apple-darwin-733852eec593.zip",
+  "archive_sha256": "aac823d80d230c9435ef3b9ff3025e35edc15936e035314c97530204f7eaa63a",
+  "binary": "dist/agentconductor-aarch64-apple-darwin-733852eec593/AgentConductor.app/Contents/MacOS/agentconductor",
+  "binary_sha256": "156d40a118ab990fc699b7f0358026ceac2032a33b5952d2666b9cff6d0e4ddd",
+  "binary_bytes": 18257488,
+  "dependency_count": 214,
+  "validation": {
+    "manifest_source_matches": true,
+    "manifest_binary_hash_matches": true,
+    "archive_crc": true,
+    "packaged_help": true,
+    "info_plist_lint": true,
+    "smoke_evidence": "/private/tmp/agentconductor-issue9-733852eec593-smoke-evidence",
+    "smoke_cases": [
+      {"mode": "shared", "source_mode": "git", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"mode": "shared", "source_mode": "folder", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"mode": "worktree", "source_mode": "git", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true},
+      {"mode": "worktree", "source_mode": "folder", "tasks": 3, "tests": 3, "parallel": true, "unapproved_merge_refused": true, "approved_merge_verified": true}
+    ]
+  },
+  "runtime": {
+    "exact_package_launched": true,
+    "process_path_verified": true,
+    "single_agentconductor_process": true,
+    "workspace_loaded": "헬스체크 기능 개발",
+    "agent_cards_loaded": ["claude", "codex", "local-agent"],
+    "mcp_source_popup_interacted_in_package": false,
+    "screenshot_captured": false,
+    "screenshot_note": "macOS screencapture reported that it could not create an image from the display; package UI startup and its accessibility tree were inspected instead. The MCP source popup layout and per-record interaction are covered by tests/native_ui_mcp_source_layout.rs."
+  },
+  "acceptance_note": "This package and startup check does not increase complete packaged Rust UI workflow acceptance; issue #9 remains 8/25."
+}

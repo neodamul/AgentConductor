@@ -1,50 +1,31 @@
 use std::io::Read;
 
-// #149: a coordinator that answers a review with a typed amendment; the mode picks the path.
 fn main() {
     let mut prompt = String::new();
     std::io::stdin().read_to_string(&mut prompt).unwrap();
     assert!(prompt.contains("agent:one.txt") && prompt.contains("add_paths"));
-    // #165: operator requests; "answer" explains, "revise" repairs the failed task, "fail" crashes.
     match std::env::args().nth(1).as_deref() {
-        Some("answer") | Some("revise") => {
-            assert!(prompt.contains("Operator request") && prompt.contains("reconcile"), "{}", prompt);
-            let (verdict, revisions) = if std::env::args().nth(1).as_deref() == Some("revise") {
-                ("revise", "[{\"task\":\"one.txt\",\"feedback\":\"Repair failed task\"}]")
-            } else {
-                ("accept", "[]")
-            };
-            println!(
-                "{{\"type\":\"result\",\"payload\":{{\"verdict\":\"{verdict}\",\"summary\":\"Investigated the discrepancy\",\"evidence\":[\"agent:one.txt\"],\"revisions\":{revisions}}}}}"
-            );
+        Some("test-command") => {
+            println!(r#"{{"type":"result","payload":{{"verdict":"revise","summary":"Use a test command that works in this project.","evidence":["agent:one.txt"],"revisions":[{{"task":"one.txt","feedback":"The original test command fails in this project; retain an equally strong check.","test_command":["true"]}}]}}}}"#);
             return;
         }
-        Some("fail") => std::process::exit(3),
+        Some("request-answer") => {
+            assert!(prompt.contains("Operator request") && prompt.contains("reconcile"));
+            println!("{{\"type\":\"result\",\"payload\":{{\"verdict\":\"accept\",\"summary\":\"Reconciled the run\",\"evidence\":[\"agent:one.txt\"],\"revisions\":[]}}}}");
+            return;
+        }
+        Some("request-fail") => std::process::exit(3),
+        Some("drift") => {
+            println!(r#"{{"type":"result","payload":{{"verdict":"revise","summary":"Split a wider scope across two changes","evidence":["agent:one.txt","agent:two.txt"],"revisions":[{{"task":"one.txt","feedback":"Add the first files","add_paths":["extra-0.txt","extra-1.txt","extra-2.txt","extra-3.txt","extra-4.txt"]}},{{"task":"two.txt","feedback":"Add more files","add_paths":["extra-5.txt","extra-6.txt","extra-7.txt","extra-8.txt"]}}]}}}}"#);
+            return;
+        }
         _ => {}
     }
-    // "drift": the first review adds eight paths, later ones two more (a marker counts rounds).
-    if std::env::args().nth(1).as_deref() == Some("drift") {
-        let marker = std::path::PathBuf::from(std::env::var_os("AC_DRIFT_MARKER").unwrap());
-        let round = marker.exists();
-        std::fs::write(&marker, "x").unwrap();
-        let paths: Vec<String> = if round {
-            (1..=2).map(|i| format!("\"e{i}.txt\"")).collect()
-        } else {
-            (1..=8).map(|i| format!("\"d{i}.txt\"")).collect()
-        };
-        println!(
-            "{{\"type\":\"result\",\"payload\":{{\"verdict\":\"revise\",\"summary\":\"Widen the scope\",\"evidence\":[\"agent:one.txt\"],\"revisions\":[{{\"task\":\"one.txt\",\"feedback\":\"Add files\",\"add_paths\":[{}]}}]}}}}",
-            paths.join(",")
-        );
-        return;
-    }
     let path = match std::env::args().nth(1).as_deref() {
-        Some("dir") => "src",
+        Some("directory" | "dir") => "src",
         Some("secret") => ".env",
         Some("overlap") => "two.txt",
         _ => "extra.txt",
     };
-    println!(
-        "{{\"type\":\"result\",\"payload\":{{\"verdict\":\"revise\",\"summary\":\"The task writes a file next to its own\",\"evidence\":[\"agent:one.txt\"],\"revisions\":[{{\"task\":\"one.txt\",\"feedback\":\"Add the file the task writes\",\"add_paths\":[\"{path}\"]}}]}}}}"
-    );
+    println!("{{\"type\":\"result\",\"payload\":{{\"verdict\":\"revise\",\"summary\":\"The task writes an additional file\",\"evidence\":[\"agent:one.txt\"],\"revisions\":[{{\"task\":\"one.txt\",\"feedback\":\"Include the additional file\",\"add_paths\":[\"{path}\"]}}]}}}}");
 }

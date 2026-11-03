@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "pull_request": 22,
+  "date": "2026-10-23",
+  "source_head_before_fix": "6bf54f3d0bc810ca04e68ecfb6d8fb2bce7a54cd",
+  "ci": {
+    "run_id": 39956497286,
+    "synthetic_merge_head": "8cc7d11aa9c0e5b64ff176e99a69560f61e3b4eb",
+    "rust_version": "1.99.0",
+    "macos": {
+      "build": "passed",
+      "tests": "passed",
+      "layout": "passed",
+      "native_ui_probe": "passed",
+      "format": "passed",
+      "clippy": "failed",
+      "failure": "manual_contains in tests/native_ui_task_activity.rs"
+    },
+    "windows_at_observation": "in_progress",
+    "windows_observed_at_utc": "2026-10-23T13:11:06Z",
+    "windows_job_tests_at_observation": "in_progress"
+  },
+  "fix": {
+    "path": "tests/native_ui_task_activity.rs",
+    "before": "labels.iter().any(|label| *label == result)",
+    "after": "labels.contains(&result)",
+    "semantics": "same string equality check"
+  },
+  "local_verification": {
+    "rust_version": "1.99.0",
+    "native_ui_task_activity": "7 passed",
+    "clippy_all_targets_test_fixtures_warnings_denied": "passed",
+    "fmt_check": "passed",
+    "source_layout": "2 passed",
+    "git_diff_check": "passed"
+  },
+  "knowledge_assets": {
+    "agentmemory": "mem_mvkzmzgs_5e9246d8aa0a",
+    "graphify": "updated without clustering: 9159 nodes, 15548 edges",
+    "cocoindex": "unavailable: CLI and Python module are not installed"
+  },
+  "remote_fix_head_verified": false,
+  "packaged_workflows": "15/25",
+  "shipped_default_rust_workflows": "0/25"
+}

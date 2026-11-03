@@ -1,0 +1,51 @@
+{
+  "date": "2026-11-03",
+  "kind": "same-state-native-workspace-agent-card-parity",
+  "issue": 9,
+  "source_branch": "codex/issue-9-native-ui-parity",
+  "source_base_commit": "6b5e567e6347a03beeca25c6e72668f8716134e1",
+  "reference": {
+    "ref": "origin/main",
+    "path": "docs/assets/ui-workspace-current.png",
+    "app_version": "0.1.55",
+    "dimensions": "1280x892",
+    "sha256": "9abd120534760f3ec78550f85a69de1b452894e78d56b2b7e508758990eddf1f"
+  },
+  "candidate": {
+    "app_version": "0.1.57",
+    "binary": "target/debug/agentconductor-native-ui-probe",
+    "feature": "manual-screenshot-capture",
+    "dimensions": "1280x892",
+    "path": "docs/evidence/issue9-native-workspace-sidebar-parity-20261103.png",
+    "sha256": "774404e967dbe02b1dcecd8becfe3003800d8dcaf62ca65d5e3da4d5178fb5ae"
+  },
+  "fixture": {
+    "workspace": "disposable HOME under /private/tmp",
+    "workspace_name": "Status endpoint",
+    "goal": "Add a lightweight readiness endpoint with tests and documentation.",
+    "profiles": ["claude", "codex", "local-agent"],
+    "catalog_counts": {"claude": 3, "codex": 2},
+    "quota_badges": {"claude": "73%", "codex": "64%/100%"},
+    "quota_and_catalog_data": "synthetic fixture values; not account readings",
+    "provider_cli_invocations": 0,
+    "user_workspace_accessed": false
+  },
+  "change": {
+    "default_sidebar_width_px": {"before": 248, "after": 298},
+    "card_details": "Executable path and localized permission label are visible, with full values retained for hover and accessibility."
+  },
+  "verification": {
+    "sidebar_layout_bilingual_tests": "12 passed across five targets",
+    "source_layout": "2 passed",
+    "warning_denied_all_target_clippy": "passed",
+    "rustfmt": "passed",
+    "git_diff_check": "passed",
+    "touched_rust_file_limit": "all touched source and test files are at or below 300 lines"
+  },
+  "remaining_visual_gaps": [
+    "Legacy New goal action and Prepared status are absent from the Rust page header.",
+    "Coordinator chat launcher remains at the far right of the content area rather than in the top application bar."
+  ],
+  "issue_9_acceptance_credit": 0,
+  "overall_acceptance": "22/50; packaged workflows 22/25; shipped/default Rust UI parity 0/25"
+}

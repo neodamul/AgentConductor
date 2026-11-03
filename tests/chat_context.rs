@@ -1,7 +1,7 @@
 //! GitHub #243 (DD-200): the chat prompt carries the workspace and the latest run's results, because the read-only
 //! coordinator cannot reach the run folder and otherwise knows nothing about what was built.
 use agentconductor::chat::{Turn, build_prompt_in};
-use agentconductor::chat_context::render;
+use agentconductor::chat_context::{render, workspace};
 use agentconductor::workflow::Report;
 use serde_json::json;
 use std::path::Path;
@@ -80,6 +80,43 @@ fn a_long_diff_is_cut_and_the_section_stays_bounded() {
         text.contains("diff cut"),
         "the reader is told it is partial"
     );
+}
+
+#[test]
+fn the_saved_latest_run_is_loaded_as_read_only_chat_evidence() {
+    let root = std::env::temp_dir().join(format!(
+        "ac-chat-run-context-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    std::fs::create_dir_all(&root).unwrap();
+    let run = root.join("run");
+    std::fs::create_dir_all(&run).unwrap();
+    let report = report();
+    let bytes = serde_json::to_vec(&report).unwrap();
+    std::fs::write(run.join("report.json"), &bytes).unwrap();
+    let mut store = agentconductor::state::Store::open(run.join("state.sqlite")).unwrap();
+    store
+        .record(
+            "workflow",
+            &serde_json::to_value(&report).unwrap(),
+            "fixture",
+        )
+        .unwrap();
+    std::fs::write(
+        run.join("diff.patch"),
+        "diff --git a/game/index.html b/game/index.html\n",
+    )
+    .unwrap();
+
+    let mut saved = serde_json::json!({"config":config(),"last_run":run});
+    saved["last_run"] = serde_json::json!(saved["last_run"].as_str().unwrap());
+    let text = workspace(&saved, Path::new("/work/project"));
+    assert!(text.contains("Latest run: waiting_approval"), "{text}");
+    assert!(text.contains("task-1 [failed]"), "{text}");
+    assert!(text.contains("task-1: exit 1"), "{text}");
+    assert!(text.contains("diff --git a/game/index.html"), "{text}");
+    drop(store);
+    std::fs::remove_dir_all(root).unwrap();
 }
 
 #[test]

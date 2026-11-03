@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-25",
+  "issue": 9,
+  "workflow_run": "https://github.com/neodamul/AgentConductor/actions/runs/40171283684",
+  "tested_commit": "312455e3b008cf756d1c715fbc6dcc1aeaab7166",
+  "result": "failed_windows_validation",
+  "platforms": {
+    "macos": "all validation steps passed",
+    "windows": "build and source/test layout passed; windows_schedule failed; package job skipped"
+  },
+  "windows_schedule": {
+    "attempts": [
+      "pre-edit UIA InvokePattern",
+      "refreshed UIA InvokePattern",
+      "physical click"
+    ],
+    "persisted_report": "waiting_availability / manual_required; no timestamp",
+    "coordinator_action_created": false
+  },
+  "diagnosis": "Restoring window.SetFocus() did not resolve the no-op. The failed harness had added Win32 focus and mouse input plus refreshed-element and retry branches that were absent from the last passing package test. The next test restores the minimal UIA sequence from run 40119945464 and still requires durable state before passing.",
+  "local_tdd": {
+    "red": "windows_schedule_dispatch failed because the driver no longer invoked the original schedule element through the known passing UIA path",
+    "green": "schedule, marker, and source_layout suites passed: 5 tests across 4 suites",
+    "format": "cargo fmt --all -- --check passed",
+    "diff_check": "git diff --check passed",
+    "file_limits": "windows_schedule.rs 218 lines; windows_schedule_dispatch.rs 13 lines; windows_schedule_marker.rs 7 lines; support/windows_schedule.rs 69 lines"
+  },
+  "acceptance": "unchanged at 21/25; exact Windows package persistence remains required",
+  "agentmemory": "mem_mvnia4tz_0b67ea8055b3",
+  "graphify": "9,447 nodes / 14,701 edges",
+  "cocoindex": "CLI unavailable on this host"
+}

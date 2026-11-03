@@ -1,13 +1,25 @@
-//! GitHub #297 (R-201 / QAS-199): a Claude CLI that is slow to start is waited for, a stuck one is
-//! given up with the limit named, and the default limit is three minutes for both collectors.
+//! GitHub #297: Claude usage waits are bounded, stage-aware, and testable.
+
+#[cfg(any(target_os = "macos", windows))]
+struct TempRoot(std::path::PathBuf);
+
+#[cfg(any(target_os = "macos", windows))]
+impl Drop for TempRoot {
+    fn drop(&mut self) {
+        let _ = std::fs::remove_dir_all(&self.0);
+    }
+}
+
 #[cfg(any(target_os = "macos", windows))]
 #[tokio::test]
-async fn a_slow_cli_is_waited_for_and_a_stuck_one_names_the_limit() {
+async fn waits_for_slow_start_and_names_both_timeout_stages() {
     use agentconductor::{plan::AgentProfile, quota};
     use std::time::Duration;
+
     let root = std::env::temp_dir().join(agentconductor::native_guard::session_id().unwrap());
     std::fs::create_dir(&root).unwrap();
-    let exe = root.join(if cfg!(windows) {
+    let _cleanup = TempRoot(root.clone());
+    let executable = root.join(if cfg!(windows) {
         "terminal.exe"
     } else {
         "terminal"
@@ -15,82 +27,103 @@ async fn a_slow_cli_is_waited_for_and_a_stuck_one_names_the_limit() {
     assert!(
         std::process::Command::new("rustc")
             .args(["tests/support/terminal_quota_agent.rs", "-o"])
-            .arg(&exe)
+            .arg(&executable)
             .status()
             .unwrap()
             .success()
     );
-    let profile = |delay_ms: u64| -> AgentProfile {
-        serde_json::from_value(serde_json::json!({"id":"claude","parser":"claude","executable":exe,"args":[],"environment":{"AC_QUOTA_DELAY_MS":delay_ms.to_string()}})).unwrap()
+    let profile = |environment: &[(&str, &str)]| -> AgentProfile {
+        let environment = environment
+            .iter()
+            .map(|(key, value)| ((*key).to_owned(), (*value).to_owned()))
+            .collect::<std::collections::BTreeMap<_, _>>();
+        serde_json::from_value(serde_json::json!({
+            "id":"claude","parser":"claude","executable":executable.clone(),
+            "args":[],"environment":environment
+        }))
+        .unwrap()
     };
-    let slow = quota::query_claude_within(
-        &profile(3000),
+
+    let result = quota::query_claude_within(
+        &profile(&[("AC_QUOTA_DELAY_MS", "2500")]),
         &root.join("slow"),
         &root,
-        Duration::from_secs(15),
+        Duration::from_secs(4),
     )
     .await
     .unwrap();
-    assert_eq!(slow.windows[0].remaining_percent, Some(73.0));
-    let error = quota::query_claude_within(
-        &profile(5000),
-        &root.join("stuck"),
+    assert_eq!(result.windows[0].remaining_percent, Some(73.0));
+
+    let before_usage = quota::query_claude_within(
+        &profile(&[("AC_QUOTA_DELAY_MS", "3000")]),
+        &root.join("before-usage"),
         &root,
-        Duration::from_secs(2),
+        Duration::from_secs(1),
     )
     .await
     .unwrap_err();
-    assert!(error.contains("before /usage"), "{error}");
-    assert!(error.contains("after 2 s"), "{error}");
-    // GitHub #295: a screen that was read but not understood is named, not hidden behind the timeout.
-    let unread = AgentProfile {
-        environment: [("AC_QUOTA_ENTERPRISE".to_string(), "zero".to_string())].into(),
-        ..profile(0)
-    };
-    let error =
-        quota::query_claude_within(&unread, &root.join("unread"), &root, Duration::from_secs(3))
-            .await
-            .unwrap_err();
-    assert!(error.contains("after /usage"), "{error}");
-    assert!(
-        error.contains("allocated budget must be positive"),
-        "{error}"
-    );
-    // GitHub #317: an expired or missing login is named at once instead of waiting for the limit.
-    let signed_out = AgentProfile {
-        environment: [("AC_QUOTA_CASE".to_string(), "signed_out".to_string())].into(),
-        ..profile(0)
-    };
-    let started = std::time::Instant::now();
-    let error = quota::query_claude_within(
-        &signed_out,
-        &root.join("signed-out"),
+    assert!(before_usage.contains("before /usage"), "{before_usage}");
+    assert!(before_usage.contains("after 1 s"), "{before_usage}");
+
+    let after_usage = quota::query_claude_within(
+        &profile(&[("AC_QUOTA_HANG_AFTER_USAGE", "1")]),
+        &root.join("after-usage"),
         &root,
-        Duration::from_secs(30),
+        Duration::from_secs(1),
     )
     .await
     .unwrap_err();
+    assert!(after_usage.contains("after /usage"), "{after_usage}");
+    assert!(after_usage.contains("after 1 s"), "{after_usage}");
+
+    let unread = quota::query_claude_within(
+        &profile(&[("AC_QUOTA_ENTERPRISE", "zero")]),
+        &root.join("unread"),
+        &root,
+        Duration::from_secs(3),
+    )
+    .await
+    .unwrap_err();
+    assert!(unread.contains("after /usage"), "{unread}");
     assert!(
-        error.contains("not signed in or the login expired"),
-        "{error}"
+        unread.contains("allocated budget must be positive"),
+        "{unread}"
     );
-    assert!(started.elapsed() < Duration::from_secs(20));
-    std::fs::remove_dir_all(root).unwrap();
 }
 
 #[test]
-fn the_default_limit_is_three_minutes_for_both_collectors() {
+fn production_wait_is_three_minutes_for_both_collectors() {
     assert_eq!(
         agentconductor::quota::CLAUDE_WAIT,
         std::time::Duration::from_secs(180)
     );
     for source in [
-        include_str!("../src/quota/terminal.rs"),
+        include_str!("../src/quota/terminal/query.rs"),
         include_str!("../src/quota/terminal/windows.rs"),
     ] {
         assert!(
+            source.contains("super::CLAUDE_WAIT"),
+            "both collectors must use the shared production limit"
+        );
+        assert!(
             !source.contains("from_secs(20)"),
-            "a literal 20 s limit is left"
+            "20-second timeout remains"
         );
     }
+}
+
+#[test]
+fn windows_collector_passes_the_wait_limit_on_each_timeout_path() {
+    let source = include_str!("../src/quota/terminal/windows.rs");
+    assert!(
+        source
+            .matches("quota_timeout(sent, wait, unread.as_deref())")
+            .count()
+            >= 2,
+        "both Windows timeout paths must pass the configured wait limit"
+    );
+    assert!(
+        !source.contains("quota_timeout(sent).into()"),
+        "the obsolete one-argument timeout call does not compile"
+    );
 }

@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "package_version": "0.1.36",
+  "package_source": "6200e49b2d9f7cef5f11c56e96adeb6c840ed234",
+  "package": {
+    "target": "aarch64-apple-darwin",
+    "binary_sha256": "7efb41e3c20001b60282772fff4f7ccc372a44eea4b7e62451030cc70df7a36d",
+    "archive_sha256": "7b57418b81630cf1a46486217786d71cbd77508928077f199fe1502a3359edc6"
+  },
+  "fixture": {
+    "agent": "deterministic Rust release_worker fixture",
+    "tasks_completed": 3,
+    "tests_passed": 3,
+    "run_state": "waiting_approval",
+    "candidate": "265ec8a5333d192933b5c8478e74c841c3f53d29",
+    "approved_or_merged": false,
+    "workspace": "disposable Git repository outside the checkout"
+  },
+  "ui": {
+    "view": "Agent Room",
+    "visible_status": "3/3 completed; 3/3 task tests passed; waiting approval",
+    "screenshot_api": "CUA screenshot visually inspected",
+    "system_capture": "CGWindowList identified app window 10535 (1140x772), but screencapture -x -l 10535 returned 'could not create image from window'; nearby app window 10547 was a 66x20 transient and failed too. CGWindowSharingState was 0. This does not establish a permission cause.",
+    "screenshot_file_retained": false
+  },
+  "cleanup": {
+    "app_process_closed": true,
+    "temporary_fixture_removed": true,
+    "package_artifacts_removed": true
+  },
+  "acceptance": {
+    "packaged_ui": "14/25",
+    "increment": 0,
+    "gate": "persist a current Agent Room screenshot and refresh both offline manuals"
+  }
+}

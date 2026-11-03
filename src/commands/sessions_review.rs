@@ -1,7 +1,17 @@
 use super::*;
 
+#[path = "sessions_review/review.rs"]
+mod review;
+
 pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
+    if let Some(result) = review::execute(args) {
+        return Some(result);
+    }
     match args {
+        [command, dir, id] if command == "amendment-undo" => Some((|| {
+            workflow::amendment_undo(Path::new(dir), id)?;
+            print_report(&workflow::load(Path::new(dir))?)
+        })()),
         [command, dir] if command == "tool-requests" => Some((|| {
             workflow::load(Path::new(dir))?;
             println!(
@@ -73,61 +83,6 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                     .map_err(|e| e.to_string())?
             );
             Ok(())
-        })()),
-        [command, dir, coordinator] if command == "review" || command == "review-apply" => {
-            Some((|| {
-                let runtime = tokio::runtime::Builder::new_multi_thread()
-                    .worker_threads(2)
-                    .enable_all()
-                    .build()
-                    .map_err(|e| e.to_string())?;
-                let proposal = runtime.block_on(workflow::review(
-                    Path::new(dir),
-                    coordinator,
-                    command == "review-apply",
-                ))?;
-                println!(
-                    "{}",
-                    serde_json::json!({"proposal_sha256":workflow::digest(&serde_json::to_vec(&proposal).map_err(|e|e.to_string())?),"proposal":proposal,"round":workflow::load(Path::new(dir))?.review_round})
-                );
-                Ok(())
-            })())
-        }
-        [command, dir, proposal] if command == "apply-review" => Some((|| {
-            workflow::apply_review(Path::new(dir), proposal)?;
-            print_report(&workflow::load(Path::new(dir))?)
-        })()),
-        [command, dir, task, feedback] if command == "revise" => Some((|| {
-            workflow::revise(Path::new(dir), task, feedback)?;
-            print_report(&workflow::load(Path::new(dir))?)
-        })()),
-        [command, dir, message] if command == "coordinator-request" => Some((|| {
-            let runtime = tokio::runtime::Builder::new_multi_thread()
-                .worker_threads(2)
-                .enable_all()
-                .build()
-                .map_err(|e| e.to_string())?;
-            let proposal =
-                runtime.block_on(workflow::coordinator_request(Path::new(dir), 1800, message))?;
-            println!("Coordinator answered: {}", proposal.summary);
-            print_report(&workflow::load(Path::new(dir))?)
-        })()),
-        [command, dir] if command == "recover" => {
-            Some((|| print_report(&workflow::recover(Path::new(dir))?))())
-        }
-        [command, dir, reason] if command == "stop" => Some((|| {
-            workflow::stop(Path::new(dir), reason)?;
-            println!("Stop request retained; inspect status until the run is stopped.");
-            Ok(())
-        })()),
-        [command, dir] if command == "resume" => Some((|| {
-            let runtime = tokio::runtime::Builder::new_multi_thread()
-                .worker_threads(2)
-                .enable_all()
-                .build()
-                .map_err(|e| e.to_string())?;
-            let report = runtime.block_on(workflow::resume(Path::new(dir), 1800))?;
-            print_report(&runtime.block_on(workflow::repair(Path::new(dir), 1800, report))?)
         })()),
         [command, profiles_path, agent_id, dir] if command == "models-discover" => Some((|| {
             let mut profiles: Vec<AgentProfile> =
@@ -286,24 +241,17 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
         [command, dir] if command == "scope-failure" => {
             Some(workflow::scope_failure(Path::new(dir)).map(|v| println!("{v}")))
         }
-        [command, dir, task, digest, paths] | [command, dir, task, digest, paths, _]
-            if command == "scope-recovery" =>
-        {
-            Some((|| {
-                let test = match args.get(5) {
-                    Some(text) => Some(
-                        serde_json::from_str::<Vec<String>>(text)
-                            .map_err(|_| "invalid test command JSON")?,
-                    ),
-                    None => None,
-                };
-                let paths: Vec<String> =
-                    serde_json::from_str(paths).map_err(|_| "invalid paths JSON")?;
-                workflow::recovery_apply(Path::new(dir), task, &paths, test, digest)
-            })())
-        }
         [command, dir, task, timestamp] if command == "schedule" => {
             Some(workflow::schedule(Path::new(dir), task, timestamp))
+        }
+        [command, dir, task, paths, test, approved] if command == "scope-recovery" => {
+            Some((|| {
+                let paths: Vec<String> = serde_json::from_str(paths).map_err(|e| e.to_string())?;
+                let test: Option<Vec<String>> =
+                    serde_json::from_str(test).map_err(|e| e.to_string())?;
+                workflow::recovery_apply(Path::new(dir), task, &paths, test, approved)?;
+                print_report(&workflow::load(Path::new(dir))?)
+            })())
         }
         [command, dir, task, model] if command == "session-model" => {
             Some(workflow::set_model(Path::new(dir), task, model))

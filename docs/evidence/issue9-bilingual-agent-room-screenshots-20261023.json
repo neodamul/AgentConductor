@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-23",
+  "kind": "current-rust-bilingual-agent-room-manual-screenshots",
+  "issue": 9,
+  "source_commit": "3b88f277b90db786d1c3e650cc9361e776bad8d2",
+  "source_worktree_diff_sha256": "06c7af3c168b8451b2447d61b7b35a1914ada73e80217c72376f91742fcd7f09",
+  "binary": {
+    "profile": "release",
+    "feature": "manual-screenshot-capture",
+    "path": "target/release/agentconductor-native-ui-probe",
+    "sha256": "9ccc5619e0e1f98ad7f7cea86ac85a1030c9163ed52149cec5d71209bdab51c5"
+  },
+  "fixture": {
+    "home": "/private/tmp/agentconductor-issue9-agent-room-3b88f27/home",
+    "workspace": "/private/tmp/agentconductor-issue9-agent-room-3b88f27/repo",
+    "run": "/private/tmp/agentconductor-issue9-agent-room-3b88f27/run",
+    "executor": "deterministic local Rust test fixture; no provider CLI",
+    "candidate": "b744fbfd2a859d13e45d8571fe7b4c361c8ed045",
+    "state": "waiting_approval",
+    "tasks_completed": 3,
+    "tests_passed": 3,
+    "approved": false,
+    "merged": false,
+    "user_workspace_touched": false,
+    "mcp_server_invoked": false,
+    "automatic_update_lookup": "not instrumented"
+  },
+  "capture": {
+    "method": "eframe framebuffer callback after snapshot and selected task details loaded",
+    "dimensions": "1140x960",
+    "theme": "light",
+    "assets": [
+      {
+        "path": "docs/assets/ui-agent-room-native.png",
+        "language": "en",
+        "sha256": "d3ed1422f21d0a1ee2f821cd2beb98b80cb200f37e29aace5ef611f8e25dd50d"
+      },
+      {
+        "path": "docs/assets/ui-agent-room-native-ko.png",
+        "language": "ko",
+        "sha256": "133b480123de5431de6effb24606149878e85b41ef1e47f03cc4ee014a6a8ee9"
+      }
+    ]
+  },
+  "manuals_updated": [
+    "docs/user-manual.md",
+    "docs/user-manual.ko.md",
+    "docs/user-manual.html",
+    "docs/user-manual.ko.html",
+    "src/native_ui_probe/manual_viewer.rs"
+  ],
+  "packaged_workflow_acceptance": "15/25",
+  "acceptance_credit": 0
+}

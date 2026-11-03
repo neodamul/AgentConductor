@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-24",
+  "kind": "local-exact-head-macos-package",
+  "issue": 9,
+  "source_commit": "c10121cee4a94e4d0af701779459a34cc3a684f4",
+  "target": "aarch64-apple-darwin",
+  "package": {
+    "archive": "dist/agentconductor-aarch64-apple-darwin-c10121cee4a9.zip",
+    "archive_bytes": 21672397,
+    "archive_sha256": "6ec2aed9dece072a390906416bd6a4288d40e8f698af404c961fb5c71b031f94",
+    "binary_bytes": 18858304,
+    "binary_sha256": "3fa44f63193cdb47ec6d06db450a090804b1241eddb4938e3c2da4451beeaa65",
+    "dependency_count": 242,
+    "includes": [
+      "Cargo.lock",
+      "DEPENDENCY-LICENSES.md",
+      "LICENSE",
+      "SBOM.cdx.json",
+      "SHA256SUMS",
+      "THIRD-PARTY-NOTICES.md",
+      "licenses/"
+    ]
+  },
+  "verification": {
+    "package_release": "passed",
+    "validate_package": "passed",
+    "zip_integrity": "passed",
+    "package_smoke": {
+      "case_count": 4,
+      "tasks_per_case": 3,
+      "tests_per_case": 3,
+      "parallel_execution": true,
+      "approved_merge_verified": true,
+      "unapproved_merge_refused": true,
+      "modes": ["shared", "worktree"],
+      "source_modes": ["git", "folder"]
+    },
+    "smoke_evidence": ".agentconductor/verification/packaged-workflow/run-29931-1792770705800433000-0/smoke.json"
+  },
+  "acceptance": {
+    "packaged_ui_workflows": "15/25",
+    "shipped_default_rust_ui": "0/25",
+    "additional_ui_workflow_credit": 0
+  },
+  "limitations": [
+    "This is a macOS arm64 package only; Windows remains unverified locally.",
+    "The commit is a documentation-only checkpoint after product source c67425bf.",
+    "The package has not been published as a GitHub Release.",
+    "CLI package smoke is not exact-package visual or operator UI acceptance."
+  ]
+}

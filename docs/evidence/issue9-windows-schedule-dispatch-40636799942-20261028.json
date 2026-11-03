@@ -1,0 +1,35 @@
+{
+  "run_id": 40636799942,
+  "head_sha": "7974878e284d13cd2080615810d30cf0e3999b91",
+  "windows_package_job_id": 122653747461,
+  "artifact_id": 12795507612,
+  "result": "failed",
+  "passed_journeys": [
+    "read-only team briefing",
+    "default workspace save"
+  ],
+  "failed_journey": "waiting-agent scheduled retry",
+  "diagnostics": {
+    "uia_focus": "unavailable: target element cannot receive focus",
+    "uia_invoke": "unavailable: unrecognized error",
+    "pointer_input": "reported sent by legacy mouse_event helper",
+    "schedule_button_after_input": "still enabled",
+    "controller_action_owner_record": false,
+    "persisted_task": "waiting_availability/manual_required with no available_at"
+  },
+  "root_cause": "The UI input did not activate the Schedule retry control, so the native Room event never reached the action controller. There was no controller action owner record. The schedule command and persistence path are not implicated by this run.",
+  "fix": "Use checked SendInput down/up after the existing foreground and same-process checks. Do not emit SCHEDULE_ACTION_SUBMITTED unless the accessibility button state confirms dispatch. The Rust package test separately requires a coordinator-ui process owner record before checking durable schedule persistence.",
+  "local_verification": {
+    "tests": "windows_schedule_dispatch, windows_schedule, and native_ui_task_scheduling: 13 passed",
+    "clippy": "cargo clippy --all-targets --features native-ui-probe -- -D warnings passed",
+    "format": "cargo fmt --check passed",
+    "diff_check": "git diff --check passed",
+    "line_limit": "all changed source and test files are under 300 lines"
+  },
+  "acceptance": {
+    "candidate_packaged_ui": "22/25",
+    "shipped_rust_replacement": "0/25",
+    "credit_added": false
+  },
+  "next_step": "Push the focused driver/test fix and rerun the exact Windows release package. Count no workflow until the action owner record and persisted timezone-qualified manual_schedule state both appear."
+}

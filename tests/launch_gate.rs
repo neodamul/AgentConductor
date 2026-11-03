@@ -1,4 +1,4 @@
-//! GitHub #149 / R-168 / DD-178: a run that cannot work is refused before anything is created.
+//! GitHub #149 / R-171 / DD-182: a run that cannot work is refused before anything is created.
 #![cfg(unix)]
 #[path = "support/workflow.rs"]
 mod support;

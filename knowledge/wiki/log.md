@@ -1,15 +1,704 @@
+# [2026-11-03] plan/task/verify | Match Workspace field labels and geometry — issue #9
+
+Compared the source-built native Workspace against the current legacy HTML/CSS. The new AccessKit test first caught a 28 px workspace-name field; after setting the scoped interactive height to 40 px it caught a 420 px project-folder field versus the legacy 380 px. Capped the field at 380 px, retained 40 px sizing for the name/coordinator/project controls and Browse action, and changed the coordinator label to “Planning coordinator.” The project-folder button remains “Browse…” while its input placeholder remains “Choose your project folder.” Twenty focused tests across five targets, all-target warning-denied Clippy, formatting, diff hygiene, and the 300-line limit pass. The first-run screenshot is internal geometry evidence only. Issue #9 remains 22/50, with no acceptance credit.
+
+# [2026-11-03] plan/task/verify | Restore the legacy project-folder button label — issue #9
+
+`origin/main:src/ui/startup.html` uses the localized “Browse…” text for the project-folder button and keeps “Choose your project folder” as the input placeholder. The new AccessKit test failed because Rust used the placeholder text on the button. Switching the button to `startup.browse` and leaving the placeholder unchanged made the affected native Workspace, project-picker, and isolation suites pass 16 tests. Issue #9 stays at 22/50 with no UI acceptance credit. PR #22 remains the only open PR, but its branch currently spans 1,179 commits and 1,851 files (+97,156/−25,391 lines) against `main`, a reviewability risk.
+
+# [2026-11-03] correction | Match worktree control to latest Workspace source — issue #9
+
+The prior layout change was wrong: it relied on a stale Rust capture and moved the worktree checkbox below goal/import controls. The current available `origin/main` Workspace reference keeps the checkbox in the project-folder row. An AccessKit bounds test first failed against the misplaced checkbox (Browse y=449..469; checkbox y=709..729), then passed after restoring the checkbox beside Browse. Sixteen focused tests, 2 source-layout tests, warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test limit pass. The v0.1.55 reference screenshot is used only for this control's placement, not full parity. Issue #9 remains 22/50 with no acceptance credit. This correction stays in the existing Draft PR #22; no extra PR was opened.
+
+# [2026-11-03] plan/task/verify | Repair exact-head native test failures — issue #9
+
+The exact-head macOS and Windows runs failed their applicable native tests. Reproduced all three targets locally: `native_ui_agent_order` overflowed the supported 210 px sidebar with move controls; `native_ui_language` and `native_ui_probe` still expected the removed execution-isolation radio labels. Wrapped the control row and changed the tests to assert the current localized `CheckBox`. Focused targets pass 18/18; the full locked/offline all-target suite, source-layout 2/2, warning-denied all-target Clippy, native UI Clippy, rustfmt, diff hygiene, and source/test bounds pass. No acceptance credit claimed. This is an issue #9 root-branch correction and does not create a new PR.
+
+# [2026-11-03] task/verify | Repair Windows packaged workspace-save UIA input — issue #9
+
+Exact package run `41520505534` disproved the stale Save-element diagnosis: after `SendKeys`, UIA focus was the top-level window and the Goal value remained empty before Save. Updated driver contracts red-first, then changed the Windows harness to click Goal bounds and use `SendInput` Ctrl+A/Unicode text, re-finding Goal during value polling. Run `41529527647` then found a second stale `windows_run_lifecycle` assertion still requiring `SendKeys`; reproduced locally red, corrected it to require Unicode input, and verified 41 tests/1 ignored across eight suites. The embedded C# helper also compiles under .NET 9. New exact-head package verification is required; acceptance stays 22/25 packaged and 0/25 shipped/default Rust UI (22/50 overall). Product UI did not change.
+
+# [2026-11-03] verify | Recheck current-head Rust UI migration and CocoIndex evidence
+
+On exact head `85f0f82e099f7b7c9b410e8986121fcd97a933d4`, run `41520505534` passed both macOS and Windows platform-validation jobs, and the macOS native-package job passed. Windows release build, bilingual manual rendering, and exact release-binary packaging/execution passed; its packaged default-desktop journey failed on Goal input. The aggregate remains 22/50 (22/25 package workflows; 0/25 shipped/default Rust UI parity). Updated PR #22 and issue #9 progress without changing acceptance.
+
+Repaired the local CocoIndex Code tool environment by adding its missing MCP SDK and `sentence-transformers` dependencies to the pinned `cocoindex-code==0.2.42` uv tool. Stopped the stale temporary daemon, then indexed 1,651 files into 12,871 chunks with CPU-only offline local embeddings and queried the index for parity evidence. The result surfaced the current screenshot manifest and its explicit limitation: current native screenshots do not prove full legacy UI parity or Windows package acceptance. No external embedding API was used. Memory lesson: `lsn_83b3b942c616ae7f` records the vertical-slice PR rule.
+
+# [2026-11-03] task/verify | Stabilize native run-completion refresh journey
+
+Exact-head run `41511209951` failed macOS `native_ui_start_journey` after Refresh run left the test accessibility snapshot at stage `02 Tasks` instead of `05 Workspace`. The failure did not reproduce in five local baseline runs. Hardened only the test helper: wait for an enabled control before clicking and allow 30 seconds for the asynchronous completed-stage refresh. The affected five-suite set passes 19 tests; the journey passes five additional consecutive runs; all-target warning-denied Clippy, rustfmt, diff hygiene, and source-layout pass. No product code or UI acceptance changed. Exact-head macOS rerun and Windows package evidence remain required.
+
+# [2026-11-02] plan/task/verify | Reconcile PR status and screenshot provenance
+
+At the start of this review, open PRs were #22 (Rust migration, Draft) and #336 (v0.1.56 docs/release prep). #336 was subsequently merged to main as `0c050741`; only #22 remains open. Its scope is still 22/25 packaged workflows and 0/25 shipped/default Rust UI parity. The README captures were confirmed stale (v0.1.54, v0.1.49, v0.1.24), and the current manual/README status records that evidence rather than claiming fresh captures. AgentMemory: `mem_mvz4v8yx_e447332f640e`.
+
+# [2026-11-02] plan/task/verify | Close PR #22 macOS CI regressions
+
+Run `41343840698` identified an egui texture-delta test panic and screenshot freshness checking historical screenshots. Fixed the test cleanup, added an explicit current-capture manifest used by docs and the freshness checker, and removed an obsolete settings image from both manuals and the embedded viewer. Rust-rendered bilingual HTML manuals. Full local all-target native-feature suite: 1,279 passed, 16 ignored across 394 suites; warning-denied Clippy, formatting, diff and 300-line checks pass. Exact-head Windows run was still in progress; this local batch is not packaged Windows acceptance.
+
+# [2026-11-02] pace Windows package goal input | issue #9 / #310
+
+Exact Windows package run `41309723645` passed platform validation and built/executed the release archive, but `default_native_workspace_is_accessible_and_saves_through_ui_automation` persisted an empty goal after Unicode `SendInput`. Added a source-contract regression that failed before the fix, then paced each Unicode key pair by 100 ms. Focused driver, run-lifecycle, source-layout and desktop-contract suites pass 16 tests (1 ignored); rustfmt and diff checks pass. Full local native suite reached 1,029 passed / 15 ignored across 309 suites before it was stopped for runtime, so the command is not claimed complete. Exact package acceptance is still pending. AgentMemory: `mem_mvxzjvkh_e262c47c9cba`; Graphify: 12,159 nodes / 19,847 edges.
+
+# [2026-11-02] task/verify | Port the managed-workspace Windows package probe — issue #226
+
+The product restore/delete behavior is already on the active Rust parent; local launch, delete, registry and layout tests pass 5/5. The stale #230 child used the requested path even though first-run UI creates a managed workspace. Ported a bounded registry resolver into the exact-package signal-settings test and added tests for canonical path selection and delayed persistence. Registry, signal-settings dispatch/window-refresh and layout suites pass 20 tests; all-target native-feature Clippy, formatting, diff checks and 300-line limits pass. Current exact Windows package verification is still required; the older run `40805049482` is not current evidence. Graphify refreshed to 12,154 nodes / 19,842 edges. AgentMemory: `mem_mvxyyn29_b1fa84d9dd35`.
+
+# [2026-11-02] plan/task/verify | Remove static labels from native Rust screens — issue #190
+
+PR #199's issue #190 port still existed only on the old parity base. Red bilingual render assertions failed on the visible Room label and Workspace sidebar tagline. Removed those strings from the native views and deleted five English/Korean catalog keys; retained the Room phase/workspace context and the actual workspace-mode control. Focused native UI, source-layout and public-doc suites pass 20/20; all-target native-feature Clippy with `-D warnings`, rustfmt, diff hygiene and the 300-line limit pass. Closed #199 as superseded after porting to #260 in `85e283d4`. Graphify refreshed to 12,140 nodes / 19,824 edges. AgentMemory: `mem_mvxytxcz_f9b83f5ce30d`. Exact packaged screenshot/visual parity remains a #9 gate.
+
+# [2026-11-02] task/verify | Reconcile chat-timeout PR #239
+
+Moved PR #239's slow-Git regression onto the current #260 parent. The test injects a wrapper that sleeps 20 seconds on `rev-parse HEAD`, but chat dispatch returns in 0.21 seconds. The first test run caught an outdated `turns` field and wrong revision token; adapting to the current `text`/`chat_revision` protocol produced a passing regression. `startup_chat` passes 6/6, source-layout 2/2, request-diagnostics 4/4, and the Windows chat test target compiles. Formatting, diff hygiene, and the 300-line file cap pass. PR #239 is closed as superseded; issue #234's product fix is already present. Exact packaged Windows chat reconnect remains unverified and issue #189 stays open.
+
+# [2026-11-01] reconcile PR backlog | issue #9
+
+Integrated PRs #305, #293, and #294 into the active #9 branch at `9126dfd0`. Audited #255: its 500 ms resumed-chat polling conflicts with QAS-192/DD-206's event-driven updates and fixed 30-second lost-event recovery. Moved its distinct Windows UI acceptance forward by asserting the editor is disabled during an in-flight resumed chat and re-enabled after completion; the exact packaged Windows run is still required. Local Rust test-target compilation, formatting, and the 300-line limit pass. #255 is superseded by the current parent branch; keep issue #189/#9 open until packaged Windows acceptance passes.
+
+# [2026-10-30] plan/task/verify | Build exact-source macOS Rust package — issue #9
+
+Packaged source head `91963479be598752d5b39a73780104ea4577cc46` locally with the Rust `package-release` command. The arm64 ZIP passed integrity, manifest/source, embedded executable checksum, `SHA256SUMS`, packaged `--help`, and all four built-in mock workflow cases (shared/worktree × Git/folder; three tasks/tests each; approval gate verified). Archive SHA-256: `0ee02a02d5464aced3957b7043b31ee491c99301dea18a8a4d98a2c322f41f4c`. This does not establish packaged GUI or Windows acceptance and is not a GitHub Release. Evidence: `docs/evidence/issue9-macos-package-91963479-20261030.json`.
+
+# [2026-10-30] verify | Complete full local Rust suite on current #9 branch
+
+On `codex/issue-9-git-head-fast-path` at `6bbb4254683cb2d147696d98384643d4dea7fc6e`, `cargo test --all-targets --locked --offline -j 2` exited 0: 1,143 passed, 15 ignored across 364 suites (265.54 seconds). This resolves the previous interrupted-run checkpoint for the current branch. It does not verify exact packaged UI behavior or Windows package acceptance. Graphify/CocoIndex were not needed for this test-only verification.
+
+# [2026-10-30] plan/task/verify | Keep repository revision checks off the Git subprocess path — issue #9
+
+Added the Rust port of main #234's Git HEAD fast path in commit `363a6f5` on `codex/issue-9-git-head-fast-path`; draft PR #260 targets the #9 parity branch. A deterministic proposal snapshot test first failed when PATH hid Git, then passed after common HEAD layouts switched to metadata reads and unsupported layouts gained a single-flight background refresh. Focused regression/layout tests pass 7/7; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test audit pass. The full all-target run was interrupted after 848 passed / 15 ignored across 252 suites with no failures, so no full-suite pass is claimed. Graphify refreshed to 11,889 nodes / 19,466 edges; CocoIndex CLI is unavailable. Exact-package responsiveness remains pending. Trace: R-193 through DD-205. See `git-head-fast-path.md` and the implementation checklist in `docs/07-implementation-plan.md`.
+
+# [2026-10-29] verify | Full local Rust test suite — issue #9
+
+At source `355d6256d358533bfd182712ce1fa99d174b4aa4`, the complete locked/offline all-target test command exited 0 with no failures. Authenticated provider and exact packaged-binary tests remain gated by their declared prerequisites. Exact Windows package and three remaining packaged UI workflows are still pending. Evidence: `docs/evidence/issue9-full-suite-355d625-20261029.json`.
+
+# [2026-10-29] verify | Exact-current-head macOS package — issue #9
+
+Built the optimized Apple Silicon package from source `355d6256d358533bfd182712ce1fa99d174b4aa4`. Manifest, binary checksum, archive CRC, packaged help, bilingual manuals, license records, SBOM, and screenshot assets were verified. Archive SHA-256: `560e138b9ce2543157caed57fedda16e73fa92000295b96e16f2f26fba2cd73e`. GUI acceptance was not run and the package earns no workflow acceptance. Windows package and the full-suite exit code remain pending. Evidence: `docs/evidence/issue9-macos-package-355d625-20261029.json`.
+
+# [2026-10-29] verify | Exact macOS package for coordinator chat recovery — issue #9
+
+Built the optimized package locally from clean source `f83c5fb15fb088eebd2d622357d719c074da4572` with `cargo run --release --locked -- package-release`. The Apple Silicon archive manifest matches the source commit, its embedded binary SHA-256 matches `SHA256SUMS`, and the package contains English/Korean HTML manuals, license records, and SBOM. Archive SHA-256: `ba37d5215b584b0a776c2942045796dc3918a5b6b6e82b82d487c268e8997423`. `docs/07-implementation-plan.md` records evidence. Windows package recovery, full-suite verification, and #9 completion remain open. Graphify/CocoIndex status was not re-run for this package-only check.
+
+# [2026-10-29] superseded audit | ACIO worker integration — issue #9 / FR-179
+
+The earlier audit claiming the ACIO runtime was disconnected was stale and incorrect for the current branch. `src/workflow/execution/worker.rs` sends `acio.input/1` and routes opted-in profiles through `worker::acio::run`; `tests/acio_worker.rs` verifies structured input, session ownership, live events, human approval, and rejection of mismatched sessions. Plan section “Route opted-in ACIO profiles through the live worker” records the prior 1,083-test full-suite evidence and completion commit `447afce112c44e37e2de0fbacb8ebb6bc73eb0fc`. This correction adds no new implementation or package acceptance. Graphify was refreshed on 2026-10-29; CocoIndex CLI is unavailable in this environment.
+
+# [2026-10-29] plan/task/verify | Add Rust ACIO runtime and CLI conformance — issue #9
+
+Added the `io` CLI command family, ACIO describe/runtime and event decoding, plus ordered stdin control delivery through the existing split process runner. TDD exposed the absent protocol field and decoder mapping; a doc test caught the missing bilingual `io` command entries, and both Markdown/HTML manuals are now synchronized. Focused tests pass 38 across seven suites; full locked/offline verification passes 1,077 tests, 14 ignored, 344 suites; warning-denied Clippy, rustfmt, diff, and source/test layout pass. This does not increase packaged UI acceptance. AgentMemory: `mem_mvsdaubm_bb0d4f08eca7`.
+
+# [2026-10-28] task/verify | Retry Windows tool-decision activation across live snapshot updates — issue #9
+
+Run `40675926557` passed Windows platform validation and the exact macOS package, then failed workflow 23 in the Windows package: the Refresh UIA/pointer interaction did not expose the confirmation before the live snapshot disabled controls. Added a red/green driver contract and bounded activation retries that reacquire a fresh enabled control before each attempt. `windows_tool_decision_dispatch` passes 10/10; formatting, diff, and 300-line checks pass (230- and 184-line files). Commit `b8a95ee6` is local only. The exact Windows package rerun must verify refresh/allow/deny receipts and mock effects; workflow 23 remains uncredited at 22/25. AgentMemory: `mem_mvs1z1ve_dfd428b84d7a`.
+
+# [2026-10-28] verify | Exact Windows package recheck of tool-request refresh — issue #9 / workflow 23
+
+Run `40675926557` passed both platform-validation jobs and the exact macOS package. The Windows release package built and rendered its bilingual manual; briefing (1/1), desktop (1/1), schedule (3/3), and signal-settings (1/1) passed. `windows_tool_decision` failed: UI Automation Invoke showed no state change, checked pointer input did not open `Confirm tool decision`, and the app then exposed disabled tool controls while the Agent Room showed `Running`. Candidate-review workflow 24 was absent from this tested head. The packaged Windows artifact is `12813540926`. Workflow 23 remains uncredited at 22/25 until the driver/product transition is fixed and the exact package passes. AgentMemory: `mem_mvs1tvqj_3cca76988685`.
+
+# [2026-10-27] task/verify | Stabilize the packaged Windows Team Briefing input — issue #9
+
+Exact-head run `40455732953` passed both platform validation jobs and the macOS package. The Windows package failed in `windows_briefing` before the signal-settings test ran: UIA `InvokePattern.Invoke()` returned `Unrecognized error`, and the fallback click did not open the menu. The same briefing test passed in exact package run `40431084361`, showing an intermittent driver issue. Failure artifact `12713663734`, archive SHA-256 `b6fa9d9ada4cb9229293f822dc345d6fe19cc495a280cd8661b81d18cbe48a1c`; evidence: `docs/evidence/issue9-windows-briefing-404557-failure-20261027.json`.
+
+Added a TDD guard for foregrounding/reacquiring the button and checking its visible bounds and process before mouse fallback. The guard failed before the driver change and passes 1/1 now; rustfmt and `git diff --check` pass. File sizes: `windows_briefing.rs` 194 lines; `windows_briefing_dispatch.rs` 25 lines. The packaged 22/25 count remains unchanged until the exact Windows package passes the briefing, schedule, desktop, and signal-settings journeys. Graphify refresh pending. CocoIndex executable unavailable on this host. AgentMemory: `mem_mvqajs2r_0d81fadccf41`.
+
+## [2026-10-27] verify | Pass Windows packaged schedule and team briefing — issue #9
+
+Exact-head run `40431084361` passed both platform validation and both exact-package jobs. The Windows release package command ran `windows_briefing`, `windows_desktop`, and `windows_schedule`; `windows_schedule` passed 2/2 and the persisted-state oracle observed `manual_schedule=2099-01-01T09:00:00+09:00`. Distinct workflow 22, read-only team briefing, also passed: all three fixture tasks were complete, `waiting_approval` remained, approvals were empty, and the persisted report was unchanged before and after. Artifacts: Windows `12704291414` (SHA-256 `bb564126f63f712e8942cab00fc85127f91c657fb5c01a39ef8c7dec832bc146`) and macOS `12703725011` (SHA-256 `24ce1871651cbf42b7da25d6dd40aa8bc78a4162b373f00b302de649754f5272`). Acceptance is 22/25 with three workflows remaining; issue #9 stays open. Graphify refreshed to 9,521 nodes / 15,993 edges and queried the test, UI, and persistence path. CocoIndex CLI unavailable. AgentMemory: `mem_mvq5il1l_deb4cfec3101`. Evidence: `docs/evidence/issue9-windows-schedule-40431084361-20261027.json`.
+
+## [2026-10-27] task/verify | Refresh the Windows packaged schedule control before UIA invoke — issue #9
+
+Exact-package run `40415608903` passed macOS/Windows validation, both package builds/smokes, Windows desktop save, and briefing. The Windows schedule journey failed at `InvokePattern.Invoke()` with `ElementNotEnabledException`. Added a source-contract Red test for reacquiring the UIA window/button after focus and scrolling, then refreshed both elements and rechecked enabled state before invocation. Focused schedule/dispatch/source-layout/public-doc checks pass 16/16; formatting, diff, and 300-line checks pass. Graphify refreshed to 9,511 nodes / 15,983 edges; CocoIndex CLI unavailable. Exact package rerun remains pending and acceptance stays 20/25. AgentMemory: `mem_mvpwge8y_48466d3c942a`. Evidence: `docs/evidence/issue9-windows-schedule-40415608903-20261027.json`.
+
+## [2026-10-27] task/verify | Diagnose the Windows packaged schedule input target — issue #9
+
+Run `40241618513` failed with a visible, enabled schedule button but no coordinator action. The driver did not establish foreground ownership or verify which process owned the point under the button. Added a bounded `user32` check before UIA Invoke: activate the exact package window, verify it is foreground, and verify the button center resolves to the packaged app PID; otherwise print a distinct diagnostic and stop. The new source contract failed against the old driver and passed after the guard. The current schedule/marker/native-interaction/layout/docs batch passes 22 tests across six suites; warning-denied all-target Clippy, unsafe-comment lint, rustfmt, diff, and 300-line checks pass. Files are 256 and 36 lines. No local PowerShell is installed, so the embedded Windows helper and exact package remain unverified; acceptance stays 20/25. Graphify refreshed to 9,487 nodes / 14,751 edges / 725 communities. CocoIndex is unavailable. AgentMemory: `mem_mvpq1ihq_72df6e050c9a`. UTM was not accessed.
+
+## [2026-10-27] verify | Reconcile main ancestry and recheck issue #9
+
+At `85c322d`, focused schedule/layout passed 11 tests and docs/layout passed 13; the combined nine-target run passed 35 with 1 ignored. Formatting, warning-denied Clippy, unsafe-comment Clippy over tests, and diff checks pass. Correction: merge-tree found nine conflict files; the earlier 1,400-path statement confused full branch-tree comparison with the actual merge delta. Resolved the conflicts preserving Rust module splits and pushed ancestry merge `aef00f5`. GitHub reports PR #22 open/draft and `MERGEABLE` / `UNSTABLE`; no CI was triggered. Exact Windows package run `40241618513` still fails to persist `manual_schedule`; acceptance remains 20/25. Graphify refreshed to 9,484 nodes / 14,748 edges / 728 communities. CocoIndex is unavailable. UTM was not accessed.
+
+## [2026-10-27] task/verify | Port test environment safety from main — #176 to issue #9
+
+Ported main commit `f086f41f` to the Rust migration branch in `30e0fdaa`, retaining Rust-only module splits while resolving three content conflicts. Added the shared `tests/support/env.rs` guard, restoration/serialization/panic tests, migrated all process-environment mutations to the helper, and extended the unsafe-comment Clippy gate to `--tests`. `rg` confirms `set_var` / `remove_var` now appear in tests only inside the helper. The affected suites plus `source_layout` pass 74 tests (2 ignored, 29 suites); both strict unsafe-gate Clippy and all-target warning-denied Clippy, rustfmt, and diff checks pass. The combined full-suite run was interrupted after 942 passed / 14 ignored across 292 suites at 223.11 seconds; it is not claimed complete. Graphify refreshed to 9,482 nodes, 14,746 edges, and 740 communities. CocoIndex is unavailable in this runtime. Windows-only compilation remains unverified; no remote CI was run. The #9 progress comment is posted; this port adds no packaged UI acceptance credit.
+
+## [2026-10-25] verify | Remove unused Windows schedule diagnostic helper — issue #9
+
+Run `40174748638` passed macOS and Windows build/layout/native tests/native UI checks, then failed Windows warning-denied Clippy because `tests/support/windows_schedule.rs::diagnostics` had no caller. Removed that dead helper; the Windows test retains local failure diagnostics and the shared support module keeps the used persisted-schedule wait. Focused schedule, marker, and source-layout suites pass 5 tests across 4 suites; local all-target Clippy, rustfmt, diff, and 300-line checks pass. Graphify refreshed: 9,450 nodes / 14,702 edges / 720 communities. AgentMemory: `mem_mvnkb7yx_09907b098260`; CocoIndex CLI unavailable on this host. The exact Windows rerun and release-package state check remain pending; acceptance stays 21/25. Evidence: `docs/evidence/issue9-windows-schedule-clippy-40174748638-20261025.json`.
+
+## [2026-10-25] plan/task | Gate Windows schedule UI acceptance on the packaged binary — issue #9
+
+Run `40172935113` passed macOS but failed the schedule interaction when the all-target validation launched the debug executable, so the Windows package job never ran. This test is specifically named and scoped for the exact Windows package; the package workflow already passes its release executable via `AGENTCONDUCTOR_DESKTOP_BINARY`. Marked this UI test ignored during debug validation and explicitly included ignored tests in the package job. The source-contract test failed before the gate change and passes locally after it. Focused schedule, marker, and layout suites pass 5 tests across 4 suites; formatting, diff, and 300-line checks pass. Graphify refreshed to 9,448 nodes / 14,702 edges; CocoIndex CLI is unavailable. AgentMemory: `mem_mvnj9hk7_ef07be8954cb`. The package UI result is still pending; acceptance remains 21/25. Evidence: `docs/evidence/issue9-windows-schedule-package-gate-40172935113-20261025.json`.
+
+## [2026-10-25] task | Restore minimal Windows schedule UIA driver — issue #9
+
+The exact Windows package run `40241618513` showed that the schedule button was visible and enabled, but a Win32 mouse event created no coordinator action and did not persist `manual_schedule`. The previous passing exact-package run `40119945464` used the original UIA button's `InvokePattern` after setting the timestamp. Replaced the accumulated Win32 focus/scroll/click path with that known passing sequence and retained the persisted timestamp as the only acceptance condition. The regression contract failed before restoring UIA activation; afterward the schedule/dispatch/marker/layout suites pass 6 tests, warning-denied all-target Clippy and rustfmt pass, and the edited test files are 218 and 33 lines. The newer exact-package failure supersedes the older schedule pass, so current packaged acceptance is 20/25 pending a successful retest. AgentMemory: `mem_mvp1hgiv_b8e59670109b`; no workflow credit is claimed.
+
+## [2026-10-26] verify | Full local Rust regression after schedule UIA restoration — issue #9
+
+On commit `5ff2a209`, the full fixture-enabled all-target suite passes 198 tests with 2 ignored across 42 suites. The CI native-UI test set passes 147 tests across 31 suites; both native binaries pass `cargo check`; warning-denied native UI Clippy and unsafe-block lint pass, as do rustfmt and diff checks. Graphify refreshed to 9,464 nodes, 14,715 edges, and 719 communities. This confirms local source behavior only; Windows packaged UI persistence remains unverified and current package acceptance is 20/25 because run `40241618513` failed the schedule interaction after the older `40119945464` pass. CocoIndex was not run in this verification-only update.
+
+Exact-head run `40171283684` passed macOS but failed the Windows schedule test after restoring `window.SetFocus()`. Three attempts still emitted input without creating a coordinator action. The test driver had accumulated Win32 focus/mouse and UIA refresh fallbacks absent from the last passing package test `40119945464`. Replaced it with the known passing focus → timestamp entry → original-button UIA Invoke sequence, changed the success marker to describe input delivery only, and retained the exact persisted `manual_schedule` check. The new source contract failed before the restoration and passes locally. Focused schedule, marker, and layout suites pass 5 tests across 4 suites; formatting, diff, and 300-line checks pass. Graphify refreshed to 9,447 nodes / 14,701 edges. AgentMemory: `mem_mvnia4tz_0b67ea8055b3`; CocoIndex CLI is unavailable. Exact Windows package rerun is pending; acceptance remains 21/25. Evidence: `docs/evidence/issue9-windows-schedule-uia-40171283684-20261025.json`.
+
+## [2026-10-25] verify | Windows schedule UIA window-focus regression — issue #9
+
+Exact-head run `40170014908` passed all macOS checks but failed the Windows schedule workflow: pre-edit UIA, refreshed UIA, and physical click attempts sent input without persisting `manual_schedule`; no coordinator action appeared. Comparison with the last passing package driver (`40119945464`) found it called `window.SetFocus()` immediately after locating the controls. The local source contract failed before restoring that call and passes afterward. Focused schedule, retry, and source-layout suites pass 7 tests across 4 suites; rustfmt, diff checks, and 300-line limits pass. Exact Windows verification is pending, and package acceptance stays 21/25. Evidence: `docs/evidence/issue9-windows-schedule-focus-40170014908-20261025.json`.
+
+## [2026-10-25] verify | Three fresh UIA retries did not fix Windows schedule dispatch — issue #9
+
+Exact Windows run `40168107124` disproved repeating the fresh-element UIA attempt: all three emitted `method=uia`, but the report stayed `waiting_availability` / `manual_required`, with no timestamp or coordinator action; Windows validation failed and package validation was skipped. The last passing package run `40119945464` used the pre-edit button element, whereas failed runs `40162937724` and `40168107124` used a refreshed element. The current driver tries pre-edit UIA, refreshed UIA, and physical click once each, and requires durable `manual_schedule` after every attempt. The macOS validation job passed. The updated locked/offline all-target suite passes 999 tests / 14 ignored / 328 suites; final focused tests pass 9 / 8 suites. Rustfmt, warning-denied Clippy, diff and 300-line checks pass. Graphify refreshed to 9,450 nodes / 15,912 edges; CocoIndex CLI unavailable. Acceptance remains 21/25. Evidence: `docs/evidence/issue9-windows-schedule-40168107124-20261025.json`.
+
+## [2026-10-24] fix | Keep Agent Room snapshots responsive during execution — issue #9 / QAS-158
+
+TDD first reproduced a live-task UI snapshot exceeding its two-second bound. Exact package ea672184 showed the rows refreshing but revealed a disabled feedback editor. The AccessKit red test failed before the UI enabled feedback only for running tasks. Package 6aa687a3 verified that running-task feedback is editable, pending-task feedback is disabled, and an alternate-agent selection enables Assign; neither action was submitted. Read-only snapshot access, report-derived watcher restoration, and feedback editing for a running task are implemented; 44 focused tests, all-target Clippy, formatting, and 300-line checks pass. Graphify refreshed at 9,278 nodes / 15,677 edges. CocoIndex could not start because `mcp.server.fastmcp` is missing from its CLI environment. Packaged UI count is 18/25 (72%); shipped/default Rust UI stays 0/25. Evidence: `docs/evidence/issue9-qas158-live-snapshot-20261024.json`.
+
+## [2026-10-23] verify | Transfer current #9 PR head through UTM Z: — issue #9
+
+Archived exact PR head `d1e1b3746b3ea08cbaa09c1ac167e0c569c9810d` and copied it to the user's existing `/Users/neodamul/Downloads/UTM` share folder. The source and host-copy SHA-256 values match. Windows still shows an app-restart prompt, so guest-side Z: access and Windows build/test remain unverified; no VM restart or shutdown was selected. Evidence: `docs/evidence/issue9-utm-z-share-head-20261023.json`.
+
+## [2026-10-23] verify | Refresh issue #9 PR conflicts and UTM transfer state
+
+At branch head `8b50d0bd`, GitHub reports PR #22 open/draft, `DIRTY`, with no checks; `origin/main` is `602ec118` and the latest stable release is v0.1.37. A read-only merge-tree now reports 39 conflict paths, so the earlier changelog-only summary was incomplete. UTM Windows remains started but has no available QEMU Guest Agent. A source-only archive for the exact Rust branch head is staged on the host and not transferred; Windows build/package/UI verification remains unclaimed while Guest Tools action-time authorization is pending. Acceptance stays 15/25 packaged and 0/25 shipped/default Rust UI. Evidence: `docs/evidence/issue9-utm-build-transfer-20261023.json`.
+
+## [2026-10-23] verify | Reconcile latest main feature changes with Rust — issue #9
+
+At the earlier parity checkpoint, the current Rust branch passed 42 tests across ten coordinator/amendment/charter/quota/process suites. `origin/main` was `b7fa27a9f033b91df5787e05833c30db471645e5`; its ten main-only commits touched 56 files. The non-mutating merge-tree analysis showed broad source/design/manual/Wiki conflicts and three shipped JavaScript UI paths deleted by Rust, so no blind merge was attempted. Issue #9 acceptance was 15/25 packaged workflows and 0/25 shipped/default Rust UI workflows. Evidence: `docs/evidence/issue9-main-feature-parity-20261023.json`.
+
 # Knowledge and development log
 
-## [2026-10-19] verify | Recursive repository planning rules (GitHub #8)
+## [2026-10-27] task/verify | Guard signal-settings navigation in Windows package — issue #9
 
-Rules below `<repository>/.agentconductor/plan-rules/` now load recursively in relative
-lexical order when the inline workspace override is unset. Existing global/default rules
-remain the base; inline workspace text remains exclusive. Symlink roots, nested symlinks,
-non-Markdown files and files outside the root are excluded. Tests first failed on the
-missing loader, then pass for empty/nested/multiple files, precedence and containment.
-Plan-rules (5) and slug-flow (1) pass; source-layout, formatting and all-target Clippy pass.
-The all-target suite is not green in this sandbox: unrelated cooperative-memory and folder
-execution tests fail with `Operation not permitted`. No full-regression pass is claimed.
+Exact-head run `40504210152` passed macOS and Windows platform validation and macOS packaging. The Windows exact package passed smoke, briefing, default desktop save, and scheduled retry persistence, but failed to open Signal transport settings: `Local Rust` never appeared after the Settings menu click. Added a Red/Green regression requiring same-process/name/type-verified keyboard activation and destination-state confirmation before the existing checked pointer fallback. Focused UI, schedule, dispatch, docs, and layout tests pass 27/27 across six suites; warning-denied Clippy, rustfmt, diff, and 300-line checks pass. Exact package retry remains required; acceptance stays 22/25. CocoIndex CLI is unavailable on this host. AgentMemory: `mem_mvqp644h_a0ce6f6ba7f7`. Evidence: `docs/evidence/issue9-windows-signal-settings-40504210152-20261027.json`.
+
+## [2026-10-27] verify | Recheck issue #9 schedule gate and PR integration
+
+At `24fdd335`, local schedule dispatch/marker, native scheduling, and 300-line layout tests pass 11/11; public-doc/layout pass 13/13. Formatting, warning-denied all-target Clippy, unsafe-comment Clippy over tests, and diff checks pass. GitHub confirms issue #9 open and PR #22 draft/conflicting. Aborted a broad `origin/main` merge before commit after the result affected more than 1,400 paths; #176 is already selectively ported. Exact Windows package run `40241618513` still fails to persist `manual_schedule`; acceptance remains 20/25. Graphify refreshed to 9,484 nodes / 14,748 edges / 728 communities. CocoIndex is unavailable. UTM was not accessed. AgentMemory: `mem_mvppgcyf_40dfc7ceae25`.
+
+## [2026-10-24] verify | Recheck QAS-29 in exact v0.1.37 package — issue #9
+
+The exact Actions macOS package ran under an isolated HOME and disposable repository. Generate plan stayed disabled without a coordinator; manual planning created three empty tasks immediately; confirming the incomplete plan was refused before the registered executable ran. Evidence: `docs/evidence/issue9-qas29-plan-gate-source-20261024.json`; AgentMemory `mem_mvlwz2up_715f5973b7b8`. Packaged acceptance remains 17/25 because QAS-29 was already counted. The temporary app process and test root were removed.
+
+## [2026-10-24] user report | UTM Windows no longer boots — issue #9
+
+The user reports that after the prior VM reset Windows does not boot and the display is unavailable. Earlier `utmctl` reachability and file reads are superseded as current-state evidence. Do not power-cycle, reset, change UTM settings, or modify the Z: share; further work requires a read-only diagnosis authorized by the user.
+
+## [2026-10-24] verify | Cross-platform release package and smoke — issue #9
+
+Run `40011350882` passed macOS and Windows validation, release builds, Rust bilingual manual rendering, exact-package smoke, and artifact retention. The macOS artifact is `12527489015` (21,164,379 bytes; artifact SHA-256 `faf6d2a0acea970638e4c59697d77175737c44e8dd79fc51ccc8971ca0703a79`; package archive SHA-256 `47075ce7a6908926d14d049e8613a02bce862170ff58bf3992b1c17f41ef7629`). The Windows artifact is `12528158860` (15,301,355 bytes; artifact SHA-256 `02bc04f6cd86b4e9bdaa96c6d05bac58d46a94b5ee6b377dbaa1adf546b7e856`; package archive SHA-256 `9927f872a25505804c3f07ccff70ef33e318c49fdab83d2e15fe599c5a19e8d1`). Both are Actions artifacts expiring 2026-11-06, not a published GitHub Release. Exact packaged UI acceptance remains 16/25; shipped/default Rust UI is 0/25. Evidence: `docs/evidence/issue9-platform-packages-40011350882-20261024.json`.
+
+## [2026-10-24] fix | Document Windows motion-query safety — issue #9
+
+Actions run `40008320185` passed Windows build/layout, all-target tests, native UI validation, formatting, and warning-denied Clippy, then found a missing `SAFETY` comment on the Windows-only `SystemParametersInfoW` call in `src/native_ui_probe/motion.rs`. Commit `c6c6052` documents the valid writable BOOL result pointer without changing behavior. Local rustfmt, host Clippy, source layout (2/2), and diff checks pass. Windows-specific verification requires a fresh Actions run. Evidence: `docs/evidence/issue9-windows-unsafe-comment-fix-20261024.json`.
+
+## [2026-10-24] verify | Exact-package create and archive a non-Git workspace — issue #9
+
+The exact v0.1.37 macOS arm64 package from pushed source `278ad6de798e73e2a71502af03117c0004d61e92` saved a plain-folder workspace, created a replacement, and completed the confirmed archive flow. The registry dropped the inactive workspace while the external project directory remained unchanged and had no `.git`. No agent or plan ran; the app and disposable HOME were removed. Packaged UI acceptance advances to 16/25; shipped/default Rust UI remains 0/25. Evidence: `docs/evidence/issue9-workspace-create-archive-278ad6de-20261024.json`.
+
+## [2026-10-23] fix | Keep native manual table columns readable — issue #9
+
+At `d051c8d4d7cdcb583b6591a8aec0f37db214b246`, the built-in native manual now sizes table columns to available window width and lays cell segments out vertically so wrapped text contributes to row height. TDD captured the initial 48 px column gap and a 77 px row overlap before the fix. Focused manual/layout tests pass 13/13; the exact v0.1.36 macOS arm64 package validated, passed all four smoke modes, and was visually inspected. Acceptance remains 14/25; screenshot refresh and Windows remain open. Evidence: `docs/evidence/issue9-d051-native-manual-table-package-20261023.json`.
+
+## [2026-10-23] verify | Full native-feature regression after Claude quota fix — issue #9
+
+The exact Rust product code at `f43882095aa0308dc2870bd34269e0ea240bab8d` passes the locked/offline release-profile all-target suite: 938 passed, 14 ignored, 0 failed across 310 test binaries in 351.22 seconds. The checked-out head was `8a46c8a0181a5d27440a309d9f68e9420037c858`. This does not add packaged workflow credit; acceptance remains 14/25. Evidence: `docs/evidence/issue9-full-regression-f438820-release-20261023.json`.
+
+## [2026-10-23] verify | Exact-package quota refresh UI follow-up — issue #9
+
+Followed up on the earlier headless-only check: in the exact v0.1.36 macOS arm64 package from `f4388209`, the Claude quota refresh button showed progress, advanced the observation timestamp, refreshed the summary, and returned enabled. The screenshot was not retained because it exposed account usage and a local project path. This component result does not add a distinct packaged workflow; acceptance remains 14/25. See `docs/evidence/issue9-claude-quota-f438820-macos-package-20261023.json`.
+
+## [2026-10-23] verify | Package Claude quota CLI path fix — issue #9
+
+Built pushed source `f43882095aa0308dc2870bd34269e0ea240bab8d` as a v0.1.36 macOS arm64 candidate. Rust package validation passes with 214 dependency records and no missing license expressions; packaged `--help` succeeds; built-in smoke passes four isolated shared/worktree × Git/folder cases, each with three parallel tasks/tests, approved merge success, and unapproved merge refusal. Binary SHA-256: `f804e8c8406408f901c7103fed4f341fc0ceedfb1a1e44506d2e9ba5457fc3ec`; archive SHA-256: `8355d7bf0a86c7497ec9cc9775e095e5294133607defca07a1a5820a88887972`. The app was not opened; its existing running windows and workspaces remain untouched. The matching-hash executable then queried the signed-in Claude CLI with a desktop-style minimal PATH; it persisted two windows without recording usage values, and no generation or tools ran. The GUI refresh button remains unverified, and this candidate retains historical manual screenshots. Evidence: `docs/evidence/issue9-claude-quota-f438820-macos-package-20261023.json`.
+
+## [2026-10-23] fix | Resolve Claude quota CLI for desktop launch — issue #9
+
+The exact v0.1.36 package showed Claude quota refresh failing with `No such file or directory` while the configured executable is the bare name `claude`. TDD reproduced the desktop-PATH mismatch with a deterministic terminal fixture: the test failed before the change and passes after the macOS collector resolves the executable using the shared filesystem-only lookup. No real provider CLI, account, or generation request was used. Formatting, diff checks, and the 300-line source/test bound pass. Exact-package rebuild and UI refresh remain open; packaged workflow acceptance stays 14/25. AgentMemory: `mem_mvkgfbu4_c8be2c1ac746`.
+
+## [2026-10-23] verify | Diagnose issue #9 PR mergeability against main
+
+Fetched `origin/main` at `b7fa27a9`; Rust branch `fe34aa0d` is 656 commits ahead and 15 behind from shared base `e9d1f1ff`. The non-mutating merge-tree check found conflicts across docs, generated manuals/Wiki, Rust coordinator/UI/workflow modules and tests, plus files removed or split to keep the branch Rust-only. No merge/rebase was attempted; worktree remains clean. Keep PR #22 draft until exact conflict resolution preserves modular Rust and the release version. Evidence: `docs/evidence/issue9-main-mergeability-b7fa-20261023.json`.
+
+## [2026-10-23] verify | Reconcile current main with Rust issue branch — issue #9
+
+Compared current main `b7fa27a9` against shared base `e9d1f1ff`; 15 upstream commits follow the base, four after the prior `c9c575a7` audit. The only new behavior is the #165 bounded coordinator lease-retry change already present in Rust as `f7dccadb`; the other changes are v0.1.37 release metadata/manual updates. Six focused Rust suites pass 24 tests at `2fed27cc`. Kept Rust version at 0.1.36 until the migration is release-ready. No behavior or packaged workflow acceptance changed. Evidence: `docs/evidence/issue9-main-parity-b7fa-20261023.json`.
+
+## [2026-10-23] verify / stop — Windows VM access probe, issue #9
+
+Booted the registered UTM Windows ARM64 VM from its stopped state. It reached the Windows lock screen but no authenticated desktop was available; no credentials or project files were accessed. Stopped the VM after the probe and verified that UTM shows Start enabled and Stop disabled, returning its configured 10 GB RAM to the host. No Windows build, package, or UI verification is claimed. Evidence: `docs/evidence/issue9-windows-vm-access-20261023.json`. AgentMemory: `mem_mvkev46a_870b27e35e91`.
+
+## [2026-10-23] maintain | Remove idle Rust debug cache — issue #9
+
+After confirming no Cargo/Rust build was active, removed only the generated `target/debug` cache (9.0 GB). Preserved the 731 MB `target/release`, the extracted 42 MB macOS app under `dist/`, and its release ZIP. The executable remains present and packaged `--help` succeeds. The next debug build must regenerate dependencies. Refreshed Graphify to 8,970 nodes / 14,140 edges / 692 communities; its output is ignored generated data. CocoIndex CLI is not installed, so no CocoIndex result is claimed. This changes no source, app data, or workflow acceptance. Evidence: `docs/evidence/issue9-target-debug-cache-cleanup-20261023.json`.
+
+## [2026-10-23] verify | Probe local UTM Windows VM — issue #9
+
+UTM listed a stopped Windows VM. A hidden disposable boot succeeded, but UTM reported that the QEMU guest agent was unavailable; IP discovery and guest command execution both failed. The host also lacks the `x86_64-pc-windows-gnu` Rust `core`/`std` target. Stopped the disposable VM, verified its stopped status, and closed the VM window created by this probe. No Windows build or runtime pass is claimed; the next local option requires a guest agent, otherwise use an exact-source Windows runner for the release gate.
+
+## [2026-10-23] verify | Build exact-source macOS package — issue #9
+
+Built and packaged committed source `ca9495b2` as an arm64 macOS archive. Release build, Rust packaging, manifest validation, binary help, four mocked CLI smoke cases, ZIP integrity, and archive checksum passed. The packaged executable is 18,606,512 bytes with 214 dependency license records. No GUI was launched and no workflow was counted; the bundled manual screenshots remain historical. Local Windows cross-compilation failed because `x86_64-pc-windows-gnu` core/std are absent. Evidence: `docs/evidence/issue9-ca9495b2-macos-package.json`. Graphify confirms the package driver owns its packaging, smoke and checksum steps; CocoIndex CLI remains unavailable.
+
+## [2026-10-23] task | Bound coordinator lease-race retries — issue #9 / GitHub #165
+
+Latest merged `main` commit `4195f64c` bounded the post-preflight coordinator lease retry to 240 × 100 ms. Rust already retried only `lease is held` and respected the shared deadline, but could retry throughout a long configured timeout. Added the same finite contention budget while preserving deadline and fail-fast behavior. A new bounded-retry regression first failed to compile because the helper lacked a retry-budget parameter. Trace remains R-173 → UC-164 → DD-184; full native-feature verification passed 938 tests (14 ignored, 310 suites) and warning-denied all-target Clippy passed. This is a parity bug fix, not a new workflow.
+
+## [2026-10-23] verify | Inspect exact-package MCP settings hierarchy — issue #9
+
+Opened the exact v0.1.36 macOS package built from `cff95dd02677519ebbb7c359f5ca9e3da0c504ed` in the existing single app window. Checked Korean/dark, English/dark, and English/light: each showed the Settings · MCP servers eyebrow, localized registration heading, and distinct window title. The saved workspace was not modified; no provider, approval, or merge action occurred. Archive SHA-256: `dafc056361c6e68a1165f30db1f3bd8a0cf99d24b59876d7d6eb7d2aa1ad44d8`. Evidence: `docs/evidence/issue9-cff95dd-mcp-dialog.json`. No screenshot file was retained. This component check does not add a distinct packaged workflow; acceptance remains 11/25. Windows verification remains open.
+AgentMemory: `mem_mvk7geva_5b15ec7aa847`. Graphify confirmed the MCP editor state/event module. CocoIndex is unavailable; no index result is claimed.
+
+## [2026-10-23] verify | Match MCP settings dialog hierarchy — issue #9
+
+Compared the native MCP registration window with the existing settings dialog. The new bilingual
+rendered-text regression first failed because the native view omitted the Settings · MCP servers
+eyebrow and the Korean window title duplicated the content heading. The native dialog now shows
+the eyebrow and registration heading while naming the window MCP server settings. Eleven focused
+tests pass across two suites; warning-denied native-feature Clippy and rustfmt pass. This is a
+component parity fix, not an accepted packaged workflow. Exact-package visual verification remains
+open because the user's existing application window was not replaced. AgentMemory:
+`mem_mvk73wbj_5f33afab5ffd`. Graphify confirmed the editor module's state/event ownership; its
+read-only integrity check found 8,916 nodes, 14,081 edges and no dangling endpoints. CocoIndex is
+not installed in this environment.
+See [native settings dialogs](native-settings-dialogs.md).
+
+## [2026-10-23] verify | Remove duplicate Agent Room goal — issue #9
+
+The exact macOS arm64 package from `f1602e7d` showed the workspace goal once in the wide header;
+the narrow task list retained task rows, status, verification, and review controls. The red
+rendered AccessKit regression caught the duplicated goal before the fix. Locked/offline serial
+all-target tests passed 929 (14 ignored, 310 suites); warning-denied Clippy, rustfmt, diff check,
+the 300-line source/test guard, optimized build, package manifest validation, and package smoke
+passed. Candidate `3db8840b` stayed `waiting_approval` with 3/3 tasks/tests; no approval or merge
+occurred. This is a component correction, not a new packaged workflow; acceptance remains 11/25.
+Graphify reports 8,893 nodes / 14,043 edges / 683 communities; CocoIndex CLI is unavailable.
+AgentMemory: `mem_mvk4r2u5_d3f75533fb77`. Evidence:
+`docs/evidence/issue9-f1602e7-agent-room-goal-layout.json`. Windows UI, accessibility/Korean IME,
+resource measurements, and release/license closure remain open.
+
+## [2026-10-23] verify | Keep one packaged app process during UI review — issue #9
+
+Process inspection found the older `dist` v0.1.36 package and the exact candidate package running simultaneously. Saved the older window's current workspace and quit it. A display-name CUA lookup then relaunched the default `dist` package; it was immediately quit using its exact bundle path. Final process inspection found only the candidate-preserving package. Its Agent Room still shows candidate `3db8840b` at `waiting_approval`, with 3/3 tasks and tests complete; no approval or merge occurred. Use exact app paths in CUA, not the display name, when multiple package bundles exist. AgentMemory lesson: `lsn_d8fe0b84cfadeb2c`; session record: `mem_mvk2kxvu_12aaf6979508`.
+
+## [2026-10-23] verify | Recheck Windows CI readiness on the Rust branch — issue #9
+
+On source `43463f4b`, locked/offline serial runs of `cooperative_worker`, `process_timeout`, and `windows_containment` pass on macOS. `public_docs` and `source_layout` pass 13 tests; rustfmt and diff checks pass. This is source-level revalidation, not a Windows run. The Mac lacks the Windows Rust standard library and MinGW linker, and the UTM Windows VM is paused. Graphify: 8,880 nodes / 15,211 edges. The platform gate remains open. AgentMemory: `mem_mvk2es1e_5573fb907b0c`.
+
+## [2026-10-23] verify | Packaged native language/status workflow — issue #9
+
+Verified the v0.1.36 macOS package in one window: Settings switches Agent Room labels and task/status tags Korean → English → Korean while the candidate remains `waiting_approval` (3/3 tasks/tests). No approval, rejection, or merge occurred. Current Rust source passes 948 tests / 14 ignored across 310 suites, warning-denied Clippy, rustfmt, and 13 public-doc/source-layout tests. Graphify reports 8,879 nodes / 15,210 edges; CocoIndex is unavailable. Evidence: `docs/evidence/issue9-6f1111c-language-status-workflow.json`; acceptance is 11/25 (44%), with 14 workflows remaining. Windows UI, Korean IME, and shipped/default replacement remain open.
+
+## [2026-10-23] fix | Explain goal-drift judgments in the Agent Room — issue #9
+
+A red bilingual regression found that the audit pipeline persisted and listed
+`goal_drift`, but the native Agent Room displayed the raw kind through its
+generic fallback. Added a dedicated localized judgment label and a rendered
+view assertion for the blocked-run explanation and charter-change evidence.
+The five charter, four coordinator-decision and seven native-judgment tests pass;
+the source-layout/300-line test, warning-denied focused Clippy, formatting and diff checks pass. Graphify refreshed to 8,788 nodes / 13,906 edges / 678 communities. Exact macOS arm64 package `aa8090405239` passed manifest validation, ZIP integrity and four package smoke cases (3 parallel tasks/tests each, merge refused before approval and successful after approval). Replaced the idle older package process in the same window and inspected the saved Issue 9 Mock Workflow: 3/3 tasks and tests passed, candidate remains pending. This run contains no goal-drift event, so live display of that label remains open. Removed the superseded package bundle and archive after confirming the old process had exited. Evidence: `docs/evidence/issue9-aa80904-macos-package.json`. Packaged workflow acceptance remains 8/25.
+
+## [2026-10-23] verify | Persisted charter and goal-drift guard — issue #9
+
+The plan's step-4 checklist was too broad: implementation and Rust integration
+coverage already existed, while exact packaged UI acceptance remained open.
+Verified the current source with `cargo test --test charter_contract` (5 passed).
+Coverage includes charter round-trip persistence, goal drift before approval and
+after approval before merge, audit recording, and legacy report compatibility.
+The approval-pending disposable GUI fixture was left unchanged. Packaged
+workflow acceptance remains 8/25; no merge was approved or performed.
+
+## [2026-10-22] task/verify | Native ports of main #146 and #149
+
+Integrated main `e9d1f1ff` while retaining removed WebView sources. Preserved
+both requirement histories by assigning new native R-168–R-171/DD-179–DD-182.
+Rendered tests first failed for the fold control, task judgment text and wrong
+coordinator-row order. The native inspector now separates saved preference from
+decision opening; the coordinator/count row follows tasks and reuses the central
+activity/log/lesson view through the existing asynchronous worker. Focused
+validation passes 49 tests across eight suites. Full validation and exact-package
+acceptance remain open; no new packaged workflow is counted yet.
+
+The broader checkpoint passed 914 tests, 14 ignored, across 303 suites. Review
+also caught an unwanted automatic Activity-tab change, count/list reads from
+different audit versions, and a new-field filter hiding original tool inputs.
+These were corrected; the final rich-tool-context follow-up passes ten affected
+tests and warning-denied all-target Clippy, formatting and diff checks.
+AgentMemory: `mem_mvjhxm23_011f01ecb05d`.
+
+## [2026-10-22] completed | Shared-sidebar metadata polling — issue #9
+
+Fixed a one-condition native UI omission: metadata completion was polled only
+on Team, leaving Workspace settings and Review spinners stale after a collector
+had exited. Verified the cause in the v0.1.36 macOS window by switching to Team;
+the completed Claude observation and refresh button immediately appeared. A
+rendered real-worker regression fails on step 0 before the fix and passes on all
+three steps after it, preserving unsaved name/goal and avoiding idle fast polling.
+Local validation: 39 tests across six suites, warning-denied focused Clippy,
+rustfmt and diff checks pass. AgentMemory: `mem_mvjayz0d_02d7203a86d2`.
+This component fix does not add a packaged workflow to the 8/25 acceptance count.
+
+## [2026-10-22] verify | Partial package-license audit — issue #9
+
+Audited the paired v0.1.36 GitHub Actions package artifacts from run `39740270740`, built from merge source `eff9f448` (PR head `cd9935de`, base `3fecd21d`). macOS/Windows SBOMs contain 214/201 components, with no missing license expressions. Embedded archive and executable hashes match; both packages include dependency notices and both license texts for the sole GPL-optional dependency, `self_cell 1.3.0` (`Apache-2.0 OR GPL-2.0-only`). The permissive Apache option is available; final-release-source closure remains pending. Evidence: `docs/evidence/issue9-eff9f448-license-audit.json`. AgentMemory `mem_mvja8ga0_477e45de583d`. Graphify refreshed to 8,496 nodes / 13,475 edges / 645 communities; CocoIndex failed to import `mcp.server.fastmcp`.
+
+## [2026-10-22] verify | Exact merged worktree-cleanup package — issue #9
+
+Pushed merge commit `cd9935de0d598612af1f52c1a11b699c1714de26` after full native-feature tests (873 passed, 14 ignored), warning-denied Clippy, rustfmt, and diff checks. The exact macOS package's manifest, checksum, help command, and deterministic fixture smoke passed in shared/worktree × Git/folder modes. Each of four cases completed three parallel tasks and tests, rejected pre-approval merge, and verified post-approval merge; no real CLI or GUI was used. Package evidence: `docs/evidence/issue9-cd9935de-macos-package.json`.
+
+Graphify: 8,479 nodes / 14,574 edges. `cargo clean` removed 38,456 files / 10.8 GiB, and the superseded `ead895e` macOS package pair was removed while retaining the exact `cd9935de` package. GitHub run `39740270740` passed all validation and package-execution jobs on macOS and Windows. Artifacts: macOS `12409469483` (`sha256:c1a1b6efda2c88180815aafb38f07b05c94dbd6f9298dbf61236083f4104724f`), Windows `12409824890` (`sha256:5d2e0cf637a586cf1b3a05cbed2d4c93a509917e00074533d1515b7a357d18ed`). Packaged UI acceptance remains 8/25. AgentMemory: `mem_mvj800lg_5c940c9a959d`.
+
+
+## [2026-10-22] fix | Release run-owned Git worktrees safely — GitHub #143 / issue #9
+
+Merged main `3fecd21d` so merge/reject finalization removes checkouts under the run folder, while
+cache clearing and workspace archival release them before deleting run metadata. The repository
+helper preserves unrelated worktrees and records cleanup failure without undoing a final run. A
+red source-layout check found the incoming method made `src/git.rs` 329 lines; it was moved into
+`src/git/worktrees.rs` without changing its public caller contract. Focused cleanup/layout tests
+pass 6/6; full native-feature all-target tests pass 873 with 14 ignored across 298 suites; combined
+feature Clippy with warnings denied, rustfmt, and `git diff --check` pass. Packaged UI acceptance
+remains 8/25. Details: `knowledge/wiki/native-rust-ui-migration.md`.
+
+
+## [2026-10-22] verify | Exact PR #22 head passes macOS and Windows package execution — issue #9
+
+Actions run [39735141070](https://github.com/neodamul/AgentConductor/actions/runs/39735141070)
+for exact pushed head `287e9f2608bbacb9dd9d7d1983e00dba2d7ef8d2` passed both platform validation
+jobs and both native-package jobs. Each platform built the Rust executable, rendered the bilingual
+manuals with that binary, executed the exact package smoke workflow, and retained an artifact. macOS
+artifact `12407514908`: 21,600,253 bytes, SHA-256
+`1151a58d91fafa17bb3900bd34edf24418ae98857a45e64ac642cbc271adcd08`. Windows artifact
+`12408746101`: 15,718,557 bytes, SHA-256
+`efda584bf92e48290e478ab2ccb820c55cf6bf9dbd0da28b62f806e04b3eabb8`. Source product code is
+`ead895e`; the exact pushed head adds documentation only. Packaged UI acceptance remains 8/25, so
+this CI pass does not complete issue #9 or authorize a release. Graphify no-cluster refresh reports
+8,456 nodes / 14,546 edges. CocoIndex Code could not start because `mcp.server.fastmcp` is
+missing. Machine evidence:
+`docs/evidence/issue9-287e9f2-exact-head-ci.json`.
+
+## [2026-10-22] cleanup | Remove superseded native package build outputs
+
+Removed twelve ignored macOS package directories and ZIPs for superseded source revisions, reclaiming
+about 750 MiB. Kept the latest `ead895e` package, archive, checksum, and tracked source evidence.
+`dist` decreased from 813 MiB to 63 MiB. No source, user data, or active test fixture was removed.
+
+
+## [2026-10-22] release | Publish stable macOS and Windows v0.1.36 packages
+
+Release workflow `39728295847` passed both platform validation jobs, exact package execution,
+and publication for source `6d0093d3576e50642bad39fa885b9b5695b0281c`. The latest stable
+release is [v0.1.36](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.36).
+The downloaded `SHA256SUMS` matches both uploaded ZIP digests: macOS Apple Silicon
+`7af9cdc0f3631f60a3e8f58a48923c04bca70a01cbaf6ca1cf73322341ecc415`, Windows x86_64
+`c6970e8ffec84a6c2b42a6490c2840130d7ba6aeadc6afaf6f594b17539216bb`. Both package jobs
+rendered the bilingual manuals with the Rust binary and executed the exact package. The
+release does not close issue #9: native UI acceptance remains 8/25 and PR #22 is still draft.
+
+## [2026-10-22] verify | Distinguish stale UI bundles from current popup behavior — issue #9
+
+At commit `dbf893a18c4d73bc611c984fcc031684346ef67a`, exact-head Actions run `39613489337` passed
+all Windows/macOS platform and native-package jobs. The v0.1.33 current-source package at
+`/private/tmp/AgentConductor-1f75758.app` was opened directly; Workspace, Settings, and coordinator
+selection popups float over the page without moving the roster or main panel. The screenshot that
+appeared to push content came from the older `dist` bundle built at 16:29, before the popup code
+was built at 18:06. The focused layout suites passed 14 tests across five suites, plus formatting
+and diff checks. This is component/runtime evidence, not another end-to-end workflow; acceptance
+remains 8/25 and the stable shipped UI remains WebView. AgentMemory lesson `lsn_ece6924167d840c3`
+records the build-provenance check for future visual QA.
+
+## [2026-10-21] verify | Guard asynchronous Agent Room workspace return — issue #9
+
+The native all-target run exposed a stale-response race after returning from Agent Room. Trace showed the header allowed view switching while a Room request was pending; its response could then be mistaken for the Workspace refresh. Added a failing UI test for the enabled return action under pending work, then disabled the header action until the request completes. Return-control, start/return journey, and source-layout suites pass 8 tests; Clippy with warnings denied, Rustfmt, diff check, and 300-line checks pass. The platform workflow now runs `native_room_next_step` on macOS and Windows. The full release all-target suite was stopped after more than ten minutes of LTO test-crate recompilation and is not claimed. Prior Actions run `39545652734` passed all four jobs on `e0de50b`; exact-head CI/package verification remains required. Packaged workflow acceptance is unchanged at 8/25. AgentMemory `mem_mvhoklpd_31cd94816a25`.
+
+## [2026-10-21] verify | Check Agent Room header geometry — issue #9
+
+Added a regression over rendered text bounds for the Agent Room context header in English and
+Korean at 792px and 1140px. An initial AccessKit-node assertion was inappropriate for passive labels,
+so the test now checks the visible `TextShape` bounds without adding accessibility metadata or
+changing product code. The header, layout, and rendering suites pass 17/17; format and diff checks
+pass; the 129-line test stays within the 300-line limit. Packaged workflow acceptance remains 6/25.
+AgentMemory `mem_mvhb36q0_2892617eb052` was saved and Graphify refreshed to 7,724 nodes / 12,215 edges.
+
+## 2026-10-21 issue #9 packaged stage-marker parity
+
+Inspected the exact v0.1.31 package from `ca5c3f4` under a disposable `HOME`. Workspace, Agent Roles, and Review each show the selected step marker in both the page eyebrow and active card. The checked-in reference has the same layout, but its `v0.1.24` label is historical: `native-screenshot-provenance.md` records it as an earlier Rust build, so it cannot prove parity with the published WebView UI. Corrected the design guide, implementation checklist, completion audit, and package evidence record to preserve that limit. Focused UI/docs/source-layout tests pass 27 tests across four suites, as do formatting and diff checks. The exact package scan found no JavaScript/TypeScript/Python files. The new source-layout guard rejects non-Rust UI/build sources and its first red run exposed 20 ignored `.pyc` cache files under `tests/__pycache__`; those generated files were removed and the guard passes 2/2. The full native-feature all-target suite passes 797 tests, 14 ignored, 0 failed across 263 suites (220.67s); all-target Clippy is clean. Graphify re-extracted the repository at 7,557 nodes / 11,988 edges. CocoIndex is unavailable in this environment because its Python environment lacks `mcp.server.fastmcp`; no dependency was installed. AgentMemory record `mem_mvgzgobf_a05025be5c13` predates the completed suite. Packaged acceptance remains 6/25 and shipped Rust UI remains 0/25. The current screenshots were inspected but not retained.
+
+## 2026-10-20 issue #9 grouped workspace and settings audit
+
+Audited Workspace settings, Agent Roles, Review the plan, the Settings menu, MCP registration, workspace sharing, Messenger notifications, and cache cleanup together in the exact isolated v0.1.31 package. The saved-state plan button still navigated without a registered coordinator and surfaced the backend error late. Gated it on a nonempty saved goal and a coordinator ID present in the profile list; added localized guidance and a UI regression. Also stabilized the settings journey to wait for dialog content and the start journey to wait for the previous UI action to settle before merging. Focused planning tests pass (2); settings/start/docs/layout suites pass (10). The all-target local run was stopped after five minutes at 363 passed, 14 ignored across 120 suites without a reported failure; full-suite verification remains open. Actions run `39424348558` failed on both OSes in settings journey, plus a Windows merge race; its head predates these local fixes. Packaged acceptance remains 3/25; no additional workflow is claimed.
+
+Commit `4a114ec6a76141c48ebe8138694398572cae1acd` was packaged and validated locally. The exact macOS package's help command and manifest validation pass; its single isolated UI shows Generate plan disabled with “coordinator not registered” after a goal is saved without profiles. UI evidence: `docs/evidence/issue9-4a114ec-plan-gate.json`. GitHub Actions run `39428920229` is pending; packaged acceptance remains 3/25.
+
+Continued the same issue #9 batch across Agent Roles, empty Review, MCP server registration, workspace-sharing controls, Messenger notifications, and cache preview in the exact package. All expected controls rendered; Approve remained disabled without a reviewed plan, the empty cache preview disabled Clear, and no settings or workspace data changed. Evidence: `docs/evidence/issue9-4a114ec-settings-batch.json`. The grouped native UI suite batch passed 122 tests across 23 suites; the 3/25 packaged workflow denominator is unchanged.
+
+Completed a positive-path exact-package UI workflow with one local Rust fixture CLI: register and select the coordinator, generate/review the plan, approve execution, complete the task, pass 1/1 test, review and approve the diff, then confirm merge. The run reached Completed and created `one.txt` only in the disposable project. Initial fixture typo `/usr/bin/test` was corrected to macOS `/bin/test`; a fresh project run passed. Evidence: `docs/evidence/issue9-4a114ec-native-ui-plan-to-merge.json`. This adds Workflow 4 and advances packaged acceptance to 4/25 (16%); shipped Rust replacement stays 0/25. Follow-up public-doc/layout tests pass (8 tests / 2 suites), and rustfmt/diff checks pass. Actions run `39429494121` was cancelled during native build/test on both OSes. Graphify re-extraction reports 7,509 nodes / 12,943 links with no source-graph changes; CocoIndex remains unavailable due missing `mcp.server.fastmcp`.
+
+Grouped a further exact-package read-only inspection across Workspace phase analysis, Agent Room candidate review, and Updates. The accessibility tree showed the expanded analysis state and phase/task context, exact candidate revision/diff and passing test, plus a release-notes link and scrollable full notes. Reused the one existing app process; the public release metadata check was requested, but the link was not opened. Five source suites passed 23 tests and native-feature all-target Clippy is clean. This component batch does not change the 4/25 workflow count. Evidence: `docs/evidence/issue9-4a114ec-review-updates-batch.json`.
+
+Inspected the same exact package in dark mode at 1140×772, then restored light mode. Completed status, test result, diff tab/body and inspector were readable. The completed run has no enabled primary green action, so button text contrast remains open. Five grouped theme/layout suites passed 15 tests; rustfmt and diff checks pass. Actions `39431587615` was cancelled on both OSes; no run is reported for docs head `459ba84`. Evidence: `docs/evidence/issue9-4a114ec-dark-theme-audit.json`.
+
+Rechecked the full parallel UI path in the same exact v0.1.31 app process and an isolated workspace. A three-session Rust fixture produced three independent tasks with disjoint paths; run records show overlapping execution intervals, all tasks completed, and all three tests passed. Reviewed the exact diff, approved the candidate, confirmed app-level integration, and observed Completed. In dark mode, the enabled approval action and Completed panel remained readable; restored light mode afterward. This revalidates the existing 4/25 parallel workflow rather than adding another acceptance item. The target was a non-Git folder, so no Git merge is claimed. Evidence: `docs/evidence/issue9-4a114ec-parallel-ui-plan-to-merge.json`.
+
+In the same run, inspected Agent Room Activity for each task, Raw logs, Lessons, and the read-only team briefing. Each task showed the matching result; the selected task exposed a JSON result and no stderr errors; Lessons explained draft promotion; the briefing showed all three Completed with no action required. Native session ID/model are unknown for this mock CLI, so real provider-session metadata still needs separate verification.
+
+The complete local native-feature all-target suite at this product source now passes 770 tests, with 14 ignored and 0 failed across 260 suites (216.85 seconds). All-target Clippy with warnings denied passes. Exact package tests are macOS only; Actions returned no run for the docs-only head and Windows packaged UI remains open.
+
+## 2026-10-20 issue #9 packaged workspace workflow
+
+Ran the exact v0.1.31 macOS package from `a8be85f` under an isolated `HOME` so the menu contained no real-user workspace names or paths. Verified UC-30/31 as one flow: create named workspaces, save settings and role stage, confirm unsaved-state cancellation, switch and reload persisted values, remove from the recent list and reopen, then archive an inactive workspace with confirmation. One app process; no provider or external service. Evidence: `docs/evidence/issue9-a8be85f-workspace-ui.json`; binary SHA-256 `74204cbc9492379a71769a6f679d19ee28012b823e280e8a6fdd03af89300057`. Added distinct Workflow 2; packaged acceptance is 3/25, shipped Rust remains 0/25. Windows, screenshots and remaining workflows are still open.
+
+## 2026-10-20 issue #9 grouped UI continuation
+
+Confirmed Claude's latest AgentMemory handoff signal (`sig_mvgo0qng_9ea40889a2f2`) and continued issue #9 only. A grouped native UI scan found no TODO/FIXME/unimplemented markers; all six native custom dialogs are already covered by the current grouped close-action batch. Full offline native-feature verification at PR head `27e307e`: 768 passed, 14 ignored across 260 suites; Clippy (`-D warnings`), formatting, and diff checks pass. Exact-head GitHub run `39423261706` is pending on macOS and Windows. No new packaged UI workflow is claimed; the accepted count remains 2/25. The active saved workspace was read-only and unchanged.
+
+## [2026-10-20] fix | Restore sequential Settings dialog accessibility — issue #9 / R-17 / DD-160
+
+A connected native-probe journey found that Settings → MCP had no accessible in-content Close action: clicking the expected Close target left Save visible. Added a localized Close button beside Save, preserving the save request path. The grouped journey opens and closes MCP and cache dialogs, then verifies workspace-sharing remains accessible. Local all-target tests pass (767 passed, 14 ignored across 260 suites); focused related suites pass (54 tests/12 suites); public-doc/source-layout gates pass (8 tests/2 suites); Clippy, formatting, and diff checks pass. Packaged UI acceptance remains 2/25 until exact-build native review.
+
+## [2026-10-20] fix | Add close actions to remaining Settings dialogs — issue #9 / R-17 / DD-160
+
+Extended the dialog audit across all six native custom windows. The profile editor already had Cancel and cache already had Close; added localized Close actions to the MCP source-reference editor, workspace-sharing dialog, and Messenger settings. Updated sharing's open-state merge so the in-content action is not overwritten by the title-bar state. Native pointer regressions cover the source-reference and sequential sharing/Messenger paths. The 260-suite local run passes 768 tests (14 ignored); Clippy, rustfmt, diff, public-doc, source-layout, and 300-line checks pass. This source-level dialog coverage does not change packaged UI acceptance (2/25).
+
+## [2026-10-20] verify | Build current macOS package from issue #9 branch
+
+Built optimized `aarch64-apple-darwin` binary and exact-source package from `a8be85fc2392821fab345d3e1b879a6aa9bc6714`. Package validation, packaged `--help`, ZIP integrity, and four isolated shared/worktree × Git/folder mock workflow cases passed (12 tasks/tests; all unapproved merges refused and approved merges verified). Binary SHA-256 `74204cbc9492379a71769a6f679d19ee28012b823e280e8a6fdd03af89300057`; archive SHA-256 `1965a123dcd5988c24ffeee4d88bfc2b84a62696faf16e6c893c6d49e9c60547`; evidence is `docs/evidence/issue9-a8be85f-macos-package.json`. The app GUI was not launched; acceptance stays 2/25. Graphify refreshed to 7,492 nodes / 12,924 edges. CocoIndex remains unavailable because its installed environment lacks `mcp.server.fastmcp`.
+
+Refreshing the completion audit exposed stale baseline-hash and CI-status assertions in `tests/public_docs.rs`. Updated the regression to require the current product-code batch and exact package source while dropping superseded run-status requirements; `public_docs` and `source_layout` now pass (8 tests across 2 suites).
+
+## [2026-10-20] verify | Inspect packaged Settings dialog dismissal
+
+Launched the exact `a8be85` macOS package once with a disposable empty workspace and verified Korean/light-mode in-content Close and actual dismissal for MCP server settings, Jira/Confluence reference entry, workspace sharing, Messenger, and cache. No agent or external service ran; the original workspace remained unchanged. Closed the package app and removed its temporary workspace. Evidence: `docs/evidence/issue9-a8be85f-packaged-dialog-ui.json`. This component review does not raise packaged workflow acceptance beyond 2/25; no screenshot file was retained.
+
+## [2026-10-20] docs | Reconcile current issue #9 progress reports
+
+Found stale `bb0ff39` head and over-broad “latest full suite” claims in the completion audit. Updated `docs/09-completion-audit.md` and the native Rust UI Wiki to identify exact current head `b226404`, distinguish historical 759-pass/package evidence at `7419557` from targeted timeout results and the partial integrated suite, and record pending Platform validation run `39412569165`. Refreshed Graphify without clustering: 7,422 nodes / 12,771 edges. CocoIndex Code is installed but cannot start because `mcp.server.fastmcp` is missing from its environment. This does not change packaged UI acceptance (2/25).
+
+Grouped native UI regression verification across Room language/stages, MCP registration/sources/keyboard, the offline manual, and release updates: 56 tests across 17 suites pass locally. This is automated source-level evidence only and does not advance packaged acceptance beyond 2/25.
+
+## [2026-10-20] docs | Align timeout retry guidance across issue #9
+
+Reconciled the timeout contract across DD-07/DD-104, QAS-92/QAS-149, UC-143, Rust recovery comments, both Markdown manuals and their generated HTML, and the Wiki index. Wall-timeouts retry automatically after bounded backoff unless Stop is requested; Resume is for stopped or terminally blocked runs. A new public-doc regression first failed against the stale manual text. The Rust manual renderer regenerated both HTML files; public-doc and source-layout tests pass (7 tests), as do rustfmt and diff checks. This documentation correction does not change packaged UI acceptance (2/25); the remaining 23 workflows and platform/accessibility/resource gates remain open.
+
+## [2026-10-20] fix | Port timeout auto-resume and Stop-aware backoff — issue #9
+
+Integrated the latest `main` reliability batch for per-root Git index isolation (#70), timeout-stop test coverage (#71), and messenger state re-notification (#72). The Rust scheduler had lost timeout counting and retry-deadline enforcement during its module split, so a timed-out task was not reported as retryable; the new regression failed before the fix. Ported timeout evidence counting, auto-resume with a rounded-up `min(timeout, 60s)` deadline, and interruptible Stop polling into the split worker scheduler. Added deterministic slow-task coverage to the existing Stop/resume test. Targeted workflow, Stop/resume, availability, read-only loading, messenger, Git, and source-layout verification passes: 24 passed, 1 ignored across 8 suites. All-target native-feature Clippy, formatting, diff checks, and 300-line layout pass. Full suite, package, Windows UI, and end-to-end acceptance remain open.
+
+## [2026-10-20] verify | Batched exact-package UI audit — issue #9 / `7419557`
+
+Inspected the exact macOS Rust package in one isolated app window and temporary HOME. Visual checks covered Workspace, Settings/MCP, profile registration, and Agent Roles. Functional checks created two saved workspaces and archived an inactive one; a Rust-only delayed mock coordinator then entered planning, exposed the stop-and-delete action, stopped, returned to Ready, and archived the active workspace into a fresh workspace. No provider CLI, network service, or task execution ran. Evidence: `docs/evidence/issue9-7419557-packaged-ui-audit.json`. This is component/interaction verification, not a full end-to-end workflow; packaged acceptance remains 2/25. Screenshot bytes were inspected live but not persisted as a public asset. The disposable package window is the only AgentConductor window left running.
+
+## [2026-10-20] verify | Package current issue #9 head — `7419557`
+
+The exact-source Rust macOS package validates with 214 dependencies, bundled SQLite, manifest checksum, packaged `--help`, archive SHA-256, and ZIP CRC. All four shared/worktree × Git/folder smoke cases passed with three parallel tasks/tests, unapproved-merge refusal, and approved-merge verification. Machine-readable package and smoke results are tracked under `docs/evidence/issue9-7419557-macos-*.json`. No GUI or provider CLI was opened; Windows and native UI acceptance remain unverified, and the count remains 2/25. Graphify refreshed the source graph without clustering to 7,399 nodes / 12,744 edges. The CocoIndex executable is not installed on this host; RTK and Graphify were used for structural discovery and source inspection.
+
+## [2026-10-20] fix | Batch native UI regressions — issue #9 / `cb49fa1`
+
+Four native UI findings were fixed together: return to Workspace from a running Agent Room without stopping the run, preserve the selected Review step, stop-and-delete a running plan only after its work and metadata settle, and fit the profile editor at 640px. The local all-target suite passes 759 tests / 14 ignored across 258 suites; focused tests and Clippy/layout/format checks pass. Commit `cb49fa1` and checklist commit `7419557` are pushed; packaged UI acceptance remains 2/25. AgentMemory records the handoff and Claude received the continuation state.
+
+## [2026-10-20] docs | Refresh full-product completion audit — issue #9
+
+Updated the stale 2026-10-10 audit checkpoint with current exact-source macOS package and all-target test evidence. R-12–R-17 and R-24 now distinguish native UI source coverage (25/25), packaged UI acceptance (2/25), and shipped Rust replacement (0/25), with Windows, GUI, accessibility/IME, resource, authenticated-provider, and final license gates still open. Graphify was refreshed without clustering to 7,400 nodes / 12,745 edges. CocoIndex was checked and is unavailable on this host.
+
+## [2026-10-20] fix | Protect the active workspace from archive — issue #9 / UC-79
+
+The exact packaged v0.1.31 UI exposed Archive for the active workspace; confirming it archived the current workspace and switched to a new default. Added an AccessKit regression that first failed on the active row. The Rust navigation view now exposes Archive only for inactive saved workspaces. The focused native workspace suite passes 7/7, targeted Clippy (`-D warnings`), rustfmt, and diff checks pass, and both changed Rust files are under 300 lines. Exact macOS source `4de454a3e605cc5f8f368eb264cec8fc601145e6` packaged and passed manifest validation, help, ZIP CRC, and four approval-gated shared/worktree × Git/folder smoke cases. In the package UI the active row has no Archive action while an inactive row retains it; the user's real workspace was observed without edits. The full all-target run was stopped after 250 tests across 80 suites, so it is not claimed as complete. Packaged native UI acceptance remains 2/25; Windows and exact-head CI remain open. Graphify traced the navigation view and workspace confirmation path. CocoIndex is unavailable on this host.
+
+## [2026-10-20] verify | Packaged agent-profile management UI — issue #9 / workflow 3
+
+Launched the exact packaged executable in one native macOS window with a disposable HOME/workspace. Through the packaged UI, registered a custom profile (`ui-smoke`, `/usr/bin/true`), edited its ID to `ui-smoke-edited`, opened the explicit removal confirmation, confirmed, and observed the empty-agent state. No agent task or provider command ran. The package executable SHA-256 was `04325483569c54cf2359c002e4066e7b6899280f45d38030bf4b66ceacc267bd`, matching the manifest for source `2fc7bc22264724219f36c0e9a1c3858ffdc38025`. This closes packaged UI workflow 3; with the previously accepted shared-folder execution journey, verified packaged native UI acceptance is now 2/25 (8%). It does not certify Windows behavior or the shipped Rust replacement.
+
+## [2026-10-20] verify | Package the started-run navigation slice — issue #9
+
+Built exact pushed source `2fc7bc22264724219f36c0e9a1c3858ffdc38025` with the Rust release packager. `validate-package`, packaged `--help`, ZIP integrity, and the four shared/worktree × Git/folder approval-gated smoke cases pass. The manifest executable SHA-256 is `04325483569c54cf2359c002e4066e7b6899280f45d38030bf4b66ceacc267bd`; archive SHA-256 is `1458db4d854b1aff7c05ffbc2d2b3ba09803d179aadc1b9f5e9dec4fc43fbb9e`. One native v0.1.31 window launched with the same executable hash. This verifies packaging and startup, not the packaged UI transition; it does not change packaged end-to-end acceptance from 1/25. No exact-head GitHub workflow run was returned and Windows packaged UI remains open.
+
+## [2026-10-20] verify | Reopen a started run from Workspace — issue #9
+
+After returning to Workspace, the plan-review notice explained that a run had already started but provided no way to reopen its Agent Room. Added a localized **Open Agent Room** action through the existing `open_run` request and enabled it only while the saved run is available. The same window and worker are reused. The native journey regression now completes mock tasks, approves and merges the candidate, returns to Workspace, and reopens the run. Focused journey, all-target Clippy (`-D warnings`), rustfmt, diff checks, and the 300-line layout test pass; the locked all-target suite also passed locally (775 passed, 14 ignored, 257 suites). This navigation subpath does not add another end-to-end acceptance; packaged workflow acceptance remains 1/25. Exact-head CI and Windows packaged UI remain pending.
+
+## [2026-10-20] verify | Bind release packaging to its running executable — issue #9
+
+The release command previously assembled `root/target/release/agentconductor` regardless
+of which executable was running, so a custom Cargo target directory could package a stale
+binary. Added an explicit-binary assembly path used by `package-release`, retaining the
+existing assembler entry point for other callers. The regression distinguishes stale and
+current binary bytes and checks the packaged executable and manifest SHA. Full locked
+all-target tests pass (775 passed, 14 ignored, 257 suites); all-target Clippy with
+warnings denied, rustfmt, diff checks, and the touched-file 300-line check pass. Exact
+new-head macOS/Windows CI is still pending; native workflow acceptance remains 1/25.
+
+## [2026-10-20] verify | Stabilize issue #9 start journey readiness
+
+Platform Validation run `39385260992` passed Windows build, all-target tests, the 300-line layout
+gate, opt-in native launch, rustfmt, and Clippy. macOS failed the start-journey test while its
+synthetic click moved from Workspace settings to plan review. The readiness wait matched a static
+navigation label before the asynchronously loaded workspace snapshot had rendered both saved
+agents; that snapshot can populate/reflow the roster during the synthetic click. Tightened the
+test precondition to wait for the planner and worker edit controls before clicking. No product code
+or timeout changed. The focused journey passed five consecutive local runs; the complete locked
+all-target suite, source-layout guard, all-target Clippy (`-D warnings`), rustfmt, and diff check
+passed locally. The prior run's macOS failure still needs exact-new-head platform validation.
+
+## [2026-10-20] verify | Exact v0.1.31 package runtime on issue #9
+
+Built the clean issue #9 source commit `d884d7c769b51c8478fa3919777628b328621d4f` as an
+optimized macOS package. Package assembly, manifest/checksum validation, packaged `--help`, ZIP
+integrity, and four deterministic shared/worktree × Git/folder smoke cases pass. Each case runs
+three parallel tasks and tests, rejects unapproved merge, and verifies approved merge. The
+archive contains no project-owned `.js` or `.py` files; its single native executable is
+17,909,232 bytes with 214 dependency notices. No GUI or external agent CLI/service was run, so
+this adds no end-to-end UI workflow acceptance beyond 1/25. Full evidence:
+[`issue9-d884d7c-macos-package.json`](../../docs/evidence/issue9-d884d7c-macos-package.json).
+Graphify query of the release/package path traversed 276 graph nodes (7,522-node graph).
+CocoIndex could not be run because no `cocoindex` command is installed in this environment.
+
+## [2026-10-20] audit | Current native package and public screenshot provenance — issue #9
+
+Read the current app without editing its fields: the existing README/manual workspace-light,
+workspace-dark, agent-settings, and Agent Room image assets all visibly say v0.1.24. Reused the
+existing single window by closing package `1ff6814` and launching exact package source `d884d7c`;
+the accessibility tree confirms v0.1.31 and restores the saved `헬스체크 기능 개발` workspace.
+No duplicate app window remains. CUA now provides an in-session screenshot; the exact v0.1.31
+Workspace view was inspected at 1140×772 in both themes against the design guide. Selected tabs,
+surface colors, input boundaries, Korean labels, and the three-agent rail were visible without
+clipping in those views. The original light preference was restored. This does not certify the
+other workflows, keyboard/IME, or accessibility. Shell `screencapture` still fails with
+`could not create image from display`, and the in-session image includes a local path, goal, and
+quota state, so no image was written to public docs. Capture an isolated/anonymized exact-package
+view before replacing the stale v0.1.24 assets.
+
+The exact-source opt-in native launch-path check also passed locally: 86 tests across 11 suites,
+both native binaries pass `cargo check`, and the focused native-feature Clippy run has no warnings.
+No desktop app process was started by this validation. This is source-level evidence only and does
+not supersede the macOS full-suite UI failure recorded below.
+
+The exact PR #22 validation run `39385260992` built successfully and passed the macOS 300-line
+layout gate, then failed `native_ui_start_journey` while waiting for the plan-review UI; its final
+AX labels still showed Workspace settings and an `Under review` phase without the expected review
+controls. The current local full suite passed once (772 passed, 14 ignored across 257 suites),
+then reproduced this failure on the next full-suite invocation. Four isolated journey runs passed.
+This remains an unresolved suite-context interaction; no timeout-only fix is claimed. Windows
+validation was still in progress at this checkpoint.
+
+## [2026-10-20] verify | Correct native UI design-guide test command — issue #9
+
+The design guide referenced the removed `room_task_rows` target, producing an immediate cargo
+error. Updated it to the current native appearance, bilingual, room-layout, and task-selection
+targets. The replacement command passed 16 tests across seven suites. Exact packaged UI review
+showed the Workspace layout in both themes and restored the user's light preference; it did not
+compare to a JavaScript baseline or produce a screenshot. No UI acceptance count change. Current
+PR run `39366430380` passed macOS and was still building on Windows.
+
+## [2026-10-20] verify | Restore desktop role selector width — issue #9
+
+The role-table selectors were narrower than the legacy UI at standard desktop width. A new
+AccessKit regression failed at 108px; the native selectors now use 130px at content widths of
+900px and above, while keeping the compact width for narrower layouts. Five focused native UI
+suites passed (28 tests), as did `source_layout`, rustfmt, and diff checks. Both changed Rust files
+remain below the 300-line limit. Commit `1757e32` is pushed. Workflow run `39367609082` for old
+head `7f86cce` was cancelled after newer commits arrived; it did not validate this change. This
+component-level check does not change the 1/25 packaged acceptance count.
+
+The full offline native-feature all-target suite then passed on code HEAD `311533f`: 745 passed,
+14 ignored, 0 failed across 252 suites. Native-feature all-target Clippy with `-D warnings`,
+rustfmt, `source_layout`, and `git diff --check` passed. Platform Validation run `39368429666` for
+code head `311533f` was cancelled after the documentation-only update. Run `39369276017` then
+started on PR head `2ba31c4`; the next documentation-only commit supersedes it without changing
+Rust code. Check PR #22 for the current Windows/macOS run before recording cross-platform success.
+
+# [2026-10-20] verify | Exact-head macOS package smoke — issue #9
+
+Built the optimized macOS package from exact clean issue #9 HEAD `1ff6814` with the Rust
+`package-release` command. Package validation and packaged `--help` passed. The package's
+deterministic smoke passed four shared/worktree × Git/folder cases with three parallel tasks and
+tests per case, unapproved merge refusal, and approved merge verification. Evidence is in
+`docs/evidence/issue9-1ff6814-macos-package.json`. This does not count as native UI acceptance;
+the UI workflow checkpoint remains 1/25. Exact-head macOS/Windows run `39365586146` was still
+pending when recorded.
+
+## [2026-10-20] verify | First packaged native workflow acceptance — issue #9
+
+Executed the exact v0.1.30 Rust package from `35a5c09` against a disposable shared-folder Git repository with a Rust mock coordinator and three concurrent stdin/JSONL mock worker sessions. Planning produced disjoint paths, all three `git diff --check` tests passed, the operator inspected the task results and diff and approved review and merge, the UI reported Completed, and the repository ended clean. This is the first accepted end-to-end operator workflow (1/25); the evidence records that no provider CLI or external service was called and that no screenshot asset was saved. See [native package workflow evidence](../../docs/evidence/issue9-35a5c09-native-workflow-01.json) and [packaged workflow acceptance](native-release-packaging.md). The app was closed and disposable package-test files were removed after evidence capture.
+
+## [2026-10-20] complete | Reconcile the packaged workflow Wiki with current evidence
+
+Updated `knowledge/wiki/packaged-workflow.md` to put the accepted 1/25 packaged UI journey at the top and link its committed evidence. The 2026-10-19 consent-only setup is labeled historical and superseded, removing its stale “waiting” status from current context. `docs/07-implementation-plan.md` records the Wiki sync. The source coverage (25/25), packaged workflow acceptance (1/25), and shipped replacement (0/25) remain separate measures. No screenshot export was created; no workflow beyond the accepted first journey is claimed.
+
+## [2026-10-20] verify | Stabilize the native start-journey test — issue #9
+
+Platform Validation run `39363867674` and the local full suite both timed out after 15 seconds while waiting for the approved run to open Agent Room. The focused test passed repeatedly, and its final test-only wait was raised to 30 seconds; application code and behavior are unchanged. The full serialized native-feature suite then passed 744 tests with 14 ignored across 252 suites. `source_layout`, rustfmt, diff checks, and all-target native-feature Clippy with warnings denied pass. Exact-head macOS/Windows CI for this test adjustment is still required before counting it as complete.
+
+## [2026-10-20] verify | Stabilize native start-journey wait — issue #9
+
+Platform Validation run `39345540466` exposed a macOS timing failure in `native_ui_start_journey`: the execution-review UI state was not observed within the test helper's five-second deadline. Raised the test-only wait bound to 15 seconds. The exact CI-style local all-target suite passed 749 tests (14 ignored), and the affected journey passed three consecutive focused runs. Rust application code is unchanged; cross-platform workflow acceptance remains 0/25 pending the platform rerun and exact UI review.
+
+## [2026-10-20] verify | Make native role-table headers visible — issue #9
+
+The exact light-theme app screenshot showed role-table headings missing although they remained in the accessibility tree. A TDD regression failed for all four header labels in both theme palettes because bold `RichText` kept placeholder section colors. Setting the current `ui.visuals().text_color()` made the test pass. `native_ui_roles` (7/7), `native_ui_workspace_style` (4/4), `source_layout` (1/1), all-target native-feature Clippy with warnings denied, rustfmt, and diff checks passed. Release binary SHA-256 `159c1ff98ec489083e5deadeb1bfe905ce5d1af8def62e2831a21fafe0ede81f` showed all five Korean headers in the isolated macOS app. Commit `a41f16e` was pushed to the issue-linked branch. Graphify structurally refreshed to 7,109 nodes / 12,318 edges. CocoIndex was checked but cannot start because `mcp.server.fastmcp` is missing from its installed environment. Packaged Windows visual acceptance and full issue #9 workflow acceptance remain open (0/25). AgentMemory: `mem_mvfme8hn_dd113ffc4c4b`.
+
+## [2026-10-20] verify | Full serial native Rust suite — issue #9
+
+Full `cargo test --offline --locked --all-targets --features native-ui-probe -- --test-threads=1` passes: 719 passed, 14 ignored, 0 failed across 247 targets. The first full runs exposed test-harness texture deltas left unconsumed, an outdated expected Korean empty-catalog label, and missing feature gates on native UI integration tests. Fixed those test-only issues; focused profile UI targets (5/5) and the feature-gate audit (2/2) pass. Formatting and diff checks pass. A task-local rustc/Z3 wrapper was needed for the host's Homebrew LLVM/Z3 linkage. Graphify: 7,099 nodes / 11,337 edges / 553 communities. #9 remains 0/25 end-to-end workflow acceptance. AgentMemory: `mem_mvfjlfao_8b19f0823daa`.
+
+## [2026-10-20] verify | Exact-source macOS package on issue #9
+
+Built and validated commit `fd177ea145326407d485d7f18ccd1d916f1fc00e`. The optimized package has 214 dependency license records, binary SHA-256 `6bd00e6f520e0172a0b1f912c15fe558695d4a3a6c2d80477395b9da7cae6c88`, and ZIP SHA-256 `b4d17e6b8ecb152e4056aa2e39d1cabe4e9f7880d8398435c3bb2d132578e6e5`. Its local `package-release` workflow completed four isolated Git/folder × shared/worktree mock cases with three parallel tasks/tests and approval-gated merge. One exact package app window showed the empty Workspace and was closed. Goal-list 3/3, phase-progress 9/9, native start journey 1/1, source-layout 1/1, briefing 6/6 serial, native-feature Clippy, formatting and diff checks pass. A full all-target run is not green: the sandbox first blocked loopback tests, then an escalated run hit one intermittent briefing revision mismatch; isolated relevant suites pass. AgentMemory: `mem_mvfius14_41fb107ca8d4`. #9 remains 0/25 pending complete cross-platform UI acceptance.
+
+## [2026-10-20] verify | Number the native phase action
+
+Matched the released Workspace's `Plan phase n` label in the Rust UI using the existing localized message. An AccessKit test failed first with the generic label, then passed after the change. Goal-list (3), phase-progress (9), native start journey (1), source-layout (1), formatting, diff check, and all-target native-feature Clippy pass. The label helpers live in a small submodule so the goal view remains within 300 lines. Graphify: 7,095 nodes / 11,333 edges / 539 communities. AgentMemory: `mem_mvfik3wp_637a29f437ae`. Issue #9 remains at 0/25 end-to-end acceptance. See [native goal phase labels](native-goal-phase-labels.md).
+
+## [2026-10-20] verify | Label proposed phases as under review
+
+Compared native Goals & Progress with the v0.1.30 phase panel. A non-completed proposal should label its phase `Reviewing phase n/N`; Rust still displayed the same phase as `Next`. A rendered regression failed first, then passed after Rust used the localized reviewing heading and marked a proposed phase under review regardless of the current-phase field. Two goal-list tests, nine phase-progress tests, the native start journey, source-layout, formatting, and warning-denied native-feature Clippy pass. Graphify refreshed to 7,083 nodes / 11,320 edges / 539 communities. Exact packaged UI/accessibility and overall 0/25 acceptance remain open.
+
+## [2026-10-20] verify | Show goal identity and stage in the native goal list
+
+Compared v0.1.30 `renderGoals()` with native Workspace. Legacy saved-goal rows display slug, localized stage, goal description, and a distinct selection action. Rust only displayed the active goal heading and rendered other descriptions as direct buttons. A rendered regression failed because slug/stage were absent; Rust now displays them for active and inactive goals while preserving the revision-bound select event. Goal-list and nine phase-progress tests, native start journey, review copy, source-layout, formatting, and warning-denied native-feature Clippy pass. Graphify refreshed to 7,079 nodes / 11,314 edges / 555 communities. Exact packaged layout/accessibility and full end-to-end acceptance remain open (0/25).
+
+## [2026-10-20] verify | Preserve mismatches with empty phase lists
+
+`slug_progress::progress()` reports unreadable `plan/plan.json` as a mismatch with an empty `phases` array. The native Goals & Progress early return suppressed that warning. A rendered test failed on this case; Rust now keeps the card visible when mismatches exist and shows a planned state instead of claiming all zero phases are complete. Nine phase-progress tests, source-layout, formatting, and warning-denied all-target native-feature Clippy pass. Packaged UI/accessibility and 0/25 end-to-end acceptance remain open.
+
+## [2026-10-20] verify | Show goal-progress mismatch warnings
+
+Compared the v0.1.30 `renderGoals()` goal card with native Rust. The legacy UI showed every mismatch in phase/task state, while Rust silently omitted the warning list. A rendered regression failed first; Rust now shows every mismatch with the existing warning foreground color and a warning marker. Eight phase-progress tests, review-copy/source-layout checks, formatting, and all-target native-feature Clippy with warnings denied pass. Exact packaged UI and accessibility checks remain open; workflow acceptance remains 0/25.
+
+## [2026-10-20] verify | Restore coordinator analysis disclosure
+
+The v0.1.30 `renderPlanPhases()` shows saved whole-goal coordinator analysis in a collapsed disclosure before phase rows. The native Goals & Progress card omitted it. A rendered test failed on the missing localized disclosure; Rust now shows the saved non-empty analysis through the existing localized collapsible widget. All seven phase-progress tests, `native_ui_review`, `native_ui_start_journey`, `source_layout`, and the three-parallel-task shared/worktree approval-and-merge workflow pass. Formatting and all-target native-feature Clippy with warnings denied pass. Graphify refreshed to 7,059 nodes / 11,281 edges / 539 communities. CocoIndex remains unavailable because its installed environment cannot import `mcp.server.fastmcp`. Exact packaged UI and keyboard/accessibility checks remain open; native workflow acceptance stays 0/25.
+
+## [2026-10-20] verify | Restore Workspace phase briefs and planned task details
+
+Compared the v0.1.30 `renderPlanPhases()` behavior with the Rust Goals & Progress card. Rust showed phase names and aggregate counts but omitted each phase's brief and planned task ID, first-line instruction summary, agent, and state. A rendered test failed first; expandable phase rows now show those details and open the current/reviewed phase by default. A reviewed phase shows the existing edit-below notice without duplicating its tasks. The native start-journey test also exposed stale expectations for merged task labels and a test click that did not scroll; it now follows separate accessible task heading/summary labels and scrolls to controls. All six phase-progress tests, review copy, the UI journey, the three-task shared/worktree approval-and-merge test, source layout, formatting, warning-denied native-feature Clippy, and diff checks pass. Graphify refreshed to 7,055 nodes / 11,275 edges / 532 communities. CocoIndex remains unavailable because its installed environment cannot import `mcp.server.fastmcp`. Packaged macOS/Windows UI and accessibility checks remain open; native workflow acceptance stays 0/25.
+
+## [2026-10-20] verify | Restore Review Plan snapshot-base cue
+
+Compared actual v0.1.30 `startup.js::tasks()` with Rust. The shipped review screen shows the captured repository-base prefix and reminds the operator to inspect executable paths, permission modes, scope, and tests before the start-consent dialog. The Rust view omitted that cue. A rendered AccessKit test first failed; the native view now uses the existing localized message and the proposal's captured base. Full repository-base evidence remains in the existing consent dialog. Five Review Plan unit tests and ten focused task-card/edit/review-copy/source-layout tests pass; Clippy with warnings denied, formatting, diff checks, and source-layout guard pass. Exact packaged macOS/Windows review and end-to-end parity remain open at 0/25. CocoIndex Code cannot start here because `mcp.server.fastmcp` is missing.
+
+## [2026-10-20] verify | Restore task role labels in native Review Plan
+
+The v0.1.24 shipped task summary puts a two-digit ID and optional role badge on the first line, with the instruction summary below, and labels its removal action `Remove task`. Native Rust omitted the role, combined both lines, silently clipped long text, and shortened the action label. Rendered regressions failed on each mismatch. Rust now restores the two-line hierarchy and localized role/remove labels for English and Korean, keeps unknown roles visible, and appends an ellipsis after the 160-character summary limit. AccessKit confirms the role badge stays within 480px. Focused task-card, plan-edit, review-copy and source-layout suites pass (10 tests); Rust formatting, warning-denied Clippy, and diff checks pass. This covers visible R-47/UC-39/UC-106 details only; packaged parity and 0/25 workflow acceptance remain unchanged. CocoIndex is unavailable in the current environment, and exact macOS/Windows package comparison was not run for this slice.
+
+## [2026-10-17] verify | Native screenshot provenance correction and Workspace header
+
+The public-doc regression first failed because README/manual captions called existing images
+“Native Rust” based on filenames; those names did not prove the image source. Captions are now
+neutral, and the test explicitly rejects unsupported Rust-provenance claims. Manual-render
+checks still prove local images and alt text, not source provenance. A second TDD regression
+found two rendered Workspace stage eyebrows; removing the card-level duplicate leaves one
+header label. The exact Rust preview was inspected with CUA. Saving its window image through
+macOS `screencapture` failed, so no replacement screenshot is claimed.
+
+Focused tests passed: 22 across native UI probe, public docs, native manual, and source-layout
+targets. The exact rebuilt Rust release binary was visually inspected in English/Korean and
+light/dark modes; placeholders and the empty-agent state now show. Release build, all-target
+Clippy, rustfmt, and diff checks pass. Current source has no tracked JavaScript/TypeScript/Python
+application files and no Rust source/test file above 300 lines. The CUA capture is visual evidence
+only; no image was saved. Issue #9 and PR #18 remain open/draft; screenshot and platform acceptance
+are incomplete.
+Graphify structural refresh completed without LLM: 6,105 nodes / 10,582 edges. The installed
+`cocoindex-code` entry point cannot start because `mcp.server.fastmcp` is missing; no CocoIndex
+index is claimed. AgentMemory screenshot-provenance memory: `mem_mvcfugk4_10e89bf62871`;
+Claude handoff: `sig_mvcfy8tw_53ef98b68ce4`.
 
 ## [2026-10-10] verify | Native Codex subscription/session contracts
 
@@ -518,15 +1207,109 @@ R-93–R-95/DD-101–DD-103: compile-time version beside both titles; narrowly o
 
 The user declared the goal complete with v0.1.3. Open follow-ups need the operator's environment: a real Windows PC run and a live Slack/company messenger round trip.
 
-- 2026-10-19: GitHub #16 default-path follow-up shows localized `Starting agent execution…` directly below the approve button immediately after plan approval and holds the run progress indicator while the start request resolves and Agent Room opens. The native Rust path continues to use its bottom feedback panel and exact-run report gate. Local runtime, message, UI, pending-state and formatting checks pass; package-level macOS and Windows validation remains outstanding.
+## 2026-10-18 native sidebar provider icons
 
-## 2026-10-19 local company build version
+Native eframe now decodes the existing bounded provider PNG data URLs, caches textures per provider URL and renders installed Claude/Codex artwork; custom profiles and unresolved icons keep monograms. The rendered regression was red before implementation; 22 focused tests and the full native-feature offline all-target suite pass with zero failures. All-target native-feature Clippy passes with warnings denied. Graphify refreshed the source graph (6,617 nodes / 11,478 edges). CocoIndex is not installed on this host. An optimized macOS app showed installed provider icons with isolated fake CLI profiles. The committed macOS package binary hash matches the inspected build; package validation passed four shared/worktree × Git/folder smoke cases (three tasks and tests each, approved merge verified, unapproved merge refused). Archive SHA-256: `458aef6cc5331f93ce77101d2d85e0edfa616ed1e243319111989d711b31e2ab`. Windows runtime discovery/rendering remains pending. Verified workflow acceptance stays 0/25; issue #9 remains open.
 
-GitHub #13: kept `Cargo.toml` numeric and added the empty tracked `company-suffix.txt` local build input. The validated suffix appears in both titlebars through `update::current()`; Cargo/MCP protocol versions and semantic release comparisons remain numeric. Rust package assembly rejects either a changed suffix file or a previously suffixed binary, preventing an accidental public company-labelled build. Architecture trace R-155 → DD-165 and the implementation checklist are in the system docs. Focused version, UI, release-package, source-layout, formatter, and Clippy checks pass locally. AgentMemory decision saved as `mem_mvezq58i_752e54236f97`.
-## 2026-10-19 custom CLI profile behavior (#12)
+## 2026-10-19 native Resume and integration-repair boundary
 
-Added backward-compatible per-profile event-name/session-pointer mappings and opt-in custom quota commands. Commands use the registered executable and argv without a shell; bounded JSON output must follow the normalized `Snapshot` schema. Existing native provider parsers/quota readers remain unchanged. AgentMemory decision/verification memories: `mem_mvf02oy9_66b41cb2e24d`, `mem_mvf0u5jd_1df56fa0eec3`; maintained detail: [custom CLI profiles](custom-cli-profiles.md). The Rust quota-due snapshot and `quota-refresh` command support configured custom profiles, but the production WebView still gates quota UI controls to Claude/Codex; that UI capability awaits the Rust UI migration under R-151. No JS/Python source/test changes are included relative to `origin/main`. After merging current `origin/main` with #44, full local Rust verification passed (180 suites, 542 passed, 0 failed, 14 ignored); focused Rust/source-layout 47/47, all-target Clippy, formatting and diff checks passed. PR #48 and issue #12 remain open for review.
-## 2026-10-19 GitHub #44 timeout recovery
+Latest `main` (`5993970`, failed-run resume guard) was merged into the #9 Rust branch. Requirement review found the blanket `failed` rejection conflicted with R-123/UC-113: repairable integration failures must re-enter the coordinator's bounded repair loop. A regression first failed under the blanket guard, then passed after the UI guard reused `workflow::repairable`; unrelated failures remain blocked. Nine focused UI/repair tests, native-feature all-target Clippy, rustfmt, diff checks and the source-layout test pass. #9 remains 0/25 pending full packaged operator-workflow acceptance.
+
+## 2026-10-19 full native-feature regression
+
+After latest-main synchronization, the locked offline all-target native UI suite passed 659 tests, ignored 14, across 230 suites. Four local AgentMemory TCP fixtures failed under sandbox restrictions, then passed when the same suite ran with loopback permission. Clippy, formatting, diff checks and the 300-line source-layout test pass. Removed this suite's 92 mock executables and 21 recent fixture folders after it exited; kept older failed-test evidence and validated release archives. This does not change #9's 0/25 accepted workflows.
+
+## 2026-10-19 completed test-fixture cleanup
+
+Removed the remaining 350 `ac-workflow-mock-*` test binaries and 61 `ac-flow-*` temporary repositories from `/private/tmp/agentconductor-tmp` after confirming no AgentConductor or test process was using them. Both prefixes are created by `tests/support/workflow.rs`; logs, failure reports outside these fixture paths, package archives, and the active issue worktree were preserved. This cleanup does not change issue #9's 0/25 workflow acceptance or platform verification status.
+
+## 2026-10-19 issue #16 short-window start feedback
+
+The start status was nested at the end of scrollable Workspace content and disappeared at 700px height during plan approval. A native UI journey test failed against that placement, then passed after moving the existing pending/error text into a bottom panel outside the scroll area. The test drives plan generation, review, exact consent, the pending interval, resize to 700px, and the actual Room transition; it confirms the pending text bounds fit the short viewport. The locked offline native-feature all-target suite passed with loopback permission (the sandbox-only attempt denied four local AgentMemory fixture binds). After the final regression strengthening, the focused journey and source-layout guard passed again; all-target Clippy (`-D warnings`), rustfmt, and `git diff --check` passed. Graphify refreshed the code graph to 6,666 nodes / 11,574 edges. Removed 117 recent generated `ac-flow-*` and `ac-workflow-mock-*` test fixtures after confirming no test process remained. CocoIndex is unavailable in this host environment. Issue #16 remains open until the Rust UI is integrated and verified in packaged macOS and Windows builds; #9 acceptance remains 0/25.
+
+## 2026-10-19 native profile popup visual comparison
+
+Rebuilt the current optimized Rust binary at HEAD `d8658d31a662bdd1790bfdb5266560f13fcbcce6` (SHA-256 `7588325b4cbd4937d20d1c35766b618400a930d815ad1140ad089f7c631654bd`) and compared the agent profile editor with MCP server settings in one disposable 1140×772 macOS app window. Both use the same centered, resizable settings-window frame, title bar, close control and application typography; body layouts differ for their distinct forms. The only registered test profile used `/usr/bin/true`; its workspace and temporary signed app bundle were removed after review. No user workspace/settings were edited. This visual component check does not change issue #9's 0/25 accepted end-to-end workflows; Windows/package and full workflow acceptance remain open.
+
+## 2026-10-19 generated-plan review visibility
+
+Extended the existing native UI journey to require all three generated task ID/instruction summaries in the Review Plan accessibility tree before approval. The first run caught an incorrect test expectation (fixture IDs are `task-0` through `task-2`); corrected it to match the fixture and the journey passes. The 300-line layout guard initially caught the test at 302 lines; compacted it to fit and reran both checks successfully. This adds journey evidence only: no workflow count increase, packaged UI acceptance, or source behavior change.
+
+## 2026-10-19 isolated issue #9 settings-window review
+
+Launched the release build from exact branch head `f9eaf26` as one temporary macOS app bundle with an isolated HOME. Inspected the initial Workspace, Team role assignment, Register CLI agent window, and MCP server registration window. Both settings windows use the same centered native frame, title bar, close affordance, and resize behavior; the MCP window displays the OpenCode JSONC sample. No workspace, agent profile, or MCP settings were saved. Closed the review window and confirmed the process exited. This is a component visual check only; it does not change the 0/25 accepted end-to-end workflow count or the pending platform/package gates.
+
+The exact source at `1dbfc2be14a55de5d41abe01c03c6919a2512ec3` then passed the local macOS `package-release` command. The package manifest records 214 dependency license records and binary SHA-256 `02781d8408ca0fc10edf64b6c737eedbb949d5b47368ac4fbdac1e25063964a7`; the ZIP SHA-256 is `0e3250708aba4474ca94aa9a2526ce881b60f0e22b1cbdadc425974c9801d736`. All four packaged workflow smoke cases passed (shared/worktree × Git/folder; three parallel tasks and tests per case; approved merge accepted, unapproved merge refused). This is local macOS packaging evidence, not a published release, Windows validation, or 25-workflow acceptance.
+
+PR #31's Actions run `39143064496` passed build and source-layout on macOS and Windows but failed the full test step on each OS. macOS failed `native_worker` at the exact request-count assertion (2 observed, 1 expected); the same result was reproduced on the exact `main` baseline and is assigned bug #32. Windows failed four cases in the unchanged `mcp_auto_sources` target; macOS passed all four of those cases, and Windows baseline comparison is tracked as bug #33. Both bugs precede merging planning-rules enhancement #8; PR #31 remains open and unmerged. Source-layout passed on both platforms.
+
+Graphify was refreshed after the issue #9 verification updates using local AST extraction only: 6,671 nodes and 11,579 edges. CocoIndex Code CLI is installed but this repository is not initialized for its index; `ccc status` reported that fact and no CocoIndex index result is claimed.
+
+## 2026-10-19 issue #9 progress metrics
+
+Corrected the progress report to keep the historical source-coverage inventory (24/25 rows marked Complete; Workflow 3 partial) separate from verified native end-to-end parity (0/25) and shipped Rust replacement acceptance (0/25). GitHub issue #9, the implementation plan, and the native Rust UI Wiki now use the same definitions. Graphify local AST extraction refreshed `graphify-out` to 6,671 nodes and 11,579 edges. CocoIndex Code CLI is present, but this repository is not initialized for its index; structural grep returned no matches for the attempted Rust function pattern, so no CocoIndex verification is claimed. `git diff --check` passed; docs-only commit `dbef9f1` was pushed to `codex/issue-9-native-ui-parity`.
+
+
+## 2026-10-19 issue #9 Workflow 3 source runtime
+
+Ran the exact Rust binary built after source commit `74d3872` (SHA-256 `2e4bcc2ff02576f09c54afd0182389eb23d4a4411b632cd4f447c7ff85905cc0`) in one ad-hoc signed macOS app window with isolated HOME and a disposable workspace. Registered a custom `/usr/bin/true` profile, edited and saved its ID, verified the delete confirmation and removed it; the sidebar returned to its empty state. No agent task was invoked. This completes the source-coverage inventory for Workflow 3, bringing it to 25/25 implemented. The exact released UI was not compared and Windows/package/accessibility gates remain open; verified end-to-end parity remains 0/25. The temporary bundle, HOME and workspace were removed. AgentMemory: `mem_mvedk95b_ffa5371a4f10`.
+
+
+## 2026-10-19 issue #9 sidebar footer parity
+
+Restored the existing English/Korean local-first heading and approval summary at the bottom of the native CLI-agent sidebar. The sidebar list remains independently scrollable and reserves space for the footer. A rendered-text test using the production left-panel layout failed before the change and passes afterward; existing sidebar tests pass 5/5 and the source-layout test passes. Graphify local AST extraction updated the graph to 6,680 nodes and 11,590 edges. CocoIndex Code's structural grep found the sidebar entry point without initialization; the semantic index remains unavailable. AgentMemory: `mem_mvedynhg_5787cdf797cd`. This component check does not change accepted workflow parity (0/25); packaged macOS/Windows and exact v0.1.24 comparison remain open.
+
+
+## 2026-10-19 issue #32 bug port to Rust branch
+
+Ported merged PR #34 to `codex/issue-9-native-ui-parity` as `d4b7734`. Preserved the branch’s atomic ledger reconciliation helper, moved the provider tool-call ID into the human-visible request reason exactly once, and added stale-ID approval rejection to the parallel-worker regression. `native_worker` 4/4, `gates` 5/5, and source-layout 1/1 pass locally; focused offline Clippy (`-D warnings`), rustfmt, and diff checks pass. Touched Rust and test files stay below 300 lines. The upstream PR’s macOS/Windows validation and packaging checks were green before merge. AgentMemory: `mem_mvee4h1v_1606fc039071`. Native UI acceptance remains 0/25.
+
+## 2026-10-19 custom CLI event normalization — issue #9
+
+Added bounded profile declarations for custom JSONL event names and session-ID JSON Pointers.
+The profile-aware decoder now feeds live progress, worker completion, interrupted-run recovery,
+and coordinator-document parsing while preserving built-in provider behavior. A mock CLI test
+reproduced the unrecognized vendor completion event blocking the run; after the fix, all three
+parallel tasks complete and the run correctly waits for human approval. An all-target offline
+locked suite passed before the final cardinality and JSON-Pointer boundary checks. Its repeat after
+those checks exposed one `cli_workflow` temporary-directory cleanup race; that test passed when
+run alone. Relevant protocol, plan, coordinator, progress, recovery, and workflow suites pass, as
+do all-target Clippy (`-D warnings`), formatting, diff, and source-layout checks. Graphify AST
+extraction now reports 6,827 nodes and 11,838 edges. CocoIndex is not installed in this host
+environment.
+This is runtime compatibility coverage only and does not change issue #9's accepted end-to-end
+workflow count (0/25). The registry, custom quota declarations, UI editor, and Windows package
+acceptance remain open.
+
+## 2026-10-19 issue #9 exact 0.1.30 macOS package
+
+Merged latest main into `codex/issue-9-native-ui-parity`, then built committed HEAD `dbad31d` with
+the Rust release packager. The four shared/worktree × Git/folder smoke cases passed; manifest
+validation accepted 214 dependency license records. Binary SHA-256 `d2b66628f69d248e5dc92b1244c035afb783ab4280057831fa20174ae0e38e85`; ZIP SHA-256
+`07b8956372b0f10ddbbacbfd74e645d1ac345a1c1eeebf2e971acd57a740f9eb`. Opened one isolated native
+window, saved a disposable Workspace and confirmed persisted settings. Closed the app and removed
+its temporary bundle/HOME/workspace. This package/Workspace check does not advance end-to-end
+workflow parity beyond 0/25. Windows and comparison against the legacy shipped UI remain open.
+
+## 2026-10-20 issue #9 full offline test suite
+
+The exact current Rust branch HEAD `1c9759846eab51ea8be1e1ce2446f427b8c5a30a` passed `cargo test --offline --locked --all-targets --features native-ui-probe -- --test-threads=1` with exit code 0. Homebrew LLVM 23 expected a Z3 5.1 soname that was absent while Z3 5.3 was installed; a temporary alias and Rust shim in `/private/tmp/ac-issue9-z3-compat` were needed for Cargo and integration tests that spawn `rustc`. The initial run without the child-process shim failed only while compiling mock agents; the complete retry passed. AgentMemory record: `mem_mvfmtydk_81eea7878957`.
+
+This local regression pass does not establish exact packaged macOS/Windows UI acceptance. Current-head macOS package validation, Windows visual acceptance, and the 25-workflow end-to-end parity audit remain open; accepted workflow count remains 0/25.
+
+## 2026-10-20 issue #9 native finalization verification
+
+On the exact issue #9 branch HEAD, the focused finalization, rendered-room, and source-layout suites passed (15 tests). `cargo fmt --all -- --check`, `git diff --check`, the changed Rust/test file 300-line check (maximum 288 lines), and the optimized release build plus `--help` entry point passed. PR #22 still has no check run for its current HEAD and conflicts with `main`; cross-platform exact-package and end-to-end native UI acceptance remain open at 0/25. Issue #50's default JavaScript behavior remains in merged PR #51; Rust work is additional parity for #9.
+
+## 2026-10-20 issue #9 port of bug #52
+
+Ported the bounded correction attempt for invalid overlapping phase scopes from the already-merged Rust fix to the #9 migration branch. The regression was confirmed red before implementation: duplicate `score:` scopes failed with `unsafe or overlapping scope`. The dedicated regression and source-layout tests now pass after one retry; invalid second responses remain rejected. This preserves the behavior from GitHub #52 when the Rust migration branch replaces the current implementation.
+
+The complete serialized suite then passed 725 tests, 14 ignored, and 0 failed across 249 suites with debug symbols and incremental artifacts disabled; all-target Clippy, rustfmt, diff checks, and the exact optimized release build/CLI help check also passed. The first default-debug test build exhausted the host disk, so only its generated `target/debug` cache was removed before the compact full-suite retry.
+
+## 2026-10-20 issue #9 port of SQLite contention fix
+
+The #9 branch reproduced GitHub #56's 2.5-second `BEGIN IMMEDIATE` writer lock and failed with `database is locked` under its two-second timeout. A shared ten-second timeout was added to writable and read-only SQLite connections without changing transaction semantics. The focused regression passed after 2.53 seconds. Full verification passed: 726 tests, 14 ignored, 0 failed across 250 suites; all-target Clippy (`-D warnings`), rustfmt, diff and 300-line checks, and the optimized release build/CLI help check passed. Binary SHA-256: `9313d3adfa62682d1b85930eaffe9956ca364dc352587c586204ae19282d8562`.
 
 R-153 / DD-163: keep a wall-timeout visible while automatically retrying from retained artifacts; cap the backoff at 60 seconds; honor Stop before relaunch; expose terminal blocked causes through the report-level error used by the existing banner. Focused timeout and Stop regressions pass locally. Full verification on integrated #12 branch: 180 suites, 542 passed, 0 failed, 14 ignored; Clippy, rustfmt, and 300-line source-layout checks pass. The separate Rust-native port remains in progress.
 
@@ -546,64 +1329,167 @@ Prepared the v0.1.31 release from `main` (WebView line): CHANGELOG section, Engl
 
 `messenger::notify_run` remembered only the last notifiable state, so `failed → running → failed` sent one message. It now records every reported state (when the link is enabled) and sends only for notifiable ones; repeated saves of one state remain silent. Red-first test: `tests/messenger_renotify.rs`; existing messenger suites unchanged.
 
-## 2026-10-20 send feedback while a task runs (#95)
+## 2026-10-20 grouped native UI/operator-surface review (#9)
 
-`room.js` disabled Send feedback whenever the run was `running`, although `active_feedback::queue` accepts feedback for a running task. New `feedbackEnabled(task)` gate; red-first `tests/room_feedback_gate.cjs` run through `tests/room_feedback_gate.rs`. Manuals updated.
-## 2026-10-20 quota reset zones (#82)
+One existing isolated v0.1.31 app window covered workspace settings/roles, MCP registration, sharing, Messenger, cache preview, custom model configuration, and completed Agent Room evidence. No settings were saved and no cache or external state changed. The associated ten native UI suites passed 48 tests. Evidence: `docs/evidence/issue9-4a114ec-grouped-native-ui-audit.json`. Packaged acceptance stays 4/25; source/UI checks do not count as a new end-to-end workflow. Exact-head run `39435401549` was queued, and Windows/accessibility/IME/provider/resource/license gates remain open.
 
-`reset_time` knew only Seoul/Tokyo/UTC. New `src/quota/zones.rs` is a built-in table with US/EU/AU/NZ rules (identical on macOS and Windows). Unknown zones still return nothing; extend the table to add one. Red-first `tests/quota_reset_zones.rs`.
-## 2026-10-20 update downloads are cleaned (#80)
+Graphify re-extracted the issue #9 checkpoint after the regression fix: 7,517 nodes and 12,953 edges. CocoIndex Code remains unavailable because its environment lacks `mcp.server.fastmcp`; no CocoIndex result is claimed.
 
-`update::install` left `updates/<tag>` (15-30 MB each) forever. After a successful replace it now calls `clear_downloads`. Red-first `tests/update_downloads.rs`.
-## 2026-10-20 MCP header prefixes validate (#84)
+## 2026-10-20 repository-switch clean-baseline regression (#9)
 
-`Settings::parse` validated headers with the bare-reference check, so the documented `Authorization: Bearer {env:TOKEN}` was refused although `expand` supports it. Headers now allow the Bearer/Basic prefix. Red-first `tests/mcp_header_references.rs`.
-## 2026-10-20 case-insensitive scope overlap (#79)
+The grouped Git/worktree smoke found that switching a workspace to another repository while keeping identical goal text retained the old `active_slug`. The next plan wrote metadata into an unexcluded goal folder, so the clean-baseline approval gate correctly refused to start. Red-first regression `changing_repository_detaches_the_active_goal_before_planning_again` failed before the fix. Saving now clears only the active slug when the repository path changes and preserves prior slug records. Focused validation passed 15 tests across five suites; all-target regression passed 771 tests with 14 ignored across 260 suites; Clippy passed with warnings denied.
 
-`plan::overlaps`, the `.git`/`.agentconductor` component check and the tool write-scope check compared bytes. They now fold case. Red-first `tests/plan_scope_case.rs`.
-## 2026-10-20 command policy fails closed on unplaceable forms (#83)
+The exact `a1ea942` macOS package passed package-release smoke and a single-window isolated UI run: switching to a clean Git repository while retaining the goal cleared the old active slug, planning created three disjoint worktree tasks, 3/3 task tests passed, the exact diff was reviewed and approved, merge completed, and the fixture's `main` worktree was clean with only the three intended files. Evidence: `docs/evidence/issue9-a1ea942-git-worktree-ui-smoke.json`. Packaged issue #9 acceptance advances to 5/25 (20%); shipped Rust replacement remains 0/25. Windows, accessibility, IME, authenticated CLI, resources, license closure and exact-head CI remain open.
 
-`Policy::command` matched whole words against the outside-program list, so `c''url`, `${x}rl`, `node -e`, `sh -c` and `python -m http.server` were Automatic. New `src/guard/forms.rs` sends glued quotes, expansions and inline-code interpreters to a human. Red-first `tests/guard_command_forms.rs` (both directions: ordinary quoting and `python3 src/tool.py` stay Automatic).
-## 2026-10-20 messenger approval parser is explicit-command only (#81)
+## 2026-10-21 explicit messenger decision commands (#81)
 
-`inbound::parse` accepted an allow/deny pair anywhere in a reply, so `don't allow CODE` approved. It now takes the decision word as the first word after mentions. Red-first `tests/messenger_decision_parse.rs`.
+The main-branch parser accepted an allow/deny word anywhere in a reply, so conversational or negated text could approve a request. Regression tests first reproduced `don't allow CODE` as an approval. `inbound::parse` now checks only the first command after optional mentions and still accepts explicit allow/approve/deny/reject forms. The Rust #9 branch keeps the parser in `src/messenger/inbound/wire.rs` and preserves its public re-export; this avoids undoing the issue branch's module split. Focused tests passed (4 passed, 1 ignored); the full local all-target suite passed (794 passed, 14 ignored across 263 suites); all-target Clippy passed with warnings denied; rustfmt, diff, and source-layout passed. GitHub Actions has not listed an exact-head run for merge commit `1b1a92058b8f2219626a386cecf6eb8963b155cc`; the prior run targets the pre-merge commit and is stale.
 
-## 2026-10-20 queued agent and model change for pending tasks (#103)
+The current exact-source macOS package at `0d09b88` passed `package-release`, manifest validation, packaged `--help`, ZIP CRC, and archive scans for JavaScript/Python files and inline scripts. It contains one 17,942,384-byte executable and 214 dependency records. Binary SHA-256 `1425a6384fd7b24382acc91226de007fe8646c6b579e5d9d632d4b3f427b51db`; archive SHA-256 `3c06a3d3ea4407359a0fdc48fdfb04341a3627ad892c2b7872f81701fd81f009`. Evidence: `docs/evidence/issue9-0d09b88-macos-package.json`. The package was not opened; it adds no UI acceptance. Windows package/UI and exact-head Actions remain open.
 
-`workflow::reassign` and `set_model` refused any edit while the run was running, and the room disabled the buttons. A change for a pending task is now queued (`src/workflow/pending_edit.rs`) and applied by the scheduler before launch; running or finished tasks are still refused. Red-first `tests/pending_edit.rs` and `tests/room_edit_gate.cjs`.
-## 2026-10-20 live agent activity in the room (#100)
+## 2026-10-21 restore compact legacy step navigation (#9)
 
-Requirement chain R-159 to DD-169. `task_activity` gains the current tool (`src/activity.rs`), the snapshot exposes a per-running-task `activity` map, and the task header renders elapsed times locally every second. Red-first Rust and Node tests: `activity_tool`, `activity_record`, `room_activity_snapshot`, `room_activity_text`.
+Compared the isolated native v0.1.31 Workspace with a checked-in same-size capture carrying a v0.1.24 label. Screenshot provenance identifies that reference as an earlier Rust build, not the published WebView UI. It showed compact content-sized tabs while the native three-step row used equal-width, 48px-high cards; this supported a Rust-component layout correction but did not establish WebView parity. Red-first bounds regression failed at 48px; the row now uses content-sized localized buttons that wrap only when needed. The exact package from `227854d3` validates, its `--help` exits 0, and ZIP CRC passes; its 17,942,384-byte executable SHA-256 is `8568714474af52d04e7cf2f678dd69d27a8f95c4149c59c51b59993fa34ea97a`. One exact-package window visually confirmed compact tabs and navigation through Roles and Review at 1140×772. Header/compact-header/start-journey suites pass (5 tests / 3 suites); after the exact-head macOS CI failure exposed a test helper's language lookup mismatch, the settings journey passed three consecutive runs with the helper fixed, and the grouped four-suite batch passed 6 tests. Focused Clippy, rustfmt, source-layout, diff, and 300-line checks pass. A full all-target attempt was stopped after 666 passed / 14 ignored across 213 suites (exit 130), so it is incomplete. Graphify refreshed to 7,532 nodes / 12,968 edges; CocoIndex Code remains unavailable because `mcp.server.fastmcp` cannot be imported. No screenshot file was retained; README/manual screenshot parity, native IME, Windows rendering, remaining workflows and full suite remain open. No packaged workflow acceptance is added: 5/25 packaged and 0/25 shipped.
 
-## 2026-10-20 coordinator chat (#115)
+Graphify was re-extracted without clustering after this record: 7,532 nodes and 12,969 edges. CocoIndex Code remains unavailable because its environment cannot import `mcp.server.fastmcp`.
 
-New `chat` module and worker job (`src/chat.rs`, `src/commands/chat.rs`, `src/ui/setup/chat.rs`), slide-over panel (`chat.html/css/js`). Reuses the coordinator's read-only invocation and the single job slot. Red-first `chat_prompt`, `startup_chat`, `chat_ask` (scripted coordinator end to end), `chat_ui` and `chat_runtime.cjs`. Browser check was not possible; the panel logic is covered by the Node test.
-## 2026-10-20 room focus follows the running session (#109)
+Graphify re-extracted the current tree locally without clustering (7,526 nodes / 12,963 edges); a local query located the packaged-workflow, exact-package and completion-audit assets. CocoIndex Code is installed but its entry point still fails before command handling because `mcp.server.fastmcp` is missing. This is an environment failure, not successful indexing.
 
-The room kept the finished session selected, so the activity showed old work while the run awaited approval. `followTarget` (room.js) now moves the selection from consecutive snapshots; reviewed finished sessions are never taken away. Red-first `tests/room_follow_focus.cjs`.
-## 2026-10-20 activity line layout jitter (#117)
+## 2026-10-21 center workspace-sharing settings dialog (#9)
 
-The line toggled hidden and could wrap as its numbers changed, moving the tabs below. It is now a fixed 18 px one-line slot hidden with visibility only, with an ellipsis and tabular numbers. Extended tests/room_activity_text.cjs.
+The native workspace-sharing settings dialog used egui's compact default placement and opened at the viewport's upper-left, unlike the centered MCP, Messenger, and cache dialogs. A rendered regression first failed with the Export action at x=30 in a 1140px viewport. The dialog now uses a centered anchor and 480px initial width, matching the cache dialog. Six related native suites pass 18 tests. Component evidence does not change packaged workflow acceptance (5/25) or shipped Rust replacement (0/25); exact current-package screenshots and Windows UI remain open.
 
-## 2026-10-20 Downward arrow for available updates (#127)
+The exact `97a16bb4ca40070760d6052e5bd095ef6b1c4a3c` macOS package also passed `package-release`, manifest validation, packaged `--help`, and ZIP CRC. Binary SHA-256: `2f9402e0f14b9c90083a7c897211e0e7968be08039543178d12b43ac4ea94eaf`; archive SHA-256: `5380a52ad58763375a168324b928db26cf95d787f57e884ed6da2e3aa83b49e6`. Evidence: `docs/evidence/issue9-97a16bb-macos-package.json`. The package was not opened, and this does not add workflow acceptance.
 
-The titlebar update affordance now shows a downward arrow (U+2B07) instead of an upward one; the accessible name, tooltip and update action are unchanged. Checked visually with the real button and stylesheet, and covered by a regression test in tests/update_notes.rs.
+Correction: the package was opened in one isolated temporary HOME after old package processes were stopped. The current exact build visually shows the sharing dialog centered in light/dark themes; MCP, Messenger, and empty-cache dialogs were also reviewed. No workspace/settings/cache mutations occurred. No screenshot was saved as a repository artifact, and component review does not increase the 5/25 workflow count.
 
-## 2026-10-20 Configurable update repository (#130)
+The same isolated build's profile-registration form, five-role stage, and empty Review stage were checked as a group. Registration Cancel preserved the empty profile list; the empty Review page showed no reviewed plan and kept approval disabled until settings and roles are saved. These are component checks only.
+# 2026-10-21 v0.1.32 parity port into issue #9
 
-Settings stores one optional update repository (a github.com name or an https host URL) in preferences.json; src/update_source.rs validates it and maps non-github hosts to their api v3 releases API. The download path stays the app updates folder.
+Merged the current main source into the Rust UI branch, resolved module-boundary conflicts without retaining its WebView/CJS implementation, and added two system-architecture traces (R-161/R-162 through DD-171/DD-172). TDD regressions were first red for fail-closed shell forms, case-insensitive task scopes, MCP environment headers, IANA quota zones, pending-task reassignment, and update-download cleanup. The Rust integration now connects those contracts plus queued agent/model edits, running-task feedback, and factual Agent Room activity.
 
-## 2026-10-22 Coordinator triage of failed tasks (#135)
+Focused local verification passed 36 tests across 12 suites. Full local verification passed 800 tests with 14 ignored across 271 suites. The 300-line source-layout test, all-target warning-denied Clippy, rustfmt, diff checks, and offline manuals passed. The optimized macOS release package for `cf92f39` passes a four-case packaged smoke across shared/worktree and Git/folder combinations, with approved merges verified and unapproved merges refused; archive CRC passes. Archive SHA-256 is `fd17557d0be3a27470fccbbf75c372c279ed4d93bde905eb447d54f65755fc51`; evidence is `docs/evidence/issue9-cf92f39-packaged-smoke.json`. Exact-package UI review, Windows packaging/UI, and exact-head Actions completion remain open. Packaged issue #9 acceptance remains 6/25 and shipped Rust UI remains 0/25. Graphify re-extracted the tree at 7,699 nodes / 13,223 edges. CocoIndex remains unavailable because the configured Python environment lacks `mcp.server.fastmcp`.
 
-repairable now also accepts a failed run with a failed task (not an out-of-scope change, no task waiting for availability), so the existing bounded coordinator repair loop reviews the task output and resumes the run. First slice of #135; coordinator decisions while an account is out of quota remain a follow-up.
+See Current-main Rust parity for architecture, test scope, and source map.
 
-## 2026-10-22 Step lessons shared with later tasks (#138)
+## 2026-10-21 Agent Room focus-follow port — issue #109 / issue #9
 
-Existing reviewed lessons are manual, hash-pinned and only reach the same task. New workflow::step_lessons records bounded lessons from coordinator revisions, replaced test commands and approved scope changes, shows them in the Agent Room, adds them to every worker prompt and relies on the memory outbox (plus a best-effort sync when agentmemory is preferred) for delivery.
+Ported the WebView's completed-session focus rule into the native Rust Agent Room: a selected task that transitions from running to terminal yields focus to the next running or `waiting_tool_approval` task. TDD first reproduced missing selection, then the new activity suite passed 6/6. Source layout (2/2), warning-denied all-target Clippy, rustfmt, and diff checks pass. The full all-target run surfaced an unrelated, independently reproducible “Open Agent Room” workspace UI failure after a completed run; the backend still marks its run available, so this remains an open #9 gate. Packaged workflow acceptance stays 8/25. AgentMemory: `mem_mvhn80be_75cd291be699`. See [current-main Rust parity](current-main-rust-parity.md).
+## 2026-10-21 coordinator chat manual parity — issue #9 / main #115
+
+The Rust Workspace coordinator-chat feature was present, but the public English/Korean manuals and generated HTML did not describe it. Added the Workspace entry point, read-only CLI scope, shared planning slot, and current-window-only conversation note. The first public-doc regression failed on the missing English label; after updating the Markdown and regenerating both HTML manuals with `agentconductor manual render`, `public_docs` and `source_layout` passed (13 tests). This is documentation parity only; packaged acceptance remains 8/25.
+
+## 2026-10-21 fixed-slot Agent Room activity — main #117 / issue #9
+
+Ported main's stable single-row live activity layout into the Rust Agent Room. A rendered test first reproduced a 57px vertical shift between empty and populated activity; the fix now keeps a localized, truncated 18px row in both states. Seven native task-activity tests, two source-layout tests, warning-denied native-feature Clippy, Rustfmt, and diff checks pass. Packaged workflow acceptance remains 8/25 pending exact-package verification.
+# 2026-10-21 — Keep Stop-during-backoff test stable (#112)
+
+Aligned the Rust migration branch's stop-during-backoff regression test with main: retry delay 5s and stop-response bound 2s. The focused test and full workflow suite passed (8 tests total). No production behavior changed; packaged native UI acceptance remains 8/25.
+
+## 2026-10-21 Main integration and test-temp cleanup — issue #9
+
+Integrated the current-main documentation and non-WebView changes into the native Rust migration branch. Removed duplicate chat declarations and the upstream WebView UI/CJS tests while retaining Rust-embedded locale JSON. Regenerated the English and Korean HTML manuals, restored screenshot links referenced by the public manuals, and made the room-header version assertion follow `CARGO_PKG_VERSION`. Full local verification passed 828 tests with 14 ignored across 278 suites; all-target Clippy, formatting, source-layout, and public-doc checks passed. A duplicate unconditional chat-result read was removed after caller tracing; focused `startup_chat` and `chat_ask` tests pass. Removed 148 MB of test-generated `target/debug/tmp` files. The optimized package for exact merge HEAD and Windows package verification remain pending. Packaged UI acceptance remains 8/25; current screenshots and complete Rust UI parity remain unverified.
+
+## Exact merge package verification — issue #9 / 2026-10-21
+
+The `9be8e88` exact-source `aarch64-apple-darwin` package passed packaged `validate-package`, `--help`, archive CRC, and the four approval-gated smoke cases: shared/worktree × Git/folder. Each case ran three concurrent deterministic mock tasks and tests; approved merge was verified and unapproved merge refused. Binary SHA-256: `86c72bf263fa32b4affe652b38b7d4d80d8125d754372252ae84509b63993d30`; archive SHA-256: `e82f2a852215413a946ef54829237725e8c2b5b47779171d5ac301f1b2c16916`. Evidence: `docs/evidence/issue9-9be8e88-macos-smoke/run-36772-1792567832764762000-0`. Windows exact-source package remains pending; this is not visual UI acceptance, which remains 8/25.
+
+## 2026-10-21 Coordinator analysis popup layout — issue #9
+
+A rendered regression reproduced the Review page's whole-goal analysis disclosure moving the next phase down by 8 px. Replaced the inline collapsing section with an anchored, 480 px-bounded menu popup; explicit accessibility metadata keeps the analysis in the assistive-technology tree while phase geometry stays fixed, and an outside click closes it. The new geometry/accessibility/popup-content regression and workspace/Settings menu, goal-list, and phase-progress suites pass (14 tests); adding source-layout checks brings focused verification to 16 tests across five suites. Warning-denied all-target Clippy, formatting, diff checks, and the 300-line limit pass. The exact 1743fed release binary builds for `aarch64-apple-darwin` and passes `--help`; SHA-256 is `3dd649d07d6ca7f311922fe5a48f3a8576bcb1a08852842a62e5e7fd0688b76e`. Graphify refreshed to 8,009 nodes / 13,699 edges. CocoIndex is installed but cannot start because its environment lacks `mcp.server.fastmcp`. Package-level visual verification remains open; packaged workflow acceptance is unchanged at 8/25.
+
+The exact `ce33720` macOS release package then passed manifest validation, `Info.plist` lint, archive CRC, packaged `--help`, and four deterministic shared/worktree × Git/folder smoke cases. Each case ran three tasks and three tests; the harness verified approved merge and refused unapproved merge. The package contains one native executable, SQLite, an SBOM, and dependency license texts for 214 crates. This is CLI/package smoke evidence, not visual UI acceptance; issue #9 remains 8/25 and the live user window was not replaced. Archive SHA-256: `7f773a96d81b3b02838bef622548cc83a3b08f9e75c64a4de5351c2e9d1749c6`. Evidence: `docs/evidence/issue9-ce337-macos-package.json`.
+
+The next rendered pass found the same vertical reflow in phase-detail rows: opening a completed phase moved the following phase down by 8 px. Phase rows now open bounded, scrollable popups (480 px wide, 360 px high) with accessible names, preserving other phase and action positions. TDD passed the phase-popup interaction/details tests (3), phase-progress tests (6), and coordinator-analysis popup test (1); source-layout (2), warning-denied all-target Clippy, rustfmt, diff, and 300-line limits pass. AgentMemory: `mem_mvhyjd8s_12fb1fc7778b`. Graphify refreshed to 8,025 nodes / 13,740 edges. CocoIndex CLI was attempted but cannot start because `mcp.server.fastmcp` is missing from its runtime. No live app window was replaced. Packaged acceptance remains 8/25 until the exact build is reviewed.
+
+The exact `8a2f817` macOS package then passed `package-release`, manifest/source/target/binary-hash validation, packaged `--help`, ZIP CRC, and all four shared/worktree × Git/folder smoke cases (three tasks and tests per case, approved merge verified and unapproved merge refused). Its 18,158,448-byte binary SHA-256 is `b75e5ce72c817fb91a14ac10b90a25baf57d17f8b31365c26249be8909c90e9e`; archive SHA-256 is `941b45048b6e18d344939f3d56050219a849254d732fda4ee2b1bc769a4a2a7d`. The native-ui-probe all-target suite passed 832 tests (14 ignored, 283 suites); public-docs, source-layout, Clippy, formatting, and diff checks passed. Evidence: `docs/evidence/issue9-8a2f817-macos-package.json`. AgentMemory: `mem_mvhyt2tp_9d246923164f`, `mem_mvhz8vy7_ac0aefbddc65`. The prior exact-base Actions run `39581794809` passed macOS/Windows validation and its macOS package; Windows package execution remains open. No app window was launched; exact-head visual review and Windows CI remain open. Packaged UI workflow acceptance remains 8/25.
+
+## 2026-10-22 Team Briefing popup geometry — issue #9
+
+Added a rendered Rust UI regression for the Team Briefing disclosure. With a populated session fixture, the popup paints its session details and the following Stop control retains its original y-coordinate. The focused regression passes; the broader popup audit passes 21 tests across six suites, and layout/docs coverage passes 19 tests across five suites. This is component-layout evidence only: packaged workflow acceptance remains 8/25, and no product UI behavior changed.
+
+## 2026-10-22 Remaining native menu layout checks — issue #9
+
+Audited every `menu_button` and popup call site after another reported vertical shift. The remaining untested Profile Rules JSON and task-detail editors already use anchored egui popups; rendered tests now verify that the Save action and following task keep their original y-coordinates. Focused popup/UI regressions pass (27 tests across nine suites), warning-denied focused Clippy, `source_layout`, formatting, and diff checks pass. The profile editor regression is included in macOS/Windows native UI CI. No application-source fix was needed and packaged acceptance remains 8/25.
+
+## 2026-10-22 Cargo feature gate for Team Briefing popup regression — issue #9
+
+Actions run `39634545852` failed macOS and Windows because Cargo auto-discovered the new
+`tests/native_room_briefing_layout.rs` target without the `native-ui-probe` feature gate. The test
+now has `#![cfg(feature = "native-ui-probe")]`, matching other UI integration tests. The
+no-default-features target-gate audit and focused Team Briefing popup test pass, as do rustfmt and
+diff checks. The local all-target run completed; one unrelated `cli_workflow` test reported a
+`DirectoryNotEmpty` cleanup error but passed when rerun alone. All other targets passed. No UI
+workflow acceptance changes. Exact-head macOS/Windows Actions verification remains pending.
+
+## [2026-10-22] verify | Recheck Rust menu overlays and exact macOS package — issue #9
+
+The single Rust preview window showed Workspace and Settings menus overlaying the page. Twenty-two rendered menu/popup layout tests passed across six suites. The exact `d23c3c2` macOS package passed help, package/archive validation, and four mock-agent smoke cases across shared/worktree and Git/folder modes; each ran three parallel tasks/tests, refused a pre-approval merge, and verified the approved merge. Evidence: `docs/evidence/issue9-d23c3c2-macos-package.json`. This does not add an accepted packaged UI workflow (8/25). Graphify refreshed without clustering (8,159 nodes, 14,009 edges). Actions run `39687975008` completed: Windows passed and macOS failed in the immediate Settings-dialog dismissal assertion.
+
+## [2026-10-22] fix | Keep MCP import-review results out of Workspace flow — issue #9
+
+The final disclosure audit found one more page reflow: opening the MCP source-selection preview inserted its result cards in the Workspace scroll area and moved the execution controls down by 116 px (anchor y=61 → y=177). A rendered regression reproduced the shift first; the results now use a centered, scrollable window and a reopen control. All other `menu_button` details and long-form dialogs already overlay the page. Fourteen tests across eight focused suites pass, as do warning-denied all-target Clippy, the two-test source-layout target, public-doc checks, formatting and diff checks. The Settings journey passes five local runs after changing the one-frame close check to bounded polling. The exact `83f8e61` macOS package passed validation and four approval-gated smoke modes; evidence is `docs/evidence/issue9-83f8e61-macos-package.json`. Graphify refreshed after the docs update with no additional code-graph topology changes. CocoIndex Code remains unavailable because `cocoindex-code --help` fails to import `mcp.server.fastmcp`. A full all-target attempt was stopped after 483 passed / 14 ignored and is not reported as complete. The previous exact-head CI passed Windows but failed the old one-frame macOS assertion; the current PR has no new checks reported. Packaged workflow acceptance remains 8/25, so issue #9 stays open.
+
+
+## 2026-10-22 | verify | Exact v0.1.34 packaged native plan-to-merge UI — issue #9
+
+Opened the package built from exact source `76d8082b` in one window and completed three concurrent
+mock worktree tasks against a disposable Git project. All task tests passed; the exact candidate
+diff was reviewed; candidate approval and merge confirmation were required; the app reached
+Completed and the disposable project was clean. The custom parser requires `type=result` unless a
+profile mapping declares another terminal event. Evidence:
+`docs/evidence/issue9-76d8082-macos-package-ui-workflow.json`. This repeats accepted workflows 4/5;
+count remains 8/25. AgentMemory: `mem_mvj06ed6_a5514176f478`.
+
+## 2026-10-22 | fix | Match native update indicator to GitHub #127
+
+The upstream v0.1.35 requirement specifies a downward-arrow update control, but the Rust UI still
+painted `↑`. A rendered regression failed with the actual glyph while confirming the localized
+accessible name; changing the glyph to `⬇` made the regression pass. The focused native update and
+source-layout suites pass 11 tests, with formatting, warning-denied focused Clippy, and diff checks
+clean. This is component parity only; issue #9 acceptance remains 8/25. See
+`knowledge/wiki/native-update-indicator.md`.
+
+## 2026-10-22 | feat | Port update repository Settings to the Rust UI — GitHub #130
+
+Added an accessible native Settings entry and a localized editor backed by the existing asynchronous
+Room worker. The rendered UI journey enters `acme/tool`, saves it, closes the editor, and reads the
+persisted value back; backend tests continue to cover GitHub Enterprise URLs and rejection without
+overwriting a valid setting. The manual HTML files were regenerated by the Rust renderer. This
+feature is integrated into issue #9; its packaged workflow acceptance count remains 8/25. See
+`knowledge/wiki/native-update-source-settings.md`.
+
+## 2026-10-22 | feat | Coordinator triage of failed tasks — GitHub #135
+
+The existing bounded coordinator repair loop now also handles an eligible failed run with a
+failed task, unless the task is waiting for availability or the failure is out of scope. A revise
+verdict resets that task and its dependents and resumes the run; a missing coordinator, blocked
+verdict, or unusable review leaves the failure for the operator. Coordinator decisions during
+quota exhaustion remain a follow-up.
+See [coordinator failed-task triage](coordinator-failed-task-triage.md).
+## 2026-10-22 | feat | Port step lessons into the native Agent Room — GitHub #138
+
+The native task-detail bridge returns bounded run lessons and the Agent Room Lessons view renders each lesson's source task, cause, and response in English and Korean. Coordinator revisions and replaced test commands record lessons through the existing run store and memory outbox; prompt and scope-recovery integrations remain in the shared Rust workflow engine. This adds no store, process, or permission path. Packaged UI acceptance remains 8/25 pending exact-package end-to-end evidence.
+
+### Exact-source macOS package checkpoint — 2026-10-22
+
+The pushed `ead895e51bcf92b6d843447cc8c3c00790958a8b` head packages as `aarch64-apple-darwin` with the binary and manifest naming the same source commit. Package validation, packaged `--help`, internal binary SHA-256, and archive CRC pass. The archive hash is recorded in `docs/evidence/issue9-ead895e-macos-package.json`.
+
+The GUI was not replaced because the current application showed an unsaved-workspace warning. Windows exact-head package/runtime and a complete packaged GUI workflow remain unverified; issue #9 stays at 8/25. This checkpoint does not count as UC-28 acceptance.
+
+Existing reviewed lessons are manual, hash-pinned and only reach the same task. New `workflow::step_lessons` records bounded lessons from coordinator revisions, replaced test commands, and approved scope changes, shows them in the Agent Room, adds them to worker prompts, and uses the memory outbox plus best-effort synchronization when AgentMemory is preferred.
 
 ## 2026-10-20 Worktree cleanup after merge or reject (#143)
 
-Repository::remove_worktrees_under removes the linked worktrees that live under a run folder and prunes dangling entries, leaving other worktrees alone. Merge and reject call it after saving the final state; cache clear and workspace deletion call workflow::release_run_worktrees first. Failures are recorded as worktree_cleanup and never fail the run.
+`Repository::remove_worktrees_under` removes linked worktrees contained by a run folder and prunes dangling entries while leaving unrelated worktrees alone. Merge and reject call it after saving final state; cache clearing and workspace deletion call `workflow::release_run_worktrees` first. Cleanup failures are recorded as `worktree_cleanup` and do not fail the run.
+
+## 2026-10-22 Three-task Review row visibility (#9)
+
+Added a full-screen rendered regression for the prior observation that a manual plan summary showed
+three tasks but only two editor rows seemed visible. At 1140×772, all three localized task controls
+are present and inside the viewport. The initial English-only expectation was invalid under the
+Korean host locale; no current-source UI defect was reproduced. This test does not claim exact
+package, Windows, or new workflow acceptance. See `docs/evidence/issue9-review-three-task-rows.json`.
 
 ## 2026-10-20 Collapsible task detail with decision-driven opening (#146)
 
@@ -616,22 +1502,532 @@ workflow::decisions derives one list of coordinator judgments from existing audi
 ## 2026-10-22 Launch gate (#149 step 2)
 
 workflow::guardrail::launch_gate resolves every agent executable and task test command (PATH, absolute, project-relative, or a script a task writes inside its owned paths) before the run folder is created and refuses with typed violations; a passed gate is a launch_gate audit record shown as a gate judgment. No command is executed: a dry run would mutate the project and tests legitimately fail before the work exists.
+## 2026-10-23 Native typed coordinator amendments (#149 step 3)
 
-## 2026-10-22 Typed plan amendments (#149 step 3)
+TDD: the new Revision contract test first failed to compile because typed `add_paths` and
+`add_dependencies` were absent. Rust now accepts those bounded fields while preserving old review
+records. The existing plan validator rejects malformed, overlapping and cyclic scope/dependency
+changes; broad top-level directories, sensitive paths and the five-change budget escalate without
+mutating the plan. Safe amendments are audited and can be undone from the native Agent Room; undo
+invalidates derived evidence and stops the run for explicit resume. The mock coordinator tests the
+complete failed-scope → amendment → re-execution → waiting-for-approval flow and the human undo.
+Focused Rust/UI tests pass (22 tests across five suites); after review, explicit dotted directory
+scopes and duplicate dependencies received additional regressions and pass. All touched source and
+test files are under 300 lines. Warning-denied all-target Clippy, formatting, source layout and
+manual rendering pass. Offline all-target tests pass 925 / 14 ignored / 306 suites when one unrelated
+UI-start test is filtered; the unfiltered run blocks inside Controller::snapshot → Store::open.
+Graphify was refreshed against the current tree (8,737 nodes / 13,793 edges) to confirm guardrail
+and amendment ownership; generated graph output is ignored local data. Step 4 charter/drift checks
+and Windows/package acceptance remain open.
 
-Revision gains add_paths and add_dependencies; guardrail::amend validates with the plan rules and classifies risk (top-level directory or sensitive path = person); workflow::amendments applies low-risk ones inside the review step under a budget of five, records applied, escalated and undone amendments with previous values, and amendment_undo restores them. repairable now includes out-of-scope failures; an escalation blocks the run and stops the repair loop. The room lists amendments with an Undo button.
+## 2026-10-23 Charter persistence and goal-drift gates (#149 step 4)
 
-## 2026-10-22 Charter and goal-drift check (#149 step 4)
+TDD started with a failing compile test for Plan rules, Report charter, drift checks and typed
+amendments. The implementation persists the approved goal, planning-rule SHA-256 and ordered task
+ID/path/dependency/test contract. Scheduler, review, approval and merge boundaries reject
+unrecorded changes as `goal_drift`; the existing decisions list exposes the audit event. Old Plan
+and Report JSON remains readable. Coordinator amendments, test-command replacements and
+operator-approved scope recovery update the charter; Undo restores the prior contract. A first
+full regression caught scope recovery omitting the charter update; that flow was fixed and the
+unfiltered offline suite then passed 932 tests / 14 ignored / 307 suites. Warning-denied Clippy,
+source-layout, format and diff checks pass; changed Rust files remain at or below 300 lines.
+Graphify indexed the current source (8,762 nodes / 15,015 edges). `/private/tmp` was 463 MB and
+contained other-project files, so it was preserved; this worktree's 14 GB Cargo `target/` is a
+rebuildable cache to remove after final local checks. CocoIndex is not installed in this environment.
 
-guardrail::charter records the goal and original scopes at run start, drift counts paths beyond it, amendments above eight escalate with goal_drift, the review evidence carries the charter, and an approved scope change records an updated charter. Last step of #149.
+## 2026-10-23 Rust port of quota credit rounding (#162)
 
-## 2026-10-20 Credit balances rounded for display (#162)
+The Rust quota display helper now rounds finite amount strings below the `1e15` magnitude bound,
+matching the merged main fix for issue #162. Invalid, non-finite, and out-of-range strings remain
+verbatim; quota snapshots and percentages are unchanged. Red reproduced the long fractional amount.
+Quota display tests pass 7/7, source-layout 2/2, warning-denied all-target Clippy, rustfmt, and diff
+checks pass. Changed Rust files are 147/200 lines. The exact-source package and Windows display have
+not been checked; issue #9 remains at 8/25 acceptance pending packaged UI verification. The
+unfiltered locked/offline all-target suite subsequently passed 933 tests / 14 ignored / 307 suites
+on exact source `b7b67a0c`. Source `97876887c26d` then built a local arm64 macOS release
+package. Manifest, binary and archive checksums validate; the packaged binary passed four mock
+smoke cases for parallel task execution, test results, approval refusal and post-approval merge.
+The package evidence is in `docs/evidence/issue9-97876887-macos-package.json`. The native screen,
+Windows execution and 8/25 packaged UI acceptance remain unchanged.
 
-quota display amount now rounds finite numeric text to a whole number and leaves other text unchanged; the allocation text in badges and the room budget rows uses it. The stored precise values and percentages are unchanged.
-## 2026-10-23 Feedback to the coordinator (#165)
+## 2026-10-23 Manual coordinator fallback during quota waits (#9)
 
-workflow::coordinator_request runs the recorded coordinator through the evidence review with the operator text, records queued, processing and completed or failed, and resumes only when it revised tasks; the coordinator-request broker command and Action::CoordinatorRequest (moved with Action into src/ui/controller/action.rs) carry it; the room enables the box in the coordinator view with a separate draft; the snapshot now names the recorded coordinator.
+Implemented the pending R-163/DD-173 follow-up: a manual evidence review uses the selected
+coordinator when its shared account has reset; otherwise it waits for the existing `fallback_due`
+deadline and follows only its registered, unrestricted fallback chain. The fallback model reaches
+the read-only CLI invocation. Audit receipts include requested/effective coordinator IDs and the
+selected model. A missing restriction fails closed; before eligibility there are no review process
+artifacts. This does not auto-triage quota waits or alter task retries/assignment.
 
-## 2026-10-28 Quiet idle-poll timeouts (#221)
+TDD first reproduced the old refusal, then passed both deadline/fallback cases. Review, fallback,
+availability, repair, docs and source-layout suites pass 43 tests. The full locked/offline all-target
+run passes 935 tests / 14 ignored / 308 suites; warning-denied Clippy, rustfmt, diff checks and the
+300-line limit pass. Graphify updated to 8,782 nodes / 15,068 edges; CocoIndex is unavailable.
+`cargo clean` removed 44,958 files / 11.8 GiB and preserved `dist`. #9 remains at 8/25 pending
+packaged UI and exact platform acceptance.
 
-Scheduled workspace and room polls are marked as background observation and suppress their own timeout toast. Shared page request deadlines pause while hidden, resume with remaining visible time, and restart when a callback is materially late after suspension. Explicit refreshes keep visible errors; no native request is automatically retried. Rust native parity and its regression test follow after the verified main issue branch is merged.
+## 2026-10-23 Exact-package Agent Room reinspection (#9)
+
+Built and launched the v0.1.36 macOS package from `01f6443b804918ee23b4bd12d84e9e3e64674a16`.
+In the retained disposable mock workspace, the Agent Room showed three completed tasks and three
+passing tests, candidate diff, per-task session IDs/raw JSONL, zero coordinator judgments, and a
+read-only team briefing with absent processes and stale results. The candidate remains pending
+human approval; no approval or merge occurred. This repeats an existing fixture and does not change
+the 8/25 workflow acceptance count. Windows UI and later plan charter/drift checks remain open.
+
+
+## 2026-10-23 Exact-package goal-drift label display (#9)
+
+The exact macOS package from `aa8090405239` rendered the Korean goal-drift coordinator
+judgment in its native Agent Room. To preserve the user's approval candidate, the event was
+inserted only into a disposable copy of the pending run under `/private/tmp`; the original
+database still has zero goal-drift events. The copied UI showed 3/3 tasks and 3/3 tests. No
+approval, rejection, or merge was performed. The original single-window view was restored and
+the copy removed. This verifies the packaged label rendering only; workflow acceptance remains
+8/25 and Windows package/UI verification remains open.
+
+
+## 2026-10-23 Exact-package Workflow 9: post-approval drift refusal (#9)
+
+The exact v0.1.36 package approved the exact candidate in an isolated run copy. After a matching
+baseline charter was added only to that copy, the plan goal was changed. The packaged merge
+command rejected the operation with `[goal_drift]`, persisted one coordinator judgment, and
+left the fixture repository HEAD unchanged. The Agent Room showed the Korean blocked label and
+disabled Merge while retaining 3/3 task/test evidence. The original app-managed run remained
+pending approval with zero drift rows, was restored, and the copy was removed. This distinct
+failure-path workflow advances packaged acceptance from 8/25 to 9/25; Windows UI remains open.
+
+## 2026-10-23 Exact-package Workflow 10 and branding review (#9)
+
+Workflow 10 used the exact v0.1.36 package at `b298ae79774e` to send a coordinator-directed
+operator request in a disposable copied run. The queued, processing and completed states rendered,
+and the read-only response cited evidence. All tasks/tests remained complete; the candidate stayed
+pending approval and the original run was untouched. Evidence:
+`docs/evidence/issue9-b298ae7-packaged-ui-coordinator-request.json`. Acceptance is **10/25 (40%)**.
+
+The exact package from source `6f1111c5ae61c91933e03a20fb04a4df513193de` was then opened in the
+single app process. The Agent Room showed the shared AC mark/name/version once; candidate review
+displayed three diffs and three passing tests. The temporary candidate remained
+`waiting_approval`, and approval/merge were not triggered. This component verification adds no
+workflow. Docs commits `c02ce6a0` and `4c5714d9` record the screen check; archive SHA-256 is
+`6ae1d923a7af0485d47314325197bef0d96f9a4cd724c5d07b9df851be4d9be4`.
+## 2026-10-23 Upstream main parity audit for the Rust branch (#9)
+
+Fetched `origin/main` at `c9c575a7` and compared its seven commits since shared base `e9d1f1ff`.
+The #149 amendments/launch gate/charter, #156 CI readiness, #162 quota rounding, and #165
+coordinator feedback have equivalent Rust implementations on the issue branch. Six focused
+suites pass 22 tests. The Rust branch intentionally does not merge main wholesale: main has 47
+project-owned JS/CJS/Python files and consolidates Rust modules, while the issue branch contains
+none of those extensions and maintains the 300-line limit. Main's R-172 renumber for #165 would
+also collide with the existing #156 R-172 trace, so Rust keeps #165 at R-173. This audit changes
+no packaged workflow acceptance and keeps #9/#149 open pending review and release acceptance.
+
+## 2026-10-23 — Agent Room shared-branding contract
+
+The selected-language Agent Room regression suite still expected the app name inside the page,
+although the shared native shell owns that branding. Corrected the test to assert that the app name
+is absent from the page. The initial related run caught this stale expectation; after the test-only
+fix, the room-language suite passed 3/3, related status/language/render suites passed 19/19,
+source-layout passed 2/2, and formatting passed. Graphify refreshed to 8,862 nodes, 14,004 edges,
+and 688 communities. CocoIndex is unavailable in this environment (`cocoindex` command missing).
+No UI behavior or packaged acceptance changed.
+
+## 2026-10-23 — Coordinator amendment bounds and test-command repair (#149)
+
+Compared the latest seven commits on `origin/main` against the Rust port. The Rust review parser
+accepted up to 32 paths / 12 dependencies and 4,096-byte path values, while main's current
+deterministic gate is eight entries per type and 1,024 bytes per entry. A red coordinator-contract
+test reproduced the wider acceptance. Added one shared bounds check at review and application
+boundaries. Added a full failed-check → coordinator test-command replacement → audit/charter update
+→ exact Undo test; it first failed because the fixture only proposed scope changes. The corrected
+fixture and test pass. Six related suites pass 28 tests; source-layout 2/2, all-target warning-denied
+Clippy, formatting and diff checks pass. Files remain below 300 lines. Graphify refreshed to 8,873
+nodes / 14,024 edges / 683 communities. The upstream test-command feature remains required by the
+open #149 issue; this port keeps it inside the typed, validated, auditable amendment path.
+
+## 2026-10-23 — Agent Room review and activity layout (#9)
+
+At the 1140 px reference viewport, the previous Rust layout gave the center review column about 428 px and let activity cards shrink to 257 px despite unused review space. Red tests now require a 550 px review span, a bounded inspector, and activity frames at least 540 px in a 620 px test surface. The summary and inspector widths were balanced, and each activity group now takes the parent review width.
+
+The exact macOS arm64 package from `1f152729e0c3babd0beb2b6338536b667ea1671c` was validated and inspected in one v0.1.36 window. The activity cards span the center column; the inspector stays bounded. Candidate `3db8840b02ce28558701698c327a5820b7dc7311` remained `waiting_approval` with 3/3 tasks/tests; no approval, rejection, or merge occurred. The full locked/offline suite passed 929 tests (14 ignored), and Clippy, release build, formatting, and the 300-line source check passed. Graphify reports 8,886 nodes / 14,036 edges / 689 communities; CocoIndex is unavailable. This component visual check keeps packaged acceptance at 11/25. Package evidence is in `docs/evidence/issue9-1f152729-agent-room-layout.json`.
+## 2026-10-23 — Fix first-use company Messenger test payload (#9 / workflow 13)
+
+The exact v0.1.36 package at `2ef5c3b` reproduced a failure in Settings → Messenger: changing
+from Slack to company webhook caused the view to turn an unset template into `Some("")`; the
+explicit test action then failed with `message body is not JSON` before the curl transport ran.
+A new AccessKit-backed test failed red on the empty editor value. The view now seeds the editor
+with the same `{"text":"{{text}}"}` default that the Rust payload builder already uses, and the
+regression verifies that the production renderer produces a JSON object. The focused Messenger
+suite passes 2/2, source-layout 2/2, public-docs 11/11, all-target native-feature Clippy with
+warnings denied, rustfmt, and diff checks pass; changed Rust/test files are below 300 lines.
+
+The exact-source UI Send test now passes in one isolated macOS package window: the JSON body is
+visible and the UI reports “Test message sent.” The loopback-only fake curl captured the HTTPS URL
+and JSON request body; no external request was sent, and the disposable settings were not saved.
+This accepts Workflow 13 and raises packaged UI acceptance to 13/25 (52%); shipped/default Rust
+UI remains 0/25. The broader local all-target test run was stopped at 637 passed / 14 ignored and
+is incomplete. Graphify's read-only integrity check reports 8,916 nodes, 14,081 edges, and no
+dangling endpoints; the source module is present, but Graphify found no path from that module to
+the integration test, so no source/test link is claimed. `ccc status` confirms CocoIndex has not
+been initialized for this project; no index result is claimed.
+
+The fixed source `9845db79af26` now builds and passes package-release smoke, package validation,
+packaged help, ZIP integrity, and checksum verification for macOS arm64. Binary SHA-256 is
+`0c4e1fa888cc18d13da40f81683032686829a79ea5411250a2b4ab59c8397a23`; archive SHA-256 is
+`6bba2a52980147a01402949749789d6d49a615406a9399b5bdd9b449724b1570`. Idle Cargo incremental/temp
+caches were removed before this build; the post-package target size is 9.6 GB (8.8 GB debug,
+731 MB release). The CUA screenshot was inspected but not saved as a repository artifact.
+
+## 2026-10-23 — Complete the current-head native-feature regression (#9)
+
+The earlier broad test attempt at the same product source was stopped at 637 passes and 14 ignored; it was incomplete. The full rerun at docs head `12d6d808` completes with 938 passed, 14 ignored and no failures across 310 test binaries in 363.89 seconds. Warning-denied all-target Clippy, rustfmt, and diff checks also pass. This closes the source-level regression gate only: packaged UI acceptance stays 14/25, shipped/default Rust UI remains 0/25, and Windows/package/UI, accessibility/IME, resource, current-manual screenshot, and final-source license checks remain open. Evidence: `docs/evidence/issue9-full-regression-20261023.json`.
+
+## 2026-10-23 — Review workspace and settings overlays (#9)
+
+The existing v0.1.36 macOS package was inspected read-only in one window. The workspace menu does not shift the underlying page; MCP registration and workspace-sharing dialogs show no visible overlap at 1140×768 in Korean dark theme. No settings were saved and no workspace was switched. This does not add packaged workflow acceptance. AgentMemory: `mem_mvkd4i5n_771f4210cdac`.
+
+## 2026-10-23 — Verify packaged native cache maintenance (#9 / workflow 14)
+
+The exact macOS arm64 v0.1.36 package from `9845db79af26` ran in one isolated app window with a temporary HOME. A synthetic completed quota-query cache entry appeared in Settings → Preview and clear local cache as the only eligible entry; the protected/uncertain count was zero. Clearing the reviewed digest reported one removed entry. Filesystem checks confirmed the fixture was gone while the 938-byte `startup.json` remained. The temporary app and HOME were removed, and the user's existing package window was restored with its saved workspace intact.
+
+`native_ui_cache` passes 7 tests, `cache_cleanup` 4, `public_docs` 11, and `source_layout` 2. The UI screenshot was inspected but not retained; this validates only the macOS package. CocoIndex is unavailable in the current runtime (`cocoindex` is not installed); no index result is claimed. Graphify diagnostic reports 8,916 nodes and 14,081 edges with no dangling endpoints. A narrow query finds `preview()`, `RequestWorker`, and the native worker fixture, but the module-to-test path remains indirect, so no direct edge is claimed. Evidence: `docs/evidence/issue9-9845db79-cache-cleanup-ui.json`.
+
+
+## 2026-10-23 — Check current-source bilingual manual assets in the macOS package (#9)
+
+The v0.1.36 package built from issue-9 source `575fef74` passed package validation with 242 dependency records. English/Korean HTML manuals and Agent Room PNG hashes match the current source assets. The generic CUA selector showed a saved workspace outside the isolated test root, so exact-package manual display was not accepted and no UI action was taken. Packaged UI acceptance stays at 15/25. Evidence: `docs/evidence/issue9-current-source-package-manual-20261023.json`; AgentMemory: `mem_mvksk77o_52dd00979543`. CocoIndex was unavailable; no CocoIndex result is claimed.
+
+## 2026-10-23 — Confirm exact-package manual rendering (#9)
+
+Retrying with Launch Services arguments opened the exact v0.1.36 package under an isolated `HOME` and workspace. The in-app User manual rendered its dark Korean Workspace screenshot and its English Agent Room screenshot of three completed tasks, passing tests, and pending human review. The first generic app-selector mismatch remains recorded as a discarded attempt. No task, approval, or merge occurred, and workflow acceptance remains 15/25. Evidence: `docs/evidence/issue9-current-source-package-manual-20261023.json`.
+
+## 2026-10-23 — Port the Google Rust review policy to the migration branch (#169)
+
+Ported the selected review policy and R-174 → DD-185 architecture trace from `main` into the Rust migration branch. The policy adds no lint gates or source cleanup; stable rustfmt, warning-denied Clippy, and the 300-line changed Rust-file guard remain authoritative. TDD contract `rust_review_policy` failed before the missing document was ported. The scoped Graphify query and final tests are recorded in the implementation plan; CocoIndex is not installed on this host.
+
+## 2026-10-23 — Refresh issue #9 PR and release-version audit
+
+TDD refreshed the PR #22/current-release audit after push `02cc8eb`: GitHub reported OPEN/DRAFT, base `main`, merge state `UNKNOWN`, and no checks; `origin/main` was `602ec118`, v0.1.37 was published, and the Rust branch remained v0.1.36. The changelog merge conflict is unresolved. Recheck the release and align to the next stable version before packaging. Focused status/docs/layout tests passed 14/14, formatting and diff checks passed. AgentMemory: `mem_mvkv768g_ad00e2a409b0`.
+## [2026-10-23] verify | Copy exact #9 source archive to existing UTM Z: share
+
+The user clarified that Windows already has `Z:` mapped and provided its host folder `/Users/neodamul/Downloads/UTM`. Copied the source archive for branch head `c4cbd2a6c13b5ab59f50b1efa37842a54a9c7a9c` into that folder; Finder shows the archive. UTM stayed started and input capture was restored off. The Windows restart-apps confirmation remains visible, so guest-side file access, build, package and UI remain unverified. No VM restart or shutdown was selected. Packaged UI acceptance remains 15/25, shipped/default Rust UI 0/25. Evidence: `docs/evidence/issue9-utm-z-share-transfer-20261023.json`.
+
+## 2026-10-24 — Integrate latest main into issue #9 Rust branch (#169 / #172)
+
+Merged current main `3bcfebf21908` into the issue-linked Rust branch as `4a53cf66516e`. Preserved #172 safety rationale and Windows quota/picker updates while retaining Rust-only native UI helpers and the 300-line file split. The initial compile failure for provider icon decoding and picker arguments was fixed. Local native-feature tests pass 959 with 14 ignored across 319 suites; focused journey/docs/layout 14/14, public docs/source layout 13/13, safety Clippy, rustfmt, and diff checks pass. Graphify: 9,201 nodes / 14,401 edges / 701 communities. CocoIndex unavailable in this environment. Current CI run 39999933920 is pending; no UI acceptance credit. See [current-main Rust parity](current-main-rust-parity.md) and evidence `docs/evidence/issue9-main-merge-20261024.json`.
+
+## 2026-10-24 — Recheck UTM Windows guest channel after approved reset
+
+Recorded that the VM reset completed and guest-agent file access partly recovered: one `C:\Windows\win.ini` pull succeeded, while the UTM display remains inactive and the guest `Z:` probe does not verify the interactive user's mapping. A later session query hung. No share change or second power action occurred. Plan, completion audit and evidence JSON are updated; 13 public-doc/source-layout tests pass. GitHub run `40000373810` continued on the previous documentation head while this follow-up was staged. See [UTM Windows guest access](utm-windows-guest-access.md) and `docs/evidence/issue9-utm-windows-recheck-20261024.json`.
+
+## 2026-10-24 — Recheck UTM Windows guest channel after approved reset
+
+Recorded that the VM reset completed and guest-agent file access partly recovered: one `C:\Windows\win.ini` pull succeeded, while the UTM display remains inactive and the guest `Z:` probe does not verify the interactive user's mapping. A later session query hung. No share change or second power action occurred. Plan, completion audit and evidence JSON are updated; 13 public-doc/source-layout tests pass. GitHub run `40000373810` completed only partially and was cancelled by the later checkpoint push. See [UTM Windows guest access](utm-windows-guest-access.md) and `docs/evidence/issue9-utm-windows-recheck-20261024.json`.
+
+## 2026-10-24 — Build exact issue-head local macOS Rust package
+
+Built and smoke-tested the current issue branch head `8ef672bd` using `cargo run --offline --locked --release -- package-release`. Package validation and ZIP integrity passed; all four shared/worktree × Git/folder smoke cases passed with three parallel tasks/tests, approved merge, and unapproved-merge refusal. The 18,858,304-byte binary SHA-256 is `95746fd5052c7c4fde4472ecce7afa7db2b01ec38a94c612bc9f15b4e0a78e4e`; the archive SHA-256 is `605ee5e9b65e26e41a9a2c5b9a9a4151fe41655bc5ee1d3cd5dc12e4e1bfa519`. Package includes the 242-component SBOM, dependency license bundle, notices, and bilingual manuals. Evidence: `docs/evidence/issue9-local-macos-package-8ef672bd-20261024.json`; see [native release packaging](native-release-packaging.md). No release or visual workflow credit is claimed.
+
+
+
+## 2026-10-24 — Existing-package Settings gear spot-check
+
+Bound the already-running `f23381cf` v0.1.37 app by full bundle path, avoiding a second process. Visual and accessibility inspection confirmed the gear-only `설정` button and Settings menu actions; Escape closed the menu. The Settings renderer and its regression test have no source diff from that package commit to the current branch. The existing app displayed saved workspace/profile data, so no isolation or workflow credit is claimed; nothing was changed, and a screenshot was not committed to avoid exposing workspace context. Evidence: `docs/evidence/issue9-settings-gear-existing-package-20261024.json`.
+
+
+Graphify refreshed after this observation: 9,223 nodes, 14,423 edges, 697 communities; 369 code files extracted and 380 unclassified paths skipped. CocoIndex CLI is unavailable.
+
+
+Read-only package screen review covered Agent Roles and Plan Review. Six roles and primary/fallback model controls were visible; Plan Review reported no reviewed plan with save/run disabled. Returned to Workspace; no plan execution or data mutation. No isolated acceptance credit.
+
+
+Focused current-source regression tests for Settings appearance, Agent Roles, Plan Review, workspaces, and planning stop passed 23/23 across six suites without launching a desktop process. This strengthens component verification but adds no packaged UI acceptance.
+
+## 2026-10-24 — Refresh 0.1.37 public Workspace documentation captures
+
+Replaced the stale README screenshot and refreshed the bilingual manuals' light/dark Workspace captures using the current-source Rust UI probe in fresh temporary homes. Set README and Markdown manual version labels to the latest published 0.1.37; regenerated both offline HTML manuals through the Rust renderer. Focused docs/manual/screenshot tests pass 14/14. The update lookup is the public GitHub release metadata GET; no provider CLI/MCP or user profile data was used. Agent Room screenshots, Windows UI and packaged UI acceptance were not checked or credited. See `native-screenshot-provenance.md` and `docs/evidence/issue9-current-workspace-docs-20261024.json`.
+
+## 2026-10-24 — Revalidate #9 current-head platform journey
+
+The previously failing macOS Step 3 test passes locally on the current source; the current Actions run 40003966004 also passes the entire macOS job. Do not make a speculative fix based on the older failure. The Windows job passed build and layout and is still in native tests. Local formatting and public-doc/source-layout checks pass. UTM remains started with IP 192.168.64.6, but guest process launch fails with OSStatus -2700; no power/share change was made. Acceptance stays 15/25 packaged and 0/25 shipped/default Rust UI. Evidence: `docs/evidence/issue9-current-head-platform-recheck-20261024.json`.
+
+## 2026-10-24 — Exact current-source macOS package and UI inspection
+
+Built and validated local v0.1.37 macOS arm64 package from commit 08a1783. Package smoke passes four shared/worktree × Git/folder cases with three concurrent tasks/tests; approved merges verify and unapproved merges are refused. Exact package UI was inspected once under an isolated HOME; only read-only navigation was used. Package includes current bilingual docs/screenshots, 242 dependency license records and SBOM components. Removed older generated dist packages, retaining the current candidate. This is not a release or new workflow acceptance. Windows remains open. See `native-release-packaging.md` and `docs/evidence/issue9-local-macos-package-ui-08a1783-20261024.json`.
+
+## 2026-10-24 — Windows native test step completed on current CI
+
+Actions run 40003966004 has advanced: Windows build, source/test layout and all-target native tests passed; opt-in native UI launch is active, formatting/lint/safety are pending. macOS full validation remains passed. Do not claim cross-platform validation until the active Windows job completes. This is remote test evidence only; UTM guest execution and `Z:` remain unverified.
+
+## 2026-10-24 — Approved UTM Windows reset follow-up
+
+User approved the warned VM reset. Force-stopped and restarted only the confirmed `Windows` VM; it returned to `started` with IP `192.168.64.6`. Guest execution still fails with OSStatus `-2700`, and UTM says “Display output is not active.” The reset did not restore the guest agent; do not repeat power/share changes without a new reason. Actions 40003966004 had passed Windows all-target native tests, with UI launch still running at observation. See the issue #9 Windows progress evidence.
+
+## 2026-10-24 — Windows UI and formatting checks passed
+
+Actions run 40003966004 passed Windows opt-in native UI launch and formatting, in addition to build/layout and all-target tests, then failed warning-denied Clippy because `tests/windows_console.rs` re-exported unused `language`; the unsafe-comment gate was skipped. Removed that unused export. Local all-target Clippy and formatting pass; the full local test suite is running. UTM reset result is unchanged: VM started at 192.168.64.6 but guest process execution still fails with OSStatus -2700 and display output is inactive.
+
+## 2026-10-24 — Exact pushed-head package and CI rerun
+
+Built and validated the exact pushed head `278ad6d` as local v0.1.37 macOS arm64. Manifest and ZIP integrity pass; four embedded shared/worktree × Git/folder smoke cases pass. Retained the newest candidate and removed the superseded package/smoke run. Platform Validation run 40008320185 passed all macOS checks and Windows build/layout/all-target tests; the Windows native UI launch step is now in progress, with later checks pending. No new packaged UI acceptance. See `docs/evidence/issue9-local-macos-package-278ad6de-20261024.json`.
+
+## 2026-10-24 — workflow 19 session/model package verification
+
+Exact v0.1.37 macOS package at source `6ca19965` displayed `fixture-session-19`, exposed only two fixture-observed models, saved `fixture-large`, and persisted it through the native Rust action. A deterministic local JSONL fixture intentionally failed; model editing invalidated its evidence and the run was stopped. Four focused task-control tests, package validation, and ZIP integrity pass. Packaged acceptance is 19/25; shipped/default Rust UI remains 0/25. No provider CLI, MCP, or external service ran. Evidence: `docs/evidence/issue9-workflow19-session-model-20261024.json`.
+
+## 2026-10-24 — workflow 21 task activity, raw logs, and lessons
+
+Exact v0.1.37 macOS arm64 package `6ca19965` displayed normalized Activity, separate JSONL Raw logs, and task-specific Lessons from deterministic mock state. The run stayed at `waiting_approval`; no decision or merge was made. Focused tests passed 9/9. Packaged acceptance is 20/25; shipped/default Rust UI remains 0/25. The package window and temporary fixture were closed/removed. Windows display and package runtime remain unverified. See `docs/evidence/issue9-workflow21-task-activity-20261024.json`.
+
+## 2026-10-24 — native manual AccessKit text regression
+
+Added a source test proving the manual's headings, prose, command-table cells, code and screenshot alternative text are represented in AccessKit updates. Text uses `TextRun.value`, not `node.label`; no product-source fix was warranted. Exact-package visual inspection showed current tables and Workspace/Agent Room illustrations, but VoiceOver remains unverified because the interactive CUA tree omitted text runs. The check adds no packaged acceptance. See `docs/evidence/issue9-manual-accesskit-text-20261024.json`.
+
+## 2026-10-24 — workflow 20 package UI attempt stopped safely
+
+A disposable package CLI run reached `waiting_availability` using only a local Rust mock, and `native_ui_task_scheduling` passed 3/3. The CUA binding by display name showed an existing Workspace with saved profiles instead of the requested Agent Room, so no schedule or other control was touched. The run and temporary tree were removed. Automatic quota queries may have occurred because the visible Workspace had refresh timestamps; this is not verified. No packaged workflow acceptance is claimed. A follow-up unique-bundle launch aborted with signal 6 before CUA exposed a window; its disposable run/root were stopped and removed. Resolve reliable launch/window binding before another UI attempt. See `docs/evidence/issue9-workflow20-package-ui-attempt-20261024.json`.
+
+
+## 2026-10-24 — Windows waiting-task schedule regression
+
+Actions run `40098597709` passed macOS validation but found that the Windows UI request guard rejected schedule actions while the top-level workflow remained running. UI Automation successfully set the timestamp and invoked the enabled button; the app did not persist it. Added a regression reproducing the rejection, then allowed schedule actions through the active-job guard while retaining waiting-task and timezone checks. Focused schedule suites, source layout, rustfmt, and Clippy pass locally. Exact Windows package rerun remains required. Graphify refreshed to 9,404 nodes / 15,859 edges; CocoIndex CLI is unavailable. Evidence: `docs/evidence/issue9-windows-schedule-regression-20261024.json`. UTM remains at Windows sign-in; no guest reset/restart was performed.
+
+## 2026-10-25 — Windows schedule driver marker contract
+
+A focused source-level regression test exposed a guaranteed false failure in `tests/windows_schedule.rs`: the UI script emitted `SCHEDULE_ACTION_INPUT_SENT`, while the Rust driver accepted only `SCHEDULE_CLICK_SENT`. The new seven-line test failed against the mismatched driver and passed after aligning the success check. Focused marker, schedule, briefing, native scheduling interaction, and source-layout suites pass (5 suites); formatting passes; the schedule test remains exactly 300 lines. Actions run `40160742328` targets the pre-fix commit and is not Windows package acceptance for this correction; exact-head run `40161383352` is now in progress on `07b988cd3cdc2b285dc3d49e993f68ec576745ab`. Keep the package gate and issue #9 acceptance count pending until an exact-head Windows package test persists `manual_schedule` and displays the briefing. CocoIndex CLI is not installed in this environment (`rtk which cocoindex` returned no path).
+
+## 2026-10-25 — Exact-head Windows validation progress
+
+Run `40161383352` on `07b988cd3cdc2b285dc3d49e993f68ec576745ab` passed every macOS validation step, including all-target tests, native UI checks, formatting, Clippy, and the unsafe-block gate. The Windows job remains in `cargo build --all-targets`; Windows tests and package acceptance have not started. Keep issue #9's package count unchanged.
+
+## 2026-10-25 — Windows desktop goal input dropped the final character
+
+Exact-head run `40161383352` on `07b988cd3cdc2b285dc3d49e993f68ec576745ab` passed macOS validation, Windows build/layout, `windows_briefing`, and `windows_schedule` (2 tests). Windows `windows_desktop` failed because `SendKeys` persisted `Windows UIA go` instead of `Windows UIA goal`; the Windows package job was skipped. Added a source regression test that failed while the driver used SendKeys, then replaced it with UIA `ValuePattern.SetValue` and a bounded read-back check before Save. The regression, Windows desktop harness compile, and source-layout suites pass locally (3 suites); rustfmt passes. Exact-head Windows runtime/package retest remains required; package acceptance remains 21/25. Graphify: 9,433 nodes / 15,895 edges. CocoIndex CLI is unavailable.
+# [2026-10-27] verify | Wait for packaged Windows Schedule retry to become enabled — issue #9
+
+Run `40421602785` passed source validation for both platforms and exact package execution on macOS. On Windows, package smoke, default desktop save, and briefing passed; the schedule test entered the target timestamp but saw `Schedule retry` disabled after foregrounding and refreshing the UIA tree. Red: `windows_schedule_dispatch` failed without a post-focus wait. Green: driver now re-reads the window/button for up to five seconds; focused suites pass 16 tests; formatting, diff, and 300-line checks pass. AgentMemory: `mem_mvpy0bdk_66c24c69434f`. Acceptance stays 20/25 until exact Windows package state proves the timestamp persisted. Evidence: `docs/evidence/issue9-windows-schedule-40421602785-20261027.json`.
+
+## 2026-10-27 — Native Rust signal settings port — issue #9 / R-131 / QAS-127
+
+The Rust Settings menu had no route to the existing workspace signal preference, despite R-131 and DD-140 requiring it. TDD red: `settings_menu_opens_signal_transport_preferences` failed because the accessibility tree contained no transport entry. Green: added a centered async native dialog using existing `signal_transport` and `set_signal_transport` controller messages. Local Rust hides the agentmemory port control; saving retains the last nonzero port. Read failure cannot overwrite stored settings, and opening the dialog cannot replace another pending controller request. Input/selection geometry is separated and at least 36 px high. Focused UI/route/layout/capture tests pass (17); the full offline all-target run now passes 1,008 tests, 14 ignored, across 331 suites; capture-feature Clippy, rustfmt and the 300-line gate pass. Rustfmt, diff checks and warning-denied Clippy pass. Graphify refresh: 9,577 nodes / 14,909 edges / 715 communities. CocoIndex structural grep confirmed one controller-send boundary; full project indexing was unnecessary. AgentMemory: `mem_mvq6n14x_5e0cdb198ad9`. This is native Rust prototype work only: no packaged acceptance credit, package restart, release, or Windows visual acceptance is claimed. Automated save/reopen against a disposable preference file is verified; the loaded Settings dialog was visually verified at 1140x740 (SHA-256 69f5d67c6d66d6da49426da9263f0c79493a69f62ec6c9dc601c4c23d4f38787).
+
+## 2026-10-27 — Windows packaged schedule fallback driver — issue #9
+
+Commit `09383e9507807ef1669aacc06125216e6b79ce30` extracts the exact-package PowerShell UI driver into a Rust fixture and tests UIA button focus/invoke plus foreground- and process-checked pointer fallback. This earlier checkpoint was written while run `40496851499` was still in progress; the completed run and resulting schedule failure are recorded in the following entry. AgentMemory: `mem_mvqlttn1_efca9941fe3b`, `mem_mvqm49ye_0ce781537be6`.
+## 2026-10-27 — Windows packaged schedule dispatch follow-up
+
+Run `40496851499` validated macOS/Windows and packaged the exact macOS/Windows builds. Windows briefing and default desktop passed, but the scheduled timestamp was not persisted after a process-checked pointer input fallback; `available_at` remained null and signal-settings was not reached. Artifact `12732733595`, SHA-256 `7fc2cc49b4204b29b679b87052fa6a293b6cb2f50e37e5126fa7916e12937689`. A test-first guarded keyboard fallback was added; local focused suites pass 13/13. Exact Windows package verification remains pending and acceptance stays 22/25. Evidence: `docs/evidence/issue9-windows-schedule-40496851499-20261027.json`; AgentMemory: `mem_mvqn4p9k_43683bca7d5c`.
+
+## 2026-10-27 — Windows signal-settings activation follow-up — issue #9 / UC-121
+
+Run `40504210152` showed that clicking the Settings menu action did not open its destination dialog. Commit `de1b5bff` adds guarded same-process UIA keyboard activation and waits for the expected destination control before pointer fallback. Six local suites pass 27 tests; warning-denied Clippy, rustfmt, diff checks, and the 300-line limit pass. Workflow `40512063929` passed both platform validation jobs and the exact macOS package (artifact `12740230574`, SHA-256 `730d336f344e98c3c9ed41ebf86cb94c9ef6db1396b1efbebf6f1382b818d657`); Windows packaging and settings persistence are pending. Acceptance stays 22/25. AgentMemory: `mem_mvqpxisw_448c8c55e047`.
+# [2026-10-28] task/verify | Add the packaged candidate-review journey — issue #9
+
+Added the exact Windows package UI journey for reviewing a candidate SHA, the actual `+implemented` diff line, and test output, then separately approving+merging or rejecting it. The source-contract regression first failed because the workflow did not run this test; it passes after the package command was wired. A second red/green assertion now requires the visible diff content, and the driver reads UIA TextPattern as a multiline fallback. The architecture trace uses the human-review requirements and keeps the separate cross-platform package trace in context. Local contract/layout checks pass 4/4, formatting and diff checks pass, and files remain under 300 lines. Commits `4abf408`, `a4aba2a`, and `5e0a554` are local; the current in-flight package run tests the prior head, so workflow 24 remains uncredited pending a new exact Windows package run. AgentMemory: `mem_mvs14hut_5804924e6b2c`, `mem_mvs1c1r3_aca0fdfa4dff`, `mem_mvs1f28w_b4d93ff3a0a6`, `mem_mvs1k5mx_98d3bae72d3e`.
+
+
+## 2026-10-28 — Exact Windows package compile failure in candidate review
+
+Run `40683626949` checked out exact PR head `829e58ee`. Windows validation failed before package execution because `tests/windows_candidate_review.rs` treated `Repository::clean()` as a boolean twice; the method returns `Result<(), String>` and enforces the clean-state invariant itself. The two assertions now call `git.clean().unwrap()` directly. Focused local source-contract and layout checks pass 4/4; rustfmt, diff check, and the 300-line limit pass. Windows candidate review remains unverified and workflow 24 receives no credit until a new exact-head package run passes. AgentMemory: `mem_mvs2e2aa_e8bf2c3e0c6b`.
+
+## 2026-10-29 — Live ACIO worker integration — issue #9
+
+TDD wired only profiles that opt into protocol ACIO through the live Rust worker. A deterministic worker regression first failed because the old plain-text stdin path did not provide ACIO input and tool requests never reached the approval ledger. The worker now sends schema-validated structured task/workspace input with a host-owned session ID, consumes ordered events through the existing process observer, persists session/results, resumes only established sessions, and sends decision-required tools through the existing exact human approval ledger. An unanswered request remains pending and does not grant permission. A live session mismatch is rejected before any tool approval receipt can be created. Added the optional bounded session ID to the input schema and documented the assignment/echo contract. Focused ACIO tests passed 17/17; the full offline all-target suite passed 1,083 tests, 14 ignored, across 345 suites; warning-denied Clippy, rustfmt, diff checks, and the 300-line guard passed.
+
+Commit 447afce112c44e37e2de0fbacb8ebb6bc73eb0fc was pushed to PR #22. AgentMemory: mem_mvsg09ok_a99229b36e7b. This source integration earns no packaged UI acceptance credit. Packaged UI acceptance remains 22/25, shipped/default Rust UI remains 0/25, aggregate 22/50.
+
+## 2026-10-29 — Windows approval review transition — issue #9 / workflow 24
+
+Run 40736018268 on issue #221 exposed the existing #9 Windows candidate-review journey gap: after approval, the driver waited for the merge control without opening Review changes. A source-contract regression failed first, then passed after adding the missing UI step. Commit 447afce112c44e37e2de0fbacb8ebb6bc73eb0fc fixes the transition, and docs head b512639face151dfbbe2e4e6192e2018af8b40a1 is pushed. Exact Windows packaged verification for that head is pending; do not credit workflow 24. CocoIndex is not installed in this environment; Graphify's local AST graph was refreshed to 10,948 nodes, 16,648 edges, and 806 communities.
+
+## 2026-10-29 — Bounded Windows briefing activation retry — issue #9
+
+Run `40741509631` failed in `windows_briefing` before candidate review: UIA Invoke returned `Unrecognized error`; the checked pointer fallback returned success but did not open the briefing or enter pending state. Added a red/green contract requiring observable state checks and a maximum of three attempts. Each retry reacquires the button and revalidates its bounds and same-process target; retries stop when the request is pending or the briefing menu appears. Local contract/layout tests pass 3/3, formatting, diff, and 300-line checks pass. The exact packaged Windows rerun remains required; acceptance stays 22/25, shipped Rust UI 0/25, aggregate 22/50.
+
+## 2026-10-29 — Candidate confirmation outside main-window bounds — issue #9
+
+Run `40745298702` reached the Windows candidate flow after briefing passed, then failed because the `Confirm candidate decision` button's UIA bounds fell outside the main-window rectangle. Added a red/green regression and removed that overly strict containment check. The driver still rejects empty/offscreen controls and checks foreground/point ownership against the exact app process before sending input. The focused candidate-driver, briefing-driver, and source-layout suites pass 9 tests, with formatting, diff, and 300-line checks clean. Exact packaged approve/merge/reject verification remains open; acceptance stays 22/25, 0/25 shipped Rust replacement, 22/50 aggregate.
+## 2026-10-29 — Native Rust scheduled-poll behavior — issue #221
+
+The Rust port keeps existing scheduled Agent Room reads quiet, leaves initial and explicit operation failures visible, discards stale background task-detail replies, and rebases a delayed poll from the current monotonic time without adding an idle Workspace poll. Its non-conflicting trace is R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198. Post-rebase focused tests pass (poll 4/4, native probe 13/13, source layout 2/2), with format/diff checks passing. PR #228 remains draft/open while exact package validation is rerun on the latest base. AgentMemory: `mem_mvsdzhk9_4842d473a9a6`.
+
+## 2026-10-29 — Local macOS release package at Rust head 79fdea8 — issue #9
+
+Built the exact arm64 package from `79fdea8a` with the offline bilingual manuals, SBOM, and dependency-license notices. All 486 ZIP entries pass CRC; manifest source and binary hash match; packaged CLI help and `Info.plist` lint pass. Archive SHA-256: `2bcf911eeaa7cff4a5cbc8700fe9db98765b63408b08ee7696b57ecc1dd58e20`; binary SHA-256: `862ab066bb69193127c2c745289cdf8a61c85a9894931cc13a429efae724fb7a`. Evidence: `docs/evidence/issue9-macos-local-package-79fdea8-20261029.json`. No GUI launch, screenshot, real coordinator invocation, or Windows exact-head package journey is claimed; acceptance remains 22/25 packaged, 0/25 shipped Rust replacements, 22/50 aggregate.
+
+## 2026-10-29 — Reconcile issue #221 with current Rust base
+
+Updated the existing Rust issue branch to current #9 commit `f83c5fb1` in the designated worktree. Merge exposed a deferred-receipt polling regression: background refresh remained paused from snapshot state after the operator had deferred the decision. The regression failed before removing that stale snapshot check and passes when only live confirmation/modal state gates polling. The split poll receiver now routes all settings-owned pending states through the current `handled_by_settings` predicate; Room refresh helpers moved to `room/polling.rs` to meet the 300-line source limit. Local verification passes: source layout 2/2, native room poll 2/2, native probe 13/13, tool dialog 4/4, warning-denied all-target Clippy, rustfmt, and diff hygiene. The old CI's 317-line `room.rs` failure was from the stale merge base; the current merged file is 256 lines. Exact macOS/Windows package verification and PR #228 merge remain open.
+
+## 2026-10-29 — Correct synchronized chat reset expectation — Rust PR #228
+
+Exact-head run `40882128427` failed macOS native tests because `native_workspace_chat_reset` expected an unmarked operator turn after the synchronized #9 UI had changed to terminal-style `> ` / `< ` markers. Reproduced the failure locally, corrected the expected rendered text, and verified the test target 2/2, warning-denied all-target Clippy, and formatting. A local all-target run is not green: parallel execution exposed two timing-sensitive UI tests (each passes alone); the single-thread run passed 331 tests across 77 suites and then stalled in `io_conformance`, so it was interrupted. Exact cross-platform validation must rerun on the corrected head before PR #228 can merge.
+
+## 2026-10-29 — Complete Rust issue #221 integration
+
+Corrected head `3d6fd707` passed exact run `40885718536` on macOS and Windows, including native package execution and the packaged Windows default-desktop UI checks. PR #228 was squash-merged into `codex/issue-9-native-ui-parity` as `f833e522`; issue #221 is closed. Local focused verification passes for the chat reset target (2/2), source layout (2/2), warning-denied all-target Clippy, rustfmt, and diff checks. The local full all-target test remains incomplete because `io_conformance` stalled after 331 passing tests / 3 ignored across 77 suites. AgentMemory: test correction `mem_mvtlpu05_1858a756874e`; completion `mem_mvtnoi50_a12ac3ad56b8`.
+## 2026-10-29 — Coordinator format correction retry — GitHub #235 / issue #9
+
+Ported the bounded JSON-format correction behavior with a deterministic local CLI. The first malformed response is preserved in `process-format-1`; exactly one retry includes the parse reason, and a second malformed response fails after exactly two process runs. Timeout, stop, capacity, and provider-error handling remain on existing paths. Focused tests pass 28/28 across seven targets; `cargo fmt --check`, `git diff --check`, and warning-denied all-target Clippy pass. The full locked/offline all-target suite also exits successfully at `09fa3482`; exact package checks remain open and are not credited by this unit. AgentMemory: `mem_mvte7n6u_cb7a6e81ae87`.
+
+## 2026-10-29 — Exact macOS package at Rust head 87239f6 — issue #9
+
+Built `87239f6a68e5b7e4ccc3efc8c0efffc5d11b1407` with the offline Rust release package command. The manifest source SHA and binary SHA match; full ZIP CRC and packaged `--help` pass. Archive SHA-256 `f2200d0db44d6e926505ef0ce806cc936d4bb65644863fee00194d688d03dcc4`; binary SHA-256 `081136f7ab226b91373ee196150b0923f86e11ad210db603eb7c51103566888b`. Evidence: `docs/evidence/issue9-macos-package-87239f6-20261029.json`. No GUI launch/screenshot, Windows package, or UI acceptance credit. AgentMemory: `mem_mvtf3c2h_1057064c096e`.
+## 2026-10-30 — Native event-driven refresh — issue #9
+
+Pushed `153d152f` on `codex/issue-9-git-head-fast-path`. Successful state changes broadcast content-free invalidations to peer windows; each view coalesces events and refreshes from authoritative snapshots. Periodic/event refresh uses its own worker and reply lane, with distinct pending state so it cannot occupy the foreground request lane or overwrite an interactive result. Deterministic blocked-snapshot/chat and event fan-out/sender-suppression/read-only-filter tests pass. Local verification: 60 library tests and 30 targeted tests across four targets; warning-denied all-target Clippy, rustfmt, diff check, and 300-line audit pass. AgentMemory: `mem_mvu7a0nj_e1bbe9fa40b8`. Graphify refreshed to 11,663 nodes / 19,055 edges. CocoIndex CLI is unavailable here; no index coverage is claimed.
+
+Follow-up: the prior implementation's event receiver drained duplicates but the underlying channel was unbounded; the claim that invalidations were coalesced was therefore incomplete. Replaced each event queue with `sync_channel(1)` and nonblocking `try_send`, and added a 10,000-event regression proving one queued invalidation/wakeup. Generalized the blocked-refresh test from `chat` to `save`. Event tests pass 3/3; native start journey and source layout pass 3/3; warning-denied all-target Clippy, rustfmt, diff hygiene, and changed-file line limit pass. Full all-target tests were interrupted at `checkpoints` after 372 passed / 4 ignored across 88 suites, so full-suite success is not claimed. No package or UI acceptance added.
+
+Snapshot lock correction: `Startup::dispatch` had released its saved-state mutex only after assembling the full snapshot, so concurrent views could queue behind filesystem/quota/revision reads despite the independent UI worker. Snapshot dispatch now clones `Saved`, drops the mutex, then assembles the snapshot from the copy. A deterministic barrier regression holds snapshot assembly and verifies another thread acquires the shared state lock before that work is released. QAS-192, UC-185, and DD-206 now specify and trace this lock boundary. Verification: 62 library tests and four targeted tests across native start journey, chat startup context, and source layout pass; warning-denied all-target Clippy, rustfmt, diff hygiene, and changed-file line limits pass. Full all-target regression is still unclaimed after its prior interruption at the checkpoints target. No package/UI acceptance is added.
+
+## 2026-11-01 — Port direct request feedback to native Rust — issue #285 / #9
+
+Inspected Claude's open #285 PR #287 and the Rust #9 lineage before changing the native view. The existing Rust branch already contains the #279 elapsed/stale job feedback port from #283 (`18224cda`), so it was recorded as completed rather than duplicated. Added a separate native implementation for direct foreground requests: immediate feedback, operation-specific wait text after one second, elapsed time, and quiet metadata/snapshot refreshes. The repaint is local and does not schedule backend work. Four focused suites pass 102 tests; warning-denied targeted Clippy, rustfmt, diff checks, and the 300-line guard pass. Exact packaged UI acceptance is unchanged. CocoIndex is unavailable in this environment; no project dependency was added. Commits `35ec7f4d` and `2925c7b2` are pushed to `codex/issue-285-rust-request-feedback`; draft Rust PR #289 is stacked on #9 PR #260 and is mergeable. Issue #9 progress was updated and Claude was notified via AgentMemory signal `sig_mvxd1219_aaeac054cd57`. AgentMemory completion record: `mem_mvxd1ouz_9e1619a15b11`.
+
+## 2026-10-30 — Apply background snapshots during pending UI work — issue #9
+
+A received snapshot was previously discarded whenever an interactive reply was pending, leaving peer-window and external-process changes invisible until the command completed. TDD added a regression that first failed on the missing snapshot, then passed after background replies began updating the visible snapshot while preserving the pending command, unsaved goal text, and current error. Requirement R-194, BG-149, SF-182, UC-185, FR-186/NFR-81, QAS-192, DDR-46, and DD-206 now include this behavior. Focused native UI tests: 48 passed; source-layout: 2 passed; warning-denied all-target Clippy, rustfmt, and diff checks pass. The local all-target run was interrupted after 682 passed / 14 ignored in 204 suites; no failure had appeared, but full-suite success is not claimed. The single serial foreground worker and pending slot remain an explicit architecture gap. Graphify refreshed to 11,673 nodes / 19,070 edges. CocoIndex CLI is unavailable in this environment. AgentMemory: `mem_mvu8yzdh_236e5c466276`.
+
+## 2026-10-30 — Separate native foreground work into bounded lanes — issue #257
+
+The single foreground worker let a slow snapshot delay every later UI request. A barrier regression first reproduced the timeout. The worker now uses two bounded read workers, one serialized state-change worker, a separate single-flight snapshot lane, and request IDs that discard superseded foreground replies. Unknown valid request kinds default to the serialized lane. State changes wake peer views through the existing coalesced event bus. Verification: 66 library tests, 13 native UI integration tests, and 2 source-layout tests pass; warning-denied all-target Clippy, rustfmt, and diff checks pass. Graphify refreshed to 11,723 nodes / 17,818 edges. CocoIndex CLI is not installed; no substitute dependency was added. The full all-target suite and packaged UI responsiveness remain unverified.
+
+## 2026-10-30 — Dispatch event refresh while a native operation is pending — issue #257 / #9
+
+A coalesced state invalidation or due recovery check previously stopped at the view's global pending-action guard, even though snapshot execution and replies had their own worker. Now events can start a bounded snapshot while an unrelated operation is pending; the existing human decision-modal guard remains. The snapshot result preserves pending state, dirty input, and error. TDD red/green: `state_change_event_refresh_runs_while_an_interactive_request_is_pending` and `foreground_action_does_not_disable_periodic_room_refresh`. Focused native UI tests: 53 pass, source layout 2/2, warning-denied Clippy, rustfmt, diff hygiene, and ≤300-line checks pass. The full all-target run was stopped after 756 passed / 14 ignored across 231 suites with no observed failure; no full-suite pass is claimed. Graphify reports 11,738 nodes / 19,183 edges. `cocoindex-code` is installed but cannot import `mcp.server.fastmcp`; no CocoIndex result is claimed. Commit `be1026e8` is pushed; issue #9/#257 and PR #260 checkpoints are posted. AgentMemory: `mem_mvubyrnn_4eadeb64cedf`. Exact packaged checks remain pending.
+
+## 2026-10-30 — Route native invalidations by affected view — issue #257
+
+The generic state invalidation woke every peer view even when only workspace settings changed. TDD now distinguishes workspace changes from run changes: workspace changes wake Workspace only, while run changes wake both Workspace and Agent Room. EventBus still suppresses the source, coalesces duplicate events in bounded channels, and wakes only matching subscribers. All 69 native UI library tests pass locally with `native-ui-probe`. Exact macOS/Windows package verification remains pending; the #257 implementation is not complete until that gate passes.
+## 2026-10-30 — Guard Windows tool-decision UI automation against delayed state
+
+The Windows packaged tool-decision driver could report a false negative after a 500 ms state wait even though the final UI Automation tree contained the confirmation button. The old helper retried pointer input up to three times after UIA and keyboard attempts, risking duplicate approval input. A red/green source-contract test now requires a bounded 4-second state wait and a single process-checked pointer click, with no alternate or repeated approval inputs. Local verification: 15 tool-decision and source-layout tests pass; warning-denied Clippy, rustfmt, diff hygiene, and the 300-line limit pass. Graphify refreshed to 11,751 nodes / 17,852 edges. Windows packaged runtime still needs exact-head verification. See `docs/07-implementation-plan.md` and `knowledge/wiki/native-release-packaging.md`.
+
+## 2026-10-30 — Package the current pushed issue #9 head
+
+Source `7a56e372e598fff7df593d3ab4933bad62021360` built an exact Apple Silicon package. Manifest/source, binary and archive checksums, ZIP integrity, packaged help, bilingual manuals, licenses, notices and SBOM pass. The packaged binary passed four mock workflows across shared/worktree × Git/folder, with 12 parallel tasks/tests, merge refusal before approval, and approved merge verification. Focused package-evidence/public-doc/source-layout tests pass 19/19; warning-denied Clippy, rustfmt, diff hygiene and 300-line cap pass. Graphify refreshed to 11,754 nodes / 17,855 edges. Packaged GUI, Windows exact package, current-main merge, and release remain unverified. Evidence: `docs/evidence/issue9-7a56e372-macos-package.json` and `docs/evidence/issue9-7a56e372-macos-smoke.json`.
+
+## 2026-10-30 — Triage bug #226 workspace restore report
+
+Reviewing PR #230 found no reproducible product defect from the current report. Five focused workspace/delete/launch suites pass 20 tests. Confirmed Delete archives and unregisters a folder, while Remove-from-menu deliberately retains the directory; deleting the default may create an empty replacement workspace. The report does not identify which path occurred. Issue #226 remains open for repro details and exact Windows package verification. See `docs/07-implementation-plan.md` and `knowledge/wiki/current-main-rust-parity.md`.
+## 2026-11-01 — Refuse unsafe Windows background-chat fallback — issue #189
+
+When Windows denies Job Object breakaway for a detached chat worker, a normal hidden child is not guaranteed to survive desktop shutdown if it inherits a host Job Object. The fallback now calls `IsProcessInJob` and is allowed only when the desktop is outside every host job. Membership or query failure persists `not_spawned` and reports an explicit error, avoiding a false running state. A red/green policy test and local focused tests, formatting, diff hygiene, and warning-denied Clippy pass; exact Windows package execution remains pending.
+## 2026-11-01 — Preserve unsaved Workspace settings during event refresh — issue #257
+
+R-194/QAS-192 required event snapshots to preserve unsaved form input, but `poll_background` called the full workspace loader and replaced local values. A deterministic regression failed on the unsaved workspace name. Background application now compares each setting with the previous saved snapshot: dirty fields remain local, clean fields accept the incoming saved value, and a dirty goal keeps its optimizer proposal. Updated the old renderer test to inject an event snapshot rather than assume fast polling. Local verification: 96 tests across native UI and source-layout suites; warning-denied all-target Clippy, rustfmt, diff checks, and the 300-line limit pass. Graphify: 11,857 nodes / 19,366 edges. CocoIndex cannot import `mcp.server.fastmcp`. Exact packaged macOS/Windows checks remain open.
+
+## 2026-11-01 — Back off idle task-progress spool reads — issue #257
+
+Claude PR #255's current Rust behavior showed an idle-spool cost reduction not yet present on the #9 branch. The progress observer now starts at 100 ms, doubles its delay up to 2 seconds while no bytes arrive, and resets immediately when output resumes. Completion draining still uses bytes-read state so a partial final JSONL record reaches the decoder. The cadence regression, live-progress tests, and Claude quota observer tests pass (9 focused tests); the broader affected suite passes 105 across five targets. Warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line bound pass. Graphify: 11,867 nodes / 19,379 edges. CocoIndex is unavailable due to the missing `mcp.server.fastmcp` module. Exact package acceptance remains pending.
+
+## 2026-11-01 — Keep coordinator completion audit off native request polling — issue #257 / Claude PR #255 parity
+
+The Rust coordinator previously called `Child::try_wait`, wrote the process owner record, and saved the terminal SQLite event inline from UI polling. A child that had exited could therefore make unrelated UI work wait behind SQLite's writer lock. A named monitor thread now owns `Child::wait` and terminal persistence; it releases the shared job-state lock before file/database I/O. Polling reads in-memory status and remains responsive until persistence succeeds. If the monitor thread cannot start, `try_wait` remains a fallback. The new regression locks SQLite after child exit and checks poll latency/state. The focused regression plus affected native UI/source-layout suites pass 98 tests; warning-denied all-target Clippy, rustfmt, diff checks, and 300-line cap pass. An unrestricted `cargo test` invocation was stopped after more than a minute with no output; it is not counted as verified. Graphify: 11,888 nodes / 19,421 edges. CocoIndex remains unavailable because `mcp.server.fastmcp` cannot import. Packaged behavior remains unverified.
+
+## 2026-11-01 — Port authenticated process invalidation and adaptive recovery — issue #257 / Claude PR #255 parity
+
+Current #255 uses a token-authenticated loopback UDP event bridge plus adaptive metadata recovery. Rust now creates a per-Room receiver, configures only its `ui-action` child with address/token/surface, sends invalidations on progress and child completion, and removes those variables from provider/MCP/quota/Git child environments. The file observer remains independent and backs off from one second to 30 seconds, watching report/startup plus SQLite/WAL metadata. New tests reject wrong tokens, route a valid workspace event to that surface, verify child environment/scrubbing, assert bounded backoff, and catch SQLite-only changes. The 103-test affected suite passes across library, native UI, and source-layout; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line limit pass. Graphify: 11,942 nodes / 19,515 edges. AgentMemory: `mem_mvxf7p2e_e73272420eed`; commit `1cfed4e` pushed to the #257 branch and PR #294 updated. CocoIndex is unavailable because `mcp.server.fastmcp` cannot import. Exact packaged macOS/Windows acceptance remains open.
+
+## [2026-11-01] verify | Keep event recovery at a fixed 30-second cadence — issue #257
+
+The #257 clarification requires event-driven active updates and only a 30-second missed-notification recovery check. The previous 1-to-30-second backoff reset to 1 second on metadata changes, so sustained task writes could schedule repeated snapshots. A regression failed with `1s` versus `30s`. Production listeners now keep a fixed 30-second metadata-only interval and publish invalidations without building snapshots; tests inject a short interval to stay deterministic. Focused event/listener tests (17), source-layout (2), all-target/all-feature Clippy, rustfmt, and diff checks pass. Exact platform/package validation remains pending.
+## Windows UI Automation text entry — issue #9 / 2026-11-01
+
+PR #260's Windows packaged lifecycle check (run `41270341316`) failed while searching for a prefilled stop-reason edit by an exact UIA Name. PR #239's packaged desktop-save check (run `41280824549`) failed because the egui/AccessKit text input did not provide UIA `ValuePattern`. Updated both Windows test drivers to focus the accessible edit and send keyboard input; the lifecycle driver locates the edit adjacent to the visible label. TDD source contract failed before the change and passed after it. Local focused batch: 15 passed, 1 ignored; formatting and warning-denied Clippy pass. The exact Windows package check must be rerun; no Windows runtime pass is claimed yet.
+
+## Windows packaged lifecycle readiness — issue #9 / 2026-11-01
+
+After the text-entry update, Windows package run `41293037713` advanced beyond the former `Stop reason` lookup failure and then failed because the `Stop run` control was present but not yet enabled. The test driver now polls for the enabled state before invoking it. TDD source contract was red before this addition and the focused macOS source/native-room/layout checks pass afterward (15 passed, 1 ignored); formatting and warning-denied Clippy also pass. This remains a Windows UI acceptance blocker until the final pushed PR head passes.
+
+## Shared validation exposed a stale Windows input contract — issue #9 / 2026-11-01
+
+Runs `41297846153`, `41297870756`, `41298028204`, `41298098982`, and `41298169824` all failed macOS `windows_desktop_driver` because its source-contract test still required `ValuePattern.SetValue` after the driver had moved to focus plus keyboard input. The failure was in the test's expected implementation, before exact Windows package execution. Updated the contract to require focus → select → type → save and reject the obsolete `SetValue` path; the actual packaged Windows save journey still needs a fresh run.
+
+The corrected focused driver suite passes 8/8 on the local Mac. Full local all-target test execution is constrained by this sandbox: four AgentMemory tests cannot bind loopback TCP and three folder-execution tests hit denied filesystem operations (`Operation not permitted`). These are separate environment restrictions; exact CI and Windows package results remain the acceptance gate.
+
+## 2026-11-01 — Port quota diagnostics and slow-query handling into #9 Rust integration
+
+GitHub #295 quota errors are now shown in native sidebar, agent settings, and Agent Room from the recorded snapshot or failed quota metadata job. TDD adds bilingual accessibility-tree tests and keeps the compact quota row when no error exists. GitHub #297 quota queries now use an injected deadline with a shared 60-second production limit on macOS and Windows; the UI shows a local elapsed timer only on the active agent card. The fixture uses the Claude version/prompt and quota section headings required by the real collector, and cleans its temp root on panic. Local targeted tests, source-layout/public-doc checks, warning-denied Clippy, formatting and diff checks pass. #295 was committed/pushed as `d4a11db6`; #297 changes are still uncommitted in the same integration worktree. Exact-head platform run `41307850806` for #295 remains active. CocoIndex cannot import `mcp.server.fastmcp`; Graphify was refreshed before the #297 local changes and needs another update.
+
+## 2026-11-01 — Make the native coordinator chat input discoverable — issue #189
+
+The Windows package UI Automation flow could not locate the Rust chat editor by its prompt because the multiline TextEdit had no accessible name. Added an AccessKit regression and exposed the localized placeholder as the editor's accessible name. The integrated #9 branch passes all-target tests, warning-denied Clippy, rustfmt, diff checks, and the 300-line source/test limit. Exact packaged Windows UI Automation remains unverified, so issue #189 stays open.
+
+## Windows event test timestamp stability — issue #9 / 2026-11-01
+
+Windows run `41294797195` found a race in a listener test that rewrote same-length JSON and expected the metadata fingerprint to change immediately. The updated fixture changes the report length, avoiding reliance on filesystem timestamp precision. The focused test and all 80 library tests pass locally; the latest Windows validation remains pending.
+
+## 2026-11-01 — Integrate event-driven UI and preserve drafts — issue #257 / #9
+
+Integrated PR #294 into the active #9 branch, retaining the #305 chat lifecycle and #293 accessibility changes. Conflict resolution preserved both branches' requirements, architecture decisions, checklists, and Wiki records. The first full check caught `src/ui/controller.rs` at 335 lines; split the fallback process helpers into `src/ui/controller/process.rs` and reran the source-layout tests. A second compile failure caught an accidental move of `owner_path` in `tests/ui.rs`; borrowing fixed it. Full local verification now passes 1,192 tests (16 ignored, 374 suites) with `native-ui-probe`, warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test limit. Exact packaged Windows acceptance remains outstanding.
+## 2026-11-01 — Port the coordinator status board to Rust — issue #286
+
+Added a native egui coordinator board using the current Agent Room snapshot. The board shows run/task counts, assignments, statuses and observed output age; presentation skips repetitive `workflow` history while preserving the audit data. The age label uses local repaint only and does not poll or dispatch requests. TDD caught missing board behavior and an inaccessible agent label. Verification: 2 board tests, 18 Agent Room/language/layout tests, source layout 2/2, warning-denied all-target Clippy and rustfmt pass. `git diff --check` first found an extra blank line at EOF and passes after cleanup. The broad all-feature offline run was stopped after 90 seconds without output, so it is not claimed. Commit `85905874` is pushed and draft PR #288 targets the Rust event-driven base branch. Exact packaged visual acceptance remains under #9. Graphify no-cluster refresh: 11,891 nodes / 19,417 edges. CocoIndex CLI is unavailable in this environment.
+
+## 2026-11-02 — Consolidate native request feedback into the existing #9 branch
+
+Integrated the existing Rust request-feedback PR #289 into #260 rather than opening another stacked PR. The change keeps event-driven request lanes and adds immediate foreground feedback, elapsed wait text, quiet metadata/snapshot refreshes, and bilingual accessible labels. Conflict resolution preserved both PRs' architecture traces and checklists. Commit `d802a9fa` is pushed; GitHub closed #289 as merged. AgentMemory: `mem_mvy0fo8d_bf25df594487`. Verification after integration: 110 Rust library tests, 29 related integration tests, 13 public-doc/source-layout tests, warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line limit pass. Graphify refreshed to 12,318 nodes / 20,115 edges; CocoIndex is unavailable in this environment. Exact packaged UI acceptance remains open under #9.
+
+## 2026-11-02 — Repair the Windows chat script contract test — issue #189
+
+The current chat automation script defines `ChatEdit($allowDisabled = $false)`, but its source-contract test searched only for `ChatEdit()`. The exact test failed locally before the test parser was updated to locate parameterized function bodies; the null-window assertion remains. The focused script test now passes 2/2, and chat/lifecycle/accessibility suites pass 14 tests. Warning-denied targeted Clippy, rustfmt, and diff checks pass; the test file is 36 lines. AgentMemory: `mem_mvy0nic1_43f5859b441b`. Graphify refreshed to 12,321 nodes / 20,118 edges. CocoIndex is unavailable in this environment. This fixes a stale test contract, not the open exact-packaged Windows chat acceptance gate.
+# [2026-11-02] verify | Integrate current main into the Rust root PR — issue #9
+
+Resolved all 119 previously reported conflicts in existing PR #22 and pushed merge commit `ad11775e`. Preserved native Rust UI/build sources, removed incoming web-only tests and assets, ported screenshot freshness checking to a Rust binary, updated bilingual manual/README version and captures, and refreshed the plan checklist. Local full suite: 249 passed, 1 ignored across 43 suites. Release-profile native binary and live repository screenshot gate pass. PR is mergeable but remains draft: exact Windows package and visual parity acceptance remain. Platform Validation run 41336821290 was still in progress. AgentMemory: `mem_mvy5z9m8_c813c9281346`.
+# [2026-11-02] verify | Refresh v0.1.53 Rust UI manual screenshots — issue #9
+
+Replaced stale public Workspace and Agent Room captures with visually inspected v0.1.53 Rust native UI images. Captured the Agent Room from a disposable three-task Rust mock run: all three tasks and tests passed, a deterministic sample quota showed 64% remaining, and the run stayed `waiting_approval` without approval or merge. Regenerated the English and Korean HTML manuals. Evidence is in `docs/evidence/issue9-current-native-screenshots-20261102.json`; image hashes and capture limits are in `native-screenshot-provenance.md`. This documentation work does not satisfy exact Windows package acceptance or full legacy UI parity.
+
+## 2026-11-02 — Fix the actual Windows workspace input driver — issue #9
+
+Exact-head run `41347900792` failed the Windows `windows_desktop` test: UI Automation found and focused the Goal edit, but the test's Unicode `SendInput` left its value empty. Source inspection showed the earlier plan/Wiki statement that the driver called `ValuePattern.SetValue` was false. TDD changed the driver contract first (five expected failures), then the PowerShell driver now calls `SetValue`, polls readback for up to three seconds, and saves only on an exact value. The focused contract and source-layout suites pass 16 tests; warning-denied test Clippy, rustfmt, and diff checks pass. The exact package run is still required; no Windows acceptance is claimed until it passes.
+
+Run `41350246764` confirmed that the revised Windows debug `windows_desktop` input test passes, but both platform test suites failed on the stale `windows_run_lifecycle` source assertion requiring `TypeText` and prohibiting `.SetValue`; the package jobs were skipped. TDD updated the lifecycle contract, and the full local suite now passes 1,279 tests with 16 ignored across 394 suites. Focused driver/lifecycle/source-layout/public-doc tests pass 28 with one ignored; targeted Clippy, rustfmt, and diff checks pass. Push the correction and require a fresh exact packaged Windows run before counting acceptance.
+# [2026-11-02] verify | Port update blockers to the native Rust UI — issue #9 / #331
+
+Integrated main `76d0ac7d` and pushed `a86ec103` to the existing root PR #22, resolving its merge conflict. Ported the update guard and refusal details, added English/Korean native messages, and added tests for classification, localization, and actual dialog rendering. Local verification passed 19 tests across six focused suites, warning-denied all-target Clippy, rustfmt, and diff hygiene. Exact-head macOS and Windows checks were queued; this does not change 22/25 packaged workflows or 0/25 shipped/default Rust UI parity. Raw source hashes: `../raw/2026-11-02-native-update-blocker.md`. AgentMemory: `mem_mvz2hs7e_5870ee4c1203`.
+
+# [2026-11-02] verify | Gate native tests and keep coordinator assertions locale-aware — issue #9 / #333
+
+Integrated main `54a9148f` into Rust commit `ab41ab0d`, preserved custom CLI read-only validation, and ported #333 refusal localization into native catalogs. CI run `41423326877` exposed an ungated auto-discovered native UI test; added the crate-level `native-ui-probe` gate and verified default/opt-in paths. The full local suite then exposed an English-only runtime assertion on the Korean host; the product output was correctly localized, and the test now accepts English or Korean while asserting the agent identity. After that fix, the complete locked/offline all-target suite passed; source layout, warning-denied all-target Clippy, rustfmt, and diff hygiene also pass. Exact-head platform validation remains pending. Packaged workflow acceptance remains 22/25; shipped/default UI parity remains 0/25. Raw evidence: `../raw/2026-11-02-issue9-ci-gates-and-localized-tests.md`. AgentMemory: `mem_mvz3p4dd_77028`.
+
+# [2026-11-02] verify | Reconcile v0.1.56 main docs into Rust migration — issue #9
+
+Integrated main `0c050741` in the existing Rust migration worktree, keeping the README and screenshot manifest specific to Rust. Main's stale web UI screenshots were not copied; the existing Rust Workspace images are explicitly labeled source-build v0.1.54 captures, not v0.1.56 package evidence. Version and bilingual manuals are now v0.1.56. Local `public_docs`, `source_layout`, and `knowledge` tests passed 16/16; no Rust product source changed. Graphify refreshed to 12,971 nodes / 19,452 edges / 952 communities. CocoIndex is unavailable because its CLI and Python module are absent. Exact native screenshot refresh, Windows package/UI acceptance, and overall Rust parity remain open. Raw evidence: `../raw/2026-11-02-main-v0.1.56-rust-sync.md`.
+
+# [2026-11-02] task / verify | Preserve run events racing with workspace wakeup — issue #9 / #257
+
+Windows run `41431944692` exposed a deterministic listener ordering race: `WorkspaceChanged` subscribers could synchronously update the report before its baseline fingerprint was captured, causing the following `RunChanged` notification to be lost. A new wake-callback regression failed before the fix with a timeout; moving fingerprint capture before event publication made it pass. Commit `fdf83c64` is pushed; PR #22 and issues #9/#257 were updated. Local verification: 111 library tests, 13 native UI probe tests, 2 source-layout tests, formatting, and warning-denied all-target release Clippy. Run `41438654168` passed macOS and Windows validation and the macOS package, but the Windows package job was cancelled at its 25-minute timeout during its UI test command. A test-first CI change now raises the package timeout to 45 minutes; exact Windows package acceptance remains pending. Graphify refreshed to 12,983 nodes / 19,462 edges / 972 communities. CocoIndex remains unavailable because its CLI and Python module are absent. AgentMemory: `mem_mvz6idls_525815ce0e09`. Raw evidence: `../raw/2026-11-02-event-listener-wakeup-race.md` and `../raw/2026-11-02-windows-package-timeout.md`.
+
+# [2026-11-02] plan / task / verify | Give Windows package verification enough time — issue #9
+
+The Windows package job in run `41438654168` was limited to 25 minutes and was cancelled at the limit while serialized exact-package UI tests were still running. The Windows lifecycle, briefing and candidate-review tests had passed; coordinator chat cases were explicitly skipped because the hosted runner denied Job Object breakaway. Added a TDD workflow-contract test, observed Red at 25 minutes, changed `native-package` to 45 minutes, and verified locally: 6 workflow tests, 2 source-layout tests, 3 knowledge tests, 11 public-doc tests, formatting, warning-denied Clippy and diff checks pass. Graphify refreshed to 12,991 nodes / 19,469 edges / 966 communities. CocoIndex remains unavailable because its CLI and Python module are absent. A new exact-head package run is required before recording Windows acceptance. Raw evidence: `../raw/2026-11-02-windows-package-timeout.md`.
+
+# [2026-11-02] verify | Diagnose exact Windows lifecycle package failure — issue #9
+
+Exact-head run `41446760915` on `05a2fd74` passed platform validation and the macOS package. The 45-minute Windows package job completed and passed desktop save, briefing, candidate review, and run recovery; three coordinator-chat lifetime cases were skipped because the host Job Object denied breakaway. The stop/resume lifecycle flow failed after Resume because the report did not reach `waiting_approval`. Added persisted state/error/task-attempt details to its timeout output. Local focused lifecycle and source-layout checks pass; this is diagnostic coverage, not a product fix or Windows acceptance. Packaged acceptance remains 22/25 and shipped/default Rust UI remains 0/25. Graphify refreshed to 13,001 nodes / 20,970 edges without clustering. CocoIndex is unavailable because its CLI and Python module are absent. AgentMemory: `mem_mvzb5uaw_b64297ed9957`. Raw evidence: `../raw/2026-11-02-windows-lifecycle-resume-state.md`.
+
+
+# [2026-11-03] plan / task / verify | Refresh Windows desktop Save UIA control — issue #9
+
+Exact run `41515280203` reported that UI Automation read the goal but the isolated startup file stayed unchanged. The driver now reacquires the visible enabled Save button after editing; local regression contract passed 16/16 with formatting and diff checks. In run `41520505534`, macOS validation passed; Windows build and source layout passed and all-target tests are running. The stale-element hypothesis is not confirmed and packaged acceptance remains 22/25 (22/50 overall). Graphify refreshed to 13,089 nodes / 19,604 edges / 963 communities. CocoIndex was checked but its CLI is unavailable. Raw evidence: `../raw/2026-11-03-windows-save-uia-refresh.md`.
+
+# [2026-11-03] plan / task / verify | Isolate same-state Workspace screenshot capture — issue #9
+
+The documented Rust Workspace capture was an empty first-run screen while the available main reference showed a saved workspace. Added a regression and capture-only guard so an opt-in manual screenshot run does not schedule automatic quota CLI subprocesses. The red test failed to compile before `due_quota` accepted capture mode; Green quota scheduling tests pass 5/5 with the capture feature, source-layout passes 2/2, and formatting/diff checks pass. Built and captured a saved workspace with the same name, goal, three profiles, and 1280×892 viewport from an isolated HOME; the app closed automatically and created no quota-query directory. The temporary capture still lacks retained quota data and does not establish screen parity, so public screenshot assets were not replaced and UI acceptance stays 0/25. CocoIndex CLI is unavailable. Raw evidence: `../raw/2026-11-03-isolated-workspace-screenshot-capture.md`.
+
+Warning-denied Clippy passes on all targets with `manual-screenshot-capture`. The broad `all-targets` regression was interrupted after 897 passed and 14 ignored across 268 suites; no failure was reported before interruption, but this is not a full-suite pass.
+
+# [2026-11-03] plan / task / verify | Audit event-driven regressions from closed PR #255 — issue #9
+
+Compared the closed PR's event, worker-concurrency, chat-persistence, timeout, and saved-workspace claims with the current refactored tests. The current local regression command passed 27 tests across six targets. `native-request-lanes.md` records the new source-to-test map. This is not exact packaged Windows/macOS evidence; historical package artifacts are absent and #9 acceptance remains 22/50 overall, 22/25 packaged workflows, 0/25 shipped/default Rust UI parity. CocoIndex CLI is unavailable. AgentMemory: `mem_0180c67348d98a3f`. Raw evidence: `../raw/2026-11-03-pr255-regression-audit.md`.
+
+# [2026-11-03] plan / task / verify | Restore ValuePattern input for Windows package Goal field — issue #9
+
+Exact packaged run `41520505534` failed because the Goal edit read back empty and UIA focus had returned to the top-level window after Unicode `SendInput`. This contradicted the existing `windows-uia-text-input.md` decision. Added five failing source-contract assertions first, then changed the driver to `SetFocus` + `ValuePattern.SetValue` + bounded readback and aligned the lifecycle contract. Local Windows-driver/lifecycle/source-layout tests pass 19 with 1 ignored. A new remote run is required: `41545058701` targets pre-correction head `21eb66f4` and cannot validate this correction. Packaged acceptance stays 22/25. Raw evidence: `../raw/2026-11-03-windows-uia-setvalue-followup.md`.
+# 2026-11-03
+
+- Added interaction/render regressions for the Workspace worktree checkbox and coordinator blocker warning. The checkbox persists `worktree`; the blocker now has a tinted, wrapped panel. The initial tests failed against the prior radio-group/inline-text rendering, then passed with the changes. This does not count as overall UI parity acceptance.
+- Added viewport-bound regression coverage for Workspace coordinator controls and replaced fixed-language interaction assertions with active-catalog lookups. The macOS failure in Actions run `41557402619` was localized to three Korean-only expectations; all 116 library tests and focused UI checks now pass locally. Remote validation remains pending.

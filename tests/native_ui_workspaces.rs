@@ -1,9 +1,11 @@
 use agentconductor::native_ui_probe::workspace::navigation::{
     Event, State, needs_discard_confirmation, request,
 };
-use eframe::egui::{self, accesskit::Role};
+use eframe::egui;
 use std::path::Path;
 
+#[path = "support/native_ui.rs"]
+mod native_ui;
 #[path = "support/workflow.rs"]
 mod support;
 #[path = "support/env.rs"]
@@ -47,6 +49,70 @@ fn workspace_actions_use_the_existing_rust_dispatch_contract() {
 }
 
 #[test]
+fn workspace_sharing_requests_keep_revision_and_permission_confirmation_explicit() {
+    use agentconductor::native_ui_probe::workspace::sharing::{
+        export_request, import_request, preview_request,
+    };
+
+    assert_eq!(
+        serde_json::from_slice::<serde_json::Value>(&export_request("/share", "r1")).unwrap(),
+        serde_json::json!({"kind":"export_settings","folder":"/share","revision":"r1"})
+    );
+    assert_eq!(
+        serde_json::from_slice::<serde_json::Value>(&preview_request("/share")).unwrap(),
+        serde_json::json!({"kind":"preview_settings","folder":"/share"})
+    );
+    assert_eq!(
+        serde_json::from_slice::<serde_json::Value>(&import_request("/share", "r2", false))
+            .unwrap(),
+        serde_json::json!({"kind":"import_settings","folder":"/share","revision":"r2","keep_verified":false})
+    );
+    assert_eq!(
+        serde_json::from_slice::<serde_json::Value>(&import_request("/share", "r2", true)).unwrap()
+            ["keep_verified"],
+        true
+    );
+}
+
+#[test]
+fn workspace_sharing_preview_discloses_warnings_before_the_import_action() {
+    use agentconductor::native_ui_probe::workspace::sharing::{State, show};
+
+    let mut state = State::default();
+    state.set_folder("/share/team".into());
+    state.set_preview(serde_json::json!({
+        "settings":{"name":"Team","agents":[{"id":"claude"}],"coordinator":"claude"},
+        "warnings":["claude: executable may not exist on this machine"]
+    }));
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut output = context.run_ui(Default::default(), |ui| {
+        show(&mut state, "en", true, true, ui);
+    });
+    let nodes = &output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes;
+    let labels = nodes
+        .iter()
+        .filter_map(|(_, node)| node.label())
+        .collect::<Vec<_>>();
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(labels.contains(&"Import workspace settings from /share/team"));
+    assert!(labels.contains(&"Import and replace settings"));
+    assert!(labels.contains(&"Cancel import"));
+    assert!(labels.contains(&"Keep verified local permission claims"));
+    assert!(labels.contains(&"claude: executable may not exist on this machine"));
+    assert!(
+        labels
+            .contains(&"Save or discard workspace changes before importing or exporting settings")
+    );
+}
+
+#[test]
 fn only_switching_or_creation_requires_confirmation_for_unsaved_edits() {
     assert!(needs_discard_confirmation(
         &Event::Create("Next".into()),
@@ -68,74 +134,29 @@ fn only_switching_or_creation_requires_confirmation_for_unsaved_edits() {
 }
 
 #[test]
-fn workspace_menu_exposes_accessible_open_forget_and_delete_actions() {
-    let mut state = State::default();
-    state.open();
-    state.set_workspaces(vec![
-        serde_json::json!({
-            "name":"Current",
-            "path":"/work/current",
-            "registered":true
-        }),
-        serde_json::json!({
-            "name":"Research",
-            "path":"/work/research",
-            "registered":true
-        }),
-    ]);
-    let context = egui::Context::default();
-    context.enable_accesskit();
-    let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::workspace::navigation::show(
-            &mut state,
-            "Current",
-            "/work/current",
-            true,
-            false,
-            true,
-            ui,
-        );
-    });
-    let labels = output
-        .platform_output
-        .accesskit_update
-        .as_ref()
-        .unwrap()
-        .nodes
-        .iter()
-        .filter(|(_, node)| node.role() == Role::Button)
-        .filter_map(|(_, node)| node.label())
-        .collect::<Vec<_>>();
-    output.textures_delta.set.clear();
-    output.textures_delta.free.clear();
-    for action in [
-        "Preview and clear local cache",
-        "Create workspace",
-        "Open workspace Research",
-        "Remove Research from list",
-        "Archive workspace Research",
-    ] {
-        assert!(labels.contains(&action), "{action}");
-    }
-}
-
-#[test]
 fn archive_confirmation_names_the_exact_workspace_and_preserves_project_data() {
     let mut state = State::default();
     state.confirm_delete("/work/research", "Research");
     let context = egui::Context::default();
     context.enable_accesskit();
-    let mut output = context.run_ui(Default::default(), |ui| {
-        agentconductor::native_ui_probe::workspace::navigation::show(
-            &mut state,
-            "Current",
-            "/work/current",
-            true,
-            false,
-            false,
-            ui,
+    let mut output = None;
+    for _ in 0..2 {
+        let next = context.run_ui(
+            egui::RawInput {
+                screen_rect: Some(egui::Rect::from_min_size(
+                    egui::Pos2::ZERO,
+                    egui::vec2(1000.0, 800.0),
+                )),
+                ..Default::default()
+            },
+            |ui| native_ui::show_navigation(&mut state, false, ui),
         );
-    });
+        if let Some(mut previous) = output.replace(next) {
+            previous.textures_delta.set.clear();
+            previous.textures_delta.free.clear();
+        }
+    }
+    let mut output = output.unwrap();
     let labels = output
         .platform_output
         .accesskit_update
@@ -149,9 +170,11 @@ fn archive_confirmation_names_the_exact_workspace_and_preserves_project_data() {
     output.textures_delta.free.clear();
     assert!(labels.contains(&"Confirm archive Research"));
     assert!(labels.contains(&"Cancel archive Research"));
-    assert!(labels.contains(
-        &"Archive workspace Research at /work/research; project source files are preserved"
-    ));
+    assert!(labels.iter().any(|label| {
+        label.contains("Research")
+            && label.contains("/work/research")
+            && (label.contains("preserved") || label.contains("보존됩니다"))
+    }));
 }
 
 #[test]

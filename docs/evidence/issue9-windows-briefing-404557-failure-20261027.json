@@ -1,0 +1,20 @@
+{
+  "issue": 9,
+  "run_id": 40455732953,
+  "head_sha": "5dad72b74bf9f167841c039e24781225352885fe",
+  "platform": "windows-latest",
+  "package_artifact_id": 12713663734,
+  "package_archive": "agentconductor-x86_64-pc-windows-msvc-b9c95875a28e.zip",
+  "package_archive_sha256": "b6fa9d9ada4cb9229293f822dc345d6fe19cc495a280cd8661b81d18cbe48a1c",
+  "validation": {
+    "macos": "passed",
+    "windows": "passed",
+    "macos_package": "passed",
+    "windows_package": "failed"
+  },
+  "failing_step": "Verify the packaged Windows default desktop",
+  "failing_test": "exact_windows_package_reads_the_team_briefing_without_changing_the_run",
+  "failure": "UIA InvokePattern.Invoke returned Unrecognized error and the fallback click did not open the read-only briefing menu.",
+  "signal_settings_test": "not reached because the preceding briefing test failed",
+  "acceptance": "remains 22/25"
+}

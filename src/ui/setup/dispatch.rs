@@ -1,23 +1,29 @@
 use super::*;
 
-mod complex;
 mod operation;
+
+pub(super) fn with_snapshot_copy<T>(
+    saved: std::sync::MutexGuard<'_, Saved>,
+    work: impl FnOnce(&Saved) -> T,
+) -> T {
+    let snapshot = saved.clone();
+    drop(saved);
+    work(&snapshot)
+}
 
 impl Startup {
     pub fn dispatch(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
+        if bytes.len() > 128 * 1024 {
+            return Err(crate::ui::messages::text("native.native_request_exceeds_128_kib").into());
+        }
+        let request: Request = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
         if bytes.len() > 64 * 1024 {
             return Err(crate::ui::messages::text("native.native_request_exceeds_64_kib").into());
         }
-        let request: Request = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
-        let waiting = std::time::Instant::now();
         let mut saved = self
             .saved
             .lock()
             .map_err(|_| crate::ui::messages::text("native.startup_settings_poisoned"))?;
-        crate::ui::diagnostics::step("lock", waiting.elapsed());
-        if let Request::Chat { revision, text } = &request {
-            return self.dispatch_chat(&mut saved, revision, text);
-        }
         if matches!(request, Request::StopPlanning {}) {
             return self.stop_planning(&mut saved);
         }
@@ -27,44 +33,22 @@ impl Startup {
         if let Request::CacheClear { digest } = &request {
             return self.clear_cache(&saved, Some(digest), 0);
         }
-        let stepping = std::time::Instant::now();
+        if let Request::Chat { revision, text } = &request {
+            return self.dispatch_chat(&mut saved, revision, text.clone());
+        }
         let metadata_job = self.metadata_tick(&mut saved)?;
         let job = self.job(&saved)?;
         self.settle(&mut saved, &job)?;
-        crate::ui::diagnostics::step("advance", stepping.elapsed());
-        if let Request::Snapshot {
-            icons,
-            mcp_result,
-            quota_refresh_last,
-        } = request
-        {
-            // GitHub #234: the lock covers advancing the state only; the answer is built from a copy, so the
-            // periodic snapshot never keeps a chat or an action waiting while it reads files.
-            let view = saved.clone();
-            drop(saved);
-            let building = std::time::Instant::now();
-            let answer = self.snapshot_state(
-                &view,
-                &job,
-                &metadata_job,
-                icons,
-                mcp_result,
-                &quota_refresh_last,
-            );
-            crate::ui::diagnostics::step("snapshot", building.elapsed());
-            return answer;
+        if matches!(&request, Request::Snapshot { .. }) {
+            return with_snapshot_copy(saved, |snapshot| {
+                self.snapshot_state(snapshot, &job, &metadata_job, &request)
+            });
         }
         if let Request::BaselineStatus {} = request {
             return self.baseline_status(&saved);
         }
         if let Request::PreviewSettings { folder } = &request {
             return self.preview_settings(&saved, folder);
-        }
-        if let Request::ChatHistory {} = request {
-            return Ok(self.chat_history(&saved));
-        }
-        if let Request::ChatReset {} = request {
-            return self.chat_reset(&mut saved);
         }
         if let Request::Messenger {} = request {
             return Ok(crate::messenger::status(
@@ -116,6 +100,7 @@ impl Startup {
             | Request::McpDiscover { revision, .. }
             | Request::McpPreview { revision, .. }
             | Request::Chat { revision, .. }
+            | Request::ChatReset { revision }
             | Request::OptimizeGoal { revision, .. }
             | Request::McpApply { revision, .. }
             | Request::Save { revision, .. }
@@ -139,8 +124,6 @@ impl Startup {
             | Request::Start { revision, .. }
             | Request::SaveMessenger { revision, .. } => revision,
             Request::CachePreview {}
-            | Request::ChatHistory {}
-            | Request::ChatReset {}
             | Request::CacheClear { .. }
             | Request::StopPlanning {}
             | Request::Snapshot { .. }

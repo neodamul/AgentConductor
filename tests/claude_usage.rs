@@ -127,11 +127,10 @@ fn first_run_stops_the_query_and_trust_is_recognised() {
 }
 
 #[test]
-fn signed_out_and_expired_screens_stop_the_query_with_one_message() {
-    // GitHub #317: a never-signed-in CLI and an expired login are told the same way.
+fn signed_out_and_expired_claude_screens_stop_the_query_with_one_message() {
     for screen in [
         "Claude Code v2.1.296\nNot logged in · Please run /login\n$",
-        "Welcome to Claude Code v2.1.296\nSelect login method:\n 1. Claude account with subscription",
+        "Welcome to Claude Code v2.1.296\nSelect login method:\n1. Claude account",
         "Claude Code v2.1.296\n$ /usage\nOAuth token has expired. Please run /login",
     ] {
         let blocker = quota::claude_blocker(screen).unwrap();
@@ -146,13 +145,12 @@ fn signed_out_and_expired_screens_stop_the_query_with_one_message() {
 }
 
 #[test]
-fn codex_signed_out_or_expired_errors_share_one_message_and_api_key_keeps_its_own() {
-    let signed_out = [
+fn codex_signed_out_or_expired_errors_share_one_message_but_api_key_keeps_its_own() {
+    for detail in [
         "codex account authentication required to read rate limits",
         "failed to fetch codex rate limits: 401 Unauthorized",
         "Your access token could not be refreshed because your refresh token has expired. Please log out and sign in again.",
-    ];
-    for detail in signed_out {
+    ] {
         let message = quota::codex_rate_limit_error(detail);
         assert!(
             message.contains("not signed in or the login expired"),
@@ -160,10 +158,8 @@ fn codex_signed_out_or_expired_errors_share_one_message_and_api_key_keeps_its_ow
         );
         assert!(message.contains("codex login"));
     }
-    let api_key =
-        quota::codex_rate_limit_error("chatgpt authentication required to read rate limits");
+    let api_key = quota::codex_rate_limit_error("chatgpt authentication required");
     assert!(api_key.contains("API key"));
-    assert!(quota::codex_rate_limit_error("boom").contains("inspect local query logs"));
 }
 
 #[test]

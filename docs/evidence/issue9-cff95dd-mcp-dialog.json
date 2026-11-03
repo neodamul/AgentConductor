@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "verification_type": "exact-package MCP settings dialog visual parity",
+  "date": "2026-10-23",
+  "application_version": "0.1.36",
+  "source_commit": "cff95dd02677519ebbb7c359f5ca9e3da0c504ed",
+  "target": "aarch64-apple-darwin",
+  "binary_sha256": "1e12b75478e937d2ba338128b5f36e3fc5fbb1650a70f3da2e1125d163c76877",
+  "archive_sha256": "dafc056361c6e68a1165f30db1f3bd8a0cf99d24b59876d7d6eb7d2aa1ad44d8",
+  "visual_inspection": {
+    "window_count": 1,
+    "dialog": "MCP server settings",
+    "views": [
+      {"locale": "Korean", "theme": "dark", "window_title": "MCP 서버 설정", "section": "설정 · MCP 서버", "heading": "MCP 서버 등록"},
+      {"locale": "English", "theme": "dark", "window_title": "MCP server settings", "section": "SETTINGS · MCP SERVERS", "heading": "Register MCP servers"},
+      {"locale": "English", "theme": "light", "window_title": "MCP server settings", "section": "SETTINGS · MCP SERVERS", "heading": "Register MCP servers"}
+    ],
+    "close_and_save_controls_visible": true,
+    "screenshot_retained": false
+  },
+  "environment": {
+    "providers_or_external_services_called": false,
+    "user_workspace_modified": false,
+    "workspace_saved": false,
+    "fixture_candidate_approved_or_merged": false
+  },
+  "acceptance": {
+    "before": "11/25 (44%)",
+    "after": "11/25 (44%)",
+    "distinct_workflow_added": false,
+    "remaining_workflows": 14
+  }
+}

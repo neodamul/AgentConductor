@@ -15,7 +15,7 @@ fn clip(text: &str, chars: usize) -> String {
 
 /// Lessons of the run, newest first.
 pub fn list(dir: &Path) -> Result<Vec<Value>, String> {
-    let store = Store::open(dir.join("state.sqlite"))?;
+    let store = Store::read_only_snapshot(dir.join("state.sqlite"))?;
     Ok(store
         .optional_document(KEY)?
         .and_then(|v| v.as_array().cloned())

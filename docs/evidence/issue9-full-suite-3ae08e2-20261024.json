@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "issue": 9,
+  "date": "2026-10-24",
+  "kind": "full-locked-offline-package-test-run",
+  "repository": "neodamul/AgentConductor",
+  "branch": "codex/issue-9-native-ui-parity",
+  "commit": "3ae08e2db6cbf0c02c74ac390fdbc9e3218ae889",
+  "command": "cargo test --locked --offline",
+  "result": {
+    "exit_code": 0,
+    "passed": 963,
+    "ignored": 14,
+    "failed": 0,
+    "test_binaries": 321,
+    "elapsed_seconds": 245.25
+  },
+  "scope": "Complete package test run under the host default feature configuration. This is local macOS evidence; it does not establish Windows runtime/UI behavior or release readiness.",
+  "acceptance": {
+    "packaged_ui_workflows": "20/25",
+    "shipped_default_rust_ui": "0/25"
+  },
+  "open_items": [
+    "Resolve exact package launch/window binding before retrying workflow 20.",
+    "The user reports the Windows UTM guest does not boot and has no display after the approved reset; do not perform further VM power/reset/configuration actions.",
+    "Windows UI, accessibility/Korean IME, retained screenshots, resource measurements, final license review, and stable release remain incomplete."
+  ]
+}

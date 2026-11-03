@@ -1,5 +1,4 @@
 //! Explicit planning output contracts; provider flags constrain generation before decoding.
-//! GitHub #337: every object lists all of its properties as required (Codex Structured Outputs).
 use crate::protocol::Provider;
 use serde_json::{Value, json};
 use std::path::Path;
@@ -15,18 +14,17 @@ fn object(properties: Value) -> Value {
 }
 pub fn for_plan(agents: &[String], roles: &[String], phased: bool) -> Value {
     let strings = json!({"type":"array","items":{"type":"string"}});
-    // GitHub #251: `Plan::validate` rejects a task without a path or a test command, so the contract says so.
-    let at_least_one = json!({"type":"array","minItems":1,"items":{"type":"string"}});
+    let non_empty_strings = json!({"type":"array","minItems":1,"items":{"type":"string"}});
     let role = if roles.is_empty() {
         json!({"type":["string","null"]})
     } else {
         json!({"type":"string","enum":roles})
     };
-    // Strict structured outputs (Codex) accept neither optional fields nor free-form maps, so a task states
-    // the one option the application applies, `effort`, and null means none.
+    // Codex strict structured outputs reject optional keys and free-form maps.
+    // `effort` is the option the task-profile resolver consumes; null means unset.
     let options = object(json!({"effort":{"type":["string","null"]}}));
     let task = object(
-        json!({"id":{"type":"string"},"agent":{"type":"string","enum":agents},"prompt":{"type":"string"},"paths":at_least_one,"depends_on":strings,"test_command":at_least_one,"role":role,"model":{"type":["string","null"]},"execution_options":options,"task_type":{"type":["string","null"],"enum":["extract","summarize","analyze","code","agentic","creative",null]}}),
+        json!({"id":{"type":"string"},"agent":{"type":"string","enum":agents},"prompt":{"type":"string"},"paths":non_empty_strings,"depends_on":strings,"test_command":non_empty_strings,"role":role,"model":{"type":["string","null"]},"execution_options":options,"task_type":{"type":["string","null"],"enum":["extract","summarize","analyze","code","agentic","creative",null]}}),
     );
     let tasks = json!({"type":"array","items":task});
     if phased {

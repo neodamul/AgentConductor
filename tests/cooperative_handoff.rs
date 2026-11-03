@@ -1,3 +1,4 @@
+#![cfg(feature = "test-fixtures")]
 #![cfg(unix)]
 //! DD-43: a completed cooperative handoff continues automatically on the reviewed fallback
 //! target after the relinquishing worker's processes are gone, preserving partial work.
@@ -20,14 +21,8 @@ fn completed_handoff_moves_to_the_reviewed_fallback_without_a_competing_writer()
     fallback["quota_group"] = "fallback-account".into();
     let company = &mut value["agents"][0];
     company["id"] = "company".into();
-    company["executable"] = "/usr/bin/python3".into();
-    company["args"] = serde_json::json!([
-        format!(
-            "{}/tests/support/cooperative_worker.py",
-            env!("CARGO_MANIFEST_DIR")
-        ),
-        "{session_id}"
-    ]);
+    company["executable"] = env!("CARGO_BIN_EXE_test_agent_fixture").into();
+    company["args"] = serde_json::json!(["cooperative-worker", "{session_id}"]);
     company["cooperative"] = "checkpoint_v1".into();
     company["quota_group"] = "company-account".into();
     company["fallback"] = serde_json::json!({"agent":"mock","model":null});

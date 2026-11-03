@@ -305,7 +305,7 @@ Generate plan shows progress with elapsed time from the moment it is pressed, in
 Trace: R-98 -> BG-53 -> SF-85 -> UC-88 -> FR-83 -> QAS-94 -> DD-106. Source: user request, 2026-10-13.
 
 ### SF-86 Run and task status at a glance
-The Agent Room shows the run's current final state immediately: a run status banner with the state in bold colour, task progress and the last error, and a prominent Resume button whenever the run can continue. Task states (failed, completed, pending, waiting, running) are bold and colour-coded in the session heading and in the left session list. In the left list a failed task is red, a task waiting for a decision or tool request has a blinking border, pending tasks use a strong colour, and the Tool requests count turns red and blinks while requests wait.
+The Agent Room shows the run's current final state immediately: a run status banner with the state in bold colour, task progress and the last error, and a prominent Resume button whenever the run can continue. Show the selected workspace mode and current branch with the repository context. The left session list has a localized heading and task count; task states (failed, completed, pending, waiting, running) are bold and colour-coded in the session heading and list. In the left list a failed task is red, a task waiting for a decision or tool request has a blinking border, pending tasks use a strong colour, and the Tool requests count turns red and blinks while requests wait.
 Trace: R-99 -> BG-54 -> SF-86 -> UC-89 -> FR-84 -> QAS-95 -> DD-107. Source: user request, 2026-10-13.
 
 ### SF-87 Goal folders directly in the project folder
@@ -546,11 +546,9 @@ Trace: R-152 → BG-107 → SF-139 → UC-142 → FR-137 → QAS-148 → DD-162.
 ### SF-142 Local company build label
 Embed an optional validated suffix from the empty-by-default repository file `company-suffix.txt` in the displayed version. Keep Cargo and update comparisons numeric; reject release packaging when the suffix is non-empty.
 Trace: R-155 → BG-110 → SF-142 → UC-145 → FR-140/NFR-52 → QAS-151 → DD-165. GitHub #13.
-
 ### SF-141 Declarative custom CLI event and quota profiles
 Store custom event names, session-ID JSON Pointer, quota argv, timeout, and normalized quota output pointer on each AgentProfile. Existing provider adapters remain the default for Claude, Codex, and OpenCode; custom profiles can opt into these fields without adding provider-specific Rust branches.
 Trace: R-154 → BG-109 → SF-141 → UC-144 → FR-139 → QAS-150 → DDR-17 → DD-164. GitHub #12, 2026-10-19.
-
 ### SF-140 Retain timeout evidence, retry safely, and report blocked causes
 On subprocess wall-timeout, persist attempt artifacts and audit evidence, keep the task pending during a bounded retry delay, and retry automatically unless a stop request exists. Surface the timeout in the run error banner; when retry is exhausted or the task ends blocked, place its cause in the final report.
 Trace: R-153 → BG-108 → SF-140 → UC-143 → FR-138 → QAS-149 → DD-163. GitHub #44, 2026-10-19.
@@ -574,7 +572,6 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### SF-148 Read-only coordinator chat as a bounded worker job
 Run each question as a worker job of the existing job slot: the coordinator profile runs in the project folder with its read-only tools, receives the recent conversation and the manual, and returns one JSON answer that the page shows when the job completes.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
-
 ### SF-147 Follow the run with the selected session
 On each snapshot, compare the previous and current session states; when the selected session stopped running, select the next running session, or the integration entry while the run awaits a decision.
 Trace: R-160 → BG-115 → SF-147 → UC-150 → FR-145 → QAS-156 → DDR-21 → DD-170. GitHub #109, user, 2026-10-21.
@@ -648,7 +645,7 @@ The server stores the conversation of the latest chat; the panel restores it, re
 Trace: R-179 → BG-134 → SF-167 → UC-170 → FR-166/FR-167 → QAS-177 → DD-190. GitHub #185, user, 2026-10-27.
 
 ### SF-168 Static labels removed
-The title bar label, the sidebar note and the footer default-mode text are removed from the workspace and Agent Room pages with their styles and message keys.
+The title bar label, the sidebar note and the footer default-mode text are removed from the web workspace, native Rust workspace and Agent Room, along with their styles and message keys.
 Trace: R-180 → BG-135 → SF-168 → UC-171 → FR-168 → QAS-178 → DD-191. GitHub #190, user, 2026-10-27.
 
 ### SF-169 Resync after a failed send
@@ -671,70 +668,90 @@ Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → 
 The launch path chooses a workspace from the saved list (last used first) instead of always opening the default folder. With none, an unused placeholder opens, is hidden from every list, and the page asks for the first workspace name; creating it retires the placeholder.
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
 
+### SF-174 Quiet native background reads and rebase delayed polls
+Classify existing scheduled Agent Room snapshots and their automatic detail/coordinator reads as background work; keep their failures out of action toasts and let the next normal schedule retry. Keep initial reads, explicit refreshes, approvals and mutations visible. On a delayed eframe repaint, issue at most one due snapshot and set the next deadline from the current `Instant`. Do not add a Workspace polling loop or retry state-changing requests.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178/NFR-76 → QAS-184 → DDR-40 → DD-198. GitHub #221, 2026-10-29.
+
+### SF-175 Supervised ACIO worker execution
+For opted-in profiles, build and schema-check the ACIO task input, run it through the existing process supervisor, normalize live events and sessions, and pause for the existing exact human approval when an ACIO tool requests a decision. Keep non-ACIO profiles unchanged.
+Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179/NFR-77 → QAS-185 → DDR-41 → DD-199. GitHub #9, 2026-10-29.
+### SF-176 Coordinator workspace evidence
+Build a bounded Workspace prompt section from saved settings and the latest workflow report, then place it between the manual and earlier conversation. Include a clear no-run state and keep untrusted text inside neutralized evidence values.
+Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### SF-177 Native chat-bubble launcher
+Render a compact theme-colored bubble/robot glyph inside the existing coordinator-chat button; retain its localized accessible name, tooltip and click behavior.
+Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. Main #229, 2026-10-29.
+
+### SF-178 Reconcile native chat sends with the stored conversation
+The Rust chat panel keeps a send pending while its result is unknown, then resolves it from the next readable workspace conversation snapshot.
+Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. Port of GitHub #241, 2026-10-29.
+
 ### SF-174 Standard prompt form and bounded format retry
 One shared builder assembles Document, Task and Format; the reviewer and worker prompts use it. The coordinator JSON call retries once when the reply cannot be read as the requested JSON.
-Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DD-198. GitHub #235, user, 2026-10-29.
+Trace: R-186 → BG-141 → SF-174 → UC-177 → FR-178 → QAS-184 → DDR-42 → DD-198. GitHub #235, user, 2026-10-29.
 
-### SF-176 Workspace section in the chat prompt
-The chat worker builds a Workspace section from the saved settings and the latest run's report and diff and places it between the manual and the conversation.
-Trace: R-188 → BG-143 → SF-176 → UC-179 → FR-180 → QAS-186 → DD-200. GitHub #243, user, 2026-10-29.
+### SF-181 Non-blocking repository HEAD resolution
+Read loose, packed, and detached HEAD values from local Git metadata. When a linked worktree or unsupported layout requires Git, return a cached/pending revision immediately and perform a coalesced background refresh. Keep routine revision and render paths free of Git subprocesses.
+Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185/NFR-80 → QAS-191 → DDR-45 → DD-205. Port of GitHub #234, 2026-10-30.
 
-### SF-175 Pending state for a chat send whose outcome is unknown
-The chat panel keeps an unconfirmed message as a pending turn, keeps the send button disabled, and reconciles with the stored conversation as soon as it can be read.
-Trace: R-187 → BG-142 → SF-175 → UC-178 → FR-179 → QAS-185 → DD-199. GitHub #241, user, 2026-10-29.
+### SF-182 Broadcast state invalidations and isolate refresh work
+The shared Room publishes successful state changes to subscribed native views, excluding the originating view. Listeners coalesce notifications and request one asynchronous snapshot through a dedicated background queue and reply channel, even while an unrelated interactive request is pending. A completed snapshot updates visible state without replacing the pending request or dirty form values; a human decision modal may pause refresh for its view. Active child work is notification-driven; all views use a 30-second recovery check.
+Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186/NFR-81 → QAS-192 → DDR-46 → DD-206. GitHub #9, user, 2026-10-30.
 
-### SF-177 Fence scan that tries every block
-The reply reader tries each fenced block in turn and skips the ones that do not parse or lack the field.
-Trace: R-189 → BG-144 → SF-177 → UC-180 → FR-181 → QAS-187 → DD-201. GitHub #247, user, 2026-10-29.
+### SF-183 Dispatch native requests through bounded independent lanes
+Run read-only requests in a small bounded worker pool, serialize state-changing requests in their own bounded lane, route synchronous network-bound requests through a dedicated bounded I/O lane, and keep scheduled snapshots on their existing single-flight background lane. Correlate replies and ignore superseded results. Classify unknown valid request kinds conservatively as state changes so they cannot race mutations or bypass peer-view invalidation.
+Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187/NFR-82 → QAS-193 → DDR-47 → DD-207. GitHub #257, user, 2026-10-30.
 
-### SF-178 Plan contract and scope correction
-The output schema requires a non-empty paths array and test command, the prompt says verification tasks own a path, validation errors name the task and the field, and an empty scope is corrected once like an unsafe one.
-Trace: R-190 → BG-145 → SF-178 → UC-181 → FR-182 → QAS-188 → DD-202. GitHub #251, user, 2026-10-29.
+### SF-184 Event-driven native refresh
+Publish scoped in-process invalidations after successful state changes and listen for persisted external changes on a separate lightweight thread. Coalesce invalidations into one asynchronous authoritative snapshot; retain only a 30-second recovery check rather than polling active jobs every second.
+Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188/NFR-83 → QAS-194 → DDR-48 → DD-208. GitHub #257, user, 2026-11-01.
 
-### SF-179 Non-blocking state revision and snapshot
-HEAD is read from the Git files without a process; a layout the files cannot answer is refreshed by a short background task and read from a cache; the snapshot is built outside the settings lock; the request diagnostics log names a lock wait or a step of 500 ms or more.
-Trace: R-191 → BG-146 → SF-179 → UC-182 → FR-183 → QAS-189 → DD-203. GitHub #234, user, 2026-10-30.
+### SF-185 Follow the current workspace without owning stale sessions
+Resolve the listener's startup and report paths from the current workspace on each check. Keep only a non-owning reference to `Startup` so a workspace switch releases an idle previous session and its lease.
+Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189/NFR-84 → QAS-195 → DDR-49 → DD-209. Rust workspace lease regression found while validating GitHub #226/#257, 2026-11-01.
 
-### SF-180 Chat in its own job slot, with the running work in its prompt
-The chat worker is started in its own slot and followed through `chat_job` in the snapshot; planning, starting and chat no longer exclude each other. The chat prompt has a bounded Running work section built from the saved job and the planner's process folder; a rejected send appears as an error turn in the conversation.
-Trace: R-192 → BG-147 → SF-180 → UC-183 → FR-184 → QAS-190 → DD-204. GitHub #261, user, 2026-10-30.
+### SF-189 Wait safely for Claude quota output
+Give the whole interactive Claude quota query up to 60 seconds across CLI startup, project trust, prompt, and `/usage` response. Preserve prompt-stage versus response-stage timeout details and return immediately after parsed quota output. Show elapsed time on the queried agent card while its quota job is active.
+Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, 2026-11-01.
 
-### SF-181 Task summary layout
-The task summary is a grid whose third line, the facts line, is placed explicitly under the text column.
-Trace: R-193 → BG-148 → SF-181 → UC-184 → FR-185 → QAS-191 → DD-205. GitHub #262, user, 2026-10-30.
+### SF-190 Show quota query errors inline
+On the native agent sidebar and agent settings list, show the stored quota error beside the unavailable quota badge. On the Agent Room run screen, show each stored agent quota error in the run status area. Keep the full error as accessible text and a hover detail. Parse valid grouped Enterprise amounts and cursor-forward terminal spacing; retain malformed or unrecognized screen errors for the same inline display.
+Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #295, 2026-11-01.
+### SF-187 Coordinator run status board
+Render run state and task counts above the coordinator timeline, then show each planned task with its agent, status and available latest-output age. Derive the board from the existing snapshot, and omit repetitive workflow-save rows only from the visible timeline.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-192/NFR-85 → QAS-198 → DDR-51 → DD-212. Rust port of JavaScript #267, GitHub #286, 2026-11-01.
 
-### SF-182 Status board in the coordinator Activity tab, without the workflow rows
-The tab starts with a board built from the snapshot the page already has, followed by the history without its `workflow` entries.
-Trace: R-194 → BG-149 → SF-182 → UC-185 → FR-186 → QAS-192 → DD-206. GitHub #267, user, 2026-10-30.
+### SF-188 Native coordinator Activity parity
+Expose the current run summary, per-task status and available activity age in the Rust Agent Room while retaining the existing coordinator judgment, review and audit actions. Rust consumes the existing snapshot and does not change the JavaScript UI/backend implementation.
+Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-193/NFR-86 → QAS-199 → DDR-52 → DD-213. GitHub #286, 2026-11-01.
+### SF-186 Show elapsed time for workspace jobs
+Redraw operator-visible chat, rewrite, MCP, and update status from their recorded or observed start times. Show snapshot age after six seconds of silence and refresh dependent controls immediately after an asynchronous answer.
+Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, 2026-11-01.
 
-### SF-183 End of the starting state
-The page clears its "starting" mark when the run opens and when a start job ends.
-Trace: R-195 → BG-150 → SF-183 → UC-186 → FR-187 → QAS-193 → DD-207. GitHub #269, user, 2026-10-30.
+### SF-187 Acknowledge direct requests across native views
+Both native views mark a user-triggered request immediately and, after one second, display its operation and elapsed time. Exclude routine and background refreshes. Repaint locally while a foreground request is pending; do not introduce recurring snapshots.
+Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. Rust follow-up to GitHub #285, 2026-11-01.
 
-### SF-184 Live progress on every step of the JS pages
-The workspace page shows planning and starting progress on every tab, with elapsed time counted from recorded start times, a lasting failure box for a failed start, optimize and model discovery in progress, and the age of the last snapshot when the app is slow to answer. The run screen shows why a task is pending, the silence of each running task, the integration verification in progress, a stop in progress, a run whose process is gone, the elapsed time of its own actions and the age of the last snapshot. The snapshot gives the run's process presence, the stop request, the verification step and the start time of UI actions.
-Trace: R-196 → BG-151 → SF-184 → UC-187 → FR-188 → QAS-194 → DD-208. GitHub #273, user, 2026-10-31.
+### SF-191 Enforce task paths and describe one correctable scope failure
+Require non-empty `paths` and `test_command` arrays in the output schema; validate each task field with an actionable task-specific error; and retry a phased plan once when a task has no path.
+Trace: R-203 → BG-158 → SF-191 → UC-194 → FR-195 → QAS-201 → DD-215. GitHub #251, 2026-11-02.
 
-### SF-185 Version-checked manual header and recaptured screenshots
-The manual header is checked against the package version; the six screenshots are captured from the current page in WKWebView over the live bridge's demo workspace.
-Trace: R-197 → BG-152 → SF-185 → UC-188 → FR-189 → QAS-195 → DD-209. GitHub #277, user, 2026-10-31.
+### SF-192 Extract a bounded complete coordinator document
+Scan provider output for the first complete valid JSON object containing the requested field, continuing after an unfinished fenced draft. Enforce a 256 KiB document limit and report oversize or missing-document failures.
+Trace: R-204 → BG-159 → SF-192 → UC-195 → FR-196 → QAS-202 → DDR-53 → DD-216. Rust parity port of main #247, 2026-11-02.
 
-### SF-186 Elapsed time and staleness for chat, rewrite, MCP lookup and update
-The chat working line, the goal rewrite status, the MCP review dialog, the tool discovery text, the source status line and the update dialog show the elapsed time of their job from its recorded start, redrawn every second, with the age of the last snapshot when it is over 5 s.
-Trace: R-198 → BG-153 → SF-186 → UC-189 → FR-190 → QAS-196 → DD-210. GitHub #279, user, 2026-11-01.
+### SF-193 Present bounded stdout and stderr evidence on failure
+For a failed integration check, the run report and retry-feedback source shall carry the readable tails of both process streams when available; keep the existing behavior when only one stream has output.
+Trace: R-205 → BG-160 → SF-193 → UC-196 → FR-197 → QAS-203 → DDR-54 → DD-217. GitHub #323, 2026-11-02.
 
-### SF-187 One waiting sign for every request
-Both pages send every request through one helper that marks the pressed button and names a request that has waited over 1 s with its time; refreshes are left out.
-Trace: R-199 → BG-154 → SF-187 → UC-190 → FR-191 → QAS-197 → DD-211. GitHub #285, user, 2026-11-01.
+### SF-194 Configure and identify a safe workspace coordinator
+Workspace settings select a coordinator profile and an optional model from its observed CLI catalog. The agent list identifies the selected coordinator for the active workspace. Custom profiles may declare a separate read-only argument list, and the UI explains in the active language when a selected profile cannot serve coordinator chat.
+Trace: R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-198/FR-199/FR-200 → NFR-88/NFR-89 → QAS-204/QAS-205 → DDR-55 → DD-218. Rust parity follow-up to merged GitHub #325/#326/#333, 2026-11-02.
 
-### SF-188 Release doc checks
-Tests for the version sentences and the screenshot references run on every change; a script compares the last interface change with the last capture or confirmation and gates publishing.
-Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-192 → QAS-198 → DD-212. GitHub #290, user, 2026-11-01.
+### SF-195 Explain why an application update cannot proceed
+Before an update starts, report active workspace work and readiness-check failures as distinct, localized conditions. Include enough context and elapsed time for the operator to identify the blocker and decide when to retry.
+Trace: R-207 → BG-162 → SF-195 → UC-199 → FR-201/NFR-90 → QAS-206 → DDR-56 → DD-219. Rust parity port of merged GitHub #332/#331, 2026-11-02.
 
-### SF-189 Wait limit of the Claude usage query and its elapsed time
-One shared limit of 60 s for starting the CLI, the trust screen, the prompt and the `/usage` answer; a timeout names that limit; the agent card counts the running query.
-Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
-
-### SF-190 Request kind guard
-A node test extracts the request kinds from the page scripts and compares them with a classification in the test and with the quiet list of the waiting helper.
-Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.
+### SF-196 Configure custom CLI output and denial behavior
+Custom profiles may select fail-or-text handling for non-JSON lines and declare a denial event using a JSON Pointer plus exactly one value or case-insensitive message match. The decoder stores a distinct denied event; the worker fails the task with the configured tool name and denial reason. The native profile editor exposes these fields and warns, without blocking save, when automatic tool approval has no denial mapping.
+Trace: R-208 → BG-163 → SF-196 → UC-200 → FR-202/NFR-91 → QAS-207 → DDR-57 → DD-220.

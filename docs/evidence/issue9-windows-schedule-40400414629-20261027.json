@@ -1,0 +1,34 @@
+{
+  "workflow_run": 40400414629,
+  "source_commit": "4e67747bc4657d49611576f679c125ec473f34c0",
+  "pull_request_merge_commit": "ac213452d8a5a30f924a4bf77f4ef2e9ebeb70cb",
+  "date": "2026-10-27",
+  "result": "failed_exact_windows_schedule_acceptance",
+  "platform_validation": {
+    "macos": "passed",
+    "windows": "passed"
+  },
+  "package_jobs": {
+    "macos": {
+      "result": "passed",
+      "artifact_id": 12691226472,
+      "size_bytes": 21171906,
+      "sha256": "e1463aeeea248559adb8fc6d939cc0a5a3f274f1ac76071addd0dce06550b32b"
+    },
+    "windows": {
+      "result": "package_build_and_smoke_passed_schedule_test_failed",
+      "artifact_id": 12691720839,
+      "size_bytes": 15309475,
+      "sha256": "24d19e9d2336af7cddd36f298d4b69a36682ea288d9daa436d8f7cf573c6000a"
+    }
+  },
+  "windows_schedule": {
+    "diagnostic": "SCHEDULE_TARGET_PROCESS_MISMATCH",
+    "expected_process_id": 6196,
+    "target_process_id": 0,
+    "click_point": "884,867",
+    "button_bounds": "834,857,99,20",
+    "interpretation": "The button center was below the app window and did not resolve to a process. This run predates the bounded-scroll and geometry guard currently under local verification."
+  },
+  "acceptance": "Keep issue #9 packaged UI acceptance at 20/25 until a new exact Windows package run persists manual_schedule=2099-01-01T09:00:00+09:00."
+}

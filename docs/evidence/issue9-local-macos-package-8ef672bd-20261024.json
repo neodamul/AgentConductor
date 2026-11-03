@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-24",
+  "kind": "exact-pr-head-local-macos-rust-package",
+  "repository": "neodamul/AgentConductor",
+  "branch": "codex/issue-9-native-ui-parity",
+  "source_commit": "8ef672bd2d94ae38ed6caeab4f1d93d8df52d47c",
+  "package_version": "0.1.37",
+  "target": "aarch64-apple-darwin",
+  "commands": {
+    "build_and_pack": "cargo run --offline --locked --release -- package-release",
+    "validate": "cargo run --offline --locked --release -- validate-package dist/agentconductor-aarch64-apple-darwin-8ef672bd2d94",
+    "zip_integrity": "unzip -t dist/agentconductor-aarch64-apple-darwin-8ef672bd2d94.zip"
+  },
+  "archive": {
+    "path": "dist/agentconductor-aarch64-apple-darwin-8ef672bd2d94.zip",
+    "bytes": 21672397,
+    "sha256": "605ee5e9b65e26e41a9a2c5b9a9a4151fe41655bc5ee1d3cd5dc12e4e1bfa519",
+    "zip_integrity": "passed"
+  },
+  "binary": {
+    "path": "dist/agentconductor-aarch64-apple-darwin-8ef672bd2d94/agentconductor",
+    "bytes": 18858304,
+    "sha256": "95746fd5052c7c4fde4472ecce7afa7db2b01ec38a94c612bc9f15b4e0a78e4e",
+    "runtime": "one native executable; SQLite bundled"
+  },
+  "supply_chain": {
+    "dependency_count": 242,
+    "sbom_component_count": 242,
+    "bundled": ["SBOM.cdx.json", "DEPENDENCY-LICENSES.md", "THIRD-PARTY-NOTICES.md", "licenses/", "LICENSE"],
+    "offline_manuals": ["docs/user-manual.html", "docs/user-manual.ko.html", "docs/user-manual.md", "docs/user-manual.ko.md"]
+  },
+  "packaged_smoke": {
+    "exit_code": 0,
+    "cases": [
+      {"isolation": "shared", "source": "git", "tasks": 3, "tests": 3, "parallel": true, "approved_merge": true, "unapproved_merge_refused": true},
+      {"isolation": "shared", "source": "folder", "tasks": 3, "tests": 3, "parallel": true, "approved_merge": true, "unapproved_merge_refused": true},
+      {"isolation": "worktree", "source": "git", "tasks": 3, "tests": 3, "parallel": true, "approved_merge": true, "unapproved_merge_refused": true},
+      {"isolation": "worktree", "source": "folder", "tasks": 3, "tests": 3, "parallel": true, "approved_merge": true, "unapproved_merge_refused": true}
+    ]
+  },
+  "ui_visual_acceptance": false,
+  "github_release": false,
+  "issue9_acceptance": {"packaged_native_ui_workflows": "15/25", "shipped_default_rust_ui": "0/25"}
+}

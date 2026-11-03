@@ -1,69 +1,8 @@
 use eframe::egui::{self, Ui};
 use serde_json::Value;
 
-pub(super) fn text_field(ui: &mut Ui, label: &str, task: &mut Value, key: &str) {
-    ui.label(label);
-    let mut value = match key {
-        "paths" | "depends_on" => task[key]
-            .as_array()
-            .map(|values| {
-                values
-                    .iter()
-                    .filter_map(Value::as_str)
-                    .collect::<Vec<_>>()
-                    .join(if key == "paths" { "\n" } else { ", " })
-            })
-            .unwrap_or_default(),
-        "test_command" => task[key]
-            .as_str()
-            .map(str::to_owned)
-            .unwrap_or_else(|| serde_json::to_string(&task[key]).unwrap_or_else(|_| "[]".into())),
-        _ => task[key].as_str().unwrap_or_default().to_owned(),
-    };
-    let response = if key == "prompt" {
-        ui.add(egui::TextEdit::multiline(&mut value).desired_rows(3))
-    } else {
-        ui.add(egui::TextEdit::singleline(&mut value))
-    };
-    let changed = response.changed();
-    response.accessible_name(label);
-    if changed {
-        task[key] = match key {
-            "paths" => serde_json::json!(
-                value
-                    .lines()
-                    .map(str::trim)
-                    .filter(|s| !s.is_empty())
-                    .collect::<Vec<_>>()
-            ),
-            "depends_on" => serde_json::json!(
-                value
-                    .split(',')
-                    .map(str::trim)
-                    .filter(|s| !s.is_empty())
-                    .collect::<Vec<_>>()
-            ),
-            "test_command" => serde_json::from_str(&value).unwrap_or(Value::String(value)),
-            _ => Value::String(value),
-        };
-    }
-}
-
-pub(super) fn agent_picker(ui: &mut Ui, task: &mut Value, agents: &[Value]) {
-    ui.label("Assigned agent");
-    let response = egui::ComboBox::from_id_salt(("task-agent", task["id"].as_str().unwrap_or("")))
-        .selected_text(task["agent"].as_str().unwrap_or("Select agent"))
-        .show_ui(ui, |ui| {
-            for agent in agents {
-                if let Some(id) = agent["id"].as_str() {
-                    ui.selectable_value(&mut task["agent"], Value::String(id.into()), id);
-                }
-            }
-        });
-    response.response.accessible_name("Assigned agent");
-}
-
-pub(super) fn model_picker(ui: &mut Ui, task: &mut Value, agents: &[Value]) {
+pub(super) fn model_picker(ui: &mut Ui, language: &str, task: &mut Value, agents: &[Value]) {
+    let text = |key| crate::ui::messages::in_language(language, key);
     let agent = agents.iter().find(|agent| agent["id"] == task["agent"]);
     let models = agent
         .and_then(|agent| agent["catalog"]["models"].as_array())
@@ -71,12 +10,12 @@ pub(super) fn model_picker(ui: &mut Ui, task: &mut Value, agents: &[Value]) {
         .unwrap_or_default();
     let selected = agent
         .map(|agent| task_model_selection_label(task, agent))
-        .unwrap_or_else(|| "Automatic".to_owned());
+        .unwrap_or_else(|| text("startup.automatic").to_owned());
     let response = egui::ComboBox::from_id_salt(("task-model", task["id"].as_str().unwrap_or("")))
         .selected_text(&selected)
         .show_ui(ui, |ui| {
             if ui
-                .selectable_label(task_model(task, agent).is_none(), "Automatic")
+                .selectable_label(task_model(task, agent).is_none(), text("startup.automatic"))
                 .clicked()
             {
                 if supports_model_option(agent) {
@@ -98,10 +37,63 @@ pub(super) fn model_picker(ui: &mut Ui, task: &mut Value, agents: &[Value]) {
                 }
             }
         });
-    response.response.accessible_name("Session model");
+    response
+        .response
+        .accessible_name(crate::ui::messages::in_language(
+            language,
+            "startup.session_model",
+        ));
 }
 
-pub(super) fn execution_option_pickers(ui: &mut Ui, task: &mut Value, agents: &[Value]) {
+pub(super) fn task_type_picker(ui: &mut Ui, language: &str, task: &mut Value) {
+    const TYPES: [(&str, &str); 6] = [
+        ("extract", "startup.task_type_extract"),
+        ("summarize", "startup.task_type_summarize"),
+        ("analyze", "startup.task_type_analyze"),
+        ("code", "startup.task_type_code"),
+        ("agentic", "startup.task_type_agentic"),
+        ("creative", "startup.task_type_creative"),
+    ];
+    let text = |key| crate::ui::messages::in_language(language, key);
+    let id = task["id"].as_str().unwrap_or("");
+    let selected = task["task_type"].as_str().unwrap_or("code").to_owned();
+    ui.label(text("startup.task_type"));
+    let response = egui::ComboBox::from_id_salt(("task-type", id))
+        .selected_text(text(
+            TYPES
+                .iter()
+                .find(|(kind, _)| *kind == selected)
+                .map_or("startup.task_type_code", |(_, label)| label),
+        ))
+        .show_ui(ui, |ui| {
+            for (kind, label) in TYPES {
+                if ui.selectable_label(selected == kind, text(label)).clicked() {
+                    task["task_type"] = kind.into();
+                }
+            }
+        });
+    response.response.accessible_name(text("startup.task_type"));
+}
+
+pub(super) fn task_type_label(language: &str, kind: &str) -> &'static str {
+    let key = match kind {
+        "extract" => "startup.task_type_extract",
+        "summarize" => "startup.task_type_summarize",
+        "analyze" => "startup.task_type_analyze",
+        "agentic" => "startup.task_type_agentic",
+        "creative" => "startup.task_type_creative",
+        _ => "startup.task_type_code",
+    };
+    crate::ui::messages::in_language(language, key)
+}
+
+pub(super) fn execution_option_pickers(
+    ui: &mut Ui,
+    language: &str,
+    task: &mut Value,
+    agents: &[Value],
+) {
+    let default_label = crate::ui::messages::in_language(language, "startup.profile_default");
     let Some(agent) = agents.iter().find(|agent| agent["id"] == task["agent"]) else {
         return;
     };
@@ -121,16 +113,13 @@ pub(super) fn execution_option_pickers(ui: &mut Ui, task: &mut Value, agents: &[
         let selected = task["execution_options"][name]
             .as_str()
             .or(option["default"].as_str())
-            .unwrap_or("Profile default");
+            .unwrap_or(default_label);
         let response =
             egui::ComboBox::from_id_salt(("task-option", task["id"].as_str().unwrap_or(""), name))
                 .selected_text(selected)
                 .show_ui(ui, |ui| {
                     if ui
-                        .selectable_label(
-                            task["execution_options"][name].is_null(),
-                            "Profile default",
-                        )
+                        .selectable_label(task["execution_options"][name].is_null(), default_label)
                         .clicked()
                         && let Some(options) = task["execution_options"].as_object_mut()
                     {
@@ -145,11 +134,16 @@ pub(super) fn execution_option_pickers(ui: &mut Ui, task: &mut Value, agents: &[
                         }
                     }
                 });
-        response.response.accessible_name(format!("Task {name}"));
+        response
+            .response
+            .accessible_name(crate::ui::messages::interpolate(
+                crate::ui::messages::in_language(language, "startup.task_option_named"),
+                &[("value1", name)],
+            ));
     }
 }
 
-pub(super) fn task_model_selection_label(task: &Value, agent: &Value) -> String {
+pub fn task_model_selection_label(task: &Value, agent: &Value) -> String {
     match task_model(task, Some(agent)) {
         Some(model) if has_task_model_override(task) => model.to_owned(),
         Some(model) => format!("{model} (profile default)"),
@@ -157,7 +151,7 @@ pub(super) fn task_model_selection_label(task: &Value, agent: &Value) -> String 
     }
 }
 
-pub(super) fn task_option_values(task: &Value, agent: &Value, name: &str) -> Option<Vec<String>> {
+pub fn task_option_values(task: &Value, agent: &Value, name: &str) -> Option<Vec<String>> {
     let option = agent["execution_options"]
         .as_array()?
         .iter()

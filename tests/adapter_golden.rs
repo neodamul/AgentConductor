@@ -9,7 +9,7 @@ use serde_json::{Value, json};
 #[path = "support/env.rs"]
 mod env;
 
-const GOLDEN: &str = "tests/data/adapter_golden.json";
+const GOLDEN_DIR: &str = "tests/data";
 
 fn mode(m: InputMode) -> &'static str {
     match m {
@@ -130,10 +130,32 @@ fn argument_building_for_the_known_clis_matches_the_golden_file() {
     env.set("HOME", &home);
     env.set("USERPROFILE", &home);
     let now = snapshot();
+    let entries = now.as_object().unwrap();
     if std::env::var_os("AC_UPDATE_GOLDEN").is_some() {
-        std::fs::write(GOLDEN, serde_json::to_string_pretty(&now).unwrap() + "\n").unwrap();
+        for (key, value) in entries {
+            let path = format!("{GOLDEN_DIR}/adapter_golden_{key}.json");
+            let document = serde_json::json!({key: value});
+            std::fs::write(
+                path,
+                serde_json::to_string_pretty(&document).unwrap() + "\n",
+            )
+            .unwrap();
+        }
     }
-    let golden: Value = serde_json::from_str(&std::fs::read_to_string(GOLDEN).unwrap()).unwrap();
+    let mut golden = serde_json::Map::new();
+    for entry in std::fs::read_dir(GOLDEN_DIR).unwrap() {
+        let path = entry.unwrap().path();
+        if path
+            .file_name()
+            .unwrap()
+            .to_string_lossy()
+            .starts_with("adapter_golden_")
+        {
+            let document: Value = serde_json::from_slice(&std::fs::read(path).unwrap()).unwrap();
+            golden.extend(document.as_object().unwrap().clone());
+        }
+    }
+    let golden = Value::Object(golden);
     assert_eq!(now, golden);
     drop(env);
     let _ = std::fs::remove_dir_all(home);

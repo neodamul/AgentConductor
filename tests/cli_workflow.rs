@@ -151,5 +151,6 @@ fn binary_schedules_reassigns_and_selects_models_with_native_commands() {
             .state,
         "waiting_approval"
     );
+    drop(runtime);
     std::fs::remove_dir_all(root).unwrap();
 }

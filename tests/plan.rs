@@ -3,6 +3,7 @@ use agentconductor::plan::{AgentProfile, Plan, Task};
 fn plan() -> Plan {
     Plan {
         goal: "refresh token rotation".into(),
+        plan_rules: String::new(),
         workspace_mode: Default::default(),
         agents: ["claude", "codex", "opencode"]
             .into_iter()
@@ -10,7 +11,11 @@ fn plan() -> Plan {
                 id: id.into(),
                 executable: id.into(),
                 args: vec![],
+                coordinator_model: None,
+                read_only_args: None,
                 parser: Default::default(),
+                protocol: None,
+                agent_settings: None,
                 input_mode: Default::default(),
                 environment: Default::default(),
                 permission_mode: "unverified".into(),
@@ -27,12 +32,9 @@ fn plan() -> Plan {
                 fallback: None,
                 cooperative: Default::default(),
                 event_types: Default::default(),
+                quota_rules: vec![],
                 session_id_pointer: None,
                 quota_command: None,
-                coordinator_model: None,
-                read_only_args: None,
-                protocol: None,
-                agent_settings: None,
             })
             .collect(),
         tasks: ["src/auth", "tests/auth", "docs/auth"]
@@ -57,6 +59,35 @@ fn plan() -> Plan {
 #[test]
 fn accepts_three_independent_scopes() {
     assert!(plan().validate().is_ok());
+}
+
+#[test]
+fn custom_event_metadata_is_limited_to_bounded_custom_profiles() {
+    let mut p = plan();
+    p.agents[0].event_types.insert(
+        "turn_done".into(),
+        agentconductor::protocol::EventKind::Result,
+    );
+    p.agents[0].session_id_pointer = Some("/meta/session".into());
+    assert!(p.validate().is_ok());
+
+    p.agents[0].parser = agentconductor::protocol::Provider::Claude;
+    assert!(p.validate().is_err());
+    p.agents[0].parser = agentconductor::protocol::Provider::Custom;
+    p.agents[0].session_id_pointer = Some("meta/session".into());
+    assert!(p.validate().is_err());
+    p.agents[0].session_id_pointer = Some("/meta~2session".into());
+    assert!(p.validate().is_err());
+    p.agents[0].session_id_pointer = Some("/meta~1session".into());
+    assert!(p.validate().is_ok());
+
+    for index in 0..64 {
+        p.agents[0].event_types.insert(
+            format!("event-{index}"),
+            agentconductor::protocol::EventKind::Progress,
+        );
+    }
+    assert!(p.validate().is_err());
 }
 
 #[test]
@@ -125,10 +156,41 @@ fn rejects_empty_inputs_and_shell_executable() {
     assert!(p.validate().is_err());
     let mut p = plan();
     p.tasks[0].paths.clear();
-    assert!(p.validate().is_err());
+    assert!(
+        p.validate()
+            .unwrap_err()
+            .contains("task task-0: paths is empty")
+    );
     let mut p = plan();
     p.agents[0].executable = "sh".into();
     assert!(p.validate().is_err());
+}
+
+#[test]
+fn task_validation_names_the_invalid_field() {
+    let mut p = plan();
+    p.tasks[0].prompt.clear();
+    assert!(
+        p.validate()
+            .unwrap_err()
+            .contains("task task-0: prompt is empty")
+    );
+
+    let mut p = plan();
+    p.tasks[0].test_command.clear();
+    assert!(
+        p.validate()
+            .unwrap_err()
+            .contains("task task-0: test_command")
+    );
+
+    let mut p = plan();
+    p.tasks[0].agent = "missing".into();
+    assert!(
+        p.validate()
+            .unwrap_err()
+            .contains("task task-0: unknown agent missing")
+    );
 }
 
 #[test]

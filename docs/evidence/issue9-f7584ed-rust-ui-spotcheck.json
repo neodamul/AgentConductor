@@ -1,0 +1,19 @@
+{
+  "kind": "debug-native-ui-spot-check",
+  "source_commit": "f7584edda220e20466f703eb26312c59d442e6e3",
+  "worktree_branch": "codex/issue-9-native-ui-parity",
+  "executable": "target/debug/agentconductor",
+  "window_bundle": "/private/tmp/ac-rust-ui-screenshot/AgentConductor.app",
+  "isolated_home": "/private/tmp/ac-rust-ui-home",
+  "run_artifact_root": "/private/tmp/ac-rust-ui-workspace",
+  "plain_project_folder": "/private/tmp/ac-rust-ui-project",
+  "checks": [
+    "Displayed Workspace settings, Agent Roles, and Review the plan surfaces from the current Rust source.",
+    "Registered a temporary custom test-agent using /usr/bin/true; the CLI was not invoked.",
+    "Saved a workspace pointing to an empty non-Git project folder, with the run-artifact root kept separate.",
+    "Assigned test-agent to development and saved roles; Generate plan became enabled after both prerequisite saves. It was not clicked."
+  ],
+  "external_calls": false,
+  "screenshot_asset_retained": false,
+  "acceptance_effect": "No packaged UI workflow accepted; count remains 8/25."
+}

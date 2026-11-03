@@ -1,0 +1,55 @@
+{
+  "date": "2026-10-24",
+  "kind": "read-only-windows-guest-state-check",
+  "vm": "Windows",
+  "user_confirmed_share": {
+    "guest_drive": "Z:",
+    "host_path": "/Users/neodamul/Downloads/UTM",
+    "share_settings_changed": false
+  },
+  "observations": {
+    "utm_gui_power_controls": "running",
+    "utmctl_status": "started",
+    "guest_ipv4": "192.168.64.6",
+    "initial_guest_screen": "Windows displayed a restart-apps confirmation listing UTM Guest Tools Installer, Network File Explorer, and Task Manager.",
+    "action": "Cancelled the guest restart prompt; did not use UTM stop, pause, or restart controls.",
+    "screen_after_cancel": "black",
+    "recheck": {
+      "utm_application_version": "5.0.6 (125)",
+      "current_read_only_screen_check": {
+        "screen": "Display output is not active",
+        "guest_command": "cmd.exe /c ver",
+        "guest_command_result": "UTM reported OSStatus -2700: Failed to execute child process (No such file or directory); no guest output returned.",
+        "power_or_share_settings_changed": false
+      },
+      "utmctl_status": "started",
+      "guest_ipv4": "192.168.64.6",
+      "restart_confirmation": "UTM warned that its Restart control resets the VM and loses unsaved changes.",
+      "restart_confirmed": true,
+      "restart_authorized_by_user": true,
+      "after_reset_display": "UEFI boot manager appeared briefly, then UTM displayed 'Display output is not active' and a black screen.",
+      "after_reset_ip_address": "utmctl returned OSStatus -2700 (port not connected).",
+      "after_reset_ping": "192.168.64.6 did not reply to one ICMP probe.",
+      "later_network_recheck": "utmctl ip-address returned IPv4 192.168.64.6 and IPv6 addresses; the display remained inactive.",
+      "read_only_utmctl_exec": "PowerShell query failed with OSStatus -10004 before guest output.",
+      "z_package_read": "An earlier utmctl file pull of the staged Windows package terminated with signal 6 and produced a zero-byte host file. After the user-approved reset, one read-only pull of C:\\Windows\\win.ini also terminated with signal 6 (exit 134).",
+      "temporary_guest_probe": "A command was issued to create C:\\Windows\\Temp\\ac-utm-probe-20261024.txt. The subsequent read and cleanup attempts terminated with signal 6; whether the marker exists is unverified.",
+      "host_share_listing": "macOS returned Operation not permitted for the supplied host folder."
+    },
+    "share_visibility_from_guest": "unverified"
+  },
+  "result": "The user-approved VM reset is complete. The VM is started, its IPv4 address is 192.168.64.6, and a read-only pull of C:\\Windows\\win.ini succeeds. The display remains inactive; guest process execution and a pull from the staged Z: package path terminate utmctl with signal 6 (exit 134). Windows desktop access, Z: visibility, and package execution remain unverified. No UTM share settings changed.",
+  "latest_user_approved_reset_recheck": {
+    "date": "2026-10-24",
+    "reset": "After the user explicitly approved discarding unsaved Windows changes, utmctl stop Windows and utmctl start Windows completed.",
+    "vm_status": "started",
+    "guest_ipv4": "192.168.64.6",
+    "guest_file_channel": "utmctl file pull Windows C:\\Windows\\win.ini succeeded and returned the standard Windows INI contents.",
+    "display": "UTM still displays 'Display output is not active'.",
+    "process_execution": "cmd.exe /c dir Z:\\ terminated utmctl with signal 6 (exit 134).",
+    "z_drive_package_pull": "Pulling the staged Z:\\AgentConductor\\AgentConductor-Windows-x64-PR22-8abbb6df.zip terminated utmctl with signal 6 (exit 134).",
+    "share_settings_changed": false,
+    "cleanup": "Deleted the zero-byte host-side failed package transfer.",
+    "result": "The reset restored guest IP and file-pull access, but Windows desktop display, Z: visibility, and Windows app execution remain unverified."
+  }
+}

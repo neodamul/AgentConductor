@@ -8,49 +8,11 @@ mod support;
 #[path = "support/env.rs"]
 mod test_env;
 
-const HTML: &str = include_str!("../src/ui/startup.html");
-
 fn call(room: &Room, value: serde_json::Value) -> Result<serde_json::Value, String> {
     room.dispatch(value.to_string().as_bytes())
 }
 fn exe() -> &'static Path {
     Path::new(env!("CARGO_BIN_EXE_agentconductor"))
-}
-
-#[test]
-fn settings_are_grouped_with_goal_first_and_repository_beside_worktrees() {
-    let goal = HTML.find("id=\"start-goal\"").unwrap();
-    let settings = HTML
-        .find("startup.workspace_settings_5ebc59")
-        .expect("visible settings heading");
-    let coordinator = HTML.find("id=\"start-coordinator\"").unwrap();
-    let repository = HTML.find("id=\"start-repository\"").unwrap();
-    let browse = HTML
-        .find("id=\"start-browse\"")
-        .expect("folder picker button");
-    let worktrees = HTML.find("id=\"start-worktrees\"").unwrap();
-    // Step 1 (user request 2026-10-14): the coordinator sits right of the workspace name and the
-    // project folder comes before the goal.
-    let name = HTML.find("id=\"start-name\"").unwrap();
-    assert!(settings < name && name < coordinator && coordinator < repository && repository < goal);
-    assert!(repository < browse && browse < worktrees);
-    // The path width applies to the path field only, never to the worktree checkbox.
-    let css = include_str!("../src/ui/startup.css");
-    assert!(
-        !css.contains(".repository-row input{"),
-        "row rule would size the checkbox"
-    );
-    // The coordinator selector keeps its original natural width (user request 2026-10-11).
-    assert!(css.contains(".workspace-settings select{display:block;width:auto;min-width:210px}"));
-    // Path, Browse and the worktree option share one row (user request 2026-10-11).
-    let row = &HTML[HTML.find("class=\"repository-row\"").unwrap()..];
-    let row = &row[..row.find("</div>").unwrap()];
-    assert!(row.contains("id=\"start-browse\"") && row.contains("id=\"start-worktrees\""));
-    let titlebar = &HTML[..HTML.find("</header>").unwrap()];
-    assert!(
-        titlebar.contains("id=\"start-workspace-menu\""),
-        "workspace menu in title bar"
-    );
 }
 
 #[test]

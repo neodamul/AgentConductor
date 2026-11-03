@@ -24,8 +24,9 @@ pub(super) enum Request {
         revision: String,
         text: String,
     },
-    ChatHistory {},
-    ChatReset {},
+    ChatReset {
+        revision: String,
+    },
     OptimizeGoal {
         revision: String,
         goal: String,
@@ -40,6 +41,12 @@ pub(super) enum Request {
         quota_refresh_last: std::collections::BTreeMap<String, u64>,
         #[serde(default)]
         mcp_result: bool,
+        #[serde(default)]
+        chat_result: bool,
+        #[serde(default)]
+        chat_history: bool,
+        #[serde(default)]
+        optimize_result: bool,
         /// DD-71: icon data URLs only when the page asks for them.
         #[serde(default)]
         icons: bool,

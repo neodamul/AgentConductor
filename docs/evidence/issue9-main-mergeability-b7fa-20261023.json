@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-23",
+  "issue": 9,
+  "branch": "codex/issue-9-native-ui-parity",
+  "branch_head": "fe34aa0d8b629ad8e0464ec441a671c3c46c4b40",
+  "upstream_main": "b7fa27a9f033b91df5787e05833c30db471645e5",
+  "shared_base": "e9d1f1ff966403b56eee6f6ae9eebd01a1b4e9f4",
+  "divergence": {
+    "branch_ahead": 656,
+    "branch_behind": 15
+  },
+  "check": "git merge-tree --write-tree origin/main HEAD",
+  "result": "conflicts",
+  "conflict_groups": [
+    "README and requirements/design/plan documentation",
+    "generated bilingual manuals and LLM Wiki",
+    "Rust coordinator, UI controller, quota and workflow modules",
+    "Rust tests for coordinator decisions, requests, and repair",
+    "main-modified legacy UI files deleted or split in the Rust branch"
+  ],
+  "safety": "The merge-tree check did not change refs or the worktree; the Rust worktree remained clean. No merge or rebase was attempted.",
+  "decision": "Keep PR #22 draft. The current-main behavior audit is complete, but integration needs explicit conflict resolution that preserves the Rust-only source split and release-version boundary.",
+  "scope": "Mergeability diagnosis only; no product code or acceptance count changed."
+}

@@ -1,0 +1,23 @@
+{
+  "workflow_run": 40241618513,
+  "commit": "ac3f8b327bd8c076f53c6198b1fd14e8a3f6f5bb",
+  "date": "2026-10-26",
+  "result": "failed_exact_windows_schedule_acceptance",
+  "passed": [
+    "macOS platform validation",
+    "Windows platform validation",
+    "macOS exact release package build and smoke",
+    "Windows exact release package build and smoke",
+    "Windows packaged briefing",
+    "Windows packaged default desktop save"
+  ],
+  "schedule_ui": {
+    "geometry": "button=(720,684)-(819,704); window=(-8,-8)-(1032,728)",
+    "enabled": true,
+    "click_point": "770,694",
+    "click": "The script moved to the button center, waited 150 ms, held mouse-down for 100 ms, and sent mouse-up.",
+    "effect": "No coordinator action file appeared; the report stayed waiting_availability with manual_required and no available_at value."
+  },
+  "next_diagnostic": "Immediately before clicking, restore foreground and log the foreground process and WindowFromPoint process; refuse the click if either is not the packaged app PID.",
+  "acceptance": "Windows exact-package scheduling remains unverified until manual_schedule=2099-01-01T09:00:00+09:00 is persisted."
+}

@@ -169,25 +169,19 @@ async fn actual_planner_requests_and_reads_schema_constrained_phases() {
     fs::remove_dir_all(root).unwrap();
 }
 
-/// GitHub #251: the output contract asks for what `Plan::validate` demands.
 #[test]
-fn a_task_must_own_a_path_and_name_a_test_command() {
+fn task_paths_and_test_commands_require_one_item() {
     for phased in [true, false] {
-        let s = schema::for_plan(&["claude".into()], &[], phased);
+        let schema = schema::for_plan(&["claude".into()], &[], phased);
         let tasks = if phased {
-            &s["properties"]["phases"]["items"]["properties"]["tasks"]
+            &schema["properties"]["phases"]["items"]["properties"]["tasks"]
         } else {
-            &s["properties"]["tasks"]
+            &schema["properties"]["tasks"]
         };
+        let item = &tasks["items"]["properties"];
         for field in ["paths", "test_command"] {
-            assert_eq!(
-                tasks["items"]["properties"][field]["minItems"], 1,
-                "{field}"
-            );
+            assert_eq!(item[field]["minItems"], 1, "{field}");
         }
-        assert_eq!(
-            tasks["items"]["properties"]["depends_on"].get("minItems"),
-            None
-        );
+        assert_eq!(item["depends_on"].get("minItems"), None);
     }
 }

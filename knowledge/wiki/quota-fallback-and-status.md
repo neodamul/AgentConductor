@@ -2,6 +2,14 @@
 
 Trace: R-22/DD-26, R-25/R-26/DD-28, R-29/DD-31.
 
+## Native reduced-motion preference — 2026-10-23
+
+The native UI now reads macOS `NSWorkspace.accessibilityDisplayShouldReduceMotion` through the existing Objective-C icon bridge and Windows `SPI_GETCLIENTAREAANIMATION` through the Windows system API. It checks during frames already requested by the UI; it adds no timer, thread, or dependency. Reduced motion sets egui animation duration to zero; disabling the OS preference restores the startup duration. An initial unsupported/error result leaves egui's current duration intact; transient errors preserve the last successful OS value. Focused tests cover disable/restore, unavailable and transient-error behavior, and a live macOS preference query. Windows target compilation and actual Windows UI preference switching remain unverified on this host.
+
+The rendered running-status dot derives its phase from egui's monotonic frame clock. An integration regression refreshes a snapshot containing a changed quota observation and verifies the pulse advances at the supplied frame time instead of restarting.
+
+Verification on 2026-10-23: the regression inspects the rendered dot color across a shared egui context at 0.4s and 0.8s while the quota observation changes. The local native-feature suite passes 935 tests (14 ignored) across 310 suites; the Windows runtime remains unverified.
+
 ## Contracts
 
 Rust remains the execution authority without a coordinator LLM. Codex quota metadata uses registered `app-server` stdio initialization followed only by `account/rateLimits/read`; it requests no generation or reset. Independent reported windows retain used percentage, derive bounded remaining percentage and clear stale/future/expired capacity. Missing values and context/USD fields never become subscription balance. Private observations remain in ignored local evidence.
@@ -23,6 +31,28 @@ Native session lists map running to pulsing green, completed to steady green, wa
 
 Claude status-line quota parser is tested, but authenticated headless capture is not implemented. Windows CI run 38022076235 passed macOS checks and failed Windows compilation at Unix-only run_controlled_async; native Windows process/filesystem/lease/desktop safety and releases remain open. Native fallback-registration/model/consent interaction, metadata error/timeout boundaries, measured resources and live reduced-motion settings need more acceptance evidence. Cooperative agentmemory directives (R-27/DD-29), on-demand briefings (R-28/DD-30), fine-grained idle detection and optional designated coordinator-session lifecycle remain unfinished. This page is checkpoint evidence, not full-product completion.
 
+## Exact packaged quota fallback — 2026-10-21
+
+The v0.1.32 macOS release executable from product source `b4ad2f5` was run with three disjoint
+mock tasks. Each paid-profile invocation emitted a structured `usage_limit_reached` event with
+`resetsAt`; all tasks transferred once to the configured company CLI on attempt 2 and passed their
+tests. The packaged run waited for review, refused merge before approval, accepted approval bound
+to the exact candidate, merged, and ended `completed` with a clean disposable repository. This
+confirms CLI orchestration and review gating in the binary. It does not prove native UI interaction
+or add to the 6/25 packaged UI workflow count. Evidence: `docs/evidence/issue9-b4ad2f5-quota-fallback-cli.json`.
+
+## Exact macOS package quota fallback through the native UI — 2026-10-23
+
+The v0.1.36 arm64 package at source ca9495b2 ran three independent tasks in a disposable shared Git
+repository. Each quota-agent process emitted a structured usage_limit_reached event with a reset
+time, then the coordinator transferred the task to the configured mock fallback on attempt 2. The
+Agent Room showed all three handoffs, the three owned files, and 3/3 passing tests. After inspecting
+the exact candidate diff, the operator approved it, refreshed the approval-bound evidence, and
+merged through the UI. The run reached completed and the disposable repository was clean at
+candidate commit 9ca548243128d007e8678d64cf4df6654d1a9230. This adds the twelfth accepted packaged UI
+workflow (12/25); no real provider CLI or external service ran. Evidence:
+`docs/evidence/issue9-ca9495b2-quota-fallback-ui.json`.
+
 ## Source fingerprints
 
 | Source | SHA-256 |
@@ -38,6 +68,5 @@ Claude status-line quota parser is tested, but authenticated headless capture is
 | `tests/fallback.rs` | `2b8dc59cfd52f3dee39d1ce7675b57d908b2e64ae984b9635b968fe461dd298b` |
 | `tests/cli_workflow.rs` | `f3a192758615151f6c0849e8e37e67935f69656860f87fff8fb0e76245d68613` |
 | `tests/recovery.rs` | `4107a72fdaa2a9ec5981d6cec4916b94ba135cf291cc0812f2a7f6620aae6831` |
-| `docs/assets/ui-status-lights-native.jpg` | `24533cccaf14a2e1ad41f103b335d13ac1e7e3b64a2abc3c9fb33bb5894e3b77` |
 
 Additional ownership-loss regression: removing the missing-owner guard reproduced the failure; restoring it passed the focused test. The preceding full regression covers the same production guard; the additional unit case was then run independently. Missing attempted-worker ownership now refuses fallback instead of assuming process absence.

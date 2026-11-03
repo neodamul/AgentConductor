@@ -24,16 +24,3 @@ async fn korean_goal_round_trips_into_the_planning_prompt_and_plan() {
     assert!(prompt.contains(GOAL));
     std::fs::remove_dir_all(root).unwrap();
 }
-
-#[test]
-fn native_forms_never_act_on_or_overwrite_text_during_input_method_composition() {
-    let room = include_str!("../src/ui/room.js");
-    let startup = include_str!("../src/ui/startup.js");
-    // The send shortcut must not fire while a syllable is still being composed.
-    assert!(room.contains("e.isComposing"));
-    // Polling must not replace a field whose composition is in progress.
-    for script in [room, startup] {
-        assert!(script.contains("compositionstart"));
-        assert!(script.contains("compositionend"));
-    }
-}
