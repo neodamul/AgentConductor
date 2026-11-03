@@ -124,3 +124,10 @@ details.startup-task>summary.task-summary{list-style:none;cursor:pointer;display
 #start-manual-body .manual-table{overflow:auto}#start-manual-body table{width:100%;border-collapse:collapse;font-size:12px}#start-manual-body th,#start-manual-body td{padding:8px 10px;border:1px solid var(--line);text-align:left;vertical-align:top}#start-manual-body th{background:var(--fill);color:var(--ink)}#start-manual-body img{display:block;max-width:100%;height:auto}#start-manual-body a{color:var(--accent-text)}
 .coordinator-pair{display:flex;gap:8px;align-items:center}#start-coordinator-note{flex:1 1 100%;margin:0}.read-only-args{margin:0 0 10px}.read-only-args summary{cursor:pointer;font-size:12px;font-weight:600}
 .notice{white-space:pre-line;max-height:60vh;overflow:auto}
+/* GitHub #390: one stepper, steps grouped Prepare / Run / Finish. */
+.startup-tabs .step-group{display:flex;gap:2px;min-width:0;padding:0 4px;border-radius:8px 8px 0 0;background:var(--surface-2)}.startup-tabs .step-group[data-group="prepare"]{flex:3}.startup-tabs .step-group[data-group="run"]{flex:2}.startup-tabs .step-group[data-group="finish"]{flex:1.2}
+.startup-tabs [role="tab"]{min-width:0;overflow:hidden;text-overflow:ellipsis}.startup-tabs [role="tab"]:disabled{opacity:.5;cursor:default}.startup-tabs [role="tab"]:disabled:hover{background:transparent}
+.startup-tabs [role="tab"].done .tab-number{background:var(--ok-bg);color:var(--ok)}.startup-tabs [role="tab"].running{color:var(--info);animation:attn-blink 1.1s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.startup-tabs [role="tab"].running{animation:none}}
+#run-screen .startup-tabs{margin:10px 0}
+.startup-tabs [role="tab"]>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis}

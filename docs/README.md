@@ -14,14 +14,14 @@ Requirements (R) → Business goals (BG) → System features (SF) → Use cases 
 
 | Step | Document | Contents |
 |---|---|---|
-| 1 | [01-requirements.md](01-requirements.md) | R-01 … R-209 with acceptance criteria |
-| 2 | [02-business-goals.md](02-business-goals.md) | BG-01 … BG-164 and success measures |
-| 3 | [03-system-features.md](03-system-features.md) | SF-01 … SF-197 |
-| 4 | [04-usecases.md](04-usecases.md) | UC-01 … UC-201 |
-| 5 | [04b-functional-nonfunctional-analysis.md](04b-functional-nonfunctional-analysis.md) | FR-01 … FR-203, NFR-01 … NFR-75, C-01 … C-06 |
-| 6 | [05-qas.md](05-qas.md) | QAS-01 … QAS-208 |
+| 1 | [01-requirements.md](01-requirements.md) | R-01 … R-210 with acceptance criteria |
+| 2 | [02-business-goals.md](02-business-goals.md) | BG-01 … BG-165 and success measures |
+| 3 | [03-system-features.md](03-system-features.md) | SF-01 … SF-198 |
+| 4 | [04-usecases.md](04-usecases.md) | UC-01 … UC-202 |
+| 5 | [04b-functional-nonfunctional-analysis.md](04b-functional-nonfunctional-analysis.md) | FR-01 … FR-204, NFR-01 … NFR-75, C-01 … C-06 |
+| 6 | [05-qas.md](05-qas.md) | QAS-01 … QAS-209 |
 | 7 | [05b-design-drivers.md](05b-design-drivers.md) | DDR-01 … DDR-39 and the architecture view |
-| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-221, DD-UI-01 |
+| 8 | [06-design-decisions.md](06-design-decisions.md) | DD-01 … DD-222, DD-UI-01 |
 | 9 | [07-implementation-plan.md](07-implementation-plan.md) | Current status, Plan → TDD → Verify → Complete checklists |
 | 10 | [14-architecture-verification.md](14-architecture-verification.md) | Requirement → test evidence for the consolidated architecture, and the open gaps |
 | — | [user-manual.md](user-manual.md) | User manual: desktop guide and full command reference |
@@ -142,6 +142,7 @@ requirement changes it.
 | R-180 Screens show only information the operator can use | BG-135 | SF-168 | UC-171 | FR-168 | QAS-178 | — | DD-191 | current |
 | R-185 A deleted default workspace stays deleted | BG-140 | SF-173 | UC-176 | FR-177 | QAS-183 | — | DD-197 | current |
 | R-209 Deleting workspaces needs no replacement name | BG-164 | SF-197 | UC-201 | FR-203 | QAS-208 | — | DD-221 | current |
+| R-210 One goal screen with a single six-step stepper | BG-165 | SF-198 | UC-202 | FR-204 | QAS-209 | — | DD-222 | current |
 
 ### Planning
 
@@ -337,8 +338,8 @@ NFR 50 and 67–69, QAS 169–170, DDR 33, DD 183–184. Never assigned: BG 6, S
 Held by the Rust migration line (`codex/issue-9-native-ui-parity`, GitHub #9 and the issues split
 from it) and not yet on `main`; use them only when that line merges, and start new `main` entries
 above them: R 203–208, BG 158–163, SF 191–196, UC 194–200, FR 195–202, NFR 76–91, QAS 201–207,
-DDR 40–57, DD 215–220. Next free on `main`: R 210, BG 165, SF 198, UC 202, FR 204, NFR 92,
-QAS 209, DDR 58, DD 222. Its R 205, R 207 and R 208 port GitHub #323, #331 and #341, which `main`
+DDR 40–57, DD 215–220. Next free on `main`: R 211, BG 166, SF 199, UC 203, FR 205, NFR 92,
+QAS 210, DDR 58, DD 223. Its R 205, R 207 and R 208 port GitHub #323, #331 and #341, which `main`
 traces as amendments of R-110, R-126 and R-183; when the line merges, keep both and mark the
 amended `main` requirement with `Status: Amended by` the ported one.
 <!-- end reserved identifiers -->

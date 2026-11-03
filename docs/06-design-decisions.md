@@ -1252,6 +1252,10 @@ Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source
 Room::delete_workspace switches to the first entry of the recent registry that is still a saved workspace, else any other saved workspace, else creates one named native.new_workspace. The delete dialog has no name field; the optional replacement field only names that empty fallback.
 Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Source: user request, 2026-10-13.
 
+### DD-222 One goal screen with a single six-step stepper
+The existing stepper nav (start-step-tabs) gains tabs 4-6 and is moved between the Workspace main column and the Room center when the screen changes, like the shared titlebar; showStep keeps handling steps 1-3, and src/ui/stepper.js (window.acStepper) marks steps 4-6 from the Room's stage, enables them while a run is available and ignores Room snapshots once the operator is back on the Workspace screen; the Room's data-stage strip is removed. No request kind or run backend changes.
+Trace: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. Source: user, approved design #387, 2026-11-04.
+
 ### DD-134 Reuse Markdown and existing package asset selection
 Keep two Markdown manuals with literal command/JSON identifiers unchanged. Reuse README-linked asset packaging; add no documentation framework or dependency. Capture the actual native app, mark offline fixture screenshots explicitly, and distinguish full-access from guarded tool gates.
 Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.

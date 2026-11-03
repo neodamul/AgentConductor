@@ -1443,6 +1443,12 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [x] Verify: Windows local tests.
 - [ ] Complete: release.
 
+### One goal screen with a single six-step stepper — DD-222
+- [x] Plan: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #390; design GitHub #387.
+- [x] Task / Red/Green: tests/unified_stepper_runtime.cjs (markup, run marks, availability, navigation); one six-tab nav shared by both screens, src/ui/stepper.js.
+- [x] Verify: Node runtime tests, source_layout, i18n contracts, architecture_trace; the UI simulator (tests/ui_sim) showed the Workspace-to-Room round trip.
+- [ ] Complete: release (version 0.2.0 only when the user asks).
+
 ## Bilingual release documentation — DD-134 / v0.1.16
 
 - [x] Plan: pull the latest release source, inspect changed behavior and preserve concurrent Claude work.

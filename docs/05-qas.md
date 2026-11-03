@@ -509,6 +509,10 @@ Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source
 Stimulus: the operator deletes the current workspace three times in a row. Response: each deletion asks only for confirmation and opens the most recently used remaining workspace; deleting the last leaves one empty workspace. Measure: no name prompt appears.
 Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Source: user request, 2026-10-13.
 
+### QAS-209 One goal screen with a single six-step stepper
+Stimulus: the operator opens a run from the Workspace screen and uses tabs 1 to 6. Response: one stepper is visible on both screens, the current step is selected, and tabs 4-6 are disabled while no run exists. Measure: no second step strip exists in the page and the selected tab always matches the run stage.
+Trace: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. Source: user, approved design #387, 2026-11-04.
+
 ### QAS-121 Documentation language and release consistency
 Status: Amended by QAS-140, QAS-195, QAS-198 (R-144, R-197, R-200).
 Given a Korean UI preference and a release update, run documentation and native UI checks. Both manuals cover every executable command, all screenshot links resolve, README stays under 120 lines, and no language-dependent error assertion fails.
