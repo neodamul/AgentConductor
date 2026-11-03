@@ -70,6 +70,8 @@ try{
   if(mode==='delete-warning')action='openWorkspace();document.querySelector(".goal-trash").click()';
   if(mode==='briefing')action='renderTeamBriefing();openSidePanel("team-brief-dialog")';
   if(mode==='chat')action='document.getElementById("coordinator-chat-button").click()';
+  if(mode==='profile-edit'||mode==='profile-edit-bottom'){await call('Runtime.evaluate',{expression:'selectRail("agents");'+frameWait,awaitPromise:true});action='openProfileEditor("claude");'+(mode==='profile-edit-bottom'?'const fields=document.querySelector(".profile-editor-fields");fields.scrollTop=fields.scrollHeight;':'');}
+  if(mode==='close-confirmation')action='openClosePreview()';
   if(mode==='settings')action='document.getElementById("settings-button").click()';
   if(mode.startsWith('quota-')){
    await call('Runtime.evaluate',{expression:'selectRail("agents");'+frameWait,awaitPromise:true});
@@ -81,11 +83,12 @@ try{
   }
   await call('Runtime.evaluate',{expression:action+';'+frameWait,awaitPromise:true});
   await new Promise(resolve=>setTimeout(resolve,230));
-  const state=await call('Runtime.evaluate',{expression:'JSON.stringify({frame:document.querySelector(".win").getBoundingClientRect().toJSON(),view:views[i][1],error:document.documentElement.dataset.designError||null,scrolled:document.querySelector(".win").scrollLeft,quotaOpen:!document.getElementById("usage-popover").hidden,choiceOpen:!selectionMenu.hidden})',returnByValue:true});
+  const state=await call('Runtime.evaluate',{expression:'JSON.stringify({frame:document.querySelector(".win").getBoundingClientRect().toJSON(),view:views[i][1],error:document.documentElement.dataset.designError||null,scrolled:document.querySelector(".win").scrollLeft,dialogs:[...document.querySelectorAll("dialog[open]")].map(d=>d.getBoundingClientRect().toJSON()),quotaOpen:!document.getElementById("usage-popover").hidden,choiceOpen:!selectionMenu.hidden})',returnByValue:true});
   const value=JSON.parse(state.result.value);if(value.error||value.scrolled)throw new Error(name+' invalid frame '+JSON.stringify(value));
   if(mode.startsWith('quota-')&&!value.quotaOpen)throw new Error(name+' quota closed');
   if(pickerModes[mode]&&!value.choiceOpen)throw new Error(name+' choices closed');
   const frame=value.frame;if(frame.x<0||frame.y<0||frame.right>width||frame.bottom>height)throw new Error(name+' frame outside viewport');
+  if(value.dialogs.some(d=>d.left<frame.left||d.right>frame.right||d.top<frame.top||d.bottom>frame.bottom))throw new Error(name+' dialog exceeds app frame');
   const image=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false,clip:{x:frame.x,y:frame.y,width:frame.width,height:frame.height,scale:1}});
   const bytes=Buffer.from(image.data,'base64');await writeFile(join(root,record.file),bytes);
   Object.assign(record,{frame,view:value.view,viewport:[width,height],sha256:createHash('sha256').update(bytes).digest('hex'),capture_method:'settled-frame DevTools screenshot',checks:[{name:'no script errors or horizontal displacement',pass:true},{name:'frame within explicit viewport',pass:true}]});

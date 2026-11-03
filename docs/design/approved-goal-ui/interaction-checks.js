@@ -63,7 +63,15 @@
   const cards=[...document.querySelectorAll('.briefing-session')];
   check('view '+index+' factual briefing fields',cards.length===3&&cards.every(card=>['세션:','모델:','시도','프로세스:','메모리 보고','다음 단계:'].every(text=>card.textContent.includes(text))));
  }
- i=0;show();const priorCoordinator=JSON.stringify(workspaceCoordinator);
+ i=0;show();const originalProfile=JSON.stringify(profileFixtures.claude);openProfileEditor('claude');
+ check('executable is visible editable',!profileField('executable').readOnly&&profileField('executable').value==='claude');profileField('executable').value='example-cli';
+ await closeDialog(profileDialog,'cancel');check('profile cancel preserves values',JSON.stringify(profileFixtures.claude)===originalProfile);
+ openProfileEditor('claude');profileField('executable').value='example-cli';profileField('args').value='not JSON';document.getElementById('profile-edit-form').requestSubmit();check('profile rejects invalid args',profileDialog.open&&!!profileField('edit-error').textContent);
+ profileField('args').value='[]';let profileClosed=new Promise(resolve=>profileDialog.addEventListener('close',resolve,{once:true}));document.getElementById('profile-edit-form').requestSubmit();await profileClosed;check('profile applies and closes',!profileDialog.open&&profileFixtures.claude.executable==='example-cli');
+ openProfileEditor('claude');const providerButton=nativeSelectionButtons.get(profileField('provider'));providerButton.click();check('choice menu belongs to active modal',!selectionMenu.hidden&&selectionMenu.closest('dialog')===profileDialog);closeSelectionMenu();await closeDialog(profileDialog,'cancel');
+ i=3;show();openClosePreview();const closing=document.getElementById('close-run-dialog');check('close default keeps background',closing.open&&document.activeElement.value==='keep');await closeDialog(closing,'cancel');check('close cancel recorded safely',document.documentElement.dataset.lastCloseChoice==='cancel');
+ openClosePreview();await closeDialog(closing,'keep');check('background choice does not stop preview',document.documentElement.dataset.lastCloseChoice==='keep');openClosePreview();await closeDialog(closing,'stop');check('stop choice only simulates close',document.documentElement.dataset.lastCloseChoice==='stop');
+ const priorCoordinator=JSON.stringify(workspaceCoordinator);
  openAssignmentPicker('coordinator','agent');check('Claude Code display name',[...document.querySelectorAll('#assignment-options button')].some(button=>button.dataset.value==='claude'&&button.textContent.includes('Claude Code')));
  closeSelectionMenu(true);check('dismiss preserves assignment',JSON.stringify(workspaceCoordinator)===priorCoordinator);
  openAssignmentPicker('coordinator','agent');document.querySelector('#assignment-options [data-value="claude"]').click();
@@ -118,6 +126,16 @@
  check('agent trash balances tools',[...document.querySelectorAll('.agent-remove svg')].every(svg=>getComputedStyle(svg).width==='13px'));
  check('inspector title is not a tab',getComputedStyle(document.querySelector('#task-inspector-title')).borderTopWidth==='0px'&&getComputedStyle(document.querySelector('#task-inspector-title')).backgroundColor==='rgba(0, 0, 0, 0)');
  check('evidence summary has no KPI tiles',[...document.querySelectorAll('.result-stats>div')].every(item=>getComputedStyle(item).backgroundColor==='rgba(0, 0, 0, 0)'&&getComputedStyle(item.querySelector('strong')).fontSize==='16px'));
+ check('goal counts stay synchronized',[...document.querySelectorAll('[data-goal-count]')].every(badge=>badge.textContent===String(workspaceGoals.length)));
+ check('goal list looks like a button',getComputedStyle(document.getElementById('goal-picker')).borderTopWidth==='1px');
+ check('briefing icon beside goal list',document.getElementById('goal-picker').nextElementSibling.id==='team-brief-button'&&document.getElementById('workspace-goals-button').nextElementSibling.id==='workspace-team-brief-button'&&!!document.querySelector('#team-brief-button svg'));
+ check('tab captions left aligned',[...document.querySelectorAll('.tabs .tab-label,.ttabs>button,.rail-tabs button')].every(tab=>getComputedStyle(tab).textAlign==='left'));
+ check('card actions have leading icons',[...document.querySelectorAll('.main>.card button')].filter(button=>!button.closest('.ttabs')&&!button.querySelector('svg')).every(button=>!!button.dataset.actionIcon));
+ i=3;show();check('task rows show progress tags',[...document.querySelectorAll('.outline-state-badge')].map(tag=>tag.textContent).join('/')==='실행 중/대기/완료');
+ check('tasks look selectable',document.querySelectorAll('.outline-task .outline-open-icon').length===3);
+ check('task avatars stay compact beside tags',[...document.querySelectorAll('.outline-agent')].every(icon=>getComputedStyle(icon).width==='28px')&&document.querySelectorAll('.outline-agent .agent-brand-logo').length===2);
+ i=5;show();const blockedTag=document.querySelectorAll('.outline-state-badge')[2],tone=document.createElement('span');tone.style.cssText='color:var(--err);background:var(--err-bg)';document.body.append(tone);check('blocked task keeps red semantic tag',blockedTag.textContent==='막힘'&&getComputedStyle(blockedTag).color===getComputedStyle(tone).color&&getComputedStyle(blockedTag).backgroundColor===getComputedStyle(tone).backgroundColor);tone.remove();
+ check('Goal list buttons share icon',[...document.querySelectorAll('.goal-list-button')].length===2&&document.querySelectorAll('.goal-list-button .goal-list-icon').length===2);
  check('no script errors',!document.documentElement.dataset.designError);
  document.documentElement.dataset.interactionResult=JSON.stringify({theme:initialTheme,width:innerWidth,checks});
 })().catch(error=>document.documentElement.dataset.designError=error.message);

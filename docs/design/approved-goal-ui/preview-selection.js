@@ -12,7 +12,7 @@ function positionSelectionMenu(){
 }
 function openSelectionMenu(config){
  if(!selectionMenu.hidden&&selectionAnchor===config.anchor){closeSelectionMenu();return;}
- closeSelectionMenu();selectionConfig=config;selectionAnchor=config.anchor;
+ closeSelectionMenu();(config.anchor.closest('dialog[open]')||document.body).append(selectionMenu);selectionConfig=config;selectionAnchor=config.anchor;
  document.getElementById('assignment-menu-heading').textContent=config.title;
  const list=document.getElementById('assignment-options');list.replaceChildren();
  for(const option of config.options){

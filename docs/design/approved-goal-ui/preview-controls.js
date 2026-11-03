@@ -93,7 +93,7 @@ function renderTeamBriefing(){
  });
  document.getElementById('briefing-approvals').textContent=view==='g'?'검토 요청: 도구 실행 · task-1 · 승인 대기':view==='c'?'검토 요청: 머지 · 통합 후보 · 승인 대기':view==='a'?'검토 요청: 계획 실행 · 전체 작업 · 승인 대기':'기록된 승인 요청이 없습니다.';
 }
-document.getElementById('team-brief-button').addEventListener('click',()=>{renderTeamBriefing();openSidePanel('team-brief-dialog');});
+document.querySelectorAll('[data-team-brief]').forEach(button=>button.addEventListener('click',()=>{renderTeamBriefing();openSidePanel('team-brief-dialog');}));
 document.getElementById('team-brief-close').addEventListener('click',()=>closeSidePanel('team-brief-dialog'));
 
 document.getElementById('goal-entry').addEventListener('input',event=>{

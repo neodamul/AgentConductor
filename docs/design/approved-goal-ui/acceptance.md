@@ -29,13 +29,13 @@ Screenshots are static samples; inspect the running pulse and reduced-motion beh
 
 ## Image coverage
 
-Twenty-six states per theme, **52 images total**. See [paired gallery](gallery.html).
+Twenty-nine states per theme, **58 images total**. See [paired gallery](gallery.html).
 
 | Group | Images in each theme |
 |---|---|
 | Main flow | Workspace/Goal, roles, plan, tasks, tool request, permission denial, verification, review/merge, result, new Goal |
 | Docked layouts | Inspector upper, inspector lower, collapsed left rail, wide/full-window |
-| Modal/slide-over | Goal list, permanent-delete warning, briefing, coordinator chat, settings, coordinator/model list, role/model list, fallback-agent list, fallback-model list |
+| Modal/slide-over | Goal list, permanent-delete warning, briefing, coordinator chat, settings, coordinator/model list, role/model list, fallback-agent list, fallback-model list, profile editor upper/lower, active-run close confirmation |
 | Quota | Healthy details, error/retry, unsupported |
 
 The pipeline records the actual scenario title, theme, explicit viewport, measured app frame, and

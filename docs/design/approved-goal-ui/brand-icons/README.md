@@ -10,4 +10,4 @@ The marks identify the corresponding agents; their trademarks remain with their 
 `claude-code-color.svg` is upstream `claudecode-color.svg`; `codex-color.svg` keeps its upstream name.
 The preview embeds the SVG geometry with sizing/accessibility attributes only, preserving upstream fill/gradient colors.
 The displayed variants are `claude-code-color.svg` and `codex-color.svg`, preserving the upstream orange and blue/violet colors.
-Only agent-list avatars are replaced; the run-stage icon remains the connected-task-node symbol.
+Agent and task lists share these colored brand shapes. Task containers are compact beside inline status tags (28px, with a 20px mark); agent-card marks remain 19px. The run-stage group icon remains connected task nodes.

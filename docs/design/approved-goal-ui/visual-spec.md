@@ -19,14 +19,14 @@ must reproduce the visual proportions with their own scale-factor handling, not 
 | Side-rail padding | 22px vertical / 18px horizontal; both sides identical |
 | Header Goal title | Compact single line, 17px semibold, ellipsis and full-text tooltip |
 | Header information row | Fixed 36px, never collapses when empty |
-| Six step tabs | 36px high; three background-grouped desktop tab sets with integrated labels; no upper caption row |
+| Six step tabs | Number/title gap 7px; 36px high; three background-grouped desktop tab sets with integrated labels; no upper caption row |
 | Rail/activity tabs | 29px high |
 | Selected tab | Rounded upper corners, thin side outline, accent upper edge, open lower edge joining content |
 | Step card | Neutral surface, thin outline; fixed header/footer; flexible scrolling body |
 | Workspace / Goal section | 24px top padding; visible section division |
 | Agent card | 144px fixed reference height; 8px radius; compact facts/actions |
 | Agent avatar | 29px; 1.5px semantic status border |
-| Task avatar | Smaller compact counterpart in task list; same semantic state treatment |
+| Task avatar | 28px compact container with 20px colored brand mark; inline status tags keep title space, same 1.5px semantic border |
 | Quota hit box / graphic | 30px / 27px, two concentric rings |
 | Titlebar hit boxes / SVGs | 32px / 18px; same vertical center and baseline across the cluster |
 | Statusbar / its glyphs | 30px bar; 14px glyphs centered in 24px internal rows |
@@ -109,7 +109,7 @@ remain visibly disabled and use the normal cursor. No unrequested extra modal is
 
 - Keep the existing app mark, coordinator chat SVG, and settings gear identity.
 - Agent-list Claude Code/Codex avatars use pinned local color SVG brand assets (Claude Code orange, Codex blue/violet), not Cl/Cx initials or executable extraction.
-  See `brand-icons/provenance.json` and its retained MIT notice. Task-list initials are a separate scope.
+  See `brand-icons/provenance.json` and its retained MIT notice. Task-list avatars share the same colored brand geometry at a compact size beside inline status tags.
 - Menu: familiar three horizontal strokes. Left/right panel glyphs mirror which column they control.
 - Update: downward arrow/download shape, before chat and settings in the right titlebar cluster.
 - Use 1.6px strokes on the 24-unit SVG grid; align the graphics inside identical hit boxes.
@@ -160,3 +160,22 @@ The image set is documentation evidence, not an additional desktop process or ap
 Review/result summaries are compact document metadata on one ruled line, not dashboard KPI tiles.
 Use readable 14px labels with 16px semibold values, no separate card fill/radius and no oversized numbers.
 The actual changed-file list, test evidence and lessons remain the main content.
+
+Tab captions are left-aligned, including rail and activity tabs. Action buttons inside step cards
+use leading 13px icons mapped to their action; existing icon-only controls are not doubled.
+Draft selectors also use leading field icons, with the chevron kept at the trailing edge.
+Icon updates follow actual control changes; do not add periodic polling.
+
+The inner Activity / Changes and tests / Raw logs / Lessons tabs are content-width controls:
+label width plus 12px padding on each side, left aligned, leaving unused width empty.
+They may shrink with full-text tooltips when constrained; do not stretch them into equal columns.
+
+Profile Edit uses a centered, neutral 560px dialog, fixed title/footer and a scrolling field body.
+The executable field and Browse are explicit, without restoring the path to compact cards.
+The active-run close dialog uses the same visual family (620px), with background continuation
+as the focused primary action; Stop and Cancel remain clearly distinct secondary actions.
+These are centered dialogs, not the docked task inspector or slide-over Settings.
+
+Centered dialogs are measured against the app content frame, not the surrounding documentation
+page. Keep their bounds and scrolling field body inside that frame; native dropdown popups stay
+in the active modal interaction scope. Reference layout responds to resize events, never polling.

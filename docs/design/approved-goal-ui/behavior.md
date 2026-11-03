@@ -61,13 +61,20 @@ Quota updates stay asynchronous; default interval is five minutes, editable per 
 The task rail shows the **current Phase and Task**, task completion count, and elapsed time.
 Each row shows a small agent avatar, task number, task description, and ownership/dependency context.
 The agent avatar carries status; do not replace the task description with a standalone agent name.
+Task rows also retain compact Completed/Running/Waiting tags (and blocked/approval states),
+so progress/dependency order is readable. Tags use green for running/completed, yellow for
+waiting, and red for blocked/refused (displayed as 막힘 in the Korean reference). The existing dependency text still distinguishes parallel work.
+A trailing chevron, quiet row separator, hover fill and selected accent edge make every task selectable.
 Selecting a task updates the center and an already-open inspector without losing the chosen subview.
 
 ## Center and scrolling
 
 The Goal header is compact. Step 1 shows Workspace settings while the Goal is being typed;
-do not echo each keystroke as a second Goal title. Later steps use the saved Goal name.
-The information row below is fixed-height, including when empty. Team briefing is a real button.
+do not echo each keystroke as a second Goal title. Later steps use the saved Goal name. Their Goal list entry uses the same leading list icon, outlined button and
+Goal-count badge as the Workspace Goal section, never a plain text link. All badges update together
+when Goals are saved/deleted; an unsaved draft is not included.
+The information row below is fixed-height, including when empty. Team briefing is an icon button immediately to the right of Goal list in the same action area,
+including the Workspace Goal section. Its tooltip/accessibility name is Team briefing.
 Completion counts and elapsed time belong to the left task rail, not a duplicate right header.
 
 One stepper has six tabs, with neutral desktop-style tabs and a shared, subdued background for each
@@ -90,7 +97,7 @@ Action explanations may wrap within the footer; do not silently cut a warning or
 | 3 Plan | Generate/progress/review, current Phase/Task, editable task scopes/dependencies/tests; approve → 4 |
 | 4 Tasks | Selected task header; Activity, Changes and tests, Raw logs, Lessons; direction composer and context-appropriate actions |
 | 5 Verify | Integration tests with outcomes/exit codes, coordinator judgments, failure feedback/rework; success → 6 |
-| 6 Review and merge | Exact candidate, changed files, tests, human review/approve/reject/revise, then merge/accept |
+| 6 Review and merge | Review changes (변경 검토), exact candidate, changed files, tests, human review/approve/reject/revise, then merge/accept |
 
 Do not introduce steps 7–10 because the reference has ten scenarios. Scenario numbers are preview tooling.
 A completed merge opens the result popup while preserving the step-6 context. If phases remain,
@@ -181,3 +188,21 @@ The update icon belongs in the titlebar, not this statusbar.
 Preview arrows sit **below the app image**, in normal document flow. Their fixed-width label slot
 keeps left/right arrow positions stable across all scenarios. They are not viewport-fixed overlays.
 They are not application controls and must not be shipped.
+
+## Profile editing and closing an active run (Claude review)
+
+The agent-card Edit button opens the profile editor. The executable command/path remains visible
+and editable there, with Browse, even though it is omitted from compact cards. Preserve provider,
+agent ID, JSON argument arrays, read-only arguments, stdin/task-file input, concurrent sessions,
+quota refresh interval, fallback agent/model and the existing CLI-permission explanation.
+Apply validates and closes; Cancel changes nothing. This reference stores fixture edits only,
+and Browse illustrates the host file picker without accessing or executing files.
+
+R-118 is inherited from merged PR #383, not a new implementation in this design. When the actual
+backend reports an active run on window close, show a centered confirmation with three choices:
+Cancel, Stop the run and close, Keep running in the background. Keep running is the focused default.
+Cancel leaves the window/run/drafts untouched; Keep closes only the window and preserves the run;
+Stop requests the durable stop before closing. Reopening restores the recorded run.
+The merged host's fallback for a second close within 10 seconds or an unresponsive page remains
+backend behavior, not an extra mock feature. The menu's Close action opens this preview safely;
+choosing an option never closes the browser or stops a real process in the reference.

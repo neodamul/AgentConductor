@@ -98,3 +98,11 @@ added permanent progress text, and offered a new-Goal shortcut in the result bod
 superseded by [behavior](behavior.md). Its original screenshots are not this design's acceptance images.
 The general design-guide motion restriction is amended only for the approved running-avatar pulse.
 Other architecture/security/process requirements continue to apply.
+
+## Existing-capability review follow-up
+
+R-118: the active-run close dialog, durable stop/background continuation and host hooks are already
+merged in PR #383 (`ebffd4e5295f708c42a9ff5c4f274278437b1b47`). The design adds their missing
+reference state, not duplicate backend code. Profile Edit keeps the current main form fields;
+hiding executable paths on cards must not remove their view/edit/Browse entry point.
+The common choice list stays inside the active modal's interaction scope when editing a profile.

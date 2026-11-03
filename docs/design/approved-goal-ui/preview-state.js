@@ -57,7 +57,8 @@ function updateTaskOutline(view){
  document.querySelectorAll('[data-task-index]').forEach((button,index)=>{
  button.setAttribute('aria-pressed',String(index===selectedOutlineTask));button.querySelector('.outline-agent').dataset.state=states[index];
  const status=view==='a'?'계획됨 · '+outlineTasks[index].dependency:states[index]==='completed'?'완료':states[index]==='error'?'권한 거부':states[index]==='running'?'실행 중':view==='g'&&index===0?'도구 승인 대기':'대기 · '+outlineTasks[index].dependency;
- const description=outlineTasks[index].agent+' · '+status;
+ const badge=button.querySelector('.outline-state-badge');badge.dataset.state=states[index];badge.textContent=view==='a'?'예정':states[index]==='completed'?'완료':states[index]==='running'?'실행 중':states[index]==='error'?'막힘':view==='g'&&index===0?'승인 대기':'대기';
+  const description=outlineTasks[index].agent+' · '+status;
  button.dataset.statusText=description;button.querySelector('.outline-agent').dataset.statusText=description;
  button.querySelector('.outline-agent').dataset.attention=String(states[index]==='error'||view==='g'&&index===0);
  button.setAttribute('aria-label',outlineTasks[index].id+' '+outlineTasks[index].title+' — '+description);
@@ -76,6 +77,7 @@ function renderOutlineSelection(view){
  detail.textContent=task.id+' · '+task.title+' — '+task.instruction+' 소유 경로: '+task.path+' / 의존성: '+task.dependency+' / 검증: '+task.test;
  const card=document.querySelector('section.card[data-show="b"]');
  card.querySelector('h2').textContent=task.title;card.querySelector('.cardhead .sub').textContent=task.agent+' · '+task.id+' · '+task.path;
+ document.querySelectorAll('.card[data-show="g"],.card[data-show="h"]').forEach(item=>{item.querySelector('h2').textContent=task.title;item.querySelector('.cardhead .sub').textContent=task.agent+' · '+task.id+' · '+task.path;});
  if(selectedOutlineTask===1){card.querySelector('.cardhead .pill').textContent='대기';card.querySelector('.cardhead .pill').className='pill';}
  else{card.querySelector('.cardhead .pill').textContent=selectedOutlineTask===2?'완료':'실행 중';card.querySelector('.cardhead .pill').className=selectedOutlineTask===2?'pill ok':'pill run';}
  const events=card.querySelectorAll('.ev');events.forEach(event=>event.hidden=selectedOutlineTask!==0);
@@ -153,7 +155,7 @@ function openWorkspaceHome(){
 }
 function refreshWorkspaceGoalSection(){
  const draft=selectedGoalId==='draft',goal=selectedGoal();
- document.getElementById('workspace-goal-count').textContent=workspaceGoals.length;
+ document.querySelectorAll('[data-goal-count]').forEach(badge=>badge.textContent=workspaceGoals.length);
  document.getElementById('workspace-current-goal').textContent=draft?'새 Goal 작성':goal.name;
  document.getElementById('workspace-current-goal-state').textContent=draft?'아직 저장하지 않음':goal.state==='completed'?'완료':goal.state==='draft'?'준비 중':'진행 중';
 }
@@ -198,7 +200,7 @@ function renderMergedState(){
  document.getElementById('review-run-state').textContent=merged?'완료':'승인 대기';
  document.getElementById('review-goal-title').textContent=merged?'검토한 결과가 main에 반영되었습니다':'변경을 검토하고 승인합니다';
  if(merged){updateAgentStates('d');updateTaskOutline('d');}
- const button=document.getElementById('review-main-action');button.textContent=merged?'완료 결과 보기':reviewOpened?'승인하고 머지 (시안)':'변경 열어 검토';
+ const button=document.getElementById('review-main-action');button.textContent=merged?'완료 결과 보기':reviewOpened?'승인하고 머지 (시안)':'변경 검토';
  document.querySelectorAll('section.card[data-show="c"] .btn:not(#review-main-action)').forEach(control=>control.disabled=merged);
 }
 const goalDrafts={j:'리프레시 토큰을 쓸 때마다 새로 발급하고, 재사용된 토큰을 탐지하면 세션을 끊는다.',e:'로그인 실패가 5번 넘으면 계정을 15분 잠근다. 잠금 해제 API와 테스트를 추가한다.'};
@@ -211,7 +213,7 @@ document.querySelectorAll('[data-cls]').forEach(e=>{e.className='tab';const m=e.
 document.querySelectorAll('.agent').forEach(e=>e.classList.toggle('sel',(e.dataset.v||'').split(' ').includes(v)));
 updateAgentStates(v);
 updateTaskOutline(v);
- document.getElementById('team-brief-button').disabled=['j','i','e'].includes(v);
+ document.querySelectorAll('[data-team-brief]').forEach(button=>button.disabled=['j','i','e'].includes(v));
  document.getElementById('saved-goal-title').title=document.getElementById('saved-goal-title').textContent;
 document.getElementById('label').textContent=`${i+1} / ${views.length}  ${views[i][1]}`;location.hash=i;if(selectedGoal().state==='completed'&&v==='c'){const tab=document.querySelector('.tabs .tab[data-step="6"]');tab.classList.add('done');tab.querySelector('.num').textContent='✓';}if(popupResult)showGoalResult('rotation');}
 prev.onclick=()=>{workspaceVisible=false;i=(i+views.length-1)%views.length;show()};next.onclick=()=>{workspaceVisible=false;i=(i+1)%views.length;show()};show();
@@ -223,7 +225,7 @@ prev.onclick=()=>{workspaceVisible=false;i=(i+views.length-1)%views.length;show(
 document.querySelectorAll('[data-panel-close]').forEach(button=>button.onclick=()=>closeSidePanel(button.dataset.panelClose));
 document.getElementById('side-panel-backdrop').onclick=()=>document.querySelectorAll('.slide-panel').forEach(panel=>closeSidePanel(panel.id));
 document.addEventListener('keydown',event=>{
- if(document.getElementById('goal-result-dialog').open||document.getElementById('delete-goal-dialog').open||!document.getElementById('assignment-menu').hidden)return;
+ if(document.querySelector('dialog[open]')||!document.getElementById('assignment-menu').hidden)return;
  const panel=[...document.querySelectorAll('.slide-panel')].find(item=>item.classList.contains('is-open'));if(!panel)return;
  if(event.key==='Escape'){event.preventDefault();closeSidePanel(panel.id);}
  if(event.key==='Tab'){const controls=[...panel.querySelectorAll('button,input,select,textarea,a[href]')].filter(control=>!control.disabled);const first=controls[0],last=controls.at(-1);if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus({preventScroll:true});}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus({preventScroll:true});}}

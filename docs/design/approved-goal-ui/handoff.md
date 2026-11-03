@@ -72,3 +72,8 @@ The complete package can be reviewed without running AgentConductor: open `previ
 Source/image hashes and local browser checks are in `verification.json`.
 `verify-and-capture.py` regenerates evidence with local Chrome and its DevTools frame capture;
 its output is documentation evidence only, and the script is not shipped.
+
+Claude's 2026-11-04 review identified two retained capabilities needing explicit screens: profile
+Edit (including executable/Browse) and R-118 active-run close confirmation. Both are now referenced
+in the preview and image gallery. The actual R-118 backend remains the merged #383 implementation.
+Keep the documentation on this branch/PR #389; do not move it onto or merge the superseded #388.
