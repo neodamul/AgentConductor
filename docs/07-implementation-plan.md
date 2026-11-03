@@ -1491,6 +1491,13 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [x] Verify: the runner found three real differences (green status border used the accent blue instead of the design's ok green, agent avatar radius 7px instead of 6px, missing avatar fill); after the fixes the task avatar matches pixel for pixel; a mutation (green back to accent) fails the check.
 - [ ] Complete: release (version 0.2.0 only when the user asks).
 
+### Shell geometry of the goal screen (part 1) — DD-222
+- [x] Plan: Trace: amends R-210 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #408 (checklist items: rail width/padding, rail tabs, step tab row, version size); design GitHub #387.
+- [x] Task / Red/Green: design-parity entries `rail`, `rail-tab`, `step-tab`, `app-version`, `titlebar` first (red against the old 290px rail, 33px rail tabs, 51px step tabs and 13px version), then `startup.css` / `room.css`.
+- [x] Verify: UI Rust and Node tests; design parity 7 entries pass.
+- [ ] Remaining in #408: titlebar order and 32px hit boxes, rail toggle, Goal header and info row, fixed step-card header/footer, group icons and backgrounds, leading icons, content-width inner tabs, evidence line, fullscreen reflow, narrow-width rail (230/190).
+- [ ] Complete: release (version 0.2.0 only when the user asks).
+
 ## Bilingual release documentation — DD-134 / v0.1.16
 
 - [x] Plan: pull the latest release source, inspect changed behavior and preserve concurrent Claude work.
