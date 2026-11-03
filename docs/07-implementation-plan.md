@@ -1,12 +1,34 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Exercise the Windows workspace goal with keyboard input — issue #9
+
+- [x] Red: exact-head Windows package run `41598286445` built and smoked the package, then failed `default_native_workspace_is_accessible_and_saves_through_ui_automation`: UIA `ValuePattern.SetValue` left the observed goal blank and moved focus back to the window.
+- [x] Task: drive the focused, accessible Goal edit using Ctrl+A and actual keyboard text input; continue reading the UIA value and require the persisted workspace goal after Save.
+- [x] Local Verify: rustfmt, `source_layout` (2/2), diff check; `tests/windows_desktop.rs` is 216 lines.
+- [ ] Windows Verify: rerun the packaged desktop journey on the updated exact commit; do not count Windows UI acceptance until the saved goal is observed.
+- [ ] Preserve runner evidence: three packaged coordinator-chat lifecycle cases were explicitly skipped because hosted Windows denied process breakaway from its Job Object; those cases still need an eligible Windows host.
+
+### 2026-11-03 — Audit issue #9 visual-parity evidence
+
+- [x] Plan: inspect `docs/assets/ui-agent-room-native.png` and `docs/assets/ui-agent-room-current.png` with their capture metadata.
+- [x] Verify the captures are not a valid parity pair: the Rust source-build capture is v0.1.57 at 1140×960; the legacy capture is v0.1.49 at 1280×892, and the deterministic goal/task/session data differs.
+- [x] Record: differing visible structure is a reason to obtain a controlled comparison, not enough evidence to score individual UI requirements because versions, viewport, and state are not matched.
+- [ ] Task: capture the same deterministic workspace, task states, locale, theme, and viewport from both builds. Record source/package revisions with each artifact.
+- [ ] Verify: compare all visible controls, panel placement, hierarchy, spacing, typography, and task/session content from the matched pair; keep shipped/default parity at 0/25 until this review is complete.
+
 ### 2026-11-03 — Repair native UI test feature-gate regression — issue #9
 
 - [x] Red: exact-head run `41595881419` failed macOS `auto_discovered_native_ui_tests_are_feature_gated`: `tests/native_ui_probe_args.rs` mixed ordinary CLI-argument tests with an assertion that imports feature-gated `native_ui_probe`.
 - [x] Green: keep parser tests in `native_ui_probe_args.rs` and move the eframe storage-key assertion into the already feature-gated `native_ui_probe.rs` suite.
 - [x] Verify: 21 tests pass across the affected four suites; warning-denied Clippy, rustfmt, diff hygiene, and the 300-line guard pass. Both changed test files remain below 300 lines.
+- [x] Full local Verify: `cargo test --locked --offline --all-targets --features test-fixtures --no-fail-fast` passes 1,362 tests, 16 ignored, across 414 suites.
+- [x] macOS package Verify: package built from `5aae8708`; ZIP integrity and extracted binary `--help` pass. Archive SHA-256: `2c688248cf5d7f628f87a03bf7aac5fc6cd5e6076d066a702c47c976c54c0d86`. This local package is not a GitHub Release or visual-parity evidence.
 - [x] Diagnose Windows run `41595881419`: Cargo build failed while writing fingerprint files and reading a checked-out test file with OS error 433 (“A device which does not exist”) under `D:\a\...\target`; no Rust compiler diagnostic was emitted, and no Windows tests ran. This is runner/storage evidence, not Windows acceptance.
-- [ ] Push the local fix and retry exact-head platform validation. Then rerun the Windows package journeys; keep #310 open until the exact packaged schedule journey passes.
+- [x] Exact-head Platform Validation run `41598286445`: macOS and Windows passed build, source-layout, all-target tests, opt-in native UI tests/checks, formatting, Clippy, and unsafe-block comment checks.
+- [x] Exact-head macOS native package and packaged smoke passed in run `41598286445`.
+- [x] Exact-head Windows package archive and smoke passed, but packaged default-desktop UI automation failed to set Goal through UIA `ValuePattern.SetValue`; see the TDD section above.
+- [ ] Push the keyboard-entry test adjustment after local checks and rerun the Windows package gate.
+- [ ] Keep #310 open until its exact packaged Windows schedule journey passes.
 
 ### 2026-11-03 — Restore the Workspace location status bar — issue #9
 
