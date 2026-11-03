@@ -1,5 +1,12 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Investigate exact-head Windows validation failure — issue #9 / #310
+
+- [x] Observe run `41595881419` against exact head `8f31a0c9`; macOS native build and source-layout checks pass and its tests are still running.
+- [x] Inspect the Windows job log: `cargo build --all-targets --locked --features test-fixtures` ran for several minutes, then the hosted runner returned OS error 433 (“A device which does not exist”) while writing Cargo fingerprints under `D:\a\...\target` and reading a checked-out test file. No Rust compiler diagnostic was emitted; the job stopped before source-layout and test steps.
+- [x] Classify Windows status as infrastructure failure / unverified, not a source pass or source failure. Update PR #22 and issue #310 with the log evidence.
+- [ ] After the current workflow reaches a terminal state, rerun the Windows job for the same commit. Do not push during the active macOS job because branch synchronization cancels the workflow.
+
 ### 2026-11-03 — Restore the Workspace location status bar — issue #9
 
 - [x] Plan: compare the current-main Workspace capture and source with the native Rust renderer. Main keeps the local workspace path pinned at the bottom and shows a loading label before the first snapshot; Rust showed neither.

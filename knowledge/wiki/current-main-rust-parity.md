@@ -1,5 +1,9 @@
 # Current-main behavior carried into the Rust UI branch
 
+## Exact-head Windows runner failure — issue #9 / #310 / 2026-11-03
+
+Platform Validation run `41595881419` targets exact root head `8f31a0c9`. The Windows job completed Cargo dependency compilation and began `cargo build --all-targets --locked --features test-fixtures`, then failed while writing fingerprint files and reading a checked-out test source with Windows OS error 433 (“A device which does not exist”) under `D:\a\AgentConductor\AgentConductor`. The log has no Rust compiler diagnostic. This is runner/storage evidence, not proof of a source defect and not a Windows pass. The job failed before source-layout, native tests, or package verification. The macOS job passed build and layout and is still executing tests. Rerun the Windows job after the current workflow is terminal; keep #310 and Windows package acceptance open until the exact packaged journey passes.
+
 ## Current migration reconciliation — 2026-11-02 (updated)
 
 GitHub currently shows one open pull request: draft root PR #22. Its head is
