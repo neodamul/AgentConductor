@@ -77,15 +77,28 @@ if (-not [DesktopInput]::Focus($hwnd, $expectedProcessId)) {
   Write-Output 'GOAL_WINDOW_NOT_FOREGROUND'
   exit 7
 }
-$goal.SetFocus()
+$goalBounds = $goal.Current.BoundingRectangle
+if ($goal.Current.IsOffscreen -or $goalBounds.IsEmpty) {
+  Write-Output 'GOAL_NOT_VISIBLE'
+  exit 7
+}
+if (-not [DesktopInput]::Focus($hwnd, $expectedProcessId)) {
+  Write-Output 'GOAL_WINDOW_NOT_FOREGROUND_BEFORE_CLICK'
+  exit 7
+}
+$goalX = [int]($goalBounds.Left + ($goalBounds.Width / 2))
+$goalY = [int]($goalBounds.Top + ($goalBounds.Height / 2))
+[DesktopInput]::Click($goalX, $goalY)
 $focusDeadline = (Get-Date).AddSeconds(3)
 while ((Get-Date) -lt $focusDeadline -and -not $goal.Current.HasKeyboardFocus) {
   Start-Sleep -Milliseconds 50
 }
 if (-not $goal.Current.HasKeyboardFocus) {
-  Write-Output 'GOAL_FOCUS_FAILED'
+  Write-Output 'GOAL_CLICK_FOCUS_FAILED'
   exit 7
 }
+$focused = [System.Windows.Automation.AutomationElement]::FocusedElement
+Write-Output "GOAL_FOCUS_AFTER_CLICK:$($focused.Current.ProcessId):$($focused.Current.ControlType.ProgrammaticName):$($focused.Current.Name)"
 $goalValue = $goal.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
 if ($goalValue.Current.IsReadOnly) { Write-Output 'GOAL_VALUE_READ_ONLY'; exit 7 }
 [System.Windows.Forms.SendKeys]::SendWait('^a')

@@ -1,12 +1,19 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Click the native Goal field before typing — issue #9
+
+- [x] Red: exact-head package run `41607201602` built both packages, then the Windows driver still produced an empty Goal after `SendKeys`; UIA reported the top-level AgentConductor window as focused.
+- [x] Task: click the visible Goal edit at its UIA bounding-rectangle center before sending Ctrl+A and text; report focus before and after keyboard input.
+- [x] Local Verify: Windows driver/lifecycle and source-layout suites passed 19 tests with 1 ignored; rustfmt and diff hygiene passed. Updated test files are 229 and 228 lines.
+- [ ] Exact-head Verify: push and rerun the Windows package UI journey; require Goal readback and persisted `startup.json` value.
+
 ### 2026-11-03 — Align Windows driver contract tests with keyboard input — issue #9
 
 - [x] Red: run `41604900376` failed macOS tests because six `windows_desktop_driver` source assertions and one `windows_run_lifecycle` assertion still required the removed UIA `ValuePattern.SetValue` call and old diagnostic markers.
 - [x] Green: assert focus-gated Ctrl+A/keyboard input, continued UIA value readback, and save ordering; remove stale requirements for the setter call.
 - [x] Local Verify: `windows_desktop_driver` + `windows_run_lifecycle`: 17 passed, 1 ignored; `source_layout`: 2 passed; rustfmt and diff check pass.
 - [x] Size Verify: `windows_desktop.rs` 216 lines; `windows_desktop_driver.rs` 220; `windows_run_lifecycle.rs` 297 (all <=300).
-- [ ] Exact-head Verify: commit and push these test corrections; rerun cross-platform validation and packaged Windows desktop journey on the new head.
+- [x] Exact-head run: commit/push and cross-platform validation passed at `e18de84f`; packaged Windows journey ran but failed to enter Goal text even after `SendKeys`. Follow-up is tracked above; Windows acceptance remains open.
 
 ### 2026-11-03 — Exercise the Windows workspace goal with keyboard input — issue #9
 
