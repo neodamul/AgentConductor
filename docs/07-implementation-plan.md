@@ -6,6 +6,7 @@
 - [x] Red: extend the bilingual/accessibility navigation test with a dirty workspace and require Settings before Discard changes; it failed because Rust rendered Discard before Chat and Settings.
 - [x] Task / Green: render Chat and Settings first, then Discard changes and Back to run, preserving each action's existing enablement and confirmation behavior.
 - [x] Verify: header-chat, navigation-language, new-goal confirmation, appearance, and source-layout suites pass 15 tests; rustfmt and diff hygiene pass. Touched files are 171 and 79 lines.
+- [x] Full local Verify: `cargo test --locked --offline --all-targets --features test-fixtures --no-fail-fast` passes 1,363 tests with 16 ignored across 414 suites on `f03b9cbe`.
 - [ ] Exact screen verification: recapture current Rust and exact current-main builds with matching workspace state and inspect the full navigation row.
 
 ### 2026-11-03 — Do not gate keyboard input on UIA focus reporting — issue #9

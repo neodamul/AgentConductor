@@ -3,7 +3,15 @@
 - Comparing Rust navigation with the current `main` startup header exposed an action-order mismatch: Rust placed Discard changes before coordinator Chat and Settings; main places Chat, Settings, Discard changes, then Back to run.
 - TDD extended the native navigation interaction test to require the same order in a dirty workspace. It failed before the change, then passed after moving the unchanged discard/back actions after Settings.
 - Local locked/offline focused verification passes 15 tests across header chat, navigation language, new-goal confirmation, appearance, and source-layout suites; rustfmt and diff hygiene pass. Touched source/test files remain below 300 lines.
+- Full local locked/offline all-target verification passes 1,363 tests with 16 ignored across 414 suites on commit `f03b9cbe`.
 - This aligns one control sequence but adds no aggregate UI parity credit. Exact current-build screenshot review remains open; issue #9 remains 22/50 and shipped/default Rust UI parity 0/25.
+
+## Reconciled PR inventory — 2026-11-03
+
+- The earlier “Current GitHub integration inventory” below is a historical snapshot and is superseded by the later integration work recorded in `docs/07-implementation-plan.md`.
+- PR #342 merged into `main` at `a133f31d`; issue #341 is closed. The Rust implementation is present on the #9 branch in commit `76d920f3`, and `main` at `b747e392` was merged into that branch at `42ead92e`.
+- PR #22 is the open root migration PR. The #341 fix is not an outstanding PR; it does not satisfy the separate #9 packaged-workflow and full UI parity gates.
+- Do not treat closing intermediate issue-specific PRs as completing #9. Keep #22 Draft until its remaining acceptance evidence is complete.
 
 ## Windows Goal driver PowerShell parse failure — 2026-11-03
 
