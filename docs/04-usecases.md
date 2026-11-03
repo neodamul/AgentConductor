@@ -468,7 +468,6 @@ The coordinator plans every phase of a goal when the plan is generated, so Revie
 Trace: R-117 -> BG-72 -> SF-104 -> UC-107 -> FR-102 -> QAS-113 -> DD-125. Source: user request, 2026-10-13.
 
 ### UC-108 A run survives closing or losing the desktop app
-Status: Not implemented on `main` (R-118; see docs/14).
 Closing the desktop app (or the app process ending) must not end a run: the run coordinator and its agent workers keep working and the app reattaches when reopened. Closing the window while a run is active asks: Keep running in the background (default), Stop the run and close, or Cancel.
 Trace: R-118 -> BG-73 -> SF-105 -> UC-108 -> FR-103 -> QAS-114 -> DD-127. Source: user request, 2026-10-13.
 

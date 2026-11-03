@@ -193,7 +193,7 @@ requirement changes it.
 | R-106 Decide a live tool request from its window | BG-61 | SF-93 | UC-96 | FR-91 | QAS-102 | — | DD-114 | current |
 | R-107 Coordinator decides routine requests and records each decision | BG-62 | SF-94 | UC-97 | FR-92 | QAS-103 | — | DD-115 | current |
 | R-113 A blocking verification finding fails integration verification | BG-68 | SF-100 | UC-103 | FR-98 | QAS-109 | — | DD-120 | current |
-| R-118 A run survives closing or losing the desktop app | BG-73 | SF-105 | UC-108 | FR-103 | QAS-114 | — | DD-127 | not implemented on main |
+| R-118 A run survives closing or losing the desktop app | BG-73 | SF-105 | UC-108 | FR-103 | QAS-114 | — | DD-127 | current |
 | R-119 Interrupted runs recover and resume automatically | BG-74 | SF-106 | UC-109 | FR-104 | QAS-115 | — | DD-128 | current |
 | R-120 Interruptions and silent workers are visible | BG-75 | SF-107 | UC-110 | FR-105 | QAS-116 | — | DD-129 | amended by R-159 |
 | R-121 Reassign tasks that have not started while the run is working | BG-76 | SF-108 | UC-111 | FR-106 | QAS-117 | — | DD-130 | current |

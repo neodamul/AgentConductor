@@ -50,7 +50,6 @@ the tests that exercise it and says whether the behavior is present on `main`.
 
 | Requirement | Kind | Detail |
 |---|---|---|
-| R-118 | not implemented | No close dialog (Keep running / Stop and close / Cancel) and no Job Object breakaway exist; `src/process/windows_job.rs` kills children with the job. docs/07 DD-127 is unchecked. |
 | R-120 | partly implemented | Silence and process state are shown since R-159 (`room.js` activity lines); the collapsed "Thinking… n updates" line and the interruption history of DD-129 are not implemented. |
 | R-151 | in progress | Rust-only UI is on the migration line (#9); `main` ships the JS pages. |
 | R-174 | policy | Applied in review and by the CI Clippy gates (docs/13); not a test. |
@@ -190,7 +189,7 @@ the tests that exercise it and says whether the behavior is present on `main`.
 | R-106 Decide a live tool request from its window | current | `native_ui_tool_dialog.rs`, `test_tool_approval_dialog.py` | passes |
 | R-107 Coordinator decides routine requests and records each decisi | current | `coordinator_decisions.rs`, `native_guard_coordinator_requests.rs` | passes |
 | R-113 A blocking verification finding fails integration verificati | current | `verification_blockers.rs` | passes |
-| R-118 A run survives closing or losing the desktop app | not implemented on main | — | not implemented |
+| R-118 A run survives closing or losing the desktop app | current | `close_window.rs`, `close_dialog_runtime.cjs` (GitHub #377) | passes |
 | R-119 Interrupted runs recover and resume automatically | current | `crash_recovery.rs`, `recovery.rs`, `stop_resume.rs` | passes |
 | R-120 Interruptions and silent workers are visible | amended by R-159 | — | partly implemented |
 | R-121 Reassign tasks that have not started while the run is workin | current | `pending_edit.rs` | passes |

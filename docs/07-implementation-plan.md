@@ -1394,7 +1394,7 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [ ] Task / Red/Green: implementation and regression tests.
 - [ ] Verify: Windows local tests and native run.
 - [ ] Complete: release.
-- [ ] Verified 2026-11-03 (GitHub #349): not implemented on `main` (no close dialog, no Job Object breakaway).
+- [x] Implemented with GitHub #377: runs are separate processes (own process group, no Job Object shared with the app) and keep working after it ends; closing the window while a run's coordinator holds the run lock asks Keep running (default) / Stop the run and close / Cancel. `tests/close_window.rs`, `tests/close_dialog_runtime.cjs`; on macOS the debug build showed the dialog, Cancel kept the window, and Stop wrote `stop.request` and ended the app.
 
 ### Interrupted runs recover and resume automatically — DD-128
 - [x] Plan: R-119 -> BG-74 -> SF-106 -> UC-109 -> FR-104 -> QAS-115 -> DD-128.
@@ -2583,5 +2583,5 @@ Trace: amends R-13 (requirements trace to tests); rules in docs/README.md, recor
 
 - [x] Plan: the trace documents had one identifier chain with two meanings, four sections titled by their DD name, a goal defined twice, cited but undefined DD/DDR identifiers, amendments split from their entries, requirements changed by later ones without a status, issue fixes with no trace, and a README index frozen at R-59.
 - [x] Task: renumber the second chain (R-209 … DD-221), restore headings, merge duplicates and stray amendments, add `Status:` lines to requirements, use cases and QAS, trace every issue unit, rebuild the README index and matrix by area; `tests/architecture_trace.rs` enforces the rules (mutation run: four of six tests fail on injected faults); `tests/agent_master_list.rs` covers R-101, `tests/agent_order_runtime.cjs` R-102 and `tests/run_phase_title_runtime.cjs` R-114.
-- [x] Verify (macOS): full suite; docs/14 lists requirement evidence and the gaps (R-118 not implemented, R-120 partly, R-151 on the Rust line, R-183 open item from #341).
+- [x] Verify (macOS): full suite; docs/14 lists requirement evidence and the gaps (R-118 not implemented — since done with #377, R-120 partly, R-151 on the Rust line, R-183 open item from #341).
 - [ ] Complete: merge only on request.
