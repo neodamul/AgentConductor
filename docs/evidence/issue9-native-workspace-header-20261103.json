@@ -1,0 +1,40 @@
+{
+  "date": "2026-11-03",
+  "issue": 9,
+  "reference": {
+    "source": "origin/main:src/ui/startup.html and src/ui/startup.css",
+    "source_commit": "f3b819020d97d141daf6b03d979fb36ef9b1cd9d",
+    "contract": "Title, New goal, and phase are sibling header elements distributed with space-between."
+  },
+  "tdd": {
+    "test": "workspace_title_actions_match_legacy_order_and_space_between_distribution",
+    "red": "Rendered-glyph geometry showed a 493 px title/action gap and 106 px action/phase gap.",
+    "green": "Measure New goal and phase widths, then split remaining row width evenly between the three siblings.",
+    "result": "Both compact-header tests passed."
+  },
+  "capture": {
+    "path": "docs/evidence/issue9-native-workspace-header-current-20261103.png",
+    "dimensions": "1280x892",
+    "sha256": "2a0caad0df60df72f32ee9062e3efe72f9780ce585c223a0d1db84c7ec00303d",
+    "fixture": "Disposable HOME; workspace Status endpoint; three synthetic profiles; synthetic retained Claude/Codex quota values; no provider CLI, user workspace, or external service accessed.",
+    "visual_result": "Header gaps are near-equal; workspace form and sidebar remain populated for source-level review.",
+    "reference_limit": "The retained legacy image is v0.1.55; latest-main HTML/CSS is authoritative, so the image is not treated as current-main full-screen evidence."
+  },
+  "verification": {
+    "tests": "cargo test --locked --offline --features native-ui-probe --test native_ui_compact_header: 2 passed",
+    "clippy": "cargo clippy --locked --offline --features native-ui-probe --test native_ui_compact_header -- -D warnings passed",
+    "rustfmt": "cargo fmt --check passed",
+    "graphify": "Refreshed code graph: 13,258 nodes, 21,360 edges; no LLM clustering.",
+    "cocoindex": "CLI not installed on this host; no CocoIndex result is claimed.",
+    "line_counts": {
+      "src/native_ui_probe/workspace/header.rs": 189,
+      "tests/native_ui_compact_header.rs": 124
+    }
+  },
+  "acceptance": {
+    "issue_9_overall": "22/50",
+    "shipped_default_rust_ui": "0/25",
+    "credit_added": false
+  },
+  "limitations": "Local component and source-build screenshot only. Full interaction parity and exact macOS/Windows package acceptance remain open."
+}

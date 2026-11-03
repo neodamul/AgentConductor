@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Match legacy Workspace header distribution — issue #9
+
+- [x] Plan: current-main HTML uses three header siblings with `justify-content: space-between`; equal gaps are part of the visible Workspace layout.
+- [x] Red: rendered-glyph geometry failed with a 493 px title/action gap and 106 px action/phase gap.
+- [x] Task / Green: measure the action and phase widths, then divide the remaining row width evenly between title/action and action/phase.
+- [x] Verify: compact-header tests pass 2/2; current source-built populated Rust capture at 1280×892 visually confirms near-equal gaps and retains synthetic Claude/Codex quota values. Warning-denied targeted Clippy, rustfmt, and the 300-line guard pass.
+- [ ] Full interaction parity and exact macOS/Windows package acceptance remain open. No credit is claimed; issue #9 remains 22/50 and PR #22 remains Draft.
+
 ### 2026-11-03 — Restore native Workspace header action order — issue #9
 
 - [x] Plan: match the legacy title → `New goal` → phase order and keep the action group separated across the header row.

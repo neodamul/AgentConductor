@@ -42,6 +42,7 @@ pub fn show_title_controls(
     let title = text(language, "startup.what_should_the_team_work_on");
     let mut clicked = false;
     ui.horizontal(|ui| {
+        ui.spacing_mut().item_spacing.x = 0.0;
         ui.vertical(|ui| {
             ui.label(
                 RichText::new(eyebrow)
@@ -57,25 +58,43 @@ pub fn show_title_controls(
             )
             .accessible_name(title);
         });
-        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-            let status = text(language, phase);
-            egui::Frame::new()
-                .fill(ui.visuals().faint_bg_color)
-                .corner_radius(egui::CornerRadius::same(5))
-                .inner_margin(egui::Margin::symmetric(8, 4))
-                .show(ui, |ui| {
-                    ui.label(RichText::new(status).small());
-                })
-                .response
-                .accessible_name(status);
-            ui.add_space(80.0);
-            clicked = ui
-                .add_enabled(
-                    can_start_new_goal,
-                    egui::Button::new(text(language, "startup.new_goal")),
-                )
-                .clicked();
-        });
+        let goal_action = text(language, "startup.new_goal");
+        let status = text(language, phase);
+        let goal_width = ui
+            .painter()
+            .layout_no_wrap(
+                goal_action.to_owned(),
+                egui::TextStyle::Button.resolve(ui.style()),
+                Color32::PLACEHOLDER,
+            )
+            .size()
+            .x
+            + ui.spacing().button_padding.x * 2.0;
+        let status_width = ui
+            .painter()
+            .layout_no_wrap(
+                status.to_owned(),
+                egui::TextStyle::Small.resolve(ui.style()),
+                Color32::PLACEHOLDER,
+            )
+            .size()
+            .x
+            + 16.0;
+        let gap = ((ui.available_width() - goal_width - status_width) / 2.0).max(0.0);
+        ui.add_space(gap);
+        clicked = ui
+            .add_enabled(can_start_new_goal, egui::Button::new(goal_action))
+            .clicked();
+        ui.add_space(gap);
+        egui::Frame::new()
+            .fill(ui.visuals().faint_bg_color)
+            .corner_radius(egui::CornerRadius::same(5))
+            .inner_margin(egui::Margin::symmetric(8, 4))
+            .show(ui, |ui| {
+                ui.label(RichText::new(status).small());
+            })
+            .response
+            .accessible_name(status);
     });
     ui.add_space(12.0);
     clicked

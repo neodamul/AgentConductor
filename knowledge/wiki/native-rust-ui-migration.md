@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+## Workspace header space-between geometry — 2026-11-03
+
+The current-main Workspace uses three siblings in a flex row with `justify-content: space-between`. Rendering the button and phase as a fixed-spaced nested right-to-left group produced a 493 px title/action gap and a 106 px action/phase gap. The native header now measures the action and phase widths and splits the remaining width evenly. A rendered-glyph regression verifies the order and gap equality. The populated 1280×892 Rust capture confirms the header and card geometry with synthetic quota observations; the legacy screenshot available for comparison is labeled v0.1.55 and is not current-main full-screen evidence. Graphify refreshed to 13,258 nodes and 21,360 edges. CocoIndex CLI is unavailable on this host, so no CocoIndex result is claimed. Issue #9 remains 22/50, with no acceptance credit. Evidence: `docs/evidence/issue9-native-workspace-header-20261103.json`.
+
 ## Workspace header action order — 2026-11-03
 
 The legacy header order is title, `New goal`, then phase. The native header uses a right-to-left action group, so child insertion order is reversed; place the phase first, then spacing, then the action. The phase is decorative and its AccessKit node has no bounds, so geometry tests should locate its rendered egui text shape. Two compact-header tests and warning-denied targeted Clippy pass after the correction. This is a local component check only; same-state screen parity remains open. Issue #9 remains 22/50. Evidence: `docs/evidence/issue9-native-header-order-20261103.json`.
