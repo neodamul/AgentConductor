@@ -1,5 +1,15 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Restore exact-head native test validation — issue #9
+
+- [x] Plan: reproduce the macOS Platform Validation failure locally and keep the current checkbox-based workspace isolation and narrow-sidebar contracts.
+- [x] Red: the exact-head all-target run reproduced failures in `native_ui_agent_order`, `native_ui_language`, and `native_ui_probe`; the first also exposed move controls overflowing a 210 px sidebar.
+- [x] Task / Green: wrap sidebar move controls at the available width and update localization/accessibility assertions to the current single worktree checkbox.
+- [x] Focused verification: 18 tests across the three failed targets pass locally; source/test layout passes 2/2; `cargo fmt --check` and `git diff --check` pass.
+- [x] Full local verification after the fix: locked/offline all-target tests pass, warning-denied all-target Clippy with `test-fixtures` passes, native UI Clippy passes with undocumented-unsafe-block warnings denied, and source-layout passes 2/2.
+- [x] Record exact local result and the superseded exact-head failure in `docs/evidence/issue9-native-test-validation-00491e97-20261103.json`.
+- [ ] Rebuild and verify the exact macOS/Windows packages before changing issue #9 acceptance. This repair adds no UI parity credit; acceptance remains 22/50.
+
 ### 2026-11-03 — Match native agent-card metadata with the populated reference — issue #9
 
 - [x] Plan: compare the current Rust framebuffer against the populated `origin/main` workspace capture at 1280×892; align coordinator, model-count, and permission metadata as visible badges.

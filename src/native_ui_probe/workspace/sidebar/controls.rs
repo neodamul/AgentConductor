@@ -14,7 +14,7 @@ pub(super) fn show(
     ui: &mut egui::Ui,
 ) -> Option<Event> {
     let mut event = None;
-    ui.horizontal(|ui| {
+    ui.horizontal_wrapped(|ui| {
         ui.spacing_mut().item_spacing.x = 4.0;
         if icon_button(ui, editable, false)
             .accessible_name(message(language, "startup.edit_agent_named", id))

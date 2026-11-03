@@ -1,0 +1,37 @@
+{
+  "date": "2026-11-03",
+  "kind": "issue-9-native-platform-test-repair",
+  "issue": 9,
+  "base_commit": "00491e97f35a7ecba00768651c27f957d14b9d43",
+  "remote_run": {
+    "id": 41561385341,
+    "macos": "failed in Execute applicable native tests",
+    "windows": "failed in Execute applicable native tests",
+    "package": "skipped because platform validation failed",
+    "failing_targets": [
+      "native_ui_agent_order",
+      "native_ui_language",
+      "native_ui_probe"
+    ]
+  },
+  "repair": {
+    "sidebar_order_controls": "wrap at the available card width, including the supported 210 px sidebar",
+    "workspace_isolation_assertions": "expect the current localized checkbox instead of removed radio controls"
+  },
+  "local_verification": {
+    "focused_failing_targets": "18 passed",
+    "all_targets": "cargo test --locked --offline --all-targets --features test-fixtures --no-fail-fast passed",
+    "source_layout": "2 passed",
+    "clippy_all_targets": "cargo clippy --all-targets --locked --offline --features test-fixtures -- -D warnings passed",
+    "clippy_native_ui": "cargo clippy --lib --bins --tests --locked --offline --features native-ui-probe -- -D clippy::undocumented_unsafe_blocks passed",
+    "format_and_diff": "cargo fmt --check and git diff --check passed",
+    "source_test_file_limit": "verified by source_layout"
+  },
+  "acceptance": {
+    "overall": "22/50",
+    "packaged_workflows": "22/25",
+    "shipped_default_rust_ui": "0/25",
+    "changed_by_this_repair": false
+  },
+  "scope_note": "Local source and test evidence only. No exact macOS or Windows package acceptance is claimed."
+}

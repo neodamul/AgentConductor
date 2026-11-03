@@ -87,13 +87,8 @@ fn native_probe_controls_have_accessible_names() {
     ] {
         assert!(buttons.contains(&label.as_str()), "{label}");
     }
-    let mut isolation = labels(Role::RadioButton);
-    isolation.sort();
-    let mut expected_isolation = [
-        locale.text("startup.git_worktree"),
-        locale.text("startup.shared_folder"),
-    ];
-    expected_isolation.sort();
+    let isolation = labels(Role::CheckBox);
+    let expected_isolation = [locale.text("startup.isolate_tasks_in_git_worktrees")];
     assert_eq!(inputs, expected_inputs);
     assert_eq!(isolation, expected_isolation);
     assert!(missing_hints.is_empty(), "missing {missing_hints:?}");

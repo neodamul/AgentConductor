@@ -51,9 +51,7 @@ fn native_language_selection_updates_labels_and_survives_restart() {
         "워크스페이스 이름",
         "프로젝트 폴더",
         "목표",
-        "실행 격리",
-        "공유 폴더",
-        "Git worktree",
+        "작업을 Git worktree로 격리",
         "워크스페이스 저장",
         "프로젝트 폴더 선택",
     ] {

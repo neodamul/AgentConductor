@@ -2,6 +2,7 @@
 
 - [Windows package timeout](../raw/2026-11-02-windows-package-timeout.md): exact-package UI tests exceeded the 25-minute job budget; regression test and timeout increase to 45 minutes.
 - [Native test gates and localized assertions](native-test-gates-and-localized-expectations.md): gate Cargo auto-discovered native UI tests and keep runtime localization assertions language-aware.
+- [Native sidebar card density](native-sidebar-card-density.md): keep agent metadata compact and wrap reorder controls at the supported minimum sidebar width.
 - [Coordinator controls and locale-safe UI tests](native-test-gates-and-localized-expectations.md): keep workspace selectors inside the viewport and use the active locale in interaction tests.
 - [Workspace isolation and coordinator warnings](native-test-gates-and-localized-expectations.md): preserve the reference checkbox interaction and visible accessible blocker panel.
 - [Windows UI Automation text input](windows-uia-text-input.md): set and verify text through UI Automation `ValuePattern` in the exact packaged Windows app.
