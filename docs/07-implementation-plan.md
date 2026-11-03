@@ -1,3 +1,12 @@
+## 2026-11-03 — #380 Agent Room confirmation overlays
+
+Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160; refinement of the existing dialog containment requirement.
+
+- [x] Plan: locate inline stop, recovery, and approve/reject/merge confirmations.
+- [x] Task: preserve initiating controls and move all five confirmation paths into the existing modal pattern.
+- [x] Verify: geometry regression fails before the fix; all five initiating controls retain their positions after it. Pointer confirm/cancel and typed reason payloads pass, alongside state/evidence guards and Korean labels (28 tests across six suites).
+- [x] Completed: implementation and local static review pass; 28 focused tests, warning-denied Clippy and the 300-line guard pass. Integration is via the issue PR; live framebuffer/package verification remains separate.
+
 ## 2026-11-03 — #378 agent removal overlay
 
 Existing trace: R-151 native UI migration and R-101 shared registry, with the design-guide containment/dialog rules (workflow #350; quality gate #348).

@@ -30,6 +30,7 @@ fn native_room_stop_requires_a_confirmed_reason_and_is_hidden_when_terminal() {
     output.textures_delta.free.clear();
 
     state.confirming_stop = true;
+    settle_confirmation(&context, &mut state, &snapshot, "en");
     let mut output = context.run_ui(Default::default(), |ui| {
         room::show(&mut state, Some(&snapshot), false, None, "en", ui);
     });
@@ -121,6 +122,7 @@ fn native_room_candidate_decisions_require_current_evidence_and_confirmation() {
     output.textures_delta.free.clear();
 
     state.confirming_decision = Some(CandidateDecision::Approve);
+    settle_confirmation(&context, &mut state, &snapshot, "en");
     let mut output = context.run_ui(Default::default(), |ui| {
         room::show(&mut state, Some(&snapshot), false, None, "en", ui);
     });
@@ -158,6 +160,19 @@ fn native_room_candidate_decisions_require_current_evidence_and_confirmation() {
         .collect::<Vec<_>>();
     assert!(!labels.contains(&"Confirm candidate decision"));
     assert_eq!(state.confirming_decision, None);
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+}
+
+pub(super) fn settle_confirmation(
+    context: &egui::Context,
+    state: &mut room::State,
+    snapshot: &serde_json::Value,
+    language: &str,
+) {
+    let mut output = context.run_ui(Default::default(), |ui| {
+        room::show(state, Some(snapshot), false, None, language, ui);
+    });
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
 }

@@ -1597,3 +1597,7 @@ Claude's #341 implementation introduces a distinct `permission_denied` lifecycle
 ## Agent removal confirmation — #378
 
 Registry removal confirmation used to render inline and moved workspace content down by 51px. It now uses the existing egui modal pattern without changing the removal or SaveProfiles path. The dedicated `native_ui_removal_modal` suite asserts unchanged content geometry and drives the confirm/cancel buttons with pointer input. The confirmation accessibility test waits for the modal sizing frame and lives in the same dedicated suite to keep files below 300 lines. Focused regression/source-layout verification: 16 passed; Clippy passes. Desktop framebuffer review remains pending because the active app belongs to Claude's worktree and host screen capture failed.
+
+## Agent Room confirmation overlays — #380
+
+Stop, recovery and candidate approve/reject/merge confirmations used to replace controls or insert inline content. All five now use the existing egui modal while the initiating controls remain in place. Busy/state/evidence guards, reason limits, explicit confirmation and original event payloads are preserved. `native_room_confirmation_modals` checks fixed geometry and drives ten confirm/cancel cases with pointer input, typing stop/rejection reasons through the actual text fields. Related renderer, next-step, bilingual and source-layout suites pass 28 tests. This is automated interaction evidence, not live desktop/package acceptance.
