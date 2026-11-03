@@ -5,6 +5,7 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 the GitHub Release notes for its tag.
 
 ## Unreleased
+- Engineering documents: the requirement, use case and quality-scenario documents are consolidated (a reused identifier chain renumbered, superseded and amended entries marked, issue fixes traced, the index rebuilt), a test keeps them consistent, and docs/14 records which requirements are verified by tests and which are not yet implemented.
 
 ## v0.1.58
 - A custom CLI's output that is not JSON no longer ends as a bare "invalid JSONL": the failure quotes the line and shows the end of the CLI's stdout and stderr, labeled apart.

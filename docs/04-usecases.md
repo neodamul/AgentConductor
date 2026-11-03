@@ -51,6 +51,7 @@ After the old process has exited, the person reassigns a task to another registe
 At registration, query the CLI model catalog and retain provenance. Display catalog models and query age. The person selects an observed model for a new task or changes an idle session model. Running processes cannot be edited. Re-run changed work and review the new candidate before merge.
 
 ### UC-15 — Prepare and start a goal
+Status: Amended by UC-43 (R-53).
 
 1. Open the native app and register CLI profiles without provider API credentials.
 2. Select a repository, coordinator and goal; optionally select worktrees.
@@ -78,6 +79,7 @@ The operator registers the company CLI and selects it as Claude/Codex fallback w
 The operator requests current status. The orchestrator returns the goal and overall state, then each agent/session's task, last observed activity/report, report age, restriction or waiting reason, evidence and next action. Approval requests are listed separately. Stale reports and unknown progress are visible. This read-only query never resumes, reassigns or approves work. Trace: SF-22.
 
 ### UC-20 Scan the agent list
+Status: Amended by UC-73 (R-83).
 
 The operator sees active blinking green lights, steady completed green lights, yellow waits and red failed/blocked sessions without opening individual logs. Selecting a row shows the actual state and evidence. Reduced-motion users receive a steady light with the same state label. Trace: SF-23.
 
@@ -110,6 +112,7 @@ The operator opens the workspace or Agent Room. Claude Code, Codex and OpenCode 
 A new operator opens the repository or release README, reads what the product does, sees the actual workspace and Agent Room, installs the package, launches the app and follows the walkthrough (register agents, enter a goal, review the plan, approve, review the result, merge). Questions beyond that are answered by the linked user manual. Trace: SF-30.
 
 ### UC-28 Write the plan yourself
+Status: Amended by UC-43 (R-53).
 
 The operator enters a goal, chooses **Write plan manually**, and receives three empty tasks. For each task they choose an agent and write instructions, owned paths, dependencies and a test command, save the edits and approve the exact plan. Incomplete or overlapping tasks are refused with the reason and nothing runs. If the repository changed after the form was created, approval is refused. Trace: SF-31.
 
@@ -118,6 +121,7 @@ The operator enters a goal, chooses **Write plan manually**, and receives three 
 The operator types the goal, picks a coordinator, presses **Browse…** next to Repository and selects the project folder in the system dialog; the path appears in the field. Cancelling leaves the field unchanged. A workspace without a repository can be saved; plan buttons stay disabled until a repository is set. Trace: SF-32.
 
 ### UC-30 Switch workspaces from the menu
+Status: Amended by UC-139 (R-149).
 
 The operator opens the workspace menu in the title bar, sees the current folder and recent workspaces, and selects one, chooses **Open folder…**, or **New workspace…**. Unsaved edits are confirmed first. The window reloads with the selected workspace; a workspace already open in another window, or a running planning job, refuses the switch with the reason. Trace: SF-33.
 
@@ -138,6 +142,7 @@ The operator presses **Generate plan** or **Write plan manually** while the repo
 The baseline dialog lists only `.DS_Store` files. It explains they are created by Finder and offers **Ignore and continue** with a note on making it permanent for every repository. The operator chooses it; the patterns are added to the repository's local exclude list and planning continues without a commit. If other changes remain, the dialog shows just those with **Commit and continue** / **Stop**. Trace: SF-36.
 
 ### UC-37 Watch a plan being generated
+Status: Amended by UC-73, UC-125, UC-187 (R-83, R-135, R-196).
 
 The operator presses **Generate plan**. The review area immediately shows "Planning with claude… 0:05" and updates every second. About a minute later the plan appears, a notice says it is ready and the window scrolls to it. If the coordinator fails, the review area shows the exit status and the log folder instead. Trace: SF-38.
 
@@ -166,6 +171,7 @@ Developer A chooses **Workspace ▾ → Export settings…**, accepts the reposi
 The operator registers a workspace for a project that already has `docs/plan.md` with nine open items. In step 2 they keep the role rules and press **Read plan…**, choose the file and wait while "Planning with claude…" is shown. Seven tasks appear, each with a role and an allowed agent, covering the open items; completed items are absent. They remove one task they want to postpone, add one manual task, save the edits and approve. Trace: SF-44.
 
 ### UC-44 Pursue a new goal in the same workspace
+Status: Amended by UC-64, UC-74, UC-90 (R-74, R-84, R-100).
 
 The operator enters "Adjust the health check interval" and presses Generate plan. The window proposes the slug `healthcheck_interval_adjust` (editable), creates its tree and shows it in the slug list next to the earlier `healthcheck_feature` slug, whose progress stays visible. Trace: SF-45.
 
@@ -194,10 +200,12 @@ A worker asks to run a command while the operator is away. The linked channel re
 A linked approver presses **Allow** or **Deny** on the message. The application verifies the messenger signature, the approver's link and that the exact request is still pending and unexpired, then records the decision with the messenger identity in the audit log. Plan execution consent and final merge remain desktop-only until separately approved as a requirement. Trace: SF-37.
 
 ### UC-49 Review Claude capacity
+Status: Amended by UC-87, UC-138, UC-192 (R-97, R-148, R-201).
 
 While a Claude task runs, the operator sees a provider-reported utilization of 0.27 as 73% remaining in the relevant window. Refresh rechecks the retained observation; missing utilization stays unavailable and observations older than five minutes stay stale. Trace: SF-50.
 
 ### UC-50 Scan capacity while choosing an agent — The operator sees 73% beside an agent name; the tooltip explains the reported windows, source and freshness. Trace: SF-51.
+Status: Amended by UC-54, UC-98, UC-120 (R-64, R-108, R-130).
 
 ### UC-51 Import a Story and supporting pages (planned)
 
@@ -213,6 +221,7 @@ Activate the refresh icon beside one paid agent to update its account metadata; 
 
 
 ### UC-54 Read and refresh account windows
+Status: Amended by UC-120 (R-130).
 
 An operator scans an agent row, sees slash-separated percentages, inspects Current / Total for an explicitly reported Enterprise plan or provider duration labels in the tooltip, then refreshes that same compact group. Missing values remain unknown and stale observations remain visibly stale. Trace: SF-54.
 
@@ -228,6 +237,7 @@ Open Edit; the installed executable path is suggested without replacing a custom
 Open Edit or + Add, choose Provider (first field). ID, executable path and options change together; the operator may still adjust them, then saves. Role rules, coordinator and fallbacks that used the old ID now use the new one. Trace: SF-56.
 
 ### UC-57 See when an exhausted agent returns
+Status: Superseded by UC-120 (R-130).
 
 An agent row shows `0%/40% · 14:30`; hovering explains each window and its reset. Trace: SF-57.
 
@@ -243,8 +253,6 @@ Pick **Alternate agent · on account restriction** → agent; the model list sho
 
 From the workspace menu choose **Messenger…**, pick Slack or Company messenger (webhook), paste the webhook URL, choose events, optionally edit the JSON body template (company) and allow the goal text, press **Send test message**, then **Save**. Afterwards the channel receives one message per event, for example "AgentConductor · Payments team: candidate ready for review (3/3 tasks completed)". Trace: SF-37 / UC-34.
 
-DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar Settings menu; keep reference insertion and preview beside the goal. The Settings gear uses a 26 px glyph in a 44 × 44 px pointer target.
-
 
 ### UC-60 Inspect agents on Windows
 The operator registers an installed CLI and sees its provider badge, then refreshes capacity. The collector returns actual reported windows or an explicit authentication/trust/timeout error; it never generates a model turn or accepts trust automatically. Trace: SF-60.
@@ -258,6 +266,7 @@ The operator presses Models, sees the discovery limitation, enters company-provi
 A worker pauses on a tool request while the operator is away. The channel receives "Tool request needs a decision — task build, tool Bash. Reply `allow 3FA9C21B` or `deny 3FA9C21B`." A listed approver replies `allow 3FA9C21B`. Within about 15 seconds AgentConductor applies the decision exactly as the desktop **Allow** would, records the approver identity and posts "Allowed by U123 (task build)". Replies from other users, unknown or expired codes, repeated replies and bot messages are ignored and logged. Trace: SF-37 / UC-35.
 
 ### UC-64 Start a goal without naming its folder
+Status: Amended by UC-74 (R-84).
 
 Type the goal "헬스체크 주기 조정" and generate the plan. The work folder becomes `.agentconductor/helseuchekeu_jugi_jojeong/`; a second goal with the same words becomes `…_2`. Goals & progress lists the slug. Trace: SF-46.
 
@@ -270,6 +279,7 @@ The operator presses Browse, selects or cancels the foreground picker, and retai
 
 
 ### UC-67 Save a fresh project and query account capacity
+Status: Superseded by UC-70, UC-114 (R-80, R-124).
 Select a plain directory and save a named workspace. Reopen to recover the same path. Quota refresh runs without a Git repository or execution run. Attempting planning explains the missing Git/initial commit before creating artifacts. Trace: SF-64.
 
 
@@ -278,10 +288,12 @@ While agent A queries models, the operator opens and saves another profile, chan
 
 
 ### UC-69 Generate a plan for a fresh project
+Status: Superseded by UC-70, UC-114 (R-80, R-124).
 Select an existing plain project folder and save. Generate plan asks to create a Git baseline. Stop changes nothing. Approve initializes Git and an empty commit; existing untracked/staged files require separate baseline-file consent. The normal plan flow then continues. Trace: SF-66.
 
 
 ### UC-70 Plan and apply changes in a folder without Git
+Status: Amended by UC-114 (R-124).
 Select a plain folder, register agents and generate or write a plan. Approve the exact plan; three agents work in the private shared copy or optional worktrees. Review the diff and tests, approve, then choose Apply changes. The original has no new .git. If another editor changes the original after planning or verification, starting/applying is refused and a new plan is required. Trace: SF-67.
 
 
@@ -310,6 +322,7 @@ On a Windows computer where the Claude CLI was never set up, choose ↻ on the C
 
 
 ### UC-77 Readable Windows project paths
+Status: Merged into UC-93 (R-103).
 Trace: R-87 -> BG-42 -> SF-74 -> UC-77 -> FR-72 -> QAS-83 -> DD-95.
 Canonicalization must not expose extended drive/UNC prefixes in project fields. Preserve roots, Unicode and actual directory identity.
 
@@ -360,10 +373,12 @@ Trace: R-94 -> BG-49 -> SF-81 -> UC-84 -> FR-79 -> QAS-90 -> DD-102. Source: use
 
 
 ### UC-85 Abandon a blocked planning workspace
+Status: Amended by UC-201 (R-209).
 Allow confirmed deletion of the current app-owned workspace after Generate plan fails or stalls. Offer Stop planning and delete: request cooperative cancellation, await owned-process quiescence and metadata settlement, then switch the same window to a fresh workspace and archive only the abandoned workspace app data. Never kill unrelated/reused PIDs or erase the project. Refusal must preserve the current workspace and expose the reason. Active implementation runs retain explicit Stop/recovery requirements.
 Trace: R-95 -> BG-50 -> SF-82 -> UC-85 -> FR-80 -> QAS-91 -> DD-103. Source: user request, 2026-10-12.
 
 ### UC-86 Agents work inside the workspace sandbox; the coordinator decides beyond it
+Status: Amended by UC-97, UC-112 (R-107, R-122).
 Agents coordinate and develop inside the plan without waiting on routine approvals. Work confined to the task workspace runs at once; a request reaching outside it (network, installs, history-changing Git, privilege, other processes, outside paths, secrets) is decided by the workspace coordinator , and a person is asked only when no coordinator can decide. The permission level is not chosen in the agent profile; it follows from the CLI. Time spent waiting for a decision does not count toward the task limit, and a task that times out can be resumed instead of failing.
 Trace: R-96 -> BG-51 -> SF-83 -> UC-86 -> FR-81 -> QAS-92 -> DD-104. Source: user request, 2026-10-13.
 
@@ -372,6 +387,7 @@ Claude usage must load even when Claude first asks whether to trust the project 
 Trace: R-97 -> BG-52 -> SF-84 -> UC-87 -> FR-82 -> QAS-93 -> DD-105. Source: user request, 2026-10-13.
 
 ### UC-88 Planning start and workspace naming feedback
+Status: Amended by UC-201 (R-209).
 Generate plan shows progress with elapsed time from the moment it is pressed, including while the project folder is copied before the coordinator starts. Saving workspace settings updates the titlebar name at once. Deleting the current workspace asks for the name of the fresh workspace that replaces it instead of always naming it "New workspace".
 Trace: R-98 -> BG-53 -> SF-85 -> UC-88 -> FR-83 -> QAS-94 -> DD-106. Source: user request, 2026-10-13.
 
@@ -452,6 +468,7 @@ The coordinator plans every phase of a goal when the plan is generated, so Revie
 Trace: R-117 -> BG-72 -> SF-104 -> UC-107 -> FR-102 -> QAS-113 -> DD-125. Source: user request, 2026-10-13.
 
 ### UC-108 A run survives closing or losing the desktop app
+Status: Not implemented on `main` (R-118; see docs/14).
 Closing the desktop app (or the app process ending) must not end a run: the run coordinator and its agent workers keep working and the app reattaches when reopened. Closing the window while a run is active asks: Keep running in the background (default), Stop the run and close, or Cancel.
 Trace: R-118 -> BG-73 -> SF-105 -> UC-108 -> FR-103 -> QAS-114 -> DD-127. Source: user request, 2026-10-13.
 
@@ -460,6 +477,7 @@ When a run is recorded as running but its coordinator and workers are gone (app 
 Trace: R-119 -> BG-74 -> SF-106 -> UC-109 -> FR-104 -> QAS-115 -> DD-128. Source: user request, 2026-10-13.
 
 ### UC-110 Interruptions and silent workers are visible
+Status: Amended by UC-149 (R-159).
 The Agent Room shows when a run was interrupted and recovered (banner history and coordinator Activity), collapses a worker's consecutive thinking_tokens events into one line (Thinking… n updates, last at hh:mm) instead of empty Thinking tokens rows, and warns when a running task has produced no output for several minutes or its process is gone, suggesting Recover.
 Trace: R-120 -> BG-75 -> SF-107 -> UC-110 -> FR-105 -> QAS-116 -> DD-129. Source: user request, 2026-10-13.
 
@@ -479,11 +497,12 @@ Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source
 Choose a project, review a plan, and start. Files appear in the selected project without `.git`. Review evidence and Accept the exact result, or Reject to restore owned files. If files changed after verification, show the conflict and preserve the manual edit. Existing private-copy runs continue with their previous Apply flow.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.
 
-### UC-114 Deleting workspaces needs no replacement name
+### UC-201 Deleting workspaces needs no replacement name
 Deleting a workspace asks for no new workspace name. When the current workspace is deleted, the most recently used other workspace opens, so several workspaces can be deleted in a row; only when none is left does one empty workspace start.
-Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user request, 2026-10-13.
+Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Source: user request, 2026-10-13.
 
 ### UC-115 Read the current application manual
+Status: Amended by UC-134, UC-188, UC-191 (R-144, R-197, R-200).
 Open either manual, follow workspace tabs, register CLIs and review a candidate. Match displayed labels, permissions, folder execution and recovery behavior to the documented version.
 Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.
 
@@ -510,6 +529,7 @@ The operator sees an exhausted account as 0%/24% followed by refresh. Hovering t
 Trace: R-130 -> BG-85 -> SF-117 -> UC-120 -> FR-115 -> QAS-126 -> DD-139. Source: user, 2026-10-14.
 
 ### UC-121 Select signal transport and open tool instructions
+Status: Amended by UC-169 (R-178).
 
 Open Settings: labels and selection controls are separated. Choose Local Rust: server fields disappear. Choose agentmemory: the retained server port appears. Open the workspace menu and Agent tools guide: the existing static guide opens without executing installation commands.
 Trace: R-131 -> BG-86 -> SF-118 -> UC-121 -> FR-116 -> QAS-127 -> DD-140. Source: user, 2026-10-14.
@@ -540,6 +560,7 @@ Plans reverted to their saved values can be approved; actual workspace/plan edit
 
 
 ### UC-127 / UC-128 Recover transport and open the manual
+Status (UC-128): Amended by UC-169 (R-178).
 
 Codex reconnect attempts with a valid n/m counter and explicit WebSocket-to-HTTP fallback announcements are visible Warning events. All raw evidence/session IDs remain; turn.failed, real authentication/quota errors, missing final output, nonzero exit and timeout remain failures. No global Codex config is silently rewritten. The shared workspace menu opens bundled English/Korean user manuals offline with headings, lists, code blocks and safe text nodes; language switches update an open manual. The guide uses model_providers.openai-https (plural) and supports_websockets=false in user-level config. Follow managed Enterprise policy.
 Trace: R-137 → BG-92 → SF-124 → UC-127 → FR-122 → QAS-133 → DD-146; R-138 → BG-93 → SF-125 → UC-128 → FR-123 → QAS-134 → DD-147. User, 2026-10-14.
@@ -554,7 +575,7 @@ A model reply such as "Selected model is at capacity" is retried after a short w
 Trace: R-140 -> BG-95 -> SF-127 -> UC-130 -> FR-125 -> QAS-136 -> DD-149. Source: user requests, 2026-10-14.
 
 
-### UC-131 Work without memory tools / UC-132 pick a project or file
+### UC-131 / UC-132 Work without memory tools; pick a project or file
 
 The planner receives the workspace-selected coordination backend after operator rules, and every worker receives it after its task/dependency/lesson context. Local Rust requires no agentmemory daemon or CLI/MCP tool; progress remains normal owned CLI output captured by Rust. Agentmemory preferred delivery is host-owned and retains local fallback. Optional tool installation guidance cannot require or select a transport. Only registered checkpoint_v1 workers get addressed polling/ack/report instructions and exact executable-path shell examples; no new profile capability, peer recipient or approval is fabricated.
 
@@ -564,7 +585,7 @@ Trace: R-141 → BG-96 → SF-128 → UC-131 → FR-126 → QAS-137 → DD-150; 
 Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 
-### Workspace transfer menu — DD-152
+### UC-133 Workspace transfer menu
 
 Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
@@ -575,17 +596,19 @@ Open Workspace menu and User manual. Read real column headers and command rows, 
 Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.
 
 
-### Saved-project Claude quota retry — DD-154
+### UC-135 Saved-project Claude quota retry
 
 Saving a project folder after an empty-folder Claude usage attempt immediately schedules a fresh query. Empty project paths are excluded from automatic Claude queries; other providers retain their account refresh schedule. Folder changes invalidate only Claude scheduling context, never grant trust or execution permissions.
 Trace: R-145 → BG-100 → SF-132 → UC-135 → FR-130 → QAS-141 → DD-154. User, 2026-10-14.
 
-### Schema-constrained planning replies — DD-155
+### UC-136 Schema-constrained planning replies
+Status: Amended by GitHub #337 (R-146): the schema passes Codex strict Structured Outputs, and a planning failure shows stderr and stdout.
 
 Planning requests specify an explicit JSON Schema: phases, tasks, owned paths, dependencies and command arguments remain arrays, with registered agent IDs, required fields and no unknown properties. Claude receives --json-schema; Codex receives --output-schema bound to a retained local schema file. Other CLIs receive the exact schema in the planning prompt. Strict phase/task, ownership, role, dependency and human-approval validation remains unchanged; invalid objects are not guessed or silently reordered.
 Trace: R-146 → BG-101 → SF-133 → UC-136 → FR-131 → QAS-142 → DD-155. User, 2026-10-14.
 
 ### UC-137 Create a workspace after viewing completed work
+Status: Amended by UC-139 (R-149).
 
 View a completed Agent Room, return home, create a named workspace; the new workspace opens and old evidence remains. Reject navigation while the previous execution is active.
 Trace: R-147 → BG-102 → SF-134 → UC-137 → FR-132 → QAS-143 → DD-156. GitHub #4, user2026-10-14.
@@ -595,10 +618,8 @@ Trace: R-147 → BG-102 → SF-134 → UC-137 → FR-132 → QAS-143 → DD-156.
 A Claude CLI starts with ❯, > or $; the collector sends /usage once and stores reported metadata, then reaps its process. Onboarding/login/trust blockers retain their existing handling.
 Trace: R-148 → BG-103 → SF-135 → UC-138 → FR-133 → QAS-144 → DD-157. GitHub #5, user2026-10-14.
 
-DD-157 implementation note: the operator confirmed Windows Claude2.1.296 uses a > prompt and a Yes-I-trust-folder choice, with an explicit spent/allocated Enterprise line. Parse that declared allocation using existing exact-decimal subtraction; the display percentage is derived from remaining/allocated amounts. Date-only resets remain unscheduled. Committed fixtures use synthetic amounts; no operator account values are published.
 
-
-### Active workspace navigation — DD-158
+### UC-139 Active workspace navigation
 
 Create, open and switch workspaces while planning, metadata collection or execution is active. Keep the owned Startup, child handles, controller and window/run leases for each active workspace; restore that session when revisited and read its current report/logs. Settings and job descriptors already persist in startup.json; progress/evidence remains in the original run, so navigation neither stops workers nor overwrites CLI state. Idle sessions release their leases and reopen from disk as before. Serialize composite navigation, acquire the target first, and retain the original on target/registry failure. Completed parked sessions can release their leases for exact-name-confirmed deletion; active or unknown work remains protected. Ignore late workspace/closed-room responses, reset per-workspace refresh tracking, and request a fresh snapshot before editing the new view. Export/import continues to transfer the existing reviewed configuration archive; live process handles are not exported.
 Trace: R-149 → BG-104 → SF-136 → UC-139 → FR-134 → QAS-145 → DD-158. User, 2026-10-15; supersedes the active-navigation restriction in DD-156.
@@ -645,6 +666,7 @@ An operator opens a running task that has printed nothing for minutes. The task 
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
 
 ### UC-151 Ask how to run what the team built
+Status: Amended by UC-170, UC-172, UC-178, UC-179, UC-183 (R-179, R-181, R-187, R-188, R-192).
 An operator returns to the workspace after a completed run, opens the chat from the title bar, asks how to run the result, and receives the project-specific commands. Another question about the current screen is answered from the manual. Closing the panel keeps the conversation for the session.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
 
@@ -733,6 +755,7 @@ An operator reports a timeout and attaches the log; an in-house agent with only 
 Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193. GitHub #200, user, 2026-10-28.
 
 ### UC-174 An owner connects an in-house agent CLI
+Status: Amended by GitHub #341 (R-183): invalid output keeps labeled stdout/stderr excerpts, text mode and denial conditions are profile settings; a distinct permission-denied task state is still open.
 The owner reads the contract, makes the CLI print `--acio-describe`, validates a captured run with the checker and registers the CLI by path; the plan then gives classification tasks a fast model with examples and implementation tasks a high-effort model with completion tests.
 Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.
 
@@ -805,6 +828,7 @@ The release PR bumps the version but not the README sentence: CI fails and names
 Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-192 → QAS-198 → DD-212. GitHub #290, user, 2026-11-01.
 
 ### UC-192 Usage on a company PC
+Status: Amended by GitHub #321 (R-201): the card shows no elapsed usage-query text; the refresh icon marks the query.
 The CLI needs 35 s before it answers `/usage`. The operator presses refresh: the card says "Querying usage… 0:35" and then shows the percentages. A CLI that never answers ends after 60 s with "Claude quota prompt timed out before /usage after 60 s".
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
 

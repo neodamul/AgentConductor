@@ -30,6 +30,7 @@ UC-09→QAS-09; UC-10→QAS-10; UC-11→QAS-11.
 - QAS-11: Given an unknown model, reject before spawn. Given a valid model change after approval, merge must fail until new verification and human approval.
 
 ### QAS-16 — Startup consent and private configuration
+Status: Amended by QAS-45 (R-53).
 
 Invalid/stale/oversized native requests must not change settings or start a child. Stored profile environment values must not appear in snapshots. Plan approval binds the actual stored profiles, tasks, workspace mode and repository base. Closing/reopening the UI must not silently rerun a planner or executor. Trace: UC-15 / R-21.
 
@@ -50,6 +51,7 @@ Given a restricted paid account and reviewed self-hosted fallback, no running at
 Given concurrent workers, a stale agentmemory report and a terminated local process, a status query identifies the process termination and stale report rather than claiming ongoing work. Every statement of progress has a timestamp/source; unknown information is not guessed. The query changes no task revision, permissions or approval. Trace: UC-19.
 
 ### QAS-21 Visible and accessible status
+Status: Amended by QAS-79 (R-83).
 
 Given simultaneous running, waiting and failed tasks, the list shows blinking green, steady yellow and steady red with matching text. Polling does not reset the active pulse on every refresh. Unknown states stay yellow. Reduced-motion preference disables animation without losing state information. Trace: UC-20.
 
@@ -82,6 +84,7 @@ Given installed Claude, Codex (ChatGPT) and OpenCode applications, built-in prof
 Given the README only, a first-time operator can name the product's purpose and start the desktop workflow: the README shows real screenshots, install and launch steps and a desktop walkthrough, contains no shell command blocks and stays under 120 lines. It has sections answering how orchestration works, how roles are assigned, what happens at usage limits and what to prepare, and states that agentmemory is optional. Every command listed by `agentconductor --help` is documented in the user manual, which the README links and release packages include. Trace: UC-27.
 
 ### QAS-29 Planning without a coordinator
+Status: Amended by QAS-45 (R-53).
 
 Given registered agents, a clean repository and a goal, **Write plan manually** produces a three-task draft immediately, launches no process and contacts no LLM. Saving an incomplete or overlapping draft is refused; a completed draft is approved by its exact digest and runs; a repository change after drafting refuses approval. Trace: UC-28.
 
@@ -90,6 +93,7 @@ Given registered agents, a clean repository and a goal, **Write plan manually** 
 Given the workspace screen, **Browse…** opens the platform folder dialog (macOS `choose folder`, Windows `FolderBrowserDialog`) without blocking the window's request thread; a selection fills the field, cancel changes nothing. A workspace with an empty repository saves; plan creation without one is refused. Trace: UC-29.
 
 ### QAS-31 In-place workspace switching
+Status: Amended by QAS-145 (R-149).
 
 Given two workspaces, selecting another from the menu reloads the window on it within one request, records it as recent, and releases the previous window lease so the old workspace can be opened again. Switching to a workspace held by another window, or while a planning job or run view is active, is refused and the current workspace stays open. Trace: UC-30.
 
@@ -118,6 +122,7 @@ Given a pending request, a decision from the messenger is applied only when the 
 Given untracked `.DS_Store` files (nested included) and optionally other changes, **Ignore and continue** appends each missing pattern once to `$(git rev-parse --git-path info/exclude)`, creates no commit and modifies no tracked file; the repository is then clean, or only the other changes remain. Tracked metadata files and non-OS files are never excluded. Trace: UC-36.
 
 ### QAS-38 Planning is never silent
+Status: Amended by QAS-79, QAS-131, QAS-194 (R-83, R-135, R-196).
 
 Given **Generate plan**, within one refresh (1 s) the review area shows the coordinator and an elapsed time derived from the job's recorded start, updating each second; on completion a ready notice appears and the plan section scrolls into view; on failure the area shows the exit status and the job's log directory. A window reopened during planning shows the same elapsed time. Trace: UC-37.
 
@@ -150,6 +155,7 @@ Given a workspace with private environment values, catalogs and a repository, th
 Plans with 0 or more than 12 tasks are refused; 1 and 12 are accepted. The planning prompt no longer demands three tasks and asks for the smallest disjoint split. **Read plan…** sends the document text (at most 64 KiB, larger files refused) with the role rules to the coordinator running on the read-only snapshot; the generated plan passes the same validation, role checks and approval as a generated one; when the goal is empty the document's first heading becomes the goal. Trace: UC-43.
 
 ### QAS-46 Goals accumulate as slugs
+Status: Amended by QAS-69, QAS-80, QAS-96 (R-74, R-84, R-100).
 
 Setting a second goal adds a second slug with its own tree; slugs are unique, lowercase `[a-z0-9_]`, at most 48 characters; the repository's `.agentconductor/` is excluded from Git status so planning and merges are unaffected. Trace: UC-44.
 
@@ -170,10 +176,12 @@ Export writes one store-only zip per slug with entries only under that slug; imp
 The planning prompt contains the workspace override exclusively when set. Otherwise it contains the existing global/default rules plus all Markdown files below `<repository>/.agentconductor/plan-rules/`, recursively and in relative lexical order. Files outside that root, non-Markdown files and symlinks are excluded. Trace: UC-48.
 
 ### QAS-51 Claude quota is evidence, not inferred capacity
+Status: Amended by QAS-93, QAS-144, QAS-199 (R-97, R-148, R-201).
 
 A valid owned stream event updates the board before worker completion. Missing utilization, malformed values and unrelated costs do not become a percentage. A new event replaces prior window evidence rather than refreshing omitted windows. Refresh preserves observation timestamps and execution revision, creates no process and reads no credentials. Profile changes invalidate retained metadata. Trace: UC-49.
 
 ### QAS-52 — A reported 73% renders beside the agent name in both lists; multiple reported windows use the lowest remaining value. Missing values render an em dash; stale values render Stale. Names can truncate without hiding the badge. Workspace reads only its retained run and validates the current profile digest. Trace: UC-50.
+Status: Amended by QAS-57, QAS-104, QAS-126 (R-64, R-108, R-130).
 
 ### QAS-53 MCP registration compatibility
 
@@ -196,6 +204,7 @@ A fresh workspace queries each supported provider without an execution run. Refr
 Given an open workspace or Agent Room with no running job, unsaved edit or planning in progress, the page refreshes at most every 5 s, not at all while the window is hidden, and snapshots omit application icons unless the page asks for them once or after the agent kinds change; with a job running it refreshes every second. The release build idles at core RSS < 100 MiB and average CPU < 1 % over 30 s. Trace: R-65, NFR-05.
 
 ### QAS-57 Independent window readability
+Status: Amended by QAS-126 (R-130).
 
 Given remaining values 73% and 36%, an operator sees both values and their window labels in the agent row. The row displays `73%/36% ↻` on one line. The tooltip maps Enterprise to Current/Total and a 300-minute plus plan to 5h/Weekly. A 1440-minute window is Daily; unknown durations retain provider labels. The same group contains the refresh icon. Trace: FR-50 / NFR-24.
 
@@ -203,6 +212,7 @@ Given remaining values 73% and 36%, an operator sees both values and their windo
 
 Given a reviewed plan and an existing agent, changing cadence from five to ten minutes survives reopening without changing its proposal. Bounds outside 1–60 are refused. Missing tools can be selected through a native file picker; no CLI is launched to locate them. Enabled controls remain usable during idle UI polling. Actual app inspection verifies uniform form sizing and AC identity. Trace: FR-51 / NFR-25.
 ### QAS-59 Empty agent list by default
+Status: Superseded by QAS-97 (R-101).
 
 Given a new workspace, the snapshot lists no agents, an empty coordinator and the provider templates; saving such a workspace succeeds; generating or writing a plan is refused until an agent is registered and chosen as coordinator. Trace: R-66.
 
@@ -211,6 +221,7 @@ Given a new workspace, the snapshot lists no agents, an empty coordinator and th
 Given a Claude agent `claude` used as coordinator, role agent and Codex's fallback, switching it to OpenCode in Edit yields ID `opencode` (or `opencode-2` when taken), the OpenCode executable and arguments, no Claude models, and after saving the coordinator, role and fallback reference `opencode`. Trace: FR-52 / NFR-26.
 
 ### QAS-62 Reset time for exhausted quota
+Status: Superseded by QAS-126 (R-130).
 
 Given windows 0 % (reset today 14:30) and 40 %, the badge reads `0%/40% · 14:30`; a reset on another day includes the date; an exhausted window without a reset time reads `· reset unknown`; non-exhausted quota shows no time. Trace: FR-53.
 
@@ -240,6 +251,7 @@ Given aipro has no /models command, Models explains the limitation and shows exi
 Given a linked run with one pending request `3FA9C21B…`, a Slack reply `allow 3fa9c21b` from a listed approver applies exactly one approval for that request and posts a confirmation; the same reply seen again, a reply from an unlisted user, a bot message, `allow 00000000`, or a reply after the request is no longer pending changes nothing and is logged; a relay decision with a wrong signature is refused; with no pending request no inbound HTTP request is made. Trace: FR-58 / NFR-30 / QAS-36.
 
 ### QAS-69 Readable automatic slugs
+Status: Amended by QAS-80 (R-84).
 
 `Add export API` → `add_export_api`; `헬스체크 주기 조정` → `helseuchekeu_jugi_jojeong`; `결제 API 개선` → `gyeolje_api_gaeseon`; `日本語だけ` on 2026-10-11 → `goal_20261011`; a repeated goal → `_2`; a very long goal ≤ 48 characters without a trailing `_`; the startup page has no slug input. Trace: FR-59.
 
@@ -252,6 +264,7 @@ Browse opens NSOpenPanel above the active macOS app; cancellation returns no pat
 
 
 ### QAS-72 Fresh directory settings and metadata remain usable
+Status: Superseded by QAS-75, QAS-120 (R-80, R-124).
 A plain directory saves and reopens correctly; planning rejects it with actionable guidance before any slug or Git mutation. An unborn repository saves but requires an initial commit before planning. Invalid files preserve settings. Codex fixture quota reaches the fresh workspace with no Git and no run. Trace: FR-62/NFR-33.
 
 
@@ -260,10 +273,12 @@ A paused OpenCode catalog fixture allows profile registration and workspace Save
 
 
 ### QAS-74 Git setup consent preserves project content
+Status: Superseded by QAS-75, QAS-120 (R-80, R-124).
 False approval leaves a plain folder without .git; accepted approval creates an empty committed tree and local audit; existing files remain untracked and staged files remain staged; repeated setup is rejected. Actual ensureBaseline JavaScript stops without a write or rechecks and continues after approval. Trace: FR-64/NFR-35.
 
 
 ### QAS-75 Folder planning, verification and approval
+Status: Amended by QAS-120 (R-124).
 Given a plain folder, the actual planning subprocess returns three tasks from a read-only copy, and shared/worktree execution yields a tested candidate without changing the original. Unapproved application fails; exact approval applies files without creating .git. A later original edit causes refusal and preserves it. Excluded secret/build paths never enter the snapshot or application; aliases are refused. Trace: FR-65/NFR-36.
 
 ### QAS-76 Metadata resilience and bounded temporary history
@@ -295,6 +310,7 @@ On Windows, a .cmd launcher started with a canonical \\?\ folder runs in that fo
 
 
 ### QAS-83 Readable Windows project paths
+Status: Merged into QAS-99 (R-103).
 Trace: R-87 -> BG-42 -> SF-74 -> UC-77 -> FR-72 -> QAS-83 -> DD-95.
 Canonicalization must not expose extended drive/UNC prefixes in project fields. Preserve roots, Unicode and actual directory identity.
 
@@ -339,11 +355,13 @@ Measure: repeated successful refreshes retain at most eight eligible diagnostic/
 
 
 ### QAS-91 Abandon a blocked planning workspace
+Status: Amended by QAS-208 (R-209).
 Allow confirmed deletion of the current app-owned workspace after Generate plan fails or stalls. Offer Stop planning and delete: request cooperative cancellation, await owned-process quiescence and metadata settlement, then switch the same window to a fresh workspace and archive only the abandoned workspace app data. Never kill unrelated/reused PIDs or erase the project. Refusal must preserve the current workspace and expose the reason. Active implementation runs retain explicit Stop/recovery requirements.
 Trace: R-95 -> BG-50 -> SF-82 -> UC-85 -> FR-80 -> QAS-91 -> DD-103. Source: user request, 2026-10-12.
 Measure: a blocking planning subprocess exits through its stop marker, no replacement writer starts early, and current-workspace deletion lands in an empty workspace with recoverable prior app data; project hash remains unchanged.
 
 ### QAS-92 Agents work inside the workspace sandbox; the coordinator decides beyond it
+Status: Amended by QAS-103, QAS-118 (R-107, R-122).
 Agents coordinate and develop inside the plan without waiting on routine approvals. Work confined to the task workspace runs at once; a request reaching outside it (network, installs, history-changing Git, privilege, other processes, outside paths, secrets) is decided by the workspace coordinator , and a person is asked only when no coordinator can decide. The permission level is not chosen in the agent profile; it follows from the CLI. Time spent waiting for a decision does not count toward the task limit, and a task that times out can be resumed instead of failing.
 Trace: R-96 -> BG-51 -> SF-83 -> UC-86 -> FR-81 -> QAS-92 -> DD-104. Source: user request, 2026-10-13.
 Measure: Workspace-confined commands are classified Automatic and outside requests Human in the policy tests; a Human request is sent to the configured coordinator first and to the ledger only without a valid answer; a timed-out task becomes blocked and Resume runs it again; the profile dialog has no permission selector.
@@ -354,6 +372,7 @@ Trace: R-97 -> BG-52 -> SF-84 -> UC-87 -> FR-82 -> QAS-93 -> DD-105. Source: use
 Measure: ConPTY/PTY fixtures for the default, y/n and repeating prompts report usage, usage, and "kept asking to trust" within 15 s; a real Claude 2.1.296 usage query on Windows returned current-session and weekly usage.
 
 ### QAS-94 Planning start and workspace naming feedback
+Status: Amended by QAS-208 (R-209).
 Generate plan shows progress with elapsed time from the moment it is pressed, including while the project folder is copied before the coordinator starts. Saving workspace settings updates the titlebar name at once. Deleting the current workspace asks for the name of the fresh workspace that replaces it instead of always naming it "New workspace".
 Trace: R-98 -> BG-53 -> SF-85 -> UC-88 -> FR-83 -> QAS-94 -> DD-106. Source: user request, 2026-10-13.
 Measure: The plan progress box shows "Preparing the project folder for planning…" before the job exists; a delete with replacement " Fresh start " opens a workspace named "Fresh start"; the titlebar shows a renamed workspace after Save without reopening the menu.
@@ -454,6 +473,7 @@ Trace: R-117 -> BG-72 -> SF-104 -> UC-107 -> FR-102 -> QAS-113 -> DD-125. Source
 Measure: After Generate plan for the ladder goal, Review the plan lists 4 phases with their briefing lines (e.g. 2. 02-race-core: marble race priority logic (TDD)) and task lists (t05, t06, t07); phase 1 is open as under review; the analysis expands; the goal_briefing test passes.
 
 ### QAS-114 A run survives closing or losing the desktop app
+Status: Not measured: R-118 is not implemented on `main` (see docs/14).
 Closing the desktop app (or the app process ending) must not end a run: the run coordinator and its agent workers keep working and the app reattaches when reopened. Closing the window while a run is active asks: Keep running in the background (default), Stop the run and close, or Cancel.
 Trace: R-118 -> BG-73 -> SF-105 -> UC-108 -> FR-103 -> QAS-114 -> DD-127. Source: user request, 2026-10-13.
 Measure: On Windows and macOS, ending the app process while a task runs leaves the coordinator and worker alive; reopening shows the same run progressing (DD-126 routing opens the Agent Room); the close dialog's Stop path stops through the normal Stop request and records it.
@@ -464,6 +484,7 @@ Trace: R-119 -> BG-74 -> SF-106 -> UC-109 -> FR-104 -> QAS-115 -> DD-128. Source
 Measure: Killing the app tree during t08 and reopening shows Interrupted at hh:mm → recovered → resumed automatically; t08 continues with --resume of its session; t01..t07 stay completed; a third interruption within the cap leaves the run waiting for the operator; the setting can turn automatic resume off.
 
 ### QAS-116 Interruptions and silent workers are visible
+Status: Amended by QAS-155 (R-159).
 The Agent Room shows when a run was interrupted and recovered (banner history and coordinator Activity), collapses a worker's consecutive thinking_tokens events into one line (Thinking… n updates, last at hh:mm) instead of empty Thinking tokens rows, and warns when a running task has produced no output for several minutes or its process is gone, suggesting Recover.
 Trace: R-120 -> BG-75 -> SF-107 -> UC-110 -> FR-105 -> QAS-116 -> DD-129. Source: user request, 2026-10-13.
 Measure: t08's transcript renders one Thinking line with its count and time; a running task silent for over 5 minutes shows No output for n minutes; a task whose process is gone shows Not responding — Recover; the banner lists Interrupted 14:38 → resumed 14:41.
@@ -485,11 +506,12 @@ Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source
 Given an ordinary project with existing files and no Git metadata, start shared execution. Verify outputs appear only in the selected project, `.git` remains absent, and baseline evidence precedes task launch. Accept preserves outputs; Reject restores modified/deleted files and removes newly created owned files. Manual edits after the worker checkpoint produce a warning and refuse automatic restoration without overwriting those edits. Confirm existing Git and legacy private-folder runs still work.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.
 
-### QAS-120 Deleting workspaces needs no replacement name
+### QAS-208 Deleting workspaces needs no replacement name
 Stimulus: the operator deletes the current workspace three times in a row. Response: each deletion asks only for confirmation and opens the most recently used remaining workspace; deleting the last leaves one empty workspace. Measure: no name prompt appears.
-Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user request, 2026-10-13.
+Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Source: user request, 2026-10-13.
 
 ### QAS-121 Documentation language and release consistency
+Status: Amended by QAS-140, QAS-195, QAS-198 (R-144, R-197, R-200).
 Given a Korean UI preference and a release update, run documentation and native UI checks. Both manuals cover every executable command, all screenshot links resolve, README stays under 120 lines, and no language-dependent error assertion fails.
 Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.
 
@@ -517,6 +539,7 @@ Given an exhausted window with a known or unknown reset, the card remains compac
 Trace: R-130 -> BG-85 -> SF-117 -> UC-120 -> FR-115 -> QAS-126 -> DD-139. Source: user, 2026-10-14.
 
 ### QAS-127 Settings readability and retained server values
+Status: Amended by QAS-176 (R-178).
 
 Given a saved agentmemory port, changing transport to local and back hides/shows the field without data loss. The guide is absent from Settings and available from the workspace menu. Native light/dark labels do not overlap inputs.
 Trace: R-131 -> BG-86 -> SF-118 -> UC-121 -> FR-116 -> QAS-127 -> DD-140. Source: user, 2026-10-14.
@@ -547,6 +570,7 @@ Plans reverted to their saved values can be approved; actual workspace/plan edit
 
 
 ### QAS-133 / QAS-134 Five reconnects then final success, safe manual display
+Status (QAS-134): Amended by QAS-176 (R-178).
 
 Codex reconnect attempts with a valid n/m counter and explicit WebSocket-to-HTTP fallback announcements are visible Warning events. All raw evidence/session IDs remain; turn.failed, real authentication/quota errors, missing final output, nonzero exit and timeout remain failures. No global Codex config is silently rewritten. The shared workspace menu opens bundled English/Korean user manuals offline with headings, lists, code blocks and safe text nodes; language switches update an open manual. The guide uses model_providers.openai-https (plural) and supports_websockets=false in user-level config. Follow managed Enterprise policy.
 Trace: R-137 → BG-92 → SF-124 → UC-127 → FR-122 → QAS-133 → DD-146; R-138 → BG-93 → SF-125 → UC-128 → FR-123 → QAS-134 → DD-147. User, 2026-10-14.
@@ -561,7 +585,7 @@ Stimulus: a model is momentarily at capacity, an agent writes outside its scope,
 Trace: R-140 -> BG-95 -> SF-127 -> UC-130 -> FR-125 -> QAS-136 -> DD-149. Source: user requests, 2026-10-14.
 
 
-### QAS-137 Optional memory absent / QAS-138 Unicode native selection
+### QAS-137 / QAS-138 Optional memory absent; Unicode native selection
 
 The planner receives the workspace-selected coordination backend after operator rules, and every worker receives it after its task/dependency/lesson context. Local Rust requires no agentmemory daemon or CLI/MCP tool; progress remains normal owned CLI output captured by Rust. Agentmemory preferred delivery is host-owned and retains local fallback. Optional tool installation guidance cannot require or select a transport. Only registered checkpoint_v1 workers get addressed polling/ack/report instructions and exact executable-path shell examples; no new profile capability, peer recipient or approval is fabricated.
 
@@ -571,7 +595,7 @@ Trace: R-141 → BG-96 → SF-128 → UC-131 → FR-126 → QAS-137 → DD-150; 
 Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 
-### Workspace transfer menu — DD-152
+### QAS-139 Workspace transfer menu
 
 Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
@@ -582,17 +606,19 @@ Given command tables and escaped pipe characters, HTML preserves columns and cod
 Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.
 
 
-### Saved-project Claude quota retry — DD-154
+### QAS-141 Saved-project Claude quota retry
 
 Saving a project folder after an empty-folder Claude usage attempt immediately schedules a fresh query. Empty project paths are excluded from automatic Claude queries; other providers retain their account refresh schedule. Folder changes invalidate only Claude scheduling context, never grant trust or execution permissions.
 Trace: R-145 → BG-100 → SF-132 → UC-135 → FR-130 → QAS-141 → DD-154. User, 2026-10-14.
 
-### Schema-constrained planning replies — DD-155
+### QAS-142 Schema-constrained planning replies
+Status: Amended by GitHub #337 (R-146): measured by tests/planning_schema.rs (strict-shape walk) and tests/planning_failure_detail.rs.
 
 Planning requests specify an explicit JSON Schema: phases, tasks, owned paths, dependencies and command arguments remain arrays, with registered agent IDs, required fields and no unknown properties. Claude receives --json-schema; Codex receives --output-schema bound to a retained local schema file. Other CLIs receive the exact schema in the planning prompt. Strict phase/task, ownership, role, dependency and human-approval validation remains unchanged; invalid objects are not guessed or silently reordered.
 Trace: R-146 → BG-101 → SF-133 → UC-136 → FR-131 → QAS-142 → DD-155. User, 2026-10-14.
 
 ### QAS-143 Completed-room navigation regression
+Status: Amended by QAS-145 (R-149).
 
 Given a retained completed room, workspace creation succeeds without restart; a running report is refused and remains attached.
 Trace: R-147 → BG-102 → SF-134 → UC-137 → FR-132 → QAS-143 → DD-156. GitHub #4, user2026-10-14.
@@ -602,10 +628,8 @@ Trace: R-147 → BG-102 → SF-134 → UC-137 → FR-132 → QAS-143 → DD-156.
 Run a fixture CLI through the native collector for all three prompts and verify usage plus quiescent ownership. A mere banner or cost line must not authorize command input.
 Trace: R-148 → BG-103 → SF-135 → UC-138 → FR-133 → QAS-144 → DD-157. GitHub #5, user2026-10-14.
 
-DD-157 implementation note: the operator confirmed Windows Claude2.1.296 uses a > prompt and a Yes-I-trust-folder choice, with an explicit spent/allocated Enterprise line. Parse that declared allocation using existing exact-decimal subtraction; the display percentage is derived from remaining/allocated amounts. Date-only resets remain unscheduled. Committed fixtures use synthetic amounts; no operator account values are published.
 
-
-### Active workspace navigation — DD-158
+### QAS-145 Active workspace navigation
 
 Create, open and switch workspaces while planning, metadata collection or execution is active. Keep the owned Startup, child handles, controller and window/run leases for each active workspace; restore that session when revisited and read its current report/logs. Settings and job descriptors already persist in startup.json; progress/evidence remains in the original run, so navigation neither stops workers nor overwrites CLI state. Idle sessions release their leases and reopen from disk as before. Serialize composite navigation, acquire the target first, and retain the original on target/registry failure. Completed parked sessions can release their leases for exact-name-confirmed deletion; active or unknown work remains protected. Ignore late workspace/closed-room responses, reset per-workspace refresh tracking, and request a fresh snapshot before editing the new view. Export/import continues to transfer the existing reviewed configuration archive; live process handles are not exported.
 Trace: R-149 → BG-104 → SF-136 → UC-139 → FR-134 → QAS-145 → DD-158. User, 2026-10-15; supersedes the active-navigation restriction in DD-156.
@@ -652,6 +676,7 @@ Given a running task whose last event was a tool start 3 minutes ago and which h
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
 
 ### QAS-157 A question yields an answer or a visible error, never a file change
+Status: Amended by QAS-177, QAS-179, QAS-185, QAS-186, QAS-190 (R-179, R-181, R-187, R-188, R-192).
 Given a coordinator that answers `{"answer": ...}`, the chat shows that answer once; given a failing coordinator it shows the error and keeps the conversation usable; invalid conversations (empty, ending with the assistant, over-long, unknown role) are refused before any job starts; the prompt stays under the coordinator limit.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
 
@@ -743,6 +768,7 @@ Given a chat request, the log has a start and a done line (with the reason on fa
 Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193. GitHub #200, user, 2026-10-28.
 
 ### QAS-181 Examples are the contract
+Status: Amended by GitHub #341 (R-183): measured by tests/custom_cli_denials.rs; the distinct permission-denied state is not yet measured because it is not implemented.
 Every file in `schemas/cli-io/v1/examples/valid` validates and every file in `examples/invalid` is rejected by its schema; the minimal CLI example produces a stream that validates; a `code` task without `verify`, an `extract` task without `response_schema` and a `summarize` task without materials are rejected; both shipped presets and the in-house example validate as `acio.agent/1`, and an unknown control encoding, a `replace_argv` resume without `argv` and an empty response-schema setting are rejected.
 Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.
 
@@ -815,6 +841,7 @@ A version bump without the README or manual sentence fails the tests naming the 
 Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-192 → QAS-198 → DD-212. GitHub #290, user, 2026-11-01.
 
 ### QAS-199 A slow CLI is waited for, a stuck one is named
+Status: Amended by GitHub #321 (R-201): the card assertion is replaced by tests/progress_runtime.cjs (no usage-wait text on cards).
 A fixture CLI that prints its prompt 3 s late is collected when the wait is 10 s; one that is 5 s late with a wait of 2 s fails with `before /usage` and `after 2 s`; the default wait is 60 s and neither collector contains a literal 20 s. In the simulator a running `quota:<agent>` job shows `Querying usage…` with a counting time on that agent's card and nothing on the others; in the run screen a running `quota` job marks the refresh button busy and the source line counts its time, and both return to normal when the job ends.
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
 

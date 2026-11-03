@@ -326,7 +326,7 @@ an explicit refresh and fresh human review.
 
 ## DD-20 — Live normalized task evidence from owned spools
 
-Trace: R-02/06/09/10 → BG-02/03/04 → SF-01/04/06/07 → UC-03/04/06 → QAS-03/04/06 → T-03/05/07.
+Trace: R-02/06/09/10 → BG-02/03/04 → SF-01/04/06/07 → UC-03/04 → QAS-03/04/06 → T-03/05/07.
 
 Observe the existing owned stdout spool while a worker runs. One bounded incremental
 decoder per attempt retains sequence/raw-offset/native-session evidence in SQLite;
@@ -340,7 +340,7 @@ fail observation instead of manufacturing progress or successful completion.
 
 ## DD-21 — Reviewed runtime lessons with source revalidation
 
-Trace: R-06/10/11 → BG-04 → SF-04/07 → UC-06 → QAS-04/06/07 → T-07.
+Trace: R-06/10/11 → BG-04 → SF-04/07 → UC-05 → QAS-04/06/07 → T-07.
 
 Keep draft observations separate from canonical lessons. Promotion requires an idle
 coordinator and an exact digest of a bounded typed lesson. Store context, failure,
@@ -356,7 +356,7 @@ lesson summaries for explicit delivery to the local memory replica.
 
 ## DD-22 — Embedded local intervention room
 
-Trace: R-07/09/12/17/18/19/20 → BG-03/05/07/08/09 → SF-06/08/09/10/11 → UC-04/08/09/10/11 → QAS-05/08/09/10/11 → T-06/08/09.
+Trace: R-07/09/12/17/18/19/20 → BG-03/05/07/08/09 → SF-06/08/09/10/11 → UC-04/09/10/11 → QAS-05/08/09/10/11 → T-06/08/09.
 
 Embed the approved sage/forest Agent Room interface in the Rust executable. On macOS
 use the system Cocoa/WebKit window; an optional browser surface shares the same local
@@ -874,6 +874,8 @@ The existing progress reader receives the reviewed agent profile and persists va
 
 ### DD-67 Inline quota — Add a compact, nonshrinking badge to the agent-name row; preserve detailed windows in the inspector and tooltip. Workspace snapshot reads quota from its retained run using a read-only SQLite snapshot and current profiles, never launches a CLI. Missing observations stay unavailable. Trace: QAS-52.
 
+DD-67 collection correction: Workspace quota has its own SQLite cache and background metadata refresh, independent of execution runs. Query supported providers once per open and on badge activation, preserve reviewed plans, and use the newest valid profile-bound workspace/run observation. Claude macOS `/usage` terminal collection is a separate read-only metadata channel; answer the folder trust prompt with its default at most twice (the query session has no tools, hooks or project settings) and stop with guidance if it keeps asking.
+
 ### DD-68 MCP goal-source imports
 
 Use the OpenCode `mcp` map as the connection schema, with workspace UI to add/edit/enable servers or paste/import JSON/JSONC. Separate `goal_sources` binds Jira and Confluence to server names and configured read tools; one server may serve both. Tool schemas are discovered, not hard-coded to an Atlassian connector. Do not require OpenCode installation or copy authentication tokens from its store. Existing connector authentication/OAuth stays distinct from model API keys.
@@ -884,9 +886,16 @@ Import is a separate preview/apply operation in workspace settings before planni
 
 Compatibility source: https://opencode.ai/docs/mcp-servers/ (checked 2026-10-11).
 
-### DD-67 collection correction
+DD-68 implementation constraints (2026-10-11): The built-in Rust client uses contained stdin/stdout JSONL for local servers and short-lived system curl for Streamable HTTP JSON/SSE; there is no resident MCP daemon, model API key or new Cargo dependency. Reuse one session per server per import; DELETE remote sessions and reap local children. Initial support targets protocol 2025-06-18 (older protocol versions are accepted on stdio). Legacy HTTP+SSE endpoints and native OAuth authorization/discovery/refresh are unsupported; use an authenticated local company proxy or environment-backed remote headers. OAuth registration metadata is retained for configuration compatibility, without reading OpenCode tokens. Secret values must be environment references; URL credentials/query parameters are refused.
 
-Workspace quota has its own SQLite cache and background metadata refresh, independent of execution runs. Query supported providers once per open and on badge activation, preserve reviewed plans, and use the newest valid profile-bound workspace/run observation. Claude macOS `/usage` terminal collection is a separate read-only metadata channel; answer the folder trust prompt with its default at most twice (the query session has no tools, hooks or project settings) and stop with guidance if it keeps asking.
+Each source binding is an operator assertion of an exact read-only tool; conflicting server annotations are refused. Only initialize, initialized notification, tools/list and the bound tools/call are sent. Server requests for sampling/elicitation/roots are not answered. Maximums: 8 servers, 12 references, 128 tools/4 catalog pages, 256 KiB response, 2 MiB session output, 16 KiB per source, 48 KiB combined body and two minutes per import. Source URL/title/version/update metadata is optional and captured only when supplied; missing metadata is not invented. Arbitrary prose numbers remain prose; explicit source controls confirm IDs.
+
+Workspace snapshots request large MCP results only once for a completed operation. Applying selected evidence invalidates a reviewed plan, creates immutable private snapshots and a local wiki provenance index, and audits IDs/status/digests without document bodies. Planning stores approved context separately from existing-plan documents and labels it untrusted evidence. Execution rechecks the exact applied evidence. Portable settings retain connection definitions and bindings, but no import receipts or original document bodies. Company-server authentication and read-tool behavior still require operator-supplied live acceptance.
+
+
+DD-68 source-binding amendment (2026-10-13): discovered tool rows provide explicit Jira/Confluence binding editors with schema-derived identifier templates and editable required arguments. Preview identifies missing document-reader bindings, opens configuration, and never implicitly calls an unselected tool. Registered-server discovery remains independent; existing bindings are preserved and stale catalogs refused.
+
+DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar Settings menu; keep reference insertion and preview beside the goal. The Settings gear uses a 26 px glyph in a 32 × 32 px pointer target.
 
 ### DD-69 Per-agent idle metadata refresh
 
@@ -960,18 +969,6 @@ Trace: R-43 -> BG-18 -> SF-37 -> UC-34/UC-61 -> FR-28/NFR-17 -> QAS-35/QAS-66 ->
 - **Payload.** Slack: `{"text": …}`. Company webhook: operator template (default `{"text":"{{text}}"}`) with JSON-escaped placeholders; the result must be valid JSON.
 - **Deferred to phase 2 (DD-51):** inbound decisions, linked approvers, signatures, Socket Mode, OS credential store.
 - Rejected: an HTTP/TLS crate (new dependency and binary size), polling from the window (stops when the window is hidden or closed, DD-71).
-### DD-68 implementation constraints — 2026-10-11
-
-The built-in Rust client uses contained stdin/stdout JSONL for local servers and short-lived system curl for Streamable HTTP JSON/SSE; there is no resident MCP daemon, model API key or new Cargo dependency. Reuse one session per server per import; DELETE remote sessions and reap local children. Initial support targets protocol 2025-06-18 (older protocol versions are accepted on stdio). Legacy HTTP+SSE endpoints and native OAuth authorization/discovery/refresh are unsupported; use an authenticated local company proxy or environment-backed remote headers. OAuth registration metadata is retained for configuration compatibility, without reading OpenCode tokens. Secret values must be environment references; URL credentials/query parameters are refused.
-
-Each source binding is an operator assertion of an exact read-only tool; conflicting server annotations are refused. Only initialize, initialized notification, tools/list and the bound tools/call are sent. Server requests for sampling/elicitation/roots are not answered. Maximums: 8 servers, 12 references, 128 tools/4 catalog pages, 256 KiB response, 2 MiB session output, 16 KiB per source, 48 KiB combined body and two minutes per import. Source URL/title/version/update metadata is optional and captured only when supplied; missing metadata is not invented. Arbitrary prose numbers remain prose; explicit source controls confirm IDs.
-
-Workspace snapshots request large MCP results only once for a completed operation. Applying selected evidence invalidates a reviewed plan, creates immutable private snapshots and a local wiki provenance index, and audits IDs/status/digests without document bodies. Planning stores approved context separately from existing-plan documents and labels it untrusted evidence. Execution rechecks the exact applied evidence. Portable settings retain connection definitions and bindings, but no import receipts or original document bodies. Company-server authentication and read-tool behavior still require operator-supplied live acceptance.
-
-
-DD-68 source-binding amendment (2026-10-13): discovered tool rows provide explicit Jira/Confluence binding editors with schema-derived identifier templates and editable required arguments. Preview identifies missing document-reader bindings, opens configuration, and never implicitly calls an unselected tool. Registered-server discovery remains independent; existing bindings are preserved and stale catalogs refused.
-
-DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar Settings menu; keep reference insertion and preview beside the goal. The Settings gear uses a 26 px glyph in a 32 × 32 px pointer target.
 
 
 ## DD-78 Windows launchers, ConPTY and provider badges
@@ -1220,6 +1217,9 @@ Trace: R-116 -> BG-71 -> SF-103 -> UC-106 -> FR-101 -> QAS-112 -> DD-124. Source
 slug_progress::briefing reads plan/plan.json (phases with specs) and plan/analysis.md; a phase's briefing is the analysis list item naming it, else its phase file; the active goal in the startup snapshot carries it; the plan review renders a details element per phase.
 Trace: R-117 -> BG-72 -> SF-104 -> UC-107 -> FR-102 -> QAS-113 -> DD-125. Source: user request, 2026-10-13.
 
+### DD-126 A workspace opens where the work is
+The startup snapshot carries the last run state. On opening a workspace, an unfinished run opens the Agent Room; a plan ready for review, or planning in progress, scrolls to Review the plan (`src/ui/startup.js`). No new request kind or persisted state is added. Operator request, 2026-10-13; amends R-117 / UC-107 / QAS-113 (recorded in docs/07 under DD-125).
+
 ### DD-127 A run survives closing or losing the desktop app
 Launch the run coordinator outside the app's Windows Job Object (CREATE_BREAKAWAY_FROM_JOB plus its own process group; the app's job must allow breakaway) and detached from the app's process group on Unix; keep workers in the coordinator's KILL_ON_JOB_CLOSE job so a dead coordinator cannot orphan them. The app reattaches through the existing run directory, owner records and locks. The Agent Room footer text claiming the coordinator keeps running becomes true on Windows.
 Trace: R-118 -> BG-73 -> SF-105 -> UC-108 -> FR-103 -> QAS-114 -> DD-127. Source: user request, 2026-10-13.
@@ -1248,9 +1248,9 @@ Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source
 Supersede DD-88 execution copies for new ordinary-folder runs; retain its read-only planning snapshots and legacy application compatibility. Clone the reviewed baseline without checkout into external project-history keyed by canonical source identity. Repository operations pass explicit Git metadata and work-tree paths; never add `.git` to the user folder. Codex invocations in direct folders and read-only exported snapshots add `--skip-git-repo-check`, preserving permission/model/session flags and the coordinator read-only sandbox. Persist the baseline commit before worker launch. Shared tasks write to the selected source root. Accept advances only external history; Reject journals an inverse application of the baseline after exact candidate-file validation, preserving concurrent edits. Completed-worker checkpoints and an active-owned-path notice warn about external edits without pretending to identify the writer. Explicit worktree mode retains isolation, and existing Git repositories retain their prior flow. No provider API or new dependency is introduced.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.
 
-### DD-133 Deleting workspaces needs no replacement name
+### DD-221 Deleting workspaces needs no replacement name
 Room::delete_workspace switches to the first entry of the recent registry that is still a saved workspace, else any other saved workspace, else creates one named native.new_workspace. The delete dialog has no name field; the optional replacement field only names that empty fallback.
-Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user request, 2026-10-13.
+Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Source: user request, 2026-10-13.
 
 ### DD-134 Reuse Markdown and existing package asset selection
 Keep two Markdown manuals with literal command/JSON identifiers unchanged. Reuse README-linked asset packaging; add no documentation framework or dependency. Capture the actual native app, mark offline fixture screenshots explicitly, and distinguish full-access from guarded tool gates.
@@ -1290,8 +1290,7 @@ Trace: R-131 -> BG-86 -> SF-118 -> UC-121 -> FR-116 -> QAS-127 -> DD-140. Source
 New permission_mode operator_auto_approve: profile form checkbox start-self-approve; validate_profiles and validate_permissions accept it; derive_permission keeps it like read_only/external_sandbox (standard claude/codex still become full_access); share.rs LOCAL_CLAIMS includes it. Bypass-flag argv checks still apply.
 Trace: R-132 -> BG-87 -> SF-119 -> UC-122 -> FR-117 -> QAS-128 -> DD-141. Source: user request, 2026-10-14.
 
-### DD-141 amendment: no checkbox
-User decision 2026-10-14 ("체크박스없이 그냥 되면 안되냐"): derive_permission gives every CLI other than the standard Claude/Codex templates, the guarded Claude callback and an operator read_only/external_sandbox claim the mode operator_auto_approve by default, matching full access by default (DD-131). The agent-form checkbox is removed and the mode is no longer a local import claim. A raw plan whose profile is still unverified is refused with a hint to save the agent list.
+DD-141 amendment (no checkbox): User decision 2026-10-14 ("체크박스없이 그냥 되면 안되냐"): derive_permission gives every CLI other than the standard Claude/Codex templates, the guarded Claude callback and an operator read_only/external_sandbox claim the mode operator_auto_approve by default, matching full access by default (DD-131). The agent-form checkbox is removed and the mode is no longer a local import claim. A raw plan whose profile is still unverified is refused with a hint to save the agent list.
 Trace: R-132 -> DD-141. Source: user request, 2026-10-14.
 
 ### DD-142 Reuse GitHub release body without HTML rendering
@@ -1315,7 +1314,7 @@ Retrying plan generation clears the previous visible failure immediately, switch
 Plans reverted to their saved values can be approved; actual workspace/plan edits and active jobs still block approval with localized reasons. Compare normalized editable task values against a saved snapshot, retaining null/default semantics and preserving the baseline across local task add/remove. Claude api_error usage_limit_reached / HTTP 429 is an Error even without type/is_error. Persist a quota restriction without inventing utilization or a reset from duration fields; explicit retry/reset timestamps bind the durable reservation and reviewed five-hour fallback. Show the usage-limit reason instead of an opaque telemetry JSON blob. Trace: R-136 → BG-91 → SF-123 → UC-126 → FR-121 → QAS-132 → DD-145. Source: user, 2026-10-14.
 
 
-### DD-146 Codex reconnect notices / DD-147 bundled manual
+### DD-146 / DD-147 Codex reconnect notices; bundled manual
 
 Codex reconnect attempts with a valid n/m counter and explicit WebSocket-to-HTTP fallback announcements are visible Warning events. All raw evidence/session IDs remain; turn.failed, real authentication/quota errors, missing final output, nonzero exit and timeout remain failures. No global Codex config is silently rewritten. The shared workspace menu opens bundled English/Korean user manuals offline with headings, lists, code blocks and safe text nodes; language switches update an open manual. The guide uses model_providers.openai-https (plural) and supports_websockets=false in user-level config. Follow managed Enterprise policy.
 Trace: R-137 → BG-92 → SF-124 → UC-127 → FR-122 → QAS-133 → DD-146; R-138 → BG-93 → SF-125 → UC-128 → FR-123 → QAS-134 → DD-147. User, 2026-10-14.
@@ -1330,7 +1329,7 @@ availability::transient_capacity → restriction 60 s (automatic resume, three r
 Trace: R-140 -> BG-95 -> SF-127 -> UC-130 -> FR-125 -> QAS-136 -> DD-149. Source: user requests, 2026-10-14.
 
 
-### DD-150 Selected backend contract / DD-151 direct Windows selection
+### DD-150 / DD-151 Selected backend contract; direct Windows selection
 
 The planner receives the workspace-selected coordination backend after operator rules, and every worker receives it after its task/dependency/lesson context. Local Rust requires no agentmemory daemon or CLI/MCP tool; progress remains normal owned CLI output captured by Rust. Agentmemory preferred delivery is host-owned and retains local fallback. Optional tool installation guidance cannot require or select a transport. Only registered checkpoint_v1 workers get addressed polling/ack/report instructions and exact executable-path shell examples; no new profile capability, peer recipient or approval is fabricated.
 
@@ -1340,7 +1339,7 @@ Trace: R-141 → BG-96 → SF-128 → UC-131 → FR-126 → QAS-137 → DD-150; 
 Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 
-### Workspace transfer menu — DD-152
+### DD-152 Workspace transfer menu
 
 Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
@@ -1351,12 +1350,12 @@ Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. 
 Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.
 
 
-### Saved-project Claude quota retry — DD-154
+### DD-154 Saved-project Claude quota retry
 
 Saving a project folder after an empty-folder Claude usage attempt immediately schedules a fresh query. Empty project paths are excluded from automatic Claude queries; other providers retain their account refresh schedule. Folder changes invalidate only Claude scheduling context, never grant trust or execution permissions.
 Trace: R-145 → BG-100 → SF-132 → UC-135 → FR-130 → QAS-141 → DD-154. User, 2026-10-14.
 
-### Schema-constrained planning replies — DD-155
+### DD-155 Schema-constrained planning replies
 
 Planning requests specify an explicit JSON Schema: phases, tasks, owned paths, dependencies and command arguments remain arrays, with registered agent IDs, required fields and no unknown properties. Claude receives --json-schema; Codex receives --output-schema bound to a retained local schema file. Other CLIs receive the exact schema in the planning prompt. Strict phase/task, ownership, role, dependency and human-approval validation remains unchanged; invalid objects are not guessed or silently reordered.
 Trace: R-146 → BG-101 → SF-133 → UC-136 → FR-131 → QAS-142 → DD-155. User, 2026-10-14.
@@ -1374,7 +1373,7 @@ Trace: R-148 → BG-103 → SF-135 → UC-138 → FR-133 → QAS-144 → DD-157.
 DD-157 implementation note: the operator confirmed Windows Claude2.1.296 uses a > prompt and a Yes-I-trust-folder choice, with an explicit spent/allocated Enterprise line. Parse that declared allocation using existing exact-decimal subtraction; the display percentage is derived from remaining/allocated amounts. Date-only resets remain unscheduled. Committed fixtures use synthetic amounts; no operator account values are published.
 
 
-### Active workspace navigation — DD-158
+### DD-158 Active workspace navigation
 
 Create, open and switch workspaces while planning, metadata collection or execution is active. Keep the owned Startup, child handles, controller and window/run leases for each active workspace; restore that session when revisited and read its current report/logs. Settings and job descriptors already persist in startup.json; progress/evidence remains in the original run, so navigation neither stops workers nor overwrites CLI state. Idle sessions release their leases and reopen from disk as before. Serialize composite navigation, acquire the target first, and retain the original on target/registry failure. Completed parked sessions can release their leases for exact-name-confirmed deletion; active or unknown work remains protected. Ignore late workspace/closed-room responses, reset per-workspace refresh tracking, and request a fresh snapshot before editing the new view. Export/import continues to transfer the existing reviewed configuration archive; live process handles are not exported.
 Trace: R-149 → BG-104 → SF-136 → UC-139 → FR-134 → QAS-145 → DD-158. User, 2026-10-15; supersedes the active-navigation restriction in DD-156.
