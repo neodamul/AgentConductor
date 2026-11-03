@@ -700,6 +700,7 @@ Given a coordinator repair of a failed task, the run has one lesson naming the t
 Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → DDR-25 → DD-174. GitHub #138, user, 2026-10-22.
 
 ### QAS-161 A folded detail column opens for a decision and returns afterward
+Status: Amended by QAS-209 (R-210).
 Given a folded column, a run that enters waiting_approval opens it once; folding it again keeps it folded with the dot blinking; a second distinct decision opens it again; when the decision is gone the column follows the saved preference; a saved preference survives a new page load; a failing local storage leaves the column open; a decision with the column open shows no dot.
 Trace: R-165 → BG-120 → SF-152 → UC-155 → FR-150/NFR-59 → QAS-161 → DDR-26 → DD-175. GitHub #146, user, 2026-10-22.
 

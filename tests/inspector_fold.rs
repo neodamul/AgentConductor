@@ -1,4 +1,4 @@
-//! GitHub #146 / DD-175: the task detail column folds, is remembered and opens for a decision.
+//! GitHub #146 / DD-175, amended by #394 / R-210: the docked task detail column starts closed and is toggled from the titlebar.
 use std::process::Command;
 
 const HTML: &str = include_str!("../src/ui/room.html");
@@ -20,11 +20,19 @@ fn the_fold_logic_follows_the_decision_rules() {
 }
 
 #[test]
-fn the_page_has_an_accessible_toggle_and_a_quiet_blinking_dot() {
+fn the_page_has_a_titlebar_toggle_and_a_quiet_blinking_dot() {
+    let startup = include_str!("../src/ui/startup.html");
+    for page in [HTML, startup] {
+        assert!(page.contains("class=\"quiet small-button inspector-switch\""));
+        assert!(page.contains("aria-expanded=\"false\""));
+        assert!(page.contains("class=\"inspector-alert\" role=\"status\""));
+    }
     assert!(HTML.contains("id=\"inspector-toggle\""));
-    assert!(HTML.contains("aria-expanded=\"true\""));
-    assert!(HTML.contains("id=\"inspector-alert\""));
-    assert!(HTML.contains("role=\"status\""));
+    assert!(startup.contains("id=\"start-inspector-toggle\""));
+    assert!(
+        !HTML.contains("inspector-heading><h2><span data-i18n=\"room.task_inspector\"></span></h2><span class=\"inspector-dot\"></span><span id=\"inspector-alert"),
+        "no toggle or alert inside the inspector"
+    );
     assert!(CSS.contains(".insp-closed"));
     assert!(CSS.contains("@keyframes inspector-blink"));
     assert!(CSS.contains("prefers-reduced-motion"));
@@ -48,7 +56,7 @@ fn the_page_has_an_accessible_toggle_and_a_quiet_blinking_dot() {
             assert!(catalog.contains(&format!("\"{id}\"")), "{id}");
         }
     }
-    assert!(JS.contains("$('inspector-toggle')"));
+    assert!(JS.contains("window.acInspector"));
     let guide = include_str!("../docs/design-guide.md");
     assert!(guide.contains("reduced-motion") && guide.contains("decision"));
 }

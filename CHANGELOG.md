@@ -5,6 +5,7 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 the GitHub Release notes for its tag.
 
 ## Unreleased
+- The Agent Room's task details column is now docked: it starts closed every time a run is opened and is opened and closed only with the panel icon in the titlebar. It no longer remembers its state or opens by itself; when a decision is waiting, the icon shows a blinking dot.
 - The left panel has two tabs on both screens, **Agents** and **Phases & tasks**. The agent cards (with Add, quota, Edit, Models, Remove, order and drag) are also available in the Agent Room; steps 1–2 open on Agents and later steps on Phases & tasks. The Workspace screen lists the plan's tasks under Phases & tasks.
 - One stepper with six steps (Workspace, Agent roles, Plan, Tasks, Verify, Review and merge, grouped Prepare / Run / Finish) now serves both the Workspace settings and the Agent Room. Steps 4–6 open the Room while a run exists and the Room marks the step of the run; steps 1–3 take you back to the Workspace panels. The Room's separate five-stage strip is gone.
 - Closing the window while a run is working now asks first: keep the run going in the background (the default), stop it and close, or cancel. A run keeps working after the app is closed and is shown again when the app reopens.
