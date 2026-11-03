@@ -5,6 +5,7 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 the GitHub Release notes for its tag.
 
 ## Unreleased
+- A custom CLI that refuses a tool (a matched `denial_condition`) now ends its task as **Permission denied** instead of Failed: tasks that depend on it wait, the run is blocked with the tool and the CLI's message, and Resume retries it after the CLI's configuration is changed.
 - Engineering documents: the requirement, use case and quality-scenario documents are consolidated (a reused identifier chain renumbered, superseded and amended entries marked, issue fixes traced, the index rebuilt), a test keeps them consistent, and docs/14 records which requirements are verified by tests and which are not yet implemented.
 
 ## v0.1.58

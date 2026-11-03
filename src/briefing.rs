@@ -148,6 +148,9 @@ pub fn collect(dir: &Path, now: u64) -> Result<Value, String> {
                 "waiting_availability" => "Review availability, schedule or reassign",
                 "waiting_approval" => "Review exact tool request",
                 "failed" | "blocked" => "Inspect retained evidence and revise or reassign",
+                "permission_denied" => {
+                    "Allow the tool in the CLI's configuration or reassign, then resume"
+                }
                 "stopped" => "Review partial work before explicit resume",
                 "pending" => "Wait for dependencies and capacity",
                 "completed" if report.state == "completed" => "No action required",
