@@ -25,6 +25,7 @@ function chatUi({q,request,state,notice,stale=()=>''}) {
  function reset(){turns=[];waiting=null;unsure=null;loading=null;ready=false;recall=-1;draw();}
  function step(dir){const h=sendable();if(!h.length)return;let i=(recall<0?h.length:recall)+dir;if(i<0)return;if(recall<0)draft=q('chat-input').value;if(i>=h.length){recall=-1;q('chat-input').value=draft;return;}recall=i;q('chat-input').value=h[i];}
  q('chat-button').onclick=()=>setOpen(box().hidden);
+ if(typeof MutationObserver!=='undefined')new MutationObserver(()=>{if(document.querySelector('dialog.slide-panel[open]'))setOpen(false);}).observe(document.body,{subtree:true,attributes:true,attributeFilter:['open']});
  q('chat-close').onclick=()=>setOpen(false);
  q('chat-new').onclick=async()=>{if(waiting)return;try{await request({kind:'chat_reset'});turns=[];recall=-1;draw();}catch(e){notice(e.message,true);}};
  q('chat-form').onsubmit=e=>{e.preventDefault();send();};

@@ -1483,7 +1483,13 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [x] Plan: Trace: amends R-210 (amends R-34, NFR-12, QAS-27, DD-40) -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #406; design GitHub #387.
 - [x] Task / Red/Green: `tests/icons.rs` (bundled bytes and pinned hashes), `tests/release_package.rs` (license text and notice), `tests/room_task_rows.rs` (28px/29px bordered containers) first, then `src/icons/brand.rs`, the package step and the CSS.
 - [x] Verify: icon, package, avatar and UI tests; the real app shows the Claude Code and Codex marks in the agent list.
-- [ ] Complete: slide-overs of the same issue; release (version 0.2.0 only when the user asks).
+- [ ] Complete: release (version 0.2.0 only when the user asks).
+
+### Briefing, chat and Settings as right slide-overs — DD-222
+- [x] Plan: Trace: amends R-210 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #406; design GitHub #387.
+- [x] Task / Red/Green: `tests/slide_over_panels.rs` first (red), then the `slide-panel` class on the briefing and Settings dialogs, the chat slide-in and the one-at-a-time rule in `chat.js`.
+- [x] Verify: UI Rust and Node tests; UI simulator showed Settings and the briefing as 460px right panels, the chat closing when either opens, and no horizontal scroll.
+- [ ] Complete: release (version 0.2.0 only when the user asks).
 
 ## Bilingual release documentation — DD-134 / v0.1.16
 
