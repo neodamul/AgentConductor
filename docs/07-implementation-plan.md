@@ -875,6 +875,7 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 - [ ] Complete: English operator docs, source-linked wiki, agentmemory and reviewed delivery.
 
 ### Workspace quota collection regression
+Trace: amends R-61 (see docs/README.md, requirement areas).
 
 - [x] Reproduce: active workspace has no last run; display fixtures did not test collection.
 - [x] Red: fresh-workspace Codex quota request fails as unknown request.
@@ -902,6 +903,7 @@ Not started. Each phase follows Plan → Task → Verify → Complete with TDD.
 
 
 ### Stable release numbering and operator screenshots
+Trace: amends R-125 (see docs/README.md, requirement areas).
 
 - [x] Plan: current version 0.1.0, subsequent version 0.1.1; GitHub publications are stable releases, not pre-releases.
 - [x] Task / TDD: v0.1.0 notes regression fails before section migration; stable publish workflow removes --prerelease.
@@ -1232,6 +1234,7 @@ Verification checkpoint (2026-10-12, integrated v0.1.10 source): 360 Rust tests 
 Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/tag/v0.1.10), source e445e2e221449e88f34a57346ba07025ecf0cabe; [Release CI 38233701284](https://github.com/neodamul/AgentConductor/actions/runs/38233701284) passed both platform validation/package smoke and publication. Downloaded packages passed CRC, binary/archive SHA256, exact source/manual/README, bundled icons, MIT root license, dependency notices/texts and SBOM checks (42 macOS / 108 Windows components). macOS ZIP SHA256 92c35f88b56797cc1138e6c3ff7b0602f8bcded68e99701f880b9c6aaa3b4c02; Windows ZIP SHA256 2ed98ee89a23a9d66bad4209e3d720a8b255c29dfbca74fdf07b85d9b8c1952f. User-authorized removal of 13 Releases strictly below v0.1.8 completed after this audit; all Git tags/history retained. Native Windows desktop interaction remains operator acceptance.
 
 ### Signal transport review correction — post-v0.1.10
+Trace: amends R-92 (see docs/README.md, requirement areas).
 - [x] Plan: review Claude 196e55c against restart/idempotency and bounded-operation requirements.
 - [x] Task / Red: simulated dispatch-before-receipt crash republished the directive.
 - [x] Task / Green: durable pre-dispatch claim plus kernel-owned workspace lease; no age-based lock stealing.
@@ -1279,24 +1282,28 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [ ] Task / Red/Green: implementation and regression tests.
 - [ ] Verify: Windows local tests and native run.
 - [ ] Complete: release.
+- [x] Verified 2026-11-03 (GitHub #349): implemented in `src/ui/setup/master.rs`; `tests/agent_master_list.rs` added.
 
 ### Reorder agent cards — DD-110
 - [x] Plan: R-102 -> BG-57 -> SF-89 -> UC-92 -> FR-87 -> QAS-98 -> DD-110.
 - [ ] Task / Red/Green: implementation and regression tests.
 - [ ] Verify: Windows local tests and native run.
 - [ ] Complete: release.
+- [ ] Verified 2026-11-03 (GitHub #349): implemented in `src/ui/startup.js` (drag and drop, Move up/down); no automated test yet.
 
 ### Readable file paths everywhere — DD-111
 - [x] Plan: R-103 -> BG-58 -> SF-90 -> UC-93 -> FR-88 -> QAS-99 -> DD-111.
 - [ ] Task / Red/Green: implementation and regression tests.
 - [ ] Verify: Windows local tests and native run.
 - [ ] Complete: release.
+- [x] Verified 2026-11-03 (GitHub #349): implemented in `src/ui/i18n.js` and `src/messenger/send.rs`.
 
 ### Activity tab reads like the CLI — DD-112
 - [x] Plan: R-104 -> BG-59 -> SF-91 -> UC-94 -> FR-89 -> QAS-100 -> DD-112.
 - [ ] Task / Red/Green: implementation and regression tests.
 - [ ] Verify: Windows local tests and native run.
 - [ ] Complete: release.
+- [x] Verified 2026-11-03 (GitHub #349): implemented; `tests/room_activity_text.rs`, `tests/room_activity_text.cjs`.
 
 ### Coordinator final step in the task list — DD-113
 - [x] Plan: R-105 -> BG-60 -> SF-92 -> UC-95 -> FR-90 -> QAS-101 -> DD-113.
@@ -1387,12 +1394,14 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [ ] Task / Red/Green: implementation and regression tests.
 - [ ] Verify: Windows local tests and native run.
 - [ ] Complete: release.
+- [ ] Verified 2026-11-03 (GitHub #349): not implemented on `main` (no close dialog, no Job Object breakaway).
 
 ### Interrupted runs recover and resume automatically — DD-128
 - [x] Plan: R-119 -> BG-74 -> SF-106 -> UC-109 -> FR-104 -> QAS-115 -> DD-128.
 - [ ] Task / Red/Green: implementation and regression tests.
 - [ ] Verify: Windows local tests and native run.
 - [ ] Complete: release.
+- [x] Verified 2026-11-03 (GitHub #349): implemented in `src/workflow/automatic.rs` and `src/ui/automatic.rs`; `tests/crash_recovery.rs`, `tests/recovery.rs`, `tests/stop_resume.rs`.
 
 ### Interruptions and silent workers are visible — DD-129
 - [x] Plan: R-120 -> BG-75 -> SF-107 -> UC-110 -> FR-105 -> QAS-116 -> DD-129.
@@ -1401,12 +1410,14 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [ ] Complete: release.
 - [ ] Activity: consecutive thinking_tokens events collapse into one line (Thinking… n updates, last at hh:mm) instead of empty Thinking tokens rows.
 - [ ] Running task with no output for 5+ minutes shows a No output for n minutes warning; a task whose process is gone shows Not responding — Recover.
+- [ ] Verified 2026-11-03 (GitHub #349): silence and process state are shown since R-159; the Thinking collapse and interruption history are not implemented.
 
 ### Reassign tasks that have not started while the run is working — DD-130
 - [x] Plan: R-121 -> BG-76 -> SF-108 -> UC-111 -> FR-106 -> QAS-117 -> DD-130.
 - [ ] Task / Red/Green: implementation and regression tests.
 - [ ] Verify: Windows local tests and native run.
 - [ ] Complete: release.
+- [x] Verified 2026-11-03 (GitHub #349): implemented with GitHub #103; `tests/pending_edit.rs`.
 
 ### Agents run with the highest permission by default — DD-131
 - [x] Plan: R-122 -> BG-77 -> SF-109 -> UC-112 -> FR-107 -> QAS-118 -> DD-131.
@@ -1427,8 +1438,8 @@ Delivery: [stable v0.1.10](https://github.com/neodamul/AgentConductor/releases/t
 - [ ] Native follow-up: Claude rebuild/relaunch and smoke-check direct outputs before removing six legacy snapshots. Ladder phases 1–4 are already completed under the previous flow (Claude signal, 2026-10-13).
 - [ ] Complete: release.
 
-### Deleting workspaces needs no replacement name — DD-133
-- [x] Plan: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133.
+### Deleting workspaces needs no replacement name — DD-221
+- [x] Plan: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221.
 - [x] Task / Red/Green: delete_workspace opens the most recently used other workspace; dialog name field removed; tests/workspace_registry.rs deletes until none is left.
 - [x] Verify: Windows local tests.
 - [ ] Complete: release.
@@ -1875,7 +1886,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Task 2.30 / Plan (GitHub #15, UC-28): when an edited task plan differs from the reviewed digest, make the save action visually prominent and state that saving requires reviewing the new plan again. Preserve the existing disabled state when no edits exist or a save is pending.
 - [x] Task 2.30 / Red → Green: the accessibility-tree regression first failed because the dirty state had no explicit next-step label. The native editor now exposes “Plan changes need review” and an accent-filled “Save changed plan and review again” action only for dirty drafts.
 - [x] Task 2.30 / Verify → Complete: 58 tests across seven native UI suites, feature all-target Clippy (`-D warnings`), source-layout, rustfmt, diff and 500-line checks pass locally; largest touched files are 237 and 220 lines. Graphify updated the isolated UI graph to 562 nodes / 1,075 edges. CocoIndex incrementally indexed 519 files into 5,493 chunks with zero errors. Workflow parity remains 13/25 (52%) prototype and 0/25 release conversion. GitHub #15 remains open until the shipped UI includes the fix. Wiki/AgentMemory updated; commit/push completed.
-- [x] Task 2.31 / Plan (GitHub #11, UC-06, UC-16): make the active coordinator visible in native plan review with a pulsing status light, reusing the Room running-state color and repaint cadence. Keep terminal and non-running states static.
+- [x] Task 2.31 / Plan (GitHub #11, UC-16): make the active coordinator visible in native plan review with a pulsing status light, reusing the Room running-state color and repaint cadence. Keep terminal and non-running states static.
 - [x] Task 2.31 / Red → Green: a regression first failed because the plan screen had no activity-color source. The shared planning module now returns a pulse color only for a running plan, and Review renders it as an accessible coordinator indicator while its existing 500 ms repaint keeps the pulse moving.
 - [x] Task 2.31 / Verify → Complete: 59 tests across eight native UI suites, feature all-target Clippy (`-D warnings`), source-layout, rustfmt, diff and 500-line checks pass locally; touched files are 472, 26, 497 and 18 lines. Graphify updated the isolated UI graph to 596 nodes / 1,152 edges. CocoIndex indexed 521 files into 5,497 chunks with zero errors. Workflow parity stays 13/25 (52%) prototype and 0/25 release conversion. GitHub #11 remains open pending shipped UI verification. Wiki/AgentMemory updated; commit/push completed.
 - [x] Task 2.32 / Plan (GitHub #14, UC-23): surface each newly pending Claude Code tool request immediately in the native Agent Room, with exact tool/task/input evidence and an explicit decision. Preserve the existing revision-bound confirmation, allow/deny validation, and inline request list; defer only the request the operator dismisses.
@@ -1916,6 +1927,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Complete: remove superseded authored JS/Python paths and CI steps, commit/push independently verified units, update documentation and release through the registered skill.
 
 ## GitHub #7 — custom CLI JSONL stream prefix
+Trace: amends R-154 (see docs/README.md, requirement areas).
 
 - [x] Plan: trace custom profile argv through subprocess stdout spooling, `Decoder::finish`, and the terminal `Result` gate. Keep JSON object/schema validation and successful-result requirements unchanged.
 - [x] Red: a split-BOM custom JSONL fixture reproduced the same decoder error reported by the issue: `invalid JSONL at offset 0: expected value at line 1 column 1`.
@@ -1925,6 +1937,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Optional follow-up: capture the registered CLI's sanitized first stdout line if the error persists, then verify the behavior in a packaged cross-platform run; provider-specific output was not available during this decoder-level fix.
 
 ## GitHub #32 — duplicate native-worker permission receipts
+Trace: amends R-30 (see docs/README.md, requirement areas).
 
 - [x] Plan: reproduce the macOS assertion that one guarded Claude task leaves two requests after parallel sibling tasks finish; trace receipt creation in `native_guard::coordinated_decision` and scheduler finalization.
 - [x] Red: `cargo test --offline --locked --test native_worker compiled_native_worker_stops_before_the_command_and_retains_its_session_and_exact_request -- --exact --nocapture` failed with `requests.len() == 2` where the regression expected one actionable request.
@@ -1933,6 +1946,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Complete: source-layout, all-target Clippy (`-D warnings`), formatting and diff checks pass locally; issue #32 progress and AgentMemory/wiki are updated. Existing modified source files `src/native_guard.rs` (312 lines) and `src/workflow/scheduler.rs` (472 lines) were already over the current 300-line target at this branch base; the responsibility-based module split remains outstanding under #9.
 
 ## GitHub #36 — failed plan retry timeout recovery
+Trace: amends R-152 (see docs/README.md, requirement areas).
 
 - [x] Plan: trace the “native response timed out; refresh” message to the interactive 15-second request default and inspect planning startup, baseline checks, polling, and retained-job feedback.
 - [x] Task / Red: `planning_preparation_polls_use_the_plan_timeout` failed because snapshots used the 15-second timeout while planning progress was active.
@@ -1941,6 +1955,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Complete: update #36, LLM Wiki and AgentMemory; commit/push the issue branch and open draft PR #37 (`Fixes #36`). The issue stays open for review and later integration into the Rust-native UI branch.
 
 ## GitHub #13 — local company build label
+Trace: amends R-155 (see docs/README.md, requirement areas).
 
 - [x] Plan: keep `Cargo.toml` numeric; use a tracked empty suffix file for local builds, display through `update::current()`, and reject non-empty suffixes at Rust package assembly. Preserve numeric update comparison and protocol client versions.
 - [x] Task / Red: add unit coverage for `0.1.25.company_name`, invalid labels, and package refusal; initial focused test failed because the suffix formatter was not implemented.
@@ -1955,6 +1970,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify: after merging current `origin/main` (including #44), `cargo test --locked --all-targets -- --quiet --test-threads=1` passes locally (180 suites, 542 passed, 0 failed, 14 ignored); focused issue/regression tests 47/47, all-target Clippy, rustfmt, diff checks, and the source-layout 300-line ceiling pass. The full suite needed local loopback access for cooperative-memory fixtures; serial execution avoids shared temporary-workspace collisions. Changed Rust source/test modules are split to 300 lines or fewer. Cross-platform CI remains required before merge.
 - [x] Complete: document the normalized Snapshot contract and JSON example; update AgentMemory and LLM Wiki (`knowledge/wiki/custom-cli-profiles.md`); merge latest `origin/main` without rewriting the issue branch and push PR #48. Existing native CLI parsers and provider-specific quota formats remain built-in defaults; custom quota output must be normalized to Snapshot by the CLI or a local wrapper. Rust quota scheduling and CLI refresh support custom profiles; the current WebView quota controls remain limited to Claude/Codex pending R-151. No JavaScript or Python changes are included relative to `origin/main`. Keep issue #12 and PR #48 open for review.
 ## GitHub #44 — blocked task timeout feedback and automatic resume
+Trace: amends R-153 (see docs/README.md, requirement areas).
 
 - [x] Plan: trace the repeated wall-timeout path, run report/error banner, retained per-attempt artifacts, scheduler stop gate and terminal blocked status.
 - [x] Task / Red: add a one-time timeout worker fixture and assert automatic retry; confirm the test failed because the task was `blocked` instead of reaching review.
@@ -1973,6 +1989,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Complete: close #50 only after the Rust UI parity review is complete.
 
 ## GitHub #52 — recover from overlapping generated phase scopes
+Trace: amends R-190 (see docs/README.md, requirement areas).
 
 - [x] Plan: trace the phase validation error to coordinator output that assigned the same `score:` scope to two tasks; preserve overlap rejection as a safety boundary.
 - [x] Red: deterministic coordinator fixture returned duplicate `score:` scopes and reproduced `phase 01-game-selection: unsafe or overlapping scope: score:`.
@@ -1981,6 +1998,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Complete: PR #53 merged to `main`; PR #54 merged to `rust`; GitHub issue #52 is closed.
 
 ## GitHub #56 — wait through transient SQLite writer contention
+Trace: amends R-157 (see docs/README.md, requirement areas).
 - [x] Plan: Windows package smoke run `39309528729` showed one of three concurrent tasks failing with `database is locked`; `Store::open` and read-only snapshots both used a two-second timeout.
 - [x] Task / Red: add `state_contention`; it failed after 2.5 seconds of a held writer lock with the current timeout.
 - [x] Task / Green: use one ten-second SQLite busy timeout for both run connection modes, preserving existing transaction and error semantics.
@@ -2009,6 +2027,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Complete: finish architecture/wiki/manual documentation, commit and push issue-linked `main` PR, then port the same change to an issue-linked `rust` PR and verify both branches. Keep #62 open until both PRs are reviewed and merged.
 
 ### Read-only run loading — GitHub #65
+Trace: amends R-157 (see docs/README.md, requirement areas).
 
 - [x] Plan: PR #55 macOS failure → root cause `workflow::load` write-capable open racing run start-up.
 - [x] Task/TDD Red: `tests/workflow_load_readonly.rs` (schema untouched by `load`) failed first; `active_feedback` now reports an early run error instead of a 20 s timeout.
@@ -2017,41 +2036,56 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 
 
 ### Messenger re-notification — GitHub #72
+Trace: amends R-43 (see docs/README.md, requirement areas).
 
 - [x] Red: `tests/messenger_renotify.rs` — `failed → failed → running → failed` must deliver two messages.
 - [x] Green: record every reported state; send only for notifiable ones.
 - [x] Verify: messenger suites, fmt, clippy `-D warnings`.
 
 ### Run-screen feedback while running — GitHub #95
+Trace: amends R-09 (see docs/README.md, requirement areas).
 ### Quota reset time zones — GitHub #82
+Trace: amends R-127 (see docs/README.md, requirement areas).
 ### Update download cleanup — GitHub #80
+Trace: amends R-126 (see docs/README.md, requirement areas).
 ### MCP header references — GitHub #84
+Trace: amends R-90 (see docs/README.md, requirement areas).
 ### Case-insensitive task scopes — GitHub #79
+Trace: amends R-05 (see docs/README.md, requirement areas).
 ### Command policy fail-closed forms — GitHub #83
+Trace: amends R-08 (see docs/README.md, requirement areas).
 
 - [x] Red: `tests/guard_command_forms.rs` — obfuscated network commands and inline interpreter code must ask; ordinary commands stay automatic.
 - [x] Green: `src/guard/forms.rs` (glued quotes, `$` expansion, inline-code interpreters).
 - [x] Verify: guard suites, full suite, fmt, clippy `-D warnings`.
 ### Messenger explicit approval parsing — GitHub #81
+Trace: amends R-43 (see docs/README.md, requirement areas).
 
 - [x] Red-first tests, green fix, verify (suite, fmt, clippy).
 
 ### Pending-task edits during a run — GitHub #103
+Trace: amends R-121 (see docs/README.md, requirement areas).
 ### Live agent activity — GitHub #100
+Trace: amends R-159 (see docs/README.md, requirement areas).
 
 - [x] Red-first tests, green fix, verify (suite, fmt, clippy).
 
 ### Coordinator chat — GitHub #115
+Trace: amends R-161 (see docs/README.md, requirement areas).
 ### Room focus follows progress — GitHub #109
+Trace: amends R-160 (see docs/README.md, requirement areas).
 ### Activity line fixed slot — GitHub #117
+Trace: amends R-159 (see docs/README.md, requirement areas).
 
 - [x] Red-first tests, green fix, verify (suite, fmt, clippy).
 
 ### Downward update arrow — GitHub #127
+Trace: amends R-126 (see docs/README.md, requirement areas).
 
 - [x] Red-first tests, green fix, verify (suite, fmt, clippy).
 
 ### Update repository setting — GitHub #130
+Trace: amends R-126 (see docs/README.md, requirement areas).
 
 - [x] Red-first tests, green fix, verify (suite, fmt, clippy).
 
@@ -2065,10 +2099,12 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Requirement chain R-164 to DD-174, red tests, recording, prompt delivery, Agent Room list (verified in the browser), manual.
 
 ### Worktree cleanup — GitHub #143
+Trace: amends R-05 (see docs/README.md, requirement areas).
 
 - [x] Red-first tests, green fix, verify (suite, fmt, clippy).
 
 ### Collapsible task detail — GitHub #146
+Trace: amends R-165 (see docs/README.md, requirement areas).
 
 - [x] Red-first tests, green fix, verify (suite, fmt, clippy).
 
@@ -2100,6 +2136,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [x] Verify — local `cooperative_worker`, `process_timeout`, `process`, `windows_containment` and `source_layout`: 20 passed across five suites; Rustfmt and diff checks pass. Windows-specific test is cfg-gated and remains pending Windows CI.
 - [ ] Complete — run repeated load checks and Windows CI on the issue-linked PR, merge into main only after green CI, then port and verify on the Rust migration branch before closing #156.
 ### Round credit display — GitHub #162
+Trace: amends R-75 (see docs/README.md, requirement areas).
 
 - [x] Red-first tests, green fix, verify (suite, fmt, clippy).
 
@@ -2218,6 +2255,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Complete: merge after the design PR #206 (this branch is stacked on it).
 
 ### acio 2/6: runtime, protocol setting, control channel — GitHub #208
+Trace: amends R-183 (see docs/README.md, requirement areas).
 
 - [x] Plan: phase 2 of `docs/cli-io-protocol.md` §13; the setting is `protocol: acio` on a custom profile (not a new `Provider`, which would have touched 25 match sites).
 - [x] Red: `tests/acio_runtime.rs` did not compile before `src/acio.rs` existed.
@@ -2236,6 +2274,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Complete: merge into `main`. Not yet consumed: `options`, `response_schema`, `control` and `capabilities` settings (phases 4 and 5); Claude and Codex event decoding stays code.
 
 ### acio 4/6: task types in plans, per-model resolution, review display — GitHub #210
+Trace: amends R-183 (see docs/README.md, requirement areas).
 
 - [x] Plan: phase 4 of `docs/cli-io-protocol.md` §13 (FR-172 implemented as FR-174); decisions of 2026-10-28: the coordinator sets `task.type`, no operator control for now, the roles table shows efforts and fit.
 - [x] Red: `tests/task_types.rs` and `tests/task_profile_ui.rs` did not compile or failed before the code existed.
@@ -2245,6 +2284,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Complete: merge into `main` after #215 (stacked). Not changed: `execution_options` are still dropped when the page rebuilds a task on edit (existing behavior); the native UI (Codex #9 track) does not show task kinds.
 
 ### acio 5/6: prompts assembled as Document, Task, Format — GitHub #211
+Trace: amends R-186 (see docs/README.md, requirement areas).
 
 - [x] Plan: phase 5 of `docs/cli-io-protocol.md` §13 (FR-175); the user's order "Document - Task - Format".
 - [x] Red: `tests/prompt_order.rs` failed to compile before `planner::plan_prompt` existed and asserted the old order.
@@ -2273,6 +2313,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Complete: merge the verified issue PR into `main`, then port the behavior and native Rust regression coverage to the Rust migration branch.
 
 ### Chat button icon — GitHub #229
+Trace: amends R-161 (see docs/README.md, requirement areas).
 
 - [x] Plan: user request 2026-10-28: the coordinator chat is a conversation now, so the "?" button should look like a chatbot. An inline SVG (bubble with two eyes and an antenna, `currentColor`) keeps the theme color and needs no emoji font.
 - [x] Red: `the_chat_button_is_a_chatbot_icon_not_a_question_mark` in `tests/chat_ui.rs` failed before the change.
@@ -2282,6 +2323,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Complete: merge, then the next release. The native UI (Codex track, #9) keeps its own button.
 
 ### #221 Follow-up diagnostics and quiet retries
+Trace: amends R-184 (see docs/README.md, requirement areas).
 
 - [x] Task: report page-side timeout duration to the local diagnostics log, and show a transport timeout only after three consecutive misses on scheduled background polls. Explicit refresh and non-timeout errors remain visible immediately.
 - [x] Verify: `tests/poll_failure_runtime.cjs` covers retry threshold, reset after success, immediate non-timeout errors, and timeout diagnostics from both UI entrypoints.
@@ -2297,6 +2339,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Complete: merge, then the next release.
 
 ### Standard prompt form and reply check — GitHub #235
+- [x] Verified 2026-11-03 (GitHub #349): implemented in `src/prompt_form.rs`; `tests/prompt_form.rs`, `tests/coordinator_format_retry.rs`.
 
 - [x] Plan: user request 2026-10-29: CLIs (also in-house ones) cannot be changed and no sample output exists, so the application fixes the prompt layout and checks the reply itself. Chat, planning and the optimizer already use Document/Task/Format (#211); the reviewer, the worker and the MCP prompts do not. Chain R-186 → DD-198.
 - [ ] Red: `tests/prompt_form.rs` (assemble order and once-only blocks, untrusted heading neutralized, reviewer and worker layout, `Owned paths:` kept) and `tests/coordinator_format_retry.rs` (second attempt after a malformed reply).
@@ -2352,6 +2395,7 @@ Local Python77, formatting and all-target Clippy passed. Extra local all-target 
 - [ ] Complete: merge; release only on request. Related: Codex's Rust chat (#189) must read `chat_job`.
 
 ### Task facts line layout — GitHub #262
+- [x] Verified 2026-11-03 (GitHub #349): `tests/task_profile_layout.rs` exists and passes.
 
 - [x] Plan: user report 2026-10-30 (v0.1.45): the task type / effort line of a task in the plan review is a one-character-wide column. R-193 → DD-205: place it explicitly in the summary grid.
 - [ ] Red: `tests/task_profile_layout.rs`.
@@ -2472,6 +2516,7 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Complete: release requested by the user.
 
 ### Agent cards without the usage-query text — GitHub #321
+Trace: amends R-201 (see docs/README.md, requirement areas).
 
 - [x] Plan: the card fact "Querying usage… m:ss" added with #297 is dropped at the user's request (2026-11-02): the refresh icon already marks a running query and the company PC now shows usage. Only the cards change; the run screen keeps its source line and busy refresh button.
 - [x] Red: `tests/progress_runtime.cjs` (cards contain no `AC_QUOTA_WAIT`/`quotaAgent`).
@@ -2487,6 +2532,7 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Verify (macOS): live page checked (panel opens on the run screen, badge, selector); full suite.
 - [ ] Complete: merge and release only on request.
 ### Integration failure shows both streams — GitHub #323
+Trace: amends R-110 (see docs/README.md, requirement areas).
 
 - [x] Plan: `public_report` picked the first non-empty stream (stderr first) and the room cut it to its first 4 or 12 lines, so a stderr warning hid the stdout failure. The pass/fail decision is unchanged (exit code and timeout). `ui::failure_output::failure_output` gives each stream its own last 8 lines with an "earlier lines" count, labels them only when both exist, and puts stdout last; full logs stay in the evidence tab. Reported on a corporate Windows build.
 - [x] Red: `tests/failure_output.rs` (three tests), `tests/progress_runtime.cjs` (banner and feedback are not cut to the first lines).
@@ -2503,11 +2549,13 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [ ] Complete: merge and release only on request.
 
 ### Korean text for the coordinator refusal — GitHub #333
+Trace: amends R-70 (see docs/README.md, requirement areas).
 
 - [x] Plan: the two refusal texts of `coordinator::read_only_args` (#325, #326) were built with `format!` and so were English in the Korean interface. They are catalog messages (`native.coordinator_not_read_only`, `native.coordinator_bad_read_only_args`) rendered in the machine's language; tests read each catalog directly because the language is a machine setting.
 - [x] Red/Verify: `tests/coordinator.rs` (both catalogs, Korean has Hangul and the same placeholders), full suite.
 - [ ] Complete: released with #331 as v0.1.56.
 ### Update blocker names the work and tells it from a failed check — GitHub #331
+Trace: amends R-126 (see docs/README.md, requirement areas).
 
 - [x] Plan: `Room::ensure_update_idle` turned every error of the startup check, the run job and the runs of every workspace into "Finish or stop running work", so a finished run still marked `running`, a background usage query and an unreadable job record all looked the same. `ui::update_guard` now collects `Blocker::Active` (workspace, kind, elapsed) and `Blocker::Unknown` (what, error); a run blocks only while its coordinator holds `coordinator.lock` (the kernel releases it when the coordinator is gone), a retained startup job only while its process is present. The text lists running work first with how to wait or stop, then failed checks as not running work; it keeps its line breaks in the notice. Update itself is unchanged: it starts once no blocker is left.
 - [x] Red: `tests/update_blockers.rs` (message, failed check, stale versus live run), `tests/progress_runtime.cjs` (notice line breaks).
@@ -2516,13 +2564,24 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [ ] Complete: merge and release only on request. Elapsed time is not known for a run's blocker on every platform (creation time of the run folder is used when the file system has it).
 
 ### Codex planning schema and the hidden API error — GitHub #337
+Trace: amends R-146 (see docs/README.md, requirement areas).
 
 - [x] Plan: `planner::schema::for_plan` removed `execution_options` and `task_type` from `required`, and `execution_options` was a free-form map; Codex Structured Outputs (strict) rejects both with `invalid_json_schema: Missing 'task_type'`. Every object now lists all its properties as required and is closed: `execution_options` is `{effort: string|null}` (the one option the application applies) and `task_type` is a typed nullable enum. `Task` reads null option values as absent. `coordinator::failure` shows stderr and stdout together through `failure_output` (#323) instead of stderr alone, since Codex logs skill-loading errors on stderr and the rejection as a stdout event.
 - [x] Red/Verify: `tests/planning_schema.rs` (strict-shape walk over flat/phased/role variants, null options read as a task), `tests/planning_failure_detail.rs` (both streams), full suite.
-- [ ] Complete: merge and release only on request.
+- [x] Complete: released in v0.1.57.
 
 ### Custom CLI permission denials and invalid output — GitHub #341
+Trace: amends R-183 (see docs/README.md, requirement areas).
 
 - [x] Plan: a custom CLI that denies tools in non-interactive mode surfaced as `invalid JSONL at offset N` (the observer stopped at the first text line and dropped what the CLI printed) or as a success (a denial tool event with a zero exit and a result). `Decoder` now quotes the offending line (bounded); `progress::observe` and the worker add the end of stdout and stderr, labeled apart (`coordinator::output_excerpt`, `failure_output`). Profile settings (custom only, rejected with acio): `on_invalid_json` (`fail` default, `text` = progress text; refusal-looking text becomes an error "check the CLI configuration"; success still needs a result event and exit 0) and `denial_condition` (`EventKind::Denied`, reported by the worker as "permission denied: tool …: …"). `AgentProfile::configuration_hint` flags `operator_auto_approve` without any event mapping, error or denial condition; the snapshot carries `config_hints` and the agent card shows a "Check configuration" badge. Not done: a separate task status for denial (the status stays `failed`), the `{prompt}` placeholder.
 - [x] Red/Verify: `tests/custom_cli_denials.rs` (decoder, validation, hint, and three end-to-end runs with a script as the CLI), `tests/coordinator_chat_check.rs` (snapshot hint), `tests/progress_runtime.cjs`, full suite.
-- [ ] Complete: merge and release only on request.
+- [x] Complete (items 1, 2 and 4): released in v0.1.58.
+- [ ] Open: a matched denial as a distinct permission-denied task state (issue reopened 2026-11-03).
+
+### Architecture trace consolidation and implementation verification — GitHub #349
+Trace: amends R-13 (requirements trace to tests); rules in docs/README.md, record in docs/14.
+
+- [x] Plan: the trace documents had one identifier chain with two meanings, four sections titled by their DD name, a goal defined twice, cited but undefined DD/DDR identifiers, amendments split from their entries, requirements changed by later ones without a status, issue fixes with no trace, and a README index frozen at R-59.
+- [x] Task: renumber the second chain (R-209 … DD-221), restore headings, merge duplicates and stray amendments, add `Status:` lines to requirements, use cases and QAS, trace every issue unit, rebuild the README index and matrix by area; `tests/architecture_trace.rs` enforces the rules (mutation run: four of six tests fail on injected faults); `tests/agent_master_list.rs` covers R-101.
+- [x] Verify (macOS): full suite; docs/14 lists requirement evidence and the gaps (R-118 not implemented, R-120 partly, R-102 and R-114 untested, R-151 on the Rust line, R-183 open item from #341).
+- [ ] Complete: merge only on request.

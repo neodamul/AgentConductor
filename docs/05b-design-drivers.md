@@ -115,6 +115,9 @@ Company identity belongs in optional local build metadata, not Cargo's semantic 
 
 ### Driver DDR-18 Bounded database contention
 Concurrent task progress must survive brief writer contention without hiding sustained failures or blocking indefinitely. Use SQLite's bounded busy handling at the shared connection boundary. Trace: QAS-153.
+
+### Driver DDR-19 Custom CLI behavior is data, not code
+A company CLI cannot be verified or changed by the application, so its catalog, option groups, result pointers and error conditions must be declared in the agent profile and validated at every boundary instead of being guessed or hard-coded per provider. Trace: QAS-154.
 ### Driver DD-163 Recoverable timeout with human control
 Subprocess timeouts must not erase partial work or make the run look like an unexplained terminal failure. Retry without an LLM, maintain bounded resource use, make progress visible through the existing report channel, and honor a human Stop before relaunch. Trace: QAS-149.
 
@@ -161,6 +164,9 @@ Most mechanical rules are already default Clippy lints denied in CI, and the res
 
 ### Driver DDR-35 Gate only after the count is zero
 Enabling the lint first would fail on every existing site and block unrelated work; documenting first and gating last keeps each step small and verifiable. Trace: QAS-172.
+
+### Driver DDR-36 One owner of process-environment mutation
+Parallel test threads share one process environment, so mutation must go through a single serialized owner that restores the originals; the unsafe gate then covers test targets without per-file exceptions. Trace: QAS-173.
 
 ### Driver DDR-37 Reuse the chat job instead of a new runtime
 The coordinator chat (DD-171) already runs a read-only coordinator as a bounded worker job and returns its artifact in the next snapshot. Reusing that path adds no process type, no new permission and no polling of its own; the bundled skill is only prompt text. Trace: QAS-174.

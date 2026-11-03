@@ -15,11 +15,10 @@ estimated token costs are different; missing cost data must not appear as zero.
 
 - BG-07 (R-18): Continue work across subscription reset windows without busy retry loops or lost evidence.
 - BG-08 (R-19): Preserve delivery continuity by transferring a role to an available agent while keeping ownership explicit.
-- BG-09 (R-20): Give people control over session models without inventing account capabilities or changing authentication.
 
-### BG-09 — Start and review work in one local application
+### BG-09 Start, review and control work in one local application
 
-An operator can configure CLI teammates and start a goal without manually editing files or opening another application. Existing authentication remains authoritative. Trace: R-21.
+An operator can configure CLI teammates and start a goal without manually editing files or opening another application, and controls session models without the application inventing account capabilities or changing authentication. Existing authentication remains authoritative. Trace: R-20, R-21 (merged: the R-20 goal was a separate BG-09 bullet).
 
 ### BG-10 Capacity visibility and portable delivery
 
@@ -73,7 +72,7 @@ A workspace becomes a durable record of every goal pursued in it — analysis, p
 
 Operators can assess Claude subscription capacity from existing execution metadata without spending tokens solely to query usage. Trace: R-60.
 
-### BG-22 extension — Operators assess capacity directly from the agent list without opening an inspector.
+BG-22 extension: Operators assess capacity directly from the agent list without opening an inspector.
 
 ### BG-23 Plan from company work records
 
@@ -91,12 +90,11 @@ Operators configure installed tools and refresh cadence with consistent controls
 ### BG-26 Fewer agent setup mistakes and predictable capacity
 
 Operators switch an agent to another CLI without leftover settings from the previous one, and know when an exhausted agent becomes usable again without opening an inspector. Trace: R-68, R-69.
+BG-26 extension (R-71): fallback configuration is understandable and selectable without leaving the dialog.
 
 ### BG-27 Operate in the operator's language
 
 Korean-speaking operators read and act on the workspace and Agent Room in Korean while English remains the shared default for documentation and collaboration. Trace: R-70.
-
-BG-26 extension (R-71): fallback configuration is understandable and selectable without leaving the dialog.
 
 
 ### BG-28 Windows operators use the same lightweight workflow
@@ -318,9 +316,9 @@ Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source
 Keep deliverables where the operator selected and make acceptance or restoration predictable, while preserving existing project history and manual edits.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.
 
-### BG-79 Deleting workspaces needs no replacement name
+### BG-164 Deleting workspaces needs no replacement name
 Cleaning up several workspaces takes one confirmation each, without inventing names.
-Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user request, 2026-10-13.
+Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Source: user request, 2026-10-13.
 
 ### BG-80 Operate the same release in either language
 Let English and Korean operators configure and review the current application without relying on stale screenshots or undocumented behavior.
@@ -393,7 +391,7 @@ Operators are never left guessing whether a run is working, and momentary model 
 Trace: R-140 -> BG-95 -> SF-127 -> UC-130 -> FR-125 -> QAS-136 -> DD-149. Source: user requests, 2026-10-14.
 
 
-### BG-96 Consistent communication / BG-97 immediate native selection
+### BG-96 / BG-97 Consistent communication; immediate native selection
 
 The planner receives the workspace-selected coordination backend after operator rules, and every worker receives it after its task/dependency/lesson context. Local Rust requires no agentmemory daemon or CLI/MCP tool; progress remains normal owned CLI output captured by Rust. Agentmemory preferred delivery is host-owned and retains local fallback. Optional tool installation guidance cannot require or select a transport. Only registered checkpoint_v1 workers get addressed polling/ack/report instructions and exact executable-path shell examples; no new profile capability, peer recipient or approval is fabricated.
 
@@ -403,7 +401,7 @@ Trace: R-141 → BG-96 → SF-128 → UC-131 → FR-126 → QAS-137 → DD-150; 
 Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 
-### Workspace transfer menu — DD-152
+### BG-98 Workspace transfer menu
 
 Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
@@ -414,12 +412,12 @@ Operators understand commands and settings in either language without raw Markdo
 Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.
 
 
-### Saved-project Claude quota retry — DD-154
+### BG-100 Saved-project Claude quota retry
 
 Saving a project folder after an empty-folder Claude usage attempt immediately schedules a fresh query. Empty project paths are excluded from automatic Claude queries; other providers retain their account refresh schedule. Folder changes invalidate only Claude scheduling context, never grant trust or execution permissions.
 Trace: R-145 → BG-100 → SF-132 → UC-135 → FR-130 → QAS-141 → DD-154. User, 2026-10-14.
 
-### Schema-constrained planning replies — DD-155
+### BG-101 Schema-constrained planning replies
 
 Planning requests specify an explicit JSON Schema: phases, tasks, owned paths, dependencies and command arguments remain arrays, with registered agent IDs, required fields and no unknown properties. Claude receives --json-schema; Codex receives --output-schema bound to a retained local schema file. Other CLIs receive the exact schema in the planning prompt. Strict phase/task, ownership, role, dependency and human-approval validation remains unchanged; invalid objects are not guessed or silently reordered.
 Trace: R-146 → BG-101 → SF-133 → UC-136 → FR-131 → QAS-142 → DD-155. User, 2026-10-14.
@@ -435,7 +433,7 @@ Collect existing CLI metadata across shell-style and chevron prompts without ask
 Trace: R-148 → BG-103 → SF-135 → UC-138 → FR-133 → QAS-144 → DD-157. GitHub #5, user2026-10-14.
 
 
-### Active workspace navigation — DD-158
+### BG-104 Active workspace navigation
 
 Create, open and switch workspaces while planning, metadata collection or execution is active. Keep the owned Startup, child handles, controller and window/run leases for each active workspace; restore that session when revisited and read its current report/logs. Settings and job descriptors already persist in startup.json; progress/evidence remains in the original run, so navigation neither stops workers nor overwrites CLI state. Idle sessions release their leases and reopen from disk as before. Serialize composite navigation, acquire the target first, and retain the original on target/registry failure. Completed parked sessions can release their leases for exact-name-confirmed deletion; active or unknown work remains protected. Ignore late workspace/closed-room responses, reset per-workspace refresh tracking, and request a fresh snapshot before editing the new view. Export/import continues to transfer the existing reviewed configuration archive; live process handles are not exported.
 Trace: R-149 → BG-104 → SF-136 → UC-139 → FR-134 → QAS-145 → DD-158. User, 2026-10-15; supersedes the active-navigation restriction in DD-156.

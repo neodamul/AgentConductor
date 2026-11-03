@@ -1,4 +1,4 @@
-//! DD-133: the default workspace (~/.agentconductor/desktop) can be deleted while it is open.
+//! DD-221: the default workspace (~/.agentconductor/desktop) can be deleted while it is open.
 use agentconductor::ui::Room;
 use std::path::Path;
 #[path = "support/workflow.rs"]

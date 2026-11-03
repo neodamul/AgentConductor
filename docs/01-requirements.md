@@ -38,6 +38,7 @@ follow the user's explicit sequence and standard QAS fields.
 - R-20: Query model catalogs through existing authenticated CLI subprocesses during registration. Persist source/version/query time. Select or change a session model only from the observed catalog; reject unknown models and invalidate prior approvals. Unsupported discovery requires an explicit operator catalog import, never an API-key fallback.
 
 ### R-21 — Native startup workspace
+Status: Amended by R-53: a plan has one to twelve tasks, not three.
 
 Launch without a preexisting run. Register native/custom executable profiles, discover/import observed catalogs, enter a repository and goal, generate or edit three scoped tasks, review literal commands and permission capabilities, and explicitly approve the exact plan before execution. Shared workspace is the default; worktrees remain optional. Keep settings, plans, jobs and evidence local. Native messages only; no UI HTTP service.
 
@@ -70,6 +71,7 @@ The company CLI polls agentmemory before work and at cooperative checkpoints, pu
 When the operator asks for current status, Rust or the designated AI coordinator briefs all agent sessions: assigned work, observed activity, last intermediate report and its age, execution/restriction state, evidence, pending approvals and next action. Reconcile agentmemory reports with authoritative local process/task records. Missing or conflicting reports are explicitly uncertain. Optional LLM prose cannot manufacture progress.
 
 ### R-29 At-a-glance agent status lights
+Status: Amended by R-83: the planning progress light blinks even when the system asks for reduced motion; agent status lights still respect it.
 
 Agent/session lists show green, yellow or red status lights. Running sessions blink green; completed sessions are steady green. Pending, approval/availability waits and stops are yellow; failures and blocked tasks are red. Text/accessibility labels explain the state; unknown states are yellow rather than healthy. Respect reduced-motion settings.
 
@@ -102,6 +104,7 @@ Production code lives under `src/` and tests under `tests/`; no inline `#[cfg(te
 The public README introduces the product for someone who has never used it: what it does, who it is for, real screenshots, how to install and a short desktop-first walkthrough. It contains no command-line reference. Detailed operation, every CLI command, configuration fields and safety rules move to a separate English user manual linked from the README and shipped in release packages. The product is a desktop application; the CLI is an advanced/automation interface. The README must also answer first-contact questions: the main capabilities; how orchestration works (what the deterministic engine decides versus what an optional LLM coordinator proposes); how roles are assigned to agents; how work is redistributed when an account's hourly or weekly usage limit is reached; whether agentmemory is required; and what the user must prepare.
 
 ### R-37 Plan without an LLM coordinator
+Status: Amended by R-53: the hand-written plan form has one to twelve tasks.
 
 The operator can write the plan in the desktop workspace without any planning agent: the product provides a three-task form for the current goal and registered agents, and the operator fills in each task's agent, instructions, owned paths, dependencies and test. An LLM coordinator remains optional for proposing the same form. A hand-written plan is validated, reviewed and approved exactly like a generated one, and is bound to the repository base at the time the form was created. Source: user decision, 2026-10-11.
 
@@ -110,6 +113,7 @@ The operator can write the plan in the desktop workspace without any planning ag
 The workspace screen groups its settings under a visible **Workspace settings** heading. The goal comes first; the planning coordinator follows; the repository sits under the coordinator together with the Git-worktree option. The repository is chosen with a native folder picker (typing a path remains possible) and is optional for saving a workspace; it is required only to create or run a plan. Source: user request, 2026-10-11.
 
 ### R-39 Multiple workspaces
+Status: Amended by R-149: workspaces are created, opened and switched in the same window, also while work is active; an active workspace keeps running and is restored when revisited.
 
 The window shows which workspace directory is open and offers a workspace menu to open a recent workspace, open an existing folder or create a new one, without restarting the application or using the command line. One window per workspace is preserved. Source: user request, 2026-10-11.
 
@@ -127,13 +131,16 @@ Planning still requires a clean repository. When the operator starts planning wi
 
 ### R-43 Messenger integration (planned)
 
-**Status: planned, not implemented.** AgentConductor will connect to Slack and to company-provided messengers. The operator and their team receive concise notifications when a decision is needed (plan approval, tool request, candidate review, usage limit with no fallback), when a run completes or fails, and on request a team briefing. Later phases allow answering a pending decision from the messenger. The desktop application stays the source of truth: no source code, diffs or secrets leave the machine unless the operator enables it per workspace, and a messenger decision is accepted only from a linked, authorized user and only for the exact pending request. Source: user request, 2026-10-11.
+**Status: phases 1 (outbound webhook notifications) and 2 (Slack allow/deny replies and a signed company relay) are implemented in `src/messenger/`; which company messenger is used is still open.** AgentConductor will connect to Slack and to company-provided messengers. The operator and their team receive concise notifications when a decision is needed (plan approval, tool request, candidate review, usage limit with no fallback), when a run completes or fails, and on request a team briefing. Later phases allow answering a pending decision from the messenger. The desktop application stays the source of truth: no source code, diffs or secrets leave the machine unless the operator enables it per workspace, and a messenger decision is accepted only from a linked, authorized user and only for the exact pending request. Source: user request, 2026-10-11.
+R-43 activation (user decision, 2026-10-11): start messenger integration. **Phase 1 — outbound notifications** for Slack (Incoming Webhook) and company messengers that accept an incoming webhook (configurable JSON body). Configuration is per workspace; the webhook URL is a machine-local secret and never exported. Events: plan ready, candidate ready for review, tool request waiting, usage limit wait, run completed / failed / stopped / blocked, plus a test message. **Phase 2 — answering decisions from the messenger** stays planned until the company messenger and its API are chosen.
+R-43 phase 2 activation (user decision, 2026-10-11): linked approvers answer **pending tool requests** from the messenger. Slack: a reply `allow <code>` or `deny <code>` in the configured channel by a listed approver. Company messenger: a company-hosted relay returns signed decisions. Plan consent and final merge stay desktop-only. Which company messenger will be used is still open; the relay contract keeps that choice independent.
 
 ### R-44 Ignore operating-system files and continue
 
 When the unclean changes include untracked operating-system metadata files (for example `.DS_Store`, `Thumbs.db`, `desktop.ini`, `._*`), the baseline dialog explains that these are generated by the OS, guides how to ignore them permanently, and offers **Ignore and continue**, which excludes them locally for this repository without a commit and continues when nothing else remains. Source: user request, 2026-10-11.
 
 ### R-45 Visible planning progress
+Status: Amended by R-83, R-135, R-196: progress shows real output, retries clear the old failure, and the general no-frozen-step rule applies.
 
 While a coordinator generates the plan, the **Review the plan** area shows that planning is in progress, which coordinator is working and the elapsed time. When the plan is ready the window says so and brings the plan into view; when planning fails the same area shows the reason and where the logs are. Source: user request, 2026-10-11.
 
@@ -174,6 +181,7 @@ A plan may contain between one and twelve tasks instead of exactly three. The pl
 For a project that already has a plan, the operator chooses **Read plan…**, selects a Markdown file of any format (for example a plan written by Claude or Codex, or a project checklist) and the planning coordinator converts its remaining work into a reviewable plan that follows the role rules. The coordinator reads the document and a read-only snapshot of the repository; it does not edit anything. Items already marked done are not planned again. Source: user request, 2026-10-11.
 
 ### R-55 Goals become slugs with a work tree
+Status: Amended by R-74, R-84, R-100: the slug is named automatically in English, and the goal folder is <project>/<slug>/ when the workspace has a project folder.
 
 Every goal set in a workspace becomes a slug — a short human-readable phrase such as `healthcheck_interval_adjust` — and goals accumulate: setting a new goal adds a slug instead of replacing the previous one. Each slug owns a folder tree `plan/`, `phase/`, `task/`, `verification/`, `completed/` under `<repository>/.agentconductor/<slug>/`, or under `~/.agentconductor/<workspace>/<slug>/` when the workspace has no repository. A slug may exist without a plan. Source: user request, 2026-10-11.
 
@@ -194,16 +202,17 @@ Exporting a workspace writes the workspace settings JSON and one `<slug>.zip` pe
 The planning rules taught so far (analysis first, phases, task → verification → completed, role assignment, TDD, source/test separation, 300-line files, English documents, recording and assetization) live in a global, editable rules file passed to the planning coordinator. A workspace may override them; the override is stored in the workspace settings JSON. When no workspace override is set, Markdown rules under `<repository>/.agentconductor/plan-rules/` are recursively discovered and appended in repository-relative lexical order. Existing global rules remain supported. Source: user request, 2026-10-11; GitHub issue #8.
 
 ### R-60 Collect Claude subscription quota without extra generation
+Status: Amended by R-97, R-148, R-201: Claude usage is read by a separate no-generation usage query, not only from owned execution streams.
 
 Collect provider-reported utilization and reset windows from owned Claude CLI streams, show remaining percentages in Agent Room, and retain unavailable/stale states when metadata is absent. Refresh must not generate a prompt, read authentication secrets, or pretend to obtain a new account observation. Source: user request, 2026-10-11.
 
 ### R-61 Inline agent quota — Show paid CLI remaining capacity beside the agent name in the left workspace and session lists; unknown and stale values remain explicit. Source: user request, 2026-10-11.
+Status: Amended by R-64, R-108, R-130: quota is one compact line beside the name, not in the Agent Room task list.
+R-61 correction: fresh workspaces must independently collect supported paid-agent quota; a retained execution run must not be required for displaying account capacity.
 
 ### R-62 Jira and Confluence goal imports
 
 Workspace settings register Jira/Confluence MCP connections using the same `mcp` server-object format as OpenCode. Import a Jira Story and referenced Confluence pages as goal context, with explicit goal keywords and a reference preview. Source: user requests, 2026-10-11.
-
-R-61 correction: fresh workspaces must independently collect supported paid-agent quota; a retained execution run must not be required for displaying account capacity.
 
 ### R-63 Agent-specific refresh and action icons
 
@@ -214,6 +223,7 @@ Each agent has its own quota refresh icon and periodic refresh schedule. Remove 
 AgentConductor exists because three agent desktop applications at once exhaust the host, so an idle window must stay within the NFR-05 budget (core RSS < 100 MiB, idle CPU < 1 %). The window refreshes quickly only while work is happening (a job runs, a plan is generated, edits are unsaved), slows down when idle, stops while hidden, and never resends unchanged heavy data such as application icons. Source: user directive and measurement, 2026-10-11 (idle 105–106 MiB, CPU spikes 3–4.5 %).
 
 ### R-64 Compact quota windows
+Status: Amended by R-130: reset times move to the tooltip and the card is smaller.
 
 Keep quota values and their refresh icon in one compact control beside each agent. Show one compact numeric line such as `64%/100% ↻`. Explain Enterprise Current / Total or provider periods (5h, Daily, Weekly or others) in the tooltip. Show independent remaining percentages rather than hiding windows behind a minimum. Never infer Enterprise from a company name or numeric limits.
 
@@ -224,6 +234,7 @@ R-64 / UC-54 interaction refinement: keep a 5px gap between quota values and ref
 
 Default quota refresh is five minutes, independently configurable per agent in Edit (1–60 whole minutes). Locate installed executable paths automatically and provide a native Browse fallback without launching the CLI. Single-line form controls share height and paired columns share width. Use the existing AC brand mark as the native application icon. Quota background refresh shows no loading message.
 ### R-66 New workspaces start without agents
+Status: Superseded by R-101: the agent list is a machine-wide master list, so a new workspace opens with it; nothing is pre-registered on a fresh machine.
 
 A new workspace has an empty agent list; the operator adds the agents they actually use with **+ Add**, where the Claude Code, Codex and OpenCode templates remain available. Nothing is pre-registered, no model lookup or CLI process starts for agents the operator did not add, and planning stays disabled until at least one agent and a coordinator exist. Tests add their agents explicitly before starting. Source: user request, 2026-10-11.
 
@@ -232,22 +243,18 @@ A new workspace has an empty agent list; the operator adds the agents they actua
 In the agent dialog, Provider comes first and Agent ID second. Changing the provider replaces every provider-derived value at once: the agent ID (the provider's template ID, suffixed `-2`, `-3`… when taken), the located executable path, arguments, input mode, permission mode, session limit and quota cadence; models observed for the previous CLI are discarded. When an existing agent's ID changes, the coordinator, role rules and other agents' fallbacks follow the new ID instead of being dropped. Source: user requests, 2026-10-11.
 
 ### R-69 Show when exhausted quota returns
+Status: Superseded by R-130: reset times are shown in the tooltip instead of extending the exhausted badge.
 
 When a paid agent's quota window reaches 0 %, the compact quota control shows the reset time beside the percentages (time of day today, otherwise date and time), and the tooltip lists the reset time of every window. Source: user request, 2026-10-11.
 
 ### R-70 Interface language
 
 All text is UTF-8 end to end (pages, settings, release notes, CLI output read by the app). A **Settings** menu lets the operator choose the interface language; English is the default and Korean is available. The choice applies immediately, survives restarts and applies to every workspace on the machine. User content (goals, task instructions, logs, agent output) is never translated. Source: user request, 2026-10-11.
-
 R-70 amendment (2026-10-11): the Settings button shows only the gear icon; its name stays available as tooltip and accessible label.
 
 ### R-71 Fallback model choices are always offered
 
 In the agent dialog the fallback model is the model the *fallback agent* runs with when this agent's account is limited — not this agent's own model. Choosing an alternate agent shows its model list; when that agent's models were never fetched, they are fetched once and the list fills in while the dialog stays open. Source: user question, 2026-10-11.
-
-R-43 activation (user decision, 2026-10-11): start messenger integration. **Phase 1 — outbound notifications** for Slack (Incoming Webhook) and company messengers that accept an incoming webhook (configurable JSON body). Configuration is per workspace; the webhook URL is a machine-local secret and never exported. Events: plan ready, candidate ready for review, tool request waiting, usage limit wait, run completed / failed / stopped / blocked, plus a test message. **Phase 2 — answering decisions from the messenger** stays planned until the company messenger and its API are chosen.
-
-DD-68 UI amendment (2026-10-11): configure MCP connections through the top-bar Settings menu; keep reference insertion and preview beside the goal. The Settings gear uses a 26 px glyph in a 44 × 44 px pointer target.
 
 
 ### R-72 Windows CLI metadata and provider visibility
@@ -257,9 +264,8 @@ Windows CLI-only installations show recognizable provider badges, prefer executa
 ### R-73 Self-hosted CLI model catalogs without discovery
 A working self-hosted CLI may expose no model-list command. Explain that capability limit and register company-supplied IDs without HTTP endpoints, API keys, guessed IDs or a generation prompt. Preserve existing models when reopening the editor. Source: user confirmed aipro has no /models command, 2026-10-11.
 
-R-43 phase 2 activation (user decision, 2026-10-11): linked approvers answer **pending tool requests** from the messenger. Slack: a reply `allow <code>` or `deny <code>` in the configured channel by a listed approver. Company messenger: a company-hosted relay returns signed decisions. Plan consent and final merge stay desktop-only. Which company messenger will be used is still open; the relay contract keeps that choice independent.
-
 ### R-74 Slugs are named automatically
+Status: Amended by R-84: a goal in another language gets an English slug; romanization is no longer used.
 
 The operator no longer types a slug. Each new goal gets a readable, unique slug derived from the goal: ASCII words as before, Korean (Hangul) romanized by the Revised Romanization of Korean, other scripts fall back to `goal_<yyyymmdd>`; a taken slug gets `_2`, `_3`…; at most 48 characters, cut at a word boundary. The slug is shown read-only in Goals & progress. Source: user request, 2026-10-11 (amends R-55).
 
@@ -272,6 +278,7 @@ Repository browsing must open a visible app-owned native picker. Windows desktop
 
 
 ### R-77 Save new project folders before Git setup
+Status: Superseded by R-80, R-124: a project needs no Git repository; results are written into the selected folder against a recorded baseline.
 Workspace settings must save existing project directories without invoking Git. Plan creation requires a Git root with an initial commit under the current diff/review architecture, checked before creating goal artifacts or launching agents. Quota collection is independent of project Git state. A future non-Git execution design or explicit Git setup flow requires an operator product decision.
 
 
@@ -280,10 +287,12 @@ Registration/edit forms open immediately while executable resolution proceeds as
 
 
 ### R-79 Approved Git setup for new project planning
+Status: Superseded by R-80, R-124: no Git setup is needed or offered before planning.
 Generate plan and manual planning offer explicit approval when the selected folder lacks Git or an initial commit. Create an empty baseline only after approval, preserve existing files and staged changes, then recheck the normal file-commit consent. Refuse replay and existing/nested/inaccessible repository replacement; never silently initialize.
 
 
 ### R-80 Work in ordinary project folders
+Status: Amended by R-124: ordinary-folder runs write directly into the selected project against an immutable baseline instead of an app-managed working copy; no .git is created there.
 A project need not contain a Git repository or initial commit. Generate plan, manual planning, phased execution and tests use an app-managed working copy; the original is changed only after exact diff/test review and approval. Refuse concurrent original edits. Git worktrees and branch merges remain optional. Git is still used internally for private change history, with no .git created in the original folder. Source: user clarification, 2026-10-12. This supersedes the mandatory initialization prerequisite in R-77/R-79; the unreleased initialization flow is superseded.
 
 
@@ -309,9 +318,11 @@ Enterprise allocation shows as a remaining percentage like the subscription wind
 
 ### R-86 Claude capacity on Windows reports why it is unavailable
 Claude capacity collection on Windows must run the CLI in the project folder even when the path is in extended-length form, and must report a first-run setup screen immediately instead of timing out. Source: user report, Windows Claude Enterprise, 2026-10-12 ("claude quota query timed out no generation request"; terminal showed "UNC 경로는 지원되지 않습니다" and the theme selection screen).
+R-86 clarification (merged PR #1): an empty project path is a prerequisite error, not a process timeout. Preserve all-model and named-model Claude windows separately. Codex API-key authentication must report unsupported subscription quota without presenting invented percentages.
 
 
 ### R-87 Readable Windows project paths
+Status: Merged into R-103: readable paths apply to every screen, message and notification, not only project fields.
 Canonicalization must not expose extended drive/UNC prefixes in project fields. Preserve roots, Unicode and actual directory identity. Source: user correction, 2026-10-12.
 
 
@@ -332,8 +343,6 @@ Trace: R-91 -> BG-46 -> SF-78 -> UC-81 -> FR-76/NFR-47 -> QAS-87 -> DD-99.
 Edit Claude, choose Codex as fallback and press Use profile. Await the validated native save and close only after success. Invalid JSON, cycles, native/revision errors and an already admitted action leave the dialog open with a readable inline message. Save is asynchronous and deduplicated; private environment values remain unchanged. Profile execution changes invalidate an earlier plan approval.
 
 
-R-86 clarification (merged PR #1): an empty project path is a prerequisite error, not a process timeout. Preserve all-model and named-model Claude windows separately. Codex API-key authentication must report unsupported subscription quota without presenting invented percentages.
-
 
 ### R-92 Selectable signal transport with Rust fallback
 The operator can choose the signal backend in workspace Settings even while agentmemory is available. Provide Local Rust and agentmemory preferred. Local Rust uses the durable local signal ledger without requiring a memory daemon or MCP connection. agentmemory preferred falls back automatically for eligible local recipients when the agentmemory server or its memory/signal MCP connection is unavailable, times out or fails validation. This requirement covers coordination signals; it cannot replace unrelated MCP document/tool operations. Failure must not discard a signal or change its intended session. Source: user direction, 2026-10-12. Status: implemented for local app-owned recipients (DD-100); remote recipients have no route yet and stay out of scope.
@@ -351,10 +360,12 @@ Trace: R-94 -> BG-49 -> SF-81 -> UC-84 -> FR-79 -> QAS-90 -> DD-102. Source: use
 
 
 ### R-95 Abandon a blocked planning workspace
+Status: Amended by R-209: after deleting, the most recently used other workspace opens; no replacement name is asked.
 Allow confirmed deletion of the current app-owned workspace after Generate plan fails or stalls. Offer Stop planning and delete: request cooperative cancellation, await owned-process quiescence and metadata settlement, then switch the same window to a fresh workspace and archive only the abandoned workspace app data. Never kill unrelated/reused PIDs or erase the project. Refusal must preserve the current workspace and expose the reason. Active implementation runs retain explicit Stop/recovery requirements.
 Trace: R-95 -> BG-50 -> SF-82 -> UC-85 -> FR-80 -> QAS-91 -> DD-103. Source: user request, 2026-10-12.
 
 ### R-96 Agents work inside the workspace sandbox; the coordinator decides beyond it
+Status: Amended by R-107, R-122: workers run with the highest permission their CLI offers by default and the operator may lower it in the profile; routine requests are decided by the coordinator.
 Agents coordinate and develop inside the plan without waiting on routine approvals. Work confined to the task workspace runs at once; a request reaching outside it (network, installs, history-changing Git, privilege, other processes, outside paths, secrets) is decided by the workspace coordinator , and a person is asked only when no coordinator can decide. The permission level is not chosen in the agent profile; it follows from the CLI. Time spent waiting for a decision does not count toward the task limit, and a task that times out can be resumed instead of failing.
 Trace: R-96 -> BG-51 -> SF-83 -> UC-86 -> FR-81 -> QAS-92 -> DD-104. Source: user request, 2026-10-13.
 
@@ -363,6 +374,7 @@ Claude usage must load even when Claude first asks whether to trust the project 
 Trace: R-97 -> BG-52 -> SF-84 -> UC-87 -> FR-82 -> QAS-93 -> DD-105. Source: user request, 2026-10-13.
 
 ### R-98 Planning start and workspace naming feedback
+Status: Amended by R-209: deleting the current workspace no longer asks for a replacement name.
 Generate plan shows progress with elapsed time from the moment it is pressed, including while the project folder is copied before the coordinator starts. Saving workspace settings updates the titlebar name at once. Deleting the current workspace asks for the name of the fresh workspace that replaces it instead of always naming it "New workspace".
 Trace: R-98 -> BG-53 -> SF-85 -> UC-88 -> FR-83 -> QAS-94 -> DD-106. Source: user request, 2026-10-13.
 
@@ -443,6 +455,7 @@ The coordinator plans every phase of a goal when the plan is generated, so Revie
 Trace: R-117 -> BG-72 -> SF-104 -> UC-107 -> FR-102 -> QAS-113 -> DD-125. Source: user request, 2026-10-13.
 
 ### R-118 A run survives closing or losing the desktop app
+Status: Not implemented on `main` (verification 2026-11-03, see docs/14): no close dialog and no Job Object breakaway; the run ends with the app on Windows.
 Closing the desktop app (or the app process ending) must not end a run: the run coordinator and its agent workers keep working and the app reattaches when reopened. Closing the window while a run is active asks: Keep running in the background (default), Stop the run and close, or Cancel.
 Trace: R-118 -> BG-73 -> SF-105 -> UC-108 -> FR-103 -> QAS-114 -> DD-127. Source: user request, 2026-10-13.
 
@@ -451,6 +464,7 @@ When a run is recorded as running but its coordinator and workers are gone (app 
 Trace: R-119 -> BG-74 -> SF-106 -> UC-109 -> FR-104 -> QAS-115 -> DD-128. Source: user request, 2026-10-13.
 
 ### R-120 Interruptions and silent workers are visible
+Status: Amended by R-159: time since the last output and whether the owned process is present are shown; the collapsed "Thinking… n updates" line and the interruption history are not implemented (see docs/14).
 The Agent Room shows when a run was interrupted and recovered (banner history and coordinator Activity), collapses a worker's consecutive thinking_tokens events into one line (Thinking… n updates, last at hh:mm) instead of empty Thinking tokens rows, and warns when a running task has produced no output for several minutes or its process is gone, suggesting Recover.
 Trace: R-120 -> BG-75 -> SF-107 -> UC-110 -> FR-105 -> QAS-116 -> DD-129. Source: user request, 2026-10-13.
 
@@ -470,11 +484,12 @@ Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source
 Ordinary-folder shared executions create task files and results directly in the selected project. No `.git` directory or link is created there. Record an immutable baseline before tasks start; Accept finalizes the verified result and Reject restores owned files to that baseline. Warn about manual edits to owned files while tasks run and refuse to overwrite later edits. Existing Git repositories retain their current behavior; legacy runs retain their original bindings.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.
 
-### R-124 Deleting workspaces needs no replacement name
+### R-209 Deleting workspaces needs no replacement name
 Deleting a workspace asks for no new workspace name. When the current workspace is deleted, the most recently used other workspace opens, so several workspaces can be deleted in a row; only when none is left does one empty workspace start.
-Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user request, 2026-10-13.
+Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Source: user request, 2026-10-13.
 
 ### R-125 Release-matched English and Korean manuals
+Status: Amended by R-144, R-197, R-200: manuals ship as offline HTML and tests check the version, screenshots and their age.
 Publish English and Korean operator manuals, a concise public README and genuine native screenshots matched to the shipped version. Keep implementation plans and internal decisions out of the README.
 Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.
 
@@ -501,6 +516,7 @@ Keep account percentages and refresh together beside the agent name. Show quota 
 Trace: R-130 -> BG-85 -> SF-117 -> UC-120 -> FR-115 -> QAS-126 -> DD-139. Source: user, 2026-10-14.
 
 ### R-131 Readable and focused Settings
+Status: Amended by R-178: the Agent tools guide and the user manual open from Settings, not the workspace menu.
 
 Separate section labels from selection controls with readable spacing. Hide agentmemory server configuration for Local Rust, retaining its saved value. Move Agent tools guide from Settings to the workspace menu.
 Trace: R-131 -> BG-86 -> SF-118 -> UC-121 -> FR-116 -> QAS-127 -> DD-140. Source: user, 2026-10-14.
@@ -530,7 +546,8 @@ Retrying plan generation clears the previous visible failure immediately, switch
 Plans reverted to their saved values can be approved; actual workspace/plan edits and active jobs still block approval with localized reasons. Compare normalized editable task values against a saved snapshot, retaining null/default semantics and preserving the baseline across local task add/remove. Claude api_error usage_limit_reached / HTTP 429 is an Error even without type/is_error. Persist a quota restriction without inventing utilization or a reset from duration fields; explicit retry/reset timestamps bind the durable reservation and reviewed five-hour fallback. Show the usage-limit reason instead of an opaque telemetry JSON blob. Trace: R-136 → BG-91 → SF-123 → UC-126 → FR-121 → QAS-132 → DD-145. Source: user, 2026-10-14.
 
 
-### R-137 Codex transport recovery / R-138 in-app manual
+### R-137 / R-138 Codex transport recovery; in-app manual
+Status (R-138): Amended by R-178: the manual opens from Settings, not the workspace menu.
 
 Codex reconnect attempts with a valid n/m counter and explicit WebSocket-to-HTTP fallback announcements are visible Warning events. All raw evidence/session IDs remain; turn.failed, real authentication/quota errors, missing final output, nonzero exit and timeout remain failures. No global Codex config is silently rewritten. The shared workspace menu opens bundled English/Korean user manuals offline with headings, lists, code blocks and safe text nodes; language switches update an open manual. The guide uses model_providers.openai-https (plural) and supports_websockets=false in user-level config. Follow managed Enterprise policy.
 Trace: R-137 → BG-92 → SF-124 → UC-127 → FR-122 → QAS-133 → DD-146; R-138 → BG-93 → SF-125 → UC-128 → FR-123 → QAS-134 → DD-147. User, 2026-10-14.
@@ -545,7 +562,7 @@ A model reply such as "Selected model is at capacity" is retried after a short w
 Trace: R-140 -> BG-95 -> SF-127 -> UC-130 -> FR-125 -> QAS-136 -> DD-149. Source: user requests, 2026-10-14.
 
 
-### R-141 Selected signal instructions / R-142 responsive native path selection
+### R-141 / R-142 Selected signal instructions; responsive native path selection
 
 The planner receives the workspace-selected coordination backend after operator rules, and every worker receives it after its task/dependency/lesson context. Local Rust requires no agentmemory daemon or CLI/MCP tool; progress remains normal owned CLI output captured by Rust. Agentmemory preferred delivery is host-owned and retains local fallback. Optional tool installation guidance cannot require or select a transport. Only registered checkpoint_v1 workers get addressed polling/ack/report instructions and exact executable-path shell examples; no new profile capability, peer recipient or approval is fabricated.
 
@@ -555,7 +572,7 @@ Trace: R-141 → BG-96 → SF-128 → UC-131 → FR-126 → QAS-137 → DD-150; 
 Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 
-### Workspace transfer menu — DD-152
+### R-143 Workspace transfer menu
 
 Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
@@ -566,17 +583,19 @@ Update README and English/Korean manuals for0.1.21. App-menu help displays actua
 Trace: R-144 -> BG-99 -> SF-131 -> UC-134 -> FR-129 -> QAS-140 -> DD-153. Source: user, 2026-10-14.
 
 
-### Saved-project Claude quota retry — DD-154
+### R-145 Saved-project Claude quota retry
 
 Saving a project folder after an empty-folder Claude usage attempt immediately schedules a fresh query. Empty project paths are excluded from automatic Claude queries; other providers retain their account refresh schedule. Folder changes invalidate only Claude scheduling context, never grant trust or execution permissions.
 Trace: R-145 → BG-100 → SF-132 → UC-135 → FR-130 → QAS-141 → DD-154. User, 2026-10-14.
 
-### Schema-constrained planning replies — DD-155
+### R-146 Schema-constrained planning replies
+Status: Amended by GitHub #337: the schema is strict enough for Codex Structured Outputs (every object lists all of its properties as required and is closed; `execution_options` is `{effort: string|null}` and `task_type` a nullable enum), and a failed planning step shows both what the CLI wrote to stderr and to stdout.
 
 Planning requests specify an explicit JSON Schema: phases, tasks, owned paths, dependencies and command arguments remain arrays, with registered agent IDs, required fields and no unknown properties. Claude receives --json-schema; Codex receives --output-schema bound to a retained local schema file. Other CLIs receive the exact schema in the planning prompt. Strict phase/task, ownership, role, dependency and human-approval validation remains unchanged; invalid objects are not guessed or silently reordered.
 Trace: R-146 → BG-101 → SF-133 → UC-136 → FR-131 → QAS-142 → DD-155. User, 2026-10-14.
 
 ### R-147 Retained completed rooms do not block workspace creation
+Status: Amended by R-149: an active run or job no longer blocks leaving; the workspace keeps running and is restored when revisited.
 
 Allow creation/switching after a completed room remains open; preserve old evidence. Active run or UI job still blocks departure.
 Trace: R-147 → BG-102 → SF-134 → UC-137 → FR-132 → QAS-143 → DD-156. GitHub #4, user2026-10-14.
@@ -586,10 +605,8 @@ Trace: R-147 → BG-102 → SF-134 → UC-137 → FR-132 → QAS-143 → DD-156.
 Recognize known interactive prompt variants before sending /usage; keep existing auth, no generation, bounded trust and timeout. Do not fabricate unavailable Enterprise allocations.
 Trace: R-148 → BG-103 → SF-135 → UC-138 → FR-133 → QAS-144 → DD-157. GitHub #5, user2026-10-14.
 
-DD-157 implementation note: the operator confirmed Windows Claude2.1.296 uses a > prompt and a Yes-I-trust-folder choice, with an explicit spent/allocated Enterprise line. Parse that declared allocation using existing exact-decimal subtraction; the display percentage is derived from remaining/allocated amounts. Date-only resets remain unscheduled. Committed fixtures use synthetic amounts; no operator account values are published.
 
-
-### Active workspace navigation — DD-158
+### R-149 Active workspace navigation
 
 Create, open and switch workspaces while planning, metadata collection or execution is active. Keep the owned Startup, child handles, controller and window/run leases for each active workspace; restore that session when revisited and read its current report/logs. Settings and job descriptors already persist in startup.json; progress/evidence remains in the original run, so navigation neither stops workers nor overwrites CLI state. Idle sessions release their leases and reopen from disk as before. Serialize composite navigation, acquire the target first, and retain the original on target/registry failure. Completed parked sessions can release their leases for exact-name-confirmed deletion; active or unknown work remains protected. Ignore late workspace/closed-room responses, reset per-workspace refresh tracking, and request a fresh snapshot before editing the new view. Export/import continues to transfer the existing reviewed configuration archive; live process handles are not exported.
 Trace: R-149 → BG-104 → SF-136 → UC-139 → FR-134 → QAS-145 → DD-158. User, 2026-10-15; supersedes the active-navigation restriction in DD-156.
@@ -600,6 +617,7 @@ A project folder has one active owning workspace. New goals are added within it;
 Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159. GitHub #6, user2026-10-15.
 
 ### R-151 Rust-only application and release toolchain
+Status: In progress on the Rust migration line (GitHub #9 and its follow-ups); `main` still ships the JavaScript pages that R-196, R-198, R-199 and R-202 govern, so this requirement is not met on `main`.
 All application behavior, user-interface interaction, release packaging, manual generation, and project-owned verification tooling shall be implemented in Rust. The distributed application shall not execute JavaScript or Python. Replace project-authored JavaScript and Python in these paths with Rust; do not vendor non-Rust implementation source from third-party projects. Preserve user-selected external agent CLIs and operating-system services as process/runtime boundaries.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160. Source: user, 2026-10-15.
 
@@ -636,6 +654,7 @@ While a task runs, the Agent Room shall show what is observable without reading 
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
 
 ### R-161 Chat with the coordinator from the workspace screen
+Status: Amended by R-179, R-181, R-187, R-188, R-192: the chat is a persistent terminal-style transcript, survives slow or unconfirmed sends, carries workspace and run context, and works while a plan is made.
 The workspace screen shall offer a slide-over chat with the registered coordinator, closed by default. The operator can ask how to run or use a finished result, where outputs are, or how to use the current screen; the coordinator answers from the project's files, plans and documents and from the manual. The chat is read-only: it gives exact commands for the operator to run and never changes files or runs commands itself.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
 
@@ -724,6 +743,7 @@ The application shall record which page request was slow or failed, and the ship
 Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193. GitHub #200, user, 2026-10-28.
 
 ### R-183 A standard, schema-based CLI interface
+Status: Amended by GitHub #341: output that is not valid JSON keeps a bounded, labeled excerpt of stdout and stderr; a profile may read text output (`on_invalid_json = text`) and declare a `denial_condition` on any event; automatic approval without a way to see refusals shows a configuration hint. Open: a matched denial must be reported as a distinct permission-denied task state with the tool name and message (today it is `failed`).
 The application shall define one schema-based contract for what goes into a CLI's stdin and what comes out of its stdout, stderr and exit code, that an in-house LLM agent CLI can implement directly or through a thin wrapper. The contract shall state the kind of work (classification and extraction, summary, analysis, code, long agentic work, creative generation) so that model, effort and prompt conditions fit the task and the model and are not the same for every model.
 Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.
 
@@ -796,6 +816,7 @@ A release shall not carry user-facing docs that disagree with it: the README and
 Trace: R-200 → BG-155 → SF-188 → UC-191 → FR-192 → QAS-198 → DD-212. GitHub #290, user, 2026-11-01.
 
 ### R-201 A slow Claude usage query is waited for and shown
+Status: Amended by GitHub #321: the agent card no longer shows the elapsed usage-query text; the spinning refresh icon marks a running query, and the run screen keeps its source line.
 The Claude usage query shall be given up only after a minute, not after 20 seconds, so that a machine where the CLI starts or answers slowly still reports usage. When it is given up, the message shall name the limit and the stage it was waiting in. While a usage query runs, the agent card shall show how long it has run.
 Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213. GitHub #297, user, 2026-11-01.
 
