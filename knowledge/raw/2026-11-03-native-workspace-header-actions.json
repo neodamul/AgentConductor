@@ -3,7 +3,7 @@
   "kind": "native-workspace-header-actions-and-chat-placement",
   "issue": 9,
   "source_branch": "codex/issue-9-native-ui-parity",
-  "source_commit": "pending-commit",
+  "source_commit": "ea8f3caaf00b8df1f14ec7f848f3761d0e0a2432",
   "reference": "origin/main Workspace header and app-bar screenshot comparison",
   "change": {
     "page_header": [
