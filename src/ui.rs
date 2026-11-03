@@ -215,6 +215,8 @@ pub struct Room {
     window_lease: Mutex<crate::leases::Lease>,
     parked_workspaces: Mutex<std::collections::BTreeMap<PathBuf, workspaces::ParkedWorkspace>>,
     workspace_navigation: Mutex<()>,
+    /// R-118: the operator confirmed closing the window; the native shell closes it.
+    closing: std::sync::atomic::AtomicBool,
 }
 impl Room {
     /// A native window holds one kernel lease per canonical run directory.
@@ -244,6 +246,7 @@ impl Room {
             window_lease: Mutex::new(lease),
             parked_workspaces: Mutex::new(std::collections::BTreeMap::new()),
             workspace_navigation: Mutex::new(()),
+            closing: Default::default(),
         })
     }
     pub fn startup(root: &Path, exe: &Path) -> Result<Self, String> {
@@ -258,6 +261,7 @@ impl Room {
             window_lease: Mutex::new(lease),
             parked_workspaces: Mutex::new(std::collections::BTreeMap::new()),
             workspace_navigation: Mutex::new(()),
+            closing: Default::default(),
         })
     }
     fn surface(&self) -> Result<Option<Arc<setup::Startup>>, String> {
@@ -292,6 +296,7 @@ mod controller;
 use controller::*;
 
 mod automatic;
+mod close;
 mod update;
 
 mod diagnostics;

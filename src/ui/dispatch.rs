@@ -96,6 +96,9 @@ impl Room {
             };
             return Ok(serde_json::json!({"html":html}));
         }
+        if kind["kind"] == "close_window" {
+            return self.close_window(kind["stop"] == true);
+        }
         // DD-135: update checks and installs work from any surface.
         if let Some(update @ ("update_status" | "check_update" | "apply_update")) =
             kind["kind"].as_str()

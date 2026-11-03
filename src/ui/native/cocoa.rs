@@ -1,4 +1,5 @@
 mod brand;
+mod close;
 mod menu;
 use std::{
     ffi::{CStr, CString, c_char, c_void},
@@ -105,6 +106,7 @@ extern "C" fn deliver(context: Id) {
             let pool = send0(send0(class("NSAutoreleasePool"), "alloc"), "init");
             reply(result.block as Id, result.value);
             send0(pool, "drain");
+            close::close_if_confirmed(BRIDGE.get().unwrap());
         }
         if let Some(bridge) = BRIDGE.get() {
             bridge.active.fetch_sub(1, Ordering::AcqRel);
@@ -454,8 +456,10 @@ pub fn open(room: Arc<super::super::Room>) -> Result<(), String> {
             transmute::<extern "C" fn(Id, Sel, Id), unsafe extern "C" fn()>(close_window),
             encoding.as_ptr(),
         );
-        objc_registerClassPair(delegate_class);
     }
+    close::register(delegate_class);
+    // SAFETY: every method of the delegate class was added above.
+    unsafe { objc_registerClassPair(delegate_class) };
     let delegate = send0(delegate_class, "new");
     send1(window, "setDelegate:", delegate);
     menu::install(app, window)?;

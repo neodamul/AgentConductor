@@ -6,6 +6,9 @@ pub enum Surface {
     AgentRoom,
 }
 
+/// R-118: asks the page whether to close while a run works; a page without the dialog confirms at once.
+#[cfg(all(any(target_os = "macos", windows), not(feature = "native-ui-probe")))]
+const CLOSE_REQUESTED: &str = "window.__acCloseRequested?window.__acCloseRequested():window.__acRequest(JSON.stringify({kind:'close_window',stop:false}))";
 #[cfg(all(target_os = "macos", not(feature = "native-ui-probe")))]
 mod cocoa;
 /// Windows shell: the shared pages in the system WebView2 runtime with the same

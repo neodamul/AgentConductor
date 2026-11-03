@@ -63,20 +63,10 @@ impl Room {
             }),
         }
         // Runs of every saved workspace, not only the open one.
-        match workspaces::saved() {
-            Ok(saved) => {
-                for workspace in saved {
-                    let Ok(entries) = fs::read_dir(&workspace) else {
-                        continue;
-                    };
-                    let name = workspace
-                        .file_name()
-                        .map_or_else(String::new, |n| n.to_string_lossy().into_owned());
-                    for run in entries.flatten().map(|e| e.path()) {
-                        if run.join("report.json").is_file() {
-                            blockers.extend(run_blocker(&language, &name, &run));
-                        }
-                    }
+        match saved_runs() {
+            Ok(runs) => {
+                for (name, run) in runs {
+                    blockers.extend(run_blocker(&language, &name, &run));
                 }
             }
             Err(error) => blockers.push(Blocker::Unknown {
@@ -90,4 +80,23 @@ impl Room {
             Err(message(&language, &blockers))
         }
     }
+}
+
+/// Every run folder (with its workspace name) of every saved workspace.
+pub(super) fn saved_runs() -> Result<Vec<(String, PathBuf)>, String> {
+    let mut runs = Vec::new();
+    for workspace in workspaces::saved()? {
+        let Ok(entries) = fs::read_dir(&workspace) else {
+            continue;
+        };
+        let name = workspace
+            .file_name()
+            .map_or_else(String::new, |n| n.to_string_lossy().into_owned());
+        for run in entries.flatten().map(|e| e.path()) {
+            if run.join("report.json").is_file() {
+                runs.push((name.clone(), run));
+            }
+        }
+    }
+    Ok(runs)
 }
