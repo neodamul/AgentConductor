@@ -12,6 +12,8 @@ The exact source commit `5aae8708` also builds a local macOS package archive (`a
 
 The Windows job in prior run `41595881419` failed before source-layout or tests. After Cargo dependency compilation, the hosted runner returned Windows OS error 433 (“A device which does not exist”) while writing Cargo fingerprints under `D:\a\AgentConductor\AgentConductor\target` and reading a test file. No Rust compiler diagnostic appeared. The retry in `41598286445` passed Windows validation. Keep #310 open until its packaged schedule journey passes.
 
+Follow-up run `41604900376` exposed seven stale source-contract assertions on macOS: six in `tests/windows_desktop_driver.rs` and one in `tests/windows_run_lifecycle.rs` still demanded UIA `ValuePattern.SetValue` and its previous diagnostic markers. They now assert the focus-checked keyboard path, UIA value readback, and save ordering. Local focused verification passes 17 tests with 1 ignored; source-layout 2/2, rustfmt, and diff hygiene pass. The exact-head Windows packaged journey still needs a rerun.
+
 ## Current migration reconciliation — 2026-11-02 (updated)
 
 GitHub currently shows one open pull request: draft root PR #22. Its head is

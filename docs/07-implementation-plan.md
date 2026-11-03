@@ -1,10 +1,19 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Align Windows driver contract tests with keyboard input — issue #9
+
+- [x] Red: run `41604900376` failed macOS tests because six `windows_desktop_driver` source assertions and one `windows_run_lifecycle` assertion still required the removed UIA `ValuePattern.SetValue` call and old diagnostic markers.
+- [x] Green: assert focus-gated Ctrl+A/keyboard input, continued UIA value readback, and save ordering; remove stale requirements for the setter call.
+- [x] Local Verify: `windows_desktop_driver` + `windows_run_lifecycle`: 17 passed, 1 ignored; `source_layout`: 2 passed; rustfmt and diff check pass.
+- [x] Size Verify: `windows_desktop.rs` 216 lines; `windows_desktop_driver.rs` 220; `windows_run_lifecycle.rs` 297 (all <=300).
+- [ ] Exact-head Verify: commit and push these test corrections; rerun cross-platform validation and packaged Windows desktop journey on the new head.
+
 ### 2026-11-03 — Exercise the Windows workspace goal with keyboard input — issue #9
 
 - [x] Red: exact-head Windows package run `41598286445` built and smoked the package, then failed `default_native_workspace_is_accessible_and_saves_through_ui_automation`: UIA `ValuePattern.SetValue` left the observed goal blank and moved focus back to the window.
 - [x] Task: drive the focused, accessible Goal edit using Ctrl+A and actual keyboard text input; continue reading the UIA value and require the persisted workspace goal after Save.
 - [x] Local Verify: rustfmt, `source_layout` (2/2), diff check; `tests/windows_desktop.rs` is 216 lines.
+- [x] Push test adjustment `0c8c71b6`; exact-head Platform Validation run `41604900376` has started.
 - [ ] Windows Verify: rerun the packaged desktop journey on the updated exact commit; do not count Windows UI acceptance until the saved goal is observed.
 - [ ] Preserve runner evidence: three packaged coordinator-chat lifecycle cases were explicitly skipped because hosted Windows denied process breakaway from its Job Object; those cases still need an eligible Windows host.
 
@@ -27,7 +36,7 @@
 - [x] Exact-head Platform Validation run `41598286445`: macOS and Windows passed build, source-layout, all-target tests, opt-in native UI tests/checks, formatting, Clippy, and unsafe-block comment checks.
 - [x] Exact-head macOS native package and packaged smoke passed in run `41598286445`.
 - [x] Exact-head Windows package archive and smoke passed, but packaged default-desktop UI automation failed to set Goal through UIA `ValuePattern.SetValue`; see the TDD section above.
-- [ ] Push the keyboard-entry test adjustment after local checks and rerun the Windows package gate.
+- [x] Commit/push the keyboard-entry test adjustment; rerun package validation on the new exact head `0c8c71b6`.
 - [ ] Keep #310 open until its exact packaged Windows schedule journey passes.
 
 ### 2026-11-03 — Restore the Workspace location status bar — issue #9
