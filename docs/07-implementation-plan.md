@@ -1,3 +1,12 @@
+## 2026-11-03 — #378 agent removal overlay
+
+Existing trace: R-151 native UI migration and R-101 shared registry, with the design-guide containment/dialog rules (workflow #350; quality gate #348).
+
+- [x] Plan: reproduce inline removal confirmation shifting workspace content.
+- [x] Task: use the existing egui modal; preserve deletion/persistence and cancel paths.
+- [x] Verify: layout regression fails before the change (51px push-down); after the change geometry remains stable and pointer-driven confirm/cancel work. Existing accessibility confirmation test moved to the dedicated modal suite.
+- [x] Completed: 16 focused tests pass; warning-denied Clippy and the 300-line guard pass. No release or full UI parity claim.
+
 ## 2026-11-03 — #374 current Resume verification
 
 - [x] Plan: compare historical Windows UI lifecycle failure with current recovery code.
