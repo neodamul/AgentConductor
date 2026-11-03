@@ -1593,3 +1593,7 @@ The native framebuffer capture at `docs/evidence/issue9-current-head-workspace-f
 ## Permission-denied presentation — 2026-11-03
 
 Claude's #341 implementation introduces a distinct `permission_denied` lifecycle state, including dependency blocking and Resume handling. Competing PR #376 used a failure category and was closed unmerged. Native rendering must recognize the selected lifecycle value in every shared status renderer: English/Korean labels, error colors and task borders. The run banner must also find denial errors when no aggregate run error is present. Tests: `native_ui_permission_denied`, `native_run_status_banner`, `native_run_status_rows`, `native_ui_status`, `source_layout` (10 passed). This is focused rendering evidence, not end-to-end backend integration or package acceptance.
+
+## Agent removal confirmation — #378
+
+Registry removal confirmation used to render inline and moved workspace content down by 51px. It now uses the existing egui modal pattern without changing the removal or SaveProfiles path. The dedicated `native_ui_removal_modal` suite asserts unchanged content geometry and drives the confirm/cancel buttons with pointer input. The confirmation accessibility test waits for the modal sizing frame and lives in the same dedicated suite to keep files below 300 lines. Focused regression/source-layout verification: 16 passed; Clippy passes. Desktop framebuffer review remains pending because the active app belongs to Claude's worktree and host screen capture failed.

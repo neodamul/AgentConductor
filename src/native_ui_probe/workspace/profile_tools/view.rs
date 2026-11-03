@@ -157,40 +157,48 @@ pub fn show_in_language(
         }
     }
     if let Some(id) = editor.remove_confirmation.clone() {
-        ui.separator();
-        ui.label(message(
-            language,
-            "startup.confirm_remove_agent_message",
-            &[("value1", &id)],
-        ));
-        ui.horizontal(|ui| {
-            if ui
-                .add_enabled(
-                    editable,
-                    egui::Button::new(text(language, "startup.confirm_remove_agent")),
-                )
-                .accessible_name(message(
+        let modal = egui::Modal::new(egui::Id::unique("native-remove-agent-confirmation")).show(
+            ui.ctx(),
+            |ui| {
+                ui.set_max_width(480.0);
+                ui.label(message(
                     language,
-                    "startup.confirm_remove_agent_named",
+                    "startup.confirm_remove_agent_message",
                     &[("value1", &id)],
-                ))
-                .clicked()
-                && remove_profile(profiles, coordinator, roles, editor, &id)
-            {
-                event = Some(Event::SaveProfiles);
-            }
-            if ui
-                .button(text(language, "startup.cancel_remove_agent"))
-                .accessible_name(message(
-                    language,
-                    "startup.cancel_remove_agent_named",
-                    &[("value1", &id)],
-                ))
-                .clicked()
-            {
-                editor.remove_confirmation = None;
-            }
-        });
+                ));
+                ui.horizontal(|ui| {
+                    if ui
+                        .add_enabled(
+                            editable,
+                            egui::Button::new(text(language, "startup.confirm_remove_agent")),
+                        )
+                        .accessible_name(message(
+                            language,
+                            "startup.confirm_remove_agent_named",
+                            &[("value1", &id)],
+                        ))
+                        .clicked()
+                        && remove_profile(profiles, coordinator, roles, editor, &id)
+                    {
+                        event = Some(Event::SaveProfiles);
+                    }
+                    if ui
+                        .button(text(language, "startup.cancel_remove_agent"))
+                        .accessible_name(message(
+                            language,
+                            "startup.cancel_remove_agent_named",
+                            &[("value1", &id)],
+                        ))
+                        .clicked()
+                    {
+                        editor.remove_confirmation = None;
+                    }
+                });
+            },
+        );
+        if modal.should_close() {
+            editor.remove_confirmation = None;
+        }
     }
     if let Some(catalog_event) = super::catalog_view::show(editor, editable, language, ui) {
         event = Some(catalog_event);
