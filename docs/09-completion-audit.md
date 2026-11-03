@@ -1,3 +1,10 @@
+## Windows Goal driver PowerShell parse failure — 2026-11-03
+
+- Exact-head Platform Validation run `41617997008` passed macOS. Windows reached the native desktop test, where `default_native_workspace_is_accessible_and_saves_through_ui_automation` stopped before input: PowerShell parsed `$goalX:` and `$goalY:` as invalid variable references in the diagnostic string. The packaged Windows job was skipped because validation failed.
+- TDD repair adds a source contract for braced variables; it failed against the old diagnostic. The driver now emits `${goalX}` and `${goalY}` before the colon separators.
+- Local locked/offline verification: `windows_desktop`, `windows_desktop_driver`, and `source_layout` pass 19 tests; rustfmt, diff hygiene, and the 300-line check pass. This does not replace Windows script execution.
+- Exact-head Windows validation and packaged Goal persistence remain pending. Acceptance stays at **22/50** (packaged workflows **22/25**; shipped/default Rust UI parity **0/25**).
+
 ## Native Workspace location status bar — 2026-11-03
 
 - Compared `origin/main` Workspace source with the native Rust render and found that Rust omitted the pinned bottom line showing the workspace root and its initial loading state.

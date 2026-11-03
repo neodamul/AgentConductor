@@ -40,6 +40,12 @@ fn goal_driver_reports_the_focused_control_and_exact_goal_value() {
 }
 
 #[test]
+fn goal_driver_uses_unambiguous_powershell_variable_boundaries_in_diagnostics() {
+    let source = include_str!("windows_desktop.rs");
+    assert!(source.contains("GOAL_CLICK:${goalX}:${goalY}:"));
+}
+
+#[test]
 fn goal_driver_checks_enabled_controls_then_validates_keyboard_text_by_readback() {
     let source = include_str!("windows_desktop.rs");
     let wait_enabled = source.find("$goal.Current.IsEnabled -or -not $save.Current.IsEnabled");

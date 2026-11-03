@@ -2,10 +2,10 @@
 
 ### 2026-11-03 — Do not gate keyboard input on UIA focus reporting — issue #9
 
-- [x] Red: exact-head run `41614474518` reached the updated Windows package driver, but UIA kept `HasKeyboardFocus` false after the physical click and the driver exited before typing.
-- [x] Task: allow keyboard entry after the visible-field click; record click bounds and focused element, then make actual Goal-value readback and saved configuration the acceptance checks.
-- [x] Local Verify: Windows driver/lifecycle/source-layout suites passed 19 tests with 1 ignored; rustfmt and diff hygiene passed. Updated test files are 223 and 227 lines.
-- [ ] Exact-head Verify: push and require the packaged Windows journey to read back and persist the Goal value.
+- [x] Red: exact-head run `41614474518` reached the updated Windows package driver, but UIA kept `HasKeyboardFocus` false after the physical click and the driver exited before typing. Follow-up run `41617997008` exposed a PowerShell parse error in the click diagnostic (`$goalX:`); the packaged Windows journey did not reach input or persistence checks.
+- [x] Task: allow keyboard entry after the visible-field click; record click bounds and focused element, then make actual Goal-value readback and saved configuration the acceptance checks. Delimit interpolated PowerShell variables before colons.
+- [x] Local Verify: the new interpolation contract failed before the fix and passes after it. Windows desktop/driver/source-layout suites pass 19 tests; rustfmt and diff hygiene pass. Updated test files are 223 and 233 lines.
+- [ ] Exact-head Verify: push and require the packaged Windows journey to parse the script, read back the Goal value, and persist it in configuration.
 
 ### 2026-11-03 — Click the native Goal field before typing — issue #9
 
