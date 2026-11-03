@@ -1,3 +1,12 @@
+## 2026-11-03 — #374 current Resume verification
+
+- [x] Plan: compare historical Windows UI lifecycle failure with current recovery code.
+- [x] Task: inspect run 41446760915 and artifact 13145767282; establish that the lifecycle state was not retained there. Existing later fixes are 812c5e33 and 2b0cbb8c.
+- [x] Verify: current local binary lifecycle test passes (1); UI child Resume, packet guards and stale-stop protection pass (14).
+- [ ] Completed: exact Windows packaged UI lifecycle remains unverified; issue #374 stays open with no new acceptance credit.
+
+Evidence: `docs/evidence/issue374-local-resume-20261103.json`. Downloaded temporary artifact was removed after inspection.
+
 ## 2026-11-03 — #341 native permission-denied presentation
 
 Trace: R-208 / DD-220; follows the selected main implementation on `claude/issue-341-denied-state`.
