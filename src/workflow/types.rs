@@ -35,6 +35,8 @@ pub struct TaskReport {
     pub automatic_retries: u32,
     #[serde(default)]
     pub timeouts: u32,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub failure_kind: Option<TaskFailureKind>,
     pub id: String,
     pub status: String,
     pub cwd: PathBuf,
@@ -46,6 +48,13 @@ pub struct TaskReport {
     pub snapshot: Option<Snapshot>,
     pub artifacts: PathBuf,
 }
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum TaskFailureKind {
+    PermissionDenied,
+}
+
 #[derive(Clone, Serialize, Deserialize)]
 pub struct TestReport {
     pub task: String,

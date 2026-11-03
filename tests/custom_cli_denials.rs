@@ -148,6 +148,19 @@ fn the_new_settings_are_validated_and_custom_only() {
 }
 
 #[test]
+fn permission_denials_have_a_distinct_localized_task_state() {
+    let room = include_str!("../src/ui/room.js");
+    assert!(room.contains("failure_kind==='permission_denied'"));
+    assert!(room.contains("room.permission_denied"));
+    let en: serde_json::Value =
+        serde_json::from_str(include_str!("../src/ui/messages/en.json")).unwrap();
+    let ko: serde_json::Value =
+        serde_json::from_str(include_str!("../src/ui/messages/ko.json")).unwrap();
+    assert_eq!(en["room.permission_denied"], "Permission denied");
+    assert_eq!(ko["room.permission_denied"], "권한 거부");
+}
+
+#[test]
 fn automatic_approval_without_any_way_to_see_a_denial_gets_a_hint() {
     assert!(profile(json!({})).configuration_hint().is_some());
     assert!(
@@ -215,6 +228,11 @@ mod worker {
         .await;
         let error = report.tasks[0].error.clone().unwrap_or_default();
         assert_eq!(report.tasks[0].status, "failed", "{error}");
+        assert_eq!(
+            report.tasks[0].failure_kind,
+            Some(agentconductor::workflow::TaskFailureKind::PermissionDenied),
+            "{error}"
+        );
         assert!(
             error.contains("Permission denied by non-interactive policy"),
             "{error}"
@@ -232,6 +250,11 @@ mod worker {
         let report = run_with(script, denial).await;
         let error = report.tasks[0].error.clone().unwrap_or_default();
         assert_eq!(report.tasks[0].status, "failed");
+        assert_eq!(
+            report.tasks[0].failure_kind,
+            Some(agentconductor::workflow::TaskFailureKind::PermissionDenied),
+            "{error}"
+        );
         assert!(error.starts_with("permission denied: tool bash"), "{error}");
         // Without the declaration the same output reads as a success, which is what the condition is for.
         let report = run_with(script, json!({})).await;
@@ -260,6 +283,11 @@ mod worker {
         .await;
         let error = refused.tasks[0].error.clone().unwrap_or_default();
         assert_eq!(refused.tasks[0].status, "failed");
+        assert_eq!(
+            refused.tasks[0].failure_kind,
+            Some(agentconductor::workflow::TaskFailureKind::PermissionDenied),
+            "{error}"
+        );
         assert!(error.contains("check the CLI configuration"), "{error}");
     }
 }

@@ -107,7 +107,7 @@ fn excerpt(bytes: &[u8]) -> String {
 }
 
 /// Words a CLI uses when it refuses to run a tool; text like this is a configuration problem, not progress.
-fn reads_as_refusal(text: &str) -> bool {
+pub(crate) fn reads_as_refusal(text: &str) -> bool {
     let text = text.to_lowercase();
     [
         "permission denied",

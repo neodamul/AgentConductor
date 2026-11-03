@@ -362,6 +362,7 @@
   "room.exit_e1fe73": "exit {value1}",
   "room.failed": "Failed: {value1}",
   "room.failed_031a8f": "Failed",
+"room.permission_denied": "Permission denied",
   "room.fetch_a_web_page": "Fetch a web page",
   "room.file": "File",
   "room.files": "Files",

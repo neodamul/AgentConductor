@@ -10,6 +10,7 @@ pub(in crate::workflow) async fn worker(
     report.error = None;
     report.restriction = None;
     report.pending_tool = None;
+    report.failure_kind = None;
     let stop_file = report.artifacts.parent().unwrap().join("stop.request");
     let mut stopped = false;
     let mut timed_out = false;
@@ -134,7 +135,9 @@ pub(in crate::workflow) async fn worker(
             }
             return Err(denied.or(provider_error).unwrap_or_else(||format!("agent exit={:?}, termination_signal={:?}, timed_out={}; inspect retained logs",process.exit_code,process.termination_signal,process.timed_out)));
         }
-        if let Some(error)=parse_error {return Err(format!("{error}\nthe CLI's own output:\n{}",crate::coordinator::output_excerpt(&process.stdout,&process.stderr)));}
+        if let Some(error)=parse_error {
+            return Err(format!("{error}\nthe CLI's own output:\n{}",crate::coordinator::output_excerpt(&process.stdout,&process.stderr)));
+        }
         if agent.cooperative == crate::plan::CooperativeMode::CheckpointV1 {
             let owner: process::Ownership = serde_json::from_slice(&fs::read(report.artifacts.join("process/owner.json")).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;
             owner.ensure_quiescent()?;
@@ -168,6 +171,9 @@ pub(in crate::workflow) async fn worker(
     match result {
         Ok(()) => report.status = "completed".into(),
         Err(e) => {
+            if crate::protocol::reads_as_refusal(&e) {
+                report.failure_kind = Some(TaskFailureKind::PermissionDenied);
+            }
             report.status = if stopped || stop_file.exists() {
                 "stopped"
             } else if relinquished {

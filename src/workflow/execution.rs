@@ -151,6 +151,7 @@ pub(super) async fn run_inner(
             retry_not_before: 0,
             automatic_retries: 0,
             timeouts: 0,
+            failure_kind: None,
             id: task.id.clone(),
             status: "pending".into(),
             cwd,

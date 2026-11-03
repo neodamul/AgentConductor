@@ -362,6 +362,7 @@
   "room.exit_e1fe73": "종료 코드 {value1}",
   "room.failed": "실패: {value1}",
   "room.failed_031a8f": "실패",
+"room.permission_denied": "권한 거부",
   "room.fetch_a_web_page": "웹 페이지 가져오기",
   "room.file": "파일",
   "room.files": "대상 파일",
