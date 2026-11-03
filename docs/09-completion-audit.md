@@ -9,7 +9,8 @@
 
 - The live open-PR inventory contains root Rust migration PR #22 and independent main-branch PR #342 for bug #341. PR #342 is not a child branch of #22.
 - The #9 branch contains `origin/main` through `f3b81902` and is 0 commits behind. Do not copy unmerged #342 changes into #9; port them after main integration.
-- PR #342's own description says the separate permission-denied task status is not implemented, while issue #341 requires a distinct permission-denied state. Keep #341 open and review the full acceptance contract after Platform Validation run `41576022811` reaches a terminal result.
+- Platform Validation run `41576022811` failed macOS in two `custom_cli_denials` worker tests: their shell fixtures exit without reading stdin, producing `write agent input: Broken pipe`. The Windows validation job was still running when inspected.
+- PR #342's own description says the separate permission-denied task status is not implemented, while issue #341 requires a distinct permission-denied state. The exact failure and missing acceptance item were reported on PR #342. Keep #341 open until both are fixed and verified.
 - PR #22 remains the single issue #9 integration PR and remains Draft until exact package and full shipped/default Rust UI parity gates pass.
 
 ## Windows desktop Goal input recovery — 2026-11-03

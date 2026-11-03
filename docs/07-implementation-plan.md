@@ -16,7 +16,9 @@
 - [x] Confirm the Rust branch includes current `origin/main` at `f3b81902` (0 commits behind); do not import unmerged PR #342 code prematurely.
 - [x] Inspect #341's acceptance and #342's description: the PR reports that a distinct permission-denied task status is not implemented, although #341 requires one. Keep the bug open and do not merge/close it based on passing checks alone.
 - [ ] After #342 merges, port its backend and user-visible behavior into the Rust-native #9 path, add Rust regression coverage, and preserve issue #9's single root PR.
-- [ ] Recheck #342's active Platform Validation run `41576022811`; then review the exact head against all #341 acceptance criteria before any merge decision.
+- [x] Review the live Platform Validation run `41576022811`: macOS fails two `custom_cli_denials` end-to-end tests with `write agent input: Broken pipe`; the fixture scripts exit without reading stdin. The Windows validation job was still running at inspection.
+- [x] Reported both the fixture failure and the missing distinct permission-denied task status (required by #341) on PR #342. Do not merge/close #341 until both are fixed and verified.
+- [ ] After PR #342 is corrected and merged to main, port its completed backend behavior into the Rust-native #9 path and cover the distinct status in Rust UI/tests.
 
 ### 2026-11-03 — Match legacy Workspace header distribution — issue #9
 
