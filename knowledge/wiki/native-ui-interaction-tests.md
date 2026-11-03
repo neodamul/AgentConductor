@@ -12,6 +12,8 @@ Tests that wait for multiple asynchronous workflow phases must give each phase i
 
 For Windows editable fields, `SetFocus()` can throw even when UI Automation reports a visible enabled edit. Catch that failure and use a mouse click only after checking the edit's process ID, enabled/visible state, and bounds; the click helper must also verify the point belongs to the packaged app process. Re-read the focused element and send keyboard input only when it is the exact app-owned edit. Keep this PowerShell in `tests/support/` so source-contract tests can inspect it and the Rust test remains under the 300-line limit.
 
+When emitting diagnostics from PowerShell, delimit variables before a colon (`${goalX}:`), or PowerShell may parse `$goalX:` as a scoped variable reference and fail before the UI journey starts. Add a source-contract regression and validate the script on Windows; Rust source tests alone cannot prove PowerShell parses successfully.
+
 Agent Room background refresh can temporarily disable a candidate rejection field while its prompt remains visible. Reacquire the app-owned edit by accessible name and retry `ValuePattern.SetValue` only while it is enabled and on-screen, with a short deadline and UIA diagnostics on failure. Never bypass the pending-action guard to force input.
 
 Windows may expose more than one UIA edit with the same accessible name during a settings transition. For editable settings, choose only an enabled, on-screen edit with nonempty bounds, and wait within a bounded deadline for it to become actionable before focusing or typing.

@@ -2,7 +2,11 @@
 
 ## Visual-parity evidence audit — issue #9 / 2026-11-03
 
-The available Rust Room screenshot is a source-build v0.1.57 capture at 1140×960 using a deterministic fixture with three completed mock tasks awaiting human approval. The available legacy screenshot visibly reports v0.1.49 at 1280×892 and contains a different goal and task/session state. These screenshots cannot support a same-state visual-parity score. Differences in panel geometry and hierarchy are visible, but should be triaged against a matched capture pair rather than scored from these unlike fixtures. The Rust shipped/default UI parity score therefore remains 0/25. Capture both exact builds with the same workspace, task/session data, locale, theme, and viewport before reviewing every visible control and layout detail.
+The available screenshots are not a valid comparison pair. The legacy Workspace PNG visibly reports v0.1.55 although `screenshots-current.txt` claims v0.1.58; it shows three configured agents, a populated folder and goal, coordinator state, and the Prepared status at 1280×892. The Rust Workspace PNG reports v0.1.57, has no configured agents or saved goal, and measures 1140×720. The earlier Room captures are also mismatched: the Rust v0.1.57 capture at 1140×960 and legacy v0.1.49 capture at 1280×892 show different task/session data. These images cannot support a same-state parity score. The Rust shipped/default UI parity score remains 0/25. Recapture the exact current main and Rust builds with the same workspace/agent/task state, locale, theme, and viewport, then review each control and visible behavior.
+
+## Windows Goal input diagnostic parse failure — issue #9 / 2026-11-03
+
+Exact-head Platform Validation run `41617997008` passed macOS but Windows failed before Goal input: PowerShell parsed `$goalX:` and `$goalY:` as invalid variable references in the `GOAL_CLICK` diagnostic. The packaged Windows test therefore did not exercise input or persistence. TDD added a source contract that failed before the fix; the driver now braces the variables (`${goalX}`, `${goalY}`). Local focused tests pass 19 across the Windows desktop, driver, and source-layout suites. Exact Windows validation and package persistence remain required; source tests cannot prove PowerShell script execution.
 
 ## Exact-head platform failures and native test correction — issue #9 / #310 / 2026-11-03
 
