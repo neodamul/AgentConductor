@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Restore native Workspace header action order — issue #9
+
+- [x] Plan: match the legacy title → `New goal` → phase order and keep the action group separated across the header row.
+- [x] Red: a rendered geometry regression reproduced the Rust ordering defect; the test reads the phase text from egui's rendered shapes because its decorative AccessKit node has no bounds.
+- [x] Task / Green: reverse the right-to-left action group order and add spacing between the phase and button.
+- [x] Verify: both compact-header tests pass; warning-denied targeted Clippy, rustfmt, and `git diff --check` pass. Source and test files stay below 300 lines.
+- [ ] Same-state full-screen comparison, exact package validation, and #9 acceptance review remain open. No acceptance credit is claimed; #9 remains 22/50 and PR #22 remains Draft.
+
 ### 2026-11-03 — Restore exact-head native test validation — issue #9
 
 - [x] Plan: reproduce the macOS Platform Validation failure locally and keep the current checkbox-based workspace isolation and narrow-sidebar contracts.

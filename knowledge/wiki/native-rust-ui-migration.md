@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+## Workspace header action order — 2026-11-03
+
+The legacy header order is title, `New goal`, then phase. The native header uses a right-to-left action group, so child insertion order is reversed; place the phase first, then spacing, then the action. The phase is decorative and its AccessKit node has no bounds, so geometry tests should locate its rendered egui text shape. Two compact-header tests and warning-denied targeted Clippy pass after the correction. This is a local component check only; same-state screen parity remains open. Issue #9 remains 22/50. Evidence: `docs/evidence/issue9-native-header-order-20261103.json`.
+
 ## Workspace field labels and geometry — 2026-11-03
 
 The native settings row now uses the localized “Planning coordinator” label. Workspace name, coordinator selection, project path, and Browse controls use the 40 px interactive height in the legacy stylesheet. The project-folder field caps at 380 px at the 1280 px comparison viewport; the checkbox remains alongside Browse. Red-first AccessKit bounds checks caught the initial 28 px name field and 420 px project field. Twenty focused tests across five targets, warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line guard pass. The source-built first-run capture verifies only these visible form details; it does not establish full-screen parity. Issue #9 remains 22/50, with no acceptance credit. Evidence: `docs/evidence/issue9-workspace-form-geometry-20261103.json`.

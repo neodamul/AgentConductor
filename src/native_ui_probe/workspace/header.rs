@@ -58,12 +58,6 @@ pub fn show_title_controls(
             .accessible_name(title);
         });
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-            clicked = ui
-                .add_enabled(
-                    can_start_new_goal,
-                    egui::Button::new(text(language, "startup.new_goal")),
-                )
-                .clicked();
             let status = text(language, phase);
             egui::Frame::new()
                 .fill(ui.visuals().faint_bg_color)
@@ -74,6 +68,13 @@ pub fn show_title_controls(
                 })
                 .response
                 .accessible_name(status);
+            ui.add_space(80.0);
+            clicked = ui
+                .add_enabled(
+                    can_start_new_goal,
+                    egui::Button::new(text(language, "startup.new_goal")),
+                )
+                .clicked();
         });
     });
     ui.add_space(12.0);
