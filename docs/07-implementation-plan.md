@@ -1,3 +1,13 @@
+## 2026-11-03 — #341 native permission-denied presentation
+
+Trace: R-208 / DD-220; follows the selected main implementation on `claude/issue-341-denied-state`.
+
+- [x] Plan: inspect Claude's implementation; retire duplicate PR #376 instead of merging competing status models.
+- [x] Task: render `permission_denied` through the shared native label, error colors, task-row border, and task-error banner.
+- [x] Verify: both new rendering tests fail before the fix; 10 tests across five focused suites pass after it, including source layout.
+- [x] Completed: native presentation unit implemented; no aggregate workflow acceptance credit.
+- [ ] Integrate the selected backend after its main merge and verify the end-to-end denial/Resume journey.
+
 # Implementation plan and TDD
 
 ### 2026-11-03 — Track each Rust UI acceptance workflow separately

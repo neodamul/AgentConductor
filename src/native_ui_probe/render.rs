@@ -14,7 +14,7 @@ pub fn status_color_with_motion(status: &str, time: f64, animate: bool) -> Color
         | "waiting_tool_approval"
         | "pending"
         | "ready" => Color32::from_rgb(218, 148, 34),
-        "failed" | "blocked" | "rejected" => Color32::from_rgb(205, 55, 55),
+        "failed" | "permission_denied" | "blocked" | "rejected" => Color32::from_rgb(205, 55, 55),
         "running" if animate => {
             let phase = time.rem_euclid(1.6) / 1.6;
             let pulse = 0.28 + 0.72 * (1.0 - (std::f64::consts::TAU * phase).cos()) / 2.0;
@@ -40,6 +40,7 @@ pub fn status_label<'a>(status: &'a str, language: &str) -> Cow<'a, str> {
         "waiting_tool_approval" => "room.waiting_tool_approval",
         "blocked" => "room.blocked",
         "failed" => "room.failed_031a8f",
+        "permission_denied" => "room.permission_denied",
         "completed" | "merged" => "room.completed",
         "approved" => "room.approved",
         "rejected" => "room.rejected",
@@ -51,7 +52,7 @@ pub fn status_label<'a>(status: &'a str, language: &str) -> Cow<'a, str> {
 
 pub fn status_colors(status: &str, dark_mode: bool) -> (Color32, Color32) {
     let (light, dark) = match status {
-        "failed" | "blocked" | "rejected" => (
+        "failed" | "permission_denied" | "blocked" | "rejected" => (
             (
                 Color32::from_rgb(196, 49, 42),
                 Color32::from_rgb(253, 236, 234),

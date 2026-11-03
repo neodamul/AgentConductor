@@ -20,7 +20,7 @@ pub(super) fn show(
     let reduced_motion = ui.style().animation_time == 0.0;
     let time = ui.input(|input| input.time);
     let border = match status {
-        "failed" => foreground,
+        "failed" | "permission_denied" => foreground,
         "waiting_approval" | "waiting_tool_approval" => {
             if !reduced_motion {
                 ui.ctx()
@@ -36,7 +36,7 @@ pub(super) fn show(
     };
     let row = egui::Frame::new()
         .stroke(egui::Stroke::new(
-            if waiting || status == "failed" {
+            if waiting || matches!(status, "failed" | "permission_denied") {
                 1.5
             } else {
                 0.0

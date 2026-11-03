@@ -1,4 +1,5 @@
 {
+  "room.permission_denied": "Permission denied",
   "native.a_native_room_has_already_been_opened_in": "a native Room has already been opened in this process",
   "native.ac_application_icon_initialization_failed": "AC application icon initialization failed",
   "native.ac_application_icon_initialization_failed_450d71": "AC application icon initialization failed: {e}",

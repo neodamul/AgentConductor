@@ -1589,3 +1589,7 @@ at 0/25 until the complete screen-by-screen gate passes.
 ## Current-head first-run Workspace capture — 2026-11-03
 
 The native framebuffer capture at `docs/evidence/issue9-current-head-workspace-first-run-2101377-20261103.png` was generated from branch head `2101377e` in one disposable HOME and visually inspected at 1280×892. It shows the current `Prepared` phase, `New goal` action, and coordinator launcher beside Settings. The empty coordinator warning is expected because the HOME contains no profile. This capture is not a populated same-state comparison and earns no parity credit; it is internal evidence, not a README/manual asset.
+
+## Permission-denied presentation — 2026-11-03
+
+Claude's #341 implementation introduces a distinct `permission_denied` lifecycle state, including dependency blocking and Resume handling. Competing PR #376 used a failure category and was closed unmerged. Native rendering must recognize the selected lifecycle value in every shared status renderer: English/Korean labels, error colors and task borders. The run banner must also find denial errors when no aggregate run error is present. Tests: `native_ui_permission_denied`, `native_run_status_banner`, `native_run_status_rows`, `native_ui_status`, `source_layout` (10 passed). This is focused rendering evidence, not end-to-end backend integration or package acceptance.

@@ -25,7 +25,13 @@ pub(super) fn show(
         .filter(|value| !value.trim().is_empty())
         .or_else(|| {
             tasks.and_then(|items| {
-                items.iter().find(|task| task["status"] == "failed")?["error"].as_str()
+                items.iter().find(|task| {
+                    matches!(
+                        task["status"].as_str(),
+                        Some("failed" | "permission_denied")
+                    )
+                })?["error"]
+                    .as_str()
             })
         });
     let (foreground, background) =
