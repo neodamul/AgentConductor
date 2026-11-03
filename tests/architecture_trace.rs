@@ -348,3 +348,21 @@ fn every_issue_unit_of_the_plan_traces_to_the_architecture() {
         "plan units without a trace: {untraced:?}"
     );
 }
+
+#[test]
+fn every_test_named_as_evidence_exists() {
+    let record = &docs()["14-architecture-verification.md"];
+    let tests = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests");
+    let missing: Vec<&str> = record
+        .split('`')
+        .skip(1)
+        .step_by(2)
+        .filter(|name| [".rs", ".cjs", ".py"].iter().any(|ext| name.ends_with(ext)))
+        .filter(|name| !name.contains('/') || name.starts_with("support/"))
+        .filter(|name| !tests.join(name).is_file())
+        .collect();
+    assert!(
+        missing.is_empty(),
+        "docs/14 names tests that do not exist: {missing:?}"
+    );
+}

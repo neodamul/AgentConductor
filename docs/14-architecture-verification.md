@@ -50,8 +50,6 @@ the tests that exercise it and says whether the behavior is present on `main`.
 
 | Requirement | Kind | Detail |
 |---|---|---|
-| R-102 | implemented, untested | Drag and drop and Move up/down are in `src/ui/startup.js` (DD-110); no automated test. |
-| R-114 | implemented, untested | `src/ui/room.js` renders the run phase beside the name (DD-122); no automated test. |
 | R-118 | not implemented | No close dialog (Keep running / Stop and close / Cancel) and no Job Object breakaway exist; `src/process/windows_job.rs` kills children with the job. docs/07 DD-127 is unchecked. |
 | R-120 | partly implemented | Silence and process state are shown since R-159 (`room.js` activity lines); the collapsed "Thinking… n updates" line and the interruption history of DD-129 are not implemented. |
 | R-151 | in progress | Rust-only UI is on the migration line (#9); `main` ships the JS pages. |
@@ -82,7 +80,7 @@ the tests that exercise it and says whether the behavior is present on `main`.
 | R-78 Nonblocking agent registration and metadata | current | `agent_tools_guide.rs`, `app_brand.rs`, `macos_bundle.rs`, `native_room_render.rs` (+7) | passes |
 | R-91 Save an edited agent profile visibly | current | `profile_persistence.rs`, `test_profile_save_feedback.py` | passes |
 | R-101 Agent CLI list is a master list | current | `agent_master_list.rs`, `workspace_registry.rs` | passes |
-| R-102 Reorder agent cards | current | — | implemented, untested |
+| R-102 Reorder agent cards | current | `agent_order_runtime.cjs` (added; the drag gesture itself is not driven) | passes |
 | R-132 Custom CLIs that approve their own tools can run | current | `self_approving_cli.rs` | passes |
 | R-154 Custom CLI behavior belongs to its agent profile | current | `protocol.rs`, `quota_custom.rs` | passes |
 | R-158 Configure custom CLI models, execution options, and result d | current | `declarative_cli_profiles.rs` | passes |
@@ -232,7 +230,7 @@ the tests that exercise it and says whether the behavior is present on `main`.
 | R-104 Activity tab reads like the CLI | current | `room_activity_text.cjs`, `room_activity_text.rs` | passes |
 | R-108 Task list without account usage | current | `room_quota_selection.rs` | passes |
 | R-109 The coordinator is selectable and shows its work; one name | current | `coordinator_board.cjs` | passes |
-| R-114 The run's phase beside the workspace name | current | — | implemented, untested |
+| R-114 The run's phase beside the workspace name | current | `run_phase_title_runtime.cjs` (added) | passes |
 | R-115 Readable Agent Room text and agent icons sized to their name | current | `room_task_rows.rs` | passes |
 | R-159 Show live agent activity, current tool, and time since last  | current | `activity_record.rs`, `activity_tool.rs`, `room_activity_snapshot.rs`, `room_activity_text.cjs` | passes |
 | R-160 Keep the Agent Room focus on the work that is in progress | current | `room_follow_focus.cjs`, `room_follow_focus.rs` | passes |

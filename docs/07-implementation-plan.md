@@ -1289,7 +1289,7 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [ ] Task / Red/Green: implementation and regression tests.
 - [ ] Verify: Windows local tests and native run.
 - [ ] Complete: release.
-- [ ] Verified 2026-11-03 (GitHub #349): implemented in `src/ui/startup.js` (drag and drop, Move up/down); no automated test yet.
+- [x] Verified 2026-11-03 (GitHub #349): implemented in `src/ui/startup.js` (drag and drop, Move up/down); `tests/agent_order_runtime.cjs` added.
 
 ### Readable file paths everywhere — DD-111
 - [x] Plan: R-103 -> BG-58 -> SF-90 -> UC-93 -> FR-88 -> QAS-99 -> DD-111.
@@ -2582,6 +2582,6 @@ Trace: amends R-183 (see docs/README.md, requirement areas).
 Trace: amends R-13 (requirements trace to tests); rules in docs/README.md, record in docs/14.
 
 - [x] Plan: the trace documents had one identifier chain with two meanings, four sections titled by their DD name, a goal defined twice, cited but undefined DD/DDR identifiers, amendments split from their entries, requirements changed by later ones without a status, issue fixes with no trace, and a README index frozen at R-59.
-- [x] Task: renumber the second chain (R-209 … DD-221), restore headings, merge duplicates and stray amendments, add `Status:` lines to requirements, use cases and QAS, trace every issue unit, rebuild the README index and matrix by area; `tests/architecture_trace.rs` enforces the rules (mutation run: four of six tests fail on injected faults); `tests/agent_master_list.rs` covers R-101.
-- [x] Verify (macOS): full suite; docs/14 lists requirement evidence and the gaps (R-118 not implemented, R-120 partly, R-102 and R-114 untested, R-151 on the Rust line, R-183 open item from #341).
+- [x] Task: renumber the second chain (R-209 … DD-221), restore headings, merge duplicates and stray amendments, add `Status:` lines to requirements, use cases and QAS, trace every issue unit, rebuild the README index and matrix by area; `tests/architecture_trace.rs` enforces the rules (mutation run: four of six tests fail on injected faults); `tests/agent_master_list.rs` covers R-101, `tests/agent_order_runtime.cjs` R-102 and `tests/run_phase_title_runtime.cjs` R-114.
+- [x] Verify (macOS): full suite; docs/14 lists requirement evidence and the gaps (R-118 not implemented, R-120 partly, R-151 on the Rust line, R-183 open item from #341).
 - [ ] Complete: merge only on request.
