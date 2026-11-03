@@ -8190,3 +8190,13 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Verify: custom CLI, native profile editor, coordinator snapshot, and chat blocker suites pass (19 tests). Locked/offline full target coverage passes in two batches: 1,218 tests across 359 suites, then 139 tests across the remaining 53 suites; zero failures. The all-target command exceeded its 600-second wrapper before the last batch, which was then run separately.
 - [x] Quality: warning-denied all-target Clippy, rustfmt, diff hygiene, and the ≤300-line guard pass. Graphify refreshed without clustering (13,344 nodes / 21,484 edges); CocoIndex remains unavailable in this runtime.
 - [x] Commit/push: pushed merge commit `42ead92e`; updated PR #22 and issue #9 with current tests and scope. PR #22 is the only open PR, remains Draft because #9 is 22/50, and is now 0 commits behind `main`. GitHub reports it mergeable; macOS and Windows validation jobs are still in progress. No packaged-workflow or UI parity credit is added.
+
+### 2026-11-03 — Align native Workspace rail geometry — issue #9
+
+- [x] Plan: compare the populated Rust Workspace with the available legacy source screenshot; the native rail and agent cards were wider, moving the main form right.
+- [x] Red: tighten the AccessKit viewport regression for the folder and goal controls from x=344 to x=314; it failed before the layout change.
+- [x] Task / Green: reduce the default rail width, set its inner margins explicitly, and keep the Workspace root frame/card helpers in separate Rust modules so `workspace.rs` stays within 300 lines.
+- [x] Verify (local): the manual-capture argument, Workspace geometry, sidebar density, and sidebar footer suites pass 9/9; warning-denied all-target Clippy, rustfmt, diff hygiene, and the ≤300-line guard pass.
+- [x] Assetize: refresh Graphify to 13,369 nodes / 21,515 edges and add the sizing rationale to the native Rust UI LLM Wiki. CocoIndex is not installed in this runtime.
+- [ ] Verify visually: the opt-in GUI capture did not produce an image in this macOS session (window host logged an XPC connection error); the geometry test is component-level evidence only.
+- [ ] Complete: review a fresh full-screen capture and exact package workflows before changing #9 acceptance. Keep issue #9 at 22/50 and PR #22 Draft.

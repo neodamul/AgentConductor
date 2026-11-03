@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+## Workspace sidebar width and card insets — 2026-11-03
+
+The available legacy source screenshot uses a 290 px left rail with agent cards inset from both edges. The native Workspace had a wider default egui panel and asymmetric card space. The Rust panel now uses an explicit default width and frame margins, while the root Workspace frame and reusable settings-card frame live in separate modules to keep `workspace.rs` below 300 lines. A Red/Green AccessKit regression checks that the folder and goal controls begin at x=314 in a 1280-point raw viewport. Four focused suites pass 9 tests; warning-denied all-target Clippy, rustfmt, diff checks, and the source/test 300-line guard pass. The local GUI capture attempt did not produce a screenshot because the app host reported an XPC connection error, so this is component geometry evidence only and earns no full-screen parity credit. Graphify refreshed to 13,369 nodes / 21,515 edges. CocoIndex is unavailable in this runtime. Issue #9 remains 22/50.
+
 ## Workspace header space-between geometry — 2026-11-03
 
 The current-main Workspace uses three siblings in a flex row with `justify-content: space-between`. Rendering the button and phase as a fixed-spaced nested right-to-left group produced a 493 px title/action gap and a 106 px action/phase gap. The native header now measures the action and phase widths and splits the remaining width evenly. A rendered-glyph regression verifies the order and gap equality. The populated 1280×892 Rust capture confirms the header and card geometry with synthetic quota observations; the legacy screenshot available for comparison is labeled v0.1.55 and is not current-main full-screen evidence. Graphify refreshed to 13,258 nodes and 21,360 edges. CocoIndex CLI is unavailable on this host, so no CocoIndex result is claimed. Issue #9 remains 22/50, with no acceptance credit. Evidence: `docs/evidence/issue9-native-workspace-header-20261103.json`.

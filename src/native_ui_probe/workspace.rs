@@ -1,12 +1,14 @@
 use super::{Pending, Probe, room};
-use eframe::egui::{self, CornerRadius, Frame, vec2};
+use eframe::egui::{self, Frame, vec2};
 use serde_json::Value;
 
 mod actions;
+mod card;
 pub mod chat;
 mod execution;
 pub(super) mod feedback;
 mod footer;
+mod frame;
 mod goal;
 pub mod goals;
 pub mod header;
@@ -17,6 +19,7 @@ pub(super) mod optimizer;
 mod pending;
 mod permissions;
 pub mod plan_source;
+mod plan_validation;
 mod planning;
 pub mod profile_tools;
 mod requests;
@@ -28,12 +31,15 @@ pub mod sidebar;
 pub mod signal_settings;
 pub(super) mod tasks;
 mod team;
+pub(super) use card::card;
 pub use execution::execution_ready;
 pub use execution::{
     Event as StartEvent, consent_in_language as show_execution_consent_in_language,
     controls as start_controls, controls_in_language as start_controls_in_language, start_request,
 };
+pub(super) use frame::root_frame;
 pub use pending::pending_message;
+pub(super) use plan_validation::plan_configuration_available;
 pub use planning::{planning_activity_color, planning_status};
 pub use requests::{picked_folder, prepare_request, task_edit_request, workspace_save_request};
 pub use role_rules::show_in_language as show_role_rules_in_language;
@@ -60,143 +66,138 @@ mod optimizer_tests;
 #[path = "../../tests/native_ui_probe/workspace_footer.rs"]
 mod footer_tests;
 
-pub(super) fn plan_configuration_available(snapshot: &Value) -> bool {
-    let config = &snapshot["config"];
-    config["goal"]
-        .as_str()
-        .is_some_and(|goal| !goal.trim().is_empty())
-        && config["coordinator"].as_str().is_some_and(|coordinator| {
-            config["profiles"]
-                .as_array()
-                .is_some_and(|profiles| profiles.iter().any(|profile| profile["id"] == coordinator))
-        })
-}
-
 pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
     let background = ui.visuals().panel_fill;
     ui.painter().rect_filled(ui.max_rect(), 0.0, background);
     ui.spacing_mut().item_spacing = vec2(10.0, 10.0);
-    Frame::new()
-        .fill(background)
-        .inner_margin(24.0)
-        .show(ui, |ui| {
-            probe.show_navigation(ui);
-            if probe.coordinator_chat.is_open() {
-                probe.coordinator_chat.set_compatibility_issue(
-                    probe
-                        .snapshot
-                        .as_ref()
-                        .and_then(chat::coordinator_chat_issue),
-                );
-                let language = probe.navigation.appearance.language().to_owned();
-                let progress =
-                    probe
-                        .active_work
-                        .label("chat", &language, std::time::Instant::now());
-                let event = egui::Panel::right("native-coordinator-chat")
-                    .resizable(true)
-                    .default_size(360.0)
-                    .size_range(300.0..=480.0)
-                    .show(ui, |ui| {
-                        probe.coordinator_chat.show_with_progress(
-                            &language,
-                            progress.as_deref(),
-                            ui,
-                        )
-                    })
-                    .inner;
-                match event {
-                    Some(chat::Event::Send(turns)) => probe.send_coordinator_chat(turns),
-                    Some(chat::Event::NewConversation) => probe.reset_coordinator_chat(),
-                    None => {}
-                }
-            }
-            probe.show_sharing(ui.ctx());
+    root_frame(background).show(ui, |ui| {
+        probe.show_navigation(ui);
+        if probe.coordinator_chat.is_open() {
+            probe.coordinator_chat.set_compatibility_issue(
+                probe
+                    .snapshot
+                    .as_ref()
+                    .and_then(chat::coordinator_chat_issue),
+            );
             let language = probe.navigation.appearance.language().to_owned();
-            let mcp_progress = probe
+            let progress = probe
                 .active_work
-                .label("mcp", &language, std::time::Instant::now());
-            if let Some(mcp::Event::Save(settings)) = probe.mcp_editor.show_with_progress(
-                probe.snapshot.as_ref(),
-                &language,
-                permissions::editable(probe) && probe.room_view.is_none(),
-                mcp_progress.as_deref(),
-                ui,
-            ) {
-                probe.save_mcp_settings(&settings);
-            }
-            if let Some(event) = probe.messenger_editor.show(
-                probe.snapshot.as_ref().unwrap_or(&Value::Null),
-                probe.navigation.appearance.language(),
-                permissions::editable(probe)
-                    && probe.room_view.is_none()
-                    && probe.pending.is_none(),
-                ui,
-            ) {
-                probe.send_messenger(event);
-            }
-            if let Some(event) = probe.signal_settings.show(
-                probe.navigation.appearance.language(),
-                permissions::editable(probe) && probe.room_view.is_none(),
-                probe.pending.is_some(),
-                ui,
-            ) {
-                probe.send_signal_settings(event);
-            }
-            if probe.room_view.is_some() {
-                let waiting_status = feedback::waiting_status(probe);
-                if let Some(room_view) = probe.room_view.as_mut() {
-                    room_view.pending_status = waiting_status;
-                }
-                let event = egui::ScrollArea::vertical()
-                    .id_salt("agent-room-content")
-                    .show(ui, |ui| {
-                        let room_view = probe.room_view.as_mut().unwrap();
-                        room::show(
-                            room_view,
-                            probe.snapshot.as_ref(),
-                            probe.pending.is_some(),
-                            probe.error.as_deref(),
-                            probe.navigation.appearance.language(),
-                            ui,
-                        )
-                    })
-                    .inner;
-                if let Some(event) = event {
-                    room_events::apply(probe, event);
-                }
-                if probe.room_view.is_some() {
-                    return;
-                }
-            }
-            let event = egui::Panel::left("native-agent-roster")
+                .label("chat", &language, std::time::Instant::now());
+            let event = egui::Panel::right("native-coordinator-chat")
                 .resizable(true)
-                .default_size(sidebar::DEFAULT_PANEL_WIDTH)
-                .size_range(210.0..=400.0)
+                .default_size(360.0)
+                .size_range(300.0..=480.0)
                 .show(ui, |ui| {
-                    sidebar::show(
-                        &probe.profiles,
-                        probe.snapshot.as_ref().unwrap_or(&Value::Null),
+                    probe
+                        .coordinator_chat
+                        .show_with_progress(&language, progress.as_deref(), ui)
+                })
+                .inner;
+            match event {
+                Some(chat::Event::Send(turns)) => probe.send_coordinator_chat(turns),
+                Some(chat::Event::NewConversation) => probe.reset_coordinator_chat(),
+                None => {}
+            }
+        }
+        probe.show_sharing(ui.ctx());
+        let language = probe.navigation.appearance.language().to_owned();
+        let mcp_progress = probe
+            .active_work
+            .label("mcp", &language, std::time::Instant::now());
+        if let Some(mcp::Event::Save(settings)) = probe.mcp_editor.show_with_progress(
+            probe.snapshot.as_ref(),
+            &language,
+            permissions::editable(probe) && probe.room_view.is_none(),
+            mcp_progress.as_deref(),
+            ui,
+        ) {
+            probe.save_mcp_settings(&settings);
+        }
+        if let Some(event) = probe.messenger_editor.show(
+            probe.snapshot.as_ref().unwrap_or(&Value::Null),
+            probe.navigation.appearance.language(),
+            permissions::editable(probe) && probe.room_view.is_none() && probe.pending.is_none(),
+            ui,
+        ) {
+            probe.send_messenger(event);
+        }
+        if let Some(event) = probe.signal_settings.show(
+            probe.navigation.appearance.language(),
+            permissions::editable(probe) && probe.room_view.is_none(),
+            probe.pending.is_some(),
+            ui,
+        ) {
+            probe.send_signal_settings(event);
+        }
+        if probe.room_view.is_some() {
+            let waiting_status = feedback::waiting_status(probe);
+            if let Some(room_view) = probe.room_view.as_mut() {
+                room_view.pending_status = waiting_status;
+            }
+            let event = egui::ScrollArea::vertical()
+                .id_salt("agent-room-content")
+                .show(ui, |ui| {
+                    let room_view = probe.room_view.as_mut().unwrap();
+                    room::show(
+                        room_view,
+                        probe.snapshot.as_ref(),
+                        probe.pending.is_some(),
+                        probe.error.as_deref(),
                         probe.navigation.appearance.language(),
-                        permissions::editable(probe),
-                        probe.profile_editor.is_editing(),
                         ui,
                     )
                 })
                 .inner;
             if let Some(event) = event {
-                team::handle_event(probe, event);
+                room_events::apply(probe, event);
             }
-            if feedback::visible(probe) {
-                egui::Panel::bottom("native-workspace-feedback")
-                    .show(ui, |ui| feedback::show(probe, ui));
+            if probe.room_view.is_some() {
+                return;
             }
-            footer::show(
-                probe.snapshot.as_ref().unwrap_or(&Value::Null),
-                probe.navigation.appearance.language(),
-                ui,
-            );
-            egui::CentralPanel::default().show(ui, |ui| {
+        }
+        let event = egui::Panel::left("native-agent-roster")
+            .resizable(true)
+            .default_size(sidebar::DEFAULT_PANEL_WIDTH)
+            .size_range(210.0..=400.0)
+            .frame(
+                Frame::side_top_panel(ui.style()).inner_margin(egui::Margin {
+                    left: 8,
+                    right: 23,
+                    top: 2,
+                    bottom: 2,
+                }),
+            )
+            .show(ui, |ui| {
+                sidebar::show(
+                    &probe.profiles,
+                    probe.snapshot.as_ref().unwrap_or(&Value::Null),
+                    probe.navigation.appearance.language(),
+                    permissions::editable(probe),
+                    probe.profile_editor.is_editing(),
+                    ui,
+                )
+            })
+            .inner;
+        if let Some(event) = event {
+            team::handle_event(probe, event);
+        }
+        if feedback::visible(probe) {
+            egui::Panel::bottom("native-workspace-feedback")
+                .show(ui, |ui| feedback::show(probe, ui));
+        }
+        footer::show(
+            probe.snapshot.as_ref().unwrap_or(&Value::Null),
+            probe.navigation.appearance.language(),
+            ui,
+        );
+        egui::CentralPanel::default()
+            .frame(Frame::central_panel(ui.style()).inner_margin(egui::Margin {
+                left: 39,
+                right: 12,
+                top: 8,
+                bottom: 8,
+            }))
+            .show(ui, |ui| {
                 let language = probe.navigation.appearance.language().to_owned();
                 let dirty = probe.navigation.has_unsaved_changes();
                 let snapshot = probe.snapshot.as_ref().unwrap_or(&Value::Null);
@@ -288,13 +289,5 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                     }
                 }
             });
-        });
-}
-
-pub(super) fn card(ui: &egui::Ui) -> Frame {
-    Frame::new()
-        .fill(ui.visuals().window_fill)
-        .stroke(ui.visuals().widgets.noninteractive.bg_stroke)
-        .corner_radius(CornerRadius::same(10))
-        .inner_margin(16.0)
+    });
 }

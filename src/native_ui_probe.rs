@@ -27,7 +27,7 @@ mod worker;
 #[path = "../tests/support/native_worker.rs"]
 pub(crate) mod worker_test_support;
 pub mod workspace;
-pub use app::open_window;
+pub use app::{app_storage_key, open_window};
 use pending::Pending;
 pub use render::{
     evidence as render_evidence, evidence_in_language as render_evidence_in_language, status_color,

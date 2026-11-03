@@ -2,7 +2,7 @@ use super::profile_tools;
 use eframe::egui::{self, CornerRadius, Frame, RichText, Stroke, vec2};
 use serde_json::Value;
 
-pub(super) const DEFAULT_PANEL_WIDTH: f32 = 298.0;
+pub(super) const DEFAULT_PANEL_WIDTH: f32 = 236.0;
 
 mod badges;
 pub(in crate::native_ui_probe::workspace) mod controls;
