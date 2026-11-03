@@ -1,5 +1,9 @@
 # Windows workspace lifecycle
 
+## Open bug #226 current-root checkpoint — 2026-11-03
+
+The current Rust root contains the deleted-default/last-saved-workspace startup fix and the exact Windows package regression. The current-root local batch passes 16 tests across workspace recovery, registry, Windows reopen/schedule contracts, and source layout. Platform Validation run `41594888214` was in progress for product source head `7328a35d`; the prior package run `41535022980` was cancelled. Keep #226 open until the exact Windows package confirms the deleted default is not recreated and the saved survivor is reopened.
+
 Sources: [UC-77–UC-80](../../docs/04-usecases.md), [DD-95–DD-98](../../docs/06-design-decisions.md), [manual](../../docs/user-manual.md).
 
 - Canonical Windows paths carry an extended prefix. Present project paths through the existing drive/UNC conversion, preserving filesystem identity and root separators.

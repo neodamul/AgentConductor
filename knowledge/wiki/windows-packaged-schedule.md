@@ -1,5 +1,9 @@
 # Windows packaged schedule interaction
 
+## Open bug #310 current-root checkpoint — 2026-11-03
+
+`tests/windows_schedule.rs` forwards `AC_RUN_DIR` to the PowerShell driver and checks the scheduled action against the same packaged run directory. The current-root local batch passes 16 tests across schedule dispatch, Windows reopen/schedule contracts, workspace recovery, and source layout. Platform Validation run `41594888214` was in progress for product source head `7328a35d`; after validation succeeds, its downstream package stage is configured to run `windows_schedule` against the exact release package. The prior run `41535022980` was cancelled. Keep #310 open until that packaged test persists the requested schedule timestamp in the run report.
+
 ## 2026-11-01 text-entry automation
 
 Windows package runs `41270341316` and `41280824549` exposed two test-driver assumptions: the lifecycle script required a prefilled TextEdit to have the exact UIA name `Stop reason`, and the desktop-save script required `ValuePattern` on an AccessKit text input. Those are not stable Windows UIA contracts for egui text fields. The drivers now locate the edit after its visible label and use keyboard focus plus `SendKeys`, matching normal user input. A local TDD check was red before the change and now passes with the source-layout/native-room batch (15 passed, 1 ignored), formatting and warning-denied Clippy. Exact Windows package execution is still required before these failures can be considered resolved.

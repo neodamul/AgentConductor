@@ -8208,3 +8208,11 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Confirm priority/status: #189 is an open `bug`; no new source change was needed because its current Rust implementation is already on PR #22.
 - [ ] Exact-package verify: current Platform Validation run [41594888214](https://github.com/neodamul/AgentConductor/actions/runs/41594888214) was in progress at inspection. This does not yet prove the exact Windows package chat journey.
 - [ ] Complete: close #189 only after the exact Windows package journey proves transcript persistence/reconnect and chat editor interaction. No issue #9 acceptance credit is added; keep #9 at 22/50 and PR #22 Draft.
+
+### 2026-11-03 — Revalidate workspace recovery #226 and packaged scheduling #310
+
+- [x] Plan: prioritize the two open `bug` issues before further enhancements; verify their existing fixes on the current #9 code root rather than duplicating them.
+- [x] Task / local verify: workspace recovery, registry, Windows reopen/schedule contracts, schedule dispatch, and source-layout tests pass 16 tests across seven suites.
+- [x] Confirm package coverage: workflow `platform-validation.yml` runs both `windows_workspace_reopen` and `windows_schedule` against the exact packaged Windows executable.
+- [ ] Exact-package verify: run [41594888214](https://github.com/neodamul/AgentConductor/actions/runs/41594888214) was in progress when inspected; previous run [41535022980](https://github.com/neodamul/AgentConductor/actions/runs/41535022980) was cancelled. No Windows package result is claimed.
+- [ ] Complete: close #226/#310 only after the package report proves survivor-workspace recovery and persisted schedule timestamp. Issue #9 remains 22/50; PR #22 remains Draft.
