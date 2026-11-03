@@ -24,7 +24,7 @@
 - [x] Plan / Red: compare the JavaScript `leave(() => changeGoal(...))` flow; a new UI test failed because native navigation had no New goal confirmation event.
 - [x] Task / Green: keep New goal enabled for dirty workspaces, show the existing localized discard dialog, and start the revisioned request only after explicit confirmation. Cancel/close leaves edits intact.
 - [x] Verify locally: 23 tests pass across seven focused targets; 11 public-doc tests and both source-layout checks pass; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line guard pass. The 1,313-test all-target run is from baseline commit `ea8f3caa`, before this confirmation-only follow-up.
-- [ ] Push the follow-up and update PR #22/issue #9. No aggregate or screen-parity credit is claimed; same-state screenshot review remains open.
+- [x] Push `8a537972` and update the existing Draft PR #22 and issue #9 progress. No aggregate or screen-parity credit is claimed; same-state screenshot review remains open.
 
 ### 2026-11-03 — Verify event and request-lane regressions — issue #9 / PR #255
 

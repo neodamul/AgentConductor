@@ -22,6 +22,7 @@
     "rustfmt_and_diff": "Passed."
   },
   "follow_up": {
+    "source_commit": "8a537972880c7eecadc61e3517a0b1055673606e",
     "behavior": "Keep New goal enabled with unsaved edits; show localized discard confirmation; enqueue the revisioned request only after approval; cancel preserves edits.",
     "focused_tests": "23 passed across seven targets: native_ui_header, native_ui_header_actions, native_ui_header_chat, native_ui_navigation_language, native_ui_new_goal_confirmation, native_ui_workspace_menu_layout, and source_layout.",
     "public_docs": "11 passed.",
