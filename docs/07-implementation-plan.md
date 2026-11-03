@@ -101,7 +101,10 @@
 - [x] Task: the current root branch exposes the localized chat placeholder as the multiline editor's accessible name, and the Windows driver locates that visible, enabled editor by its UIA name. No duplicate code change was needed.
 - [x] Verify: chat/accessibility/lifecycle/source-layout checks pass 11 tests across five suites; after writing the English LLM Wiki entry, `public_docs` and `source_layout` pass 13 tests across two suites. Graphify trace confirms the `chat/view.rs` source node and its imports/callees.
 - [x] Record: added `knowledge/raw/2026-11-03-issue189-current-head-chat-verification.md` and updated `knowledge/wiki/native-coordinator-chat.md`; CocoIndex CLI is not installed in this host, so no CocoIndex run is claimed.
-- [ ] Exact package: Platform Validation run `41500210315` is still executing on current head `397069af`. Check whether the Windows chat journeys actually run or report an explicit host Job Object skip; a skip is not acceptance evidence.
+- [x] Reverify (2026-11-03): on current Rust head `d5731f11`, chat persistence/interaction, editor accessibility, Windows driver contracts, package skip diagnostics, and source-layout pass 23 tests across seven targets; warning-denied all-target Clippy passes.
+- [x] Correct status: Platform Validation run `41500210315` was cancelled, not still executing. Current-head run `41553629403` is compiling/testing macOS and Windows targets but does not run the exact packaged chat UI journeys.
+- [x] Assetize: refresh the issue #189 raw observation and coordinator chat LLM Wiki; Graphify now contains 13,202 nodes / 19,775 edges / 967 communities. CocoIndex CLI is unavailable on this host.
+- [ ] Exact package: run the Windows chat persistence and in-flight reconnect journeys against the exact packaged binary on a host that permits the worker lifecycle. An explicit Job Object skip is not acceptance evidence.
 - [ ] Complete: keep bug #189 open until exact Windows packaged chat persistence/reconnect journeys pass; update issue #9 acceptance only from that evidence.
 
 ### 2026-11-03 — Verify remaining Rust bug ports locally — issues #226 and #310
