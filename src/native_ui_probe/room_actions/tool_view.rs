@@ -43,9 +43,20 @@ pub(in crate::native_ui_probe) fn tool_controls(
     if !confirmation_is_current {
         state.confirming_tool = None;
     }
+    if confirmation_is_current {
+        state.tool_dialog = state.confirming_tool.as_ref().map(|(id, _, _)| id.clone());
+    }
     if state.tool_dialog.as_ref().is_some_and(|id| {
         !requests.iter().any(|request| {
-            request["id"].as_str() == Some(id.as_str()) && request["status"] == "pending"
+            request["id"].as_str() == Some(id.as_str())
+                && (request["status"] == "pending"
+                    || request["status"] == "approved"
+                        && state
+                            .confirming_tool
+                            .as_ref()
+                            .is_some_and(|(current, action, _)| {
+                                current == id && *action == ToolAction::Refresh
+                            }))
         })
     }) {
         state.tool_dialog = None;
@@ -138,46 +149,6 @@ pub(in crate::native_ui_probe) fn tool_controls(
             }
         });
     let mut event = None;
-    if let Some((id, action, _)) = state
-        .confirming_tool
-        .clone()
-        .filter(|(id, _, _)| state.tool_dialog.as_deref() != Some(id.as_str()))
-        && let Some(request) = requests
-            .iter()
-            .find(|request| request["id"].as_str() == Some(id.as_str()))
-    {
-        ui.label(match action {
-            ToolAction::Approve => text("room.confirm_allow_tool_input_once"),
-            ToolAction::Reject => text("room.confirm_deny_tool_request"),
-            ToolAction::Refresh => text("room.confirm_refresh_tool_request"),
-        });
-        ui.monospace(format!(
-            "{} · {id}",
-            request["request"]["tool"]
-                .as_str()
-                .unwrap_or(text("room.unknown_tool"))
-        ));
-        ui.horizontal(|ui| {
-            if ui
-                .button(text("room.cancel_tool_decision"))
-                .accessible_name(text("room.cancel_tool_decision"))
-                .clicked()
-            {
-                state.confirming_tool = None;
-            }
-            if ui
-                .add_enabled(
-                    can_decide,
-                    egui::Button::new(text("room.confirm_tool_decision")),
-                )
-                .accessible_name(text("room.confirm_tool_decision"))
-                .clicked()
-            {
-                event = Some(super::super::room::Event::ToolDecision(action, id.clone()));
-                state.confirming_tool = None;
-            }
-        });
-    }
     if let Some(id) = state.tool_dialog.clone()
         && let Some(request) = requests
             .iter()

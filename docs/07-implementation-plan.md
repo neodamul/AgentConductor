@@ -1,3 +1,7 @@
+## Paused checkpoint — 2026-11-03
+
+The user stopped Rust development. Goal remains paused. Unfinished #382 is preserved on `codex/issue-382-unified-tool-modal`; do not merge, close, release or resume automatically. See `knowledge/raw/2026-11-03-rust-ui-paused-handoff.md` for source state, completed units, exact test limits and resume checklist. The checkpoint commit preserves work and does not mark #382 complete.
+
 ## 2026-11-03 — #380 Agent Room confirmation overlays
 
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160; refinement of the existing dialog containment requirement.
