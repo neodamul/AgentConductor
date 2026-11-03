@@ -916,7 +916,6 @@
   "startup.send_test_message": "Send test message",
   "startup.sends_a_short_message_when_a_decision_is": "Sends a short message when a decision is needed or a run ends. The webhook URL stays on this computer and is never exported.",
   "startup.session_model": "Session model",
-  "startup.sessions": "{value1} · {value2} sessions",
   "startup.settings": "Settings",
   "startup.settings_02f6ea": "SETTINGS",
   "startup.settings_saved": "Settings saved.",
