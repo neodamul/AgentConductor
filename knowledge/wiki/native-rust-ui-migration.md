@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+## Project-folder button label — 2026-11-03
+
+The native project-folder button now uses the localized `Browse…` label from the legacy Workspace, while the longer “Choose your project folder” text remains the input placeholder. An AccessKit regression failed against the old button label and passes after the correction. Sixteen affected native UI tests pass. This is a parity detail only; issue #9 remains 22/50 and no acceptance point is claimed. Evidence: `docs/evidence/issue9-browse-label-20261103.json`.
+
 ## Correct Workspace isolation placement — 2026-11-03
 
 The worktree checkbox is beside the project-folder picker, matching the current legacy source. A previous change moved it below goal/import controls after relying on an outdated Rust screenshot; that was incorrect and has been reversed. The AccessKit bounds regression failed against the misplaced control and now passes with the checkbox aligned to Browse. The only available main screenshot is labeled v0.1.55 and is used for this control's placement only, not full parity. Sixteen focused tests, two source-layout tests, warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line guard pass. Issue #9 remains 22/50; no acceptance point is claimed. Evidence: `docs/evidence/issue9-workspace-isolation-layout-20261103.json`.

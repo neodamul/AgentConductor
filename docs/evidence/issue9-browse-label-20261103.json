@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-03",
+  "issue": 9,
+  "reference": "origin/main:src/ui/startup.html",
+  "change": "Use the localized Browse label on the project-folder button and retain the longer folder-selection text as the input placeholder.",
+  "tdd": {
+    "red": {
+      "test": "project_picker_uses_the_legacy_browse_button_label",
+      "result": "failed: Rust button exposed the placeholder text instead of the localized Browse label"
+    },
+    "green": {
+      "command": "cargo test --locked --offline --features native-ui-probe --test native_ui_probe --test native_ui_probe_project_layout --test native_ui_workspace_isolation_layout",
+      "result": "16 tests passed across three targets"
+    }
+  },
+  "files": [
+    "src/native_ui_probe/workspace/goal.rs",
+    "tests/native_ui_probe.rs",
+    "tests/native_ui_probe_project_layout.rs",
+    "tests/native_ui_workspace_isolation_layout.rs"
+  ],
+  "acceptance": {
+    "issue_9_overall": "22/50",
+    "shipped_default_rust_ui": "0/25",
+    "credit_added": false
+  }
+}

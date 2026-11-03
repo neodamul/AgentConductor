@@ -27,7 +27,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             locale.text("startup.workspace_name_hint"),
             locale.text("startup.project_folder"),
             locale.text("startup.project_folder_hint"),
-            locale.text("startup.choose_your_project_folder"),
+            locale.text("startup.browse"),
             locale.text("startup.goal"),
             locale.text("startup.goal_hint"),
             locale.text("startup.save_workspace"),

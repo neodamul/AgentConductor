@@ -1,3 +1,7 @@
+# [2026-11-03] plan/task/verify | Restore the legacy project-folder button label — issue #9
+
+`origin/main:src/ui/startup.html` uses the localized “Browse…” text for the project-folder button and keeps “Choose your project folder” as the input placeholder. The new AccessKit test failed because Rust used the placeholder text on the button. Switching the button to `startup.browse` and leaving the placeholder unchanged made the affected native Workspace, project-picker, and isolation suites pass 16 tests. Issue #9 stays at 22/50 with no UI acceptance credit. PR #22 remains the only open PR, but its branch currently spans 1,178 commits and 1,847 files against `main`, a reviewability risk.
+
 # [2026-11-03] correction | Match worktree control to latest Workspace source — issue #9
 
 The prior layout change was wrong: it relied on a stale Rust capture and moved the worktree checkbox below goal/import controls. The current available `origin/main` Workspace reference keeps the checkbox in the project-folder row. An AccessKit bounds test first failed against the misplaced checkbox (Browse y=449..469; checkbox y=709..729), then passed after restoring the checkbox beside Browse. Sixteen focused tests, 2 source-layout tests, warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test limit pass. The v0.1.55 reference screenshot is used only for this control's placement, not full parity. Issue #9 remains 22/50 with no acceptance credit. This correction stays in the existing Draft PR #22; no extra PR was opened.

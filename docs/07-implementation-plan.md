@@ -31,6 +31,15 @@
 
 Issue #9 remains at 22/50 until the same-state screenshot review and full acceptance review are complete.
 
+### 2026-11-03 — Restore the legacy project-folder button label — issue #9
+
+- [x] Plan: `origin/main:src/ui/startup.html` uses “Browse…” as the button label and keeps “Choose your project folder” as the input placeholder.
+- [x] Red: the new AccessKit regression failed because the Rust button incorrectly displayed the longer placeholder text.
+- [x] Task / Green: use the localized `startup.browse` label for the button; keep `startup.choose_your_project_folder` for the repository field hint.
+- [x] Verify: 16 tests pass across native UI, project-picker, and workspace-isolation targets.
+- [ ] Full screen parity and package acceptance remain open; issue #9 stays 22/50. This label correction adds no acceptance point.
+- [ ] PR #22 remains Draft. Its current diff spans 1,178 commits and 1,847 files against `main`; keep this branch limited to issue #9 and record the branch size as a reviewability risk.
+
 ### 2026-11-03 — Restore Workspace header actions and coordinator placement — issue #9
 
 - [x] Plan: the same-state reference shows a phase badge and `New goal` action beside the Workspace title, with coordinator chat in the application bar beside Settings.

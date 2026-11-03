@@ -22,11 +22,7 @@ fn project_folder_picker_stays_visible_with_coordinator_drawer_open() {
     let mut released = frame(&context, &mut probe, vec![pointer(point, false)]);
     clear(&mut released);
     let mut opened = frame(&context, &mut probe, Vec::new());
-    let browse = find_bounds(
-        &opened,
-        Role::Button,
-        locale.text("startup.choose_your_project_folder"),
-    );
+    let browse = find_bounds(&opened, Role::Button, locale.text("startup.browse"));
     let labels = labels(&opened);
     let coordinator_edge = opened
         .platform_output

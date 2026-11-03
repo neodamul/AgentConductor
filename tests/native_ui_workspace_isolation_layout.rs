@@ -27,10 +27,7 @@ fn worktree_toggle_shares_the_project_picker_row() {
             .and_then(|(_, node)| node.bounds())
             .unwrap_or_else(|| panic!("missing {label}"))
     };
-    let picker = bounds(
-        Role::Button,
-        locale.text("startup.choose_your_project_folder"),
-    );
+    let picker = bounds(Role::Button, locale.text("startup.browse"));
     let isolation = bounds(
         Role::CheckBox,
         locale.text("startup.isolate_tasks_in_git_worktrees"),
@@ -38,6 +35,34 @@ fn worktree_toggle_shares_the_project_picker_row() {
     assert!(
         ((isolation.y0 + isolation.y1 - picker.y0 - picker.y1) / 2.0).abs() <= 2.0,
         "the latest main Workspace reference keeps execution isolation beside the project picker: picker={picker:?}, isolation={isolation:?}"
+    );
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+}
+
+#[test]
+fn project_picker_uses_the_legacy_browse_button_label() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut probe = Probe::default();
+    let locale = State::load();
+    let mut output = frame(&context, &mut probe);
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    output = frame(&context, &mut probe);
+
+    let nodes = &output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes;
+    let browse = locale.text("startup.browse");
+    assert!(
+        nodes
+            .iter()
+            .any(|(_, node)| node.role() == Role::Button && node.label() == Some(browse)),
+        "the project picker must use the legacy Browse label `{browse}`"
     );
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
