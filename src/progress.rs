@@ -75,6 +75,15 @@ impl Reader {
 }
 
 /// Owns the worker future so observation failure/cancellation drops its process group.
+fn with_output(spool: &Path, error: String) -> String {
+    let output = crate::coordinator::output_excerpt(spool, &spool.with_file_name("stderr.log"));
+    if output.is_empty() {
+        error
+    } else {
+        format!("{error}\nthe CLI's own output:\n{output}")
+    }
+}
+
 pub async fn observe<F: Future>(
     future: F,
     spool: &Path,
@@ -133,12 +142,12 @@ async fn observe_inner<F: Future>(
             result=&mut future=>{
                 // A launch failure can legitimately have no stdout spool.
                 if spool.exists() {
-                    while reader.poll(spool,task,attempt,true).await?.bytes_read {}
+                    while reader.poll(spool,task,attempt,true).await.map_err(|e| with_output(spool, e))?.bytes_read {}
                 }
                 return Ok(result);
             },
             _=tokio::time::sleep(delay)=>{
-                let observed=reader.poll(spool,task,attempt,false).await?.bytes_read;
+                let observed=reader.poll(spool,task,attempt,false).await.map_err(|e| with_output(spool, e))?.bytes_read;
                 delay=next_poll_delay(delay,observed);
             },
         }

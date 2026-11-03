@@ -842,3 +842,7 @@ Trace: R-206 → BG-161 → SF-194 → UC-198 → FR-199/FR-200 → NFR-88/NFR-8
 ### UC-199 Review an update blocked by active work
 The operator checks for an application update while workspace work or a failed readiness check prevents progress. The UI names active work, separates it from check failures, and offers a clear next step without launching the update.
 Trace: R-207 → BG-162 → SF-195 → UC-199 → FR-201/NFR-90 → QAS-206 → DDR-56 → DD-219.
+
+### UC-200 Configure and diagnose a custom CLI permission denial
+An operator edits a custom profile and may choose `on_invalid_json: text` to retain ordinary output as progress, while success still requires exit code zero and a result event. The operator may declare a denial event by event type, JSON Pointer and expected value, or by a case-insensitive message match, and may identify the tool and message pointers. When automatic tool approval is declared without a denial mapping, the native profile editor shows a non-blocking localized hint. During a run, a matched event is retained as denied and fails the task with its tool and reason; malformed JSON failures include a bounded, separately labeled stdout/stderr excerpt.
+Trace: R-208 → BG-163 → SF-196 → UC-200 → FR-202/NFR-91 → QAS-207 → DDR-57 → DD-220.

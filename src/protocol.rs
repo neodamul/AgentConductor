@@ -1,3 +1,5 @@
+mod provider;
+mod text_output;
 use serde::Serialize;
 use serde_json::Value;
 
@@ -28,6 +30,7 @@ pub enum EventKind {
     Usage,
     Warning,
     Error,
+    Denied,
     Unknown,
 }
 
@@ -40,62 +43,14 @@ pub struct Event {
     pub payload: Value,
 }
 
-// DD-146: Codex emits recoverable transport notices as top-level error events.
-// Only explicit retry/fallback announcements are nonterminal; final turn failures stay errors.
-fn codex_reconnecting(payload: &Value) -> bool {
-    if payload["will_retry"] == false {
-        return false;
-    }
-    let Some(message) = payload
-        .get("message")
-        .and_then(Value::as_str)
-        .or_else(|| payload.pointer("/error/message").and_then(Value::as_str))
-    else {
-        return false;
-    };
-    let message = message.trim();
-    if let Some(attempt) = message.strip_prefix("Reconnecting... ") {
-        let counter = attempt
-            .split_whitespace()
-            .next()
-            .unwrap_or("")
-            .trim_end_matches(':');
-        let Some((n, max)) = counter.split_once('/') else {
-            return false;
-        };
-        return matches!((n.parse::<u32>(),max.parse::<u32>()),(Ok(n),Ok(max)) if n>0 && n<=max && max<=1000);
-    }
-    message.starts_with("Falling back from WebSockets to HTTPS transport")
-        || message.starts_with("Falling back from WebSocket to HTTP transport")
-}
-
-fn acio_kind(payload: &Value) -> EventKind {
-    match payload["type"].as_str().unwrap_or("") {
-        "session" => EventKind::Session,
-        "progress" | "message" | "heartbeat" | "ack" => EventKind::Progress,
-        "tool" => EventKind::Tool,
-        "usage" => EventKind::Usage,
-        "warning" => EventKind::Warning,
-        "error" => EventKind::Error,
-        "result"
-            if matches!(
-                payload["data"]["status"].as_str(),
-                Some("failure" | "cancelled")
-            ) =>
-        {
-            EventKind::Error
-        }
-        "result" => EventKind::Result,
-        _ => EventKind::Unknown,
-    }
-}
-
 pub struct Decoder {
     provider: Provider,
     event_types: std::collections::BTreeMap<String, EventKind>,
     session_id_pointer: Option<String>,
     result_pointer: Option<String>,
     error_condition: Option<crate::plan::JsonCondition>,
+    denial: Option<crate::plan::DenialCondition>,
+    text_mode: bool,
     acio: bool,
     limit: usize,
     buffer: Vec<u8>,
@@ -112,6 +67,8 @@ impl Decoder {
             session_id_pointer: None,
             result_pointer: None,
             error_condition: None,
+            denial: None,
+            text_mode: false,
             acio: false,
             limit,
             buffer: vec![],
@@ -131,6 +88,8 @@ impl Decoder {
                 .clone_from(&profile.session_id_pointer);
             decoder.result_pointer.clone_from(&profile.result_pointer);
             decoder.error_condition.clone_from(&profile.error_condition);
+            decoder.denial.clone_from(&profile.denial_condition);
+            decoder.text_mode = profile.on_invalid_json == crate::plan::InvalidJson::Text;
         }
         decoder
     }
@@ -171,8 +130,20 @@ impl Decoder {
         } else {
             &bytes
         };
-        let payload: Value = serde_json::from_slice(json)
-            .map_err(|e| format!("invalid JSONL at offset {start}: {e}"))?;
+        let payload: Value = match serde_json::from_slice(json) {
+            Ok(payload) => payload,
+            Err(_) if self.text_mode && self.provider == Provider::Custom => {
+                let event = text_output::event(self.seq, start, self.session_id.clone(), json);
+                self.seq += 1;
+                return Ok(vec![event]);
+            }
+            Err(error) => {
+                return Err(format!(
+                    "invalid JSONL at offset {start}: {error}; the line was: {}",
+                    text_output::excerpt(json)
+                ));
+            }
+        };
         if !payload.is_object() {
             return Err(format!("event must be a JSON object at offset {start}"));
         }
@@ -206,8 +177,16 @@ impl Decoder {
             && self.error_condition.as_ref().is_some_and(|condition| {
                 payload.pointer(&condition.pointer) == Some(&condition.equals)
             });
+        let denied = self.provider == Provider::Custom
+            && !self.acio
+            && self
+                .denial
+                .as_ref()
+                .is_some_and(|condition| condition.matches(&payload));
         let kind = if self.acio {
-            acio_kind(&payload)
+            provider::acio_kind(&payload)
+        } else if denied {
+            EventKind::Denied
         } else if configured_error {
             EventKind::Error
         } else if self.provider == Provider::Custom
@@ -236,7 +215,7 @@ impl Decoder {
                     _ => EventKind::Unknown,
                 },
                 Provider::Codex => match event_type {
-                    "error" if codex_reconnecting(&payload) => EventKind::Warning,
+                    "error" if provider::codex_reconnecting(&payload) => EventKind::Warning,
                     "item.completed"
                         if payload.pointer("/item/type").and_then(Value::as_str)
                             == Some("error") =>

@@ -821,3 +821,10 @@ Trace: R-207 → BG-162 → SF-195 → UC-199 → FR-201 → QAS-206 → DDR-56 
 ### NFR-90 Keep update refusals safe and actionable
 Do not start an update when a blocker is present. Keep active work distinct from failed checks, and show the explanation in a bounded, readable native dialog without additional polling or process launches.
 Trace: R-207 → BG-162 → SF-195 → UC-199 → FR-201/NFR-90 → QAS-206 → DDR-56 → DD-219.
+
+### FR-202 Normalize custom CLI text output and permission-denial events
+The profile shall persist optional `on_invalid_json` (`fail` by default or `text`) and `denial_condition` fields. Text mode shall apply only to custom JSONL profiles, preserve non-JSON lines as progress, and never permit a nonzero exit, refusal-like text, or missing result event to become success. A denial condition shall support an optional event type, JSON Pointer, exactly one of an equality value or case-insensitive message substring, and optional tool/message pointers. A match shall be stored with the distinct `denied` event kind and fail the task with a readable denial description. Parser failures shall include bounded stdout and stderr excerpts with stream labels. Existing profiles and built-in provider decoders shall retain their defaults.
+
+### NFR-91 Keep denial configuration understandable without blocking profile editing
+The native profile editor shall expose the denial and invalid-output fields through its existing advanced JSON editor and show a localized, non-blocking warning when automatic approval has no observable denial mapping. Profile validation shall reject malformed pointers and ambiguous or empty match declarations before save or execution.
+Trace: R-208 → BG-163 → SF-196 → UC-200 → FR-202/NFR-91 → QAS-207 → DDR-57 → DD-220.

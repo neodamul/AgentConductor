@@ -217,3 +217,6 @@ Validate coordinator model choice against the persisted observed catalog and pas
 
 ### Driver DDR-56 Refuse updates before launch and report each blocker
 Keep the update guard at the backend dispatch boundary. Return structured active-work and failed-check details; localize them in the native dialog and preserve separate sections, elapsed time, and next-step guidance. Do not launch an updater or add a polling path when a blocker is present. Trace: QAS-206.
+
+### Driver DDR-57 Make generic CLI denial evidence visible without provider-specific flags
+Use declarative event types, JSON Pointers and bounded output excerpts. Keep profile validation generic, surface denial evidence as a distinct event, and never infer a vendor approval flag. Keep malformed-text mode from satisfying the result/exit success gate. Trace: QAS-207 → DD-220.

@@ -93,3 +93,11 @@ are integrated into the existing modular native UI. Profile edits are validated 
 replace the saved candidate; task model selection resolves planner overrides before profile
 defaults, and model-specific option lists use that effective model. Local verification is
 tracked in the issue #9 implementation checklist.
+
+## Permission denials and non-JSON output (Rust port of GitHub #341)
+
+A custom profile may set `on_invalid_json` to `fail` (the default) or `text`. In `text` mode, non-JSON lines become progress events; success still requires a zero exit and a result event. Text that resembles a permission refusal remains a failure and asks the operator to check the CLI configuration. A malformed JSONL failure includes a bounded raw excerpt with stdout and stderr labeled separately.
+
+To identify structured refusals, a profile may declare `denial_condition` with an optional `event_type`, a JSON Pointer, exactly one of `equals` or case-insensitive `contains`, and optional JSON Pointers for the tool name and message. The decoder records a distinct `denied` event; the task remains failed and its error carries the configured tool and reason. The Rust profile editor preserves these fields and shows a localized non-blocking hint if `operator_auto_approve` is configured without any denial mapping. No vendor-specific approval flag is inferred.
+
+The native port is covered by deterministic decoder/worker and profile-editor tests. Exact macOS/Windows package behavior remains part of issue #9 packaged-workflow verification; these source tests do not add acceptance credit.

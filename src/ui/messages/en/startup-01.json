@@ -223,5 +223,6 @@
   "startup.optimization_questions": "Questions to resolve",
   "startup.optimization_credit": "Powered by the vendored prompt-optimizer skill.",
   "startup.use_optimized_goal": "Use optimized goal",
-  "startup.keep_original_goal": "Keep original goal"
+  "startup.keep_original_goal": "Keep original goal",
+  "startup.custom_auto_approval_needs_denial_mapping": "Automatic tool approval is enabled, but no permission-denial event is configured."
 }

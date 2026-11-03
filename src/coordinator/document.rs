@@ -43,6 +43,10 @@ fn log_tail(path: &Path, limit: u64) -> String {
     String::from_utf8_lossy(&bytes).trim().to_string()
 }
 
+pub(crate) fn output_excerpt(stdout: &Path, stderr: &Path) -> String {
+    failure_output(&log_tail(stderr, 1500), &log_tail(stdout, 1500))
+}
+
 fn failure_output(stderr: &str, stdout: &str) -> String {
     let streams: Vec<(&str, &str)> = [("stderr", stderr), ("stdout", stdout)]
         .into_iter()

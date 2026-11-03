@@ -5,8 +5,8 @@ mod profile;
 mod task;
 mod task_validation;
 pub use profile::{
-    AgentProfile, CatalogOrigin, CooperativeMode, ExecutionOption, Fallback, JsonCondition,
-    ModelCatalog, ModelDiscovery, QuotaCommand,
+    AgentProfile, CatalogOrigin, CooperativeMode, DenialCondition, ExecutionOption, Fallback,
+    InvalidJson, JsonCondition, ModelCatalog, ModelDiscovery, QuotaCommand,
 };
 pub use task::{Task, TaskType, WorkspaceMode};
 pub use task_validation::EMPTY_PATHS;

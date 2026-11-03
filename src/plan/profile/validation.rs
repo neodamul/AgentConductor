@@ -51,6 +51,8 @@ impl AgentProfile {
                 || self.session_id_pointer.is_some()
                 || self.result_pointer.is_some()
                 || self.error_condition.is_some()
+                || self.denial_condition.is_some()
+                || self.on_invalid_json != crate::plan::InvalidJson::Fail
             {
                 return Err("the acio protocol defines its own event mapping; remove the custom event mappings".into());
             }
@@ -59,7 +61,9 @@ impl AgentProfile {
             && (self.model_discovery.is_some()
                 || !self.execution_options.is_empty()
                 || self.result_pointer.is_some()
-                || self.error_condition.is_some())
+                || self.error_condition.is_some()
+                || self.denial_condition.is_some()
+                || self.on_invalid_json != crate::plan::InvalidJson::Fail)
         {
             return Err("custom CLI configuration requires a custom profile".into());
         }
@@ -127,8 +131,39 @@ impl AgentProfile {
         {
             return Err("custom error condition needs a non-null match value".into());
         }
+        if let Some(denial) = &self.denial_condition {
+            let one_match = denial.equals.is_some()
+                != denial
+                    .contains
+                    .as_ref()
+                    .is_some_and(|text| !text.is_empty());
+            if !one_match
+                || denial
+                    .equals
+                    .as_ref()
+                    .is_some_and(serde_json::Value::is_null)
+                || !denial.pointer.starts_with('/')
+                || !denial
+                    .tool_pointer
+                    .iter()
+                    .chain(&denial.message_pointer)
+                    .all(|p| pointer(p))
+            {
+                return Err("custom denial condition needs a JSON Pointer and exactly one of equals or contains".into());
+            }
+        }
         crate::agent_settings::settings_for(self.parser, self.agent_settings.as_ref())?;
         Ok(())
+    }
+
+    pub fn configuration_hint(&self) -> Option<&'static str> {
+        (self.parser == crate::protocol::Provider::Custom
+            && self.permission_mode == "operator_auto_approve"
+            && self.protocol.is_none()
+            && self.event_types.is_empty()
+            && self.error_condition.is_none()
+            && self.denial_condition.is_none())
+        .then_some("automatic approval is enabled but no permission-denial event is configured")
     }
     pub fn quota_key(&self) -> &str {
         self.quota_group.as_deref().unwrap_or(&self.executable)

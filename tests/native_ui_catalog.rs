@@ -123,6 +123,37 @@ fn catalog_save_uses_the_existing_revision_bound_startup_dispatch() {
     assert_eq!(value["catalog"]["models"][0], "company-small");
 }
 
+#[test]
+fn legacy_custom_profile_defaults_survive_an_unchanged_native_edit() {
+    let mut profile = json!({"id":"aipro","executable":"aipro","args":["run"],"parser":"custom"});
+    let mut editor = Editor::default();
+    editor.open(&profile);
+    editor.apply(&mut profile).unwrap();
+    let parsed: agentconductor::plan::AgentProfile =
+        serde_json::from_value(profile.clone()).unwrap();
+    assert_eq!(
+        parsed.on_invalid_json,
+        agentconductor::plan::InvalidJson::Fail
+    );
+    assert!(parsed.denial_condition.is_none());
+}
+
+#[test]
+fn custom_cli_denial_and_text_output_rules_survive_native_profile_editing() {
+    let mut profile = json!({
+        "id":"aipro", "executable":"aipro", "args":["run"], "parser":"custom",
+        "permission_mode":"operator_auto_approve"
+    });
+    let mut editor = Editor::default();
+    editor.open(&profile);
+    assert!(editor.configuration_hint().is_some());
+    editor.set_extensions(r#"{"on_invalid_json":"text","denial_condition":{"pointer":"/status","equals":"error","tool_pointer":"/name","message_pointer":"/message"}}"#);
+    assert!(editor.configuration_hint().is_none());
+    editor.apply(&mut profile).unwrap();
+    assert_eq!(profile["on_invalid_json"], "text");
+    assert_eq!(profile["denial_condition"]["pointer"], "/status");
+}
+
 fn frame(
     context: &egui::Context,
     profiles: &mut Vec<serde_json::Value>,

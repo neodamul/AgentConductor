@@ -815,3 +815,7 @@ Trace: R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-198/FR-199/FR-200 �
 ### R-207 Refuse application updates while work is active
 An application update shall not start while a workspace operation is active. The operator shall see which work prevents the update and why a readiness check failed, with the two conditions distinguishable in the native interface.
 Trace: R-207 → BG-162 → SF-195 → UC-199 → FR-201/NFR-90 → QAS-206 → DDR-56 → DD-219. Rust parity port of merged GitHub #332/#331, 2026-11-02.
+
+### R-208 Make custom CLI denials and malformed output actionable
+A custom CLI profile shall retain bounded stdout/stderr evidence when JSONL parsing fails, optionally treat non-JSON lines as progress text while still requiring a successful exit and result event, and map declared tool-denial events to an explicit denied event with the reported tool and reason. Automatic tool approval without an observable denial mapping shall produce a non-blocking configuration hint.
+Trace: R-208 → BG-163 → SF-196 → UC-200 → FR-202/NFR-91 → QAS-207 → DDR-57 → DD-220. Rust parity port of merged GitHub #341, 2026-11-03.

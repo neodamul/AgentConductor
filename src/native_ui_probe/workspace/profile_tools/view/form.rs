@@ -157,6 +157,7 @@ pub(super) fn show(
         None
     };
     let fallback_error = fallback::validation_error(profiles, editor, language);
+    let config_hint = editor.configuration_hint().is_some();
     if let Some(error) = validation_error {
         ui.colored_label(ui.visuals().error_fg_color, &error)
             .accessible_name(error);
@@ -166,6 +167,14 @@ pub(super) fn show(
     } else if let Some(error) = &editor.error {
         ui.colored_label(ui.visuals().error_fg_color, error)
             .accessible_name(error.clone());
+    }
+    if config_hint {
+        let hint = text(
+            language,
+            "startup.custom_auto_approval_needs_denial_mapping",
+        );
+        ui.colored_label(ui.visuals().warn_fg_color, hint)
+            .accessible_name(hint);
     }
     ui.horizontal(|ui| {
         let can_save = editable

@@ -751,3 +751,7 @@ Trace: R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-198/FR-199/FR-200 �
 ### SF-195 Explain why an application update cannot proceed
 Before an update starts, report active workspace work and readiness-check failures as distinct, localized conditions. Include enough context and elapsed time for the operator to identify the blocker and decide when to retry.
 Trace: R-207 → BG-162 → SF-195 → UC-199 → FR-201/NFR-90 → QAS-206 → DDR-56 → DD-219. Rust parity port of merged GitHub #332/#331, 2026-11-02.
+
+### SF-196 Configure custom CLI output and denial behavior
+Custom profiles may select fail-or-text handling for non-JSON lines and declare a denial event using a JSON Pointer plus exactly one value or case-insensitive message match. The decoder stores a distinct denied event; the worker fails the task with the configured tool name and denial reason. The native profile editor exposes these fields and warns, without blocking save, when automatic tool approval has no denial mapping.
+Trace: R-208 → BG-163 → SF-196 → UC-200 → FR-202/NFR-91 → QAS-207 → DDR-57 → DD-220.

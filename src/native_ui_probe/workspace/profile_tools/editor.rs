@@ -133,6 +133,10 @@ impl Editor {
         self.error = None;
     }
 
+    pub fn configuration_hint(&self) -> Option<&'static str> {
+        extensions::configuration_hint(&self.base_profile, &self.extensions)
+    }
+
     pub fn executable(&self) -> &str {
         &self.executable
     }

@@ -3,6 +3,7 @@ use serde_json::Value;
 
 mod document;
 mod run;
+pub(crate) use document::output_excerpt;
 pub use document::{failure, read_document, read_profile_document};
 pub use run::{run_json, run_json_with_model, run_json_within};
 

@@ -8172,3 +8172,13 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Verify locally: 118 library tests pass; all six Workspace model interaction/render tests, five sidebar tests, and two source-layout tests pass. Warning-denied all-target native-feature Clippy, rustfmt, diff checks, and the ≤300-line guard pass. The checkbox test verifies persisted `worktree` mode; viewport tests verify the coordinator model and isolation controls remain visible.
 - [x] Assetize: update the native test-gates LLM Wiki and raw source note. Graphify code graph refreshed to 13,234 nodes / 21,331 edges without clustering or LLM calls.
 - [ ] Complete: capture and inspect the full current screen against the matched legacy reference, then finish remaining packaged workflows and shipped/default UI parity. Issue #9 remains 22/50 and PR #22 remains Draft.
+
+### 2026-11-03 — Port custom CLI denial and invalid-output handling — GitHub #341
+
+- [x] Plan: trace R-208 → BG-163 → SF-196 → UC-200 → FR-202/NFR-91 → QAS-207 → DDR-57 → DD-220; keep built-in provider behavior and existing profile defaults unchanged.
+- [x] Red: add the merged-main custom CLI regression suite first; compilation fails on the missing `Denied`, `denial_condition`, `InvalidJson`, and configuration hint contracts.
+- [x] Task / Green: port bounded raw output excerpts, `fail`/`text` handling, declared denial matching, task failure details, native profile JSON editing, and the localized automatic-approval hint into the Rust modules.
+- [x] Focused verify: custom CLI denial suite passes 10 tests; native profile editor suite passes 7 tests, including legacy-profile `fail` defaults, configuration round-trip, and warning-state checks.
+- [x] Full verify: locked/offline all-target suite passed with test threads serialized after one parallel run stalled; `ui_resume` passed 3/3. Warning-denied all-target Clippy, rustfmt, diff checks, and the ≤300-line `src`/`tests` guard pass.
+- [x] Assetize: update the custom CLI LLM Wiki and evidence; refresh Graphify (13,342 nodes / 21,482 edges, no clustering). CocoIndex is unavailable in this runtime.
+- [ ] Commit/push: publish this verified unit and update PR #22 and issue #9 with current main integration status. Do not claim packaged workflow or UI parity acceptance from source tests.

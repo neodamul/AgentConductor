@@ -1643,3 +1643,7 @@ Trace: R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-198/FR-199/FR-200 �
 ### DD-219 Guard updates before spawn and preserve structured refusal details
 Run the existing update-readiness guard before starting an update. Report active work and failed checks separately, retain known elapsed time, and show the refusal in the native update dialog with localized next-step guidance. Do not add a background poll or duplicate the backend check in the UI.
 Trace: R-207 → BG-162 → SF-195 → UC-199 → FR-201/NFR-90 → QAS-206 → DDR-56 → DD-219. Rust parity port of merged GitHub #332/#331, 2026-11-02.
+
+### DD-220 Keep custom denial detection declarative and fail-safe
+Store denial matching in the custom profile rather than hard-coding vendor flags or prose. Use a distinct JSONL event kind so downstream review can identify a refusal without parsing the task error string. Keep the task unsuccessful on any denial; text mode only changes how non-JSON progress lines are represented and does not waive the zero-exit/result-event success contract. Bound diagnostic excerpts and label stdout and stderr separately. Surface incomplete automatic-approval configuration as a localized warning, not a save blocker. Built-in adapters remain unchanged.
+Trace: R-208 → BG-163 → SF-196 → UC-200 → FR-202/NFR-91 → QAS-207 → DDR-57 → DD-220.

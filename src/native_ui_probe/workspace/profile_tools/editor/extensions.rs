@@ -1,11 +1,25 @@
 use serde_json::Value;
 
+pub(super) fn configuration_hint(profile: &Value, input: &str) -> Option<&'static str> {
+    let rules: Value = serde_json::from_str(input).ok()?;
+    let mut profile = profile.as_object()?.clone();
+    for key in ["event_types", "error_condition", "denial_condition"] {
+        if let Some(value) = rules.get(key) {
+            profile.insert(key.to_owned(), value.clone());
+        }
+    }
+    serde_json::from_value::<crate::plan::AgentProfile>(Value::Object(profile))
+        .ok()?
+        .configuration_hint()
+}
+
 pub(super) fn serialize(profile: &Value) -> String {
     serde_json::to_string_pretty(&serde_json::json!({
         "agent_settings":profile["agent_settings"], "catalog":profile["catalog"],
         "model_discovery":profile["model_discovery"],
         "execution_options":profile["execution_options"], "result_pointer":profile["result_pointer"],
-        "error_condition":profile["error_condition"], "quota_command":profile["quota_command"],
+        "error_condition":profile["error_condition"], "on_invalid_json":profile["on_invalid_json"],
+        "denial_condition":profile["denial_condition"], "quota_command":profile["quota_command"],
         "quota_rules":profile["quota_rules"].as_array().cloned().unwrap_or_default()
     }))
     .unwrap_or_else(|_| "{}".into())
@@ -29,16 +43,24 @@ pub(super) fn apply(
         "execution_options",
         "result_pointer",
         "error_condition",
+        "on_invalid_json",
+        "denial_condition",
         "quota_command",
         "quota_rules",
     ] {
         if let Some(value) = values.get(key) {
-            profile[key] = if matches!(key, "execution_options" | "quota_rules") && value.is_null()
-            {
-                serde_json::json!([])
+            if key == "on_invalid_json" && value.is_null() {
+                if let Some(object) = profile.as_object_mut() {
+                    object.remove(key);
+                }
             } else {
-                value.clone()
-            };
+                profile[key] =
+                    if matches!(key, "execution_options" | "quota_rules") && value.is_null() {
+                        serde_json::json!([])
+                    } else {
+                        value.clone()
+                    };
+            }
         }
     }
     if provider_changed {

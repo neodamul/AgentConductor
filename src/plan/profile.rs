@@ -1,6 +1,10 @@
 use serde::{Deserialize, Serialize};
 
+mod denial;
+mod invalid_json;
 mod validation;
+pub use denial::DenialCondition;
+pub use invalid_json::InvalidJson;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -35,6 +39,10 @@ pub struct AgentProfile {
     pub result_pointer: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub error_condition: Option<JsonCondition>,
+    #[serde(default, skip_serializing_if = "InvalidJson::is_fail")]
+    pub on_invalid_json: InvalidJson,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub denial_condition: Option<DenialCondition>,
     #[serde(default = "three")]
     pub max_sessions: usize,
     #[serde(default = "five_minutes", skip_serializing_if = "default_cadence")]

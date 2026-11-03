@@ -649,3 +649,7 @@ Trace: R-206 → BG-161 → SF-194 → UC-197/UC-198 → FR-198/FR-199/FR-200 �
 ### BG-162 Prevent updates from interrupting active work
 Operators need a clear explanation when an update is blocked by running work or a failed readiness check, so they can protect work and decide what to do next.
 Trace: R-207 → BG-162 → SF-195 → UC-199 → FR-201/NFR-90 → QAS-206 → DDR-56 → DD-219.
+
+### BG-163 Diagnose custom CLI permission refusal without hiding the cause
+Operators can tell when a custom CLI refused a tool or emitted non-JSON output, see the bounded evidence that explains it, and correct an auto-approval profile before trusting a run.
+Trace: R-208 → BG-163 → SF-196 → UC-200 → FR-202/NFR-91 → QAS-207 → DDR-57 → DD-220. GitHub #341, 2026-11-03.
