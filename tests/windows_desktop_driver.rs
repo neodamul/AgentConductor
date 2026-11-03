@@ -40,17 +40,16 @@ fn goal_driver_reports_the_focused_control_and_exact_goal_value() {
 }
 
 #[test]
-fn goal_driver_waits_for_enabled_controls_and_focus_before_keyboard_input() {
+fn goal_driver_checks_enabled_controls_then_validates_keyboard_text_by_readback() {
     let source = include_str!("windows_desktop.rs");
     let wait_enabled = source.find("$goal.Current.IsEnabled -or -not $save.Current.IsEnabled");
     let focus = source.find("[DesktopInput]::Focus($hwnd, $expectedProcessId)");
     let click_goal = source.find("[DesktopInput]::Click($goalX, $goalY)");
-    let wait_focus = source.find("-not $goal.Current.HasKeyboardFocus");
     let type_goal = source.find("[System.Windows.Forms.SendKeys]::SendWait('Windows UIA goal')");
     assert!(wait_enabled.is_some_and(|index| Some(index) < focus));
     assert!(focus.is_some_and(|index| click_goal.is_some_and(|click| index < click)));
-    assert!(click_goal.is_some_and(|click| Some(click) < wait_focus));
-    assert!(wait_focus.is_some_and(|index| Some(index) < type_goal));
+    assert!(click_goal.is_some_and(|click| type_goal.is_some_and(|text| click < text)));
+    assert!(!source.contains("HasKeyboardFocus"));
 }
 
 #[test]

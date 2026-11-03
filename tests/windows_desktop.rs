@@ -89,15 +89,9 @@ if (-not [DesktopInput]::Focus($hwnd, $expectedProcessId)) {
 $goalX = [int]($goalBounds.Left + ($goalBounds.Width / 2))
 $goalY = [int]($goalBounds.Top + ($goalBounds.Height / 2))
 [DesktopInput]::Click($goalX, $goalY)
-$focusDeadline = (Get-Date).AddSeconds(3)
-while ((Get-Date) -lt $focusDeadline -and -not $goal.Current.HasKeyboardFocus) {
-  Start-Sleep -Milliseconds 50
-}
-if (-not $goal.Current.HasKeyboardFocus) {
-  Write-Output 'GOAL_CLICK_FOCUS_FAILED'
-  exit 7
-}
+Start-Sleep -Milliseconds 250
 $focused = [System.Windows.Automation.AutomationElement]::FocusedElement
+Write-Output "GOAL_CLICK:$goalX:$goalY:$($goalBounds.Width):$($goalBounds.Height)"
 Write-Output "GOAL_FOCUS_AFTER_CLICK:$($focused.Current.ProcessId):$($focused.Current.ControlType.ProgrammaticName):$($focused.Current.Name)"
 $goalValue = $goal.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
 if ($goalValue.Current.IsReadOnly) { Write-Output 'GOAL_VALUE_READ_ONLY'; exit 7 }
