@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><title>AgentConductor — 단일 목표 화면 시안</title>
+<style>
+:root{--bg:#f2f2f6;--surface:#fff;--surface-2:#ebebf0;--fill:#e6e6ec;--line:#dcdce2;--line-strong:#c4c4cc;--ink:#1c1c1e;--soft:#606067;--bar:#e9e9ee;--accent:#0a66d8;--accent-soft:#e3edfb;--accent-text:#0a56b8;--ok:#1f7a3a;--ok-bg:#e3f3e8;--warn:#9a5a00;--warn-bg:#fff1dc;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Segoe UI",sans-serif;color:var(--ink)}
+*{box-sizing:border-box}body{margin:0;background:#d9d9df;padding:24px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.win{width:1180px;height:800px;background:var(--surface-2);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;border:1px solid var(--line-strong)}
+.titlebar{height:52px;background:var(--bar);display:flex;align-items:center;gap:12px;padding:0 20px;border-bottom:1px solid #cfcfd6;font-size:13px}
+.mark{width:26px;height:26px;border-radius:6px;background:#1f2a26;color:#fff;font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center}
+.titlebar strong{font-size:16px}.ver{color:var(--soft)}.div{width:1px;height:18px;background:#cfcfd6}
+.sp{flex:1}.ibtn{width:32px;height:32px;border:1px solid var(--line);border-radius:6px;background:var(--surface);display:flex;align-items:center;justify-content:center;color:var(--soft)}
+.shell{flex:1;display:grid;grid-template-columns:250px minmax(0,1fr);min-height:0}
+.rail{background:var(--bg);border-right:1px solid var(--line);padding:22px 18px;display:flex;flex-direction:column;gap:10px}
+.eyebrow{font-size:11.5px;font-weight:700;letter-spacing:1.2px;color:var(--soft)}
+.rail h2{margin:2px 0 4px;font-size:18px}
+.agent{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.agent.sel{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.agent .top{display:flex;align-items:center;gap:9px}.ava{width:26px;height:26px;border-radius:6px;background:var(--fill);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.agent .name{font-weight:650;font-size:14px}.agent .meta{font-size:11.5px;color:var(--soft)}
+.quota{margin-left:auto;font-size:11.5px;color:var(--soft)}
+.now{font-size:12.5px;display:flex;align-items:center;gap:7px}.dot{width:8px;height:8px;border-radius:50%;flex:none}
+.d-run{background:var(--accent)}.d-ok{background:var(--ok)}.d-wait{background:#c9881c}.d-idle{background:var(--line-strong)}
+.facts{display:flex;gap:5px;flex-wrap:wrap}.fact{font-size:11px;padding:2px 7px;border-radius:4px;background:var(--accent-soft);color:var(--accent-text)}.fact.g{background:var(--fill);color:var(--soft)}
+.railfoot{margin-top:auto;font-size:12px;color:var(--soft);line-height:1.7}
+.main{padding:26px 40px 0;display:flex;flex-direction:column;min-height:0}
+.head{display:flex;align-items:flex-start;gap:12px}.head h1{font-size:23px;margin:6px 0 8px;letter-spacing:-.4px;font-weight:700}
+.runmeta{display:flex;gap:16px;align-items:center;font-size:13px;color:var(--soft);margin-bottom:14px}.runmeta b{color:var(--ink);font-weight:600}
+.pill{font-size:12px;padding:5px 9px;border-radius:4px;background:var(--fill);color:var(--soft);margin-left:auto;margin-top:6px;white-space:nowrap}
+.pill.run{background:var(--accent-soft);color:var(--accent-text)}.pill.ok{background:var(--ok-bg);color:var(--ok)}
+.tabs{display:grid;grid-template-columns:repeat(6,1fr);border-bottom:1px solid var(--line)}
+.tab{display:flex;align-items:center;gap:8px;padding:11px 10px;font-size:13px;color:var(--soft);border-bottom:3px solid transparent}
+.num{width:22px;height:22px;border-radius:50%;background:var(--fill);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.tab.done{color:var(--ink)}.tab.done .num{background:var(--ok-bg);color:var(--ok)}
+.tab.cur{background:var(--accent-soft);color:var(--ink);font-weight:650;border-bottom-color:var(--accent);border-radius:6px 6px 0 0}.tab.cur .num{background:var(--accent);color:#fff}
+.group{font-size:10.5px;letter-spacing:1px;color:var(--soft);display:grid;grid-template-columns:3fr 2fr 1fr;margin:10px 0 0;font-weight:700}
+.group span{border-top:2px solid var(--line);padding-top:4px;margin-right:8px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 24px;margin-top:16px;flex:1;min-height:0;display:flex;flex-direction:column}
+.cardhead{display:flex;align-items:flex-start;gap:10px}.cardhead h2{margin:4px 0 2px;font-size:18px}.sub{font-size:12.5px;color:var(--soft)}
+.ttabs{display:flex;gap:20px;border-bottom:1px solid var(--line);margin:16px 0 6px;font-size:13px}.ttabs span{padding:8px 0;color:var(--soft)}.ttabs .on{color:var(--accent-text);font-weight:650;border-bottom:2px solid var(--accent)}
+.ev{display:grid;grid-template-columns:62px 1fr;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}.ev code{font-size:12px;color:var(--soft)}.ev b{display:block;font-weight:650;margin-bottom:2px}.ev .m{color:var(--soft)}
+.ev.th .m{font-style:italic}
+.dir{margin-top:auto;padding-top:14px}.ta{border:1px solid var(--line);border-radius:6px;height:58px;padding:9px 11px;color:#9a9aa2;font-size:13px;margin:6px 0 10px}
+.actions{display:flex;align-items:center;gap:8px}.actions .note{font-size:12px;color:var(--soft);margin-right:auto}
+.btn{border:1px solid var(--line);background:var(--fill);border-radius:6px;padding:8px 13px;font-size:13px;color:var(--ink)}
+.btn.p{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}.btn.q{background:transparent}
+.row{display:grid;grid-template-columns:28px 1.6fr 1fr 1fr 90px;align-items:center;gap:10px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:8px;font-size:13px}
+.row .n{width:22px;height:22px;border-radius:5px;background:var(--fill);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.row .t{font-weight:600}.row .s{color:var(--soft);font-size:12px}
+.phase{display:flex;gap:10px;align-items:center;font-size:12.5px;color:var(--soft);margin-top:12px}
+.stat{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.st{background:var(--bg);border-radius:8px;padding:12px 14px}.st .l{font-size:12px;color:var(--soft)}.st .v{font-size:20px;font-weight:700;margin-top:3px}
+.files{margin-top:12px;font-size:12.5px;border:1px solid var(--line);border-radius:8px}.files div{display:flex;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line)}.files div:last-child{border:0}.add{color:var(--ok);margin-left:auto}.del{color:#c4312a}
+.status{height:30px;border-top:1px solid var(--line);background:var(--bar);display:flex;align-items:center;gap:8px;padding:0 16px;font-size:12px;color:var(--soft)}
+.pager{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:20px;padding:6px 14px;font-size:13px}.pager button{border:0;background:none;font-size:16px;cursor:pointer;color:var(--soft)}
+.view{display:none}.view.show{display:contents}
+</style></head><body>
+<div class="win">
+<div class="titlebar"><span class="mark">ac</span><strong>AgentConductor</strong><span class="ver">v0.1.59</span><span class="div"></span><span>워크스페이스 · 토큰 회전 ▾</span><span class="sp"></span><span class="ibtn">💬</span><span class="ibtn">⚙</span></div>
+<div class="shell">
+<aside class="rail">
+<span class="eyebrow">내 팀</span><h2>CLI 에이전트</h2>
+<div class="agent sel" data-v="b c d"><div class="top"><span class="ava">Cl</span><div><div class="name">claude</div><div class="meta">구현 · 세션 3개</div></div><span class="quota">64%/100%</span></div><div class="now" data-show="a"><span class="dot d-idle"></span>대기 중</div><div class="now" data-show="b"><span class="dot d-run"></span>토큰 회전 구현 중</div><div class="now" data-show="c d"><span class="dot d-ok"></span>작업 1개 완료</div><div class="now" data-show="e"><span class="dot d-idle"></span>대기 중</div></div>
+<div class="agent"><div class="top"><span class="ava">Cx</span><div><div class="name">codex</div><div class="meta">테스트 · 세션 3개</div></div><span class="quota">73%/92%</span></div><div class="now" data-show="a"><span class="dot d-idle"></span>대기 중</div><div class="now" data-show="b"><span class="dot d-wait"></span>구현 완료를 기다림</div><div class="now" data-show="c d"><span class="dot d-ok"></span>작업 1개 완료</div><div class="now" data-show="e"><span class="dot d-idle"></span>대기 중</div></div>
+<div class="agent"><div class="top"><span class="ava">Ai</span><div><div class="name">aipro</div><div class="meta">문서 · 코디네이터</div></div></div><div class="facts"><span class="fact">코디네이터</span></div><div class="now" data-show="a"><span class="dot d-ok"></span>계획 작성 완료</div><div class="now" data-show="b"><span class="dot d-ok"></span>보안 정책 노트 완료</div><div class="now" data-show="c"><span class="dot d-run"></span>검토 결과 정리 중</div><div class="now" data-show="d"><span class="dot d-ok"></span>교훈 2개 기록</div><div class="now" data-show="e"><span class="dot d-idle"></span>목표를 기다림</div></div>
+<div class="railfoot">공유 폴더 · main<br>로컬 CLI 인증</div>
+</aside>
+<main class="main">
+<span class="eyebrow">목표</span>
+<div class="head"><h1 data-show="a b c d">리프레시 토큰 회전을 추가한다 <span style="font-size:14px;color:var(--soft);font-weight:500">목표 ▾</span></h1><h1 data-show="e" style="color:var(--soft)">새 목표 <span style="font-size:14px;font-weight:500">· 이전 목표 1개 완료 ▾</span></h1>
+<span class="pill" data-show="a">계획 검토 중</span><span class="pill run" data-show="b">실행 중</span><span class="pill ok" data-show="c">승인 대기</span><span class="pill ok" data-show="d">완료</span><span class="pill" data-show="e">목표 입력</span></div>
+<div class="runmeta" data-show="a"><span>작업 3개 · 단계 1개</span><span>코디네이터 aipro</span></div>
+<div class="runmeta" data-show="b"><span><span class="dot d-run" style="display:inline-block"></span> <b>작업 1/3 완료</b></span><span>경과 06:42</span><span style="margin-left:auto">팀 브리핑</span></div>
+<div class="runmeta" data-show="d"><span><b>머지 완료</b></span><span>변경 5개 파일</span><span>총 21:40</span></div>
+<div class="runmeta" data-show="e"><span>워크스페이스와 역할은 이어받았습니다</span></div>
+<div class="runmeta" data-show="c"><span><b>작업 3/3 완료</b></span><span>통합 테스트 통과</span><span>경과 18:05</span></div>
+<div class="tabs">
+<div class="tab done"><span class="num">✓</span>워크스페이스</div>
+<div class="tab done"><span class="num">✓</span>에이전트 역할</div>
+<div class="tab" data-cls="a:cur b:done c:done d:done e:cur"><span class="num" data-num="3">3</span>계획</div>
+<div class="tab" data-cls="b:cur c:done d:done"><span class="num" data-num="4">4</span>작업</div>
+<div class="tab" data-cls="c:done d:done"><span class="num" data-num="5">5</span>검증</div>
+<div class="tab" data-cls="c:cur d:done"><span class="num" data-num="6">6</span>검토와 머지</div>
+</div>
+<div class="group"><span>준비</span><span>실행</span><span>마무리</span></div>
+
+<section class="card" data-show="a">
+<div class="cardhead"><div><span class="eyebrow">3단계 · 계획</span><h2>계획을 검토하고 실행을 시작합니다</h2><div class="sub">코디네이터가 목표와 저장소를 분석해 작업 3개를 제안했습니다. 작업을 펼쳐 지시와 담당을 고칠 수 있습니다.</div></div></div>
+<div class="row"><span class="n">1</span><span class="t">토큰 회전 구현</span><span class="s">claude · src/auth/</span><span class="s">cargo test auth</span><span class="s">▸ 펼치기</span></div>
+<div class="row"><span class="n">2</span><span class="t">재사용 탐지 테스트</span><span class="s">codex · tests/auth/</span><span class="s">1번 이후</span><span class="s">▸ 펼치기</span></div>
+<div class="row"><span class="n">3</span><span class="t">보안 정책 노트</span><span class="s">aipro · docs/security.md</span><span class="s">—</span><span class="s">▸ 펼치기</span></div>
+<div class="phase">단계 1개 · 작업 3개 · 담당 3명 · 소유 경로 겹침 없음</div>
+<div class="dir"><div class="actions"><span class="note">승인하면 같은 화면에서 4단계 작업으로 넘어갑니다.</span><button class="btn q">계획 다시 만들기</button><button class="btn p">승인하고 실행</button></div></div>
+</section>
+
+<section class="card" data-show="b">
+<div class="cardhead"><div><span class="eyebrow">4단계 · 작업 · 선택한 작업</span><h2>토큰 회전 구현</h2><div class="sub">claude · task-1 · src/auth/</div></div><span class="pill run" style="margin-top:2px">실행 중</span></div>
+<div class="ttabs"><span class="on">활동</span><span>변경과 테스트</span><span>원본 로그</span><span>교훈</span><span>상세</span></div>
+<div class="ev"><code>14:31</code><div><b>인증 흐름 검토</b><span class="m">토큰 저장소와 refresh 엔드포인트를 찾았습니다.</span></div></div>
+<div class="ev th"><code>#3–14</code><div><b>생각 중… 12회 갱신</b><span class="m">출력 없이 추론 중입니다.</span></div></div>
+<div class="ev"><code>14:36</code><div><b>재사용 탐지 구현 중</b><span class="m">src/auth/refresh.rs 편집 · 마지막 출력 8초 전 · 프로세스 실행 중</span></div></div>
+<div class="dir"><span class="eyebrow">지시</span><div class="ta">이 작업에 변경을 요청하거나 방향을 바꾸세요…</div>
+<div class="actions"><button class="btn q">■ 실행 중지</button><span class="note">claude · 현재 작업으로 보냄 · 검토는 검증 후에 열립니다</span><button class="btn p">지시 보내기</button></div></div>
+</section>
+
+<section class="card" data-show="c">
+<div class="cardhead"><div><span class="eyebrow">6단계 · 검토와 머지</span><h2>변경을 검토하고 승인합니다</h2><div class="sub">코디네이터가 세 작업의 결과를 합쳐 통합 테스트를 통과했습니다.</div></div></div>
+<div class="stat"><div class="st"><div class="l">변경 파일</div><div class="v">5</div></div><div class="st"><div class="l">통합 테스트</div><div class="v" style="color:var(--ok)">3/3 통과</div></div><div class="st"><div class="l">코디네이터 판단</div><div class="v">승인 권고</div></div></div>
+<div class="files"><div>src/auth/refresh.rs<span class="add">+84</span><span class="del">−12</span></div><div>src/auth/store.rs<span class="add">+21</span><span class="del">−3</span></div><div>tests/auth/rotation.rs<span class="add">+66</span><span class="del">−0</span></div><div>docs/security.md<span class="add">+18</span><span class="del">−2</span></div></div>
+<div class="dir"><div class="actions"><span class="note">승인 전에 변경 전체를 열어 확인해야 승인 버튼이 켜집니다.</span><button class="btn q">거부</button><button class="btn">수정 요청</button><button class="btn p">변경 열어 검토</button></div></div>
+</section>
+
+<section class="card" data-show="d">
+<div class="cardhead"><div><span class="eyebrow">목표 완료</span><h2>리프레시 토큰 회전이 main에 반영되었습니다</h2><div class="sub">승인 14:58 · 머지 15:02 · 커밋 3f9a1c2</div></div></div>
+<div class="stat"><div class="st"><div class="l">변경 파일</div><div class="v">5</div></div><div class="st"><div class="l">통합 테스트</div><div class="v" style="color:var(--ok)">3/3 통과</div></div><div class="st"><div class="l">남은 교훈</div><div class="v">2</div></div></div>
+<div class="files"><div>교훈 · 테스트 명령은 cargo test auth로 좁혀야 빠르다</div><div>교훈 · refresh.rs는 store.rs와 함께 바꿔야 한다</div></div>
+<div class="dir"><div class="actions"><span class="note">이 목표는 단계가 하나라 끝났습니다. 여러 단계 목표라면 여기서 "다음 단계 계획"이 주 버튼이 됩니다.</span><button class="btn q">결과 열기</button><button class="btn p">새 목표</button></div></div>
+</section>
+<section class="card" data-show="e">
+<div class="cardhead"><div><span class="eyebrow">3단계 · 계획</span><h2>팀이 무엇을 해야 하나요?</h2><div class="sub">목표를 적으면 코디네이터 aipro가 작업을 나눕니다. 워크스페이스와 역할은 1·2단계에서 바로 고칠 수 있습니다.</div></div></div>
+<span class="eyebrow" style="margin-top:18px">목표</span>
+<div class="ta" style="height:120px;color:var(--ink)">로그인 실패가 5번 넘으면 계정을 15분 잠근다. 잠금 해제 API와 테스트를 추가한다.</div>
+<div style="display:flex;gap:8px"><button class="btn">+ Jira 스토리</button><button class="btn">+ Confluence 문서</button><button class="btn">프롬프트 최적화</button></div>
+<div class="dir"><div class="actions"><span class="note">계획이 만들어지면 이 카드에서 바로 검토합니다.</span><button class="btn q">계획 직접 작성</button><button class="btn p">계획 만들기</button></div></div>
+</section>
+</main></div>
+<div class="status"><span class="dot d-ok"></span>연결됨 · 로컬 실행<span class="sp"></span>토큰 회전 / main</div>
+</div>
+<div class="pager"><button id="prev">‹</button><span id="label"></span><button id="next">›</button></div>
+<script>
+const views=[['a','3단계 · 계획 검토'],['b','4단계 · 작업 진행'],['c','6단계 · 검토와 머지'],['d','목표 완료'],['e','새 목표 · 3단계']];let i=Number(location.hash.slice(1))||0;
+function show(){const v=views[i][0];document.querySelectorAll('[data-show]').forEach(e=>e.style.display=e.dataset.show.split(' ').includes(v)?'':'none');
+document.querySelectorAll('[data-cls]').forEach(e=>{e.className='tab';const m=e.dataset.cls.split(' ').map(x=>x.split(':')).find(x=>x[0]===v);if(m)e.classList.add(m[1]);const n=e.querySelector('[data-num]');n.textContent=e.classList.contains('done')?'✓':n.dataset.num;});
+document.querySelectorAll('.agent').forEach(e=>e.classList.toggle('sel',(e.dataset.v||'').split(' ').includes(v)));
+document.getElementById('label').textContent=`${i+1} / ${views.length}  ${views[i][1]}`;location.hash=i;}
+prev.onclick=()=>{i=(i+views.length-1)%views.length;show()};next.onclick=()=>{i=(i+1)%views.length;show()};show();
+</script></body></html>
