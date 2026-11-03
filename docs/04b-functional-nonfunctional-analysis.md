@@ -750,3 +750,9 @@ Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213.
 ### FR-194 Classification and checks
 `tests/request_kinds_runtime.cjs` reads `kind: '<name>'` literals of `startup.js`, `room.js`, `mcp.js`, `chat.js`, `optimize.js` and `manual.js`. Each kind is in exactly one of ENVELOPE, REFRESH, JOBS, DIRECT; none is unclassified or stale. The quiet list of `AC_WAIT` equals REFRESH, the usage job and the two update polls. Each JOBS entry names a string its page source must contain (its progress rendering).
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.
+
+### FR-207 Goal identity and context contract
+Keep existing create_slug/new_goal/next_phase request shapes. Folder allocation uses an exclusive create operation before adding markers or excluding the folder from Git; failed collisions leave registry and disk contents unchanged. Trace: UC-205.
+
+### NFR-94 Existing project entries are never adopted implicitly
+Refuse ordinary files/directories and aliases/reparse points at a requested Goal path; automatic naming skips existing entries including dangling links. No target directory is recursively created over an unverified existing path. Trace: FR-207.

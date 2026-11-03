@@ -1626,3 +1626,6 @@ Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213.
 ### DD-214 A classification test instead of a longer checklist
 The checklist of #285 states coverage but cannot notice a later addition, and every earlier pass found gaps by hand. Extracting the kinds from the sources makes the list complete by construction and makes the decision explicit at the moment a request is added. The progress renderings are checked by a named string, not by behaviour: this guards removal and forgetting, while the behaviour itself stays covered by the simulator replays and the unit tests of each rendering.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.
+
+## DD-225 Goal folder allocation and model audit
+Trace: R-213 / DDR-60. Existing persisted slug records remain internal identifiers. Reuse current Workspace retention, non-Git external history and phase continuation. Correct creation to atomically reserve the Goal root before marker creation or Git exclusion, and treat dangling links as occupied. Existing directories are never adopted through create_slug. UI-only modal sizes/focus/scrolling and keeping step 6 visible behind results are frontend acceptance owned by Claude; they are not established by native backend tests.
