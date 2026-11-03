@@ -1,5 +1,10 @@
 # AgentConductor design guide
 
+The [approved unified Goal UI](design/approved-goal-ui/README.md) refines this guide for the
+unified screen: grouped backgrounds/icons, anchored choice lists, a docked inspector, 1.5px running
+status borders, matched quota-window colors, and paired light/dark evidence. Its behavior contract
+supersedes the earlier #388 draft. Existing capabilities and the semantic theme palette remain required.
+
 This guide keeps later UI work consistent with the chosen look (R-128, DD-137). Read it before
 changing `src/ui/*.css`, `startup.html`, `room.html` or the rendering code in `startup.js` and
 `room.js`. `tests/interface_theme.rs` enforces the rules marked **(tested)**.
@@ -101,4 +106,8 @@ status color on its `-bg`. Notifications use `--bar-ink` on `--bar`; error notif
 
 ## Motion
 
-The only animation allowed is the blinking warning dot on the folded task-detail strip (#146). It blinks while a decision is open and the strip is folded, is plain opacity, uses `--warn`, and stops under `prefers-reduced-motion: reduce`. Anything the operator can fold away must reopen or signal when the run needs a decision.
+On legacy surfaces, the only animation allowed is the blinking warning dot on the folded task-detail strip (#146). It blinks while a decision is open and the strip is folded, is plain opacity, uses `--warn`, and stops under `prefers-reduced-motion: reduce`. Anything the operator can fold away must reopen or signal when the run needs a decision.
+
+The approved unified UI additionally permits the running-avatar pulse described in its visual
+specification, with reduced-motion support. Choice fields use one anchored popup-list treatment in
+Workspace, role/Fallback assignment, task details and Settings; they do not open assignment modals.
