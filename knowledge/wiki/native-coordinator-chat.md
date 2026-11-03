@@ -1,5 +1,9 @@
 # Native coordinator chat
 
+## Issue #189 current-root verification — 2026-11-03
+
+At Rust root head `7328a35d`, the current source tests for transcript interaction, accessibility, launch/reset/compatibility/uncertainty handling, worker lifecycle, Windows driver contracts, and source layout pass 23 tests across 11 suites. This confirms the merged Rust implementation locally; it does not prove the packaged Windows UI journey. Platform Validation run `41594888214` was in progress when inspected, and no exact-package pass is claimed. Keep issue #189 open and issue #9 at 22/50 until the exact Windows package interaction completes and the transcript survives the supported close/reopen/reconnect flows.
+
 The Workspace chat is an optional side panel that asks the selected coordinator to answer questions about the project, its plans, and the offline manual. The transcript is stored with the workspace's bounded chat artifacts, restored from the next snapshot after reopening, and includes a running chat job so the UI can resume following it. The retained transcript is capped at the latest 40 turns.
 
 The Rust UI sends the request through the existing Startup operation slot; planning and chat cannot occupy it at the same time. Only the latest question crosses Startup IPC; the worker rebuilds earlier turns from the bounded transcript artifact stored with the workspace. The worker keeps that input artifact so a completed transcript can be restored after restart; the next accepted question or an explicit reset removes older chat artifacts. A workspace from an older build that has only an answer artifact remains readable, although its deleted question cannot be recovered. Prompt context clips older turns at a UTF-8 boundary and clips older answers instead of rejecting a follow-up because one answer exceeded the per-question bound.

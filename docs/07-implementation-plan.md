@@ -8200,3 +8200,11 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Assetize: refresh Graphify to 13,369 nodes / 21,515 edges and add the sizing rationale to the native Rust UI LLM Wiki. CocoIndex is not installed in this runtime.
 - [ ] Verify visually: the opt-in GUI capture did not produce an image in this macOS session (window host logged an XPC connection error); the geometry test is component-level evidence only.
 - [ ] Complete: review a fresh full-screen capture and exact package workflows before changing #9 acceptance. Keep issue #9 at 22/50 and PR #22 Draft.
+
+### 2026-11-03 — Revalidate open coordinator-chat bug #189 on current root
+
+- [x] Plan: verify the chat persistence/accessibility/Windows driver fix from closed PR #255 is integrated into current issue #9 root commit `7328a35d`.
+- [x] Task / local verify: the chat transcript, accessibility, launcher/reset/compatibility/uncertainty, worker lifecycle, Windows script contract, Windows package driver, and source-layout suites pass 23 tests across 11 targets.
+- [x] Confirm priority/status: #189 is an open `bug`; no new source change was needed because its current Rust implementation is already on PR #22.
+- [ ] Exact-package verify: current Platform Validation run [41594888214](https://github.com/neodamul/AgentConductor/actions/runs/41594888214) was in progress at inspection. This does not yet prove the exact Windows package chat journey.
+- [ ] Complete: close #189 only after the exact Windows package journey proves transcript persistence/reconnect and chat editor interaction. No issue #9 acceptance credit is added; keep #9 at 22/50 and PR #22 Draft.
