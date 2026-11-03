@@ -18,10 +18,3 @@ fn workspace_capture_rejects_missing_or_unexpected_arguments() {
     assert!(args::workspace_path(&["--workspace".into()]).is_err());
     assert!(args::workspace_path(&["--other".into()]).is_err());
 }
-
-#[test]
-fn screenshot_capture_uses_separate_eframe_persistence() {
-    use agentconductor::native_ui_probe::app_storage_key;
-    assert_eq!(app_storage_key(false), "AgentConductor");
-    assert_ne!(app_storage_key(true), app_storage_key(false));
-}

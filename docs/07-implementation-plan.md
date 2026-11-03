@@ -1,11 +1,12 @@
 # Implementation plan and TDD
 
-### 2026-11-03 — Investigate exact-head Windows validation failure — issue #9 / #310
+### 2026-11-03 — Repair native UI test feature-gate regression — issue #9
 
-- [x] Observe run `41595881419` against exact head `8f31a0c9`; macOS native build and source-layout checks pass and its tests are still running.
-- [x] Inspect the Windows job log: `cargo build --all-targets --locked --features test-fixtures` ran for several minutes, then the hosted runner returned OS error 433 (“A device which does not exist”) while writing Cargo fingerprints under `D:\a\...\target` and reading a checked-out test file. No Rust compiler diagnostic was emitted; the job stopped before source-layout and test steps.
-- [x] Classify Windows status as infrastructure failure / unverified, not a source pass or source failure. Update PR #22 and issue #310 with the log evidence.
-- [ ] After the current workflow reaches a terminal state, rerun the Windows job for the same commit. Do not push during the active macOS job because branch synchronization cancels the workflow.
+- [x] Red: exact-head run `41595881419` failed macOS `auto_discovered_native_ui_tests_are_feature_gated`: `tests/native_ui_probe_args.rs` mixed ordinary CLI-argument tests with an assertion that imports feature-gated `native_ui_probe`.
+- [x] Green: keep parser tests in `native_ui_probe_args.rs` and move the eframe storage-key assertion into the already feature-gated `native_ui_probe.rs` suite.
+- [x] Verify: 21 tests pass across the affected four suites; warning-denied Clippy, rustfmt, diff hygiene, and the 300-line guard pass. Both changed test files remain below 300 lines.
+- [x] Diagnose Windows run `41595881419`: Cargo build failed while writing fingerprint files and reading a checked-out test file with OS error 433 (“A device which does not exist”) under `D:\a\...\target`; no Rust compiler diagnostic was emitted, and no Windows tests ran. This is runner/storage evidence, not Windows acceptance.
+- [ ] Push the local fix and retry exact-head platform validation. Then rerun the Windows package journeys; keep #310 open until the exact packaged schedule journey passes.
 
 ### 2026-11-03 — Restore the Workspace location status bar — issue #9
 

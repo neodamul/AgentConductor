@@ -283,3 +283,11 @@ fn native_workspace_summary_renders_the_saved_goal_from_rust_snapshot() {
 
 #[path = "native_ui_probe/persistence.rs"]
 mod persistence;
+
+#[test]
+fn screenshot_capture_uses_separate_eframe_persistence() {
+    let default_key = native::app_storage_key(false);
+    let capture_key = native::app_storage_key(true);
+    assert_eq!(default_key, "AgentConductor");
+    assert_ne!(capture_key, default_key);
+}
