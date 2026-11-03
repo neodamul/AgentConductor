@@ -28,7 +28,7 @@ available texts. ISC and BSL-1.0 licenses are permissive and their bundled
 copyright and license notices must be preserved. AgentConductor and its AC
 artwork use the root MIT license.
 
-Git, selected agent CLIs, provider artwork, RTK, Ponytail, Graphify, CocoIndex,
+Git, selected agent CLIs, RTK, Ponytail, Graphify, CocoIndex,
 agentmemory and its optional services are not bundled. Their licenses and account
 terms require separate review if redistributed. Windows uses the installed system
 WebView2 runtime; macOS uses system WebKit. No UI web server is required.
@@ -37,6 +37,11 @@ The bundled prompt-optimizer skill (SKILL.md and four reference files, embedded
 unmodified in the executable) is from https://github.com/getsentry/skills and is
 licensed under Apache-2.0, Copyright 2025 Functional Software, Inc. dba Sentry.
 licenses/prompt-optimizer holds the license text and the source commit.
+
+The Claude Code and Codex marks shown in the agent lists are two unmodified color SVGs from
+Lobe Icons (https://github.com/lobehub/lobe-icons, MIT, Copyright (c) 2023 LobeHub), embedded in
+the executable. licenses/lobe-icons holds the license text and the pinned revision. The marks
+identify the agents; their trademarks remain with Anthropic and OpenAI.
 ";
 
 fn validate_company_suffix(file: &str, built: &str, cargo: &str) -> Result<(), String> {
@@ -202,10 +207,16 @@ fn write_package(plan: PackagePlan<'_>) -> Result<Value, String> {
         copy_file(&root.join(file), &destination.join(file))?;
     }
     // GitHub #180: the embedded skill's Apache-2.0 text and origin travel with the executable.
-    for file in ["LICENSE", "SOURCE.md"] {
+    // GitHub #406: the embedded Lobe Icons marks travel with their MIT text and pinned revision.
+    for (name, file) in [
+        ("prompt-optimizer", "LICENSE"),
+        ("prompt-optimizer", "SOURCE.md"),
+        ("lobe-icons", "LICENSE"),
+        ("lobe-icons", "SOURCE.md"),
+    ] {
         copy_file(
-            &root.join("third_party/prompt-optimizer").join(file),
-            &destination.join("licenses/prompt-optimizer").join(file),
+            &root.join("third_party").join(name).join(file),
+            &destination.join("licenses").join(name).join(file),
         )?;
     }
 
