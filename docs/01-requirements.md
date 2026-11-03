@@ -463,7 +463,7 @@ When a run is recorded as running but its coordinator and workers are gone (app 
 Trace: R-119 -> BG-74 -> SF-106 -> UC-109 -> FR-104 -> QAS-115 -> DD-128. Source: user request, 2026-10-13.
 
 ### R-120 Interruptions and silent workers are visible
-Status: Amended by R-159: time since the last output and whether the owned process is present are shown; the collapsed "Thinking… n updates" line and the interruption history are not implemented (see docs/14).
+Status: Amended by R-159: instead of a no-output warning, the task shows facts only (time since the last output, whether the owned process is present). Implemented with GitHub #385: consecutive thinking updates read as one line "Thinking… n updates" naming their event range (events carry no time), and the run banner states how often the run was interrupted and recovered, with the time and outcome of the last recovery; recoveries also appear among the coordinator judgments (R-167).
 The Agent Room shows when a run was interrupted and recovered (banner history and coordinator Activity), collapses a worker's consecutive thinking_tokens events into one line (Thinking… n updates, last at hh:mm) instead of empty Thinking tokens rows, and warns when a running task has produced no output for several minutes or its process is gone, suggesting Recover.
 Trace: R-120 -> BG-75 -> SF-107 -> UC-110 -> FR-105 -> QAS-116 -> DD-129. Source: user request, 2026-10-13.
 

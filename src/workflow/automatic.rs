@@ -92,6 +92,25 @@ pub fn automatic_recover(dir: &Path, enabled: bool) -> Result<AutomaticRecovery,
     })
 }
 
+/// R-120 / DD-129: each automatic recovery of a lost coordinator, once, with its latest outcome,
+/// oldest first (at most ten).
+pub fn interruptions(store: &Store) -> Result<Vec<Value>, String> {
+    let mut seen = Vec::new();
+    let mut list = Vec::new();
+    // `audit` lists oldest first; the newest record of a recovery carries its outcome.
+    for record in store.audit("auto_recovery", 200)?.into_iter().rev() {
+        let at = record["observed_at_ms"].clone();
+        if record["recovered"] != true || seen.contains(&at) {
+            continue;
+        }
+        seen.push(at.clone());
+        list.push(json!({"at": at, "status": record["status"]}));
+    }
+    list.truncate(10);
+    list.reverse();
+    Ok(list)
+}
+
 pub fn automatic_resume_result(
     dir: &Path,
     started: bool,
