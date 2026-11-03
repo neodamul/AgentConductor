@@ -35,6 +35,7 @@ enum Confirmation {
     Discard {
         areas: Vec<String>,
         return_to_run: bool,
+        start_new_goal: bool,
     },
 }
 
@@ -86,6 +87,15 @@ impl State {
         self.confirmation = Some(Confirmation::Discard {
             areas,
             return_to_run,
+            start_new_goal: false,
+        });
+    }
+
+    pub fn confirm_new_goal(&mut self) {
+        self.confirmation = Some(Confirmation::Discard {
+            areas: self.dirty_areas.clone(),
+            return_to_run: false,
+            start_new_goal: true,
         });
     }
 

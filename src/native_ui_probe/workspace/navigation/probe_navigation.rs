@@ -63,6 +63,10 @@ impl Probe {
                     self.open_run();
                 }
             }
+            Some(Event::DiscardAndNewGoal) => {
+                self.discard_workspace_changes();
+                super::super::goals::request_new_goal(self);
+            }
             Some(event) => self.navigate(event),
             None => {}
         }

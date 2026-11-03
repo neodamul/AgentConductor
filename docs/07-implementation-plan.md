@@ -4,7 +4,7 @@
 
 - [x] Plan: the same-state reference shows a phase badge and `New goal` action beside the Workspace title, with coordinator chat in the application bar beside Settings.
 - [x] Red: new AccessKit and pointer-interaction tests failed because Rust had no title action/status API; the existing header-button count also exposed the newly added control and was narrowed to numbered step tabs.
-- [x] Task / Green: render localized title, phase badge, and an accessible `New goal` button; derive phase from job/proposal/dirty state; route the button through the revisioned asynchronous request worker and refresh the Workspace after success; disable it while the workspace is dirty, busy, missing a repository, or has a nonterminal run. Move the chat launcher into the application bar.
+- [x] Task / Green: render localized title, phase badge, and an accessible `New goal` button; derive phase from job/proposal/dirty state; route the button through the revisioned asynchronous request worker and refresh the Workspace after success; keep it available with unsaved edits and require explicit discard confirmation before switching goals. Disable it while a request or job is active, no repository is configured, or a run is nonterminal. Move the chat launcher into the application bar.
 - [x] Focused local verification: 17 tests across six targets passed; warning-denied all-target Clippy, formatting, diff hygiene, and the 300-line source/test check passed.
 - [x] Complete local all-target suite: 1,313 passed and 16 ignored across 408 test targets; warning-denied all-target Clippy, formatting, diff hygiene, and the 300-line layout guard passed.
 - [ ] Capture and inspect the resulting Workspace screen. No aggregate or screen-parity credit is claimed yet; issue #9 remains 22/50 and shipped/default Rust UI parity remains 0/25.
@@ -17,7 +17,14 @@
 - [x] Task / Green: widen the default agent roster from 248 px to 298 px; render a truncated executable and localized permission line on every agent card; keep full executable and permission details available to assistive technology and hover text.
 - [x] Verify locally: 12 sidebar/layout/bilingual tests pass across five targets, source-layout passes 2/2, warning-denied all-target Clippy passes, rustfmt and `git diff --check` pass. All touched Rust source and test files are at or below 300 lines.
 - [x] Visual check: `docs/evidence/issue9-native-workspace-sidebar-parity-20261103.png` was rendered by the Rust framebuffer callback. Model counts and quota readings are synthetic fixtures; no provider CLI or user workspace was accessed.
-- [ ] Remaining parity: the Rust Workspace still lacks the legacy “New goal” action and “Prepared” state in the page header, and places the coordinator-chat launcher at the far edge of the content area. This unit adds no UI acceptance credit; overall remains 22/50 and shipped/default Rust UI parity remains 0/25.
+- [x] At this checkpoint the Rust Workspace still lacked the legacy “New goal” action and “Prepared” state in the page header and placed coordinator chat at the far edge of the content area. The following header unit addresses those source-level gaps; no UI acceptance credit is claimed without screenshot review.
+
+### 2026-11-03 — Match New goal's unsaved-edit confirmation — issue #9
+
+- [x] Plan / Red: compare the JavaScript `leave(() => changeGoal(...))` flow; a new UI test failed because native navigation had no New goal confirmation event.
+- [x] Task / Green: keep New goal enabled for dirty workspaces, show the existing localized discard dialog, and start the revisioned request only after explicit confirmation. Cancel/close leaves edits intact.
+- [x] Verify locally: 23 tests pass across seven focused targets; 11 public-doc tests and both source-layout checks pass; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line guard pass. The 1,313-test all-target run is from baseline commit `ea8f3caa`, before this confirmation-only follow-up.
+- [ ] Push the follow-up and update PR #22/issue #9. No aggregate or screen-parity credit is claimed; same-state screenshot review remains open.
 
 ### 2026-11-03 — Verify event and request-lane regressions — issue #9 / PR #255
 

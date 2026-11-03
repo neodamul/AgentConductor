@@ -9,7 +9,7 @@
     "page_header": [
       "Show localized Prepared, Preparing, Starting, Ready, or Unsaved status.",
       "Show the localized New goal button and route it through the revisioned asynchronous worker.",
-      "Disable New goal while edits are unsaved, requests or jobs are active, no repository is configured, or a run is nonterminal."
+      "Disable New goal while requests or jobs are active, no repository is configured, or a run is nonterminal; require explicit discard confirmation for unsaved edits."
     ],
     "coordinator_chat": "Render the existing chat launcher in the application bar immediately before Settings."
   },
@@ -20,6 +20,15 @@
     "clippy": "All targets passed with warnings denied.",
     "source_layout": "Passed the 300-line source/test and test separation guard.",
     "rustfmt_and_diff": "Passed."
+  },
+  "follow_up": {
+    "behavior": "Keep New goal enabled with unsaved edits; show localized discard confirmation; enqueue the revisioned request only after approval; cancel preserves edits.",
+    "focused_tests": "23 passed across seven targets: native_ui_header, native_ui_header_actions, native_ui_header_chat, native_ui_navigation_language, native_ui_new_goal_confirmation, native_ui_workspace_menu_layout, and source_layout.",
+    "public_docs": "11 passed.",
+    "source_layout": "2 passed, including the 300-line and test-separation guard.",
+    "clippy": "All targets passed with warnings denied.",
+    "format_and_diff": "cargo fmt --check and git diff --check passed.",
+    "graphify": "13,202 nodes, 19,775 edges, 967 communities."
   },
   "graphify": {
     "nodes": 13197,

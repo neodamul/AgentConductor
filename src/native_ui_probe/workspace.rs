@@ -192,7 +192,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 let snapshot = probe.snapshot.as_ref().unwrap_or(&Value::Null);
                 let phase = header::workspace_phase(snapshot, dirty);
                 let can_start_new_goal =
-                    goals::can_start_new_goal(snapshot, probe.pending.is_some(), dirty);
+                    goals::can_start_new_goal(snapshot, probe.pending.is_some());
                 if header::show_title_controls(
                     probe.workspace_step,
                     &language,
@@ -200,7 +200,11 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                     can_start_new_goal,
                     ui,
                 ) {
-                    goals::request_new_goal(probe);
+                    if dirty {
+                        probe.navigation.confirm_new_goal();
+                    } else {
+                        goals::request_new_goal(probe);
+                    }
                 }
                 if let Some(step) = header::show_steps(probe.workspace_step, &language, ui) {
                     probe.workspace_step = step;

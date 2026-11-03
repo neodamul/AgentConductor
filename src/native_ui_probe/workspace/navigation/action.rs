@@ -10,6 +10,7 @@ pub enum Event {
     Updates,
     BackToRun,
     DiscardChanges { return_to_run: bool },
+    DiscardAndNewGoal,
     Create(String),
     ConfirmCreate(String),
     Open(String),
@@ -30,7 +31,7 @@ pub fn request(event: &Event) -> Vec<u8> {
         | Event::Updates => {
             unreachable!("settings use their own requests")
         }
-        Event::BackToRun | Event::DiscardChanges { .. } => {
+        Event::BackToRun | Event::DiscardChanges { .. } | Event::DiscardAndNewGoal => {
             unreachable!("workspace header actions do not send navigation requests")
         }
         Event::Create(name) | Event::ConfirmCreate(name) => {

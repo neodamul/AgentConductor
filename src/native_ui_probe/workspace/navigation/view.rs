@@ -92,6 +92,7 @@ pub fn show_in_language_with_chat(
                 state.confirmation = Some(Confirmation::Discard {
                     areas: state.dirty_areas.clone(),
                     return_to_run: true,
+                    start_new_goal: false,
                 });
             } else {
                 event = Some(Event::BackToRun);
@@ -107,6 +108,7 @@ pub fn show_in_language_with_chat(
             state.confirmation = Some(Confirmation::Discard {
                 areas: state.dirty_areas.clone(),
                 return_to_run: false,
+                start_new_goal: false,
             });
         }
         if let Some(chat) = chat {

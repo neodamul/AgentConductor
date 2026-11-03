@@ -16,10 +16,9 @@ pub fn new_goal_request(revision: &str) -> Vec<u8> {
         .expect("new-goal request is serializable")
 }
 
-pub fn can_start_new_goal(snapshot: &serde_json::Value, pending: bool, dirty: bool) -> bool {
+pub fn can_start_new_goal(snapshot: &serde_json::Value, pending: bool) -> bool {
     let run_state = snapshot["run_state"].as_str();
     !pending
-        && !dirty
         && snapshot["job"]["state"] != "running"
         && snapshot["config"]["repository"]
             .as_str()

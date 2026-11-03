@@ -2,9 +2,9 @@
 
 ## Workspace header and coordinator placement — 2026-11-03
 
-The legacy Workspace header includes the localized execution phase and a `New goal` action beside the page title; the coordinator-chat launcher belongs in the application bar beside Settings. The native page header now shows the phase from the current job, proposal, and unsaved-draft state. The new-goal action sends the existing revisioned request through the asynchronous worker, then returns to Workspace and refreshes its snapshot after a successful change. It is disabled while edits are unsaved, a request or job is active, no repository is configured, or a run is nonterminal. Coordinator chat is rendered in the application bar and remains available through its existing state and worker path.
+The legacy Workspace header includes the localized execution phase and a `New goal` action beside the page title; the coordinator-chat launcher belongs in the application bar beside Settings. The native page header now shows the phase from the current job, proposal, and unsaved-draft state. The new-goal action sends the existing revisioned request through the asynchronous worker, then returns to Workspace and refreshes its snapshot after a successful change. It is disabled while a request or job is active, no repository is configured, or a run is nonterminal. With unsaved edits, it opens the existing localized discard confirmation and sends the request only after explicit approval; canceling preserves the draft. Coordinator chat is rendered in the application bar and remains available through its existing state and worker path.
 
-Regression coverage verifies English/Korean labels, status selection, pointer activation, the revisioned request payload, disabled-state rules, app-bar alignment, navigation behavior, and the 300-line source/test guard. The focused local set passed 17 tests across six targets. The complete local Rust UI suite passed **1,313 tests with 16 ignored across 408 targets**; warning-denied all-target Clippy, rustfmt, and diff hygiene passed. Graphify was refreshed to 13,197 nodes, 19,769 edges, and 983 communities. CocoIndex CLI is not installed in this host. A fresh same-state screenshot review and exact-head packaged validation are still pending. This source-level unit adds no packaged workflow or shipped Rust parity acceptance; overall remains 22/50 and shipped/default Rust UI parity remains 0/25.
+Regression coverage verifies English/Korean labels, status selection, pointer activation, the revisioned request payload, busy-state rules, app-bar alignment, and explicit discard confirmation for unsaved edits. The original focused local set passed 17 tests across six targets. The confirmation follow-up passed 23 tests across seven focused targets, 11 public-document tests, both source-layout checks, warning-denied all-target Clippy, rustfmt, and diff hygiene. The complete local Rust UI suite at baseline source commit `ea8f3caa` passed **1,313 tests with 16 ignored across 408 targets** before the confirmation follow-up. Graphify was refreshed to 13,197 nodes, 19,769 edges, and 983 communities before the follow-up. CocoIndex CLI is not installed in this host. A fresh same-state screenshot review and exact-head packaged validation are still pending. This source-level unit adds no packaged workflow or shipped Rust parity acceptance; overall remains 22/50 and shipped/default Rust UI parity remains 0/25.
 
 ## Exact-head platform validation — 2026-11-03
 
@@ -1552,7 +1552,8 @@ below 300 lines.
 
 The review image is `docs/evidence/issue9-native-workspace-sidebar-parity-20261103.png`. It uses
 synthetic Claude/Codex quota and model observations and a disposable workspace; no provider CLI or
-user workspace was used. The comparison still shows missing page-header “New goal” and “Prepared”
-controls and the chat launcher in the wrong location. This source-level visual improvement earns
-no workflow acceptance credit: issue #9 remains 22/50 overall, with shipped/default Rust UI parity
+user workspace was used. At this checkpoint the page header still lacked “New goal” and “Prepared,”
+and the chat launcher was misplaced; the follow-up above adds these controls and explicit unsaved-edit
+confirmation. This source-level visual improvement earns no workflow acceptance credit: issue #9
+remains 22/50 overall, with shipped/default Rust UI parity
 at 0/25 until the complete screen-by-screen gate passes.

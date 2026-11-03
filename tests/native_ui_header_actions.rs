@@ -161,19 +161,10 @@ fn new_goal_request_is_revisioned_and_disabled_when_workspace_is_not_idle() {
         br#"{"kind":"new_goal","revision":"r17"}"#
     );
     assert!(
-        agentconductor::native_ui_probe::workspace::goals::can_start_new_goal(
-            &snapshot, false, false
-        )
+        agentconductor::native_ui_probe::workspace::goals::can_start_new_goal(&snapshot, false)
     );
     assert!(
-        !agentconductor::native_ui_probe::workspace::goals::can_start_new_goal(
-            &snapshot, true, false
-        )
-    );
-    assert!(
-        !agentconductor::native_ui_probe::workspace::goals::can_start_new_goal(
-            &snapshot, false, true
-        )
+        !agentconductor::native_ui_probe::workspace::goals::can_start_new_goal(&snapshot, true)
     );
 }
 

@@ -181,6 +181,7 @@ pub(super) fn show(
                 Confirmation::Discard {
                     areas,
                     return_to_run,
+                    start_new_goal,
                 } => {
                     let areas = areas.join(", ");
                     let warning = message(
@@ -194,7 +195,11 @@ pub(super) fn show(
                         .accessible_name(text(language, "startup.discard_unsaved_changes"))
                         .clicked()
                     {
-                        event = Some(Event::DiscardChanges { return_to_run });
+                        event = Some(if start_new_goal {
+                            Event::DiscardAndNewGoal
+                        } else {
+                            Event::DiscardChanges { return_to_run }
+                        });
                         state.confirmation = None;
                     }
                     if ui.button(text(language, "startup.keep_editing")).clicked() {
