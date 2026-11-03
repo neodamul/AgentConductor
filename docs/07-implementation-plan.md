@@ -1467,6 +1467,12 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [x] Verify: UI Rust tests and Node tests; UI simulator opened the panel from the Workspace and the Room, count and list content checked.
 - [ ] Complete: release (version 0.2.0 only when the user asks).
 
+### Result popup of a completed goal — DD-222
+- [x] Plan: Trace: amends R-210 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #398; design GitHub #387.
+- [x] Task / Red/Green: tests/result_popup_runtime.cjs first (red), then room_result.js, the dialog, the Result button and messages.
+- [x] Verify: UI Rust tests and Node tests; UI simulator showed no popup for an already finished run, the popup on the running-to-completed transition and from the Result button.
+- [ ] Complete: release (version 0.2.0 only when the user asks).
+
 ## Bilingual release documentation — DD-134 / v0.1.16
 
 - [x] Plan: pull the latest release source, inspect changed behavior and preserve concurrent Claude work.
