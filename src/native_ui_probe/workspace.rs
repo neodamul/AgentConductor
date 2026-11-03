@@ -6,6 +6,7 @@ mod actions;
 pub mod chat;
 mod execution;
 pub(super) mod feedback;
+mod footer;
 mod goal;
 pub mod goals;
 pub mod header;
@@ -54,6 +55,10 @@ mod action_tests;
 #[cfg(test)]
 #[path = "../../tests/native_ui_probe/optimizer.rs"]
 mod optimizer_tests;
+
+#[cfg(test)]
+#[path = "../../tests/native_ui_probe/workspace_footer.rs"]
+mod footer_tests;
 
 pub(super) fn plan_configuration_available(snapshot: &Value) -> bool {
     let config = &snapshot["config"];
@@ -186,6 +191,11 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 egui::Panel::bottom("native-workspace-feedback")
                     .show(ui, |ui| feedback::show(probe, ui));
             }
+            footer::show(
+                probe.snapshot.as_ref().unwrap_or(&Value::Null),
+                probe.navigation.appearance.language(),
+                ui,
+            );
             egui::CentralPanel::default().show(ui, |ui| {
                 let language = probe.navigation.appearance.language().to_owned();
                 let dirty = probe.navigation.has_unsaved_changes();

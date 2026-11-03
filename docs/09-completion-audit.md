@@ -1,3 +1,11 @@
+## Native Workspace location status bar — 2026-11-03
+
+- Compared `origin/main` Workspace source with the native Rust render and found that Rust omitted the pinned bottom line showing the workspace root and its initial loading state.
+- Added an egui bottom panel before the central content and two regressions against the complete Workspace render. The path is pinned to the bottom of a 1280×892 viewport; the loading label remains visible before the first snapshot.
+- The full locked/offline all-target suite passes: 1,344 passed, 16 ignored across 411 suites. Focused footer tests pass 2/2; warning-denied native-feature Clippy, source-layout, formatting, and diff hygiene pass.
+- The opt-in native screenshot launch did not run: offline Cargo resolution could not find `eframe` in the local registry index. No window was launched; the egui render tests verify both status strings and bottom placement.
+- This restores context visibility but adds no workflow acceptance credit. Issue #9 remains 22/50; shipped/default Rust UI parity remains 0/25.
+
 ## Native Workspace step-tab viewport regression — 2026-11-03
 
 - Commit `e2419db3` bounds the three equal stage-tab widths to both the available layout width and the clipped viewport width.

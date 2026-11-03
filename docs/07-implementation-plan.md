@@ -1,5 +1,16 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Restore the Workspace location status bar — issue #9
+
+- [x] Plan: compare the current-main Workspace capture and source with the native Rust renderer. Main keeps the local workspace path pinned at the bottom and shows a loading label before the first snapshot; Rust showed neither.
+- [x] Red: render the full native Workspace at 1280×892 and assert the path label is pinned to the bottom. With a no-op footer implementation, the test failed because the status text was absent.
+- [x] Task / Green: add a localized egui bottom panel with the current workspace path and the existing loading message; reserve its height before rendering the central content.
+- [x] Focused verify: both loading/path render tests, native header/source-layout suites, warning-denied all-target native-feature Clippy, formatting, diff hygiene, and the 300-line guard pass.
+- [x] Full locked/offline all-target verification: 1,344 passed, 16 ignored across 411 suites.
+- [x] Final focused verification: footer tests 2/2, source-layout 2/2, warning-denied all-target native-feature Clippy, rustfmt, and diff hygiene pass; changed source/test files are 300, 28, and 68 lines.
+- [ ] Screenshot capture: the opt-in probe could not resolve `eframe` from the offline registry, so no screenshot was produced and no window was launched. The full egui Workspace render tests verify the bottom placement and text; capture remains a follow-up when the cached dependency index is available.
+- [ ] Complete: commit/push this unit to the existing #22 branch and update its exact progress. This missing-status-bar fix adds no workflow acceptance credit; #9 remains 22/50 and shipped/default Rust UI parity remains 0/25.
+
 ### 2026-11-03 — Keep Workspace stage tabs within the visible viewport — issue #9
 
 - [x] Plan: the existing regression requires all three localized stage buttons to remain within the visible content at 480 px and 836 px widths.

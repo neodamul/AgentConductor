@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-03",
+  "issue": 9,
+  "source_base": "9c82febc",
+  "feature": "native Workspace location status bar",
+  "reference": {
+    "source": "origin/main:src/ui/startup.html and src/ui/startup.js",
+    "source_commit": "f3b819020d97d141daf6b03d979fb36ef9b1cd9d",
+    "behavior": "Show the loading label until the first snapshot, then pin the local workspace path at the bottom of the window."
+  },
+  "tdd": {
+    "test": "native_ui_probe::workspace::footer_tests::{local_workspace_path_is_pinned_to_the_window_bottom,loading_status_remains_visible_before_the_first_snapshot}",
+    "red": "With a no-op footer, the complete Workspace renderer omitted the bottom status text.",
+    "green": "Both rendering regressions pass with the localized bottom panel."
+  },
+  "verification": {
+    "focused": "Footer tests 2/2; native header/source-layout suites pass; native-feature all-target Clippy with warnings denied passes; rustfmt and diff hygiene pass.",
+    "full_suite": "cargo test --locked --offline --all-targets --features 'test-fixtures native-ui-probe' --quiet: 1,344 passed, 16 ignored across 411 suites.",
+    "screenshot": "Opt-in screenshot launch was not produced because offline Cargo resolution could not find eframe in the local registry index; no application window launched. Render tests verify the bottom location and both status messages."
+  },
+  "acceptance": {
+    "issue_9_overall": "22/50",
+    "packaged_workflows": "22/25",
+    "shipped_default_rust_ui": "0/25",
+    "credit_added": false
+  }
+}
