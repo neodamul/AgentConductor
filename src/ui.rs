@@ -14,7 +14,11 @@ use std::{
 
 const HTML: &str = include_str!("ui/room.html");
 const CSS: &str = include_str!("ui/room.css");
-const JS: &str = include_str!("ui/room.js");
+// R-120: the Activity helpers come first so room.js stays within the file-size bound.
+const JS: &str = concat!(
+    include_str!("ui/room_activity.js"),
+    include_str!("ui/room.js")
+);
 /// ID catalogs and translation runtime, loaded before either page script.
 const I18N: &str = concat!(
     "const AC_MESSAGES={en:",

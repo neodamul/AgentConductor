@@ -376,6 +376,8 @@
   "room.import_or_discover_a_model_catalog_with_the": "CLI로 모델 목록을 가져오거나 조회합니다.",
   "room.in": "위치",
   "room.in_out": "입력 {value1} / 출력 {value2}",
+  "room.interrupted_recovered": "중단 후 복구 {value1}회, 마지막 {value2} ({value3})",
+  "room.thinking_updates": "생각 중… {value1}회 갱신",
   "room.in_progress": " 진행 중…",
   "room.in_the_background": "백그라운드",
   "room.instructions": "지시 내용",

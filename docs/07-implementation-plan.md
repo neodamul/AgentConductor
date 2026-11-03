@@ -1405,12 +1405,11 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 
 ### Interruptions and silent workers are visible — DD-129
 - [x] Plan: R-120 -> BG-75 -> SF-107 -> UC-110 -> FR-105 -> QAS-116 -> DD-129.
-- [ ] Task / Red/Green: implementation and regression tests.
-- [ ] Verify: Windows local tests and native run.
+- [x] Task / Red/Green (GitHub #385): `collapseThinking` and `interruptionText` in `src/ui/room.js`; `workflow::interruptions` lists each automatic recovery once with its latest outcome and the run snapshot carries it. `tests/interruption_history.rs`, `tests/thinking_collapse_runtime.cjs`.
+- [x] Verify (macOS): suite; Windows: CI.
 - [ ] Complete: release.
-- [ ] Activity: consecutive thinking_tokens events collapse into one line (Thinking… n updates, last at hh:mm) instead of empty Thinking tokens rows.
-- [ ] Running task with no output for 5+ minutes shows a No output for n minutes warning; a task whose process is gone shows Not responding — Recover.
-- [ ] Verified 2026-11-03 (GitHub #349): silence and process state are shown since R-159; the Thinking collapse and interruption history are not implemented.
+- [x] Activity: consecutive thinking_tokens events collapse into one line (Thinking… n updates); events carry no time, so the line names their event range instead of "last at hh:mm".
+- [x] No-output warning: replaced by R-159 (facts only: last output age and process presence; silence is never called failure).
 
 ### Reassign tasks that have not started while the run is working — DD-130
 - [x] Plan: R-121 -> BG-76 -> SF-108 -> UC-111 -> FR-106 -> QAS-117 -> DD-130.

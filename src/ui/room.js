@@ -184,7 +184,7 @@ paintInspector();
 function renderSnapshot() {
   if(!snapshot)return;syncInspector();const r=snapshot.report;if(selected>=r.tasks.length)selected=0;
   const t=task(),p=planTask(),a=profile();
-  let ownership=$('owned-file-warning');if(!ownership){ownership=node('p');ownership.id='owned-file-warning';$('run-banner-progress').parentElement.append(ownership);}const changed=snapshot.owned_changes||[];ownership.hidden=!r.direct_workspace||r.plan.workspace_mode!=='shared'||(!changed.length&&r.state!=='running');AC_I18N.bind(ownership,()=>changed.length?acMessage("room.owned_edit_detected",{paths:changed.join(', ')}):acMessage("room.owned_edit_warning",{paths:r.plan.tasks.flatMap(t=>t.paths).join(', ')}));
+  let interrupted=$('run-interruptions');if(!interrupted){interrupted=node('p');interrupted.id='run-interruptions';$('run-banner-progress').parentElement.append(interrupted);}AC_I18N.bind(interrupted,()=>(interruptionText(snapshot.interruptions)));interrupted.hidden=!snapshot.interruptions?.length; let ownership=$('owned-file-warning');if(!ownership){ownership=node('p');ownership.id='owned-file-warning';$('run-banner-progress').parentElement.append(ownership);}const changed=snapshot.owned_changes||[];ownership.hidden=!r.direct_workspace||r.plan.workspace_mode!=='shared'||(!changed.length&&r.state!=='running');AC_I18N.bind(ownership,()=>changed.length?acMessage("room.owned_edit_detected",{paths:changed.join(', ')}):acMessage("room.owned_edit_warning",{paths:r.plan.tasks.flatMap(t=>t.paths).join(', ')}));
   AC_I18N.bind($('goal'),()=>(r.plan.goal));const project=(r.folder?.original||r.repo).replace(/^\\\\\?\\/,'');AC_I18N.bind($('repository'),()=>(project.split(/[\\/]/).filter(Boolean).pop()||project));AC_I18N.bind($('repository'),()=>(project),"title");
   AC_I18N.bind($('workspace-mode'),()=>(r.plan.workspace_mode==='worktree'?acMessage("room.isolated_worktrees"):acMessage("room.shared_directory")));AC_I18N.bind($('branch'),()=>(r.branch));
   AC_I18N.bind($('run-state'),()=>(statusLabel(r.state)));$('run-state').className='state-label tone-'+statusTone(r.state);AC_I18N.bind($('session-count'),()=>(r.tasks.length));
@@ -352,7 +352,7 @@ function event(label,text,cls='',seq) {
 function renderTask(data) {
   const t=task(),p=planTask();if(!t||data.task.id!==t.id)return;
   const timeline=[event(acMessage("room.assigned_task"),p.prompt,'plan')];if(t.feedback)timeline.push(event(acMessage("room.you_latest_review"),t.feedback));
-  for(const e of data.events)for(const x of transcript(e))timeline.push(event(x.label,x.text,x.cls,e.seq));
+  for(const x of collapseThinking(data.events)){if(x.thinking){const t=x.thinking;timeline.push(event(acMessage("room.thinking_updates",{value1:t.count}),'','muted',t.first===t.last?t.first:`${t.first}–${t.last}`));}else for(const y of transcript(x.event))timeline.push(event(y.label,y.text,y.cls,x.event.seq));}
   for(const d of data.decisions||[])timeline.push(decisionEntry(d));
   for(const d of data.coordinator_decisions||[])if(d.kind!=='tool')timeline.push(judgmentEntry(d));
   if(t.error)timeline.push(event(acMessage("room.coordinator_report"),t.error,'error'));

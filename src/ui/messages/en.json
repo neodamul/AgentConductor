@@ -376,6 +376,8 @@
   "room.import_or_discover_a_model_catalog_with_the": "Import or discover a model catalog with the CLI.",
   "room.in": "In",
   "room.in_out": "{value1} in / {value2} out",
+  "room.interrupted_recovered": "Interrupted and recovered {value1} time(s); last at {value2} ({value3})",
+  "room.thinking_updates": "Thinking… {value1} updates",
   "room.in_progress": " in progress…",
   "room.in_the_background": "In the background",
   "room.instructions": "Instructions",
