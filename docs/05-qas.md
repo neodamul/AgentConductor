@@ -473,7 +473,6 @@ Trace: R-117 -> BG-72 -> SF-104 -> UC-107 -> FR-102 -> QAS-113 -> DD-125. Source
 Measure: After Generate plan for the ladder goal, Review the plan lists 4 phases with their briefing lines (e.g. 2. 02-race-core: marble race priority logic (TDD)) and task lists (t05, t06, t07); phase 1 is open as under review; the analysis expands; the goal_briefing test passes.
 
 ### QAS-114 A run survives closing or losing the desktop app
-Status: Not measured: R-118 is not implemented on `main` (see docs/14).
 Closing the desktop app (or the app process ending) must not end a run: the run coordinator and its agent workers keep working and the app reattaches when reopened. Closing the window while a run is active asks: Keep running in the background (default), Stop the run and close, or Cancel.
 Trace: R-118 -> BG-73 -> SF-105 -> UC-108 -> FR-103 -> QAS-114 -> DD-127. Source: user request, 2026-10-13.
 Measure: On Windows and macOS, ending the app process while a task runs leaves the coordinator and worker alive; reopening shows the same run progressing (DD-126 routing opens the Agent Room); the close dialog's Stop path stops through the normal Stop request and records it.

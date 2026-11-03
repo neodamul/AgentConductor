@@ -51,6 +51,8 @@ pub fn open(room: Arc<super::super::Room>) -> Result<(), String> {
     let active = Arc::new(AtomicUsize::new(0));
     let (ipc_closed, ipc_active) = (closed.clone(), active.clone());
     let loaded = AtomicBool::new(false);
+    let shell = room.clone();
+    let mut asked: Option<std::time::Instant> = None;
     let webview = WebViewBuilder::new()
         .with_incognito(true)
         .with_devtools(false)
@@ -113,13 +115,26 @@ pub fn open(room: Arc<super::super::Room>) -> Result<(), String> {
                 let value = serde_json::to_string(&value).unwrap_or_else(|_| "\"\"".into());
                 let _ = webview
                     .evaluate_script(&format!("window.__acReply({},{ok},{value})", reply.id));
+                if shell.closing() {
+                    closed.store(true, Ordering::Release);
+                    *control = ControlFlow::Exit;
+                }
             }
             Event::WindowEvent {
                 event: WindowEvent::CloseRequested,
                 ..
             } => {
-                closed.store(true, Ordering::Release);
-                *control = ControlFlow::Exit;
+                // R-118: a working run asks first; asking again within 10 s, or nothing to ask about, closes.
+                if shell.closing()
+                    || asked.is_some_and(|at| at.elapsed() < std::time::Duration::from_secs(10))
+                    || shell.active_runs().is_empty()
+                {
+                    closed.store(true, Ordering::Release);
+                    *control = ControlFlow::Exit;
+                } else {
+                    asked = Some(std::time::Instant::now());
+                    let _ = webview.evaluate_script(super::CLOSE_REQUESTED);
+                }
             }
             _ => {}
         }

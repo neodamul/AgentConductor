@@ -218,6 +218,10 @@ q('read-plan').onclick=async()=>{if(!await save())return;if(!await ensureBaselin
   // GitHub #273 (DD-208): running work and the age of the last snapshot are redrawn every second, without waiting for a reply.
   function renderStatus(){if(!state)return;const stale=AC_STALE(lastSnapshotAt),waiting=AC_WAIT.text();AC_I18N.bind(q('status'),()=>(stale||waiting||(state.job?.state==='running'&&!state.job.kind.startsWith('quota:')?acMessage("startup.in_progress_a0dd34", {value1:state.job.kind}):acMessage("startup.local_workspace")+state.root)));q('status').classList.toggle('stale',!!stale);}
   q('step-progress').onclick=()=>showStep('review');
+  // R-118 / DD-127: the native window asks before closing while a run works; keeping it running is the default.
+  window.__acCloseRequested=()=>{const d=q('close-dialog');if(d.open)return;d.showModal();q('close-keep').focus();};
+  const closeWindow=stop=>request({kind:'close_window',stop}).catch(e=>{q('close-dialog').close();notice(e.message,true);});
+  q('close-keep').onclick=()=>closeWindow(false);q('close-stop').onclick=()=>closeWindow(true);
   let chatSync=false;setInterval(async()=>{if(home||document.hidden||!chat.busy()||chatSync)return;chatSync=true;try{state=await request({kind:'snapshot'});chat.update();}catch(e){}finally{chatSync=false;}},2000);
    setInterval(()=>{if(document.hidden||!state)return;if(startPending||state.job?.state==='running')planProgress();renderStatus();chat.tick();optimize.update();if(state.job?.kind==='mcp')sources.update();if(q('update').open&&['checking','installing'].includes(update?.phase))renderUpdate();},1000);
   poll(true).then(schedule);
