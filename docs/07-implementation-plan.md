@@ -8195,7 +8195,7 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 
 - [x] Plan: compare the populated Rust Workspace with the available legacy source screenshot; the native rail and agent cards were wider, moving the main form right.
 - [x] Red: tighten the AccessKit viewport regression for the folder and goal controls from x=344 to x=314; it failed before the layout change.
-- [x] Task / Green: reduce the default rail width, set its inner margins explicitly, and keep the Workspace root frame/card helpers in separate Rust modules so `workspace.rs` stays within 300 lines.
+- [x] Task / Green: reduce the default rail width, set its inner margins explicitly, adjust Workspace content-card padding, and split frame/validation helpers so `workspace.rs` stays within 300 lines.
 - [x] Verify (local): the manual-capture argument, Workspace geometry, sidebar density, and sidebar footer suites pass 9/9; warning-denied all-target Clippy, rustfmt, diff hygiene, and the ≤300-line guard pass.
 - [x] Assetize: refresh Graphify to 13,369 nodes / 21,515 edges and add the sizing rationale to the native Rust UI LLM Wiki. CocoIndex is not installed in this runtime.
 - [ ] Verify visually: the opt-in GUI capture did not produce an image in this macOS session (window host logged an XPC connection error); the geometry test is component-level evidence only.
