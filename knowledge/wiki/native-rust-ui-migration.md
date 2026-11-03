@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+## Correct Workspace isolation placement — 2026-11-03
+
+The worktree checkbox is beside the project-folder picker, matching the current legacy source. A previous change moved it below goal/import controls after relying on an outdated Rust screenshot; that was incorrect and has been reversed. The AccessKit bounds regression failed against the misplaced control and now passes with the checkbox aligned to Browse. The only available main screenshot is labeled v0.1.55 and is used for this control's placement only, not full parity. Sixteen focused tests, two source-layout tests, warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line guard pass. Issue #9 remains 22/50; no acceptance point is claimed. Evidence: `docs/evidence/issue9-workspace-isolation-layout-20261103.json`.
+
 ## Workspace header and coordinator placement — 2026-11-03
 
 The legacy Workspace header includes the localized execution phase and a `New goal` action beside the page title; the coordinator-chat launcher belongs in the application bar beside Settings. The native page header now shows the phase from the current job, proposal, and unsaved-draft state. The new-goal action sends the existing revisioned request through the asynchronous worker, then returns to Workspace and refreshes its snapshot after a successful change. It is disabled while a request or job is active, no repository is configured, or a run is nonterminal. With unsaved edits, it opens the existing localized discard confirmation and sends the request only after explicit approval; canceling preserves the draft. Coordinator chat is rendered in the application bar and remains available through its existing state and worker path.

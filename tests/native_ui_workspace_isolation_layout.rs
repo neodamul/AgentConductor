@@ -4,7 +4,7 @@ use agentconductor::native_ui_probe::{Probe, appearance::State};
 use eframe::egui::{self, Pos2, accesskit::Role};
 
 #[test]
-fn worktree_toggle_is_below_the_project_folder_row() {
+fn worktree_toggle_shares_the_project_picker_row() {
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut probe = Probe::default();
@@ -36,8 +36,8 @@ fn worktree_toggle_is_below_the_project_folder_row() {
         locale.text("startup.isolate_tasks_in_git_worktrees"),
     );
     assert!(
-        isolation.y0 >= picker.y1,
-        "execution isolation belongs on its own row below the project picker: picker={picker:?}, isolation={isolation:?}"
+        ((isolation.y0 + isolation.y1 - picker.y0 - picker.y1) / 2.0).abs() <= 2.0,
+        "the latest main Workspace reference keeps execution isolation beside the project picker: picker={picker:?}, isolation={isolation:?}"
     );
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();

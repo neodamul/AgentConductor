@@ -21,13 +21,13 @@
 
 ### 2026-11-03 — Align workspace execution-isolation placement — issue #9
 
-- [x] Plan: place the optional worktree control in its own section after goal/import controls, matching the Workspace form grouping in the populated reference.
-- [x] Red: `native_ui_workspace_isolation_layout::worktree_toggle_is_below_the_project_folder_row` failed because the checkbox shared the project-folder row.
-- [x] Task / Green: move the localized execution-isolation heading and checkbox below the goal/import controls without changing the default shared-folder behavior or saved mode.
-- [x] Verify: 16 focused tests pass across language, workspace, project-picker, and isolation-layout targets; source-layout passes 2/2; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line limit pass.
-- [x] Assetize the change in the Native startup workspace Wiki and save the AgentMemory record; Graphify now has 13,244 nodes / 21,344 edges.
-- [x] Record the red/green bounds evidence in `docs/evidence/issue9-workspace-isolation-layout-20261103.json`.
-- [ ] Capture the corrected same-state screenshot with valid coordinator configuration and synthetic quota observations; this layout fix adds no parity acceptance.
+- [x] Plan: compare against the latest available `origin/main` Workspace reference; its project-folder row keeps the optional worktree checkbox beside Browse.
+- [x] Red: the first implementation moved the checkbox below the goal/import controls. The corrected AccessKit bounds test failed with Browse at y=449..469 and the checkbox at y=709..729.
+- [x] Task / Green: restore the checkbox beside the project-folder picker, matching `src/ui/startup.html`; preserve shared-folder as the default and the existing save contract.
+- [x] Verify: the four focused UI targets pass 16 tests; source-layout passes 2/2; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test limit pass.
+- [x] Capture the corrected Rust screen with the same saved-workspace fixture and synthetic quota values in `docs/evidence/issue9-workspace-isolation-current-main-reference-20261103.png`.
+- [x] Record the superseded placement and the corrected red/green evidence in `docs/evidence/issue9-workspace-isolation-layout-20261103.json`; the older placement claim is not current.
+- [ ] Full screen-by-screen parity remains open. The available main screenshot is labeled v0.1.55, so it is used only to verify checkbox placement; this change adds no acceptance credit.
 
 Issue #9 remains at 22/50 until the same-state screenshot review and full acceptance review are complete.
 

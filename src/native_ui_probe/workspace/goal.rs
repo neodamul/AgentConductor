@@ -119,6 +119,13 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 {
                     probe.pick_folder();
                 }
+                ui.checkbox(
+                    &mut use_worktrees,
+                    probe
+                        .navigation
+                        .appearance
+                        .text("startup.isolate_tasks_in_git_worktrees"),
+                );
             });
         });
         let label = ui.label(goal);
@@ -176,21 +183,6 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             Some(super::mcp::SourceEvent::Apply(selected)) => probe.apply_mcp_sources(&selected),
             None => {}
         }
-        ui.label(
-            probe
-                .navigation
-                .appearance
-                .text("startup.execution_isolation"),
-        );
-        ui.add_enabled_ui(can_edit, |ui| {
-            ui.checkbox(
-                &mut use_worktrees,
-                probe
-                    .navigation
-                    .appearance
-                    .text("startup.isolate_tasks_in_git_worktrees"),
-            );
-        });
         probe.workspace_mode = if use_worktrees {
             crate::plan::WorkspaceMode::Worktree
         } else {

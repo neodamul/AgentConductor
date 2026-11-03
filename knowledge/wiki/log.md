@@ -1,6 +1,6 @@
-# [2026-11-03] plan/task/verify | Align Workspace execution-isolation placement — issue #9
+# [2026-11-03] correction | Match worktree control to latest Workspace source — issue #9
 
-The optional worktree checkbox had been placed beside the project-path picker, splitting the reference form's project and isolation groups. Added an AccessKit bounds regression: it failed with the checkbox and browse button on the same y-coordinate, then passed after moving the checkbox beneath goal/import controls under a localized `Execution isolation` heading. Shared-folder remains the default. Sixteen focused tests and 2 source-layout tests pass; warning-denied all-target Clippy, formatting, diff hygiene, and the 300-line limit pass. Graphify: 13,244 nodes / 21,344 edges. CocoIndex CLI is unavailable in this host. No issue #9 acceptance credit is claimed; same-state screenshot review remains open.
+The prior layout change was wrong: it relied on a stale Rust capture and moved the worktree checkbox below goal/import controls. The current available `origin/main` Workspace reference keeps the checkbox in the project-folder row. An AccessKit bounds test first failed against the misplaced checkbox (Browse y=449..469; checkbox y=709..729), then passed after restoring the checkbox beside Browse. Sixteen focused tests, 2 source-layout tests, warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line source/test limit pass. The v0.1.55 reference screenshot is used only for this control's placement, not full parity. Issue #9 remains 22/50 with no acceptance credit. This correction stays in the existing Draft PR #22; no extra PR was opened.
 
 # [2026-11-03] plan/task/verify | Repair exact-head native test failures — issue #9
 
