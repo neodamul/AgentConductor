@@ -743,7 +743,7 @@ The application shall record which page request was slow or failed, and the ship
 Trace: R-182 → BG-137 → SF-170 → UC-173 → FR-170 → QAS-180 → DD-193. GitHub #200, user, 2026-10-28.
 
 ### R-183 A standard, schema-based CLI interface
-Status: Amended by GitHub #341: output that is not valid JSON keeps a bounded, labeled excerpt of stdout and stderr; a profile may read text output (`on_invalid_json = text`) and declare a `denial_condition` on any event; automatic approval without a way to see refusals shows a configuration hint. Open: a matched denial must be reported as a distinct permission-denied task state with the tool name and message (today it is `failed`).
+Status: Amended by GitHub #341: output that is not valid JSON keeps a bounded, labeled excerpt of stdout and stderr; a profile may read text output (`on_invalid_json = text`) and declare a `denial_condition` on any event; automatic approval without a way to see refusals shows a configuration hint. A matched denial is its own task state, `permission_denied`, with the tool name and message; dependents and the run are blocked until Resume.
 The application shall define one schema-based contract for what goes into a CLI's stdin and what comes out of its stdout, stderr and exit code, that an in-house LLM agent CLI can implement directly or through a thin wrapper. The contract shall state the kind of work (classification and extraction, summary, analysis, code, long agentic work, creative generation) so that model, effort and prompt conditions fit the task and the model and are not the same for every model.
 Trace: R-183 → BG-138 → SF-171 → UC-174 → FR-171/FR-172/FR-173/NFR-74 → QAS-181 → DDR-38 → DD-194/DD-195. GitHub #205, user, 2026-10-28.
 

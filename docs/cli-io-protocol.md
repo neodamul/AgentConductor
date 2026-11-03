@@ -204,9 +204,10 @@ what it is, not as a parser error:
   "not allowed", "requires approval", ...) fails the run with "check the CLI configuration".
 - `denial_condition` names an event that means a tool was refused: optional `event_type`, a JSON Pointer
   `pointer` checked by `equals` or by a case-insensitive `contains`, and optional `tool_pointer` and
-  `message_pointer`. A matching event fails the task even when the process exits 0 and a result follows, with
-  "permission denied: tool NAME: MESSAGE". The task status stays `failed`; a separate "permission denied" status
-  for an approve-and-retry flow is future work.
+  `message_pointer`. A matching event ends the task even when the process exits 0 and a result follows: its
+  status is `permission_denied` with the error "permission denied: tool NAME: MESSAGE". Tasks that depend on it
+  are `blocked`, the run is `blocked` with that error, the coordinator does not try to repair it, and Resume
+  retries it after the CLI's configuration was changed (or the task was reassigned).
 - An agent set to `operator_auto_approve` with no event mapping, error or denial condition (and no acio) gets a
   non-blocking "Check configuration" badge on its card: nothing in its settings could show a refused tool.
 - Not done: a `{prompt}` placeholder for CLIs that take the prompt only as an argument.

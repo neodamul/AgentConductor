@@ -54,7 +54,6 @@ the tests that exercise it and says whether the behavior is present on `main`.
 | R-120 | partly implemented | Silence and process state are shown since R-159 (`room.js` activity lines); the collapsed "Thinking… n updates" line and the interruption history of DD-129 are not implemented. |
 | R-151 | in progress | Rust-only UI is on the migration line (#9); `main` ships the JS pages. |
 | R-174 | policy | Applied in review and by the CI Clippy gates (docs/13); not a test. |
-| R-183 | open item | GitHub #341 (reopened): a matched denial is still reported as `failed`, not as a distinct permission-denied state. |
 
 ## Requirement evidence
 
@@ -84,7 +83,7 @@ the tests that exercise it and says whether the behavior is present on `main`.
 | R-132 Custom CLIs that approve their own tools can run | current | `self_approving_cli.rs` | passes |
 | R-154 Custom CLI behavior belongs to its agent profile | current | `protocol.rs`, `quota_custom.rs` | passes |
 | R-158 Configure custom CLI models, execution options, and result d | current | `declarative_cli_profiles.rs` | passes |
-| R-183 A standard, schema-based CLI interface | amended by GitHub #341 | `acio_runtime.rs`, `adapter_golden.rs`, `agent_settings.rs`, `cli_io.rs` (+8) | open item |
+| R-183 A standard, schema-based CLI interface | amended by GitHub #341 | `custom_cli_denials.rs`, `permission_denied_status_runtime.cjs`, `acio_runtime.rs`, `adapter_golden.rs`, `agent_settings.rs`, `cli_io.rs` (+8) | passes |
 | R-186 Every agent prompt has one standard form and its reply is ch | current | `coordinator_format_retry.rs`, `prompt_form.rs`, `prompt_order.rs` | passes |
 | R-189 A valid JSON block is found even after an unfinished one | current | `coordinator_document.rs` | passes |
 
