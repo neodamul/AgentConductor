@@ -1,5 +1,13 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Match Workspace app-bar action order — issue #9
+
+- [x] Plan: compare the native Workspace navigation row with `origin/main:src/ui/startup.html`; main orders coordinator chat, Settings, Discard changes, then Back to run.
+- [x] Red: extend the bilingual/accessibility navigation test with a dirty workspace and require Settings before Discard changes; it failed because Rust rendered Discard before Chat and Settings.
+- [x] Task / Green: render Chat and Settings first, then Discard changes and Back to run, preserving each action's existing enablement and confirmation behavior.
+- [x] Verify: header-chat, navigation-language, new-goal confirmation, appearance, and source-layout suites pass 15 tests; rustfmt and diff hygiene pass. Touched files are 171 and 79 lines.
+- [ ] Exact screen verification: recapture current Rust and exact current-main builds with matching workspace state and inspect the full navigation row.
+
 ### 2026-11-03 — Do not gate keyboard input on UIA focus reporting — issue #9
 
 - [x] Red: exact-head run `41614474518` reached the updated Windows package driver, but UIA kept `HasKeyboardFocus` false after the physical click and the driver exited before typing. Follow-up run `41617997008` exposed a PowerShell parse error in the click diagnostic (`$goalX:`); the packaged Windows journey did not reach input or persistence checks.

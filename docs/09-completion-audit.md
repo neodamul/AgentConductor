@@ -1,3 +1,10 @@
+## Workspace app-bar action order — 2026-11-03
+
+- Comparing Rust navigation with the current `main` startup header exposed an action-order mismatch: Rust placed Discard changes before coordinator Chat and Settings; main places Chat, Settings, Discard changes, then Back to run.
+- TDD extended the native navigation interaction test to require the same order in a dirty workspace. It failed before the change, then passed after moving the unchanged discard/back actions after Settings.
+- Local locked/offline focused verification passes 15 tests across header chat, navigation language, new-goal confirmation, appearance, and source-layout suites; rustfmt and diff hygiene pass. Touched source/test files remain below 300 lines.
+- This aligns one control sequence but adds no aggregate UI parity credit. Exact current-build screenshot review remains open; issue #9 remains 22/50 and shipped/default Rust UI parity 0/25.
+
 ## Windows Goal driver PowerShell parse failure — 2026-11-03
 
 - Exact-head Platform Validation run `41617997008` passed macOS. Windows reached the native desktop test, where `default_native_workspace_is_accessible_and_saves_through_ui_automation` stopped before input: PowerShell parsed `$goalX:` and `$goalY:` as invalid variable references in the diagnostic string. The packaged Windows job was skipped because validation failed.

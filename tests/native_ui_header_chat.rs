@@ -7,7 +7,7 @@ use agentconductor::native_ui_probe::workspace::{
 use eframe::egui::{self, accesskit::Role};
 
 #[test]
-fn coordinator_launcher_is_in_the_application_bar_before_settings() {
+fn application_actions_match_the_legacy_header_order() {
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut navigation = navigation::State::default();
@@ -28,7 +28,7 @@ fn coordinator_launcher_is_in_the_application_bar_before_settings() {
                     current_path: "/repo",
                     can_change: true,
                     planning_running: false,
-                    dirty: false,
+                    dirty: true,
                     show_cache: false,
                     language: "en",
                 },
@@ -57,6 +57,7 @@ fn coordinator_launcher_is_in_the_application_bar_before_settings() {
         })
         .and_then(|(_, node)| node.bounds())
         .expect("Settings button bounds");
+    let discard = bounds("Discard changes");
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
     assert!(
@@ -66,6 +67,10 @@ fn coordinator_launcher_is_in_the_application_bar_before_settings() {
     assert!(
         chat.x0 < settings.x0,
         "chat must appear immediately before Settings"
+    );
+    assert!(
+        settings.x0 < discard.x0,
+        "Discard changes must follow the chat and Settings actions"
     );
     assert!(
         chat.y1 <= 50.0,

@@ -80,37 +80,6 @@ pub fn show_in_language_with_chat(
             egui::Popup::close_id(ui.ctx(), popup_id);
             state.open = false;
         }
-        if state.run_available
-            && ui
-                .add_enabled(
-                    !state.loading,
-                    egui::Button::new(text(language, "startup.back_to_run")),
-                )
-                .clicked()
-        {
-            if dirty {
-                state.confirmation = Some(Confirmation::Discard {
-                    areas: state.dirty_areas.clone(),
-                    return_to_run: true,
-                    start_new_goal: false,
-                });
-            } else {
-                event = Some(Event::BackToRun);
-            }
-        }
-        if ui
-            .add_enabled(
-                dirty && can_change,
-                egui::Button::new(text(language, "startup.discard_changes")),
-            )
-            .clicked()
-        {
-            state.confirmation = Some(Confirmation::Discard {
-                areas: state.dirty_areas.clone(),
-                return_to_run: false,
-                start_new_goal: false,
-            });
-        }
         if let Some(chat) = chat {
             chat.show_launcher(language, ui);
         }
@@ -149,6 +118,37 @@ pub fn show_in_language_with_chat(
                 event = Some(Event::Updates);
             }
             None => {}
+        }
+        if ui
+            .add_enabled(
+                dirty && can_change,
+                egui::Button::new(text(language, "startup.discard_changes")),
+            )
+            .clicked()
+        {
+            state.confirmation = Some(Confirmation::Discard {
+                areas: state.dirty_areas.clone(),
+                return_to_run: false,
+                start_new_goal: false,
+            });
+        }
+        if state.run_available
+            && ui
+                .add_enabled(
+                    !state.loading,
+                    egui::Button::new(text(language, "startup.back_to_run")),
+                )
+                .clicked()
+        {
+            if dirty {
+                state.confirmation = Some(Confirmation::Discard {
+                    areas: state.dirty_areas.clone(),
+                    return_to_run: true,
+                    start_new_goal: false,
+                });
+            } else {
+                event = Some(Event::BackToRun);
+            }
         }
     });
     tools_guide::show(&mut state.tools_guide, language, ui);
