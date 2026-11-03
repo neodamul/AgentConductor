@@ -179,7 +179,7 @@ const toggleInspector = () => { inspectorState = inspectorStep(inspectorState, {
 window.acInspector = { toggle: toggleInspector }; $('inspector-toggle').onclick = toggleInspector;
 paintInspector();
 function renderSnapshot() {
-  if(!snapshot)return;syncInspector();const r=snapshot.report;if(selected>=r.tasks.length)selected=0;
+  if(!snapshot)return;syncInspector();watchResult(snapshot);const r=snapshot.report;if(selected>=r.tasks.length)selected=0;
   const t=task(),p=planTask(),a=profile();
   let interrupted=$('run-interruptions');if(!interrupted){interrupted=node('p');interrupted.id='run-interruptions';$('run-banner-progress').parentElement.append(interrupted);}AC_I18N.bind(interrupted,()=>(interruptionText(snapshot.interruptions)));interrupted.hidden=!snapshot.interruptions?.length; let ownership=$('owned-file-warning');if(!ownership){ownership=node('p');ownership.id='owned-file-warning';$('run-banner-progress').parentElement.append(ownership);}const changed=snapshot.owned_changes||[];ownership.hidden=!r.direct_workspace||r.plan.workspace_mode!=='shared'||(!changed.length&&r.state!=='running');AC_I18N.bind(ownership,()=>changed.length?acMessage("room.owned_edit_detected",{paths:changed.join(', ')}):acMessage("room.owned_edit_warning",{paths:r.plan.tasks.flatMap(t=>t.paths).join(', ')}));
   AC_I18N.bind($('goal'),()=>(r.plan.goal));const project=(r.folder?.original||r.repo).replace(/^\\\\\?\\/,'');AC_I18N.bind($('repository'),()=>(project.split(/[\\/]/).filter(Boolean).pop()||project));AC_I18N.bind($('repository'),()=>(project),"title");
@@ -476,7 +476,7 @@ async function poll(background=false) {
   }catch(e){if(roomStopped)return;pollFailed(e,background);}finally{polling=false;}
 }
 for(const el of document.querySelectorAll('[data-tab]'))el.onclick=()=>el.dataset.tab==='review'?loadReview():changeTab(el.dataset.tab);
-$('brief-team').onclick=briefTeam;$('quota-agent').onchange=()=>{quotaAgent=$('quota-agent').value;renderQuota(profile());};$('quota-refresh').onclick=()=>refreshQuota($('quota-agent').value);$('refresh').onclick=poll;$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('open-tools').onclick=()=>{deferredTools.clear();if(snapshot)syncToolDialog();if(!$('tool-dialog').open)$('tool-requests').scrollIntoView({behavior:'smooth',block:'center'});};
+$('brief-team').onclick=briefTeam;$('quota-agent').onchange=()=>{quotaAgent=$('quota-agent').value;renderQuota(profile());};$('quota-refresh').onclick=()=>refreshQuota($('quota-agent').value);$('refresh').onclick=poll;$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('show-result').onclick=()=>openResult().catch(e=>notice(e.message,true));$('result-close').onclick=()=>$('result-dialog').close();$('open-tools').onclick=()=>{deferredTools.clear();if(snapshot)syncToolDialog();if(!$('tool-dialog').open)$('tool-requests').scrollIntoView({behavior:'smooth',block:'center'});};
 // Input-method composition (e.g. Korean) must finish before text is replaced or sent.
 let composing=false;document.addEventListener('compositionstart',()=>{composing=true;});document.addEventListener('compositionend',()=>{composing=false;});
 $('feedback').oninput=()=>{const key=coordinatorView?COORDINATOR_DRAFT:task()?.id;if(key)drafts.set(key,$('feedback').value);};

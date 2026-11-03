@@ -17,6 +17,7 @@ const CSS: &str = include_str!("ui/room.css");
 // R-120: the Activity helpers come first so room.js stays within the file-size bound.
 const JS: &str = concat!(
     include_str!("ui/room_activity.js"),
+    include_str!("ui/room_result.js"),
     include_str!("ui/room.js")
 );
 /// ID catalogs and translation runtime, loaded before either page script.
