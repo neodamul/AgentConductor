@@ -104,6 +104,7 @@
 - [x] Reverify (2026-11-03): on current Rust head `d5731f11`, chat persistence/interaction, editor accessibility, Windows driver contracts, package skip diagnostics, and source-layout pass 23 tests across seven targets; warning-denied all-target Clippy passes.
 - [x] Correct status: Platform Validation run `41500210315` was cancelled, not still executing. Current-head run `41553629403` is compiling/testing macOS and Windows targets but does not run the exact packaged chat UI journeys.
 - [x] Assetize: refresh the issue #189 raw observation and coordinator chat LLM Wiki; Graphify now contains 13,202 nodes / 19,775 edges / 967 communities. CocoIndex CLI is unavailable on this host.
+- [x] Inspect local Windows options without changing UTM settings: Z: contains `issue9-windows-package-ac3f8b.zip` (SHA-256 `57d45e14390264bd471855220238afd0b6e86421401f89efd8387d97355f64bc`), whose package source is `ac3f8b32` from Oct 26, before the chat accessibility fix `fbc2280a` from Oct 30. Its embedded smoke report covers CLI/merge cases, not chat UI. The guest has no `cargo` or `rustc`; the host has no Windows cross-linker/toolchain. Do not count this stale ZIP as package evidence.
 - [ ] Exact package: run the Windows chat persistence and in-flight reconnect journeys against the exact packaged binary on a host that permits the worker lifecycle. An explicit Job Object skip is not acceptance evidence.
 - [ ] Complete: keep bug #189 open until exact Windows packaged chat persistence/reconnect journeys pass; update issue #9 acceptance only from that evidence.
 
