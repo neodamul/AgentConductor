@@ -1,0 +1,27 @@
+{
+  "date": "2026-11-03",
+  "kind": "current-head-native-workspace-first-run-capture",
+  "issue": 9,
+  "source_head": "2101377ee42435f29b789783fd3b6684a3454001",
+  "binary": "target/debug/agentconductor-native-ui-probe",
+  "feature": "manual-screenshot-capture",
+  "surface": "Workspace",
+  "capture": {
+    "method": "native eframe framebuffer callback",
+    "dimensions": "1280x892",
+    "home": "disposable temporary HOME, removed after capture",
+    "path": "docs/evidence/issue9-current-head-workspace-first-run-2101377-20261103.png",
+    "sha256": "cfdbbf64bdd16d770fd26355f49770e9b242b4d4d68c67a1ad11225267620f03",
+    "app_window": "one window; closed automatically after capture"
+  },
+  "observations": [
+    "Prepared phase and New goal action appear beside the Workspace title.",
+    "Coordinator chat launcher appears in the application bar beside Settings.",
+    "The empty coordinator-profile warning is expected for the intentionally empty first-run HOME."
+  ],
+  "limitations": [
+    "This is a first-run blank Workspace, not a same-state comparison with the populated JavaScript reference.",
+    "No screen-parity or issue #9 acceptance credit is claimed.",
+    "The screenshot is internal evidence and is not a README or manual release asset."
+  ]
+}

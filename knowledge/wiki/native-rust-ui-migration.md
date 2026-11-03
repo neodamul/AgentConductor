@@ -1557,3 +1557,7 @@ and the chat launcher was misplaced; the follow-up above adds these controls and
 confirmation. This source-level visual improvement earns no workflow acceptance credit: issue #9
 remains 22/50 overall, with shipped/default Rust UI parity
 at 0/25 until the complete screen-by-screen gate passes.
+
+## Current-head first-run Workspace capture — 2026-11-03
+
+The native framebuffer capture at `docs/evidence/issue9-current-head-workspace-first-run-2101377-20261103.png` was generated from branch head `2101377e` in one disposable HOME and visually inspected at 1280×892. It shows the current `Prepared` phase, `New goal` action, and coordinator launcher beside Settings. The empty coordinator warning is expected because the HOME contains no profile. This capture is not a populated same-state comparison and earns no parity credit; it is internal evidence, not a README/manual asset.

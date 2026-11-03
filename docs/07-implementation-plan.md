@@ -7,7 +7,8 @@
 - [x] Task / Green: render localized title, phase badge, and an accessible `New goal` button; derive phase from job/proposal/dirty state; route the button through the revisioned asynchronous request worker and refresh the Workspace after success; keep it available with unsaved edits and require explicit discard confirmation before switching goals. Disable it while a request or job is active, no repository is configured, or a run is nonterminal. Move the chat launcher into the application bar.
 - [x] Focused local verification: 17 tests across six targets passed; warning-denied all-target Clippy, formatting, diff hygiene, and the 300-line source/test check passed.
 - [x] Complete local all-target suite: 1,313 passed and 16 ignored across 408 test targets; warning-denied all-target Clippy, formatting, diff hygiene, and the 300-line layout guard passed.
-- [ ] Capture and inspect the resulting Workspace screen. No aggregate or screen-parity credit is claimed yet; issue #9 remains 22/50 and shipped/default Rust UI parity remains 0/25.
+- [x] Capture and inspect the current-head Rust first-run Workspace at 1280×892: `docs/evidence/issue9-current-head-workspace-first-run-2101377-20261103.png`. It shows the Prepared phase, New goal control, and coordinator launcher beside Settings. The disposable HOME had no agents or coordinator profile, so the empty-roster warning is expected; this is not same-state JavaScript parity evidence.
+- [ ] Complete same-state screen review with populated workspace/agent fixtures. No aggregate or screen-parity credit is claimed; issue #9 remains 22/50 and shipped/default Rust UI parity remains 0/25.
 - [ ] Push this unit and inspect exact-head macOS/Windows validation before updating PR #22 and issue #9.
 
 ### 2026-11-03 — Restore visible agent details in native Workspace — issue #9
