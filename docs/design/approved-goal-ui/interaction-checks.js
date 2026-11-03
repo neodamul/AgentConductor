@@ -116,6 +116,8 @@
  check('agent trash uses shared SVG',[...document.querySelectorAll('.agent-remove')].every(button=>button.querySelector('svg path').getAttribute('d')==='M3 6h18M9 6V4h6v2M5 6l1 14h12l1-14M10 10v6M14 10v6'));
  check('agent brands replace card initials',document.querySelectorAll('.agent .status-icon .agent-brand-logo').length===2);
  check('agent trash balances tools',[...document.querySelectorAll('.agent-remove svg')].every(svg=>getComputedStyle(svg).width==='13px'));
+ check('inspector title is not a tab',getComputedStyle(document.querySelector('#task-inspector-title')).borderTopWidth==='0px'&&getComputedStyle(document.querySelector('#task-inspector-title')).backgroundColor==='rgba(0, 0, 0, 0)');
+ check('evidence summary has no KPI tiles',[...document.querySelectorAll('.result-stats>div')].every(item=>getComputedStyle(item).backgroundColor==='rgba(0, 0, 0, 0)'&&getComputedStyle(item.querySelector('strong')).fontSize==='16px'));
  check('no script errors',!document.documentElement.dataset.designError);
  document.documentElement.dataset.interactionResult=JSON.stringify({theme:initialTheme,width:innerWidth,checks});
 })().catch(error=>document.documentElement.dataset.designError=error.message);

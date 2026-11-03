@@ -40,7 +40,8 @@ label badges. Light backgrounds: `#dce5ef` / `#dce9df` / `#e9e1d2`; dark backgro
 (1–3, 4–5, and 6) on a single 36px row. Keep the selected tab clear on the card surface.
 Do not restore detached captions, group outlines, or a second group-label row.
 
-The two side panels share background, spacing, separators, heading proportions, and control radii.
+The two side panels share background, spacing, separators, heading proportions, and control radii. The right "Task details" heading is a plain panel
+title, not a tab: no accent edge, selected background, or tab-shaped border.
 The inspector must look like a docked rail, not a floating modal or a different settings application.
 No X/Close is present in the inspector. The titlebar toggle remains reachable while it is open.
 
@@ -56,7 +57,8 @@ Use tabular numerals for percentages, counts, timings, and other aligned metrics
 | Main Goal | 17px, weight 650 |
 | Step title | 18px semibold |
 | Rail title | 18px semibold |
-| Selected rail / inspector heading tab | 12px, weight 650 |
+| Selected left-rail tab | 12px, weight 650 |
+| Right inspector title | Plain 18px heading, weight 650; no selected-tab styling |
 | Section heading | 13–14px, weight 650 |
 | Main body / compact metadata | 12–13px / 11–12px |
 
@@ -152,3 +154,9 @@ See [gallery](gallery.html) for paired screenshots, including quota errors, dial
 
 No external fonts, network image hosts, new styling library, or runtime framework is needed.
 The image set is documentation evidence, not an additional desktop process or app dependency.
+
+## Evidence summaries
+
+Review/result summaries are compact document metadata on one ruled line, not dashboard KPI tiles.
+Use readable 14px labels with 16px semibold values, no separate card fill/radius and no oversized numbers.
+The actual changed-file list, test evidence and lessons remain the main content.
