@@ -9,8 +9,9 @@
 ## Reconciled PR inventory — 2026-11-03
 
 - The earlier “Current GitHub integration inventory” below is a historical snapshot and is superseded by the later integration work recorded in `docs/07-implementation-plan.md`.
-- PR #342 merged into `main` at `a133f31d`; issue #341 is closed. The Rust implementation is present on the #9 branch in commit `76d920f3`, and `main` at `b747e392` was merged into that branch at `42ead92e`.
-- PR #22 is the open root migration PR. The #341 fix is not an outstanding PR; it does not satisfy the separate #9 packaged-workflow and full UI parity gates.
+- PR #342 merged into `main` at `a133f31d`; its invalid-output handling and denial matching are present on the #9 branch in commit `76d920f3`, and `main` at `b747e392` was merged at `42ead92e`.
+- Review of #342's explicit omissions found that denial still becomes task state `failed`, not a distinct permission-denied state. Issue #341 has been reopened and labeled `bug`; do not claim it complete until that state is implemented and verified.
+- PR #22 is the open root migration PR. The merged #342 work does not satisfy the separate #9 packaged-workflow and full UI parity gates.
 - Do not treat closing intermediate issue-specific PRs as completing #9. Keep #22 Draft until its remaining acceptance evidence is complete.
 
 ## Windows Goal driver PowerShell parse failure — 2026-11-03

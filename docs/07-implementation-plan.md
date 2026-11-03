@@ -86,11 +86,12 @@
 ### 2026-11-03 — Current PR integration follow-up — issue #9 / bug priority
 
 - [x] Query the live PR list: #22 is the single Rust migration root; #342 was the independent main PR for #341.
-- [x] Verify PR #342 merged at `a133f31d` on 2026-11-03 and issue #341 is closed. Main's follow-up `84e3a9d1` makes the fake CLI consume stdin before responding.
+- [x] Verify PR #342 merged at `a133f31d` on 2026-11-03. Main's follow-up `84e3a9d1` makes the fake CLI consume stdin before responding.
 - [x] Merge current main `b747e392` into the Rust root at `42ead92e`; the Rust branch is now 0 commits behind main. Intentional JavaScript deletions and split Rust modules are preserved.
 - [x] Port denial classification, invalid-JSON policy, bounded output excerpts, profile-editor fields, localized warning, and snapshot `config_hints`; add Rust regression coverage.
 - [x] Verify locally: 1,357 tests pass across 412 suites with zero failures; warning-denied Clippy, rustfmt, diff hygiene, and the 300-line guard pass. See [custom CLI evidence](evidence/issue9-custom-cli-denials-20261103.json).
 - [x] Update the custom CLI LLM Wiki, Graphify, PR #22, and issue #9. The issue #9 root remains Draft at 22/50; source tests do not verify exact macOS/Windows package behavior.
+- [ ] Bug follow-up: PR #342 leaves denial events at task state `failed`, without the distinct permission-denied state proposed by #341. Issue #341 is reopened with the `bug` label; complete the main issue-linked fix and verification, then port it to the Rust root. Keep this separate from #9 acceptance and do not create a second open PR until the fix is ready for review.
 
 ### 2026-11-03 — Match legacy Workspace header distribution — issue #9
 
