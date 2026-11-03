@@ -14,6 +14,13 @@ impl Startup {
             );
         }
         let existing: Vec<String> = saved.config.slugs.iter().map(|s| s.slug.clone()).collect();
+        let root_for = |slug: &str| {
+            if saved.config.repository.as_os_str().is_empty() {
+                self.broker.dir.join(slug)
+            } else {
+                saved.config.repository.join(slug)
+            }
+        };
         let slug = match requested {
             Some(slug) => {
                 crate::slugs::validate(&slug)?;
@@ -30,28 +37,21 @@ impl Startup {
                 let mut taken = existing.clone();
                 loop {
                     let slug = crate::slugs::unique(&crate::slugs::suggest(&goal), &taken);
-                    let root = crate::slugs::root(
-                        &saved.config.repository,
-                        &self.broker.dir,
-                        &saved.config.name,
-                        &slug,
-                    );
-                    if !root.exists() {
-                        break slug;
+                    match fs::symlink_metadata(root_for(&slug)) {
+                        Err(e) if e.kind() == std::io::ErrorKind::NotFound => break slug,
+                        Err(e) => return Err(e.to_string()),
+                        Ok(_) => taken.push(slug),
                     }
-                    taken.push(slug);
                 }
             }
         };
+        let root = root_for(&slug);
+        // DD-225: establish ownership atomically; never adopt existing project data.
+        fs::create_dir(&root)
+            .map_err(|e| format!("Cannot reserve new Goal folder {}: {e}", root.display()))?;
         if let Ok(repo) = Repository::open(&saved.config.repository) {
             crate::slugs::exclude_from_git(&repo, &slug)?;
         }
-        let root = crate::slugs::root(
-            &saved.config.repository,
-            &self.broker.dir,
-            &saved.config.name,
-            &slug,
-        );
         crate::slugs::create_tree(&root)?;
         let mut next = saved.clone();
         next.config.slugs.push(crate::slugs::Slug {

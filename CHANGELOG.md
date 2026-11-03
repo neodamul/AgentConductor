@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 - The left panel is 250px wide with equal side padding on the Workspace screen and in the Agent Room, its two tabs are 29px high, the six step tabs are a single 35px row and the version in the title bar is smaller, matching the approved design.
+- The team briefing, the coordinator chat and Settings now open as right-hand slide-overs over the unchanged screen, like the Goal list; only one is open at a time (opening Settings or the briefing closes the chat).
 - Claude Code and Codex now show their own color marks (two MIT-licensed Lobe Icons files embedded in the app and shipped with their license text) instead of the installed application's icon or letters; task avatars are 28px and agent avatars 29px with the status border. OpenCode keeps its installed-application icon.
 - In the Agent Room the task status is shown by the border of the agent's icon (green running or completed, yellow waiting, red failed or blocked) instead of a separate dot; only a running task pulses. The icon is larger so the border reads.
 - When a goal completes, one centered result popup shows where the changes were merged, the changed files, the verification results and the lessons. It opens once when a run completes in the Agent Room and from a new **Result** button in the left panel afterwards.

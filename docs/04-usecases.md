@@ -839,3 +839,6 @@ Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213.
 ### UC-193 Adding a request
 A developer adds `request({kind:'export_report'})`; the guard fails and names it. They classify it (direct, so the pressed button and the waiting line already cover it), or, if it starts a background job, name the progress rendering the page has for it.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.
+
+### UC-205 Create or continue a Goal in a Workspace
+Actor: operator. An existing project directory is linked, with or without its own Git repository. Editing display text keeps existing Goal folders in place. Starting New Goal clears only Goal-specific proposal/context and keeps linked directory, coordinator, profiles and role rules. A direct requested Goal identifier colliding with any filesystem entry fails without touching it; automatic allocation finds an unused identifier. Continuing a completed phase loads the next phase of the same Goal for review. Trace: SF-201.
