@@ -102,8 +102,11 @@ pub fn show_title_controls(
 
 pub fn show_steps(current: usize, language: &str, ui: &mut egui::Ui) -> Option<usize> {
     let mut selected = current;
+    let content_width = ui
+        .available_width()
+        .min((ui.clip_rect().width() - 16.0).max(0.0));
     let step_width =
-        ((ui.available_width() - ui.spacing().item_spacing.x * 2.0) / TITLES.len() as f32).floor();
+        ((content_width - ui.spacing().item_spacing.x * 2.0) / TITLES.len() as f32).floor();
     ui.horizontal(|ui| {
         for (index, id) in TITLES.iter().enumerate() {
             let label = format!("{}. {}", index + 1, text(language, id));
