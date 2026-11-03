@@ -1185,6 +1185,8 @@
   "startup.read_only_args": "JSON array: how this CLI runs without writing; needed for the coordinator chat of a custom CLI",
   "startup.read_only_args_summary": "Read-only arguments (optional)",
   "startup.coordinator_cannot_chat": "Chat with this coordinator is unavailable: {reason}",
+  "startup.config_hint_badge": "Check configuration",
+  "startup.auto_approve_unconfigured": "This agent is set to approve tools automatically, but nothing in its settings shows when the CLI refuses one. Add the CLI's approval flag to its arguments and declare a denial condition (denial_condition), so a refused tool is reported as \"permission denied\" instead of a parser error or a silent success.",
   "room.pending_dependencies": "Waiting for {value1} to complete",
   "room.pending_retry": "Automatic retry in {value1}",
   "room.pending_session_limit": "Waiting for a free session (at most {value1} at a time)",

@@ -5,6 +5,10 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 the GitHub Release notes for its tag.
 
 ## Unreleased
+- A custom CLI's output that is not JSON no longer ends as a bare "invalid JSONL": the failure quotes the line and shows the end of the CLI's stdout and stderr, labeled apart.
+- A custom profile can set `on_invalid_json: "text"` to keep non-JSON lines as progress text (a result event and a zero exit are still required, and text that reads as a refusal fails with "check the CLI configuration").
+- A custom profile can declare a `denial_condition` (event type, JSON pointer with `equals` or `contains`, tool and message pointers). A matching event fails the task as "permission denied: tool …: …" even when the CLI exits 0.
+- An agent set to approve tools automatically but with nothing that could show a refusal gets a "Check configuration" badge on its card.
 
 ## v0.1.57
 - Codex planning no longer fails with `invalid_json_schema: Missing 'task_type'`: the plan contract now lists every task field as required (a task states `task_type` and `execution_options.effort` as null when it has none), so Codex Structured Outputs accepts it.

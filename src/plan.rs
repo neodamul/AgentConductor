@@ -3,8 +3,8 @@ use std::collections::HashSet;
 
 mod profile;
 pub use profile::{
-    AgentProfile, CatalogOrigin, CooperativeMode, ExecutionOption, Fallback, JsonCondition,
-    ModelCatalog, ModelDiscovery, QuotaCommand,
+    AgentProfile, CatalogOrigin, CooperativeMode, DenialCondition, ExecutionOption, Fallback,
+    InvalidJson, JsonCondition, ModelCatalog, ModelDiscovery, QuotaCommand,
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -119,6 +119,11 @@ fn log_tail(path: &Path, limit: u64) -> String {
     String::from_utf8_lossy(&bytes).trim().to_string()
 }
 
+/// GitHub #341: the end of what a CLI printed, stdout and stderr labeled apart, for a failure that stopped reading it.
+pub fn output_excerpt(stdout: &Path, stderr: &Path) -> String {
+    crate::ui::failure_output::failure_output(&log_tail(stderr, 1500), &log_tail(stdout, 1500))
+}
+
 /// Why a coordinator process failed: its status and the end of its own output, so the
 /// operator sees the cause instead of only "logs retained".
 pub fn failure(label: &str, result: &process::ProcessResult) -> String {

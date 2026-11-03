@@ -97,6 +97,7 @@ pub(in crate::workflow) async fn worker(
         let mut progress = false;
         let mut provider_error = None;
         let mut parse_error = None;
+        let mut denied = None;
         loop {
             let n = file.read(&mut buffer).map_err(|e|e.to_string())?;
             let batch = match if n==0 {decoder.finish()} else {decoder.push(&buffer[..n])} {
@@ -114,6 +115,9 @@ pub(in crate::workflow) async fn worker(
                     report.restriction=availability::detect(&event.payload,&message,(now()/1000) as i64);
                     provider_error=Some(message);
                 }
+                if event.kind==EventKind::Denied {
+                    denied = agent.denial_condition.as_ref().map(|d| d.describe(&event.payload)).or(denied);
+                }
                 terminal |= event.kind==EventKind::Result;
                 progress |= event.kind==EventKind::Progress;
                 serde_json::to_writer(&mut events,&event).map_err(|e|e.to_string())?;
@@ -121,16 +125,16 @@ pub(in crate::workflow) async fn worker(
             }
             if n==0 {break;}
         }
-        let failed=process.exit_code!=Some(0)||process.timed_out||process.stopped||provider_error.is_some();
+        let failed=process.exit_code!=Some(0)||process.timed_out||process.stopped||provider_error.is_some()||denied.is_some();
         if failed {
             if report.restriction.is_none() && !process.timed_out && !process.stopped {
                 let mut message=String::new();
                 fs::File::open(&process.stderr).map_err(|e|e.to_string())?.take(1024*1024).read_to_string(&mut message).map_err(|e|e.to_string())?;
                 report.restriction=availability::detect(&serde_json::Value::Null,&message,(now()/1000) as i64);
             }
-            return Err(provider_error.unwrap_or_else(||format!("agent exit={:?}, termination_signal={:?}, timed_out={}; inspect retained logs",process.exit_code,process.termination_signal,process.timed_out)));
+            return Err(denied.or(provider_error).unwrap_or_else(||format!("agent exit={:?}, termination_signal={:?}, timed_out={}; inspect retained logs",process.exit_code,process.termination_signal,process.timed_out)));
         }
-        if let Some(error)=parse_error {return Err(error);}
+        if let Some(error)=parse_error {return Err(format!("{error}\nthe CLI's own output:\n{}",crate::coordinator::output_excerpt(&process.stdout,&process.stderr)));}
         if agent.cooperative == crate::plan::CooperativeMode::CheckpointV1 {
             let owner: process::Ownership = serde_json::from_slice(&fs::read(report.artifacts.join("process/owner.json")).map_err(|e|e.to_string())?).map_err(|e|e.to_string())?;
             owner.ensure_quiescent()?;

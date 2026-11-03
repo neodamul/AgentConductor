@@ -30,6 +30,12 @@ pub struct AgentProfile {
     pub result_pointer: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub error_condition: Option<JsonCondition>,
+    /// GitHub #341: what to do with a stdout line that is not JSON (custom CLIs only).
+    #[serde(default, skip_serializing_if = "InvalidJson::is_fail")]
+    pub on_invalid_json: InvalidJson,
+    /// GitHub #341: an event that means the CLI refused a tool (custom CLIs only).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub denial_condition: Option<DenialCondition>,
     #[serde(default = "three")]
     pub max_sessions: usize,
     #[serde(default = "five_minutes", skip_serializing_if = "default_cadence")]
@@ -106,6 +112,81 @@ impl ExecutionOption {
 pub struct JsonCondition {
     pub pointer: String,
     pub equals: serde_json::Value,
+}
+
+/// `fail` stops at the first line that is not JSON (and quotes it); `text` records such lines as progress text.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum InvalidJson {
+    #[default]
+    Fail,
+    Text,
+}
+
+impl InvalidJson {
+    fn is_fail(&self) -> bool {
+        *self == Self::Fail
+    }
+}
+
+/// GitHub #341: an event that says a tool was refused. `pointer` is checked against the event (optionally only
+/// events of `event_type`) by `equals` or by `contains` (a case-insensitive message match); the tool and message
+/// pointers name what to report.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct DenialCondition {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub event_type: Option<String>,
+    pub pointer: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub equals: Option<serde_json::Value>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub contains: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub tool_pointer: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub message_pointer: Option<String>,
+}
+
+impl DenialCondition {
+    pub fn matches(&self, payload: &serde_json::Value) -> bool {
+        if self
+            .event_type
+            .as_deref()
+            .is_some_and(|kind| payload["type"].as_str() != Some(kind))
+        {
+            return false;
+        }
+        let Some(value) = payload.pointer(&self.pointer) else {
+            return false;
+        };
+        match (&self.equals, &self.contains) {
+            (Some(expected), _) => value == expected,
+            (None, Some(text)) => value
+                .as_str()
+                .is_some_and(|v| v.to_lowercase().contains(&text.to_lowercase())),
+            (None, None) => false,
+        }
+    }
+
+    /// "permission denied: tool bash: <message>" from the pointers; a missing value is left out.
+    pub fn describe(&self, payload: &serde_json::Value) -> String {
+        let text = |pointer: &Option<String>| {
+            pointer
+                .as_deref()
+                .and_then(|p| payload.pointer(p))
+                .and_then(serde_json::Value::as_str)
+                .map(String::from)
+        };
+        let mut out = String::from("permission denied");
+        if let Some(tool) = text(&self.tool_pointer) {
+            out += &format!(": tool {tool}");
+        }
+        if let Some(message) = text(&self.message_pointer) {
+            out += &format!(": {message}");
+        }
+        out
+    }
 }
 
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -208,6 +289,8 @@ impl AgentProfile {
                 || self.session_id_pointer.is_some()
                 || self.result_pointer.is_some()
                 || self.error_condition.is_some()
+                || self.denial_condition.is_some()
+                || self.on_invalid_json != InvalidJson::Fail
             {
                 return Err("the acio protocol defines its own event mapping; remove the custom event mappings".into());
             }
@@ -216,7 +299,9 @@ impl AgentProfile {
             && (self.model_discovery.is_some()
                 || !self.execution_options.is_empty()
                 || self.result_pointer.is_some()
-                || self.error_condition.is_some())
+                || self.error_condition.is_some()
+                || self.denial_condition.is_some()
+                || self.on_invalid_json != InvalidJson::Fail)
         {
             return Err("custom CLI configuration requires a custom profile".into());
         }
@@ -284,8 +369,39 @@ impl AgentProfile {
         {
             return Err("custom error condition needs a non-null match value".into());
         }
+        if let Some(denial) = &self.denial_condition {
+            let message_match =
+                denial.equals.is_some() != denial.contains.as_ref().is_some_and(|c| !c.is_empty());
+            if !message_match
+                || denial
+                    .equals
+                    .as_ref()
+                    .is_some_and(serde_json::Value::is_null)
+                || !denial.pointer.starts_with('/')
+                || !denial
+                    .tool_pointer
+                    .iter()
+                    .chain(&denial.message_pointer)
+                    .all(|p| pointer(p))
+            {
+                return Err("custom denial condition needs a JSON Pointer and exactly one of equals or contains".into());
+            }
+        }
         Ok(())
     }
+
+    /// GitHub #341: a non-blocking hint when automatic approval is declared but nothing could show that a tool
+    /// was refused, which is how a missing approval flag goes unnoticed.
+    pub fn configuration_hint(&self) -> Option<&'static str> {
+        (self.parser == crate::protocol::Provider::Custom
+            && self.permission_mode == "operator_auto_approve"
+            && self.protocol.is_none()
+            && self.event_types.is_empty()
+            && self.error_condition.is_none()
+            && self.denial_condition.is_none())
+        .then_some("startup.auto_approve_unconfigured")
+    }
+
     pub fn quota_key(&self) -> &str {
         self.quota_group.as_deref().unwrap_or(&self.executable)
     }
