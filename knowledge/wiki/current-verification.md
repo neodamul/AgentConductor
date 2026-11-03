@@ -1,3 +1,11 @@
+## Current issue #9 verification and PR inventory — 2026-11-03
+
+Commit `e2419db3` fixes the native Workspace stage-tab overflow at a 480 px viewport. The existing English/Korean geometry regression failed first (third tab x=378..559), then all six `native_ui_header` tests passed after tab width was capped by the clipped viewport. The locked/offline all-target test command passed locally; public-doc tests pass 11/11; source-layout passes 2/2; rustfmt and `git diff --check` pass. This does not establish exact package behavior or screen parity and adds no #9 acceptance credit.
+
+The live Rust branch is `codex/issue-9-native-ui-parity` at `e2419db3`, with current `origin/main` `f3b81902` already integrated (0 commits behind). The live PR list has root migration PR #22 and independent main PR #342 for bug #341. PR #342's Platform Validation run `41576022811` is active; its description says the distinct permission-denied task state required by #341 is unfinished. Keep the bug open, review the exact PR after CI, and port its merged behavior to #9 only after it lands on main. Keep #22 as the single #9 root PR and Draft until exact package and full shipped/default Rust UI parity are verified.
+
+Graphify refreshed the code graph without LLM clustering: 13,266 nodes and 21,367 edges. CocoIndex is not installed or exposed as a tool in this environment; no CocoIndex result is claimed.
+
 ## Root PR integration checkpoint — 2026-11-02
 
 PR #22 is the only open PR. Current `main` was integrated into `codex/issue-9-native-ui-parity` at merge commit `ad11775e593eb454299eda5e9180b06a73dbbaaf`; the branch is pushed, clean, and GitHub reports it mergeable. The 119 conflicts reported before the merge were resolved while preserving the Rust-native UI/build boundary and replacing web-only tests with native Rust coverage.

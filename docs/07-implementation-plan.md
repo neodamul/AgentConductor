@@ -1,5 +1,23 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Keep Workspace stage tabs within the visible viewport — issue #9
+
+- [x] Plan: the existing regression requires all three localized stage buttons to remain within the visible content at 480 px and 836 px widths.
+- [x] Red: the full all-target run failed at 480 px; “3. Review the plan” extended from x=378 to x=559.
+- [x] Task / Green: calculate the three equal tab widths from the smaller of available UI width and clipped viewport width, reserving the content inset.
+- [x] Verify: the existing header regression passes in English and Korean (6 header tests); source-layout passes 2/2; locked/offline all-target tests pass; `cargo fmt --all -- --check` passes. Provider-login and exact packaged Windows tests remain skipped by their environment guards.
+- [x] Commit and push `e2419db3` to `codex/issue-9-native-ui-parity`.
+- [x] Record the implementation note in `knowledge/wiki/native-workspace-step-tabs.md` and the test evidence in `docs/evidence/issue9-native-workspace-step-tabs-20261103.json`.
+- [ ] Inspect exact-head macOS/Windows validation and continue same-state screen review. This layout fix adds no acceptance credit; #9 remains 22/50, packaged workflows 22/25, shipped/default Rust UI 0/25, and PR #22 remains Draft.
+
+### 2026-11-03 — Current PR integration follow-up — issue #9 / bug priority
+
+- [x] Query the live PR list: #22 is the Rust migration root; #342 is an independent main-branch PR for bug #341, not a child PR of #22.
+- [x] Confirm the Rust branch includes current `origin/main` at `f3b81902` (0 commits behind); do not import unmerged PR #342 code prematurely.
+- [x] Inspect #341's acceptance and #342's description: the PR reports that a distinct permission-denied task status is not implemented, although #341 requires one. Keep the bug open and do not merge/close it based on passing checks alone.
+- [ ] After #342 merges, port its backend and user-visible behavior into the Rust-native #9 path, add Rust regression coverage, and preserve issue #9's single root PR.
+- [ ] Recheck #342's active Platform Validation run `41576022811`; then review the exact head against all #341 acceptance criteria before any merge decision.
+
 ### 2026-11-03 — Match legacy Workspace header distribution — issue #9
 
 - [x] Plan: current-main HTML uses three header siblings with `justify-content: space-between`; equal gaps are part of the visible Workspace layout.
