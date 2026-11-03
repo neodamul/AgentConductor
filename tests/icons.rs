@@ -63,26 +63,55 @@ fn malformed_or_oversized_pixels_are_refused() {
 }
 
 #[test]
+fn claude_code_and_codex_use_the_pinned_color_brand_marks() {
+    use sha2::{Digest, Sha256};
+    let source = include_str!("../third_party/lobe-icons/SOURCE.md");
+    for (provider, file) in [
+        (Provider::Claude, "claude-code-color.svg"),
+        (Provider::Codex, "codex-color.svg"),
+    ] {
+        let url = icons::provider_icon(provider).unwrap();
+        let encoded = url.strip_prefix("data:image/svg+xml;base64,").unwrap();
+        let svg = decode(encoded);
+        assert_eq!(
+            svg,
+            std::fs::read(format!("third_party/lobe-icons/{file}")).unwrap()
+        );
+        assert!(url.len() <= 64 * 1024);
+        // The vendored bytes are the pinned upstream files, so the notice's hash is checked.
+        let hash: String = Sha256::digest(&svg)
+            .iter()
+            .map(|b| format!("{b:02x}"))
+            .collect();
+        assert!(
+            source.contains(&format!("`{file}` | `packages/")) && source.contains(&hash),
+            "{file}"
+        );
+    }
+    assert!(icons::brand_icon(Provider::OpenCode).is_none());
+    assert!(icons::brand_icon(Provider::Custom).is_none());
+}
+
+#[test]
 fn custom_agents_never_receive_an_application_icon() {
     assert!(icons::provider_icon(Provider::Custom).is_none());
 }
 
 #[cfg(target_os = "macos")]
 #[test]
-#[ignore = "requires the Claude, ChatGPT (Codex) and OpenCode desktop applications"]
+#[ignore = "requires the OpenCode desktop application"]
 fn installed_macos_applications_provide_their_icons() {
-    for provider in [Provider::Claude, Provider::Codex, Provider::OpenCode] {
-        let url = icons::provider_icon(provider).expect("installed application icon");
-        assert!(url.starts_with("data:image/png;base64,"));
-        assert!(url.len() <= 64 * 1024);
-        if let Some(dir) = std::env::var_os("AC_ICON_EVIDENCE") {
-            let png = decode(url.strip_prefix("data:image/png;base64,").unwrap());
-            std::fs::write(
-                std::path::Path::new(&dir).join(format!("{provider:?}.png")),
-                png,
-            )
-            .unwrap();
-        }
+    let provider = Provider::OpenCode;
+    let url = icons::provider_icon(provider).expect("installed application icon");
+    assert!(url.starts_with("data:image/png;base64,"));
+    assert!(url.len() <= 64 * 1024);
+    if let Some(dir) = std::env::var_os("AC_ICON_EVIDENCE") {
+        let png = decode(url.strip_prefix("data:image/png;base64,").unwrap());
+        std::fs::write(
+            std::path::Path::new(&dir).join(format!("{provider:?}.png")),
+            png,
+        )
+        .unwrap();
     }
 }
 

@@ -8,7 +8,7 @@ use agentconductor::{icons, protocol::Provider};
 mod test_env;
 
 #[test]
-fn per_user_claude_install_path_yields_a_bounded_png_icon() {
+fn an_installed_claude_application_does_not_replace_the_brand_mark() {
     let local = std::env::temp_dir().join(format!("ac-win-icons-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&local);
     let app = local.join("AnthropicClaude");
@@ -24,8 +24,9 @@ fn per_user_claude_install_path_yields_a_bounded_png_icon() {
     // Single-threaded use before any icon lookup in this test binary.
     let mut env = test_env::lock();
     env.set("LOCALAPPDATA", &local);
-    let url = icons::provider_icon(Provider::Claude).expect("icon from per-user install path");
-    assert!(url.starts_with("data:image/png;base64,iVBORw0KGgo"));
+    // GitHub #406: Claude Code keeps its pinned brand mark even when the application is installed.
+    let url = icons::provider_icon(Provider::Claude).expect("bundled brand mark");
+    assert!(url.starts_with("data:image/svg+xml;base64,"));
     assert!(url.len() <= 64 * 1024);
     assert!(icons::provider_icon(Provider::Custom).is_none());
     let _ = std::fs::remove_dir_all(local);

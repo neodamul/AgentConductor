@@ -1479,6 +1479,12 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [x] Verify: room_task_rows and the UI tests; UI simulator showed green/red borders, a pulse on running avatars only, 20px avatars and no dots. Chrome rounds the 1.5px border to 1px at 1x scale.
 - [ ] Complete: release (version 0.2.0 only when the user asks).
 
+### Brand marks for Claude Code and Codex — DD-222
+- [x] Plan: Trace: amends R-210 (amends R-34, NFR-12, QAS-27, DD-40) -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #406; design GitHub #387.
+- [x] Task / Red/Green: `tests/icons.rs` (bundled bytes and pinned hashes), `tests/release_package.rs` (license text and notice), `tests/room_task_rows.rs` (28px/29px bordered containers) first, then `src/icons/brand.rs`, the package step and the CSS.
+- [x] Verify: icon, package, avatar and UI tests; the real app shows the Claude Code and Codex marks in the agent list.
+- [ ] Complete: slide-overs of the same issue; release (version 0.2.0 only when the user asks).
+
 ## Bilingual release documentation — DD-134 / v0.1.16
 
 - [x] Plan: pull the latest release source, inspect changed behavior and preserve concurrent Claude work.
