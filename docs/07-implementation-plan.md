@@ -2632,3 +2632,11 @@ Trace: amends R-13 (requirements trace to tests); rules in docs/README.md, recor
 - [x] Task: renumber the second chain (R-209 … DD-221), restore headings, merge duplicates and stray amendments, add `Status:` lines to requirements, use cases and QAS, trace every issue unit, rebuild the README index and matrix by area; `tests/architecture_trace.rs` enforces the rules (mutation run: four of six tests fail on injected faults); `tests/agent_master_list.rs` covers R-101, `tests/agent_order_runtime.cjs` R-102 and `tests/run_phase_title_runtime.cjs` R-114.
 - [x] Verify (macOS): full suite; docs/14 lists requirement evidence and the gaps (R-118 not implemented — since done with #377, R-120 partly, R-151 on the Rust line, R-183 open item from #341).
 - [ ] Complete: merge only on request.
+
+### Workspace/Goal model audit — GitHub #411
+Trace: R-213 / DD-225.
+
+- [x] Plan: audit stable naming, optional worktrees/non-Git folder support, New Goal retention and next-phase continuation before changing code.
+- [x] Task: exclusive Goal root reservation refuses folder/file/link collisions; automatic naming skips dangling links; request shapes unchanged.
+- [x] Verify: Red reproduced directory/link adoption → Green: 24 tests across seven local suites, including collision/context/display edits, plain-folder planning/approved merge and phase continuation; fmt/Clippy/whitespace pass.
+- [ ] Completed: commit/push backend audit and correction; Claude verifies UI-only dialog/step continuity; full issue remains open until acceptance.

@@ -322,3 +322,11 @@ the tests that exercise it and says whether the behavior is present on `main`.
 | R-174 New Rust code follows a short, evidence-based review policy | current | — | policy |
 | R-175 Every unsafe operation states why it is sound | current | `icons.rs`, `leases.rs` | passes |
 | R-176 Tests do not mutate the process environment unsoundly | current | `availability_watcher.rs`, `env_guard.rs`, `support/env.rs`, `windows_icons.rs` | passes |
+
+## Workspace/Goal model audit — GitHub #411
+
+| Requirement | Evidence | Remaining acceptance |
+|---|---|---|
+| R-213 | `workspace_goal_rules.rs`, `startup_folder_plan.rs`, `folder_workflow.rs`, `slug_flow.rs`, `slug_folder.rs`, `slugs.rs`; with architecture trace, 24 tests in seven local suites | Actual Windows reparse-point/package checks; Claude webview dialog dimensions/focus/scroll and step-6 result/continuation rendering |
+
+Existing backend behavior was retained after audit. The correction exclusively reserves a new Goal root before writing ownership markers or Git exclusions; new allocation performs no legacy migration. Non-Git projects remain free of `.git`; private external change history still requires the Git executable. Display edits preserve existing folder IDs/paths, and New Goal retains Workspace directory/coordinator/profiles/roles. These tests do not establish native modal geometry.
