@@ -9,7 +9,7 @@
 - [x] Full locked/offline all-target verification: 1,344 passed, 16 ignored across 411 suites.
 - [x] Final focused verification: footer tests 2/2, source-layout 2/2, warning-denied all-target native-feature Clippy, rustfmt, and diff hygiene pass; changed source/test files are 300, 28, and 68 lines.
 - [ ] Screenshot capture: the opt-in probe could not resolve `eframe` from the offline registry, so no screenshot was produced and no window was launched. The full egui Workspace render tests verify the bottom placement and text; capture remains a follow-up when the cached dependency index is available.
-- [ ] Complete: commit/push this unit to the existing #22 branch and update its exact progress. This missing-status-bar fix adds no workflow acceptance credit; #9 remains 22/50 and shipped/default Rust UI parity remains 0/25.
+- [x] Complete: commit/push `7948f24b` to the existing #22 branch; update the PR body and issue #9 progress. This missing-status-bar fix adds no workflow acceptance credit; #9 remains 22/50 and shipped/default Rust UI parity remains 0/25.
 
 ### 2026-11-03 — Keep Workspace stage tabs within the visible viewport — issue #9
 
