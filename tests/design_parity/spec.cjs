@@ -44,4 +44,9 @@ module.exports = [
   { name: 'task-status-tag', props: ['borderTopLeftRadius'], keys: ['height', 'borderTopLeftRadius'], pixel: false, tol: 1,
     mock: { url: '?theme=light#3', selector: '.outline-task .outline-state-badge' },
     app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()", selector: '.session-choice .session-status' } },
+  // Step groups (GitHub #408): a subdued background per Prepare / Run / Finish set with a 14px group icon.
+  ...['prepare', 'run', 'finish'].map((group, index) => ({ name: `step-group-${group}`, props: ['borderTopLeftRadius', 'backgroundColor'], keys: ['height', 'borderTopLeftRadius', 'backgroundColor'], pixel: false,
+    mock: { url: '?theme=light#0', selector: '.tabs .step-group', index }, app: { selector: `#start-step-tabs .step-group[data-group=${group}]` } })),
+  { name: 'step-group-icon', props: [], keys: ['width', 'height'], pixel: false,
+    mock: { url: '?theme=light#0', selector: '.tabs-group-name svg', index: 0 }, app: { selector: '#start-step-tabs .tabs-group-name svg', index: 0 } },
 ];

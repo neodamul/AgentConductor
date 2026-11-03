@@ -7,6 +7,7 @@
 const fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
 const { findChrome, launch } = require('./cdp.cjs'), { decode, diffRatio } = require('./png.cjs');
 const { pathToFileURL } = require('url'), repo = path.resolve(__dirname, '../..'), MOCK = pathToFileURL(path.join(repo, 'docs/design/approved-goal-ui/preview.html')).href;
+const THEME = process.env.PARITY_THEME === 'dark' ? 'dark' : 'light';
 const argv = process.argv.slice(2), flag = n => { const i = argv.indexOf(n); return i < 0 ? null : argv[i + 1]; };
 const chrome = findChrome();
 if (!chrome) { console.log('design parity skipped: no Chrome found (set CHROME)'); process.exit(77); }
@@ -28,10 +29,11 @@ const MEASURE = (sel, index, props, mark) => `(() => { const e = [...document.qu
   return o; })()`;
 
 async function visit(browser, side, spec) {
-  if (side === 'mock') await browser.goto(MOCK + (spec.url || '?theme=light#0')); else {
+  if (side === 'mock') await browser.goto(MOCK + (spec.url || '?theme=light#0').replace('theme=light', 'theme=' + THEME)); else {
     await browser.goto(APP); await browser.eval(`sessionStorage.setItem('SIM_PRESET', ${JSON.stringify(PRESET + (spec.setup || ''))}); location.reload()`);
     await new Promise(r => setTimeout(r, 1200));
   }
+  if (side === 'app') await browser.eval(`document.documentElement.dataset.theme = ${JSON.stringify(THEME)}`);
   if (spec.run) await browser.eval(spec.run);
   await new Promise(r => setTimeout(r, 600));
   // Pulses and slides are checked by their own tests; freeze them so the pixels are comparable.

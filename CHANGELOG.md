@@ -5,6 +5,7 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 the GitHub Release notes for its tag.
 
 ## Unreleased
+- The Prepare, Run and Finish groups of the stepper have their own subdued background colours (light and dark) and a small group icon, as in the approved design.
 - Agent cards no longer print the executable path or a fixed session capacity, have 8px corners with a red removal icon, and task rows in the left panel are quiet rows with a trailing chevron, a hover fill and an accent edge on the selected one; the Agent Room's left panel is now really 250px wide when the task panel is closed.
 - Each Goal in the Goal list has a red trash button (permanent deletion behind a centered confirmation naming the Goal and its exact folder; Cancel is the default), a folder button that opens the Goal's folder in Finder/Explorer, and — for a completed Goal — a **Result** button that opens the same completed-goal popup as the Agent Room.
 - The left panel is 250px wide with equal side padding on the Workspace screen and in the Agent Room, its two tabs are 29px high, the six step tabs are a single 35px row and the version in the title bar is smaller, matching the approved design.
