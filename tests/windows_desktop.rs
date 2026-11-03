@@ -88,7 +88,8 @@ if (-not $goal.Current.HasKeyboardFocus) {
 }
 $goalValue = $goal.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern)
 if ($goalValue.Current.IsReadOnly) { Write-Output 'GOAL_VALUE_READ_ONLY'; exit 7 }
-$goalValue.SetValue('Windows UIA goal')
+[System.Windows.Forms.SendKeys]::SendWait('^a')
+[System.Windows.Forms.SendKeys]::SendWait('Windows UIA goal')
 $goalValueDeadline = (Get-Date).AddSeconds(3)
 $goalText = ''
 while ($goalText -ne 'Windows UIA goal' -and (Get-Date) -lt $goalValueDeadline) {
@@ -106,8 +107,8 @@ while ($goalText -ne 'Windows UIA goal' -and (Get-Date) -lt $goalValueDeadline) 
   if ($goalText -ne 'Windows UIA goal') { Start-Sleep -Milliseconds 50 }
 }
 $focused = [System.Windows.Automation.AutomationElement]::FocusedElement
-Write-Output "GOAL_FOCUS_AFTER_SET_VALUE:$($focused.Current.ProcessId):$($focused.Current.ControlType.ProgrammaticName):$($focused.Current.Name)"
-Write-Output "GOAL_TEXT_AFTER_SET_VALUE:$goalText"
+Write-Output "GOAL_FOCUS_AFTER_KEYBOARD:$($focused.Current.ProcessId):$($focused.Current.ControlType.ProgrammaticName):$($focused.Current.Name)"
+Write-Output "GOAL_TEXT_AFTER_KEYBOARD:$goalText"
 if ($goalText -ne 'Windows UIA goal') { Write-Output "GOAL_VALUE_MISMATCH:$goalText"; exit 7 }
 
 # Text edits may rebuild the UI Automation tree; never invoke a button captured before editing.
