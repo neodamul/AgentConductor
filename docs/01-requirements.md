@@ -488,7 +488,7 @@ Deleting a workspace asks for no new workspace name. When the current workspace 
 Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Source: user request, 2026-10-13.
 
 ### R-210 One goal screen with a single six-step stepper
-One stepper of six steps (Workspace, Agent roles, Plan, Tasks, Verify, Review and merge), grouped Prepare / Run / Finish, serves the Workspace settings and the Agent Room. Tabs 1-3 open the Workspace panels; tabs 4-6 open the Agent Room when a run is available, and the Room marks the step of the run's current stage. The Workspace screen and the Room no longer show separate step strips. The left rail has two tabs on both screens, Agents and Phases & tasks: steps 1-2 open on Agents, steps 3-6 on Phases & tasks; the agent panel keeps every agent function (add, quota, facts, edit, models, remove, order, drag) in the Room too.
+One stepper of six steps (Workspace, Agent roles, Plan, Tasks, Verify, Review and merge), grouped Prepare / Run / Finish, serves the Workspace settings and the Agent Room. Tabs 1-3 open the Workspace panels; tabs 4-6 open the Agent Room when a run is available, and the Room marks the step of the run's current stage. The Workspace screen and the Room no longer show separate step strips. The left rail has two tabs on both screens, Agents and Phases & tasks: steps 1-2 open on Agents, steps 3-6 on Phases & tasks; the agent panel keeps every agent function (add, quota, facts, edit, models, remove, order, drag) in the Room too. The Room's task detail column is docked, starts closed on every opening and is toggled only by a titlebar icon; a pending decision lights that icon and never opens the column.
 Trace: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. Source: user, approved design #387, 2026-11-04.
 
 ### R-125 Release-matched English and Korean manuals
@@ -678,6 +678,7 @@ When a step teaches the run something worth sharing (the coordinator revises a t
 Trace: R-164 → BG-119 → SF-151 → UC-154 → FR-149/NFR-58 → QAS-160 → DDR-25 → DD-174. GitHub #138, user, 2026-10-22.
 
 ### R-165 The task detail column can be folded and still never hides a decision
+Status: Amended by R-210: the column is docked and starts closed on every opening, only the titlebar toggle opens it, nothing is remembered, and a decision lights the toggle instead of opening the column.
 The operator shall be able to fold the Agent Room's task detail column to a narrow strip and unfold it, and the choice shall be remembered across runs and restarts. When the run needs a person (approval, tool approval, blocked, or a failure that needs guided recovery) a folded column shall open by itself once per decision, show the candidate review first, and, if the operator folds it again while the decision is open, show a blinking warning dot on the strip until the decision is made. After the decision the column returns to the operator's own choice. Folding removes no information, and the dot blinks only for a decision and not under reduced-motion settings.
 Trace: R-165 → BG-120 → SF-152 → UC-155 → FR-150/NFR-59 → QAS-161 → DDR-26 → DD-175. GitHub #146, user, 2026-10-22.
 

@@ -1455,6 +1455,12 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [x] Verify: every Rust test touching the UI sources and the Node tests pass; the UI simulator showed the cards, tabs and defaults on both screens.
 - [ ] Complete: release (version 0.2.0 only when the user asks).
 
+### Docked task inspector, closed by default — DD-222
+- [x] Plan: Trace: amends R-210 (amends R-165) -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #394; design GitHub #387.
+- [x] Task / Red/Green: tests/inspector_fold_runtime.cjs and tests/inspector_fold.rs rewritten first (red), then room.js, room.html, startup.html, CSS.
+- [x] Verify: UI Rust tests and Node tests; UI simulator checked the toggle, closed default and decision dot.
+- [ ] Complete: release (version 0.2.0 only when the user asks).
+
 ## Bilingual release documentation — DD-134 / v0.1.16
 
 - [x] Plan: pull the latest release source, inspect changed behavior and preserve concurrent Claude work.

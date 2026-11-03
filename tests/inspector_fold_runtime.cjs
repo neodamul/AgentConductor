@@ -1,15 +1,10 @@
-// GitHub #146: the task detail column folds, remembers the choice and opens for a decision.
+// GitHub #146, amended by #394 / R-210: the docked task detail column starts closed, only a toggle opens it and a decision lights the toggle.
 const fs = require('node:fs'), vm = require('node:vm'), assert = require('node:assert/strict');
 const source = fs.readFileSync('src/ui/room.js', 'utf8');
 const start = source.indexOf('// inspector-fold'), end = source.indexOf('// inspector-fold-end');
 assert.ok(start >= 0 && end > start, 'room.js marks the inspector fold block');
-const store = new Map();
-let broken = false;
-const localStorage = {
-  getItem: k => { if (broken) throw new Error('blocked'); return store.has(k) ? store.get(k) : null; },
-  setItem: (k, v) => { if (broken) throw new Error('blocked'); store.set(k, String(v)); },
-};
-const context = vm.createContext({ localStorage, console });
+assert.ok(!/localStorage/.test(source.slice(start, end)), 'the open/closed choice is not remembered');
+const context = vm.createContext({ console });
 vm.runInContext(source.slice(start, end), context);
 const run = code => { const v = vm.runInContext(code, context); return v === undefined ? undefined : JSON.parse(JSON.stringify(v)); };
 const snap = (state, extra = {}) => JSON.stringify({ report: { state, error: '', candidate: { commit: 'c1' }, tasks: [], ...extra.report }, tool_requests: extra.tools || [] });
@@ -27,35 +22,17 @@ assert.equal(run(`decisionKey(${snap('running', { tools: [{ id: 't1', status: 'a
 assert.notEqual(run(`decisionKey(${snap('waiting_approval')})`), run(`decisionKey(${snap('waiting_approval', { report: { candidate: { commit: 'c2' } } })})`), 'a new candidate is a new decision');
 assert.equal(run('decisionKey(null)'), '');
 
-// The folded column opens once per decision and then follows the operator's choice.
+// A toggle flips what is shown; a decision never opens the column, it only records its key.
 const step = (s, ev) => run(`inspectorStep(${JSON.stringify(s)}, ${JSON.stringify(ev)})`);
-let s = { pref: true, open: false, key: '' };
-s = step(s, { type: 'snapshot', key: '' });
-assert.deepEqual(s, { pref: true, open: false, key: '' }, 'no decision: stays folded');
+let s = { open: false, key: '' };
 s = step(s, { type: 'snapshot', key: 'a' });
-assert.deepEqual(s, { pref: true, open: true, key: 'a' }, 'a decision opens the folded column');
+assert.deepEqual(s, { open: false, key: 'a' }, 'a decision does not open the closed column');
 s = step(s, { type: 'toggle' });
-assert.deepEqual(s, { pref: true, open: false, key: 'a' }, 'folding during the decision is respected');
-s = step(s, { type: 'snapshot', key: 'a' });
-assert.equal(s.open, false, 'the same decision does not reopen it');
+assert.deepEqual(s, { open: true, key: 'a' }, 'the toggle opens it');
 s = step(s, { type: 'snapshot', key: 'b' });
-assert.equal(s.open, true, 'a different decision opens it again');
+assert.deepEqual(s, { open: true, key: 'b' }, 'a new decision keeps it as it is');
+s = step(s, { type: 'toggle' });
+assert.deepEqual(s, { open: false, key: 'b' });
 s = step(s, { type: 'snapshot', key: '' });
-assert.deepEqual(s, { pref: true, open: false, key: '' }, 'after the decision the preference returns');
-
-// Unfolding is remembered too, and an unfolded column returns unfolded.
-s = step({ pref: true, open: false, key: '' }, { type: 'toggle' });
-assert.deepEqual(s, { pref: false, open: true, key: '' });
-s = step(step(s, { type: 'snapshot', key: 'a' }), { type: 'snapshot', key: '' });
-assert.deepEqual(s, { pref: false, open: true, key: '' });
-
-// The preference survives a new page and a blocked storage leaves the column open.
-assert.equal(run('loadInspectorPref()'), false, 'open by default');
-run('saveInspectorPref(true)');
-assert.equal(run('loadInspectorPref()'), true);
-run('saveInspectorPref(false)');
-assert.equal(run('loadInspectorPref()'), false);
-broken = true;
-assert.equal(run('loadInspectorPref()'), false, 'blocked storage: open, no error');
-run('saveInspectorPref(true)');
+assert.deepEqual(s, { open: false, key: '' }, 'the key clears when the decision is over');
 console.log('inspector fold ok');
