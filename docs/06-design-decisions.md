@@ -1253,7 +1253,7 @@ Room::delete_workspace switches to the first entry of the recent registry that i
 Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Source: user request, 2026-10-13.
 
 ### DD-222 One goal screen with a single six-step stepper
-The existing stepper nav (start-step-tabs) gains tabs 4-6 and is moved between the Workspace main column and the Room center when the screen changes, like the shared titlebar; showStep keeps handling steps 1-3, and src/ui/stepper.js (window.acStepper) marks steps 4-6 from the Room's stage, enables them while a run is available and ignores Room snapshots once the operator is back on the Workspace screen; the Room's data-stage strip is removed. No request kind or run backend changes.
+The existing stepper nav (start-step-tabs) gains tabs 4-6 and is moved between the Workspace main column and the Room center when the screen changes, like the shared titlebar; showStep keeps handling steps 1-3, and src/ui/stepper.js (window.acStepper) marks steps 4-6 from the Room's stage, enables them while a run is available and ignores Room snapshots once the operator is back on the Workspace screen; the Room's data-stage strip is removed. src/ui/rail.js (window.acRail) moves the rail tab strip and the agent panel between the Workspace rail and the Room rail the same way, picks the default tab per step and renders the plan outline on the Workspace screen. No request kind or run backend changes.
 Trace: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. Source: user, approved design #387, 2026-11-04.
 
 ### DD-134 Reuse Markdown and existing package asset selection

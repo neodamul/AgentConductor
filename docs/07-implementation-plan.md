@@ -1449,6 +1449,12 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [x] Verify: Node runtime tests, source_layout, i18n contracts, architecture_trace; the UI simulator (tests/ui_sim) showed the Workspace-to-Room round trip.
 - [ ] Complete: release (version 0.2.0 only when the user asks).
 
+### Left rail with Agents and Phases & tasks tabs — DD-222
+- [x] Plan: Trace: amends R-210 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #392; design GitHub #387.
+- [x] Task / Red/Green: tests/rail_tabs_runtime.cjs; src/ui/rail.js moves one tab strip and the agent panel between both rails.
+- [x] Verify: every Rust test touching the UI sources and the Node tests pass; the UI simulator showed the cards, tabs and defaults on both screens.
+- [ ] Complete: release (version 0.2.0 only when the user asks).
+
 ## Bilingual release documentation — DD-134 / v0.1.16
 
 - [x] Plan: pull the latest release source, inspect changed behavior and preserve concurrent Claude work.

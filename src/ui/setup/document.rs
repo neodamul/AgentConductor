@@ -15,13 +15,14 @@ pub(crate) fn document() -> Result<String, String> {
     );
     let manual_script = include_str!("../manual.js");
     let script = format!(
-        "{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}\n{}\n{}\n{}\n{}",
+        "{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
         super::super::I18N,
         super::super::JS,
         include_str!("../mcp.js"),
         include_str!("../chat.js"),
         include_str!("../optimize.js"),
         include_str!("../stepper.js"),
+        include_str!("../rail.js"),
         manual_script,
         include_str!("../startup.js")
     );

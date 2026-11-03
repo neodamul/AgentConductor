@@ -131,3 +131,6 @@ details.startup-task>summary.task-summary{list-style:none;cursor:pointer;display
 @media(prefers-reduced-motion:reduce){.startup-tabs [role="tab"].running{animation:none}}
 #run-screen .startup-tabs{margin:10px 0}
 .startup-tabs [role="tab"]>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
+/* GitHub #392: left rail tabs (Agents | Phases & tasks) on both screens. */
+.rail-tabs{display:flex;gap:4px;margin:0 0 14px}.rail-tabs [role="tab"]{flex:1;min-width:0;border:1px solid var(--line);border-bottom:0;border-radius:6px 6px 0 0;background:var(--surface-2);color:var(--soft);padding:8px 6px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.rail-tabs [role="tab"][aria-selected="true"]{background:var(--surface);color:var(--ink);font-weight:600;border-top:2px solid var(--accent)}.rail-tabs [role="tab"]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.rail-room{display:flex;flex-direction:column;flex:1;min-height:0}.rail-room[hidden]{display:none}.rail-outline-list{margin:0;padding:0;list-style:none}.rail-outline-list li{padding:8px 0;border-bottom:1px solid var(--line);font-size:13px}

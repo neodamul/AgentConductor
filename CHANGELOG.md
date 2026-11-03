@@ -5,6 +5,7 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 the GitHub Release notes for its tag.
 
 ## Unreleased
+- The left panel has two tabs on both screens, **Agents** and **Phases & tasks**. The agent cards (with Add, quota, Edit, Models, Remove, order and drag) are also available in the Agent Room; steps 1–2 open on Agents and later steps on Phases & tasks. The Workspace screen lists the plan's tasks under Phases & tasks.
 - One stepper with six steps (Workspace, Agent roles, Plan, Tasks, Verify, Review and merge, grouped Prepare / Run / Finish) now serves both the Workspace settings and the Agent Room. Steps 4–6 open the Room while a run exists and the Room marks the step of the run; steps 1–3 take you back to the Workspace panels. The Room's separate five-stage strip is gone.
 - Closing the window while a run is working now asks first: keep the run going in the background (the default), stop it and close, or cancel. A run keeps working after the app is closed and is shown again when the app reopens.
 - The Agent Room folds a run of thinking updates into one Activity line ("Thinking… n updates") and the run banner says how often the run was interrupted and recovered, with the time and outcome of the last recovery.
