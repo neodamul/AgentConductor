@@ -8076,3 +8076,12 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Verify locally: all 116 library tests pass; the four workspace model tests pass; sidebar density/details pass 5/5; feature-gated library Clippy with warnings denied, rustfmt, and `git diff --check` pass. All touched Rust/test files remain below 300 lines.
 - [ ] Verify remotely: rerun the exact PR head and confirm macOS and Windows platform validation. Existing run `41557402619` failed macOS on the three locale-dependent tests before this fix; Windows was still running at inspection.
 - [ ] Complete: review a fresh same-state screenshot and finish remaining package and shipped/default Rust UI parity gates. Keep issue #9 at 22/50 and PR #22 Draft.
+
+### 2026-11-03 — Match Workspace isolation and blocker presentation — issue #9
+
+- [x] Plan: compare the Rust Workspace form with the current legacy reference. The reference places worktree isolation beside the project-folder controls and renders coordinator incompatibility as a prominent warning panel; Rust used a separate radio section and inline small text.
+- [x] Red: the isolation interaction test fails because the expected accessible checkbox does not exist. The warning-panel render test fails with no tinted panel geometry.
+- [x] Task / Green: replace the radio group with the localized “Isolate tasks in Git worktrees” checkbox on the project-folder row and keep the same Shared/Worktree save contract. Render compatibility refusal in a full-width tinted panel with an icon and wrapped text.
+- [x] Verify locally: 118 library tests pass; all six Workspace model interaction/render tests, five sidebar tests, and two source-layout tests pass. Warning-denied all-target native-feature Clippy, rustfmt, diff checks, and the ≤300-line guard pass. The checkbox test verifies persisted `worktree` mode; viewport tests verify the coordinator model and isolation controls remain visible.
+- [x] Assetize: update the native test-gates LLM Wiki and raw source note. Graphify code graph refreshed to 13,234 nodes / 21,331 edges without clustering or LLM calls.
+- [ ] Complete: capture and inspect the full current screen against the matched legacy reference, then finish remaining packaged workflows and shipped/default UI parity. Issue #9 remains 22/50 and PR #22 remains Draft.

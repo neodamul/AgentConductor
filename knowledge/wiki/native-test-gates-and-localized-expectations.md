@@ -25,6 +25,8 @@ Keep behavior assertions stronger than “some localized text exists”: retain 
 
 For pointer-driven UI tests, resolve the accessibility label through the same active message catalog used by the widget. Fixed Korean or English labels can pass on one workstation and fail on CI even when the UI is correct. For refusal notices, format the expected text from the active locale and the real refusal reason. Keep separate coverage for the viewport bounds of controls: a field can remain in the accessibility tree while extending beyond the visible window.
 
+Workspace isolation should be tested through the same checkbox used by the reference UI, then verified in the serialized save request as `workspace_mode = worktree`. Coordinator blockers should remain accessible while receiving a visibly distinct, wrapping warning container; a present accessibility label alone does not prove visible emphasis.
+
 ## Traced use case
 
 Coordinator read-only refusal flow: R-206 → BG-161 → SF-194 → UC-198 → FR-199/FR-200/NFR-88/NFR-89 → QAS-204 → DDR-55 → DD-218.
@@ -34,3 +36,5 @@ Coordinator read-only refusal flow: R-206 → BG-161 → SF-194 → UC-198 → F
 The 2026-11-02 gate and localization correction is recorded in [the raw source note](../raw/2026-11-02-issue9-ci-gates-and-localized-tests.md) and [the implementation plan](../../docs/07-implementation-plan.md).
 
 The 2026-11-03 coordinator-field overflow and English-runner regression are recorded in [the raw source note](../raw/2026-11-03-issue9-coordinator-viewport-and-locale.md) and [the implementation plan](../../docs/07-implementation-plan.md).
+
+The 2026-11-03 isolation-checkbox and warning-panel rendering change is recorded in [the raw source note](../raw/2026-11-03-issue9-workspace-isolation-warning.md) and [the implementation plan](../../docs/07-implementation-plan.md).

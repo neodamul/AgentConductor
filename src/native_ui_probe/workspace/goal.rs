@@ -1,6 +1,8 @@
 use super::{Probe, card, header, permissions::editable};
 use eframe::egui::{self, RichText};
 
+mod warning;
+
 pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
     let can_edit = editable(probe);
     let (
@@ -13,9 +15,6 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         browse,
         goal,
         goal_hint,
-        isolation,
-        shared,
-        worktree,
         save,
         coordinator_label,
         coordinator_none,
@@ -31,9 +30,6 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             locale.text("startup.choose_your_project_folder"),
             locale.text("startup.goal"),
             locale.text("startup.goal_hint"),
-            locale.text("startup.execution_isolation"),
-            locale.text("startup.shared_folder"),
-            locale.text("startup.git_worktree"),
             locale.text("startup.save_workspace"),
             locale.text("startup.coordinator_analysis_of_the_whole_goal"),
             locale.text("startup.coordinator_none"),
@@ -102,35 +98,41 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             let template =
                 crate::ui::messages::in_language(&language, "startup.coordinator_cannot_chat");
             let warning = crate::ui::messages::interpolate(template, &[("value1", &reason)]);
-            ui.add(
-                egui::Label::new(
-                    RichText::new(&warning)
-                        .small()
-                        .color(ui.visuals().warn_fg_color),
-                )
-                .wrap(),
-            )
-            .accessible_name(warning);
+            warning::show(&warning, ui);
         }
-        ui.horizontal_wrapped(|ui| {
-            let label = ui.label(project);
-            ui.add_enabled(
-                can_edit,
-                egui::TextEdit::singleline(&mut probe.repository)
-                    .desired_width(ui.available_width().min(420.0))
-                    .margin(egui::vec2(8.0, 6.0))
-                    .hint_text(project_hint),
-            )
-            .labelled_by(label.id)
-            .accessible_name(project);
-            if ui
-                .add_enabled(can_edit, egui::Button::new(browse))
-                .accessible_name(browse)
-                .clicked()
-            {
-                probe.pick_folder();
-            }
+        ui.label(project);
+        let mut use_worktrees = probe.workspace_mode == crate::plan::WorkspaceMode::Worktree;
+        ui.add_enabled_ui(can_edit, |ui| {
+            ui.horizontal_wrapped(|ui| {
+                let input_width = (ui.available_width() - 290.0).clamp(180.0, 420.0);
+                ui.add(
+                    egui::TextEdit::singleline(&mut probe.repository)
+                        .desired_width(input_width)
+                        .margin(egui::vec2(8.0, 6.0))
+                        .hint_text(project_hint),
+                )
+                .accessible_name(project);
+                if ui
+                    .add(egui::Button::new(browse))
+                    .accessible_name(browse)
+                    .clicked()
+                {
+                    probe.pick_folder();
+                }
+                ui.checkbox(
+                    &mut use_worktrees,
+                    probe
+                        .navigation
+                        .appearance
+                        .text("startup.isolate_tasks_in_git_worktrees"),
+                );
+            });
         });
+        probe.workspace_mode = if use_worktrees {
+            crate::plan::WorkspaceMode::Worktree
+        } else {
+            crate::plan::WorkspaceMode::Shared
+        };
         let label = ui.label(goal);
         ui.add_enabled(
             can_edit,
@@ -186,21 +188,6 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             Some(super::mcp::SourceEvent::Apply(selected)) => probe.apply_mcp_sources(&selected),
             None => {}
         }
-        ui.label(isolation).accessible_name(isolation);
-        ui.add_enabled_ui(can_edit, |ui| {
-            ui.horizontal(|ui| {
-                ui.radio_value(
-                    &mut probe.workspace_mode,
-                    crate::plan::WorkspaceMode::Shared,
-                    shared,
-                );
-                ui.radio_value(
-                    &mut probe.workspace_mode,
-                    crate::plan::WorkspaceMode::Worktree,
-                    worktree,
-                );
-            })
-        });
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
             if super::super::appearance::primary_button(
                 ui,

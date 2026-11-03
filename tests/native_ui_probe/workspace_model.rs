@@ -83,6 +83,7 @@ fn workspace_coordinator_fields_fit_the_default_native_viewport() {
     use eframe::egui::Rect;
     let locale = crate::native_ui_probe::appearance::State::load();
     let model_label = locale.text("startup.coordinator_model");
+    let isolation_label = locale.text("startup.isolate_tasks_in_git_worktrees");
     let context = egui::Context::default();
     context.enable_accesskit();
     let mut probe = probe(custom_profile());
@@ -93,21 +94,70 @@ fn workspace_coordinator_fields_fit_the_default_native_viewport() {
         },
         |ui| probe.update_ui(ui),
     );
-    let bounds = output
+    let nodes = &output
         .platform_output
         .accesskit_update
         .as_ref()
         .unwrap()
-        .nodes
-        .iter()
-        .find(|(_, node)| node.label() == Some(model_label))
-        .and_then(|(_, node)| node.bounds())
-        .unwrap_or_else(|| panic!("missing coordinator model: {:?}", labels(&output)));
+        .nodes;
+    for label in [model_label, isolation_label] {
+        let bounds = nodes
+            .iter()
+            .find(|(_, node)| node.label() == Some(label))
+            .and_then(|(_, node)| node.bounds())
+            .unwrap_or_else(|| panic!("missing {label}: {:?}", labels(&output)));
+        assert!(
+            bounds.x1 <= 1132.0,
+            "{label} overflows the viewport: {bounds:?}"
+        );
+    }
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
+}
+
+#[test]
+fn workspace_isolation_checkbox_selects_git_worktrees() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut probe = probe(custom_profile());
+    let first = frame(&context, &mut probe, Vec::new());
+    let checkbox = position(&first, &localized("startup.isolate_tasks_in_git_worktrees"));
+
+    click(&context, &mut probe, checkbox);
+
+    assert_eq!(probe.workspace_mode, crate::plan::WorkspaceMode::Worktree);
+    let request = crate::native_ui_probe::workspace::workspace_save_request(
+        probe.snapshot.as_ref().unwrap(),
+        &probe.name,
+        &probe.repository,
+        &probe.goal,
+        probe.workspace_mode,
+        &probe.profiles,
+        &probe.coordinator,
+    );
+    let saved: Value = serde_json::from_slice(&request).unwrap();
+    assert_eq!(saved["config"]["workspace_mode"], "worktree");
+}
+
+#[test]
+fn coordinator_blocker_uses_a_visible_warning_panel() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut probe = probe(custom_profile());
+    let output = frame(&context, &mut probe, Vec::new());
+
+    let panel_width = output
+        .shapes
+        .iter()
+        .filter_map(|clipped| match &clipped.shape {
+            egui::epaint::Shape::Rect(rect) if rect.fill.a() == 28 => Some(rect.rect.width()),
+            _ => None,
+        })
+        .max_by(f32::total_cmp)
+        .unwrap_or_default();
     assert!(
-        bounds.x1 <= 1132.0,
-        "field overflows the viewport: {bounds:?}"
+        panel_width >= 500.0,
+        "warning panel width was {panel_width}"
     );
 }
 
