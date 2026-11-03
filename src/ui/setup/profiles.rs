@@ -57,7 +57,12 @@ impl Startup {
         };
         rename(&mut next.config.coordinator);
         for entries in next.config.roles.values_mut() {
-            entries.iter_mut().for_each(|e| rename(&mut e.agent));
+            for entry in entries {
+                rename(&mut entry.agent);
+                if let Some(crate::plan::FallbackRule::Agent(policy)) = &mut entry.fallback {
+                    rename(&mut policy.agent);
+                }
+            }
         }
         let ids: Vec<String> = profiles.iter().map(|p| p.id.clone()).collect();
         for profile in &mut profiles {
@@ -77,6 +82,13 @@ impl Startup {
         }
         for entries in next.config.roles.values_mut() {
             entries.retain(|e| profiles.iter().any(|p| p.id == e.agent));
+            for entry in entries.iter_mut() {
+                if let Some(crate::plan::FallbackRule::Agent(policy)) = &mut entry.fallback
+                    && !profiles.iter().any(|p| p.id == policy.agent)
+                {
+                    entry.fallback = Some(crate::plan::FallbackRule::Disabled(false));
+                }
+            }
         }
         next.config.roles.retain(|_, entries| !entries.is_empty());
         next.config.profiles = profiles;
@@ -206,6 +218,7 @@ pub(crate) fn validate_profiles(profiles: &[AgentProfile]) -> Result<(), String>
                 role: None,
                 execution_options: Default::default(),
                 task_type: None,
+                fallback: None,
             })
             .collect(),
     };

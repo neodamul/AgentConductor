@@ -334,3 +334,15 @@ The inherited avatar checks retain #417's pending #410 status-border tolerance a
 represented as exact avatar parity. Existing Node/DOM/architecture/layout regression: 10 tests
 across four local Rust suites. Role/fallback/backend precedence and full feature acceptance
 remain open. Tests: `choice_controls.rs`, `choice_controls/runtime.cjs`, `design_parity/choice_spec.cjs`.
+
+## Task-scoped fallback policy — GitHub #409, backend unit
+
+Trace: R-210 / DD-222. TDD first failed for missing Task policy resolution; unit tests then
+covered explicit role override/none, unchanged other roles/profile defaults, legacy omission,
+invalid self/same-account/unknown/model policies and profile rename/removal. Real deterministic
+CLI runs verify override vs inheritance, explicit-none waiting, bounded exhausted cycles and
+queued manual reassignment. A transfer-candidate validation failure found during integration
+was fixed by consuming the first-hop policy before validation. 48 tests passed in nine local
+suites including old fallback/plan/roles/schema/profile/pending-edit and all Node UI behavior.
+Optional native UI callers were mechanically kept type-compatible (cargo check), not redesigned.
+Tests: `role_fallback_overrides.rs`, `role_fallback_runtime.rs`. Role UI wiring remains pending.

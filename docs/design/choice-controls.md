@@ -27,3 +27,19 @@ Verification: native backend unit/integration tests, assembled UI simulator inte
 and approved mock parity in both themes at widths 840 and 1280. Browser checks prove
 webview behavior only, not OS-native package/IME/screen-reader acceptance. Main merge
 and releases need their own approval; these checks never tag or publish.
+
+## Reviewed fallback contract
+
+Role entries and reviewed Tasks accept an optional `fallback`: omitted/null inherits the
+profile default, `false` explicitly disables it, and `{agent, model?}` overrides the first
+hop for that task. `true`, self/same-account targets, unknown agents and incompatible models
+are invalid. Operator role rules apply the Task field without changing shared profiles or
+other roles. The fallback chain still checks cached account restrictions and stops at an
+already-tried agent; mutually configured profiles remain compatible rather than looping.
+
+After an actual agent transfer, the first-hop override is consumed before candidate-plan
+validation and the target uses its own reviewed profile chain. A same-agent model edit keeps
+its policy. Pending-task agent changes clear the old first hop too. Agent renames update the
+nested role reference; removing its target turns that role policy into explicit `false`,
+which cannot accidentally reactivate an inherited default. Plan review metadata names the
+effective fallback, and editing unrelated Task fields preserves the policy.

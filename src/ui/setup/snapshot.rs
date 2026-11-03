@@ -33,7 +33,7 @@ impl Startup {
                             .find(|agent| agent.id == task.agent)
                             .and_then(|agent| crate::task_profile::resolve(agent, task).ok())
                             .map_or(serde_json::Value::Null, |r| {
-                                serde_json::json!({"task_type":r.task_type,"model":r.model,"effort":r.options.get("effort"),"warnings":r.warnings})
+                                serde_json::json!({"task_type":r.task_type,"model":r.model,"effort":r.options.get("effort"),"warnings":r.warnings,"fallback":task.fallback_for(&plan.agents).ok().flatten(),"fallback_explicit":task.fallback.is_some()})
                             })
                     })
                     .collect();

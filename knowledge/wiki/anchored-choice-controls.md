@@ -16,3 +16,9 @@ origin on both sides, so fractional parent placement does not masquerade as a fo
 Shell geometry is checked separately under #408. Do not broaden pixel tolerances to hide a
 real control difference. First unit: 80 behavior checks, eight control crops at 0.00% difference.
 Role-specific fallback and manual catalog wiring are subsequent #409 work, not complete yet.
+
+Task-scoped fallback uses missing/null = inherit, false = disable, object = explicit first
+hop. Always clear a consumed hop in the candidate plan before validating a new agent, not
+only after transfer: otherwise the new target appears to fall back to itself. Retain the
+policy for same-agent model edits. Runtime tests, not just serialization checks, caught this.
+Pending-task changes and profile rename/removal must follow the same policy contract.

@@ -2638,6 +2638,7 @@ Trace: amends R-210 / DD-222.
 
 - [x] Plan: audit existing native select sources, role rules, catalog checks and inherited fallback execution before editing; preserve native state/events behind one shared anchored surface.
 - [x] Task (shared surface): isolated anchored_select JS/CSS plus native-document/simulator includes; native values/change events retained.
-- [ ] Task (role/model rules): isolated role module and reviewed per-role fallback overrides without mutating shared profiles.
+- [x] Task (fallback backend): reviewed Task/Role policy overrides, explicit none, isolated defaults, transfer/pending-edit handling and rename/removal references.
+- [ ] Task (role/model UI): isolated role module, Agent/model resets, inherited/default choices and operator model catalog registration.
 - [ ] Verify: real simulator keyboard/focus/modal/refresh tests in light/dark at 840/1280; add parity entries for every visual element, validate backend precedence and unsupported-catalog paths.
 - [ ] Completed: commit/push verified units; full issue stays open until all acceptance checks pass. Depends on the #417 parity runner, integrated locally into this issue branch; main unchanged.

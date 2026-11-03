@@ -1229,5 +1229,7 @@
   "choices.model_id": "모델 ID",
   "choices.apply": "적용",
   "choices.invalid_model": "공백이 없고 하이픈으로 시작하지 않는 모델 ID를 입력하세요.",
-  "choices.manual_unavailable": "이 항목에서는 모델 ID를 직접 등록할 수 없습니다."
+  "choices.manual_unavailable": "이 항목에서는 모델 ID를 직접 등록할 수 없습니다.",
+  "choices.fallback_summary": "Fallback: {value1} / {value2}",
+  "choices.fallback_disabled": "Fallback: 지정 안 함 (역할 설정)"
 }

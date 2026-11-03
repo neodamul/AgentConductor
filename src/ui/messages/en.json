@@ -1229,5 +1229,7 @@
   "choices.model_id": "Model ID",
   "choices.apply": "Apply",
   "choices.invalid_model": "Enter a nonempty model ID without spaces or a leading dash.",
-  "choices.manual_unavailable": "Manual model configuration is unavailable for this field."
+  "choices.manual_unavailable": "Manual model configuration is unavailable for this field.",
+  "choices.fallback_summary": "Fallback: {value1} / {value2}",
+  "choices.fallback_disabled": "Fallback: none (role override)"
 }
