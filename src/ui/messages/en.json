@@ -1223,5 +1223,16 @@
   "room.verification_test": "Integration verification: test {value1} of {value2} ({value3}) running for {value4}",
   "room.verification_next": "Every task is done; the coordinator is verifying the combined result.",
   "room.stopping_run": "Stopping: waiting for the agents and tests to exit.",
-  "room.runner_absent": "The run's process is not running, but the run is still marked as running. Use Recover to continue it."
+  "room.runner_absent": "The run's process is not running, but the run is still marked as running. Use Recover to continue it.",
+  "startup.goal_row_result": "Result",
+  "startup.goal_row_folder": "Open the folder of Goal {value1}",
+  "startup.goal_row_trash": "Delete Goal {value1} permanently",
+  "startup.goal_row_no_result": "This Goal has no recorded result.",
+  "startup.delete_goal_title": "Permanently delete this Goal folder?",
+  "startup.delete_goal_warning": "This deletes the Goal's folder and everything inside it.",
+  "startup.delete_goal_nobackup": "There is no backup, nothing moves to the Trash and it cannot be recovered.",
+  "startup.delete_goal_confirm": "Delete permanently",
+  "startup.delete_goal_pending": "Stopping this Goal's work before deleting…",
+  "startup.delete_goal_timeout": "The Goal's work is still stopping. Try again in a moment.",
+  "startup.delete_goal_done": "Goal {value1} was deleted."
 }
