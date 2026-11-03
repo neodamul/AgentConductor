@@ -23,6 +23,8 @@ The application selects localized strings from the native message catalog. Tests
 
 Keep behavior assertions stronger than “some localized text exists”: retain the profile identifier, refusal reason, and disabled action checks. Never bypass read-only validation to make a localization test pass.
 
+For pointer-driven UI tests, resolve the accessibility label through the same active message catalog used by the widget. Fixed Korean or English labels can pass on one workstation and fail on CI even when the UI is correct. For refusal notices, format the expected text from the active locale and the real refusal reason. Keep separate coverage for the viewport bounds of controls: a field can remain in the accessibility tree while extending beyond the visible window.
+
 ## Traced use case
 
 Coordinator read-only refusal flow: R-206 → BG-161 → SF-194 → UC-198 → FR-199/FR-200/NFR-88/NFR-89 → QAS-204 → DDR-55 → DD-218.
@@ -30,3 +32,5 @@ Coordinator read-only refusal flow: R-206 → BG-161 → SF-194 → UC-198 → F
 ## Evidence
 
 The 2026-11-02 gate and localization correction is recorded in [the raw source note](../raw/2026-11-02-issue9-ci-gates-and-localized-tests.md) and [the implementation plan](../../docs/07-implementation-plan.md).
+
+The 2026-11-03 coordinator-field overflow and English-runner regression are recorded in [the raw source note](../raw/2026-11-03-issue9-coordinator-viewport-and-locale.md) and [the implementation plan](../../docs/07-implementation-plan.md).

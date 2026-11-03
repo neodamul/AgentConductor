@@ -1,5 +1,5 @@
 use super::{Event, message, profile_tools, text};
-use eframe::egui::{self, RichText};
+use eframe::egui;
 use serde_json::Value;
 
 struct DragAgent(String);
@@ -64,15 +64,6 @@ pub(super) fn show(
         .accessible_name(format!("{id}: {drag}"))
         .on_hover_text(drag)
         .on_hover_cursor(egui::CursorIcon::Grab);
-        if snapshot["config"]["coordinator"] == id {
-            let coordinator = text(language, "native.coordinator").to_owned();
-            ui.label(
-                RichText::new(coordinator.clone())
-                    .small()
-                    .color(ui.visuals().weak_text_color()),
-            )
-            .accessible_name(coordinator);
-        }
     });
     event
 }

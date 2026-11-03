@@ -65,36 +65,31 @@ fn sidebar_keeps_agent_command_accessible_on_the_name_row() {
 }
 
 #[test]
-fn coordinator_badge_shares_the_agent_action_row() {
-    let profiles = vec![json!({"id":"claude", "parser":"claude"})];
+fn coordinator_badge_shares_the_metadata_row() {
+    let profiles = vec![
+        json!({"id":"claude", "parser":"claude", "permission_mode":"full_access", "catalog":{"models":["sonnet"]}}),
+    ];
     let snapshot = json!({"config":{"profiles":profiles,"coordinator":"claude"}});
     let context = egui::Context::default();
     context.enable_accesskit();
-    let mut output = context.run_ui(
-        egui::RawInput {
-            screen_rect: Some(Rect::from_min_size(
-                egui::Pos2::ZERO,
-                egui::vec2(248.0, 800.0),
-            )),
-            ..Default::default()
-        },
-        |ctx| {
-            egui::Panel::left("coordinator-density")
-                .default_size(248.0)
-                .show(ctx, |ui| {
-                    sidebar::show(&profiles, &snapshot, "en", true, false, ui);
-                });
-        },
-    );
+    let draw = || {
+        context.run_ui(
+            egui::RawInput {
+                screen_rect: Some(Rect::from_min_size(
+                    egui::Pos2::ZERO,
+                    egui::vec2(320.0, 800.0),
+                )),
+                ..Default::default()
+            },
+            |ui| {
+                sidebar::show(&profiles, &snapshot, "en", true, false, ui);
+            },
+        )
+    };
+    let mut output = draw();
     output.textures_delta.set.clear();
     output.textures_delta.free.clear();
-    output = context.run_ui(Default::default(), |ctx| {
-        egui::Panel::left("coordinator-density")
-            .default_size(248.0)
-            .show(ctx, |ui| {
-                sidebar::show(&profiles, &snapshot, "en", true, false, ui);
-            });
-    });
+    output = draw();
 
     let nodes = &output
         .platform_output
@@ -102,10 +97,10 @@ fn coordinator_badge_shares_the_agent_action_row() {
         .as_ref()
         .unwrap()
         .nodes;
-    let bounds = |role, label| {
+    let bounds = |label| {
         nodes
             .iter()
-            .find(|(_, node)| node.role() == role && node.label() == Some(label))
+            .find(|(_, node)| node.label() == Some(label))
             .and_then(|(_, node)| node.bounds())
             .unwrap_or_else(|| {
                 panic!(
@@ -117,14 +112,16 @@ fn coordinator_badge_shares_the_agent_action_row() {
                 )
             })
     };
-    let actions = bounds(Role::Button, "Edit agent claude");
-    let coordinator = bounds(Role::Label, "Coordinator");
+    let coordinator = bounds("Coordinator");
+    for label in ["1 models", "Full access"] {
+        let badge = bounds(label);
+        assert!(
+            ((badge.y0 + badge.y1 - coordinator.y0 - coordinator.y1) / 2.0).abs() <= 3.0,
+            "coordinator, model count and permission must share one metadata row: {coordinator:?} {badge:?}"
+        );
+    }
     assert!(
-        ((actions.y0 + actions.y1) / 2.0 - (coordinator.y0 + coordinator.y1) / 2.0).abs() <= 3.0,
-        "coordinator badge is on a separate card row: {actions:?} {coordinator:?}"
-    );
-    assert!(
-        coordinator.x1 <= 248.0,
+        coordinator.x1 <= 320.0,
         "coordinator badge escaped the rail: {coordinator:?}"
     );
     output.textures_delta.set.clear();

@@ -2011,3 +2011,6 @@ Compared the closed PR's event, worker-concurrency, chat-persistence, timeout, a
 # [2026-11-03] plan / task / verify | Restore ValuePattern input for Windows package Goal field — issue #9
 
 Exact packaged run `41520505534` failed because the Goal edit read back empty and UIA focus had returned to the top-level window after Unicode `SendInput`. This contradicted the existing `windows-uia-text-input.md` decision. Added five failing source-contract assertions first, then changed the driver to `SetFocus` + `ValuePattern.SetValue` + bounded readback and aligned the lifecycle contract. Local Windows-driver/lifecycle/source-layout tests pass 19 with 1 ignored. A new remote run is required: `41545058701` targets pre-correction head `21eb66f4` and cannot validate this correction. Packaged acceptance stays 22/25. Raw evidence: `../raw/2026-11-03-windows-uia-setvalue-followup.md`.
+# 2026-11-03
+
+- Added viewport-bound regression coverage for Workspace coordinator controls and replaced fixed-language interaction assertions with active-catalog lookups. The macOS failure in Actions run `41557402619` was localized to three Korean-only expectations; all 116 library tests and focused UI checks now pass locally. Remote validation remains pending.

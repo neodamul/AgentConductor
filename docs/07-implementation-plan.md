@@ -1,5 +1,14 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Match native agent-card metadata with the populated reference — issue #9
+
+- [x] Plan: compare the current Rust framebuffer against the populated `origin/main` workspace capture at 1280×892; align coordinator, model-count, and permission metadata as visible badges.
+- [x] Red: add an AccessKit bounds regression requiring all three metadata badges on one row; it failed because permission was merged into the executable line and the coordinator appeared with action controls.
+- [x] Task / Green: render separate localized coordinator, model-count, and permission badges; keep the executable visible on its own line and preserve full details for hover/accessibility; remove the duplicate coordinator label from the action row.
+- [x] Focused local verification: sidebar density and metadata targets pass 5/5; `cargo fmt --all` completed. Full parity is still unverified.
+- [ ] Capture the updated Rust screenshot with fresh synthetic quota observations and compare it against the same populated reference.
+- [ ] Align remaining workspace form geometry, coordinator warning, and execution-isolation control; keep issue #9 at 22/50 until full acceptance review.
+
 ### 2026-11-03 — Restore Workspace header actions and coordinator placement — issue #9
 
 - [x] Plan: the same-state reference shows a phase badge and `New goal` action beside the Workspace title, with coordinator chat in the application bar beside Settings.
@@ -8058,3 +8067,12 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Verify (macOS, local): `cargo test --locked --offline --all-targets` passed **1,314 tests, 16 ignored, across 409 suites** in 283.30 seconds.
 - [x] Resource check: the existing `target` stayed at 17 GiB; available disk space remained 14 GiB after the run.
 - [ ] Complete: this verifies Rust source tests on macOS only. It does not verify the exact Windows package, packaged UI journeys, screenshot parity, or shipped/default Rust UI acceptance. Keep issue #9 at 22/50 and PR #22 Draft.
+
+### 2026-11-03 — Keep coordinator controls inside the viewport and make UI tests locale-safe — issue #9
+
+- [x] Plan: inspect the populated Rust workspace capture and current PR #22 checks. The coordinator model selector exceeded a 1140px viewport (`x1=1217`); macOS CI also failed three workspace-model tests because they required Korean labels while the runner rendered English.
+- [x] Red: add a viewport-bound regression; it fails with the coordinator model control 85px beyond the safe viewport edge.
+- [x] Task / Green: distribute workspace name, coordinator, and model controls across three responsive columns. Change interaction tests to obtain labels and refusal wording from the active locale.
+- [x] Verify locally: all 116 library tests pass; the four workspace model tests pass; sidebar density/details pass 5/5; feature-gated library Clippy with warnings denied, rustfmt, and `git diff --check` pass. All touched Rust/test files remain below 300 lines.
+- [ ] Verify remotely: rerun the exact PR head and confirm macOS and Windows platform validation. Existing run `41557402619` failed macOS on the three locale-dependent tests before this fix; Windows was still running at inspection.
+- [ ] Complete: review a fresh same-state screenshot and finish remaining package and shipped/default Rust UI parity gates. Keep issue #9 at 22/50 and PR #22 Draft.

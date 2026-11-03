@@ -4,6 +4,7 @@ use serde_json::Value;
 
 pub(super) const DEFAULT_PANEL_WIDTH: f32 = 298.0;
 
+mod badges;
 pub(in crate::native_ui_probe::workspace) mod controls;
 mod header;
 pub(crate) mod icons;
@@ -73,6 +74,8 @@ pub fn show(
                 let details = format!("{executable} · {permission}");
                 let visible_details =
                     format!("{executable} · {}", permission_label(permission, language));
+                let permission_badge = permission_label(permission, language);
+                let coordinator = snapshot["config"]["coordinator"] == id;
                 let status = status(id, parser, snapshot, now);
                 let dot_status = if status == "ready" {
                     "completed"
@@ -128,16 +131,6 @@ pub fn show(
                                         .color(ui.visuals().weak_text_color()),
                                 )
                                 .accessible_name(meta);
-                                ui.add(
-                                    egui::Label::new(
-                                        RichText::new(visible_details.clone())
-                                            .small()
-                                            .color(ui.visuals().weak_text_color()),
-                                    )
-                                    .truncate(),
-                                )
-                                .on_hover_text(details.clone())
-                                .accessible_name(visible_details);
                             });
                         });
                         let saved = snapshot["config"]["profiles"]
@@ -154,12 +147,23 @@ pub fn show(
                                     &[("value1", &model_count.to_string())],
                                 )
                             };
-                            ui.label(
-                                RichText::new(model_text.clone())
+                            if coordinator {
+                                badges::show(ui, text(language, "native.coordinator"));
+                            }
+                            badges::show(ui, &model_text);
+                            badges::show(ui, &permission_badge);
+                        });
+                        ui.add(
+                            egui::Label::new(
+                                RichText::new(executable)
                                     .small()
                                     .color(ui.visuals().weak_text_color()),
                             )
-                            .accessible_name(model_text);
+                            .truncate(),
+                        )
+                        .on_hover_text(details.clone())
+                        .accessible_name(visible_details);
+                        ui.horizontal_wrapped(|ui| {
                             if let Some(action) = models::show(
                                 profile,
                                 snapshot,
@@ -171,32 +175,32 @@ pub fn show(
                             ) {
                                 event = Some(action);
                             }
+                            if matches!(parser, "claude" | "codex")
+                                && let Some(action) =
+                                    quota::show(id, snapshot, language, can_edit && saved, ui)
+                            {
+                                event = Some(action);
+                            }
+                            if let Some(fallback) = profile["fallback"]["agent"].as_str() {
+                                let fallback = crate::ui::messages::interpolate(
+                                    text(language, "startup.fallback"),
+                                    &[("value1", fallback)],
+                                );
+                                ui.label(RichText::new(fallback.clone()).small())
+                                    .accessible_name(fallback);
+                            }
+                            if let Some(action) = controls::show(
+                                id,
+                                snapshot,
+                                language,
+                                can_edit,
+                                profile_editing,
+                                (index, profiles.len()),
+                                ui,
+                            ) {
+                                event = Some(action);
+                            }
                         });
-                        if matches!(parser, "claude" | "codex")
-                            && let Some(action) =
-                                quota::show(id, snapshot, language, can_edit && saved, ui)
-                        {
-                            event = Some(action);
-                        }
-                        if let Some(fallback) = profile["fallback"]["agent"].as_str() {
-                            let fallback = crate::ui::messages::interpolate(
-                                text(language, "startup.fallback"),
-                                &[("value1", fallback)],
-                            );
-                            ui.label(RichText::new(fallback.clone()).small())
-                                .accessible_name(fallback);
-                        }
-                        if let Some(action) = controls::show(
-                            id,
-                            snapshot,
-                            language,
-                            can_edit,
-                            profile_editing,
-                            (index, profiles.len()),
-                            ui,
-                        ) {
-                            event = Some(action);
-                        }
                     });
                 if can_edit
                     && !profile_editing

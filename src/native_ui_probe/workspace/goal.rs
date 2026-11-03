@@ -61,20 +61,19 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             .to_owned();
         let language = probe.navigation.appearance.language().to_owned();
         let coordinator = probe.coordinator.clone();
-        let name_width = (ui.available_width() * 0.52).min(380.0);
-        ui.horizontal_wrapped(|ui| {
-            ui.vertical(|ui| {
+        ui.columns(3, |columns| {
+            columns[0].vertical(|ui| {
                 ui.label(name);
                 ui.add_enabled(
                     can_edit,
                     egui::TextEdit::singleline(&mut probe.name)
-                        .desired_width(name_width)
+                        .desired_width(ui.available_width())
                         .margin(egui::vec2(8.0, 6.0))
                         .hint_text(name_hint),
                 )
                 .accessible_name(name);
             });
-            ui.vertical(|ui| {
+            columns[1].vertical(|ui| {
                 ui.label(coordinator_label);
                 ui.add_enabled_ui(can_edit && !probe.profiles.is_empty(), |ui| {
                     egui::ComboBox::from_id_salt("native-workspace-coordinator")
@@ -96,7 +95,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 .iter_mut()
                 .find(|profile| profile["id"] == coordinator)
             {
-                coordinator_model_selector(profile, &language, can_edit, ui);
+                coordinator_model_selector(profile, &language, can_edit, &mut columns[2]);
             }
         });
         if let Some(reason) = super::chat::coordinator_issue(&probe.profiles, &probe.coordinator) {

@@ -8,7 +8,7 @@ fn workspace_coordinator_model_is_selectable_from_observed_catalog() {
     context.enable_accesskit();
     let mut probe = probe(custom_profile());
     let first = frame(&context, &mut probe, Vec::new());
-    let selector = position(&first, "조정자 모델");
+    let selector = position(&first, &localized("startup.coordinator_model"));
 
     click(&context, &mut probe, selector);
     let open = frame(&context, &mut probe, Vec::new());
@@ -35,11 +35,11 @@ fn workspace_cli_default_removes_the_coordinator_model_override() {
     context.enable_accesskit();
     let mut probe = probe(custom_profile());
     let first = frame(&context, &mut probe, Vec::new());
-    let selector = position(&first, "조정자 모델");
+    let selector = position(&first, &localized("startup.coordinator_model"));
 
     click(&context, &mut probe, selector);
     let open = frame(&context, &mut probe, Vec::new());
-    let default_option = position(&open, "CLI 기본값");
+    let default_option = position(&open, &localized("startup.cli_default"));
     click(&context, &mut probe, default_option);
 
     assert!(probe.profiles[0].get("coordinator_model").is_none());
@@ -60,11 +60,54 @@ fn workspace_shows_read_only_coordinator_blocker_before_chat_opens() {
     let output = frame(&context, &mut probe, Vec::new());
 
     let labels = labels(&output);
+    let language = crate::native_ui_probe::appearance::State::load()
+        .language()
+        .to_owned();
+    let reason = crate::native_ui_probe::workspace::chat::coordinator_issue(
+        &probe.profiles,
+        &probe.coordinator,
+    )
+    .unwrap();
+    let expected = crate::ui::messages::interpolate(
+        crate::ui::messages::in_language(&language, "startup.coordinator_cannot_chat"),
+        &[("value1", &reason)],
+    );
     assert!(
-        labels
-            .iter()
-            .any(|label| label.starts_with("이 코디네이터와는 대화할 수 없습니다:")),
-        "labels: {labels:?}"
+        labels.contains(&expected.as_str()),
+        "missing {expected}; labels: {labels:?}"
+    );
+}
+
+#[test]
+fn workspace_coordinator_fields_fit_the_default_native_viewport() {
+    use eframe::egui::Rect;
+    let locale = crate::native_ui_probe::appearance::State::load();
+    let model_label = locale.text("startup.coordinator_model");
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut probe = probe(custom_profile());
+    let mut output = context.run_ui(
+        egui::RawInput {
+            screen_rect: Some(Rect::from_min_size(Pos2::ZERO, egui::vec2(1140.0, 740.0))),
+            ..Default::default()
+        },
+        |ui| probe.update_ui(ui),
+    );
+    let bounds = output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes
+        .iter()
+        .find(|(_, node)| node.label() == Some(model_label))
+        .and_then(|(_, node)| node.bounds())
+        .unwrap_or_else(|| panic!("missing coordinator model: {:?}", labels(&output)));
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    assert!(
+        bounds.x1 <= 1132.0,
+        "field overflows the viewport: {bounds:?}"
     );
 }
 
@@ -146,6 +189,11 @@ fn position(output: &egui::FullOutput, label: &str) -> Pos2 {
         ((bounds.x0 + bounds.x1) / 2.0) as f32,
         ((bounds.y0 + bounds.y1) / 2.0) as f32,
     )
+}
+
+fn localized(key: &'static str) -> String {
+    let locale = crate::native_ui_probe::appearance::State::load();
+    locale.text(key).to_owned()
 }
 
 fn labels(output: &egui::FullOutput) -> Vec<&str> {
