@@ -29,6 +29,8 @@ pub enum EventKind {
     Usage,
     Warning,
     Error,
+    /// GitHub #341: the CLI refused a tool (a profile's `denial_condition` matched).
+    Denied,
     Unknown,
 }
 
@@ -92,12 +94,41 @@ fn acio_kind(payload: &Value) -> EventKind {
     }
 }
 
+/// A bounded, single-line quote of raw output for a failure message.
+fn excerpt(bytes: &[u8]) -> String {
+    let text = String::from_utf8_lossy(bytes);
+    let line: String = text.trim().chars().take(200).collect();
+    let line = line.replace(['\n', '\r'], " ");
+    if text.trim().chars().count() > 200 {
+        format!("{line}…")
+    } else {
+        line
+    }
+}
+
+/// Words a CLI uses when it refuses to run a tool; text like this is a configuration problem, not progress.
+fn reads_as_refusal(text: &str) -> bool {
+    let text = text.to_lowercase();
+    [
+        "permission denied",
+        "denied by",
+        "not permitted",
+        "not allowed",
+        "approval required",
+        "requires approval",
+    ]
+    .iter()
+    .any(|phrase| text.contains(phrase))
+}
+
 pub struct Decoder {
     provider: Provider,
     event_types: std::collections::BTreeMap<String, EventKind>,
     session_id_pointer: Option<String>,
     result_pointer: Option<String>,
     error_condition: Option<crate::plan::JsonCondition>,
+    denial: Option<crate::plan::DenialCondition>,
+    text_mode: bool,
     acio: bool,
     limit: usize,
     buffer: Vec<u8>,
@@ -114,6 +145,8 @@ impl Decoder {
             session_id_pointer: None,
             result_pointer: None,
             error_condition: None,
+            denial: None,
+            text_mode: false,
             acio: false,
             limit,
             buffer: vec![],
@@ -133,6 +166,8 @@ impl Decoder {
                 .clone_from(&profile.session_id_pointer);
             decoder.result_pointer.clone_from(&profile.result_pointer);
             decoder.error_condition.clone_from(&profile.error_condition);
+            decoder.denial.clone_from(&profile.denial_condition);
+            decoder.text_mode = profile.on_invalid_json == crate::plan::InvalidJson::Text;
         }
         decoder
     }
@@ -154,6 +189,32 @@ impl Decoder {
         Ok(events)
     }
 
+    /// GitHub #341: a line that is not JSON, kept as text. It never makes a success by itself: the worker still
+    /// needs a result event and a zero exit, and a line that reads as a refusal fails the run.
+    fn text_event(&mut self, start: u64, line: &[u8]) -> Event {
+        let text = excerpt(line);
+        let (kind, payload) = if reads_as_refusal(&text) {
+            (
+                EventKind::Error,
+                serde_json::json!({"type":"error","message":format!("check the CLI configuration: the CLI printed what reads as a refusal: {text}")}),
+            )
+        } else {
+            (
+                EventKind::Progress,
+                serde_json::json!({"type":"text","text":text}),
+            )
+        };
+        let event = Event {
+            seq: self.seq,
+            raw_offset: start,
+            session_id: self.session_id.clone(),
+            kind,
+            payload,
+        };
+        self.seq += 1;
+        event
+    }
+
     pub fn finish(&mut self) -> Result<Vec<Event>, String> {
         if self.buffer.is_empty() {
             return Ok(vec![]);
@@ -173,8 +234,18 @@ impl Decoder {
         } else {
             &bytes
         };
-        let payload: Value = serde_json::from_slice(json)
-            .map_err(|e| format!("invalid JSONL at offset {start}: {e}"))?;
+        let payload: Value = match serde_json::from_slice(json) {
+            Ok(payload) => payload,
+            Err(_) if self.text_mode && self.provider == Provider::Custom => {
+                return Ok(vec![self.text_event(start, json)]);
+            }
+            Err(e) => {
+                return Err(format!(
+                    "invalid JSONL at offset {start}: {e}; the line was: {}",
+                    excerpt(json)
+                ));
+            }
+        };
         if !payload.is_object() {
             return Err(format!("event must be a JSON object at offset {start}"));
         }
@@ -204,8 +275,13 @@ impl Decoder {
             && self.error_condition.as_ref().is_some_and(|condition| {
                 payload.pointer(&condition.pointer) == Some(&condition.equals)
             });
+        let denied = self.provider == Provider::Custom
+            && !self.acio
+            && self.denial.as_ref().is_some_and(|d| d.matches(&payload));
         let kind = if self.acio {
             acio_kind(&payload)
+        } else if denied {
+            EventKind::Denied
         } else if configured_error {
             EventKind::Error
         } else if self.provider == Provider::Custom

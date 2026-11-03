@@ -87,6 +87,9 @@ assert.ok(room.includes('value2:broken.output||') && room.includes('value1:test.
 // GitHub #326: a custom CLI declares its read-only arguments in the agent form, and the settings warn when the coordinator cannot answer chat.
 assert.ok(fs.readFileSync('src/ui/startup.html', 'utf8').includes('<textarea id="start-read-only-args"'), 'the agent form has the read-only arguments field');
 assert.ok(startup.includes('read_only_args') && startup.includes('state?.chat_blockers?.[draft.coordinator]'), 'the form saves them and the coordinator warning reads the snapshot');
+// GitHub #341: an agent that approves tools automatically but cannot show a refusal carries a configuration badge with the explanation.
+assert.ok(startup.includes("state?.config_hints?.[p.id]") && startup.includes("acMessage('startup.config_hint_badge')") && startup.includes('state?.config_hints,'), 'the agent card shows the configuration hint');
+for (const lang of ['en', 'ko']) { const m = JSON.parse(fs.readFileSync(`src/ui/messages/${lang}.json`, 'utf8')); assert.ok(m['startup.config_hint_badge'] && m['startup.auto_approve_unconfigured'], `${lang} has the hint texts`); }
 assert.ok(fs.readFileSync('src/ui/startup.html', 'utf8').includes('id="start-coordinator-note"'), 'the warning has a place under the coordinator selector');
 for (const lang of ['en', 'ko']) for (const key of ['startup.read_only_args', 'startup.coordinator_cannot_chat']) assert.ok(JSON.parse(fs.readFileSync(`src/ui/messages/${lang}.json`, 'utf8'))[key], `${lang} has ${key}`);
 // GitHub #331: a refusal that lists the blocking work keeps its line breaks and scrolls instead of growing off the screen.

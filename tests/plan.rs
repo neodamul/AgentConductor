@@ -19,6 +19,8 @@ fn plan() -> Plan {
                 execution_options: vec![],
                 result_pointer: None,
                 error_condition: None,
+                on_invalid_json: Default::default(),
+                denial_condition: None,
                 max_sessions: 3,
                 quota_refresh_minutes: 5,
                 quota_group: None,

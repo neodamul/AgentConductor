@@ -1185,6 +1185,8 @@
   "startup.read_only_args": "JSON 배열: 이 CLI를 쓰기 없이 실행하는 인수. 사용자 지정 CLI를 코디네이터 대화에 쓰려면 필요합니다",
   "startup.read_only_args_summary": "읽기 전용 인수 (선택)",
   "startup.coordinator_cannot_chat": "이 코디네이터와는 대화할 수 없습니다: {reason}",
+  "startup.config_hint_badge": "설정 확인",
+  "startup.auto_approve_unconfigured": "이 에이전트는 도구를 자동 승인하도록 설정되어 있지만, CLI가 도구를 거부해도 이를 알아볼 설정이 없습니다. CLI의 승인 옵션을 인수에 추가하고 거부 조건(denial_condition)을 지정하면, 거부된 도구가 파서 오류나 조용한 성공 대신 \"권한 거부\"로 표시됩니다.",
   "room.pending_dependencies": "{value1} 완료를 기다리는 중",
   "room.pending_retry": "{value1} 후 자동 재시도",
   "room.pending_session_limit": "빈 세션을 기다리는 중 (동시에 최대 {value1}개)",

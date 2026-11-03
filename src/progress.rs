@@ -50,6 +50,16 @@ impl Reader {
     }
 }
 
+/// GitHub #341: a stopped reading says what the CLI had printed, not only where the parser gave up.
+fn with_output(spool: &Path, error: String) -> String {
+    let raw = crate::coordinator::output_excerpt(spool, &spool.with_file_name("stderr.log"));
+    if raw.is_empty() {
+        error
+    } else {
+        format!("{error}\nthe CLI's own output:\n{raw}")
+    }
+}
+
 /// Owns the worker future so observation failure/cancellation drops its process group.
 pub async fn observe<F: Future>(
     future: F,
@@ -110,11 +120,11 @@ async fn observe_inner<F: Future>(
             result=&mut future=>{
                 // A launch failure can legitimately have no stdout spool.
                 if spool.exists() {
-                    while reader.poll(spool,task,attempt,true).await? {}
+                    while reader.poll(spool,task,attempt,true).await.map_err(|e| with_output(spool, e))? {}
                 }
                 return Ok(result);
             },
-            _=interval.tick()=>{reader.poll(spool,task,attempt,false).await?;},
+            _=interval.tick()=>{reader.poll(spool,task,attempt,false).await.map_err(|e| with_output(spool, e))?;},
         }
     }
 }

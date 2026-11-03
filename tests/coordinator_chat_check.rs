@@ -33,3 +33,40 @@ fn the_snapshot_names_agents_that_cannot_answer_chat() {
     drop(startup);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn the_snapshot_flags_automatic_approval_that_nothing_could_show_refused() {
+    // GitHub #341.
+    let root = std::env::temp_dir().join(agentconductor::native_guard::session_id().unwrap());
+    std::fs::create_dir(&root).unwrap();
+    let exe = std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor"));
+    let startup = Startup::open(&root, exe).unwrap();
+    let state = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    let custom = |id: &str, extra: serde_json::Value| {
+        let mut p = json!({"id": id, "executable": "aipro", "args": ["run", "{task_file}"], "parser": "custom",
+               "permission_mode": "operator_auto_approve"});
+        p.as_object_mut()
+            .unwrap()
+            .extend(extra.as_object().unwrap().clone());
+        p
+    };
+    let profiles = json!([
+        custom("bare", json!({})),
+        custom(
+            "watched",
+            json!({"denial_condition": {"pointer": "/status", "equals": "error"}})
+        )
+    ]);
+    let packet =
+        json!({"kind": "save_profiles", "revision": state["revision"], "profiles": profiles});
+    startup.dispatch(packet.to_string().as_bytes()).unwrap();
+    let state = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    let hints = state["config_hints"].as_object().unwrap();
+    assert_eq!(
+        hints["bare"], "startup.auto_approve_unconfigured",
+        "{hints:?}"
+    );
+    assert!(!hints.contains_key("watched"), "{hints:?}");
+    drop(startup);
+    std::fs::remove_dir_all(root).unwrap();
+}

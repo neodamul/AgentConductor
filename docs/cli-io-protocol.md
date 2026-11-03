@@ -191,8 +191,25 @@ that does not answer is registered with the declarative profile as today. Schema
 ## 10. Adopting it for an in-house LLM agent CLI
 
 An in-house CLI is covered by the per-agent settings that already exist (the declarative `custom` profile: argv
-template, `event_types`, `session_id_pointer`, `result_pointer`, `error_condition`, execution options). Nothing
+template, `event_types`, `session_id_pointer`, `result_pointer`, `error_condition`, `denial_condition`,
+`on_invalid_json`, execution options). Nothing
 new has to be built for it. The protocol adds two optional upgrades the owner can adopt at their own pace:
+
+GitHub #341 (permission denials and text output). A CLI that denies tools in non-interactive mode is reported as
+what it is, not as a parser error:
+
+- A line that is not JSON stops the run and is quoted (bounded) in the failure together with the end of stdout and
+  stderr, labeled apart. `on_invalid_json: "text"` keeps such lines as progress text instead; success still needs
+  exit code 0 and a result event, and a line that reads as a refusal ("permission denied", "denied by",
+  "not allowed", "requires approval", ...) fails the run with "check the CLI configuration".
+- `denial_condition` names an event that means a tool was refused: optional `event_type`, a JSON Pointer
+  `pointer` checked by `equals` or by a case-insensitive `contains`, and optional `tool_pointer` and
+  `message_pointer`. A matching event fails the task even when the process exits 0 and a result follows, with
+  "permission denied: tool NAME: MESSAGE". The task status stays `failed`; a separate "permission denied" status
+  for an approve-and-retry flow is future work.
+- An agent set to `operator_auto_approve` with no event mapping, error or denial condition (and no acio) gets a
+  non-blocking "Check configuration" badge on its card: nothing in its settings could show a refused tool.
+- Not done: a `{prompt}` placeholder for CLIs that take the prompt only as an argument.
 
 | Level | What the owner does | Result |
 |---|---|---|
