@@ -52,7 +52,14 @@ async function visit(browser, side, spec) {
     const failures = []; let ran = 0;
     for (const spec of require('./spec.cjs')) {
       if (flag('--only') && spec.name !== flag('--only')) continue;
-      ran++; const measured = {}, shots = {};
+      ran++;
+      if (spec.assert) { // behaviour check on the app only: `assert` is evaluated after `run` and must be true
+        if (spec.viewport) await browser.viewport(spec.viewport[0], spec.viewport[1]);
+        await visit(browser, 'app', spec.app); const ok = await browser.eval(spec.assert);
+        if (spec.viewport) await browser.viewport(1280, 960);
+        if (ok !== true) failures.push(`${spec.name}: assertion failed (${spec.assert})`); continue;
+      }
+      const measured = {}, shots = {};
       for (const side of ['mock', 'app']) {
         await visit(browser, side, side === 'mock' ? spec.mock : spec.app);
         const s = spec[side]; measured[side] = await browser.eval(MEASURE(s.selector, s.index || 0, spec.props, s.mark));
