@@ -2620,3 +2620,11 @@ Trace: amends R-13 (requirements trace to tests); rules in docs/README.md, recor
 - [x] Task: renumber the second chain (R-209 … DD-221), restore headings, merge duplicates and stray amendments, add `Status:` lines to requirements, use cases and QAS, trace every issue unit, rebuild the README index and matrix by area; `tests/architecture_trace.rs` enforces the rules (mutation run: four of six tests fail on injected faults); `tests/agent_master_list.rs` covers R-101, `tests/agent_order_runtime.cjs` R-102 and `tests/run_phase_title_runtime.cjs` R-114.
 - [x] Verify (macOS): full suite; docs/14 lists requirement evidence and the gaps (R-118 not implemented — since done with #377, R-120 partly, R-151 on the Rust line, R-183 open item from #341).
 - [ ] Complete: merge only on request.
+
+### Goal row backend actions — GitHub #402
+Trace: R-211 / DD-223.
+
+- [x] Plan: audit existing Goal registry, run bindings, owned stop paths and read-only result gaps.
+- [x] Task: native result/folder/delete requests and explicit UI contract (issue comment).
+- [x] Verify: Red (missing requests, then missing result evidence) → Green; 33 tests in eight final local suites (existing phase-flow/navigation suites also passed in the preceding run), including ownership, context preservation, stop/retry, stale confirmation, last-Goal removal and snapshots during deletion. Formatting and focused Clippy checked.
+- [ ] Completed: commit/push; Claude integrates UI; merge and close only after full acceptance.

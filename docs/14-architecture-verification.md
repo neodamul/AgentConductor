@@ -322,3 +322,11 @@ the tests that exercise it and says whether the behavior is present on `main`.
 | R-174 New Rust code follows a short, evidence-based review policy | current | — | policy |
 | R-175 Every unsafe operation states why it is sound | current | `icons.rs`, `leases.rs` | passes |
 | R-176 Tests do not mutate the process environment unsoundly | current | `availability_watcher.rs`, `env_guard.rs`, `support/env.rs`, `windows_icons.rs` | passes |
+
+## Goal row backend actions — GitHub #402
+
+| Requirement | Backend evidence | Remaining acceptance |
+|---|---|---|
+| R-211 | `goal_row_actions.rs`, `unit/goal_deletion.rs`; 33 tests passed across eight final local suites including architecture trace, startup chat/routing, stop/resume and source layout; existing phase-flow/startup/navigation suites also passed | Webview result/folder/delete wiring and exact macOS/Windows package interactions remain with Claude; not yet full feature completion |
+
+Deletion runs outside the settings mutex, rejects competing writes without waiting and keeps snapshots responsive. It removes only the verified Goal directory, preserving central audit/run evidence. Folder opening is implemented via native argument passing; actual Finder/Explorer launch is not automated in these tests.

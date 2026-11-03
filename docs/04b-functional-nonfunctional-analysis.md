@@ -750,3 +750,9 @@ Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213.
 ### FR-194 Classification and checks
 `tests/request_kinds_runtime.cjs` reads `kind: '<name>'` literals of `startup.js`, `room.js`, `mcp.js`, `chat.js`, `optimize.js` and `manual.js`. Each kind is in exactly one of ENVELOPE, REFRESH, JOBS, DIRECT; none is unclassified or stale. The quiet list of `AC_WAIT` equals REFRESH, the usage job and the two update polls. Each JOBS entry names a string its page source must contain (its progress rendering).
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.
+
+### FR-205 Goal action request contract
+Expose goal_result, goal_folder and delete_goal on the startup bridge; reads leave selection unchanged; deletion requires revision, slug, goal text and exact folder. Trace: UC-203.
+
+### NFR-92 Fail-closed Goal removal
+Reject unregistered identifiers, aliases/reparse points, missing or invalid folder markers, non-child paths and unverified run ownership. Do not wait for processes under the settings mutex; return stopping and retry after state changes. Trace: FR-205.

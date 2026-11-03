@@ -638,3 +638,6 @@ Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213.
 ### BG-157 The absence of silent waits is enforced
 The coverage reached by the progress work does not erode when a request is added later.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.
+
+### BG-166 Review and discard Goals safely
+Operators inspect history or discard a stuck Goal without losing their current working context or unrelated files. Trace: R-211.
