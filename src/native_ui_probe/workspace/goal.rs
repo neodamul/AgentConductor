@@ -31,7 +31,7 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             locale.text("startup.goal"),
             locale.text("startup.goal_hint"),
             locale.text("startup.save_workspace"),
-            locale.text("startup.coordinator_analysis_of_the_whole_goal"),
+            locale.text("startup.planning_coordinator"),
             locale.text("startup.coordinator_none"),
         )
     };
@@ -57,42 +57,45 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             .to_owned();
         let language = probe.navigation.appearance.language().to_owned();
         let coordinator = probe.coordinator.clone();
-        ui.columns(3, |columns| {
-            columns[0].vertical(|ui| {
-                ui.label(name);
-                ui.add_enabled(
-                    can_edit,
-                    egui::TextEdit::singleline(&mut probe.name)
-                        .desired_width(ui.available_width())
-                        .margin(egui::vec2(8.0, 6.0))
-                        .hint_text(name_hint),
-                )
-                .accessible_name(name);
-            });
-            columns[1].vertical(|ui| {
-                ui.label(coordinator_label);
-                ui.add_enabled_ui(can_edit && !probe.profiles.is_empty(), |ui| {
-                    egui::ComboBox::from_id_salt("native-workspace-coordinator")
-                        .selected_text(selected)
-                        .width(ui.available_width().min(280.0))
-                        .show_ui(ui, |ui| {
-                            for profile in &probe.profiles {
-                                if let Some(id) = profile["id"].as_str() {
-                                    ui.selectable_value(&mut probe.coordinator, id.into(), id);
-                                }
-                            }
-                        })
-                        .response
-                        .accessible_name(coordinator_label);
+        ui.scope(|ui| {
+            ui.spacing_mut().interact_size.y = 40.0;
+            ui.columns(3, |columns| {
+                columns[0].vertical(|ui| {
+                    ui.label(name);
+                    ui.add_enabled(
+                        can_edit,
+                        egui::TextEdit::singleline(&mut probe.name)
+                            .desired_width(ui.available_width())
+                            .margin(egui::vec2(8.0, 6.0))
+                            .hint_text(name_hint),
+                    )
+                    .accessible_name(name);
                 });
+                columns[1].vertical(|ui| {
+                    ui.label(coordinator_label);
+                    ui.add_enabled_ui(can_edit && !probe.profiles.is_empty(), |ui| {
+                        egui::ComboBox::from_id_salt("native-workspace-coordinator")
+                            .selected_text(selected)
+                            .width(ui.available_width().min(280.0))
+                            .show_ui(ui, |ui| {
+                                for profile in &probe.profiles {
+                                    if let Some(id) = profile["id"].as_str() {
+                                        ui.selectable_value(&mut probe.coordinator, id.into(), id);
+                                    }
+                                }
+                            })
+                            .response
+                            .accessible_name(coordinator_label);
+                    });
+                });
+                if let Some(profile) = probe
+                    .profiles
+                    .iter_mut()
+                    .find(|profile| profile["id"] == coordinator)
+                {
+                    coordinator_model_selector(profile, &language, can_edit, &mut columns[2]);
+                }
             });
-            if let Some(profile) = probe
-                .profiles
-                .iter_mut()
-                .find(|profile| profile["id"] == coordinator)
-            {
-                coordinator_model_selector(profile, &language, can_edit, &mut columns[2]);
-            }
         });
         if let Some(reason) = super::chat::coordinator_issue(&probe.profiles, &probe.coordinator) {
             let template =
@@ -103,29 +106,32 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
         let mut use_worktrees = probe.workspace_mode == crate::plan::WorkspaceMode::Worktree;
         ui.label(project);
         ui.add_enabled_ui(can_edit, |ui| {
-            ui.horizontal_wrapped(|ui| {
-                let input_width = (ui.available_width() - 290.0).clamp(180.0, 420.0);
-                ui.add(
-                    egui::TextEdit::singleline(&mut probe.repository)
-                        .desired_width(input_width)
-                        .margin(egui::vec2(8.0, 6.0))
-                        .hint_text(project_hint),
-                )
-                .accessible_name(project);
-                if ui
-                    .add(egui::Button::new(browse))
-                    .accessible_name(browse)
-                    .clicked()
-                {
-                    probe.pick_folder();
-                }
-                ui.checkbox(
-                    &mut use_worktrees,
-                    probe
-                        .navigation
-                        .appearance
-                        .text("startup.isolate_tasks_in_git_worktrees"),
-                );
+            ui.scope(|ui| {
+                ui.spacing_mut().interact_size.y = 40.0;
+                ui.horizontal_wrapped(|ui| {
+                    let input_width = (ui.available_width() - 290.0).clamp(180.0, 380.0);
+                    ui.add(
+                        egui::TextEdit::singleline(&mut probe.repository)
+                            .desired_width(input_width)
+                            .margin(egui::vec2(8.0, 6.0))
+                            .hint_text(project_hint),
+                    )
+                    .accessible_name(project);
+                    if ui
+                        .add(egui::Button::new(browse))
+                        .accessible_name(browse)
+                        .clicked()
+                    {
+                        probe.pick_folder();
+                    }
+                    ui.checkbox(
+                        &mut use_worktrees,
+                        probe
+                            .navigation
+                            .appearance
+                            .text("startup.isolate_tasks_in_git_worktrees"),
+                    );
+                });
             });
         });
         let label = ui.label(goal);

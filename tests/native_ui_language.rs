@@ -53,7 +53,7 @@ fn native_language_selection_updates_labels_and_survives_restart() {
         "목표",
         "작업을 Git worktree로 격리",
         "워크스페이스 저장",
-        "프로젝트 폴더 선택",
+        "찾아보기…",
     ] {
         assert!(
             labels.contains(&label),

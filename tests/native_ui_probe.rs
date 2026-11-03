@@ -62,7 +62,7 @@ fn native_probe_controls_have_accessible_names() {
     let rendered_step_count = visible_text
         .matches(locale.text("startup.step_1_workspace"))
         .count();
-    let coordinator_label = locale.text("startup.coordinator_analysis_of_the_whole_goal");
+    let coordinator_label = locale.text("startup.planning_coordinator");
     let repeated_workspace_heading = output
         .shapes
         .iter()

@@ -68,6 +68,51 @@ fn project_picker_uses_the_legacy_browse_button_label() {
     output.textures_delta.free.clear();
 }
 
+#[test]
+fn workspace_fields_match_legacy_control_geometry() {
+    let context = egui::Context::default();
+    context.enable_accesskit();
+    let mut probe = Probe::default();
+    let locale = State::load();
+    let mut output = frame(&context, &mut probe);
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+    output = frame(&context, &mut probe);
+
+    let nodes = &output
+        .platform_output
+        .accesskit_update
+        .as_ref()
+        .unwrap()
+        .nodes;
+    let bounds = |role, label: &str| {
+        nodes
+            .iter()
+            .find(|(_, node)| node.role() == role && node.label() == Some(label))
+            .and_then(|(_, node)| node.bounds())
+            .unwrap_or_else(|| panic!("missing {label}"))
+    };
+    for (role, label) in [
+        (Role::TextInput, locale.text("startup.workspace_name")),
+        (Role::TextInput, locale.text("startup.project_folder")),
+        (Role::Button, locale.text("startup.browse")),
+    ] {
+        let actual = bounds(role, label).y1 - bounds(role, label).y0;
+        assert!(
+            (actual - 40.0).abs() <= 2.0,
+            "legacy Workspace control `{label}` is 40 px tall, got {actual}"
+        );
+    }
+    let project_folder = bounds(Role::TextInput, locale.text("startup.project_folder"));
+    let project_width = project_folder.x1 - project_folder.x0;
+    assert!(
+        (project_width - 380.0).abs() <= 2.0,
+        "legacy project-folder input is 380 px wide, got {project_width}"
+    );
+    output.textures_delta.set.clear();
+    output.textures_delta.free.clear();
+}
+
 fn frame(context: &egui::Context, probe: &mut Probe) -> egui::FullOutput {
     context.run_ui(
         egui::RawInput {

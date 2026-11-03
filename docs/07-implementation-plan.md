@@ -40,6 +40,15 @@ Issue #9 remains at 22/50 until the same-state screenshot review and full accept
 - [ ] Full screen parity and package acceptance remain open; issue #9 stays 22/50. This label correction adds no acceptance point.
 - [ ] PR #22 remains Draft. At head `6a8148b8`, its diff spans 1,179 commits and 1,851 files (+97,156/−25,391 lines) against `main`; this accumulated root-issue branch is a reviewability risk.
 
+### 2026-11-03 — Match Workspace field labels and geometry — issue #9
+
+- [x] Plan: use the current legacy UI contract: “Planning coordinator”, 40 px single-line controls, a 380 px project-folder field at 1280 px, and a separate localized Browse button.
+- [x] Red: AccessKit exposed a 28 px workspace-name field; after the height fix, the project-folder field still failed at 420 px versus 380 px.
+- [x] Task / Green: scope 40 px interactive control sizing to the Workspace settings fields and project row, cap the project field at 380 px, and use the legacy Planning coordinator label.
+- [x] Verify: 20 tests pass across language, native Workspace, project-picker, isolation-layout, and source-layout targets; warning-denied all-target Clippy, rustfmt, diff hygiene, and the ≤300-line source/test guard pass.
+- [x] Capture and inspect a source-built 1280×892 Workspace frame in `docs/evidence/issue9-workspace-form-geometry-20261103.png`.
+- [ ] This first-run capture verifies only form labels and geometry. Full same-state parity remains open; issue #9 stays 22/50 and this unit adds no acceptance credit.
+
 ### 2026-11-03 — Restore Workspace header actions and coordinator placement — issue #9
 
 - [x] Plan: the same-state reference shows a phase badge and `New goal` action beside the Workspace title, with coordinator chat in the application bar beside Settings.

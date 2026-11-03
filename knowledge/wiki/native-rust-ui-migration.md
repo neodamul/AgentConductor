@@ -1,5 +1,9 @@
 # Native Rust UI migration
 
+## Workspace field labels and geometry — 2026-11-03
+
+The native settings row now uses the localized “Planning coordinator” label. Workspace name, coordinator selection, project path, and Browse controls use the 40 px interactive height in the legacy stylesheet. The project-folder field caps at 380 px at the 1280 px comparison viewport; the checkbox remains alongside Browse. Red-first AccessKit bounds checks caught the initial 28 px name field and 420 px project field. Twenty focused tests across five targets, warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line guard pass. The source-built first-run capture verifies only these visible form details; it does not establish full-screen parity. Issue #9 remains 22/50, with no acceptance credit. Evidence: `docs/evidence/issue9-workspace-form-geometry-20261103.json`.
+
 ## Project-folder button label — 2026-11-03
 
 The native project-folder button now uses the localized `Browse…` label from the legacy Workspace, while the longer “Choose your project folder” text remains the input placeholder. An AccessKit regression failed against the old button label and passes after the correction. Sixteen affected native UI tests pass. This is a parity detail only; issue #9 remains 22/50 and no acceptance point is claimed. Evidence: `docs/evidence/issue9-browse-label-20261103.json`.
