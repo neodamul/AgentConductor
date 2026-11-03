@@ -181,9 +181,9 @@ mod worker {
 
     async fn run_with(script: &str, extra: serde_json::Value) -> workflow::Report {
         let (root, _) = support::setup("shared");
-        // Shells are refused as agent executables, so the stand-in CLI is a script file.
+        // Shells are refused as agent executables, so the stand-in CLI is a script file; it reads its input first, since a CLI that exits before the prompt is written would fail the run with a broken pipe.
         let cli = root.join("fake-cli");
-        std::fs::write(&cli, format!("#!/bin/sh\n{script}\n")).unwrap();
+        std::fs::write(&cli, format!("#!/bin/sh\ncat >/dev/null\n{script}\n")).unwrap();
         std::fs::set_permissions(&cli, std::os::unix::fs::PermissionsExt::from_mode(0o755))
             .unwrap();
         let mut agent = json!({"id":"aipro","executable":cli,"args":["run"],"parser":"custom",
