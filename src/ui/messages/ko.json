@@ -877,6 +877,7 @@
   "startup.rail_outline_eyebrow": "계획",
   "startup.rail_outline_title": "단계와 작업",
   "startup.rail_outline_empty": "에이전트 역할을 정하고 계획을 만들면 여기에 표시됩니다.",
+  "startup.goal_list": "목표 목록",
   "startup.review_the_plan": "계획 검토",
   "startup.reviewing_phase": "검토 중: {value1}/{value2}단계: {value3}",
   "startup.role": "역할",

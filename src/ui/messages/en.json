@@ -877,6 +877,7 @@
   "startup.rail_outline_eyebrow": "Plan",
   "startup.rail_outline_title": "Phases and tasks",
   "startup.rail_outline_empty": "The plan appears here once the agent roles are confirmed and a plan is made.",
+  "startup.goal_list": "Goal list",
   "startup.review_the_plan": "Review the plan",
   "startup.reviewing_phase": "Reviewing phase {value1}/{value2}: {value3}",
   "startup.role": "Role",
