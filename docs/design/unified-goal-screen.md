@@ -17,11 +17,16 @@ Rendered from `unified-goal-screen.html` (the app's own color tokens and sizes; 
 
 | State | Image |
 |---|---|
-| Step 3 · plan review | ![](1-plan-review.png) |
-| Step 4 · tasks | ![](2-tasks.png) |
-| Step 6 · review and merge | ![](3-review-merge.png) |
-| Goal done | ![](4-goal-done.png) |
-| New goal · step 3 | ![](5-new-goal.png) |
+| Step 1 · workspace | ![](1-step1-workspace.png) |
+| Step 2 · agent roles | ![](2-step2-agent-roles.png) |
+| Step 3 · plan review | ![](3-step3-plan-review.png) |
+| Step 4 · tasks | ![](4-step4-tasks.png) |
+| Step 4 · tool request waiting | ![](5-step4-tool-request.png) |
+| Step 4 · permission denied | ![](6-step4-permission-denied.png) |
+| Step 5 · verify | ![](7-step5-verify.png) |
+| Step 6 · review and merge | ![](8-step6-review-merge.png) |
+| Goal done | ![](9-goal-done.png) |
+| New goal · step 3 | ![](10-new-goal.png) |
 
 ## Traces it touches
 R-38 (workspace settings), R-45/R-196 (visible progress), R-99/R-111 (next step always shown), R-104 (activity), R-112/R-195 (phases), R-118 (close dialog), R-120/R-159 (activity facts), R-165 (inspector folding is replaced by tabs), R-180 (only useful information). A requirement entry (next free number on `main`, see docs/README.md reserved block) is added when implementation starts.
