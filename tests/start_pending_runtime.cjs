@@ -3,7 +3,7 @@ const assert = require('node:assert/strict'), fs = require('node:fs'), vm = requ
 const source = fs.readFileSync('src/ui/startup.js', 'utf8');
 const line = head => { const at = source.indexOf(head); assert.ok(at >= 0, head + ' exists in startup.js'); return source.slice(at, source.indexOf('\n', at)); };
 let redraws = 0;
-const context = vm.createContext({ request: async () => ({ opened: true, run: 'run-1' }), planProgress() { redraws++; }, window: { startRoom() {}, stopRoom() {} }, document: { body: { classList: { add() {} } }, getElementById: () => ({ hidden: true }) } });
+const context = vm.createContext({ placeGoalList() {}, request: async () => ({ opened: true, run: 'run-1' }), planProgress() { redraws++; }, window: { startRoom() {}, stopRoom() {} }, document: { body: { classList: { add() {} } }, getElementById: () => ({ hidden: true }) } });
 vm.runInContext('let home=true,autoOpen=true,startPending=true;', context);
 vm.runInContext(line('function startEnded(') + ';' + line('async function enter(') + ';this.enter=enter;this.startEnded=startEnded;', context);
 const flags = () => JSON.parse(vm.runInContext('JSON.stringify({home,autoOpen,startPending})', context));

@@ -1461,6 +1461,12 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [x] Verify: UI Rust tests and Node tests; UI simulator checked the toggle, closed default and decision dot.
 - [ ] Complete: release (version 0.2.0 only when the user asks).
 
+### Goal list as a right slide-over — DD-222
+- [x] Plan: Trace: amends R-210 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #396; design GitHub #387.
+- [x] Task / Red/Green: tests/goal_panel_runtime.cjs, goal_controls_runtime.cjs and slug_page.rs first (red), then the dialog, button and styling.
+- [x] Verify: UI Rust tests and Node tests; UI simulator opened the panel from the Workspace and the Room, count and list content checked.
+- [ ] Complete: release (version 0.2.0 only when the user asks).
+
 ## Bilingual release documentation — DD-134 / v0.1.16
 
 - [x] Plan: pull the latest release source, inspect changed behavior and preserve concurrent Claude work.

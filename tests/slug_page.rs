@@ -15,10 +15,9 @@ fn page_offers_slug_progress_next_phase_and_rules() {
     // R-74 / DD-82: the slug is named automatically; the page never asks for it.
     assert!(!step1.contains("id=\"start-slug\""), "no slug input");
     assert!(!SCRIPT.contains("q('slug')"), "the page sends no slug");
-    let goals = HTML
-        .find("id=\"start-goals\"")
-        .expect("goals and progress card");
-    assert!(goals < settings, "progress overview comes first");
+    // GitHub #396: the goals are a slide-over dialog opened from the counted Goal list button.
+    assert!(HTML.contains("<dialog id=\"start-goals\" class=\"slide-panel\""));
+    assert!(HTML.contains("id=\"start-goal-list-open\""));
     assert!(HTML.contains("<dialog id=\"start-rules\""));
     for needle in ["kind:'next_phase'", "kind:'save_plan_rules'"] {
         assert!(SCRIPT.contains(needle), "missing {needle}");
