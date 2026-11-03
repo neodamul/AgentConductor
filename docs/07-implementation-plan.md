@@ -19,6 +19,18 @@
 - [ ] Capture the updated Rust screenshot with fresh synthetic quota observations and compare it against the same populated reference.
 - [ ] Align remaining workspace form geometry, coordinator warning, and execution-isolation control; keep issue #9 at 22/50 until full acceptance review.
 
+### 2026-11-03 — Align workspace execution-isolation placement — issue #9
+
+- [x] Plan: place the optional worktree control in its own section after goal/import controls, matching the Workspace form grouping in the populated reference.
+- [x] Red: `native_ui_workspace_isolation_layout::worktree_toggle_is_below_the_project_folder_row` failed because the checkbox shared the project-folder row.
+- [x] Task / Green: move the localized execution-isolation heading and checkbox below the goal/import controls without changing the default shared-folder behavior or saved mode.
+- [x] Verify: 16 focused tests pass across language, workspace, project-picker, and isolation-layout targets; source-layout passes 2/2; warning-denied all-target Clippy, rustfmt, diff hygiene, and the 300-line limit pass.
+- [x] Assetize the change in the Native startup workspace Wiki and save the AgentMemory record; Graphify now has 13,244 nodes / 21,344 edges.
+- [x] Record the red/green bounds evidence in `docs/evidence/issue9-workspace-isolation-layout-20261103.json`.
+- [ ] Capture the corrected same-state screenshot with valid coordinator configuration and synthetic quota observations; this layout fix adds no parity acceptance.
+
+Issue #9 remains at 22/50 until the same-state screenshot review and full acceptance review are complete.
+
 ### 2026-11-03 — Restore Workspace header actions and coordinator placement — issue #9
 
 - [x] Plan: the same-state reference shows a phase badge and `New goal` action beside the Workspace title, with coordinator chat in the application bar beside Settings.

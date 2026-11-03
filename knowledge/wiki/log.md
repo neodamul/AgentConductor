@@ -1,3 +1,7 @@
+# [2026-11-03] plan/task/verify | Align Workspace execution-isolation placement — issue #9
+
+The optional worktree checkbox had been placed beside the project-path picker, splitting the reference form's project and isolation groups. Added an AccessKit bounds regression: it failed with the checkbox and browse button on the same y-coordinate, then passed after moving the checkbox beneath goal/import controls under a localized `Execution isolation` heading. Shared-folder remains the default. Sixteen focused tests and 2 source-layout tests pass; warning-denied all-target Clippy, formatting, diff hygiene, and the 300-line limit pass. Graphify: 13,244 nodes / 21,344 edges. CocoIndex CLI is unavailable in this host. No issue #9 acceptance credit is claimed; same-state screenshot review remains open.
+
 # [2026-11-03] plan/task/verify | Repair exact-head native test failures — issue #9
 
 The exact-head macOS and Windows runs failed their applicable native tests. Reproduced all three targets locally: `native_ui_agent_order` overflowed the supported 210 px sidebar with move controls; `native_ui_language` and `native_ui_probe` still expected the removed execution-isolation radio labels. Wrapped the control row and changed the tests to assert the current localized `CheckBox`. Focused targets pass 18/18; the full locked/offline all-target suite, source-layout 2/2, warning-denied all-target Clippy, native UI Clippy, rustfmt, diff hygiene, and source/test bounds pass. No acceptance credit claimed. This is an issue #9 root-branch correction and does not create a new PR.

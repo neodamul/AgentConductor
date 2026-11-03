@@ -100,8 +100,8 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             let warning = crate::ui::messages::interpolate(template, &[("value1", &reason)]);
             warning::show(&warning, ui);
         }
-        ui.label(project);
         let mut use_worktrees = probe.workspace_mode == crate::plan::WorkspaceMode::Worktree;
+        ui.label(project);
         ui.add_enabled_ui(can_edit, |ui| {
             ui.horizontal_wrapped(|ui| {
                 let input_width = (ui.available_width() - 290.0).clamp(180.0, 420.0);
@@ -119,20 +119,8 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                 {
                     probe.pick_folder();
                 }
-                ui.checkbox(
-                    &mut use_worktrees,
-                    probe
-                        .navigation
-                        .appearance
-                        .text("startup.isolate_tasks_in_git_worktrees"),
-                );
             });
         });
-        probe.workspace_mode = if use_worktrees {
-            crate::plan::WorkspaceMode::Worktree
-        } else {
-            crate::plan::WorkspaceMode::Shared
-        };
         let label = ui.label(goal);
         ui.add_enabled(
             can_edit,
@@ -188,6 +176,26 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
             Some(super::mcp::SourceEvent::Apply(selected)) => probe.apply_mcp_sources(&selected),
             None => {}
         }
+        ui.label(
+            probe
+                .navigation
+                .appearance
+                .text("startup.execution_isolation"),
+        );
+        ui.add_enabled_ui(can_edit, |ui| {
+            ui.checkbox(
+                &mut use_worktrees,
+                probe
+                    .navigation
+                    .appearance
+                    .text("startup.isolate_tasks_in_git_worktrees"),
+            );
+        });
+        probe.workspace_mode = if use_worktrees {
+            crate::plan::WorkspaceMode::Worktree
+        } else {
+            crate::plan::WorkspaceMode::Shared
+        };
         ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
             if super::super::appearance::primary_button(
                 ui,

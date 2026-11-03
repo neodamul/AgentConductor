@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-03",
+  "issue": 9,
+  "base_head": "d52fdfcfda603b8f12a4c5746970a2f3de18dba9",
+  "change": "Move the optional Git-worktree control into a separate execution-isolation section below goal/import controls.",
+  "tdd": {
+    "red": {
+      "command": "cargo test --locked --offline --features native-ui-probe --test native_ui_workspace_isolation_layout -- --nocapture",
+      "result": "failed as expected: project picker and isolation checkbox shared y=449..469"
+    },
+    "green": {
+      "command": "cargo test --locked --offline --features native-ui-probe --test native_ui_workspace_isolation_layout -- --nocapture",
+      "result": "passed: checkbox bounds start below the project picker"
+    }
+  },
+  "verification": {
+    "focused_tests": "16 passed across native_ui_language, native_ui_probe, native_ui_probe_project_layout, and native_ui_workspace_isolation_layout",
+    "source_layout": "2 passed",
+    "clippy": "cargo clippy --all-targets --locked --offline --features test-fixtures -- -D warnings passed",
+    "rustfmt": "cargo fmt --check passed",
+    "diff_check": "git diff --check passed",
+    "line_counts": {
+      "src/native_ui_probe/workspace/goal.rs": 267,
+      "tests/native_ui_workspace_isolation_layout.rs": 57
+    }
+  },
+  "acceptance": {
+    "issue_9_overall": "22/50",
+    "shipped_default_rust_ui": "0/25",
+    "credit_added": false
+  },
+  "limitations": "The same-state visual capture with a valid coordinator and synthetic quota values remains pending. This is source-level layout evidence, not packaged macOS/Windows UI evidence."
+}
