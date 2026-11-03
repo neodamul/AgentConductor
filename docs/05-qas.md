@@ -852,3 +852,6 @@ Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213.
 ### QAS-200 A new or wrongly quiet request fails
 Adding an unclassified kind to a page script, or a direct kind to the quiet list, fails `tests/request_kinds_runtime.cjs` with a message naming it; removing a job's progress rendering fails it too. It passes on the current pages (76 kinds: 7 refresh, 21 job, 47 direct).
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.
+
+### QAS-211 Quota rings agree with provider evidence
+Stimulus: a snapshot contains subscription windows, Enterprise budgets, stale/reset data or a query error. Response: two selected ring slots use the same rows as the popup; all additional provider windows remain available; unknown, stale or unlimited capacity has no fabricated percentage. Measure: native pure-data and snapshot regressions cover both windows, budgets, reset/error and unsupported profiles without live provider calls. Trace: NFR-93.

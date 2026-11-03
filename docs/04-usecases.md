@@ -839,3 +839,6 @@ Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213.
 ### UC-193 Adding a request
 A developer adds `request({kind:'export_report'})`; the guard fails and names it. They classify it (direct, so the pressed button and the waiting line already cover it), or, if it starts a background job, name the progress rendering the page has for it.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.
+
+### UC-204 Inspect an agent quota indicator
+Actor: operator. Trigger: quota data refreshes or the operator opens the indicator. Snapshot returns cached ring/popup data without launching a CLI. All windows, resets and source/error metadata remain inspectable. Unsupported and stale observations show no invented filled ring; refresh uses existing per-agent asynchronous query. Trace: SF-200.

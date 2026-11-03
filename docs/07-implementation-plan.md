@@ -2620,3 +2620,11 @@ Trace: amends R-13 (requirements trace to tests); rules in docs/README.md, recor
 - [x] Task: renumber the second chain (R-209 … DD-221), restore headings, merge duplicates and stray amendments, add `Status:` lines to requirements, use cases and QAS, trace every issue unit, rebuild the README index and matrix by area; `tests/architecture_trace.rs` enforces the rules (mutation run: four of six tests fail on injected faults); `tests/agent_master_list.rs` covers R-101, `tests/agent_order_runtime.cjs` R-102 and `tests/run_phase_title_runtime.cjs` R-114.
 - [x] Verify (macOS): full suite; docs/14 lists requirement evidence and the gaps (R-118 not implemented — since done with #377, R-120 partly, R-151 on the Rust line, R-183 open item from #341).
 - [ ] Complete: merge only on request.
+
+### Quota indicator backend — GitHub #404
+Trace: R-212 / DD-224.
+
+- [x] Plan: audit cached quota View, budget and existing localized label contracts.
+- [x] Task: additive native quota_indicators shared by startup and run snapshots; UI contract posted in #404.
+- [x] Verify: missing projection failed first; 47 tests across eight local suites passed, then final consistency changes passed 22 tests across three suites. Actual startup/run snapshots return identical cached indicators; no CLI starts. Formatting/Clippy/whitespace checked.
+- [ ] Completed: commit/push backend, Claude wires UI; release remains gated by explicit user request.

@@ -827,3 +827,6 @@ Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213.
 ### R-202 No request can be added whose wait shows nothing
 Every kind of request the JS pages send shall be classified as a job with its own progress rendering, a refresh, or a direct request whose wait the page names, and a request kind that is not classified, or a kind left quiet that is not a refresh, shall fail the tests.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.
+
+### R-212 Structured provider quota indicators
+Agent quota rings and popups shall use the same structured native observation, retaining provider windows, budget scopes, reset/error/source metadata and conservative unavailable/stale states. Never invent quota capacity or query providers during snapshot rendering. Trace: R-212 → BG-167 → SF-200 → UC-204 → FR-206 → NFR-93 → QAS-211 → DDR-59 → DD-224. GitHub #404.

@@ -140,3 +140,5 @@
 - [SQLite writer contention](sqlite-writer-contention.md): bounded Windows parallel-task database waits, deterministic lock regression, and transaction preservation (GitHub #56, DD-167).
 - [Reduced-motion native status indicators](reduced-motion-native-status.md): static running-state feedback and animation-only repaint suppression in the native UI (GitHub #59, DD-17).
 - [Idle polling and suspended-page timeouts](idle-poll-timeouts.md): silent scheduled polls, visibility-paused request deadlines and deterministic timeout coverage (GitHub #221, DD-196).
+
+- [Quota indicator contract](quota-indicator-contract.md): cached ring/popup rows and conservative capacity (#404).

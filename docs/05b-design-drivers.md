@@ -176,3 +176,6 @@ Bidirectional control is needed, but plain control lines with acks need no reque
 
 ### Driver DDR-39 Distinguish observation from operator action
 An automatic snapshot and an explicit user action share the request bridge but have different feedback requirements. Mark only scheduled and visibility-resume polls as background, and pause the same request deadline while the document is hidden instead of adding a second transport or retry policy. Trace: QAS-182.
+
+### Driver DDR-59 Project cached observations once
+Share a structured Rust projection across both views rather than parsing badge text or querying providers for a decorative indicator. Trace: QAS-211.
