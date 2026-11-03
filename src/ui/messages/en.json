@@ -331,6 +331,7 @@
   "room.available": "Available {value1}",
   "room.back_to_workspace": "Back to workspace",
   "room.blocked": "Blocked",
+  "room.permission_denied": "Permission denied",
   "room.branch": "Branch: ",
   "room.brief_team": "Brief team",
   "room.candidate": "{value1}\nCandidate: {value2}",

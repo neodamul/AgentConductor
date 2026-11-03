@@ -331,6 +331,7 @@
   "room.available": "사용 가능 {value1}",
   "room.back_to_workspace": "워크스페이스로",
   "room.blocked": "막힘",
+  "room.permission_denied": "권한 거부",
   "room.branch": "브랜치: ",
   "room.brief_team": "팀 브리핑",
   "room.candidate": "{value1}\n후보: {value2}",

@@ -180,6 +180,16 @@ mod worker {
     use serde_json::json;
 
     async fn run_with(script: &str, extra: serde_json::Value) -> workflow::Report {
+        let one = json!([{"id":"one.txt","agent":"aipro","prompt":"p","paths":["one.txt"],"test_command":["true"]}]);
+        run_tasks(script, extra, one, false).await
+    }
+
+    async fn run_tasks(
+        script: &str,
+        extra: serde_json::Value,
+        tasks: serde_json::Value,
+        resume: bool,
+    ) -> workflow::Report {
         let (root, _) = support::setup("shared");
         // Shells are refused as agent executables, so the stand-in CLI is a script file; it reads its input first, since a CLI that exits before the prompt is written would fail the run with a broken pipe.
         let cli = root.join("fake-cli");
@@ -192,8 +202,8 @@ mod worker {
             .as_object_mut()
             .unwrap()
             .extend(extra.as_object().unwrap().clone());
-        let plan = json!({"goal":"one file","workspace_mode":"shared","agents":[agent],
-            "tasks":[{"id":"one.txt","agent":"aipro","prompt":"p","paths":["one.txt"],"test_command":["true"]}]});
+        let plan =
+            json!({"goal":"one file","workspace_mode":"shared","agents":[agent],"tasks":tasks});
         let report = workflow::run(
             serde_json::from_value(plan).unwrap(),
             &root.join("repo"),
@@ -202,6 +212,17 @@ mod worker {
         )
         .await
         .unwrap();
+        let report = if resume {
+            let now = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .unwrap()
+                .as_secs() as i64;
+            workflow::resume_due(&root.join("run"), now, 5)
+                .await
+                .unwrap()
+        } else {
+            report
+        };
         std::fs::remove_dir_all(root).unwrap();
         report
     }
@@ -231,8 +252,10 @@ mod worker {
         let denial = json!({"denial_condition":{"event_type":"tool","pointer":"/status","equals":"error","tool_pointer":"/name","message_pointer":"/message"}});
         let report = run_with(script, denial).await;
         let error = report.tasks[0].error.clone().unwrap_or_default();
-        assert_eq!(report.tasks[0].status, "failed");
+        // GitHub #341 item 3: a matched denial is its own task state, not a plain failure.
+        assert_eq!(report.tasks[0].status, "permission_denied", "{error}");
         assert!(error.starts_with("permission denied: tool bash"), "{error}");
+        assert!(error.contains("non-interactive policy"), "{error}");
         // Without the declaration the same output reads as a success, which is what the condition is for.
         let report = run_with(script, json!({})).await;
         assert_eq!(
@@ -240,6 +263,38 @@ mod worker {
             "{:?}",
             report.tasks[0].error
         );
+    }
+
+    #[tokio::test]
+    async fn a_denied_task_blocks_the_run_and_its_dependents_without_a_repair_round() {
+        let script = r#"echo '{"type":"tool","name":"bash","status":"error","message":"Permission denied by non-interactive policy"}'; echo '{"type":"result"}'"#;
+        let denial = json!({"denial_condition":{"event_type":"tool","pointer":"/status","equals":"error","tool_pointer":"/name","message_pointer":"/message"}});
+        let tasks = json!([
+            {"id":"one.txt","agent":"aipro","prompt":"p","paths":["one.txt"],"test_command":["true"]},
+            {"id":"two.txt","agent":"aipro","prompt":"p","paths":["two.txt"],"test_command":["true"],"depends_on":["one.txt"]}
+        ]);
+        let report = run_tasks(script, denial.clone(), tasks.clone(), false).await;
+        assert_eq!(report.tasks[0].status, "permission_denied");
+        assert_eq!(
+            report.tasks[1].status, "blocked",
+            "a dependent waits for the denied task"
+        );
+        // A person changes the CLI's configuration or reassigns the task; the coordinator cannot fix a denial.
+        assert_eq!(report.state, "blocked");
+        assert!(
+            report
+                .error
+                .as_deref()
+                .unwrap_or_default()
+                .starts_with("permission denied: tool bash"),
+            "{:?}",
+            report.error
+        );
+        assert!(!workflow::repairable(&report));
+        // Resume retries the denied task (after the CLI's configuration was changed) instead of refusing.
+        let resumed = run_tasks(script, denial, tasks, true).await;
+        assert_eq!(resumed.tasks[0].attempt, report.tasks[0].attempt + 1);
+        assert_eq!(resumed.tasks[0].status, "permission_denied");
     }
 
     #[tokio::test]

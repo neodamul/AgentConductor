@@ -79,7 +79,9 @@ async fn resume_inner(
     }
     // Blocked tasks (for example a timed-out session) are retried by Resume.
     for task in &mut report.tasks {
-        if task.status == "blocked" && !tool_rejected(dir, task)? {
+        if matches!(task.status.as_str(), "blocked" | "permission_denied")
+            && !tool_rejected(dir, task)?
+        {
             task.status = "pending".into();
         }
     }

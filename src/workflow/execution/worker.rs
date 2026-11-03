@@ -15,6 +15,7 @@ pub(in crate::workflow) async fn worker(
     let mut timed_out = false;
     let mut checkpoint_blocked = false;
     let mut relinquished = false;
+    let mut permission_denied = false;
     let result = async {
         let _session_lease = match report.session_id.as_deref() {
             Some(id) => Some(crate::leases::SessionLease::acquire(
@@ -134,6 +135,8 @@ pub(in crate::workflow) async fn worker(
                 fs::File::open(&process.stderr).map_err(|e|e.to_string())?.take(1024*1024).read_to_string(&mut message).map_err(|e|e.to_string())?;
                 report.restriction=availability::detect(&serde_json::Value::Null,&message,(now()/1000) as i64);
             }
+            // GitHub #341: a declared denial is its own state; a stop or a timeout still wins.
+            permission_denied = denied.is_some() && !process.timed_out && !process.stopped;
             // GitHub #624: plain text the CLI printed instead of JSON is the likeliest cause, so it is quoted.
             let plain=if text_seen {format!("\nthe CLI printed plain text instead of JSON events:\n{}",crate::coordinator::output_excerpt(&process.stdout,&process.stderr))} else {String::new()};
             return Err(denied.or(provider_error).unwrap_or_else(||format!("agent exit={:?}, termination_signal={:?}, timed_out={}; inspect retained logs{plain}",process.exit_code,process.termination_signal,process.timed_out)));
@@ -187,6 +190,8 @@ pub(in crate::workflow) async fn worker(
                 "pending"
             } else if checkpoint_blocked {
                 "blocked"
+            } else if permission_denied {
+                "permission_denied"
             } else {
                 "failed"
             }

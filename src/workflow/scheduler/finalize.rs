@@ -76,13 +76,16 @@ pub(super) async fn finish(
             "waiting_availability"
         } else if report.tasks.iter().any(|t| t.status == "waiting_approval") {
             "waiting_tool_approval"
-        } else if report.tasks.iter().any(|t| t.status == "blocked")
+        } else if report
+            .tasks
+            .iter()
+            .any(|t| matches!(t.status.as_str(), "blocked" | "permission_denied"))
             && !report.tasks.iter().any(|t| t.status == "failed")
         {
-            report.error = report
-                .tasks
+            // GitHub #341: a denial is the cause the operator must fix, so it is named first.
+            report.error = ["permission_denied", "blocked"]
                 .iter()
-                .find(|task| task.status == "blocked")
+                .find_map(|status| report.tasks.iter().find(|task| task.status == *status))
                 .and_then(|task| task.error.clone());
             "blocked"
         } else {
