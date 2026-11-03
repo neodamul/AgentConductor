@@ -5,6 +5,7 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 the GitHub Release notes for its tag.
 
 ## Unreleased
+- In the Agent Room the task status is shown by the border of the agent's icon (green running or completed, yellow waiting, red failed or blocked) instead of a separate dot; only a running task pulses. The icon is larger so the border reads.
 - When a goal completes, one centered result popup shows where the changes were merged, the changed files, the verification results and the lessons. It opens once when a run completes in the Agent Room and from a new **Result** button in the left panel afterwards.
 - The goals of a workspace open in a slide-over from an outlined **Goal list** button with a count badge, on the Workspace screen and in the Agent Room, instead of an inline card. The list and its actions are unchanged.
 - The Agent Room's task details column is now docked: it starts closed every time a run is opened and is opened and closed only with the panel icon in the titlebar. It no longer remembers its state or opens by itself; when a decision is waiting, the icon shows a blinking dot.

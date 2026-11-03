@@ -7,7 +7,7 @@
 
 .quota-window{margin:8px 0}.quota-window strong{display:block}.quota-window span{display:block;margin-top:4px}
 
-.agent-light{width:9px;height:9px;border-radius:50%;flex-shrink:0;align-self:flex-start;margin-top:11px;box-shadow:0 0 0 2px var(--surface)}.agent-light.green{background:var(--accent)}.agent-light.yellow{background:var(--warn)}.agent-light.red{background:var(--err)}.agent-light.running{animation:agent-pulse 1.6s ease-in-out infinite}@keyframes agent-pulse{0%,100%{opacity:1}50%{opacity:.25}}@media(prefers-reduced-motion:reduce){.agent-light.running{animation:none}}
+@keyframes agent-pulse{0%,100%{opacity:1}50%{opacity:.25}}@media(prefers-reduced-motion:reduce){}
 
 #briefing-sessions{max-height:55vh;overflow:auto}.briefing-session{border-top:1px solid var(--line);padding:12px 0}.briefing-session h3{font-size:16px}.briefing-text{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px}
 /* DD-40: application icons share the avatar box. */
@@ -27,7 +27,7 @@ img.brand-mark{display:block;width:32px;height:32px;object-fit:contain;margin-ri
 
 .titlebar .app-version{font-size:13px;font-weight:400;color:var(--bar-ink);opacity:.7;white-space:nowrap;flex-shrink:0;margin-left:-6px}
 /* Session card: the icon carries the status (coloured ring, pulsing while running); right of it the quota line above the agent name; below it task and status across the full width. */
-.session{position:relative}.session-choice{display:grid;grid-template-columns:32px minmax(0,1fr);gap:0 8px;align-items:center;padding:14px 10px 12px}.session-choice .agent-light{display:none}.session-choice .session-body{display:contents}.session-choice .name-row{grid-column:2;grid-row:1;margin:0;padding-top:19px}.session-choice .sub{grid-column:1/-1}.session-choice .name-row+.sub{margin-top:6px}.session>.quota-controls{position:absolute;top:13px;left:50px;margin:0}.session-choice:has(.agent-light.green) .session-symbol{box-shadow:0 0 0 2px var(--accent)}.session-choice:has(.agent-light.yellow) .session-symbol{box-shadow:0 0 0 2px var(--warn)}.session-choice:has(.agent-light.red) .session-symbol{box-shadow:0 0 0 2px var(--err)}.session-choice:has(.agent-light.running) .session-symbol{animation:agent-pulse 1.6s ease-in-out infinite}@media(prefers-reduced-motion:reduce){.session-choice:has(.agent-light.running) .session-symbol{animation:none}}
+.session{position:relative}.session-choice{display:grid;grid-template-columns:32px minmax(0,1fr);gap:0 8px;align-items:center;padding:14px 10px 12px}.session-choice .session-choice .session-body{display:contents}.session-choice .name-row{grid-column:2;grid-row:1;margin:0;padding-top:19px}.session-choice .sub{grid-column:1/-1}.session-choice .name-row+.sub{margin-top:6px}.session>.quota-controls{position:absolute;top:13px;left:50px;margin:0}@media(prefers-reduced-motion:reduce){}
 /* Live tool approval: the request, its decision and the task's activity log, which keeps updating whatever is decided. */
 #tool-dialog{width:min(760px,92vw)}#tool-dialog pre{max-height:140px}.tool-dialog-log{max-height:280px;overflow:auto;background:var(--accent-soft);border:1px solid var(--line);border-radius:6px;padding:12px;margin:8px 0 4px;display:flex;flex-direction:column;gap:12px}#tool-dialog-status{color:var(--warn);font-weight:600}#tool-dialog-status.settled{color:var(--soft);font-weight:400}
 /* Readable tool request: action, labelled inputs, raw JSON on demand. */
@@ -58,7 +58,7 @@ img.brand-mark{display:block;width:32px;height:32px;object-fit:contain;margin-ri
 .session-choice .session-body{display:flex;flex-direction:column;gap:3px;min-width:0}
 .session-choice .session-task{font-size:13px;font-weight:600;color:var(--ink);line-height:1.35;overflow-wrap:anywhere}
 .session-choice .session-meta{display:flex;flex-wrap:wrap;align-items:center;gap:3px 6px;min-width:0;font-size:11px;color:var(--soft)}
-.session-choice .session-meta .session-symbol,.session-choice .session-meta .app-icon.session-symbol{width:14px;height:14px;font-size:9px;border-radius:3px;box-shadow:none}
+.session-choice .session-meta .session-symbol,.session-choice .session-meta .app-icon.session-symbol{width:20px;height:20px;font-size:11px;border-radius:5px;box-shadow:none;box-sizing:border-box;border:1.5px solid var(--line)}
 .session-choice .session-meta .name{flex:0 1 auto;min-width:0;margin:0;font-size:11.5px;font-weight:500;color:var(--soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .session-choice .session-meta .session-status{flex:0 1 auto;max-width:100%;margin:0 0 0 auto;padding:0 5px;font-size:10.5px;font-weight:600;line-height:1.55;border-radius:3px;white-space:normal;overflow-wrap:anywhere}
 .session-choice .task-name{margin-top:0;font-size:11.5px}
@@ -89,3 +89,5 @@ button.is-busy{position:relative;overflow:hidden;cursor:progress}button.is-busy,
 #run-banner-attention{margin:3px 0 0;color:var(--warn);font-size:13px;font-weight:600;overflow-wrap:anywhere}.session-note{display:block;font-size:11px;color:var(--soft);overflow-wrap:anywhere}#connection.stale{color:var(--warn)}
 /* GitHub #398: the centered result popup. */
 .result-dialog{width:min(620px,92vw);max-height:86vh;overflow:auto}.result-metrics{display:flex;gap:24px;margin:12px 0;padding:10px 0;border-block:1px solid var(--line)}.result-metric{display:flex;flex-direction:column;gap:2px;font-size:12px}.result-metric strong{font-size:18px}.result-list{margin:0 0 14px;padding:0;list-style:none;font-size:13px}.result-list li{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px solid var(--line)}
+.session-choice .session-meta .session-symbol.st-green{border-color:var(--accent)}.session-choice .session-meta .session-symbol.st-yellow{border-color:var(--warn)}.session-choice .session-meta .session-symbol.st-red{border-color:var(--err)}
+.session-choice .session-meta .session-symbol.running{animation:agent-pulse 1.6s ease-in-out infinite}@media(prefers-reduced-motion:reduce){.session-choice .session-meta .session-symbol.running{animation:none}}

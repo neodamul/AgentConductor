@@ -5,14 +5,30 @@ const CSS: &str = include_str!("../src/ui/room.css");
 
 #[test]
 fn the_task_name_leads_and_icon_name_and_status_share_one_line() {
-    assert!(ROOM.contains("meta.append(avatar(agent?.parser,agentName(agent),'session-symbol'),node('span',agentName(agent),'name'),node('span',statusLabel(session.status),'sub session-status"));
+    assert!(ROOM.contains("meta.append(symbol,node('span',agentName(agent),'name'),node('span',statusLabel(session.status),'sub session-status"));
     // The first line leads with the reviewed task summary and keeps the task ID as a label.
     assert!(
         ROOM.contains("body.append(taskHeading(session.id,r.plan.tasks[index]?.prompt),meta,note)")
     );
     assert!(ROOM.contains("heading.append(node('span',id,'task-id'));if(summary)heading.append(node('span',summary,'task-summary'))"));
     assert!(CSS.contains(".session-choice .session-meta{display:flex;flex-wrap:wrap"));
-    assert!(CSS.contains(".session-choice .session-meta .session-symbol,.session-choice .session-meta .app-icon.session-symbol{width:14px;height:14px"));
+    assert!(CSS.contains(".session-choice .session-meta .session-symbol,.session-choice .session-meta .app-icon.session-symbol{width:20px;height:20px"));
+}
+
+#[test]
+fn the_avatar_border_carries_the_task_status() {
+    // GitHub #400: the avatar carries the status as a 1.5px border and only a running one pulses.
+    assert!(ROOM.contains("symbol.classList.add('st-'+statusLight(session.status))"));
+    assert!(ROOM.contains("if(session.status==='running')symbol.classList.add('running')"));
+    assert!(!ROOM.contains("agent-light"), "the separate dot is gone");
+    assert!(!CSS.contains("agent-light"), "and so are its rules");
+    for (name, color) in [("green", "accent"), ("yellow", "warn"), ("red", "err")] {
+        let rule = format!(".session-symbol.st-{name}{{border-color:var(--{color})}}");
+        assert!(CSS.contains(&rule), "{rule}");
+    }
+    assert!(CSS.contains("border:1.5px solid"));
+    assert!(CSS.contains(".session-symbol.running{animation:agent-pulse"));
+    assert!(CSS.contains("prefers-reduced-motion:reduce){.session-choice .session-meta .session-symbol.running{animation:none}"));
 }
 
 #[test]

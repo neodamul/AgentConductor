@@ -87,9 +87,7 @@ fn settings_offer_light_and_dark() {
 
 #[test]
 fn session_status_is_compact_and_never_leaves_the_rail() {
-    let row = &ROOM_JS[ROOM_JS
-        .find("const body=node('span',undefined,'session-body'),meta=")
-        .unwrap()..];
+    let row = &ROOM_JS[ROOM_JS.find("const symbol=avatar(agent?.parser").unwrap()..];
     let row = &row[..row.find("row.prepend(button)").unwrap()];
     assert!(
         row.contains("'session-symbol'") && row.contains("session-status"),
