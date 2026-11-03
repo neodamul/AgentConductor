@@ -4,6 +4,7 @@
   "issue": 9,
   "source_issue": 341,
   "baseline_commit": "71e972cf559cfa6aacf3c114f37b0b49b6c5efab",
+  "verified_commit": "76d920f3",
   "main_commit_at_verification": "b747e3921bfa76cb15016080beafd11bf3e85c74",
   "trace": "R-208 -> BG-163 -> SF-196 -> UC-200 -> FR-202/NFR-91 -> QAS-207 -> DDR-57 -> DD-220",
   "implementation": [
@@ -43,6 +44,6 @@
   "limitations": [
     "Source regressions do not verify exact packaged macOS or Windows CLI behavior.",
     "Issue #9 remains 22/50; this port adds no packaged-workflow or shipped/default UI parity acceptance.",
-    "At verification time the Rust branch was five commits behind origin/main and required reconciliation before push."
+    "After this push, the Rust branch remains five commits behind origin/main. A read-only merge-tree check identifies conflicts in shared Rust modules and JavaScript-only files intentionally deleted on the Rust branch; reconcile before claiming current-main integration."
   ]
 }
