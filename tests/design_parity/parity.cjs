@@ -39,7 +39,7 @@ async function visit(browser, side, spec) {
 }
 
 (async () => {
-  const browser = await launch(chrome);
+  let browser = await launch(chrome); let viewport = JSON.stringify({width:1280,height:960});
   try {
     if (argv[0] === '--probe') {
       await visit(browser, argv[1], { url: argv[3] });
@@ -49,6 +49,7 @@ async function visit(browser, side, spec) {
     const failures = []; let ran = 0;
     for (const spec of require('./spec.cjs')) {
       if (flag('--only') && spec.name !== flag('--only')) continue;
+      const next=JSON.stringify(spec.viewport||{width:1280,height:960});if(next!==viewport){await browser.close();browser=await launch(chrome,spec.viewport);viewport=next;}
       ran++; const measured = {}, shots = {};
       for (const side of ['mock', 'app']) {
         await visit(browser, side, side === 'mock' ? spec.mock : spec.app);

@@ -2632,3 +2632,12 @@ Trace: amends R-13 (requirements trace to tests); rules in docs/README.md, recor
 - [x] Task: renumber the second chain (R-209 … DD-221), restore headings, merge duplicates and stray amendments, add `Status:` lines to requirements, use cases and QAS, trace every issue unit, rebuild the README index and matrix by area; `tests/architecture_trace.rs` enforces the rules (mutation run: four of six tests fail on injected faults); `tests/agent_master_list.rs` covers R-101, `tests/agent_order_runtime.cjs` R-102 and `tests/run_phase_title_runtime.cjs` R-114.
 - [x] Verify (macOS): full suite; docs/14 lists requirement evidence and the gaps (R-118 not implemented — since done with #377, R-120 partly, R-151 on the Rust line, R-183 open item from #341).
 - [ ] Complete: merge only on request.
+
+### Anchored choice standard — GitHub #409
+Trace: amends R-210 / DD-222.
+
+- [x] Plan: audit existing native select sources, role rules, catalog checks and inherited fallback execution before editing; preserve native state/events behind one shared anchored surface.
+- [x] Task (shared surface): isolated anchored_select JS/CSS plus native-document/simulator includes; native values/change events retained.
+- [ ] Task (role/model rules): isolated role module and reviewed per-role fallback overrides without mutating shared profiles.
+- [ ] Verify: real simulator keyboard/focus/modal/refresh tests in light/dark at 840/1280; add parity entries for every visual element, validate backend precedence and unsupported-catalog paths.
+- [ ] Completed: commit/push verified units; full issue stays open until all acceptance checks pass. Depends on the #417 parity runner, integrated locally into this issue branch; main unchanged.

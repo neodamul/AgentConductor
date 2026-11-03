@@ -1223,5 +1223,11 @@
   "room.verification_test": "Integration verification: test {value1} of {value2} ({value3}) running for {value4}",
   "room.verification_next": "Every task is done; the coordinator is verifying the combined result.",
   "room.stopping_run": "Stopping: waiting for the agents and tests to exit.",
-  "room.runner_absent": "The run's process is not running, but the run is still marked as running. Use Recover to continue it."
+  "room.runner_absent": "The run's process is not running, but the run is still marked as running. Use Recover to continue it.",
+  "choices.select": "Select",
+  "choices.manual": "Enter model ID…",
+  "choices.model_id": "Model ID",
+  "choices.apply": "Apply",
+  "choices.invalid_model": "Enter a nonempty model ID without spaces or a leading dash.",
+  "choices.manual_unavailable": "Manual model configuration is unavailable for this field."
 }

@@ -1223,5 +1223,11 @@
   "room.verification_test": "통합 검증: 테스트 {value1}/{value2} ({value3}) {value4}째 실행 중",
   "room.verification_next": "모든 작업이 끝났고 코디네이터가 합친 결과를 검증하고 있습니다.",
   "room.stopping_run": "중지하는 중: 에이전트와 테스트가 끝나기를 기다립니다.",
-  "room.runner_absent": "실행 프로세스가 동작하지 않는데 실행 상태가 '실행 중'으로 남아 있습니다. 복구로 이어 가세요."
+  "room.runner_absent": "실행 프로세스가 동작하지 않는데 실행 상태가 '실행 중'으로 남아 있습니다. 복구로 이어 가세요.",
+  "choices.select": "선택",
+  "choices.manual": "모델 ID 직접 입력…",
+  "choices.model_id": "모델 ID",
+  "choices.apply": "적용",
+  "choices.invalid_model": "공백이 없고 하이픈으로 시작하지 않는 모델 ID를 입력하세요.",
+  "choices.manual_unavailable": "이 항목에서는 모델 ID를 직접 등록할 수 없습니다."
 }

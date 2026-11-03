@@ -322,3 +322,15 @@ the tests that exercise it and says whether the behavior is present on `main`.
 | R-174 New Rust code follows a short, evidence-based review policy | current | — | policy |
 | R-175 Every unsafe operation states why it is sound | current | `icons.rs`, `leases.rs` | passes |
 | R-176 Tests do not mutate the process environment unsoundly | current | `availability_watcher.rs`, `env_guard.rs`, `support/env.rs`, `windows_icons.rs` | passes |
+
+## Anchored selection surface — GitHub #409, first unit
+
+Trace: R-210 / DD-222. The real assembled simulator passed 80 behavioral checks (20 per
+light/dark × 840/1280), including dynamic fields, keyboard commit/cancel, outside dismissal,
+active-modal scope, disabled/options updates and manual-registration success/error.
+Eight fixed-width/pixel-aligned field/list reference cases matched computed styles and crops
+with 0.00% differing pixels. These compare reusable atoms; shell placement remains #408.
+The inherited avatar checks retain #417's pending #410 status-border tolerance and are not
+represented as exact avatar parity. Existing Node/DOM/architecture/layout regression: 10 tests
+across four local Rust suites. Role/fallback/backend precedence and full feature acceptance
+remain open. Tests: `choice_controls.rs`, `choice_controls/runtime.cjs`, `design_parity/choice_spec.cjs`.
