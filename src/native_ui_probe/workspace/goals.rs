@@ -4,8 +4,10 @@ use serde_json::Value;
 
 mod action;
 mod labels;
-pub use action::{next_phase_request, select_goal_request};
-use labels::{goal_stage, phase_action_label};
+mod new_goal;
+pub use action::{can_start_new_goal, new_goal_request, next_phase_request, select_goal_request};
+use labels::{goal_stage, length, phase_action_label, task_line};
+pub(in crate::native_ui_probe::workspace) use new_goal::request_new_goal;
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Event {
@@ -273,28 +275,4 @@ fn task_row(ui: &mut egui::Ui, spec: &Value, phase: &Value, language: &str) {
         let status = text(status);
         ui.label(RichText::new(status)).accessible_name(status);
     });
-}
-
-fn task_line(prompt: &str) -> String {
-    let line = prompt
-        .lines()
-        .map(str::trim)
-        .map(|line| {
-            line.strip_prefix("- ")
-                .or_else(|| line.strip_prefix("* "))
-                .unwrap_or(line)
-        })
-        .find(|line| !line.is_empty() && !line.ends_with(':'))
-        .unwrap_or_default();
-    let mut chars = line.chars();
-    let summary: String = chars.by_ref().take(160).collect();
-    if chars.next().is_some() {
-        summary + "…"
-    } else {
-        summary
-    }
-}
-
-fn length(value: &Value, key: &str) -> String {
-    value[key].as_array().map_or(0, Vec::len).to_string()
 }

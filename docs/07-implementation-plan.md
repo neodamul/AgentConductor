@@ -1,5 +1,15 @@
 # Implementation plan and TDD
 
+### 2026-11-03 — Restore Workspace header actions and coordinator placement — issue #9
+
+- [x] Plan: the same-state reference shows a phase badge and `New goal` action beside the Workspace title, with coordinator chat in the application bar beside Settings.
+- [x] Red: new AccessKit and pointer-interaction tests failed because Rust had no title action/status API; the existing header-button count also exposed the newly added control and was narrowed to numbered step tabs.
+- [x] Task / Green: render localized title, phase badge, and an accessible `New goal` button; derive phase from job/proposal/dirty state; route the button through the revisioned asynchronous request worker and refresh the Workspace after success; disable it while the workspace is dirty, busy, missing a repository, or has a nonterminal run. Move the chat launcher into the application bar.
+- [x] Focused local verification: 17 tests across six targets passed; warning-denied all-target Clippy, formatting, diff hygiene, and the 300-line source/test check passed.
+- [x] Complete local all-target suite: 1,313 passed and 16 ignored across 408 test targets; warning-denied all-target Clippy, formatting, diff hygiene, and the 300-line layout guard passed.
+- [ ] Capture and inspect the resulting Workspace screen. No aggregate or screen-parity credit is claimed yet; issue #9 remains 22/50 and shipped/default Rust UI parity remains 0/25.
+- [ ] Push this unit and inspect exact-head macOS/Windows validation before updating PR #22 and issue #9.
+
 ### 2026-11-03 — Restore visible agent details in native Workspace — issue #9
 
 - [x] Plan: compare the populated `origin/main` Workspace screenshot with a Rust capture using the same 1280×892 viewport, workspace name, goal, repository field, three agent profiles, model counts, and synthetic retained quota observations.

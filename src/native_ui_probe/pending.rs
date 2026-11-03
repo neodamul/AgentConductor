@@ -20,6 +20,7 @@ pub(super) enum Pending {
     ScopeRecoveryPreview,
     ScopeRecoveryApply,
     Prepare,
+    NewGoal,
     NextPhase,
     SelectGoal,
     PrepareRefresh,
@@ -98,6 +99,7 @@ impl Pending {
                 | Self::Update
                 | Self::Save
                 | Self::Prepare
+                | Self::NewGoal
                 | Self::NextPhase
                 | Self::SelectGoal
                 | Self::Metadata

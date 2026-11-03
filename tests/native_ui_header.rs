@@ -188,7 +188,14 @@ fn all_step_buttons_fit_the_content_column_in_both_languages() {
                 .nodes
                 .iter()
                 .map(|(_, node)| node)
-                .filter(|node| node.role() == Role::Button)
+                .filter(|node| {
+                    node.role() == Role::Button
+                        && node.label().is_some_and(|label| {
+                            ["1.", "2.", "3."]
+                                .iter()
+                                .any(|prefix| label.starts_with(prefix))
+                        })
+                })
                 .collect::<Vec<_>>();
             assert_eq!(buttons.len(), 3);
             let bounds = buttons

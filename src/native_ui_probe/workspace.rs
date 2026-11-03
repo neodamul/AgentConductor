@@ -187,28 +187,27 @@ pub(super) fn show(probe: &mut Probe, ui: &mut egui::Ui) {
                     .show(ui, |ui| feedback::show(probe, ui));
             }
             egui::CentralPanel::default().show(ui, |ui| {
-                ui.horizontal(|ui| {
-                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                        probe
-                            .coordinator_chat
-                            .show_launcher(probe.navigation.appearance.language(), ui);
-                    });
-                });
-                if let Some(step) = header::show(
+                let language = probe.navigation.appearance.language().to_owned();
+                let dirty = probe.navigation.has_unsaved_changes();
+                let snapshot = probe.snapshot.as_ref().unwrap_or(&Value::Null);
+                let phase = header::workspace_phase(snapshot, dirty);
+                let can_start_new_goal =
+                    goals::can_start_new_goal(snapshot, probe.pending.is_some(), dirty);
+                if header::show_title_controls(
                     probe.workspace_step,
-                    probe.navigation.appearance.language(),
+                    &language,
+                    phase,
+                    can_start_new_goal,
                     ui,
                 ) {
+                    goals::request_new_goal(probe);
+                }
+                if let Some(step) = header::show_steps(probe.workspace_step, &language, ui) {
                     probe.workspace_step = step;
                 }
                 scroll::show(ui, |ui| {
                     let phase_event = probe.snapshot.as_ref().and_then(|snapshot| {
-                        goals::show(
-                            snapshot,
-                            probe.navigation.appearance.language(),
-                            probe.pending.is_some(),
-                            ui,
-                        )
+                        goals::show(snapshot, &language, probe.pending.is_some(), ui)
                     });
                     goals::apply(probe, phase_event);
                     if probe.room_view.is_none()

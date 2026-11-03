@@ -6,6 +6,15 @@ pub fn show_in_language(
     context: NavigationContext<'_>,
     ui: &mut egui::Ui,
 ) -> Option<Event> {
+    show_in_language_with_chat(state, context, None, ui)
+}
+
+pub fn show_in_language_with_chat(
+    state: &mut State,
+    context: NavigationContext<'_>,
+    chat: Option<&mut crate::native_ui_probe::workspace::chat::State>,
+    ui: &mut egui::Ui,
+) -> Option<Event> {
     let NavigationContext {
         current_name,
         current_path,
@@ -99,6 +108,9 @@ pub fn show_in_language(
                 areas: state.dirty_areas.clone(),
                 return_to_run: false,
             });
+        }
+        if let Some(chat) = chat {
+            chat.show_launcher(language, ui);
         }
         match crate::native_ui_probe::appearance::show_with_cache(
             &mut state.appearance,

@@ -93,6 +93,7 @@ fn status(probe: &Probe) -> String {
     } else {
         match probe.pending {
             Some(Pending::PickFolder) => "Choosing project folder…",
+            Some(Pending::NewGoal) => "Starting a new goal…",
             Some(Pending::Prepare) => "Generating a plan…",
             Some(Pending::NextPhase) => "Updating the plan…",
             Some(Pending::Metadata | Pending::MetadataRefresh) => "Refreshing agent metadata…",

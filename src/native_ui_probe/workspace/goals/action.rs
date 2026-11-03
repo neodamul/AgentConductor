@@ -11,6 +11,22 @@ pub fn select_goal_request(revision: &str, slug: &str) -> Vec<u8> {
         .expect("goal selection request is serializable")
 }
 
+pub fn new_goal_request(revision: &str) -> Vec<u8> {
+    serde_json::to_vec(&json!({"kind":"new_goal","revision":revision}))
+        .expect("new-goal request is serializable")
+}
+
+pub fn can_start_new_goal(snapshot: &serde_json::Value, pending: bool, dirty: bool) -> bool {
+    let run_state = snapshot["run_state"].as_str();
+    !pending
+        && !dirty
+        && snapshot["job"]["state"] != "running"
+        && snapshot["config"]["repository"]
+            .as_str()
+            .is_some_and(|repository| !repository.trim().is_empty())
+        && run_state.is_none_or(|state| matches!(state, "completed" | "failed" | "stopped"))
+}
+
 pub(super) fn request_next_phase(probe: &mut Probe) {
     let result = probe
         .snapshot

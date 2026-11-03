@@ -15,7 +15,7 @@ mod view_menu;
 pub use action::{Event, needs_discard_confirmation, request};
 pub use context::NavigationContext;
 use helpers::{display_path, message, text};
-pub use view::show_in_language;
+pub use view::{show_in_language, show_in_language_with_chat};
 
 #[derive(Clone)]
 enum Confirmation {
@@ -57,6 +57,10 @@ pub struct State {
 }
 
 impl State {
+    pub fn has_unsaved_changes(&self) -> bool {
+        !self.dirty_areas.is_empty()
+    }
+
     pub fn open(&mut self) {
         self.open = true;
     }
@@ -127,13 +131,23 @@ impl State {
 }
 
 pub fn show(state: &mut State, context: NavigationContext<'_>, ui: &mut egui::Ui) -> Option<Event> {
+    show_with_chat(state, context, None, ui)
+}
+
+pub fn show_with_chat(
+    state: &mut State,
+    context: NavigationContext<'_>,
+    chat: Option<&mut crate::native_ui_probe::workspace::chat::State>,
+    ui: &mut egui::Ui,
+) -> Option<Event> {
     let language = state.appearance.language().to_owned();
-    show_in_language(
+    show_in_language_with_chat(
         state,
         NavigationContext {
             language: &language,
             ..context
         },
+        chat,
         ui,
     )
 }

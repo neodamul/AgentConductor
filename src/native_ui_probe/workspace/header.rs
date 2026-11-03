@@ -10,24 +10,77 @@ const EYEBROWS: [&str; 3] = [
     "startup.step_2_team",
     "startup.step_3_your_execution_decision",
 ];
-pub fn show(current: usize, language: &str, ui: &mut egui::Ui) -> Option<usize> {
-    let eyebrow = step_eyebrow(current, language);
-    ui.label(
-        RichText::new(eyebrow)
-            .small()
-            .strong()
-            .color(ui.visuals().hyperlink_color),
-    );
-    let title = text(language, "startup.what_should_the_team_work_on");
-    ui.heading(
-        RichText::new(title)
-            .size(26.0)
-            .strong()
-            .color(ui.visuals().text_color()),
-    )
-    .accessible_name(title);
-    ui.add_space(12.0);
 
+pub fn workspace_phase(snapshot: &serde_json::Value, dirty: bool) -> &'static str {
+    if snapshot["job"]["state"] == "running" {
+        return if snapshot["job"]["kind"] == "start" {
+            "startup.starting"
+        } else {
+            "startup.preparing"
+        };
+    }
+    match snapshot["proposal"]["phase"].as_str() {
+        Some("ready") => "startup.ready",
+        Some("starting") => "startup.starting",
+        _ if dirty => "startup.unsaved",
+        _ => "startup.prepared",
+    }
+}
+pub fn show(current: usize, language: &str, ui: &mut egui::Ui) -> Option<usize> {
+    show_title_controls(current, language, "startup.prepared", false, ui);
+    show_steps(current, language, ui)
+}
+
+pub fn show_title_controls(
+    current: usize,
+    language: &str,
+    phase: &'static str,
+    can_start_new_goal: bool,
+    ui: &mut egui::Ui,
+) -> bool {
+    let eyebrow = step_eyebrow(current, language);
+    let title = text(language, "startup.what_should_the_team_work_on");
+    let mut clicked = false;
+    ui.horizontal(|ui| {
+        ui.vertical(|ui| {
+            ui.label(
+                RichText::new(eyebrow)
+                    .small()
+                    .strong()
+                    .color(ui.visuals().hyperlink_color),
+            );
+            ui.heading(
+                RichText::new(title)
+                    .size(26.0)
+                    .strong()
+                    .color(ui.visuals().text_color()),
+            )
+            .accessible_name(title);
+        });
+        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+            clicked = ui
+                .add_enabled(
+                    can_start_new_goal,
+                    egui::Button::new(text(language, "startup.new_goal")),
+                )
+                .clicked();
+            let status = text(language, phase);
+            egui::Frame::new()
+                .fill(ui.visuals().faint_bg_color)
+                .corner_radius(egui::CornerRadius::same(5))
+                .inner_margin(egui::Margin::symmetric(8, 4))
+                .show(ui, |ui| {
+                    ui.label(RichText::new(status).small());
+                })
+                .response
+                .accessible_name(status);
+        });
+    });
+    ui.add_space(12.0);
+    clicked
+}
+
+pub fn show_steps(current: usize, language: &str, ui: &mut egui::Ui) -> Option<usize> {
     let mut selected = current;
     let step_width =
         ((ui.available_width() - ui.spacing().item_spacing.x * 2.0) / TITLES.len() as f32).floor();

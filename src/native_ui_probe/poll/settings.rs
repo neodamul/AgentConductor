@@ -229,6 +229,14 @@ pub(super) fn apply(probe: &mut Probe, snapshot: Value) {
             workspace::plan_source::accepted(probe);
             probe.refresh_after(Pending::PrepareRefresh);
         }
+        Some(Pending::NewGoal) if snapshot["changed"] == true => {
+            probe.workspace_step = 0;
+            probe.refresh_after(Pending::Refresh);
+        }
+        Some(Pending::NewGoal) => {
+            probe.pending = None;
+            probe.error = Some("Workspace did not start a new goal".into());
+        }
         Some(Pending::NextPhase) => {
             probe.workspace_step = 2;
             probe.refresh_after(Pending::Refresh);

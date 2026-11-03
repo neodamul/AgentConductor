@@ -1,4 +1,4 @@
-use super::{Event, NavigationContext, Probe, show};
+use super::{Event, NavigationContext, Probe, show_with_chat};
 use eframe::egui;
 use serde_json::Value;
 
@@ -31,7 +31,8 @@ impl Probe {
             && self.starting_run.is_none()
             && self.room_view.is_none()
             && snapshot.is_none_or(|value| value["job"]["state"] != "running");
-        let event = show(
+        let chat = (self.room_view.is_none()).then_some(&mut self.coordinator_chat);
+        let event = show_with_chat(
             &mut self.navigation,
             NavigationContext {
                 current_name: name,
@@ -44,6 +45,7 @@ impl Probe {
                 show_cache: self.room_view.is_none(),
                 language: "en",
             },
+            chat,
             ui,
         );
         match event {
