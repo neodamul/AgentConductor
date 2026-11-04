@@ -442,3 +442,24 @@ mutation routing. Complete Node UI regression, native/static/i18n suites and foc
 Clippy/fmt pass. New version/divider/menu entries compare the actual visible controls;
 muted glyph/version colors are corrected by targeted red/green checks. After replaying only this issue onto main, full local light/dark comparisons each pass
 136 entries. Native Windows package acceptance remains separate.
+
+## Goal-specific planning confirmation — GitHub #429
+
+Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
+
+The confirmation regression first failed because no confirmation function existed.
+`tests/planning_confirmation_runtime.cjs` covers the current Goal/coordinator/model,
+cancel/Escape, incompatible or missing selection, changed revision/Workspace/model
+and the coordinator-model review key. `tests/planning_confirmation_browser.cjs`
+checks the assembled page in light/dark at 840/1280px, modal bounds/focus/cursor,
+cancellation, changed Goal and accepted planner request. `tests/goal_planning.rs`
+executes a deterministic CLI through the real planner path, records selected model
+argv for two Goals/coordinators and verifies the first plan stays byte-identical.
+New Goal inherits the same profile/model/roles; invalid models start no CLI.
+
+The planning row remains informational; no new worker-role key is introduced.
+`tests/project_goals.rs`, `tests/workspace_goal_rules.rs` and
+`tests/startup_folder_plan.rs` retain archived-run, ownership and ordinary-folder
+behavior. Native Windows UI acceptance is separate from local macOS evidence.
+
+#429 integration after #431: 42 tests across 12 local suites pass, including the complete Node UI suite. Warning-denied Clippy and formatting pass. Browser coverage also exercises document import cancellation/confirmation and a context change during the awaited baseline request. No provider service or real operator workspace is used.

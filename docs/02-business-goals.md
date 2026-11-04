@@ -651,3 +651,5 @@ Operators can edit display text, start a Goal or continue phases without losing 
 
 ### BG-169 Know what a Goal and a Workspace cost in tokens
 The operator can see how many input and output tokens each task, each Goal and the whole Workspace used, from what the CLIs report, to compare agents and plan capacity. Trace: R-214.
+
+BG-165 / #429 amendment (2026-11-04): Operators can reuse team defaults for a new Goal while deliberately confirming who plans it and which model is used, without altering another Goal’s reviewed execution.

@@ -2866,3 +2866,12 @@ Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / QAS-209 / DD-222.
 - [ ] Completed: implemented, verified and merged; GitHub #441 closed.
 
 Trace: R-214 / UC-206 / QAS-213 / DD-226.
+
+### Goal-specific planning confirmation — GitHub #429
+Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
+
+- [x] Plan: audit inherited coordinator/model/roles, preserved historical proposal boundaries and existing native model/revision validation; amend the complete architecture chain.
+- [x] Red: tests require explicit Goal/planner evidence, cancellation and changed-context rejection.
+- [x] Task: reuse modal and existing planning requests, retain the informational planning row and five worker roles.
+- [x] Verify: real planner argv/local-v1→local-v2, inherited defaults and unchanged prior Goal plan; browser light/dark 840/1280 covers generation/import, cancel, changed Goal and post-baseline changes. All 42 tests across 12 local suites pass, including complete Node UI regression; warning-denied Clippy and fmt pass on main with #431.
+- [x] Completed: isolated issue-linked implementation and PR prepared; AgentMemory/wiki checkpoint recorded. Source/test files remain below 300 lines; Windows native UI acceptance remains separate.
