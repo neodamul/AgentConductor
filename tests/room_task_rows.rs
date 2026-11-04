@@ -76,3 +76,11 @@ fn blocked_and_refused_task_tags_are_red_like_the_avatar_border() {
     assert!(ROOM.contains("failed:'bad',blocked:'bad',permission_denied:'bad',rejected:'bad',"));
     assert!(ROOM.contains("['failed','blocked','permission_denied'].includes(status)?'red'"));
 }
+
+#[test]
+fn selecting_a_task_keeps_the_chosen_subview() {
+    // behavior.md: selecting a task updates the centre without losing the chosen subview (activity, changes, logs, lessons).
+    let start = ROOM.find("function selectTask(index)").unwrap();
+    let end = ROOM[start..].find("function selectCoordinator").unwrap();
+    assert!(!ROOM[start..start + end].contains("changeTab("));
+}

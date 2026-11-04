@@ -1524,7 +1524,8 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [x] Plan: Trace: amends R-210 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #410 (checklist items: agent cards without executable path and capacity text, red removal icon, task rows with chevron and selected edge); design GitHub #387.
 - [x] Task / Red/Green: design-parity entries `agent-card`, `agent-tool`, `agent-remove`, `task-row`, `task-status-tag` and `room_task_rows.rs` first, then `startup.js` / `startup.css` / `room.css`; the Room rail now really is 250px (a closed-inspector rule still said 222px).
 - [x] Verify: UI Rust and Node tests; design parity 14 entries pass.
-- [ ] Remaining in #410: status border and attention marker on agent avatars, task-row tag set (blocked/approval), keeping the inspector subview on selection, the seven inspector sections.
+- [x] Part 2: blocked/refused tags are red like the avatar border (`blocked_and_refused_task_tags_are_red_like_the_avatar_border`); selecting a task keeps the chosen subview (`selecting_a_task_keeps_the_chosen_subview`); all seven inspector sections already exist.
+- [ ] Remaining in #410: status border and attention marker on agent avatars (needs Codex's quota_indicators wiring from #404).
 - [ ] Complete: release (version 0.2.0 only when the user asks).
 
 ## Bilingual release documentation — DD-134 / v0.1.16
