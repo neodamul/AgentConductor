@@ -829,5 +829,9 @@ Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213.
 Every kind of request the JS pages send shall be classified as a job with its own progress rendering, a refresh, or a direct request whose wait the page names, and a request kind that is not classified, or a kind left quiet that is not a refresh, shall fail the tests.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.
 
+### R-211 Goal row actions preserve context and protect ownership
+Read a historical Goal result without switching the active Goal; reveal its verified folder; permanently remove only the confirmed registered Goal folder after its owned work has stopped. Never delete the Workspace directory, another Goal, an alias target, or project sources.
+Trace: R-211 → BG-166 → SF-199 → UC-203 → FR-205 → NFR-92 → QAS-210 → DDR-58 → DD-223. GitHub #402.
+
 ### R-213 Workspace Goal identity and safe folder allocation
 Goal folders use backend-generated stable English identifiers, never phonetic transliteration. Display edits shall not rename existing folders. New Goal keeps Workspace context; phase continuation keeps the same Goal. Creating a Goal shall never claim or alter an existing unrelated directory, file, alias or reparse point. Worktrees are optional and user project folders need no initialized Git repository. Trace: R-213 → BG-168 → SF-201 → UC-205 → FR-207 → NFR-94 → QAS-212 → DDR-60 → DD-225. GitHub #411.
