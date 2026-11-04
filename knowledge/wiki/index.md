@@ -153,3 +153,4 @@
 - [Exact Workspace controls](workspace-control-parity.md): immutable mock, whole-box comparison and content-aware fixtures (#435).
 
 - [Compact agent actions](compact-agent-actions.md): non-shrinking icons and width-safe padding (#424).
+- [Bounded browser-test teardown](browser-test-lifecycle.md) — owned process trees and non-replayed exit events (#435).

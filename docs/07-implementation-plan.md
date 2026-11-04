@@ -2806,3 +2806,11 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [ ] Start the issue-linked implementation branch from updated main after coordinator confirmation.
 - [ ] Restore Workspace/Goal sections and shared full briefing without replacing the new rail/profile code.
 - [ ] Add a separate attention-marker crop against an approved view where attention is enabled; do not compare the badge-on app to the badge-off view. Keep the existing neutral/waiting avatar entry.
+### Bounded browser teardown — GitHub #435
+Trace: R-210 / QAS-209 / DD-222.
+
+- [x] Red: the actual CDP driver with an already-exited launcher waits forever for a new exit event; bounded regression reports that missing event.
+- [x] Task: skip already-exited launchers, terminate only the owned Windows PID tree, bound both termination command and exit wait, and always remove timer/listener state.
+- [x] Verify: actual-driver exited/live cases pass on simulated macOS/Windows; helper tests cover owned tree arguments, missing PID, termination failure and no-exit timeout. Real local brand/import browser checks pass.
+- [x] Verify: complete local Node UI suite plus architecture/layout checks pass; native Windows termination remains pending.
+- [x] Completed: isolated, locally verified teardown unit ready for coordinator integration; #427 work continues independently.
