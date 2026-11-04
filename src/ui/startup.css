@@ -191,3 +191,8 @@ dialog h2{font-size:18px}
 #branch.muted{font-size:12px}
 .nav-action{font-size:13px}
 #brief-team{font-size:12px}
+/* Hover treatment from preview.css (GitHub #432). */
+header.titlebar #start-workspace-menu:hover,header.titlebar #start-settings-button:hover,header.titlebar #start-chat-button:hover,header.titlebar #start-rail-toggle:hover{background:rgba(0,0,0,.045);color:var(--ink)}
+:root[data-theme="dark"] header.titlebar #start-workspace-menu:hover,:root[data-theme="dark"] header.titlebar #start-settings-button:hover,:root[data-theme="dark"] header.titlebar #start-chat-button:hover,:root[data-theme="dark"] header.titlebar #start-rail-toggle:hover{background:var(--fill)}
+#start-goal-list-open:hover,#start-new-goal:hover{background:var(--fill)}
+.profile-tools .remove-agent:hover{background:var(--err-bg);border-color:var(--err)}

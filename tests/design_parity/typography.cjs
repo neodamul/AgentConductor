@@ -35,4 +35,9 @@ module.exports = [
       for (const e of document.querySelectorAll('body *')) { const r = e.getBoundingClientRect(); if (!r.width || !r.height || ![...e.childNodes].some(n => n.nodeType == 3 && n.textContent.trim())) continue;
         const f = parseFloat(getComputedStyle(e).fontSize); if (!ok.has(f)) bad.push((e.id || e.className) + ':' + f); }
       window.__offScale = bad; return bad.length === 0; })()` })),
+  // Hover treatment (preview.css): the same fill / colour / border appears under the pointer.
+  ...[['workspace-home', '#workspace-home', '#start-workspace-menu'], ['titlebar-icon', '#settings-button', '#start-settings-button'],
+    ['goal-list-button', '#workspace-goals-button', '#start-goal-list-open'], ['agent-remove', '.agent .tools button', '.profile-tools .remove-agent']
+  ].map(([name, mock, app]) => ({ name: 'hover-' + name, hover: true, props: ['backgroundColor', 'color', 'borderTopColor'], keys: name === 'agent-remove' ? ['backgroundColor', 'color', 'borderTopColor'] : ['backgroundColor', 'color'], pixel: false,
+    mock: { selector: mock, index: name === 'agent-remove' ? 1 : 0 }, app: { selector: app } })),
 ];

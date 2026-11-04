@@ -57,7 +57,10 @@ async function visit(browser, side, spec) {
     const got = {}; let current = null;
     for (const { x, side } of jobs) {
       const k = key(side, x); if (k !== current) { await visit(browser, side, x[side]); current = k; }
-      const s = x[side], m = await browser.eval(MEASURE(s.selector, s.index || 0, x.props || [], s.mark));
+      const s = x[side];
+      if (x.hover) { const c = await browser.eval(MEASURE(s.selector, s.index || 0, [], null)); if (c) await browser.hover(c.x + c.width / 2, c.y + c.height / 2); }
+      const m = await browser.eval(MEASURE(s.selector, s.index || 0, x.props || [], s.mark));
+      if (x.hover) await browser.hover(0, 0);
       got[x.name] = got[x.name] || { shots: {} }; got[x.name][side] = m;
       if (!m) { failures.push(`${x.name}: ${side} element not found (${s.selector})`); continue; }
       got[x.name].shots[side] = await browser.shot({ x: m.x, y: m.y, width: m.width, height: m.height });
