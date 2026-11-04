@@ -16,3 +16,15 @@ styles rather than assuming a later rule wins. A 3px rail gap splits its width e
 Verification: light and dark, 91 local parity entries each, zero differences. Ten local
 icon/DOM/Node/architecture tests passed. This unit does not claim Windows package acceptance
 or resolve the separate #431 Windows choice-field crop difference.
+
+## Windows-only failures
+
+Equal computed parent fonts do not prove equal child line boxes. A direct flex text item
+and a translated child span can lay out differently with fractional font sizes and platform
+fallbacks. Keep the mock's text structure, then inspect child bounds and actual platform
+fonts (`CSS.getPlatformFontsForNode`) on the failing platform. The failure collector is
+read-only and writes JSON alongside comparison crops.
+
+The Windows avatar crop difference is still unconfirmed locally. A fractional-origin
+perturbation did not reproduce it on macOS, even with zero channel tolerance. Do not turn
+that candidate into a diagnosis or loosen the comparison; retain failing platform crops.

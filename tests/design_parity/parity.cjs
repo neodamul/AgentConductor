@@ -6,6 +6,7 @@
 // Exit 0 = all within tolerance, 1 = a difference, 77 = skipped (no Chrome). Spec: spec.cjs.
 const fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
 const { findChrome, launch } = require('./cdp.cjs'), { decode, diffRatio } = require('./png.cjs');
+const { describe } = require('./diagnostics.cjs');
 const { pathToFileURL } = require('url'), repo = path.resolve(__dirname, '../..'), MOCK = pathToFileURL(path.join(repo, 'docs/design/approved-goal-ui/preview.html')).href;
 const THEME = process.env.PARITY_THEME === 'dark' ? 'dark' : 'light', WIDTH = Number(process.env.PARITY_WIDTH) || 1280;
 const argv = process.argv.slice(2), flag = n => { const i = argv.indexOf(n); return i < 0 ? null : argv[i + 1]; };
@@ -64,6 +65,7 @@ async function visit(browser, side, spec) {
       if (x.focus) await browser.eval('document.activeElement && document.activeElement.blur()');
       if (x.hover) await browser.hover(0, 0);
       got[x.name] = got[x.name] || { shots: {} }; got[x.name][side] = m;
+      got[x.name].diagnostics ||= {};got[x.name].diagnostics[side]=await describe(browser,s.selector,s.index||0);
       if (!m) { failures.push(`${x.name}: ${side} element not found (${s.selector})`); continue; }
       got[x.name].shots[side] = await browser.shot({ x: m.x, y: m.y, width: m.width, height: m.height });
       fs.writeFileSync(path.join(out, `${x.name}.${side}.png`), got[x.name].shots[side]);
@@ -85,6 +87,9 @@ async function visit(browser, side, spec) {
     }
     console.log(`design parity: ${ran} element(s), ${failures.length} difference(s); captures in ${out}`);
     failures.forEach(f => console.log('  - ' + f));
+    const bad=new Set(failures.map(f=>f.split(':')[0].split('.')[0]));
+    for(const name of bad)if(got[name]?.diagnostics){const info=JSON.stringify(got[name].diagnostics,null,2);fs.writeFileSync(path.join(out,name+'.diagnostics.json'),info);console.log('diagnostics '+name+': '+info);}
+
     process.exitCode = failures.length ? 1 : 0;
   } finally { await browser.close(); }
 })().catch(e => { console.error(e); process.exit(2); });

@@ -2713,3 +2713,11 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Task: Workspace control labels, semantic leading icons, natural padding/line-height boxes, workspace-name-only title button and rail-tab gap match the mock. Test fixture supplies the same variable Workspace name to compare content-dependent widths.
 - [x] Verify: 91 entries / zero differences in light and dark locally; ten action-icon/DOM/Node/architecture tests across four Rust suites passed. Approved mock/tolerances unchanged.
 - [x] Completed: verified Workspace controls batch committed/pushed to the shared issue-linked branch; Claude retains Room and parity-runner ownership. Workspace card sections continue separately under #427.
+
+### Windows control diagnostics — GitHub #435 / PR #436
+
+- [x] Plan: preserve the approved mock and strict comparison; distinguish locally proven changes from Windows-only failures.
+- [x] Task: import labels use the mock's direct flex text structure; failure evidence records root/child boxes, computed styles and actual platform fonts. Diagnostics do not mutate the DOM or change acceptance thresholds.
+- [x] Verify: the diagnostics browser self-check covers text/element/comment children, real font evidence, absent elements and unchanged DOM; local import whole-box comparison passes at 1280/840px in both themes. Full 1280px light/dark comparisons each pass 91 entries; seven Rust tests across three suites pass.
+- [ ] Verify: Windows import height and avatar crop after the follow-up push; the avatar difference has not reproduced on macOS.
+- [ ] Completed: Windows evidence reviewed and PR #436 merged by the coordinator.

@@ -31,6 +31,15 @@ async function launch(chrome, { width = 1280, height = 960, scale = 2 } = {}) {
     async eval(expr) { const r = await send('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true }); if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description || r.exceptionDetails.text); return r.result.value; },
     async hover(x, y) { await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x, y }); await new Promise(r => setTimeout(r, 60)); },
     async tab() { for (const type of ['keyDown', 'keyUp']) await send('Input.dispatchKeyEvent', { type, key: 'Tab', code: 'Tab', windowsVirtualKeyCode: 9 }); },
+    async fonts(selector, index = 0) {
+      await send('DOM.enable'); await send('CSS.enable'); await send('DOM.getDocument');
+      const r = await send('Runtime.evaluate', { expression: `[...document.querySelectorAll(${JSON.stringify(selector)})].filter(e=>e.getBoundingClientRect().width>0)[${index}]`, returnByValue: false });
+      if (!r.result.objectId) return [];
+      try {
+        const n = await send('DOM.requestNode', { objectId: r.result.objectId });
+        return (await send('CSS.getPlatformFontsForNode', { nodeId: n.nodeId })).fonts;
+      } finally { await send('Runtime.releaseObject', { objectId: r.result.objectId }); }
+    },
     async viewport(w, h) { await send('Emulation.setDeviceMetricsOverride', { width: w, height: h, deviceScaleFactor: scale, mobile: false }); },
     async shot(clip) { const r = await send('Page.captureScreenshot', { format: 'png', clip: clip && { ...clip, scale: 1 } }); return Buffer.from(r.data, 'base64'); },
     async close() { try { ws.close(); } catch {} const gone = new Promise(r => proc.once('exit', r)); proc.kill(); await gone; fs.rmSync(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 }); },
