@@ -156,3 +156,5 @@
 - [Bounded browser-test teardown](browser-test-lifecycle.md) — owned process trees and non-replayed exit events (#435).
 
 - [Workspace and Goal section ownership](workspace-goal-sections.md) — shared briefing, stable information row and real attention badge (#427).
+
+- [Goal planning confirmation](goal-planning-confirmation.md) — inherited defaults, explicit planner evidence and stale-context rejection (#429).

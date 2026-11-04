@@ -1279,5 +1279,11 @@
   "startup.goal_objective": "Objective to achieve",
   "startup.workspace_section_label": "Workspace",
   "startup.goal_section_label": "Goal",
-  "startup.app_menu": "Menu"
+  "startup.app_menu": "Menu",
+  "startup.planning_confirmation_title": "Confirm the planner for this Goal",
+  "startup.planning_confirmation_note": "Workspace team defaults are reused. Confirm this selection before the CLI starts planning.",
+  "startup.planning_confirmation_evidence": "Goal: {goal}\nCoordinator: {agent}\nModel: {model}",
+  "startup.planning_confirmation_changed": "The Goal or planning selection changed. Review it and confirm again.",
+  "startup.planning_selection_invalid": "Choose a registered coordinator and a compatible planning model in Workspace.",
+  "startup.planning_confirmation_accept": "Confirm and plan"
 }

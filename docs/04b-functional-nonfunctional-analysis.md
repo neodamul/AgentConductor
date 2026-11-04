@@ -775,3 +775,5 @@ Each task attempt carries an optional `usage` record (`input_tokens`, `output_to
 
 ### NFR-95 Token counts are truthful and counted once
 No estimation, no cash conversion, no double counting across retry, resume, restart or concurrent writers; a crash between the CLI event and the ledger write loses at most that event and never corrupts earlier entries. Trace: FR-208.
+
+FR-204 / NFR-09 / #429 amendment (2026-11-04): The confirmation names the actual selected profile model, validates it against its registered catalog and binds acceptance to the Goal/configuration and Workspace epoch. Recheck that binding after awaited save/baseline work before sending the planner request. Do not add a planning worker role or implicit model substitution.

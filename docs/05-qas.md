@@ -866,3 +866,5 @@ Stimulus: a new Goal identifier collides with an existing project entry. Respons
 
 ### QAS-213 Token totals are exact for what was reported
 Stimulus: a Goal with retried and resumed tasks, a CLI that reports no usage and a concurrent write. Response: the task shows each attempt once, the Goal total equals the sum of reported attempts and states the reported coverage, the Workspace total equals the sum of its Goals. Measure: parser fixtures per CLI (reported, partial, absent), retry/resume no-double-count, restart replay and concurrent-writer tests, and an integration run from task to Goal to Workspace total. Trace: NFR-95.
+
+QAS-209 / #429 amendment (2026-11-04): Given inherited coordinator/model defaults, when generation is requested, the operator sees those exact values before launch. Cancel/escape/context change produces no planner request; a confirmed unchanged context reaches native model validation and the planner’s persisted profile input. New Goal and coordinator changes must not change an archived reviewed plan. Exercise light/dark at 840/1280px and stale/missing-model cases.

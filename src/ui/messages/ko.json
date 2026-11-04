@@ -1279,5 +1279,11 @@
   "startup.goal_objective": "달성할 목표",
   "startup.workspace_section_label": "Workspace",
   "startup.goal_section_label": "Goal",
-  "startup.app_menu": "메뉴"
+  "startup.app_menu": "메뉴",
+  "startup.planning_confirmation_title": "이 Goal의 계획 담당 확인",
+  "startup.planning_confirmation_note": "워크스페이스의 팀 기본값을 이어받습니다. CLI가 계획을 작성하기 전에 담당과 모델을 확인하세요.",
+  "startup.planning_confirmation_evidence": "목표: {goal}\n코디네이터: {agent}\n모델: {model}",
+  "startup.planning_confirmation_changed": "목표 또는 계획 담당 설정이 바뀌었습니다. 검토 후 다시 확인하세요.",
+  "startup.planning_selection_invalid": "워크스페이스에서 등록된 코디네이터와 호환되는 계획 모델을 선택하세요.",
+  "startup.planning_confirmation_accept": "확인 후 계획 작성"
 }
