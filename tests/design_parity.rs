@@ -3,6 +3,7 @@ use std::process::Command;
 
 #[test]
 fn the_ui_matches_the_approved_design_mock_to_the_pixel() {
+    let mut failures = Vec::new();
     for theme in ["light", "dark"] {
         for width in [840, 1280] {
             let mut command = Command::new("node");
@@ -22,11 +23,12 @@ fn the_ui_matches_the_approved_design_mock_to_the_pixel() {
             match output.status.code() {
                 Some(0) => {}
                 Some(77) if std::env::var_os("CI").is_none() => eprintln!("skipped: {text}"),
-                _ => panic!(
+                _ => failures.push(format!(
                     "{theme}/{width}: {text}\n{}",
                     String::from_utf8_lossy(&output.stderr)
-                ),
+                )),
             }
         }
     }
+    assert!(failures.is_empty(), "{}", failures.join("\n"));
 }

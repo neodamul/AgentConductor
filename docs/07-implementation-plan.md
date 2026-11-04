@@ -2993,3 +2993,8 @@ Trace: R-210 / R-211 / UC-202 / UC-203 / QAS-209 / QAS-210 / DD-222 / DD-223.
 - [x] Task: align only the reference frame client width, preserving approved interior CSS, frame height and pixel tolerances; direct actual app/mock probes pass at both widths/themes.
 - [ ] Verify: fresh strict matrix and Node harness after alignment; Windows must prove the corrected junction and viewport on its runner.
 - [ ] Completed: do not close #420 until these platform failures are resolved.
+
+#420 matrix diagnostics: the old driver panicked at the first failed cell and
+hid the other three. The subprocess regression now forces CI failure and
+requires all four distinct calls before the final failure. Aggregate failures
+only after completing the matrix; do not retry or discard any failed cell.

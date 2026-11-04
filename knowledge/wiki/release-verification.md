@@ -88,3 +88,9 @@ Count specifications with PARITY_THEME set: the unfiltered170 definitions
 include10 entries explicitly owned by the opposite theme. Each actual cell has
 160 relevant entries, including14 default behavior assertions. Do not report
 the unfiltered catalog as executed per-cell coverage.
+
+A failed matrix cell must not hide the other three. The Rust driver now records
+each cell failure and rejects the whole matrix only after all cells finish.
+`tests/parity_matrix.rs` forces an unavailable-browser failure and verifies four
+distinct failed calls, in addition to the four success calls and isolated paths.
+This gathers diagnostics without retrying or discarding any failed result.
