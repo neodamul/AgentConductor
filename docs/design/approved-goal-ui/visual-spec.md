@@ -62,6 +62,15 @@ Use tabular numerals for percentages, counts, timings, and other aligned metrics
 | Section heading | 13–14px, weight 650 |
 | Main body / compact metadata | 12–13px / 11–12px |
 
+### Strict size scale (GitHub #432, measured from `preview.html`)
+
+Text uses only these sizes: 10, 10.5, 11, 11.5, 12, 12.5, 13, 14, 16 (metric values, pager arrows), 17, 18px. Never 15, 19, 20, 22 or 26px, and no
+control falls back to the browser default (16px / 13.33px): `button, input, select, textarea` inherit the page size.
+Control heights: 22 (agent tool), 25 (workspace name), 26 (import actions), 27 (new Goal), 28 (Goal list), 29 (rail tab),
+32 (titlebar icon), 33 (Browse, choice fields), 34 (step-card actions). Weights: 400 body, 500 idle tab, 650 selected tab / names / titles, 700 headings and eyebrows.
+`tests/design_parity/typography.cjs` compares size, weight, colour, height, padding, radius and border of each control with the mock in both themes,
+and asserts that no screen state shows text outside the scale.
+
 Tab/header/list text that cannot fit stays on one line with ellipsis. Hover exposes the complete text;
 accessible text must remain complete. Do not use clipped screenshots as evidence of preserved information.
 Instructions, errors, confirmation warnings, logs, and evidence wrap or scroll instead of losing content.
@@ -116,6 +125,7 @@ remain visibly disabled and use the normal cursor. No unrequested extra modal is
 - Titlebar buttons have transparent background/border at rest, quiet fill on hover/selection.
 - Goal and Agent removal share the same red trash SVG path and stroke. Goal glyph: 18px;
   agent-card glyph: 13px in a 22px control, balanced with 11px surrounding tool text. No emoji.
+- Agent card header: avatar, name block, quota ring and reorder handle share one vertical centre line. The ring (30px hit box) spans both text lines like the avatar; the reorder handle is a 10px x 20px dotted grip (four dot rows) centred beside the ring.
 - Trash is the deliberate red exception; do not color unrelated actions red.
 - Keep focus outlines visible. Active, hover, disabled, loading, error, and unsupported are distinct states.
 

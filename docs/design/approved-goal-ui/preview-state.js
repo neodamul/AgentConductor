@@ -7,7 +7,7 @@ document.querySelectorAll('.main > .card').forEach(card=>{
  card.insertBefore(body,footer);
 });
 const initialOverview=location.hash==='#workspace';
-const views=[['j','1단계 · 워크스페이스와 목표'],['i','2단계 · 에이전트 역할'],['a','3단계 · 계획 검토'],['b','4단계 · 작업 진행'],['g','4단계 · 도구 요청 대기'],['h','4단계 · 권한 거부'],['f','5단계 · 검증'],['c','6단계 · 검토와 머지'],['d','목표 완료 팝업'],['e','새 목표 · 1단계']];let i=Number(location.hash.slice(1))||0;
+const views=[['j','1단계 · 워크스페이스와 목표'],['i','2단계 · 에이전트 역할'],['a','3단계 · 계획 검토'],['b','4단계 · 작업 진행'],['g','4단계 · 도구 요청 대기'],['h','4단계 · 권한 거부'],['f','5단계 · 검증'],['c','6단계 · 검토·병합'],['d','목표 완료 팝업'],['e','새 목표 · 1단계']];let i=Number(location.hash.slice(1))||0;
 
 const idleState=[['waiting','대기 중 — 실행 중인 세션이 없습니다'],['waiting','대기 중 — 실행 중인 세션이 없습니다'],['waiting','목표를 기다리는 중']];
 const agentStates={j:idleState,i:idleState,e:idleState,

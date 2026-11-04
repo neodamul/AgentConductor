@@ -2693,3 +2693,55 @@ Trace: R-213 / DD-225.
 - [x] Task: exclusive Goal root reservation refuses folder/file/link collisions; automatic naming skips dangling links; request shapes unchanged.
 - [x] Verify: Red reproduced directory/link adoption → Green: 24 tests across seven local suites, including collision/context/display edits, plain-folder planning/approved merge and phase continuation; fmt/Clippy/whitespace pass.
 - [ ] Completed: commit/push backend audit and correction; Claude verifies UI-only dialog/step continuity; full issue remains open until acceptance.
+
+### One size scale from the approved mock — GitHub #432
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+- [x] Plan: measure the mock and the app (headless Chrome), record a strict text-size scale and control heights in `visual-spec.md`.
+- [x] Task: size, weight, colour and padding of the titlebar, rail, step tabs, step card and Room controls follow the mock; controls inherit the page size; no 15/19/20/22/26px text.
+- [x] Verify: `tests/design_parity/typography.cjs` (22 element entries plus a no-off-scale assertion for 7 screen states) passes in light and dark; Rust parity, node_runtime, interface_theme, source_layout suites pass.
+- [ ] Completed: PR merged after the stack #422/#423; remaining mock sections (config section heads, titlebar item order) are in #427.
+
+- [x] Step footer (GitHub #427, part 1): "Discard changes" leaves the titlebar and follows the open step into its footer row, beside the primary action, with the mock's explanatory note; parity entries `type-discard-button` and `discard-follows-step`.
+- [x] Narrow windows (GitHub #427, part 2): the left rail stays beside the content and is 190px below 600px (the old stacked layout below 700px is gone); parity assertions at 1280/840/560px. The mock captures `images/*.png` were re-rendered after the step 6 caption change (`verify-and-capture.py`: 58 captures, 28 contrast pairs).
+- [x] Agent avatar status (GitHub #410): `src/ui/agent_status.js` (`window.acAgentStatus`) gives each agent card's avatar the strongest state of its tasks (green running/completed, yellow waiting, red failure, a pulse only while running, an attention marker for waiting/failure; neutral otherwise); fed by the Room snapshot, re-stamped when cards rebuild; `tests/agent_status_runtime.cjs`; the `agent-avatar` parity entry now matches the mock at 0.00% differing pixels (the 0.25 allowance is gone).
+
+### Quota ring and popup — GitHub #426
+Trace: R-212 / DD-224 (backend contract), R-210 / DD-222 (layout).
+
+- [x] Plan: consume `quota_indicators[agent]` (rings, windows, budgets, status, error) without new requests, timers or provider queries; refresh uses the existing quota request.
+- [x] Task: `src/ui/quota_ring.js` (`window.acQuotaRing`) draws the two-ring 30px icon (27px graphic) and one shared popup (windows/budgets with the ring colours, reset text, observation time, unsupported/stale/error text, retry); the card's text badge and ↻ button are gone; `.quota-short/.quota-long` tokens live in the light/dark token sets.
+- [x] Verify: parity entries `quota-ring-healthy` (0.00%), `quota-ring-error`, `quota-popup-healthy` (1.7%), `quota-popup-error` plus behaviour assertions (opens beside the ring, Escape closes and restores focus, unsupported, error retry) pass in light and dark (98 entries); quota/i18n/theme/layout suites pass.
+- [ ] Completed: PR after #433; Windows CI.
+### Exact Workspace control boxes — GitHub #435
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+- [x] Plan: approved mock remains immutable; reproduce whole-box failures before editing app styles.
+- [x] Task: Workspace control labels, semantic leading icons, natural padding/line-height boxes, workspace-name-only title button and rail-tab gap match the mock. Test fixture supplies the same variable Workspace name to compare content-dependent widths.
+- [x] Verify: 91 entries / zero differences in light and dark locally; ten action-icon/DOM/Node/architecture tests across four Rust suites passed. Approved mock/tolerances unchanged.
+- [x] Completed: verified Workspace controls batch committed/pushed to the shared issue-linked branch; Claude retains Room and parity-runner ownership. Workspace card sections continue separately under #427.
+
+### Windows control diagnostics — GitHub #435 / PR #436
+
+- [x] Plan: preserve the approved mock and strict comparison; distinguish locally proven changes from Windows-only failures.
+- [x] Task: import labels use the mock's direct flex text structure; failure evidence records root/child boxes, computed styles and actual platform fonts. Diagnostics do not mutate the DOM or change acceptance thresholds.
+- [x] Verify: the diagnostics browser self-check covers text/element/comment children, real font evidence, absent elements and unchanged DOM; local import whole-box comparison passes at 1280/840px in both themes. Full 1280px light/dark comparisons each pass 91 entries; seven Rust tests across three suites pass.
+- [ ] Verify: Windows import height and avatar crop after the follow-up push; the avatar difference has not reproduced on macOS.
+- [ ] Completed: Windows evidence reviewed and PR #436 merged by the coordinator.
+
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+Windows import follow-up (same R-210 / UC-202 / QAS-209 / DD-222 trace):
+
+- [x] Red: the assembled UI with a 15.5px fallback text line still produced a 26px row instead of its natural 27.5px box.
+- [x] Task: remove the MCP selector from the old fixed-height rule; its higher specificity defeated the later natural-height rule. The separate optimization control is unchanged.
+- [x] Green: actual-browser regression covers both 15.5px and 22px text lines and verifies that every sibling stretches to the row height; parent-box parity remains equal locally. Full light/dark 1280px comparisons each pass 119 entries; 13 Rust tests across three suites pass.
+- [ ] Windows: confirm the native fallback font result in CI; no claim of avatar correction accompanies this import fix.
+
+Inline brand follow-up (same R-210 / UC-202 / QAS-209 / DD-222 trace):
+
+- [x] Plan: Windows difference grids locate the remaining avatar differences inside the logo; preserve the approved mock and the existing outer box.
+- [x] Task: clone only pinned, embedded Claude Code/Codex SVG templates into the existing avatar boxes in both factories. Configuration/CLI icon URLs are never interpreted as SVG markup. Keep existing image/initial fallbacks.
+- [x] Verify: browser regression changes from image-based failure to trusted inline paths with the existing 29/19px agent and 28/20px task boxes; both focused avatar crops match locally. Native Startup/standalone Room documents embed the assets and helper; 23 tests pass across six Rust suites (one existing platform-dependent test ignored).
+- [x] Verify: full local 1280px light/dark comparisons each pass 119 entries; focused Clippy passes.
+- [ ] Windows: native rerun still required; a local match does not prove Windows acceptance.

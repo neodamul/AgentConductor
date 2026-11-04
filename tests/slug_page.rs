@@ -6,12 +6,9 @@ const SCRIPT: &str = include_str!("../src/ui/startup.js");
 
 #[test]
 fn page_offers_slug_progress_next_phase_and_rules() {
-    let at = |text: &str| {
-        HTML.find(&format!("\"{}\"", catalog::id(text)))
-            .unwrap_or_else(|| panic!("{text}"))
-    };
-    let settings = at("Workspace settings");
-    let step1 = &HTML[settings..at("Agent roles")];
+    // The first step's panel (its tab caption is the short "Workspace" since GitHub #432).
+    let step1 = &HTML[HTML.find("id=\"start-panel-workspace\"").unwrap()
+        ..HTML.find("id=\"start-panel-team\"").unwrap()];
     // R-74 / DD-82: the slug is named automatically; the page never asks for it.
     assert!(!step1.contains("id=\"start-slug\""), "no slug input");
     assert!(!SCRIPT.contains("q('slug')"), "the page sends no slug");

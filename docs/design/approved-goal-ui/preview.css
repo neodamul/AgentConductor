@@ -242,3 +242,5 @@ button:not(:disabled),a[href],summary,[role="button"]:not([aria-disabled="true"]
 button[data-action-icon]{display:inline-flex;align-items:center;justify-content:center;gap:6px}button[data-action-icon]::before{content:"";display:block;width:13px;height:13px;flex:none;background:currentColor;mask-image:var(--action-icon);-webkit-mask-image:var(--action-icon);mask-size:contain;mask-repeat:no-repeat;mask-position:center}.assignment-choice[data-action-icon]{justify-content:flex-start}
 
 #goal-result-dialog,#delete-goal-dialog,#profile-edit-dialog,#close-run-dialog{position:fixed;right:auto;bottom:auto;margin:0;transform:none;max-width:var(--reference-dialog-width,90vw);max-height:var(--reference-dialog-height,85vh)}.profile-editor-fields{max-height:min(58vh,calc(var(--reference-dialog-height,85vh) - 160px))}
+/* Reorder handle: a dotted grip, 20px (four dot rows) and centred beside the 30px quota ring. */
+.agent .grip{font-size:0;display:block;flex:none;width:10px;height:20px;margin-left:4px;background:radial-gradient(circle,var(--line-strong) 1.2px,transparent 1.6px) 0 0/5px 5px}

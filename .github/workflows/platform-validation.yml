@@ -42,7 +42,16 @@ jobs:
       - name: Enforce source and test layout
         run: cargo test --locked --test source_layout
       - name: Execute applicable native tests
+        env:
+          PARITY_OUT: ${{ runner.temp }}/parity-captures
         run: cargo test --all-targets --locked --no-fail-fast
+      - name: Retain design parity captures
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2, MIT
+        with:
+          name: parity-captures-${{ matrix.os }}-${{ github.sha }}
+          path: ${{ runner.temp }}/parity-captures
+          if-no-files-found: warn
       - name: Validate opt-in native Rust UI launch path
         run: |
           cargo test --locked --features native-ui-probe --test native_ui_launch --test native_ui_probe --test native_room_render --test native_ui_profiles --test native_ui_roles --test native_ui_tasks --test native_ui_pending --test native_ui_activity --test native_ui_tool_dialog --test native_ui_cache --test native_ui_workspaces

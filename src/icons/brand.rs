@@ -16,3 +16,10 @@ pub fn brand_icon(provider: Provider) -> Option<String> {
         super::base64(svg.as_bytes())
     ))
 }
+
+/// Inert templates contain only the two pinned repository assets, never configuration data.
+pub(crate) fn templates() -> String {
+    format!(
+        "<template id=\"ac-brand-claude\">{CLAUDE_CODE}</template><template id=\"ac-brand-codex\">{CODEX}</template>"
+    )
+}

@@ -24,10 +24,12 @@ fn function_body(name: &str) -> &'static str {
 }
 
 #[test]
-fn titlebar_offers_back_to_run_and_discard_with_a_confirmation_dialog() {
+fn titlebar_offers_back_to_run_and_the_step_footer_discard_with_a_confirmation_dialog() {
     let titlebar = &HTML[..HTML.find("</header>").unwrap()];
     assert!(titlebar.contains("id=\"start-back\""));
-    assert!(titlebar.contains("id=\"start-discard\""));
+    assert!(!titlebar.contains("id=\"start-discard\""));
+    // The discard button lives in the step footer (mock) and showStep moves it to the open step.
+    assert!(HTML.contains("<button id=\"start-discard\""));
     assert!(HTML.contains("<dialog id=\"start-leave\""));
 }
 

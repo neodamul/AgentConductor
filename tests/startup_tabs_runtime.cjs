@@ -7,9 +7,12 @@ for(const tag of markup.matchAll(/<(?:button|section)\b[^>]*id="start-((?:tab|pa
 }
 const source=fs.readFileSync('src/ui/startup.js','utf8');
 const code=source.slice(source.indexOf(' const stepNames='),source.indexOf(' const copy='));
-nodes.set('save',{});
+nodes.set('save',{});nodes.set('discard',{});
+// Each panel has one action row; showStep moves the single discard button into the open step's row.
+const rows={};for(const [id,node] of nodes)if(id.startsWith('panel-')){const row=rows[id]={held:[],prepend(n){this.held.push(n);}};node.querySelector=()=>row;}
 const context=vm.createContext({q:id=>nodes.get(id),mirrorProgress(){}});vm.runInContext(code,context);
 const names=['workspace','team','review'];
+const discard=nodes.get('discard');
 function active(name){for(const n of names){const tab=nodes.get('tab-'+n),panel=nodes.get('panel-'+n),selected=n===name;assert.equal(tab.attrs.role,'tab');assert.equal(panel.attrs.role,'tabpanel');assert.equal(tab.attrs['aria-controls'],panel.attrs.id);assert.equal(panel.attrs['aria-labelledby'],tab.attrs.id);assert.equal(tab.attrs['aria-selected'],String(selected));assert.equal(tab.tabIndex,selected?0:-1);assert.equal(panel.hidden,!selected);}}
 active('workspace');
 // Input nodes stay attached to the same panels; switching is view-only.
@@ -31,3 +34,6 @@ vm.runInContext(source.slice(saveStart,saveEnd)+';',context);
  assert.match(markup,/<button id="start-save" class="primary">/);
  console.log('Workspace Save: green action, successful next-tab and failed-save retention passed');
 })().catch(error=>{console.error(error);process.exitCode=1;});
+// The discard button follows the open step.
+nodes.get('tab-review').onclick();assert.equal(rows['panel-review'].held.at(-1),discard);
+nodes.get('tab-team').onclick();assert.equal(rows['panel-team'].held.at(-1),discard);

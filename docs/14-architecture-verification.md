@@ -344,3 +344,22 @@ Deletion runs outside the settings mutex, rejects competing writes without waiti
 | R-213 | `workspace_goal_rules.rs`, `startup_folder_plan.rs`, `folder_workflow.rs`, `slug_flow.rs`, `slug_folder.rs`, `slugs.rs`; with architecture trace, 24 tests in seven local suites | Actual Windows reparse-point/package checks; Claude webview dialog dimensions/focus/scroll and step-6 result/continuation rendering |
 
 Existing backend behavior was retained after audit. The correction exclusively reserves a new Goal root before writing ownership markers or Git exclusions; new allocation performs no legacy migration. Non-Git projects remain free of `.git`; private external change history still requires the Git executable. Display edits preserve existing folder IDs/paths, and New Goal retains Workspace directory/coordinator/profiles/roles. These tests do not establish native modal geometry.
+
+## Exact Workspace controls — GitHub #435
+
+Trace: R-210 / UC-202 / QAS-209 / DD-222. Red: 35 whole-box differences remained after the Room control fixes. Green: both local light/dark runs of `tests/design_parity/parity.cjs` passed 91 entries with zero differences; the approved mock and thresholds were not edited. Natural padding/line-height boxes, names, semantic leading icons, badge margin and rail gap match the mock. The variable Workspace-name fixture uses the same input on both sides; product state always supplies the actual name. Ten local action-icon/DOM/Node/architecture tests across four Rust suites passed. Native Windows results and the separate #431 choice-field crops remain unverified by this local unit.
+
+Windows follow-up (#435 / #436): import text structure now matches the mock; read-only child/font diagnostics self-check and local import comparison (1280/840px, both themes) pass. Full local light/dark comparison each passes 91 entries; seven Rust tests in three suites pass. Native Windows height and avatar acceptance remain pending; macOS evidence does not establish Windows acceptance.
+
+Import cascade regression (#435, R-210 / DD-222): `tests/import_row_runtime.cjs` reproduces
+26px versus natural 27.5px before removing the obsolete MCP fixed-height selector. Both
+15.5px and 22px fallback-line scenarios now pass with equal sibling heights. Full local
+light/dark comparisons each pass 119 entries; 13 Rust tests across three suites pass.
+Windows confirmation and the two Windows avatar crop defects remain separate acceptance.
+
+Pinned inline brand rendering (#435, R-210 / DD-222): the browser regression rejects
+the old image drawing path and verifies direct pinned paths, unsupported-provider
+rejection and unchanged 29/19px and 28/20px outer/content boxes. Startup and standalone
+Room documents embed the same inert asset templates/helper. Full local light/dark
+comparisons each pass 119 entries; 23 native tests pass across six suites (one existing
+platform-dependent test ignored); focused Clippy passes. Windows crops remain pending.
