@@ -23,7 +23,7 @@ for(const width of [840,1280])for(const theme of ['light','dark']){
  const manualOrigin=`const fr=f.getBoundingClientRect();f.style.position='relative';f.style.left=(Math.round(fr.left)-fr.left)+'px';f.style.top=(Math.round(fr.top)-fr.top)+'px';`;
  entries.push({name:`choice-manual-form-${theme}-${width}`,viewport:{width,height:960},props,
   mock:{url:`?theme=${theme}#0`,selector:'#assignment-manual-form',run:mock+align+`openSelectionMenu({anchor:b,title:'모델',value:'',options:[],onSelect:()=>{}});const f=document.getElementById('assignment-manual-form');f.hidden=false;`+manualOrigin},
-  app:{selector:'#ac-choice-menu form',run:setup+align+`const s=document.getElementById('start-coordinator-model');s.dataset.choiceManual='true';acChoices.open(s);document.querySelector('#ac-choice-menu [data-value=__manual]').click();const f=document.querySelector('#ac-choice-menu form');document.activeElement.blur();`+manualOrigin}});
+  app:{selector:'#ac-choice-menu form',run:setup+align+`const s=document.getElementById('start-coordinator-model');s.dataset.choiceManual='true';const m=acChoices.buttonFor(s);m.style.width='160px';m.style.flex='none';m.parentElement.style.width='160px';m.parentElement.style.flex='none';acChoices.open(s);document.querySelector('#ac-choice-menu [data-value=__manual]').click();const f=document.querySelector('#ac-choice-menu form');document.activeElement.blur();`+manualOrigin}});
 
 }
 module.exports=entries;
