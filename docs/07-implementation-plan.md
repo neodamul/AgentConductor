@@ -2745,3 +2745,13 @@ Inline brand follow-up (same R-210 / UC-202 / QAS-209 / DD-222 trace):
 - [x] Verify: browser regression changes from image-based failure to trusted inline paths with the existing 29/19px agent and 28/20px task boxes; both focused avatar crops match locally. Native Startup/standalone Room documents embed the assets and helper; 23 tests pass across six Rust suites (one existing platform-dependent test ignored).
 - [x] Verify: full local 1280px light/dark comparisons each pass 119 entries; focused Clippy passes.
 - [ ] Windows: native rerun still required; a local match does not prove Windows acceptance.
+
+### Per-entry parity viewports — GitHub #409 / PR #431
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+- [x] Plan: port the existing entry viewport contract onto the current isolated-capture runner in a separate issue-linked branch; do not restart #436 CI.
+- [x] Red: the real runner rejects an object viewport and ignores entry dimensions while capturing ordinary elements.
+- [x] Task: honor array/object dimensions in measurements and assertions, inherit `PARITY_WIDTH` for default entries, and include dimensions in page-state grouping. Keep capture retries, failure evidence and zero pixel/channel tolerance.
+- [x] Verify: actual Chrome captures prove object/array/default dimensions, cache separation with identical page scripts, and both assertion forms.
+- [x] Verify: full existing 1280px light/dark comparisons each pass 119 entries; Node UI suite and eight architecture/layout tests pass.
+- [ ] Completed: commit/push runner unit for PR #431 integration; Windows choice-field crops remain a separate acceptance check.

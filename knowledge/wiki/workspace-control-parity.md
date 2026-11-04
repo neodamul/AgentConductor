@@ -43,3 +43,10 @@ assembled from repository assets; never parse SVG supplied through CLI/configura
 icon URLs. Keep the same padding, border and content sizes. Both Startup and standalone
 Room documents must ship those templates and the shared renderer. Windows must still
 confirm the resulting crops.
+
+Per-entry viewports are part of page state, even when two entries run identical scripts.
+Normalize the existing array/object forms once; apply the dimensions before both
+measurement and assertions, and put them in the grouped-page cache key. Default entries
+must inherit the command's `PARITY_WIDTH`, not an unrelated hard-coded 1280px. A test
+that merely compares two screenshots can pass when both use the wrong viewport: verify
+the resulting PNG dimensions against the requested viewport as well.

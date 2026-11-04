@@ -363,3 +363,10 @@ rejection and unchanged 29/19px and 28/20px outer/content boxes. Startup and sta
 Room documents embed the same inert asset templates/helper. Full local light/dark
 comparisons each pass 119 entries; 23 native tests pass across six suites (one existing
 platform-dependent test ignored); focused Clippy passes. Windows crops remain pending.
+
+Per-entry viewports (#409 / PR #431, R-210 / DD-222): the real-runner regression
+reproduces the object-form protocol error, then verifies PNG dimensions for object,
+array and inherited command-width entries with identical page scripts, plus both
+assertion forms. Full local light/dark comparisons each pass 119 entries; all Node UI
+tests and eight architecture/layout tests pass. This test-infrastructure port does not
+certify the pending Windows choice-field crops or merge the feature branch.
