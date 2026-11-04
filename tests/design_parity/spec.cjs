@@ -79,4 +79,8 @@ module.exports = [
   // Full-window behaviour (GitHub #408): a big window reflows the centre; rail, icons, tabs and borders keep their size.
   { name: 'fullscreen-reflow', viewport: [1920, 1080], app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()" },
     assert: "(() => { const r = n => document.querySelector(n).getBoundingClientRect(); const q = n => getComputedStyle(document.querySelector(n)); return r('.rail').width === 250 && r('.session-symbol').width === 28 && r('.view-tabs .tab').height === 29 && q('.session-symbol').borderTopWidth === '1.5px' && r('.center').width > 1200; })()" },
+  // Slide-over panels (GitHub #406): the team briefing is 600px wide with 24px padding, anchored to the right edge.
+  { name: 'briefing-panel', props: ['paddingTop', 'paddingLeft'], keys: ['width', 'paddingTop', 'paddingLeft'], pixel: false,
+    mock: { url: '?theme=light&panel=briefing#0', selector: '.briefing-panel' },
+    app: { run: "document.getElementById('run-screen').hidden = false; document.getElementById('briefing-dialog').showModal()", selector: '#briefing-dialog' } },
 ];
