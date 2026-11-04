@@ -478,3 +478,45 @@ and enabled controls before asserting that no second planner request occurred.
 No production context guard, acceptance tolerance or approved mock is changed.
 
 #466 final local verification: `cargo test --all-targets --locked --no-fail-fast` exits zero with 842 passed, zero failed and 15 ignored across 270 suites, including both-theme design parity and the complete Node UI acceptance suite. Clippy with warnings denied, formatting and diff checks pass. This does not establish native Windows acceptance.
+
+## 0.2.0 coverage map — GitHub #420
+
+Trace: R-210 / R-211 / R-212 / R-213 / UC-202 / UC-203 / UC-204 / UC-205 / QAS-209 / QAS-210 / QAS-211 / QAS-212 / DDR-58 / DDR-59 / DDR-60 / DD-222 / DD-223 / DD-224 / DD-225.
+
+This adopts the preserved coordinator coverage-map draft, corrected by reading the
+actual test bodies. A source-string assertion is a contract check; it is not an
+assembled UI or native controller integration. Pixel checks prove only the
+geometry/style they inspect. A fake bridge proves UI behavior, not provider or
+filesystem behavior. Platform-only tests require that platform's execution.
+
+The inspected baseline is main be76d974: 842 local macOS tests pass, zero fail,
+15 are ignored. That baseline does not complete the gaps listed here.
+
+| Requirement / issue | Unit / backend contract evidence | Integration evidence | Limits / missing evidence |
+|---|---|---|---|
+| R-210 six-step shell / #406 #408 | `unified_stepper_runtime.cjs`, `startup_tabs_runtime.cjs` | `workspace_sections_runtime.cjs`, `design_parity.rs` | Static navigation assertions alone are not integration evidence. |
+| R-210 rail tabs, collapse and widths / #408 #410 | `rail_tabs_runtime.cjs`, `rail_toggle.rs` | `workspace_sections_runtime.cjs`, `design_parity.rs` | Full responsive matrix is being added below. |
+| R-210 slide-over exclusivity / #406 | `slide_over_panels.rs`, `goal_panel_runtime.cjs` | Partial briefing behavior in `workspace_sections_runtime.cjs` | Joined Goal/chat/Settings/briefing exclusivity flow remains open. |
+| R-210 inspector dock / #410 | `inspector_fold.rs`, `inspector_fold_runtime.cjs` | `design_parity.rs` | Inspector model interactions are a separate row. |
+| R-210 completion/result popup / #406 | `result_popup_runtime.cjs` | Style/geometry only in `design_parity.rs` | Automatic completion and Goal-row reopening need joined browser evidence; Windows workspace save is not result-popup proof. |
+| R-210 provider/status avatars / #410 #435 #439 | `icons.rs`, `agent_status_runtime.cjs`, `room_task_rows.rs` | `brand_avatar_runtime.cjs`, `opencode_avatar_runtime.cjs`, `design_parity.rs` | Windows extraction/brand contracts are platform-specific. |
+| R-210 action/import controls / #432 #435 | `action_icons.rs` | `import_row_runtime.cjs`, `design_parity.rs` | No tolerance or approved-mock relaxation is permitted. |
+| R-210 active-run close decision | `close_dialog_runtime.cjs` | `close_window.rs` | Native controller test is Unix-only; do not count it as Windows execution. |
+| R-211 / DD-223 Goal result/folder/delete / #402 | `goal_rows_runtime.cjs` | `goal_row_actions.rs` (real Startup dispatch and owned filesystem) | Covers exact/stale confirmation, pending stop and retry. `goal_action_safety.rs` adds duplicate-delete/editor races and root aliases; `windows_goal_folder.rs` adds real Explorer observation plus deletion. Windows execution is pending. |
+| R-212 / DD-224 cached quota / #404 #426 | `quota_indicators.rs`, `quota_display.rs` | `startup_quota.rs`, `design_parity.rs` | Assembled UI still needs the complete ok/unlimited/unsupported/error sequence; native startup fixture is Unix-only. |
+| R-213 / DD-225 Goal ownership / #411 | `workspace_goal_rules.rs`, `workspace_delete_default.rs` | `project_goals.rs`, `folder_workflow.rs`, `cli_workflow.rs` | Existing Unix links plus `goal_action_safety.rs` cover root aliases/concurrency. Its Windows junction case still requires Windows execution. |
+| R-210 shared/manual model choices / #409 #430 | `role_rules.rs`, `recovery.rs` | `choice_controls.rs`, `choice_controls/profile_fallback.cjs`, `choice_controls/inspector_model.cjs`, `cli_workflow.rs` | Recovery includes explicit catalog registration and invalid-model non-mutation. |
+| R-210 Goal planner confirmation / #429 #466 | `planning_confirmation_runtime.cjs` | `goal_planning.rs`, `planning_confirmation_browser.cjs` | Delayed post-prepare settlement is mandatory; negative assertions require completed actions. |
+| R-213 New Goal and phase continuation | `goal_controls_runtime.cjs` | `project_goals.rs`, `phased_planning.rs`, `phase_link.rs` | Native flows exist; one joined browser lifecycle is still required. |
+| Evidence/architecture integrity | `architecture_trace.rs` | No runtime claim: this is a document/source contract | `verification_evidence.rs` rejects missing nested references and traversal. |
+| Design matrix: both themes × 840/1280 | `parity_viewport_runtime.cjs`, `parity_coverage_runtime.cjs`, `parity_matrix.rs` | `design_parity.rs` | Four driver cells and independent capture paths are proven by subprocess capture. Three 840 exclusions are removed; matching operator-ID fixtures pass focused comparisons. Full four-cell local pixel run passes (545.46 seconds). Dedicated 560/1920 and short-height regressions retain their explicit purpose. |
+| Release readiness / #428 | `release_readiness.rs` offline refusal fixtures | Explicit ignored readiness check invokes read-only GitHub and existing screenshot verifier; v0.2.0 publication requires it | Current candidate is correctly blocked by open issues, 0.1.58 versions, Unreleased notes and stale screenshots. Screenshot recapture remains deferred. |
+| Standing 300-line goal / #472 | `source_layout.rs` currently enforces 500 | No 300-line compliance claim | 41 files exceed the requested bound; tracked independently in #472. |
+
+The intentional planning-row exception remains: five backend worker-role keys,
+with planning coordinator/model selected in Workspace and confirmed per Goal.
+No extra editable planning role is required to make the mock appear complete.
+
+The milestone cannot be declared verified until all open #420 acceptance items
+have concrete passing evidence. #428 owns release preparation and deferred
+screenshots; #472 owns the previously unenforced 300-line rule.

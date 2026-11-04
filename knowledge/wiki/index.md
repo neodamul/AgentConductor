@@ -158,3 +158,5 @@
 - [Workspace and Goal section ownership](workspace-goal-sections.md) — shared briefing, stable information row and real attention badge (#427).
 
 - [Goal planning confirmation](goal-planning-confirmation.md) — inherited defaults, explicit planner evidence and stale-context rejection (#429).
+
+- [Milestone release verification](release-verification.md) — truthful evidence, responsive matrix, Goal safety and non-publishing release gate (#420).

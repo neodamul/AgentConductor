@@ -2905,3 +2905,14 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Verify: delayed actual assembled-browser flow passes at 840/1280 in both themes; Clippy/fmt pass. Negative baseline test requires actual rejection and action settlement.
 - [x] Verify: complete local `cargo test --all-targets --locked --no-fail-fast` exits zero: 842 passed, zero failed, 15 ignored across 270 suites. Windows native behavior remains a separate check.
 - [x] Completed: isolated issue-linked PR #467, AgentMemory/wiki checkpoint recorded; own scratch reproductions can be removed after integration.
+
+### Whole-milestone acceptance — GitHub #420
+Trace: R-210 / R-211 / R-212 / R-213 / BG-165 / SF-198 / UC-202 / UC-203 / UC-204 / UC-205 / QAS-209 / QAS-210 / QAS-211 / QAS-212 / DDR-58 / DDR-59 / DDR-60 / DD-222 / DD-223 / DD-224 / DD-225.
+
+- [x] Plan: inspect current test bodies, preserved coverage-map draft and native/UI boundaries; baseline main be76d974 passes 842 tests with 15 ignored. Record the independent 300-line compliance bug #472 instead of accepting the stale 500-line gate.
+- [x] Task: adopt a truthful requirement-to-unit/integration map; nested evidence gate fails on nonexistent/traversing references and passes actual documents.
+- [x] Task: actual Rust driver runs light/dark × 840/1280, separate capture directories, all 146 entries per cell permitted; full four-cell local pixel run passes. Dedicated viewport regressions remain explicit and failure artifacts are retained.
+- [ ] Task: add missing Goal lifecycle, phase continuation and adversarial mutation/alias tests; preserve real controller coverage and explain platform boundaries.
+- [x] Task: non-publishing release gate implemented and v0.2.0 publication wired through it. Offline fixtures pass; live candidate check correctly reports unresolved blockers.
+- [ ] Verify: local tests for each new behavior, complete local regression once the unit is integrated, and macOS/Windows CI evidence.
+- [ ] Completed: every issue acceptance item proven, PR/evidence/wiki/AgentMemory updated and own temporary artifacts cleaned. Until then #420 remains open.

@@ -18,7 +18,10 @@ jobs:
   # GitHub #290: the captured screens are as new as the interface (or a commit confirms them).
   screenshots:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: read
     steps:
       - name: Check out the full history
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2, MIT
@@ -27,6 +30,11 @@ jobs:
           persist-credentials: false
       - name: Captured screens are as new as the interface
         run: python3 scripts/check_screenshots.py
+      - name: Verify the complete 0.2.0 milestone before publishing
+        if: github.ref_name == 'v0.2.0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: cargo test --locked --test release_readiness milestone_020_release_gate -- --ignored
 
   publish:
     needs: [verify, screenshots]

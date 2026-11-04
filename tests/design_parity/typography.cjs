@@ -21,8 +21,9 @@ module.exports = [
   e('rail-add-box', B, '.railhead .add', '#start-add'),
   e('rail-sub-box', ['width', 'height'], '.agent-panel .sub', '#rail-pane-agents p.small'),
   e('agent-card-box', B, '.agent', '.startup-profile'),
-  { ...e('agent-top-box', ['width', 'height'], '.agent .top', '.startup-profile .profile-top'), widths: [1280] },
-  { ...e('agent-name-box', ['width', 'height', 'fontSize'], '.agent .name', '.startup-profile .name-row'), widths: [1280] },
+  // Names are operator data: compare the same registered ID to avoid a false narrow-screen wrap.
+  { ...e('agent-top-box', ['width', 'height'], '.agent .top', '.startup-profile .profile-top'), mock:{selector:'.agent .top',run:"document.querySelector('.agent .name').textContent='claude';"} },
+  { ...e('agent-name-box', ['width', 'height', 'fontSize'], '.agent .name', '.startup-profile .name-row'), mock:{selector:'.agent .name',run:"document.querySelector('.agent .name').textContent='claude';"} },
   e('agent-facts-box', ['width', 'height', 'columnGap', 'rowGap'], '.agent .facts', '.startup-profile .agent-facts'),
   e('agent-fact-box', B.filter(k => k !== 'width'), '.agent .fact', '.startup-profile .fact'),
   e('agent-tools-box', ['width', 'height', 'columnGap'], '.agent .tools', '.startup-profile .profile-tools'),
@@ -112,8 +113,8 @@ module.exports = [
   { name: 'quota-ring-healthy', props: ['borderTopLeftRadius', 'color'], keys: ['width', 'height', 'borderTopLeftRadius', 'color'], mock: { selector: '.usage-button', index: 0 }, app: { selector: '.usage-button', index: 0 } },
   { name: 'quota-ring-error', props: ['borderTopLeftRadius', 'color'], keys: ['width', 'height', 'borderTopLeftRadius', 'color'], mock: { selector: '.usage-button.error' }, app: { selector: '.usage-button.error' } },
   // The popup is a fixed overlay that does not depend on the window width; at 840px Chrome rasterises its text half a pixel off for the same boxes, so it is gated at 1280px.
-  { name: 'quota-popup-healthy', widths: [1280], props: ['borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'backgroundColor'], keys: ['width', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'backgroundColor'],
-    mock: { run: "document.querySelector('[data-usage=claude]').click();document.head.append(Object.assign(document.createElement('style'), { textContent: 'html,body{background:#fff!important}*{visibility:hidden!important}#usage-popover,#usage-popover *{visibility:visible!important}' }));", selector: '#usage-popover' }, app: { run: "document.querySelectorAll('.usage-button')[0].click();document.head.append(Object.assign(document.createElement('style'), { textContent: 'html,body{background:#fff!important}*{visibility:hidden!important}#usage-popover,#usage-popover *{visibility:visible!important}' }));", selector: '#usage-popover' } },
+  { name: 'quota-popup-healthy', props: ['borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'backgroundColor'], keys: ['width', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'backgroundColor'],
+    mock: { run: "document.querySelector('.agent .name').textContent='claude';document.querySelector('[data-usage=claude]').click();document.head.append(Object.assign(document.createElement('style'), { textContent: 'html,body{background:#fff!important}*{visibility:hidden!important}#usage-popover,#usage-popover *{visibility:visible!important}' }));", selector: '#usage-popover' }, app: { run: "document.querySelectorAll('.usage-button')[0].click();document.head.append(Object.assign(document.createElement('style'), { textContent: 'html,body{background:#fff!important}*{visibility:hidden!important}#usage-popover,#usage-popover *{visibility:visible!important}' }));", selector: '#usage-popover' } },
   // The error popup compares its error box (the mock's buttons render in the UA font, so the footer width differs by design).
   { name: 'quota-popup-error', props: ['borderTopLeftRadius', 'backgroundColor', 'color', 'paddingTop', 'fontSize'], keys: ['width', 'height', 'borderTopLeftRadius', 'backgroundColor', 'color', 'paddingTop', 'fontSize'], pixel: false,
     mock: { run: "document.querySelector('[data-usage=codex]').click()", selector: '.usage-error' }, app: { run: "document.querySelector('.usage-button.error').click()", selector: '.usage-error' } },
