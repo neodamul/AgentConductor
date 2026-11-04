@@ -1,5 +1,6 @@
 // GitHub #414: a tiny Chrome DevTools Protocol driver for the design parity check (no npm dependency).
 // Node's global WebSocket and a local headless Chrome are enough.
+const { stopChrome } = require('./chrome_process.cjs');
 const { spawn } = require('child_process'), fs = require('fs'), os = require('os'), path = require('path');
 
 function findChrome() {
@@ -42,7 +43,7 @@ async function launch(chrome, { width = 1280, height = 960, scale = 2 } = {}) {
     },
     async viewport(w, h) { await send('Emulation.setDeviceMetricsOverride', { width: w, height: h, deviceScaleFactor: scale, mobile: false }); },
     async shot(clip) { const r = await send('Page.captureScreenshot', { format: 'png', clip: clip && { ...clip, scale: 1 } }); return Buffer.from(r.data, 'base64'); },
-    async close() { try { ws.close(); } catch {} const gone = new Promise(r => proc.once('exit', r)); proc.kill(); await gone; fs.rmSync(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 }); },
+    async close() { try { ws.close(); } catch {} await stopChrome(proc); fs.rmSync(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 }); },
   };
   return api;
 }

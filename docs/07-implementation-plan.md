@@ -2745,3 +2745,12 @@ Inline brand follow-up (same R-210 / UC-202 / QAS-209 / DD-222 trace):
 - [x] Verify: browser regression changes from image-based failure to trusted inline paths with the existing 29/19px agent and 28/20px task boxes; both focused avatar crops match locally. Native Startup/standalone Room documents embed the assets and helper; 23 tests pass across six Rust suites (one existing platform-dependent test ignored).
 - [x] Verify: full local 1280px light/dark comparisons each pass 119 entries; focused Clippy passes.
 - [ ] Windows: native rerun still required; a local match does not prove Windows acceptance.
+
+### Bounded browser teardown — GitHub #435
+Trace: R-210 / QAS-209 / DD-222.
+
+- [x] Red: the actual CDP driver with an already-exited launcher waits forever for a new exit event; bounded regression reports that missing event.
+- [x] Task: skip already-exited launchers, terminate only the owned Windows PID tree, bound both termination command and exit wait, and always remove timer/listener state.
+- [x] Verify: actual-driver exited/live cases pass on simulated macOS/Windows; helper tests cover owned tree arguments, missing PID, termination failure and no-exit timeout. Real local brand/import browser checks pass.
+- [x] Verify: complete local Node UI suite plus architecture/layout checks pass; native Windows termination remains pending.
+- [x] Completed: isolated, locally verified teardown unit ready for coordinator integration; #427 work continues independently.
