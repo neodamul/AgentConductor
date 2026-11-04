@@ -76,7 +76,7 @@ async function visit(browser, side, spec) {
         e.style.cssText += ';position:fixed;left:100px;top:100px;margin:0;box-sizing:border-box;width:${m.width}px;height:${m.height}px;transform:none;translate:none;z-index:99999';
         document.head.append(Object.assign(document.createElement('style'), { id: 'parity-solo', textContent: 'html,body{background:#fff!important}*{visibility:hidden!important}[data-parity-target],[data-parity-target] *{visibility:visible!important}' })); })()`);
       got[x.name].shots[side] = await browser.shot({ x: 100, y: 100, width: m.width, height: m.height });
-      await browser.eval(`(() => { const e = document.querySelector('[data-parity-target]'); if (!e) return; e.setAttribute('style', e.dataset.parityStyle); if (!e.dataset.parityStyle) e.removeAttribute('style'); delete e.dataset.parityStyle; delete e.dataset.parityTarget; document.getElementById('parity-solo')?.remove(); })()`);
+      await browser.eval(`(() => { document.getElementById('parity-solo')?.remove(); const e = document.querySelector('[data-parity-target]'); if (!e) return; e.setAttribute('style', e.dataset.parityStyle); if (!e.dataset.parityStyle) e.removeAttribute('style'); delete e.dataset.parityStyle; delete e.dataset.parityTarget; })()`);
       fs.writeFileSync(path.join(out, `${x.name}.${side}.png`), got[x.name].shots[side]);
     }
     for (const spec of specs) {
