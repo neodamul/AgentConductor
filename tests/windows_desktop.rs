@@ -42,8 +42,8 @@ while ((Get-Date) -lt $deadline -and -not ($heading -and $goal -and $save)) {
   $all = $window.FindAll($T::Descendants, $C)
   foreach ($e in $all) {
     $n = $e.Current.Name
-    if ($n -eq 'What should the team work on?') { $heading = $e }
-    if ($n -eq 'Goal' -and $e.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit') { $goal = $e }
+    if ($n -ieq 'workspace settings') { $heading = $e }
+    if ($n -eq 'Objective to achieve' -and $e.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit') { $goal = $e }
     if ($n -eq 'Save and go to step 2' -and $e.Current.ControlType.ProgrammaticName -eq 'ControlType.Button') { $save = $e }
   }
   if (-not ($heading -and $goal -and $save)) { Start-Sleep -Milliseconds 500 }
