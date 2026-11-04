@@ -2914,7 +2914,8 @@ Trace: R-210 / R-211 / R-212 / R-213 / BG-165 / SF-198 / UC-202 / UC-203 / UC-20
 - [x] Task: actual Rust driver runs light/dark × 840/1280, separate capture directories, all 146 entries per cell permitted; full four-cell local pixel run passes. Dedicated viewport regressions remain explicit and failure artifacts are retained.
 - [x] Task: joined lifecycle (15 assertions/cell), quota/surface flow (18 assertions/cell), phase continuation and adversarial mutation/alias tests added; four browser cells pass. Production Goal race #475 fixed separately and integrated. Native and simulated boundaries remain explicit.
 - [x] Task: non-publishing release gate implemented and v0.2.0 publication wired through it. Offline fixtures pass; live candidate check correctly reports unresolved blockers.
-- [ ] Verify: local tests for each new behavior, complete local regression once the unit is integrated, and macOS/Windows CI evidence.
+- [x] Verify locally: 852 Rust/Node cases pass, zero fail, 16 explicit ignores across 275 suites; four strict pixel cells pass in 544.65 seconds, Clippy/fmt pass. PR #478 fixes the separate Python fixture; all 45 cases pass after main integration.
+- [ ] Verify platform: record macOS/Windows CI and real Windows Explorer/junction execution evidence.
 - [ ] Completed: every issue acceptance item proven, PR/evidence/wiki/AgentMemory updated and own temporary artifacts cleaned. Until then #420 remains open.
 
 ### New Goal context transition preserves edits — GitHub #475

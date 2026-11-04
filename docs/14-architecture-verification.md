@@ -541,3 +541,17 @@ and team-briefing slide-overs. Both tests run light/dark at 840/1280.
 The lifecycle exposed #475, fixed independently in PR #476/main 9af04ea9:
 wait for the whole Goal transition, not an empty Goal field, before editing.
 A separate delayed-snapshot regression now protects that real production race.
+
+#420 local checkpoint on 5aa215f1: complete `cargo test --all-targets --locked
+--no-fail-fast` exits zero, 852 passed, zero failed, 16 explicit ignores across
+275 suites. The strict four-cell pixel test passes in 544.65 seconds. All-target
+warning-denied Clippy and formatting pass. The separate Python suite first
+exposed the #475 fixture initialization gap; PR #478 fixes it on main 86d7c044.
+After integration, all 45 Python cases pass. Only that Python fixture and
+documentation differ from the full Rust/Node-tested tree, so product behavior
+and pixel evidence remain from the recorded immutable source.
+
+The 16 ignores include authenticated/provider live tests, configured external
+service tests, a subprocess helper, release readiness and the manual page server.
+They do not establish live provider, release-candidate or native Windows success.
+Windows CI evidence is still pending; #420 stays open and its PR stays draft.
