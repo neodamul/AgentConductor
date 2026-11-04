@@ -1285,5 +1285,19 @@
   "startup.planning_confirmation_evidence": "목표: {goal}\n코디네이터: {agent}\n모델: {model}",
   "startup.planning_confirmation_changed": "목표 또는 계획 담당 설정이 바뀌었습니다. 검토 후 다시 확인하세요.",
   "startup.planning_selection_invalid": "워크스페이스에서 등록된 코디네이터와 호환되는 계획 모델을 선택하세요.",
-  "startup.planning_confirmation_accept": "확인 후 계획 작성"
+  "startup.planning_confirmation_accept": "확인 후 계획 작성",
+  "about.menu": "AgentConductor 정보",
+  "about.close": "정보 닫기",
+  "about.meta": "버전 {version} · MIT 라이선스",
+  "about.updated": "{version}으로 업데이트됨",
+  "about.description": "AgentConductor는 하나의 Goal을 팀으로 해결합니다. 코디네이터가 작업을 계획하고, 이미 사용 중인 AI 코딩 에이전트에 작업을 나눠 주며, 각 작업은 격리된 worktree에서 실행됩니다. 결과를 검토하고 승인한 뒤에만 병합합니다.",
+  "about.install_title": "먼저 에이전트 CLI를 설치하세요",
+  "about.install_note": "AgentConductor는 공식 명령줄 도구를 사용합니다. 하나 이상 설치하고 로그인해야 정상적으로 동작합니다. Node.js와 npm이 필요합니다.",
+  "about.copy": "복사",
+  "about.copied": "복사됨",
+  "about.after_install": "설치한 뒤 터미널에서 claude, codex 또는 opencode를 한 번 실행해 로그인하세요. 이 화면은 메뉴에서 언제든 다시 열 수 있습니다.",
+  "about.credits_title": "Credits",
+  "about.credits_body": "AgentConductor는 MIT 라이선스의 오픈소스입니다. 브랜드 마크는 Lobe Icons(MIT, © LobeHub)를 사용합니다. Claude Code는 Anthropic, Codex는 OpenAI, OpenCode는 OpenCode 프로젝트의 제품이며, 이름과 마크의 권리는 각 소유자에게 있고 도구를 가리키는 용도로만 사용합니다.",
+  "about.once_note": "설치·업데이트 후 처음 한 번만 표시됩니다.",
+  "about.start": "시작하기"
 }

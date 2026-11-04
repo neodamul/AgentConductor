@@ -21,7 +21,7 @@
     proposal: phase => ({ phase, plan: phase === 'ready' ? plan : null, digest: 'd1', repository_base: 'abcdef1234567890', directory: '/tmp/p', run: '/tmp/sim-run', task_profiles: [] }),
     release(kind) { for (const f of this.waiters[kind] || []) f(); this.waiters[kind] = []; },
   };
-  const defaults = { workspaces: () => ({ name: 'sim', current: '/tmp/sim-desktop', registered: [] }), chat_history: () => ({ turns: [] }), check_update: () => ({ phase: 'idle', current: 'sim', newer: false }), update_status: () => ({ phase: 'idle', current: 'sim', newer: false }), open_run: () => ({ opened: true, run: 'run-1' }), coordinator: () => ({ history: [], judgments: [], stdout: '', stderr: '' }), task: p => ({ task: SIM.room.report.tasks[p.index], events: [], decisions: [], knowledge: [], step_lessons: [], usage: null, stdout: '', stderr: '' }) };
+  const defaults = { about_status: () => ({ version: 'sim', show: false, updated: false }), about_seen: () => ({ version: 'sim', show: false, updated: false }), workspaces: () => ({ name: 'sim', current: '/tmp/sim-desktop', registered: [] }), chat_history: () => ({ turns: [] }), check_update: () => ({ phase: 'idle', current: 'sim', newer: false }), update_status: () => ({ phase: 'idle', current: 'sim', newer: false }), open_run: () => ({ opened: true, run: 'run-1' }), coordinator: () => ({ history: [], judgments: [], stdout: '', stderr: '' }), task: p => ({ task: SIM.room.report.tasks[p.index], events: [], decisions: [], knowledge: [], step_lessons: [], usage: null, stdout: '', stderr: '' }) };
   window.__acRequest = body => {
     const p = JSON.parse(body), kind = p.kind === 'snapshot' ? (p.room ? 'room_snapshot' : 'snapshot') : p.kind;
     SIM.log.push({ at: Date.now(), kind, p });

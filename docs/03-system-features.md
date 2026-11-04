@@ -757,3 +757,6 @@ Allocate a new direct-child Goal directory exclusively, preserve existing IDs/pa
 Keep an append-only ledger of reported input/output tokens per task attempt, derive per-Goal and per-Workspace totals from it, and show them in the task inspector (Session metrics), the Goal row, the result popup and the Workspace. Trace: BG-169.
 
 SF-198 / #429 amendment (2026-11-04): Reuse the existing modal and revision-guarded planning path for Goal-specific coordinator/model confirmation. Preserve the five worker-role keys; the planning row remains informational and points to Workspace configuration.
+
+### SF-203 About dialog with first-start display
+A centered About dialog (description, credits, CLI install guide with copyable commands) shown once per app version and always available from the application menu. Trace: BG-170.

@@ -76,9 +76,9 @@ async function visit(browser, side, spec) {
       for (let attempt = 0; attempt < 5; attempt++) {
         await browser.eval(`(() => { const e = [...document.querySelectorAll(${JSON.stringify(s.selector)})].filter(x => x.getBoundingClientRect().width > 0)[${s.index || 0}];
           e.dataset.parityStyle = e.getAttribute('style') || ''; e.dataset.parityTarget = '1';
-          e.style.cssText += ';position:fixed;left:100px;top:100px;margin:0;box-sizing:border-box;width:${m.width}px;height:${m.height}px;transform:none;translate:none;z-index:99999';
+          e.style.cssText += '${x.inPlace ? '' : `;position:fixed;left:100px;top:100px;margin:0;box-sizing:border-box;width:${m.width}px;height:${m.height}px;transform:none;translate:none;z-index:99999`}';
           document.head.append(Object.assign(document.createElement('style'), { id: 'parity-solo', textContent: 'html,body{background:#fff!important}*{visibility:hidden!important}[data-parity-target],[data-parity-target] *{visibility:visible!important}' })); })()`);
-        got[x.name].shots[side] = await browser.shot({ x: 100, y: 100, width: m.width, height: m.height });
+        got[x.name].shots[side] = await browser.shot(x.inPlace ? { x: m.x, y: m.y, width: m.width, height: m.height } : { x: 100, y: 100, width: m.width, height: m.height });
         const kept = await browser.eval("!!document.querySelector('[data-parity-target]')");
         await browser.eval(`(() => { document.getElementById('parity-solo')?.remove(); const e = document.querySelector('[data-parity-target]'); if (!e) return; e.setAttribute('style', e.dataset.parityStyle); if (!e.dataset.parityStyle) e.removeAttribute('style'); delete e.dataset.parityStyle; delete e.dataset.parityTarget; })()`);
         if (kept) break;

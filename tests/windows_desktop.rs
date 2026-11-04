@@ -19,10 +19,13 @@ while (-not $window -and (Get-Date) -lt $deadline) {
   if (-not $window) { Start-Sleep -Milliseconds 500 }
 }
 if (-not $window) { Write-Output 'NO_WINDOW'; exit 2 }
-$firstHeading = $null; $firstName = $null; $firstCreate = $null
+$firstHeading = $null; $firstName = $null; $firstCreate = $null; $aboutDone = $false
 while ((Get-Date) -lt $deadline -and -not ($firstHeading -and $firstName -and $firstCreate)) {
   $all = $window.FindAll($T::Descendants, $C)
   foreach ($e in $all) {
+    if ($e.Current.AutomationId -eq 'about-start' -and $e.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' -and -not $aboutDone) {
+      try { $e.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke(); $aboutDone = $true; Write-Output 'ABOUT_DISMISSED' } catch {}
+    }
     if ($e.Current.Name -eq 'Name the new workspace') { $firstHeading = $e }
     if ($e.Current.AutomationId -eq 'start-new-name' -and $e.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit') { $firstName = $e }
     if ($e.Current.AutomationId -eq 'start-new-create' -and $e.Current.ControlType.ProgrammaticName -eq 'ControlType.Button') { $firstCreate = $e }
@@ -41,9 +44,12 @@ $heading = $null; $goal = $null; $save = $null
 while ((Get-Date) -lt $deadline -and -not ($heading -and $goal -and $save)) {
   $all = $window.FindAll($T::Descendants, $C)
   foreach ($e in $all) {
+    if ($e.Current.AutomationId -eq 'about-start' -and $e.Current.ControlType.ProgrammaticName -eq 'ControlType.Button' -and -not $aboutDone) {
+      try { $e.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke(); $aboutDone = $true; Write-Output 'ABOUT_DISMISSED' } catch {}
+    }
     $n = $e.Current.Name
-    if ($n -eq 'What should the team work on?') { $heading = $e }
-    if ($n -eq 'Goal' -and $e.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit') { $goal = $e }
+    if ($n -ieq 'workspace settings') { $heading = $e }
+    if ($n -eq 'Objective to achieve' -and $e.Current.ControlType.ProgrammaticName -eq 'ControlType.Edit') { $goal = $e }
     if ($n -eq 'Save and go to step 2' -and $e.Current.ControlType.ProgrammaticName -eq 'ControlType.Button') { $save = $e }
   }
   if (-not ($heading -and $goal -and $save)) { Start-Sleep -Milliseconds 500 }
@@ -104,6 +110,10 @@ fn webview2_workspace_is_rendered_accessible_and_saves_through_ui_automation() {
     assert!(
         report.contains("FIRST_WORKSPACE_CREATED"),
         "first-run dialog: {report}"
+    );
+    assert!(
+        report.contains("ABOUT_DISMISSED"),
+        "first start shows the About dialog (#468): {report}"
     );
     assert!(report.contains("DRIVEN"), "UI Automation driver: {report}");
     assert_eq!(goal, "Windows UIA goal 윈도우");

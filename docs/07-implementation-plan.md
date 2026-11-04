@@ -2895,3 +2895,49 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: PR merged; GitHub #430 closed together with the profile fallback unit (#448).
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Planning browser action settlement — GitHub #466
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+- [x] Plan: reproduce the #429 acceptance failure without changing production guards; post-prepare snapshot latency keeps Import Plan disabled beyond the test’s 500ms delay. A 5200ms idle-only poll experiment passes.
+- [x] Red: delayed post-prepare snapshot reproduces missing pick_file / unopened first modal with #464 diagnostics.
+- [x] Task: wait for actual action settlement before the next interaction; retain the deterministic delay and all confirmation assertions.
+- [x] Verify: delayed actual assembled-browser flow passes at 840/1280 in both themes; Clippy/fmt pass. Negative baseline test requires actual rejection and action settlement.
+- [x] Verify: complete local `cargo test --all-targets --locked --no-fail-fast` exits zero: 842 passed, zero failed, 15 ignored across 270 suites. Windows native behavior remains a separate check.
+- [x] Completed: isolated issue-linked PR #467, AgentMemory/wiki checkpoint recorded; own scratch reproductions can be removed after integration.
+
+### New Goal context transition preserves edits — GitHub #475
+Trace: R-210 / R-213 / UC-202 / UC-205 / QAS-209 / QAS-212 / DD-222 / DD-225.
+
+- [x] Plan: joined #420 flow reproduces empty second Goal and no save request; action’s first poll paints empty fields before change_goal clears draft and starts its second poll.
+- [x] Red: hold the second snapshot and require edit/save controls to remain unavailable until the target Goal is ready.
+- [x] Task: guard the entire asynchronous transition, keep a valid draft and restore controls on success/refusal without adding a timer or request.
+- [x] Verify: both themes at 840/1280, refused transition and existing Goal controls; full Node behavior suite passes, plus Clippy/fmt. Native Goal persistence and source/architecture checks run in the same affected suite.
+- [ ] Completed: independent issue-linked PR, main merge and replay to #420, then clean owned artifacts.
+
+### Goal transition quota fixture — GitHub #475 follow-up
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+- [x] Red: the separate local Python CI suite fails 1/45 because its extracted busy() test does not define goalChanging after PR #476.
+- [x] Task: initialize the test state and assert Goal transitions suppress auto-discovery without advancing another agent's quota cooldown. Production code is unchanged.
+- [x] Verify: full local Python discovery on this linked main-based branch passes all 45 tests; the two scheduler cases retain actual extracted production functions.
+- [ ] Completed: merge the isolated follow-up, apply main to #420 and clean owned scratch files.
+
+### Step tabs follow their captions and the approved mock — GitHub #473
+
+- [x] Report: nearly equal captions had very different tab widths (app 147 vs 193 px, mock 117 vs 158 px at 1280) because groups split the row 3:2:1.2 and tabs shared the leftover; the strict parity set did not compare tab widths, so it passed.
+- [x] Red: `step_tab_widths_runtime.cjs` fails with 31–94 px of free space per tab; parity entries for every tab box, position and number box (width/height/dl/dt, pixel diff) added.
+- [x] Task: tabs and groups take their natural width and shrink only when the row is full; tab, number, group and selected-tab boxes follow the mock (16 px number, 3 px padding, 7 px gap, 2 px selected top border, surface fill). The approved mock's groups and tabs changed the same way, by the user's word 'app or mock'.
+- [x] Verify: light/dark × 1280/840 parity 0 (159/156 entries), including pixel crops of every tab and group; the dimmed disabled step is an app-only state the mock does not show, compared with steps enabled.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### About screen — GitHub #468
+
+- [x] Plan: record the requirement R-215 through the whole chain (BG-170, SF-203, UC-207, FR-209 / NFR-96, QAS-214, DDR-62, DD-227); the user asked for a centered first-start/after-update dialog, reachable from the menu, with description, credits and CLI install guidance.
+- [x] Task: mock added to the approved goal-screen mock (light/dark), `about-dialog` strict parity entry.
+- [x] Task: backend `about_status` / `about_seen` over the preferences file; UI fragment, menu item, i18n (en/ko), first-start check.
+- [x] Verify: Rust preference test, `tests/about_runtime.cjs` in four theme/width cells, parity 0 differences, i18n/theme contracts.
+- [ ] Completed: full local suite, merged; GitHub #468 closed.
+
+Trace: R-215 / UC-207 / QAS-214 / DD-227.
