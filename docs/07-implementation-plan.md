@@ -2949,3 +2949,12 @@ Trace: R-215 / UC-207 / QAS-214 / DD-227.
 - [ ] Verify: Node UI suite and strict design parity on macOS; Windows through CI.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### First-workspace dialog can be cancelled — GitHub #490
+
+- [x] Plan: user report 2026-11-05: the "Name the new workspace" dialog has no Cancel on the first start (hidden and Escape blocked by #226); R-185 amended instead of leaving a contradiction.
+- [x] Task: the dialog keeps its Cancel button and Escape in every case; nothing is created, the placeholder stays hidden, the question returns on the next page load.
+- [x] Verify: `tests/first_workspace_runtime.cjs` (Red: old assertions fail, now cancel visible and Escape allowed), `launch_workspace` Rust wrapper.
+- [ ] Completed: merged; GitHub #490 closed.
+
+Trace: R-185 / UC-202 / DD-222.
