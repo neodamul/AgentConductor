@@ -86,7 +86,7 @@ async function visit(browser, side, spec) {
       fs.writeFileSync(path.join(out, `${x.name}.${side}.png`), got[x.name].shots[side]);
     }
     for (const spec of specs) {
-      if (spec.assert) { if (!spec.viewport && WIDTH !== 1280) continue; // authored at 1280
+      if (spec.assert) {
       // behaviour check on the app only: `assert` is evaluated after `run` and must be true
         await browser.viewport(...viewport(spec));
         await visit(browser, 'app', spec.app); const ok = await browser.eval(spec.assert);

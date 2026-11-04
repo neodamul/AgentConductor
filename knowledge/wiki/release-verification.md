@@ -47,3 +47,13 @@ quota, bounds, focus and panel assertions. Fake replies cannot prove filesystem
 delete, Explorer launch or provider execution; retain the Rust controller and
 Windows-specific evidence alongside these UI checks. The lifecycle found #475
 and now waits for the target Goal controls to settle before entering new text.
+
+## Enumerated entries are not executed coverage
+
+The inherited parity runner counted 14 behavior entries at 840 while skipping
+their execution. Four successful subprocesses did not prove every entry ran.
+`tests/parity_assertion_runtime.cjs` injects a forced-false assertion and requires
+nonzero failure at both widths in both themes; removing the bypass makes it pass.
+The real assertions must then pass, rather than being hidden again. The approved
+9px narrow titlebar version is a selector-specific type-scale exception, tested
+against rejection of 9px body text and 9px desktop version text.

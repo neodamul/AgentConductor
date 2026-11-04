@@ -555,3 +555,14 @@ The 16 ignores include authenticated/provider live tests, configured external
 service tests, a subprocess helper, release readiness and the manual page server.
 They do not establish live provider, release-candidate or native Windows success.
 Windows CI evidence is still pending; #420 stays open and its PR stays draft.
+
+Coverage correction after the checkpoint: an inherited width guard excluded 14
+default-viewport behavior assertions at 840 but included them in the reported
+element count. `tests/parity_assertion_runtime.cjs` injects an intentionally
+false assertion through the real subprocess driver and requires failure in all
+four cells. It fails before removing the guard and passes afterward. The actual
+840 run exposes the pre-existing tab-caption constraint and the approved narrow
+9px version text missing from the global type-scale assertion. The latter is
+allowed only for the version at <=900px, whose font remains compared directly
+with the mock. Do not count the earlier checkpoint as complete four-cell
+behavior coverage; fresh actual matrix evidence is required.

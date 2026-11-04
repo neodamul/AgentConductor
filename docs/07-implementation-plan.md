@@ -2934,3 +2934,9 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Task: initialize the test state and assert Goal transitions suppress auto-discovery without advancing another agent's quota cooldown. Production code is unchanged.
 - [x] Verify: full local Python discovery on this linked main-based branch passes all 45 tests; the two scheduler cases retain actual extracted production functions.
 - [x] Completed: PR #478 merged at 86d7c044, applied to #420; own branch/checkpoint cleanup follows the merge.
+
+#420 coverage correction: the reported element count included 14 behavior
+assertions skipped at 840 by an inherited guard. The 852-pass checkpoint is
+valid for what ran, but cannot establish every-entry four-cell coverage. Add a
+forced-failing assertion subprocess test first, remove the implicit width skip,
+then verify actual narrow behavior and all four strict cells again.

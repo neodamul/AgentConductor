@@ -67,7 +67,7 @@ module.exports = [
     name: 'type-scale-' + state, app: { setup, run },
     assert: `(() => { const ok = new Set([10, 10.5, 11, 11.5, 12, 12.5, 13, 14, 16, 17, 18]); const bad = [];
       for (const e of document.querySelectorAll('body *')) { const r = e.getBoundingClientRect(); if (!r.width || !r.height || !(e.matches('input:not([type=checkbox]),textarea,select') || [...e.childNodes].some(n => n.nodeType == 3 && n.textContent.trim()))) continue;
-        const f = parseFloat(getComputedStyle(e).fontSize); if (!ok.has(f)) bad.push((e.id || e.className) + ':' + f); }
+        const f = parseFloat(getComputedStyle(e).fontSize), narrowVersion = innerWidth <= 900 && e.matches('.app-version') && f === 9; if (!ok.has(f) && !narrowVersion) bad.push((e.id || e.className) + ':' + f); }
       window.__offScale = bad; return bad.length === 0; })()` })),
   // Hover treatment (preview.css): the same fill / colour / border appears under the pointer.
   ...[['workspace-home', '#workspace-home', '#start-workspace-menu'], ['titlebar-icon', '#settings-button', '#start-settings-button'],
