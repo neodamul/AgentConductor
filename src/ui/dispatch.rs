@@ -1,5 +1,6 @@
 //! Keep native request routing separate from window/surface lifetime.
 use super::*;
+mod run;
 impl Room {
     pub fn dispatch(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
         let kind = diagnostics::kind(bytes);
@@ -247,7 +248,8 @@ impl Room {
         }
         if !from_room {
             let changing_goal = matches!(kind["kind"].as_str(), Some("new_goal" | "select_goal"));
-            let _goal_navigation = if changing_goal {
+            let deleting_goal = kind["kind"] == "delete_goal";
+            let _goal_navigation = if changing_goal || deleting_goal {
                 Some(
                     self.workspace_navigation
                         .lock()
@@ -270,7 +272,9 @@ impl Room {
                     );
                 }
                 let result = surface.dispatch(bytes);
-                if changing_goal && result.as_ref().is_ok_and(|value| value["changed"] == true) {
+                if (changing_goal || deleting_goal)
+                    && result.as_ref().is_ok_and(|value| value["changed"] == true)
+                {
                     *self
                         .controller
                         .lock()
@@ -283,61 +287,6 @@ impl Room {
                 return result;
             }
         }
-        let controller = self
-            .controller
-            .lock()
-            .map_err(|_| crate::ui::messages::text("native.surface_state_poisoned"))?
-            .clone();
-        let Some(controller) = controller else {
-            return Err(crate::ui::messages::text("native.no_active_surface").into());
-        };
-        let request = serde_json::from_slice::<Request>(bytes).map_err(|e| e.to_string())?;
-        if let Request::Briefing {} = &request {
-            let now = std::time::SystemTime::now()
-                .duration_since(std::time::UNIX_EPOCH)
-                .map_err(|e| e.to_string())?
-                .as_millis();
-            return crate::briefing::collect(
-                &controller.dir,
-                u64::try_from(now)
-                    .map_err(|_| crate::ui::messages::text("native.briefing_clock_overflow"))?,
-            );
-        }
-        if let Request::UndoAmendment { id } = &request {
-            workflow::amendment_undo(&controller.dir, id)?;
-            return Ok(serde_json::json!({"undone":id}));
-        }
-        if let Request::ScopeFailure {} = &request {
-            return workflow::scope_failure(&controller.dir);
-        }
-        if let Request::ScopePreview {
-            task,
-            paths,
-            test_command,
-        } = &request
-        {
-            return workflow::recovery_preview(&controller.dir, task, paths, test_command.clone());
-        }
-        if let Some(startup) = self.surface()? {
-            startup.poll_job()?;
-        }
-        match request {
-            Request::Briefing {} => unreachable!("briefing returned before polling mutations"),
-            Request::ScopeFailure {}
-            | Request::ScopePreview { .. }
-            | Request::UndoAmendment { .. } => {
-                unreachable!("scope review returned before polling mutations")
-            }
-            Request::Snapshot {
-                icons,
-                quota_refresh_last,
-            } => controller.snapshot(icons, &quota_refresh_last),
-            Request::Evidence {} => controller.evidence(),
-            Request::Task { index } => controller.task(index),
-            Request::Coordinator {} => controller.coordinator(),
-            Request::Action { revision, action } => {
-                controller.action(ActionRequest { revision, action })
-            }
-        }
+        self.dispatch_run(bytes)
     }
 }
