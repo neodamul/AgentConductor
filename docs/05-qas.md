@@ -76,7 +76,7 @@ Given 1-second polling, composing and committing Korean syllables in the goal/fe
 Given unsaved goal, profile and plan edits, "Back to run" asks for confirmation naming the unsaved areas; confirming returns to the Agent Room with the saved workspace unchanged on disk and no save, plan or start request issued; cancelling keeps every edit. With no edits the return is immediate. Trace: UC-25.
 
 ### QAS-27 Icons without redistribution or unsafe content
-Status: Amended by R-210/QAS-209: the release binary carries exactly two vendored MIT color brand marks (Claude Code, Codex; `third_party/lobe-icons`, license text and pinned revision in the package) and no other provider artwork; OpenCode keeps its installed-application icon, bounded as below.
+Status: Amended by R-210/QAS-209: the release binary carries exactly three vendored MIT brand marks (Claude Code, Codex, OpenCode; `third_party/lobe-icons`, license text and pinned revision in the package) and no other provider artwork; OpenCode uses its pinned monochrome mark under #439.
 
 Given installed Claude, Codex (ChatGPT) and OpenCode applications, built-in profiles render their application icons within one second of opening; a custom profile renders letters. With an application removed, its profiles render letters and nothing fails. The release binary contains no provider artwork, icons are bounded (≤ 64 × 64 px, ≤ 64 KiB each) PNG data URLs permitted by the existing `img-src data:` policy, and no network request is made. Trace: UC-26.
 
@@ -512,6 +512,7 @@ Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Sourc
 
 ### QAS-209 One goal screen with a single six-step stepper
 Stimulus: the operator opens a run from the Workspace screen and uses tabs 1 to 6. Response: one stepper is visible on both screens, the current step is selected, and tabs 4-6 are disabled while no run exists. Measure: no second step strip exists in the page and the selected tab always matches the run stage.
+Amendment #439 (2026-11-04): Given an OpenCode profile without its desktop application, native snapshots and both avatar factories use the pinned SVG locally. Verify source revision/SHA-256, a valid inline mark in light/dark at 840/1280px, bounded data URLs and unchanged custom fallback.
 Trace: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. Source: user, approved design #387, 2026-11-04.
 
 ### QAS-121 Documentation language and release consistency

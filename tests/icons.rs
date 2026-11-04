@@ -63,12 +63,13 @@ fn malformed_or_oversized_pixels_are_refused() {
 }
 
 #[test]
-fn claude_code_and_codex_use_the_pinned_color_brand_marks() {
+fn built_in_agents_use_the_pinned_brand_marks() {
     use sha2::{Digest, Sha256};
     let source = include_str!("../third_party/lobe-icons/SOURCE.md");
     for (provider, file) in [
         (Provider::Claude, "claude-code-color.svg"),
         (Provider::Codex, "codex-color.svg"),
+        (Provider::OpenCode, "opencode.svg"),
     ] {
         let url = icons::provider_icon(provider).unwrap();
         let encoded = url.strip_prefix("data:image/svg+xml;base64,").unwrap();
@@ -88,7 +89,6 @@ fn claude_code_and_codex_use_the_pinned_color_brand_marks() {
             "{file}"
         );
     }
-    assert!(icons::brand_icon(Provider::OpenCode).is_none());
     assert!(icons::brand_icon(Provider::Custom).is_none());
 }
 

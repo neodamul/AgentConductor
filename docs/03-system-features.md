@@ -414,6 +414,7 @@ Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Sourc
 
 ### SF-198 One goal screen with a single six-step stepper
 A single six-step stepper element is shared by the Workspace screen and the Agent Room; it replaces the three Workspace tabs and the five-stage Room strip.
+Amendment #439 (2026-11-04): The existing bundled icon map and trusted inline renderer include a pinned MIT OpenCode SVG; both native documents and the simulator carry the same asset without a new dependency.
 Trace: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. Source: user, approved design #387, 2026-11-04.
 
 ### SF-112 Bilingual release documentation
