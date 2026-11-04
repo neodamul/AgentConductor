@@ -6,7 +6,7 @@ const B = [...T, 'width', 'height', 'paddingTop', 'paddingRight', 'paddingBottom
 const e = (name, keys, mock, app) => ({ name: 'type-' + name, props: keys.filter(k => k !== 'height' && k !== 'width'), keys, pixel: false, mock: { selector: mock }, app: { selector: app } });
 module.exports = [
   e('brand', T, '.title-brand strong', 'header.titlebar > strong'),
-  e('workspace-home', B, '#workspace-home', '#start-workspace-menu'),
+  { ...e('workspace-home', B, '#workspace-home', '#start-workspace-menu'), app: { selector:'#start-workspace-menu', setup:"SIM.reply.workspaces=()=>({name:'Auth Service',current:'/tmp/sim-desktop',registered:[]});" } },
   e('settings-glyph', ['fontSize', 'color'], '#settings-button', '#start-settings-button'),
   e('rail-tab-selected', T, '#rail-agents-tab', '#rail-tab-agents'),
   e('rail-tab-idle', T, '#rail-tasks-tab', '#rail-tab-tasks'),

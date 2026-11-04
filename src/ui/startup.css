@@ -245,3 +245,19 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 #send-feedback,#stop{display:flex;align-items:center;gap:6px;padding:8px 13px;line-height:normal;height:auto}
 #send-feedback{border:1px solid var(--accent)}
 #stop{background:transparent}
+
+/* #435 Workspace controls use the approved mock's natural box model and labels. */
+header.titlebar #start-workspace-menu{height:auto;padding:5px 7px;border:0;border-radius:5px;background:transparent;color:var(--ink);font:inherit;cursor:pointer;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#rail-tabs{gap:3px}
+#start-browse{display:flex;align-items:center;gap:6px;padding:5px 10px}
+#start-goal-list-open{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:auto;padding:4px 9px;border:1px solid var(--line-strong);border-radius:6px;background:var(--surface);color:var(--ink);font-size:12px;line-height:18px;cursor:pointer}
+#start-new-goal{display:flex;align-items:center;gap:6px;height:auto;padding:5px 9px}
+#start-mcp-controls button{display:flex;align-items:center;gap:6px;height:auto;padding:5px 8px;font-size:11.5px}
+#start-save,.step-card #start-discard{display:flex;align-items:center;gap:6px;height:auto;padding:8px 13px;line-height:normal}
+[data-action-icon="folder"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M3%207V4h7l2%203h9v13H3z%22%2F%3E%3C%2Fsvg%3E")}
+[data-action-icon="plus"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%205v14M5%2012h14%22%2F%3E%3C%2Fsvg%3E")}
+[data-action-icon="link"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M10%2013a5%205%200%200%200%207%200l3-3a5%205%200%200%200-7-7l-2%202%20M14%2011a5%205%200%200%200-7%200l-3%203a5%205%200%200%200%207%207l2-2%22%2F%3E%3C%2Fsvg%3E")}
+
+header.titlebar #start-workspace-menu{font-size:13px}#start-mcp-controls.source-actions button{padding:5px 8px}
+
+#start-goal-count{display:inline-flex;align-items:center;justify-content:center;margin-left:4px;min-width:18px;height:18px;padding:1px 5px;border-radius:4px;background:var(--fill);color:var(--soft);font-size:11px;line-height:18px;font-variant-numeric:tabular-nums}

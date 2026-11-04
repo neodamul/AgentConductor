@@ -2705,3 +2705,11 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Step footer (GitHub #427, part 1): "Discard changes" leaves the titlebar and follows the open step into its footer row, beside the primary action, with the mock's explanatory note; parity entries `type-discard-button` and `discard-follows-step`.
 - [x] Narrow windows (GitHub #427, part 2): the left rail stays beside the content and is 190px below 600px (the old stacked layout below 700px is gone); parity assertions at 1280/840/560px. The mock captures `images/*.png` were re-rendered after the step 6 caption change (`verify-and-capture.py`: 58 captures, 28 contrast pairs).
 - [x] Agent avatar status (GitHub #410): `src/ui/agent_status.js` (`window.acAgentStatus`) gives each agent card's avatar the strongest state of its tasks (green running/completed, yellow waiting, red failure, a pulse only while running, an attention marker for waiting/failure; neutral otherwise); fed by the Room snapshot, re-stamped when cards rebuild; `tests/agent_status_runtime.cjs`; the `agent-avatar` parity entry now matches the mock at 0.00% differing pixels (the 0.25 allowance is gone).
+
+### Exact Workspace control boxes — GitHub #435
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+- [x] Plan: approved mock remains immutable; reproduce whole-box failures before editing app styles.
+- [x] Task: Workspace control labels, semantic leading icons, natural padding/line-height boxes, workspace-name-only title button and rail-tab gap match the mock. Test fixture supplies the same variable Workspace name to compare content-dependent widths.
+- [x] Verify: 91 entries / zero differences in light and dark locally; ten action-icon/DOM/Node/architecture tests across four Rust suites passed. Approved mock/tolerances unchanged.
+- [x] Completed: verified Workspace controls batch committed/pushed to the shared issue-linked branch; Claude retains Room and parity-runner ownership. Workspace card sections continue separately under #427.

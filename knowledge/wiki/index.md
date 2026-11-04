@@ -147,3 +147,5 @@
 - [Approved Goal UI](approved-goal-ui.md): unified flow, docked/overlay boundaries, anchored Fallback/model choices and both-theme reference evidence (#387).
 
 - [Workspace/Goal rules](workspace-goal-rules.md): model audit and exclusive Goal folder ownership (#411).
+
+- [Exact Workspace controls](workspace-control-parity.md): immutable mock, whole-box comparison and content-aware fixtures (#435).
