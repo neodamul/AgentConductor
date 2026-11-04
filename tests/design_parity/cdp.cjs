@@ -15,7 +15,7 @@ async function launch(chrome, { width = 1280, height = 960, scale = 2 } = {}) {
   const proc = spawn(chrome, ['--headless=new', '--remote-debugging-port=0', `--user-data-dir=${dir}`, '--no-first-run',
     `--force-device-scale-factor=${scale}`, '--hide-scrollbars', '--allow-file-access-from-files', `--window-size=${width},${height}`, 'about:blank'], { stdio: 'ignore' });
   const portFile = path.join(dir, 'DevToolsActivePort');
-  for (let i = 0; i < 100 && !fs.existsSync(portFile); i++) await new Promise(r => setTimeout(r, 100));
+  for (let i = 0; i < 400 && !fs.existsSync(portFile); i++) await new Promise(r => setTimeout(r, 100));
   if (!fs.existsSync(portFile)) { proc.kill(); throw new Error('Chrome did not start'); }
   const port = fs.readFileSync(portFile, 'utf8').split('\n')[0];
   const targets = await (await fetch(`http://127.0.0.1:${port}/json`)).json();
