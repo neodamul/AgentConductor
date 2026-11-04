@@ -28,3 +28,10 @@ read-only and writes JSON alongside comparison crops.
 The Windows avatar crop difference is still unconfirmed locally. A fractional-origin
 perturbation did not reproduce it on macOS, even with zero channel tolerance. Do not turn
 that candidate into a diagnosis or loosen the comparison; retain failing platform crops.
+
+The confirmed import-row defect was the cascade, not a different translated child font:
+`#start-mcp-controls .small-button` fixed height at 26px and outranked the later
+`#start-mcp-controls button` natural height. Removing the stale MCP selector allows
+the parent stretch behavior to work. A real-browser regression varies the tallest
+label's line-height to reproduce the Windows fallback condition on macOS; it asserts
+natural content height and equal sibling heights without changing the approved mock.

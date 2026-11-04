@@ -2730,3 +2730,10 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [ ] Completed: Windows evidence reviewed and PR #436 merged by the coordinator.
 
 Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+Windows import follow-up (same R-210 / UC-202 / QAS-209 / DD-222 trace):
+
+- [x] Red: the assembled UI with a 15.5px fallback text line still produced a 26px row instead of its natural 27.5px box.
+- [x] Task: remove the MCP selector from the old fixed-height rule; its higher specificity defeated the later natural-height rule. The separate optimization control is unchanged.
+- [x] Green: actual-browser regression covers both 15.5px and 22px text lines and verifies that every sibling stretches to the row height; parent-box parity remains equal locally. Full light/dark 1280px comparisons each pass 119 entries; 13 Rust tests across three suites pass.
+- [ ] Windows: confirm the native fallback font result in CI; no claim of avatar correction accompanies this import fix.
