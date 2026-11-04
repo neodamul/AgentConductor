@@ -204,6 +204,8 @@ function renderSnapshot() {
   AC_I18N.bind($('paths'),()=>(p?.paths.join('\n')||'—'));AC_I18N.bind($('session-id'),()=>(t?.session_id?acMessage("room.session_168693")+t.session_id:acMessage("room.no_native_session_yet")));
   setOptions($('agent-select'),r.plan.agents.map(a=>({value:a.id,label:agentName(a)+' · '+a.id})),p.agent,t.id+p.agent+JSON.stringify(r.plan.agents.map(a=>a.id)));
   const models=a?.catalog?.models||[];setOptions($('model-select'),models.length?models.map(m=>({value:m,label:m})):[{value:'',label:acMessage("room.no_observed_catalog")}],p.model||models[0]||'',t.id+JSON.stringify(a?.catalog)+String(p.model));
+  const modelSelect=$('model-select'),manualTask=t.id;modelSelect.dataset.choiceIcon='model';modelSelect.dataset.choiceManual=String(!!a&&canEditTask(t)&&r.state!=='running'&&(!models.length||a.catalog?.origin==='manual'));
+  modelSelect.acManualPick=async value=>{if(!canEditTask(t))throw Error(acMessage('choices.agent_changed'));if(!await act({kind:'model',task:manualTask,model:value,register:true}))throw Error(acMessage('choices.registration_failed'));};
   AC_I18N.bind($('catalog-note'),()=>(a?.catalog?acMessage("room.observed", {value1:a.catalog.cli_version,value2:new Date(a.catalog.queried_at*1000).toLocaleDateString()}):acMessage("room.import_or_discover_a_model_catalog_with_the")));
   $('set-model').disabled=!canEditTask(t)||!models.length;$('reassign').disabled=!canEditTask(t);$('schedule').disabled=!idle()||t.status!=='waiting_availability';
   const effectiveRestriction=t.restriction||snapshot.quotas?.[a?.id]?.restriction;

@@ -311,7 +311,7 @@ optional `"workspace_mode": "worktree"`. Validate it to obtain the digest.
 | `agentconductor quota-refresh RUN AGENT` | Refresh account quota from Codex or Claude CLI metadata. |
 | `agentconductor schedule RUN TASK <YYYY-MM-DDTHH:MM:SS+HH:MM>` | Schedule a limited session. |
 | `agentconductor reassign RUN TASK AGENT [model]` | Move a task to another agent. |
-| `agentconductor session-model RUN TASK <model>` | Change a session's observed model. |
+| `agentconductor session-model RUN TASK <model> [--register]` | Change a session's observed model; `--register` first adds a model id the CLI did not report to that agent's catalog as a manual entry (stopped run only). |
 | `agentconductor revise RUN TASK "<feedback>"` | Targeted feedback (up to 16 KiB). |
 | `agentconductor stop RUN "<reason>"` | Stop processes, keeping logs and partial files. |
 | `agentconductor resume RUN` | Explicitly resume a stopped run. |
