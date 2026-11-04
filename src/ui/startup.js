@@ -159,7 +159,7 @@ q('read-plan').onclick=async()=>{if(busy())return;let picked;try{picked=await re
   function planningUnchanged(selection){const same=selection.key===planningContextKey();if(!same)notice(()=>acMessage('startup.planning_confirmation_changed'),true);return same;}
   async function confirmPlanning(reference=''){
    const profile=draft.profiles.find(p=>p.id===draft.coordinator),model=profile?.coordinator_model;
-   if(!profile||model&&!profile.catalog?.models?.includes(model)){notice(()=>acMessage('startup.planning_selection_invalid'),true);return null;}
+   if(!profile||model!=null&&!profile.catalog?.models?.includes(model)){notice(()=>acMessage('startup.planning_selection_invalid'),true);return null;}
    const dialog=q('planning-confirm');if(dialog.open)return null;
    const selection={key:planningContextKey(),revision:state.revision};
    AC_I18N.bind(q('planning-evidence'),()=>acMessage('startup.planning_confirmation_evidence',{goal:draft.goal.trim()||reference,agent:profile.id,model:model||acMessage('startup.cli_default')}));
