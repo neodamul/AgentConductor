@@ -12,6 +12,9 @@ impl Lock {
         let lock = Self {
             _lease: crate::leases::Lease::acquire(&dir.join("coordinator.lock"))?,
         };
+        if fs::symlink_metadata(dir.join("goal-deleted.json")).is_ok() {
+            return Err("Goal deletion revoked this run; create a new Goal to execute work".into());
+        }
         if let Some((root, expected)) = REVIEWED_REVISION.get()
             && (&dir.canonicalize().map_err(|e| e.to_string())? != root
                 || &revision(&load(dir)?)? != expected)
