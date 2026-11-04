@@ -840,6 +840,9 @@ Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213.
 A developer adds `request({kind:'export_report'})`; the guard fails and names it. They classify it (direct, so the pressed button and the waiting line already cover it), or, if it starts a background job, name the progress rendering the page has for it.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.
 
+### UC-204 Inspect an agent quota indicator
+Actor: operator. Trigger: quota data refreshes or the operator opens the indicator. Snapshot returns cached ring/popup data without launching a CLI. All windows, resets and source/error metadata remain inspectable. Unsupported and stale observations show no invented filled ring; refresh uses existing per-agent asynchronous query. Trace: SF-200.
+
 ### UC-203 Inspect or delete a registered Goal
 Actor: operator. Precondition: a registered Goal exists. Result reads retained public run data without selecting it; Folder reveals its verified directory. Delete requires its exact Goal text and folder, requests owned work to stop, and returns pending until it is quiescent. Then delete only that folder and remove its registry entry. Failed ownership, changed confirmation or unknown process state retains the folder. Deleting the last Goal yields an empty usable workspace. Trace: SF-199.
 
