@@ -15,7 +15,7 @@ pub(crate) fn document() -> Result<String, String> {
     );
     let manual_script = include_str!("../manual.js");
     let script = format!(
-        "{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
+        "{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
         super::super::I18N,
         super::super::JS,
         include_str!("../mcp.js"),
@@ -23,6 +23,7 @@ pub(crate) fn document() -> Result<String, String> {
         include_str!("../optimize.js"),
         include_str!("../result_view.js"),
         include_str!("../goal_rows.js"),
+        include_str!("../action_icons.js"),
         include_str!("../stepper.js"),
         include_str!("../rail.js"),
         manual_script,

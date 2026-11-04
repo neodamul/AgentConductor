@@ -5,6 +5,7 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 the GitHub Release notes for its tag.
 
 ## Unreleased
+- The main action buttons of a step (save, generate plan, approve and run, read plan, write plan manually, discard changes) show a small icon in front of their label.
 - A title bar button hides and restores the whole left panel on the Workspace screen and in the Agent Room; the centre uses the freed space.
 - The Goal header is a compact single line (17px) without the small caption above it.
 - The Activity, Changes and tests, Raw logs and Lessons tabs of a task are compact pill-shaped tabs that fit their labels instead of an underlined row.
