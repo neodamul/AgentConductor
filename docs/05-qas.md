@@ -853,3 +853,6 @@ Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213.
 ### QAS-200 A new or wrongly quiet request fails
 Adding an unclassified kind to a page script, or a direct kind to the quiet list, fails `tests/request_kinds_runtime.cjs` with a message naming it; removing a job's progress rendering fails it too. It passes on the current pages (76 kinds: 7 refresh, 21 job, 47 direct).
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.
+
+### QAS-212 Goal creation cannot manufacture ownership of project data
+Stimulus: a new Goal identifier collides with an existing project entry. Response: explicit names fail without writing a marker, registry record or Git exclusion; automatic names choose another path. Measure: native regressions preserve ordinary contents, files and link targets, preserve folder IDs on display edits, and retain Workspace context on New Goal. Existing non-Git planning/approved merge and phase-continuation integration tests remain green. Trace: NFR-94.
