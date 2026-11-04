@@ -188,3 +188,6 @@ A generic app marker is not permission to claim an existing directory. Reserve t
 
 ### Driver DDR-61 Count what the CLI reports, once
 Usage is evidence supplied by the CLI event stream; the ledger is append-only and keyed by task attempt so replays are idempotent, and totals are derived, never typed in. Trace: QAS-213.
+
+### Driver DDR-62 One acknowledgement per version, stored where preferences live
+The About state is a single version string in the existing preferences file, so no new store, migration or service exists. Trace: QAS-214.

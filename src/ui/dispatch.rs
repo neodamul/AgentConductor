@@ -97,6 +97,12 @@ impl Room {
             };
             return Ok(serde_json::json!({"html":html}));
         }
+        // #468: the About screen's once-per-version state is an app preference, independent of any workspace.
+        match kind["kind"].as_str() {
+            Some("about_status") => return Ok(about::status()),
+            Some("about_seen") => return about::seen(),
+            _ => {}
+        }
         if kind["kind"] == "close_window" {
             return self.close_window(kind["stop"] == true);
         }

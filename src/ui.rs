@@ -288,6 +288,7 @@ impl Room {
 mod controller;
 use controller::*;
 
+mod about;
 mod automatic;
 mod close;
 mod update;

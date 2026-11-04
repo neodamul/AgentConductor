@@ -2940,3 +2940,23 @@ assertions skipped at 840 by an inherited guard. The 852-pass checkpoint is
 valid for what ran, but cannot establish every-entry four-cell coverage. Add a
 forced-failing assertion subprocess test first, remove the implicit width skip,
 then verify actual narrow behavior and all four strict cells again.
+
+
+### Step tabs follow their captions and the approved mock — GitHub #473
+
+- [x] Report: nearly equal captions had very different tab widths (app 147 vs 193 px, mock 117 vs 158 px at 1280) because groups split the row 3:2:1.2 and tabs shared the leftover; the strict parity set did not compare tab widths, so it passed.
+- [x] Red: `step_tab_widths_runtime.cjs` fails with 31–94 px of free space per tab; parity entries for every tab box, position and number box (width/height/dl/dt, pixel diff) added.
+- [x] Task: tabs and groups take their natural width and shrink only when the row is full; tab, number, group and selected-tab boxes follow the mock (16 px number, 3 px padding, 7 px gap, 2 px selected top border, surface fill). The approved mock's groups and tabs changed the same way, by the user's word 'app or mock'.
+- [x] Verify: light/dark × 1280/840 parity 0 (159/156 entries), including pixel crops of every tab and group; the dimmed disabled step is an app-only state the mock does not show, compared with steps enabled.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### About screen — GitHub #468
+
+- [x] Plan: record the requirement R-215 through the whole chain (BG-170, SF-203, UC-207, FR-209 / NFR-96, QAS-214, DDR-62, DD-227); the user asked for a centered first-start/after-update dialog, reachable from the menu, with description, credits and CLI install guidance.
+- [x] Task: mock added to the approved goal-screen mock (light/dark), `about-dialog` strict parity entry.
+- [x] Task: backend `about_status` / `about_seen` over the preferences file; UI fragment, menu item, i18n (en/ko), first-start check.
+- [x] Verify: Rust preference test, `tests/about_runtime.cjs` in four theme/width cells, parity 0 differences, i18n/theme contracts.
+- [ ] Completed: full local suite, merged; GitHub #468 closed.
+
+Trace: R-215 / UC-207 / QAS-214 / DD-227.
