@@ -63,6 +63,11 @@ module.exports = [
       mock: { url: '?theme=light#0', selector: '.tabs .tab', index }, app: { setup: STEPS_ENABLED, run: STEP_ONE, selector: '#start-step-tabs [role=tab]', index } },
     { name: `pos-step-tab-${index}`, props: [], keys: ['dt', 'dl'], pixel: false,
       mock: { url: '?theme=light#0', selector: '.tabs .tab', index, rel: '.titlebar' }, app: { selector: '#start-step-tabs [role=tab]', index, rel: 'header.titlebar' } }]),
+  // #468: the About dialog, opened by update (centered, with the update tag).
+  // In place: a modal dialog sits in the top layer where the mock re-centres it itself, so it is not lifted to the capture spot.
+  { name: 'about-dialog', props: [], keys: ['width', 'height'], inPlace: true,
+    mock: { url: '?theme=light&about=update#0', selector: '#about-dialog' },
+    app: { setup: "SIM.reply.about_status=()=>({version:'0.2.0',show:true,updated:true});", selector: '#about-dialog' } },
   { name: 'step-number-box', props: [], keys: ['width', 'height'], pixel: false,
     mock: { url: '?theme=light#0', selector: '.step-group .tab .num', index: 0 }, app: { selector: '#start-step-tabs .tab-number', index: 0 } },
   { name: 'step-group-icon', props: [], keys: ['width', 'height'], pixel: false,
