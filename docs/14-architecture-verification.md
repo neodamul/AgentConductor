@@ -430,3 +430,15 @@ The former #425 grid and stress-specific padding assertions are superseded by ex
 comparison with the newer approved natural-width layout; icon-fit, names, tooltips,
 keyboard focus and pointer assertions remain. #424 narrow wrapping is still open,
 and actual Windows choice-field crop acceptance remains pending.
+## Workspace and Goal UI acceptance — GitHub #427
+
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+Core sections/Goal controls/shared briefing pass 80 assembled UI checks and ten native
+briefing/run-binding tests. The fixed information row and true attention badge pass
+full 133-entry light/dark comparisons with zero differences. Titlebar and working menu
+add 56 real interaction checks, including Room preservation and guarded Workspace
+mutation routing. Complete Node UI regression, native/static/i18n suites and focused
+Clippy/fmt pass. New version/divider/menu entries compare the actual visible controls;
+muted glyph/version colors are corrected by targeted red/green checks. After replaying only this issue onto main, full local light/dark comparisons each pass
+136 entries. Native Windows package acceptance remains separate.

@@ -168,7 +168,11 @@ impl Startup {
         let saved = self
             .saved
             .lock()
-            .map_err(|_| messages::text("native.startup_settings_poisoned"))?;
+            .map_err(|_| messages::text("native.startup_settings_poisoned"))?
+            .clone();
+        self.active_run_for(&saved)
+    }
+    fn active_run_for(&self, saved: &Saved) -> Result<Option<PathBuf>, String> {
         if let Some(proposal) = &saved.proposal
             && proposal.phase == "starting"
             && proposal.run.join("report.json").exists()
@@ -192,7 +196,7 @@ impl Startup {
             }
             return Ok(Some(proposal.run.clone()));
         }
-        Ok(self.last_run(&saved))
+        Ok(self.last_run(saved))
     }
     /// The started run survives later draft edits, but only inside this workspace.
     fn ensure_no_live_jobs(&self) -> Result<(), String> {
@@ -263,3 +267,5 @@ mod automatic;
 #[cfg(test)]
 #[path = "../../tests/unit/goal_deletion.rs"]
 mod goal_deletion_tests;
+
+mod workspace_briefing;

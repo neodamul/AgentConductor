@@ -2,6 +2,8 @@
 // builds an element adds its entry; `props` are computed-style properties that must match the mock exactly,
 // width/height/mark within `tol` px, and the element's screenshot crop may differ by at most `maxPixelDiff`.
 const BOX = ['borderTopWidth', 'borderTopLeftRadius'];
+// Include the badge outside the avatar border; wrapping the real node preserves its actual pseudo-element.
+const attentionBox = selector => `(() => { const e=document.querySelector(${JSON.stringify(selector)}),box=document.createElement('span');box.id='attention-probe';box.style.cssText='display:inline-flex;flex:none;padding:6px;background:transparent';e.replaceWith(box);box.append(e); })()`;
 module.exports = [
   ...require('./typography.cjs'),
   ...require('./choice_spec.cjs'),
@@ -9,6 +11,9 @@ module.exports = [
    
     mock: { url: '?theme=light#0', selector: '.status-icon', index: 0, mark: '.agent-brand-logo' },
     app: { run: "acAgentStatus.apply([{ status: 'needs_input' }], [{ agent: 'claude' }], () => 'wait'); document.querySelectorAll('.agent-symbol').forEach(e => delete e.dataset.attention)", selector: '.agent-symbol.app-icon', index: 0, mark: 'content' } },
+  { name: 'agent-attention-marker', props: [],
+    mock: { url: '?theme=light#4', selector: '#attention-probe', run: "document.getElementById('rail-agents-tab').click();" + attentionBox('.agent .status-icon') },
+    app: { selector: '#attention-probe', run: "acAgentStatus.apply([{status:'blocked_on_human'}],[{agent:'claude'}],()=> 'wait');" + attentionBox('.startup-profile .agent-symbol.app-icon') } },
   // The task rail of the run steps: the Room opens through the simulator's run and the Tasks tab.
   { name: 'task-avatar', props: BOX,
     mock: { url: '?theme=light#3', selector: '.outline-task .outline-agent', index: 0, mark: '.agent-brand-logo' },
@@ -54,7 +59,7 @@ module.exports = [
   // Step card (GitHub #408): the header and the action footer stay visible while only the body scrolls.
   { name: 'step-card-fixed-header-footer', viewport: [1280, 520],
     app: { run: "const m = document.querySelector('.startup-main'); m.scrollTop = Math.floor(m.scrollHeight / 2)" },
-    assert: "(() => { const c = document.querySelector('#start-panel-workspace'), h = c.querySelector('.section-title').getBoundingClientRect(), f = c.querySelector('.startup-actions').getBoundingClientRect(); return h.top >= 0 && h.bottom <= innerHeight && f.top >= 0 && f.bottom <= innerHeight + 1; })()" },
+    assert: "(() => { const c = document.querySelector('#start-panel-workspace'), h = c.querySelector('.cardhead').getBoundingClientRect(), f = c.querySelector('.startup-actions').getBoundingClientRect(); return h.top >= 0 && h.bottom <= innerHeight && f.top >= 0 && f.bottom <= innerHeight + 1; })()" },
   // Content-width inner tabs (GitHub #408): 29px high, 7px radius, label + 11px padding, left aligned, not stretched.
   { name: 'view-tab', props: ['borderTopLeftRadius', 'fontSize'], keys: ['height', 'borderTopLeftRadius', 'fontSize'], pixel: false,
     mock: { url: '?theme=light#3', selector: '.ttabs span', index: 1 },

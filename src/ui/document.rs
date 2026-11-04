@@ -3,7 +3,11 @@ pub(super) fn room() -> Result<String, String> {
     let css = super::CSS;
     let i18n = super::I18N;
     let js = super::JS;
-    let brand_script = include_str!("brand_avatar.js");
+    let shared_scripts = concat!(
+        include_str!("brand_avatar.js"),
+        "\n",
+        include_str!("team_briefing.js")
+    );
     let nonce = crate::native_guard::session_id()?;
     let policy = format!(
         "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; script-src 'nonce-{nonce}'; style-src 'nonce-{nonce}'; connect-src 'none'; img-src data:; base-uri 'none'; form-action 'none'\">"
@@ -19,7 +23,7 @@ pub(super) fn room() -> Result<String, String> {
         )
         .replace(
             "</body>",
-            &format!("<script nonce=\"{nonce}\">{i18n}\n{brand_script}\n{js}</script></body>"),
+            &format!("<script nonce=\"{nonce}\">{i18n}\n{shared_scripts}\n{js}</script></body>"),
         )
         .replace("{{APP_VERSION}}", &crate::update::current()))
 }

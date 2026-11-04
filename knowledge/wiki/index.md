@@ -154,3 +154,5 @@
 
 - [Compact agent actions](compact-agent-actions.md): non-shrinking icons and width-safe padding (#424).
 - [Bounded browser-test teardown](browser-test-lifecycle.md) — owned process trees and non-replayed exit events (#435).
+
+- [Workspace and Goal section ownership](workspace-goal-sections.md) — shared briefing, stable information row and real attention badge (#427).
