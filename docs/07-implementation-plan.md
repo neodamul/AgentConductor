@@ -2728,3 +2728,5 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Verify: the diagnostics browser self-check covers text/element/comment children, real font evidence, absent elements and unchanged DOM; local import whole-box comparison passes at 1280/840px in both themes. Full 1280px light/dark comparisons each pass 91 entries; seven Rust tests across three suites pass.
 - [ ] Verify: Windows import height and avatar crop after the follow-up push; the avatar difference has not reproduced on macOS.
 - [ ] Completed: Windows evidence reviewed and PR #436 merged by the coordinator.
+
+Trace: R-210 / UC-202 / QAS-209 / DD-222.

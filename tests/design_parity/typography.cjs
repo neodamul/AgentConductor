@@ -12,6 +12,8 @@ module.exports = [
   e('rail-tab-idle', T, '#rail-tasks-tab', '#rail-tab-tasks'),
   e('rail-eyebrow', T, '.railhead .eyebrow', '.startup-team .eyebrow'),
   e('rail-title', T, '.railhead h2', '.startup-team h2'),
+  e('import-row-box', ['height', 'columnGap', 'alignItems', 'flexWrap', 'display'], '.goal-import-actions', '#start-mcp-controls'),
+  e('import-preview-button', B.filter(k => k !== 'width'), '.goal-import-actions .btn:nth-child(3)', '#start-mcp-preview'),
   e('rail-head-box', ['width', 'height'], '.railhead', '#rail-pane-agents .section-title'),
   e('rail-add-box', B, '.railhead .add', '#start-add'),
   e('rail-sub-box', ['width', 'height'], '.agent-panel .sub', '#rail-pane-agents p.small'),

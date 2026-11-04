@@ -283,6 +283,8 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
    the ring spans both text lines like the avatar and the handle is a 10x20px dotted grip (four dot rows), centred on the ring. */
 .profile-top{align-items:center}
 .profile-top .quota-controls{position:static;margin:0 0 0 auto;flex:none}
+/* The mock's import row: buttons stretch to the tallest one (its Hangul-only label sets the row height on Windows). */
+#start-mcp-controls{align-items:normal;gap:6px;flex-wrap:nowrap}
 /* The mock declares the colour scheme, so native controls and text rendering follow the theme. */
 :root{color-scheme:light}:root[data-theme="dark"]{color-scheme:dark}
 /* #435 rail: section head, hint and agent cards follow the mock's box model (card fixed at 144px, one row of tools). */
