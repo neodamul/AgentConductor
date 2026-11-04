@@ -1507,7 +1507,8 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [x] Part 5: the Goal header is compact (17px semibold single line, eyebrow removed; parity entry `goal-title`).
 - [x] Part 6: a 32px titlebar button before the Workspace name hides and restores the whole left rail on both screens; the centre takes the space (`rail_toggle.rs`, parity `rail-toggle-button` and the behaviour check `rail-toggle-behaviour`).
 - [x] Part 7: step-card action buttons (save, generate plan, approve & run, read plan, write manually, discard) carry a leading 13px icon (`action_icons.js`, `action_icons.rs`).
-- [ ] Remaining in #408: titlebar order, fixed 36px info row and the Team briefing icon button on the Workspace screen, leading icons, evidence line, fullscreen reflow, narrow-width rail (230/190).
+- [x] Part 8: the rail is 250px and 230px below 900px (Workspace screen and Room; the old 240px/170px breakpoints are gone), checked at 840 and 1280 by parity behaviour checks.
+- [ ] Remaining in #408: titlebar order and the full 32px cluster, fixed 36px info row and the Team briefing icon button on the Workspace screen, leading icons on selectors, evidence line, fullscreen reflow, rail 190px below 600px.
 - [ ] Complete: release (version 0.2.0 only when the user asks).
 
 ### Goal-list row actions in the webview — DD-222
