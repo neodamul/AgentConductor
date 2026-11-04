@@ -83,4 +83,9 @@ module.exports = [
   { name: 'briefing-panel', props: ['paddingTop', 'paddingLeft'], keys: ['width', 'paddingTop', 'paddingLeft'], pixel: false,
     mock: { url: '?theme=light&panel=briefing#0', selector: '.briefing-panel' },
     app: { run: "document.getElementById('run-screen').hidden = false; document.getElementById('briefing-dialog').showModal()", selector: '#briefing-dialog' } },
+  // Titlebar cluster (GitHub #408): 32px hit boxes with a 6px radius and a transparent border at rest.
+  { name: 'titlebar-chat', props: ['borderTopLeftRadius', 'borderTopColor'], keys: ['width', 'height', 'borderTopLeftRadius', 'borderTopColor'], pixel: false,
+    mock: { selector: '#coordinator-chat-button' }, app: { selector: '#start-chat-button' } },
+  { name: 'titlebar-settings', props: ['borderTopLeftRadius', 'borderTopColor'], keys: ['width', 'height', 'borderTopLeftRadius', 'borderTopColor'], pixel: false,
+    mock: { selector: '#settings-button' }, app: { selector: '#start-settings-button' } },
 ];
