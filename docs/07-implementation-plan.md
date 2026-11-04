@@ -2941,3 +2941,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: full local suite, merged; GitHub #468 closed.
 
 Trace: R-215 / UC-207 / QAS-214 / DD-227.
+
+### Source bound: quota display — GitHub #472
+
+- [x] Plan: split `src/quota/display.rs` (409 lines) with no behaviour change: local time helpers (`display/clock.rs`) and window labels (`display/labels.rs`); `display.rs` keeps the badge and row builders (295 lines) and the public paths are unchanged.
+- [x] Verify: full local `cargo test --all-targets --locked`, warning-denied Clippy.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
