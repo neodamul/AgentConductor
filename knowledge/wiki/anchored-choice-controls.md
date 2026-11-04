@@ -15,10 +15,18 @@ and crop comparison of isolated controls uses the same fixed width and pixel-ali
 origin on both sides, so fractional parent placement does not masquerade as a font difference.
 Shell geometry is checked separately under #408. Do not broaden pixel tolerances to hide a
 real control difference. First unit: 80 behavior checks, eight control crops at 0.00% difference.
-Role-specific fallback and manual catalog wiring are subsequent #409 work, not complete yet.
+Role-specific fallback and coordinator/role manual catalog wiring are implemented in the next verified unit; final per-surface and coordinator-seeding acceptance remain open in #430 and #429.
 
 Task-scoped fallback uses missing/null = inherit, false = disable, object = explicit first
 hop. Always clear a consumed hop in the candidate plan before validating a new agent, not
 only after transfer: otherwise the new target appears to fall back to itself. Retain the
 policy for same-agent model edits. Runtime tests, not just serialization checks, caught this.
 Pending-task changes and profile rename/removal must follow the same policy contract.
+
+The I18N catalog is lexical (`const AC_I18N`), not `window.AC_I18N`. A popup fallback
+through the window property silently prints message IDs; assert actual translated labels.
+Observe option/disabled changes to update an open list, but do not dismiss it merely because
+its accessible name was rebound. Preserve a missing saved primary for reassignment instead
+of silently serializing an empty role after an unrelated edit.
+
+A manual registration callback must capture its originating agent before awaiting the catalog request. A coordinator switch can happen while the bridge is pending; reject the late selection rather than applying the old model to the new coordinator.

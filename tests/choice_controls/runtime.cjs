@@ -20,7 +20,7 @@ execFileSync('node',[path.join(root,'tests/ui_sim/build.cjs'),root,path.join(out
     check('provider display name',button.textContent.includes('Claude Code'));
     const before=select.value;button.click();await settle();
     const menu=document.getElementById('ac-choice-menu');
-    check('list opens at field',!menu.hidden&&button.getAttribute('aria-expanded')==='true');
+    check('list opens at field',!menu.hidden&&button.getAttribute('aria-expanded')==='true');select.setAttribute('aria-label','Updated coordinator label');await settle();check('accessibility label refresh keeps choice list open',!menu.hidden);
     const a=button.getBoundingClientRect(),m=menu.getBoundingClientRect();
     check('anchored six pixel gap',Math.abs(m.top-a.bottom-6)<.6||Math.abs(a.top-m.bottom-6)<.6);
     check('list stays in app viewport',m.left>=8&&m.right<=innerWidth-8&&m.top>=8&&m.bottom<=innerHeight-8);
@@ -46,7 +46,7 @@ execFileSync('node',[path.join(root,'tests/ui_sim/build.cjs'),root,path.join(out
     dynamic.dataset.choiceManual='true';let manualCalls=0;
     dynamic.acManualPick=async value=>{manualCalls++;if(value==='reject')throw Error('fixture rejection');};
     const manual=()=>{db.click();menu.querySelector('[data-value="__manual"]').click();return menu.querySelector('input');};
-    let entry=manual();entry.value='-invalid';menu.querySelector('form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));await settle();
+    let entry=manual();check('manual controls are translated',menu.querySelector('label').textContent===acMessage('choices.model_id')&&menu.querySelector('form button').textContent===acMessage('choices.apply'));entry.value='-invalid';menu.querySelector('form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));await settle();
     check('invalid manual model never commits',manualCalls===0&&!menu.hidden&&dynamic.value==='a');
     entry.value='configured-model';entry.dispatchEvent(new Event('input'));menu.querySelector('form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));await settle();
     check('explicit manual registration commits after success',manualCalls===1&&menu.hidden&&dynamic.value==='configured-model');

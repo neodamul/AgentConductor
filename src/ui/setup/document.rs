@@ -12,20 +12,23 @@ pub(crate) fn document() -> Result<String, String> {
         include_str!("../mcp.css"),
         include_str!("../chat.css"),
         include_str!("../optimize.css")
-    ) + include_str!("../anchored_select.css");
+    ) + include_str!("../anchored_select.css")
+        + include_str!("../role_choices.css");
     let manual_script = include_str!("../manual.js");
-    let script = format!(
-        "{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
-        super::super::I18N,
-        super::super::JS,
-        include_str!("../mcp.js"),
-        include_str!("../chat.js"),
-        include_str!("../optimize.js"),
-        include_str!("../stepper.js"),
-        include_str!("../rail.js"),
-        manual_script,
-        include_str!("../startup.js")
-    ) + include_str!("../anchored_select.js");
+    let script = include_str!("../role_choices.js").to_string()
+        + &format!(
+            "{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
+            super::super::I18N,
+            super::super::JS,
+            include_str!("../mcp.js"),
+            include_str!("../chat.js"),
+            include_str!("../optimize.js"),
+            include_str!("../stepper.js"),
+            include_str!("../rail.js"),
+            manual_script,
+            include_str!("../startup.js")
+        )
+        + include_str!("../anchored_select.js");
     let policy = format!(
         "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; script-src 'nonce-{nonce}'; style-src 'nonce-{nonce}'; connect-src 'none'; img-src data:; base-uri 'none'; form-action 'none'\">"
     );

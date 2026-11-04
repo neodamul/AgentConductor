@@ -1231,5 +1231,13 @@
   "choices.invalid_model": "Enter a nonempty model ID without spaces or a leading dash.",
   "choices.manual_unavailable": "Manual model configuration is unavailable for this field.",
   "choices.fallback_summary": "Fallback: {value1} / {value2}",
-  "choices.fallback_disabled": "Fallback: none (role override)"
+  "choices.fallback_disabled": "Fallback: none (role override)",
+  "choices.inherit": "Use profile default",
+  "choices.none": "None",
+  "choices.fallback": "Fallback agent",
+  "choices.agent_changed": "The agent changed; choose the model again.",
+  "choices.model_binding_required": "Configure a {model} CLI argument or model option before selecting a custom model.",
+  "choices.registration_failed": "Model registration failed; the previous choice is retained.",
+  "choices.cli_default_model": "CLI default model",
+  "choices.model_placeholder": "CLI model ID"
 }

@@ -43,3 +43,26 @@ its policy. Pending-task agent changes clear the old first hop too. Agent rename
 nested role reference; removing its target turns that role policy into explicit `false`,
 which cannot accidentally reactivate an inherited default. Plan review metadata names the
 effective fallback, and editing unrelated Task fields preserves the policy.
+
+## Role and manual catalog UI unit
+
+`role_choices.js` renders the five existing worker roles without adding a new planning-role
+key to the Rust schema. Each row stores its own primary/model and inherited/disabled/explicit
+fallback/model. Agent changes reset models even when both catalogs contain the same ID;
+self fallback is removed, and no fallback disables its model. Changing an inherited model
+creates an explicit role override. Saved missing primaries stay visible for reassignment.
+The internal inherit token cannot collide with a registered agent ID.
+
+Coordinator and role manual model entry registers through the existing asynchronous
+`catalog` request before applying the choice. Custom CLIs need a declared model argument;
+registration failure or a changed source agent must not select a new value. Catalog refresh
+updates options without a polling timer or an extra query. The lexical I18N binding is used
+for popup labels, and accessibility-label updates alone must not dismiss an open list.
+
+Design-owner decision (2026-11-04): the planning row is intentionally informational;
+Workspace owns its coordinator/model, and the existing five worker-role keys are retained.
+This is an explicit exception from the mock's editable planning/verification row, not an
+unimplemented sixth backend role. Goal-specific confirmation/seeding is tracked in #429;
+remaining inspector/per-surface manual-model acceptance is #430. Both stay in milestone
+0.2.0 after #409 merges. Isolated atom parity does not certify the parent shell or native
+Windows package.

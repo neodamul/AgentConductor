@@ -2652,9 +2652,9 @@ Trace: amends R-210 / DD-222.
 - [x] Plan: audit existing native select sources, role rules, catalog checks and inherited fallback execution before editing; preserve native state/events behind one shared anchored surface.
 - [x] Task (shared surface): isolated anchored_select JS/CSS plus native-document/simulator includes; native values/change events retained.
 - [x] Task (fallback backend): reviewed Task/Role policy overrides, explicit none, isolated defaults, transfer/pending-edit handling and rename/removal references.
-- [ ] Task (role/model UI): isolated role module, Agent/model resets, inherited/default choices and operator model catalog registration.
-- [ ] Verify: real simulator keyboard/focus/modal/refresh tests in light/dark at 840/1280; add parity entries for every visual element, validate backend precedence and unsupported-catalog paths.
-- [ ] Completed: commit/push verified units; full issue stays open until all acceptance checks pass. Depends on the #417 parity runner, integrated locally into this issue branch; main unchanged.
+- [x] Task (role/model UI unit): isolated role module, Agent/model resets, inherited/default choices and asynchronous operator model catalog registration; saved missing primaries and token collisions covered.
+- [x] Verify (implementation unit): 168 real simulator checks (88 shared + 80 role), 32 tests across ten local Rust suites, focused Clippy; 27 registered parity entries pass, including 20 choice atoms in light/dark at 840/1280. New field/list/form/arrow crops differ 0%; disabled models 0.07–0.26%. Existing avatar exception remains #410.
+- [ ] Completed: commit/push verified implementation and PR; design-owner intentional planning-row exception documented. Separate milestone acceptance continues in #429 (Goal confirmation/seeding) and #430 (inspector/manual paths); native Windows packages remain #420. Main contains the #417 parity runner and #414/#416/#418 backends.
 
 ### Quota indicator backend — GitHub #404
 Trace: R-212 / DD-224.

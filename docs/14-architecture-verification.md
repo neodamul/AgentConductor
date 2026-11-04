@@ -369,3 +369,24 @@ Deletion runs outside the settings mutex, rejects competing writes without waiti
 | R-213 | `workspace_goal_rules.rs`, `startup_folder_plan.rs`, `folder_workflow.rs`, `slug_flow.rs`, `slug_folder.rs`, `slugs.rs`; with architecture trace, 24 tests in seven local suites | Actual Windows reparse-point/package checks; Claude webview dialog dimensions/focus/scroll and step-6 result/continuation rendering |
 
 Existing backend behavior was retained after audit. The correction exclusively reserves a new Goal root before writing ownership markers or Git exclusions; new allocation performs no legacy migration. Non-Git projects remain free of `.git`; private external change history still requires the Git executable. Display edits preserve existing folder IDs/paths, and New Goal retains Workspace directory/coordinator/profiles/roles. These tests do not establish native modal geometry.
+
+## Role choices and manual catalog UI — GitHub #409, UI unit
+
+Trace: R-210 / UC-202 / DD-222. The actual assembled simulator passed 88 generic choice
+checks and 80 role checks across light/dark and 840/1280. The Rust entry point runs both
+browser scripts. Latest local regression: 32 tests across ten suites, including real
+fallback scheduling, model catalogs, role rules, Node runtime, architecture, DOM IDs,
+source layout and compact agent buttons. Focused Clippy and formatting passed.
+
+TDD regressions reproduced raw manual-label keys and loss of a saved missing primary;
+both now pass. Accessibility label rebinding no longer closes an open list. Manual
+registration uses the native async catalog request and only commits after success.
+
+New parity cases cover the 18px fallback arrow, disabled fallback-model field and manual
+entry form in both themes/widths, in addition to the shared field and list. These are
+isolated control atoms, not evidence of full-shell or native Windows equivalence. Full 27-entry parity passed with zero failures: new fields/lists/forms/arrows 0% crop
+difference, disabled fields 0.07–0.26%; the pre-existing 19.62% avatar difference remains
+tracked under #410. The planning row is an intentional informational exception from the
+mock, approved by the design owner. Goal confirmation/seeding is #429 and remaining
+inspector/manual acceptance is #430, both in milestone 0.2.0. A late model-registration
+reply after a coordinator switch is also rejected by a real browser regression.

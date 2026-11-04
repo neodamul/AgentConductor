@@ -2,11 +2,11 @@
 (() => {
   const buttons=new WeakMap(),menu=document.createElement('div');
   menu.id='ac-choice-menu';menu.className='ac-choice-menu';menu.hidden=true;
-  menu.innerHTML='<div class="ac-choice-heading"></div><div class="ac-choice-options" role="listbox" id="ac-choice-options"></div><form class="ac-choice-manual" hidden><label></label><div><input required maxlength="512"><button type="submit"></button></div><p role="alert" hidden></p></form>';
+  menu.innerHTML='<div class="ac-choice-heading"></div><div class="ac-choice-options" role="listbox" id="ac-choice-options"></div><form class="ac-choice-manual" hidden><label for="ac-choice-manual-model"></label><div><input id="ac-choice-manual-model" required maxlength="512"><button type="submit"></button></div><p role="alert" hidden></p></form>';
   document.body.append(menu);
   const heading=menu.querySelector('.ac-choice-heading'),list=menu.querySelector('.ac-choice-options'),form=menu.querySelector('form'),input=form.querySelector('input'),error=form.querySelector('p');
   let anchor=null,source=null;
-  const text=id=>window.AC_I18N?acMessage(id):id;
+  const text=id=>typeof AC_I18N!=='undefined'?acMessage(id):id;
   const display=(select,value,label)=>{const agent=select.dataset.choiceIcon==='person'||/coordinator$|provider$|agent$|agent-select$/.test(select.id);return agent&&value==='claude'?'Claude Code':agent&&value==='codex'?'Codex':label;};
   function close(restore=false){
     menu.hidden=true;anchor?.setAttribute('aria-expanded','false');
@@ -28,7 +28,7 @@
     const label=select.selectedOptions[0]?.textContent||'—';
     const shown=display(select,select.value,label);
     if(button.querySelector('.ac-choice-value').textContent!==shown)button.querySelector('.ac-choice-value').textContent=shown;
-    button.disabled=select.disabled;button.title=select.title||shown;
+    button.disabled=select.disabled;button.title=select.title||shown;button.classList.toggle('missing',select.classList.contains('missing'));
     const labelText=select.getAttribute('aria-label')||[...select.labels||[]].map(e=>{const label=e.cloneNode(true);label.querySelectorAll('select,button,.ac-selection-control').forEach(n=>n.remove());return label.textContent.trim();}).join(' ')||select.id||text('choices.select');
     button.setAttribute('aria-label',labelText);
     const icons={person:'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0 M4 21v-2a8 8 0 0 1 16 0v2',model:'M6 6h12v12H6z M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4',fallback:'M4 7h15l-4-4M20 17H5l4 4',sliders:'M4 7h16M4 17h16 M8 4v6M16 14v6'};
@@ -56,7 +56,7 @@
       option(label,o.value,o.selected,o.disabled||o.parentElement?.disabled,()=>pick(o.value));
     }
     if(select.dataset.choiceManual==='true')option(text('choices.manual'),'__manual',false,false,()=>{
-      form.hidden=false;form.querySelector('label').textContent=text('choices.model_id');form.querySelector('button').textContent=text('choices.apply');input.setAttribute('aria-label',text('choices.model_id'));input.value='';input.focus({preventScroll:true});position();
+      form.hidden=false;form.querySelector('label').textContent=text('choices.model_id');form.querySelector('button').textContent=text('choices.apply');input.setAttribute('aria-label',text('choices.model_id'));input.placeholder=text('choices.model_placeholder');input.value='';input.focus({preventScroll:true});position();
     });
     menu.hidden=false;button.setAttribute('aria-expanded','true');position();
     (list.querySelector('[aria-selected="true"]:not(:disabled)')||list.querySelector('button:not(:disabled)'))?.focus({preventScroll:true});
@@ -93,14 +93,14 @@
       await select.acManualPick(value);
       if(![...select.options].some(o=>o.value===value))select.add(new Option(value,value));
       if(source===select&&!menu.hidden)pick(value);
-    }catch(e){error.hidden=false;error.textContent=e.message;position();}
+    }catch(e){if(source===select&&!menu.hidden){error.hidden=false;error.textContent=e.message;position();}}
     finally{form.querySelector('button').disabled=false;}
   };
   input.addEventListener('input',()=>input.setCustomValidity(''));
   document.addEventListener('close',e=>{if(e.target.contains(menu)){close();document.body.append(menu);}},true);
   new MutationObserver(records=>{
     for(const r of records){
-      if(r.target.matches?.('select,option,optgroup')){const select=r.target.closest('select');if(select)enhance(select);}
+      if(r.target.matches?.('select,option,optgroup')){const select=r.target.closest('select');if(select){if(source===select&&!menu.hidden&&form.hidden&&r.attributeName!=='aria-label')close(true);enhance(select);}}
       for(const n of r.addedNodes||[])if(n.nodeType===1)scan(n);
       if(r.target.matches?.('dialog'))scan(r.target);
     }
