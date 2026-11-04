@@ -203,3 +203,6 @@ header.titlebar #start-settings-button:focus-visible,header.titlebar #start-chat
 #startup-screen input:not([type=checkbox]):not([type=radio]),dialog input:not([type=checkbox]):not([type=radio]),#startup-screen select,dialog select{box-sizing:border-box;height:33px;font-size:13px;padding:6px 9px;border-radius:6px}
 #startup-screen select,dialog select{font-size:12px}
 #startup-screen textarea,dialog textarea{font-size:13px;padding:9px 11px;border-radius:6px;background:var(--surface)}
+/* The step card hangs from the step tabs: no top border or radius, 12px bottom radius, 17/22px padding; status bar 30px on --bar. */
+.step-card{border-top-width:0;border-radius:0 0 12px 12px;padding:17px 22px}
+footer.statusbar{box-sizing:border-box;height:30px;padding-left:16px;background:var(--bar)}
