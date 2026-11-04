@@ -40,4 +40,8 @@ module.exports = [
     ['goal-list-button', '#workspace-goals-button', '#start-goal-list-open'], ['agent-remove', '.agent .tools button', '.profile-tools .remove-agent']
   ].map(([name, mock, app]) => ({ name: 'hover-' + name, hover: true, props: ['backgroundColor', 'color', 'borderTopColor'], keys: name === 'agent-remove' ? ['backgroundColor', 'color', 'borderTopColor'] : ['backgroundColor', 'color'], pixel: false,
     mock: { selector: mock, index: name === 'agent-remove' ? 1 : 0 }, app: { selector: app } })),
+  // Keyboard focus ring (preview.css): 2px accent outline.
+  ...[['titlebar-icon', '#settings-button', '#start-settings-button'], ['rail-tab', '#rail-agents-tab', '#rail-tab-agents']
+  ].map(([name, mock, app]) => ({ name: 'focus-' + name, focus: true, props: ['outlineStyle', 'outlineWidth', 'outlineColor', 'outlineOffset'], keys: ['outlineStyle', 'outlineWidth', 'outlineColor', 'outlineOffset'], pixel: false,
+    mock: { selector: mock }, app: { selector: app } })),
 ];
