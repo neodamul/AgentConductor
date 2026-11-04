@@ -72,6 +72,8 @@ One screen serves the whole job. A single stepper with six steps — **Workspace
 
 When a goal completes, one popup shows where the changes were merged, the changed files, the verification results and the lessons; **Result** in the Goal list or in the Agent Room opens the same popup. The team briefing, the chat with the coordinator and Settings also slide in from the right, one at a time. Claude Code and Codex show their own marks; the border of an agent's icon shows its state (green running or completed, yellow waiting, red failed or blocked).
 
+**About AgentConductor** (application menu) shows what AgentConductor is, its credits and how to install the three agent CLIs: `npm install -g @anthropic-ai/claude-code`, `npm install -g @openai/codex` and `npm install -g opencode-ai`, each with a copy button. It also opens by itself once on the first start after an install or an update; **Get started** or Escape closes it, and it stays quiet until the next version.
+
 ### 1.3 Agents and models
 
 The app-owned workspaces share one machine-wide CLI list, `~/.agentconductor/agents.json`.

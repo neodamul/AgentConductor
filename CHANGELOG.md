@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- About screen: the first start after an install or an update shows a centered About dialog with a short description of AgentConductor, credits and the install commands of the Claude Code, Codex and OpenCode CLIs (each with a copy button); it is shown once per version and is always available from the application menu (GitHub #468).
 ## v0.2.0
 - The goal screen follows the approved design exactly: a strict parity check compares every element's box, text, colour, hover and focus state and pixel crop with the design mock in both themes at 1280 and 840 pixels, with no tolerance.
 - Coordinator, role and model choices open as anchored menus under their field with the same look as the approved design; a role can have a fallback model, and a model id the list does not know can be entered by hand (GitHub #409).
