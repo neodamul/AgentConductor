@@ -916,7 +916,6 @@
   "startup.send_test_message": "테스트 메시지 보내기",
   "startup.sends_a_short_message_when_a_decision_is": "결정이 필요하거나 실행이 끝나면 짧은 메시지를 보냅니다. 웹훅 URL은 이 컴퓨터에만 저장되며 내보내지 않습니다.",
   "startup.session_model": "세션 모델",
-  "startup.sessions": "{value1} · 세션 {value2}개",
   "startup.settings": "설정",
   "startup.settings_02f6ea": "설정",
   "startup.settings_saved": "설정을 저장했습니다.",

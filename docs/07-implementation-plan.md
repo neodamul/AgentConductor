@@ -1511,6 +1511,13 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [ ] Real-app check after the backend PRs (#418 ownership fix first, then the Goal action PR) are on main: folder opens in Finder/Explorer, deletion removes only the Goal folder.
 - [ ] Complete: release (version 0.2.0 only when the user asks).
 
+### Agent cards and task rows match the design (part 1) — DD-222
+- [x] Plan: Trace: amends R-210 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #410 (checklist items: agent cards without executable path and capacity text, red removal icon, task rows with chevron and selected edge); design GitHub #387.
+- [x] Task / Red/Green: design-parity entries `agent-card`, `agent-tool`, `agent-remove`, `task-row`, `task-status-tag` and `room_task_rows.rs` first, then `startup.js` / `startup.css` / `room.css`; the Room rail now really is 250px (a closed-inspector rule still said 222px).
+- [x] Verify: UI Rust and Node tests; design parity 14 entries pass.
+- [ ] Remaining in #410: status border and attention marker on agent avatars, task-row tag set (blocked/approval), keeping the inspector subview on selection, the seven inspector sections.
+- [ ] Complete: release (version 0.2.0 only when the user asks).
+
 ## Bilingual release documentation — DD-134 / v0.1.16
 
 - [x] Plan: pull the latest release source, inspect changed behavior and preserve concurrent Claude work.
