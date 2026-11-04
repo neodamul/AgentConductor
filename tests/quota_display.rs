@@ -156,7 +156,7 @@ fn room_budget_rows_are_localized_rust_snapshot_data() {
     assert_eq!(ko["enterprise"][0]["headline"], "64% 남음 · 개인 할당량");
 
     let room = include_str!("../src/ui/room.js");
-    let controller = include_str!("../src/ui/controller.rs");
+    let controller = include_str!("../src/ui/controller/quota_snapshot.rs");
     assert!(controller.contains("\"quota_budget_rows\""));
     assert!(room.contains("snapshot.quota_budget_rows?.[agent?.id]"));
     assert!(!room.contains("const share=b=>"));
@@ -201,7 +201,7 @@ fn room_quota_reset_times_are_localized_rust_snapshot_data() {
             .starts_with("재설정 2027-")
     );
     let room = include_str!("../src/ui/room.js");
-    let controller = include_str!("../src/ui/controller.rs");
+    let controller = include_str!("../src/ui/controller/quota_snapshot.rs");
     assert!(controller.contains("\"quota_window_reset_labels\""));
     assert!(room.contains("snapshot.quota_window_reset_labels?.[agent?.id]"));
     assert!(!room.contains("new Date(b.resets_at*1000)"));

@@ -2653,6 +2653,22 @@ Trace: amends R-13 (requirements trace to tests); rules in docs/README.md, recor
 - [x] Verify (macOS): full suite; docs/14 lists requirement evidence and the gaps (R-118 not implemented — since done with #377, R-120 partly, R-151 on the Rust line, R-183 open item from #341).
 - [ ] Complete: merge only on request.
 
+### Quota indicator backend — GitHub #404
+Trace: R-212 / DD-224.
+
+- [x] Plan: audit cached quota View, budget and existing localized label contracts.
+- [x] Task: additive native quota_indicators shared by startup and run snapshots; UI contract posted in #404.
+- [x] Verify: missing projection failed first; 47 tests across eight local suites passed, then final consistency changes passed 22 tests across three suites. Actual startup/run snapshots return identical cached indicators; no CLI starts. Formatting/Clippy/whitespace checked.
+- [ ] Completed: commit/push backend, Claude wires UI; release remains gated by explicit user request.
+
+### Goal row backend actions — GitHub #402
+Trace: R-211 / DD-223.
+
+- [x] Plan: audit existing Goal registry, run bindings, owned stop paths and read-only result gaps.
+- [x] Task: native result/folder/delete requests and explicit UI contract (issue comment).
+- [x] Verify: Red (missing requests, then missing result evidence) → Green; 33 tests in eight final local suites (existing phase-flow/navigation suites also passed in the preceding run), including ownership, context preservation, stop/retry, stale confirmation, last-Goal removal and snapshots during deletion. Formatting and focused Clippy checked.
+- [ ] Completed: commit/push; Claude integrates UI; merge and close only after full acceptance.
+
 ### Workspace/Goal model audit — GitHub #411
 Trace: R-213 / DD-225.
 
