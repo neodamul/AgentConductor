@@ -2914,3 +2914,11 @@ Trace: R-210 / R-213 / UC-202 / UC-205 / QAS-209 / QAS-212 / DD-222 / DD-225.
 - [x] Task: guard the entire asynchronous transition, keep a valid draft and restore controls on success/refusal without adding a timer or request.
 - [x] Verify: both themes at 840/1280, refused transition and existing Goal controls; full Node behavior suite passes, plus Clippy/fmt. Native Goal persistence and source/architecture checks run in the same affected suite.
 - [ ] Completed: independent issue-linked PR, main merge and replay to #420, then clean owned artifacts.
+
+### Goal transition quota fixture — GitHub #475 follow-up
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+- [x] Red: the separate local Python CI suite fails 1/45 because its extracted busy() test does not define goalChanging after PR #476.
+- [x] Task: initialize the test state and assert Goal transitions suppress auto-discovery without advancing another agent's quota cooldown. Production code is unchanged.
+- [x] Verify: full local Python discovery on this linked main-based branch passes all 45 tests; the two scheduler cases retain actual extracted production functions.
+- [ ] Completed: merge the isolated follow-up, apply main to #420 and clean owned scratch files.
