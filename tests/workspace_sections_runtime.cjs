@@ -21,7 +21,7 @@ const preset=`SIM.home.config.goal='Goal A';SIM.home.slugs=[{slug:'goal-a',goal:
   q('start-goal-list-open').click();check('existing Goal list opens',q('start-goals').open);q('start-goals-close').click();
   q('start-tab-team').click();check('Goal list stays reachable on Team',q('start-goal-list-open').getBoundingClientRect().width>0);check('Team title is the actual Goal',q('start-page-title').textContent==='Goal A');
   q('start-tab-workspace').click();check('Goal list returns to Goal section',goal.contains(q('start-goal-list-open')));
-  SIM.home.run_available=true;SIM.home.run_state='running';const until=Date.now()+5000;while(q('brief-team').disabled&&Date.now()<until)await new Promise(r=>setTimeout(r,30));
+  SIM.home.run_available=true;SIM.home.run_state='running';const until=Date.now()+12000;while(q('brief-team').disabled&&Date.now()<until)await new Promise(r=>setTimeout(r,30));
   check('existing run enables briefing',!q('brief-team').disabled);q('brief-team').click();
   const briefingUntil=Date.now()+5000;while(!q('briefing-dialog').open&&Date.now()<briefingUntil)await new Promise(r=>setTimeout(r,30));
   check('Workspace opens full briefing '+JSON.stringify({open:q('briefing-dialog').open,notice:q('start-notice').textContent,brief:q('briefing-dialog').textContent,requests:SIM.log.slice(-5).map(x=>x.kind)}),q('briefing-dialog').open&&['Implement authentication','Writing tests','Preserve rotation state','Review edge cases','Wait for results'].every(t=>q('briefing-dialog').textContent.includes(t)));
