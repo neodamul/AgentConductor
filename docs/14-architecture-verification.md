@@ -476,3 +476,5 @@ pass with the delay retained. The test also waits for Read Plan to settle before
 the changed-baseline case, then requires the actual context-rejection message
 and enabled controls before asserting that no second planner request occurred.
 No production context guard, acceptance tolerance or approved mock is changed.
+
+#466 final local verification: `cargo test --all-targets --locked --no-fail-fast` exits zero with 842 passed, zero failed and 15 ignored across 270 suites, including both-theme design parity and the complete Node UI acceptance suite. Clippy with warnings denied, formatting and diff checks pass. This does not establish native Windows acceptance.

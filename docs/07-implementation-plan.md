@@ -2903,5 +2903,5 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Red: delayed post-prepare snapshot reproduces missing pick_file / unopened first modal with #464 diagnostics.
 - [x] Task: wait for actual action settlement before the next interaction; retain the deterministic delay and all confirmation assertions.
 - [x] Verify: delayed actual assembled-browser flow passes at 840/1280 in both themes; Clippy/fmt pass. Negative baseline test requires actual rejection and action settlement.
-- [ ] Verify: complete local cargo all-targets suite; Windows remains a separate check.
-- [ ] Completed: issue-linked PR, AgentMemory/wiki checkpoint and own temporary-file cleanup.
+- [x] Verify: complete local `cargo test --all-targets --locked --no-fail-fast` exits zero: 842 passed, zero failed, 15 ignored across 270 suites. Windows native behavior remains a separate check.
+- [x] Completed: isolated issue-linked PR #467, AgentMemory/wiki checkpoint recorded; own scratch reproductions can be removed after integration.
