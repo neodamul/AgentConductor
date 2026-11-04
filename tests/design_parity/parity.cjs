@@ -34,8 +34,8 @@ const MEASURE = (sel, index, props, mark, rel) => `(() => { const e = [...docume
 
 async function visit(browser, side, spec) {
   if (side === 'mock') { await browser.goto('about:blank'); await browser.goto(MOCK + (spec.url || '?theme=light#0').replace('theme=light', 'theme=' + THEME)); } else {
-    await browser.goto(APP); await browser.eval(`sessionStorage.setItem('SIM_PRESET', ${JSON.stringify(PRESET + (spec.setup || ''))}); location.reload()`);
-    await new Promise(r => setTimeout(r, 1200));
+    await browser.goto(APP); await browser.eval(`sessionStorage.setItem('SIM_PRESET', ${JSON.stringify(PRESET + (spec.setup || ''))})`);
+    await browser.goto(APP);
   }
   if (side === 'app') await browser.eval(`document.documentElement.dataset.theme = ${JSON.stringify(THEME)}`);
   if (spec.run) await browser.eval(spec.run);
@@ -82,6 +82,7 @@ async function visit(browser, side, spec) {
         const kept = await browser.eval("!!document.querySelector('[data-parity-target]')");
         await browser.eval(`(() => { document.getElementById('parity-solo')?.remove(); const e = document.querySelector('[data-parity-target]'); if (!e) return; e.setAttribute('style', e.dataset.parityStyle); if (!e.dataset.parityStyle) e.removeAttribute('style'); delete e.dataset.parityStyle; delete e.dataset.parityTarget; })()`);
         if (kept) break;
+        if (attempt === 4) throw new Error(`${x.name}: ${side} changed during all five capture attempts`);
       }
       fs.writeFileSync(path.join(out, `${x.name}.${side}.png`), got[x.name].shots[side]);
     }

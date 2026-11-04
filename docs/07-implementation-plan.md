@@ -2968,3 +2968,19 @@ Trace: R-215 / UC-207 / QAS-214 / DD-227.
 - [ ] Verify: Node UI suite and strict design parity on macOS; Windows through CI.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Parity evidence stability — GitHub #420
+Trace: R-210 / R-211 / UC-202 / UC-203 / QAS-209 / QAS-210 / DD-222 / DD-223.
+
+Evidence stability correction: a controlled fake browser returns no
+retained target on all five capture attempts, yet the previous runner compares
+identical white images and exits zero. Add a deterministic negative regression,
+fail closed at the existing retry budget, retain success on the fifth attempt,
+and route preset reload through the existing awaited navigation helper instead
+of evaluating reload and sleeping 1200ms. No comparison tolerance changes.
+
+- [x] Red: all five unstable captures compare equal and falsely exit zero; after the retry guard, the separate unsettled-reload fixture still fails.
+- [x] Task: reject exhausted captures, retain fifth-attempt success and await the existing navigation helper for preset reload. Deterministic negative/positive cases pass.
+- [x] Task: Windows-only junction fixture uses a static raw cmd command, quoted environment variables and disabled delayed expansion; product code unchanged.
+- [ ] Verify: fresh strict matrix and complete Node harness; native Windows junction/Explorer execution must be established by the runner.
+- [ ] Completed: #420 stays open until full evidence, platform receipts and cleanup are complete.

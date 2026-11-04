@@ -57,3 +57,18 @@ nonzero failure at both widths in both themes; removing the bypass makes it pass
 The real assertions must then pass, rather than being hidden again. The approved
 9px narrow titlebar version is a selector-specific type-scale exception, tested
 against rejection of 9px body text and 9px desktop version text.
+
+## Stable evidence and navigation
+
+Equal PNGs are insufficient if the target disappeared during every capture.
+The runner now rejects exhaustion of its existing five attempts.
+`tests/parity_capture_runtime.cjs` proves always-unstable captures fail, a stable
+fifth attempt succeeds, an immediately stable target succeeds, and evaluation
+waits for the new document. A white 2x2 PNG deliberately cannot hide instability.
+Preset setup uses the existing awaited goto helper instead of an unchecked
+reload plus a 1200ms sleep. Pixel and geometry tolerances are unchanged.
+
+The Windows junction fixture must pass its static cmd command via raw_arg: cmd
+uses different decoding from ordinary CRT arguments. Paths remain quoted
+environment values, with delayed expansion disabled. This does not prove
+Windows execution from macOS. See the [Rust CommandExt reference](https://doc.rust-lang.org/std/os/windows/process/trait.CommandExt.html#tymethod.raw_arg).

@@ -86,6 +86,7 @@ fn a_goal_alias_to_the_project_root_is_refused_without_touching_source() {
 #[cfg(windows)]
 #[test]
 fn a_reparse_goal_to_the_project_root_is_refused_without_touching_source() {
+    use std::os::windows::process::CommandExt;
     let f = Fixture::new();
     let retained = f.root.join("retained-goal");
     fs::rename(f.folder(), &retained).unwrap();
@@ -93,12 +94,8 @@ fn a_reparse_goal_to_the_project_root_is_refused_without_touching_source() {
     fs::write(&source, "keep").unwrap();
     let plain = |p: std::path::PathBuf| p.to_string_lossy().trim_start_matches(r"\\?\").to_owned();
     let output = std::process::Command::new("cmd.exe")
-        .args([
-            "/D",
-            "/S",
-            "/C",
-            r#"mklink /J "%AC_TEST_LINK%" "%AC_TEST_TARGET%""#,
-        ])
+        .args(["/D", "/V:OFF", "/S", "/C"])
+        .raw_arg(r#""mklink /J "%AC_TEST_LINK%" "%AC_TEST_TARGET%"""#)
         .env("AC_TEST_LINK", plain(f.folder()))
         .env("AC_TEST_TARGET", plain(f.root.join("project")))
         .output()
