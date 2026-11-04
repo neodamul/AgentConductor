@@ -1483,7 +1483,13 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [x] Plan: Trace: amends R-210 (amends R-34, NFR-12, QAS-27, DD-40) -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #406; design GitHub #387.
 - [x] Task / Red/Green: `tests/icons.rs` (bundled bytes and pinned hashes), `tests/release_package.rs` (license text and notice), `tests/room_task_rows.rs` (28px/29px bordered containers) first, then `src/icons/brand.rs`, the package step and the CSS.
 - [x] Verify: icon, package, avatar and UI tests; the real app shows the Claude Code and Codex marks in the agent list.
-- [ ] Complete: slide-overs of the same issue; release (version 0.2.0 only when the user asks).
+- [ ] Complete: release (version 0.2.0 only when the user asks).
+
+### Briefing, chat and Settings as right slide-overs — DD-222
+- [x] Plan: Trace: amends R-210 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #406; design GitHub #387.
+- [x] Task / Red/Green: `tests/slide_over_panels.rs` first (red), then the `slide-panel` class on the briefing and Settings dialogs, the chat slide-in and the one-at-a-time rule in `chat.js`.
+- [x] Verify: UI Rust and Node tests; UI simulator showed Settings and the briefing as 460px right panels, the chat closing when either opens, and no horizontal scroll.
+- [ ] Complete: release (version 0.2.0 only when the user asks).
 
 ### Design parity check against the approved mock — DD-222
 - [x] Plan: Trace: amends R-210 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #415; design GitHub #387. Every goal-screen issue adds spec entries for the elements it builds.
@@ -2653,3 +2659,11 @@ Trace: amends R-13 (requirements trace to tests); rules in docs/README.md, recor
 - [x] Task: renumber the second chain (R-209 … DD-221), restore headings, merge duplicates and stray amendments, add `Status:` lines to requirements, use cases and QAS, trace every issue unit, rebuild the README index and matrix by area; `tests/architecture_trace.rs` enforces the rules (mutation run: four of six tests fail on injected faults); `tests/agent_master_list.rs` covers R-101, `tests/agent_order_runtime.cjs` R-102 and `tests/run_phase_title_runtime.cjs` R-114.
 - [x] Verify (macOS): full suite; docs/14 lists requirement evidence and the gaps (R-118 not implemented — since done with #377, R-120 partly, R-151 on the Rust line, R-183 open item from #341).
 - [ ] Complete: merge only on request.
+
+### Workspace/Goal model audit — GitHub #411
+Trace: R-213 / DD-225.
+
+- [x] Plan: audit stable naming, optional worktrees/non-Git folder support, New Goal retention and next-phase continuation before changing code.
+- [x] Task: exclusive Goal root reservation refuses folder/file/link collisions; automatic naming skips dangling links; request shapes unchanged.
+- [x] Verify: Red reproduced directory/link adoption → Green: 24 tests across seven local suites, including collision/context/display edits, plain-folder planning/approved merge and phase continuation; fmt/Clippy/whitespace pass.
+- [ ] Completed: commit/push backend audit and correction; Claude verifies UI-only dialog/step continuity; full issue remains open until acceptance.
