@@ -4,6 +4,10 @@ use serde_json::json;
 #[path = "support/workflow.rs"]
 mod support;
 
+// #480: on a 2-vCPU Windows runner nine parallel workflow tests (each spawning Git and, on first use, compiling a mock agent)
+// starved each other past their bounded waits. Two at a time keep every wait a measure of the product, not of the runner.
+static GATE: tokio::sync::Semaphore = tokio::sync::Semaphore::const_new(2);
+
 fn with_fallback(mode: &str) -> (std::path::PathBuf, Plan) {
     let (root, plan) = support::setup(mode);
     let mut value = serde_json::to_value(plan).unwrap();
@@ -16,6 +20,7 @@ fn with_fallback(mode: &str) -> (std::path::PathBuf, Plan) {
 
 #[tokio::test]
 async fn restricted_profile_transfers_to_company_cli_and_retains_account_evidence() {
+    let _gate = GATE.acquire().await.unwrap();
     let (root, plan) = with_fallback("shared");
     let run = root.join("run");
     let report = agentconductor::workflow::run(plan, &root.join("repo"), &run, 5)
@@ -77,6 +82,7 @@ fn fallback_rejects_unknown_models_and_same_account_substitutes() {
 
 #[tokio::test]
 async fn no_policy_waits_and_ordinary_failure_does_not_transfer() {
+    let _gate = GATE.acquire().await.unwrap();
     for mode in ["quota", "task"] {
         let (root, mut plan) = with_fallback("shared");
         if mode == "quota" {
@@ -103,6 +109,7 @@ async fn no_policy_waits_and_ordinary_failure_does_not_transfer() {
 
 #[tokio::test]
 async fn reachable_fallback_permissions_are_checked_before_execution() {
+    let _gate = GATE.acquire().await.unwrap();
     let (root, mut plan) = with_fallback("shared");
     plan.agents[1].permission_mode = "unverified".into();
     let run = root.join("run");
@@ -119,6 +126,7 @@ async fn reachable_fallback_permissions_are_checked_before_execution() {
 
 #[tokio::test]
 async fn fallback_uses_optional_worktrees_and_retains_partial_files() {
+    let _gate = GATE.acquire().await.unwrap();
     let (root, mut plan) = with_fallback("worktree");
     plan.agents[0].args = vec!["quota-partial-long".into()];
     plan.agents[1].args = vec!["task-preserve".into()];
@@ -137,6 +145,7 @@ async fn fallback_uses_optional_worktrees_and_retains_partial_files() {
 
 #[tokio::test]
 async fn renaming_a_profile_does_not_clear_the_same_account_restriction() {
+    let _gate = GATE.acquire().await.unwrap();
     let (root, mut plan) = with_fallback("shared");
     plan.agents[0].args = vec!["quota".into()];
     plan.agents[0].fallback = None;
@@ -162,6 +171,7 @@ async fn renaming_a_profile_does_not_clear_the_same_account_restriction() {
 
 #[tokio::test]
 async fn restricted_fallback_target_waits_without_unbounded_retries() {
+    let _gate = GATE.acquire().await.unwrap();
     let (root, mut plan) = with_fallback("worktree");
     plan.agents[1].args = vec!["quota".into()];
     let report = agentconductor::workflow::run(plan, &root.join("repo"), &root.join("run"), 5)
@@ -176,6 +186,7 @@ async fn restricted_fallback_target_waits_without_unbounded_retries() {
 
 #[tokio::test]
 async fn human_stop_prevents_policy_transfer() {
+    let _gate = GATE.acquire().await.unwrap();
     let (root, mut plan) = with_fallback("shared");
     plan.agents[0].args = vec!["quota-slow".into()];
     let run = root.join("run");
@@ -207,6 +218,7 @@ async fn human_stop_prevents_policy_transfer() {
 
 #[tokio::test]
 async fn mutual_fallback_with_both_accounts_restricted_waits_for_availability() {
+    let _gate = GATE.acquire().await.unwrap();
     let (root, mut plan) = with_fallback("shared");
     let mut company = plan.agents[0].clone();
     company.id = "company".into();
