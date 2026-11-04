@@ -62,4 +62,10 @@ module.exports = [
   // Compact Goal header (GitHub #408): 17px semibold single line.
   { name: 'goal-title', props: ['fontSize', 'fontWeight'], keys: ['height', 'fontSize', 'fontWeight'], pixel: false,
     mock: { url: '?theme=light#0', selector: '.head h1' }, app: { selector: '.startup-main .startup-heading h1' } },
+  // Left rail toggle (GitHub #408): a 32px titlebar button hides and restores the whole rail; the centre takes the space.
+  { name: 'rail-toggle-button', props: ['borderTopLeftRadius'], keys: ['width', 'height', 'borderTopLeftRadius'], pixel: false,
+    mock: { url: '?theme=light#0', selector: '#sidebar-toggle' }, app: { selector: '#start-rail-toggle' } },
+  { name: 'rail-toggle-behaviour',
+    app: { run: "window.__w = document.querySelector('.startup-main').getBoundingClientRect().width; document.getElementById('start-rail-toggle').click()" },
+    assert: "(() => { const hidden = document.querySelector('.startup-team').getBoundingClientRect().width === 0 && document.querySelector('.startup-main').getBoundingClientRect().width > window.__w + 200; document.getElementById('start-rail-toggle').click(); return hidden && document.querySelector('.startup-team').getBoundingClientRect().width === 250; })()" },
 ];

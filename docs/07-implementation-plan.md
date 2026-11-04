@@ -1499,7 +1499,8 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [x] Part 3: the step card's header and action footer are sticky so a short window never pushes the actions out of view (parity behaviour check `step-card-fixed-header-footer` at 1280x520, mutation-checked).
 - [x] Part 4: the Activity / Changes and tests / Raw logs / Lessons tabs are content-width 29px pills with 7px radius, left aligned (parity entries `view-tab` and `view-tabs-not-stretched`).
 - [x] Part 5: the Goal header is compact (17px semibold single line, eyebrow removed; parity entry `goal-title`).
-- [ ] Remaining in #408: titlebar order and 32px hit boxes, rail toggle, fixed 36px info row and the Team briefing icon button on the Workspace screen, leading icons, evidence line, fullscreen reflow, narrow-width rail (230/190).
+- [x] Part 6: a 32px titlebar button before the Workspace name hides and restores the whole left rail on both screens; the centre takes the space (`rail_toggle.rs`, parity `rail-toggle-button` and the behaviour check `rail-toggle-behaviour`).
+- [ ] Remaining in #408: titlebar order, fixed 36px info row and the Team briefing icon button on the Workspace screen, leading icons, evidence line, fullscreen reflow, narrow-width rail (230/190).
 - [ ] Complete: release (version 0.2.0 only when the user asks).
 
 ### Goal-list row actions in the webview — DD-222
