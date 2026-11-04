@@ -2662,3 +2662,11 @@ Trace: R-213 / DD-225.
 - [x] Task: exclusive Goal root reservation refuses folder/file/link collisions; automatic naming skips dangling links; request shapes unchanged.
 - [x] Verify: Red reproduced directory/link adoption → Green: 24 tests across seven local suites, including collision/context/display edits, plain-folder planning/approved merge and phase continuation; fmt/Clippy/whitespace pass.
 - [ ] Completed: commit/push backend audit and correction; Claude verifies UI-only dialog/step continuity; full issue remains open until acceptance.
+
+### Compact agent action icons — GitHub #424
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+- [x] Plan: preserve action strip behavior and approved height; isolate excess horizontal padding.
+- [x] Task: icon-only buttons use zero horizontal padding and a stable non-shrinking 13px SVG; labeled buttons use compact spacing.
+- [x] Verify: Red reproduced icon-only text padding; Green: 40 actual button checks in light/dark at 840/1280. The reported 187px strip retains all five actions on one row and every SVG at 13px; verified against the live Claude simulator with temporary CSS injection. Architecture/DOM ID regression also passed (nine Rust tests across three suites).
+- [ ] Completed: commit/push and coordinate integration with the pending agent-card PR; release and native Windows verification are outside this unit.
