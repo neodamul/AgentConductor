@@ -57,3 +57,9 @@ Goal, repository, coordinator, model and Save stay disabled; immediate input
 persists after settlement, and refused transitions restore editing. All four
 light/dark × 840/1280 browser cases pass. The simulated bridge proves UI
 sequencing; native Goal persistence is checked separately by `project_goals`.
+
+The #475 transition flag is also a dependency of the Python scheduler fixture
+that extracts busy(). Define it in that test's globals and assert that a Goal
+transition suppresses auto-discovery without blocking normal metadata behavior.
+The Node harness does not execute Python: validate the separate Python discovery
+step before claiming the complete local CI checks passed.
