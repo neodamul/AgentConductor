@@ -1,5 +1,5 @@
-//! Icons for built-in providers (DD-40, amended by DD-222). Claude Code and Codex use the pinned
-//! color marks in `brand`; other providers read the operator's own application icon at runtime.
+//! Icons for built-in providers (DD-40, amended by DD-222). Built-in providers use the pinned
+//! marks in `brand`; custom providers retain their existing initials.
 use crate::protocol::Provider;
 use std::{
     collections::HashMap,

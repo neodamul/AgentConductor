@@ -71,7 +71,7 @@ in `05b-design-drivers.md`.
 | NFR-09 | Truthfulness | Quota, status and briefings never fabricate progress or capacity | R-22, R-28, R-29 | QAS-17, QAS-20, QAS-21 |
 | NFR-10 | Usability / accessibility | Status readable without colour alone; reduced motion; dialogs reachable by assistive technology; Korean input; every screen has a way back without side effects | R-17, R-29, R-32, R-33 | QAS-21, QAS-25, QAS-26 |
 | NFR-11 | Portability | macOS and Windows native builds with equivalent safety primitives | R-23, R-24 | QAS-18 |
-| NFR-12 | Distribution compliance | Reviewed licenses, notices and checksums for every released artifact; no bundled third-party trademarks (exception, amended by R-210: two vendored MIT agent marks with their notice) | R-15, R-24, R-34 | QAS-14, QAS-27 |
+| NFR-12 | Distribution compliance | Reviewed licenses, notices and checksums for every released artifact; no bundled third-party trademarks (exception, amended by R-210: three vendored MIT agent marks with their notice; OpenCode added by #439) | R-15, R-24, R-34 | QAS-14, QAS-27 |
 | NFR-14 | Learnability | A first-time operator can start the desktop workflow from the README without CLI knowledge | R-36 | QAS-28 |
 | NFR-15 | Independence | Planning, execution and approval work with no LLM coordinator; a draft launches no process | R-37 | QAS-29 |
 | NFR-16 | Discoverability | Every workspace setting is reachable from visible controls without typing paths or using the CLI | R-38, R-39 | QAS-30, QAS-31 |
@@ -341,6 +341,7 @@ Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Sourc
 
 ### FR-204 One goal screen with a single six-step stepper
 The stepper has six tabs with single-line labels and the group names Prepare / Run / Finish as accessible names; the Room maps task states to steps 4 (tasks), 5 (verify) and 6 (review, merge, complete); tabs 1-3 keep arrow, Home and End navigation; tabs 4-6 are reached with Tab and activated with Enter or Space and are disabled while no run exists.
+Amendment #439 (2026-11-04): Built-in OpenCode profiles resolve the locally embedded licensed mark; reuse the existing inline avatar path, preserve custom fallback behavior and avoid executable or network discovery.
 Trace: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. Source: user, approved design #387, 2026-11-04.
 
 ### FR-110 Validate both language references

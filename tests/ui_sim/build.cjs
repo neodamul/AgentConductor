@@ -7,7 +7,7 @@
 const fs = require('fs'), path = require('path');
 const [repo, out] = process.argv.slice(2), ui = f => fs.readFileSync(path.join(repo, 'src/ui', f), 'utf8');
 const i18n = 'const AC_MESSAGES={en:' + ui('messages/en.json') + ',ko:' + ui('messages/ko.json') + '};\n' + ui('i18n.js');
-const brands = [['claude','claude-code-color.svg'],['codex','codex-color.svg']].map(([id,file])=>'<template id="ac-brand-'+id+'">'+fs.readFileSync(path.join(repo,'third_party/lobe-icons',file),'utf8')+'</template>').join('');
+const brands = [['claude','claude-code-color.svg'],['codex','codex-color.svg'],['opencode','opencode.svg']].map(([id,file])=>'<template id="ac-brand-'+id+'">'+fs.readFileSync(path.join(repo,'third_party/lobe-icons',file),'utf8')+'</template>').join('');
 const home = brands + ui('startup.html') + ui('mcp.html') + ui('chat.html') + ui('optimize.html');
 const style = [ui('room.css'), ui('startup.css'), ui('mcp.css'), ui('chat.css'), ui('optimize.css'),ui('titlebar.css')].join('\n');
 const script = [i18n, 'window.startRoom=function(){ ' + ui('room_activity.js') + ui('room_result.js') + ui('room.js') + ' };', ui('mcp.js'), ui('chat.js'), ui('optimize.js'), ui('result_view.js'), ui('goal_rows.js'), ui('action_icons.js'), ui('stepper.js'), ui('rail.js'), ui('agent_status.js'), ui('quota_ring.js'), ui('brand_avatar.js'),ui('team_briefing.js'), ui('manual.js'), ui('startup.js')].join('\n');
