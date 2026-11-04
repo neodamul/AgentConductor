@@ -23,7 +23,7 @@ function decode(buf) {
   return { width, height, data: rgba };
 }
 // Share of pixels whose channels differ by more than `tol` (0-255); sizes must match.
-function diffRatio(a, b, tol = 24) {
+function diffRatio(a, b, tol = 0) {
   if (a.width !== b.width || a.height !== b.height) return { ratio: 1, sizeMismatch: [a.width, a.height, b.width, b.height] };
   let bad = 0;
   for (let i = 0; i < a.data.length; i += 4) if (Math.max(...[0, 1, 2, 3].map(k => Math.abs(a.data[i + k] - b.data[i + k]))) > tol) bad++;

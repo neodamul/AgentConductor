@@ -66,10 +66,12 @@ fn quota_badge_rendering_is_native_snapshot_data() {
     let room = include_str!("../src/ui/room.js");
     assert!(!startup.contains("function quotaBadge"));
     assert!(!room.contains("function quotaBadge"));
-    assert!(startup.contains("state?.quota_badges?.[p.id]"));
+    // GitHub #426: the card shows the dual-ring icon built from `quota_indicators`; refresh lives in its popup.
+    assert!(startup.contains("state?.quota_indicators?.[p.id]"));
+    assert!(startup.contains("acQuotaRing.button"));
     assert!(!room.contains("quotaBadge("));
     assert!(startup.contains("quota-controls"));
-    assert!(startup.contains("quota-refresh"));
+    assert!(startup.contains("refresh:()=>refreshQuota(p.id)"));
 }
 
 #[test]

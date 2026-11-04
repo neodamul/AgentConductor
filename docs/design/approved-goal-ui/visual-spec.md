@@ -125,6 +125,7 @@ remain visibly disabled and use the normal cursor. No unrequested extra modal is
 - Titlebar buttons have transparent background/border at rest, quiet fill on hover/selection.
 - Goal and Agent removal share the same red trash SVG path and stroke. Goal glyph: 18px;
   agent-card glyph: 13px in a 22px control, balanced with 11px surrounding tool text. No emoji.
+- Agent card header: avatar, name block, quota ring and reorder handle share one vertical centre line. The ring (30px hit box) spans both text lines like the avatar; the reorder handle is a 10px x 20px dotted grip (four dot rows) centred beside the ring.
 - Trash is the deliberate red exception; do not color unrelated actions red.
 - Keep focus outlines visible. Active, hover, disabled, loading, error, and unsupported are distinct states.
 

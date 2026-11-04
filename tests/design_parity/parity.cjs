@@ -22,11 +22,13 @@ const ICON_MAP = `{claude:${JSON.stringify(icon('claude-code-color.svg'))},codex
 const PRESET = `SIM.home.icons=${ICON_MAP};SIM.room.icons=${ICON_MAP};`;
 
 // Nth visible match; `mark` is the logo inside the element (mock) or the content box of an <img> (app).
-const MEASURE = (sel, index, props, mark) => `(() => { const e = [...document.querySelectorAll(${JSON.stringify(sel)})].filter(x => x.getBoundingClientRect().width > 0)[${index}]; if (!e) return null;
+const MEASURE = (sel, index, props, mark, rel) => `(() => { const e = [...document.querySelectorAll(${JSON.stringify(sel)})].filter(x => x.getBoundingClientRect().width > 0)[${index}]; if (!e) return null;
   const r = e.getBoundingClientRect(), c = getComputedStyle(e), o = { x: r.left, y: r.top, width: r.width, height: r.height };
   for (const p of ${JSON.stringify(props)}) o[p] = c[p];
   const k = ${JSON.stringify(mark || null)} && e.querySelector(${JSON.stringify(mark || 'x')});
   if (${JSON.stringify(mark || null)} === 'content') o.mark = r.width - 2 * (parseFloat(c.borderLeftWidth) + parseFloat(c.paddingLeft)); else if (k) o.mark = k.getBoundingClientRect().width;
+  const q = ${JSON.stringify(rel || null)} && [...document.querySelectorAll(${JSON.stringify(rel || 'x')})].filter(x => x.getBoundingClientRect().width > 0)[0];
+  if (q) { const b = q.getBoundingClientRect(); o.dy = r.top - b.bottom; o.dc = r.top + r.height / 2 - (b.top + b.height / 2); o.dt = r.top - b.top; o.dl = r.left - b.left; }
   return o; })()`;
 
 async function visit(browser, side, spec) {
@@ -52,7 +54,7 @@ async function visit(browser, side, spec) {
     }
     const failures = [], specs = require('./spec.cjs').filter(x => !flag('--only') || x.name === flag('--only')), ran = specs.length;
     // Measure grouped by page state so each state is loaded once (the run is dominated by page loads).
-    const key = (side, x) => side === 'mock' ? 'mock|' + (x.mock.url || '?theme=light#0') : 'app|' + (x.app.setup || '') + '|' + (x.app.run || '');
+    const key = (side, x) => side === 'mock' ? 'mock|' + (x.mock.url || '?theme=light#0') + '|' + (x.mock.run || '') : 'app|' + (x.app.setup || '') + '|' + (x.app.run || '');
     const jobs = []; for (const x of specs) if (!x.assert) for (const side of ['mock', 'app']) jobs.push({ x, side });
     jobs.sort((p, q) => (key(p.side, p.x) < key(q.side, q.x) ? -1 : key(p.side, p.x) > key(q.side, q.x) ? 1 : 0));
     const got = {}; let current = null;
@@ -61,7 +63,7 @@ async function visit(browser, side, spec) {
       const s = x[side];
       if (x.hover) { const c = await browser.eval(MEASURE(s.selector, s.index || 0, [], null)); if (c) await browser.hover(c.x + c.width / 2, c.y + c.height / 2); }
       if (x.focus) { await browser.tab(); await browser.eval(`[...document.querySelectorAll(${JSON.stringify(s.selector)})].filter(e => e.getBoundingClientRect().width > 0)[${s.index || 0}]?.focus()`); }
-      const m = await browser.eval(MEASURE(s.selector, s.index || 0, x.props || [], s.mark));
+      const m = await browser.eval(MEASURE(s.selector, s.index || 0, x.props || [], s.mark, s.rel));
       if (x.focus) await browser.eval('document.activeElement && document.activeElement.blur()');
       if (x.hover) await browser.hover(0, 0);
       got[x.name] = got[x.name] || { shots: {} }; got[x.name][side] = m;

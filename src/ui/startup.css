@@ -1,4 +1,4 @@
-.startup-shell{display:grid;grid-template-columns:250px minmax(0,1fr);height:calc(100vh - 83px);overflow:hidden}.startup-team{background:var(--bg);border-right:1px solid var(--line);padding:22px 18px;overflow:auto}.startup-team h2{font-size:19px;margin:7px 0}.startup-team .small{line-height:1.55}.startup-profile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:14px}.startup-profile .profile-top{display:flex;gap:10px;align-items:center}.startup-profile strong{font-size:14px}.startup-profile code{display:block;font-size:11px;color:var(--soft);overflow-wrap:anywhere;margin:12px 0}.startup-profile .profile-tools{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.startup-profile .small-button{font-size:11px;padding:5px 8px}.startup-main{padding:34px 40px;overflow:auto;background:var(--surface)}.startup-heading{display:flex;align-items:center;justify-content:space-between;gap:20px}.startup-heading h1{font-size:26px;line-height:1.25;margin:8px 0 26px}.startup-goal,.startup-review{border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:24px;margin-bottom:24px}.startup-goal>label{display:block;font-size:12px;font-weight:600;margin-bottom:8px}.startup-goal>input,.startup-goal>textarea{display:block;width:100%;margin-bottom:20px}.startup-shell input,.startup-shell textarea,.startup-shell select,#start-agent-dialog input,#start-agent-dialog textarea,#start-agent-dialog select,#start-catalog-dialog textarea{box-sizing:border-box;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);font:inherit;padding:10px 12px;min-width:0}.startup-shell textarea{resize:vertical;font-size:13px;line-height:1.55}.startup-shell input:focus,.startup-shell textarea:focus,.startup-shell select:focus{outline:2px solid var(--accent);outline-offset:1px}.startup-options{display:flex;align-items:end;justify-content:space-between;gap:20px}.startup-options label{font-size:12px;display:block;margin-bottom:8px}.startup-options select{min-width:210px}.startup-options label.startup-check{display:flex;align-items:center;gap:8px}.startup-check input{width:auto}.startup-actions{display:flex;justify-content:flex-end;gap:12px;align-items:center;border-top:1px solid var(--line);padding-top:20px;margin-top:20px}.startup-actions>.small{margin-right:auto;flex:1;min-width:0;line-height:1.55}.startup-review h2{font-size:19px;margin:7px 0}.startup-tasks{display:grid;gap:16px;margin-top:20px}.startup-task{border:1px solid var(--line);border-radius:10px;padding:18px;background:var(--surface)}.startup-task h3{font-size:14px;margin:0 0 14px}.startup-task label{display:block;font-size:11px;margin:8px 0 5px;font-weight:600}.startup-task input,.startup-task textarea,.startup-task select{width:100%;font-size:12px}.startup-task .task-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.startup-review-footer{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:20px}.startup-review-footer code{font-size:11px;color:var(--soft);overflow-wrap:anywhere;flex:1;min-width:160px}.agent-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}#start-agent-dialog label{display:block;font-size:12px;margin-bottom:15px}#start-agent-dialog input,#start-agent-dialog select,#start-agent-dialog textarea,#start-catalog-dialog textarea{display:block;width:100%;margin-top:7px;font-size:12px}#start-consent-evidence{font-size:11px;white-space:pre-wrap;max-height:45vh;overflow:auto}[hidden]{display:none!important}@media(max-width:1000px){.startup-shell{grid-template-columns:250px minmax(0,1fr)}.startup-main{padding:25px 22px}.startup-actions{flex-wrap:wrap}.startup-options{align-items:stretch;flex-direction:column}.startup-task .task-grid{grid-template-columns:1fr}}@media(max-width:900px){.startup-shell{grid-template-columns:230px minmax(0,1fr)}}@media(max-width:700px){.agent-form-grid{grid-template-columns:1fr}}
+.startup-shell{display:grid;grid-template-columns:250px minmax(0,1fr);height:calc(100vh - 83px);overflow:hidden}.startup-team{background:var(--bg);border-right:1px solid var(--line);padding:22px 18px;overflow:auto}.startup-team h2{font-size:19px;margin:7px 0}.startup-team .small{line-height:1.55}.startup-profile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:14px}.startup-profile .profile-top{display:flex;gap:10px;align-items:center}.startup-profile strong{font-size:14px}.startup-profile code{display:block;font-size:11px;color:var(--soft);overflow-wrap:anywhere;margin:12px 0}.startup-profile .profile-tools{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.startup-profile .small-button{font-size:11px;padding:5px 8px}.startup-main{padding:16px 40px;overflow:auto;background:var(--surface)}.startup-heading{display:flex;align-items:center;justify-content:space-between;gap:20px}.startup-heading h1{font-size:26px;line-height:1.25;margin:8px 0 26px}.startup-goal,.startup-review{border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:24px;margin-bottom:24px}.startup-goal>label{display:block;font-size:12px;font-weight:600;margin-bottom:8px}.startup-goal>input,.startup-goal>textarea{display:block;width:100%;margin-bottom:20px}.startup-shell input,.startup-shell textarea,.startup-shell select,#start-agent-dialog input,#start-agent-dialog textarea,#start-agent-dialog select,#start-catalog-dialog textarea{box-sizing:border-box;border:1px solid var(--line);border-radius:7px;background:var(--surface);color:var(--ink);font:inherit;padding:10px 12px;min-width:0}.startup-shell textarea{resize:vertical;font-size:13px;line-height:1.55}.startup-shell input:focus,.startup-shell textarea:focus,.startup-shell select:focus{outline:2px solid var(--accent);outline-offset:1px}.startup-options{display:flex;align-items:end;justify-content:space-between;gap:20px}.startup-options label{font-size:12px;display:block;margin-bottom:8px}.startup-options select{min-width:210px}.startup-options label.startup-check{display:flex;align-items:center;gap:8px}.startup-check input{width:auto}.startup-actions{display:flex;justify-content:flex-end;gap:12px;align-items:center;border-top:1px solid var(--line);padding-top:20px;margin-top:20px}.startup-actions>.small{margin-right:auto;flex:1;min-width:0;line-height:1.55}.startup-review h2{font-size:19px;margin:7px 0}.startup-tasks{display:grid;gap:16px;margin-top:20px}.startup-task{border:1px solid var(--line);border-radius:10px;padding:18px;background:var(--surface)}.startup-task h3{font-size:14px;margin:0 0 14px}.startup-task label{display:block;font-size:11px;margin:8px 0 5px;font-weight:600}.startup-task input,.startup-task textarea,.startup-task select{width:100%;font-size:12px}.startup-task .task-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.startup-review-footer{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:20px}.startup-review-footer code{font-size:11px;color:var(--soft);overflow-wrap:anywhere;flex:1;min-width:160px}.agent-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}#start-agent-dialog label{display:block;font-size:12px;margin-bottom:15px}#start-agent-dialog input,#start-agent-dialog select,#start-agent-dialog textarea,#start-catalog-dialog textarea{display:block;width:100%;margin-top:7px;font-size:12px}#start-consent-evidence{font-size:11px;white-space:pre-wrap;max-height:45vh;overflow:auto}[hidden]{display:none!important}@media(max-width:1000px){.startup-shell{grid-template-columns:250px minmax(0,1fr)}.startup-actions{flex-wrap:wrap}.startup-options{align-items:stretch;flex-direction:column}.startup-task .task-grid{grid-template-columns:1fr}}@media(max-width:900px){.startup-shell{grid-template-columns:230px minmax(0,1fr)}}@media(max-width:700px){.agent-form-grid{grid-template-columns:1fr}}
 /* DD-39: workspace navigation stays reachable and legible on the dark titlebar. */
 .titlebar{position:sticky;top:0;z-index:5}
 .titlebar button{background:var(--surface);color:var(--bar-ink);border-color:var(--bar-line);font-size:11px;padding:6px 11px}
@@ -212,7 +212,7 @@ footer.statusbar{box-sizing:border-box;height:30px;padding-left:16px;background:
 /* Heading row: title left, actions grouped right; the tab strip sits 57px below the title and the card hangs from it (mock). */
 .startup-heading{justify-content:flex-start}
 .startup-heading>div:first-child{flex:1;min-width:0}
-.startup-heading{margin-bottom:53px}
+.startup-heading{margin-bottom:54px}
 .startup-tabs{margin:0;border-bottom:0}
 header.titlebar{border-bottom:1px solid var(--bar-line)}
 /* Tab widths follow their captions (no fixed 3:2:1.2 group ratio), so captions are not cut while there is room. */
@@ -224,7 +224,7 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 .step-card #start-discard{box-sizing:border-box;height:34px;font-size:13px;padding:0 13px;border:1px solid var(--line);background:transparent;color:var(--ink)}
 /* Narrow windows (mock): the rail is 190px below 600px. */
 @media(max-width:900px){.startup-main{padding-left:18px;padding-right:18px}header.titlebar>strong{font-size:13px}.titlebar .app-version{font-size:9px}}
-@media(max-width:600px){.rail,.task-inspector{padding:14px 10px}.startup-main{padding-left:12px;padding-right:12px}header.titlebar>strong{font-size:11px}.startup-shell{grid-template-columns:190px minmax(0,1fr)}.startup-team{padding:14px 10px}.workbench,.workbench.insp-closed{grid-template-columns:190px minmax(0,1fr)}}
+@media(max-width:600px){.rail,.task-inspector{padding:14px 10px}.startup-main{padding:12px 12px 0}header.titlebar>strong{font-size:11px}.startup-shell{grid-template-columns:190px minmax(0,1fr)}.startup-team{padding:14px 10px}.workbench,.workbench.insp-closed{grid-template-columns:190px minmax(0,1fr)}}
 /* Agent avatar status (mock .status-icon): border colour by task state, a pulse only while running, an attention marker. */
 .startup-profile .agent-symbol{--state-color:var(--line-strong);position:relative;border-color:var(--state-color)}
 .startup-profile .agent-symbol[data-state="running"],.startup-profile .agent-symbol[data-state="completed"]{--state-color:var(--ok)}
@@ -241,6 +241,49 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 .composer label>span{font-size:11.5px}
 #send-feedback{box-sizing:border-box;height:34px}
 #stop{box-sizing:border-box;height:34px;font-size:13px}
+/* Quota ring and popup (mock .usage-button / .usage-popover, GitHub #426). */
+.quota-controls{margin-left:auto;position:relative;flex:none;display:flex;align-items:center}
+.usage-button{font:revert;width:30px;height:30px;padding:1px;border:0;border-radius:7px;background:transparent;color:var(--soft);display:grid;place-items:center;cursor:pointer}
+.usage-button:hover,.usage-button[aria-expanded="true"]{background:var(--fill);color:var(--ink)}
+.usage-button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.usage-button svg{display:block;width:27px;height:27px}
+.usage-track{stroke:var(--line);fill:none}
+.usage-value{stroke:currentColor;fill:none;stroke-linecap:round}
+.usage-button.error{color:var(--err)}
+.usage-button,.usage-button *{cursor:pointer}
+.usage-value.quota-short{stroke:var(--quota-short)}
+.usage-value.quota-long{stroke:var(--quota-long)}
+.usage-popover{position:fixed;z-index:30;width:274px;padding:17px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 32px rgba(0,0,0,.1333);color:var(--ink);font-size:13px}
+.usage-popover[hidden]{display:none}
+.usage-popover .usage-heading{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.usage-heading .sp{flex:1}
+.usage-heading strong{font-size:14px}
+.usage-heading .usage-reset{font-size:11px;color:var(--soft)}
+.usage-close,.usage-refresh{border:0;background:transparent;color:var(--soft);cursor:pointer;border-radius:5px;padding:3px 6px;font-size:15px}
+.usage-close{line-height:17px}
+.usage-close:hover,.usage-refresh:hover{background:var(--fill)}
+.usage-refresh.refreshing{animation:quota-spin 1s linear infinite}
+.usage-item+.usage-item{margin-top:17px}
+.usage-line{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.usage-line b{font-size:14px;font-variant-numeric:tabular-nums}
+.usage-meter{height:5px;background:var(--fill);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.usage-meter span{height:100%;display:block;background:var(--soft);border-radius:3px}
+.usage-item .usage-reset,.usage-observed{font-size:11px;color:var(--soft)}
+.usage-observed{border-top:1px solid var(--line);padding-top:12px;margin-top:15px;display:flex;align-items:center;justify-content:space-between}
+.usage-unavailable{font-size:12px;color:var(--soft);line-height:1.6;margin:0}
+.usage-error{padding:12px;border-radius:7px;background:var(--err-bg);color:var(--err);font-size:12px;line-height:1.6}
+.usage-error strong{display:block;margin-bottom:5px}
+.usage-error p{margin:0;overflow-wrap:anywhere}
+.usage-item.quota-short{--quota-color:var(--quota-short)}
+.usage-item.quota-long{--quota-color:var(--quota-long)}
+.usage-item .usage-line>span{display:inline-flex;align-items:center;gap:6px}
+.usage-item .usage-line>span::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--quota-color,var(--soft));flex:none}
+.usage-item .usage-meter>span{background:var(--quota-color,var(--soft))}
+/* Card header (mock .agent .top): avatar, name block, quota ring and reorder handle share one centre line;
+   the ring spans both text lines like the avatar and the handle is a 10x20px dotted grip (four dot rows), centred on the ring. */
+.profile-top{align-items:center}
+.profile-top .quota-controls{position:static;margin:0 0 0 auto;flex:none}
+.startup-profile .drag-handle{position:static;flex:none;width:10px;height:20px;margin:0 0 0 4px;font-size:0;background:radial-gradient(circle,var(--line-strong) 1.2px,transparent 1.6px) 0 0/5px 5px}
 /* Room action buttons (mock .dir .btn): flex, 6px gap, leading 13px icon, 8px 13px padding; labels are the mock's. */
 [data-action-icon="send"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='black'%20stroke-width='1.6'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M21%203L10%2014M21%203l-7%2018-4-7-7-4z'/%3E%3C/svg%3E")}[data-action-icon="stop"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='black'%20stroke-width='1.6'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Crect%20x='6'%20y='6'%20width='12'%20height='12'%20rx='1.5'/%3E%3C/svg%3E")}
 #send-feedback,#stop{display:flex;align-items:center;gap:6px;padding:8px 13px;line-height:normal;height:auto}
