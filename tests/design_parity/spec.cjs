@@ -71,4 +71,9 @@ module.exports = [
   // Rail width follows the design's breakpoints: 250px, 230px below 900px (GitHub #408).
   { name: 'rail-width-840', viewport: [840, 800], app: {}, assert: "document.querySelector('.startup-team').getBoundingClientRect().width === 230" },
   { name: 'rail-width-1280', app: {}, assert: "document.querySelector('.startup-team').getBoundingClientRect().width === 250" },
+  // Result summary (GitHub #408): compact metadata on one ruled line - 16px/650 values, 14px/500 labels.
+  { name: 'result-metric-value', props: ['fontSize', 'fontWeight'], keys: ['fontSize', 'fontWeight'], pixel: false,
+    mock: { url: '?theme=light#8', selector: '.result-stats strong' }, app: { run: "acResultView.show({goal:'g',branch:'b',repo:'r',commit:'abcdef123456',diff:'diff --git a/x b/x\\n+1\\n',tests:[{task:'t',exit_code:0}],details:[]})", selector: '.result-metric strong' } },
+  { name: 'result-metric-label', props: ['fontSize', 'fontWeight'], keys: ['fontSize', 'fontWeight'], pixel: false,
+    mock: { url: '?theme=light#8', selector: '.result-stats span' }, app: { run: "acResultView.show({goal:'g',branch:'b',repo:'r',commit:'abcdef123456',diff:'diff --git a/x b/x\\n+1\\n',tests:[{task:'t',exit_code:0}],details:[]})", selector: '.result-metric span' } },
 ];
