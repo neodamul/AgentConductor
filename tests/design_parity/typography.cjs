@@ -1,11 +1,12 @@
 // GitHub #432: text and button sizes follow the approved mock element by element. Each entry compares the
 // computed font size, weight, colour and (for controls) height of the mock element with its app counterpart.
-const T = ['fontSize', 'fontWeight', 'color'], B = [...T, 'height', 'paddingLeft', 'borderTopLeftRadius', 'borderTopWidth', 'borderTopColor', 'backgroundColor'];
-// The mock's controls take their height from the platform font (Windows adds up to 1.5px); the app pins explicit px, so heights compare within 3px.
-const e = (name, keys, mock, app) => ({ name: 'type-' + name, props: keys.filter(k => k !== 'height'), keys, pixel: false, tol: keys.includes('height') ? 3 : undefined, mock: { selector: mock }, app: { selector: app } });
+const T = ['fontSize', 'fontWeight', 'color', 'fontFamily'];
+// A control matches the mock when its whole box does: size, padding, line height, layout, border, radius, fill and text.
+const B = [...T, 'width', 'height', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'lineHeight', 'display', 'columnGap', 'borderTopLeftRadius', 'borderTopWidth', 'borderTopColor', 'backgroundColor'];
+const e = (name, keys, mock, app) => ({ name: 'type-' + name, props: keys.filter(k => k !== 'height' && k !== 'width'), keys, pixel: false, mock: { selector: mock }, app: { selector: app } });
 module.exports = [
   e('brand', T, '.title-brand strong', 'header.titlebar > strong'),
-  e('workspace-home', ['fontSize', 'height'], '#workspace-home', '#start-workspace-menu'),
+  { ...e('workspace-home', B, '#workspace-home', '#start-workspace-menu'), app: { selector:'#start-workspace-menu', setup:"SIM.reply.workspaces=()=>({name:'Auth Service',current:'/tmp/sim-desktop',registered:[]});" } },
   e('settings-glyph', ['fontSize', 'color'], '#settings-button', '#start-settings-button'),
   e('rail-tab-selected', T, '#rail-agents-tab', '#rail-tab-agents'),
   e('rail-tab-idle', T, '#rail-tasks-tab', '#rail-tab-tasks'),
@@ -52,10 +53,13 @@ module.exports = [
   // Containers: the step card, the status bar and the card's action row.
   { name: 'box-step-card', props: ['borderTopLeftRadius', 'borderBottomLeftRadius', 'borderTopWidth', 'backgroundColor', 'paddingTop', 'paddingLeft', 'boxShadow'], keys: ['borderTopLeftRadius', 'borderBottomLeftRadius', 'borderTopWidth', 'backgroundColor', 'paddingTop', 'paddingLeft', 'boxShadow'], pixel: false, mock: { selector: 'section.card' }, app: { selector: '.step-card' } },
   { name: 'box-statusbar', props: ['backgroundColor', 'borderTopWidth', 'borderTopColor', 'paddingLeft'], keys: ['height', 'backgroundColor', 'borderTopWidth', 'borderTopColor', 'paddingLeft'], pixel: false, mock: { selector: '.status' }, app: { selector: 'footer.statusbar' } },
-  { name: 'box-step-tabs', props: ['borderTopLeftRadius', 'backgroundColor'], keys: ['height', 'borderTopLeftRadius', 'backgroundColor'], pixel: false, tol: 1, mock: { selector: '.step-group', index: 0 }, app: { selector: '.step-group', index: 0 } },
+  { name: 'box-step-tabs', props: ['borderTopLeftRadius', 'backgroundColor'], keys: ['height', 'borderTopLeftRadius', 'backgroundColor'], pixel: false, mock: { selector: '.step-group', index: 0 }, app: { selector: '.step-group', index: 0 } },
   // Vertical rhythm of the Workspace screen: the tab strip is 57px below the title and the card hangs from it (measured on the mock).
-  { name: 'box-heading-tabs-card', app: {}, assert: `(() => { const h = document.querySelector('.startup-heading h1').getBoundingClientRect(), t = document.getElementById('start-step-tabs').getBoundingClientRect(), c = document.querySelector('.step-card').getBoundingClientRect();
-    return Math.abs((t.top - h.bottom) - 57) <= 2 && Math.abs(c.top - t.bottom) <= 1 })()` },
+  // Position inside the window: offset of each landmark from the title bar's top-left corner, as on the mock.
+  ...[['heading', '.main h1', '.startup-heading h1'], ['tabs', '.tabs', '#start-step-tabs'], ['card', '.card', '.step-card'], ['rail', '.rail', '.startup-team']]
+    .map(([n, m, a]) => ({ name: 'pos-' + n, props: [], keys: ['dt', 'dl'], pixel: false, mock: { selector: m, rel: '.titlebar' }, app: { selector: a, rel: 'header.titlebar' } })),
+  { name: 'box-tabs-below-heading', props: [], keys: ['dy'], pixel: false, mock: { selector: '.tabs', rel: '.main h1' }, app: { selector: '#start-step-tabs', rel: '.startup-heading h1' } },
+  { name: 'box-card-hangs-from-tabs', props: [], keys: ['dy'], pixel: false, mock: { selector: '.card', rel: '.tabs' }, app: { selector: '.step-card', rel: '#start-step-tabs' } },
   { name: 'box-titlebar-surface', props: ['backgroundColor', 'borderBottomWidth', 'borderBottomColor', 'borderRightWidth', 'borderRightColor'], keys: ['backgroundColor', 'borderBottomWidth', 'borderBottomColor', 'borderRightWidth', 'borderRightColor'], pixel: false, mock: { selector: '.titlebar' }, app: { selector: 'header.titlebar' } },
   { name: 'box-rail-surface', props: ['backgroundColor', 'borderBottomWidth', 'borderBottomColor', 'borderRightWidth', 'borderRightColor'], keys: ['backgroundColor', 'borderBottomWidth', 'borderBottomColor', 'borderRightWidth', 'borderRightColor'], pixel: false, mock: { selector: '.rail' }, app: { selector: '.startup-team' } },
   { name: 'box-main-surface', props: ['backgroundColor', 'paddingLeft', 'paddingTop'], keys: ['paddingLeft'], pixel: false, mock: { selector: 'main.main' }, app: { selector: '.startup-main' } },
@@ -69,15 +73,15 @@ module.exports = [
   ...[[1280, 250], [840, 230], [560, 190]].map(([w, rail]) => ({ name: 'rail-width-at-' + w, viewport: [w, 900], app: {}, assert: `Math.round(document.querySelector('.startup-team').getBoundingClientRect().width) === ${rail}` })),
   // Room (run steps): same elements as the mock's task view, measured in the simulator's running run.
   ...(() => { const room = { setup: "SIM.home.run_available=true;SIM.home.run_state='running';SIM.room.report.plan.tasks[0].agent='claude';", run: "document.getElementById('start-tab-tasks').click()" };
-    const r = (name, keys, mock, app) => ({ name: 'room-' + name, props: keys.filter(k => k !== 'height'), keys, pixel: false, tol: keys.includes('height') ? 3 : undefined, mock: { url: '?theme=light#3', selector: mock }, app: { ...room, selector: app } });
+    const r = (name, keys, mock, app) => ({ name: 'room-' + name, props: keys.filter(k => k !== 'height' && k !== 'width'), keys, pixel: false, mock: { url: '?theme=light#3', selector: mock }, app: { ...room, selector: app } });
     return [r('goal-title', T, '#saved-goal-title', '#goal'), r('task-title', T, '.cardhead h2', '#selected-agent'), r('task-status', ['fontSize', 'fontWeight'], '.cardhead .pill', '#task-status'),
       r('view-tab-selected', ['fontSize', 'fontWeight'], '.ttabs button.on', '.view-tabs .tab.active'), r('view-tab-idle', ['fontSize', 'fontWeight'], '.ttabs span', '.view-tabs .tab:not(.active)'),
-      r('composer-label', T, '.dir .eyebrow', '.composer label>span'), r('send-button', ['fontSize', 'fontWeight', 'height'], '.dir .btn.p', '#send-feedback'), r('stop-button', ['fontSize', 'height'], '.dir .btn.q', '#stop')]; })(),
+      r('composer-label', T, '.dir .eyebrow', '.composer label>span'), r('send-button', B, '.dir .btn.p', '#send-feedback'), r('stop-button', B, '.dir .btn.q', '#stop')]; })(),
   // Quota ring and popup (GitHub #426): icon geometry and pixels, popup geometry and pixels, healthy and error.
   { name: 'quota-ring-healthy', props: ['borderTopLeftRadius', 'color'], keys: ['width', 'height', 'borderTopLeftRadius', 'color'], mock: { selector: '.usage-button', index: 0 }, app: { selector: '.usage-button', index: 0 } },
   { name: 'quota-ring-error', props: ['borderTopLeftRadius', 'color'], keys: ['width', 'height', 'borderTopLeftRadius', 'color'], mock: { selector: '.usage-button.error' }, app: { selector: '.usage-button.error' } },
-  { name: 'quota-popup-healthy', props: ['borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'backgroundColor'], keys: ['width', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'backgroundColor'], maxPixelDiff: 0.05,
-    mock: { run: "document.querySelector('[data-usage=claude]').click()", selector: '#usage-popover' }, app: { run: "document.querySelectorAll('.usage-button')[0].click()", selector: '#usage-popover' } },
+  { name: 'quota-popup-healthy', props: ['borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'backgroundColor'], keys: ['width', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'backgroundColor'],
+    mock: { run: "document.querySelector('[data-usage=claude]').click();document.head.append(Object.assign(document.createElement('style'), { textContent: 'html,body{background:#fff!important}*{visibility:hidden!important}#usage-popover,#usage-popover *{visibility:visible!important}' }));", selector: '#usage-popover' }, app: { run: "document.querySelectorAll('.usage-button')[0].click();document.head.append(Object.assign(document.createElement('style'), { textContent: 'html,body{background:#fff!important}*{visibility:hidden!important}#usage-popover,#usage-popover *{visibility:visible!important}' }));", selector: '#usage-popover' } },
   // The error popup compares its error box (the mock's buttons render in the UA font, so the footer width differs by design).
   { name: 'quota-popup-error', props: ['borderTopLeftRadius', 'backgroundColor', 'color', 'paddingTop', 'fontSize'], keys: ['width', 'height', 'borderTopLeftRadius', 'backgroundColor', 'color', 'paddingTop', 'fontSize'], pixel: false,
     mock: { run: "document.querySelector('[data-usage=codex]').click()", selector: '.usage-error' }, app: { run: "document.querySelector('.usage-button.error').click()", selector: '.usage-error' } },
@@ -90,7 +94,6 @@ module.exports = [
   { name: 'quota-popup-error-retry', app: { run: "document.querySelector('.usage-button.error').click()" }, assert: "(() => { const p = document.getElementById('usage-popover'); return !!p.querySelector('.usage-error[role=alert]') && p.querySelector('.usage-refresh').textContent.includes('조회') })()" },
   // Agent card header: ring and handle on the avatar's centre line; the handle is as tall as the ring.
   { name: 'type-grip', props: [], keys: ['width', 'height'], pixel: false, mock: { selector: '.agent .grip' }, app: { selector: '.drag-handle' } },
-  { name: 'agent-header-centre-line', app: {}, assert: `(() => { const c = e => { const r = e.getBoundingClientRect(); return r.top + r.height / 2 }, card = document.querySelector('.startup-profile');
-    const a = c(card.querySelector('.agent-symbol')), q = c(card.querySelector('.usage-button')), g = c(card.querySelector('.drag-handle'));
-    return Math.abs(a - q) <= 1.5 && Math.abs(q - g) <= 1.5 })()` },
+  { name: 'agent-ring-centre-line', props: [], keys: ['dc'], pixel: false, mock: { selector: '.usage-button', index: 0, rel: '.status-icon' }, app: { selector: '.startup-profile .usage-button', index: 0, rel: '.startup-profile .agent-symbol' } },
+  { name: 'agent-grip-centre-line', props: [], keys: ['dc'], pixel: false, mock: { selector: '.agent .grip', rel: '.status-icon' }, app: { selector: '.startup-profile .drag-handle', rel: '.startup-profile .agent-symbol' } },
 ];

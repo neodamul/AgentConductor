@@ -2713,3 +2713,10 @@ Trace: R-212 / DD-224 (backend contract), R-210 / DD-222 (layout).
 - [x] Task: `src/ui/quota_ring.js` (`window.acQuotaRing`) draws the two-ring 30px icon (27px graphic) and one shared popup (windows/budgets with the ring colours, reset text, observation time, unsupported/stale/error text, retry); the card's text badge and ↻ button are gone; `.quota-short/.quota-long` tokens live in the light/dark token sets.
 - [x] Verify: parity entries `quota-ring-healthy` (0.00%), `quota-ring-error`, `quota-popup-healthy` (1.7%), `quota-popup-error` plus behaviour assertions (opens beside the ring, Escape closes and restores focus, unsupported, error retry) pass in light and dark (98 entries); quota/i18n/theme/layout suites pass.
 - [ ] Completed: PR after #433; Windows CI.
+### Exact Workspace control boxes — GitHub #435
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+- [x] Plan: approved mock remains immutable; reproduce whole-box failures before editing app styles.
+- [x] Task: Workspace control labels, semantic leading icons, natural padding/line-height boxes, workspace-name-only title button and rail-tab gap match the mock. Test fixture supplies the same variable Workspace name to compare content-dependent widths.
+- [x] Verify: 91 entries / zero differences in light and dark locally; ten action-icon/DOM/Node/architecture tests across four Rust suites passed. Approved mock/tolerances unchanged.
+- [x] Completed: verified Workspace controls batch committed/pushed to the shared issue-linked branch; Claude retains Room and parity-runner ownership. Workspace card sections continue separately under #427.

@@ -1,13 +1,13 @@
 // GitHub #414: compare the app UI with the approved design mock (docs/design/approved-goal-ui/preview.html)
 // at the same viewport, element by element: geometry and computed style within a pixel tolerance, plus the
 // share of differing pixels in the element's screenshot crop. Usage:
-//   node tests/design_parity/parity.cjs [--out dir] [--only name] | --probe mock|app <selector> [url-suffix]
+//   [PARITY_THEME=dark] [PARITY_WIDTH=840] node tests/design_parity/parity.cjs [--out dir] [--only name] | --probe mock|app <selector> [url-suffix]
 // (--probe app honours PROBE_SETUP / PROBE_RUN: simulator state to set, and a script to run, before measuring)
 // Exit 0 = all within tolerance, 1 = a difference, 77 = skipped (no Chrome). Spec: spec.cjs.
 const fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
 const { findChrome, launch } = require('./cdp.cjs'), { decode, diffRatio } = require('./png.cjs');
 const { pathToFileURL } = require('url'), repo = path.resolve(__dirname, '../..'), MOCK = pathToFileURL(path.join(repo, 'docs/design/approved-goal-ui/preview.html')).href;
-const THEME = process.env.PARITY_THEME === 'dark' ? 'dark' : 'light';
+const THEME = process.env.PARITY_THEME === 'dark' ? 'dark' : 'light', WIDTH = Number(process.env.PARITY_WIDTH) || 1280;
 const argv = process.argv.slice(2), flag = n => { const i = argv.indexOf(n); return i < 0 ? null : argv[i + 1]; };
 const chrome = findChrome();
 if (!chrome) { console.log('design parity skipped: no Chrome found (set CHROME)'); process.exit(77); }
@@ -21,11 +21,13 @@ const ICON_MAP = `{claude:${JSON.stringify(icon('claude-code-color.svg'))},codex
 const PRESET = `SIM.home.icons=${ICON_MAP};SIM.room.icons=${ICON_MAP};`;
 
 // Nth visible match; `mark` is the logo inside the element (mock) or the content box of an <img> (app).
-const MEASURE = (sel, index, props, mark) => `(() => { const e = [...document.querySelectorAll(${JSON.stringify(sel)})].filter(x => x.getBoundingClientRect().width > 0)[${index}]; if (!e) return null;
+const MEASURE = (sel, index, props, mark, rel) => `(() => { const e = [...document.querySelectorAll(${JSON.stringify(sel)})].filter(x => x.getBoundingClientRect().width > 0)[${index}]; if (!e) return null;
   const r = e.getBoundingClientRect(), c = getComputedStyle(e), o = { x: r.left, y: r.top, width: r.width, height: r.height };
   for (const p of ${JSON.stringify(props)}) o[p] = c[p];
   const k = ${JSON.stringify(mark || null)} && e.querySelector(${JSON.stringify(mark || 'x')});
   if (${JSON.stringify(mark || null)} === 'content') o.mark = r.width - 2 * (parseFloat(c.borderLeftWidth) + parseFloat(c.paddingLeft)); else if (k) o.mark = k.getBoundingClientRect().width;
+  const q = ${JSON.stringify(rel || null)} && [...document.querySelectorAll(${JSON.stringify(rel || 'x')})].filter(x => x.getBoundingClientRect().width > 0)[0];
+  if (q) { const b = q.getBoundingClientRect(); o.dy = r.top - b.bottom; o.dc = r.top + r.height / 2 - (b.top + b.height / 2); o.dt = r.top - b.top; o.dl = r.left - b.left; }
   return o; })()`;
 
 async function visit(browser, side, spec) {
@@ -42,7 +44,7 @@ async function visit(browser, side, spec) {
 }
 
 (async () => {
-  const browser = await launch(chrome);
+  const browser = await launch(chrome, { width: WIDTH });
   try {
     if (argv[0] === '--probe') {
       await visit(browser, argv[1], { url: argv[3], setup: process.env.PROBE_SETUP, run: process.env.PROBE_RUN });
@@ -60,7 +62,7 @@ async function visit(browser, side, spec) {
       const s = x[side];
       if (x.hover) { const c = await browser.eval(MEASURE(s.selector, s.index || 0, [], null)); if (c) await browser.hover(c.x + c.width / 2, c.y + c.height / 2); }
       if (x.focus) { await browser.tab(); await browser.eval(`[...document.querySelectorAll(${JSON.stringify(s.selector)})].filter(e => e.getBoundingClientRect().width > 0)[${s.index || 0}]?.focus()`); }
-      const m = await browser.eval(MEASURE(s.selector, s.index || 0, x.props || [], s.mark));
+      const m = await browser.eval(MEASURE(s.selector, s.index || 0, x.props || [], s.mark, s.rel));
       if (x.focus) await browser.eval('document.activeElement && document.activeElement.blur()');
       if (x.hover) await browser.hover(0, 0);
       got[x.name] = got[x.name] || { shots: {} }; got[x.name][side] = m;
@@ -69,18 +71,19 @@ async function visit(browser, side, spec) {
       fs.writeFileSync(path.join(out, `${x.name}.${side}.png`), got[x.name].shots[side]);
     }
     for (const spec of specs) {
-      if (spec.assert) { // behaviour check on the app only: `assert` is evaluated after `run` and must be true
+      if (spec.assert) { if (!spec.viewport && WIDTH !== 1280) continue; // authored at 1280
+      // behaviour check on the app only: `assert` is evaluated after `run` and must be true
         if (spec.viewport) await browser.viewport(spec.viewport[0], spec.viewport[1]);
         await visit(browser, 'app', spec.app); const ok = await browser.eval(spec.assert);
-        if (spec.viewport) await browser.viewport(1280, 960);
+        if (spec.viewport) await browser.viewport(WIDTH, 960);
         if (ok !== true) failures.push(`${spec.name}: assertion failed (${spec.assert})`); continue;
       }
       const measured = got[spec.name], shots = measured.shots;
       if (!measured.mock || !measured.app) continue;
-      const tol = spec.tol ?? 0.5, cmp = (label, a, b) => { for (const k of Object.keys(a)) { if (k === 'shots' || (spec.keys && !spec.keys.includes(k))) continue;
+      const tol = 0.01, cmp = (label, a, b) => { for (const k of Object.keys(a)) { if (k === 'shots' || (spec.keys && !spec.keys.includes(k))) continue;
         const x = a[k], y = b[k], num = typeof x === 'number'; if (num ? Math.abs(x - y) > (k === 'x' || k === 'y' ? Infinity : tol) : String(x) !== String(y)) failures.push(`${spec.name}${label}.${k}: mock ${x} app ${y}`); } };
       cmp('', measured.mock, measured.app);
-      if (shots.mock && shots.app && spec.pixel !== false) { const d = diffRatio(decode(shots.mock), decode(shots.app)); console.log(`  ${spec.name}: ${(d.ratio * 100).toFixed(2)}% of pixels differ`); if (d.ratio > (spec.maxPixelDiff ?? 0.02)) failures.push(`${spec.name}: ${(d.ratio * 100).toFixed(1)}% of pixels differ${d.sizeMismatch ? ' (size ' + d.sizeMismatch.join(',') + ')' : ''}`); }
+      if (shots.mock && shots.app && spec.pixel !== false) { const d = diffRatio(decode(shots.mock), decode(shots.app)); console.log(`  ${spec.name}: ${(d.ratio * 100).toFixed(2)}% of pixels differ`); if (d.ratio > 0) failures.push(`${spec.name}: ${(d.ratio * 100).toFixed(1)}% of pixels differ${d.sizeMismatch ? ' (size ' + d.sizeMismatch.join(',') + ')' : ''}`); }
     }
     console.log(`design parity: ${ran} element(s), ${failures.length} difference(s); captures in ${out}`);
     failures.forEach(f => console.log('  - ' + f));

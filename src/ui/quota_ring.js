@@ -36,7 +36,8 @@ window.acQuotaRing = (() => {
     const at = Number(indicator?.observed_at);
     if (!at) return acMessage('startup.quota_not_observed');
     const age = Math.max(0, Date.now() / 1000 - at);
-    return age < 90 ? acMessage('startup.quota_observed_now') : acMessage('startup.quota_observed_at', { value1: new Date(at * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
+    const when = age < 90 ? acMessage('startup.quota_observed_now') : acMessage('startup.quota_observed_at', { value1: new Date(at * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
+    return indicator.source ? when + ' · ' + indicator.source : when;
   }
 
   function fill(id) {
@@ -67,8 +68,8 @@ window.acQuotaRing = (() => {
 
   function place(button) {
     const rect = button.getBoundingClientRect();
-    popup.style.left = Math.min(innerWidth - popup.offsetWidth - 12, Math.max(12, rect.right + 10)) + 'px';
-    popup.style.top = Math.min(innerHeight - popup.offsetHeight - 12, Math.max(12, rect.top)) + 'px';
+    popup.style.left = Math.round(Math.min(innerWidth - popup.offsetWidth - 12, Math.max(12, rect.right + 10))) + 'px';
+    popup.style.top = Math.round(Math.min(innerHeight - popup.offsetHeight - 12, Math.max(12, rect.top))) + 'px';
   }
 
   function build() {
