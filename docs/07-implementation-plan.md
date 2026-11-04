@@ -2922,3 +2922,12 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Task: initialize the test state and assert Goal transitions suppress auto-discovery without advancing another agent's quota cooldown. Production code is unchanged.
 - [x] Verify: full local Python discovery on this linked main-based branch passes all 45 tests; the two scheduler cases retain actual extracted production functions.
 - [ ] Completed: merge the isolated follow-up, apply main to #420 and clean owned scratch files.
+
+### Step tabs follow their captions and the approved mock — GitHub #473
+
+- [x] Report: nearly equal captions had very different tab widths (app 147 vs 193 px, mock 117 vs 158 px at 1280) because groups split the row 3:2:1.2 and tabs shared the leftover; the strict parity set did not compare tab widths, so it passed.
+- [x] Red: `step_tab_widths_runtime.cjs` fails with 31–94 px of free space per tab; parity entries for every tab box, position and number box (width/height/dl/dt, pixel diff) added.
+- [x] Task: tabs and groups take their natural width and shrink only when the row is full; tab, number, group and selected-tab boxes follow the mock (16 px number, 3 px padding, 7 px gap, 2 px selected top border, surface fill). The approved mock's groups and tabs changed the same way, by the user's word 'app or mock'.
+- [x] Verify: light/dark × 1280/840 parity 0 (159/156 entries), including pixel crops of every tab and group; the dimmed disabled step is an app-only state the mock does not show, compared with steps enabled.
+
+Trace: R-210 / UC-202 / DD-222.

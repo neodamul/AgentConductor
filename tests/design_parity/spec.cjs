@@ -4,6 +4,9 @@
 const BOX = ['borderTopWidth', 'borderTopLeftRadius'];
 // Include the badge outside the avatar border; wrapping the real node preserves its actual pseudo-element.
 const attentionBox = selector => `(() => { const e=document.querySelector(${JSON.stringify(selector)}),box=document.createElement('span');box.id='attention-probe';box.style.cssText='display:inline-flex;flex:none;padding:6px;background:transparent';e.replaceWith(box);box.append(e); })()`;
+// The mock has no disabled step; its tabs are all reachable, so the app is compared with a run available (disabled steps dim by design).
+const STEP_ONE = "document.querySelector('#start-step-tabs [role=tab]').click();";
+const STEPS_ENABLED = "SIM.home.run_available=true;SIM.home.run_state='running';";
 module.exports = [
   ...require('./typography.cjs'),
   ...require('./choice_spec.cjs'),
@@ -52,8 +55,16 @@ module.exports = [
     mock: { url: '?theme=light#3', selector: '.outline-task .outline-state-badge' },
     app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()", selector: '.session-choice .session-status' } },
   // Step groups (GitHub #408): a subdued background per Prepare / Run / Finish set with a 14px group icon.
-  ...['prepare', 'run', 'finish'].map((group, index) => ({ name: `step-group-${group}`, props: ['borderTopLeftRadius', 'backgroundColor'], keys: ['height', 'borderTopLeftRadius', 'backgroundColor'], pixel: false,
-    mock: { url: '?theme=light#0', selector: '.tabs .step-group', index }, app: { selector: `#start-step-tabs .step-group[data-group=${group}]` } })),
+  ...['prepare', 'run', 'finish'].map((group, index) => ({ name: `step-group-${group}`, props: ['borderTopLeftRadius', 'backgroundColor'], keys: ['width', 'height', 'borderTopLeftRadius', 'backgroundColor'],
+    mock: { url: '?theme=light#0', selector: '.tabs .step-group', index }, app: { setup: STEPS_ENABLED, run: STEP_ONE, selector: `#start-step-tabs .step-group[data-group=${group}]` } })),
+  // #473: every tab is as wide as its caption and sits where the mock puts it.
+  ...[0, 1, 2, 3, 4, 5].flatMap(index => [
+    { name: `step-tab-box-${index}`, props: [], keys: ['width', 'height'],
+      mock: { url: '?theme=light#0', selector: '.tabs .tab', index }, app: { setup: STEPS_ENABLED, run: STEP_ONE, selector: '#start-step-tabs [role=tab]', index } },
+    { name: `pos-step-tab-${index}`, props: [], keys: ['dt', 'dl'], pixel: false,
+      mock: { url: '?theme=light#0', selector: '.tabs .tab', index, rel: '.titlebar' }, app: { selector: '#start-step-tabs [role=tab]', index, rel: 'header.titlebar' } }]),
+  { name: 'step-number-box', props: [], keys: ['width', 'height'], pixel: false,
+    mock: { url: '?theme=light#0', selector: '.step-group .tab .num', index: 0 }, app: { selector: '#start-step-tabs .tab-number', index: 0 } },
   { name: 'step-group-icon', props: [], keys: ['width', 'height'], pixel: false,
     mock: { url: '?theme=light#0', selector: '.tabs-group-name svg', index: 0 }, app: { selector: '#start-step-tabs .tabs-group-name svg', index: 0 } },
   // Step card (GitHub #408): the header and the action footer stay visible while only the body scrolls.
