@@ -2689,3 +2689,10 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [ ] Completed: commit/push and coordinate integration with the pending agent-card PR; release and native Windows verification are outside this unit.
 
 - #424 platform follow-up: Windows reported glyph-width wrapping after the padding fix. Red reproduced locally with 2px letter-spacing; Green uses a bounded five-column strip with ellipsis-capable label spans and 23/22/22px icon-only targets. Ten local tests across four suites pass, including all 40 stressed browser button checks. Windows rerun and #422 updated parity integration remain pending.
+
+### CLI fixture watcher cleanup — PR #431 / GitHub #409
+
+- [x] Plan: inspect actual failing CI; model/reassignment assertions passed, then macOS failed deleting a directory still written by its detached watcher.
+- [x] Task: fixture cleanup waits for the owned watcher's terminal record and OS-confirmed process/group absence before deleting; no retry of destructive deletion and no product policy change.
+- [x] Verify: 10 local tests across CLI workflow, independent watcher and real role-fallback runtime passed. Windows choice-field parity is a separate failure.
+- [ ] Completed: commit/push verified fix on the existing issue-linked branch.

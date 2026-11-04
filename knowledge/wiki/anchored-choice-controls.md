@@ -30,3 +30,5 @@ its accessible name was rebound. Preserve a missing saved primary for reassignme
 of silently serializing an empty role after an unrelated edit.
 
 A manual registration callback must capture its originating agent before awaiting the catalog request. A coordinator switch can happen while the bridge is pending; reject the late selection rather than applying the old model to the new coordinator.
+
+CI cleanup lesson (#431): a waiting_approval report is a workflow result, not proof that its independent availability watcher exited. The CLI fixture now waits for a terminal ownership record AND OS-confirmed PID/process-group absence before deleting evidence. The scheduling and model assertions already passed; do not change product fallback policy to hide a cleanup race.
