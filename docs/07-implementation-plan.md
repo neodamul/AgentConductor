@@ -1504,6 +1504,13 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [ ] Remaining in #408: titlebar order and 32px hit boxes, rail toggle, Goal header and info row, fixed step-card header/footer, group icons and backgrounds, leading icons, content-width inner tabs, evidence line, fullscreen reflow, narrow-width rail (230/190).
 - [ ] Complete: release (version 0.2.0 only when the user asks).
 
+### Goal-list row actions in the webview — DD-222
+- [x] Plan: Trace: amends R-210 -> UC-202 -> FR-204 -> QAS-209 -> DD-222 (backend: Codex PR for #402). GitHub #402; design GitHub #387.
+- [x] Task / Red/Green: `tests/goal_rows_runtime.cjs` (confirmation markup with Cancel as default, same reviewed Goal/folder retried with a fresh revision, errors surfaced, never optimistic), design-parity entries `goal-trash` and `goal-folder` first, then `src/ui/goal_rows.js`, `src/ui/result_view.js` (the result popup shared by the Room and the Goal list), the delete dialog, messages and CSS.
+- [x] Verify: UI Rust and Node tests; design parity 9 entries; UI simulator: Result opens the same centered popup over the list, Cancel sends no request, Confirm shows the stopping text, retries and closes only after `deleted`.
+- [ ] Real-app check after the backend PRs (#418 ownership fix first, then the Goal action PR) are on main: folder opens in Finder/Explorer, deletion removes only the Goal folder.
+- [ ] Complete: release (version 0.2.0 only when the user asks).
+
 ## Bilingual release documentation — DD-134 / v0.1.16
 
 - [x] Plan: pull the latest release source, inspect changed behavior and preserve concurrent Claude work.
