@@ -64,4 +64,6 @@ module.exports = [
   // "Discard changes" is a step-footer button (mock `.actions .btn.q`) that follows the open step.
   e('discard-button', B, '.actions .btn.q', '#start-discard'),
   { name: 'discard-follows-step', app: { run: "document.getElementById('start-tab-team').click()" }, assert: `(() => { const d = document.getElementById('start-discard'); return !d.closest('header') && d.closest('.step-card') === document.getElementById('start-panel-team') })()` },
+  // Rail width by viewport (mock): 250px, 230px below 900px, 190px below 600px.
+  ...[[1280, 250], [840, 230], [560, 190]].map(([w, rail]) => ({ name: 'rail-width-at-' + w, viewport: [w, 900], app: {}, assert: `Math.round(document.querySelector('.startup-team').getBoundingClientRect().width) === ${rail}` })),
 ];

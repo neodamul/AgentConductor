@@ -2703,3 +2703,4 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [ ] Completed: PR merged after the stack #422/#423; remaining mock sections (config section heads, titlebar item order) are in #427.
 
 - [x] Step footer (GitHub #427, part 1): "Discard changes" leaves the titlebar and follows the open step into its footer row, beside the primary action, with the mock's explanatory note; parity entries `type-discard-button` and `discard-follows-step`.
+- [x] Narrow windows (GitHub #427, part 2): the left rail stays beside the content and is 190px below 600px (the old stacked layout below 700px is gone); parity assertions at 1280/840/560px. The mock captures `images/*.png` were re-rendered after the step 6 caption change (`verify-and-capture.py`: 58 captures, 28 contrast pairs).
