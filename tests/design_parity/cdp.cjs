@@ -26,10 +26,21 @@ async function launch(chrome, { width = 1280, height = 960, scale = 2 } = {}) {
   let id = 0; const waiting = new Map(), events = [];
   ws.onmessage = m => { const d = JSON.parse(m.data); if (d.id && waiting.has(d.id)) { const { res, rej } = waiting.get(d.id); waiting.delete(d.id); d.error ? rej(new Error(d.error.message)) : res(d.result); } else events.push(d); };
   const send = (method, params = {}) => new Promise((res, rej) => { const n = ++id; waiting.set(n, { res, rej }); ws.send(JSON.stringify({ id: n, method, params })); });
-  await send('Page.enable'); await send('Runtime.enable');
+  await send('Page.enable'); await send('Page.setLifecycleEventsEnabled', { enabled: true }); await send('Runtime.enable');
   await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: scale, mobile: false });
   const api = {
-    async goto(url) { events.length = 0; await send('Page.navigate', { url }); for (let i = 0; i < 100 && !events.some(e => e.method === 'Page.loadEventFired'); i++) await new Promise(r => setTimeout(r, 100)); await new Promise(r => setTimeout(r, 400)); },
+    // Waits for the load of the document this navigation created (matched by loaderId), so a slow response never hands back a
+    // half-created page; a same-document navigation (hash only) has no loader and no load event.
+    async goto(url) {
+      events.length = 0; const nav = await send('Page.navigate', { url });
+      if (nav.errorText) throw new Error(`Navigation to ${url} failed: ${nav.errorText}`);
+      if (nav.loaderId) {
+        const loaded = () => events.some(e => e.method === 'Page.lifecycleEvent' && e.params.name === 'load' && e.params.loaderId === nav.loaderId);
+        for (let i = 0; i < 600 && !loaded(); i++) await new Promise(r => setTimeout(r, 100));
+        if (!loaded()) throw new Error(`Page did not load within 60 s: ${url}`);
+      }
+      await new Promise(r => setTimeout(r, 400));
+    },
     async eval(expr) { const r = await send('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true }); if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description || r.exceptionDetails.text); return r.result.value; },
     async hover(x, y) { await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x, y }); await new Promise(r => setTimeout(r, 60)); },
     async tab() { for (const type of ['keyDown', 'keyUp']) await send('Input.dispatchKeyEvent', { type, key: 'Tab', code: 'Tab', windowsVirtualKeyCode: 9 }); },
