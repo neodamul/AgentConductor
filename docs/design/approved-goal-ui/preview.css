@@ -250,3 +250,25 @@ button[data-action-icon]{display:inline-flex;align-items:center;justify-content:
 .step-group{flex:0 1 auto}
 .step-group>.tab{flex:0 1 auto}
 .tab-label{flex:0 1 auto}
+/* About screen (#468): shown once after an install or update, and from the app menu. */
+#about-dialog{width:600px;max-width:92vw;max-height:88vh;margin:0;overflow:auto;padding:22px 24px 18px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);box-shadow:0 15px 60px #0003;font:13px/1.7 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+#about-dialog::backdrop{background:#0004}
+.about-btn{border:1px solid var(--line);background:transparent;border-radius:6px;padding:6px 12px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
+.about-btn.about-primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600;padding:8px 16px}
+.about-dialog>.result-close{position:absolute;top:10px;right:10px}
+.about-head{display:flex;align-items:center;gap:12px}
+.about-head .about-mark{width:44px;height:44px;flex:none;font-size:20px}
+.about-head h2{margin:0;font-size:18px;line-height:1.2}
+.about-meta{color:var(--soft);font-size:12px}
+.about-tag{margin-left:auto;margin-right:24px;font-size:11px;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent-text);white-space:nowrap}
+.about-dialog p{margin:12px 0 0}
+.about-dialog h3{font-size:12px;margin:18px 0 6px;letter-spacing:.03em;text-transform:uppercase;color:var(--soft)}
+.about-dialog .about-note{color:var(--soft);font-size:12px;margin:8px 0 0}
+.about-cli{display:grid;grid-template-columns:22px 92px 1fr auto;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);margin-top:6px}
+.about-cli b{font-size:13px}
+.about-logo{display:flex;width:22px;height:22px}.about-mono{color:var(--ink)}
+.about-dialog code{font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.about-cli code{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:4px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;user-select:all}
+.about-credit{font-size:12px;color:var(--soft);line-height:1.6}
+.about-foot{display:flex;align-items:center;gap:10px;margin-top:18px;padding-top:12px;border-top:1px solid var(--line)}
+.about-foot span{flex:1;color:var(--soft);font-size:12px}

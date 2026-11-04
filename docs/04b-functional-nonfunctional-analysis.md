@@ -777,3 +777,9 @@ Each task attempt carries an optional `usage` record (`input_tokens`, `output_to
 No estimation, no cash conversion, no double counting across retry, resume, restart or concurrent writers; a crash between the CLI event and the ledger write loses at most that event and never corrupts earlier entries. Trace: FR-208.
 
 FR-204 / NFR-09 / #429 amendment (2026-11-04): The confirmation names the actual selected profile model, validates it against its registered catalog and binds acceptance to the Goal/configuration and Workspace epoch. Recheck that binding after awaited save/baseline work before sending the planner request. Do not add a planning worker role or implicit model substitution.
+
+### FR-209 About display contract
+The backend reports the running version and whether it was already acknowledged (`about_status`); acknowledging stores that version in the operator preferences (`about_seen`). The dialog is shown automatically only when the stored version differs from the running one, never during a run or another modal, and always from the menu. Text is localized and the commands are literal. Trace: UC-207.
+
+### NFR-96 About is light and never blocks work
+No background work, no network access and no extra dependency; a missing or corrupt preference counts as unseen and never fails startup; the dialog follows the approved mock in both themes and at 840 and 1280 px. Trace: FR-209.

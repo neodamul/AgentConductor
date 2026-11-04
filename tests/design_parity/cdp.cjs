@@ -18,7 +18,8 @@ async function launch(chrome, { width = 1280, height = 960, scale = 2 } = {}) {
   const portFile = path.join(dir, 'DevToolsActivePort');
   for (let i = 0; i < 400 && !fs.existsSync(portFile); i++) await new Promise(r => setTimeout(r, 100));
   if (!fs.existsSync(portFile)) { proc.kill(); throw new Error('Chrome did not start'); }
-  const port = fs.readFileSync(portFile, 'utf8').split('\n')[0];
+  // Windows: Chrome may still hold the file open for a moment (EBUSY), so retry the read.
+  let port; for (let i = 0; !port; i++) { try { port = fs.readFileSync(portFile, 'utf8').split('\n')[0]; } catch (e) { if (i >= 50 || !['EBUSY', 'EPERM', 'EACCES'].includes(e.code)) throw e; await new Promise(r => setTimeout(r, 100)); } }
   const targets = await (await fetch(`http://127.0.0.1:${port}/json`)).json();
   const ws = new WebSocket(targets.find(t => t.type === 'page').webSocketDebuggerUrl);
   await new Promise((res, rej) => { ws.onopen = res; ws.onerror = rej; });

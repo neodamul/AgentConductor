@@ -847,3 +847,7 @@ Record the input and output tokens that each CLI reports for every task attempt 
 Trace: R-214 → BG-169 → SF-202 → UC-206 → FR-208 / NFR-95 → QAS-213 → DDR-61 → DD-226. GitHub #441.
 
 R-210 / #429 amendment (2026-11-04): New Goal seeds Workspace coordinator, its planning model and worker-role defaults without reusing a prior Goal proposal. Before an LLM planning request, explicitly confirm the current Goal and coordinator/model; cancellation or changed context launches nothing. Reject incompatible models instead of silently substituting CLI default.
+
+### R-215 About screen: what the app is, who made it and which CLIs it needs
+Show a centered About dialog on the first start after an install or an update and keep it reachable from the application menu at any time. It states in a few sentences what AgentConductor is, lists credits, and tells the operator that Claude Code, Codex and OpenCode CLIs must be installed to use the agents, with one short install command each (for example `npm install -g @anthropic-ai/claude-code`). The dialog is dismissed once per version; the choice is kept in the operator's preferences. Source: user request, 2026-11-04.
+Trace: R-215 → BG-170 → SF-203 → UC-207 → FR-209 / NFR-96 → QAS-214 → DDR-62 → DD-227. GitHub #468.

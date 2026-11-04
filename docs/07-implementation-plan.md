@@ -2931,3 +2931,13 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Verify: light/dark × 1280/840 parity 0 (159/156 entries), including pixel crops of every tab and group; the dimmed disabled step is an app-only state the mock does not show, compared with steps enabled.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### About screen — GitHub #468
+
+- [x] Plan: record the requirement R-215 through the whole chain (BG-170, SF-203, UC-207, FR-209 / NFR-96, QAS-214, DDR-62, DD-227); the user asked for a centered first-start/after-update dialog, reachable from the menu, with description, credits and CLI install guidance.
+- [x] Task: mock added to the approved goal-screen mock (light/dark), `about-dialog` strict parity entry.
+- [x] Task: backend `about_status` / `about_seen` over the preferences file; UI fragment, menu item, i18n (en/ko), first-start check.
+- [x] Verify: Rust preference test, `tests/about_runtime.cjs` in four theme/width cells, parity 0 differences, i18n/theme contracts.
+- [ ] Completed: full local suite, merged; GitHub #468 closed.
+
+Trace: R-215 / UC-207 / QAS-214 / DD-227.

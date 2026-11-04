@@ -1285,5 +1285,19 @@
   "startup.planning_confirmation_evidence": "Goal: {goal}\nCoordinator: {agent}\nModel: {model}",
   "startup.planning_confirmation_changed": "The Goal or planning selection changed. Review it and confirm again.",
   "startup.planning_selection_invalid": "Choose a registered coordinator and a compatible planning model in Workspace.",
-  "startup.planning_confirmation_accept": "Confirm and plan"
+  "startup.planning_confirmation_accept": "Confirm and plan",
+  "about.menu": "About AgentConductor",
+  "about.close": "Close About",
+  "about.meta": "Version {version} · MIT License",
+  "about.updated": "Updated to {version}",
+  "about.description": "AgentConductor turns a Goal into a team effort. A coordinator plans the work, assigns tasks to the AI coding agents you already use, runs each one in its own isolated worktree, reviews the result and merges it only after you approve.",
+  "about.install_title": "Install the agent CLIs first",
+  "about.install_note": "AgentConductor drives the official command-line tools; it works once at least one is installed and signed in. Needs Node.js with npm.",
+  "about.copy": "Copy",
+  "about.copied": "Copied",
+  "about.after_install": "Then run claude, codex or opencode once in a terminal to sign in. Reopen this screen any time from the menu.",
+  "about.credits_title": "Credits",
+  "about.credits_body": "AgentConductor is open source under the MIT License. Brand marks are from Lobe Icons (MIT, © LobeHub). Claude Code is a product of Anthropic, Codex of OpenAI and OpenCode of the OpenCode project; their names and marks belong to their owners and are used only to identify the tools.",
+  "about.once_note": "Shown once after each install or update.",
+  "about.start": "Get started"
 }

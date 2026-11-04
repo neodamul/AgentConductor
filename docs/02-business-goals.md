@@ -653,3 +653,6 @@ Operators can edit display text, start a Goal or continue phases without losing 
 The operator can see how many input and output tokens each task, each Goal and the whole Workspace used, from what the CLIs report, to compare agents and plan capacity. Trace: R-214.
 
 BG-165 / #429 amendment (2026-11-04): Operators can reuse team defaults for a new Goal while deliberately confirming who plans it and which model is used, without altering another Goal’s reviewed execution.
+
+### BG-170 A new operator knows what the app is and what to install
+After installing or updating, the operator immediately learns what AgentConductor does, who is credited and which agent CLIs must be installed, and can find the same information again later. Trace: R-215.

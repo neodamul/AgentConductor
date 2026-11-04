@@ -5,7 +5,8 @@ pub(crate) fn document() -> Result<String, String> {
         + include_str!("../startup.html")
         + include_str!("../mcp.html")
         + include_str!("../chat.html")
-        + include_str!("../optimize.html");
+        + include_str!("../optimize.html")
+        + include_str!("../about.html");
     let style = format!(
         "{}\n{}\n{}\n{}\n{}",
         super::super::CSS,
@@ -15,10 +16,12 @@ pub(crate) fn document() -> Result<String, String> {
         include_str!("../optimize.css")
     ) + include_str!("../anchored_select.css")
         + include_str!("../role_choices.css")
+        + include_str!("../about.css")
         + include_str!("../titlebar.css");
     let helper_scripts = concat!(
         include_str!("../brand_avatar.js"),
         include_str!("../team_briefing.js"),
+        include_str!("../about.js"),
         "\n",
         include_str!("../manual.js")
     );
