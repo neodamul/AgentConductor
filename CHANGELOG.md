@@ -6,9 +6,10 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+## v0.2.0
+- The goal screen follows the approved design exactly: a strict parity check compares every element's box, text, colour, hover and focus state and pixel crop with the design mock in both themes at 1280 and 840 pixels, with no tolerance.
 - Jira items are called issues everywhere they are shown ("Jira 이슈" / "Jira issue": the import button, the reference dialog, the import error text and the documents), not stories.
 - Agent cards show the dual-ring quota icon from the provider's windows; clicking it opens a popup with each window's remaining share, reset time, observation time and, on errors, the failure with a retry (#426).
-
 - UI: every text and control size, weight, colour and padding now follows the approved mock (one strict size scale, no browser-default 16px controls); a typography parity set checks it in both themes (#432).
 - Both manuals have a new section "The goal screen" (1.2a) describing the six-step stepper, the panels, the Goal list actions, the result popup and the status borders.
 - The completed-goal popup shows its summary as one ruled line (changed files, tests passed, lessons) instead of three stacked tiles.

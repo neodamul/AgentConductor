@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.1.58** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.2.0** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.1.58 makes a custom CLI that refuses tools or prints text instead of JSON easy to diagnose: the failure quotes the line and shows the end of the CLI's output and errors, a profile can keep text lines as progress (`on_invalid_json: "text"`) and declare an event that means a tool was refused (`denial_condition`), which fails the task as "permission denied" even when the CLI exits 0, and an agent set to approve tools automatically with nothing that could show a refusal gets a "Check configuration" badge.
+The app version is beside the title. Version 0.2.0 redesigns the goal screen: one six-step stepper for the Workspace settings and the Agent Room, a two-tab left panel (Agents, Phases & tasks) with fixed-size agent cards, a quota ring with a usage popup on every agent, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, one centered result popup when a goal completes, and status borders on the agent icons. Every text size, control and colour follows the approved design.
 
 ### 1.1a Application updates
 
