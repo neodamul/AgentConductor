@@ -2701,3 +2701,5 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Task: size, weight, colour and padding of the titlebar, rail, step tabs, step card and Room controls follow the mock; controls inherit the page size; no 15/19/20/22/26px text.
 - [x] Verify: `tests/design_parity/typography.cjs` (22 element entries plus a no-off-scale assertion for 7 screen states) passes in light and dark; Rust parity, node_runtime, interface_theme, source_layout suites pass.
 - [ ] Completed: PR merged after the stack #422/#423; remaining mock sections (config section heads, titlebar item order) are in #427.
+
+- [x] Step footer (GitHub #427, part 1): "Discard changes" leaves the titlebar and follows the open step into its footer row, beside the primary action, with the mock's explanatory note; parity entries `type-discard-button` and `discard-follows-step`.

@@ -61,4 +61,7 @@ module.exports = [
   // Step tab captions are the mock's short names and none is cut at the reference width.
   { name: 'step-tab-captions', app: {}, assert: `(() => { const tabs = [...document.querySelectorAll('#start-step-tabs [role=tab]')], names = tabs.map(t => t.querySelector('span:last-child').textContent.trim());
     return names.slice(0, 3).join('|') === ['워크스페이스', '에이전트 역할', '계획'].join('|') && tabs.every(t => { const l = t.querySelector('span:last-child'); return l.scrollWidth <= l.clientWidth + 1 }) })()` },
+  // "Discard changes" is a step-footer button (mock `.actions .btn.q`) that follows the open step.
+  e('discard-button', B, '.actions .btn.q', '#start-discard'),
+  { name: 'discard-follows-step', app: { run: "document.getElementById('start-tab-team').click()" }, assert: `(() => { const d = document.getElementById('start-discard'); return !d.closest('header') && d.closest('.step-card') === document.getElementById('start-panel-team') })()` },
 ];

@@ -215,3 +215,7 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 /* Tab widths follow their captions (no fixed 3:2:1.2 group ratio), so captions are not cut while there is room. */
 .startup-tabs .step-group,.startup-tabs .step-group[data-group]{flex:1 1 auto}
 .startup-tabs [role="tab"]{flex:1 1 auto}
+/* "Discard changes" sits in the step footer beside the primary action (mock .actions .btn.q), with the explanatory note on the left. */
+.startup-actions{display:flex;align-items:center;gap:8px;justify-content:flex-end}
+.startup-actions .step-save-note{margin-right:auto;font-size:11px}
+.step-card #start-discard{box-sizing:border-box;height:34px;font-size:13px;padding:0 13px;border:1px solid var(--line);background:transparent;color:var(--ink)}

@@ -677,6 +677,7 @@
   "startup.development": "Development",
   "startup.discard": "Discard",
   "startup.discard_changes": "Discard changes",
+  "startup.save_note": "Saves the Workspace settings and the Goal, then checks the roles.",
   "startup.discard_unsaved_changes": "Discard unsaved changes",
   "startup.discard_unsaved_changes_470e7e": "Discard unsaved changes?",
   "startup.disposable_cache_folders": "Disposable cache folders",
