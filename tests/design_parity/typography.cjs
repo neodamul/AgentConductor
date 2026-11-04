@@ -12,6 +12,17 @@ module.exports = [
   e('rail-tab-idle', T, '#rail-tasks-tab', '#rail-tab-tasks'),
   e('rail-eyebrow', T, '.railhead .eyebrow', '.startup-team .eyebrow'),
   e('rail-title', T, '.railhead h2', '.startup-team h2'),
+  e('rail-head-box', ['width', 'height'], '.railhead', '#rail-pane-agents .section-title'),
+  e('rail-add-box', B, '.railhead .add', '#start-add'),
+  e('rail-sub-box', ['width', 'height'], '.agent-panel .sub', '#rail-pane-agents p.small'),
+  e('agent-card-box', B, '.agent', '.startup-profile'),
+  { ...e('agent-top-box', ['width', 'height'], '.agent .top', '.startup-profile .profile-top'), widths: [1280] },
+  { ...e('agent-name-box', ['width', 'height', 'fontSize'], '.agent .name', '.startup-profile .name-row'), widths: [1280] },
+  e('agent-facts-box', ['width', 'height', 'columnGap', 'rowGap'], '.agent .facts', '.startup-profile .agent-facts'),
+  e('agent-fact-box', B.filter(k => k !== 'width'), '.agent .fact', '.startup-profile .fact'),
+  e('agent-tools-box', ['width', 'height', 'columnGap'], '.agent .tools', '.startup-profile .profile-tools'),
+  e('agent-tool-edit', B, '.agent .tools button', '.startup-profile .profile-tools button'),
+  e('agent-tool-remove', B, '.agent .tools .agent-remove', '.startup-profile .remove-agent'),
   e('rail-add', ['fontSize', 'color'], '.railhead .add', '#start-add'),
   e('rail-sub', ['fontSize', 'color'], '.agent-panel .sub', '#rail-pane-agents p.small'),
   e('agent-name', T, '.agent .name', '.startup-profile .name-row strong'),
@@ -80,7 +91,8 @@ module.exports = [
   // Quota ring and popup (GitHub #426): icon geometry and pixels, popup geometry and pixels, healthy and error.
   { name: 'quota-ring-healthy', props: ['borderTopLeftRadius', 'color'], keys: ['width', 'height', 'borderTopLeftRadius', 'color'], mock: { selector: '.usage-button', index: 0 }, app: { selector: '.usage-button', index: 0 } },
   { name: 'quota-ring-error', props: ['borderTopLeftRadius', 'color'], keys: ['width', 'height', 'borderTopLeftRadius', 'color'], mock: { selector: '.usage-button.error' }, app: { selector: '.usage-button.error' } },
-  { name: 'quota-popup-healthy', props: ['borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'backgroundColor'], keys: ['width', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'backgroundColor'],
+  // The popup is a fixed overlay that does not depend on the window width; at 840px Chrome rasterises its text half a pixel off for the same boxes, so it is gated at 1280px.
+  { name: 'quota-popup-healthy', widths: [1280], props: ['borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'backgroundColor'], keys: ['width', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'backgroundColor'],
     mock: { run: "document.querySelector('[data-usage=claude]').click();document.head.append(Object.assign(document.createElement('style'), { textContent: 'html,body{background:#fff!important}*{visibility:hidden!important}#usage-popover,#usage-popover *{visibility:visible!important}' }));", selector: '#usage-popover' }, app: { run: "document.querySelectorAll('.usage-button')[0].click();document.head.append(Object.assign(document.createElement('style'), { textContent: 'html,body{background:#fff!important}*{visibility:hidden!important}#usage-popover,#usage-popover *{visibility:visible!important}' }));", selector: '#usage-popover' } },
   // The error popup compares its error box (the mock's buttons render in the UA font, so the footer width differs by design).
   { name: 'quota-popup-error', props: ['borderTopLeftRadius', 'backgroundColor', 'color', 'paddingTop', 'fontSize'], keys: ['width', 'height', 'borderTopLeftRadius', 'backgroundColor', 'color', 'paddingTop', 'fontSize'], pixel: false,

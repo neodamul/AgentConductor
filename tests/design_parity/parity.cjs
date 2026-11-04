@@ -52,7 +52,7 @@ async function visit(browser, side, spec) {
       console.log(JSON.stringify(await browser.eval(`[...document.querySelectorAll(${JSON.stringify(argv[2])})].slice(0, 6).map(e => { const r = e.getBoundingClientRect(), c = getComputedStyle(e); return { cls: String(e.className.baseVal ?? e.className), w: r.width, h: r.height, x: r.left, y: r.top, bw: c.borderTopWidth, bc: c.borderTopColor, pad: c.paddingTop, rad: c.borderTopLeftRadius }; })`), null, 1));
       return;
     }
-    const failures = [], specs = require('./spec.cjs').filter(x => !flag('--only') || x.name === flag('--only')), ran = specs.length;
+    const failures = [], specs = require('./spec.cjs').filter(x => (!flag('--only') || x.name === flag('--only')) && (!x.widths || x.widths.includes(WIDTH))), ran = specs.length;
     // Measure grouped by page state so each state is loaded once (the run is dominated by page loads).
     const key = (side, x) => side === 'mock' ? 'mock|' + (x.mock.url || '?theme=light#0') + '|' + (x.mock.run || '') : 'app|' + (x.app.setup || '') + '|' + (x.app.run || '');
     const jobs = []; for (const x of specs) if (!x.assert) for (const side of ['mock', 'app']) jobs.push({ x, side });
@@ -69,7 +69,14 @@ async function visit(browser, side, spec) {
       got[x.name] = got[x.name] || { shots: {} }; got[x.name][side] = m;
       got[x.name].diagnostics ||= {};got[x.name].diagnostics[side]=await describe(browser,s.selector,s.index||0);
       if (!m) { failures.push(`${x.name}: ${side} element not found (${s.selector})`); continue; }
-      got[x.name].shots[side] = await browser.shot({ x: m.x, y: m.y, width: m.width, height: m.height });
+      // Chrome rasterises the same drawing a little differently at different page positions and on different backdrops, so each element is
+      // captured alone: lifted to the same fixed spot on a white page, at its own measured size, with everything else hidden.
+      await browser.eval(`(() => { const e = [...document.querySelectorAll(${JSON.stringify(s.selector)})].filter(x => x.getBoundingClientRect().width > 0)[${s.index || 0}];
+        e.dataset.parityStyle = e.getAttribute('style') || ''; e.dataset.parityTarget = '1';
+        e.style.cssText += ';position:fixed;left:100px;top:100px;margin:0;box-sizing:border-box;width:${m.width}px;height:${m.height}px;transform:none;translate:none;z-index:99999';
+        document.head.append(Object.assign(document.createElement('style'), { id: 'parity-solo', textContent: 'html,body{background:#fff!important}*{visibility:hidden!important}[data-parity-target],[data-parity-target] *{visibility:visible!important}' })); })()`);
+      got[x.name].shots[side] = await browser.shot({ x: 100, y: 100, width: m.width, height: m.height });
+      await browser.eval(`(() => { const e = document.querySelector('[data-parity-target]'); if (!e) return; e.setAttribute('style', e.dataset.parityStyle); if (!e.dataset.parityStyle) e.removeAttribute('style'); delete e.dataset.parityStyle; delete e.dataset.parityTarget; document.getElementById('parity-solo')?.remove(); })()`);
       fs.writeFileSync(path.join(out, `${x.name}.${side}.png`), got[x.name].shots[side]);
     }
     for (const spec of specs) {

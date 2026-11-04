@@ -283,6 +283,24 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
    the ring spans both text lines like the avatar and the handle is a 10x20px dotted grip (four dot rows), centred on the ring. */
 .profile-top{align-items:center}
 .profile-top .quota-controls{position:static;margin:0 0 0 auto;flex:none}
+/* The mock declares the colour scheme, so native controls and text rendering follow the theme. */
+:root{color-scheme:light}:root[data-theme="dark"]{color-scheme:dark}
+/* #435 rail: section head, hint and agent cards follow the mock's box model (card fixed at 144px, one row of tools). */
+#rail-tabs{margin-bottom:10px}
+#rail-pane-agents{display:flex;flex-direction:column;gap:10px;padding-top:10px}
+#rail-pane-agents .section-title{display:flex;align-items:flex-end;justify-content:space-between;margin:0}
+#rail-pane-agents .section-title h2{margin:2px 0 4px;font-size:18px}
+#start-add{box-sizing:border-box;height:auto;padding:4px 9px;font:inherit;font-size:12px;line-height:normal;border-radius:6px}
+#rail-pane-agents p.small{margin:0;line-height:normal}
+#start-profiles{display:flex;flex-direction:column;gap:10px}
+.startup-profile{box-sizing:border-box;height:144px;flex:none;display:flex;flex-direction:column;gap:6px;margin:0}
+.startup-profile .profile-top{gap:7px;padding:0}
+.startup-profile .name-row{font-size:14px}.startup-profile .profile-name strong{line-height:normal}
+.startup-profile .agent-facts{gap:5px;margin:0}.startup-profile .agent-facts .fact{border-radius:4px}
+.startup-profile .agent-exe{display:none}
+.startup-profile .profile-tools{margin:auto 0 0;gap:4px}
+.startup-profile .profile-tools button{padding:2px 6px;min-height:22px;height:auto;line-height:16px;font-size:11px;font-family:inherit;column-gap:normal}.startup-profile .profile-tools .remove-agent{width:auto;min-width:22px;padding:2px 4px}
+.startup-profile .profile-tools button:first-child{font-family:revert}
 .startup-profile .drag-handle{position:static;flex:none;width:10px;height:20px;margin:0 0 0 4px;font-size:0;background:radial-gradient(circle,var(--line-strong) 1.2px,transparent 1.6px) 0 0/5px 5px}
 /* Room action buttons (mock .dir .btn): flex, 6px gap, leading 13px icon, 8px 13px padding; labels are the mock's. */
 [data-action-icon="send"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='black'%20stroke-width='1.6'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M21%203L10%2014M21%203l-7%2018-4-7-7-4z'/%3E%3C/svg%3E")}[data-action-icon="stop"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='black'%20stroke-width='1.6'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Crect%20x='6'%20y='6'%20width='12'%20height='12'%20rx='1.5'/%3E%3C/svg%3E")}

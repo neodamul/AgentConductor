@@ -701,6 +701,8 @@
   "startup.drag_to_reorder": "Drag to reorder",
   "startup.e_g_client_a": "e.g. Client A",
   "startup.e_g_payments_team": "e.g. Payments team",
+  "startup.tool_edit": "✎ Edit",
+  "startup.tool_models": "Models ↻",
   "startup.edit": "Edit",
   "startup.edit_cli_profile": "Edit CLI profile",
   "startup.empty_plan_created_fill_in_each_task_save": "Empty plan created. Fill in each task, save the edits, then approve.",
