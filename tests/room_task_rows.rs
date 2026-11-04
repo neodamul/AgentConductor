@@ -69,3 +69,10 @@ fn task_rows_are_quiet_rows_with_a_trailing_chevron_and_a_selected_accent_edge()
         ".session::after{content:\"\";flex:none;align-self:center;width:12px;height:12px;"
     ));
 }
+
+#[test]
+fn blocked_and_refused_task_tags_are_red_like_the_avatar_border() {
+    // behavior.md: red for blocked/refused, yellow for waiting; the tag tone and the avatar light agree.
+    assert!(ROOM.contains("failed:'bad',blocked:'bad',permission_denied:'bad',rejected:'bad',"));
+    assert!(ROOM.contains("['failed','blocked','permission_denied'].includes(status)?'red'"));
+}
