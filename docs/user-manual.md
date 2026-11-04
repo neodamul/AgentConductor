@@ -65,6 +65,13 @@ Settings has **Agent tools guide…** for optional agentmemory, RTK, Ponytail, G
 
 ![Dark Korean workspace](assets/ui-workspace-dark-current.png)
 
+### 1.2a The goal screen
+One screen serves the whole job. A single stepper with six steps — **Workspace**, **Agent roles**, **Plan**, **Tasks**, **Verify** and **Review and merge** — is grouped as Prepare, Run and Finish; the first three open the workspace settings and the last three open the Agent Room while a run exists, and the Room marks the step the run is in. The left panel has two tabs, **Agents** and **Phases & tasks**, and the panel icon at the left of the title bar hides or restores it. Task details open in a column on the right with the icon at the right of the title bar; it starts closed every time and never opens by itself.
+
+**Goal list** (next to the goal title) opens the workspace's goals in a panel that slides in from the right, on the workspace screen and in the Agent Room. Each goal row has a red trash button (permanent deletion), a folder button that opens the goal's folder in Finder or Explorer and, for a completed goal, **Result**. Deleting asks first: the confirmation names the goal and its exact folder, warns that the whole folder is deleted without backup and without going to the Trash, and **Cancel** is the default. Running work of that goal is stopped before anything is removed; only that goal's own folder is deleted, never the project folder, and a folder that is not owned by the app is refused.
+
+When a goal completes, one popup shows where the changes were merged, the changed files, the verification results and the lessons; **Result** in the Goal list or in the Agent Room opens the same popup. The team briefing, the chat with the coordinator and Settings also slide in from the right, one at a time. Claude Code and Codex show their own marks; the border of an agent's icon shows its state (green running or completed, yellow waiting, red failed or blocked).
+
 ### 1.3 Agents and models
 
 The app-owned workspaces share one machine-wide CLI list, `~/.agentconductor/agents.json`.

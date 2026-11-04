@@ -1233,5 +1233,6 @@
   "startup.delete_goal_confirm": "영구 삭제",
   "startup.delete_goal_pending": "삭제 전에 이 Goal의 작업을 중지하는 중…",
   "startup.delete_goal_timeout": "Goal의 작업이 아직 중지되는 중입니다. 잠시 후 다시 시도하세요.",
-  "startup.delete_goal_done": "Goal {value1}을(를) 삭제했습니다."
+  "startup.delete_goal_done": "Goal {value1}을(를) 삭제했습니다.",
+  "startup.rail_toggle": "왼쪽 패널 접기·펼치기"
 }

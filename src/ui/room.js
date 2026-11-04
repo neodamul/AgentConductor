@@ -9,7 +9,7 @@ function statusLight(status){return ['running','completed','ready'].includes(sta
 const names = {claude:'Claude Code',codex:'Codex',opencode:'OpenCode'};
 const pretty = value => {const key='state.'+String(value||'unknown');return Object.hasOwn(AC_MESSAGES.en,key)?acMessage(key):String(value||acMessage('room.unknown')).replaceAll('_',' ');};
 // Run and task states: a capitalised label and a colour tone, so the final state reads at a glance.
-const STATUS_TONE = {completed:'ok',approved:'ok',merged:'ok',failed:'bad',permission_denied:'bad',rejected:'bad',running:'run',pending:'idle',ready:'idle'};
+const STATUS_TONE = {completed:'ok',approved:'ok',merged:'ok',failed:'bad',blocked:'bad',permission_denied:'bad',rejected:'bad',running:'run',pending:'idle',ready:'idle'};
 const statusTone = status => STATUS_TONE[status]||'wait';
 // Literal labels so every state has an exact interface string to translate.
 const STATUS_LABELS = {get completed(){return acMessage("startup.completed_22a970");},get failed(){return acMessage("room.failed_031a8f");},get pending(){return acMessage("room.pending");},get running(){return acMessage("room.running");},get ready(){return acMessage("startup.ready");},get blocked(){return acMessage("room.blocked");},get permission_denied(){return acMessage("room.permission_denied");},get stopped(){return acMessage("room.stopped");},get approved(){return acMessage("room.approved");},get rejected(){return acMessage("room.rejected");},get waiting_approval(){return acMessage("room.waiting_approval");},get waiting_tool_approval(){return acMessage("room.waiting_tool_approval");},get waiting_availability(){return acMessage("room.waiting_availability");},get interrupted(){return acMessage("room.interrupted");}};

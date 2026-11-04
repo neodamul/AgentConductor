@@ -1233,5 +1233,6 @@
   "startup.delete_goal_confirm": "Delete permanently",
   "startup.delete_goal_pending": "Stopping this Goal's work before deleting…",
   "startup.delete_goal_timeout": "The Goal's work is still stopping. Try again in a moment.",
-  "startup.delete_goal_done": "Goal {value1} was deleted."
+  "startup.delete_goal_done": "Goal {value1} was deleted.",
+  "startup.rail_toggle": "Hide or show the left panel"
 }

@@ -26,7 +26,7 @@ window.acResultView = (() => {
     const row = (a, b) => { const el = node('li'); el.append(node('span', a), node('span', b, 'muted')); return el; };
     AC_I18N.bind($('result-title'), () => acMessage('room.result_title', { value1: data.goal }));
     AC_I18N.bind($('result-target'), () => acMessage('room.result_target', { value1: data.branch, value2: (data.commit || '').slice(0, 12), value3: data.repo }));
-    const metric = (label, value) => { const el = node('div', undefined, 'result-metric'); el.append(node('span', label, 'muted'), node('strong', String(value))); return el; };
+    const metric = (label, value) => { const el = node('div', undefined, 'result-metric'); el.append(node('strong', String(value)), node('span', label, 'muted')); return el; };
     AC_I18N.replace($('result-metrics'), metric(() => acMessage('room.result_metric_files'), changed.length), metric(() => acMessage('room.result_metric_tests'), `${summary.passed}/${summary.total}`), metric(() => acMessage('room.result_metric_lessons'), notes.length));
     AC_I18N.replace($('result-files'), ...changed.map(f => row(f.path, `+${f.add} / −${f.del}`)));
     AC_I18N.replace($('result-tests'), ...outputs.map(t => row(t.task, () => acMessage(t.exit_code === 0 && !t.timed_out ? 'room.result_test_passed' : 'room.result_test_failed'))));
