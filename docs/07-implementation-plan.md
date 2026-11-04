@@ -2948,6 +2948,8 @@ Trace: R-215 / UC-207 / QAS-214 / DD-227.
 - [x] Task: `goto()` waits for the lifecycle `load` event of its own navigation (`loaderId`), fails after 60 s with the URL instead of continuing silently; hash-only navigations keep the short settle wait.
 - [ ] Verify: Node UI suite and strict design parity on macOS; Windows through CI.
 
+Trace: R-210 / UC-202 / DD-222.
+
 ### Windows fallback test contention — GitHub #480
 
 - [x] Plan: the Windows job log of #469 showed nine parallel workflow tests starving each other on a 2-vCPU runner (one finished in 5 s, others ran longer than 60 s and hit their bounded waits; all passed on re-run); the waits measured the runner, not the product.
