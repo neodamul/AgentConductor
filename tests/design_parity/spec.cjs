@@ -68,4 +68,7 @@ module.exports = [
   { name: 'rail-toggle-behaviour',
     app: { run: "window.__w = document.querySelector('.startup-main').getBoundingClientRect().width; document.getElementById('start-rail-toggle').click()" },
     assert: "(() => { const hidden = document.querySelector('.startup-team').getBoundingClientRect().width === 0 && document.querySelector('.startup-main').getBoundingClientRect().width > window.__w + 200; document.getElementById('start-rail-toggle').click(); return hidden && document.querySelector('.startup-team').getBoundingClientRect().width === 250; })()" },
+  // Rail width follows the design's breakpoints: 250px, 230px below 900px (GitHub #408).
+  { name: 'rail-width-840', viewport: [840, 800], app: {}, assert: "document.querySelector('.startup-team').getBoundingClientRect().width === 230" },
+  { name: 'rail-width-1280', app: {}, assert: "document.querySelector('.startup-team').getBoundingClientRect().width === 250" },
 ];
