@@ -176,7 +176,7 @@ fn roles_table_sits_in_team_tab_and_tasks_show_their_role() {
     let three = HTML.find("id=\"start-panel-review\"").expect("step 3");
     assert!(one < two && two < three);
     // Each step is its own card, like step 3 (user request 2026-10-11).
-    assert_eq!(HTML.matches("class=\"startup-goal step-card\"").count(), 2);
+    assert_eq!(HTML.matches("class=\"startup-goal step-card").count(), 2);
     let step2 = &HTML[HTML.find("id=\"start-panel-team\"").unwrap()..];
     assert!(
         step2.find("id=\"start-prepare\"").unwrap() < step2.find("startup-review").unwrap(),

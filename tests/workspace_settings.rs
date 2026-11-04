@@ -34,18 +34,23 @@ fn settings_are_grouped_with_goal_first_and_repository_beside_worktrees() {
     let name = HTML.find("id=\"start-name\"").unwrap();
     assert!(settings < name && name < coordinator && coordinator < repository && repository < goal);
     assert!(repository < browse && browse < worktrees);
-    // The path width applies to the path field only, never to the worktree checkbox.
+    // The path width applies to the path field only, never to the worktree checkbox: the checkbox sits outside the row.
     let css = include_str!("../src/ui/startup.css");
     assert!(
-        !css.contains(".repository-row input{"),
-        "row rule would size the checkbox"
+        !css.contains("\n.repository-row input{"),
+        "an unscoped row rule would size the checkbox"
+    );
+    assert!(
+        css.contains("#start-workspace-section .repository-row input{flex:1;min-width:0}"),
+        "the row rule is scoped to the Workspace section"
     );
     // The coordinator selector keeps its original natural width (user request 2026-10-11).
     assert!(css.contains(".workspace-settings select{display:block;width:auto;min-width:210px}"));
-    // Path, Browse and the worktree option share one row (user request 2026-10-11).
+    // Path and Browse share one row; the worktree option is its own line right after it (approved mock, #435).
     let row = &HTML[HTML.find("class=\"repository-row\"").unwrap()..];
     let row = &row[..row.find("</div>").unwrap()];
-    assert!(row.contains("id=\"start-browse\"") && row.contains("id=\"start-worktrees\""));
+    assert!(row.contains("id=\"start-repository\"") && row.contains("id=\"start-browse\""));
+    assert!(!row.contains("id=\"start-worktrees\""));
     let titlebar = &HTML[..HTML.find("</header>").unwrap()];
     assert!(
         titlebar.contains("id=\"start-workspace-menu\""),
