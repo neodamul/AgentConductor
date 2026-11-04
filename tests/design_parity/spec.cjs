@@ -4,10 +4,10 @@
 const BOX = ['borderTopWidth', 'borderTopLeftRadius'];
 module.exports = [
   ...require('./typography.cjs'),
-  { name: 'agent-avatar', props: BOX, maxPixelDiff: 0.25, // the mock's border carries the agent status colour; the app's arrives with #410 (then 0.02)
+  { name: 'agent-avatar', props: BOX, // the mock's first agent waits for a decision: yellow border and the attention marker
    
     mock: { url: '?theme=light#0', selector: '.status-icon', index: 0, mark: '.agent-brand-logo' },
-    app: { selector: '.agent-symbol.app-icon', index: 0, mark: 'content' } },
+    app: { run: "acAgentStatus.apply([{ status: 'needs_input' }], [{ agent: 'claude' }], () => 'wait')", selector: '.agent-symbol.app-icon', index: 0, mark: 'content' } },
   // The task rail of the run steps: the Room opens through the simulator's run and the Tasks tab.
   { name: 'task-avatar', props: BOX, maxPixelDiff: 0.005,
     mock: { url: '?theme=light#3', selector: '.outline-task .outline-agent', index: 0, mark: '.agent-brand-logo' },

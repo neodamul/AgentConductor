@@ -221,3 +221,12 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 .step-card #start-discard{box-sizing:border-box;height:34px;font-size:13px;padding:0 13px;border:1px solid var(--line);background:transparent;color:var(--ink)}
 /* Narrow windows (mock): the rail is 190px below 600px. */
 @media(max-width:600px){.startup-shell{grid-template-columns:190px minmax(0,1fr)}.startup-team{padding:14px 10px}.workbench,.workbench.insp-closed{grid-template-columns:190px minmax(0,1fr)}}
+/* Agent avatar status (mock .status-icon): border colour by task state, a pulse only while running, an attention marker. */
+.startup-profile .agent-symbol{--state-color:var(--line-strong);position:relative;border-color:var(--state-color)}
+.startup-profile .agent-symbol[data-state="running"],.startup-profile .agent-symbol[data-state="completed"]{--state-color:var(--ok)}
+.startup-profile .agent-symbol[data-state="waiting"]{--state-color:var(--warn)}
+.startup-profile .agent-symbol[data-state="error"]{--state-color:var(--err)}
+.startup-profile .agent-symbol[data-state="running"]{animation:agent-status-pulse 1.8s ease-in-out infinite}
+.startup-profile .agent-symbol[data-attention="true"]::after{content:'!';position:absolute;right:-5px;top:-5px;display:grid;place-items:center;width:12px;height:12px;border-radius:50%;background:var(--state-color);color:var(--accent-ink);font-size:9px;font-weight:700;border:1px solid var(--surface)}
+@keyframes agent-status-pulse{0%,100%{border-color:var(--state-color)}50%{border-color:var(--line)}}
+@media(prefers-reduced-motion:reduce){.startup-profile .agent-symbol[data-state="running"]{animation:none}}
