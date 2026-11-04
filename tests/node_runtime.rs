@@ -13,16 +13,50 @@ fn every_node_ui_test_passes() {
     let failed: Vec<String> = scripts
         .iter()
         .filter_map(|script| {
-            let result = std::process::Command::new("node")
+            // A page test that hangs (a browser that never exits) must name itself instead of stalling the whole job.
+            let mut child = std::process::Command::new("node")
                 .current_dir(root)
                 .arg(script)
-                .output()
+                .stdout(std::process::Stdio::piped())
+                .stderr(std::process::Stdio::piped())
+                .spawn()
                 .expect("Node runs UI behavior tests");
-            (!result.status.success()).then(|| {
+            let (mut out, mut err) = (child.stdout.take().unwrap(), child.stderr.take().unwrap());
+            let readers = [
+                std::thread::spawn(move || {
+                    let mut v = Vec::new();
+                    let _ = std::io::Read::read_to_end(&mut out, &mut v);
+                    v
+                }),
+                std::thread::spawn(move || {
+                    let mut v = Vec::new();
+                    let _ = std::io::Read::read_to_end(&mut err, &mut v);
+                    v
+                }),
+            ];
+            let started = std::time::Instant::now();
+            let status = loop {
+                if let Some(status) = child.try_wait().unwrap() {
+                    break Some(status);
+                }
+                if started.elapsed() > std::time::Duration::from_secs(120) {
+                    let _ = child.kill();
+                    let _ = child.wait();
+                    break None;
+                }
+                std::thread::sleep(std::time::Duration::from_millis(200));
+            };
+            let [_, stderr] = readers.map(|reader| reader.join().unwrap_or_default());
+            (!status.is_some_and(|status| status.success())).then(|| {
                 format!(
-                    "{}:\n{}",
+                    "{}: {}\n{}",
                     script.display(),
-                    String::from_utf8_lossy(&result.stderr)
+                    if status.is_none() {
+                        "hung for 120 seconds and was stopped"
+                    } else {
+                        "failed"
+                    },
+                    String::from_utf8_lossy(&stderr)
                 )
             })
         })
