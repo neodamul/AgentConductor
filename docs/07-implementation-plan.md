@@ -2794,3 +2794,15 @@ Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / QAS-209 / DD-222.
 - [x] Task: extend existing assets/map/templates/renderer/simulator; retain custom fallback and no-runtime-discovery behavior.
 - [x] Verify: native and real browser light/dark 840/1280 checks; source/license/layout regressions.
 - [x] Completed: isolated commit and PR prepared; AgentMemory/wiki checkpoint recorded. Local Node UI suite, warning-denied Clippy, native icon and browser checks pass. Latest-main integration exposed a separate #427 hard-coded attention colour; PR #443 corrected it and all six theme-contract tests pass. Windows rendering remains separate.
+
+### Token usage accounting — GitHub #441
+
+- [x] Plan: record the requirement R-214 through the whole chain (BG-169, SF-202, UC-206, FR-208 / NFR-95, QAS-213, DDR-61, DD-226) before any code; the user asked for input/output tokens per task, rolled up per Goal and per Workspace.
+- [ ] Task: specify the data model in the issue: append-only per-attempt `usage` records, unreported versus zero, idempotent replay keyed by task and attempt, derived Goal and Workspace totals, the rule for deleted Goals.
+- [ ] Task: parser fixtures per CLI (claude, codex, opencode, custom) for reported, partial and absent usage; tests first.
+- [ ] Task: ledger persistence in the task record with restart replay and concurrent-writer tests.
+- [ ] Task: surfaces — task inspector Session metrics, Goal row and result popup totals, Workspace total; localized; parity entries.
+- [ ] Verify: unit and integration tests (task → Goal → Workspace), adversarial retry/resume/restart cases, full suite on macOS and Windows.
+- [ ] Completed: implemented, verified and merged; GitHub #441 closed.
+
+Trace: R-214 / UC-206 / QAS-213 / DD-226.

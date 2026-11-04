@@ -185,3 +185,6 @@ Use existing process ownership, durable stop markers and revision checks instead
 
 ### Driver DDR-60 Establish ownership by exclusive creation
 A generic app marker is not permission to claim an existing directory. Reserve the new directory atomically before writing any Goal metadata; do not build a second folder model for behavior already implemented. Trace: QAS-212.
+
+### Driver DDR-61 Count what the CLI reports, once
+Usage is evidence supplied by the CLI event stream; the ledger is append-only and keyed by task attempt so replays are idempotent, and totals are derived, never typed in. Trace: QAS-213.

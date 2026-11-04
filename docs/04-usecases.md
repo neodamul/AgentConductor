@@ -849,3 +849,6 @@ Actor: operator. Precondition: a registered Goal exists. Result reads retained p
 
 ### UC-205 Create or continue a Goal in a Workspace
 Actor: operator. An existing project directory is linked, with or without its own Git repository. Editing display text keeps existing Goal folders in place. Starting New Goal clears only Goal-specific proposal/context and keeps linked directory, coordinator, profiles and role rules. A direct requested Goal identifier colliding with any filesystem entry fails without touching it; automatic allocation finds an unused identifier. Continuing a completed phase loads the next phase of the same Goal for review. Trace: SF-201.
+
+### UC-206 Review token usage of a task, a Goal and a Workspace
+Actor: operator. A run finishes (or is retried, resumed or interrupted). The task inspector shows the reported input and output tokens of each attempt and their sum; the Goal row and result popup show the Goal total; the Workspace shows the total over its Goals. An attempt whose CLI reported no usage shows as unreported and the total states how many attempts reported. Retrying or resuming never counts an attempt twice; deleting a Goal keeps or drops its tokens in the Workspace total according to the documented rule (DD-226). Trace: SF-202.

@@ -339,8 +339,8 @@ NFR 50 and 67–69, QAS 169–170, DDR 33, DD 183–184. Never assigned: BG 6, S
 Held by the Rust migration line (`codex/issue-9-native-ui-parity`, GitHub #9 and the issues split
 from it) and not yet on `main`; use them only when that line merges, and start new `main` entries
 above them: R 203–208, BG 158–163, SF 191–196, UC 194–200, FR 195–202, NFR 76–91, QAS 201–207,
-DDR 40–57, DD 215–220. Next free on `main`: R 211, BG 166, SF 199, UC 203, FR 205, NFR 92,
-QAS 210, DDR 58, DD 223. Its R 205, R 207 and R 208 port GitHub #323, #331 and #341, which `main`
+DDR 40–57, DD 215–220. Next free on `main`: R 215, BG 170, SF 203, UC 207, FR 209, NFR 96,
+QAS 214, DDR 62, DD 227. Its R 205, R 207 and R 208 port GitHub #323, #331 and #341, which `main`
 traces as amendments of R-110, R-126 and R-183; when the line merges, keep both and mark the
 amended `main` requirement with `Status: Amended by` the ported one.
 <!-- end reserved identifiers -->
@@ -350,3 +350,4 @@ amended `main` requirement with `Status: Amended by` the ported one.
 | R-211 | Goal row ownership and context | BG-166 | SF-199 | UC-203 | FR-205 / NFR-92 | QAS-210 | DD-223 |
 
 | R-213 | Workspace Goal identity and folder ownership | BG-168 | SF-201 | UC-205 | FR-207 / NFR-94 | QAS-212 | DD-225 |
+| R-214 | Token usage per task, Goal and Workspace | BG-169 | SF-202 | UC-206 | FR-208 / NFR-95 | QAS-213 | DD-226 |

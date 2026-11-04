@@ -1637,3 +1637,6 @@ Trace: R-211 / DDR-58. Goal identity is a registered internal slug; resolve its 
 
 ## DD-225 Goal folder allocation and model audit
 Trace: R-213 / DDR-60. Existing persisted slug records remain internal identifiers. Reuse current Workspace retention, non-Git external history and phase continuation. Correct creation to atomically reserve the Goal root before marker creation or Git exclusion, and treat dangling links as occupied. Existing directories are never adopted through create_slug. UI-only modal sizes/focus/scrolling and keeping step 6 visible behind results are frontend acceptance owned by Claude; they are not established by native backend tests.
+
+## DD-226 Token ledger design
+Trace: R-214 / DDR-61. Reuse the existing per-task event parsing and the task record; add an append-only per-attempt `usage` entry keyed by task id and attempt number (replay-safe), derive Goal and Workspace totals on read. Unreported is a distinct state. Deleting a Goal removes its folder and registry entry; its tokens leave the Workspace total (the ledger lives with the Goal) unless a later decision keeps a Workspace-level history. UI surfaces reuse the inspector Session metrics, Goal row and result popup. The data model and parsers are specified in GitHub #441 before implementation.
