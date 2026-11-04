@@ -6,6 +6,7 @@ const BOX = ['borderTopWidth', 'borderTopLeftRadius'];
 const attentionBox = selector => `(() => { const e=document.querySelector(${JSON.stringify(selector)}),box=document.createElement('span');box.id='attention-probe';box.style.cssText='display:inline-flex;flex:none;padding:6px;background:transparent';e.replaceWith(box);box.append(e); })()`;
 module.exports = [
   ...require('./typography.cjs'),
+  ...require('./choice_spec.cjs'),
   { name: 'agent-avatar', props: BOX, // the mock's first agent waits for a decision: yellow border and the attention marker
    
     mock: { url: '?theme=light#0', selector: '.status-icon', index: 0, mark: '.agent-brand-logo' },

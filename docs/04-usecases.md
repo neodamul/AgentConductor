@@ -505,6 +505,8 @@ The operator prepares a goal in steps 1-3, starts the run, and sees steps 4-6 ad
 Amendment #439 (2026-11-04): After registering OpenCode, the operator recognizes its brand in agent, task and selected-agent surfaces in either theme, even without its desktop app. Custom registrations retain their current initials.
 Trace: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. Source: user, approved design #387, 2026-11-04.
 
+Agent action strip: edit, models, remove and reorder remain distinct, readable targets at both reference widths. Reducing button padding must preserve tooltips, focus, disabled states and the icon content (GitHub #424).
+
 ### UC-115 Read the current application manual
 Status: Amended by UC-134, UC-188, UC-191 (R-144, R-197, R-200).
 Open either manual, follow workspace tabs, register CLIs and review a candidate. Match displayed labels, permissions, folder execution and recovery behavior to the documented version.

@@ -86,7 +86,11 @@ pub fn show(
             entries.remove(index);
         }
         if let Some(agent) = add {
-            entries.push(crate::roles::RoleAgent { agent, model: None });
+            entries.push(crate::roles::RoleAgent {
+                agent,
+                model: None,
+                fallback: None,
+            });
         }
     }
 }

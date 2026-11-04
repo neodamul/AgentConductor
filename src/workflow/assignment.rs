@@ -67,6 +67,9 @@ pub(super) fn transfer_role(
     let mut candidate = report.plan.clone();
     candidate.tasks[index].agent = agent.into();
     candidate.tasks[index].model = model.map(String::from);
+    if old_agent != agent {
+        candidate.tasks[index].fallback = None;
+    }
     candidate.validate()?;
     let task = &report.tasks[index];
     let git = Repository::open(&task.cwd)?;
@@ -94,6 +97,10 @@ pub(super) fn transfer_role(
     fs::write(&handoff, &text).map_err(|e| e.to_string())?;
     store.record("handoff",&serde_json::json!({"task":id,"from":old_agent,"to":agent,"previous_session":task.session_id,"evidence":task.artifacts,"handoff":handoff}),note)?;
     report.plan.tasks[index].agent = agent.into();
+    // The reviewed first-hop override is consumed; the target now uses its own chain.
+    if old_agent != agent {
+        report.plan.tasks[index].fallback = None;
+    }
     report.plan.tasks[index].model = model.map(String::from);
     // Bounded facts only; no free-form cross-agent conversation or foreign native ID.
     report.plan.tasks[index].prompt.push_str("\n\n");
@@ -113,16 +120,18 @@ pub(super) fn transfer_role(
 /// walk, so a chain of restricted accounts waits instead of looping.
 fn unrestricted_fallback(
     report: &Report,
-    source: &str,
+    index: usize,
 ) -> Result<Option<(String, Option<String>)>, String> {
+    let task = &report.plan.tasks[index];
     let mut profile = report
         .plan
         .agents
         .iter()
-        .find(|agent| agent.id == source)
+        .find(|agent| agent.id == task.agent)
         .ok_or("unknown task agent")?;
     let mut tried = std::collections::HashSet::from([profile.id.as_str()]);
-    while let Some(policy) = &profile.fallback {
+    let mut next = task.fallback_for(&report.plan.agents)?;
+    while let Some(policy) = next {
         let target = report
             .plan
             .agents
@@ -136,6 +145,7 @@ fn unrestricted_fallback(
             return Ok(Some((target.id.clone(), policy.model.clone())));
         }
         profile = target;
+        next = profile.fallback.as_ref();
     }
     Ok(None)
 }
@@ -161,7 +171,11 @@ pub(super) fn apply_fallbacks_at(
                 .iter()
                 .find(|agent| agent.id == report.plan.tasks[index].agent)
                 .is_some_and(|agent| {
-                    agent.fallback.is_some()
+                    report.plan.tasks[index]
+                        .fallback_for(&report.plan.agents)
+                        .ok()
+                        .flatten()
+                        .is_some()
                         && report
                             .account_restrictions
                             .get(agent.quota_key())
@@ -202,14 +216,13 @@ pub(super) fn apply_fallbacks_at(
         };
         report.tasks[index].status = "waiting_availability".into();
         report.tasks[index].restriction = Some(restriction);
-        let source = source.id.clone();
         if !super::availability_timer::fallback_due(
             report.tasks[index].restriction.as_ref().unwrap(),
             current,
         ) {
             continue;
         }
-        if let Some((agent, model)) = unrestricted_fallback(report, &source)? {
+        if let Some((agent, model)) = unrestricted_fallback(report, index)? {
             transfer_role(
                 report,
                 dir,
@@ -255,8 +268,7 @@ pub(super) fn apply_handoffs(
         if !quiescent || dir.join("stop.request").exists() {
             continue;
         }
-        let source = report.plan.tasks[index].agent.clone();
-        if let Some((agent, model)) = unrestricted_fallback(report, &source)? {
+        if let Some((agent, model)) = unrestricted_fallback(report, index)? {
             transfer_role(
                 report,
                 dir,

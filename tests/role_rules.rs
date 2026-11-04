@@ -248,10 +248,6 @@ fn role_entries_can_pin_an_observed_model() {
             .is_err(),
         "model must be observed"
     );
-    assert!(
-        SCRIPT.contains("function roleModelSelect("),
-        "model selector per role agent"
-    );
     drop(startup);
     std::fs::remove_dir_all(root).unwrap();
 }

@@ -1258,6 +1258,8 @@ The existing stepper nav (start-step-tabs) gains tabs 4-6 and is moved between t
 Amendment #439 (2026-11-04): Extend the existing pinned brand assets/templates to OpenCode; clone only the trusted embedded SVG through the shared renderer, keep the upstream bytes and MIT notice, and perform no runtime artwork lookup.
 Trace: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. Source: user, approved design #387, 2026-11-04.
 
+GitHub #424: scope compact button geometry to the agent action strip. Use border-box height 22px, 13px non-shrinking SVGs, 4px horizontal padding for labeled actions and zero horizontal padding for icon-only actions; use two shrink-safe label columns followed by fixed 23px/22px/22px remove/reorder targets. Ellipsize label spans while preserving accessible names and tooltips, so Windows font metrics cannot wrap or compress icons. Do not alter other button surfaces or add runtime layout work.
+
 ### DD-134 Reuse Markdown and existing package asset selection
 Keep two Markdown manuals with literal command/JSON identifiers unchanged. Reuse README-linked asset packaging; add no documentation framework or dependency. Capture the actual native app, mark offline fixture screenshots explicitly, and distinguish full-access from guarded tool gates.
 Trace: R-125 -> BG-80 -> SF-112 -> UC-115 -> FR-110 -> QAS-121 -> DD-134. Source: user release/manual requests, 2026-10-14.

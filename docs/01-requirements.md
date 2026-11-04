@@ -493,6 +493,8 @@ One stepper of six steps (Workspace, Agent roles, Plan, Tasks, Verify, Review an
 Amendment #439 (2026-11-04): OpenCode is included in the pinned, locally embedded built-in brand marks. Its icon must render without an installed desktop app, executable inspection or runtime network access; preserve custom-agent initials and all existing controls.
 Trace: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. Source: user, approved design #387, 2026-11-04.
 
+Agent action buttons must retain their approved 22px height while reserving a non-shrinking 13px icon. Icon-only buttons have no horizontal text padding; labeled buttons use compact spacing without wrapping or losing accessible names (GitHub #424).
+
 ### R-125 Release-matched English and Korean manuals
 Status: Amended by R-144, R-197, R-200: manuals ship as offline HTML and tests check the version, screenshots and their age.
 Publish English and Korean operator manuals, a concise public README and genuine native screenshots matched to the shipped version. Keep implementation plans and internal decisions out of the README.

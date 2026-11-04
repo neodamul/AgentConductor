@@ -10,6 +10,8 @@ pub struct RoleAgent {
     pub agent: String,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub model: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub fallback: Option<crate::plan::FallbackRule>,
 }
 
 /// Earlier rules stored plain agent IDs; both forms are accepted.
@@ -21,16 +23,27 @@ enum Entry {
         agent: String,
         #[serde(default)]
         model: Option<String>,
+        #[serde(default)]
+        fallback: Option<crate::plan::FallbackRule>,
     },
 }
 
 impl From<Entry> for RoleAgent {
     fn from(entry: Entry) -> Self {
         match entry {
-            Entry::Name(agent) => Self { agent, model: None },
-            Entry::Full { agent, model } => Self {
+            Entry::Name(agent) => Self {
+                agent,
+                model: None,
+                fallback: None,
+            },
+            Entry::Full {
+                agent,
+                model,
+                fallback,
+            } => Self {
                 agent,
                 model: model.filter(|m| !m.is_empty()),
+                fallback,
             },
         }
     }
@@ -63,6 +76,9 @@ pub fn validate(rules: &RoleRules, profiles: &[AgentProfile]) -> Result<(), Stri
                 .iter()
                 .find(|p| p.id == entry.agent)
                 .ok_or_else(|| format!("role {role} names unregistered agent {}", entry.agent))?;
+            if let Some(policy) = &entry.fallback {
+                policy.validate(profile, profiles)?;
+            }
             if let Some(model) = &entry.model {
                 profile
                     .validate_model(model)
@@ -126,6 +142,7 @@ pub fn apply(rules: &RoleRules, tasks: &mut [Task]) -> Result<(), String> {
                     allowed.join(", ")
                 )
             })?;
+        task.fallback = entry.fallback.clone();
         if entry.model.is_some() {
             task.model = entry.model.clone();
         }

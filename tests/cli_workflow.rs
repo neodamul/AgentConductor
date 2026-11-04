@@ -76,7 +76,7 @@ fn binary_runs_review_approve_and_merge_with_plan_consent() {
         agentconductor::workflow::load(&run).unwrap().state,
         "completed"
     );
-    std::fs::remove_dir_all(root).unwrap();
+    remove_finished_fixture(&root);
 }
 
 #[test]
@@ -135,6 +135,11 @@ fn binary_schedules_reassigns_and_selects_models_with_native_commands() {
     let dir = dir.to_str().unwrap();
     run(&["schedule", dir, "one.txt", "2099-01-01T00:00:00Z"]);
     run(&["resume-due", dir]);
+    assert!(
+        std::path::Path::new(dir)
+            .join("availability-coordinator/process/owner.json")
+            .is_file()
+    );
     let sessions = run(&["sessions", dir]);
     assert_eq!(
         String::from_utf8(sessions.stdout).unwrap().lines().count(),
@@ -151,5 +156,26 @@ fn binary_schedules_reassigns_and_selects_models_with_native_commands() {
             .state,
         "waiting_approval"
     );
+    remove_finished_fixture(&root);
+}
+
+// A detached availability watcher may still publish exit evidence after review becomes ready.
+fn remove_finished_fixture(root: &std::path::Path) {
+    let owner_path = root.join("run/availability-coordinator/process/owner.json");
+    if owner_path.exists() {
+        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(20);
+        loop {
+            let owner: agentconductor::process::Ownership =
+                serde_json::from_slice(&std::fs::read(&owner_path).unwrap()).unwrap();
+            if owner.phase == "terminal" && owner.ensure_quiescent().is_ok() {
+                break;
+            }
+            assert!(
+                std::time::Instant::now() < deadline,
+                "owned fixture watcher did not exit before cleanup"
+            );
+            std::thread::sleep(std::time::Duration::from_millis(20));
+        }
+    }
     std::fs::remove_dir_all(root).unwrap();
 }

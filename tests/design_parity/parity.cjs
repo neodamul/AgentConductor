@@ -55,12 +55,13 @@ async function visit(browser, side, spec) {
     }
     const failures = [], specs = require('./spec.cjs').filter(x => (!flag('--only') || x.name === flag('--only')) && (!x.widths || x.widths.includes(WIDTH))), ran = specs.length;
     // Measure grouped by page state so each state is loaded once (the run is dominated by page loads).
-    const key = (side, x) => side === 'mock' ? 'mock|' + (x.mock.url || '?theme=light#0') + '|' + (x.mock.run || '') : 'app|' + (x.app.setup || '') + '|' + (x.app.run || '');
+    const viewport = x => Array.isArray(x.viewport) ? x.viewport : [x.viewport?.width || WIDTH, x.viewport?.height || 960];
+    const key = (side, x) => JSON.stringify([side, viewport(x), x[side].url || '', x[side].setup || '', x[side].run || '']);
     const jobs = []; for (const x of specs) if (!x.assert) for (const side of ['mock', 'app']) jobs.push({ x, side });
     jobs.sort((p, q) => (key(p.side, p.x) < key(q.side, q.x) ? -1 : key(p.side, p.x) > key(q.side, q.x) ? 1 : 0));
     const got = {}; let current = null;
     for (const { x, side } of jobs) {
-      const k = key(side, x); if (k !== current) { await visit(browser, side, x[side]); current = k; }
+      const k = key(side, x); if (k !== current) { await browser.viewport(...viewport(x)); await visit(browser, side, x[side]); current = k; }
       const s = x[side];
       if (x.hover) { const c = await browser.eval(MEASURE(s.selector, s.index || 0, [], null)); if (c) await browser.hover(c.x + c.width / 2, c.y + c.height / 2); }
       if (x.focus) { await browser.tab(); await browser.eval(`[...document.querySelectorAll(${JSON.stringify(s.selector)})].filter(e => e.getBoundingClientRect().width > 0)[${s.index || 0}]?.focus()`); }
@@ -87,7 +88,7 @@ async function visit(browser, side, spec) {
     for (const spec of specs) {
       if (spec.assert) { if (!spec.viewport && WIDTH !== 1280) continue; // authored at 1280
       // behaviour check on the app only: `assert` is evaluated after `run` and must be true
-        if (spec.viewport) await browser.viewport(spec.viewport[0], spec.viewport[1]);
+        await browser.viewport(...viewport(spec));
         await visit(browser, 'app', spec.app); const ok = await browser.eval(spec.assert);
         if (spec.viewport) await browser.viewport(WIDTH, 960);
         if (ok !== true) failures.push(`${spec.name}: assertion failed (${spec.assert})`); continue;

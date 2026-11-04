@@ -323,6 +323,30 @@ the tests that exercise it and says whether the behavior is present on `main`.
 | R-175 Every unsafe operation states why it is sound | current | `icons.rs`, `leases.rs` | passes |
 | R-176 Tests do not mutate the process environment unsoundly | current | `availability_watcher.rs`, `env_guard.rs`, `support/env.rs`, `windows_icons.rs` | passes |
 
+## Anchored selection surface — GitHub #409, first unit
+
+Trace: R-210 / DD-222. The real assembled simulator passed 80 behavioral checks (20 per
+light/dark × 840/1280), including dynamic fields, keyboard commit/cancel, outside dismissal,
+active-modal scope, disabled/options updates and manual-registration success/error.
+Eight fixed-width/pixel-aligned field/list reference cases matched computed styles and crops
+with 0.00% differing pixels. These compare reusable atoms; shell placement remains #408.
+The inherited avatar checks retain #417's pending #410 status-border tolerance and are not
+represented as exact avatar parity. Existing Node/DOM/architecture/layout regression: 10 tests
+across four local Rust suites. Role/fallback/backend precedence and full feature acceptance
+remain open. Tests: `choice_controls.rs`, `choice_controls/runtime.cjs`, `design_parity/choice_spec.cjs`.
+
+## Task-scoped fallback policy — GitHub #409, backend unit
+
+Trace: R-210 / DD-222. TDD first failed for missing Task policy resolution; unit tests then
+covered explicit role override/none, unchanged other roles/profile defaults, legacy omission,
+invalid self/same-account/unknown/model policies and profile rename/removal. Real deterministic
+CLI runs verify override vs inheritance, explicit-none waiting, bounded exhausted cycles and
+queued manual reassignment. A transfer-candidate validation failure found during integration
+was fixed by consuming the first-hop policy before validation. 48 tests passed in nine local
+suites including old fallback/plan/roles/schema/profile/pending-edit and all Node UI behavior.
+Optional native UI callers were mechanically kept type-compatible (cargo check), not redesigned.
+Tests: `role_fallback_overrides.rs`, `role_fallback_runtime.rs`. Role UI wiring remains pending.
+
 ## Quota indicator backend — GitHub #404
 
 | Requirement | Evidence | Remaining acceptance |
@@ -364,6 +388,48 @@ Room documents embed the same inert asset templates/helper. Full local light/dar
 comparisons each pass 119 entries; 23 native tests pass across six suites (one existing
 platform-dependent test ignored); focused Clippy passes. Windows crops remain pending.
 
+Per-entry viewports (#409 / PR #431, R-210 / DD-222): the real-runner regression
+reproduces the object-form protocol error, then verifies PNG dimensions for object,
+array and inherited command-width entries with identical page scripts, plus both
+assertion forms. Full local light/dark comparisons each pass 119 entries; all Node UI
+tests and eight architecture/layout tests pass. This test-infrastructure port does not
+certify the pending Windows choice-field crops or merge the feature branch.
+
+## Role choices and manual catalog UI — GitHub #409, UI unit
+
+Trace: R-210 / UC-202 / DD-222. The actual assembled simulator passed 88 generic choice
+checks and 80 role checks across light/dark and 840/1280. The Rust entry point runs both
+browser scripts. Latest local regression: 32 tests across ten suites, including real
+fallback scheduling, model catalogs, role rules, Node runtime, architecture, DOM IDs,
+source layout and compact agent buttons. Focused Clippy and formatting passed.
+
+TDD regressions reproduced raw manual-label keys and loss of a saved missing primary;
+both now pass. Accessibility label rebinding no longer closes an open list. Manual
+registration uses the native async catalog request and only commits after success.
+
+New parity cases cover the 18px fallback arrow, disabled fallback-model field and manual
+entry form in both themes/widths, in addition to the shared field and list. These are
+isolated control atoms, not evidence of full-shell or native Windows equivalence. Full 27-entry parity passed with zero failures: new fields/lists/forms/arrows 0% crop
+difference, disabled fields 0.07–0.26%; the pre-existing 19.62% avatar difference remains
+tracked under #410. The planning row is an intentional informational exception from the
+mock, approved by the design owner. Goal confirmation/seeding is #429 and remaining
+inspector/manual acceptance is #430, both in milestone 0.2.0. A late model-registration
+reply after a coordinator switch is also rejected by a real browser regression.
+
+#431 integration checkpoint (R-210 / DD-222): latest #436 assets, rail and capture retries
+are retained alongside the original role/fallback/manual-model implementation. All 20
+choice atoms across both themes and 840/1280px compare at zero differing pixels, with
+no historical per-entry allowance. Both full 129-entry runs passed 128 entries; the sole
+remaining failure targeted a hidden native select after enhancement. Its selector now
+targets the visible trigger, and the unchanged style/height checks pass in both themes.
+Local verification also includes 25 tests/seven suites, 33 plan/pending/role tests/six
+suites, the complete Node UI suite, 40 exact approved-layout button checks and Clippy.
+These overlapping suite counts are not a unique cumulative test total.
+
+The former #425 grid and stress-specific padding assertions are superseded by exact
+comparison with the newer approved natural-width layout; icon-fit, names, tooltips,
+keyboard focus and pointer assertions remain. #424 narrow wrapping is still open,
+and actual Windows choice-field crop acceptance remains pending.
 ## Workspace and Goal UI acceptance — GitHub #427
 
 Trace: R-210 / UC-202 / QAS-209 / DD-222.
