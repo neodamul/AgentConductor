@@ -25,4 +25,14 @@ module.exports = [
   e('import-button', B, '.goal-import-actions .btn', '#start-jira-reference'),
   e('save-button', B, '.actions .btn.p', '#start-save'),
   e('statusbar', ['fontSize', 'color'], '.status span', '#start-status'),
+  // Every visible text in each screen state uses one size of the mock's scale (no 15/19/20/22/26px).
+  ...[['workspace', '', ''], ['room', "SIM.home.run_available=true;SIM.home.run_state='running';SIM.room.report.plan.tasks[0].agent='claude';", "document.getElementById('start-tab-tasks').click()"],
+    ['team', '', "document.getElementById('start-tab-team').click()"], ['review', '', "document.getElementById('start-tab-review').click()"],
+    ['settings', '', "document.getElementById('start-settings-button').click()"], ['goal-list', '', "document.getElementById('start-goal-list-open').click()"],
+    ['chat', '', "document.getElementById('start-chat-button').click()"]].map(([state, setup, run]) => ({
+    name: 'type-scale-' + state, app: { setup, run },
+    assert: `(() => { const ok = new Set([10, 10.5, 11, 11.5, 12, 12.5, 13, 14, 16, 17, 18]); const bad = [];
+      for (const e of document.querySelectorAll('body *')) { const r = e.getBoundingClientRect(); if (!r.width || !r.height || ![...e.childNodes].some(n => n.nodeType == 3 && n.textContent.trim())) continue;
+        const f = parseFloat(getComputedStyle(e).fontSize); if (!ok.has(f)) bad.push((e.id || e.className) + ':' + f); }
+      window.__offScale = bad; return bad.length === 0; })()` })),
 ];

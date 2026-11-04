@@ -2677,3 +2677,11 @@ Trace: R-213 / DD-225.
 - [x] Task: exclusive Goal root reservation refuses folder/file/link collisions; automatic naming skips dangling links; request shapes unchanged.
 - [x] Verify: Red reproduced directory/link adoption → Green: 24 tests across seven local suites, including collision/context/display edits, plain-folder planning/approved merge and phase continuation; fmt/Clippy/whitespace pass.
 - [ ] Completed: commit/push backend audit and correction; Claude verifies UI-only dialog/step continuity; full issue remains open until acceptance.
+
+### One size scale from the approved mock — GitHub #432
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+- [x] Plan: measure the mock and the app (headless Chrome), record a strict text-size scale and control heights in `visual-spec.md`.
+- [x] Task: size, weight, colour and padding of the titlebar, rail, step tabs, step card and Room controls follow the mock; controls inherit the page size; no 15/19/20/22/26px text.
+- [x] Verify: `tests/design_parity/typography.cjs` (22 element entries plus a no-off-scale assertion for 7 screen states) passes in light and dark; Rust parity, node_runtime, interface_theme, source_layout suites pass.
+- [ ] Completed: PR merged after the stack #422/#423; remaining mock sections (config section heads, titlebar item order) are in #427.

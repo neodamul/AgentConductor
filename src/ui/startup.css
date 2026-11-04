@@ -175,3 +175,19 @@ header.titlebar>strong{font-size:14px;font-weight:700;line-height:17px}
 #start-mcp-controls .small-button,#start-optimize-controls .small-button{box-sizing:border-box;height:26px;font-size:11.5px;padding:0 8px}
 #start-save{box-sizing:border-box;height:34px;font-size:13px;padding:0 13px;border-color:var(--accent)}
 #startup-screen .statusbar,#start-status{font-size:12px}
+button,input,select,textarea{font-size:inherit}
+.icon-button{font-size:18px;line-height:22px}
+.titlebar strong{font-size:14px}
+.rail-section strong{font-size:14px}
+.session .name{font-size:14px}
+.session-symbol,.agent-symbol,.agent-symbol.app-icon,.app-icon.agent-symbol{font-size:12px}
+h1,.goal-bar h1{font-size:17px}
+h3,.briefing-session h3,.tool-action,.startup-goal>h3.step-title,.role-rules h3{font-size:14px}
+dialog h2{font-size:18px}
+.quota-refresh,.settings-button{font-size:12px}
+.run-banner strong{font-size:18px}
+.run-banner button.primary,.run-controls #resume.primary,.result-metric strong{font-size:13px}
+.result-metric strong{font-size:16px}
+#branch.muted{font-size:12px}
+.nav-action{font-size:13px}
+#brief-team{font-size:12px}

@@ -5,6 +5,8 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 the GitHub Release notes for its tag.
 
 ## Unreleased
+
+- UI: every text and control size, weight, colour and padding now follows the approved mock (one strict size scale, no browser-default 16px controls); a typography parity set checks it in both themes (#432).
 - Both manuals have a new section "The goal screen" (1.2a) describing the six-step stepper, the panels, the Goal list actions, the result popup and the status borders.
 - The completed-goal popup shows its summary as one ruled line (changed files, tests passed, lessons) instead of three stacked tiles.
 - The main action buttons of a step (save, generate plan, approve and run, read plan, write plan manually, discard changes) show a small icon in front of their label.
