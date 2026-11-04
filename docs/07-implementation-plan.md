@@ -2958,5 +2958,5 @@ Trace: R-35 → BG-05 → SF-12 → C-04/NFR-07 → QAS-12 → DDR-04/DDR-06 →
 - [x] Task / Red: `tests/process_layout.rs` rejects the original 467-line facade.
 - [x] Task / Green: separate the facade (119 lines), ownership (82) and supervision (276), with no new runtime dependency. Moved bodies match the original except imports/visibility.
 - [x] Verify: 27 focused local tests pass; one authenticated Claude metadata test remains explicitly ignored.
-- [ ] Verify: complete local all-target regression, Clippy, formatting and whitespace checks.
-- [ ] Complete: publish the separate main-based area PR, record actual receipts and coordinate integration. Global 300-line policy rollout remains deferred until every area complies.
+- [x] Verify: full local `cargo test --all-targets --locked --no-fail-fast` on source `0412e485` exits 0: 844 passed, 0 failed, 15 explicitly ignored across 272 suites. Main-baseline light/dark parity (319.40s), Node harness, Clippy warnings-denied, formatting and whitespace checks pass. This is not a four-cell #420 or live-provider claim.
+- [ ] Complete: publish the separate main-based area PR and verify its platform checks before integration. Global 300-line policy rollout remains deferred until every area complies.

@@ -16,3 +16,5 @@ A stopped, timed-out or failed-control attempt cancels callbacks before escalati
 ## Verification
 
 The area-specific layout test first failed at 467 lines, then passed with 119/82/276-line modules. Existing process, timeout, ownership and async-control tests cover behavior. Full-suite and platform receipts belong to the area PR; a local macOS pass alone does not prove Windows behavior.
+
+Local receipt for code `0412e485`: all-target suite exits 0 with 844 passed / 0 failed / 15 ignored in 272 suites, including main-baseline light/dark parity and the Node harness. Clippy warnings-denied, formatting and diff checks pass. Windows CI remains a separate acceptance receipt.
