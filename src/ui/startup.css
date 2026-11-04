@@ -206,3 +206,9 @@ header.titlebar #start-settings-button:focus-visible,header.titlebar #start-chat
 /* The step card hangs from the step tabs: no top border or radius, 12px bottom radius, 17/22px padding; status bar 30px on --bar. */
 .step-card{border-top-width:0;border-radius:0 0 12px 12px;padding:17px 22px}
 footer.statusbar{box-sizing:border-box;height:30px;padding-left:16px;background:var(--bar)}
+/* Heading row: title left, actions grouped right; the tab strip sits 57px below the title and the card hangs from it (mock). */
+.startup-heading{justify-content:flex-start}
+.startup-heading>div:first-child{flex:1;min-width:0}
+.startup-heading{margin-bottom:53px}
+.startup-tabs{margin:0;border-bottom:0}
+header.titlebar{border-bottom:1px solid var(--bar-line)}
