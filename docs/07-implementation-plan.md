@@ -1491,6 +1491,12 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [x] Verify: UI Rust and Node tests; UI simulator showed Settings and the briefing as 460px right panels, the chat closing when either opens, and no horizontal scroll.
 - [ ] Complete: release (version 0.2.0 only when the user asks).
 
+### Design parity check against the approved mock — DD-222
+- [x] Plan: Trace: amends R-210 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #415; design GitHub #387. Every goal-screen issue adds spec entries for the elements it builds.
+- [x] Task / Red/Green: `tests/design_parity/` (headless Chrome over CDP, no npm dependency): geometry, computed style and a pixel diff of each element's crop against `docs/design/approved-goal-ui/preview.html`; `tests/design_parity.rs` runs it where Chrome exists. Entries: agent avatar, task avatar.
+- [x] Verify: the runner found three real differences (green status border used the accent blue instead of the design's ok green, agent avatar radius 7px instead of 6px, missing avatar fill); after the fixes the task avatar matches pixel for pixel; a mutation (green back to accent) fails the check.
+- [ ] Complete: release (version 0.2.0 only when the user asks).
+
 ## Bilingual release documentation — DD-134 / v0.1.16
 
 - [x] Plan: pull the latest release source, inspect changed behavior and preserve concurrent Claude work.

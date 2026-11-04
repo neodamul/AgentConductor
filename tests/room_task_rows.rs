@@ -19,8 +19,8 @@ fn the_task_name_leads_and_icon_name_and_status_share_one_line() {
 fn brand_marks_sit_in_a_bordered_container_with_the_specified_mark_size() {
     // GitHub #406 / visual-spec: task avatar 28px with a 20px mark, agent avatar 29px with a 19px mark,
     // both inside the 1.5px border (28 = 1.5 + 2.5 + 20 + 2.5 + 1.5; 29 = 1.5 + 3.5 + 19 + 3.5 + 1.5).
-    assert!(CSS.contains(".session-choice .session-meta .app-icon.session-symbol{padding:2.5px}"));
-    assert!(CSS.contains(".app-icon.agent-symbol{width:29px;height:29px;box-sizing:border-box;border:1.5px solid var(--line);padding:3.5px}"));
+    assert!(CSS.contains(".session-choice .session-meta .app-icon.session-symbol{padding:2.5px;background:var(--fill)}"));
+    assert!(CSS.contains(".app-icon.agent-symbol{width:29px;height:29px;box-sizing:border-box;border:1.5px solid var(--line);padding:3.5px;background:var(--fill)}"));
 }
 
 #[test]
@@ -30,7 +30,7 @@ fn the_avatar_border_carries_the_task_status() {
     assert!(ROOM.contains("if(session.status==='running')symbol.classList.add('running')"));
     assert!(!ROOM.contains("agent-light"), "the separate dot is gone");
     assert!(!CSS.contains("agent-light"), "and so are its rules");
-    for (name, color) in [("green", "accent"), ("yellow", "warn"), ("red", "err")] {
+    for (name, color) in [("green", "ok"), ("yellow", "warn"), ("red", "err")] {
         let rule = format!(".session-symbol.st-{name}{{border-color:var(--{color})}}");
         assert!(CSS.contains(&rule), "{rule}");
     }
