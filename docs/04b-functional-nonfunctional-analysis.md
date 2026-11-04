@@ -769,3 +769,9 @@ Keep existing create_slug/new_goal/next_phase request shapes. Folder allocation 
 
 ### NFR-94 Existing project entries are never adopted implicitly
 Refuse ordinary files/directories and aliases/reparse points at a requested Goal path; automatic naming skips existing entries including dangling links. No target directory is recursively created over an unverified existing path. Trace: FR-207.
+
+### FR-208 Token ledger contract
+Each task attempt carries an optional `usage` record (`input_tokens`, `output_tokens`, source event, reported flag) parsed from the CLI's own events through the profile's parser; absent usage is stored as unreported. Goal and Workspace totals are derived by summing the ledger, never stored as editable numbers. Trace: UC-206.
+
+### NFR-95 Token counts are truthful and counted once
+No estimation, no cash conversion, no double counting across retry, resume, restart or concurrent writers; a crash between the CLI event and the ledger write loses at most that event and never corrupts earlier entries. Trace: FR-208.

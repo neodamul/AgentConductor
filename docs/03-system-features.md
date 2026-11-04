@@ -752,3 +752,6 @@ Provide read-only result/folder requests and a revision-bound, explicitly confir
 
 ### SF-201 Exclusive Goal folder allocation and retained Workspace context
 Allocate a new direct-child Goal directory exclusively, preserve existing IDs/paths across display edits and keep folder/coordinator/roles for a new Goal. Trace: BG-168.
+
+### SF-202 Token ledger with Goal and Workspace totals
+Keep an append-only ledger of reported input/output tokens per task attempt, derive per-Goal and per-Workspace totals from it, and show them in the task inspector (Session metrics), the Goal row, the result popup and the Workspace. Trace: BG-169.

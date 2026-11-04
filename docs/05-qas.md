@@ -863,3 +863,6 @@ Stimulus: operator reviews another Goal or deletes a stuck Goal. Environment: ru
 
 ### QAS-212 Goal creation cannot manufacture ownership of project data
 Stimulus: a new Goal identifier collides with an existing project entry. Response: explicit names fail without writing a marker, registry record or Git exclusion; automatic names choose another path. Measure: native regressions preserve ordinary contents, files and link targets, preserve folder IDs on display edits, and retain Workspace context on New Goal. Existing non-Git planning/approved merge and phase-continuation integration tests remain green. Trace: NFR-94.
+
+### QAS-213 Token totals are exact for what was reported
+Stimulus: a Goal with retried and resumed tasks, a CLI that reports no usage and a concurrent write. Response: the task shows each attempt once, the Goal total equals the sum of reported attempts and states the reported coverage, the Workspace total equals the sum of its Goals. Measure: parser fixtures per CLI (reported, partial, absent), retry/resume no-double-count, restart replay and concurrent-writer tests, and an integration run from task to Goal to Workspace total. Trace: NFR-95.

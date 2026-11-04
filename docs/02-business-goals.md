@@ -648,3 +648,6 @@ Operators inspect history or discard a stuck Goal without losing their current w
 
 ### BG-168 Keep project and Goal boundaries predictable
 Operators can edit display text, start a Goal or continue phases without losing Workspace configuration or accidentally claiming existing project files. Trace: R-213.
+
+### BG-169 Know what a Goal and a Workspace cost in tokens
+The operator can see how many input and output tokens each task, each Goal and the whole Workspace used, from what the CLIs report, to compare agents and plan capacity. Trace: R-214.

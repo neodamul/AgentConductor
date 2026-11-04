@@ -839,3 +839,7 @@ Trace: R-211 → BG-166 → SF-199 → UC-203 → FR-205 → NFR-92 → QAS-210 
 
 ### R-213 Workspace Goal identity and safe folder allocation
 Goal folders use backend-generated stable English identifiers, never phonetic transliteration. Display edits shall not rename existing folders. New Goal keeps Workspace context; phase continuation keeps the same Goal. Creating a Goal shall never claim or alter an existing unrelated directory, file, alias or reparse point. Worktrees are optional and user project folders need no initialized Git repository. Trace: R-213 → BG-168 → SF-201 → UC-205 → FR-207 → NFR-94 → QAS-212 → DDR-60 → DD-225. GitHub #411.
+
+### R-214 Token usage is recorded per task and rolled up per Goal and Workspace
+Record the input and output tokens that each CLI reports for every task attempt (planning, verification and coordinator calls included when the CLI reports them), keep them with the task, and roll them up per Goal and then per Workspace so that the Workspace total can be computed. Tokens are never inferred or estimated: a value the CLI did not report is shown as unreported and is not counted as zero. Every attempt is counted exactly once across retries, resumes and restarts. Totals say how many attempts reported (for example "12 of 14"). No cash amount is derived.
+Trace: R-214 → BG-169 → SF-202 → UC-206 → FR-208 / NFR-95 → QAS-213 → DDR-61 → DD-226. GitHub #441.
