@@ -1,6 +1,6 @@
 // GitHub #432: text and button sizes follow the approved mock element by element. Each entry compares the
 // computed font size, weight, colour and (for controls) height of the mock element with its app counterpart.
-const T = ['fontSize', 'fontWeight', 'color'];
+const T = ['fontSize', 'fontWeight', 'color', 'fontFamily'];
 // A control matches the mock when its whole box does: size, padding, line height, layout, border, radius, fill and text.
 const B = [...T, 'width', 'height', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'lineHeight', 'display', 'columnGap', 'borderTopLeftRadius', 'borderTopWidth', 'borderTopColor', 'backgroundColor'];
 const e = (name, keys, mock, app) => ({ name: 'type-' + name, props: keys.filter(k => k !== 'height' && k !== 'width'), keys, pixel: false, mock: { selector: mock }, app: { selector: app } });

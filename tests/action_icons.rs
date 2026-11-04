@@ -1,6 +1,7 @@
 //! GitHub #408 / visual-spec: step-card action buttons have a leading 13px icon mapped to the action.
 const JS: &str = include_str!("../src/ui/action_icons.js");
 const HTML: &str = include_str!("../src/ui/startup.html");
+const ROOM_HTML: &str = include_str!("../src/ui/room.html");
 const CSS: &str = include_str!("../src/ui/startup.css");
 
 #[test]
@@ -18,7 +19,7 @@ fn every_mapped_action_button_exists_and_every_icon_has_a_mask() {
         let id = parts.next().unwrap().trim().trim_matches('\'');
         let icon = parts.next().unwrap().trim().trim_matches('\'');
         assert!(
-            HTML.contains(&format!("id=\"{id}\"")),
+            HTML.contains(&format!("id=\"{id}\"")) || ROOM_HTML.contains(&format!("id=\"{id}\"")),
             "{id} is a real button"
         );
         icons.insert(icon.to_string());
