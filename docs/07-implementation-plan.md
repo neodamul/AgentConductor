@@ -2563,3 +2563,11 @@ Trace: R-47 / UC-34 / DD-55.
 
 Trace: R-201 / QAS-199 / DD-94.
 
+### Jira items are called issues on the 0.1.61 line — GitHub #584
+
+- [x] Plan: backport of main's wording change (#440) to the hotfix line: the import button, reference dialog and error text ("Jira 이슈" / "Jira issue") and the documents; the approved mock does not exist on this line.
+- [x] Verify: `i18n_contracts`, `messages`, `mcp_imports` and the other `mcp_*` suites, `source_layout`.
+- [ ] Completed: merged on `release/0.1.x`.
+
+Trace: R-43 / UC-34 / DD-55.
+

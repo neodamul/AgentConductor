@@ -7,7 +7,7 @@ JSONL processes or short-lived curl Streamable HTTP. Reuse one session per serve
 large UI results once to respect the lightweight-host requirement.
 
 Preview/apply stores goal/settings/content digests and immutable local snapshots. Required
-Jira stories cannot be skipped after failed reads; optional Confluence pages can be excluded
+Jira issues cannot be skipped after failed reads; optional Confluence pages can be excluded
 explicitly. Planning labels selected context untrusted; source modifications require a new
 review. Portable settings exclude source bodies/receipts; shared memory receives only the
 implementation decisions, never company document content.
