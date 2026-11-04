@@ -8,6 +8,7 @@ function child(){const p=new EventEmitter();Object.assign(p,{pid:2468,exitCode:n
  const win=child();let calls=0;await load('win32',(cmd,args,options)=>{calls++;assert.equal(cmd,'taskkill');assert.deepEqual([...args],['/PID','2468','/T','/F']);assert.equal(options.timeout,5000);assert.equal(options.windowsHide,true);win.exitCode=0;win.emit('exit',0);return {status:0};})(win);assert.equal(calls,1);
  const stuck=child();stuck.kill=()=>false;await assert.rejects(load('darwin')(stuck),/did not exit/);assert.equal(stuck.listenerCount('exit'),0);
  const denied=child();await assert.rejects(load('win32',()=>({status:1}))(denied),/Cannot stop owned/);assert.equal(denied.listenerCount('exit'),0);
+ const gone=child();await load('win32',()=>{queueMicrotask(()=>{gone.exitCode=0;gone.emit('exit',0);});return {status:128};})(gone);assert.equal(gone.listenerCount('exit'),0);
  const missing=child();missing.pid=undefined;await assert.rejects(load('win32')(missing),/no owned process/);
- console.log('Chrome teardown: exited/live/tree/timeout/failure/ownership checks pass');
+ console.log('Chrome teardown: exited/live/tree/already-gone/timeout/failure/ownership checks pass');
 })().catch(e=>{console.error(e);process.exitCode=1;});
