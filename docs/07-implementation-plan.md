@@ -2778,3 +2778,10 @@ Current execution queue (Codex, project AgentConductor): #427 implementation is 
 Each unit records verification, commit and next action in AgentMemory and its issue;
 CI waiting must not stop independent implementation. The earlier stash checkpoint above
 is historical: work resumed from #435 head and will rebase onto main after #436 merges.
+
+### Attention glyph theme-contract correction — GitHub #427
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+- [x] Red: latest-main `interface_theme` rejects the hard-coded attention glyph colour.
+- [x] Task: use a semantic `--attention-ink` token in both themes, preserving the approved white glyph exactly.
+- [x] Verify: all six theme-contract tests and existing trusted-brand browser regression pass; colour bytes and geometry are unchanged.
