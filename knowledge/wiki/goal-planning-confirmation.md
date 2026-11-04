@@ -27,3 +27,18 @@ pointer cursor, cancellation, changed Goal/baseline, document import and confirm
 records the real planner CLI argv, inherited defaults, alternate coordinator model,
 invalid-model rejection and byte-identical prior Goal plan. The deterministic fixture
 calls no provider service. Windows native UI acceptance is separate.
+
+## Browser action settlement — #466
+
+A logged `prepare` or `read_plan` request is not a settled action: its `finally`
+path still polls state before re-enabling controls. A fixed 500ms delay made the
+acceptance test click disabled Import Plan, producing no `pick_file` request and
+a missing confirmation modal. Delaying the post-prepare snapshot by 1200ms
+reproduces this deterministically; an idle-only 5200ms poll does not.
+
+Keep that delayed snapshot in `tests/planning_confirmation_browser.cjs`. Wait
+for request evidence **and enabled next controls** before the following action.
+For the changed-baseline negative assertion, also wait for the actual rejection
+message and settled controls; an unchanged request count while the action is
+still pending is not evidence of a correct refusal. Production confirmation and
+revision guards need no weakening for this reproduced failure.

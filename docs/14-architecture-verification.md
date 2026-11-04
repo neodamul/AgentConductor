@@ -463,3 +463,16 @@ The planning row remains informational; no new worker-role key is introduced.
 behavior. Native Windows UI acceptance is separate from local macOS evidence.
 
 #429 integration after #431: 42 tests across 12 local suites pass, including the complete Node UI suite. Warning-denied Clippy and formatting pass. Browser coverage also exercises document import cancellation/confirmation and a context change during the awaited baseline request. No provider service or real operator workspace is used.
+
+## Planning acceptance action settlement — GitHub #466
+
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+`tests/planning_confirmation_browser.cjs` fails with a 1200ms post-prepare
+snapshot delay before the correction: Import Plan is disabled when clicked,
+no file-picker request is recorded and the first confirmation modal never opens.
+After waiting for real action settlement, all light/dark × 840/1280 configurations
+pass with the delay retained. The test also waits for Read Plan to settle before
+the changed-baseline case, then requires the actual context-rejection message
+and enabled controls before asserting that no second planner request occurred.
+No production context guard, acceptance tolerance or approved mock is changed.

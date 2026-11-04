@@ -2895,3 +2895,13 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: PR merged; GitHub #430 closed together with the profile fallback unit (#448).
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Planning browser action settlement — GitHub #466
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+- [x] Plan: reproduce the #429 acceptance failure without changing production guards; post-prepare snapshot latency keeps Import Plan disabled beyond the test’s 500ms delay. A 5200ms idle-only poll experiment passes.
+- [x] Red: delayed post-prepare snapshot reproduces missing pick_file / unopened first modal with #464 diagnostics.
+- [x] Task: wait for actual action settlement before the next interaction; retain the deterministic delay and all confirmation assertions.
+- [x] Verify: delayed actual assembled-browser flow passes at 840/1280 in both themes; Clippy/fmt pass. Negative baseline test requires actual rejection and action settlement.
+- [ ] Verify: complete local cargo all-targets suite; Windows remains a separate check.
+- [ ] Completed: issue-linked PR, AgentMemory/wiki checkpoint and own temporary-file cleanup.
