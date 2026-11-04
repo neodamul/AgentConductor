@@ -7,7 +7,7 @@ module.exports = [
   { name: 'agent-avatar', props: BOX, // the mock's first agent waits for a decision: yellow border and the attention marker
    
     mock: { url: '?theme=light#0', selector: '.status-icon', index: 0, mark: '.agent-brand-logo' },
-    app: { run: "acAgentStatus.apply([{ status: 'needs_input' }], [{ agent: 'claude' }], () => 'wait')", selector: '.agent-symbol.app-icon', index: 0, mark: 'content' } },
+    app: { run: "acAgentStatus.apply([{ status: 'needs_input' }], [{ agent: 'claude' }], () => 'wait'); document.querySelectorAll('.agent-symbol').forEach(e => delete e.dataset.attention)", selector: '.agent-symbol.app-icon', index: 0, mark: 'content' } },
   // The task rail of the run steps: the Room opens through the simulator's run and the Tasks tab.
   { name: 'task-avatar', props: BOX,
     mock: { url: '?theme=light#3', selector: '.outline-task .outline-agent', index: 0, mark: '.agent-brand-logo' },

@@ -4,7 +4,8 @@ window.acBrandAvatar = (provider, cls) => {
  const source = document.getElementById('ac-brand-' + provider)?.content.firstElementChild;
  if (!source) return null;
  const svg = source.cloneNode(true);
- svg.removeAttribute('width'); svg.removeAttribute('height');
- svg.setAttribute('class', cls + ' app-icon'); svg.setAttribute('aria-hidden', 'true');
- return svg;
+ svg.removeAttribute('width'); svg.removeAttribute('height'); svg.setAttribute('class', 'brand-logo');
+ // Like the mock (a box holding an inline svg): the box carries the border and padding, the svg fills its content.
+ const box = document.createElement('span'); box.className = cls + ' app-icon'; box.setAttribute('aria-hidden', 'true'); box.append(svg);
+ return box;
 };
