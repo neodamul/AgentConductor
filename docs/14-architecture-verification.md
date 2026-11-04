@@ -364,21 +364,15 @@ Room documents embed the same inert asset templates/helper. Full local light/dar
 comparisons each pass 119 entries; 23 native tests pass across six suites (one existing
 platform-dependent test ignored); focused Clippy passes. Windows crops remain pending.
 
-## Milestone acceptance inventory — GitHub #420
+## Workspace and Goal UI acceptance — GitHub #427
 
-Trace: R-210 / UC-202 / QAS-209 / DD-222. This is a coverage inventory, not a release claim.
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
 
-| Surface / boundary | Existing evidence | Remaining acceptance |
-|---|---|---|
-| Workspace / Goal sections and actions | `workspace_sections_runtime.cjs`; #427 local interactive checks | Final titlebar/global menu and exact theme/width parity; native package interaction |
-| Cold Workspace briefing | `workspace_briefing.rs`, `briefing.rs`, `startup_run_binding.rs`; ten local tests pass | Package UI opening, no-report/changed-Goal operator flow |
-| Role choices / manual registration / reviewed fallback | PR #431 checkpoint cb10215d: actual choice/role interaction and reviewed fallback tests on that branch | Native Windows zero crops; #429 Goal confirmation; #430 full per-surface inventory |
-| Independent watcher and cleanup | `cli_workflow.rs`, `availability_watcher.rs`; ownership/quiescence regression in #431 | Integrated platform run; interrupted watcher/restart coverage audit |
-| Progress, approval and final merge | `run_progress_snapshot.rs`, `live_tool_decision.rs`, `verification_blockers.rs`, `ui_diff_review.rs` | Coverage audit of stop/restart, stale approval and deny/retry across real surfaces |
-| Goal result / folder / deletion | `goal_row_actions.rs`, `unit/goal_deletion.rs`, `project_goals.rs` | Native folder launch and destructive-warning focus/keyboard package checks |
-| Theme / responsive / attention | `design_parity` plus true badge-on crop in #427 | Zero-difference matrix after integration; narrow wrap remains #424 |
-| Release gate | Existing packaging/archive/smoke/license tests | Deterministic gate command and evidence manifest; no tag until accepted |
-
-Next audit units: verify adversarial gaps from test bodies, add only missing behavioral
-coverage, run approved disposable integration flows, and compose a release gate using
-existing checks. Windows CI completion is independent of this inventory work.
+Core sections/Goal controls/shared briefing pass 80 assembled UI checks and ten native
+briefing/run-binding tests. The fixed information row and true attention badge pass
+full 133-entry light/dark comparisons with zero differences. Titlebar and working menu
+add 56 real interaction checks, including Room preservation and guarded Workspace
+mutation routing. Complete Node UI regression, native/static/i18n suites and focused
+Clippy/fmt pass. New version/divider/menu entries compare the actual visible controls;
+muted glyph/version colors are corrected by targeted red/green checks. After replaying only this issue onto main, full local light/dark comparisons each pass
+136 entries. Native Windows package acceptance remains separate.

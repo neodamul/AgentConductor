@@ -23,10 +23,15 @@ unchanged workflow revision. Compare changed surfaces in light and dark without 
 the approved mock or widening tolerances. Document titlebar actions without backend support
 as explicit remaining scope rather than inert controls.
 
-## Titlebar scope
+## Titlebar and application menu
 
-The update button is conditional on an actual available update. The existing task inspector
-is backed by a run controller and remains hidden before a run; no pre-run inspector data
-source is invented. A distinct global hamburger-menu action is not implemented by this unit:
-the current Workspace switcher is retained, and the missing global-menu entry/order remains
-an explicit #427 acceptance item. No decorative/inert control is added to claim parity.
+The brand column follows the rail width and contains icon, title, version and divider.
+The action column starts with the hamburger menu, rail toggle and Workspace name.
+The application menu reuses existing commands and adds existing Settings/manual/tool
+guide/cache controls; the Workspace chooser retains recent entries. Escape restores
+the actual opener, and opening Settings from the Room does not leave the run view.
+Workspace-changing commands still use the existing home/unsaved-edit guards.
+
+The update button remains conditional on an actual available update. The task inspector
+is backed by a run controller and remains hidden before a run; no pre-run data or inert
+action is invented. Native Windows package acceptance is tracked separately.

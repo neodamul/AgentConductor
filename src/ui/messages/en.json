@@ -1262,5 +1262,6 @@
   "startup.goal_section_note": "Start with one Goal; add another in this Workspace when needed.",
   "startup.goal_objective": "Objective to achieve",
   "startup.workspace_section_label": "Workspace",
-  "startup.goal_section_label": "Goal"
+  "startup.goal_section_label": "Goal",
+  "startup.app_menu": "Menu"
 }

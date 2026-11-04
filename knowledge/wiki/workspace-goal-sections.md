@@ -18,5 +18,6 @@ a real mismatch caught by the new crop; no tolerance or mock alteration was need
 
 Local checkpoint: 80 assembled UI checks; ten native briefing/run-binding tests;
 133-entry light/dark comparisons each zero differences; complete Node UI regression,
-i18n/architecture/layout, fmt and focused Clippy pass. Titlebar/global-menu acceptance
-and native Windows package checks are separate remaining work.
+i18n/architecture/layout, fmt and focused Clippy pass. The titlebar/global menu adds 56 real checks, preserves Room during Settings and
+uses existing home/unsaved-edit guards for Workspace mutation. Final main-base
+light/dark comparisons each pass 136 entries. Native Windows checks remain separate.

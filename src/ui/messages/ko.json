@@ -1262,5 +1262,6 @@
   "startup.goal_section_note": "기본은 하나의 Goal입니다. 필요할 때 이 Workspace에 추가합니다.",
   "startup.goal_objective": "달성할 목표",
   "startup.workspace_section_label": "Workspace",
-  "startup.goal_section_label": "Goal"
+  "startup.goal_section_label": "Goal",
+  "startup.app_menu": "메뉴"
 }

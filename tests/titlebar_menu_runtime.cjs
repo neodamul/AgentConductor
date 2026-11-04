@@ -1,0 +1,25 @@
+// #427: titlebar structure and a working shared application menu on the real assembled document.
+const assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path'),{execFileSync}=require('node:child_process'),{pathToFileURL}=require('node:url');
+const {findChrome,launch}=require('./design_parity/cdp.cjs');
+(async()=>{const chrome=findChrome();if(!chrome){console.log('titlebar skipped: no Chrome');return;}const dir=fs.mkdtempSync(path.join(os.tmpdir(),'ac-titlebar-'));let b;
+try{const file=path.join(dir,'app.html');execFileSync(process.execPath,['tests/ui_sim/build.cjs',process.cwd(),file]);
+ for(const width of [840,1280]){b=await launch(chrome,{width});for(const theme of ['light','dark']){
+ await b.goto(pathToFileURL(file).href);
+ const checks=await b.eval(`(async()=>{document.documentElement.dataset.theme='${theme}';SIM.reply.workspaces=()=>({name:'Workspace A',current:'/tmp/sim-desktop',registered:[{name:'Workspace A',path:'/tmp/sim-desktop'}]});const q=id=>document.getElementById('start-'+id),out=[],check=(name,value)=>{if(!value)throw Error(name);out.push(name);},wait=()=>new Promise(r=>setTimeout(r,30));
+ const title=q('titlebar');check('titlebar groups exist',!!title?.querySelector('.title-brand')&&!!title.querySelector('.title-actions'));
+ check('brand/version/divider order',[...title.querySelector('.title-brand').children].map(e=>e.tagName.toLowerCase()).join(',')==='img,strong,span,span');
+ check('menu/rail/Workspace order',[...title.querySelector('.title-actions').children].slice(0,3).map(e=>e.id).join(',')==='start-app-menu,start-rail-toggle,start-workspace-menu');
+ check('divider aligns with sidebar',title.querySelector('.title-divider').getBoundingClientRect().right===document.querySelector('.startup-team').getBoundingClientRect().right);
+ q('app-menu').click();const end=Date.now()+3000;while(q('workspace-list').hidden&&Date.now()<end)await wait();check('application menu opens',!q('workspace-list').hidden&&q('app-menu').getAttribute('aria-expanded')==='true');
+ check('global menu omits recent rows',!q('workspace-list').querySelector('.workspace-row'));
+ check('menu actions use existing controls',['settings-button','manual-open','tools-guide','cache-button'].every(id=>{const target=q(id),label=target.getAttribute('aria-label')||target.textContent.trim();return [...q('workspace-list').querySelectorAll('button')].some(b=>b.textContent.trim()===label);}));
+ document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));check('Escape closes and restores opener',q('workspace-list').hidden&&document.activeElement===q('app-menu'));
+ q('workspace-menu').click();const recentEnd=Date.now()+3000;while(q('workspace-list').hidden&&Date.now()<recentEnd)await wait();check('Workspace chooser keeps recents',!!q('workspace-list').querySelector('.workspace-row'));document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));
+ q('app-menu').click();const settingsEnd=Date.now()+3000;while(q('workspace-list').hidden&&Date.now()<settingsEnd)await wait();const settings=[...q('workspace-list').querySelectorAll('button')].find(b=>b.textContent.trim()===q('settings-button').getAttribute('aria-label'));settings.click();check('menu Settings opens real panel',q('settings').open&&q('workspace-list').hidden);q('settings').close('cancel');
+ SIM.home.run_available=true;SIM.home.run_state='running';const ready=Date.now()+5000;while(document.getElementById('brief-team').disabled&&Date.now()<ready)await wait();q('tab-tasks').click();const entering=Date.now()+5000;while(!document.body.classList.contains('on-run')&&Date.now()<entering)await wait();check('Room opens with the shared titlebar',document.body.classList.contains('on-run')&&document.body.contains(title));
+ q('app-menu').click();const inRoom=Date.now()+3000;while(q('workspace-list').hidden&&Date.now()<inRoom)await wait();check('opening app menu preserves Room',document.body.classList.contains('on-run'));
+ const openSettings=[...q('workspace-list').querySelectorAll('button')].find(b=>b.textContent.trim()===q('settings-button').getAttribute('aria-label'));openSettings.click();check('menu Settings preserves Room',q('settings').open&&document.body.classList.contains('on-run'));q('settings').close('cancel');
+ q('app-menu').click();const creating=Date.now()+3000;while(q('workspace-list').hidden&&Date.now()<creating)await wait();const create=[...q('workspace-list').querySelectorAll('button')].find(b=>b.textContent.trim()===acMessage('startup.new_workspace'));create.click();const dialog=Date.now()+5000;while(!q('new-workspace').open&&Date.now()<dialog)await wait();check('workspace mutation uses existing home routing',q('new-workspace').open&&!document.body.classList.contains('on-run'));q('new-workspace').close('cancel');return out;})()`);
+ console.log(theme,width,checks.length,'titlebar/menu checks passed');
+ }await b.close();b=null;}
+}finally{if(b)await b.close();fs.rmSync(dir,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1;});

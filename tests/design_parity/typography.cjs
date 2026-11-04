@@ -5,7 +5,10 @@ const T = ['fontSize', 'fontWeight', 'color', 'fontFamily'];
 const B = [...T, 'width', 'height', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'lineHeight', 'display', 'columnGap', 'borderTopLeftRadius', 'borderTopWidth', 'borderTopColor', 'backgroundColor'];
 const e = (name, keys, mock, app) => ({ name: 'type-' + name, props: keys.filter(k => k !== 'height' && k !== 'width'), keys, pixel: false, mock: { selector: mock }, app: { selector: app } });
 module.exports = [
-  e('brand', T, '.title-brand strong', 'header.titlebar > strong'),
+  e('brand', T, '.title-brand strong', '#start-titlebar .title-brand > strong'),
+  e('version', T, '.title-brand .ver', '#start-titlebar .app-version'),
+  e('title-divider', ['width','height','backgroundColor'], '.title-brand .div', '#start-titlebar .title-divider'),
+  { ...e('app-menu-button', B, '#app-menu-button', '#start-app-menu'), pixel: true },
   { ...e('workspace-home', B, '#workspace-home', '#start-workspace-menu'), app: { selector:'#start-workspace-menu', setup:"SIM.reply.workspaces=()=>({name:'Auth Service',current:'/tmp/sim-desktop',registered:[]});" } },
   e('settings-glyph', ['fontSize', 'color'], '#settings-button', '#start-settings-button'),
   e('rail-tab-selected', T, '#rail-agents-tab', '#rail-tab-agents'),
