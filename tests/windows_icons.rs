@@ -33,7 +33,7 @@ fn an_installed_claude_application_does_not_replace_the_brand_mark() {
 }
 
 #[test]
-fn start_menu_shortcut_resolves_an_application_icon() {
+fn an_installed_start_menu_shortcut_does_not_replace_the_opencode_brand_mark() {
     let roaming = std::env::temp_dir().join(format!("ac-win-menu-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&roaming);
     let menu = roaming.join(r"Microsoft\Windows\Start Menu\Programs\OpenCode");
@@ -56,7 +56,8 @@ fn start_menu_shortcut_resolves_an_application_icon() {
     // Single-threaded use before the OpenCode icon is looked up in this test binary.
     let mut env = test_env::lock();
     env.set("APPDATA", &roaming);
-    let url = icons::provider_icon(Provider::OpenCode).expect("icon from Start Menu shortcut");
-    assert!(url.starts_with("data:image/png;base64,iVBORw0KGgo"));
+    // GitHub #439: OpenCode keeps its pinned brand mark even when a Start Menu shortcut exists.
+    let url = icons::provider_icon(Provider::OpenCode).expect("bundled brand mark");
+    assert!(url.starts_with("data:image/svg+xml;base64,"));
     let _ = std::fs::remove_dir_all(roaming);
 }
