@@ -2942,6 +2942,12 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-215 / UC-207 / QAS-214 / DD-227.
 
+### Browser test navigation race — GitHub #479
+
+- [x] Red: `tests/cdp_goto_runtime.cjs` holds a response body for 11 s; the old `goto()` gave up waiting for the load event after 10 s and the next `eval` read a document without `documentElement` (the macOS `roles.cjs` failure on #469).
+- [x] Task: `goto()` waits for the lifecycle `load` event of its own navigation (`loaderId`), fails after 60 s with the URL instead of continuing silently; hash-only navigations keep the short settle wait.
+- [ ] Verify: Node UI suite and strict design parity on macOS; Windows through CI.
+
 ### Source bound: quota terminal — GitHub #472
 
 - [x] Plan: split `src/quota/terminal.rs` (493 lines) toward the 300-line bound with no behaviour change: screen recognition (`terminal/screens.rs`), `/usage` parsing (`terminal/parse.rs`) and the session driver (`terminal.rs`); public paths are re-exported unchanged.
