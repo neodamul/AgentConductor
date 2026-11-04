@@ -143,3 +143,6 @@ details.startup-task>summary.task-summary{list-style:none;cursor:pointer;display
 
 /* #424: reserve icon space inside compact action buttons, independent of inherited text padding. */
 .startup-profile .profile-tools>.small-button{box-sizing:border-box;flex:none;height:22px;line-height:16px;padding:2px 4px;white-space:nowrap}.startup-profile .profile-tools>.small-button.remove-agent,.startup-profile .profile-tools>.small-button.move-agent{width:23px;padding:0}.startup-profile .profile-tools>.move-agent{width:26px}.startup-profile .profile-tools .tool-icon{display:block;width:13px;height:13px;flex:none}
+
+/* Bound the strip independently of platform font metrics; names remain in tooltips. */
+.startup-profile .profile-tools{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 23px 22px 22px}.startup-profile .profile-tools>.small-button{min-width:0}.startup-profile .profile-tools>.small-button.move-agent{width:22px;min-width:0}.profile-tools .agent-tool-label{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
