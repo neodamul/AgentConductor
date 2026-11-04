@@ -16,6 +16,7 @@ pub(crate) fn document() -> Result<String, String> {
     );
     let helper_scripts = concat!(
         include_str!("../brand_avatar.js"),
+        include_str!("../team_briefing.js"),
         "\n",
         include_str!("../manual.js")
     );

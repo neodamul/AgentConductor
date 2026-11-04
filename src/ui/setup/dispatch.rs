@@ -15,6 +15,11 @@ impl Startup {
             .lock()
             .map_err(|_| crate::ui::messages::text("native.startup_settings_poisoned"))?;
         crate::ui::diagnostics::step("lock", waiting.elapsed());
+        if matches!(request, Request::WorkspaceBriefing {}) {
+            let view = saved.clone();
+            drop(saved);
+            return self.workspace_briefing(&view);
+        }
         if let Request::GoalResult { slug } | Request::GoalFolder { slug, .. } = &request {
             let view = saved.clone();
             drop(saved);
@@ -191,7 +196,8 @@ impl Startup {
             | Request::Edit { revision, .. }
             | Request::Start { revision, .. }
             | Request::SaveMessenger { revision, .. } => revision,
-            Request::GoalResult { .. }
+            Request::WorkspaceBriefing {}
+            | Request::GoalResult { .. }
             | Request::GoalFolder { .. }
             | Request::DeleteGoal { .. }
             | Request::CachePreview {}

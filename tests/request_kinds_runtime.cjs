@@ -6,7 +6,7 @@
 //   direct  everything else; AC_WAIT marks the pressed button and names the request after 1 s
 const fs = require('node:fs'), assert = require('node:assert/strict');
 const read = f => fs.readFileSync(`src/ui/${f}`, 'utf8').replace(/\r\n/g, '\n');
-const pages = ['startup.js', 'room.js', 'mcp.js', 'chat.js', 'optimize.js', 'manual.js'];
+const pages = ['startup.js', 'room.js', 'mcp.js', 'chat.js', 'optimize.js', 'manual.js', 'team_briefing.js'];
 const found = new Set();
 for (const page of pages) for (const m of read(page).matchAll(/\bkind:\s*'([a-z_]+)'/g)) found.add(m[1]);
 
@@ -27,7 +27,7 @@ const JOBS = [
 // A job that has its own progress line is also kept out of the generic waiting line.
 const QUIET_JOBS = ['quota'];
 const UPDATE_POLLS = ['update_status', 'check_update']; // sent as strings through updateRequest()
-const DIRECT = ['baseline_status','briefing','cache_clear','cache_preview','catalog','chat_reset','close_window','commit_baseline','create_workspace','delete_workspace','draft','edit','evidence','export_settings','forget_workspace','home','ignore_os_files','import_settings','manual_document','mcp_apply','mcp_save','messenger','next_phase','open_run','open_workspace','pick_executable','pick_file','pick_folder','preview_settings','read_plan','resolve_executable','save','save_messenger','save_plan_rules','save_profiles','saved_workspaces','scope_failure','scope_preview','set_language','set_signal_transport','set_theme','set_update_settings','signal_transport','stop_planning','switch_workspace','test_messenger','undo_amendment','update_settings'];
+const DIRECT = ['workspace_briefing','baseline_status','briefing','cache_clear','cache_preview','catalog','chat_reset','close_window','commit_baseline','create_workspace','delete_workspace','draft','edit','evidence','export_settings','forget_workspace','home','ignore_os_files','import_settings','manual_document','mcp_apply','mcp_save','messenger','next_phase','open_run','open_workspace','pick_executable','pick_file','pick_folder','preview_settings','read_plan','resolve_executable','save','save_messenger','save_plan_rules','save_profiles','saved_workspaces','scope_failure','scope_preview','set_language','set_signal_transport','set_theme','set_update_settings','signal_transport','stop_planning','switch_workspace','test_messenger','undo_amendment','update_settings'];
 
 const classes = { ENVELOPE, REFRESH, JOBS: JOBS.flatMap(j => j.kinds), DIRECT };
 const owners = new Map();

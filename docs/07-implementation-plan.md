@@ -2754,3 +2754,24 @@ Trace: R-210 / QAS-209 / DD-222.
 - [x] Verify: actual-driver exited/live cases pass on simulated macOS/Windows; helper tests cover owned tree arguments, missing PID, termination failure and no-exit timeout. Real local brand/import browser checks pass.
 - [x] Verify: complete local Node UI suite plus architecture/layout checks pass; native Windows termination remains pending.
 - [x] Completed: isolated, locally verified teardown unit ready for coordinator integration; #427 work continues independently.
+
+### Workspace and Goal sections — GitHub #427
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+- [x] Plan: separate common Workspace fields from Goal-specific objective/actions; reuse the complete Team briefing without opening a run. Contract: docs/design/workspace-structure.md.
+- [x] Red: actual UI lacked distinct sections; native Workspace briefing request was absent.
+- [x] Task: preserve original IDs/actions and counted Goal list across steps/Room; shared read-only briefing renderer and saved-run boundary, release settings lock before collection.
+- [x] Verify: 80 actual section/briefing/title/Room-return checks across light/dark 840/1280; ten native briefing/run-binding tests pass. Full 133-entry light/dark comparisons each show zero differences, including the true attention badge.
+- [x] Verify: fixed 36px info row and unchanged tab position are tested; dark attention glyph Red 0.74% -> Green zero pixels.
+- [x] Verify: complete Node UI regression, i18n/architecture/layout checks, native document paths and focused Clippy/fmt pass.
+- [x] Completed: locally verified sections/briefing/info-row/attention checkpoint ready to publish.
+- [ ] Next unit: titlebar order and working global menu; retain conditional update/pre-run inspector behavior.
+
+#427 local checkpoint before #436 Windows follow-up: native Workspace briefing/Room routing, existing briefing/run bindings pass10tests3suites; UI section/Room-return/complete briefing64checks pass; Clippy passes. First100-entry840 light/dark comparison passes (13 authored1280-only asserts skipped). Expanded104-entry1280 comparison leaves the heading-to-tabs rhythm assertion; implement the mock's actual fixed info row instead of preserving the earlier margin approximation. This uncommitted unit is stashed while the prerequisite Windows #435 failures are corrected.
+
+Current execution queue (Codex, project AgentConductor): #427 implementation is running;
+#436 is an integration dependency only. Next unblocked units are #429, #430 and #420;
+#420 coverage inventory is already started in docs/14 and #424 has a measured proposal.
+Each unit records verification, commit and next action in AgentMemory and its issue;
+CI waiting must not stop independent implementation. The earlier stash checkpoint above
+is historical: work resumed from #435 head and will rebase onto main after #436 merges.
