@@ -751,6 +751,18 @@ Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213.
 `tests/request_kinds_runtime.cjs` reads `kind: '<name>'` literals of `startup.js`, `room.js`, `mcp.js`, `chat.js`, `optimize.js` and `manual.js`. Each kind is in exactly one of ENVELOPE, REFRESH, JOBS, DIRECT; none is unclassified or stale. The quiet list of `AC_WAIT` equals REFRESH, the usage job and the two update polls. Each JOBS entry names a string its page source must contain (its progress rendering).
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.
 
+### FR-206 Native quota indicator contract
+Startup and run snapshots add quota_indicators keyed by profile ID, with status, rings, windows, budgets and source/error/observation metadata. Preserve existing quota fields for compatibility. Trace: UC-204.
+
+### NFR-93 Conservative cached quota rendering
+Normalize only finite percentages in the range 0–100, suppress expired/stale capacity and keep one-window/unlimited/unsupported observations truthful. No query, worker, timer or network request is added by this projection. Trace: FR-206.
+
+### FR-205 Goal action request contract
+Expose goal_result, goal_folder and delete_goal on the startup bridge; reads leave selection unchanged; deletion requires revision, slug, goal text and exact folder. Trace: UC-203.
+
+### NFR-92 Fail-closed Goal removal
+Reject unregistered identifiers, aliases/reparse points, missing or invalid folder markers, non-child paths and unverified run ownership. Do not wait for processes under the settings mutex; return stopping and retry after state changes. Trace: FR-205.
+
 ### FR-207 Goal identity and context contract
 Keep existing create_slug/new_goal/next_phase request shapes. Folder allocation uses an exclusive create operation before adding markers or excluding the folder from Git; failed collisions leave registry and disk contents unchanged. Trace: UC-205.
 

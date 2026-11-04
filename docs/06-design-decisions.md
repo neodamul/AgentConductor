@@ -1628,5 +1628,11 @@ Trace: R-201 → BG-156 → SF-189 → UC-192 → FR-193 → QAS-199 → DD-213.
 The checklist of #285 states coverage but cannot notice a later addition, and every earlier pass found gaps by hand. Extracting the kinds from the sources makes the list complete by construction and makes the decision explicit at the moment a request is added. The progress renderings are checked by a named string, not by behaviour: this guards removal and forgetting, while the behaviour itself stays covered by the simulator replays and the unit tests of each rendering.
 Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214. GitHub #301, user, 2026-11-01.
 
+## DD-224 Structured quota indicators
+Trace: R-212 / DDR-59. Add quota_indicators to startup and run snapshots. Shorter provider windows sort before longer ones; Enterprise allocation rows take ring priority when present. Keep all source rows for the popup. Return at most two rings, not a synthetic denominator ring. Stale, expired, unknown and unlimited rows carry null percentages. Existing badges and quota fields remain compatible; query scheduling stays unchanged.
+
+## DD-223 Goal actions on the startup bridge
+Trace: R-211 / DDR-58. Goal identity is a registered internal slug; resolve its exact direct-child directory without migrating it during a read. Require the app marker and ordinary directory metadata. Read historical public reports outside the settings lock and validate run binding. Deletion confirms both text and canonical root, requests owned planning/run stop, and returns pending rather than sleeping. After quiescence, remove the verified Goal directory and registry entry; audit decisions and errors. Folder revealing uses a native subprocess with a path argument, never a shell.
+
 ## DD-225 Goal folder allocation and model audit
 Trace: R-213 / DDR-60. Existing persisted slug records remain internal identifiers. Reuse current Workspace retention, non-Git external history and phase continuation. Correct creation to atomically reserve the Goal root before marker creation or Git exclusion, and treat dangling links as occupied. Existing directories are never adopted through create_slug. UI-only modal sizes/focus/scrolling and keeping step 6 visible behind results are frontend acceptance owned by Claude; they are not established by native backend tests.
