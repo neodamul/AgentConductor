@@ -5,6 +5,7 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 the GitHub Release notes for its tag.
 
 ## Unreleased
+- The Goal header is a compact single line (17px) without the small caption above it.
 - The Activity, Changes and tests, Raw logs and Lessons tabs of a task are compact pill-shaped tabs that fit their labels instead of an underlined row.
 - In every step card the title and the action buttons stay visible while only the middle of the card scrolls, so a short window no longer hides Save or Approve.
 - The Prepare, Run and Finish groups of the stepper have their own subdued background colours (light and dark) and a small group icon, as in the approved design.
