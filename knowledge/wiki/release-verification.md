@@ -36,3 +36,14 @@ v0.2.0 tag workflow invokes it before publication. Currently it correctly refuse
 the unready candidate. #428 owns deferred screenshots/release preparation and
 #472 tracks the unenforced 300-line rule; neither can be silently waived by a
 coverage table.
+
+## Joined UI boundary checks — #420
+
+Run `node tests/goal_lifecycle_runtime.cjs` and
+`node tests/goal_surfaces_runtime.cjs` for actual assembled-page sequencing
+through a deterministic native-protocol bridge, both themes at 840/1280.
+The former checks 15 lifecycle assertions per cell; the latter checks 18 cached
+quota, bounds, focus and panel assertions. Fake replies cannot prove filesystem
+delete, Explorer launch or provider execution; retain the Rust controller and
+Windows-specific evidence alongside these UI checks. The lifecycle found #475
+and now waits for the target Goal controls to settle before entering new text.

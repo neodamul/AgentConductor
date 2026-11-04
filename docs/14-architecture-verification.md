@@ -495,19 +495,19 @@ The inspected baseline is main be76d974: 842 local macOS tests pass, zero fail,
 | Requirement / issue | Unit / backend contract evidence | Integration evidence | Limits / missing evidence |
 |---|---|---|---|
 | R-210 six-step shell / #406 #408 | `unified_stepper_runtime.cjs`, `startup_tabs_runtime.cjs` | `workspace_sections_runtime.cjs`, `design_parity.rs` | Static navigation assertions alone are not integration evidence. |
-| R-210 rail tabs, collapse and widths / #408 #410 | `rail_tabs_runtime.cjs`, `rail_toggle.rs` | `workspace_sections_runtime.cjs`, `design_parity.rs` | Full responsive matrix is being added below. |
-| R-210 slide-over exclusivity / #406 | `slide_over_panels.rs`, `goal_panel_runtime.cjs` | Partial briefing behavior in `workspace_sections_runtime.cjs` | Joined Goal/chat/Settings/briefing exclusivity flow remains open. |
+| R-210 rail tabs, collapse and widths / #408 #410 | `rail_tabs_runtime.cjs`, `rail_toggle.rs` | `workspace_sections_runtime.cjs`, `design_parity.rs` | Full four-cell responsive matrix is described below. |
+| R-210 slide-over exclusivity / #406 | `slide_over_panels.rs`, `goal_panel_runtime.cjs` | `goal_surfaces_runtime.cjs`, `workspace_sections_runtime.cjs` | Assembled UI checks chat yields to Goal, Settings and briefing; native webview behavior is a separate platform check. |
 | R-210 inspector dock / #410 | `inspector_fold.rs`, `inspector_fold_runtime.cjs` | `design_parity.rs` | Inspector model interactions are a separate row. |
-| R-210 completion/result popup / #406 | `result_popup_runtime.cjs` | Style/geometry only in `design_parity.rs` | Automatic completion and Goal-row reopening need joined browser evidence; Windows workspace save is not result-popup proof. |
+| R-210 completion/result popup / #406 | `result_popup_runtime.cjs` | `goal_lifecycle_runtime.cjs`, `design_parity.rs` | Joined simulated completion and historical reopening retain Goal context; fake evidence is not a provider or filesystem test. |
 | R-210 provider/status avatars / #410 #435 #439 | `icons.rs`, `agent_status_runtime.cjs`, `room_task_rows.rs` | `brand_avatar_runtime.cjs`, `opencode_avatar_runtime.cjs`, `design_parity.rs` | Windows extraction/brand contracts are platform-specific. |
 | R-210 action/import controls / #432 #435 | `action_icons.rs` | `import_row_runtime.cjs`, `design_parity.rs` | No tolerance or approved-mock relaxation is permitted. |
 | R-210 active-run close decision | `close_dialog_runtime.cjs` | `close_window.rs` | Native controller test is Unix-only; do not count it as Windows execution. |
 | R-211 / DD-223 Goal result/folder/delete / #402 | `goal_rows_runtime.cjs` | `goal_row_actions.rs` (real Startup dispatch and owned filesystem) | Covers exact/stale confirmation, pending stop and retry. `goal_action_safety.rs` adds duplicate-delete/editor races and root aliases; `windows_goal_folder.rs` adds real Explorer observation plus deletion. Windows execution is pending. |
-| R-212 / DD-224 cached quota / #404 #426 | `quota_indicators.rs`, `quota_display.rs` | `startup_quota.rs`, `design_parity.rs` | Assembled UI still needs the complete ok/unlimited/unsupported/error sequence; native startup fixture is Unix-only. |
+| R-212 / DD-224 cached quota / #404 #426 | `quota_indicators.rs`, `quota_display.rs` | `startup_quota.rs`, `goal_surfaces_runtime.cjs`, `design_parity.rs` | All four UI states consume snapshot data without provider queries; native startup fixture is Unix-only. |
 | R-213 / DD-225 Goal ownership / #411 | `workspace_goal_rules.rs`, `workspace_delete_default.rs` | `project_goals.rs`, `folder_workflow.rs`, `cli_workflow.rs` | Existing Unix links plus `goal_action_safety.rs` cover root aliases/concurrency. Its Windows junction case still requires Windows execution. |
 | R-210 shared/manual model choices / #409 #430 | `role_rules.rs`, `recovery.rs` | `choice_controls.rs`, `choice_controls/profile_fallback.cjs`, `choice_controls/inspector_model.cjs`, `cli_workflow.rs` | Recovery includes explicit catalog registration and invalid-model non-mutation. |
 | R-210 Goal planner confirmation / #429 #466 | `planning_confirmation_runtime.cjs` | `goal_planning.rs`, `planning_confirmation_browser.cjs` | Delayed post-prepare settlement is mandatory; negative assertions require completed actions. |
-| R-213 New Goal and phase continuation | `goal_controls_runtime.cjs` | `project_goals.rs`, `phased_planning.rs`, `phase_link.rs` | Native flows exist; one joined browser lifecycle is still required. |
+| R-213 New Goal and phase continuation | `goal_controls_runtime.cjs` | `project_goals.rs`, `phased_planning.rs`, `phase_link.rs`, `goal_lifecycle_runtime.cjs` | Joined browser flow proves inherited defaults, saved second Goal and retained next-phase routing. Actual persistence is proved separately by native tests. |
 | Evidence/architecture integrity | `architecture_trace.rs` | No runtime claim: this is a document/source contract | `verification_evidence.rs` rejects missing nested references and traversal. |
 | Design matrix: both themes × 840/1280 | `parity_viewport_runtime.cjs`, `parity_coverage_runtime.cjs`, `parity_matrix.rs` | `design_parity.rs` | Four driver cells and independent capture paths are proven by subprocess capture. Three 840 exclusions are removed; matching operator-ID fixtures pass focused comparisons. Full four-cell local pixel run passes (545.46 seconds). Dedicated 560/1920 and short-height regressions retain their explicit purpose. |
 | Release readiness / #428 | `release_readiness.rs` offline refusal fixtures | Explicit ignored readiness check invokes read-only GitHub and existing screenshot verifier; v0.2.0 publication requires it | Current candidate is correctly blocked by open issues, 0.1.58 versions, Unreleased notes and stale screenshots. Screenshot recapture remains deferred. |
@@ -520,3 +520,24 @@ No extra editable planning role is required to make the mock appear complete.
 The milestone cannot be declared verified until all open #420 acceptance items
 have concrete passing evidence. #428 owns release preparation and deferred
 screenshots; #472 owns the previously unenforced 300-line rule.
+
+## Joined Goal acceptance — #420
+
+`tests/goal_lifecycle_runtime.cjs` builds the real assembled page and drives
+Workspace creation, Goal save, model-confirmed planning, exact-plan consent,
+Room execution and close cancellation, automatic completion popup, Goal-row
+result/folder action, inherited New Goal defaults, persisted second Goal,
+pending-delete retry and retained next-phase preparation without a new planner.
+The deterministic `tests/ui_sim/lifecycle.cjs` bridge returns native-protocol
+fixtures; no CLI, folder opening, deletion or provider service runs in this test.
+Those boundaries remain covered by the mapped Rust controller/filesystem tests.
+
+`tests/goal_surfaces_runtime.cjs` checks cached ok/unlimited/unsupported/error
+quota data, truthful percentages/reset/error text, absence of invented rings,
+popup bounds and Escape focus restoration. Merely reading these states sends
+no quota/planner/execution request. It also checks chat yields to Goal, Settings
+and team-briefing slide-overs. Both tests run light/dark at 840/1280.
+
+The lifecycle exposed #475, fixed independently in PR #476/main 9af04ea9:
+wait for the whole Goal transition, not an empty Goal field, before editing.
+A separate delayed-snapshot regression now protects that real production race.
