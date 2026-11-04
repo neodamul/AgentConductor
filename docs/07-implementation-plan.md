@@ -1483,7 +1483,13 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [x] Plan: Trace: amends R-210 (amends R-34, NFR-12, QAS-27, DD-40) -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #406; design GitHub #387.
 - [x] Task / Red/Green: `tests/icons.rs` (bundled bytes and pinned hashes), `tests/release_package.rs` (license text and notice), `tests/room_task_rows.rs` (28px/29px bordered containers) first, then `src/icons/brand.rs`, the package step and the CSS.
 - [x] Verify: icon, package, avatar and UI tests; the real app shows the Claude Code and Codex marks in the agent list.
-- [ ] Complete: slide-overs of the same issue; release (version 0.2.0 only when the user asks).
+- [ ] Complete: release (version 0.2.0 only when the user asks).
+
+### Briefing, chat and Settings as right slide-overs — DD-222
+- [x] Plan: Trace: amends R-210 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #406; design GitHub #387.
+- [x] Task / Red/Green: `tests/slide_over_panels.rs` first (red), then the `slide-panel` class on the briefing and Settings dialogs, the chat slide-in and the one-at-a-time rule in `chat.js`.
+- [x] Verify: UI Rust and Node tests; UI simulator showed Settings and the briefing as 460px right panels, the chat closing when either opens, and no horizontal scroll.
+- [ ] Complete: release (version 0.2.0 only when the user asks).
 
 ### Design parity check against the approved mock — DD-222
 - [x] Plan: Trace: amends R-210 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #415; design GitHub #387. Every goal-screen issue adds spec entries for the elements it builds.
@@ -2642,3 +2648,27 @@ Trace: amends R-210 / DD-222.
 - [ ] Task (role/model UI): isolated role module, Agent/model resets, inherited/default choices and operator model catalog registration.
 - [ ] Verify: real simulator keyboard/focus/modal/refresh tests in light/dark at 840/1280; add parity entries for every visual element, validate backend precedence and unsupported-catalog paths.
 - [ ] Completed: commit/push verified units; full issue stays open until all acceptance checks pass. Depends on the #417 parity runner, integrated locally into this issue branch; main unchanged.
+
+### Quota indicator backend — GitHub #404
+Trace: R-212 / DD-224.
+
+- [x] Plan: audit cached quota View, budget and existing localized label contracts.
+- [x] Task: additive native quota_indicators shared by startup and run snapshots; UI contract posted in #404.
+- [x] Verify: missing projection failed first; 47 tests across eight local suites passed, then final consistency changes passed 22 tests across three suites. Actual startup/run snapshots return identical cached indicators; no CLI starts. Formatting/Clippy/whitespace checked.
+- [ ] Completed: commit/push backend, Claude wires UI; release remains gated by explicit user request.
+
+### Goal row backend actions — GitHub #402
+Trace: R-211 / DD-223.
+
+- [x] Plan: audit existing Goal registry, run bindings, owned stop paths and read-only result gaps.
+- [x] Task: native result/folder/delete requests and explicit UI contract (issue comment).
+- [x] Verify: Red (missing requests, then missing result evidence) → Green; 33 tests in eight final local suites (existing phase-flow/navigation suites also passed in the preceding run), including ownership, context preservation, stop/retry, stale confirmation, last-Goal removal and snapshots during deletion. Formatting and focused Clippy checked.
+- [ ] Completed: commit/push; Claude integrates UI; merge and close only after full acceptance.
+
+### Workspace/Goal model audit — GitHub #411
+Trace: R-213 / DD-225.
+
+- [x] Plan: audit stable naming, optional worktrees/non-Git folder support, New Goal retention and next-phase continuation before changing code.
+- [x] Task: exclusive Goal root reservation refuses folder/file/link collisions; automatic naming skips dangling links; request shapes unchanged.
+- [x] Verify: Red reproduced directory/link adoption → Green: 24 tests across seven local suites, including collision/context/display edits, plain-folder planning/approved merge and phase continuation; fmt/Clippy/whitespace pass.
+- [ ] Completed: commit/push backend audit and correction; Claude verifies UI-only dialog/step continuity; full issue remains open until acceptance.

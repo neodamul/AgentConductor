@@ -19,6 +19,7 @@ pub struct Startup {
     /// GitHub #261: logs of the chat worker, apart from the planning slot.
     chat_broker: Controller,
     saved: Mutex<Saved>,
+    goal_deletion: Mutex<()>,
     /// GitHub #234: the repository HEAD for the state revision, never fetched by a request through a Git process.
     heads: crate::git_head::Heads,
     _lease: crate::leases::Lease,
@@ -103,6 +104,7 @@ impl Startup {
                 job: Mutex::new(None),
             },
             saved: Mutex::new(saved),
+            goal_deletion: Mutex::new(()),
             heads: Default::default(),
             _lease: lease,
         };
@@ -235,6 +237,7 @@ mod request;
 mod tests;
 use request::Request;
 mod dispatch;
+mod goal_actions;
 mod planning;
 mod profiles;
 mod revision;
@@ -256,3 +259,7 @@ mod quota;
 mod run_binding;
 
 mod automatic;
+
+#[cfg(test)]
+#[path = "../../tests/unit/goal_deletion.rs"]
+mod goal_deletion_tests;

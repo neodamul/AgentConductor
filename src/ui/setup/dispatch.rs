@@ -15,6 +15,42 @@ impl Startup {
             .lock()
             .map_err(|_| crate::ui::messages::text("native.startup_settings_poisoned"))?;
         crate::ui::diagnostics::step("lock", waiting.elapsed());
+        if let Request::GoalResult { slug } | Request::GoalFolder { slug, .. } = &request {
+            let view = saved.clone();
+            drop(saved);
+            return match &request {
+                Request::GoalResult { .. } => self.goal_result(&view, slug),
+                Request::GoalFolder { open, .. } => self.goal_folder(&view, slug, *open),
+                _ => unreachable!(),
+            };
+        }
+        // Folder removal may be slow. Keep snapshots available, and reject competing
+        // mutations rather than making their native request threads wait for deletion.
+        let deletion = self.goal_deletion.try_lock();
+        if deletion.is_err() {
+            if let Request::Snapshot {
+                icons,
+                mcp_result,
+                quota_refresh_last,
+            } = request
+            {
+                let view = saved.clone();
+                drop(saved);
+                let job = self.job(&view)?;
+                return self.snapshot_state(
+                    &view,
+                    &job,
+                    &serde_json::Value::Null,
+                    icons,
+                    mcp_result,
+                    &quota_refresh_last,
+                );
+            }
+            return Err("Goal deletion is in progress; retry after it finishes".into());
+        }
+        if !matches!(request, Request::DeleteGoal { .. }) {
+            drop(deletion);
+        }
         if let Request::Chat { revision, text } = &request {
             return self.dispatch_chat(&mut saved, revision, text);
         }
@@ -93,6 +129,23 @@ impl Startup {
             };
             return self.enqueue_metadata(&mut saved, kind, agent);
         }
+        if let Request::DeleteGoal {
+            revision,
+            slug,
+            goal,
+            root,
+        } = &request
+        {
+            if revision != &self.revision(&saved)? {
+                return Err(messages::text(
+                    "native.startup_state_changed_since_review_refresh_before_acting",
+                )
+                .into());
+            }
+            let mut view = saved.clone();
+            drop(saved);
+            return self.delete_goal(&mut view, slug, goal, root);
+        }
         if job["state"] == "running" {
             return Err(crate::ui::messages::text("native.startup_operation_still_running").into());
         }
@@ -138,7 +191,10 @@ impl Startup {
             | Request::Edit { revision, .. }
             | Request::Start { revision, .. }
             | Request::SaveMessenger { revision, .. } => revision,
-            Request::CachePreview {}
+            Request::GoalResult { .. }
+            | Request::GoalFolder { .. }
+            | Request::DeleteGoal { .. }
+            | Request::CachePreview {}
             | Request::ChatHistory {}
             | Request::ChatReset {}
             | Request::CacheClear { .. }

@@ -4,6 +4,20 @@ use super::*;
 #[derive(Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 pub(super) enum Request {
+    GoalResult {
+        slug: String,
+    },
+    GoalFolder {
+        slug: String,
+        #[serde(default)]
+        open: bool,
+    },
+    DeleteGoal {
+        revision: String,
+        slug: String,
+        goal: String,
+        root: PathBuf,
+    },
     StopPlanning {},
     CachePreview {},
     CacheClear {
