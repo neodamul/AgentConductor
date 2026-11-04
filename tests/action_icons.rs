@@ -32,6 +32,6 @@ fn every_mapped_action_button_exists_and_every_icon_has_a_mask() {
         );
     }
     assert!(CSS.contains(
-        "[data-action-icon]::before{content:\"\";display:inline-block;width:13px;height:13px;"
+        "[data-action-icon]{display:flex;align-items:center;gap:6px}[data-action-icon]::before{content:\"\";display:block;flex:none;width:13px;height:13px;"
     ));
 }
