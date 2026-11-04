@@ -356,3 +356,10 @@ Import cascade regression (#435, R-210 / DD-222): `tests/import_row_runtime.cjs`
 15.5px and 22px fallback-line scenarios now pass with equal sibling heights. Full local
 light/dark comparisons each pass 119 entries; 13 Rust tests across three suites pass.
 Windows confirmation and the two Windows avatar crop defects remain separate acceptance.
+
+Pinned inline brand rendering (#435, R-210 / DD-222): the browser regression rejects
+the old image drawing path and verifies direct pinned paths, unsupported-provider
+rejection and unchanged 29/19px and 28/20px outer/content boxes. Startup and standalone
+Room documents embed the same inert asset templates/helper. Full local light/dark
+comparisons each pass 119 entries; 23 native tests pass across six suites (one existing
+platform-dependent test ignored); focused Clippy passes. Windows crops remain pending.

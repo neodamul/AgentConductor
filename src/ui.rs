@@ -31,6 +31,7 @@ const I18N: &str = concat!(
 );
 mod cache;
 mod diff;
+mod document;
 pub mod failure_output;
 pub mod language;
 pub mod messages;
@@ -280,20 +281,7 @@ impl Room {
         if self.surface()?.is_some() {
             return setup::document();
         }
-        let nonce = crate::native_guard::session_id()?;
-        let policy = format!(
-            "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; script-src 'nonce-{nonce}'; style-src 'nonce-{nonce}'; connect-src 'none'; img-src data:; base-uri 'none'; form-action 'none'\">"
-        );
-        Ok(language::embed(HTML)
-            .replace(
-                "<link rel=\"stylesheet\" href=\"/ui.css\"><script src=\"/ui.js\" defer></script>",
-                &format!("{policy}<style nonce=\"{nonce}\">{CSS}</style>"),
-            )
-            .replace(
-                "</body>",
-                &format!("<script nonce=\"{nonce}\">{I18N}\n{JS}</script></body>"),
-            )
-            .replace("{{APP_VERSION}}", &crate::update::current()))
+        document::room()
     }
 }
 

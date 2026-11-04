@@ -35,3 +35,11 @@ The confirmed import-row defect was the cascade, not a different translated chil
 the parent stretch behavior to work. A real-browser regression varies the tallest
 label's line-height to reproduce the Windows fallback condition on macOS; it asserts
 natural content height and equal sibling heights without changing the approved mock.
+
+Windows avatar grids placed the remaining differences inside the logo rather than the
+outer border. Draw pinned brand paths as inline SVG, matching the mock's drawing path,
+instead of depending on the platform's SVG-image rasterization. Reuse inert templates
+assembled from repository assets; never parse SVG supplied through CLI/configuration
+icon URLs. Keep the same padding, border and content sizes. Both Startup and standalone
+Room documents must ship those templates and the shared renderer. Windows must still
+confirm the resulting crops.

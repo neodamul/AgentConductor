@@ -18,7 +18,7 @@ function node(tag, text, cls) { const el=document.createElement(tag);if(text!==u
 function notice(message,error=false) { AC_I18N.text($('notice'),message);$('notice').className='notice'+(error?' error':'');$('notice').hidden=false;clearTimeout(notice.timer);notice.timer=setTimeout(()=>{$('notice').hidden=true;},error?11000:5000); }
 // DD-40: installed application icons for built-in agents; custom agents keep letters.
 let iconCache={},iconKinds='';const ICONS=()=>iconCache;
-function avatar(parser,label,cls){const url=parser&&parser!=='custom'?ICONS()[parser]:null;if(url){const img=document.createElement('img');img.src=url;img.alt='';img.className=cls+' app-icon';img.setAttribute('aria-hidden','true');return img;}const span=document.createElement('span');span.className=cls;AC_I18N.bind(span,()=>((label||'?').slice(0,1).toUpperCase()));return span;}
+function avatar(parser,label,cls){const url=parser&&parser!=='custom'?ICONS()[parser]:null;if(url){const brand=window.acBrandAvatar?.(parser,cls);if(brand)return brand;const img=document.createElement('img');img.src=url;img.alt='';img.className=cls+' app-icon';img.setAttribute('aria-hidden','true');return img;}const span=document.createElement('span');span.className=cls;AC_I18N.bind(span,()=>((label||'?').slice(0,1).toUpperCase()));return span;}
 async function request(packet, watched) {
   if (!watched && typeof AC_WAIT !== 'undefined') return AC_WAIT.watch(packet.kind === 'action' ? packet.action.kind : packet.kind, request(packet, true));
   const bridge=window.webkit?.messageHandlers?.agentconductor??(window.__acRequest?{postMessage:window.__acRequest}:null);

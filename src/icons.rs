@@ -9,6 +9,7 @@ use std::{
 mod brand;
 mod fallback;
 pub use brand::brand_icon;
+pub(crate) use brand::templates as brand_templates;
 pub use fallback::fallback_icon;
 
 const MAX_SIDE: u32 = 64;

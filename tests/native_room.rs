@@ -11,6 +11,10 @@ async fn native_requests_are_typed_bounded_and_hold_a_single_window_lease() {
         .unwrap();
     let exe = std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor"));
     let room = Room::open(&dir, exe).unwrap();
+    let page = room.document().unwrap();
+    assert!(page.contains("<template id=\"ac-brand-claude\">"));
+    assert!(page.contains("<template id=\"ac-brand-codex\">"));
+    assert!(page.contains("window.acBrandAvatar"));
     assert!(Room::open(&dir, exe).is_err());
     for packet in [
         b"{".as_slice(),

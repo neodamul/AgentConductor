@@ -1,7 +1,8 @@
 //! Embed the locale catalogs and UI assets into the native document.
 pub(crate) fn document() -> Result<String, String> {
     let nonce = crate::native_guard::session_id()?;
-    let home = include_str!("../startup.html").to_string()
+    let home = crate::icons::brand_templates()
+        + include_str!("../startup.html")
         + include_str!("../mcp.html")
         + include_str!("../chat.html")
         + include_str!("../optimize.html");
@@ -13,7 +14,11 @@ pub(crate) fn document() -> Result<String, String> {
         include_str!("../chat.css"),
         include_str!("../optimize.css")
     );
-    let manual_script = include_str!("../manual.js");
+    let helper_scripts = concat!(
+        include_str!("../brand_avatar.js"),
+        "\n",
+        include_str!("../manual.js")
+    );
     let script = format!(
         "{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
         super::super::I18N,
@@ -28,7 +33,7 @@ pub(crate) fn document() -> Result<String, String> {
         include_str!("../rail.js"),
         include_str!("../agent_status.js"),
         include_str!("../quota_ring.js"),
-        manual_script,
+        helper_scripts,
         include_str!("../startup.js")
     );
     let policy = format!(

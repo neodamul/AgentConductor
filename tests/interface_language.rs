@@ -35,6 +35,9 @@ fn language_is_saved_embedded_and_validated() {
     let exe = Path::new(env!("CARGO_BIN_EXE_agentconductor"));
     let room = Room::startup(&root.join("desktop"), exe).unwrap();
     let page = room.document().unwrap();
+    assert!(page.contains("<template id=\"ac-brand-claude\">"));
+    assert!(page.contains("<template id=\"ac-brand-codex\">"));
+    assert!(page.contains("window.acBrandAvatar"));
     assert!(page.contains("<html lang=\"en\" "), "English by default");
     assert!(
         page.contains("const AC_MESSAGES={en:") && page.contains("function acMessage("),

@@ -2737,3 +2737,11 @@ Windows import follow-up (same R-210 / UC-202 / QAS-209 / DD-222 trace):
 - [x] Task: remove the MCP selector from the old fixed-height rule; its higher specificity defeated the later natural-height rule. The separate optimization control is unchanged.
 - [x] Green: actual-browser regression covers both 15.5px and 22px text lines and verifies that every sibling stretches to the row height; parent-box parity remains equal locally. Full light/dark 1280px comparisons each pass 119 entries; 13 Rust tests across three suites pass.
 - [ ] Windows: confirm the native fallback font result in CI; no claim of avatar correction accompanies this import fix.
+
+Inline brand follow-up (same R-210 / UC-202 / QAS-209 / DD-222 trace):
+
+- [x] Plan: Windows difference grids locate the remaining avatar differences inside the logo; preserve the approved mock and the existing outer box.
+- [x] Task: clone only pinned, embedded Claude Code/Codex SVG templates into the existing avatar boxes in both factories. Configuration/CLI icon URLs are never interpreted as SVG markup. Keep existing image/initial fallbacks.
+- [x] Verify: browser regression changes from image-based failure to trusted inline paths with the existing 29/19px agent and 28/20px task boxes; both focused avatar crops match locally. Native Startup/standalone Room documents embed the assets and helper; 23 tests pass across six Rust suites (one existing platform-dependent test ignored).
+- [x] Verify: full local 1280px light/dark comparisons each pass 119 entries; focused Clippy passes.
+- [ ] Windows: native rerun still required; a local match does not prove Windows acceptance.
