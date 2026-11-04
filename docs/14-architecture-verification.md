@@ -333,7 +333,7 @@ with 0.00% differing pixels. These compare reusable atoms; shell placement remai
 The inherited avatar checks retain #417's pending #410 status-border tolerance and are not
 represented as exact avatar parity. Existing Node/DOM/architecture/layout regression: 10 tests
 across four local Rust suites. Role/fallback/backend precedence and full feature acceptance
-remain open. Tests: `choice_controls.rs`, `choice_controls/runtime.cjs`, `design_parity/choice_spec.cjs`.
+remain open. Tests: `choice_controls.rs`, `choice_controls/runtime.cjs`, `choice_controls/profile_fallback.cjs`, `design_parity/choice_spec.cjs`.
 
 ## Task-scoped fallback policy — GitHub #409, backend unit
 
