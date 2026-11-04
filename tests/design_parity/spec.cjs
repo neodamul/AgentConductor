@@ -9,7 +9,7 @@ module.exports = [
     mock: { url: '?theme=light#0', selector: '.status-icon', index: 0, mark: '.agent-brand-logo' },
     app: { run: "acAgentStatus.apply([{ status: 'needs_input' }], [{ agent: 'claude' }], () => 'wait')", selector: '.agent-symbol.app-icon', index: 0, mark: 'content' } },
   // The task rail of the run steps: the Room opens through the simulator's run and the Tasks tab.
-  { name: 'task-avatar', props: BOX, maxPixelDiff: 0.005,
+  { name: 'task-avatar', props: BOX,
     mock: { url: '?theme=light#3', selector: '.outline-task .outline-agent', index: 0, mark: '.agent-brand-logo' },
     app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';SIM.room.report.plan.tasks[0].agent='claude';", run: "document.getElementById('start-tab-tasks').click()",
       selector: '.session-choice .session-meta .app-icon.session-symbol', index: 0, mark: 'content' } },
@@ -18,7 +18,7 @@ module.exports = [
     mock: { selector: '.rail' }, app: { selector: '.startup-team' } },
   { name: 'rail-tab', props: ['borderTopLeftRadius', 'fontSize'], keys: ['width', 'height', 'borderTopLeftRadius', 'fontSize'], pixel: false,
     mock: { selector: '.rail-tabs button', index: 1 }, app: { selector: '#rail-tabs [role=tab]', index: 1 } },
-  { name: 'step-tab', props: ['borderTopLeftRadius'], keys: ['height', 'borderTopLeftRadius'], pixel: false, tol: 1,
+  { name: 'step-tab', props: ['borderTopLeftRadius'], keys: ['height', 'borderTopLeftRadius'], pixel: false,
     mock: { url: '?theme=light#0', selector: '.tabs .tab', index: 1 }, app: { selector: '#start-step-tabs [role=tab]', index: 1 } },
   { name: 'app-version', props: ['fontSize'], keys: ['fontSize'], pixel: false,
     mock: { selector: '.titlebar .ver' }, app: { selector: '.titlebar .app-version' } },
@@ -39,10 +39,10 @@ module.exports = [
   { name: 'agent-remove', props: ['borderTopLeftRadius', 'color'], keys: ['width', 'height', 'borderTopLeftRadius', 'color'], pixel: false,
     mock: { selector: '.agent .tools button', index: 1 }, app: { selector: '.profile-tools .remove-agent', index: 0 } },
   // Task rows (GitHub #410): 4px radius, a 17px status tag; the chevron is a pseudo-element (checked in room_task_rows.rs).
-  { name: 'task-row', props: ['borderTopLeftRadius'], keys: ['width', 'borderTopLeftRadius'], pixel: false, tol: 1.5,
+  { name: 'task-row', props: ['borderTopLeftRadius'], keys: ['width', 'borderTopLeftRadius'], pixel: false,
     mock: { url: '?theme=light#3', selector: '.outline-task' },
     app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()", selector: '.session' } },
-  { name: 'task-status-tag', props: ['borderTopLeftRadius'], keys: ['height', 'borderTopLeftRadius'], pixel: false, tol: 1,
+  { name: 'task-status-tag', props: ['borderTopLeftRadius'], keys: ['height', 'borderTopLeftRadius'], pixel: false,
     mock: { url: '?theme=light#3', selector: '.outline-task .outline-state-badge' },
     app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()", selector: '.session-choice .session-status' } },
   // Step groups (GitHub #408): a subdued background per Prepare / Run / Finish set with a 14px group icon.

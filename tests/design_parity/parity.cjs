@@ -77,10 +77,10 @@ async function visit(browser, side, spec) {
       }
       const measured = got[spec.name], shots = measured.shots;
       if (!measured.mock || !measured.app) continue;
-      const tol = spec.tol ?? 0.5, cmp = (label, a, b) => { for (const k of Object.keys(a)) { if (k === 'shots' || (spec.keys && !spec.keys.includes(k))) continue;
+      const tol = 0.01, cmp = (label, a, b) => { for (const k of Object.keys(a)) { if (k === 'shots' || (spec.keys && !spec.keys.includes(k))) continue;
         const x = a[k], y = b[k], num = typeof x === 'number'; if (num ? Math.abs(x - y) > (k === 'x' || k === 'y' ? Infinity : tol) : String(x) !== String(y)) failures.push(`${spec.name}${label}.${k}: mock ${x} app ${y}`); } };
       cmp('', measured.mock, measured.app);
-      if (shots.mock && shots.app && spec.pixel !== false) { const d = diffRatio(decode(shots.mock), decode(shots.app)); console.log(`  ${spec.name}: ${(d.ratio * 100).toFixed(2)}% of pixels differ`); if (d.ratio > (spec.maxPixelDiff ?? 0.02)) failures.push(`${spec.name}: ${(d.ratio * 100).toFixed(1)}% of pixels differ${d.sizeMismatch ? ' (size ' + d.sizeMismatch.join(',') + ')' : ''}`); }
+      if (shots.mock && shots.app && spec.pixel !== false) { const d = diffRatio(decode(shots.mock), decode(shots.app)); console.log(`  ${spec.name}: ${(d.ratio * 100).toFixed(2)}% of pixels differ`); if (d.ratio > 0) failures.push(`${spec.name}: ${(d.ratio * 100).toFixed(1)}% of pixels differ${d.sizeMismatch ? ' (size ' + d.sizeMismatch.join(',') + ')' : ''}`); }
     }
     console.log(`design parity: ${ran} element(s), ${failures.length} difference(s); captures in ${out}`);
     failures.forEach(f => console.log('  - ' + f));
