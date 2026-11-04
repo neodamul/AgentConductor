@@ -504,6 +504,8 @@ Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Sourc
 The operator prepares a goal in steps 1-3, starts the run, and sees steps 4-6 advance in the same stepper; from the Room, a step 1-3 tab returns to that Workspace panel, and a step 4-6 tab is available only while a run exists.
 Trace: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. Source: user, approved design #387, 2026-11-04.
 
+Agent action strip: edit, models, remove and reorder remain distinct, readable targets at both reference widths. Reducing button padding must preserve tooltips, focus, disabled states and the icon content (GitHub #424).
+
 ### UC-115 Read the current application manual
 Status: Amended by UC-134, UC-188, UC-191 (R-144, R-197, R-200).
 Open either manual, follow workspace tabs, register CLIs and review a candidate. Match displayed labels, permissions, folder execution and recovery behavior to the documented version.

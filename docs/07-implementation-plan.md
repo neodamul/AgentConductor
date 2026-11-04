@@ -2670,6 +2670,16 @@ Trace: amends R-13 (requirements trace to tests); rules in docs/README.md, recor
 - [x] Verify (macOS): full suite; docs/14 lists requirement evidence and the gaps (R-118 not implemented — since done with #377, R-120 partly, R-151 on the Rust line, R-183 open item from #341).
 - [ ] Complete: merge only on request.
 
+### Anchored choice standard — GitHub #409
+Trace: amends R-210 / DD-222.
+
+- [x] Plan: audit existing native select sources, role rules, catalog checks and inherited fallback execution before editing; preserve native state/events behind one shared anchored surface.
+- [x] Task (shared surface): isolated anchored_select JS/CSS plus native-document/simulator includes; native values/change events retained.
+- [x] Task (fallback backend): reviewed Task/Role policy overrides, explicit none, isolated defaults, transfer/pending-edit handling and rename/removal references.
+- [x] Task (role/model UI unit): isolated role module, Agent/model resets, inherited/default choices and asynchronous operator model catalog registration; saved missing primaries and token collisions covered.
+- [x] Verify (implementation unit): 168 real simulator checks (88 shared + 80 role), 32 tests across ten local Rust suites, focused Clippy; 27 registered parity entries pass, including 20 choice atoms in light/dark at 840/1280. New field/list/form/arrow crops differ 0%; disabled models 0.07–0.26%. Existing avatar exception remains #410.
+- [ ] Completed: commit/push verified implementation and PR; design-owner intentional planning-row exception documented. Separate milestone acceptance continues in #429 (Goal confirmation/seeding) and #430 (inspector/manual paths); native Windows packages remain #420. Main contains the #417 parity runner and #414/#416/#418 backends.
+
 ### Quota indicator backend — GitHub #404
 Trace: R-212 / DD-224.
 
@@ -2755,3 +2765,44 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Verify: actual Chrome captures prove object/array/default dimensions, cache separation with identical page scripts, and both assertion forms.
 - [x] Verify: full existing 1280px light/dark comparisons each pass 119 entries; Node UI suite and eight architecture/layout tests pass.
 - [ ] Completed: commit/push runner unit for PR #431 integration; Windows choice-field crops remain a separate acceptance check.
+
+### Compact agent action icons — GitHub #424
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+- [x] Plan: preserve action strip behavior and approved height; isolate excess horizontal padding.
+- [x] Task: icon-only buttons use zero horizontal padding and a stable non-shrinking 13px SVG; labeled buttons use compact spacing.
+- [x] Verify: Red reproduced icon-only text padding; Green: 40 actual button checks in light/dark at 840/1280. The reported 187px strip retains all five actions on one row and every SVG at 13px; verified against the live Claude simulator with temporary CSS injection. Architecture/DOM ID regression also passed (nine Rust tests across three suites).
+- [ ] Completed: commit/push and coordinate integration with the pending agent-card PR; release and native Windows verification are outside this unit.
+
+- #424 platform follow-up: Windows reported glyph-width wrapping after the padding fix. Red reproduced locally with 2px letter-spacing; Green uses a bounded five-column strip with ellipsis-capable label spans and 23/22/22px icon-only targets. Ten local tests across four suites pass, including all 40 stressed browser button checks. Windows rerun and #422 updated parity integration remain pending.
+
+### CLI fixture watcher cleanup — PR #431 / GitHub #409
+Trace: R-210 / DD-222.
+
+- [x] Plan: inspect actual failing CI; model/reassignment assertions passed, then macOS failed deleting a directory still written by its detached watcher.
+- [x] Task: fixture cleanup waits for the owned watcher's terminal record and OS-confirmed process/group absence before deleting; no retry of destructive deletion and no product policy change.
+- [x] Verify: 10 local tests across CLI workflow, independent watcher and real role-fallback runtime passed. Windows choice-field parity is a separate failure.
+- [ ] Completed: commit/push verified fix on the existing issue-linked branch.
+
+### Integrated anchored choices — GitHub #409 / PR #431
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+- [x] Plan: integrate the feature with #436 on a separate branch, preserving the approved rail/profile/avatar and capture retry implementation.
+- [x] Task: retain role/choice modules, reviewed fallback behavior and watcher cleanup; remove old #425 grid overrides and historical crop allowances. Include every new shared asset in native and simulated documents.
+- [x] Verify: 25 tests across seven local suites pass; focused Clippy passes; all ten light-theme choice atoms at 840/1280px compare at zero differing pixels.
+- [x] Verify: 40 agent action checks compare exact button boxes to the current approved mock while retaining icon-fit, accessible-name, tooltip, focus and pointer checks. The legacy 187px/2px-letter-spacing grid test is superseded by this approved-layout contract; it is not reported as solved.
+- [x] Verify: all 20 choice crops compare at zero pixels. Both 129-entry theme runs passed every item except the old hidden-select selector; the replacement visible-trigger entry then passed in both themes without dropping properties. All Node UI tests pass, plus 33 additional plan/pending/role tests.
+- [x] Verify: the 40 current-mock button checks and focused Clippy pass.
+- [x] Completed: verified integration checkpoint prepared for #431 coordination; native Windows choice-field crops and main merge acceptance remain open.
+
+Current #424 acceptance remains open: both approved mock and app wrap the natural 167px
+strip at 840px. This integration preserves the newer approved natural-width rail; it
+does not reinstate the older grid or claim that narrow single-row acceptance is complete.
+
+### Workspace integration preparation — GitHub #427
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+- [x] Preserve the existing sections/briefing WIP in the named stash until #436 merges.
+- [ ] Start the issue-linked implementation branch from updated main after coordinator confirmation.
+- [ ] Restore Workspace/Goal sections and shared full briefing without replacing the new rail/profile code.
+- [ ] Add a separate attention-marker crop against an approved view where attention is enabled; do not compare the badge-on app to the badge-off view. Keep the existing neutral/waiting avatar entry.

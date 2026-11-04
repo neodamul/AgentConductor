@@ -39,6 +39,7 @@ impl Startup {
                     role: ruled.map(|_| (*role).to_string()),
                     execution_options: Default::default(),
                     task_type: None,
+                    fallback: None,
                 }
             })
             .collect();

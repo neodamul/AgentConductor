@@ -22,6 +22,7 @@ fn candidate(report: &Report, index: usize, edit: &Edit) -> Result<crate::plan::
     if let Some(agent) = &edit.agent {
         if &task.agent != agent {
             task.model = None;
+            task.fallback = None;
         }
         task.agent = agent.clone();
     }

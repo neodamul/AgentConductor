@@ -4,6 +4,7 @@
 const BOX = ['borderTopWidth', 'borderTopLeftRadius'];
 module.exports = [
   ...require('./typography.cjs'),
+  ...require('./choice_spec.cjs'),
   { name: 'agent-avatar', props: BOX, // the mock's first agent waits for a decision: yellow border and the attention marker
    
     mock: { url: '?theme=light#0', selector: '.status-icon', index: 0, mark: '.agent-brand-logo' },

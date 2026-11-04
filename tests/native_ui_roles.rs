@@ -13,6 +13,7 @@ fn native_role_controls_show_only_registered_agents_and_observed_models() {
         vec![RoleAgent {
             agent: "codex".into(),
             model: Some("gpt-observed".into()),
+            fallback: None,
         }],
     )]);
     let context = egui::Context::default();
