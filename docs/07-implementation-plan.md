@@ -2687,3 +2687,5 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Task: icon-only buttons use zero horizontal padding and a stable non-shrinking 13px SVG; labeled buttons use compact spacing.
 - [x] Verify: Red reproduced icon-only text padding; Green: 40 actual button checks in light/dark at 840/1280. The reported 187px strip retains all five actions on one row and every SVG at 13px; verified against the live Claude simulator with temporary CSS injection. Architecture/DOM ID regression also passed (nine Rust tests across three suites).
 - [ ] Completed: commit/push and coordinate integration with the pending agent-card PR; release and native Windows verification are outside this unit.
+
+- #424 platform follow-up: Windows reported glyph-width wrapping after the padding fix. Red reproduced locally with 2px letter-spacing; Green uses a bounded five-column strip with ellipsis-capable label spans and 23/22/22px icon-only targets. Ten local tests across four suites pass, including all 40 stressed browser button checks. Windows rerun and #422 updated parity integration remain pending.
