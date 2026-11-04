@@ -44,8 +44,9 @@ async fn restricted_profile_transfers_to_company_cli_and_retains_account_evidenc
     std::fs::remove_dir_all(root).unwrap();
 }
 
-#[test]
-fn fallback_rejects_unknown_models_and_same_account_substitutes() {
+#[tokio::test]
+async fn fallback_rejects_unknown_models_and_same_account_substitutes() {
+    let _gate = GATE.acquire().await.unwrap();
     let (root, plan) = with_fallback("shared");
     let value = serde_json::to_value(&plan).unwrap();
     for change in [
