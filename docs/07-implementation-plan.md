@@ -1509,7 +1509,7 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [x] Part 7: step-card action buttons (save, generate plan, approve & run, read plan, write manually, discard) carry a leading 13px icon (`action_icons.js`, `action_icons.rs`).
 - [x] Part 8: the rail is 250px and 230px below 900px (Workspace screen and Room; the old 240px/170px breakpoints are gone), checked at 840 and 1280 by parity behaviour checks.
 - [x] Part 9: the result summary is one ruled metadata line with 16px/650 values and 14px/500 labels (parity `result-metric-value` / `result-metric-label`).
-- [ ] Remaining in #408: titlebar order and the full 32px cluster, fixed 36px info row and the Team briefing icon button on the Workspace screen, leading icons on selectors, fullscreen reflow, rail 190px below 600px.
+- [ ] Remaining in #408: titlebar order and the full 32px cluster, fixed 36px info row and the Team briefing icon button on the Workspace screen, leading icons on selectors, rail 190px below 600px (full-window reflow is covered by the parity behaviour check `fullscreen-reflow`).
 - [ ] Complete: release (version 0.2.0 only when the user asks).
 
 ### Goal-list row actions in the webview — DD-222

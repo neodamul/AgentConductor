@@ -76,4 +76,7 @@ module.exports = [
     mock: { url: '?theme=light#8', selector: '.result-stats strong' }, app: { run: "acResultView.show({goal:'g',branch:'b',repo:'r',commit:'abcdef123456',diff:'diff --git a/x b/x\\n+1\\n',tests:[{task:'t',exit_code:0}],details:[]})", selector: '.result-metric strong' } },
   { name: 'result-metric-label', props: ['fontSize', 'fontWeight'], keys: ['fontSize', 'fontWeight'], pixel: false,
     mock: { url: '?theme=light#8', selector: '.result-stats span' }, app: { run: "acResultView.show({goal:'g',branch:'b',repo:'r',commit:'abcdef123456',diff:'diff --git a/x b/x\\n+1\\n',tests:[{task:'t',exit_code:0}],details:[]})", selector: '.result-metric span' } },
+  // Full-window behaviour (GitHub #408): a big window reflows the centre; rail, icons, tabs and borders keep their size.
+  { name: 'fullscreen-reflow', viewport: [1920, 1080], app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()" },
+    assert: "(() => { const r = n => document.querySelector(n).getBoundingClientRect(); const q = n => getComputedStyle(document.querySelector(n)); return r('.rail').width === 250 && r('.session-symbol').width === 28 && r('.view-tabs .tab').height === 29 && q('.session-symbol').borderTopWidth === '1.5px' && r('.center').width > 1200; })()" },
 ];
