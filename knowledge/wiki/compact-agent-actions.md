@@ -1,0 +1,9 @@
+# Compact agent actions
+
+Source: GitHub #424; R-210 / UC-202 / DD-222.
+
+The assembled agent strip had 7px horizontal text padding, including the reorder controls. In the reported 187px strip the fifth action wrapped. Fixed button sizes alone do not reserve usable icon space.
+
+Keep 22px border-box height, 13px non-shrinking SVGs, 4px horizontal padding for labeled actions and zero for remove/reorder actions. The 23px remove and 26px reorder targets remain centered. Scope these rules to `.startup-profile .profile-tools` so titlebar and dialog buttons retain their own geometry.
+
+`tests/agent_button_geometry.cjs` measures the actual assembled controls in both themes at 840/1280, checks the reported strip width, names, pointer cursors and SVG bounds. It uses temporary browser profiles, never real agent processes. Exact reported-page verification is a temporary style injection and does not modify Claude's running server.

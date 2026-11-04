@@ -149,3 +149,5 @@
 - [Anchored choice controls](anchored-choice-controls.md): native state, modal focus and isolated visual parity (#409).
 
 - [Workspace/Goal rules](workspace-goal-rules.md): model audit and exclusive Goal folder ownership (#411).
+
+- [Compact agent actions](compact-agent-actions.md): non-shrinking icons and width-safe padding (#424).
