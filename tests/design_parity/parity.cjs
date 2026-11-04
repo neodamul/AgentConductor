@@ -1,13 +1,13 @@
 // GitHub #414: compare the app UI with the approved design mock (docs/design/approved-goal-ui/preview.html)
 // at the same viewport, element by element: geometry and computed style within a pixel tolerance, plus the
 // share of differing pixels in the element's screenshot crop. Usage:
-//   node tests/design_parity/parity.cjs [--out dir] [--only name] | --probe mock|app <selector> [url-suffix]
+//   [PARITY_THEME=dark] [PARITY_WIDTH=840] node tests/design_parity/parity.cjs [--out dir] [--only name] | --probe mock|app <selector> [url-suffix]
 // (--probe app honours PROBE_SETUP / PROBE_RUN: simulator state to set, and a script to run, before measuring)
 // Exit 0 = all within tolerance, 1 = a difference, 77 = skipped (no Chrome). Spec: spec.cjs.
 const fs = require('fs'), path = require('path'), { execFileSync } = require('child_process');
 const { findChrome, launch } = require('./cdp.cjs'), { decode, diffRatio } = require('./png.cjs');
 const { pathToFileURL } = require('url'), repo = path.resolve(__dirname, '../..'), MOCK = pathToFileURL(path.join(repo, 'docs/design/approved-goal-ui/preview.html')).href;
-const THEME = process.env.PARITY_THEME === 'dark' ? 'dark' : 'light';
+const THEME = process.env.PARITY_THEME === 'dark' ? 'dark' : 'light', WIDTH = Number(process.env.PARITY_WIDTH) || 1280;
 const argv = process.argv.slice(2), flag = n => { const i = argv.indexOf(n); return i < 0 ? null : argv[i + 1]; };
 const chrome = findChrome();
 if (!chrome) { console.log('design parity skipped: no Chrome found (set CHROME)'); process.exit(77); }
@@ -42,7 +42,7 @@ async function visit(browser, side, spec) {
 }
 
 (async () => {
-  const browser = await launch(chrome);
+  const browser = await launch(chrome, { width: WIDTH });
   try {
     if (argv[0] === '--probe') {
       await visit(browser, argv[1], { url: argv[3], setup: process.env.PROBE_SETUP, run: process.env.PROBE_RUN });
@@ -69,10 +69,11 @@ async function visit(browser, side, spec) {
       fs.writeFileSync(path.join(out, `${x.name}.${side}.png`), got[x.name].shots[side]);
     }
     for (const spec of specs) {
-      if (spec.assert) { // behaviour check on the app only: `assert` is evaluated after `run` and must be true
+      if (spec.assert) { if (!spec.viewport && WIDTH !== 1280) continue; // authored at 1280
+      // behaviour check on the app only: `assert` is evaluated after `run` and must be true
         if (spec.viewport) await browser.viewport(spec.viewport[0], spec.viewport[1]);
         await visit(browser, 'app', spec.app); const ok = await browser.eval(spec.assert);
-        if (spec.viewport) await browser.viewport(1280, 960);
+        if (spec.viewport) await browser.viewport(WIDTH, 960);
         if (ok !== true) failures.push(`${spec.name}: assertion failed (${spec.assert})`); continue;
       }
       const measured = got[spec.name], shots = measured.shots;

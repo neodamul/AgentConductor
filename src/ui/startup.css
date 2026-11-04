@@ -223,7 +223,8 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 .startup-actions .step-save-note{margin-right:auto;font-size:11px}
 .step-card #start-discard{box-sizing:border-box;height:34px;font-size:13px;padding:0 13px;border:1px solid var(--line);background:transparent;color:var(--ink)}
 /* Narrow windows (mock): the rail is 190px below 600px. */
-@media(max-width:600px){.startup-shell{grid-template-columns:190px minmax(0,1fr)}.startup-team{padding:14px 10px}.workbench,.workbench.insp-closed{grid-template-columns:190px minmax(0,1fr)}}
+@media(max-width:900px){.startup-main{padding-left:18px;padding-right:18px}header.titlebar>strong{font-size:13px}.titlebar .app-version{font-size:9px}}
+@media(max-width:600px){.rail,.task-inspector{padding:14px 10px}.startup-main{padding-left:12px;padding-right:12px}header.titlebar>strong{font-size:11px}.startup-shell{grid-template-columns:190px minmax(0,1fr)}.startup-team{padding:14px 10px}.workbench,.workbench.insp-closed{grid-template-columns:190px minmax(0,1fr)}}
 /* Agent avatar status (mock .status-icon): border colour by task state, a pulse only while running, an attention marker. */
 .startup-profile .agent-symbol{--state-color:var(--line-strong);position:relative;border-color:var(--state-color)}
 .startup-profile .agent-symbol[data-state="running"],.startup-profile .agent-symbol[data-state="completed"]{--state-color:var(--ok)}
