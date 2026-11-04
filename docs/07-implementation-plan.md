@@ -2949,3 +2949,14 @@ Trace: R-215 / UC-207 / QAS-214 / DD-227.
 - [ ] Verify: Node UI suite and strict design parity on macOS; Windows through CI.
 
 Trace: R-210 / UC-202 / DD-222.
+
+## #472 process ownership and supervision increment
+
+Trace: R-35 → BG-05 → SF-12 → C-04/NFR-07 → QAS-12 → DDR-04/DDR-06 → DD-41.
+
+- [x] Plan: inspect public callers, persistent owner records, control cancellation and platform boundaries; preserve existing public paths and trust/approval behavior.
+- [x] Task / Red: `tests/process_layout.rs` rejects the original 467-line facade.
+- [x] Task / Green: separate the facade (119 lines), ownership (82) and supervision (276), with no new runtime dependency. Moved bodies match the original except imports/visibility.
+- [x] Verify: 27 focused local tests pass; one authenticated Claude metadata test remains explicitly ignored.
+- [ ] Verify: complete local all-target regression, Clippy, formatting and whitespace checks.
+- [ ] Complete: publish the separate main-based area PR, record actual receipts and coordinate integration. Global 300-line policy rollout remains deferred until every area complies.
