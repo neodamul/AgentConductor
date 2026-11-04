@@ -2916,3 +2916,12 @@ Trace: R-210 / R-211 / R-212 / R-213 / BG-165 / SF-198 / UC-202 / UC-203 / UC-20
 - [x] Task: non-publishing release gate implemented and v0.2.0 publication wired through it. Offline fixtures pass; live candidate check correctly reports unresolved blockers.
 - [ ] Verify: local tests for each new behavior, complete local regression once the unit is integrated, and macOS/Windows CI evidence.
 - [ ] Completed: every issue acceptance item proven, PR/evidence/wiki/AgentMemory updated and own temporary artifacts cleaned. Until then #420 remains open.
+
+### New Goal context transition preserves edits — GitHub #475
+Trace: R-210 / R-213 / UC-202 / UC-205 / QAS-209 / QAS-212 / DD-222 / DD-225.
+
+- [x] Plan: joined #420 flow reproduces empty second Goal and no save request; action’s first poll paints empty fields before change_goal clears draft and starts its second poll.
+- [x] Red: hold the second snapshot and require edit/save controls to remain unavailable until the target Goal is ready.
+- [x] Task: guard the entire asynchronous transition, keep a valid draft and restore controls on success/refusal without adding a timer or request.
+- [x] Verify: both themes at 840/1280, refused transition and existing Goal controls; full Node behavior suite passes, plus Clippy/fmt. Native Goal persistence and source/architecture checks run in the same affected suite.
+- [x] Completed: PR #476 merged at 9af04ea9 and replayed into #420; verification logs retained locally and own scratch files cleaned.
