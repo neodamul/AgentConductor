@@ -87,4 +87,9 @@ module.exports = [
   { name: 'quota-popup-unsupported', app: { setup: "SIM.home.quota_indicators.claude = { status: 'unsupported', rings: [], windows: [], budgets: [], error: null, observed_at: 0 };", run: "document.querySelectorAll('.usage-button')[0].click()" },
     assert: "(() => { const p = document.getElementById('usage-popover'); return !!p.querySelector('.usage-unavailable') && !document.querySelector('.usage-button .usage-value') && !p.querySelector('.usage-item') })()" },
   { name: 'quota-popup-error-retry', app: { run: "document.querySelector('.usage-button.error').click()" }, assert: "(() => { const p = document.getElementById('usage-popover'); return !!p.querySelector('.usage-error[role=alert]') && p.querySelector('.usage-refresh').textContent.includes('조회') })()" },
+  // Agent card header: ring and handle on the avatar's centre line; the handle is as tall as the ring.
+  { name: 'type-grip', props: [], keys: ['width', 'height'], pixel: false, mock: { selector: '.agent .grip' }, app: { selector: '.drag-handle' } },
+  { name: 'agent-header-centre-line', app: {}, assert: `(() => { const c = e => { const r = e.getBoundingClientRect(); return r.top + r.height / 2 }, card = document.querySelector('.startup-profile');
+    const a = c(card.querySelector('.agent-symbol')), q = c(card.querySelector('.usage-button')), g = c(card.querySelector('.drag-handle'));
+    return Math.abs(a - q) <= 1.5 && Math.abs(q - g) <= 1.5 })()` },
 ];

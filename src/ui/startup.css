@@ -275,3 +275,8 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 .usage-item .usage-line>span{display:inline-flex;align-items:center;gap:6px}
 .usage-item .usage-line>span::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--quota-color,var(--soft));flex:none}
 .usage-item .usage-meter>span{background:var(--quota-color,var(--soft))}
+/* Card header (mock .agent .top): avatar, name block, quota ring and reorder handle share one centre line;
+   the ring spans both text lines like the avatar and the handle is a 10x20px dotted grip (four dot rows), centred on the ring. */
+.profile-top{align-items:center;padding-right:18px}
+.profile-top .quota-controls{position:static;margin:0 0 0 auto;flex:none}
+.startup-profile .drag-handle{top:15px;bottom:auto;right:10px;width:10px;height:20px;margin-top:0.5px;font-size:0;background:radial-gradient(circle,var(--line-strong) 1.2px,transparent 1.6px) 0 0/5px 5px}
