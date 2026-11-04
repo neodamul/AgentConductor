@@ -71,7 +71,7 @@ browser or retry loop.
 
 ## Import a goal
 
-1. Use **+ Jira story** / **+ Confluence page**, or type explicit references:
+1. Use **+ Jira issue** / **+ Confluence page**, or type explicit references:
    `Implement jira:EMM-52599. References confluence:53553565, confluence:548443335.`
 2. Unqualified issue keys and a `References (...)` / `참고 (...)` list offer **Use …**
    suggestions. Confirm the ID in the reference dialog; arbitrary prose numbers are
@@ -79,7 +79,7 @@ browser or retry loop.
 3. Click **Preview imports**. Workspace settings are saved and one bounded background
    operation discovers tools and uses the registered coordinator to retrieve your IDs.
 4. Large documents are first saved in full as immutable local Markdown, then summarized by the coordinator. Review summary, full source snapshot, Markdown path, server/tool, available URL/title/version/update metadata,
-   retrieval time and SHA-256. Missing upstream metadata stays unavailable. Jira stories
+   retrieval time and SHA-256. Missing upstream metadata stays unavailable. Jira issues
    are required. Deselect optional Confluence records if appropriate; failed reads are
    shown explicitly and failed Jira reads block Apply.
 5. Click **Apply selected sources**, then **Generate plan**. Applying does not run a

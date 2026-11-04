@@ -329,7 +329,7 @@ pub fn apply(
         .filter(|r| r.kind == "jira")
         .any(|r| !selected.contains(&r.key()))
     {
-        return Err("all referenced Jira stories must be imported successfully".into());
+        return Err("all referenced Jira issues must be imported successfully".into());
     }
     let mut approved = p.clone();
     approved
