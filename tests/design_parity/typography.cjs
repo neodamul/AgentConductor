@@ -32,7 +32,7 @@ module.exports = [
     ['chat', '', "document.getElementById('start-chat-button').click()"]].map(([state, setup, run]) => ({
     name: 'type-scale-' + state, app: { setup, run },
     assert: `(() => { const ok = new Set([10, 10.5, 11, 11.5, 12, 12.5, 13, 14, 16, 17, 18]); const bad = [];
-      for (const e of document.querySelectorAll('body *')) { const r = e.getBoundingClientRect(); if (!r.width || !r.height || ![...e.childNodes].some(n => n.nodeType == 3 && n.textContent.trim())) continue;
+      for (const e of document.querySelectorAll('body *')) { const r = e.getBoundingClientRect(); if (!r.width || !r.height || !(e.matches('input:not([type=checkbox]),textarea,select') || [...e.childNodes].some(n => n.nodeType == 3 && n.textContent.trim()))) continue;
         const f = parseFloat(getComputedStyle(e).fontSize); if (!ok.has(f)) bad.push((e.id || e.className) + ':' + f); }
       window.__offScale = bad; return bad.length === 0; })()` })),
   // Hover treatment (preview.css): the same fill / colour / border appears under the pointer.
@@ -44,4 +44,8 @@ module.exports = [
   ...[['titlebar-icon', '#settings-button', '#start-settings-button'], ['rail-tab', '#rail-agents-tab', '#rail-tab-agents']
   ].map(([name, mock, app]) => ({ name: 'focus-' + name, focus: true, props: ['outlineStyle', 'outlineWidth', 'outlineColor', 'outlineOffset'], keys: ['outlineStyle', 'outlineWidth', 'outlineColor', 'outlineOffset'], pixel: false,
     mock: { selector: mock }, app: { selector: app } })),
+  // Form controls: text field, choice field (a select in the app) and goal textarea.
+  { name: 'type-field-input', props: ['fontSize', 'fontWeight', 'color', 'paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopColor', 'borderTopLeftRadius', 'backgroundColor'], keys: [...['fontSize', 'fontWeight', 'color', 'paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopColor', 'borderTopLeftRadius', 'backgroundColor'], 'height'], pixel: false, mock: { selector: '.workspace-fields input' }, app: { selector: '#start-name' } },
+  { name: 'type-field-choice', props: ['fontSize', 'fontWeight', 'color', 'paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopColor', 'borderTopLeftRadius', 'backgroundColor'], keys: [...['fontSize', 'fontWeight', 'color', 'paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopColor', 'borderTopLeftRadius', 'backgroundColor'], 'height'], pixel: false, mock: { selector: '.assignment-choice' }, app: { selector: '#start-coordinator' } },
+  { name: 'type-field-textarea', props: ['fontSize', 'fontWeight', 'color', 'paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopColor', 'borderTopLeftRadius', 'backgroundColor'], keys: ['fontSize', 'fontWeight', 'color', 'paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopColor', 'borderTopLeftRadius', 'backgroundColor'], pixel: false, mock: { selector: '#goal-entry' }, app: { selector: '#start-goal' } },
 ];
