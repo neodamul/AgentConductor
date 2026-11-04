@@ -213,7 +213,7 @@ R-61 correction: fresh workspaces must independently collect supported paid-agen
 
 ### R-62 Jira and Confluence goal imports
 
-Workspace settings register Jira/Confluence MCP connections using the same `mcp` server-object format as OpenCode. Import a Jira Story and referenced Confluence pages as goal context, with explicit goal keywords and a reference preview. Source: user requests, 2026-10-11.
+Workspace settings register Jira/Confluence MCP connections using the same `mcp` server-object format as OpenCode. Import a Jira issue and referenced Confluence pages as goal context, with explicit goal keywords and a reference preview. Source: user requests, 2026-10-11.
 
 ### R-63 Agent-specific refresh and action icons
 

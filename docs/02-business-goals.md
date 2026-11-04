@@ -76,7 +76,7 @@ BG-22 extension: Operators assess capacity directly from the agent list without 
 
 ### BG-23 Plan from company work records
 
-Turn an existing Jira Story and Confluence evidence into a reviewable local plan without re-entering requirements. Trace: R-62.
+Turn an existing Jira issue and Confluence evidence into a reviewable local plan without re-entering requirements. Trace: R-62.
 
 
 ### BG-24 Readable account capacity
