@@ -29,6 +29,10 @@ fn fixture(root: &Path, target: &str) -> Value {
     fs::create_dir_all(&skill).unwrap();
     fs::write(skill.join("LICENSE"), "Apache fixture\n").unwrap();
     fs::write(skill.join("SOURCE.md"), "origin fixture\n").unwrap();
+    let marks = root.join("third_party/lobe-icons");
+    fs::create_dir_all(&marks).unwrap();
+    fs::write(marks.join("LICENSE"), "MIT icons fixture\n").unwrap();
+    fs::write(marks.join("SOURCE.md"), "icons origin fixture\n").unwrap();
     let icon = root.join("src/ui/assets/ac.icns");
     fs::create_dir_all(icon.parent().unwrap()).unwrap();
     fs::copy(
@@ -144,6 +148,13 @@ fn assembles_macos_and_windows_packages_with_reviewed_dependencies() {
         );
         let notices = fs::read_to_string(destination.join("THIRD-PARTY-NOTICES.md")).unwrap();
         assert!(notices.contains("prompt-optimizer") && notices.contains("getsentry/skills"));
+        // GitHub #406: the bundled brand marks ship their MIT text and origin, named in the notices.
+        assert_eq!(
+            fs::read(destination.join("licenses/lobe-icons/LICENSE")).unwrap(),
+            b"MIT icons fixture\n"
+        );
+        assert!(destination.join("licenses/lobe-icons/SOURCE.md").is_file());
+        assert!(notices.contains("lobehub/lobe-icons") && !notices.contains("provider artwork"));
         assert!(
             fs::read(destination.join("SHA256SUMS"))
                 .unwrap()

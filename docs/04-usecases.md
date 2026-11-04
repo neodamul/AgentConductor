@@ -842,3 +842,6 @@ Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214.
 
 ### UC-203 Inspect or delete a registered Goal
 Actor: operator. Precondition: a registered Goal exists. Result reads retained public run data without selecting it; Folder reveals its verified directory. Delete requires its exact Goal text and folder, requests owned work to stop, and returns pending until it is quiescent. Then delete only that folder and remove its registry entry. Failed ownership, changed confirmation or unknown process state retains the folder. Deleting the last Goal yields an empty usable workspace. Trace: SF-199.
+
+### UC-205 Create or continue a Goal in a Workspace
+Actor: operator. An existing project directory is linked, with or without its own Git repository. Editing display text keeps existing Goal folders in place. Starting New Goal clears only Goal-specific proposal/context and keeps linked directory, coordinator, profiles and role rules. A direct requested Goal identifier colliding with any filesystem entry fails without touching it; automatic allocation finds an unused identifier. Continuing a completed phase loads the next phase of the same Goal for review. Trace: SF-201.

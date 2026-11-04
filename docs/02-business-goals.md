@@ -641,3 +641,6 @@ Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214.
 
 ### BG-166 Review and discard Goals safely
 Operators inspect history or discard a stuck Goal without losing their current working context or unrelated files. Trace: R-211.
+
+### BG-168 Keep project and Goal boundaries predictable
+Operators can edit display text, start a Goal or continue phases without losing Workspace configuration or accidentally claiming existing project files. Trace: R-213.
