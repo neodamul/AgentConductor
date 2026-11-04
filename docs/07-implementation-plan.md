@@ -2895,3 +2895,22 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: PR merged; GitHub #430 closed together with the profile fallback unit (#448).
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Planning browser action settlement — GitHub #466
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+
+- [x] Plan: reproduce the #429 acceptance failure without changing production guards; post-prepare snapshot latency keeps Import Plan disabled beyond the test’s 500ms delay. A 5200ms idle-only poll experiment passes.
+- [x] Red: delayed post-prepare snapshot reproduces missing pick_file / unopened first modal with #464 diagnostics.
+- [x] Task: wait for actual action settlement before the next interaction; retain the deterministic delay and all confirmation assertions.
+- [x] Verify: delayed actual assembled-browser flow passes at 840/1280 in both themes; Clippy/fmt pass. Negative baseline test requires actual rejection and action settlement.
+- [x] Verify: complete local `cargo test --all-targets --locked --no-fail-fast` exits zero: 842 passed, zero failed, 15 ignored across 270 suites. Windows native behavior remains a separate check.
+- [x] Completed: isolated issue-linked PR #467, AgentMemory/wiki checkpoint recorded; own scratch reproductions can be removed after integration.
+
+### New Goal context transition preserves edits — GitHub #475
+Trace: R-210 / R-213 / UC-202 / UC-205 / QAS-209 / QAS-212 / DD-222 / DD-225.
+
+- [x] Plan: joined #420 flow reproduces empty second Goal and no save request; action’s first poll paints empty fields before change_goal clears draft and starts its second poll.
+- [x] Red: hold the second snapshot and require edit/save controls to remain unavailable until the target Goal is ready.
+- [x] Task: guard the entire asynchronous transition, keep a valid draft and restore controls on success/refusal without adding a timer or request.
+- [x] Verify: both themes at 840/1280, refused transition and existing Goal controls; full Node behavior suite passes, plus Clippy/fmt. Native Goal persistence and source/architecture checks run in the same affected suite.
+- [ ] Completed: independent issue-linked PR, main merge and replay to #420, then clean owned artifacts.
