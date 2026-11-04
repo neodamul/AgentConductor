@@ -2785,3 +2785,12 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Red: latest-main `interface_theme` rejects the hard-coded attention glyph colour.
 - [x] Task: use a semantic `--attention-ink` token in both themes, preserving the approved white glyph exactly.
 - [x] Verify: all six theme-contract tests and existing trusted-brand browser regression pass; colour bytes and geometry are unchanged.
+### Embedded OpenCode mark — GitHub #439
+Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / QAS-209 / DD-222.
+
+- [x] Plan: amend the existing architecture trace before implementation; use the same pinned upstream revision and verify its license.
+- [x] License: upstream SVG revision ea434b96e75813517b377825e01c0df61dee8836; MIT license bytes match the vendored notice; SHA-256 recorded during task.
+- [x] Red: native OpenCode brand contract fails without the new embedded mark.
+- [x] Task: extend existing assets/map/templates/renderer/simulator; retain custom fallback and no-runtime-discovery behavior.
+- [x] Verify: native and real browser light/dark 840/1280 checks; source/license/layout regressions.
+- [x] Completed: isolated commit and PR prepared; AgentMemory/wiki checkpoint recorded. Local Node UI suite, warning-denied Clippy, native icon and browser checks pass. Latest-main integration exposed a separate #427 hard-coded attention colour; PR #443 corrected it and all six theme-contract tests pass. Windows rendering remains separate.

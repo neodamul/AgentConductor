@@ -2,12 +2,20 @@
 
 Trace: R-34 → BG-14 → SF-29 → UC-26 → FR-20/NFR-10/NFR-12 → QAS-27 → DDR-10 → DD-40.
 
-Claude Code and Codex use two pinned, unmodified MIT color marks (Lobe Icons, `third_party/lobe-icons`, GitHub #406 / DD-222) embedded in the executable. Other provider artwork is resolved from operator-installed applications at runtime; no
-other provider icon is bundled or copied into this wiki. macOS resolves bundle identifiers
-through NSWorkspace and renders a bounded PNG. Windows searches per-user executable
-locations and extracts an icon. Built-in providers receive image avatars only when
-resolution succeeds; custom providers and missing applications retain letter avatars.
-The process caches the results. PNG data URLs are capped at 64 KiB.
+Claude Code, Codex and OpenCode use three pinned, unmodified MIT SVG marks
+from Lobe Icons (`third_party/lobe-icons`, GitHub #406 / #439 / DD-222).
+The executable embeds the assets, and the UI clones only trusted embedded
+SVG templates into agent, task and detail avatars. No executable discovery,
+installed desktop application or runtime network request is needed. Custom
+providers retain letter avatars. Existing avatar dimensions, state borders
+and accessibility labels remain unchanged.
+
+The #439 OpenCode extension uses the same upstream revision and MIT notice.
+Native brand-contract and actual assembled-browser checks cover agent/task/detail
+surfaces at 840/1280px in light/dark themes. Windows rendering is not inferred
+from these macOS checks.
+
+Historical extraction evidence (superseded for built-in provider marks):
 
 On 2026-10-10, all five icon tests passed, including the normally ignored test
 against actually installed Claude, Codex and OpenCode macOS applications. The

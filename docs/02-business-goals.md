@@ -322,6 +322,7 @@ Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Sourc
 
 ### BG-165 One goal screen with a single six-step stepper
 Following one goal from its description to the merged result reads as one path, not two screens.
+Amendment #439 (2026-11-04): Identify OpenCode as clearly as the other built-in agents while retaining the lightweight CLI-first workflow and avoiding desktop-app discovery.
 Trace: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. Source: user, approved design #387, 2026-11-04.
 
 ### BG-80 Operate the same release in either language
