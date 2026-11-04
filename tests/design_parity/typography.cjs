@@ -66,4 +66,10 @@ module.exports = [
   { name: 'discard-follows-step', app: { run: "document.getElementById('start-tab-team').click()" }, assert: `(() => { const d = document.getElementById('start-discard'); return !d.closest('header') && d.closest('.step-card') === document.getElementById('start-panel-team') })()` },
   // Rail width by viewport (mock): 250px, 230px below 900px, 190px below 600px.
   ...[[1280, 250], [840, 230], [560, 190]].map(([w, rail]) => ({ name: 'rail-width-at-' + w, viewport: [w, 900], app: {}, assert: `Math.round(document.querySelector('.startup-team').getBoundingClientRect().width) === ${rail}` })),
+  // Room (run steps): same elements as the mock's task view, measured in the simulator's running run.
+  ...(() => { const room = { setup: "SIM.home.run_available=true;SIM.home.run_state='running';SIM.room.report.plan.tasks[0].agent='claude';", run: "document.getElementById('start-tab-tasks').click()" };
+    const r = (name, keys, mock, app) => ({ name: 'room-' + name, props: keys.filter(k => k !== 'height'), keys, pixel: false, mock: { url: '?theme=light#3', selector: mock }, app: { ...room, selector: app } });
+    return [r('goal-title', T, '#saved-goal-title', '#goal'), r('task-title', T, '.cardhead h2', '#selected-agent'), r('task-status', ['fontSize', 'fontWeight'], '.cardhead .pill', '#task-status'),
+      r('view-tab-selected', ['fontSize', 'fontWeight'], '.ttabs button.on', '.view-tabs .tab.active'), r('view-tab-idle', ['fontSize', 'fontWeight'], '.ttabs span', '.view-tabs .tab:not(.active)'),
+      r('composer-label', T, '.dir .eyebrow', '.composer label>span'), r('send-button', ['fontSize', 'fontWeight', 'height'], '.dir .btn.p', '#send-feedback'), r('stop-button', ['fontSize', 'height'], '.dir .btn.q', '#stop')]; })(),
 ];
