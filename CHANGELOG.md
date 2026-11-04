@@ -5,6 +5,16 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 the GitHub Release notes for its tag.
 
 ## Unreleased
+- Both manuals have a new section "The goal screen" (1.2a) describing the six-step stepper, the panels, the Goal list actions, the result popup and the status borders.
+- The completed-goal popup shows its summary as one ruled line (changed files, tests passed, lessons) instead of three stacked tiles.
+- The main action buttons of a step (save, generate plan, approve and run, read plan, write plan manually, discard changes) show a small icon in front of their label.
+- A title bar button hides and restores the whole left panel on the Workspace screen and in the Agent Room; the centre uses the freed space.
+- The Goal header is a compact single line (17px) without the small caption above it.
+- The Activity, Changes and tests, Raw logs and Lessons tabs of a task are compact pill-shaped tabs that fit their labels instead of an underlined row.
+- In every step card the title and the action buttons stay visible while only the middle of the card scrolls, so a short window no longer hides Save or Approve.
+- The Prepare, Run and Finish groups of the stepper have their own subdued background colours (light and dark) and a small group icon, as in the approved design.
+- Agent cards no longer print the executable path or a fixed session capacity, have 8px corners with a red removal icon, and task rows in the left panel are quiet rows with a trailing chevron, a hover fill and an accent edge on the selected one; the Agent Room's left panel is now really 250px wide when the task panel is closed.
+- Each Goal in the Goal list has a red trash button (permanent deletion behind a centered confirmation naming the Goal and its exact folder; Cancel is the default), a folder button that opens the Goal's folder in Finder/Explorer, and — for a completed Goal — a **Result** button that opens the same completed-goal popup as the Agent Room.
 - The left panel is 250px wide with equal side padding on the Workspace screen and in the Agent Room, its two tabs are 29px high, the six step tabs are a single 35px row and the version in the title bar is smaller, matching the approved design.
 - The team briefing, the coordinator chat and Settings now open as right-hand slide-overs over the unchanged screen, like the Goal list; only one is open at a time (opening Settings or the briefing closes the chat).
 - Claude Code and Codex now show their own color marks (two MIT-licensed Lobe Icons files embedded in the app and shipped with their license text) instead of the installed application's icon or letters; task avatars are 28px and agent avatars 29px with the status border. OpenCode keeps its installed-application icon.

@@ -5,6 +5,7 @@
 const props=['borderTopWidth','borderTopLeftRadius','paddingTop','paddingRight','paddingBottom','paddingLeft','backgroundColor','color','fontSize','fontFamily','fontWeight','lineHeight','letterSpacing'];
 const entries=[];
 for(const width of [840,1280])for(const theme of ['light','dark']){
+ if(process.env.PARITY_THEME&&process.env.PARITY_THEME!==theme)continue;
  const setup=`document.documentElement.dataset.theme='${theme}';const b=acChoices.buttonFor(document.getElementById('start-coordinator'));b.style.width='160px';b.style.flex='none';b.parentElement.style.width='160px';b.parentElement.style.flex='none';document.getElementById('start-coordinator').setAttribute('aria-label','코디네이터 에이전트');acChoices.sync();`;
  const align=`const r=b.getBoundingClientRect();b.style.position='relative';b.style.left=(Math.round(r.left)-r.left)+'px';b.style.top=(Math.round(r.top)-r.top)+'px';`;
  const mock=`workspaceCoordinator.agent='claude';refreshAssignmentChoices();const b=document.querySelector('[data-assignment-target="coordinator"][data-assignment-field="agent"]');b.style.width='160px';b.style.flex='none';`;

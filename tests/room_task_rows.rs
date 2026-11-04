@@ -52,3 +52,35 @@ fn approval_and_merge_are_separate_visible_stages_and_merge_keeps_progress_in_th
         include_str!("../src/ui/startup.css").contains(r#".startup-tabs [role="tab"].running"#)
     );
 }
+
+#[test]
+fn task_rows_are_quiet_rows_with_a_trailing_chevron_and_a_selected_accent_edge() {
+    // GitHub #410 / behavior.md: separator, hover fill, selected accent edge and a 12px trailing chevron.
+    assert!(
+        CSS.contains(".session{border:0;border-bottom:1px solid var(--line);border-radius:4px;")
+    );
+    assert!(CSS.contains(".session:hover{background:var(--fill)}"));
+    assert!(
+        CSS.contains(
+            ".session.active:not([class*=\"attn-\"]){box-shadow:inset 2px 0 var(--accent)}"
+        )
+    );
+    assert!(CSS.contains(
+        ".session::after{content:\"\";flex:none;align-self:center;width:12px;height:12px;"
+    ));
+}
+
+#[test]
+fn blocked_and_refused_task_tags_are_red_like_the_avatar_border() {
+    // behavior.md: red for blocked/refused, yellow for waiting; the tag tone and the avatar light agree.
+    assert!(ROOM.contains("failed:'bad',blocked:'bad',permission_denied:'bad',rejected:'bad',"));
+    assert!(ROOM.contains("['failed','blocked','permission_denied'].includes(status)?'red'"));
+}
+
+#[test]
+fn selecting_a_task_keeps_the_chosen_subview() {
+    // behavior.md: selecting a task updates the centre without losing the chosen subview (activity, changes, logs, lessons).
+    let start = ROOM.find("function selectTask(index)").unwrap();
+    let end = ROOM[start..].find("function selectCoordinator").unwrap();
+    assert!(!ROOM[start..start + end].contains("changeTab("));
+}

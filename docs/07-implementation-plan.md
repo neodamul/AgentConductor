@@ -1501,7 +1501,31 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 - [x] Plan: Trace: amends R-210 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #408 (checklist items: rail width/padding, rail tabs, step tab row, version size); design GitHub #387.
 - [x] Task / Red/Green: design-parity entries `rail`, `rail-tab`, `step-tab`, `app-version`, `titlebar` first (red against the old 290px rail, 33px rail tabs, 51px step tabs and 13px version), then `startup.css` / `room.css`.
 - [x] Verify: UI Rust and Node tests; design parity 7 entries pass.
-- [ ] Remaining in #408: titlebar order and 32px hit boxes, rail toggle, Goal header and info row, fixed step-card header/footer, group icons and backgrounds, leading icons, content-width inner tabs, evidence line, fullscreen reflow, narrow-width rail (230/190).
+- [x] Part 2: the three step groups have the design's subdued backgrounds (light and dark tokens) and a 14px group icon (parity entries `step-group-*`); the parity runner and its Rust wrapper now run in light and dark.
+- [x] Part 3: the step card's header and action footer are sticky so a short window never pushes the actions out of view (parity behaviour check `step-card-fixed-header-footer` at 1280x520, mutation-checked).
+- [x] Part 4: the Activity / Changes and tests / Raw logs / Lessons tabs are content-width 29px pills with 7px radius, left aligned (parity entries `view-tab` and `view-tabs-not-stretched`).
+- [x] Part 5: the Goal header is compact (17px semibold single line, eyebrow removed; parity entry `goal-title`).
+- [x] Part 6: a 32px titlebar button before the Workspace name hides and restores the whole left rail on both screens; the centre takes the space (`rail_toggle.rs`, parity `rail-toggle-button` and the behaviour check `rail-toggle-behaviour`).
+- [x] Part 7: step-card action buttons (save, generate plan, approve & run, read plan, write manually, discard) carry a leading 13px icon (`action_icons.js`, `action_icons.rs`).
+- [x] Part 8: the rail is 250px and 230px below 900px (Workspace screen and Room; the old 240px/170px breakpoints are gone), checked at 840 and 1280 by parity behaviour checks.
+- [x] Part 9: the result summary is one ruled metadata line with 16px/650 values and 14px/500 labels (parity `result-metric-value` / `result-metric-label`).
+- [x] Part 10: the titlebar chat, settings and update buttons are 32px with a 6px radius and a transparent border at rest (parity `titlebar-chat`, `titlebar-settings`).
+- [ ] Remaining in #408: titlebar item order (discard changes moves to the step footer as in the mock), fixed 36px info row and the Team briefing icon button on the Workspace screen, leading icons on selectors, rail 190px below 600px (full-window reflow is covered by the parity behaviour check `fullscreen-reflow`).
+- [ ] Complete: release (version 0.2.0 only when the user asks).
+
+### Goal-list row actions in the webview — DD-222
+- [x] Plan: Trace: amends R-210 -> UC-202 -> FR-204 -> QAS-209 -> DD-222 (backend: Codex PR for #402). GitHub #402; design GitHub #387.
+- [x] Task / Red/Green: `tests/goal_rows_runtime.cjs` (confirmation markup with Cancel as default, same reviewed Goal/folder retried with a fresh revision, errors surfaced, never optimistic), design-parity entries `goal-trash` and `goal-folder` first, then `src/ui/goal_rows.js`, `src/ui/result_view.js` (the result popup shared by the Room and the Goal list), the delete dialog, messages and CSS.
+- [x] Verify: UI Rust and Node tests; design parity 9 entries; UI simulator: Result opens the same centered popup over the list, Cancel sends no request, Confirm shows the stopping text, retries and closes only after `deleted`.
+- [ ] Real-app check after the backend PRs (#418 ownership fix first, then the Goal action PR) are on main: folder opens in Finder/Explorer, deletion removes only the Goal folder.
+- [ ] Complete: release (version 0.2.0 only when the user asks).
+
+### Agent cards and task rows match the design (part 1) — DD-222
+- [x] Plan: Trace: amends R-210 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. GitHub #410 (checklist items: agent cards without executable path and capacity text, red removal icon, task rows with chevron and selected edge); design GitHub #387.
+- [x] Task / Red/Green: design-parity entries `agent-card`, `agent-tool`, `agent-remove`, `task-row`, `task-status-tag` and `room_task_rows.rs` first, then `startup.js` / `startup.css` / `room.css`; the Room rail now really is 250px (a closed-inspector rule still said 222px).
+- [x] Verify: UI Rust and Node tests; design parity 14 entries pass.
+- [x] Part 2: blocked/refused tags are red like the avatar border (`blocked_and_refused_task_tags_are_red_like_the_avatar_border`); selecting a task keeps the chosen subview (`selecting_a_task_keeps_the_chosen_subview`); all seven inspector sections already exist.
+- [ ] Remaining in #410: status border and attention marker on agent avatars (needs Codex's quota_indicators wiring from #404).
 - [ ] Complete: release (version 0.2.0 only when the user asks).
 
 ## Bilingual release documentation — DD-134 / v0.1.16
@@ -2691,6 +2715,7 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - #424 platform follow-up: Windows reported glyph-width wrapping after the padding fix. Red reproduced locally with 2px letter-spacing; Green uses a bounded five-column strip with ellipsis-capable label spans and 23/22/22px icon-only targets. Ten local tests across four suites pass, including all 40 stressed browser button checks. Windows rerun and #422 updated parity integration remain pending.
 
 ### CLI fixture watcher cleanup — PR #431 / GitHub #409
+Trace: R-210 / DD-222.
 
 - [x] Plan: inspect actual failing CI; model/reassignment assertions passed, then macOS failed deleting a directory still written by its detached watcher.
 - [x] Task: fixture cleanup waits for the owned watcher's terminal record and OS-confirmed process/group absence before deleting; no retry of destructive deletion and no product policy change.

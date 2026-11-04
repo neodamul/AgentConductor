@@ -916,7 +916,6 @@
   "startup.send_test_message": "테스트 메시지 보내기",
   "startup.sends_a_short_message_when_a_decision_is": "결정이 필요하거나 실행이 끝나면 짧은 메시지를 보냅니다. 웹훅 URL은 이 컴퓨터에만 저장되며 내보내지 않습니다.",
   "startup.session_model": "세션 모델",
-  "startup.sessions": "{value1} · 세션 {value2}개",
   "startup.settings": "설정",
   "startup.settings_02f6ea": "설정",
   "startup.settings_saved": "설정을 저장했습니다.",
@@ -1239,5 +1238,17 @@
   "choices.model_binding_required": "직접 모델을 선택하려면 CLI 인자에 {model} 또는 model 옵션을 설정하세요.",
   "choices.registration_failed": "모델 등록에 실패했습니다. 기존 선택을 유지합니다.",
   "choices.cli_default_model": "CLI 기본 모델",
-  "choices.model_placeholder": "CLI 모델 ID"
+  "choices.model_placeholder": "CLI 모델 ID",
+  "startup.goal_row_result": "결과 보기",
+  "startup.goal_row_folder": "Goal {value1} 작업 폴더 열기",
+  "startup.goal_row_trash": "Goal {value1} 영구 삭제",
+  "startup.goal_row_no_result": "이 Goal에 기록된 결과가 없습니다.",
+  "startup.delete_goal_title": "Goal 폴더를 영구 삭제할까요?",
+  "startup.delete_goal_warning": "이 Goal의 폴더와 모든 하위 파일·폴더를 삭제합니다.",
+  "startup.delete_goal_nobackup": "백업하지 않으며, 휴지통으로 이동하지 않습니다. 복구할 수 없습니다.",
+  "startup.delete_goal_confirm": "영구 삭제",
+  "startup.delete_goal_pending": "삭제 전에 이 Goal의 작업을 중지하는 중…",
+  "startup.delete_goal_timeout": "Goal의 작업이 아직 중지되는 중입니다. 잠시 후 다시 시도하세요.",
+  "startup.delete_goal_done": "Goal {value1}을(를) 삭제했습니다.",
+  "startup.rail_toggle": "왼쪽 패널 접기·펼치기"
 }

@@ -916,7 +916,6 @@
   "startup.send_test_message": "Send test message",
   "startup.sends_a_short_message_when_a_decision_is": "Sends a short message when a decision is needed or a run ends. The webhook URL stays on this computer and is never exported.",
   "startup.session_model": "Session model",
-  "startup.sessions": "{value1} · {value2} sessions",
   "startup.settings": "Settings",
   "startup.settings_02f6ea": "SETTINGS",
   "startup.settings_saved": "Settings saved.",
@@ -1239,5 +1238,17 @@
   "choices.model_binding_required": "Configure a {model} CLI argument or model option before selecting a custom model.",
   "choices.registration_failed": "Model registration failed; the previous choice is retained.",
   "choices.cli_default_model": "CLI default model",
-  "choices.model_placeholder": "CLI model ID"
+  "choices.model_placeholder": "CLI model ID",
+  "startup.goal_row_result": "Result",
+  "startup.goal_row_folder": "Open the folder of Goal {value1}",
+  "startup.goal_row_trash": "Delete Goal {value1} permanently",
+  "startup.goal_row_no_result": "This Goal has no recorded result.",
+  "startup.delete_goal_title": "Permanently delete this Goal folder?",
+  "startup.delete_goal_warning": "This deletes the Goal's folder and everything inside it.",
+  "startup.delete_goal_nobackup": "There is no backup, nothing moves to the Trash and it cannot be recovered.",
+  "startup.delete_goal_confirm": "Delete permanently",
+  "startup.delete_goal_pending": "Stopping this Goal's work before deleting…",
+  "startup.delete_goal_timeout": "The Goal's work is still stopping. Try again in a moment.",
+  "startup.delete_goal_done": "Goal {value1} was deleted.",
+  "startup.rail_toggle": "Hide or show the left panel"
 }

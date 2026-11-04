@@ -15,7 +15,7 @@ async function launch(chrome, { width = 1280, height = 960, scale = 2 } = {}) {
   const proc = spawn(chrome, ['--headless=new', '--remote-debugging-port=0', `--user-data-dir=${dir}`, '--no-first-run',
     `--force-device-scale-factor=${scale}`, '--hide-scrollbars', '--allow-file-access-from-files', `--window-size=${width},${height}`, 'about:blank'], { stdio: 'ignore' });
   const portFile = path.join(dir, 'DevToolsActivePort');
-  for (let i = 0; i < 100 && !fs.existsSync(portFile); i++) await new Promise(r => setTimeout(r, 100));
+  for (let i = 0; i < 400 && !fs.existsSync(portFile); i++) await new Promise(r => setTimeout(r, 100));
   if (!fs.existsSync(portFile)) { proc.kill(); throw new Error('Chrome did not start'); }
   const port = fs.readFileSync(portFile, 'utf8').split('\n')[0];
   const targets = await (await fetch(`http://127.0.0.1:${port}/json`)).json();
@@ -29,6 +29,7 @@ async function launch(chrome, { width = 1280, height = 960, scale = 2 } = {}) {
   const api = {
     async goto(url) { events.length = 0; await send('Page.navigate', { url }); for (let i = 0; i < 100 && !events.some(e => e.method === 'Page.loadEventFired'); i++) await new Promise(r => setTimeout(r, 100)); await new Promise(r => setTimeout(r, 400)); },
     async eval(expr) { const r = await send('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true }); if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description || r.exceptionDetails.text); return r.result.value; },
+    async viewport(w, h) { await send('Emulation.setDeviceMetricsOverride', { width: w, height: h, deviceScaleFactor: scale, mobile: false }); },
     async shot(clip) { const r = await send('Page.captureScreenshot', { format: 'png', clip: clip && { ...clip, scale: 1 } }); return Buffer.from(r.data, 'base64'); },
     async close() { try { ws.close(); } catch {} const gone = new Promise(r => proc.once('exit', r)); proc.kill(); await gone; fs.rmSync(dir, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 }); },
   };
