@@ -237,3 +237,41 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 .composer label>span{font-size:11.5px}
 #send-feedback{box-sizing:border-box;height:34px}
 #stop{box-sizing:border-box;height:34px;font-size:13px}
+/* Quota ring and popup (mock .usage-button / .usage-popover, GitHub #426). */
+.quota-controls{margin-left:auto;position:relative;flex:none;display:flex;align-items:center}
+.usage-button{width:30px;height:30px;padding:1px;border:0;border-radius:7px;background:transparent;color:var(--soft);display:grid;place-items:center;cursor:pointer}
+.usage-button:hover,.usage-button[aria-expanded="true"]{background:var(--fill);color:var(--ink)}
+.usage-button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.usage-button svg{display:block;width:27px;height:27px}
+.usage-track{stroke:var(--line);fill:none}
+.usage-value{stroke:currentColor;fill:none;stroke-linecap:round}
+.usage-button.error{color:var(--err)}
+.usage-button,.usage-button *{cursor:pointer}
+.usage-value.quota-short{stroke:var(--quota-short)}
+.usage-value.quota-long{stroke:var(--quota-long)}
+.usage-popover{position:fixed;z-index:30;width:274px;padding:17px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 32px rgba(0,0,0,.13);color:var(--ink);font-size:13px}
+.usage-popover[hidden]{display:none}
+.usage-popover .usage-heading{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.usage-heading .sp{flex:1}
+.usage-heading strong{font-size:14px}
+.usage-heading .usage-reset{font-size:11px;color:var(--soft)}
+.usage-close,.usage-refresh{border:0;background:transparent;color:var(--soft);cursor:pointer;border-radius:5px;padding:3px 6px;font-size:15px}
+.usage-close{line-height:17px}
+.usage-close:hover,.usage-refresh:hover{background:var(--fill)}
+.usage-refresh.refreshing{animation:quota-spin 1s linear infinite}
+.usage-item+.usage-item{margin-top:17px}
+.usage-line{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.usage-line b{font-size:14px;font-variant-numeric:tabular-nums}
+.usage-meter{height:5px;background:var(--fill);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.usage-meter span{height:100%;display:block;background:var(--soft);border-radius:3px}
+.usage-item .usage-reset,.usage-observed{font-size:11px;color:var(--soft)}
+.usage-observed{border-top:1px solid var(--line);padding-top:12px;margin-top:15px;display:flex;align-items:center;justify-content:space-between}
+.usage-unavailable{font-size:12px;color:var(--soft);line-height:1.6;margin:0}
+.usage-error{padding:12px;border-radius:7px;background:var(--err-bg);color:var(--err);font-size:12px;line-height:1.6}
+.usage-error strong{display:block;margin-bottom:5px}
+.usage-error p{margin:0;overflow-wrap:anywhere}
+.usage-item.quota-short{--quota-color:var(--quota-short)}
+.usage-item.quota-long{--quota-color:var(--quota-long)}
+.usage-item .usage-line>span{display:inline-flex;align-items:center;gap:6px}
+.usage-item .usage-line>span::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--quota-color,var(--soft));flex:none}
+.usage-item .usage-meter>span{background:var(--quota-color,var(--soft))}

@@ -2705,3 +2705,11 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Step footer (GitHub #427, part 1): "Discard changes" leaves the titlebar and follows the open step into its footer row, beside the primary action, with the mock's explanatory note; parity entries `type-discard-button` and `discard-follows-step`.
 - [x] Narrow windows (GitHub #427, part 2): the left rail stays beside the content and is 190px below 600px (the old stacked layout below 700px is gone); parity assertions at 1280/840/560px. The mock captures `images/*.png` were re-rendered after the step 6 caption change (`verify-and-capture.py`: 58 captures, 28 contrast pairs).
 - [x] Agent avatar status (GitHub #410): `src/ui/agent_status.js` (`window.acAgentStatus`) gives each agent card's avatar the strongest state of its tasks (green running/completed, yellow waiting, red failure, a pulse only while running, an attention marker for waiting/failure; neutral otherwise); fed by the Room snapshot, re-stamped when cards rebuild; `tests/agent_status_runtime.cjs`; the `agent-avatar` parity entry now matches the mock at 0.00% differing pixels (the 0.25 allowance is gone).
+
+### Quota ring and popup — GitHub #426
+Trace: R-212 / DD-224 (backend contract), R-210 / DD-222 (layout).
+
+- [x] Plan: consume `quota_indicators[agent]` (rings, windows, budgets, status, error) without new requests, timers or provider queries; refresh uses the existing quota request.
+- [x] Task: `src/ui/quota_ring.js` (`window.acQuotaRing`) draws the two-ring 30px icon (27px graphic) and one shared popup (windows/budgets with the ring colours, reset text, observation time, unsupported/stale/error text, retry); the card's text badge and ↻ button are gone; `.quota-short/.quota-long` tokens live in the light/dark token sets.
+- [x] Verify: parity entries `quota-ring-healthy` (0.00%), `quota-ring-error`, `quota-popup-healthy` (1.7%), `quota-popup-error` plus behaviour assertions (opens beside the ring, Escape closes and restores focus, unsupported, error retry) pass in light and dark (98 entries); quota/i18n/theme/layout suites pass.
+- [ ] Completed: PR after #433; Windows CI.

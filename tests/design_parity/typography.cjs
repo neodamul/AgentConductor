@@ -72,4 +72,19 @@ module.exports = [
     return [r('goal-title', T, '#saved-goal-title', '#goal'), r('task-title', T, '.cardhead h2', '#selected-agent'), r('task-status', ['fontSize', 'fontWeight'], '.cardhead .pill', '#task-status'),
       r('view-tab-selected', ['fontSize', 'fontWeight'], '.ttabs button.on', '.view-tabs .tab.active'), r('view-tab-idle', ['fontSize', 'fontWeight'], '.ttabs span', '.view-tabs .tab:not(.active)'),
       r('composer-label', T, '.dir .eyebrow', '.composer label>span'), r('send-button', ['fontSize', 'fontWeight', 'height'], '.dir .btn.p', '#send-feedback'), r('stop-button', ['fontSize', 'height'], '.dir .btn.q', '#stop')]; })(),
+  // Quota ring and popup (GitHub #426): icon geometry and pixels, popup geometry and pixels, healthy and error.
+  { name: 'quota-ring-healthy', props: ['borderTopLeftRadius', 'color'], keys: ['width', 'height', 'borderTopLeftRadius', 'color'], mock: { selector: '.usage-button', index: 0 }, app: { selector: '.usage-button', index: 0 } },
+  { name: 'quota-ring-error', props: ['borderTopLeftRadius', 'color'], keys: ['width', 'height', 'borderTopLeftRadius', 'color'], mock: { selector: '.usage-button.error' }, app: { selector: '.usage-button.error' } },
+  { name: 'quota-popup-healthy', props: ['borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'backgroundColor'], keys: ['width', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'backgroundColor'], maxPixelDiff: 0.05,
+    mock: { run: "document.querySelector('[data-usage=claude]').click()", selector: '#usage-popover' }, app: { run: "document.querySelectorAll('.usage-button')[0].click()", selector: '#usage-popover' } },
+  // The error popup compares its error box (the mock's buttons render in the UA font, so the footer width differs by design).
+  { name: 'quota-popup-error', props: ['borderTopLeftRadius', 'backgroundColor', 'color', 'paddingTop', 'fontSize'], keys: ['width', 'height', 'borderTopLeftRadius', 'backgroundColor', 'color', 'paddingTop', 'fontSize'], pixel: false,
+    mock: { run: "document.querySelector('[data-usage=codex]').click()", selector: '.usage-error' }, app: { run: "document.querySelector('.usage-button.error').click()", selector: '.usage-error' } },
+  // Quota popup behaviour: opens beside the ring, lists the windows, Escape closes and restores focus; unsupported and error variants.
+  { name: 'quota-popup-behaviour', app: { run: "document.querySelectorAll('.usage-button')[0].click()" }, assert: `(() => { const p = document.getElementById('usage-popover'), b = document.querySelectorAll('.usage-button')[0];
+    const open = !p.hidden && b.getAttribute('aria-expanded') === 'true' && p.querySelectorAll('.usage-item').length === 2 && p.querySelectorAll('.usage-item.quota-short, .usage-item.quota-long').length === 2 && p.getBoundingClientRect().left > b.getBoundingClientRect().right;
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })); return open && p.hidden && b.getAttribute('aria-expanded') === 'false' && document.activeElement === b })()` },
+  { name: 'quota-popup-unsupported', app: { setup: "SIM.home.quota_indicators.claude = { status: 'unsupported', rings: [], windows: [], budgets: [], error: null, observed_at: 0 };", run: "document.querySelectorAll('.usage-button')[0].click()" },
+    assert: "(() => { const p = document.getElementById('usage-popover'); return !!p.querySelector('.usage-unavailable') && !document.querySelector('.usage-button .usage-value') && !p.querySelector('.usage-item') })()" },
+  { name: 'quota-popup-error-retry', app: { run: "document.querySelector('.usage-button.error').click()" }, assert: "(() => { const p = document.getElementById('usage-popover'); return !!p.querySelector('.usage-error[role=alert]') && p.querySelector('.usage-refresh').textContent.includes('조회') })()" },
 ];

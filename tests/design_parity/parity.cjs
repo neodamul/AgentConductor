@@ -51,7 +51,7 @@ async function visit(browser, side, spec) {
     }
     const failures = [], specs = require('./spec.cjs').filter(x => !flag('--only') || x.name === flag('--only')), ran = specs.length;
     // Measure grouped by page state so each state is loaded once (the run is dominated by page loads).
-    const key = (side, x) => side === 'mock' ? 'mock|' + (x.mock.url || '?theme=light#0') : 'app|' + (x.app.setup || '') + '|' + (x.app.run || '');
+    const key = (side, x) => side === 'mock' ? 'mock|' + (x.mock.url || '?theme=light#0') + '|' + (x.mock.run || '') : 'app|' + (x.app.setup || '') + '|' + (x.app.run || '');
     const jobs = []; for (const x of specs) if (!x.assert) for (const side of ['mock', 'app']) jobs.push({ x, side });
     jobs.sort((p, q) => (key(p.side, p.x) < key(q.side, q.x) ? -1 : key(p.side, p.x) > key(q.side, q.x) ? 1 : 0));
     const got = {}; let current = null;
