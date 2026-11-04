@@ -3,6 +3,7 @@
 // width/height/mark within `tol` px, and the element's screenshot crop may differ by at most `maxPixelDiff`.
 const BOX = ['borderTopWidth', 'borderTopLeftRadius'];
 module.exports = [
+  ...require('./typography.cjs'),
   { name: 'agent-avatar', props: BOX, maxPixelDiff: 0.25, // the mock's border carries the agent status colour; the app's arrives with #410 (then 0.02)
    
     mock: { url: '?theme=light#0', selector: '.status-icon', index: 0, mark: '.agent-brand-logo' },
