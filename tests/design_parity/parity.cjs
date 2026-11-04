@@ -9,6 +9,7 @@ const { findChrome, launch } = require('./cdp.cjs'), { decode, diffRatio } = req
 const { describe } = require('./diagnostics.cjs');
 const { pathToFileURL } = require('url'), repo = path.resolve(__dirname, '../..'), MOCK = pathToFileURL(path.join(repo, 'docs/design/approved-goal-ui/preview.html')).href;
 const THEME = process.env.PARITY_THEME === 'dark' ? 'dark' : 'light', WIDTH = Number(process.env.PARITY_WIDTH) || 1280;
+const diffGrid = (a, b) => { const g = {}; for (let y = 0; y < a.height; y++) for (let x = 0; x < a.width; x++) { const i = (y * a.width + x) * 4; if ([0, 1, 2, 3].some(k => a.data[i + k] !== b.data[i + k])) { const c = `${y >> 3},${x >> 3}`; g[c] = (g[c] || 0) + 1; } } return g; };
 const argv = process.argv.slice(2), flag = n => { const i = argv.indexOf(n); return i < 0 ? null : argv[i + 1]; };
 const chrome = findChrome();
 if (!chrome) { console.log('design parity skipped: no Chrome found (set CHROME)'); process.exit(77); }
@@ -92,7 +93,7 @@ async function visit(browser, side, spec) {
       const tol = 0.01, cmp = (label, a, b) => { for (const k of Object.keys(a)) { if (k === 'shots' || (spec.keys && !spec.keys.includes(k))) continue;
         const x = a[k], y = b[k], num = typeof x === 'number'; if (num ? Math.abs(x - y) > (k === 'x' || k === 'y' ? Infinity : tol) : String(x) !== String(y)) failures.push(`${spec.name}${label}.${k}: mock ${x} app ${y}`); } };
       cmp('', measured.mock, measured.app);
-      if (shots.mock && shots.app && spec.pixel !== false) { const d = diffRatio(decode(shots.mock), decode(shots.app)); console.log(`  ${spec.name}: ${(d.ratio * 100).toFixed(2)}% of pixels differ`); if (d.ratio > 0) failures.push(`${spec.name}: ${(d.ratio * 100).toFixed(1)}% of pixels differ${d.sizeMismatch ? ' (size ' + d.sizeMismatch.join(',') + ')' : ''}`); }
+      if (shots.mock && shots.app && spec.pixel !== false) { const d = diffRatio(decode(shots.mock), decode(shots.app)); console.log(`  ${spec.name}: ${(d.ratio * 100).toFixed(2)}% of pixels differ`); if (d.ratio > 0) { failures.push(`${spec.name}: ${(d.ratio * 100).toFixed(1)}% of pixels differ${d.sizeMismatch ? ' (size ' + d.sizeMismatch.join(',') + ')' : ''}`); if (!d.sizeMismatch) console.log(`  ${spec.name} differing-pixel grid (8px cells, row,col:count): ${JSON.stringify(diffGrid(decode(shots.mock), decode(shots.app)))}`); } }
     }
     console.log(`design parity: ${ran} element(s), ${failures.length} difference(s); captures in ${out}`);
     failures.forEach(f => console.log('  - ' + f));

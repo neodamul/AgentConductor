@@ -302,7 +302,7 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 .startup-profile .agent-exe{display:none}
 .startup-profile .profile-tools{margin:auto 0 0;gap:4px}
 .startup-profile .profile-tools button{padding:2px 6px;min-height:22px;height:auto;line-height:16px;font-size:11px;font-family:inherit;column-gap:normal}.startup-profile .profile-tools .remove-agent{width:auto;min-width:22px;padding:2px 4px}
-.startup-profile .profile-tools button:first-child{font-family:revert}
+.startup-profile .profile-tools button:first-child{font-family:revert}.startup-profile .profile-tools .move-agent{min-width:0}
 .startup-profile .drag-handle{position:static;flex:none;width:10px;height:20px;margin:0 0 0 4px;font-size:0;background:radial-gradient(circle,var(--line-strong) 1.2px,transparent 1.6px) 0 0/5px 5px}
 /* Room action buttons (mock .dir .btn): flex, 6px gap, leading 13px icon, 8px 13px padding; labels are the mock's. */
 [data-action-icon="send"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='black'%20stroke-width='1.6'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M21%203L10%2014M21%203l-7%2018-4-7-7-4z'/%3E%3C/svg%3E")}[data-action-icon="stop"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='black'%20stroke-width='1.6'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Crect%20x='6'%20y='6'%20width='12'%20height='12'%20rx='1.5'/%3E%3C/svg%3E")}
