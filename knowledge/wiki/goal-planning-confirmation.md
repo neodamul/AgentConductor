@@ -42,3 +42,18 @@ For the changed-baseline negative assertion, also wait for the actual rejection
 message and settled controls; an unchanged request count while the action is
 still pending is not evidence of a correct refusal. Production confirmation and
 revision guards need no weakening for this reproduced failure.
+
+## Goal context transition — #475
+
+A mutation response and its first refresh do not finish a Goal switch. The
+second snapshot used to run after clearing the draft, while Save and text
+fields were already enabled. Fast input then reached capture with a null draft
+and never produced a save request. Keep a transition guard across both polls,
+retain a valid draft, and restore derived controls in finally, including refusal.
+No additional polling loop, provider call or background process is introduced.
+
+Evidence: `tests/goal_transition_runtime.cjs` holds the final snapshot and checks
+Goal, repository, coordinator, model and Save stay disabled; immediate input
+persists after settlement, and refused transitions restore editing. All four
+light/dark × 840/1280 browser cases pass. The simulated bridge proves UI
+sequencing; native Goal persistence is checked separately by `project_goals`.
