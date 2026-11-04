@@ -58,4 +58,7 @@ module.exports = [
   { name: 'box-titlebar-surface', props: ['backgroundColor', 'borderBottomWidth', 'borderBottomColor', 'borderRightWidth', 'borderRightColor'], keys: ['backgroundColor', 'borderBottomWidth', 'borderBottomColor', 'borderRightWidth', 'borderRightColor'], pixel: false, mock: { selector: '.titlebar' }, app: { selector: 'header.titlebar' } },
   { name: 'box-rail-surface', props: ['backgroundColor', 'borderBottomWidth', 'borderBottomColor', 'borderRightWidth', 'borderRightColor'], keys: ['backgroundColor', 'borderBottomWidth', 'borderBottomColor', 'borderRightWidth', 'borderRightColor'], pixel: false, mock: { selector: '.rail' }, app: { selector: '.startup-team' } },
   { name: 'box-main-surface', props: ['backgroundColor', 'paddingLeft', 'paddingTop'], keys: ['paddingLeft'], pixel: false, mock: { selector: 'main.main' }, app: { selector: '.startup-main' } },
+  // Step tab captions are the mock's short names and none is cut at the reference width.
+  { name: 'step-tab-captions', app: {}, assert: `(() => { const tabs = [...document.querySelectorAll('#start-step-tabs [role=tab]')], names = tabs.map(t => t.querySelector('span:last-child').textContent.trim());
+    return names.slice(0, 3).join('|') === ['워크스페이스', '에이전트 역할', '계획'].join('|') && tabs.every(t => { const l = t.querySelector('span:last-child'); return l.scrollWidth <= l.clientWidth + 1 }) })()` },
 ];

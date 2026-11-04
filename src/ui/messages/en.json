@@ -881,6 +881,8 @@
   "startup.step_tasks": "Tasks",
   "startup.step_verify": "Verify",
   "startup.step_merge": "Review and merge",
+  "startup.step_workspace": "Workspace",
+  "startup.step_plan": "Plan",
   "startup.group_prepare": "Prepare",
   "startup.group_run": "Run",
   "startup.group_finish": "Finish",

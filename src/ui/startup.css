@@ -212,3 +212,6 @@ footer.statusbar{box-sizing:border-box;height:30px;padding-left:16px;background:
 .startup-heading{margin-bottom:53px}
 .startup-tabs{margin:0;border-bottom:0}
 header.titlebar{border-bottom:1px solid var(--bar-line)}
+/* Tab widths follow their captions (no fixed 3:2:1.2 group ratio), so captions are not cut while there is room. */
+.startup-tabs .step-group,.startup-tabs .step-group[data-group]{flex:1 1 auto}
+.startup-tabs [role="tab"]{flex:1 1 auto}
