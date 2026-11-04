@@ -30,7 +30,7 @@ in `05b-design-drivers.md`.
 | FR-17 | Hold a paused tool call for a live decision and decide it while the run is active | UC-22 | SF-25 |
 | FR-18 | Accept input-method (Korean) composition in all native text fields | UC-24 | SF-27 |
 | FR-19 | Return from the workspace to the parent screen and discard unsaved edits after confirmation | UC-25 | SF-28 |
-| FR-20 | Show installed application icons for built-in agent kinds, letters for custom agents | UC-26 | SF-29 |
+| FR-20 | Show brand marks (Claude Code, Codex) or installed application icons (OpenCode) for built-in agent kinds, letters for custom agents | UC-26 | SF-29 |
 | FR-21 | Provide a product README and a complete user manual covering every CLI command | UC-27 | SF-30 |
 | FR-22 | Create an editable plan draft without running a coordinator; approve it through the same validation and digest | UC-28 | SF-31 |
 | FR-23 | Group workspace settings, order goal → coordinator → repository/worktrees, pick the repository with a native folder dialog, save without a repository | UC-29 | SF-32 |
@@ -71,7 +71,7 @@ in `05b-design-drivers.md`.
 | NFR-09 | Truthfulness | Quota, status and briefings never fabricate progress or capacity | R-22, R-28, R-29 | QAS-17, QAS-20, QAS-21 |
 | NFR-10 | Usability / accessibility | Status readable without colour alone; reduced motion; dialogs reachable by assistive technology; Korean input; every screen has a way back without side effects | R-17, R-29, R-32, R-33 | QAS-21, QAS-25, QAS-26 |
 | NFR-11 | Portability | macOS and Windows native builds with equivalent safety primitives | R-23, R-24 | QAS-18 |
-| NFR-12 | Distribution compliance | Reviewed licenses, notices and checksums for every released artifact; no bundled third-party trademarks | R-15, R-24, R-34 | QAS-14, QAS-27 |
+| NFR-12 | Distribution compliance | Reviewed licenses, notices and checksums for every released artifact; no bundled third-party trademarks (exception, amended by R-210: two vendored MIT agent marks with their notice) | R-15, R-24, R-34 | QAS-14, QAS-27 |
 | NFR-14 | Learnability | A first-time operator can start the desktop workflow from the README without CLI knowledge | R-36 | QAS-28 |
 | NFR-15 | Independence | Planning, execution and approval work with no LLM coordinator; a draft launches no process | R-37 | QAS-29 |
 | NFR-16 | Discoverability | Every workspace setting is reachable from visible controls without typing paths or using the CLI | R-38, R-39 | QAS-30, QAS-31 |
@@ -756,3 +756,15 @@ Startup and run snapshots add quota_indicators keyed by profile ID, with status,
 
 ### NFR-93 Conservative cached quota rendering
 Normalize only finite percentages in the range 0–100, suppress expired/stale capacity and keep one-window/unlimited/unsupported observations truthful. No query, worker, timer or network request is added by this projection. Trace: FR-206.
+
+### FR-205 Goal action request contract
+Expose goal_result, goal_folder and delete_goal on the startup bridge; reads leave selection unchanged; deletion requires revision, slug, goal text and exact folder. Trace: UC-203.
+
+### NFR-92 Fail-closed Goal removal
+Reject unregistered identifiers, aliases/reparse points, missing or invalid folder markers, non-child paths and unverified run ownership. Do not wait for processes under the settings mutex; return stopping and retry after state changes. Trace: FR-205.
+
+### FR-207 Goal identity and context contract
+Keep existing create_slug/new_goal/next_phase request shapes. Folder allocation uses an exclusive create operation before adding markers or excluding the folder from Git; failed collisions leave registry and disk contents unchanged. Trace: UC-205.
+
+### NFR-94 Existing project entries are never adopted implicitly
+Refuse ordinary files/directories and aliases/reparse points at a requested Goal path; automatic naming skips existing entries including dangling links. No target directory is recursively created over an unverified existing path. Trace: FR-207.

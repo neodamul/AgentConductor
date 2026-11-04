@@ -179,3 +179,9 @@ An automatic snapshot and an explicit user action share the request bridge but h
 
 ### Driver DDR-59 Project cached observations once
 Share a structured Rust projection across both views rather than parsing badge text or querying providers for a decorative indicator. Trace: QAS-211.
+
+### Driver DDR-58 Reuse owned process stop and native request boundaries
+Use existing process ownership, durable stop markers and revision checks instead of a second worker manager or UI-trusted filesystem path. Trace: QAS-210.
+
+### Driver DDR-60 Establish ownership by exclusive creation
+A generic app marker is not permission to claim an existing directory. Reserve the new directory atomically before writing any Goal metadata; do not build a second folder model for behavior already implemented. Trace: QAS-212.

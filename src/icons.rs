@@ -1,12 +1,14 @@
-//! Installed application icons for built-in providers (DD-40). Artwork is read from
-//! the operator's own applications at runtime and never bundled.
+//! Icons for built-in providers (DD-40, amended by DD-222). Claude Code and Codex use the pinned
+//! color marks in `brand`; other providers read the operator's own application icon at runtime.
 use crate::protocol::Provider;
 use std::{
     collections::HashMap,
     sync::{Mutex, OnceLock},
 };
 
+mod brand;
 mod fallback;
+pub use brand::brand_icon;
 pub use fallback::fallback_icon;
 
 const MAX_SIDE: u32 = 64;
@@ -22,7 +24,9 @@ pub fn provider_icon(provider: Provider) -> Option<String> {
     if let Some(found) = cache.lock().ok()?.get(&provider) {
         return found.clone();
     }
-    let icon = platform::icon(provider).or_else(|| fallback_icon(provider));
+    let icon = brand_icon(provider)
+        .or_else(|| platform::icon(provider))
+        .or_else(|| fallback_icon(provider));
     cache.lock().ok()?.insert(provider, icon.clone());
     icon
 }

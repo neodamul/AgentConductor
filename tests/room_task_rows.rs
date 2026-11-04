@@ -12,7 +12,15 @@ fn the_task_name_leads_and_icon_name_and_status_share_one_line() {
     );
     assert!(ROOM.contains("heading.append(node('span',id,'task-id'));if(summary)heading.append(node('span',summary,'task-summary'))"));
     assert!(CSS.contains(".session-choice .session-meta{display:flex;flex-wrap:wrap"));
-    assert!(CSS.contains(".session-choice .session-meta .session-symbol,.session-choice .session-meta .app-icon.session-symbol{width:20px;height:20px"));
+    assert!(CSS.contains(".session-choice .session-meta .session-symbol,.session-choice .session-meta .app-icon.session-symbol{width:28px;height:28px"));
+}
+
+#[test]
+fn brand_marks_sit_in_a_bordered_container_with_the_specified_mark_size() {
+    // GitHub #406 / visual-spec: task avatar 28px with a 20px mark, agent avatar 29px with a 19px mark,
+    // both inside the 1.5px border (28 = 1.5 + 2.5 + 20 + 2.5 + 1.5; 29 = 1.5 + 3.5 + 19 + 3.5 + 1.5).
+    assert!(CSS.contains(".session-choice .session-meta .app-icon.session-symbol{padding:2.5px}"));
+    assert!(CSS.contains(".app-icon.agent-symbol{width:29px;height:29px;box-sizing:border-box;border:1.5px solid var(--line);padding:3.5px}"));
 }
 
 #[test]

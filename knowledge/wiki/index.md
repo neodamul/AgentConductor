@@ -142,4 +142,8 @@
 - [Idle polling and suspended-page timeouts](idle-poll-timeouts.md): silent scheduled polls, visibility-paused request deadlines and deterministic timeout coverage (GitHub #221, DD-196).
 
 - [Quota indicator contract](quota-indicator-contract.md): cached ring/popup rows and conservative capacity (#404).
+
+- [Goal row actions](goal-row-actions.md): ownership, context preservation and nonblocking deletion (#402).
 - [Approved Goal UI](approved-goal-ui.md): unified flow, docked/overlay boundaries, anchored Fallback/model choices and both-theme reference evidence (#387).
+
+- [Workspace/Goal rules](workspace-goal-rules.md): model audit and exclusive Goal folder ownership (#411).

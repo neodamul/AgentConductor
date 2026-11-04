@@ -745,3 +745,9 @@ Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214.
 
 ### SF-200 Shared quota ring and popup data
 Publish one native per-profile indicator with at most two selected ring rows and all provider window/budget rows. Trace: BG-167.
+
+### SF-199 Ownership-checked Goal row actions
+Provide read-only result/folder requests and a revision-bound, explicitly confirmed permanent deletion with nonblocking stop-and-retry. Trace: BG-166.
+
+### SF-201 Exclusive Goal folder allocation and retained Workspace context
+Allocate a new direct-child Goal directory exclusively, preserve existing IDs/paths across display edits and keep folder/coordinator/roles for a new Goal. Trace: BG-168.

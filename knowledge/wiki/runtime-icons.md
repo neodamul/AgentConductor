@@ -2,8 +2,8 @@
 
 Trace: R-34 → BG-14 → SF-29 → UC-26 → FR-20/NFR-10/NFR-12 → QAS-27 → DDR-10 → DD-40.
 
-Provider artwork is resolved from operator-installed applications at runtime; no
-provider icon is bundled or copied into this wiki. macOS resolves bundle identifiers
+Claude Code and Codex use two pinned, unmodified MIT color marks (Lobe Icons, `third_party/lobe-icons`, GitHub #406 / DD-222) embedded in the executable. Other provider artwork is resolved from operator-installed applications at runtime; no
+other provider icon is bundled or copied into this wiki. macOS resolves bundle identifiers
 through NSWorkspace and renders a bounded PNG. Windows searches per-user executable
 locations and extracts an icon. Built-in providers receive image avatars only when
 resolution succeeds; custom providers and missing applications retain letter avatars.

@@ -346,3 +346,7 @@ amended `main` requirement with `Status: Amended by` the ported one.
 <!-- end reserved identifiers -->
 
 | R-212 | Structured cached quota indicators | BG-167 | SF-200 | UC-204 | FR-206 / NFR-93 | QAS-211 | DD-224 |
+
+| R-211 | Goal row ownership and context | BG-166 | SF-199 | UC-203 | FR-205 / NFR-92 | QAS-210 | DD-223 |
+
+| R-213 | Workspace Goal identity and folder ownership | BG-168 | SF-201 | UC-205 | FR-207 / NFR-94 | QAS-212 | DD-225 |

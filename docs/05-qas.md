@@ -76,6 +76,7 @@ Given 1-second polling, composing and committing Korean syllables in the goal/fe
 Given unsaved goal, profile and plan edits, "Back to run" asks for confirmation naming the unsaved areas; confirming returns to the Agent Room with the saved workspace unchanged on disk and no save, plan or start request issued; cancelling keeps every edit. With no edits the return is immediate. Trace: UC-25.
 
 ### QAS-27 Icons without redistribution or unsafe content
+Status: Amended by R-210/QAS-209: the release binary carries exactly two vendored MIT color brand marks (Claude Code, Codex; `third_party/lobe-icons`, license text and pinned revision in the package) and no other provider artwork; OpenCode keeps its installed-application icon, bounded as below.
 
 Given installed Claude, Codex (ChatGPT) and OpenCode applications, built-in profiles render their application icons within one second of opening; a custom profile renders letters. With an application removed, its profiles render letters and nothing fails. The release binary contains no provider artwork, icons are bounded (≤ 64 × 64 px, ≤ 64 KiB each) PNG data URLs permitted by the existing `img-src data:` policy, and no network request is made. Trace: UC-26.
 
@@ -855,3 +856,9 @@ Trace: R-202 → BG-157 → SF-190 → UC-193 → FR-194 → QAS-200 → DD-214.
 
 ### QAS-211 Quota rings agree with provider evidence
 Stimulus: a snapshot contains subscription windows, Enterprise budgets, stale/reset data or a query error. Response: two selected ring slots use the same rows as the popup; all additional provider windows remain available; unknown, stale or unlimited capacity has no fabricated percentage. Measure: native pure-data and snapshot regressions cover both windows, budgets, reset/error and unsupported profiles without live provider calls. Trace: NFR-93.
+
+### QAS-210 Goal deletion is confined and context remains stable
+Stimulus: operator reviews another Goal or deletes a stuck Goal. Environment: running/planning or empty non-Git workspace. Response: reads preserve active state; deletion stops only owned work before removing its verified folder, never follows links, and retains metadata on failure. Measure: native regression tests exercise wrong confirmation, stale revision, aliases, missing marker, pending stop, read-only result and last-Goal removal. Trace: NFR-92.
+
+### QAS-212 Goal creation cannot manufacture ownership of project data
+Stimulus: a new Goal identifier collides with an existing project entry. Response: explicit names fail without writing a marker, registry record or Git exclusion; automatic names choose another path. Measure: native regressions preserve ordinary contents, files and link targets, preserve folder IDs on display edits, and retain Workspace context on New Goal. Existing non-Git planning/approved merge and phase-continuation integration tests remain green. Trace: NFR-94.
