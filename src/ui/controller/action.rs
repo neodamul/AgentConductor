@@ -32,6 +32,8 @@ pub(in crate::ui) enum Action {
     Model {
         task: String,
         model: String,
+        #[serde(default)]
+        register: bool,
     },
     Schedule {
         task: String,
@@ -113,8 +115,16 @@ impl Action {
                 vec!["revise".into(), task.clone(), feedback.clone()]
             }
             Self::Reassign { task, agent } => vec!["reassign".into(), task.clone(), agent.clone()],
-            Self::Model { task, model } => {
-                vec!["session-model".into(), task.clone(), model.clone()]
+            Self::Model {
+                task,
+                model,
+                register,
+            } => {
+                let mut args = vec!["session-model".into(), task.clone(), model.clone()];
+                if *register {
+                    args.push("--register".into());
+                }
+                args
             }
             Self::Schedule { task, at } => vec!["schedule".into(), task.clone(), at.clone()],
             Self::ToolApprove { sha } => vec!["tool-approve".into(), sha.clone()],

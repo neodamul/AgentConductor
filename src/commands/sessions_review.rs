@@ -308,6 +308,9 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
         [command, dir, task, model] if command == "session-model" => {
             Some(workflow::set_model(Path::new(dir), task, model))
         }
+        [command, dir, task, model, flag] if command == "session-model" && flag == "--register" => {
+            Some(workflow::register_model(Path::new(dir), task, model))
+        }
         [command, dir, task, agent] if command == "reassign" => {
             Some(workflow::reassign(Path::new(dir), task, agent, None))
         }

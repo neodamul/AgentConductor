@@ -131,7 +131,7 @@
 <tr><td><code>agentconductor quota-refresh RUN AGENT</code></td><td>Refresh account quota from Codex or Claude CLI metadata.</td></tr>
 <tr><td><code>agentconductor schedule RUN TASK &lt;YYYY-MM-DDTHH:MM:SS+HH:MM&gt;</code></td><td>Schedule a limited session.</td></tr>
 <tr><td><code>agentconductor reassign RUN TASK AGENT [model]</code></td><td>Move a task to another agent.</td></tr>
-<tr><td><code>agentconductor session-model RUN TASK &lt;model&gt;</code></td><td>Change a session&#x27;s observed model.</td></tr>
+<tr><td><code>agentconductor session-model RUN TASK &lt;model&gt; [--register]</code></td><td>Change a session&#x27;s observed model; <code>--register</code> first adds a model id the CLI did not report to that agent&#x27;s catalog as a manual entry (stopped run only).</td></tr>
 <tr><td><code>agentconductor revise RUN TASK &quot;&lt;feedback&gt;&quot;</code></td><td>Targeted feedback (up to 16 KiB).</td></tr>
 <tr><td><code>agentconductor stop RUN &quot;&lt;reason&gt;&quot;</code></td><td>Stop processes, keeping logs and partial files.</td></tr>
 <tr><td><code>agentconductor resume RUN</code></td><td>Explicitly resume a stopped run.</td></tr>

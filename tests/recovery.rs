@@ -137,6 +137,32 @@ async fn per_session_models_validate_catalog_and_edits_invalidate_approval() {
         workflow::load(&dir).unwrap().plan.tasks[0].model.as_deref(),
         Some("local/two")
     );
+    // #430: a hand-entered id is accepted only through explicit registration, which is validated like any model.
+    assert!(workflow::set_model(&dir, "one.txt", "operator/own").is_err());
+    assert!(workflow::register_model(&dir, "one.txt", "--bad").is_err());
+    assert!(workflow::register_model(&dir, "one.txt", "has space").is_err());
+    let untouched = workflow::load(&dir).unwrap();
+    assert_eq!(untouched.plan.tasks[0].model.as_deref(), Some("local/two"));
+    assert!(
+        !untouched.plan.agents[0]
+            .catalog
+            .as_ref()
+            .unwrap()
+            .models
+            .iter()
+            .any(|m| m == "--bad" || m == "has space")
+    );
+    workflow::register_model(&dir, "one.txt", "operator/own").unwrap();
+    let registered = workflow::load(&dir).unwrap();
+    assert_eq!(
+        registered.plan.tasks[0].model.as_deref(),
+        Some("operator/own")
+    );
+    let catalog = registered.plan.agents[0].catalog.as_ref().unwrap();
+    assert!(
+        catalog.models.iter().any(|m| m == "local/one")
+            && catalog.models.iter().any(|m| m == "operator/own")
+    );
     assert!(workflow::merge(&dir).is_err());
     let result = workflow::resume_due(&dir, i64::MAX, 10).await.unwrap();
     assert_eq!(result.state, "waiting_approval");

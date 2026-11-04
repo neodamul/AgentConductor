@@ -309,7 +309,7 @@ Cargo 빌드 캐시는 앱 캐시와 별개입니다.
 | `agentconductor quota-refresh RUN AGENT` | 등록 에이전트의 계정 사용량을 조회합니다. |
 | `agentconductor schedule RUN TASK <YYYY-MM-DDTHH:MM:SS+HH:MM>` | 제한된 세션의 재개 시각을 지정합니다. |
 | `agentconductor reassign RUN TASK AGENT [model]` | 작업을 다른 에이전트에 재배정합니다. |
-| `agentconductor session-model RUN TASK <model>` | 세션 모델을 관측된 모델로 변경합니다. |
+| `agentconductor session-model RUN TASK <model> [--register]` | 세션 모델을 관측된 모델로 변경합니다. `--register`는 CLI가 보고하지 않은 모델 ID를 그 에이전트의 카탈로그에 직접 입력 항목으로 먼저 추가합니다(멈춘 실행에서만). |
 | `agentconductor revise RUN TASK "<feedback>"` | 최대 16 KiB의 작업 피드백을 기록합니다. |
 | `agentconductor stop RUN "<reason>"` | 이유와 함께 소유한 실행을 중단하고 파일과 로그를 보존합니다. |
 | `agentconductor resume RUN` | 중단한 실행을 명시적으로 재개합니다. |

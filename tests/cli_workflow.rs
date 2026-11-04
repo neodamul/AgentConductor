@@ -149,6 +149,13 @@ fn binary_schedules_reassigns_and_selects_models_with_native_commands() {
         run(&["reassign", dir, task, "replacement", "local/one"]);
     }
     run(&["session-model", dir, "one.txt", "local/two"]);
+    run(&[
+        "session-model",
+        dir,
+        "one.txt",
+        "operator/own",
+        "--register",
+    ]);
     run(&["resume-due", dir]);
     assert_eq!(
         agentconductor::workflow::load(std::path::Path::new(dir))

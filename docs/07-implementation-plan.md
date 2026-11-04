@@ -2882,6 +2882,16 @@ Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
 - [x] Red: `choice_controls/profile_fallback.cjs` fails because a catalog-less fallback agent offers no manual entry.
 - [x] Task: the profile editor's fallback model is an anchored choice with manual entry, registered through the same native `catalog` request; a changed fallback agent never keeps the entered model.
 - [x] Verify: four theme/width runs pass; `choice_controls`, `node_runtime`, `architecture_trace`, `fallback_models`, `model_catalogs` suites pass; no new polling, API key or discovery command.
-- [ ] Open for #430: the running-task inspector model needs a plan-level catalog registration (backend `validate_model` accepts only the plan agent's observed catalog); decision and design recorded on the issue.
+- [x] Follow-up: the running-task inspector model is the next unit (below); backend `validate_model` only accepts the plan agent's observed catalog.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Manual model choice in the task inspector — GitHub #430, inspector unit
+
+- [x] Red: `register_model` is missing (`recovery.rs`) and the inspector model offers no manual entry (`choice_controls/inspector_model.cjs`).
+- [x] Task: `session-model --register` adds a model id the CLI did not report to the task agent's catalog as a manual entry, validates it like any model (leading dash, whitespace, `{model}` binding) and applies it; a rejected id changes nothing; only a stopped run (the running-run queue is unchanged).
+- [x] Task: the inspector model is an anchored choice with manual entry when the agent has no catalog or a manual one and the task is editable; submitting sends one register-and-apply `model` action.
+- [x] Verify: workflow, CLI and browser tests (light/dark × 840/1280); no new polling, API key or discovery command.
+- [ ] Completed: PR merged; GitHub #430 closed together with the profile fallback unit (#448).
 
 Trace: R-210 / UC-202 / DD-222.
