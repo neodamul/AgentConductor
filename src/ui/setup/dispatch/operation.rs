@@ -7,7 +7,8 @@ impl Startup {
         saved: &mut Saved,
     ) -> Result<serde_json::Value, String> {
         match request {
-            Request::GoalResult { .. }
+            Request::WorkspaceBriefing {}
+            | Request::GoalResult { .. }
             | Request::GoalFolder { .. }
             | Request::DeleteGoal { .. }
             | Request::StopPlanning {}

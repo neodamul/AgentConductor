@@ -5,7 +5,10 @@ const T = ['fontSize', 'fontWeight', 'color', 'fontFamily'];
 const B = [...T, 'width', 'height', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'lineHeight', 'display', 'columnGap', 'borderTopLeftRadius', 'borderTopWidth', 'borderTopColor', 'backgroundColor'];
 const e = (name, keys, mock, app) => ({ name: 'type-' + name, props: keys.filter(k => k !== 'height' && k !== 'width'), keys, pixel: false, mock: { selector: mock }, app: { selector: app } });
 module.exports = [
-  e('brand', T, '.title-brand strong', 'header.titlebar > strong'),
+  e('brand', T, '.title-brand strong', '#start-titlebar .title-brand > strong'),
+  e('version', T, '.title-brand .ver', '#start-titlebar .app-version'),
+  e('title-divider', ['width','height','backgroundColor'], '.title-brand .div', '#start-titlebar .title-divider'),
+  { ...e('app-menu-button', B, '#app-menu-button', '#start-app-menu'), pixel: true },
   { ...e('workspace-home', B, '#workspace-home', '#start-workspace-menu'), app: { selector:'#start-workspace-menu', setup:"SIM.reply.workspaces=()=>({name:'Auth Service',current:'/tmp/sim-desktop',registered:[]});" } },
   e('settings-glyph', ['fontSize', 'color'], '#settings-button', '#start-settings-button'),
   e('rail-tab-selected', T, '#rail-agents-tab', '#rail-tab-agents'),
@@ -34,6 +37,21 @@ module.exports = [
   e('step-label', ['fontSize', 'fontWeight'], '.step-group .tab-label', '.step-group button>span:last-child'),
   e('step-card-title', T, '.cardhead h2', '#start-settings-title'),
   e('field-label', ['fontSize', 'fontWeight', 'color'], '.workspace-fields label', '.field-name label'),
+  e('workspace-eyebrow', T, '.workspace-config-card .cardhead .eyebrow', '#start-panel-workspace .cardhead .eyebrow'),
+  e('workspace-description', [...T,'lineHeight'], '.workspace-config-card .cardhead .sub', '#start-panel-workspace .cardhead .sub'),
+  e('workspace-section-title', T, '.workspace-config-section .config-section-head h3', '#start-workspace-section .config-section-head h3'),
+  e('workspace-section-note', T, '.workspace-config-section .config-section-head>span', '#start-workspace-section .config-section-head>span'),
+  e('goal-section-title', T, '.workspace-goal-section .config-section-head h3', '#start-goal-section .config-section-head h3'),
+  e('goal-section-note', T, '.workspace-goal-section .config-section-head p', '#start-goal-section .config-section-head p'),
+  e('goal-objective-label', T, '.goal-input-label', '#start-goal-section .goal-input-label'),
+  e('workspace-path-note', T, '.workspace-path-note', '#start-workspace-section .workspace-path-note'),
+  e('goal-context-title', T, '#workspace-current-goal', '#start-current-goal'),
+  e('goal-context-state', T, '#workspace-current-goal-state', '#start-current-goal-state'),
+  e('workspace-briefing-button', B, '#workspace-team-brief-button', '#brief-team'),
+
+  { name:'workspace-section-box', props:['paddingTop','paddingBottom','borderBottomWidth','borderBottomColor'], keys:['paddingTop','paddingBottom','borderBottomWidth','borderBottomColor'],pixel:false,mock:{selector:'.workspace-config-section'},app:{selector:'#start-workspace-section'} },
+  { name:'goal-context-box',props:['paddingTop','paddingRight','paddingBottom','paddingLeft','backgroundColor','borderTopLeftRadius','columnGap'],keys:['paddingTop','paddingRight','paddingBottom','paddingLeft','backgroundColor','borderTopLeftRadius','columnGap'],pixel:false,mock:{selector:'.goal-selection-context'},app:{selector:'#start-goal-section .goal-selection-context'} },
+
   e('browse', B, '.project-input .btn', '#start-browse'),
   e('goal-list-button', B, '#workspace-goals-button', '#start-goal-list-open'),
   e('new-goal-button', B, '#workspace-new-goal', '#start-new-goal'),

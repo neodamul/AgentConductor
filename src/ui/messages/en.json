@@ -866,7 +866,7 @@
   "startup.preparing": "Preparing",
   "startup.preparing_the_project_folder_for_planning": "Preparing the project folder for planning… {value1}:{value2}",
   "startup.project_files_stay_unchanged_workspace_settings_logs_and": "Project files stay unchanged. Workspace settings, logs and history move to the local recovery folder. An active plan will be stopped first. Deleting the current workspace opens a fresh workspace. Active execution must be stopped in Agent Room first.",
-  "startup.project_folder": "Project folder",
+  "startup.project_folder": "Working directory",
   "startup.protected_or_uncertain_folders": "Protected or uncertain folders",
   "startup.provider": "Provider",
   "startup.quota_observation_is_stale": "Quota observation is stale. ",
@@ -954,7 +954,7 @@
   "startup.starting": "Starting",
   "startup.starting_agent_execution": "Starting agent execution…",
   "startup.stdin": "stdin",
-  "startup.step_1_workspace": "STEP 1 · WORKSPACE",
+  "startup.step_1_workspace": "STEP 1 · PREPARE · Workspace",
   "startup.step_2_team": "STEP 2 · TEAM",
   "startup.step_3_your_execution_decision": "STEP 3 · YOUR EXECUTION DECISION",
   "startup.stop": "Stop",
@@ -1255,5 +1255,13 @@
   "startup.delete_goal_pending": "Stopping this Goal's work before deleting…",
   "startup.delete_goal_timeout": "The Goal's work is still stopping. Try again in a moment.",
   "startup.delete_goal_done": "Goal {value1} was deleted.",
-  "startup.rail_toggle": "Hide or show the left panel"
+  "startup.rail_toggle": "Hide or show the left panel",
+  "startup.workspace_description": "Connect a working directory and define the Goal for this Workspace.",
+  "startup.workspace_shared_note": "The working space shared by every Goal",
+  "startup.workspace_path_note": "After review and approval, committed/merged results are applied to the connected working directory.",
+  "startup.goal_section_note": "Start with one Goal; add another in this Workspace when needed.",
+  "startup.goal_objective": "Objective to achieve",
+  "startup.workspace_section_label": "Workspace",
+  "startup.goal_section_label": "Goal",
+  "startup.app_menu": "Menu"
 }

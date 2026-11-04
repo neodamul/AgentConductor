@@ -151,3 +151,5 @@
 - [Exact Workspace controls](workspace-control-parity.md): immutable mock, whole-box comparison and content-aware fixtures (#435).
 
 - [Bounded browser-test teardown](browser-test-lifecycle.md) — owned process trees and non-replayed exit events (#435).
+
+- [Workspace and Goal section ownership](workspace-goal-sections.md) — shared briefing, stable information row and real attention badge (#427).

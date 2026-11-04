@@ -10,7 +10,7 @@ const code=source.slice(source.indexOf(' const stepNames='),source.indexOf(' con
 nodes.set('save',{});nodes.set('discard',{});
 // Each panel has one action row; showStep moves the single discard button into the open step's row.
 const rows={};for(const [id,node] of nodes)if(id.startsWith('panel-')){const row=rows[id]={held:[],prepend(n){this.held.push(n);}};node.querySelector=()=>row;}
-const context=vm.createContext({q:id=>nodes.get(id),mirrorProgress(){}});vm.runInContext(code,context);
+const context=vm.createContext({q:id=>nodes.get(id),mirrorProgress(){},pageTitle(){}});vm.runInContext(code,context);
 const names=['workspace','team','review'];
 const discard=nodes.get('discard');
 function active(name){for(const n of names){const tab=nodes.get('tab-'+n),panel=nodes.get('panel-'+n),selected=n===name;assert.equal(tab.attrs.role,'tab');assert.equal(panel.attrs.role,'tabpanel');assert.equal(tab.attrs['aria-controls'],panel.attrs.id);assert.equal(panel.attrs['aria-labelledby'],tab.attrs.id);assert.equal(tab.attrs['aria-selected'],String(selected));assert.equal(tab.tabIndex,selected?0:-1);assert.equal(panel.hidden,!selected);}}
