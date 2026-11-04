@@ -1649,3 +1649,11 @@ DD-222 / DD-225 / #475 correction (2026-11-05): changing Goal is one asynchronou
 
 ## DD-227 About screen design
 Trace: R-215 / DDR-62. A dedicated `about.html/css/js` fragment assembled into the existing page, using the existing modal look, i18n catalogs and preference storage (`about_status` / `about_seen` requests). The approved goal-screen mock gained the same dialog, and a strict `about-dialog` parity entry keeps both identical. First-start display is decided by the backend version comparison, not by the browser.
+
+DD-222 / #420 fixture clarification: the approved preview includes a 16px
+canvas gutter and a 1px window border; the native app occupies the full client
+viewport. Compare equal client widths by resizing only the reference frame in
+the test harness. Retain its border, height, approved interior CSS and all pixel
+tolerances. A direct app/reference titlebar probe proves equal client width at
+840/1280 in both themes. This is fixture alignment, not a product design change.
+Trace: R-210 / UC-202 / QAS-209.

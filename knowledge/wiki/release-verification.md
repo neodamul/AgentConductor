@@ -72,3 +72,19 @@ The Windows junction fixture must pass its static cmd command via raw_arg: cmd
 uses different decoding from ordinary CRT arguments. Paths remain quoted
 environment values, with delayed expansion disabled. This does not prove
 Windows execution from macOS. See the [Rust CommandExt reference](https://doc.rust-lang.org/std/os/windows/process/trait.CommandExt.html#tymethod.raw_arg).
+
+## Compare the client viewport, not the preview canvas
+
+At physical viewport840 the preview's outer 16px gutter and 1px window border
+leave a client width806. The full app client is840. After a 230px rail and
+18px main padding on each side, their tab rows are540 and574. Windows fonts
+made only the preview shrink, producing false size differences.
+`tests/parity_reference_runtime.cjs` reproduces the mismatch and requires equal
+actual titlebar widths in both themes at840/1280. The harness resizes only the
+reference frame width, retaining its border and height; source mock styles and
+interior controls are unchanged.
+
+Count specifications with PARITY_THEME set: the unfiltered170 definitions
+include10 entries explicitly owned by the opposite theme. Each actual cell has
+160 relevant entries, including14 default behavior assertions. Do not report
+the unfiltered catalog as executed per-cell coverage.

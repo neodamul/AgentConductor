@@ -11,7 +11,9 @@ fn the_ui_matches_the_approved_design_mock_to_the_pixel() {
                 .env("PARITY_THEME", theme)
                 .env("PARITY_WIDTH", width.to_string());
             if let Ok(dir) = std::env::var("PARITY_OUT") {
-                command.arg("--out").arg(format!("{dir}/{theme}-{width}"));
+                command
+                    .arg("--out")
+                    .arg(std::path::Path::new(&dir).join(format!("{theme}-{width}")));
             }
             let output = command
                 .output()

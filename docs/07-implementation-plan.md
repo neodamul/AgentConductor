@@ -2984,3 +2984,12 @@ of evaluating reload and sleeping 1200ms. No comparison tolerance changes.
 - [x] Task: Windows-only junction fixture uses a static raw cmd command, quoted environment variables and disabled delayed expansion; product code unchanged.
 - [ ] Verify: fresh strict matrix and complete Node harness; native Windows junction/Explorer execution must be established by the runner.
 - [ ] Completed: #420 stays open until full evidence, platform receipts and cleanup are complete.
+
+### Windows parity fixture consistency — GitHub #420
+Trace: R-210 / R-211 / UC-202 / UC-203 / QAS-209 / QAS-210 / DD-222 / DD-223.
+
+- [x] Red: Windows job126912839758 proves the junction command syntax error, mixed path separators and 23 narrow tab differences; root reference client width is 806 versus app840. The direct client-width regression reproduces 806/840 on macOS too.
+- [x] Task: use a static raw cmd command for the junction and native Path::join for per-cell output.
+- [x] Task: align only the reference frame client width, preserving approved interior CSS, frame height and pixel tolerances; direct actual app/mock probes pass at both widths/themes.
+- [ ] Verify: fresh strict matrix and Node harness after alignment; Windows must prove the corrected junction and viewport on its runner.
+- [ ] Completed: do not close #420 until these platform failures are resolved.

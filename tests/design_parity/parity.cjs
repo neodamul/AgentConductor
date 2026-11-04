@@ -33,7 +33,13 @@ const MEASURE = (sel, index, props, mark, rel) => `(() => { const e = [...docume
   return o; })()`;
 
 async function visit(browser, side, spec) {
-  if (side === 'mock') { await browser.goto('about:blank'); await browser.goto(MOCK + (spec.url || '?theme=light#0').replace('theme=light', 'theme=' + THEME)); } else {
+  if (side === 'mock') {
+    await browser.goto('about:blank'); await browser.goto(MOCK + (spec.url || '?theme=light#0').replace('theme=light', 'theme=' + THEME));
+    // The preview canvas has padding and a frame border; compare the same native client width.
+    await browser.eval(`(() => { const frame=document.querySelector('.win'); if(!frame)throw Error('reference window missing');
+      frame.style.maxWidth='none'; frame.style.width=(innerWidth+frame.offsetWidth-frame.clientWidth)+'px';
+      if(frame.clientWidth!==innerWidth)throw Error('reference client width does not match viewport'); })()`);
+  } else {
     await browser.goto(APP); await browser.eval(`sessionStorage.setItem('SIM_PRESET', ${JSON.stringify(PRESET + (spec.setup || ''))})`);
     await browser.goto(APP);
   }
