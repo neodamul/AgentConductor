@@ -3280,3 +3280,11 @@ Trace: R-35 / DD-37 / DD-41.
 - [ ] Completed: merged to main; other files over 300 lines remain under #472 (the native UI probe, quota terminal, test support and room.js lines).
 
 Trace: R-35 / DD-37 / DD-41.
+
+### Source policy clarification — GitHub #472
+
+- [x] Plan and task: restore the user-required 300-line target and bug-first priority to the goal and architecture documents.
+- [x] Verify: the existing 500-line gate is described as transitional; no global compliance claim is made.
+- [ ] Complete: validate architecture references, merge this documentation unit, then finish the remaining splits and change the gate.
+
+Trace: R-35 / BG-05 / SF-12 / QAS-12 / DD-41.
