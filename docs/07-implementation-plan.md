@@ -3203,3 +3203,11 @@ Trace: R-43 / UC-35 / QAS-36 / DD-230.
 - [ ] Completed: merged to main; 0.1.60 backport on request.
 
 Trace: R-43 / UC-34 / QAS-35 / DD-229.
+
+### 300-line limit: release smoke split — GitHub #472
+
+- [x] Plan: `src/release_smoke.rs` (453 lines) keeps `run_smoke` and the command helpers (152); package validation moves to `release_smoke/package.rs` (75) and the end-to-end workflow case to `release_smoke/workflow.rs` (243). Behavior and the public API (`validate_package`, `ValidatedPackage`, `run_smoke`) are unchanged.
+- [x] Verify: `tests/release_smoke.rs`, `source_layout`, `architecture_trace`, Clippy.
+- [ ] Completed: merged to main; other files over 300 lines remain under #472.
+
+Trace: R-35 / DD-41.
