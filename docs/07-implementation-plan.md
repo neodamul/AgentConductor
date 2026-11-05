@@ -3211,3 +3211,11 @@ Trace: R-43 / UC-34 / QAS-35 / DD-229.
 - [ ] Completed: merged to main; other files over 300 lines remain under #472.
 
 Trace: R-35 / DD-41.
+
+### 300-line limit: cooperative directives split — GitHub #472
+
+- [x] Plan: `src/cooperative.rs` (436 lines) keeps the public operations (`worker_address`, `issue`, `poll`, `exit_directive`, `acknowledge`) at 227 lines; the persisted shapes move to `cooperative/types.rs` (69) and the transaction helpers to `cooperative/ledger.rs` (156). Public paths (`cooperative::Directive`, `Address`, `State`, …) and behavior are unchanged.
+- [x] Verify: `tests/cooperative*.rs`, `source_layout`, `architecture_trace`, Clippy.
+- [ ] Completed: merged to main; other files over 300 lines remain under #472.
+
+Trace: R-35 / DD-37 / DD-41.
