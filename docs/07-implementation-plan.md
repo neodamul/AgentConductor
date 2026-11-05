@@ -3146,3 +3146,11 @@ Trace: R-43 / UC-34 / QAS-35 / DD-229.
 - [ ] Completed: merged to main; GitHub #514 closes with the 0.1.59 release.
 
 Trace: R-185 / UC-202 / DD-222.
+
+### Messenger design review fixes — GitHub #515, #519
+
+- [x] Plan: Codex's review of DD-229/DD-230 (seven findings) is applied: an explicit event catalogue schema and rows; actionable notices exempt from the throttle; run-bound collision-safe codes; `identity` flag on channel fields and one sanitizer covering `talkers`; the `Incoming` message contract for phase 3; a durable inbox so no message is lost while a chat is in flight; own-message recognition by authenticated identity.
+- [x] Verify: `architecture_trace`; Codex re-reviews before #518 and #519 implementation treats the design as approved.
+- [ ] Completed: implementation in #518, #519.
+
+Trace: R-43 / UC-34 / QAS-35 / DD-229 / DD-230.
