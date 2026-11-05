@@ -3107,6 +3107,13 @@ integrating #504's step-tab correction. `cargo fmt --all -- --check` and
 `git diff --check` also pass. The complete Node harness and native Windows
 acceptance remain pending; no platform-wide completion is claimed.
 
+#420 latest-main receipt: current main `29959385` is integrated at `eea275ad`.
+It adds the #472 MCP-import module split and plan record, with no UI changes.
+Focused `architecture_trace`, `source_layout`, and `mcp_imports` suites pass
+(10 tests); formatting and whitespace checks pass. The strict visual matrix
+receipt remains the earlier post-#504 run at `4c2aaabe`; it was not rerun for
+this unrelated extraction. Windows acceptance remains pending.
+
 ### Source bound: quota display — GitHub #472
 
 - [x] Plan: split `src/quota/display.rs` (409 lines) with no behaviour change: local time helpers (`display/clock.rs`) and window labels (`display/labels.rs`); `display.rs` keeps the badge and row builders (295 lines) and the public paths are unchanged.
