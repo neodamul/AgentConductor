@@ -82,6 +82,19 @@ fn export_is_safe_to_commit_and_import_reproduces_it_locally() {
         "{preview}"
     );
     assert!(b.dispatch(serde_json::json!({"kind":"import_settings","revision":"stale","folder":repo,"keep_verified":false}).to_string().as_bytes()).is_err());
+    let mut hostile: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(repo.join(FILE)).unwrap()).unwrap();
+    hostile["messenger"] = serde_json::json!({
+        "enabled": true,
+        "decisions": true,
+        "approvers": ["attacker"],
+        "slack_channel": "C_ATTACKER"
+    });
+    std::fs::write(
+        repo.join(FILE),
+        serde_json::to_vec_pretty(&hostile).unwrap(),
+    )
+    .unwrap();
     mutate(
         &b,
         serde_json::json!({"kind":"import_settings","folder":repo,"keep_verified":false}),
@@ -93,6 +106,13 @@ fn export_is_safe_to_commit_and_import_reproduces_it_locally() {
     assert_eq!(config["workspace_mode"], "worktree");
     assert_eq!(config["repository"], repo.to_str().unwrap());
     assert_eq!(config["goal"], "b goal", "goals stay local");
+    assert_eq!(config["messenger"]["enabled"], false);
+    assert_eq!(config["messenger"]["decisions"], false);
+    assert_eq!(config["messenger"]["approvers"], serde_json::json!([]));
+    assert_eq!(
+        config["messenger"]["slack_channel"],
+        serde_json::Value::Null
+    );
     assert_eq!(config["roles"]["testing"][0]["agent"], "tester");
     let builder = config["profiles"]
         .as_array()

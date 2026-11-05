@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Messenger notices are limited to ten a minute per workspace so a runaway loop cannot flood a channel: the rest are counted and reported once as "N more events were not sent" with the next notice. Notices that carry an answer code (tool requests) are never limited (GitHub #518).
+- Shared workspace files cannot activate messenger delivery or decisions, assign approvers, or choose a Slack reply channel on export or import (#523).
 - The coordinator chat shows what the coordinator is doing: while it works, the single "working" bubble lists the newest tool calls and text of the CLI (Claude Code and Codex output, at most eight short lines) and the age of its last output ("last output 12s ago" or "no output yet"), so a stalled run is distinguishable from a slow one. The one-second timer updates only the status line, and a reader who scrolled up is not pulled down (GitHub #514, also released in 0.1.59).
 
 - Jira items are called issues everywhere they are shown ("Jira 이슈" / "Jira issue": the import button, the reference dialog, the import error text and the documents), not stories.
