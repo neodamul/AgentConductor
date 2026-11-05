@@ -7,6 +7,8 @@ const attentionBox = selector => `(() => { const e=document.querySelector(${JSON
 // The mock has no disabled step; its tabs are all reachable, so the app is compared with a run available (disabled steps dim by design).
 const STEP_ONE = "document.querySelector('#start-step-tabs [role=tab]').click();";
 const STEPS_ENABLED = "SIM.home.run_available=true;SIM.home.run_state='running';";
+// The reference window has a decorative border and outer margin; compare equal inner widths.
+const STEP_REFERENCE_WIDTH = "document.querySelector('.win').style.cssText='width:calc(100vw + 2px);max-width:none'";
 module.exports = [
   ...require('./typography.cjs'),
   ...require('./choice_spec.cjs'),
@@ -56,13 +58,13 @@ module.exports = [
     app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()", selector: '.session-choice .session-status' } },
   // Step groups (GitHub #408): a subdued background per Prepare / Run / Finish set with a 14px group icon.
   ...['prepare', 'run', 'finish'].map((group, index) => ({ name: `step-group-${group}`, props: ['borderTopLeftRadius', 'backgroundColor'], keys: ['width', 'height', 'borderTopLeftRadius', 'backgroundColor'],
-    mock: { url: '?theme=light#0', selector: '.tabs .step-group', index }, app: { setup: STEPS_ENABLED, run: STEP_ONE, selector: `#start-step-tabs .step-group[data-group=${group}]` } })),
+    mock: { url: '?theme=light#0', run: STEP_REFERENCE_WIDTH, selector: '.tabs .step-group', index }, app: { setup: STEPS_ENABLED, run: STEP_ONE, selector: `#start-step-tabs .step-group[data-group=${group}]` } })),
   // #473: every tab is as wide as its caption and sits where the mock puts it.
   ...[0, 1, 2, 3, 4, 5].flatMap(index => [
     { name: `step-tab-box-${index}`, props: [], keys: ['width', 'height'],
-      mock: { url: '?theme=light#0', selector: '.tabs .tab', index }, app: { setup: STEPS_ENABLED, run: STEP_ONE, selector: '#start-step-tabs [role=tab]', index } },
+      mock: { url: '?theme=light#0', run: STEP_REFERENCE_WIDTH, selector: '.tabs .tab', index }, app: { setup: STEPS_ENABLED, run: STEP_ONE, selector: '#start-step-tabs [role=tab]', index } },
     { name: `pos-step-tab-${index}`, props: [], keys: ['dt', 'dl'], pixel: false,
-      mock: { url: '?theme=light#0', selector: '.tabs .tab', index, rel: '.titlebar' }, app: { selector: '#start-step-tabs [role=tab]', index, rel: 'header.titlebar' } }]),
+      mock: { url: '?theme=light#0', run: STEP_REFERENCE_WIDTH, selector: '.tabs .tab', index, rel: '.titlebar' }, app: { selector: '#start-step-tabs [role=tab]', index, rel: 'header.titlebar' } }]),
   // #468: the About dialog, opened by update (centered, with the update tag). Captured like every other box (lifted to a fixed
   // spot, so raster phase is identical on both sides); the mock re-centres open dialogs itself, so its observers are detached.
   { name: 'about-dialog', props: [], keys: ['width', 'height'],

@@ -2886,6 +2886,16 @@ Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Source bound: native guard session identifiers — GitHub #472
+
+- [x] Plan: separate OS-backed session identifier generation from the native guard while preserving its public API and entropy source.
+- [x] Red: the focused layout test reports 313 lines in `src/native_guard.rs` against the 300-line area limit.
+- [x] Task: move UUID generation and its existing OS random implementation into a private session module; retain the original public path.
+- [x] Verify: session ID shape and uniqueness, guard decisions, session leases, architecture trace and source layout pass locally; all-target Clippy passes.
+- [ ] Completed: full regression and platform verification, merge the issue-linked PR; the wider #472 limit remains open.
+
+Trace: R-35 / DD-37 / DD-41.
+
 ### Manual model choice in the task inspector — GitHub #430, inspector unit
 
 - [x] Red: `register_model` is missing (`recovery.rs`) and the inspector model offers no manual entry (`choice_controls/inspector_model.cjs`).
@@ -2929,6 +2939,9 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Red: `step_tab_widths_runtime.cjs` fails with 31–94 px of free space per tab; parity entries for every tab box, position and number box (width/height/dl/dt, pixel diff) added.
 - [x] Task: tabs and groups take their natural width and shrink only when the row is full; tab, number, group and selected-tab boxes follow the mock (16 px number, 3 px padding, 7 px gap, 2 px selected top border, surface fill). The approved mock's groups and tabs changed the same way, by the user's word 'app or mock'.
 - [x] Verify: light/dark × 1280/840 parity 0 (159/156 entries), including pixel crops of every tab and group; the dimmed disabled step is an app-only state the mock does not show, compared with steps enabled.
+- [x] Follow-up red: at narrow widths the mock did not shrink and individual app tabs had no full-caption hover title; `step_tabs_geometry.cjs` reproduces both.
+- [x] Task: shrink the mock like the app, add localized per-tab titles and compare equal inner window widths without changing pixel tolerances.
+- [ ] Verify and complete: full local parity, Windows font rendering, merge the issue-linked PR and close #473.
 
 Trace: R-210 / UC-202 / DD-222.
 
@@ -2949,6 +2962,17 @@ Trace: R-215 / UC-207 / QAS-214 / DD-227.
 - [ ] Verify: Node UI suite and strict design parity on macOS; Windows through CI.
 
 Trace: R-210 / UC-202 / DD-222.
+
+## #472 process ownership and supervision increment
+
+Trace: R-35 → BG-05 → SF-12 → C-04/NFR-07 → QAS-12 → DDR-04/DDR-06 → DD-41.
+
+- [x] Plan: inspect public callers, persistent owner records, control cancellation and platform boundaries; preserve existing public paths and trust/approval behavior.
+- [x] Task / Red: `tests/process_layout.rs` rejects the original 467-line facade.
+- [x] Task / Green: separate the facade (119 lines), ownership (82) and supervision (276), with no new runtime dependency. Moved bodies match the original except imports/visibility.
+- [x] Verify: 27 focused local tests pass; one authenticated Claude metadata test remains explicitly ignored.
+- [x] Verify: full local `cargo test --all-targets --locked --no-fail-fast` on source `0412e485` exits 0: 844 passed, 0 failed, 15 explicitly ignored across 272 suites. Main-baseline light/dark parity (319.40s), Node harness, Clippy warnings-denied, formatting and whitespace checks pass. This is not a four-cell #420 or live-provider claim.
+- [ ] Complete: publish the separate main-based area PR and verify its platform checks before integration. Global 300-line policy rollout remains deferred until every area complies.
 
 ### About dialog integer geometry — GitHub #482
 
@@ -3035,6 +3059,22 @@ Trace: R-210 / UC-202 / DD-222.
 
 - [x] Plan: split `src/messenger.rs` (389 lines) with no behaviour change: the per-workspace webhook URL and named secrets move to `messenger/secrets.rs` (107 lines), `messenger.rs` keeps settings, payloads and delivery (288 lines); the public paths are re-exported unchanged.
 - [x] Verify: full local `cargo test --all-targets --locked`, warning-denied Clippy.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Source bound: self-update — GitHub #472
+
+- [x] Plan: split `src/update.rs` (458 lines) with no behaviour change: download, checksum and unpack move to `update/install.rs` (81 lines); swapping the running executable and cleaning up after the restart move to `update/replace.rs` (129 lines); `update.rs` keeps release lookup, status and restart (263 lines). The public paths (`verify`, `replace`, `leftover`, `after_restart`) are re-exported unchanged.
+- [x] Verify: `tests/update.rs`, `tests/update_downloads.rs`, `tests/update_blockers.rs`, library unit tests, architecture trace, warning-denied Clippy; the full suite runs in CI.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Source bound: tool-call guard — GitHub #472
+
+- [x] Plan: split `src/guard.rs` (458 lines) with no behaviour change: file identity and alias checks (including the Windows handle identity) move to `guard/identity.rs` (94 lines), path spellings and input-shape helpers to `guard/spelling.rs` (60 lines), and the Grep/Glob decision to `guard/search.rs` (84 lines); `guard.rs` keeps the policy type, workspace checks and `classify` (241 lines). `crate::guard::windows_identity` stays available on Windows.
+- [x] Verify: guard policy, command-form, guarded-control, native-guard coordinator and env-guard tests on macOS, warning-denied Clippy; the Windows build and tests run in CI (not compiled locally).
 - [ ] Completed: the remaining files over 300 lines (tracked on #472).
 
 Trace: R-210 / UC-202 / DD-222.
