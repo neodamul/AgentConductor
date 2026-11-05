@@ -190,6 +190,8 @@ fn workspace_menu_opens_the_messenger_dialog() {
         "start-messenger-template",
         "start-messenger-goal",
         "start-messenger-test",
+        "start-messenger-conversation",
+        "start-messenger-talkers",
     ] {
         assert!(dialog.contains(&format!("id=\"{id}\"")), "missing {id}");
     }

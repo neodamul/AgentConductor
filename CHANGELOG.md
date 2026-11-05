@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- **Talk to the coordinator from the messenger** (#519): listed talkers ask the read-only coordinator questions in the Slack channel or company relay and get the answer back (at most three messages). Talkers are separate from approvers, a message is only a question, the first poll skips earlier history, limits (2,000 characters, six messages per ten minutes, queue of five) are answered with a short reply, and it only reads while the desktop is open (30 s in a conversation, 2 min idle). Exported files never carry talkers or the toggle.
 - Shared workspace files cannot activate messenger delivery or decisions, assign approvers, or choose a Slack reply channel on export or import (#523).
 - The coordinator chat shows what the coordinator is doing: while it works, the single "working" bubble lists the newest tool calls and text of the CLI (Claude Code and Codex output, at most eight short lines) and the age of its last output ("last output 12s ago" or "no output yet"), so a stalled run is distinguishable from a slow one. The one-second timer updates only the status line, and a reader who scrolled up is not pulled down (GitHub #514, also released in 0.1.59).
 

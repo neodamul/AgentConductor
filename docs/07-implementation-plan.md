@@ -3167,6 +3167,7 @@ Trace: R-43 / UC-35 / QAS-36 / DD-230.
 
 - [x] Plan: while the desktop runs and the conversation is on, each request tick does at most one step: post the finished answer (split in at most three messages), hand the next queued message to the read-only coordinator chat as an untrusted operator turn (never while another chat answers), or start a poll on one short-lived thread (30 s while a conversation is going on, 120 s idle; `AGENTCONDUCTOR_MESSENGER_POLL_SECONDS` only for tests). The first poll only learns where the channel stands, so earlier history is not answered; rejections and queue places are answered with catalogue messages; the inbox (`messenger-conversation.json`) survives restarts; nothing polls while the desktop is closed.
 - [x] Verify: `tests/unit/messenger_talk.rs` (first poll, acknowledgement, rejection, interval, persistence), `tests/messenger_conversation_flow.rs` (fake Slack and coordinator: a talker's question is answered in the channel, a stranger and the history are ignored, the prompt marks the text untrusted), Clippy.
-- [ ] Completed: settings dialog (conversation, talkers, hints), manuals, CHANGELOG.
+- [x] Settings and docs: the messenger dialog has the conversation toggle and the talkers list with a hint; the one identity sanitizer (`clear_shared_authority`) also clears `conversation` and `talkers` on export and import; EN and KO manuals and the CHANGELOG describe it.
+- [ ] Completed: merged to main; 0.1.60 backport on request.
 
 Trace: R-43 / UC-35 / QAS-36 / DD-230.
