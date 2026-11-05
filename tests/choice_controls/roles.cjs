@@ -24,7 +24,7 @@ const preset=`SIM.home.config.profiles[0].catalog.models=['shared','opus'];SIM.h
   change(f,'__inherit');await wait();check('profile default is inherited without role override',!Object.hasOwn(acRoleChoices.read(document.getElementById('start-roles')).development[0],'fallback'));
   check('inherited fallback profile is aipro',fm.dataset.modelAgent==='aipro');
   const coordinator=document.getElementById('start-coordinator');change(coordinator,'aipro');await wait();check('unsupported catalog keeps coordinator default enabled',!document.getElementById('start-coordinator-model').disabled); 
-  acChoices.open(fm);document.querySelector('#ac-choice-menu [data-value=__manual]').click();
+  acChoices.open(fm);await wait();document.querySelector('#ac-choice-menu [data-value=__manual]').click();
   const input=document.querySelector('#ac-choice-menu input');input.value='internal-model';input.dispatchEvent(new Event('input'));document.querySelector('#ac-choice-menu form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
   const deadline=Date.now()+5000;while(fm.value!=='internal-model'&&Date.now()<deadline)await new Promise(r=>setTimeout(r,20));
   check('manual model registers through native catalog request',SIM.log.some(e=>e.kind==='catalog'&&e.p.agent==='aipro'&&e.p.catalog.origin==='manual'));
