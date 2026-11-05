@@ -2958,3 +2958,13 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: three consecutive macOS CI runs without an `about-dialog` difference; GitHub #482 closed.
 
 Trace: R-215 / UC-207 / QAS-214 / DD-227.
+
+### Queued planning-dialog close event — GitHub #484
+Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
+
+- [x] Plan: inspect both generation/import callers and shared confirmation; preserve selection evidence, revision/context guards and native form behavior. Reopen #484 because #485 added diagnostics only.
+- [x] Red: the VM regression delivers the previous close event while the next dialog is open; the actual assembled Chrome flow reproduces the CI state (confirm return value, enabled controls, no save/baseline/read_plan request).
+- [x] Task: settle each submitted or cancelled decision in its own invocation; ignore stale close events while reopened. VM order regression and existing confirmation guards pass; real Chrome light/dark × 840/1280 all pass with the forced late event.
+- [x] Verify: deterministic VM regression and existing confirmation guards pass; actual browser light/dark × 840/1280 passes in ten consecutive local runs with two owned CPU-load workers (40 cases), both workers terminated afterward.
+- [ ] Verify: complete local regression before review.
+- [ ] Completed: isolated linked main-based PR, AgentMemory/wiki receipts, integration and actual platform acceptance.
