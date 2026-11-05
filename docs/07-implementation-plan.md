@@ -2967,6 +2967,14 @@ Trace: R-215 / UC-207 / QAS-214 / DD-227.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Windows fallback test contention — GitHub #480
+
+- [x] Plan: the Windows job log of #469 showed nine parallel workflow tests starving each other on a 2-vCPU runner (one finished in 5 s, others ran longer than 60 s and hit their bounded waits; all passed on re-run); the waits measured the runner, not the product.
+- [x] Task: `tests/fallback.rs` runs at most two workflow tests at a time through one shared semaphore; no assertion or budget changed.
+- [ ] Verify: three consecutive Windows CI runs without `worker did not start` or the 60 s fallback-chain timeout; GitHub #480 closed after that.
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### Source bound: quota display — GitHub #472
 
 - [x] Plan: split `src/quota/display.rs` (409 lines) with no behaviour change: local time helpers (`display/clock.rs`) and window labels (`display/labels.rs`); `display.rs` keeps the badge and row builders (295 lines) and the public paths are unchanged.
