@@ -2958,3 +2958,14 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: three consecutive macOS CI runs without an `about-dialog` difference; GitHub #482 closed.
 
 Trace: R-215 / UC-207 / QAS-214 / DD-227.
+
+## #472 Cocoa callback module increment
+
+Trace: R-35 → BG-05 → SF-12 → C-04/NFR-07 → QAS-12 → DDR-04/DDR-06 → DD-41.
+
+- [x] Plan: preserve the Cocoa facade, callback ABIs, trust checks, request limit, reply block lifetime, main-thread delivery and existing native close/menu behavior.
+- [x] Red: `tests/cocoa_layout.rs` rejects the original 494-line Cocoa facade.
+- [x] Task: move WebKit callback responsibilities into a private child module; facade 292 lines, callbacks 206 lines. The moved callback bodies and ABI declarations match the original byte-for-byte except the required module visibility and import.
+- [x] Verify: Cocoa layout, architecture and close-window tests pass locally (9 tests); the live Claude metadata test remains explicitly ignored. Default macOS all-target Clippy with warnings denied passes.
+- [ ] Verify: full local regression and Windows platform checks; no native window or live-provider claim.
+- [ ] Complete: separate issue-linked PR and recorded cross-platform evidence. Global 300-line enforcement follows completion of all areas.
