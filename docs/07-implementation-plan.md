@@ -3236,6 +3236,19 @@ Trace: R-35 / DD-37 / DD-41.
 
 Trace: R-35 / DD-37 / DD-41.
 
+### Step card scroll, check rows and the Codex logo — GitHub #543, #544, #545
+
+- [x] Plan: the step cards scroll inside the card (header and footer sticky, margins painted so nothing shows through), the main area no longer scrolls; `.check-row input` stops growing; the white tile path of the Codex logo is hidden in the app and in the approved mock together.
+- [x] Verify: `tests/step_card_css.rs`, browser check of the scroll and the label offsets, `design_parity` (both themes), Clippy.
+- [ ] Completed: merged to main; #544 is also backported to 0.1.60.
+### Popup focus ring — GitHub #546
+
+- [x] Plan: `showModal()` marks the dialog `quiet-focus`: the automatically focused control keeps the focus (confirmation dialogs still focus Cancel) but shows no ring until the first key press inside the dialog or until it closes. One script (`dialog_focus.js`) in the Workspace and Room documents.
+- [x] Verify: `tests/dialog_focus_css.rs`, `planning_confirmation_browser.cjs` (Cancel stays focused), browser check (Messenger dialog, Goal list panel, Settings, Update: no ring until a key is pressed), Clippy.
+- [ ] Completed: merged to main; backported to 0.1.60 with #544.
+
+Trace: UI387-R5 / R-52 / DD-41.
+
 ### 300-line limit: coordinator arguments split — GitHub #472
 
 - [x] Plan: `src/coordinator.rs` (351 lines) keeps the verdict/proposal types and the JSON runners (266); the read-only and planning argument builders move to `coordinator/args.rs` (88). Public paths and behavior are unchanged.

@@ -60,7 +60,7 @@
 .update-button{font-size:14px;line-height:1;padding:4px 8px;color:var(--accent-ink);background:var(--accent);border-color:var(--accent);border-radius:999px}.update-button:hover{background:var(--accent)}.update-notes{word-break:break-all;user-select:text}
 .messenger-events{border:1px solid var(--line,var(--line));border-radius:8px;padding:6px 12px;margin:8px 0;display:grid;grid-template-columns:1fr 1fr;gap:2px 16px}
 .check-row{display:flex;align-items:center;gap:8px;font-weight:500}
-.check-row input{width:auto;margin:0}
+.check-row input{width:auto;margin:0;flex:none}
 #start-settings-button{display:grid;place-items:center;width:32px;height:32px;flex:0 0 32px;font-size:26px;line-height:1;padding:0;cursor:pointer}
 .messenger-decisions{border:1px solid var(--line,var(--line));border-radius:8px;padding:6px 12px 10px;margin:10px 0}
 
@@ -413,3 +413,13 @@ header.titlebar #start-workspace-menu{font-size:13px}#start-mcp-controls.source-
 #start-goal-info .goal-info-content{flex:1;min-width:0;height:30px;display:flex;align-items:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 
 .startup-main{padding-top:14px}.startup-heading h1{letter-spacing:-.2px}
+
+/* #543: only the card body scrolls; the Goal header, the stepper, the card header and its footer stay put. */
+.startup-main{display:flex;flex-direction:column;overflow:hidden}
+.startup-main>*{flex:none}
+.startup-main>.step-card:not([hidden]){flex:1 1 auto;min-height:0;overflow:auto}
+/* The card keeps its 17px padding; header and footer reach into it (negative margin, same padding) so nothing scrolls through the gap. */
+.step-card>.section-title,#start-panel-workspace>.cardhead{position:sticky;top:-17px;margin-top:-17px;padding-top:17px}
+.step-card>.startup-actions,.step-card>.startup-review-footer{position:sticky;bottom:-17px;z-index:2;background:var(--surface);margin-bottom:-17px;padding-bottom:17px}
+.step-card>.section-title,#start-panel-workspace>.cardhead{box-shadow:0 14px 0 var(--surface)}
+.step-card>.startup-actions,.step-card>.startup-review-footer{box-shadow:0 -20px 0 var(--surface)}
