@@ -13,6 +13,8 @@
 /* DD-40: application icons share the avatar box. */
 img.app-icon{object-fit:contain;background:transparent;padding:0}
 .app-icon>svg.brand-logo{display:block;flex:none;width:100%;height:100%}
+/* #545: the Codex logo ships a white tile; without it the glyph sits on the avatar like Claude's. */
+.app-icon>svg.brand-logo>path[fill="#fff"]{display:none}
 
 .session-body{flex:1;min-width:0}.name-row{display:flex;align-items:center;justify-content:space-between;gap:6px;min-width:0}.session .name-row .name{margin-bottom:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.session .name-row{margin-bottom:5px}.quota-badge{flex-shrink:0;font-size:11px;font-weight:650;font-variant-numeric:tabular-nums;line-height:1.5;white-space:nowrap;padding:1px 3px;border-radius:4px;background:var(--fill);color:var(--soft)}.profile-name{flex:1}.profile-name .name-row strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 

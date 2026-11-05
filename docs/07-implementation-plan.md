@@ -3235,3 +3235,11 @@ Trace: R-35 / DD-37 / DD-41.
 - [ ] Completed: merged to main; other files over 300 lines remain under #472.
 
 Trace: R-35 / DD-37 / DD-41.
+
+### Step card scroll, check rows and the Codex logo — GitHub #543, #544, #545
+
+- [x] Plan: the step cards scroll inside the card (header and footer sticky, margins painted so nothing shows through), the main area no longer scrolls; `.check-row input` stops growing; the white tile path of the Codex logo is hidden in the app and in the approved mock together.
+- [x] Verify: `tests/step_card_css.rs`, browser check of the scroll and the label offsets, `design_parity` (both themes), Clippy.
+- [ ] Completed: merged to main; #544 is also backported to 0.1.60.
+
+Trace: UI387-R5 / R-52 / DD-41.
