@@ -2929,6 +2929,9 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Red: `step_tab_widths_runtime.cjs` fails with 31–94 px of free space per tab; parity entries for every tab box, position and number box (width/height/dl/dt, pixel diff) added.
 - [x] Task: tabs and groups take their natural width and shrink only when the row is full; tab, number, group and selected-tab boxes follow the mock (16 px number, 3 px padding, 7 px gap, 2 px selected top border, surface fill). The approved mock's groups and tabs changed the same way, by the user's word 'app or mock'.
 - [x] Verify: light/dark × 1280/840 parity 0 (159/156 entries), including pixel crops of every tab and group; the dimmed disabled step is an app-only state the mock does not show, compared with steps enabled.
+- [x] Follow-up red: at narrow widths the mock did not shrink and individual app tabs had no full-caption hover title; `step_tabs_geometry.cjs` reproduces both.
+- [x] Task: shrink the mock like the app, add localized per-tab titles and compare equal inner window widths without changing pixel tolerances.
+- [ ] Verify and complete: full local parity, Windows font rendering, merge the issue-linked PR and close #473.
 
 Trace: R-210 / UC-202 / DD-222.
 
