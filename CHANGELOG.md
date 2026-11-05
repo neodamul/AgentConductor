@@ -7,7 +7,6 @@ the GitHub Release notes for its tag.
 ## Unreleased
 
 - Step cards: only the card body scrolls; the Goal header, the stepper, the card header and the action footer stay in place (the plan no longer slides behind the header) (#543).
-- Messenger dialog: the text beside each check box is left-aligned next to the box (#544).
 - The Codex logo no longer has a white tile, so it sits on its avatar like Claude's without a gray ring (#545).
 - More than 20 pending tool requests no longer flood the messenger: 20 are announced at a time and the rest follow in order as answers free slots (#518).
 - **Talk to the coordinator from the messenger** (#519): listed talkers ask the read-only coordinator questions in the Slack channel or company relay and get the answer back (at most three messages). Talkers are separate from approvers, a message is only a question, the first poll skips earlier history, limits (2,000 characters, six messages per ten minutes, queue of five) are answered with a short reply, and it only reads while the desktop is open (30 s in a conversation, 2 min idle). Exported files never carry talkers or the toggle.
