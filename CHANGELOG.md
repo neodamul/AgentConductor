@@ -7,6 +7,8 @@ the GitHub Release notes for its tag.
 ## Unreleased
 
 
+- Step cards: only the card body scrolls; the Goal header, the stepper, the card header and the action footer stay in place (the plan no longer slides behind the header) (#543).
+- The Codex logo no longer has a white tile, so it sits on its avatar like Claude's without a gray ring (#545).
 - Jira items are called issues everywhere they are shown ("Jira 이슈" / "Jira issue": the import button, the reference dialog, the import error text and the documents), not stories.
 - Agent cards show the dual-ring quota icon from the provider's windows; clicking it opens a popup with each window's remaining share, reset time, observation time and, on errors, the failure with a retry (#426).
 
