@@ -3078,3 +3078,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: the remaining files over 300 lines (tracked on #472).
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Source bound: git repository — GitHub #472
+
+- [x] Plan: split `src/git.rs` (436 lines) with no behaviour change: workspace snapshots, changed-path scope checks and candidate merges move to `git/snapshot.rs` (157 lines, with `Snapshot`); linked worktree creation and removal move to `git/worktrees.rs` (58 lines); `git.rs` keeps opening, command invocation, export and `git_path` (236 lines). `Repository` and `Snapshot` keep their public paths.
+- [x] Verify: git, git-head, scope-recovery, snapshot, worktree-cleanup and checkpoint tests, warning-denied Clippy; the full suite runs in CI.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
