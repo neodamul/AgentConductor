@@ -29,8 +29,16 @@ pub struct Inbox {
     pub queue: Vec<Queued>,
     /// Accepted turn times per sender, for the rate limit.
     pub turns: BTreeMap<String, Vec<u64>>,
-    /// The message whose answer is still being produced.
+    /// The message whose answer is still being produced, and the chat file that will hold it.
     pub in_flight: Option<Queued>,
+    #[serde(default)]
+    pub chat: Option<String>,
+    /// False until the first poll has skipped the channel's earlier history.
+    #[serde(default)]
+    pub started: bool,
+    /// Seconds of the last accepted message; a recent one keeps the poll interval short.
+    #[serde(default)]
+    pub last_talk: u64,
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -80,6 +88,7 @@ pub fn accept(settings: &Settings, inbox: &mut Inbox, message: &Incoming, now: u
         return Verdict::Reject("messenger.reject.queue_full");
     }
     times.push(now);
+    inbox.last_talk = now;
     inbox.queue.push(Queued {
         id: message.id.clone(),
         sender: message.sender.clone(),

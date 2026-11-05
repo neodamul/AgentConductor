@@ -3150,3 +3150,11 @@ Trace: R-43 / UC-35 / QAS-36 / DD-230.
 - [ ] Completed: worker and chat hand-off, settings dialog, manuals.
 
 Trace: R-43 / UC-35 / QAS-36 / DD-230.
+
+### Messenger conversation: desktop worker and chat hand-off (DD-230) — GitHub #519
+
+- [x] Plan: while the desktop runs and the conversation is on, each request tick does at most one step: post the finished answer (split in at most three messages), hand the next queued message to the read-only coordinator chat as an untrusted operator turn (never while another chat answers), or start a poll on one short-lived thread (30 s while a conversation is going on, 120 s idle; `AGENTCONDUCTOR_MESSENGER_POLL_SECONDS` only for tests). The first poll only learns where the channel stands, so earlier history is not answered; rejections and queue places are answered with catalogue messages; the inbox (`messenger-conversation.json`) survives restarts; nothing polls while the desktop is closed.
+- [x] Verify: `tests/unit/messenger_talk.rs` (first poll, acknowledgement, rejection, interval, persistence), `tests/messenger_conversation_flow.rs` (fake Slack and coordinator: a talker's question is answered in the channel, a stranger and the history are ignored, the prompt marks the text untrusted), Clippy.
+- [ ] Completed: settings dialog (conversation, talkers, hints), manuals, CHANGELOG.
+
+Trace: R-43 / UC-35 / QAS-36 / DD-230.

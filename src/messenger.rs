@@ -9,6 +9,7 @@ pub mod inbound;
 mod secrets;
 mod send;
 mod slack;
+pub mod talk;
 mod webhook;
 pub use channel::{Capabilities, Channel, Incoming, Kind};
 pub use secrets::{save_secret, save_secret_value, secret, secret_value, status, validate_url};
