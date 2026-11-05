@@ -1,22 +1,23 @@
 /* #468: the About dialog, matched to docs/design/approved-goal-ui (#about-dialog). */
-#about-dialog{width:600px;max-width:92vw;max-height:88vh;overflow:auto;box-sizing:border-box;padding:22px 24px 18px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);box-shadow:0 15px 60px rgba(0,0,0,.2);font:13px/1.7 -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+#about-dialog{width:600px;max-width:92vw;max-height:88vh;overflow:auto;box-sizing:border-box;padding:22px 24px 18px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);box-shadow:0 15px 60px rgba(0,0,0,.2);font:13px/22px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 #about-dialog::backdrop{background:#0004}
 #about-dialog .about-close{position:absolute;top:10px;right:10px;padding:1px 6px;background:transparent;border:0;font-family:Arial;font-size:20px;line-height:normal;color:var(--soft);cursor:pointer}
 #about-dialog .about-head{display:flex;align-items:center;gap:12px}
 #about-dialog .about-mark{display:flex;align-items:center;justify-content:center;width:44px;height:44px;flex:none;border-radius:6px;background:var(--brand-mark);color:var(--attention-ink);font-weight:700;font-size:20px}
-#about-dialog .about-head h2{margin:0;font-size:18px;line-height:1.2;font-weight:700;color:var(--ink)}
+#about-dialog .about-head h2{margin:0;font-size:18px;line-height:22px;font-weight:700;color:var(--ink)}
 #about-dialog .about-meta{color:var(--soft);font-size:12px}
 #about-dialog .about-tag{margin-left:auto;margin-right:24px;font-size:11px;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent-text);white-space:nowrap}
-#about-dialog p{margin:12px 0 0;font-size:13px;line-height:1.7;color:var(--ink)}
+#about-dialog p{margin:12px 0 0;font-size:13px;line-height:22px;color:var(--ink)}
 #about-dialog h3{font-weight:700;font-size:12px;margin:18px 0 6px;letter-spacing:.03em;text-transform:uppercase;color:var(--soft)}
 #about-dialog p.about-note{color:var(--soft);font-size:12px;margin:8px 0 0}
 #about-dialog .about-cli{display:grid;grid-template-columns:22px 92px 1fr auto;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);margin-top:6px}
 #about-dialog .about-cli b{font-size:13px}
+#about-dialog .about-cli .about-btn{min-width:64px}
 #about-dialog .about-logo{display:flex;width:22px;height:22px}
 #about-dialog .about-mono{color:var(--ink)}
-#about-dialog code{font:12px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+#about-dialog code{font:12px/17px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 #about-dialog .about-cli code{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:4px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;user-select:all}
-#about-dialog p.about-credit{font-size:12px;color:var(--soft);line-height:1.6}
+#about-dialog p.about-credit{font-size:12px;color:var(--soft);line-height:19px}
 #about-dialog .about-foot{display:flex;align-items:center;gap:10px;margin-top:18px;padding-top:12px;border-top:1px solid var(--line)}
 #about-dialog .about-foot span{flex:1;color:var(--soft);font-size:12px}
 #about-dialog .about-btn{border:1px solid var(--line);background:transparent;border-radius:6px;padding:6px 12px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}

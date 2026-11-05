@@ -2950,6 +2950,15 @@ Trace: R-215 / UC-207 / QAS-214 / DD-227.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### About dialog integer geometry — GitHub #482
+
+- [x] Plan: macOS CI showed ±1–2 level differences in a few hundred `about-dialog` pixels on some runs only; remove the fractional layout that makes the raster phase of rounded boxes unstable instead of adding any tolerance.
+- [x] Task: integer line-heights in the mock and the app (13px/22px text, 18px/22px title, 12px/17px code, 12px/19px credit) and a 64px minimum Copy button width; `verification.json` source hash refreshed.
+- [x] Verify: strict parity 0 differences in light/dark × 1280/840, About browser test, i18n/theme/layout contracts.
+- [ ] Completed: three consecutive macOS CI runs without an `about-dialog` difference; GitHub #482 closed.
+
+Trace: R-215 / UC-207 / QAS-214 / DD-227.
+
 ### Source bound: quota terminal — GitHub #472
 
 - [x] Plan: split `src/quota/terminal.rs` (493 lines) toward the 300-line bound with no behaviour change: screen recognition (`terminal/screens.rs`), `/usage` parsing (`terminal/parse.rs`) and the session driver (`terminal.rs`); public paths are re-exported unchanged.
