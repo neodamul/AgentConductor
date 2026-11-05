@@ -64,6 +64,7 @@
   "messenger.reject.rate": "Too many messages in 10 minutes; please wait a little.",
   "messenger.reject.queue_full": "The coordinator is busy and the queue is full; please try again later.",
   "messenger.ack.queued": "Queued (place {value1}); the coordinator is answering an earlier message.",
+  "messenger.reply.failed": "The coordinator could not answer that message; please try again.",
   "messenger.folded": "{n} more events were not sent because of the limit of 10 notices a minute.",
   "messenger.event.plan_ready": "plan ready for review",
   "messenger.event.waiting_approval": "candidate ready for review",

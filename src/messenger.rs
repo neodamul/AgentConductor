@@ -10,6 +10,7 @@ pub mod inbound;
 mod secrets;
 mod send;
 mod slack;
+pub mod talk;
 mod throttle;
 mod webhook;
 pub use channel::{Capabilities, Channel, Incoming, Kind};

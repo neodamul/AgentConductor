@@ -64,6 +64,7 @@
   "messenger.reject.rate": "10분 안에 메시지가 너무 많습니다. 잠시 후에 보내 주세요.",
   "messenger.reject.queue_full": "코디네이터가 바쁘고 대기열이 가득 찼습니다. 나중에 다시 보내 주세요.",
   "messenger.ack.queued": "대기열 {value1}번째입니다. 코디네이터가 앞선 메시지에 답하는 중입니다.",
+  "messenger.reply.failed": "코디네이터가 이 메시지에 답하지 못했습니다. 다시 보내 주세요.",
   "messenger.folded": "분당 10건 제한으로 알림 {n}건을 보내지 않았습니다.",
   "messenger.event.plan_ready": "계획 검토 준비 완료",
   "messenger.event.waiting_approval": "후보 검토 대기",
