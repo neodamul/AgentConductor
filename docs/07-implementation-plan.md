@@ -3002,3 +3002,11 @@ Trace: R-185 / UC-202 / DD-222.
 - [ ] Completed: merged; GitHub #493 closed.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Rail tab caption "Phase·Task" — GitHub #496
+
+- [x] Plan: user request 2026-11-05: the left panel's second tab shows an ellipsis in English ("Phases & tasks"); its English caption becomes "Phase·Task" (middle dot). The Korean caption "단계·작업" and the approved mock stay unchanged (user: keep the Korean as is).
+- [x] Verify: `tests/rail_tabs_runtime.cjs`, no truncation (scrollWidth = clientWidth) at 840 and 1280, strict parity 0 differences in light/dark × 1280/840, i18n/theme contracts.
+- [ ] Completed: merged; GitHub #496 closed.
+
+Trace: R-210 / UC-202 / DD-222.
