@@ -2886,6 +2886,16 @@ Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Source bound: native guard session identifiers — GitHub #472
+
+- [x] Plan: separate OS-backed session identifier generation from the native guard while preserving its public API and entropy source.
+- [x] Red: the focused layout test reports 313 lines in `src/native_guard.rs` against the 300-line area limit.
+- [x] Task: move UUID generation and its existing OS random implementation into a private session module; retain the original public path.
+- [x] Verify: session ID shape and uniqueness, guard decisions, session leases, architecture trace and source layout pass locally; all-target Clippy passes.
+- [ ] Completed: full regression and platform verification, merge the issue-linked PR; the wider #472 limit remains open.
+
+Trace: R-35 / DD-37 / DD-41.
+
 ### Manual model choice in the task inspector — GitHub #430, inspector unit
 
 - [x] Red: `register_model` is missing (`recovery.rs`) and the inspector model offers no manual entry (`choice_controls/inspector_model.cjs`).
