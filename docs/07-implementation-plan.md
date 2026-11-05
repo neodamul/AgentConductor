@@ -3272,3 +3272,11 @@ Trace: R-35 / DD-37 / DD-41.
 - [ ] Completed: merged to main; other files over 300 lines remain under #472.
 
 Trace: R-35 / DD-37 / DD-41.
+
+### 300-line limit: tool context split — GitHub #472
+
+- [x] Plan: `src/workflow/permissions.rs` (336 lines) keeps the tool decision, live decision, knowledge acceptance and refresh (168); the evidence derivation and verification (`tool_context`, `verify_tool_context`) move to `workflow/tool_context.rs` (169). Public paths are unchanged.
+- [x] Verify: `tool_context`, `live_tool_decision`, `activity_tool`, `source_layout`, `architecture_trace`, Clippy.
+- [ ] Completed: merged to main; other files over 300 lines remain under #472 (the native UI probe, quota terminal, test support and room.js lines).
+
+Trace: R-35 / DD-37 / DD-41.
