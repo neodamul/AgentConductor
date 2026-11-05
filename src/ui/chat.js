@@ -1,19 +1,25 @@
 // DD-171 (GitHub #115) and DD-190 (#185): coordinator chat on the workspace screen as a persistent, terminal-style transcript; the server keeps the conversation and the answer arrives with the chat job's snapshot (GitHub #261: its own slot, next to a plan).
 function chatUi({q,request,state,notice,stale=()=>''}) {
- let turns=[],waiting=null,workingNode=null,loading=null,ready=false,recall=-1,draft='',unsure=null;
+ let turns=[],waiting=null,workingNode=null,statusNode=null,loading=null,ready=false,recall=-1,draft='',unsure=null;
  const box=()=>q('chat');
  function setOpen(open){box().hidden=!open;q('chat-button').setAttribute('aria-expanded',String(open));if(open)q('chat-input').focus();}
  const node=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
  // Fenced code blocks keep their layout in <pre>; other text keeps its line breaks.
  function blocks(text){return text.split(/^```[^\n]*\n?/m).flatMap((part,i)=>part.trim()?[i%2?node('pre','chat-code',part.replace(/\n$/,'')):node('p','',part.trim())]:[]);}
  function turnNode(t){const d=node('div','chat-turn '+(t.error?'error':t.role));const h=node('strong','',t.role==='operator'?acMessage('startup.chat_you'):acMessage('startup.chat_coordinator'));d.append(h);if(t.role==='operator'){const p=node('p');p.append(node('span','chat-prompt','›'),t.text);d.append(p);}else d.append(...blocks(t.text));return d;}
- function draw(){const nodes=turns.map(turnNode);workingNode=waiting?node('div','chat-turn working',workingText()):null;if(workingNode)nodes.push(workingNode);q('chat-log').replaceChildren(...nodes);q('chat-log').scrollTop=q('chat-log').scrollHeight;q('chat-send').disabled=!!waiting;q('chat-new').disabled=!!waiting||!turns.length;}
+ // GitHub #514: the working bubble carries the CLI's recent tool lines; the 1 s timer touches only its status label, and a reader who scrolled up is not pulled down.
+ const atBottom=l=>l.scrollHeight-l.scrollTop-(l.clientHeight||0)<=24;
+ function draw(follow=false){const log=q('chat-log'),stick=follow||atBottom(log),top=log.scrollTop;const nodes=turns.map(turnNode);workingNode=waiting?workingBubble():null;if(workingNode)nodes.push(workingNode);log.replaceChildren(...nodes);log.scrollTop=stick?log.scrollHeight:top;q('chat-send').disabled=!!waiting;q('chat-new').disabled=!!waiting||!turns.length;}
+ const job=()=>{const j=state()?.chat_job;return waiting?.job&&j?.id===waiting.job?j:null;};
+ function workingBubble(){const d=node('div','chat-turn working');statusNode=node('span','chat-status',workingText());d.append(statusNode);for(const item of (job()?.progress||[]).slice(-8))d.append(node('div','chat-progress '+item.kind,(item.kind==='tool'?'▸ ':'')+item.text));return d;}
+ const age=ms=>{const s=Math.max(0,Math.floor((Date.now()-ms)/1000));return s<60?s+'s':Math.floor(s/60)+'m '+String(s%60).padStart(2,'0')+'s';};
+ const outputText=()=>{const o=job()?.output;if(!o)return '';return o.bytes>0&&o.updated_ms?acMessage('startup.chat_last_output',{value1:age(o.updated_ms)}):acMessage('startup.chat_no_output');};
  // GitHub #279: counted from the job's start; the page's 1 s timer redraws it and adds the age of the last snapshot.
- const workingText=()=>{const late=stale();return acMessage('startup.chat_working')+' '+AC_ELAPSED(waiting.at)+(late?' · '+late:'');};
- function tick(){if(waiting&&workingNode)workingNode.textContent=workingText();}
+ const workingText=()=>{const late=stale(),out=outputText();return acMessage('startup.chat_working')+' '+AC_ELAPSED(waiting.at)+(out?' · '+out:'')+(late?' · '+late:'');};
+ function tick(){if(waiting&&statusNode)statusNode.textContent=workingText();}
  const sendable=()=>turns.filter(t=>t.role==='operator').map(t=>t.text);
  function load(){if(!loading)loading=request({kind:'chat_history'}).then(r=>{if(unsure)reconcile(r.turns);else if(!waiting)turns=r.turns.map(({role,text})=>({role,text}));ready=true;settle();draw();}).catch(()=>{loading=null;});return loading;}
- async function send(){const text=q('chat-input').value.trim();if(!text||waiting)return;await load();if(waiting)return;const before=sendable().length;turns.push({role:'operator',text});q('chat-input').value='';recall=-1;waiting={at:Date.now()};draw();try{const r=await request({kind:'chat',revision:state().chat_revision,text});waiting={job:r.id,at:waiting.at};}catch(e){await resync(text,e,before);}draw();}
+ async function send(){const text=q('chat-input').value.trim();if(!text||waiting)return;await load();if(waiting)return;const before=sendable().length;turns.push({role:'operator',text});q('chat-input').value='';recall=-1;waiting={at:Date.now()};draw(true);try{const r=await request({kind:'chat',revision:state().chat_revision,text});waiting={job:r.id,at:waiting.at};}catch(e){await resync(text,e,before);}draw();}
  // A timed-out send may have started a job; failed history reads keep the outcome pending until it can be reconciled.
  async function resync(text,error,before){unsure={text,error,before};loading=null;ready=false;await load();}
  function reconcile(stored){const {text:sent,error,before}=unsure;unsure=null;waiting=null;turns=stored.map(({role,text})=>({role,text}));if(stored.filter(t=>t.role==='operator').length>before)return;const typed=q('chat-input').value;q('chat-input').value=sent+(typed?'\n'+typed:'');turns.push({role:'assistant',error:true,text:error.message});}

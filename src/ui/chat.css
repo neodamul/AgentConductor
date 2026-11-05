@@ -6,6 +6,8 @@
 .chat-log{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:6px;font-family:Menlo,Consolas,monospace;font-size:12px}
 .chat-turn{padding:6px 10px;border-radius:6px;border-left:3px solid var(--line-strong);background:var(--fill)}
 .chat-turn.working{color:var(--soft)}
+.chat-turn.working .chat-progress{margin-top:3px;white-space:pre-wrap;overflow-wrap:anywhere}
+.chat-turn.working .chat-progress.tool{color:var(--ink)}
 .chat-prompt{color:var(--accent);font-weight:700;margin-right:6px}
 .chat-code{margin:4px 0;padding:6px 8px;overflow:auto;border-radius:6px;background:var(--surface);white-space:pre}
 .chat-turn.operator{background:var(--accent-soft);border-left-color:var(--accent)}
