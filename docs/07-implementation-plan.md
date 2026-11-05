@@ -2886,6 +2886,15 @@ Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Messenger coordinator conversation threat model — GitHub #519
+
+- [x] Plan: define trust boundaries before phase 3 implementation; preserve desktop-only plan consent and merge; keep settings, deletion, deployment and secrets outside messenger authority.
+- [x] Task: document authenticated sender identity, explicit workspace/run/thread routing, allowlisted actions, replay handling, import/export boundaries, data minimization and fail-closed behavior as draft DD-229.
+- [ ] Verify: architecture trace passes and Claude confirms the threat model matches the phase 3 contract.
+- [ ] Complete: do not implement coordinator conversation until the threat model and requirements are accepted.
+
+Trace: R-43 / BG-18 / SF-37 / UC-35 / QAS-36 / DDR-14 / DD-229.
+
 ### Source bound: native guard session identifiers — GitHub #472
 
 - [x] Plan: separate OS-backed session identifier generation from the native guard while preserving its public API and entropy source.
