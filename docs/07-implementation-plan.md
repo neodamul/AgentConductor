@@ -2959,6 +2959,14 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-215 / UC-207 / QAS-214 / DD-227.
 
+### Source bound: quota terminal — GitHub #472
+
+- [x] Plan: split `src/quota/terminal.rs` (493 lines) toward the 300-line bound with no behaviour change: screen recognition (`terminal/screens.rs`), `/usage` parsing (`terminal/parse.rs`) and the session driver (`terminal.rs`); public paths are re-exported unchanged.
+- [x] Verify: full local `cargo test --all-targets --locked` 843 passed, 0 failed; warning-denied Clippy; Windows module (`terminal/windows.rs`) unchanged and reaches the moved items through the same `super::` names (Windows through CI).
+- [ ] Completed: the remaining files over 300 lines (tracked on #472) and the 300-line gate in `tests/source_layout.rs`.
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### Windows fallback test contention — GitHub #480
 
 - [x] Plan: the Windows job log of #469 showed nine parallel workflow tests starving each other on a 2-vCPU runner (one finished in 5 s, others ran longer than 60 s and hit their bounded waits; all passed on re-run); the waits measured the runner, not the product.
