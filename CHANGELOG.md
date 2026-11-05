@@ -6,9 +6,12 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- About screen: the first start after an install or an update shows a centered About dialog with a short description of AgentConductor, credits and the install commands of the Claude Code, Codex and OpenCode CLIs (each with a copy button); it is shown once per version and is always available from the application menu (GitHub #468).
+## v0.2.0
+- The goal screen follows the approved design exactly: a strict parity check compares every element's box, text, colour, hover and focus state and pixel crop with the design mock in both themes at 1280 and 840 pixels, with no tolerance.
+- Coordinator, role and model choices open as anchored menus under their field with the same look as the approved design; a role can have a fallback model, and a model id the list does not know can be entered by hand (GitHub #409).
 - Jira items are called issues everywhere they are shown ("Jira 이슈" / "Jira issue": the import button, the reference dialog, the import error text and the documents), not stories.
 - Agent cards show the dual-ring quota icon from the provider's windows; clicking it opens a popup with each window's remaining share, reset time, observation time and, on errors, the failure with a retry (#426).
-
 - UI: every text and control size, weight, colour and padding now follows the approved mock (one strict size scale, no browser-default 16px controls); a typography parity set checks it in both themes (#432).
 - Both manuals have a new section "The goal screen" (1.2a) describing the six-step stepper, the panels, the Goal list actions, the result popup and the status borders.
 - The completed-goal popup shows its summary as one ruled line (changed files, tests passed, lessons) instead of three stacked tiles.
@@ -27,7 +30,7 @@ the GitHub Release notes for its tag.
 - When a goal completes, one centered result popup shows where the changes were merged, the changed files, the verification results and the lessons. It opens once when a run completes in the Agent Room and from a new **Result** button in the left panel afterwards.
 - The goals of a workspace open in a slide-over from an outlined **Goal list** button with a count badge, on the Workspace screen and in the Agent Room, instead of an inline card. The list and its actions are unchanged.
 - The Agent Room's task details column is now docked: it starts closed every time a run is opened and is opened and closed only with the panel icon in the titlebar. It no longer remembers its state or opens by itself; when a decision is waiting, the icon shows a blinking dot.
-- The left panel has two tabs on both screens, **Agents** and **Phases & tasks**. The agent cards (with Add, quota, Edit, Models, Remove, order and drag) are also available in the Agent Room; steps 1–2 open on Agents and later steps on Phases & tasks. The Workspace screen lists the plan's tasks under Phases & tasks.
+- The left panel has two tabs on both screens, **Agents** and **Phase·Task** (English caption; the Korean caption is unchanged). The agent cards (with Add, quota, Edit, Models, Remove, order and drag) are also available in the Agent Room; steps 1–2 open on Agents and later steps on Phase·Task. The Workspace screen lists the plan's tasks under Phase·Task.
 - One stepper with six steps (Workspace, Agent roles, Plan, Tasks, Verify, Review and merge, grouped Prepare / Run / Finish) now serves both the Workspace settings and the Agent Room. Steps 4–6 open the Room while a run exists and the Room marks the step of the run; steps 1–3 take you back to the Workspace panels. The Room's separate five-stage strip is gone.
 - Closing the window while a run is working now asks first: keep the run going in the background (the default), stop it and close, or cancel. A run keeps working after the app is closed and is shown again when the app reopens.
 - The Agent Room folds a run of thinking updates into one Activity line ("Thinking… n updates") and the run banner says how often the run was interrupted and recovered, with the time and outcome of the last recovery.
