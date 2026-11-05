@@ -3030,3 +3030,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: the remaining files over 300 lines (tracked on #472).
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Source bound: messenger secrets — GitHub #472
+
+- [x] Plan: split `src/messenger.rs` (389 lines) with no behaviour change: the per-workspace webhook URL and named secrets move to `messenger/secrets.rs` (107 lines), `messenger.rs` keeps settings, payloads and delivery (288 lines); the public paths are re-exported unchanged.
+- [x] Verify: full local `cargo test --all-targets --locked`, warning-denied Clippy.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
