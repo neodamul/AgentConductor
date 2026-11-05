@@ -2892,8 +2892,9 @@ Trace: R-210 / UC-202 / DD-222.
 - [x] Task / Red: `tests/messenger_import_security.rs` verifies export and import with hostile identity values on Unix and Windows; `tests/workspace_share.rs` checks persisted settings and local configuration preservation.
 - [x] Task / Green: one `Settings` helper clears delivery/decision activation, approvers and Slack routing on both export and import.
 - [x] Verify / focused: hostile export/import and workspace-share integration tests, architecture trace, formatting and whitespace checks pass; changed Rust files stay within 300 lines.
-- [ ] Verify / complete: full all-target local suite and warning-denied Clippy on the rebased main head.
-- [ ] Complete: changelog, wiki, AgentMemory, issue-linked PR and reviewed backport readiness.
+- [x] Verify / full suite: `cargo test --all-targets --locked --no-fail-fast` completed on the pre-rebase head; every target passed except `design_parity`, which reports two dark-theme `hover-agent-remove` color mismatches in unchanged `src/ui/startup.css` (tracked by the open #420 parity matrix).
+- [x] Verify / rebased head: focused security/share suites (4 tests), architecture trace, `cargo fmt --check`, `git diff --check`, and warning-denied all-target Clippy pass on `65c26d91`.
+- [ ] Complete: await macOS/Windows checks, human review and merge of issue-linked PR #526; keep the unrelated parity defect tracked under #420.
 
 Trace: R-52 / BG-20 / SF-43 / UC-42 / FR-37 / NFR-18 / QAS-44 / DDR-15 / DD-59.
 
