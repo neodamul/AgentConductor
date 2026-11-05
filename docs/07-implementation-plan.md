@@ -3235,3 +3235,11 @@ Trace: R-35 / DD-37 / DD-41.
 - [ ] Completed: merged to main; other files over 300 lines remain under #472.
 
 Trace: R-35 / DD-37 / DD-41.
+
+### Popup focus ring — GitHub #546
+
+- [x] Plan: `showModal()` marks the dialog `quiet-focus`: the automatically focused control keeps the focus (confirmation dialogs still focus Cancel) but shows no ring until the first key press inside the dialog or until it closes. One script (`dialog_focus.js`) in the Workspace and Room documents.
+- [x] Verify: `tests/dialog_focus_css.rs`, `planning_confirmation_browser.cjs` (Cancel stays focused), browser check (Messenger dialog, Goal list panel, Settings, Update: no ring until a key is pressed), Clippy.
+- [ ] Completed: merged to main; backported to 0.1.60 with #544.
+
+Trace: UI387-R5 / R-52 / DD-41.
