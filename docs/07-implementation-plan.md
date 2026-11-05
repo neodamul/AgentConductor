@@ -2941,3 +2941,100 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: full local suite, merged; GitHub #468 closed.
 
 Trace: R-215 / UC-207 / QAS-214 / DD-227.
+
+### Browser test navigation race — GitHub #479
+
+- [x] Red: `tests/cdp_goto_runtime.cjs` holds a response body for 11 s; the old `goto()` gave up waiting for the load event after 10 s and the next `eval` read a document without `documentElement` (the macOS `roles.cjs` failure on #469).
+- [x] Task: `goto()` waits for the lifecycle `load` event of its own navigation (`loaderId`), fails after 60 s with the URL instead of continuing silently; hash-only navigations keep the short settle wait.
+- [ ] Verify: Node UI suite and strict design parity on macOS; Windows through CI.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### About dialog integer geometry — GitHub #482
+
+- [x] Plan: macOS CI showed ±1–2 level differences in a few hundred `about-dialog` pixels on some runs only; remove the fractional layout that makes the raster phase of rounded boxes unstable instead of adding any tolerance.
+- [x] Task: integer line-heights in the mock and the app (13px/22px text, 18px/22px title, 12px/17px code, 12px/19px credit) and a 64px minimum Copy button width; `verification.json` source hash refreshed.
+- [x] Verify: strict parity 0 differences in light/dark × 1280/840, About browser test, i18n/theme/layout contracts.
+- [ ] Completed: three consecutive macOS CI runs without an `about-dialog` difference; GitHub #482 closed.
+
+Trace: R-215 / UC-207 / QAS-214 / DD-227.
+
+## #472 Cocoa callback module increment
+
+Trace: R-35 → BG-05 → SF-12 → C-04/NFR-07 → QAS-12 → DDR-04/DDR-06 → DD-41.
+
+- [x] Plan: preserve the Cocoa facade, callback ABIs, trust checks, request limit, reply block lifetime, main-thread delivery and existing native close/menu behavior.
+- [x] Red: `tests/cocoa_layout.rs` rejects the original 494-line Cocoa facade.
+- [x] Task: move WebKit callback responsibilities into a private child module; facade 292 lines, callbacks 206 lines. The moved callback bodies and ABI declarations match the original byte-for-byte except the required module visibility and import.
+- [x] Verify: Cocoa layout, architecture and close-window tests pass locally (9 tests); the live Claude metadata test remains explicitly ignored. Default macOS all-target Clippy with warnings denied passes.
+- [x] Verify: full local all-target regression on source `3df36abb` exits 0: 844 passed, 0 failed, 15 explicitly ignored across 272 suites.
+- [ ] Verify: Windows platform checks; no native window or live-provider claim.
+- [ ] Complete: separate issue-linked PR and recorded cross-platform evidence. Global 300-line enforcement follows completion of all areas.
+
+### Source bound: quota terminal — GitHub #472
+
+- [x] Plan: split `src/quota/terminal.rs` (493 lines) toward the 300-line bound with no behaviour change: screen recognition (`terminal/screens.rs`), `/usage` parsing (`terminal/parse.rs`) and the session driver (`terminal.rs`); public paths are re-exported unchanged.
+- [x] Verify: full local `cargo test --all-targets --locked` 843 passed, 0 failed; warning-denied Clippy; Windows module (`terminal/windows.rs`) unchanged and reaches the moved items through the same `super::` names (Windows through CI).
+- [ ] Completed: the remaining files over 300 lines (tracked on #472) and the 300-line gate in `tests/source_layout.rs`.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Windows fallback test contention — GitHub #480
+
+- [x] Plan: the Windows job log of #469 showed nine parallel workflow tests starving each other on a 2-vCPU runner (one finished in 5 s, others ran longer than 60 s and hit their bounded waits; all passed on re-run); the waits measured the runner, not the product.
+- [x] Task: `tests/fallback.rs` runs at most two workflow tests at a time through one shared semaphore; no assertion or budget changed.
+- [ ] Verify: three consecutive Windows CI runs without `worker did not start` or the 60 s fallback-chain timeout; GitHub #480 closed after that.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Queued planning-dialog close event — GitHub #484
+Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
+
+- [x] Plan: inspect both generation/import callers and shared confirmation; preserve selection evidence, revision/context guards and native form behavior. Reopen #484 because #485 added diagnostics only.
+- [x] Red: the VM regression delivers the previous close event while the next dialog is open; the actual assembled Chrome flow reproduces the CI state (confirm return value, enabled controls, no save/baseline/read_plan request).
+- [x] Task: settle each submitted or cancelled decision in its own invocation; ignore stale close events while reopened. VM order regression and existing confirmation guards pass; real Chrome light/dark × 840/1280 all pass with the forced late event.
+- [x] Verify: deterministic VM regression and existing confirmation guards pass; actual browser light/dark × 840/1280 passes in ten consecutive local runs with two owned CPU-load workers (40 cases), both workers terminated afterward.
+- [x] Verify: full local `cargo test --all-targets --locked --no-fail-fast` on source `74c3036b` exits 0: 843 passed, 0 failed, 15 ignored across 271 suites, including the main-baseline light/dark parity and complete Node UI harness. Clippy warnings-denied and formatting pass. Windows platform acceptance remains separate.
+- [ ] Completed: isolated linked main-based PR, AgentMemory/wiki receipts, integration and actual platform acceptance.
+
+### First-workspace dialog can be cancelled — GitHub #490
+
+- [x] Plan: user report 2026-11-05: the "Name the new workspace" dialog has no Cancel on the first start (hidden and Escape blocked by #226); R-185 amended instead of leaving a contradiction.
+- [x] Task: the dialog keeps its Cancel button and Escape in every case; nothing is created, the placeholder stays hidden, the question returns on the next page load.
+- [x] Verify: `tests/first_workspace_runtime.cjs` (Red: old assertions fail, now cancel visible and Escape allowed), `launch_workspace` Rust wrapper.
+- [ ] Completed: merged; GitHub #490 closed.
+
+Trace: R-185 / UC-202 / DD-222.
+
+### Step tab horizontal padding — GitHub #493
+
+- [x] Plan: user report 2026-11-05: the stepper tabs have almost no space left and right of the caption (3px after #473); the approved mock changes together with the app.
+- [x] Task: 7px each side in the app and in the mock (the largest value at which the 840px mock frame, 32px narrower than the window, still fits the strip); mock step groups and tabs no longer shrink, so no caption is cut with an ellipsis.
+- [x] Verify: strict parity 0 differences in light/dark × 1280/840 (160/157 entries), `tests/step_tab_widths_runtime.cjs`.
+- [ ] Completed: merged; GitHub #493 closed.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Rail tab caption "Phase·Task" — GitHub #496
+
+- [x] Plan: user request 2026-11-05: the left panel's second tab shows an ellipsis in English ("Phases & tasks"); its English caption becomes "Phase·Task" (middle dot). The Korean caption "단계·작업" and the approved mock stay unchanged (user: keep the Korean as is).
+- [x] Verify: `tests/rail_tabs_runtime.cjs`, no truncation (scrollWidth = clientWidth) at 840 and 1280, strict parity 0 differences in light/dark × 1280/840, i18n/theme contracts.
+- [ ] Completed: merged; GitHub #496 closed.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Source bound: quota display — GitHub #472
+
+- [x] Plan: split `src/quota/display.rs` (409 lines) with no behaviour change: local time helpers (`display/clock.rs`) and window labels (`display/labels.rs`); `display.rs` keeps the badge and row builders (295 lines) and the public paths are unchanged.
+- [x] Verify: full local `cargo test --all-targets --locked`, warning-denied Clippy.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Source bound: messenger secrets — GitHub #472
+
+- [x] Plan: split `src/messenger.rs` (389 lines) with no behaviour change: the per-workspace webhook URL and named secrets move to `messenger/secrets.rs` (107 lines), `messenger.rs` keeps settings, payloads and delivery (288 lines); the public paths are re-exported unchanged.
+- [x] Verify: full local `cargo test --all-targets --locked`, warning-denied Clippy.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
