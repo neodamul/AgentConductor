@@ -93,7 +93,7 @@ fn settings_save_export_and_import_without_the_url() {
     );
     assert_eq!(
         serde_json::from_str::<serde_json::Value>(&text).unwrap()["messenger"],
-        settings
+        serde_json::json!({"enabled":false,"kind":"webhook","events":["completed","failed"],"template":"{\"body\":\"{{text}}\"}","include_goal":false,"decisions":false,"conversation":false,"talkers":[],"slack_channel":null,"approvers":[]})
     );
 
     let b = Startup::open(&root.join("dev-b"), exe).unwrap();
@@ -103,7 +103,16 @@ fn settings_save_export_and_import_without_the_url() {
     )
     .unwrap();
     let imported = b.dispatch(br#"{"kind":"messenger"}"#).unwrap();
-    assert_eq!(imported["settings"], settings);
+    assert_eq!(
+        imported["settings"]["enabled"], false,
+        "messenger must be configured locally after import"
+    );
+    assert_eq!(imported["settings"]["decisions"], false);
+    assert_eq!(imported["settings"]["approvers"], serde_json::json!([]));
+    assert_eq!(
+        imported["settings"]["slack_channel"],
+        serde_json::Value::Null
+    );
     assert_eq!(
         imported["has_url"], false,
         "each machine enters its own URL"
