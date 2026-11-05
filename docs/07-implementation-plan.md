@@ -3038,3 +3038,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: the remaining files over 300 lines (tracked on #472).
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Source bound: self-update — GitHub #472
+
+- [x] Plan: split `src/update.rs` (458 lines) with no behaviour change: download, checksum and unpack move to `update/install.rs` (81 lines); swapping the running executable and cleaning up after the restart move to `update/replace.rs` (129 lines); `update.rs` keeps release lookup, status and restart (263 lines). The public paths (`verify`, `replace`, `leftover`, `after_restart`) are re-exported unchanged.
+- [x] Verify: `tests/update.rs`, `tests/update_downloads.rs`, `tests/update_blockers.rs`, library unit tests, architecture trace, warning-denied Clippy; the full suite runs in CI.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
