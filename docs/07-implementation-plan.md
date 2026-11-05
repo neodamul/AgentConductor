@@ -3111,6 +3111,22 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-185 / UC-202 / DD-222.
 
+### Messenger channel interface, phase 1 — GitHub #515, #517
+
+- [x] Plan: introduce `messenger::Channel` (id, `Capabilities`, `uses_template`, `notice_body`, `fetch_replies`) and one registry; `Kind` becomes the registered id with the same stored text; Slack (`messenger/slack.rs`) and the company webhook with its relay mode (`messenger/webhook.rs`) move behind it with unchanged behavior; `inbound.rs` asks the channel for replies and keeps authorization, request-code binding and audit in the core (it also drops from 383 to 269 lines). DD-228.
+- [x] Verify: the existing messenger tests pass unmodified (`messenger`, `messenger_inbound`, `messenger_renotify`, `messenger_settings`, `messenger_decision_parse`); new `tests/messenger_channels.rs` (registry, capabilities, stored `kind`, unknown ids refused, settings compatibility); architecture trace; warning-denied Clippy.
+- [ ] Completed: phases 2 and 3 (#518, #519); release in 0.1.60 only on request.
+
+Trace: R-43 / UC-34 / QAS-35 / DD-228.
+
+### Messenger notices, settings and conversation: design — GitHub #515, #518, #519
+
+- [x] Plan: DD-229 (event catalogue, actionable codes, detail, throttle, restart state, channel-owned settings, import/export identity rule) and DD-230 (conversation capability, assumptions, authorization, allowed and forbidden actions, routing, limits, prompt handling, audit, required tests) written; implementation of #518 and #519 is assigned to Codex, review and release mechanics to Claude.
+- [ ] Verify: each Codex PR cites the DD-229/DD-230 rows it implements and the tests listed there.
+- [ ] Completed: release 0.1.60 only on request.
+
+Trace: R-43 / UC-34 / QAS-35 / DD-229.
+
 ### Coordinator chat: live progress in the working bubble (main port) — GitHub #514
 
 - [x] Plan: port of the 0.1.59 change to `main` (tracked in #524): the chat job snapshot carries `output` (bytes, last write) and `progress` (at most eight `{kind, text}` items, each at most 120 characters, from the last 64 KiB of the CLI's `stdout.jsonl`; Claude `tool_use`/`text` and Codex `command_execution`/`mcp_tool_call`/`agent_message` events); the page renders them inside the one working bubble, updates only the status label every second, keeps a scrolled-up reader in place and replaces the bubble with the answer in the same redraw.
