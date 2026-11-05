@@ -60,6 +60,7 @@
   "mcp.use_for_jira": "Jira에 사용",
   "mcp.use_these_sources_for_planning": "이 문서를 계획에 사용할까요?",
   "mcp.version_updated_retrieved_sha_256": "{value1} · {value2} · {value3} · {value4} · 버전 {value5} · 수정 {value6} · 조회 {value7} · SHA-256 {value8}",
+  "messenger.folded": "분당 10건 제한으로 알림 {n}건을 보내지 않았습니다.",
   "messenger.event.plan_ready": "계획 검토 준비 완료",
   "messenger.event.waiting_approval": "후보 검토 대기",
   "messenger.event.waiting_tool_approval": "도구 요청 결정 필요",

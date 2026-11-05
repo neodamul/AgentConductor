@@ -3142,3 +3142,11 @@ Trace: R-185 / UC-202 / DD-222.
 - [ ] Completed: throttle and fold, key set, actionable queue, `resume`/`stop`, channel field list, capability hints (the remaining #518 items).
 
 Trace: R-43 / UC-34 / QAS-35 / DD-229.
+
+### Messenger notice throttle (DD-229) — GitHub #518
+
+- [x] Plan: `messenger/throttle.rs` admits at most ten non-actionable notices a minute per workspace (`messenger-rate.json` in the workspace folder, written atomically, best effort); further notices are counted, logged as `folded`, and reported once as `messenger.folded` ("N more events were not sent…") before the next admitted notice; notices whose catalogue row is actionable are never counted or folded. The per-run duplicate rule (`messenger-sent`) is unchanged, so re-entering a state after a retry still notifies (#72).
+- [x] Verify: unit tests (ten then fold then one summary; actionable bypass; unwritable folder), `tests/messenger.rs` burst test (twelve plan notices send ten, log two `folded`, then one summary of two before the next), existing messenger tests, i18n contracts, Clippy.
+- [ ] Completed: actionable queue beyond 20, `resume`/`stop`, channel field list, capability hints.
+
+Trace: R-43 / UC-34 / QAS-35 / DD-229.
