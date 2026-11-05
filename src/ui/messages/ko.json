@@ -1286,7 +1286,7 @@
   "startup.planning_confirmation_changed": "목표 또는 계획 담당 설정이 바뀌었습니다. 검토 후 다시 확인하세요.",
   "startup.planning_selection_invalid": "워크스페이스에서 등록된 코디네이터와 호환되는 계획 모델을 선택하세요.",
   "startup.planning_confirmation_accept": "확인 후 계획 작성",
-  "about.menu": "AgentConductor 정보",
+  "about.menu": "About",
   "about.close": "정보 닫기",
   "about.meta": "버전 {version} · MIT 라이선스",
   "about.updated": "{version}으로 업데이트됨",
