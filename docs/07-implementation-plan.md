@@ -3147,6 +3147,14 @@ Trace: R-43 / UC-34 / QAS-35 / DD-229.
 
 Trace: R-185 / UC-202 / DD-222.
 
+### Messenger design review fixes — GitHub #515, #519
+
+- [x] Plan: Codex's review of DD-229/DD-230 (seven findings) is applied: an explicit event catalogue schema and rows; actionable notices exempt from the throttle; run-bound collision-safe codes; `identity` flag on channel fields and one sanitizer covering `talkers`; the `Incoming` message contract for phase 3; a durable inbox so no message is lost while a chat is in flight; own-message recognition by authenticated identity.
+- [x] Verify: `architecture_trace`; Codex re-reviews before #518 and #519 implementation treats the design as approved.
+- [ ] Completed: implementation in #518, #519.
+
+Trace: R-43 / UC-34 / QAS-35 / DD-229 / DD-230.
+
 ### Messenger event catalogue (DD-229) — GitHub #518
 
 - [x] Plan: `messenger/events.rs` holds the catalogue (id, message id, source, actionable, throttle key, detail) as the single source of the event ids; `EVENTS` is derived from it; the Korean and English texts move from the literal `label()` into `messenger.event.<id>` in the message catalogs with identical wording. No behavior change.
