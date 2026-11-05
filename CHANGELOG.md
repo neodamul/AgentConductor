@@ -6,6 +6,9 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+## v0.1.59
+- Creating a workspace is no longer blocked by unrelated work. The **Create** button in the New workspace dialog stays enabled while a quota refresh, model discovery or another action runs; it now waits for that work, says so in the dialog ("Another task is still running; the workspace is created as soon as it ends.") and creates the workspace when it ends. After any action the buttons are re-enabled before the next status refresh finishes (GitHub #511).
+
 ## v0.1.58
 - A custom CLI's output that is not JSON no longer ends as a bare "invalid JSONL": the failure quotes the line and shows the end of the CLI's stdout and stderr, labeled apart.
 - A custom profile can set `on_invalid_json: "text"` to keep non-JSON lines as progress text (a result event and a zero exit are still required, and text that reads as a refusal fails with "check the CLI configuration").
