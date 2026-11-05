@@ -3103,3 +3103,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: the remaining files over 300 lines (tracked on #472).
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Source bound: MCP imports — GitHub #472
+
+- [x] Plan: split `src/mcp/imports.rs` (445 lines) with no behaviour change: issue-reference parsing moves to `mcp/imports/references.rs` (51 lines) and applying/storing/loading imports to `mcp/imports/store.rs` (145 lines); `imports.rs` keeps the preview and discovery (260 lines). The public paths (`Reference`, `references`, `apply`, `context`, `store`, `load`) are re-exported unchanged.
+- [x] Verify: the ten MCP integration tests (sources, config, header references, imports, large sources, planner, remote, bindings, suggestions, workspace), warning-denied Clippy; the full suite runs in CI.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
