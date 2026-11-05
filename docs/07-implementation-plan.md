@@ -2928,6 +2928,18 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Verify: complete local `cargo test --all-targets --locked --no-fail-fast` exits zero: 842 passed, zero failed, 15 ignored across 270 suites. Windows native behavior remains a separate check.
 - [x] Completed: isolated issue-linked PR #467, AgentMemory/wiki checkpoint recorded; own scratch reproductions can be removed after integration.
 
+### Whole-milestone acceptance — GitHub #420
+Trace: R-210 / R-211 / R-212 / R-213 / BG-165 / SF-198 / UC-202 / UC-203 / UC-204 / UC-205 / QAS-209 / QAS-210 / QAS-211 / QAS-212 / DDR-58 / DDR-59 / DDR-60 / DD-222 / DD-223 / DD-224 / DD-225.
+
+- [x] Plan: inspect current test bodies, preserved coverage-map draft and native/UI boundaries; baseline main be76d974 passes 842 tests with 15 ignored. Record the independent 300-line compliance bug #472 instead of accepting the stale 500-line gate.
+- [x] Task: adopt a truthful requirement-to-unit/integration map; nested evidence gate fails on nonexistent/traversing references and passes actual documents.
+- [x] Task: actual Rust driver runs light/dark × 840/1280, separate capture directories, all 146 entries per cell permitted; full four-cell local pixel run passes. Dedicated viewport regressions remain explicit and failure artifacts are retained.
+- [x] Task: joined lifecycle (15 assertions/cell), quota/surface flow (18 assertions/cell), phase continuation and adversarial mutation/alias tests added; four browser cells pass. Production Goal race #475 fixed separately and integrated. Native and simulated boundaries remain explicit.
+- [x] Task: non-publishing release gate implemented and v0.2.0 publication wired through it. Offline fixtures pass; live candidate check correctly reports unresolved blockers.
+- [x] Verify locally: 852 Rust/Node cases pass, zero fail, 16 explicit ignores across 275 suites; four strict pixel cells pass in 544.65 seconds, Clippy/fmt pass. PR #478 fixes the separate Python fixture; all 45 cases pass after main integration.
+- [ ] Verify platform: record macOS/Windows CI and real Windows Explorer/junction execution evidence.
+- [ ] Completed: every issue acceptance item proven, PR/evidence/wiki/AgentMemory updated and own temporary artifacts cleaned. Until then #420 remains open.
+
 ### New Goal context transition preserves edits — GitHub #475
 Trace: R-210 / R-213 / UC-202 / UC-205 / QAS-209 / QAS-212 / DD-222 / DD-225.
 
@@ -2935,7 +2947,7 @@ Trace: R-210 / R-213 / UC-202 / UC-205 / QAS-209 / QAS-212 / DD-222 / DD-225.
 - [x] Red: hold the second snapshot and require edit/save controls to remain unavailable until the target Goal is ready.
 - [x] Task: guard the entire asynchronous transition, keep a valid draft and restore controls on success/refusal without adding a timer or request.
 - [x] Verify: both themes at 840/1280, refused transition and existing Goal controls; full Node behavior suite passes, plus Clippy/fmt. Native Goal persistence and source/architecture checks run in the same affected suite.
-- [ ] Completed: independent issue-linked PR, main merge and replay to #420, then clean owned artifacts.
+- [x] Completed: PR #476 merged at 9af04ea9 and replayed into #420; verification logs retained locally and own scratch files cleaned.
 
 ### Goal transition quota fixture — GitHub #475 follow-up
 Trace: R-210 / UC-202 / QAS-209 / DD-222.
@@ -2943,7 +2955,14 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Red: the separate local Python CI suite fails 1/45 because its extracted busy() test does not define goalChanging after PR #476.
 - [x] Task: initialize the test state and assert Goal transitions suppress auto-discovery without advancing another agent's quota cooldown. Production code is unchanged.
 - [x] Verify: full local Python discovery on this linked main-based branch passes all 45 tests; the two scheduler cases retain actual extracted production functions.
-- [ ] Completed: merge the isolated follow-up, apply main to #420 and clean owned scratch files.
+- [x] Completed: PR #478 merged at 86d7c044, applied to #420; own branch/checkpoint cleanup follows the merge.
+
+#420 coverage correction: the reported element count included 14 behavior
+assertions skipped at 840 by an inherited guard. The 852-pass checkpoint is
+valid for what ran, but cannot establish every-entry four-cell coverage. Add a
+forced-failing assertion subprocess test first, remove the implicit width skip,
+then verify actual narrow behavior and all four strict cells again.
+
 
 ### Step tabs follow their captions and the approved mock — GitHub #473
 
@@ -2975,6 +2994,36 @@ Trace: R-215 / UC-207 / QAS-214 / DD-227.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Parity evidence stability — GitHub #420
+Trace: R-210 / R-211 / UC-202 / UC-203 / QAS-209 / QAS-210 / DD-222 / DD-223.
+
+Evidence stability correction: a controlled fake browser returns no
+retained target on all five capture attempts, yet the previous runner compares
+identical white images and exits zero. Add a deterministic negative regression,
+fail closed at the existing retry budget, retain success on the fifth attempt,
+and route preset reload through the existing awaited navigation helper instead
+of evaluating reload and sleeping 1200ms. No comparison tolerance changes.
+
+- [x] Red: all five unstable captures compare equal and falsely exit zero; after the retry guard, the separate unsettled-reload fixture still fails.
+- [x] Task: reject exhausted captures, retain fifth-attempt success and await the existing navigation helper for preset reload. Deterministic negative/positive cases pass.
+- [x] Task: Windows-only junction fixture uses a static raw cmd command, quoted environment variables and disabled delayed expansion; product code unchanged.
+- [ ] Verify: fresh strict matrix and complete Node harness; native Windows junction/Explorer execution must be established by the runner.
+- [ ] Completed: #420 stays open until full evidence, platform receipts and cleanup are complete.
+
+### Windows parity fixture consistency — GitHub #420
+Trace: R-210 / R-211 / UC-202 / UC-203 / QAS-209 / QAS-210 / DD-222 / DD-223.
+
+- [x] Red: Windows job126912839758 proves the junction command syntax error, mixed path separators and 23 narrow tab differences; root reference client width is 806 versus app840. The direct client-width regression reproduces 806/840 on macOS too.
+- [x] Task: use a static raw cmd command for the junction and native Path::join for per-cell output.
+- [x] Task: align only the reference frame client width, preserving approved interior CSS, frame height and pixel tolerances; direct actual app/mock probes pass at both widths/themes.
+- [ ] Verify: fresh strict matrix and Node harness after alignment; Windows must prove the corrected junction and viewport on its runner.
+- [ ] Completed: do not close #420 until these platform failures are resolved.
+
+#420 matrix diagnostics: the old driver panicked at the first failed cell and
+hid the other three. The subprocess regression now forces CI failure and
+requires all four distinct calls before the final failure. Aggregate failures
+only after completing the matrix; do not retry or discard any failed cell.
+
 ## #472 process ownership and supervision increment
 
 Trace: R-35 → BG-05 → SF-12 → C-04/NFR-07 → QAS-12 → DDR-04/DDR-06 → DD-41.
@@ -2994,6 +3043,8 @@ Trace: R-35 → BG-05 → SF-12 → C-04/NFR-07 → QAS-12 → DDR-04/DDR-06 →
 - [ ] Completed: three consecutive macOS CI runs without an `about-dialog` difference; GitHub #482 closed.
 
 Trace: R-215 / UC-207 / QAS-214 / DD-227.
+
+#420 local About integration receipt: on source `6a2d9f73` (including #483), the strict driver completed light/dark × 840/1280 with 160 relevant entries per cell and no differences; `cargo test --locked --test design_parity -- --nocapture` exited 0 in 527.58 seconds. Four isolated capture directories each contain 278 PNGs. This is a macOS receipt; Windows and the final integrated source remain unverified. Local evidence: `.agentconductor/verification/issue-420/about-integrated/`.
 
 ## #472 Cocoa callback module increment
 
@@ -3058,6 +3109,22 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged; GitHub #496 closed.
 
 Trace: R-210 / UC-202 / DD-222.
+
+#420 latest main integration receipt: source `df29a39a` passed the strict macOS four-cell matrix in 527.15 seconds. Main `60f1ba99` then changed only one English rail label and appended its plan record; after integration, architecture/evidence/i18n/matrix tests (15) and the 1280px tab-width browser test passed. The matrix simulator defaults to Korean; its prior receipt is not presented as a fresh four-cell run on the later source. Windows About remains unverified after the latest integration.
+
+#420 exact-head receipt: merge commit `4c2aaabe` (main `552f0797`) passed
+`cargo test --locked --test design_parity -- --nocapture` locally: 1 test,
+534.38 seconds. This reruns the strict light/dark × 840/1280 pixel matrix after
+integrating #504's step-tab correction. `cargo fmt --all -- --check` and
+`git diff --check` also pass. The complete Node harness and native Windows
+acceptance remain pending; no platform-wide completion is claimed.
+
+#420 latest-main receipt: current main `29959385` is integrated at `eea275ad`.
+It adds the #472 MCP-import module split and plan record, with no UI changes.
+Focused `architecture_trace`, `source_layout`, and `mcp_imports` suites pass
+(10 tests); formatting and whitespace checks pass. The strict visual matrix
+receipt remains the earlier post-#504 run at `4c2aaabe`; it was not rerun for
+this unrelated extraction. Windows acceptance remains pending.
 
 ### Source bound: quota display — GitHub #472
 
