@@ -2886,6 +2886,18 @@ Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Messenger identity-safe workspace import — GitHub #523
+
+- [x] Plan: amend DD-59 so shared settings do not transfer messenger identity or decision authority; export and import both clear activation, approvers and reply routing. The fix is independent of the #520 channel abstraction for backporting.
+- [x] Task / Red: `tests/messenger_import_security.rs` verifies export and import with hostile identity values on Unix and Windows; `tests/workspace_share.rs` checks persisted settings and local configuration preservation.
+- [x] Task / Green: one `Settings` helper clears delivery/decision activation, approvers and Slack routing on both export and import.
+- [x] Verify / focused: hostile export/import and workspace-share integration tests, architecture trace, formatting and whitespace checks pass; changed Rust files stay within 300 lines.
+- [x] Verify / full suite: `cargo test --all-targets --locked --no-fail-fast` completed on the pre-rebase head; every target passed except `design_parity`, which reports two dark-theme `hover-agent-remove` color mismatches in unchanged `src/ui/startup.css` (tracked by the open #420 parity matrix).
+- [x] Verify / rebased head: focused security/share suites (4 tests), architecture trace, `cargo fmt --check`, `git diff --check`, and warning-denied all-target Clippy pass on `65c26d91`.
+- [ ] Complete: await macOS/Windows checks, human review and merge of issue-linked PR #526; keep the unrelated parity defect tracked under #420.
+
+Trace: R-52 / BG-20 / SF-43 / UC-42 / FR-37 / NFR-18 / QAS-44 / DDR-15 / DD-59.
+
 ### Source bound: native guard session identifiers — GitHub #472
 
 - [x] Plan: separate OS-backed session identifier generation from the native guard while preserving its public API and entropy source.
@@ -3134,6 +3146,14 @@ Trace: R-43 / UC-34 / QAS-35 / DD-229.
 - [ ] Completed: merged to main; GitHub #514 closes with the 0.1.59 release.
 
 Trace: R-185 / UC-202 / DD-222.
+
+### Messenger design review fixes — GitHub #515, #519
+
+- [x] Plan: Codex's review of DD-229/DD-230 (seven findings) is applied: an explicit event catalogue schema and rows; actionable notices exempt from the throttle; run-bound collision-safe codes; `identity` flag on channel fields and one sanitizer covering `talkers`; the `Incoming` message contract for phase 3; a durable inbox so no message is lost while a chat is in flight; own-message recognition by authenticated identity.
+- [x] Verify: `architecture_trace`; Codex re-reviews before #518 and #519 implementation treats the design as approved.
+- [ ] Completed: implementation in #518, #519.
+
+Trace: R-43 / UC-34 / QAS-35 / DD-229 / DD-230.
 
 ### Messenger event catalogue (DD-229) — GitHub #518
 
