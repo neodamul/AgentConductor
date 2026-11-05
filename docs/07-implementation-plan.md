@@ -3086,3 +3086,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: the remaining files over 300 lines (tracked on #472).
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Source bound: review round — GitHub #472
+
+- [x] Plan: split `src/workflow/review.rs` (442 lines) with no behaviour change: applying a coordinator review moves to `workflow/review/apply.rs` (125 lines) and the review request/response round to `workflow/review/request.rs` (236 lines); `review.rs` keeps the evidence helpers (91 lines). The public paths (`review`, `apply_review`) and the workflow-internal helpers are re-exported unchanged.
+- [x] Verify: review, workflow, prompt-form and read-only-load tests, warning-denied Clippy; the full suite runs in CI.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
