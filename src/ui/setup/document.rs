@@ -19,6 +19,7 @@ pub(crate) fn document() -> Result<String, String> {
         + include_str!("../about.css")
         + include_str!("../titlebar.css");
     let helper_scripts = concat!(
+        include_str!("../dialog_focus.js"),
         include_str!("../brand_avatar.js"),
         include_str!("../team_briefing.js"),
         include_str!("../about.js"),
