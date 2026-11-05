@@ -3,3 +3,4 @@ Recaptured 2026-11-02 for the workspace screens (light, dark, Korean) and the ag
 Checked 2026-11-03 against the changes since (#337): no interface change.
 Checked 2026-11-03 against the changes since (#341): a badge on the agent card built from existing styles, which is not on a captured screen.
 Checked 2026-11-05 against the changes since (#511): the New workspace dialog's Create button now stays enabled during other work and shows a waiting reason, which is not on a captured screen.
+Checked 2026-11-05 against the changes since (#514): the coordinator chat's working bubble gains progress lines and an output age, which is not on a captured screen.

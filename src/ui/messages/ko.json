@@ -746,6 +746,8 @@
   "startup.chat_coordinator": "코디네이터",
   "startup.chat_working": "코디네이터가 프로젝트를 읽는 중…",
   "startup.chat_error": "코디네이터가 답하지 못했습니다: {value1}",
+  "startup.chat_last_output": "마지막 출력 {value1} 전",
+  "startup.chat_no_output": "아직 출력 없음",
   "startup.optimize_open": "프롬프트 최적화",
   "startup.optimize_open_hint": "내장된 prompt-optimizer 스킬로 코디네이터가 목표를 다시 써 줍니다. 결과는 확인한 뒤에 사용합니다.",
   "startup.optimize_working": "코디네이터가 목표를 다시 쓰는 중…",

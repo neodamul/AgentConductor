@@ -2532,3 +2532,9 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Plan: `renderButtons()` disabled **Create** with the shared `mutating` flag, so a quota refresh, model discovery or any other `action()` blocked it with no reason, and `action()` re-rendered only after the follow-up `poll()`. **Create** now follows only its own `creating` flag; when other work is running it shows `startup.create_waits_for_running_work`, waits (at most 90 s) and then creates the workspace; `action()` re-renders the buttons before `poll()`. Hotfix 0.1.59 from v0.1.58 (`release/0.1.x`); the same change is ported to `main`.
 - [x] Red/Verify: `tests/create_workspace_runtime.cjs` (fails on v0.1.58: Create disabled during an action, no waiting reason; passes now, 40 consecutive runs), `tests/approval_feedback_runtime.cjs`, `tests/launch_workspace.rs`, i18n/startup contract tests, all Node runtime tests, manual renderer and README/manual version tests.
 - [ ] Complete: v0.1.59 tag only when the exact commit has green macOS and Windows validation.
+
+### Coordinator chat: live progress in the working bubble — GitHub #514
+
+- [x] Plan: a running chat showed only "Working N:NN". The chat job snapshot now carries `output` (bytes, last write) and `progress` (at most eight `{kind, text}` items, each at most 120 characters, from the last 64 KiB of the CLI's `stdout.jsonl`; Claude `tool_use`/`text` and Codex `command_execution`/`mcp_tool_call`/`agent_message` events). The page renders them inside the one working bubble, updates only the status label every second, keeps a scrolled-up reader in place and replaces the bubble with the answer in the same redraw.
+- [x] Red/Verify: `src/ui/setup/chat_progress.rs` unit tests (both CLIs, bounds, garbage lines), `tests/chat_progress_runtime.cjs` (15 consecutive runs), `tests/chat_runtime.cjs`, i18n/startup contract tests, Python and Node suites.
+- [ ] Complete: shipped with 0.1.59; ported to `main` separately.
