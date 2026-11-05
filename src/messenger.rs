@@ -9,6 +9,7 @@ pub mod inbound;
 mod secrets;
 mod send;
 mod slack;
+mod throttle;
 mod webhook;
 pub use channel::{Capabilities, Channel, Kind};
 pub use secrets::{save_secret, save_secret_value, secret, secret_value, status, validate_url};
@@ -206,11 +207,50 @@ pub fn notify_plan(workspace: &Path, settings: &Settings, name: &str, goal: &str
 }
 
 fn deliver_later(workspace: &Path, settings: &Settings, event: &Event, log: Option<PathBuf>) {
-    let result = secret(workspace)
-        .ok_or_else(|| "no webhook URL saved on this computer".to_string())
-        .and_then(|url| Ok((url, payload(settings, event)?.to_string())));
-    match result {
-        Ok((url, body)) => send::spawn(url, body, event.state.clone(), log),
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map_or(0, |d| d.as_secs());
+    let actionable = events::find(&event.state).is_some_and(|d| d.actionable);
+    let summary = match throttle::admit(workspace, now, actionable) {
+        throttle::Admit::Fold => {
+            send::log(
+                log.as_deref(),
+                &event.state,
+                "folded: more than 10 notices a minute",
+            );
+            return;
+        }
+        throttle::Admit::SendAfterSummary(n) => Some(n),
+        throttle::Admit::Send => None,
+    };
+    let Some(url) = secret(workspace) else {
+        send::log(
+            log.as_deref(),
+            &event.state,
+            "no webhook URL saved on this computer",
+        );
+        return;
+    };
+    if let Some(n) = summary {
+        let korean = crate::ui::language::load() == "ko";
+        let text = crate::ui::messages::interpolate(
+            crate::ui::messages::in_language(if korean { "ko" } else { "en" }, "messenger.folded"),
+            &[("n", &n.to_string())],
+        );
+        let notice = Event {
+            state: "decision".into(),
+            workspace: event.workspace.clone(),
+            goal: text,
+            completed: 0,
+            total: 0,
+        };
+        match payload(settings, &notice) {
+            Ok(body) => send::spawn(url.clone(), body.to_string(), "folded".into(), log.clone()),
+            Err(error) => send::log(log.as_deref(), "folded", &error),
+        }
+    }
+    match payload(settings, event) {
+        Ok(body) => send::spawn(url, body.to_string(), event.state.clone(), log),
         Err(error) => send::log(log.as_deref(), &event.state, &error),
     }
 }
