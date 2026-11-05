@@ -761,6 +761,8 @@ Trace: R-184 → BG-139 → SF-172 → UC-175 → FR-176/NFR-75 → QAS-182 → 
 
 ### R-185 A deleted default workspace stays deleted
 The application shall not show a default workspace the operator never created, and shall not bring one back after it was deleted. A workspace that has no name, goal, project, plan or run is only a placeholder: it is never listed, and while it is the only one the application asks the operator to name a workspace (the question cannot be skipped). At launch the application opens the most recently used saved workspace.
+
+R-185 / #490 amendment (2026-11-05): the first-workspace question can be cancelled (Cancel button or Escape). Cancelling creates nothing, keeps the placeholder hidden and unlisted, and the question is asked again on the next start; Workspace menu > New workspace stays available. Supersedes "the question cannot be skipped".
 Trace: R-185 → BG-140 → SF-173 → UC-176 → FR-177 → QAS-183 → DD-197. GitHub #226, user, 2026-10-28.
 
 ### R-186 Every agent prompt has one standard form and its reply is checked
