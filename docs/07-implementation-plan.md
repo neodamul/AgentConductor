@@ -3020,3 +3020,11 @@ Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
 - [x] Verify: actual Chrome app/reference light/dark × 840/1280 in Korean, English 840px without clipped labels, and existing icon/focus/name/cursor checks; 14 focused Rust tests pass.
 - [ ] Verify: full local regression and Windows platform evidence; screenshot recapture remains deferred.
 - [ ] Complete: issue-linked main PR and platform evidence.
+
+### Source bound: quota display — GitHub #472
+
+- [x] Plan: split `src/quota/display.rs` (409 lines) with no behaviour change: local time helpers (`display/clock.rs`) and window labels (`display/labels.rs`); `display.rs` keeps the badge and row builders (295 lines) and the public paths are unchanged.
+- [x] Verify: full local `cargo test --all-targets --locked`, warning-denied Clippy.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
