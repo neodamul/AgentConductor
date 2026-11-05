@@ -1,11 +1,14 @@
 //! R-43 phase 2 / DD-81: answer pending tool requests from the messenger. Polls only while
 //! a request is pending, inside the run process; decisions go through the DD-32 path.
-use super::{Kind, Settings, link_path, secret, secret_value, send, sibling};
+pub use super::slack::{slack_messages, slack_replies};
+pub use super::webhook::{hmac, relay_messages, relay_replies};
+use super::{Settings, link_path, secret, send, sibling};
 use serde::{Deserialize, Serialize};
-use sha2::{Digest, Sha256};
 use std::path::{Path, PathBuf};
 
 const INTERVAL: std::time::Duration = std::time::Duration::from_secs(15);
+/// DD-229: at most this many announced requests wait for an answer; further ones queue in order.
+const OUTSTANDING: usize = 20;
 
 /// Remembered between polls: announced requests, the reply cursor and handled messages.
 #[derive(Default, Serialize, Deserialize)]
@@ -62,100 +65,6 @@ pub fn parse(text: &str) -> Option<(bool, String)> {
     })
 }
 
-/// RFC 2104 HMAC-SHA256 with the existing `sha2` crate.
-pub fn hmac(key: &[u8], message: &[u8]) -> String {
-    let mut block = [0u8; 64];
-    if key.len() > 64 {
-        block[..32].copy_from_slice(&Sha256::digest(key));
-    } else {
-        block[..key.len()].copy_from_slice(key);
-    }
-    let pad = |byte: u8| block.iter().map(|b| b ^ byte).collect::<Vec<_>>();
-    let inner = Sha256::new()
-        .chain_update(pad(0x36))
-        .chain_update(message)
-        .finalize();
-    let outer = Sha256::new()
-        .chain_update(pad(0x5c))
-        .chain_update(inner)
-        .finalize();
-    format!("{outer:x}")
-}
-
-fn same(a: &str, b: &str) -> bool {
-    a.len() == b.len()
-        && a.bytes()
-            .zip(b.bytes())
-            .fold(0, |acc, (x, y)| acc | (x ^ y))
-            == 0
-}
-
-/// Slack `conversations.history` messages → replies; bots and edits are ignored.
-pub fn slack_replies(body: &str) -> Result<Vec<Reply>, String> {
-    let value: serde_json::Value = serde_json::from_str(body).map_err(|e| e.to_string())?;
-    if value["ok"] != true {
-        return Err(format!(
-            "Slack error: {}",
-            value["error"].as_str().unwrap_or("unknown")
-        ));
-    }
-    let mut replies: Vec<Reply> = value["messages"]
-        .as_array()
-        .into_iter()
-        .flatten()
-        .filter(|m| m["bot_id"].is_null() && m["subtype"].is_null())
-        .filter_map(|m| {
-            let (allow, code) = parse(m["text"].as_str()?)?;
-            Some(Reply {
-                id: m["ts"].as_str()?.into(),
-                user: m["user"].as_str()?.into(),
-                allow,
-                code,
-                ts: m["ts"].as_str()?.into(),
-            })
-        })
-        .collect();
-    replies.sort_by(|a, b| a.ts.cmp(&b.ts));
-    Ok(replies)
-}
-
-/// Company relay decisions; each must carry a valid HMAC over `code|decision|user|ts`.
-pub fn relay_replies(body: &str, secret: &str) -> Result<(Vec<Reply>, Vec<String>), String> {
-    let value: serde_json::Value = serde_json::from_str(body).map_err(|e| e.to_string())?;
-    let mut replies = vec![];
-    let mut refused = vec![];
-    for d in value["decisions"].as_array().into_iter().flatten() {
-        let field = |k: &str| d[k].as_str().unwrap_or_default().to_string();
-        let (code, decision, user, ts) =
-            (field("code"), field("decision"), field("user"), field("ts"));
-        let expected = hmac(
-            secret.as_bytes(),
-            format!("{code}|{decision}|{user}|{ts}").as_bytes(),
-        );
-        let allow = match decision.as_str() {
-            "allow" => true,
-            "deny" => false,
-            _ => {
-                refused.push(format!("{ts}: unknown decision"));
-                continue;
-            }
-        };
-        if !same(&expected, &field("signature")) {
-            refused.push(format!("{ts}: invalid signature"));
-            continue;
-        }
-        replies.push(Reply {
-            id: ts.clone(),
-            user,
-            allow,
-            code: code.to_uppercase(),
-            ts,
-        });
-    }
-    replies.sort_by(|a, b| a.ts.cmp(&b.ts));
-    Ok((replies, refused))
-}
-
 fn now() -> i64 {
     std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
@@ -204,9 +113,17 @@ pub fn poll_once(
             .and_then(|body| send::deliver(&url, &body.to_string())),
         None => Err("no webhook URL saved on this computer".into()),
     };
+    let mut outstanding = pending
+        .iter()
+        .filter(|r| state.announced.contains(&r.id))
+        .count();
     for request in &pending {
         if state.announced.contains(&request.id) {
             continue;
+        }
+        // A request that is not announced yet keeps its place and is announced as slots free up.
+        if outstanding >= OUTSTANDING {
+            break;
         }
         let text = if korean {
             format!(
@@ -226,41 +143,21 @@ pub fn poll_once(
         match post(text) {
             Ok(()) => {
                 state.announced.push(request.id.clone());
+                outstanding += 1;
                 outcome.announced += 1;
             }
             Err(e) => log(run, &format!("announce {}: {e}", code(&request.id))),
         }
     }
-    let (replies, refused) = match settings.kind {
-        Kind::Slack => {
-            let channel = settings
-                .slack_channel
-                .as_deref()
-                .ok_or("Slack channel ID is not set")?;
-            let token =
-                secret_value(&workspace, Some("token")).ok_or("Slack bot token is not saved")?;
-            let oldest = if state.cursor.is_empty() {
-                "0"
-            } else {
-                &state.cursor
-            };
-            // Tests point this at a local HTTPS stand-in; production always uses slack.com.
-            let api = std::env::var("AGENTCONDUCTOR_SLACK_API")
-                .unwrap_or_else(|_| "https://slack.com/api".into());
-            let url =
-                format!("{api}/conversations.history?channel={channel}&oldest={oldest}&limit=100");
-            let body = send::fetch(&url, &[format!("Authorization: Bearer {token}")])?;
-            (slack_replies(&body)?, vec![])
-        }
-        Kind::Webhook => {
-            let relay = secret_value(&workspace, Some("relay")).ok_or("relay URL is not saved")?;
-            let key = secret_value(&workspace, Some("relay_secret"))
-                .ok_or("relay secret is not saved")?;
-            let joiner = if relay.contains('?') { '&' } else { '?' };
-            let body = send::fetch(&format!("{relay}{joiner}since={}", state.cursor), &[])?;
-            relay_replies(&body, &key)?
-        }
-    };
+    let channel = settings.kind.channel();
+    if !channel.capabilities().replies {
+        return Err("this messenger channel cannot read replies".into());
+    }
+    let (replies, refused) = channel.fetch_replies(&super::channel::Fetch {
+        workspace: &workspace,
+        settings: &settings,
+        cursor: &state.cursor,
+    })?;
     outcome.fetched = true;
     for line in refused {
         log(run, &line);

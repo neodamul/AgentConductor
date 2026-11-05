@@ -1,5 +1,7 @@
 mod driver;
+mod files;
 mod licenses;
+mod notice;
 
 #[cfg(test)]
 #[path = "../tests/unit/release_package.rs"]
@@ -7,42 +9,19 @@ mod tests;
 
 pub use driver::build_archive;
 
+use files::{
+    copy_file, project_version, referenced_assets, required_string, sha256_file, write_bytes,
+    write_json,
+};
 use licenses::ReviewedDependency;
+use notice::THIRD_PARTY_NOTICE;
 use serde_json::{Value, json};
-use sha2::{Digest, Sha256};
 use std::{
     collections::BTreeMap,
-    fs::{self, File, OpenOptions},
-    io::{Read, Write},
+    fs,
     path::{Path, PathBuf},
     sync::atomic::{AtomicU64, Ordering},
 };
-
-const THIRD_PARTY_NOTICE: &str = "# Third-party notices
-
-The licenses directory includes the pinned dependency license texts and notices,
-including build dependencies, Unicode data and the bundled SQLite disclaimer.
-Preserve these texts when distributing. Apache-2.0 components and conjunctions
-retain their Apache notices; dual declarations and alternatives retain their
-available texts. ISC and BSL-1.0 licenses are permissive and their bundled
-copyright and license notices must be preserved. AgentConductor and its AC
-artwork use the root MIT license.
-
-Git, selected agent CLIs, RTK, Ponytail, Graphify, CocoIndex,
-agentmemory and its optional services are not bundled. Their licenses and account
-terms require separate review if redistributed. Windows uses the installed system
-WebView2 runtime; macOS uses system WebKit. No UI web server is required.
-
-The bundled prompt-optimizer skill (SKILL.md and four reference files, embedded
-unmodified in the executable) is from https://github.com/getsentry/skills and is
-licensed under Apache-2.0, Copyright 2025 Functional Software, Inc. dba Sentry.
-licenses/prompt-optimizer holds the license text and the source commit.
-
-The Claude Code and Codex marks shown in the agent lists are two unmodified color SVGs from
-Lobe Icons (https://github.com/lobehub/lobe-icons, MIT, Copyright (c) 2023 LobeHub), embedded in
-the executable. licenses/lobe-icons holds the license text and the pinned revision. The marks
-identify the agents; their trademarks remain with Anthropic and OpenAI.
-";
 
 fn validate_company_suffix(file: &str, built: &str, cargo: &str) -> Result<(), String> {
     if file.trim().is_empty() && built == cargo {
@@ -300,96 +279,4 @@ fn write_package(plan: PackagePlan<'_>) -> Result<Value, String> {
     });
     write_json(destination, "manifest.json", &manifest)?;
     Ok(manifest)
-}
-
-fn referenced_assets(root: &Path) -> Result<BTreeMap<String, PathBuf>, String> {
-    let readme = fs::read_to_string(root.join("README.md"))
-        .map_err(|error| format!("read README: {error}"))?;
-    let docs = root
-        .join("docs")
-        .canonicalize()
-        .map_err(|error| format!("resolve docs: {error}"))?;
-    let mut assets = BTreeMap::new();
-    let mut rest = readme.as_str();
-    while let Some(end) = rest.find("](") {
-        rest = &rest[end + 2..];
-        let Some(close) = rest.find(')') else { break };
-        let raw = rest[..close].trim();
-        let raw = raw
-            .strip_prefix('<')
-            .and_then(|value| value.strip_suffix('>'))
-            .unwrap_or(raw);
-        let relative = raw.split_ascii_whitespace().next().unwrap_or("");
-        if relative.starts_with("docs/") {
-            let source = root
-                .join(relative)
-                .canonicalize()
-                .map_err(|_| format!("missing or invalid README asset: {relative}"))?;
-            if !source.starts_with(&docs) || !source.is_file() {
-                return Err(format!("missing or invalid README asset: {relative}"));
-            }
-            assets.insert(relative.to_owned(), source);
-        }
-        rest = &rest[close + 1..];
-    }
-    Ok(assets)
-}
-
-fn project_version(manifest: &Path) -> Result<String, String> {
-    let text = fs::read_to_string(manifest).map_err(|error| error.to_string())?;
-    let mut in_package = false;
-    for line in text.lines() {
-        if line.starts_with('[') {
-            in_package = line.trim() == "[package]";
-        } else if in_package && let Some(value) = line.trim().strip_prefix("version = ") {
-            return Ok(value.trim().trim_matches('"').to_owned());
-        }
-    }
-    Err("package version missing from Cargo.toml".into())
-}
-
-fn required_string<'a>(value: &'a Value, key: &str) -> Result<&'a str, String> {
-    value[key]
-        .as_str()
-        .ok_or_else(|| format!("cargo metadata omitted {key}"))
-}
-
-fn copy_file(source: &Path, destination: &Path) -> Result<(), String> {
-    if let Some(parent) = destination.parent() {
-        fs::create_dir_all(parent).map_err(|error| error.to_string())?;
-    }
-    fs::copy(source, destination)
-        .map(|_| ())
-        .map_err(|error| format!("copy {}: {error}", source.display()))
-}
-
-fn write_bytes(root: &Path, name: &str, bytes: &[u8]) -> Result<(), String> {
-    let path = root.join(name);
-    let mut file = OpenOptions::new()
-        .write(true)
-        .create_new(true)
-        .open(path)
-        .map_err(|error| error.to_string())?;
-    file.write_all(bytes).map_err(|error| error.to_string())?;
-    file.sync_all().map_err(|error| error.to_string())
-}
-
-fn write_json(root: &Path, name: &str, value: &Value) -> Result<(), String> {
-    let mut bytes = serde_json::to_vec_pretty(value).map_err(|error| error.to_string())?;
-    bytes.push(b'\n');
-    write_bytes(root, name, &bytes)
-}
-
-fn sha256_file(path: &Path) -> Result<String, String> {
-    let mut file = File::open(path).map_err(|error| error.to_string())?;
-    let mut hasher = Sha256::new();
-    let mut buffer = [0; 65536];
-    loop {
-        let count = file.read(&mut buffer).map_err(|error| error.to_string())?;
-        if count == 0 {
-            break;
-        }
-        hasher.update(&buffer[..count]);
-    }
-    Ok(format!("{:x}", hasher.finalize()))
 }

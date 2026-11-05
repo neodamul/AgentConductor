@@ -46,7 +46,7 @@ in `05b-design-drivers.md`.
 | FR-34 | Fetch model catalogs automatically for built-in agents without one; keep observed catalogs across saves | UC-41 | SF-42 |
 | FR-35 | Keep a reviewed plan on saves and catalog changes unless plan-relevant settings change | UC-41 | SF-42 |
 | FR-36 | Compact agent cards with provider, sessions, model count, capability and fallback | UC-40 | SF-41 |
-| FR-37 | Export workspace settings to a versioned repository file and import them with preview, local-state preservation and capability re-verification | UC-42 | SF-43 |
+| FR-37 | Export workspace settings to a versioned repository file and import them with preview, local-state preservation, capability re-verification and messenger identity sanitization on both paths | UC-42 | SF-43 |
 | FR-38 | Accept 1–12 tasks; add and remove tasks during review | UC-43 | SF-44 |
 | FR-39 | Convert a chosen Markdown plan document (≤64 KiB) into a plan through the read-only coordinator, excluding completed items and following role rules | UC-43 | SF-44 |
 | FR-40 | Create an accumulating slug per goal with its folder tree in the repository or workspace data folder | UC-44 | SF-45 |
@@ -75,7 +75,7 @@ in `05b-design-drivers.md`.
 | NFR-14 | Learnability | A first-time operator can start the desktop workflow from the README without CLI knowledge | R-36 | QAS-28 |
 | NFR-15 | Independence | Planning, execution and approval work with no LLM coordinator; a draft launches no process | R-37 | QAS-29 |
 | NFR-16 | Discoverability | Every workspace setting is reachable from visible controls without typing paths or using the CLI | R-38, R-39 | QAS-30, QAS-31 |
-| NFR-18 | Shareability without leakage | Exported settings are deterministic, LF-terminated and free of secrets and machine-specific state | R-52 | QAS-44 |
+| NFR-18 | Shareability without leakage or transferred authority | Exported settings are deterministic, LF-terminated and free of secrets and machine-specific state; messenger activation, decisions, approvers and reply routing remain local on export and import | R-52 | QAS-44 |
 | NFR-19 | Consistency of work records | One source of truth (the tree); atomic moves; verifiable archives | R-57, R-58 | QAS-48, QAS-49 |
 | NFR-17 (planned) | Confidentiality and integrity of remote channels | Outbound-only by default, secrets in the OS credential store, redaction before sending, signed and replay-protected inbound decisions | R-43 | QAS-35, QAS-36 |
 | NFR-13 | Operability | Human decisions do not force regenerated duplicate requests; waits are bounded | R-30 | QAS-23 |

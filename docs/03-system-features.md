@@ -123,7 +123,7 @@ Page-driven sequential discovery for built-in agents without a catalog while no 
 
 ### SF-43 Workspace settings export/import
 
-Versioned `agentconductor.workspace.json` written to a chosen folder (default: the repository); import from a folder with preview, local-state preservation and capability re-verification. Trace: BG-20 / R-52.
+Versioned `agentconductor.workspace.json` written to a chosen folder (default: the repository); import from a folder with preview, local-state preservation and capability re-verification. Messenger activation, decision permission, approvers and Slack reply routing are reset on export and import so shared files cannot grant authority. Trace: BG-20 / R-52 / #523.
 
 ### SF-44 Variable-size plans and plan-document import
 
@@ -195,6 +195,8 @@ Resolve runnable Windows launchers, collect Claude /usage through a short-lived 
 
 ### SF-61 Explicit operator model catalogs
 Custom Models opens a compact ID editor with optional observed JSON import, explicit provenance and no subprocess/network query. Trace: BG-29.
+
+SF-37 channel interface (#515 phase 1): Slack and the company webhook are implementations of one `Channel` contract with declared capabilities and a single registry; behavior and stored settings are unchanged (DD-228).
 
 SF-37 phase 2: inbound decision channel by bounded polling (no public URL, no resident process): Slack `conversations.history` with a bot token, or a company relay returning HMAC-SHA256-signed decisions; linked approvers per workspace; decisions applied through the existing exact tool-decision path.
 
