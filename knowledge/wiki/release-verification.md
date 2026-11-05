@@ -94,3 +94,7 @@ each cell failure and rejects the whole matrix only after all cells finish.
 `tests/parity_matrix.rs` forces an unavailable-browser failure and verifies four
 distinct failed calls, in addition to the four success calls and isolated paths.
 This gathers diagnostics without retrying or discarding any failed result.
+
+## About geometry and four-cell parity (#420)
+
+The pre-#483 Windows run failed only About in each cell, despite the junction, native path, Node and Explorer checks passing. Fractional raster position was supported by the Windows capture comparison: shifting one 100-pixel band by one device pixel removed its observed differences. After integrating #483, source `6a2d9f73` passed the strict four-cell macOS driver in 527.58 seconds; each isolated directory contains 278 PNGs. This does not establish Windows or later integration acceptance.

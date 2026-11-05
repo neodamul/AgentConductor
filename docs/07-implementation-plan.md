@@ -3007,3 +3007,5 @@ only after completing the matrix; do not retry or discard any failed cell.
 - [ ] Completed: three consecutive macOS CI runs without an `about-dialog` difference; GitHub #482 closed.
 
 Trace: R-215 / UC-207 / QAS-214 / DD-227.
+
+#420 local About integration receipt: on source `6a2d9f73` (including #483), the strict driver completed light/dark × 840/1280 with 160 relevant entries per cell and no differences; `cargo test --locked --test design_parity -- --nocapture` exited 0 in 527.58 seconds. Four isolated capture directories each contain 278 PNGs. This is a macOS receipt; Windows and the final integrated source remain unverified. Local evidence: `.agentconductor/verification/issue-420/about-integrated/`.
