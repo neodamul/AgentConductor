@@ -1,7 +1,8 @@
-use crate::plan::overlaps;
-use serde::{Deserialize, Serialize};
+mod snapshot;
+mod worktrees;
+
+pub use snapshot::Snapshot;
 use std::{
-    collections::BTreeSet,
     io::Write,
     path::{Path, PathBuf},
     process::Stdio,
@@ -11,13 +12,6 @@ use std::{
 pub struct Repository {
     pub root: PathBuf,
     history: Option<PathBuf>,
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct Snapshot {
-    pub commit: String,
-    pub tree: String,
-    pub changed: Vec<String>,
 }
 
 impl Repository {
@@ -220,200 +214,6 @@ impl Repository {
         {
             return Err("a clean repository baseline is required".into());
         }
-        Ok(())
-    }
-    pub fn worktree(&self, path: &Path, base: &str) -> Result<(), String> {
-        self.command(&[
-            "worktree",
-            "add",
-            "--detach",
-            path.to_str().ok_or("non-UTF8 worktree path")?,
-            base,
-        ])?;
-        Ok(())
-    }
-    /// Removes this repository's linked worktrees that live under `run` and prunes entries whose
-    /// folder is already gone; other worktrees are never touched. Returns how many entries went.
-    pub fn remove_worktrees_under(&self, run: &Path) -> Result<usize, String> {
-        let run = run.canonicalize().map_err(|e| e.to_string())?;
-        let listing = self.text(&["worktree", "list", "--porcelain"])?;
-        let mut removed = 0;
-        for line in listing.lines() {
-            let Some(path) = line.strip_prefix("worktree ").map(PathBuf::from) else {
-                continue;
-            };
-            // A vanished folder cannot be canonicalized; its parent still shows where it lived.
-            let inside = path
-                .canonicalize()
-                .or_else(|_| {
-                    path.parent()
-                        .ok_or(std::io::ErrorKind::NotFound.into())
-                        .and_then(|p| p.canonicalize())
-                        .map(|p| p.join(path.file_name().unwrap_or_default()))
-                })
-                .is_ok_and(|p| p != self.root && p.starts_with(&run));
-            if inside {
-                let target = path.to_str().ok_or("non-UTF8 worktree path")?;
-                if self
-                    .command(&["worktree", "remove", "--force", target])
-                    .is_ok()
-                {
-                    removed += 1;
-                }
-            }
-        }
-        let before = self
-            .text(&["worktree", "list", "--porcelain"])?
-            .lines()
-            .count();
-        self.command(&["worktree", "prune"])?;
-        let after = self
-            .text(&["worktree", "list", "--porcelain"])?
-            .lines()
-            .count();
-        // `prune` forgets entries whose folder vanished; each entry is three lines.
-        Ok(removed + before.saturating_sub(after).div_ceil(3))
-    }
-    pub fn changed(&self, base: &str) -> Result<Vec<String>, String> {
-        let mut paths = BTreeSet::new();
-        for bytes in [
-            self.command(&["diff", "--no-renames", "--name-only", "-z", base, "--"])?,
-            self.command(&["ls-files", "--others", "--exclude-standard", "-z"])?,
-        ] {
-            for part in bytes.split(|b| *b == 0).filter(|p| !p.is_empty()) {
-                paths.insert(String::from_utf8(part.to_vec()).map_err(|e| e.to_string())?);
-            }
-        }
-        Ok(paths.into_iter().collect())
-    }
-    pub fn check_scope(&self, changed: &[String], scopes: &[String]) -> Result<(), String> {
-        for path in changed {
-            if !scopes.iter().any(|scope| {
-                overlaps(path, scope) && (path == scope || path.starts_with(&format!("{scope}/")))
-            }) {
-                return Err(format!("out-of-scope change: {path}"));
-            }
-            let mut current = self.root.clone();
-            for component in Path::new(path).components() {
-                current.push(component);
-                if std::fs::symlink_metadata(&current).is_ok_and(|m| m.file_type().is_symlink()) {
-                    let target = current.canonicalize().map_err(|e| e.to_string())?;
-                    if !target.starts_with(&self.root) {
-                        return Err(format!("symlink escapes workspace: {path}"));
-                    }
-                }
-            }
-        }
-        Ok(())
-    }
-    pub fn snapshot(
-        &self,
-        base: &str,
-        scopes: &[String],
-        index: &Path,
-    ) -> Result<Snapshot, String> {
-        let changed = self.changed(base)?;
-        self.check_scope(&changed, scopes)?;
-        self.snapshot_paths(base, changed, index)
-    }
-    /// Records the whole current workspace state without a scope check. Used for
-    /// approval fingerprints while other owned-scope writers may still be active.
-    pub fn checkpoint(&self, base: &str, index: &Path) -> Result<Snapshot, String> {
-        let changed = self.changed(base)?;
-        self.snapshot_paths(base, changed, index)
-    }
-    fn snapshot_paths(
-        &self,
-        base: &str,
-        changed: Vec<String>,
-        index: &Path,
-    ) -> Result<Snapshot, String> {
-        if index.exists() {
-            return Err("temporary index already exists".into());
-        }
-        let result = (|| {
-            self.invoke(&["read-tree", base], None, Some(index))?;
-            let mut args = vec!["add", "-A", "--"];
-            args.extend(changed.iter().map(String::as_str));
-            if !changed.is_empty() {
-                self.invoke(&args, None, Some(index))?;
-            }
-            let tree = String::from_utf8(self.invoke(&["write-tree"], None, Some(index))?)
-                .map_err(|e| e.to_string())?
-                .trim()
-                .to_string();
-            let commit = String::from_utf8(self.invoke(
-                &["commit-tree", &tree, "-p", base],
-                Some(b"AgentConductor candidate\n"),
-                Some(index),
-            )?)
-            .map_err(|e| e.to_string())?
-            .trim()
-            .to_string();
-            Ok(Snapshot {
-                commit,
-                tree,
-                changed,
-            })
-        })();
-        let _ = std::fs::remove_file(index);
-        result
-    }
-    pub fn diff(&self, base: &str, candidate: &str) -> Result<Vec<u8>, String> {
-        self.command(&["diff", "--binary", "--no-renames", base, candidate, "--"])
-    }
-    pub fn apply_working_patch(&self, patch: &[u8]) -> Result<(), String> {
-        if !patch.is_empty() {
-            self.invoke(&["apply", "--check", "--binary", "-"], Some(patch), None)?;
-            self.invoke(&["apply", "--binary", "-"], Some(patch), None)?;
-        }
-        Ok(())
-    }
-    pub fn combine(
-        &self,
-        base: &str,
-        patches: &[Vec<u8>],
-        index: &Path,
-    ) -> Result<Snapshot, String> {
-        if index.exists() {
-            return Err("temporary index already exists".into());
-        }
-        let result = (|| {
-            self.invoke(&["read-tree", base], None, Some(index))?;
-            for patch in patches {
-                if !patch.is_empty() {
-                    self.invoke(
-                        &["apply", "--cached", "--binary", "-"],
-                        Some(patch),
-                        Some(index),
-                    )?;
-                }
-            }
-            let tree = String::from_utf8(self.invoke(&["write-tree"], None, Some(index))?)
-                .map_err(|e| e.to_string())?
-                .trim()
-                .to_string();
-            let commit = String::from_utf8(self.invoke(
-                &["commit-tree", &tree, "-p", base],
-                Some(b"AgentConductor integration candidate\n"),
-                Some(index),
-            )?)
-            .map_err(|e| e.to_string())?
-            .trim()
-            .to_string();
-            let names = self.text(&["diff", "--no-renames", "--name-only", base, &commit, "--"])?;
-            Ok(Snapshot {
-                commit,
-                tree,
-                changed: names.lines().map(String::from).collect(),
-            })
-        })();
-        let _ = std::fs::remove_file(index);
-        result
-    }
-    pub fn merge_shared(&self, branch: &str, base: &str, candidate: &str) -> Result<(), String> {
-        self.command(&["update-ref", branch, candidate, base])?;
-        self.command(&["read-tree", candidate])?;
         Ok(())
     }
 }
