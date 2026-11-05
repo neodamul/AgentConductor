@@ -3010,3 +3010,13 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged; GitHub #496 closed.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Narrow agent action strip — GitHub #424
+Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
+
+- [x] Plan: inspect latest app and approved reference; preserve all actions and the original icon and focus behavior.
+- [x] Red: actual assembled Chrome at 840px renders the tools row at 48px rather than 22px.
+- [x] Task: align narrow-width gaps and non-delete horizontal padding in both the app and approved reference; preserve reorder click widths.
+- [x] Verify: actual Chrome app/reference light/dark × 840/1280 in Korean, English 840px without clipped labels, and existing icon/focus/name/cursor checks; 14 focused Rust tests pass.
+- [ ] Verify: full local regression and Windows platform evidence; screenshot recapture remains deferred.
+- [ ] Complete: issue-linked main PR and platform evidence.

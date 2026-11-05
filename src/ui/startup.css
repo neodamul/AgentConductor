@@ -413,3 +413,5 @@ header.titlebar #start-workspace-menu{font-size:13px}#start-mcp-controls.source-
 #start-goal-info .goal-info-content{flex:1;min-width:0;height:30px;display:flex;align-items:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 
 .startup-main{padding-top:14px}.startup-heading h1{letter-spacing:-.2px}
+
+@media(max-width:900px){.startup-profile .profile-tools{gap:2px}.startup-profile .profile-tools button:not(.remove-agent){padding-left:4px;padding-right:4px}.startup-profile .profile-tools button:nth-child(-n+2){padding-left:2px;padding-right:2px}}

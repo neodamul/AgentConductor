@@ -273,3 +273,5 @@ button[data-action-icon]{display:inline-flex;align-items:center;justify-content:
 .about-credit{font-size:12px;color:var(--soft);line-height:19px}
 .about-foot{display:flex;align-items:center;gap:10px;margin-top:18px;padding-top:12px;border-top:1px solid var(--line)}
 .about-foot span{flex:1;color:var(--soft);font-size:12px}
+
+@media(max-width:900px){.agent .tools{gap:2px}.agent .tools>.tb:not(.agent-remove){padding-left:4px;padding-right:4px}.agent .tools>.tb:nth-child(-n+2){padding-left:2px;padding-right:2px}}
