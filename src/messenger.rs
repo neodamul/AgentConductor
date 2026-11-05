@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
 pub mod channel;
+pub mod conversation;
 pub mod events;
 pub mod inbound;
 mod secrets;
