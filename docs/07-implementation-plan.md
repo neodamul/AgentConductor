@@ -3235,3 +3235,11 @@ Trace: R-35 / DD-37 / DD-41.
 - [ ] Completed: merged to main; other files over 300 lines remain under #472.
 
 Trace: R-35 / DD-37 / DD-41.
+
+### Popup focus ring — GitHub #546
+
+- [x] Plan: `showModal()` moves an automatic focus on a button, check box, radio, summary or link to the dialog itself (no ring, Tab still reaches every control); text fields keep their focus; `dialog:focus` has no outline. One script (`dialog_focus.js`) in the Workspace and Room documents.
+- [x] Verify: `tests/dialog_focus_css.rs`, browser check (Messenger dialog, Goal list panel, Settings, Update: dialog focused, no ring; New workspace keeps its name field), Clippy.
+- [ ] Completed: merged to main; backported to 0.1.60 with #544.
+
+Trace: UI387-R5 / R-52 / DD-41.
