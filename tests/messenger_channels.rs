@@ -12,7 +12,7 @@ fn the_registry_lists_slack_and_webhook_with_their_capabilities() {
             "{} sends notices and reads decision replies",
             c.id()
         );
-        assert!(!caps.conversation, "{} has no conversation yet", c.id());
+        assert!(caps.conversation, "{} reads raw messages for the conversation (DD-230)", c.id());
     }
     assert!(channel::find("slack").is_some() && channel::find("teams").is_none());
     assert!(!Kind::Slack.channel().uses_template() && Kind::Webhook.channel().uses_template());

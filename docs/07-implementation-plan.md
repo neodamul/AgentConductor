@@ -3134,3 +3134,11 @@ Trace: R-43 / UC-34 / QAS-35 / DD-229.
 - [ ] Completed: merged to main; GitHub #514 closes with the 0.1.59 release.
 
 Trace: R-185 / UC-202 / DD-222.
+
+### Messenger conversation: raw message contract (DD-230) — GitHub #519
+
+- [x] Plan: `messenger::Incoming { id, sender, ts, thread, text }` and `Channel::fetch_messages` (default: refused); Slack returns `conversations.history` user messages (bots, edits and anonymous items dropped, `thread_ts` kept) and the company relay returns messages that carry an HMAC over `id|sender|thread|text`, so the sender is authenticated by the transport. `Settings` gains `conversation` (default off) and `talkers` (default empty), read from older files unchanged. Both channels declare the conversation capability. Nothing is polled yet.
+- [x] Verify: `tests/messenger_incoming.rs` (Slack filtering and thread, relay signature over id, sender, thread and text with tampered, forged-sender and wrong-key items refused, defaults and old-file compatibility), `tests/messenger_channels.rs`, the existing messenger and settings tests, Clippy.
+- [ ] Completed: conversation core and limits, worker and chat hand-off, settings dialog, manuals.
+
+Trace: R-43 / UC-35 / QAS-36 / DD-230.

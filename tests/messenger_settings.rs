@@ -31,7 +31,7 @@ fn settings_save_export_and_import_without_the_url() {
     assert_eq!(initial["settings"]["enabled"], false);
     assert_eq!(initial["has_url"], false);
 
-    let settings = serde_json::json!({"enabled":true,"kind":"webhook","events":["completed","failed"],"template":"{\"body\":\"{{text}}\"}","include_goal":false,"decisions":true,"slack_channel":null,"approvers":["kim"]});
+    let settings = serde_json::json!({"enabled":true,"kind":"webhook","events":["completed","failed"],"template":"{\"body\":\"{{text}}\"}","include_goal":false,"decisions":true,"conversation":false,"talkers":[],"slack_channel":null,"approvers":["kim"]});
     let bad = serde_json::json!({"enabled":true,"kind":"webhook","events":[],"template":"not json {{text}}","include_goal":false});
     assert!(
         mutate(
