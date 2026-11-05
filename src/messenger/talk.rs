@@ -67,14 +67,16 @@ pub fn say(root: &Path, settings: &Settings, name: &str, text: &str) -> Result<(
 }
 
 /// Runs every fetched message through the core. The cursor moves with each message, and the first
-/// poll only learns where the channel stands so its history is never answered.
+/// poll only learns where the channel stands so its history is never answered. Returns the audit
+/// lines `(message id, sender, result)` of the messages that were queued or rejected.
 pub fn apply(
     settings: &Settings,
     inbox: &mut Inbox,
     messages: Vec<Incoming>,
     now: u64,
     say: &mut dyn FnMut(String),
-) {
+) -> Vec<(String, String, &'static str)> {
+    let mut audit = vec![];
     let (first, before) = (!inbox.started, inbox.cursor.clone());
     inbox.started = true;
     for message in messages {
@@ -85,15 +87,25 @@ pub fn apply(
         if first || (!before.is_empty() && message.ts <= before) {
             continue;
         }
-        match conversation::accept(settings, inbox, &message, now) {
-            Verdict::Reject(id) => say(crate::ui::messages::text(id).into()),
-            Verdict::Queued { place } if place > 1 => say(crate::ui::messages::render(
-                "messenger.ack.queued",
-                &[("value1", &place.to_string())],
-            )),
-            _ => {}
-        }
+        let result = match conversation::accept(settings, inbox, &message, now) {
+            Verdict::Reject(id) => {
+                say(crate::ui::messages::text(id).into());
+                "rejected"
+            }
+            Verdict::Queued { place } => {
+                if place > 1 {
+                    say(crate::ui::messages::render(
+                        "messenger.ack.queued",
+                        &[("value1", &place.to_string())],
+                    ));
+                }
+                "queued"
+            }
+            _ => continue,
+        };
+        audit.push((message.id, message.sender, result));
     }
+    audit
 }
 
 /// One poll: fetch, decide, answer rejections, save. Errors are returned for the log.
@@ -116,8 +128,20 @@ pub fn poll(root: &Path, settings: &Settings, name: &str, now: u64) -> Result<()
             log(root, &format!("reply: {e}"));
         }
     };
-    apply(settings, &mut inbox, messages, now, &mut say);
-    save(root, &inbox)
+    let audit = apply(settings, &mut inbox, messages, now, &mut say);
+    save(root, &inbox)?;
+    // DD-230: every accepted or rejected message leaves a record with its sender.
+    if let Ok(mut store) = crate::state::Store::open(root.join("messenger-audit.sqlite")) {
+        for (id, sender, result) in audit {
+            let value = serde_json::json!({"channel":settings.kind.channel().id(),"sender":sender,"action":"chat","result":result});
+            let _ = store.record(
+                &format!("messenger_action/{id}"),
+                &value,
+                "Messenger conversation message",
+            );
+        }
+    }
+    Ok(())
 }
 
 #[cfg(test)]

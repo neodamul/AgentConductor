@@ -26,6 +26,32 @@ fn run(inbox: &mut Inbox, messages: Vec<Incoming>, now: u64) -> Vec<String> {
 }
 
 #[test]
+fn queued_and_rejected_messages_are_audited_and_strangers_are_not() {
+    let mut inbox = Inbox {
+        started: true,
+        ..Default::default()
+    };
+    let audit = apply(
+        &settings(),
+        &mut inbox,
+        vec![
+            msg("1.0", "mallory", "hi"),
+            msg("2.0", "ann", "q"),
+            msg("3.0", "ann", &"x".repeat(2001)),
+        ],
+        10,
+        &mut |_| {},
+    );
+    assert_eq!(
+        audit,
+        vec![
+            ("2.0".to_string(), "ann".to_string(), "queued"),
+            ("3.0".to_string(), "ann".to_string(), "rejected")
+        ]
+    );
+}
+
+#[test]
 fn the_first_poll_skips_history_and_later_ones_answer_in_order() {
     let mut inbox = Inbox::default();
     assert!(run(&mut inbox, vec![msg("1.0", "ann", "old question")], 10).is_empty());

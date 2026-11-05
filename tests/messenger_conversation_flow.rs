@@ -139,6 +139,10 @@ fn a_talker_asks_the_coordinator_through_the_channel_and_a_stranger_is_ignored()
         1,
         "one answer, nothing for the stranger or the history"
     );
+    assert!(
+        desktop.join("messenger-audit.sqlite").exists(),
+        "the accepted message is audited"
+    );
     let inbox = std::fs::read_to_string(desktop.join("messenger-conversation.json")).unwrap();
     assert!(inbox.contains("\"in_flight\":null"), "{inbox}");
     drop(startup);
