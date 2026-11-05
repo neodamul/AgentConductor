@@ -252,6 +252,7 @@ mod update_blockers;
 pub(crate) use profiles::{validate_catalog, validate_name, validate_profiles};
 
 mod chat;
+mod chat_progress;
 mod jobs;
 mod lifecycle;
 mod master;

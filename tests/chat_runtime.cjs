@@ -114,7 +114,7 @@ const key = (q, init) => q('chat-input').handlers.keydown({ preventDefault() {},
   ui2.update(); await tick();
   assert.equal(q2('chat-send').disabled, true, 'a running chat is adopted');
   // GitHub #279: its time counts from the job's start, and the 1 s tick says when the app sends no new state.
-  const working = () => q2('chat-log').children.at(-1).textContent;
+  const working = () => q2('chat-log').children.at(-1).children[0].textContent; // the status label of the working bubble (GitHub #514)
   assert.match(working(), /2:0[0-1]$/, working());
   staleText = 'no new state for 9s'; ui2.tick();
   assert.match(working(), /2:0[0-1] · no new state for 9s$/, working());

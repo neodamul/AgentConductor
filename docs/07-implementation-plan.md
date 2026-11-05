@@ -3126,3 +3126,11 @@ Trace: R-43 / UC-34 / QAS-35 / DD-228.
 - [ ] Completed: release 0.1.60 only on request.
 
 Trace: R-43 / UC-34 / QAS-35 / DD-229.
+
+### Coordinator chat: live progress in the working bubble (main port) — GitHub #514
+
+- [x] Plan: port of the 0.1.59 change to `main` (tracked in #524): the chat job snapshot carries `output` (bytes, last write) and `progress` (at most eight `{kind, text}` items, each at most 120 characters, from the last 64 KiB of the CLI's `stdout.jsonl`; Claude `tool_use`/`text` and Codex `command_execution`/`mcp_tool_call`/`agent_message` events); the page renders them inside the one working bubble, updates only the status label every second, keeps a scrolled-up reader in place and replaces the bubble with the answer in the same redraw.
+- [x] Verify: `src/ui/setup/chat_progress.rs` unit tests, `tests/chat_progress_runtime.cjs`, `tests/chat_runtime.cjs`, i18n/startup contract tests, Python and Node suites.
+- [ ] Completed: merged to main; GitHub #514 closes with the 0.1.59 release.
+
+Trace: R-185 / UC-202 / DD-222.
