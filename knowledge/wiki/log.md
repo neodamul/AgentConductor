@@ -1,5 +1,9 @@
 # Knowledge and development log
 
+## [2026-11-05] plan/task — Messenger identity-safe workspace import (#523)
+
+Shared workspace exports and imports now discard messenger activation, decision mode, approvers and Slack channel identity. Hostile-file end-to-end regressions record both boundaries. See [messenger-import-identity](messenger-import-identity.md).
+
 ## [2026-10-19] verify | Recursive repository planning rules (GitHub #8)
 
 Rules below `<repository>/.agentconductor/plan-rules/` now load recursively in relative

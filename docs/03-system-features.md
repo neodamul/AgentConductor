@@ -123,7 +123,7 @@ Page-driven sequential discovery for built-in agents without a catalog while no 
 
 ### SF-43 Workspace settings export/import
 
-Versioned `agentconductor.workspace.json` written to a chosen folder (default: the repository); import from a folder with preview, local-state preservation and capability re-verification. Trace: BG-20 / R-52.
+Versioned `agentconductor.workspace.json` written to a chosen folder (default: the repository); import from a folder with preview, local-state preservation and capability re-verification. Messenger activation, decision permission, approvers and Slack reply routing are reset on export and import so shared files cannot grant authority. Trace: BG-20 / R-52 / #523.
 
 ### SF-44 Variable-size plans and plan-document import
 

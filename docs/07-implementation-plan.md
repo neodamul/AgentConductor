@@ -2886,6 +2886,17 @@ Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Messenger identity-safe workspace import — GitHub #523
+
+- [x] Plan: amend DD-59 so shared settings do not transfer messenger identity or decision authority; export and import both clear activation, approvers and reply routing. The fix is independent of the #520 channel abstraction for backporting.
+- [x] Task / Red: `tests/messenger_import_security.rs` verifies export and import with hostile identity values on Unix and Windows; `tests/workspace_share.rs` checks persisted settings and local configuration preservation.
+- [x] Task / Green: one `Settings` helper clears delivery/decision activation, approvers and Slack routing on both export and import.
+- [x] Verify / focused: hostile export/import and workspace-share integration tests, architecture trace, formatting and whitespace checks pass; changed Rust files stay within 300 lines.
+- [ ] Verify / complete: full all-target local suite and warning-denied Clippy on the rebased main head.
+- [ ] Complete: changelog, wiki, AgentMemory, issue-linked PR and reviewed backport readiness.
+
+Trace: R-52 / BG-20 / SF-43 / UC-42 / FR-37 / NFR-18 / QAS-44 / DDR-15 / DD-59.
+
 ### Source bound: native guard session identifiers — GitHub #472
 
 - [x] Plan: separate OS-backed session identifier generation from the native guard while preserving its public API and entropy source.

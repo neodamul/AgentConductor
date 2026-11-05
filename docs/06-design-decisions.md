@@ -796,6 +796,8 @@ Trace: R-52 -> BG-20 -> SF-43 -> UC-42 -> FR-37/NFR-18 -> QAS-44 -> DDR-15.
 - **Rejected.** Syncing the whole `~/.agentconductor` workspace through Git, which would
   share secrets, local paths and run evidence.
 
+Security amendment (#523, 2026-11-05): shared settings are untrusted input and must not transfer messenger authority. On export and import, force messenger `enabled` and `decisions` off, clear `approvers`, and remove `slack_channel`; workspace files cannot grant sender authority or choose the channel used to read decision replies. Keep machine-local secrets outside the shared file. Hostile-file integration tests verify both boundaries.
+
 Amendment to DD-57/DD-58 (user, 2026-10-11): `create_workspace` copies observed catalogs from
 the workspace being left onto agents with the same parser and executable, so a new
 workspace shows model lists immediately; after any workspace switch the page queues its

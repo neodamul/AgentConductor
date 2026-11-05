@@ -50,6 +50,15 @@ pub struct Settings {
     pub approvers: Vec<String>,
 }
 
+impl Settings {
+    pub(crate) fn clear_shared_authority(&mut self) {
+        self.enabled = false;
+        self.decisions = false;
+        self.approvers.clear();
+        self.slack_channel = None;
+    }
+}
+
 impl Default for Settings {
     fn default() -> Self {
         Self {
