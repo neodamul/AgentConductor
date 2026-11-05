@@ -1,5 +1,8 @@
 //! Shell commands: confined to the workspace they run at once; reaching outside asks.
-use super::{Disposition, Policy, metadata, sensitive};
+use super::{
+    Disposition, Policy,
+    spelling::{metadata, sensitive},
+};
 use std::path::Path;
 
 /// Programs whose purpose reaches outside the task workspace: network, privilege, system
