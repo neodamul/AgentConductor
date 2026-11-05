@@ -414,4 +414,4 @@ header.titlebar #start-workspace-menu{font-size:13px}#start-mcp-controls.source-
 
 .startup-main{padding-top:14px}.startup-heading h1{letter-spacing:-.2px}
 
-@media(max-width:900px){.startup-profile .profile-tools{gap:2px}.startup-profile .profile-tools button:not(.remove-agent){padding-left:4px;padding-right:4px}.startup-profile .profile-tools button:nth-child(-n+2){padding-left:2px;padding-right:2px}}
+@media(max-width:900px){.startup-profile .profile-tools{gap:1px}.startup-profile .profile-tools button:not(.remove-agent){padding-left:6px;padding-right:6px}.startup-profile .profile-tools button:nth-child(-n+2){padding-left:2px;padding-right:2px}}
