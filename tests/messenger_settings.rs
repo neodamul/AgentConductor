@@ -93,7 +93,7 @@ fn settings_save_export_and_import_without_the_url() {
     );
     assert_eq!(
         serde_json::from_str::<serde_json::Value>(&text).unwrap()["messenger"],
-        serde_json::json!({"enabled":false,"kind":"webhook","events":["completed","failed"],"template":"{\"body\":\"{{text}}\"}","include_goal":false,"decisions":false,"slack_channel":null,"approvers":[]})
+        serde_json::json!({"enabled":false,"kind":"webhook","events":["completed","failed"],"template":"{\"body\":\"{{text}}\"}","include_goal":false,"decisions":false,"conversation":false,"talkers":[],"slack_channel":null,"approvers":[]})
     );
 
     let b = Startup::open(&root.join("dev-b"), exe).unwrap();
