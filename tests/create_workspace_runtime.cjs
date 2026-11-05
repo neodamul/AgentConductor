@@ -4,11 +4,13 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('nod
 const source=fs.readFileSync('src/ui/startup.js','utf8');
 const line=(start)=>{const a=source.indexOf(start);assert(a>=0,start);const b=source.indexOf('\n',a);return source.slice(a,b);};
 assert(/q\('new-create'\)\.disabled=creating;/.test(source),'Create follows only its own flag');
+assert(source.includes("q('new-create').onclick=()=>createWorkspace();"),'the Create button creates');
+assert(source.includes("q('new-create').click();"),'Enter in the name field presses Create');
 assert(!/q\('new-create'\)\.disabled=mutating/.test(source),'Create is not coupled to unrelated work');
 const nodes=new Map();
 const q=id=>{if(!nodes.has(id))nodes.set(id,{value:'',disabled:false,text:'',close(){this.open=false;}});return nodes.get(id);};
 const log=[];let release;const held=new Promise(r=>{release=r;});let pollDone;const pollGate=new Promise(r=>{pollDone=r;});
-const context={q,log,setTimeout,Date,acMessage:key=>key,AC_I18N:{bind(node,fn){node.text=fn();}},PLAN_START_LIMIT:1,
+const context={q,log,setTimeout,clearTimeout,Date,acMessage:key=>key,AC_I18N:{bind(node,fn){node.text=fn();}},PLAN_START_LIMIT:1,
   notice(){},reloadWorkspace:async()=>{log.push('reload');},firstWorkspaceNamed(){},
   request:async packet=>{log.push(packet.kind);if(packet.kind==='quota')await held;return packet.kind==='snapshot'?{job:null,metadata_job:null}:{};},
   poll:async()=>{log.push('poll');await pollGate;}};
