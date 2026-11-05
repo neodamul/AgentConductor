@@ -639,3 +639,7 @@ Scheduled workspace and room polls are marked as background observation and supp
 ## 2026-11-04 Approved Goal UI (#387)
 
 Recorded the reviewed behavior/visual contract, local light/dark images, source fingerprints, and Claude handoff in `approved-goal-ui.md`. Design evidence remains separate from product implementation acceptance; Rust work remains paused.
+
+## 2026-11-05 Messenger conversation threat model (#519)
+
+Recorded draft DD-229 before phase 3 implementation: untrusted message content, stable sender authorization, explicit workspace/run/question routing, bounded allow/deny/resume/stop/reply authority, replay resistance, and safe import/export boundaries. Architecture trace RED identified undefined DD-229; after defining it, architecture trace passed 7/7. The #520 channel-interface PR advertises a conversation capability but does not implement conversation. Coordinator review and provider/message-contract choices remain open; see `messenger-conversation-threat-boundary.md`.
