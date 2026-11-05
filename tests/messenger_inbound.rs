@@ -77,16 +77,20 @@ fn count(dir: &Path) -> usize {
     std::fs::read_dir(dir).unwrap().count()
 }
 
-fn pending(run: &Path, task: &str) -> String {
-    let mut ledger = Ledger::open(&run.join("state.sqlite")).unwrap();
-    let context = Context {
+fn context(task: &str) -> Context {
+    Context {
         epoch: 1,
         task: task.into(),
         session: "s".into(),
         workspace: "w".into(),
         plan_sha256: "p".into(),
         workspace_sha256: "x".into(),
-    };
+    }
+}
+
+fn pending(run: &Path, task: &str) -> String {
+    let mut ledger = Ledger::open(&run.join("state.sqlite")).unwrap();
+    let context = context(task);
     let request = ToolRequest {
         tool: "Bash".into(),
         input: serde_json::json!({"command":"rm -rf build"}),
@@ -167,6 +171,56 @@ fn listed_approver_decides_once_and_nothing_is_fetched_without_pending_requests(
             .contains("oldest=100.3")
     );
     assert_eq!(decided, vec![(id, true)]);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn more_than_twenty_requests_queue_in_order_and_are_announced_as_slots_free() {
+    let (root, _plan) = support::setup("shared");
+    let mut env = test_env::lock();
+    env.set("HOME", root.join("home"));
+    let curl = fake_curl(&root, &mut env);
+    let workspace = root.join("desktop");
+    std::fs::create_dir_all(&workspace).unwrap();
+    messenger::save_secret(&workspace, Some("https://hooks.example.test/x")).unwrap();
+    messenger::save_secret_value(&workspace, Some("token"), Some("xoxb-test-token")).unwrap();
+    let run = root.join("runs/run-1");
+    std::fs::create_dir_all(&run).unwrap();
+    let settings = Settings {
+        enabled: true,
+        kind: Kind::Slack,
+        decisions: true,
+        slack_channel: Some("C1".into()),
+        approvers: vec!["U1".into()],
+        ..Default::default()
+    };
+    messenger::link_run(&run, &workspace, "Team", "goal", &settings).unwrap();
+    let ids: Vec<String> = (0..22).map(|n| pending(&run, &format!("t{n}"))).collect();
+    std::fs::write(curl.join("response.json"), r#"{"ok":true,"messages":[]}"#).unwrap();
+    // A denial really leaves the ledger, so the freed slot is visible to the next poll.
+    let mut apply = |id: &str, allow: bool| {
+        let task = format!("t{}", ids.iter().position(|i| i == id).unwrap());
+        Ledger::open(&run.join("state.sqlite"))?.decide(id, id, allow, &context(&task), 1, 2)
+    };
+    let first = inbound::poll_once(&run, &mut apply).unwrap();
+    assert_eq!(first.announced, 20, "the 21st and 22nd wait their turn");
+    assert_eq!(count(&curl.join("post")), 20);
+    // Nothing more is announced while all twenty are outstanding.
+    assert_eq!(inbound::poll_once(&run, &mut apply).unwrap().announced, 0);
+    // An answer frees a slot; the next poll announces exactly the next request in order.
+    let code = inbound::code(&ids[0]);
+    std::fs::write(
+        curl.join("response.json"),
+        serde_json::json!({"ok":true,"messages":[{"user":"U1","text":format!("deny {code}"),"ts":"100.1"}]}).to_string(),
+    )
+    .unwrap();
+    assert_eq!(
+        inbound::poll_once(&run, &mut apply).unwrap().applied.len(),
+        1
+    );
+    // `pending()` ids are not ordered by creation, so the ledger order decides which waits; one is announced.
+    assert_eq!(inbound::poll_once(&run, &mut apply).unwrap().announced, 1);
+    assert_eq!(inbound::poll_once(&run, &mut apply).unwrap().announced, 0);
     std::fs::remove_dir_all(root).unwrap();
 }
 

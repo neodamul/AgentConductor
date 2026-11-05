@@ -177,6 +177,48 @@ fn webhook_urls_are_https_local_secrets_and_runs_notify_once_per_state() {
     std::fs::remove_dir_all(root).unwrap();
 }
 
+/// DD-229: ten notices a minute per workspace; the rest fold into one "N more events" message.
+#[test]
+fn a_burst_is_limited_to_ten_a_minute_and_reported_once() {
+    let (root, _plan) = support::setup("shared");
+    let mut env = test_env::lock();
+    env.set("HOME", root.join("home"));
+    env.set("AGENTCONDUCTOR_MESSENGER_CURL", root.join("fake-curl"));
+    let sent = fake_curl(&root);
+    let workspace = root.join("desktop");
+    std::fs::create_dir_all(&workspace).unwrap();
+    messenger::save_secret(&workspace, Some(URL)).unwrap();
+    let settings = settings(Kind::Slack);
+    for _ in 0..12 {
+        messenger::notify_plan(&workspace, &settings, "Payments team", "goal", 3);
+    }
+    wait_for(&sent, 10);
+    std::thread::sleep(std::time::Duration::from_millis(400));
+    assert_eq!(
+        std::fs::read_dir(&sent).unwrap().count(),
+        20,
+        "ten sends (args + stdin each)"
+    );
+    let log = std::fs::read_to_string(workspace.join("messenger.log")).unwrap();
+    assert_eq!(log.matches("folded").count(), 2, "{log}");
+
+    // A minute later the window is empty: one summary of the two folded notices, then the new one.
+    let rate = workspace.join("messenger-rate.json");
+    let mut value: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(&rate).unwrap()).unwrap();
+    assert_eq!(value["folded"], 2);
+    value["sent"] = serde_json::json!([1]);
+    std::fs::write(&rate, serde_json::to_vec(&value).unwrap()).unwrap();
+    messenger::notify_plan(&workspace, &settings, "Payments team", "goal", 3);
+    let bodies = wait_for(&sent, 12);
+    let summaries: Vec<_> = bodies
+        .iter()
+        .filter(|b| b.contains("2 more events were not sent"))
+        .collect();
+    assert_eq!(summaries.len(), 1, "{bodies:?}");
+    std::fs::remove_dir_all(root).unwrap();
+}
+
 #[test]
 fn workspace_menu_opens_the_messenger_dialog() {
     assert!(SCRIPT.contains("\"startup.messenger\""));
@@ -190,6 +232,8 @@ fn workspace_menu_opens_the_messenger_dialog() {
         "start-messenger-template",
         "start-messenger-goal",
         "start-messenger-test",
+        "start-messenger-conversation",
+        "start-messenger-talkers",
     ] {
         assert!(dialog.contains(&format!("id=\"{id}\"")), "missing {id}");
     }
