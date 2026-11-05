@@ -3154,3 +3154,11 @@ Trace: R-185 / UC-202 / DD-222.
 - [ ] Completed: implementation in #518, #519.
 
 Trace: R-43 / UC-34 / QAS-35 / DD-229 / DD-230.
+
+### Messenger event catalogue (DD-229) — GitHub #518
+
+- [x] Plan: `messenger/events.rs` holds the catalogue (id, message id, source, actionable, throttle key, detail) as the single source of the event ids; `EVENTS` is derived from it; the Korean and English texts move from the literal `label()` into `messenger.event.<id>` in the message catalogs with identical wording. No behavior change.
+- [x] Verify: `tests/messenger_events.rs` (all nine texts in both languages equal the previous literals; the dialog list equals the catalogue; only tool requests are actionable); the existing messenger tests pass unmodified; i18n and message contracts; Clippy.
+- [ ] Completed: throttle and fold, key set, actionable queue, `resume`/`stop`, channel field list, capability hints (the remaining #518 items).
+
+Trace: R-43 / UC-34 / QAS-35 / DD-229.
