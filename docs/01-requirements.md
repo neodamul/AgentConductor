@@ -98,7 +98,7 @@ Built-in agent kinds (Claude Code, Codex, OpenCode) are shown with the same icon
 
 ### R-35 Maintainable source layout
 
-Production code lives under `src/` and tests under `tests/`; no inline `#[cfg(test)]` modules remain in production files. Every individual source, test, script, style and markup file stays at or below 500 lines. Splits follow module responsibilities without changing behavior.
+Production code lives under `src/` and tests under `tests/`; no inline `#[cfg(test)]` modules remain in production files. Every individual source, test, script, style and markup file stays at or below 300 lines. The existing 500-line gate is transitional and does not establish compliance; #472 tracks the remaining splits and the 300-line gate. Splits follow module responsibilities without changing behavior.
 
 ### R-36 Product README and separate user manual
 
@@ -581,7 +581,7 @@ Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 ### R-143 Workspace transfer menu
 
-Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
+Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing was separated into ui/dispatch.rs without changing dispatch semantics; the then-current 500-line bound is superseded by R-35.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
 
 ### R-144 Readable offline HTML manuals

@@ -10,7 +10,7 @@
 | SF-06 | SQLite state, audit, recovery | BG-03 | Included |
 | SF-07 | agentmemory, local wiki, lessons | BG-04 | Minimal integration |
 | SF-08 | CLI status, review, approval list | BG-03/05 | CLI foundation verified; functional interaction UI remains required |
-| SF-12 | License/SBOM and TDD verification | BG-05 | Development/release procedures |
+| SF-12 | License/SBOM, TDD verification and responsibility-based 300-line modules | BG-05 | Development/release procedures |
 
 Automatic planning runs the coordinator CLI once to produce JSON, then validates it
 in Rust. The coordinator reuses its login. Manual plans use the same validation path.
@@ -500,7 +500,7 @@ Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 ### SF-130 Workspace transfer menu
 
-Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
+Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing was separated into ui/dispatch.rs without changing dispatch semantics; the then-current 500-line bound is superseded by R-35.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
 
 ### SF-131 Generated offline HTML manual
