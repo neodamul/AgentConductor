@@ -595,6 +595,7 @@
   "startup.and_run": "and run",
   "startup.another_action_is_finishing_try_use_profile_again": "Another action is finishing; try Use profile again.",
   "startup.another_action_is_still_finishing_try_create_again": "Another action is still finishing; try Create again.",
+  "startup.create_waits_for_running_work": "Another task is still running; the workspace is created as soon as it ends.",
   "startup.answer_tool_requests_from_the_messenger": "Answer tool requests from the messenger",
   "startup.apply_the_shared_settings": "Apply the shared settings?",
   "startup.approve_plan_run": "Approve plan & run",
