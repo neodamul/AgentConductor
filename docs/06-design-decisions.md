@@ -511,6 +511,8 @@ Trace: R-35 -> BG-05 -> SF-12 -> C-04 -> NFR-07 -> QAS-12 -> DDR-04/DDR-06. Over
 
 Unit-test bodies reside in `tests/unit/`, linked from their original private modules with `#[cfg(test)]` and `#[path]`; this preserves private invariant coverage without widening the production API. Integration tests stay under `tests/`, with the memory round-trip cases in a nested module. CI explicitly runs `tests/source_layout.rs`, recursively checking source, tests, scripts, examples, styles and markup plus an optional root build script for the 500-line limit and rejecting test bodies under `src/`. Source modularity does not change single-executable distribution or add a runtime framework.
 
+#472 process-area increment: retain the public `process` facade and move durable ownership/quiescence checks to `process/ownership.rs`, with execution and cancellation supervision in `process/supervision.rs`. Existing containment, control I/O and Windows Job modules remain separate. The moved function bodies, record format, cancellation ordering and public paths are unchanged. `tests/process_layout.rs` enforces the requested 300-line budget for this completed area; the global gate changes only after all #472 areas comply.
+
 #472 Cocoa increment: keep the native Cocoa facade and `open` entry point stable; move WebKit message, reply, navigation and delegate registration callbacks into a private child module. Preserve callback signatures, main-frame/origin checks, request concurrency bound, block lifetime and main-queue delivery. No native framework or runtime dependency is added.
 
 ### DD-42 README as product introduction, manual as reference
