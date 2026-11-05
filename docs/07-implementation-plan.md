@@ -3264,3 +3264,11 @@ Trace: R-35 / DD-37 / DD-41.
 - [ ] Completed: merged to main; other files over 300 lines remain under #472.
 
 Trace: R-35 / DD-37 / DD-41.
+
+### 300-line limit: model catalog commands split — GitHub #472
+
+- [x] Plan: `src/commands/sessions_review.rs` (339 lines) keeps the session and review commands (285); `models-discover` and `catalog-import` move to `commands/models.rs` (61) and are dispatched from `main.rs` before it. Command names, arguments and output are unchanged.
+- [x] Verify: `model_catalogs`, `models`, `fallback_models`, `review`, `cli_io`, `source_layout`, `architecture_trace`, Clippy.
+- [ ] Completed: merged to main; other files over 300 lines remain under #472.
+
+Trace: R-35 / DD-37 / DD-41.
