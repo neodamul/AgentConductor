@@ -2975,6 +2975,50 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Queued planning-dialog close event — GitHub #484
+Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
+
+- [x] Plan: inspect both generation/import callers and shared confirmation; preserve selection evidence, revision/context guards and native form behavior. Reopen #484 because #485 added diagnostics only.
+- [x] Red: the VM regression delivers the previous close event while the next dialog is open; the actual assembled Chrome flow reproduces the CI state (confirm return value, enabled controls, no save/baseline/read_plan request).
+- [x] Task: settle each submitted or cancelled decision in its own invocation; ignore stale close events while reopened. VM order regression and existing confirmation guards pass; real Chrome light/dark × 840/1280 all pass with the forced late event.
+- [x] Verify: deterministic VM regression and existing confirmation guards pass; actual browser light/dark × 840/1280 passes in ten consecutive local runs with two owned CPU-load workers (40 cases), both workers terminated afterward.
+- [x] Verify: full local `cargo test --all-targets --locked --no-fail-fast` on source `74c3036b` exits 0: 843 passed, 0 failed, 15 ignored across 271 suites, including the main-baseline light/dark parity and complete Node UI harness. Clippy warnings-denied and formatting pass. Windows platform acceptance remains separate.
+- [ ] Completed: isolated linked main-based PR, AgentMemory/wiki receipts, integration and actual platform acceptance.
+
+### First-workspace dialog can be cancelled — GitHub #490
+
+- [x] Plan: user report 2026-11-05: the "Name the new workspace" dialog has no Cancel on the first start (hidden and Escape blocked by #226); R-185 amended instead of leaving a contradiction.
+- [x] Task: the dialog keeps its Cancel button and Escape in every case; nothing is created, the placeholder stays hidden, the question returns on the next page load.
+- [x] Verify: `tests/first_workspace_runtime.cjs` (Red: old assertions fail, now cancel visible and Escape allowed), `launch_workspace` Rust wrapper.
+- [ ] Completed: merged; GitHub #490 closed.
+
+Trace: R-185 / UC-202 / DD-222.
+
+### Step tab horizontal padding — GitHub #493
+
+- [x] Plan: user report 2026-11-05: the stepper tabs have almost no space left and right of the caption (3px after #473); the approved mock changes together with the app.
+- [x] Task: 7px each side in the app and in the mock (the largest value at which the 840px mock frame, 32px narrower than the window, still fits the strip); mock step groups and tabs no longer shrink, so no caption is cut with an ellipsis.
+- [x] Verify: strict parity 0 differences in light/dark × 1280/840 (160/157 entries), `tests/step_tab_widths_runtime.cjs`.
+- [ ] Completed: merged; GitHub #493 closed.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Rail tab caption "Phase·Task" — GitHub #496
+
+- [x] Plan: user request 2026-11-05: the left panel's second tab shows an ellipsis in English ("Phases & tasks"); its English caption becomes "Phase·Task" (middle dot). The Korean caption "단계·작업" and the approved mock stay unchanged (user: keep the Korean as is).
+- [x] Verify: `tests/rail_tabs_runtime.cjs`, no truncation (scrollWidth = clientWidth) at 840 and 1280, strict parity 0 differences in light/dark × 1280/840, i18n/theme contracts.
+- [ ] Completed: merged; GitHub #496 closed.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Source bound: quota display — GitHub #472
+
+- [x] Plan: split `src/quota/display.rs` (409 lines) with no behaviour change: local time helpers (`display/clock.rs`) and window labels (`display/labels.rs`); `display.rs` keeps the badge and row builders (295 lines) and the public paths are unchanged.
+- [x] Verify: full local `cargo test --all-targets --locked`, warning-denied Clippy.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### Source bound: messenger secrets — GitHub #472
 
 - [x] Plan: split `src/messenger.rs` (389 lines) with no behaviour change: the per-workspace webhook URL and named secrets move to `messenger/secrets.rs` (107 lines), `messenger.rs` keeps settings, payloads and delivery (288 lines); the public paths are re-exported unchanged.
