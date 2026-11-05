@@ -2975,6 +2975,16 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Queued planning-dialog close event — GitHub #484
+Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
+
+- [x] Plan: inspect both generation/import callers and shared confirmation; preserve selection evidence, revision/context guards and native form behavior. Reopen #484 because #485 added diagnostics only.
+- [x] Red: the VM regression delivers the previous close event while the next dialog is open; the actual assembled Chrome flow reproduces the CI state (confirm return value, enabled controls, no save/baseline/read_plan request).
+- [x] Task: settle each submitted or cancelled decision in its own invocation; ignore stale close events while reopened. VM order regression and existing confirmation guards pass; real Chrome light/dark × 840/1280 all pass with the forced late event.
+- [x] Verify: deterministic VM regression and existing confirmation guards pass; actual browser light/dark × 840/1280 passes in ten consecutive local runs with two owned CPU-load workers (40 cases), both workers terminated afterward.
+- [x] Verify: full local `cargo test --all-targets --locked --no-fail-fast` on source `74c3036b` exits 0: 843 passed, 0 failed, 15 ignored across 271 suites, including the main-baseline light/dark parity and complete Node UI harness. Clippy warnings-denied and formatting pass. Windows platform acceptance remains separate.
+- [ ] Completed: isolated linked main-based PR, AgentMemory/wiki receipts, integration and actual platform acceptance.
+
 ### First-workspace dialog can be cancelled — GitHub #490
 
 - [x] Plan: user report 2026-11-05: the "Name the new workspace" dialog has no Cancel on the first start (hidden and Escape blocked by #226); R-185 amended instead of leaving a contradiction.

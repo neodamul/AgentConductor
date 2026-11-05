@@ -177,7 +177,8 @@ q('read-plan').onclick=async()=>{if(busy())return;let picked;try{picked=await re
    const dialog=q('planning-confirm');if(dialog.open)return null;
    const selection={key:planningContextKey(),revision:state.revision};
    AC_I18N.bind(q('planning-evidence'),()=>acMessage('startup.planning_confirmation_evidence',{goal:draft.goal.trim()||reference,agent:profile.id,model:model||acMessage('startup.cli_default')}));
-   dialog.returnValue='';const accepted=await new Promise(resolve=>{dialog.onclose=()=>resolve(dialog.returnValue==='confirm');dialog.oncancel=()=>resolve(false);dialog.showModal();});
+   // Native close events can arrive after reopening; submission belongs to this invocation.
+   dialog.returnValue='';const accepted=await new Promise(resolve=>{dialog.onsubmit=event=>resolve(event.submitter?.value==='confirm');dialog.onclose=()=>{if(!dialog.open)resolve(dialog.returnValue==='confirm');};dialog.oncancel=()=>resolve(false);dialog.showModal();});
    if(!accepted)return null;
    if(selection.revision!==state.revision||!planningUnchanged(selection)){notice(()=>acMessage('startup.planning_confirmation_changed'),true);return null;}
    return selection;
