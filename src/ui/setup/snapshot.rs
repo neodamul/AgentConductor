@@ -87,7 +87,14 @@ impl Startup {
         {
             snapshot["job"]["output"] = jobs::activity(&p.directory.join("process"));
         }
-        let chat_job = self.chat_job(saved)?;
+        let mut chat_job = self.chat_job(saved)?;
+        // GitHub #514: a running chat shows what its CLI is doing and when it last wrote.
+        if chat_job["state"] == "running"
+            && let Some(log) = chat_job["log"].as_str().map(std::path::PathBuf::from)
+        {
+            chat_job["output"] = jobs::activity(&log);
+            chat_job["progress"] = serde_json::Value::Array(chat_progress::items(&log));
+        }
         snapshot["chat"] = self.chat_snapshot(saved, &chat_job);
         snapshot["chat_job"] = chat_job;
         snapshot["optimize"] = self.optimize_snapshot(saved, job);

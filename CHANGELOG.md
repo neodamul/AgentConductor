@@ -7,6 +7,8 @@ the GitHub Release notes for its tag.
 ## Unreleased
 
 - Shared workspace files cannot activate messenger delivery or decisions, assign approvers, or choose a Slack reply channel on export or import (#523).
+- The coordinator chat shows what the coordinator is doing: while it works, the single "working" bubble lists the newest tool calls and text of the CLI (Claude Code and Codex output, at most eight short lines) and the age of its last output ("last output 12s ago" or "no output yet"), so a stalled run is distinguishable from a slow one. The one-second timer updates only the status line, and a reader who scrolled up is not pulled down (GitHub #514, also released in 0.1.59).
+
 - Jira items are called issues everywhere they are shown ("Jira 이슈" / "Jira issue": the import button, the reference dialog, the import error text and the documents), not stories.
 - Agent cards show the dual-ring quota icon from the provider's windows; clicking it opens a popup with each window's remaining share, reset time, observation time and, on errors, the failure with a retry (#426).
 
