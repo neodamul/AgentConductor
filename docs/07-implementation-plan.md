@@ -3061,3 +3061,5 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged; GitHub #496 closed.
 
 Trace: R-210 / UC-202 / DD-222.
+
+#420 latest main integration receipt: source `df29a39a` passed the strict macOS four-cell matrix in 527.15 seconds. Main `60f1ba99` then changed only one English rail label and appended its plan record; after integration, architecture/evidence/i18n/matrix tests (15) and the 1280px tab-width browser test passed. The matrix simulator defaults to Korean; its prior receipt is not presented as a fresh four-cell run on the later source. Windows About remains unverified after the latest integration.

@@ -98,3 +98,5 @@ This gathers diagnostics without retrying or discarding any failed result.
 ## About geometry and four-cell parity (#420)
 
 The pre-#483 Windows run failed only About in each cell, despite the junction, native path, Node and Explorer checks passing. Fractional raster position was supported by the Windows capture comparison: shifting one 100-pixel band by one device pixel removed its observed differences. After integrating #483, source `6a2d9f73` passed the strict four-cell macOS driver in 527.58 seconds; each isolated directory contains 278 PNGs. This does not establish Windows or later integration acceptance.
+
+The later `df29a39a` macOS four-cell run (including #484/#494) also passed in 527.15 seconds. Main #497 subsequently changed one English rail label; focused i18n/architecture/evidence/driver and 1280px tab-width checks passed after integration. The simulator defaults to Korean, so the earlier matrix does not replace verification of the changed English text or a fresh Windows receipt.
