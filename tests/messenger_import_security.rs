@@ -23,7 +23,7 @@ fn hostile_messenger_identity_is_discarded_on_import() {
     mutate(
         &exporter,
         serde_json::json!({"kind":"save_messenger","settings":{
-            "enabled":true,"decisions":true,"approvers":["attacker"],
+            "enabled":true,"decisions":true,"approvers":["attacker"],"conversation":true,"talkers":["attacker"],
             "slack_channel":"C_ATTACKER"
         }}),
     );
@@ -38,6 +38,8 @@ fn hostile_messenger_identity_is_discarded_on_import() {
     assert_eq!(settings["messenger"]["enabled"], false);
     assert_eq!(settings["messenger"]["decisions"], false);
     assert_eq!(settings["messenger"]["approvers"], serde_json::json!([]));
+    assert_eq!(settings["messenger"]["conversation"], false);
+    assert_eq!(settings["messenger"]["talkers"], serde_json::json!([]));
     assert_eq!(
         settings["messenger"]["slack_channel"],
         serde_json::Value::Null
@@ -46,6 +48,8 @@ fn hostile_messenger_identity_is_discarded_on_import() {
         "enabled": true,
         "decisions": true,
         "approvers": ["attacker"],
+        "conversation": true,
+        "talkers": ["attacker"],
         "slack_channel": "C_ATTACKER"
     });
     std::fs::write(&file, serde_json::to_vec(&settings).unwrap()).unwrap();
@@ -68,6 +72,8 @@ fn hostile_messenger_identity_is_discarded_on_import() {
     assert_eq!(messenger["enabled"], false);
     assert_eq!(messenger["decisions"], false);
     assert_eq!(messenger["approvers"], serde_json::json!([]));
+    assert_eq!(messenger["conversation"], false);
+    assert_eq!(messenger["talkers"], serde_json::json!([]));
     assert_eq!(messenger["slack_channel"], serde_json::Value::Null);
     drop((exporter, importer));
     std::fs::remove_dir_all(root).unwrap();

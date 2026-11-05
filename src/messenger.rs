@@ -65,6 +65,9 @@ impl Settings {
         self.enabled = false;
         self.decisions = false;
         self.approvers.clear();
+        // DD-229/230: one sanitizer for every identity field a file could use to redirect authority.
+        self.conversation = false;
+        self.talkers.clear();
         self.slack_channel = None;
     }
 }
