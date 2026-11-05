@@ -3235,3 +3235,11 @@ Trace: R-35 / DD-37 / DD-41.
 - [ ] Completed: merged to main; other files over 300 lines remain under #472.
 
 Trace: R-35 / DD-37 / DD-41.
+
+### 300-line limit: release package split — GitHub #472
+
+- [x] Plan: `src/release_package.rs` (395 lines) keeps assembly and the package writer (about 280); the third-party notice text moves to `release_package/notice.rs` (25) and the file, version and checksum helpers to `release_package/files.rs` (100). Public paths and behavior are unchanged.
+- [x] Verify: `tests/release_package.rs`, the unit tests, `source_layout`, `architecture_trace`, Clippy.
+- [ ] Completed: merged to main; other files over 300 lines remain under #472.
+
+Trace: R-35 / DD-37 / DD-41.
