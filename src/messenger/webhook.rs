@@ -1,5 +1,5 @@
 //! Company webhook: notices with a configurable JSON body, decision replies from a signed relay.
-use super::channel::{Capabilities, Channel, Fetch};
+use super::channel::{Capabilities, Channel, Fetch, Incoming};
 use super::inbound::Reply;
 use super::{Event, Settings, secret_value, send};
 use sha2::{Digest, Sha256};
@@ -14,7 +14,7 @@ impl Channel for Webhook {
         Capabilities {
             notice: true,
             replies: true,
-            conversation: false,
+            conversation: true,
         }
     }
     fn uses_template(&self) -> bool {
@@ -48,14 +48,58 @@ impl Channel for Webhook {
         }
         Ok(value)
     }
+    fn fetch_messages(&self, fetch: &Fetch<'_>) -> Result<(Vec<Incoming>, Vec<String>), String> {
+        let (body, key) = relay_body(fetch)?;
+        relay_messages(&body, &key)
+    }
     fn fetch_replies(&self, fetch: &Fetch<'_>) -> Result<(Vec<Reply>, Vec<String>), String> {
-        let relay = secret_value(fetch.workspace, Some("relay")).ok_or("relay URL is not saved")?;
-        let key = secret_value(fetch.workspace, Some("relay_secret"))
-            .ok_or("relay secret is not saved")?;
-        let joiner = if relay.contains('?') { '&' } else { '?' };
-        let body = send::fetch(&format!("{relay}{joiner}since={}", fetch.cursor), &[])?;
+        let (body, key) = relay_body(fetch)?;
         relay_replies(&body, &key)
     }
+}
+
+fn relay_body(fetch: &Fetch<'_>) -> Result<(String, String), String> {
+    let relay = secret_value(fetch.workspace, Some("relay")).ok_or("relay URL is not saved")?;
+    let key =
+        secret_value(fetch.workspace, Some("relay_secret")).ok_or("relay secret is not saved")?;
+    let joiner = if relay.contains('?') { '&' } else { '?' };
+    let body = send::fetch(&format!("{relay}{joiner}since={}", fetch.cursor), &[])?;
+    Ok((body, key))
+}
+
+/// Relay messages for the conversation (DD-230); each must carry a valid HMAC over `id|sender|thread|text`,
+/// so the sender is authenticated by the relay and nobody can add or alter a message in transit.
+pub fn relay_messages(body: &str, secret: &str) -> Result<(Vec<Incoming>, Vec<String>), String> {
+    let value: serde_json::Value = serde_json::from_str(body).map_err(|e| e.to_string())?;
+    let mut messages = vec![];
+    let mut refused = vec![];
+    for m in value["messages"].as_array().into_iter().flatten() {
+        let field = |k: &str| m[k].as_str().unwrap_or_default().to_string();
+        let (id, sender, ts, thread, text) = (
+            field("id"),
+            field("sender"),
+            field("ts"),
+            field("thread"),
+            field("text"),
+        );
+        let expected = hmac(
+            secret.as_bytes(),
+            format!("{id}|{sender}|{thread}|{text}").as_bytes(),
+        );
+        if id.is_empty() || sender.is_empty() || !same(&expected, &field("signature")) {
+            refused.push(format!("{ts}: invalid message signature"));
+            continue;
+        }
+        messages.push(Incoming {
+            id,
+            sender,
+            ts,
+            thread: (!thread.is_empty()).then_some(thread),
+            text,
+        });
+    }
+    messages.sort_by(|a, b| a.ts.cmp(&b.ts));
+    Ok((messages, refused))
 }
 
 /// RFC 2104 HMAC-SHA256 with the existing `sha2` crate.
@@ -78,7 +122,7 @@ pub fn hmac(key: &[u8], message: &[u8]) -> String {
     format!("{outer:x}")
 }
 
-fn same(a: &str, b: &str) -> bool {
+pub(super) fn same(a: &str, b: &str) -> bool {
     a.len() == b.len()
         && a.bytes()
             .zip(b.bytes())

@@ -11,7 +11,7 @@ mod send;
 mod slack;
 mod throttle;
 mod webhook;
-pub use channel::{Capabilities, Channel, Kind};
+pub use channel::{Capabilities, Channel, Incoming, Kind};
 pub use secrets::{save_secret, save_secret_value, secret, secret_value, status, validate_url};
 pub use send::flush;
 
@@ -44,6 +44,12 @@ pub struct Settings {
     /// DD-81: listed approvers may answer pending tool requests from the messenger.
     #[serde(default)]
     pub decisions: bool,
+    /// DD-230: listed talkers may chat with the coordinator from the messenger.
+    #[serde(default)]
+    pub conversation: bool,
+    /// Slack user IDs, or relay user names, allowed to chat (separate from `approvers`).
+    #[serde(default)]
+    pub talkers: Vec<String>,
     /// Slack channel ID read for replies (`C0123…`).
     #[serde(default)]
     pub slack_channel: Option<String>,
@@ -70,6 +76,8 @@ impl Default for Settings {
             template: None,
             include_goal: false,
             decisions: false,
+            conversation: false,
+            talkers: vec![],
             slack_channel: None,
             approvers: vec![],
         }
