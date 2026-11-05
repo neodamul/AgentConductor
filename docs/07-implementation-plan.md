@@ -3219,3 +3219,11 @@ Trace: R-35 / DD-41.
 - [ ] Completed: merged to main; other files over 300 lines remain under #472.
 
 Trace: R-35 / DD-37 / DD-41.
+
+### 300-line limit: protocol decoder split — GitHub #472
+
+- [x] Plan: `src/protocol.rs` (374 lines) keeps the `Decoder` (258); the protocol, provider and event shapes move to `protocol/types.rs` (44) and the line classifiers (Codex reconnect notices, `acio.event/1` kinds, excerpts, refusals) to `protocol/classify.rs` (81). Public paths and behavior are unchanged.
+- [x] Verify: `tests/protocol.rs`, `acio_runtime`, `custom_cli_denials`, `source_layout`, `architecture_trace`, Clippy.
+- [ ] Completed: merged to main; other files over 300 lines remain under #472.
+
+Trace: R-35 / DD-37 / DD-41.
