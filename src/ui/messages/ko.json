@@ -907,7 +907,7 @@
   "startup.group_finish": "마무리",
   "startup.rail_tabs": "왼쪽 패널",
   "startup.rail_agents": "에이전트",
-  "startup.rail_tasks": "단계·작업",
+  "startup.rail_tasks": "Phase/Task",
   "startup.rail_outline_eyebrow": "계획",
   "startup.rail_outline_title": "단계와 작업",
   "startup.rail_outline_empty": "에이전트 역할을 정하고 계획을 만들면 여기에 표시됩니다.",

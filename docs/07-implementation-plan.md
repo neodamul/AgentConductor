@@ -2958,3 +2958,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: three consecutive macOS CI runs without an `about-dialog` difference; GitHub #482 closed.
 
 Trace: R-215 / UC-207 / QAS-214 / DD-227.
+
+### Rail tab caption "Phase/Task" — GitHub #496
+
+- [x] Plan: user request 2026-11-05: the left panel's second tab ("Phases & tasks" / "단계·작업") must not be cut with an ellipsis; its caption becomes "Phase/Task" in both languages, in the app and in the approved mock together.
+- [x] Verify: `tests/rail_tabs_runtime.cjs`, no truncation (scrollWidth = clientWidth) at 840 and 1280, strict parity 0 differences in light/dark × 1280/840, i18n/theme contracts.
+- [ ] Completed: merged; GitHub #496 closed.
+
+Trace: R-210 / UC-202 / DD-222.
