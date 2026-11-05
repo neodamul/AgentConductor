@@ -3146,3 +3146,11 @@ Trace: R-43 / UC-34 / QAS-35 / DD-229.
 - [ ] Completed: merged to main; GitHub #514 closes with the 0.1.59 release.
 
 Trace: R-185 / UC-202 / DD-222.
+
+### 300-line limit: memory client split — GitHub #472
+
+- [x] Plan: `src/memory/client.rs` (393 lines) keeps the `Client` (237); HTTP response framing (headers, bounded reads, chunked bodies) moves to `memory/client/http.rs` (121) and the bounded secret files to `memory/client/secret.rs` (50). Public paths and behavior are unchanged.
+- [x] Verify: `tests/memory.rs`, `memory_transport`, the client unit tests, `source_layout`, `architecture_trace`, Clippy.
+- [ ] Completed: merged to main; other files over 300 lines remain under #472.
+
+Trace: R-35 / DD-37 / DD-41.
