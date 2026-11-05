@@ -2890,7 +2890,8 @@ Trace: R-210 / UC-202 / DD-222.
 
 - [x] Plan: define trust boundaries before phase 3 implementation; preserve desktop-only plan consent and merge; keep settings, deletion, deployment and secrets outside messenger authority.
 - [x] Task: document authenticated sender identity, explicit workspace/run/thread routing, allowlisted actions, replay handling, import/export boundaries, data minimization and fail-closed behavior as draft DD-229.
-- [ ] Verify: architecture trace passes and Claude confirms the threat model matches the phase 3 contract.
+- [x] Verify: architecture trace (7 tests) and source layout (1 test) pass after latest-main integration; formatting and whitespace checks pass.
+- [ ] Review: Claude confirms the threat model matches the phase 3 contract and resolves the open decisions.
 - [ ] Complete: do not implement coordinator conversation until the threat model and requirements are accepted.
 
 Trace: R-43 / BG-18 / SF-37 / UC-35 / QAS-36 / DDR-14 / DD-229.
