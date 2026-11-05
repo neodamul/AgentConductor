@@ -2953,6 +2953,17 @@ Trace: R-215 / UC-207 / QAS-214 / DD-227.
 
 Trace: R-210 / UC-202 / DD-222.
 
+## #472 process ownership and supervision increment
+
+Trace: R-35 → BG-05 → SF-12 → C-04/NFR-07 → QAS-12 → DDR-04/DDR-06 → DD-41.
+
+- [x] Plan: inspect public callers, persistent owner records, control cancellation and platform boundaries; preserve existing public paths and trust/approval behavior.
+- [x] Task / Red: `tests/process_layout.rs` rejects the original 467-line facade.
+- [x] Task / Green: separate the facade (119 lines), ownership (82) and supervision (276), with no new runtime dependency. Moved bodies match the original except imports/visibility.
+- [x] Verify: 27 focused local tests pass; one authenticated Claude metadata test remains explicitly ignored.
+- [x] Verify: full local `cargo test --all-targets --locked --no-fail-fast` on source `0412e485` exits 0: 844 passed, 0 failed, 15 explicitly ignored across 272 suites. Main-baseline light/dark parity (319.40s), Node harness, Clippy warnings-denied, formatting and whitespace checks pass. This is not a four-cell #420 or live-provider claim.
+- [ ] Complete: publish the separate main-based area PR and verify its platform checks before integration. Global 300-line policy rollout remains deferred until every area complies.
+
 ### About dialog integer geometry — GitHub #482
 
 - [x] Plan: macOS CI showed ±1–2 level differences in a few hundred `about-dialog` pixels on some runs only; remove the fractional layout that makes the raster phase of rounded boxes unstable instead of adding any tolerance.
