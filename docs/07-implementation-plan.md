@@ -2970,6 +2970,18 @@ Trace: R-35 → BG-05 → SF-12 → C-04/NFR-07 → QAS-12 → DDR-04/DDR-06 →
 
 Trace: R-215 / UC-207 / QAS-214 / DD-227.
 
+## #472 Cocoa callback module increment
+
+Trace: R-35 → BG-05 → SF-12 → C-04/NFR-07 → QAS-12 → DDR-04/DDR-06 → DD-41.
+
+- [x] Plan: preserve the Cocoa facade, callback ABIs, trust checks, request limit, reply block lifetime, main-thread delivery and existing native close/menu behavior.
+- [x] Red: `tests/cocoa_layout.rs` rejects the original 494-line Cocoa facade.
+- [x] Task: move WebKit callback responsibilities into a private child module; facade 292 lines, callbacks 206 lines. The moved callback bodies and ABI declarations match the original byte-for-byte except the required module visibility and import.
+- [x] Verify: Cocoa layout, architecture and close-window tests pass locally (9 tests); the live Claude metadata test remains explicitly ignored. Default macOS all-target Clippy with warnings denied passes.
+- [x] Verify: full local all-target regression on source `3df36abb` exits 0: 844 passed, 0 failed, 15 explicitly ignored across 272 suites.
+- [ ] Verify: Windows platform checks; no native window or live-provider claim.
+- [ ] Complete: separate issue-linked PR and recorded cross-platform evidence. Global 300-line enforcement follows completion of all areas.
+
 ### Source bound: quota terminal — GitHub #472
 
 - [x] Plan: split `src/quota/terminal.rs` (493 lines) toward the 300-line bound with no behaviour change: screen recognition (`terminal/screens.rs`), `/usage` parsing (`terminal/parse.rs`) and the session driver (`terminal.rs`); public paths are re-exported unchanged.
@@ -3011,5 +3023,21 @@ Trace: R-185 / UC-202 / DD-222.
 - [x] Task: 7px each side in the app and in the mock (the largest value at which the 840px mock frame, 32px narrower than the window, still fits the strip); mock step groups and tabs no longer shrink, so no caption is cut with an ellipsis.
 - [x] Verify: strict parity 0 differences in light/dark × 1280/840 (160/157 entries), `tests/step_tab_widths_runtime.cjs`.
 - [ ] Completed: merged; GitHub #493 closed.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Rail tab caption "Phase·Task" — GitHub #496
+
+- [x] Plan: user request 2026-11-05: the left panel's second tab shows an ellipsis in English ("Phases & tasks"); its English caption becomes "Phase·Task" (middle dot). The Korean caption "단계·작업" and the approved mock stay unchanged (user: keep the Korean as is).
+- [x] Verify: `tests/rail_tabs_runtime.cjs`, no truncation (scrollWidth = clientWidth) at 840 and 1280, strict parity 0 differences in light/dark × 1280/840, i18n/theme contracts.
+- [ ] Completed: merged; GitHub #496 closed.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Source bound: quota display — GitHub #472
+
+- [x] Plan: split `src/quota/display.rs` (409 lines) with no behaviour change: local time helpers (`display/clock.rs`) and window labels (`display/labels.rs`); `display.rs` keeps the badge and row builders (295 lines) and the public paths are unchanged.
+- [x] Verify: full local `cargo test --all-targets --locked`, warning-denied Clippy.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
 
 Trace: R-210 / UC-202 / DD-222.

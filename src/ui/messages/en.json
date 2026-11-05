@@ -907,7 +907,7 @@
   "startup.group_finish": "Finish",
   "startup.rail_tabs": "Left panel",
   "startup.rail_agents": "Agents",
-  "startup.rail_tasks": "Phases & tasks",
+  "startup.rail_tasks": "Phase·Task",
   "startup.rail_outline_eyebrow": "Plan",
   "startup.rail_outline_title": "Phases and tasks",
   "startup.rail_outline_empty": "The plan appears here once the agent roles are confirmed and a plan is made.",
