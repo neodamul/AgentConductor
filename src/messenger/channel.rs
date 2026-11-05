@@ -23,6 +23,17 @@ pub struct Fetch<'a> {
     pub cursor: &'a str,
 }
 
+/// One raw message from the transport (DD-230): the core parses `text`, the channel vouches for `sender`.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Incoming {
+    pub id: String,
+    /// The identity the transport authenticates (Slack `user`; relay: the signed `sender`).
+    pub sender: String,
+    pub ts: String,
+    pub thread: Option<String>,
+    pub text: String,
+}
+
 pub trait Channel: Sync {
     /// The stable identifier stored in the workspace settings (`kind`).
     fn id(&self) -> &'static str;
@@ -39,6 +50,10 @@ pub trait Channel: Sync {
         event: &Event,
         goal: &str,
     ) -> Result<serde_json::Value, String>;
+    /// New raw messages after `fetch.cursor` plus the lines of any refused ones (the conversation capability).
+    fn fetch_messages(&self, _fetch: &Fetch<'_>) -> Result<(Vec<Incoming>, Vec<String>), String> {
+        Err("this messenger channel cannot read messages".into())
+    }
     /// New replies after `fetch.cursor` plus the lines of any refused ones.
     fn fetch_replies(&self, _fetch: &Fetch<'_>) -> Result<(Vec<Reply>, Vec<String>), String> {
         Err("this messenger channel cannot read replies".into())

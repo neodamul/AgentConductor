@@ -7,6 +7,8 @@ the GitHub Release notes for its tag.
 ## Unreleased
 
 - More than 20 pending tool requests no longer flood the messenger: 20 are announced at a time and the rest follow in order as answers free slots (#518).
+- **Talk to the coordinator from the messenger** (#519): listed talkers ask the read-only coordinator questions in the Slack channel or company relay and get the answer back (at most three messages). Talkers are separate from approvers, a message is only a question, the first poll skips earlier history, limits (2,000 characters, six messages per ten minutes, queue of five) are answered with a short reply, and it only reads while the desktop is open (30 s in a conversation, 2 min idle). Exported files never carry talkers or the toggle.
+- Messenger notices are limited to ten a minute per workspace so a runaway loop cannot flood a channel: the rest are counted and reported once as "N more events were not sent" with the next notice. Notices that carry an answer code (tool requests) are never limited (GitHub #518).
 - Shared workspace files cannot activate messenger delivery or decisions, assign approvers, or choose a Slack reply channel on export or import (#523).
 - The coordinator chat shows what the coordinator is doing: while it works, the single "working" bubble lists the newest tool calls and text of the CLI (Claude Code and Codex output, at most eight short lines) and the age of its last output ("last output 12s ago" or "no output yet"), so a stalled run is distinguishable from a slow one. The one-second timer updates only the status line, and a reader who scrolled up is not pulled down (GitHub #514, also released in 0.1.59).
 

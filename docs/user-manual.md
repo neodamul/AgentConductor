@@ -260,6 +260,15 @@ Review archives before sharing; imported capability claims require local confirm
 Webhook/bot tokens and relay secrets stay local. Goal text is included only by explicit choice.
 Remote replies never approve a plan or merge.
 
+With **Talk to the coordinator from the messenger**, the people listed as talkers can ask the
+read-only coordinator questions in the same channel and get the answer back (at most three
+messages). Talkers are separate from approvers, and a message is only a question: it can never
+approve, change settings or start work. While this app is open it reads the channel every 30
+seconds during a conversation and every 2 minutes otherwise; nothing is read when the app is
+closed. Earlier channel history is not answered. A message over 2,000 characters, more than six
+messages in ten minutes from one person, or a full queue (five) gets a short reply instead.
+Exported workspace files never carry talkers or the on/off choice.
+
 **Clear cache…** previews eligible completed query/metadata/catalog files.
 Permanent removal cannot be undone. Live/unknown/aliased data, current diagnostics, source folders,
 reviewed plans, diffs, tests, audit and workspace recovery remain.

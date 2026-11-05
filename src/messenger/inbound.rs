@@ -1,7 +1,7 @@
 //! R-43 phase 2 / DD-81: answer pending tool requests from the messenger. Polls only while
 //! a request is pending, inside the run process; decisions go through the DD-32 path.
-pub use super::slack::slack_replies;
-pub use super::webhook::{hmac, relay_replies};
+pub use super::slack::{slack_messages, slack_replies};
+pub use super::webhook::{hmac, relay_messages, relay_replies};
 use super::{Settings, link_path, secret, send, sibling};
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};

@@ -28,6 +28,7 @@ async function launch(chrome, { width = 1280, height = 960, scale = 2 } = {}) {
   const send = (method, params = {}) => new Promise((res, rej) => { const n = ++id; waiting.set(n, { res, rej }); ws.send(JSON.stringify({ id: n, method, params })); });
   await send('Page.enable'); await send('Page.setLifecycleEventsEnabled', { enabled: true }); await send('Runtime.enable');
   await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: scale, mobile: false });
+  // GitHub #527: a hover is measured after two rendered frames and every running transition has ended, not after a fixed 60 ms.
   const api = {
     // Waits for the load of the document this navigation created (matched by loaderId), so a slow response never hands back a
     // half-created page; a same-document navigation (hash only) has no loader and no load event.
@@ -42,7 +43,7 @@ async function launch(chrome, { width = 1280, height = 960, scale = 2 } = {}) {
       await new Promise(r => setTimeout(r, 400));
     },
     async eval(expr) { const r = await send('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true }); if (r.exceptionDetails) throw new Error(r.exceptionDetails.exception?.description || r.exceptionDetails.text); return r.result.value; },
-    async hover(x, y) { await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x, y }); await new Promise(r => setTimeout(r, 60)); },
+    async hover(x, y) { await send('Input.dispatchMouseEvent', { type: 'mouseMoved', x, y }); await api.eval(`new Promise(done => requestAnimationFrame(() => requestAnimationFrame(async () => { await Promise.race([Promise.all(document.getAnimations().map(a => a.finished.catch(() => {}))), new Promise(r => setTimeout(r, 2000))]); done(); })))`); },
     async tab() { for (const type of ['keyDown', 'keyUp']) await send('Input.dispatchKeyEvent', { type, key: 'Tab', code: 'Tab', windowsVirtualKeyCode: 9 }); },
     async fonts(selector, index = 0) {
       await send('DOM.enable'); await send('CSS.enable'); await send('DOM.getDocument');
