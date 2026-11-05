@@ -3142,3 +3142,11 @@ Trace: R-185 / UC-202 / DD-222.
 - [ ] Completed: conversation core and limits, worker and chat hand-off, settings dialog, manuals.
 
 Trace: R-43 / UC-35 / QAS-36 / DD-230.
+
+### Messenger conversation: core and limits (DD-230) — GitHub #519
+
+- [x] Plan: `messenger::conversation` decides every raw message in a fixed order: already handled, conversation off, an exact `allow|deny CODE` reply (left to the decision path), sender not a talker (approvers are not talkers), empty, over 2,000 characters, over 6 turns in 10 minutes per sender, queue of 5 full, otherwise queued. Rejections carry a catalogue message id so the sender gets a short reply; one message is handed to the coordinator chat at a time; the operator turn names the sender and marks the text untrusted; answers are cut into at most three messages of 3,000 characters. The remembered inbox (cursor, 500 seen ids, queue, turn times, message in flight) is plain data for the worker.
+- [x] Verify: `tests/unit/messenger_conversation.rs` (queue order and single hand-off, injection and authorization fixtures, disabled settings, every limit, bounded seen ids, answer splitting), Clippy, the message catalogue tests.
+- [ ] Completed: worker and chat hand-off, settings dialog, manuals.
+
+Trace: R-43 / UC-35 / QAS-36 / DD-230.
