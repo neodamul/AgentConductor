@@ -196,7 +196,7 @@ html[data-preview-fill="true"] .win{width:100%;max-width:none;height:calc(100dvh
 
 button:not(:disabled),a[href],summary,[role="button"]:not([aria-disabled="true"]),.tb{cursor:pointer}button:disabled,[aria-disabled="true"]{cursor:default}html:fullscreen .mock-note{display:none}
 
-.tabs{grid-template-columns:auto repeat(3,minmax(0,1fr)) auto repeat(2,minmax(0,1fr)) auto minmax(0,1fr)}.tabs-group-name{display:flex;align-items:center;align-self:center;font-size:10.5px;color:var(--soft);font-weight:600;white-space:nowrap;padding:0 6px;height:16px;border-left:2px solid var(--phase-color);margin-right:3px}.tabs-group-name[data-stage="prepare"],.tabs .tab[data-stage="prepare"]{--phase-color:var(--phase-prepare)}.tabs-group-name[data-stage="run"],.tabs .tab[data-stage="run"]{--phase-color:var(--phase-run)}.tabs-group-name[data-stage="finish"],.tabs .tab[data-stage="finish"]{--phase-color:var(--phase-finish)}.tabs .tab:nth-child(n){margin-left:0;padding-left:3px!important;padding-right:3px!important;gap:3px}.tabs .tab::after{display:none!important}.tabs .tab .num{width:16px;height:16px}
+.tabs{grid-template-columns:auto repeat(3,minmax(0,1fr)) auto repeat(2,minmax(0,1fr)) auto minmax(0,1fr)}.tabs-group-name{display:flex;align-items:center;align-self:center;font-size:10.5px;color:var(--soft);font-weight:600;white-space:nowrap;padding:0 6px;height:16px;border-left:2px solid var(--phase-color);margin-right:3px}.tabs-group-name[data-stage="prepare"],.tabs .tab[data-stage="prepare"]{--phase-color:var(--phase-prepare)}.tabs-group-name[data-stage="run"],.tabs .tab[data-stage="run"]{--phase-color:var(--phase-run)}.tabs-group-name[data-stage="finish"],.tabs .tab[data-stage="finish"]{--phase-color:var(--phase-finish)}.tabs .tab:nth-child(n){margin-left:0;padding-left:7px!important;padding-right:7px!important;gap:3px}.tabs .tab::after{display:none!important}.tabs .tab .num{width:16px;height:16px}
 
 .tools .agent-remove{display:inline-flex;align-items:center;justify-content:center;color:var(--err);font:inherit;padding:2px 4px;min-width:24px;height:24px;cursor:pointer}.tools .agent-remove svg{width:18px;height:18px;display:block;flex:none}.tools .agent-remove:hover{background:var(--err-bg);border-color:var(--err)}
 
@@ -247,8 +247,8 @@ button[data-action-icon]{display:inline-flex;align-items:center;justify-content:
 
 /* #473: tab widths follow their captions; groups are as wide as their tabs and the row shrinks only when full. */
 .tabs{display:flex;justify-content:flex-start}
-.step-group{flex:0 1 auto}
-.step-group>.tab{flex:0 1 auto}
+.step-group{flex:0 0 auto}
+.step-group>.tab{flex:0 0 auto}
 .tab-label{flex:0 1 auto}
 /* About screen (#468): shown once after an install or update, and from the app menu. */
 #about-dialog{width:600px;max-width:92vw;max-height:88vh;margin:0;overflow:auto;padding:22px 24px 18px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);box-shadow:0 15px 60px #0003;font:13px/22px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
