@@ -3100,6 +3100,13 @@ Trace: R-210 / UC-202 / DD-222.
 
 #420 latest main integration receipt: source `df29a39a` passed the strict macOS four-cell matrix in 527.15 seconds. Main `60f1ba99` then changed only one English rail label and appended its plan record; after integration, architecture/evidence/i18n/matrix tests (15) and the 1280px tab-width browser test passed. The matrix simulator defaults to Korean; its prior receipt is not presented as a fresh four-cell run on the later source. Windows About remains unverified after the latest integration.
 
+#420 exact-head receipt: merge commit `4c2aaabe` (main `552f0797`) passed
+`cargo test --locked --test design_parity -- --nocapture` locally: 1 test,
+534.38 seconds. This reruns the strict light/dark × 840/1280 pixel matrix after
+integrating #504's step-tab correction. `cargo fmt --all -- --check` and
+`git diff --check` also pass. The complete Node harness and native Windows
+acceptance remain pending; no platform-wide completion is claimed.
+
 ### Source bound: quota display — GitHub #472
 
 - [x] Plan: split `src/quota/display.rs` (409 lines) with no behaviour change: local time helpers (`display/clock.rs`) and window labels (`display/labels.rs`); `display.rs` keeps the badge and row builders (295 lines) and the public paths are unchanged.
