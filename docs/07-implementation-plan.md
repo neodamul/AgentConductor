@@ -3095,6 +3095,22 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Source bound: MCP imports — GitHub #472
+
+- [x] Plan: split `src/mcp/imports.rs` (445 lines) with no behaviour change: issue-reference parsing moves to `mcp/imports/references.rs` (51 lines) and applying/storing/loading imports to `mcp/imports/store.rs` (145 lines); `imports.rs` keeps the preview and discovery (260 lines). The public paths (`Reference`, `references`, `apply`, `context`, `store`, `load`) are re-exported unchanged.
+- [x] Verify: the ten MCP integration tests (sources, config, header references, imports, large sources, planner, remote, bindings, suggestions, workspace), warning-denied Clippy; the full suite runs in CI.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
+
+### New workspace dialog: Create is not tied to unrelated work — GitHub #511
+
+- [x] Plan: `renderButtons()` disabled **Create** with the shared `mutating` flag, so a quota refresh, model discovery or any other `action()` blocked it with no reason, and `action()` re-rendered only after the follow-up `poll()`. **Create** now follows only its own `creating` flag; when other work is running it shows `startup.create_waits_for_running_work`, waits (at most 90 s) and then creates the workspace; `action()` re-renders the buttons before `poll()`. Released as hotfix 0.1.59 from v0.1.58 (`release/0.1.x`, PR #512); this unit ports the same change to `main` for 0.2.0.
+- [x] Verify: `tests/create_workspace_runtime.cjs` (red on the unfixed code, green now, 40 consecutive runs), `tests/approval_feedback_runtime.cjs`, `tests/launch_workspace.rs`, all Node runtime tests, i18n and startup contract tests.
+- [ ] Completed: merged to main; GitHub #511 closes with the 0.1.59 release.
+
+Trace: R-185 / UC-202 / DD-222.
+
 ### Messenger channel interface, phase 1 — GitHub #515, #517
 
 - [x] Plan: introduce `messenger::Channel` (id, `Capabilities`, `uses_template`, `notice_body`, `fetch_replies`) and one registry; `Kind` becomes the registered id with the same stored text; Slack (`messenger/slack.rs`) and the company webhook with its relay mode (`messenger/webhook.rs`) move behind it with unchanged behavior; `inbound.rs` asks the channel for replies and keeps authorization, request-code binding and audit in the core (it also drops from 383 to 269 lines). DD-228.
