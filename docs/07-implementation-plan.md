@@ -3070,3 +3070,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: the remaining files over 300 lines (tracked on #472).
 
 Trace: R-210 / UC-202 / DD-222.
+
+### New workspace dialog: Create is not tied to unrelated work — GitHub #511
+
+- [x] Plan: `renderButtons()` disabled **Create** with the shared `mutating` flag, so a quota refresh, model discovery or any other `action()` blocked it with no reason, and `action()` re-rendered only after the follow-up `poll()`. **Create** now follows only its own `creating` flag; when other work is running it shows `startup.create_waits_for_running_work`, waits (at most 90 s) and then creates the workspace; `action()` re-renders the buttons before `poll()`. Released as hotfix 0.1.59 from v0.1.58 (`release/0.1.x`, PR #512); this unit ports the same change to `main` for 0.2.0.
+- [x] Verify: `tests/create_workspace_runtime.cjs` (red on the unfixed code, green now, 40 consecutive runs), `tests/approval_feedback_runtime.cjs`, `tests/launch_workspace.rs`, all Node runtime tests, i18n and startup contract tests.
+- [ ] Completed: merged to main; GitHub #511 closes with the 0.1.59 release.
+
+Trace: R-185 / UC-202 / DD-222.

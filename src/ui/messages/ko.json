@@ -605,6 +605,7 @@
   "startup.and_run": "그리고 실행",
   "startup.another_action_is_finishing_try_use_profile_again": "다른 작업이 마무리 중입니다. 잠시 후 프로필 사용을 다시 누르세요.",
   "startup.another_action_is_still_finishing_try_create_again": "다른 작업이 마무리 중입니다. 완료 후 만들기를 다시 시도하세요.",
+  "startup.create_waits_for_running_work": "다른 작업이 아직 실행 중입니다. 끝나는 즉시 워크스페이스를 만듭니다.",
   "startup.answer_tool_requests_from_the_messenger": "메신저에서 도구 요청에 답하기",
   "startup.apply_the_shared_settings": "공유 설정을 적용할까요?",
   "startup.approve_plan_run": "계획 승인 후 실행",
