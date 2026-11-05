@@ -3,9 +3,13 @@
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
+pub mod channel;
 pub mod inbound;
 mod secrets;
 mod send;
+mod slack;
+mod webhook;
+pub use channel::{Capabilities, Channel, Kind};
 pub use secrets::{save_secret, save_secret_value, secret, secret_value, status, validate_url};
 pub use send::flush;
 
@@ -20,14 +24,6 @@ pub const EVENTS: [&str; 8] = [
     "stopped",
     "blocked",
 ];
-
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum Kind {
-    #[default]
-    Slack,
-    Webhook,
-}
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Settings {
@@ -130,29 +126,10 @@ pub fn payload(settings: &Settings, event: &Event) -> Result<serde_json::Value, 
             if korean { "목표" } else { "Goal" }
         ));
     }
-    if settings.kind == Kind::Slack {
-        return Ok(serde_json::json!({ "text": text }));
-    }
-    let template = settings
-        .template
-        .as_deref()
-        .unwrap_or(r#"{"text":"{{text}}"}"#);
-    let escape = |s: &str| {
-        let quoted = serde_json::to_string(s).unwrap_or_default();
-        quoted[1..quoted.len() - 1].to_string()
-    };
-    let body = template
-        .replace("{{text}}", &escape(&text))
-        .replace("{{event}}", &escape(&event.state))
-        .replace("{{state}}", &escape(&event.state))
-        .replace("{{workspace}}", &escape(&event.workspace))
-        .replace("{{goal}}", &escape(goal));
-    let value: serde_json::Value =
-        serde_json::from_str(&body).map_err(|e| format!("message body is not JSON: {e}"))?;
-    if !value.is_object() {
-        return Err("message body must be a JSON object".into());
-    }
-    Ok(value)
+    settings
+        .kind
+        .channel()
+        .notice_body(settings, &text, event, goal)
 }
 
 pub(crate) fn sibling(run: &Path, suffix: &str) -> PathBuf {

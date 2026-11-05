@@ -3110,3 +3110,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged to main; GitHub #511 closes with the 0.1.59 release.
 
 Trace: R-185 / UC-202 / DD-222.
+
+### Messenger channel interface, phase 1 — GitHub #515, #517
+
+- [x] Plan: introduce `messenger::Channel` (id, `Capabilities`, `uses_template`, `notice_body`, `fetch_replies`) and one registry; `Kind` becomes the registered id with the same stored text; Slack (`messenger/slack.rs`) and the company webhook with its relay mode (`messenger/webhook.rs`) move behind it with unchanged behavior; `inbound.rs` asks the channel for replies and keeps authorization, request-code binding and audit in the core (it also drops from 383 to 269 lines). DD-228.
+- [x] Verify: the existing messenger tests pass unmodified (`messenger`, `messenger_inbound`, `messenger_renotify`, `messenger_settings`, `messenger_decision_parse`); new `tests/messenger_channels.rs` (registry, capabilities, stored `kind`, unknown ids refused, settings compatibility); architecture trace; warning-denied Clippy.
+- [ ] Completed: phases 2 and 3 (#518, #519); release in 0.1.60 only on request.
+
+Trace: R-43 / UC-34 / QAS-35 / DD-228.
