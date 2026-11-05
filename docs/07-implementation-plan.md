@@ -2538,3 +2538,11 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Plan: a running chat showed only "Working N:NN". The chat job snapshot now carries `output` (bytes, last write) and `progress` (at most eight `{kind, text}` items, each at most 120 characters, from the last 64 KiB of the CLI's `stdout.jsonl`; Claude `tool_use`/`text` and Codex `command_execution`/`mcp_tool_call`/`agent_message` events). The page renders them inside the one working bubble, updates only the status label every second, keeps a scrolled-up reader in place and replaces the bubble with the answer in the same redraw.
 - [x] Red/Verify: `src/ui/setup/chat_progress.rs` unit tests (both CLIs, bounds, garbage lines), `tests/chat_progress_runtime.cjs` (15 consecutive runs), `tests/chat_runtime.cjs`, i18n/startup contract tests, Python and Node suites.
 - [ ] Complete: shipped with 0.1.59; ported to `main` separately.
+
+### Release 0.1.60 — GitHub #515, #523, #544
+
+- [x] Plan: backport of the messenger channel interface, notices, queue and conversation (#517-#519), the import identity fix (#523) and the check-box alignment (#544) onto release/0.1.x; version 0.1.60, notes, EN and KO manuals and README.
+- [x] Verify: full local test suite on the release branch, the Messenger dialog unit and runtime tests, Clippy, `release notes v0.1.60`.
+- [ ] Completed: tag v0.1.60 after the merge; the release workflow publishes the assets.
+
+Trace: R-43 / UC-34 / UC-35 / DD-229 / DD-230.

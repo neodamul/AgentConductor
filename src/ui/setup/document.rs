@@ -15,7 +15,8 @@ pub(crate) fn document() -> Result<String, String> {
     );
     let manual_script = include_str!("../manual.js");
     let script = format!(
-        "{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}\n{}\n{}\n{}",
+        "{}\n{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}\n{}\n{}\n{}",
+        include_str!("../dialog_focus.js"),
         super::super::I18N,
         super::super::JS,
         include_str!("../mcp.js"),

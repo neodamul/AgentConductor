@@ -6,6 +6,13 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+## v0.1.60
+- **Messenger channel interface** (#515, phases #517-#519): Slack and the company webhook now sit behind one channel interface, so another messenger is one implementation. The notices are an enumerated catalogue with localized texts; at most ten a minute per workspace are sent (the rest are counted and reported once), and notices that carry an answer code are never limited. More than 20 pending tool requests are announced 20 at a time, the rest follow in order as answers free slots.
+- **Talk to the coordinator from the messenger** (#519): listed talkers ask the read-only coordinator questions in the Slack channel or company relay and get the answer back (at most three messages). Talkers are separate from approvers, a message is only a question, the first poll skips earlier history, limits (2,000 characters, six messages per ten minutes, queue of five) are answered with a short reply, and it only reads while the desktop is open (30 s in a conversation, 2 min idle).
+- Security: shared workspace files cannot activate messenger delivery or decisions, assign approvers or talkers, or choose a Slack reply channel on export or import (#523).
+- Messenger dialog: the text beside each check box is left-aligned next to the box (#544).
+- Popups no longer open with a blue focus ring on their first button or check box (the Messenger dialog, the Goal list panel, …); text fields keep the focus and Tab still reaches every control (#546).
+
 ## v0.1.59
 - Creating a workspace is no longer blocked by unrelated work. The **Create** button in the New workspace dialog stays enabled while a quota refresh, model discovery or another action runs; it now waits for that work, says so in the dialog ("Another task is still running; the workspace is created as soon as it ends.") and creates the workspace when it ends. After any action the buttons are re-enabled before the next status refresh finishes (GitHub #511).
 - The coordinator chat shows what the coordinator is doing: while it works, the single "working" bubble lists the newest tool calls and text of the CLI (Claude Code and Codex output, at most eight short lines) and the age of its last output ("last output 12s ago" or "no output yet"), so a stalled run is distinguishable from a slow one. The one-second timer updates only the status line, and a reader who scrolled up is not pulled down (GitHub #514).

@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.1.59** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.1.60** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.1.59 fixes the New workspace dialog: **Create** is no longer disabled while a quota refresh or another action runs; it waits for that work, shows why, and then creates the workspace, and the coordinator chat's working bubble lists the CLI's newest tool calls and the age of its last output. Version 0.1.58 makes a custom CLI that refuses tools or prints text instead of JSON easy to diagnose: the failure quotes the line and shows the end of the CLI's output and errors, a profile can keep text lines as progress (`on_invalid_json: "text"`) and declare an event that means a tool was refused (`denial_condition`), which fails the task as "permission denied" even when the CLI exits 0, and an agent set to approve tools automatically with nothing that could show a refusal gets a "Check configuration" badge.
+The app version is beside the title. Version 0.1.60 adds the channel-neutral messenger: counted notices, a queue for many tool requests and, optionally, questions to the read-only coordinator from the channel; shared workspace files can no longer set messenger approvers or the reply channel; the Messenger dialog's check boxes line up. Version 0.1.59 fixes the New workspace dialog: **Create** is no longer disabled while a quota refresh or another action runs; it waits for that work, shows why, and then creates the workspace, and the coordinator chat's working bubble lists the CLI's newest tool calls and the age of its last output. Version 0.1.58 makes a custom CLI that refuses tools or prints text instead of JSON easy to diagnose: the failure quotes the line and shows the end of the CLI's output and errors, a profile can keep text lines as progress (`on_invalid_json: "text"`) and declare an event that means a tool was refused (`denial_condition`), which fails the task as "permission denied" even when the CLI exits 0, and an agent set to approve tools automatically with nothing that could show a refusal gets a "Check configuration" badge.
 
 ### 1.1a Application updates
 
@@ -252,6 +252,14 @@ Review archives before sharing; imported capability claims require local confirm
 **Messenger…** supports Slack/webhooks and optional allow/deny replies from listed approvers.
 Webhook/bot tokens and relay secrets stay local. Goal text is included only by explicit choice.
 Remote replies never approve a plan or merge.
+With **Talk to the coordinator from the messenger**, the people listed as talkers can ask the
+read-only coordinator questions in the same channel and get the answer back (at most three
+messages). Talkers are separate from approvers, and a message is only a question: it can never
+approve, change settings or start work. While this app is open it reads the channel every 30
+seconds during a conversation and every 2 minutes otherwise; nothing is read when the app is
+closed. Earlier channel history is not answered. A message over 2,000 characters, more than six
+messages in ten minutes from one person, or a full queue (five) gets a short reply instead.
+Exported workspace files never carry talkers, approvers, the reply channel or the on/off choices.
 
 **Clear cache…** previews eligible completed query/metadata/catalog files.
 Permanent removal cannot be undone. Live/unknown/aliased data, current diagnostics, source folders,

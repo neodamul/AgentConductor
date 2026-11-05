@@ -19,6 +19,8 @@ pub struct Startup {
     /// GitHub #261: logs of the chat worker, apart from the planning slot.
     chat_broker: Controller,
     saved: Mutex<Saved>,
+    /// DD-230: the messenger conversation worker state (no resident thread).
+    talk: talk::Talk,
     /// GitHub #234: the repository HEAD for the state revision, never fetched by a request through a Git process.
     heads: crate::git_head::Heads,
     _lease: crate::leases::Lease,
@@ -30,6 +32,7 @@ pub(super) use model::{Proposal, Saved, StoredJob, defaults};
 mod launch;
 mod settle;
 mod storage;
+mod talk;
 use storage::{bytes, read, write};
 
 impl Startup {
@@ -103,6 +106,7 @@ impl Startup {
                 job: Mutex::new(None),
             },
             saved: Mutex::new(saved),
+            talk: Default::default(),
             heads: Default::default(),
             _lease: lease,
         };
