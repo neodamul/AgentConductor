@@ -102,6 +102,8 @@ fn checkpoint_time() -> Result<u64, String> {
 mod execution;
 #[path = "commands/memory_ui.rs"]
 mod memory_ui;
+#[path = "commands/models.rs"]
+mod models_commands;
 #[path = "commands/sessions_review.rs"]
 mod sessions_review;
 
@@ -139,6 +141,9 @@ fn execute_args(args: &[String]) -> Result<(), String> {
         return result;
     }
     if let Some(result) = memory_ui::execute(args) {
+        return result;
+    }
+    if let Some(result) = models_commands::execute(args) {
         return result;
     }
     if let Some(result) = sessions_review::execute(args) {

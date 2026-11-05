@@ -3,31 +3,31 @@
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
+pub mod channel;
+pub mod conversation;
+pub mod events;
 pub mod inbound;
 mod secrets;
 mod send;
+mod slack;
+pub mod talk;
+mod throttle;
+mod webhook;
+pub use channel::{Capabilities, Channel, Incoming, Kind};
 pub use secrets::{save_secret, save_secret_value, secret, secret_value, status, validate_url};
 pub use send::flush;
 
-/// Notifiable run states plus `plan_ready`, in the order the dialog lists them.
+/// Notifiable run states plus `plan_ready`, in the order the dialog lists them (DD-229).
 pub const EVENTS: [&str; 8] = [
-    "plan_ready",
-    "waiting_approval",
-    "waiting_tool_approval",
-    "waiting_availability",
-    "completed",
-    "failed",
-    "stopped",
-    "blocked",
+    events::CATALOG[0].id,
+    events::CATALOG[1].id,
+    events::CATALOG[2].id,
+    events::CATALOG[3].id,
+    events::CATALOG[4].id,
+    events::CATALOG[5].id,
+    events::CATALOG[6].id,
+    events::CATALOG[7].id,
 ];
-
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum Kind {
-    #[default]
-    Slack,
-    Webhook,
-}
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Settings {
@@ -46,12 +46,30 @@ pub struct Settings {
     /// DD-81: listed approvers may answer pending tool requests from the messenger.
     #[serde(default)]
     pub decisions: bool,
+    /// DD-230: listed talkers may chat with the coordinator from the messenger.
+    #[serde(default)]
+    pub conversation: bool,
+    /// Slack user IDs, or relay user names, allowed to chat (separate from `approvers`).
+    #[serde(default)]
+    pub talkers: Vec<String>,
     /// Slack channel ID read for replies (`C0123…`).
     #[serde(default)]
     pub slack_channel: Option<String>,
     /// Slack user IDs, or relay user names, allowed to decide.
     #[serde(default)]
     pub approvers: Vec<String>,
+}
+
+impl Settings {
+    pub(crate) fn clear_shared_authority(&mut self) {
+        self.enabled = false;
+        self.decisions = false;
+        self.approvers.clear();
+        // DD-229/230: one sanitizer for every identity field a file could use to redirect authority.
+        self.conversation = false;
+        self.talkers.clear();
+        self.slack_channel = None;
+    }
 }
 
 impl Default for Settings {
@@ -63,6 +81,8 @@ impl Default for Settings {
             template: None,
             include_goal: false,
             decisions: false,
+            conversation: false,
+            talkers: vec![],
             slack_channel: None,
             approvers: vec![],
         }
@@ -81,30 +101,6 @@ pub struct Event {
     pub total: usize,
 }
 
-fn label(state: &str, korean: bool) -> Option<&'static str> {
-    Some(match (state, korean) {
-        ("plan_ready", false) => "plan ready for review",
-        ("plan_ready", true) => "계획 검토 준비 완료",
-        ("waiting_approval", false) => "candidate ready for review",
-        ("waiting_approval", true) => "후보 검토 대기",
-        ("waiting_tool_approval", false) => "tool request needs a decision",
-        ("waiting_tool_approval", true) => "도구 요청 결정 필요",
-        ("waiting_availability", false) => "waiting for account availability",
-        ("waiting_availability", true) => "계정 사용 한도로 대기 중",
-        ("completed", false) => "run completed",
-        ("completed", true) => "실행 완료",
-        ("failed", false) => "run failed",
-        ("failed", true) => "실행 실패",
-        ("stopped", false) => "run stopped",
-        ("stopped", true) => "실행 중지",
-        ("blocked", false) => "run blocked",
-        ("blocked", true) => "실행 차단",
-        ("test", false) => "test message",
-        ("test", true) => "테스트 메시지",
-        _ => return None,
-    })
-}
-
 /// The JSON body for one event: Slack `{"text":…}` or the company template.
 pub fn payload(settings: &Settings, event: &Event) -> Result<serde_json::Value, String> {
     let korean = crate::ui::language::load() == "ko";
@@ -113,7 +109,7 @@ pub fn payload(settings: &Settings, event: &Event) -> Result<serde_json::Value, 
     let what = if decision {
         event.goal.as_str()
     } else {
-        label(&event.state, korean).ok_or("not a messenger event")?
+        events::text(&event.state, korean).ok_or("not a messenger event")?
     };
     let mut text = format!("AgentConductor · {}: {what}", event.workspace);
     if event.total > 0 && event.state != "plan_ready" {
@@ -130,29 +126,10 @@ pub fn payload(settings: &Settings, event: &Event) -> Result<serde_json::Value, 
             if korean { "목표" } else { "Goal" }
         ));
     }
-    if settings.kind == Kind::Slack {
-        return Ok(serde_json::json!({ "text": text }));
-    }
-    let template = settings
-        .template
-        .as_deref()
-        .unwrap_or(r#"{"text":"{{text}}"}"#);
-    let escape = |s: &str| {
-        let quoted = serde_json::to_string(s).unwrap_or_default();
-        quoted[1..quoted.len() - 1].to_string()
-    };
-    let body = template
-        .replace("{{text}}", &escape(&text))
-        .replace("{{event}}", &escape(&event.state))
-        .replace("{{state}}", &escape(&event.state))
-        .replace("{{workspace}}", &escape(&event.workspace))
-        .replace("{{goal}}", &escape(goal));
-    let value: serde_json::Value =
-        serde_json::from_str(&body).map_err(|e| format!("message body is not JSON: {e}"))?;
-    if !value.is_object() {
-        return Err("message body must be a JSON object".into());
-    }
-    Ok(value)
+    settings
+        .kind
+        .channel()
+        .notice_body(settings, &text, event, goal)
 }
 
 pub(crate) fn sibling(run: &Path, suffix: &str) -> PathBuf {
@@ -243,11 +220,50 @@ pub fn notify_plan(workspace: &Path, settings: &Settings, name: &str, goal: &str
 }
 
 fn deliver_later(workspace: &Path, settings: &Settings, event: &Event, log: Option<PathBuf>) {
-    let result = secret(workspace)
-        .ok_or_else(|| "no webhook URL saved on this computer".to_string())
-        .and_then(|url| Ok((url, payload(settings, event)?.to_string())));
-    match result {
-        Ok((url, body)) => send::spawn(url, body, event.state.clone(), log),
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map_or(0, |d| d.as_secs());
+    let actionable = events::find(&event.state).is_some_and(|d| d.actionable);
+    let summary = match throttle::admit(workspace, now, actionable) {
+        throttle::Admit::Fold => {
+            send::log(
+                log.as_deref(),
+                &event.state,
+                "folded: more than 10 notices a minute",
+            );
+            return;
+        }
+        throttle::Admit::SendAfterSummary(n) => Some(n),
+        throttle::Admit::Send => None,
+    };
+    let Some(url) = secret(workspace) else {
+        send::log(
+            log.as_deref(),
+            &event.state,
+            "no webhook URL saved on this computer",
+        );
+        return;
+    };
+    if let Some(n) = summary {
+        let korean = crate::ui::language::load() == "ko";
+        let text = crate::ui::messages::interpolate(
+            crate::ui::messages::in_language(if korean { "ko" } else { "en" }, "messenger.folded"),
+            &[("n", &n.to_string())],
+        );
+        let notice = Event {
+            state: "decision".into(),
+            workspace: event.workspace.clone(),
+            goal: text,
+            completed: 0,
+            total: 0,
+        };
+        match payload(settings, &notice) {
+            Ok(body) => send::spawn(url.clone(), body.to_string(), "folded".into(), log.clone()),
+            Err(error) => send::log(log.as_deref(), "folded", &error),
+        }
+    }
+    match payload(settings, event) {
+        Ok(body) => send::spawn(url, body.to_string(), event.state.clone(), log),
         Err(error) => send::log(log.as_deref(), &event.state, &error),
     }
 }

@@ -126,7 +126,7 @@ requirement changes it.
 | R-39 Multiple workspaces | BG-17 | SF-33 | UC-30 | FR-24, NFR-16 | QAS-31 | DDR-13 | DD-47 | amended by R-149 |
 | R-40 Named, registered workspaces | BG-17 | SF-34 | UC-31 | FR-25, NFR-16 | QAS-32 | DDR-13 | DD-48 | current |
 | R-50 Workspace changes keep a reviewed plan | BG-17 | SF-42 | UC-41 | FR-35 | QAS-43 | DDR-13 | DD-58 | current |
-| R-52 Shareable workspace settings (export/import) | BG-20 | SF-43 | UC-42 | FR-37, NFR-18 | QAS-44 | DDR-15 | DD-59 | current |
+| R-52 Shareable workspace settings (export/import) | BG-20 | SF-43 | UC-42 | FR-37, NFR-18 | QAS-44 | DDR-15 | DD-59 | amended by #523 |
 | R-58 Export/import includes slug archives | BG-21 | SF-48 | UC-47 | FR-43, NFR-19 | QAS-49 | DDR-16 | DD-64 | current |
 | R-70 Interface language | BG-27 | SF-58 | UC-58 | FR-54, NFR-27 | QAS-63 | — | DD-76 | current |
 | R-88 Reliable named workspace creation | BG-43 | SF-75 | UC-78 | FR-73 | QAS-84 | — | DD-96 | current |
@@ -275,7 +275,7 @@ requirement changes it.
 
 | Requirement | BG | SF | UC | FR / NFR / C | QAS | DDR | DD | Status |
 |---|---|---|---|---|---|---|---|---|
-| R-43 Messenger integration (planned) | BG-18 | SF-37 | UC-34, UC-35 | FR-28, NFR-17 | QAS-35, QAS-36 | DDR-14 | DD-51 | implemented (phases 1–2) |
+| R-43 Messenger integration (planned) | BG-18 | SF-37 | UC-34, UC-35 | FR-28, NFR-17 | QAS-35, QAS-36 | DDR-14 | DD-51, DD-228, DD-229, DD-230 | implemented (phases 1–2; channel interface #515 phase 1) |
 | R-62 Jira and Confluence goal imports | BG-23 | SF-52 | UC-51, UC-52 | FR-47, FR-48, NFR-22 | QAS-53, QAS-54, QAS-55 | — | DD-68 | current |
 | R-90 Register MCP servers in Settings | BG-45 | SF-77 | UC-80 | FR-75 | QAS-86 | — | DD-98 | current |
 | R-134 Coordinator-selected MCP sources and large documents | BG-89 | SF-121 | UC-124 | FR-119 | QAS-130 | — | DD-143 | current |
@@ -340,7 +340,7 @@ Held by the Rust migration line (`codex/issue-9-native-ui-parity`, GitHub #9 and
 from it) and not yet on `main`; use them only when that line merges, and start new `main` entries
 above them: R 203–208, BG 158–163, SF 191–196, UC 194–200, FR 195–202, NFR 76–91, QAS 201–207,
 DDR 40–57, DD 215–220. Next free on `main`: R 216, BG 171, SF 204, UC 208, FR 210, NFR 97,
-QAS 215, DDR 63, DD 228. Its R 205, R 207 and R 208 port GitHub #323, #331 and #341, which `main`
+QAS 215, DDR 63, DD 231. Its R 205, R 207 and R 208 port GitHub #323, #331 and #341, which `main`
 traces as amendments of R-110, R-126 and R-183; when the line merges, keep both and mark the
 amended `main` requirement with `Status: Amended by` the ported one.
 <!-- end reserved identifiers -->
