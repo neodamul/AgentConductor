@@ -60,7 +60,7 @@
 .update-button{font-size:14px;line-height:1;padding:4px 8px;color:var(--accent-ink);background:var(--accent);border-color:var(--accent);border-radius:999px}.update-button:hover{background:var(--accent)}.update-notes{word-break:break-all;user-select:text}
 .messenger-events{border:1px solid var(--line,var(--line));border-radius:8px;padding:6px 12px;margin:8px 0;display:grid;grid-template-columns:1fr 1fr;gap:2px 16px}
 .check-row{display:flex;align-items:center;gap:8px;font-weight:500}
-.check-row input{width:auto;margin:0}
+.check-row input{width:auto;margin:0;flex:none}
 #start-settings-button{display:grid;place-items:center;width:32px;height:32px;flex:0 0 32px;font-size:26px;line-height:1;padding:0;cursor:pointer}
 .messenger-decisions{border:1px solid var(--line,var(--line));border-radius:8px;padding:6px 12px 10px;margin:10px 0}
 
@@ -124,3 +124,5 @@ details.startup-task>summary.task-summary{list-style:none;cursor:pointer;display
 #start-manual-body .manual-table{overflow:auto}#start-manual-body table{width:100%;border-collapse:collapse;font-size:12px}#start-manual-body th,#start-manual-body td{padding:8px 10px;border:1px solid var(--line);text-align:left;vertical-align:top}#start-manual-body th{background:var(--fill);color:var(--ink)}#start-manual-body img{display:block;max-width:100%;height:auto}#start-manual-body a{color:var(--accent-text)}
 .coordinator-pair{display:flex;gap:8px;align-items:center}#start-coordinator-note{flex:1 1 100%;margin:0}.read-only-args{margin:0 0 10px}.read-only-args summary{cursor:pointer;font-size:12px;font-weight:600}
 .notice{white-space:pre-line;max-height:60vh;overflow:auto}
+/* #546: the dialog may take the focus itself after it opens; it shows no ring. */
+dialog:focus{outline:none}
