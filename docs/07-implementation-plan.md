@@ -3146,3 +3146,11 @@ Trace: R-43 / UC-34 / QAS-35 / DD-229.
 - [ ] Completed: merged to main; GitHub #514 closes with the 0.1.59 release.
 
 Trace: R-185 / UC-202 / DD-222.
+
+### Messenger decisions: announce queue beyond twenty (DD-229) — GitHub #518
+
+- [x] Plan: at most 20 announced tool requests wait for an answer; further pending requests keep their place and are announced, one per freed slot, on the next poll. A request that is no longer pending at its turn is never announced. Request lifetime still starts at creation (DD-32); a later change may start it at delivery.
+- [x] Verify: `tests/messenger_inbound.rs` (22 pending: 20 announced, none more while full, a denial frees exactly one slot), Clippy.
+- [ ] Completed: merged to main; 0.1.60 backport on request.
+
+Trace: R-43 / UC-34 / QAS-35 / DD-229.
