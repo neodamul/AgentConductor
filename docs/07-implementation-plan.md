@@ -3235,3 +3235,11 @@ Trace: R-35 / DD-37 / DD-41.
 - [ ] Completed: merged to main; other files over 300 lines remain under #472.
 
 Trace: R-35 / DD-37 / DD-41.
+
+### 300-line limit: coordinator arguments split — GitHub #472
+
+- [x] Plan: `src/coordinator.rs` (351 lines) keeps the verdict/proposal types and the JSON runners (266); the read-only and planning argument builders move to `coordinator/args.rs` (88). Public paths and behavior are unchanged.
+- [x] Verify: `custom_cli_denials`, `acio_runtime`, `source_layout`, `architecture_trace`, Clippy.
+- [ ] Completed: merged to main; other files over 300 lines remain under #472.
+
+Trace: R-35 / DD-37 / DD-41.
