@@ -3118,3 +3118,11 @@ Trace: R-185 / UC-202 / DD-222.
 - [ ] Completed: phases 2 and 3 (#518, #519); release in 0.1.60 only on request.
 
 Trace: R-43 / UC-34 / QAS-35 / DD-228.
+
+### Messenger notices, settings and conversation: design — GitHub #515, #518, #519
+
+- [x] Plan: DD-229 (event catalogue, actionable codes, detail, throttle, restart state, channel-owned settings, import/export identity rule) and DD-230 (conversation capability, assumptions, authorization, allowed and forbidden actions, routing, limits, prompt handling, audit, required tests) written; implementation of #518 and #519 is assigned to Codex, review and release mechanics to Claude.
+- [ ] Verify: each Codex PR cites the DD-229/DD-230 rows it implements and the tests listed there.
+- [ ] Completed: release 0.1.60 only on request.
+
+Trace: R-43 / UC-34 / QAS-35 / DD-229.
