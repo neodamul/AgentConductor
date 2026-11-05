@@ -2993,3 +2993,12 @@ Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
 - [ ] Completed: merged; GitHub #490 closed.
 
 Trace: R-185 / UC-202 / DD-222.
+
+### Step tab horizontal padding — GitHub #493
+
+- [x] Plan: user report 2026-11-05: the stepper tabs have almost no space left and right of the caption (3px after #473); the approved mock changes together with the app.
+- [x] Task: 7px each side in the app and in the mock (the largest value at which the 840px mock frame, 32px narrower than the window, still fits the strip); mock step groups and tabs no longer shrink, so no caption is cut with an ellipsis.
+- [x] Verify: strict parity 0 differences in light/dark × 1280/840 (160/157 entries), `tests/step_tab_widths_runtime.cjs`.
+- [ ] Completed: merged; GitHub #493 closed.
+
+Trace: R-210 / UC-202 / DD-222.
