@@ -3087,6 +3087,14 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Source bound: review round — GitHub #472
+
+- [x] Plan: split `src/workflow/review.rs` (442 lines) with no behaviour change: applying a coordinator review moves to `workflow/review/apply.rs` (125 lines) and the review request/response round to `workflow/review/request.rs` (236 lines); `review.rs` keeps the evidence helpers (91 lines). The public paths (`review`, `apply_review`) and the workflow-internal helpers are re-exported unchanged.
+- [x] Verify: review, workflow, prompt-form and read-only-load tests, warning-denied Clippy; the full suite runs in CI.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### Source bound: MCP imports — GitHub #472
 
 - [x] Plan: split `src/mcp/imports.rs` (445 lines) with no behaviour change: issue-reference parsing moves to `mcp/imports/references.rs` (51 lines) and applying/storing/loading imports to `mcp/imports/store.rs` (145 lines); `imports.rs` keeps the preview and discovery (260 lines). The public paths (`Reference`, `references`, `apply`, `context`, `store`, `load`) are re-exported unchanged.
