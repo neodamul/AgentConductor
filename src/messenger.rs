@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
 pub mod channel;
+pub mod events;
 pub mod inbound;
 mod secrets;
 mod send;
@@ -13,16 +14,16 @@ pub use channel::{Capabilities, Channel, Kind};
 pub use secrets::{save_secret, save_secret_value, secret, secret_value, status, validate_url};
 pub use send::flush;
 
-/// Notifiable run states plus `plan_ready`, in the order the dialog lists them.
+/// Notifiable run states plus `plan_ready`, in the order the dialog lists them (DD-229).
 pub const EVENTS: [&str; 8] = [
-    "plan_ready",
-    "waiting_approval",
-    "waiting_tool_approval",
-    "waiting_availability",
-    "completed",
-    "failed",
-    "stopped",
-    "blocked",
+    events::CATALOG[0].id,
+    events::CATALOG[1].id,
+    events::CATALOG[2].id,
+    events::CATALOG[3].id,
+    events::CATALOG[4].id,
+    events::CATALOG[5].id,
+    events::CATALOG[6].id,
+    events::CATALOG[7].id,
 ];
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -77,30 +78,6 @@ pub struct Event {
     pub total: usize,
 }
 
-fn label(state: &str, korean: bool) -> Option<&'static str> {
-    Some(match (state, korean) {
-        ("plan_ready", false) => "plan ready for review",
-        ("plan_ready", true) => "계획 검토 준비 완료",
-        ("waiting_approval", false) => "candidate ready for review",
-        ("waiting_approval", true) => "후보 검토 대기",
-        ("waiting_tool_approval", false) => "tool request needs a decision",
-        ("waiting_tool_approval", true) => "도구 요청 결정 필요",
-        ("waiting_availability", false) => "waiting for account availability",
-        ("waiting_availability", true) => "계정 사용 한도로 대기 중",
-        ("completed", false) => "run completed",
-        ("completed", true) => "실행 완료",
-        ("failed", false) => "run failed",
-        ("failed", true) => "실행 실패",
-        ("stopped", false) => "run stopped",
-        ("stopped", true) => "실행 중지",
-        ("blocked", false) => "run blocked",
-        ("blocked", true) => "실행 차단",
-        ("test", false) => "test message",
-        ("test", true) => "테스트 메시지",
-        _ => return None,
-    })
-}
-
 /// The JSON body for one event: Slack `{"text":…}` or the company template.
 pub fn payload(settings: &Settings, event: &Event) -> Result<serde_json::Value, String> {
     let korean = crate::ui::language::load() == "ko";
@@ -109,7 +86,7 @@ pub fn payload(settings: &Settings, event: &Event) -> Result<serde_json::Value, 
     let what = if decision {
         event.goal.as_str()
     } else {
-        label(&event.state, korean).ok_or("not a messenger event")?
+        events::text(&event.state, korean).ok_or("not a messenger event")?
     };
     let mut text = format!("AgentConductor · {}: {what}", event.workspace);
     if event.total > 0 && event.state != "plan_ready" {
