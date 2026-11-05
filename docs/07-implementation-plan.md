@@ -2970,3 +2970,47 @@ Trace: R-35 → BG-05 → SF-12 → C-04/NFR-07 → QAS-12 → DDR-04/DDR-06 →
 - [x] Verify: full local all-target regression on source `3df36abb` exits 0: 844 passed, 0 failed, 15 explicitly ignored across 272 suites.
 - [ ] Verify: Windows platform checks; no native window or live-provider claim.
 - [ ] Complete: separate issue-linked PR and recorded cross-platform evidence. Global 300-line enforcement follows completion of all areas.
+
+### Source bound: quota terminal — GitHub #472
+
+- [x] Plan: split `src/quota/terminal.rs` (493 lines) toward the 300-line bound with no behaviour change: screen recognition (`terminal/screens.rs`), `/usage` parsing (`terminal/parse.rs`) and the session driver (`terminal.rs`); public paths are re-exported unchanged.
+- [x] Verify: full local `cargo test --all-targets --locked` 843 passed, 0 failed; warning-denied Clippy; Windows module (`terminal/windows.rs`) unchanged and reaches the moved items through the same `super::` names (Windows through CI).
+- [ ] Completed: the remaining files over 300 lines (tracked on #472) and the 300-line gate in `tests/source_layout.rs`.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Windows fallback test contention — GitHub #480
+
+- [x] Plan: the Windows job log of #469 showed nine parallel workflow tests starving each other on a 2-vCPU runner (one finished in 5 s, others ran longer than 60 s and hit their bounded waits; all passed on re-run); the waits measured the runner, not the product.
+- [x] Task: `tests/fallback.rs` runs at most two workflow tests at a time through one shared semaphore; no assertion or budget changed.
+- [ ] Verify: three consecutive Windows CI runs without `worker did not start` or the 60 s fallback-chain timeout; GitHub #480 closed after that.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Queued planning-dialog close event — GitHub #484
+Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
+
+- [x] Plan: inspect both generation/import callers and shared confirmation; preserve selection evidence, revision/context guards and native form behavior. Reopen #484 because #485 added diagnostics only.
+- [x] Red: the VM regression delivers the previous close event while the next dialog is open; the actual assembled Chrome flow reproduces the CI state (confirm return value, enabled controls, no save/baseline/read_plan request).
+- [x] Task: settle each submitted or cancelled decision in its own invocation; ignore stale close events while reopened. VM order regression and existing confirmation guards pass; real Chrome light/dark × 840/1280 all pass with the forced late event.
+- [x] Verify: deterministic VM regression and existing confirmation guards pass; actual browser light/dark × 840/1280 passes in ten consecutive local runs with two owned CPU-load workers (40 cases), both workers terminated afterward.
+- [x] Verify: full local `cargo test --all-targets --locked --no-fail-fast` on source `74c3036b` exits 0: 843 passed, 0 failed, 15 ignored across 271 suites, including the main-baseline light/dark parity and complete Node UI harness. Clippy warnings-denied and formatting pass. Windows platform acceptance remains separate.
+- [ ] Completed: isolated linked main-based PR, AgentMemory/wiki receipts, integration and actual platform acceptance.
+
+### First-workspace dialog can be cancelled — GitHub #490
+
+- [x] Plan: user report 2026-11-05: the "Name the new workspace" dialog has no Cancel on the first start (hidden and Escape blocked by #226); R-185 amended instead of leaving a contradiction.
+- [x] Task: the dialog keeps its Cancel button and Escape in every case; nothing is created, the placeholder stays hidden, the question returns on the next page load.
+- [x] Verify: `tests/first_workspace_runtime.cjs` (Red: old assertions fail, now cancel visible and Escape allowed), `launch_workspace` Rust wrapper.
+- [ ] Completed: merged; GitHub #490 closed.
+
+Trace: R-185 / UC-202 / DD-222.
+
+### Step tab horizontal padding — GitHub #493
+
+- [x] Plan: user report 2026-11-05: the stepper tabs have almost no space left and right of the caption (3px after #473); the approved mock changes together with the app.
+- [x] Task: 7px each side in the app and in the mock (the largest value at which the 840px mock frame, 32px narrower than the window, still fits the strip); mock step groups and tabs no longer shrink, so no caption is cut with an ellipsis.
+- [x] Verify: strict parity 0 differences in light/dark × 1280/840 (160/157 entries), `tests/step_tab_widths_runtime.cjs`.
+- [ ] Completed: merged; GitHub #493 closed.
+
+Trace: R-210 / UC-202 / DD-222.

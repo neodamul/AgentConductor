@@ -121,7 +121,7 @@ fn a_default_folder_with_real_work_stays_listed_and_opens() {
 }
 
 #[test]
-fn the_page_asks_for_a_first_workspace_name_that_cannot_be_skipped() {
+fn the_page_asks_for_a_first_workspace_name_that_can_be_cancelled() {
     let result = std::process::Command::new("node")
         .current_dir(env!("CARGO_MANIFEST_DIR"))
         .arg("tests/first_workspace_runtime.cjs")
