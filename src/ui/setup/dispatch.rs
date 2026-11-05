@@ -70,6 +70,7 @@ impl Startup {
         }
         let stepping = std::time::Instant::now();
         let metadata_job = self.metadata_tick(&mut saved)?;
+        self.talk_tick(&mut saved);
         let job = self.job(&saved)?;
         self.settle(&mut saved, &job)?;
         crate::ui::diagnostics::step("advance", stepping.elapsed());
