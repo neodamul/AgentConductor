@@ -21,7 +21,7 @@ const preset=`SIM.home.config.profiles.push({id:'aipro',parser:'custom',executab
   const trigger=acChoices.buttonFor(model);
   check('fallback model uses the shared anchored choice',!!trigger&&!model.disabled);
   check('catalog-less agent offers manual entry',model.dataset.choiceManual==='true');
-  acChoices.open(model);document.querySelector('#ac-choice-menu [data-value=__manual]').click();
+  acChoices.open(model);await wait();document.querySelector('#ac-choice-menu [data-value=__manual]').click();
   const input=document.querySelector('#ac-choice-menu input');input.value='internal-model';input.dispatchEvent(new Event('input'));
   document.querySelector('#ac-choice-menu form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
   const deadline=Date.now()+5000;while(model.value!=='internal-model'&&Date.now()<deadline)await new Promise(r=>setTimeout(r,20));

@@ -4,6 +4,8 @@ pub(super) fn room() -> Result<String, String> {
     let i18n = super::I18N;
     let js = super::JS;
     let shared_scripts = concat!(
+        include_str!("dialog_focus.js"),
+        "\n",
         include_str!("brand_avatar.js"),
         "\n",
         include_str!("team_briefing.js")
