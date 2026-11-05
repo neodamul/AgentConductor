@@ -71,7 +71,7 @@ Agent Room에서도 같은 제목 표시줄을 사용합니다. 기존 실행이
 
 목표가 완료되면 변경 내용이 병합된 위치, 변경 파일, 검증 결과와 교훈을 한 팝업에서 보여 줍니다. 목표 목록이나 Agent Room의 **결과 보기**도 같은 팝업을 엽니다. 팀 브리핑, 코디네이터 대화, 설정도 오른쪽에서 밀려 나오며 한 번에 하나만 열립니다. Claude Code와 Codex는 각자의 로고로 표시되고, 에이전트 아이콘의 테두리가 상태를 보여 줍니다(초록: 실행 중·완료, 노랑: 대기, 빨강: 실패·막힘).
 
-**AgentConductor 정보**(애플리케이션 메뉴)는 AgentConductor가 무엇인지, 크레딧, 세 에이전트 CLI의 설치 방법(`npm install -g @anthropic-ai/claude-code`, `npm install -g @openai/codex`, `npm install -g opencode-ai`, 각각 복사 버튼)을 보여줍니다. 설치 또는 업데이트 후 처음 시작할 때 한 번 자동으로 열리며, **시작하기** 또는 Esc로 닫으면 다음 버전까지 다시 나타나지 않습니다.
+**About**(애플리케이션 메뉴의 맨 아래 항목)는 AgentConductor가 무엇인지, 크레딧, 세 에이전트 CLI의 설치 방법(`npm install -g @anthropic-ai/claude-code`, `npm install -g @openai/codex`, `npm install -g opencode-ai`, 각각 복사 버튼)을 보여줍니다. 설치 또는 업데이트 후 처음 시작할 때 한 번 자동으로 열리며, **시작하기** 또는 Esc로 닫으면 다음 버전까지 다시 나타나지 않습니다.
 
 ### 1.3 에이전트 등록과 모델
 
