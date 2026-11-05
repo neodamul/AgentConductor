@@ -1,4 +1,6 @@
-The captured screens in this folder match the interface of 0.1.58.
+The captured screens in this folder match the interface of 0.1.59.
 Recaptured 2026-11-02 for the workspace screens (light, dark, Korean) and the agent settings dialog (#325, #326). Checked 2026-11-02 against the changes since (#331): a notice style that keeps line breaks and scrolls, which is not on a captured screen. The agent room screens are unchanged and were checked, not recaptured.
 Checked 2026-11-03 against the changes since (#337): no interface change.
 Checked 2026-11-03 against the changes since (#341): a badge on the agent card built from existing styles, which is not on a captured screen.
+Checked 2026-11-05 against the changes since (#511): the New workspace dialog's Create button now stays enabled during other work and shows a waiting reason, which is not on a captured screen.
+Checked 2026-11-05 against the changes since (#514): the coordinator chat's working bubble gains progress lines and an output age, which is not on a captured screen.

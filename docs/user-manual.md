@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.1.58** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.1.59** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.1.58 makes a custom CLI that refuses tools or prints text instead of JSON easy to diagnose: the failure quotes the line and shows the end of the CLI's output and errors, a profile can keep text lines as progress (`on_invalid_json: "text"`) and declare an event that means a tool was refused (`denial_condition`), which fails the task as "permission denied" even when the CLI exits 0, and an agent set to approve tools automatically with nothing that could show a refusal gets a "Check configuration" badge.
+The app version is beside the title. Version 0.1.59 fixes the New workspace dialog: **Create** is no longer disabled while a quota refresh or another action runs; it waits for that work, shows why, and then creates the workspace, and the coordinator chat's working bubble lists the CLI's newest tool calls and the age of its last output. Version 0.1.58 makes a custom CLI that refuses tools or prints text instead of JSON easy to diagnose: the failure quotes the line and shows the end of the CLI's output and errors, a profile can keep text lines as progress (`on_invalid_json: "text"`) and declare an event that means a tool was refused (`denial_condition`), which fails the task as "permission denied" even when the CLI exits 0, and an agent set to approve tools automatically with nothing that could show a refusal gets a "Check configuration" badge.
 
 ### 1.1a Application updates
 
