@@ -20,7 +20,7 @@ const preset=`SIM.home.run_available=true;SIM.home.run_state='running';SIM.room.
   const ready=Date.now()+5000;while(model.dataset.choiceManual!=='true'&&Date.now()<ready)await new Promise(r=>setTimeout(r,30));
   check('inspector model is an anchored choice',!!acChoices.buttonFor(model));
   check('catalog-less agent offers manual entry',model.dataset.choiceManual==='true');
-  acChoices.open(model);document.querySelector('#ac-choice-menu [data-value=__manual]').click();
+  acChoices.open(model);await wait();document.querySelector('#ac-choice-menu [data-value=__manual]').click();
   const input=document.querySelector('#ac-choice-menu input');input.value='operator/own';input.dispatchEvent(new Event('input'));
   document.querySelector('#ac-choice-menu form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
   const deadline=Date.now()+5000;while(!SIM.log.some(e=>e.kind==='action'&&e.p.action.kind==='model')&&Date.now()<deadline)await new Promise(r=>setTimeout(r,20));

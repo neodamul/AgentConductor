@@ -13,6 +13,8 @@
 /* DD-40: application icons share the avatar box. */
 img.app-icon{object-fit:contain;background:transparent;padding:0}
 .app-icon>svg.brand-logo{display:block;flex:none;width:100%;height:100%}
+/* #545: the Codex logo ships a white tile; without it the glyph sits on the avatar like Claude's. */
+.app-icon>svg.brand-logo>path[fill="#fff"]{display:none}
 
 .session-body{flex:1;min-width:0}.name-row{display:flex;align-items:center;justify-content:space-between;gap:6px;min-width:0}.session .name-row .name{margin-bottom:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.session .name-row{margin-bottom:5px}.quota-badge{flex-shrink:0;font-size:11px;font-weight:650;font-variant-numeric:tabular-nums;line-height:1.5;white-space:nowrap;padding:1px 3px;border-radius:4px;background:var(--fill);color:var(--soft)}.profile-name{flex:1}.profile-name .name-row strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
@@ -96,3 +98,5 @@ button.is-busy{position:relative;overflow:hidden;cursor:progress}button.is-busy,
 .view-tabs{gap:4px;border-bottom:0;margin:14px 0 8px}.view-tabs .tab{box-sizing:border-box;height:29px;padding:0 11px;border:1px solid var(--line);border-bottom:2px solid var(--line);border-radius:7px;background:var(--fill);font-size:12px;font-weight:500;line-height:1;color:var(--soft);text-align:left;white-space:nowrap}.view-tabs .tab.active{background:var(--accent-soft);border-bottom-color:var(--accent);color:var(--accent-text);font-weight:650}
 body.rail-hidden .workbench{grid-template-columns:0 minmax(390px,1fr) 306px}body.rail-hidden .workbench.insp-closed{grid-template-columns:0 minmax(390px,1fr) 0}body.rail-hidden .rail{visibility:hidden;min-width:0;padding:0;border:0;overflow:hidden}
 .result-metrics{gap:0;align-items:center;flex-wrap:wrap}.result-metric{flex-direction:row;align-items:baseline;gap:6px;padding:0 12px;font-size:14px;font-weight:500}.result-metric:first-child{padding-left:0}.result-metric strong{font-size:16px;font-weight:650}
+/* #546: no ring on the automatically focused control until a key is pressed in the dialog. */
+dialog.quiet-focus :focus-visible{outline:none}

@@ -231,6 +231,8 @@ mod fallback_evidence_tests;
 
 mod permissions;
 pub use permissions::*;
+mod tool_context;
+pub use tool_context::*;
 mod execution;
 pub use execution::*;
 mod scheduler;

@@ -149,7 +149,7 @@ Given a ready plan, saving a new workspace name or role rules, or importing/refr
 
 ### QAS-44 Exported settings are safe to commit
 
-Given a workspace with private environment values, catalogs and a repository, the export contains `format: agentconductor.workspace/v1`, the name, coordinator, mode, agents without `environment` or `catalog`, role rules and `repository: "."` only when exported into the repository root; output is stable for the same settings and ends with LF. Import of that file into another workspace reproduces agents, roles, coordinator, mode and name; keeps local environment values and catalogs for the same agent IDs; sets the repository to the file's folder; and imports `external_sandbox`/`read_only` capabilities as `unverified` unless confirmed. Unknown formats, invalid profiles or a stale revision change nothing. Trace: UC-42.
+Given a workspace with private environment values, catalogs and a repository, the export contains `format: agentconductor.workspace/v1`, the name, coordinator, mode, agents without `environment` or `catalog`, role rules and `repository: "."` only when exported into the repository root; output is stable for the same settings and ends with LF. Export clears messenger `enabled`, `decisions`, `approvers` and `slack_channel`; import of a hostile file setting those fields cannot restore any of them. Import reproduces agents, roles, coordinator, mode and name; keeps local environment values and catalogs for the same agent IDs; sets the repository to the file's folder; and imports `external_sandbox`/`read_only` capabilities as `unverified` unless confirmed. Unknown formats, invalid profiles or a stale revision change nothing. Trace: UC-42 / #523.
 
 ### QAS-45 Plan size and document import
 

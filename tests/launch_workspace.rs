@@ -134,3 +134,33 @@ fn the_page_asks_for_a_first_workspace_name_that_can_be_cancelled() {
         String::from_utf8_lossy(&result.stderr)
     );
 }
+
+#[test]
+fn create_workspace_is_not_disabled_by_unrelated_work() {
+    let result = std::process::Command::new("node")
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .arg("tests/create_workspace_runtime.cjs")
+        .output()
+        .expect("Node runs UI behavior tests");
+    assert!(
+        result.status.success(),
+        "{}{}",
+        String::from_utf8_lossy(&result.stdout),
+        String::from_utf8_lossy(&result.stderr)
+    );
+}
+
+#[test]
+fn the_chat_working_bubble_shows_cli_progress() {
+    let result = std::process::Command::new("node")
+        .current_dir(env!("CARGO_MANIFEST_DIR"))
+        .arg("tests/chat_progress_runtime.cjs")
+        .output()
+        .expect("Node runs UI behavior tests");
+    assert!(
+        result.status.success(),
+        "{}{}",
+        String::from_utf8_lossy(&result.stdout),
+        String::from_utf8_lossy(&result.stderr)
+    );
+}

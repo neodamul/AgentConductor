@@ -2886,6 +2886,28 @@ Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Messenger identity-safe workspace import — GitHub #523
+
+- [x] Plan: amend DD-59 so shared settings do not transfer messenger identity or decision authority; export and import both clear activation, approvers and reply routing. The fix is independent of the #520 channel abstraction for backporting.
+- [x] Task / Red: `tests/messenger_import_security.rs` verifies export and import with hostile identity values on Unix and Windows; `tests/workspace_share.rs` checks persisted settings and local configuration preservation.
+- [x] Task / Green: one `Settings` helper clears delivery/decision activation, approvers and Slack routing on both export and import.
+- [x] Verify / focused: hostile export/import and workspace-share integration tests, architecture trace, formatting and whitespace checks pass; changed Rust files stay within 300 lines.
+- [x] Verify / full suite: `cargo test --all-targets --locked --no-fail-fast` completed on the pre-rebase head; every target passed except `design_parity`, which reports two dark-theme `hover-agent-remove` color mismatches in unchanged `src/ui/startup.css` (tracked by the open #420 parity matrix).
+- [x] Verify / rebased head: focused security/share suites (4 tests), architecture trace, `cargo fmt --check`, `git diff --check`, and warning-denied all-target Clippy pass on `65c26d91`.
+- [ ] Complete: await macOS/Windows checks, human review and merge of issue-linked PR #526; keep the unrelated parity defect tracked under #420.
+
+Trace: R-52 / BG-20 / SF-43 / UC-42 / FR-37 / NFR-18 / QAS-44 / DDR-15 / DD-59.
+
+### Source bound: native guard session identifiers — GitHub #472
+
+- [x] Plan: separate OS-backed session identifier generation from the native guard while preserving its public API and entropy source.
+- [x] Red: the focused layout test reports 313 lines in `src/native_guard.rs` against the 300-line area limit.
+- [x] Task: move UUID generation and its existing OS random implementation into a private session module; retain the original public path.
+- [x] Verify: session ID shape and uniqueness, guard decisions, session leases, architecture trace and source layout pass locally; all-target Clippy passes.
+- [ ] Completed: full regression and platform verification, merge the issue-linked PR; the wider #472 limit remains open.
+
+Trace: R-35 / DD-37 / DD-41.
+
 ### Manual model choice in the task inspector — GitHub #430, inspector unit
 
 - [x] Red: `register_model` is missing (`recovery.rs`) and the inspector model offers no manual entry (`choice_controls/inspector_model.cjs`).
@@ -2929,6 +2951,9 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Red: `step_tab_widths_runtime.cjs` fails with 31–94 px of free space per tab; parity entries for every tab box, position and number box (width/height/dl/dt, pixel diff) added.
 - [x] Task: tabs and groups take their natural width and shrink only when the row is full; tab, number, group and selected-tab boxes follow the mock (16 px number, 3 px padding, 7 px gap, 2 px selected top border, surface fill). The approved mock's groups and tabs changed the same way, by the user's word 'app or mock'.
 - [x] Verify: light/dark × 1280/840 parity 0 (159/156 entries), including pixel crops of every tab and group; the dimmed disabled step is an app-only state the mock does not show, compared with steps enabled.
+- [x] Follow-up red: at narrow widths the mock did not shrink and individual app tabs had no full-caption hover title; `step_tabs_geometry.cjs` reproduces both.
+- [x] Task: shrink the mock like the app, add localized per-tab titles and compare equal inner window widths without changing pixel tolerances.
+- [ ] Verify and complete: full local parity, Windows font rendering, merge the issue-linked PR and close #473.
 
 Trace: R-210 / UC-202 / DD-222.
 
@@ -2950,6 +2975,17 @@ Trace: R-215 / UC-207 / QAS-214 / DD-227.
 
 Trace: R-210 / UC-202 / DD-222.
 
+## #472 process ownership and supervision increment
+
+Trace: R-35 → BG-05 → SF-12 → C-04/NFR-07 → QAS-12 → DDR-04/DDR-06 → DD-41.
+
+- [x] Plan: inspect public callers, persistent owner records, control cancellation and platform boundaries; preserve existing public paths and trust/approval behavior.
+- [x] Task / Red: `tests/process_layout.rs` rejects the original 467-line facade.
+- [x] Task / Green: separate the facade (119 lines), ownership (82) and supervision (276), with no new runtime dependency. Moved bodies match the original except imports/visibility.
+- [x] Verify: 27 focused local tests pass; one authenticated Claude metadata test remains explicitly ignored.
+- [x] Verify: full local `cargo test --all-targets --locked --no-fail-fast` on source `0412e485` exits 0: 844 passed, 0 failed, 15 explicitly ignored across 272 suites. Main-baseline light/dark parity (319.40s), Node harness, Clippy warnings-denied, formatting and whitespace checks pass. This is not a four-cell #420 or live-provider claim.
+- [ ] Complete: publish the separate main-based area PR and verify its platform checks before integration. Global 300-line policy rollout remains deferred until every area complies.
+
 ### About dialog integer geometry — GitHub #482
 
 - [x] Plan: macOS CI showed ±1–2 level differences in a few hundred `about-dialog` pixels on some runs only; remove the fractional layout that makes the raster phase of rounded boxes unstable instead of adding any tolerance.
@@ -2958,6 +2994,18 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: three consecutive macOS CI runs without an `about-dialog` difference; GitHub #482 closed.
 
 Trace: R-215 / UC-207 / QAS-214 / DD-227.
+
+## #472 Cocoa callback module increment
+
+Trace: R-35 → BG-05 → SF-12 → C-04/NFR-07 → QAS-12 → DDR-04/DDR-06 → DD-41.
+
+- [x] Plan: preserve the Cocoa facade, callback ABIs, trust checks, request limit, reply block lifetime, main-thread delivery and existing native close/menu behavior.
+- [x] Red: `tests/cocoa_layout.rs` rejects the original 494-line Cocoa facade.
+- [x] Task: move WebKit callback responsibilities into a private child module; facade 292 lines, callbacks 206 lines. The moved callback bodies and ABI declarations match the original byte-for-byte except the required module visibility and import.
+- [x] Verify: Cocoa layout, architecture and close-window tests pass locally (9 tests); the live Claude metadata test remains explicitly ignored. Default macOS all-target Clippy with warnings denied passes.
+- [x] Verify: full local all-target regression on source `3df36abb` exits 0: 844 passed, 0 failed, 15 explicitly ignored across 272 suites.
+- [ ] Verify: Windows platform checks; no native window or live-provider claim.
+- [ ] Complete: separate issue-linked PR and recorded cross-platform evidence. Global 300-line enforcement follows completion of all areas.
 
 ### Source bound: quota terminal — GitHub #472
 
@@ -3028,3 +3076,217 @@ Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
 - [ ] Completed: the remaining files over 300 lines (tracked on #472).
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Source bound: messenger secrets — GitHub #472
+
+- [x] Plan: split `src/messenger.rs` (389 lines) with no behaviour change: the per-workspace webhook URL and named secrets move to `messenger/secrets.rs` (107 lines), `messenger.rs` keeps settings, payloads and delivery (288 lines); the public paths are re-exported unchanged.
+- [x] Verify: full local `cargo test --all-targets --locked`, warning-denied Clippy.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Source bound: self-update — GitHub #472
+
+- [x] Plan: split `src/update.rs` (458 lines) with no behaviour change: download, checksum and unpack move to `update/install.rs` (81 lines); swapping the running executable and cleaning up after the restart move to `update/replace.rs` (129 lines); `update.rs` keeps release lookup, status and restart (263 lines). The public paths (`verify`, `replace`, `leftover`, `after_restart`) are re-exported unchanged.
+- [x] Verify: `tests/update.rs`, `tests/update_downloads.rs`, `tests/update_blockers.rs`, library unit tests, architecture trace, warning-denied Clippy; the full suite runs in CI.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Source bound: tool-call guard — GitHub #472
+
+- [x] Plan: split `src/guard.rs` (458 lines) with no behaviour change: file identity and alias checks (including the Windows handle identity) move to `guard/identity.rs` (94 lines), path spellings and input-shape helpers to `guard/spelling.rs` (60 lines), and the Grep/Glob decision to `guard/search.rs` (84 lines); `guard.rs` keeps the policy type, workspace checks and `classify` (241 lines). `crate::guard::windows_identity` stays available on Windows.
+- [x] Verify: guard policy, command-form, guarded-control, native-guard coordinator and env-guard tests on macOS, warning-denied Clippy; the Windows build and tests run in CI (not compiled locally).
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Source bound: git repository — GitHub #472
+
+- [x] Plan: split `src/git.rs` (436 lines) with no behaviour change: workspace snapshots, changed-path scope checks and candidate merges move to `git/snapshot.rs` (157 lines, with `Snapshot`); linked worktree creation and removal move to `git/worktrees.rs` (58 lines); `git.rs` keeps opening, command invocation, export and `git_path` (236 lines). `Repository` and `Snapshot` keep their public paths.
+- [x] Verify: git, git-head, scope-recovery, snapshot, worktree-cleanup and checkpoint tests, warning-denied Clippy; the full suite runs in CI.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Source bound: review round — GitHub #472
+
+- [x] Plan: split `src/workflow/review.rs` (442 lines) with no behaviour change: applying a coordinator review moves to `workflow/review/apply.rs` (125 lines) and the review request/response round to `workflow/review/request.rs` (236 lines); `review.rs` keeps the evidence helpers (91 lines). The public paths (`review`, `apply_review`) and the workflow-internal helpers are re-exported unchanged.
+- [x] Verify: review, workflow, prompt-form and read-only-load tests, warning-denied Clippy; the full suite runs in CI.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Source bound: MCP imports — GitHub #472
+
+- [x] Plan: split `src/mcp/imports.rs` (445 lines) with no behaviour change: issue-reference parsing moves to `mcp/imports/references.rs` (51 lines) and applying/storing/loading imports to `mcp/imports/store.rs` (145 lines); `imports.rs` keeps the preview and discovery (260 lines). The public paths (`Reference`, `references`, `apply`, `context`, `store`, `load`) are re-exported unchanged.
+- [x] Verify: the ten MCP integration tests (sources, config, header references, imports, large sources, planner, remote, bindings, suggestions, workspace), warning-denied Clippy; the full suite runs in CI.
+- [ ] Completed: the remaining files over 300 lines (tracked on #472).
+
+Trace: R-210 / UC-202 / DD-222.
+
+### New workspace dialog: Create is not tied to unrelated work — GitHub #511
+
+- [x] Plan: `renderButtons()` disabled **Create** with the shared `mutating` flag, so a quota refresh, model discovery or any other `action()` blocked it with no reason, and `action()` re-rendered only after the follow-up `poll()`. **Create** now follows only its own `creating` flag; when other work is running it shows `startup.create_waits_for_running_work`, waits (at most 90 s) and then creates the workspace; `action()` re-renders the buttons before `poll()`. Released as hotfix 0.1.59 from v0.1.58 (`release/0.1.x`, PR #512); this unit ports the same change to `main` for 0.2.0.
+- [x] Verify: `tests/create_workspace_runtime.cjs` (red on the unfixed code, green now, 40 consecutive runs), `tests/approval_feedback_runtime.cjs`, `tests/launch_workspace.rs`, all Node runtime tests, i18n and startup contract tests.
+- [ ] Completed: merged to main; GitHub #511 closes with the 0.1.59 release.
+
+Trace: R-185 / UC-202 / DD-222.
+
+### Messenger channel interface, phase 1 — GitHub #515, #517
+
+- [x] Plan: introduce `messenger::Channel` (id, `Capabilities`, `uses_template`, `notice_body`, `fetch_replies`) and one registry; `Kind` becomes the registered id with the same stored text; Slack (`messenger/slack.rs`) and the company webhook with its relay mode (`messenger/webhook.rs`) move behind it with unchanged behavior; `inbound.rs` asks the channel for replies and keeps authorization, request-code binding and audit in the core (it also drops from 383 to 269 lines). DD-228.
+- [x] Verify: the existing messenger tests pass unmodified (`messenger`, `messenger_inbound`, `messenger_renotify`, `messenger_settings`, `messenger_decision_parse`); new `tests/messenger_channels.rs` (registry, capabilities, stored `kind`, unknown ids refused, settings compatibility); architecture trace; warning-denied Clippy.
+- [ ] Completed: phases 2 and 3 (#518, #519); release in 0.1.60 only on request.
+
+Trace: R-43 / UC-34 / QAS-35 / DD-228.
+
+### Messenger notices, settings and conversation: design — GitHub #515, #518, #519
+
+- [x] Plan: DD-229 (event catalogue, actionable codes, detail, throttle, restart state, channel-owned settings, import/export identity rule) and DD-230 (conversation capability, assumptions, authorization, allowed and forbidden actions, routing, limits, prompt handling, audit, required tests) written; implementation of #518 and #519 is assigned to Codex, review and release mechanics to Claude.
+- [ ] Verify: each Codex PR cites the DD-229/DD-230 rows it implements and the tests listed there.
+- [ ] Completed: release 0.1.60 only on request.
+
+Trace: R-43 / UC-34 / QAS-35 / DD-229.
+
+### Coordinator chat: live progress in the working bubble (main port) — GitHub #514
+
+- [x] Plan: port of the 0.1.59 change to `main` (tracked in #524): the chat job snapshot carries `output` (bytes, last write) and `progress` (at most eight `{kind, text}` items, each at most 120 characters, from the last 64 KiB of the CLI's `stdout.jsonl`; Claude `tool_use`/`text` and Codex `command_execution`/`mcp_tool_call`/`agent_message` events); the page renders them inside the one working bubble, updates only the status label every second, keeps a scrolled-up reader in place and replaces the bubble with the answer in the same redraw.
+- [x] Verify: `src/ui/setup/chat_progress.rs` unit tests, `tests/chat_progress_runtime.cjs`, `tests/chat_runtime.cjs`, i18n/startup contract tests, Python and Node suites.
+- [ ] Completed: merged to main; GitHub #514 closes with the 0.1.59 release.
+
+Trace: R-185 / UC-202 / DD-222.
+
+### Messenger design review fixes — GitHub #515, #519
+
+- [x] Plan: Codex's review of DD-229/DD-230 (seven findings) is applied: an explicit event catalogue schema and rows; actionable notices exempt from the throttle; run-bound collision-safe codes; `identity` flag on channel fields and one sanitizer covering `talkers`; the `Incoming` message contract for phase 3; a durable inbox so no message is lost while a chat is in flight; own-message recognition by authenticated identity.
+- [x] Verify: `architecture_trace`; Codex re-reviews before #518 and #519 implementation treats the design as approved.
+- [ ] Completed: implementation in #518, #519.
+
+Trace: R-43 / UC-34 / QAS-35 / DD-229 / DD-230.
+
+### Messenger event catalogue (DD-229) — GitHub #518
+
+- [x] Plan: `messenger/events.rs` holds the catalogue (id, message id, source, actionable, throttle key, detail) as the single source of the event ids; `EVENTS` is derived from it; the Korean and English texts move from the literal `label()` into `messenger.event.<id>` in the message catalogs with identical wording. No behavior change.
+- [x] Verify: `tests/messenger_events.rs` (all nine texts in both languages equal the previous literals; the dialog list equals the catalogue; only tool requests are actionable); the existing messenger tests pass unmodified; i18n and message contracts; Clippy.
+- [ ] Completed: throttle and fold, key set, actionable queue, `resume`/`stop`, channel field list, capability hints (the remaining #518 items).
+
+Trace: R-43 / UC-34 / QAS-35 / DD-229.
+
+### Messenger notice throttle (DD-229) — GitHub #518
+
+- [x] Plan: `messenger/throttle.rs` admits at most ten non-actionable notices a minute per workspace (`messenger-rate.json` in the workspace folder, written atomically, best effort); further notices are counted, logged as `folded`, and reported once as `messenger.folded` ("N more events were not sent…") before the next admitted notice; notices whose catalogue row is actionable are never counted or folded. The per-run duplicate rule (`messenger-sent`) is unchanged, so re-entering a state after a retry still notifies (#72).
+- [x] Verify: unit tests (ten then fold then one summary; actionable bypass; unwritable folder), `tests/messenger.rs` burst test (twelve plan notices send ten, log two `folded`, then one summary of two before the next), existing messenger tests, i18n contracts, Clippy.
+- [ ] Completed: actionable queue beyond 20, `resume`/`stop`, channel field list, capability hints.
+
+Trace: R-43 / UC-34 / QAS-35 / DD-229.
+
+### Messenger conversation: raw message contract (DD-230) — GitHub #519
+
+- [x] Plan: `messenger::Incoming { id, sender, ts, thread, text }` and `Channel::fetch_messages` (default: refused); Slack returns `conversations.history` user messages (bots, edits and anonymous items dropped, `thread_ts` kept) and the company relay returns messages that carry an HMAC over `id|sender|thread|text`, so the sender is authenticated by the transport. `Settings` gains `conversation` (default off) and `talkers` (default empty), read from older files unchanged. Both channels declare the conversation capability. Nothing is polled yet.
+- [x] Verify: `tests/messenger_incoming.rs` (Slack filtering and thread, relay signature over id, sender, thread and text with tampered, forged-sender and wrong-key items refused, defaults and old-file compatibility), `tests/messenger_channels.rs`, the existing messenger and settings tests, Clippy.
+- [ ] Completed: conversation core and limits, worker and chat hand-off, settings dialog, manuals.
+
+Trace: R-43 / UC-35 / QAS-36 / DD-230.
+
+### Messenger conversation: core and limits (DD-230) — GitHub #519
+
+- [x] Plan: `messenger::conversation` decides every raw message in a fixed order: already handled, conversation off, an exact `allow|deny CODE` reply (left to the decision path), sender not a talker (approvers are not talkers), empty, over 2,000 characters, over 6 turns in 10 minutes per sender, queue of 5 full, otherwise queued. Rejections carry a catalogue message id so the sender gets a short reply; one message is handed to the coordinator chat at a time; the operator turn names the sender and marks the text untrusted; answers are cut into at most three messages of 3,000 characters. The remembered inbox (cursor, 500 seen ids, queue, turn times, message in flight) is plain data for the worker.
+- [x] Verify: `tests/unit/messenger_conversation.rs` (queue order and single hand-off, injection and authorization fixtures, disabled settings, every limit, bounded seen ids, answer splitting), Clippy, the message catalogue tests.
+- [ ] Completed: worker and chat hand-off, settings dialog, manuals.
+
+Trace: R-43 / UC-35 / QAS-36 / DD-230.
+
+### Messenger conversation: desktop worker and chat hand-off (DD-230) — GitHub #519
+
+- [x] Plan: while the desktop runs and the conversation is on, each request tick does at most one step: post the finished answer (split in at most three messages), hand the next queued message to the read-only coordinator chat as an untrusted operator turn (never while another chat answers), or start a poll on one short-lived thread (30 s while a conversation is going on, 120 s idle; `AGENTCONDUCTOR_MESSENGER_POLL_SECONDS` only for tests). The first poll only learns where the channel stands, so earlier history is not answered; rejections and queue places are answered with catalogue messages; the inbox (`messenger-conversation.json`) survives restarts; nothing polls while the desktop is closed.
+- [x] Verify: `tests/unit/messenger_talk.rs` (first poll, acknowledgement, rejection, interval, persistence), `tests/messenger_conversation_flow.rs` (fake Slack and coordinator: a talker's question is answered in the channel, a stranger and the history are ignored, the prompt marks the text untrusted), Clippy.
+- [x] Settings and docs: the messenger dialog has the conversation toggle and the talkers list with a hint; the one identity sanitizer (`clear_shared_authority`) also clears `conversation` and `talkers` on export and import; EN and KO manuals and the CHANGELOG describe it.
+- [ ] Completed: merged to main; 0.1.60 backport on request.
+
+Trace: R-43 / UC-35 / QAS-36 / DD-230.
+
+### Messenger decisions: announce queue beyond twenty (DD-229) — GitHub #518
+
+- [x] Plan: at most 20 announced tool requests wait for an answer; further pending requests keep their place and are announced, one per freed slot, on the next poll. A request that is no longer pending at its turn is never announced. Request lifetime still starts at creation (DD-32); a later change may start it at delivery.
+- [x] Verify: `tests/messenger_inbound.rs` (22 pending: 20 announced, none more while full, a denial frees exactly one slot), Clippy.
+- [ ] Completed: merged to main; 0.1.60 backport on request.
+
+Trace: R-43 / UC-34 / QAS-35 / DD-229.
+
+### 300-line limit: release smoke split — GitHub #472
+
+- [x] Plan: `src/release_smoke.rs` (453 lines) keeps `run_smoke` and the command helpers (152); package validation moves to `release_smoke/package.rs` (75) and the end-to-end workflow case to `release_smoke/workflow.rs` (243). Behavior and the public API (`validate_package`, `ValidatedPackage`, `run_smoke`) are unchanged.
+- [x] Verify: `tests/release_smoke.rs`, `source_layout`, `architecture_trace`, Clippy.
+- [ ] Completed: merged to main; other files over 300 lines remain under #472.
+
+Trace: R-35 / DD-41.
+
+### 300-line limit: cooperative directives split — GitHub #472
+
+- [x] Plan: `src/cooperative.rs` (436 lines) keeps the public operations (`worker_address`, `issue`, `poll`, `exit_directive`, `acknowledge`) at 227 lines; the persisted shapes move to `cooperative/types.rs` (69) and the transaction helpers to `cooperative/ledger.rs` (156). Public paths (`cooperative::Directive`, `Address`, `State`, …) and behavior are unchanged.
+- [x] Verify: `tests/cooperative*.rs`, `source_layout`, `architecture_trace`, Clippy.
+- [ ] Completed: merged to main; other files over 300 lines remain under #472.
+
+Trace: R-35 / DD-37 / DD-41.
+
+### 300-line limit: protocol decoder split — GitHub #472
+
+- [x] Plan: `src/protocol.rs` (374 lines) keeps the `Decoder` (258); the protocol, provider and event shapes move to `protocol/types.rs` (44) and the line classifiers (Codex reconnect notices, `acio.event/1` kinds, excerpts, refusals) to `protocol/classify.rs` (81). Public paths and behavior are unchanged.
+- [x] Verify: `tests/protocol.rs`, `acio_runtime`, `custom_cli_denials`, `source_layout`, `architecture_trace`, Clippy.
+- [ ] Completed: merged to main; other files over 300 lines remain under #472.
+
+Trace: R-35 / DD-37 / DD-41.
+
+### 300-line limit: memory client split — GitHub #472
+
+- [x] Plan: `src/memory/client.rs` (393 lines) keeps the `Client` (237); HTTP response framing (headers, bounded reads, chunked bodies) moves to `memory/client/http.rs` (121) and the bounded secret files to `memory/client/secret.rs` (50). Public paths and behavior are unchanged.
+- [x] Verify: `tests/memory.rs`, `memory_transport`, the client unit tests, `source_layout`, `architecture_trace`, Clippy.
+- [ ] Completed: merged to main; other files over 300 lines remain under #472.
+
+Trace: R-35 / DD-37 / DD-41.
+
+### Step card scroll, check rows and the Codex logo — GitHub #543, #544, #545
+
+- [x] Plan: the step cards scroll inside the card (header and footer sticky, margins painted so nothing shows through), the main area no longer scrolls; `.check-row input` stops growing; the white tile path of the Codex logo is hidden in the app and in the approved mock together.
+- [x] Verify: `tests/step_card_css.rs`, browser check of the scroll and the label offsets, `design_parity` (both themes), Clippy.
+- [ ] Completed: merged to main; #544 is also backported to 0.1.60.
+### Popup focus ring — GitHub #546
+
+- [x] Plan: `showModal()` marks the dialog `quiet-focus`: the automatically focused control keeps the focus (confirmation dialogs still focus Cancel) but shows no ring until the first key press inside the dialog or until it closes. One script (`dialog_focus.js`) in the Workspace and Room documents.
+- [x] Verify: `tests/dialog_focus_css.rs`, `planning_confirmation_browser.cjs` (Cancel stays focused), browser check (Messenger dialog, Goal list panel, Settings, Update: no ring until a key is pressed), Clippy.
+- [ ] Completed: merged to main; backported to 0.1.60 with #544.
+
+Trace: UI387-R5 / R-52 / DD-41.
+
+### 300-line limit: coordinator arguments split — GitHub #472
+
+- [x] Plan: `src/coordinator.rs` (351 lines) keeps the verdict/proposal types and the JSON runners (266); the read-only and planning argument builders move to `coordinator/args.rs` (88). Public paths and behavior are unchanged.
+- [x] Verify: `custom_cli_denials`, `acio_runtime`, `source_layout`, `architecture_trace`, Clippy.
+- [ ] Completed: merged to main; other files over 300 lines remain under #472.
+
+Trace: R-35 / DD-37 / DD-41.
+
+### 300-line limit: release package split — GitHub #472
+
+- [x] Plan: `src/release_package.rs` (395 lines) keeps assembly and the package writer (about 280); the third-party notice text moves to `release_package/notice.rs` (25) and the file, version and checksum helpers to `release_package/files.rs` (100). Public paths and behavior are unchanged.
+- [x] Verify: `tests/release_package.rs`, the unit tests, `source_layout`, `architecture_trace`, Clippy.
+- [ ] Completed: merged to main; other files over 300 lines remain under #472.
+
+Trace: R-35 / DD-37 / DD-41.
+
+### 300-line limit: model catalog commands split — GitHub #472
+
+- [x] Plan: `src/commands/sessions_review.rs` (339 lines) keeps the session and review commands (285); `models-discover` and `catalog-import` move to `commands/models.rs` (61) and are dispatched from `main.rs` before it. Command names, arguments and output are unchanged.
+- [x] Verify: `model_catalogs`, `models`, `fallback_models`, `review`, `cli_io`, `source_layout`, `architecture_trace`, Clippy.
+- [ ] Completed: merged to main; other files over 300 lines remain under #472.
+
+Trace: R-35 / DD-37 / DD-41.
+
+### 300-line limit: tool context split — GitHub #472
+
+- [x] Plan: `src/workflow/permissions.rs` (336 lines) keeps the tool decision, live decision, knowledge acceptance and refresh (168); the evidence derivation and verification (`tool_context`, `verify_tool_context`) move to `workflow/tool_context.rs` (169). Public paths are unchanged.
+- [x] Verify: `tool_context`, `live_tool_decision`, `activity_tool`, `source_layout`, `architecture_trace`, Clippy.
+- [ ] Completed: merged to main; other files over 300 lines remain under #472 (the native UI probe, quota terminal, test support and room.js lines).
+
+Trace: R-35 / DD-37 / DD-41.
