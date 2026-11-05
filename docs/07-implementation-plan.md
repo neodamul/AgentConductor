@@ -2967,5 +2967,6 @@ Trace: R-35 → BG-05 → SF-12 → C-04/NFR-07 → QAS-12 → DDR-04/DDR-06 →
 - [x] Red: `tests/cocoa_layout.rs` rejects the original 494-line Cocoa facade.
 - [x] Task: move WebKit callback responsibilities into a private child module; facade 292 lines, callbacks 206 lines. The moved callback bodies and ABI declarations match the original byte-for-byte except the required module visibility and import.
 - [x] Verify: Cocoa layout, architecture and close-window tests pass locally (9 tests); the live Claude metadata test remains explicitly ignored. Default macOS all-target Clippy with warnings denied passes.
-- [ ] Verify: full local regression and Windows platform checks; no native window or live-provider claim.
+- [x] Verify: full local all-target regression on source `3df36abb` exits 0: 844 passed, 0 failed, 15 explicitly ignored across 272 suites.
+- [ ] Verify: Windows platform checks; no native window or live-provider claim.
 - [ ] Complete: separate issue-linked PR and recorded cross-platform evidence. Global 300-line enforcement follows completion of all areas.
