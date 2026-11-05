@@ -14,7 +14,7 @@ impl Startup {
         if let Some(template) = settings
             .template
             .as_deref()
-            .filter(|_| settings.kind == crate::messenger::Kind::Webhook)
+            .filter(|_| settings.kind.channel().uses_template())
         {
             let probe = crate::messenger::Settings {
                 template: Some(template.into()),
