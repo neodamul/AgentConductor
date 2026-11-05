@@ -1,12 +1,14 @@
 //! R-43 phase 2 / DD-81: answer pending tool requests from the messenger. Polls only while
 //! a request is pending, inside the run process; decisions go through the DD-32 path.
-pub use super::slack::slack_replies;
-pub use super::webhook::{hmac, relay_replies};
+pub use super::slack::{slack_messages, slack_replies};
+pub use super::webhook::{hmac, relay_messages, relay_replies};
 use super::{Settings, link_path, secret, send, sibling};
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
 const INTERVAL: std::time::Duration = std::time::Duration::from_secs(15);
+/// DD-229: at most this many announced requests wait for an answer; further ones queue in order.
+const OUTSTANDING: usize = 20;
 
 /// Remembered between polls: announced requests, the reply cursor and handled messages.
 #[derive(Default, Serialize, Deserialize)]
@@ -111,9 +113,17 @@ pub fn poll_once(
             .and_then(|body| send::deliver(&url, &body.to_string())),
         None => Err("no webhook URL saved on this computer".into()),
     };
+    let mut outstanding = pending
+        .iter()
+        .filter(|r| state.announced.contains(&r.id))
+        .count();
     for request in &pending {
         if state.announced.contains(&request.id) {
             continue;
+        }
+        // A request that is not announced yet keeps its place and is announced as slots free up.
+        if outstanding >= OUTSTANDING {
+            break;
         }
         let text = if korean {
             format!(
@@ -133,6 +143,7 @@ pub fn poll_once(
         match post(text) {
             Ok(()) => {
                 state.announced.push(request.id.clone());
+                outstanding += 1;
                 outcome.announced += 1;
             }
             Err(e) => log(run, &format!("announce {}: {e}", code(&request.id))),

@@ -3147,6 +3147,63 @@ Trace: R-43 / UC-34 / QAS-35 / DD-229.
 
 Trace: R-185 / UC-202 / DD-222.
 
+### Messenger design review fixes — GitHub #515, #519
+
+- [x] Plan: Codex's review of DD-229/DD-230 (seven findings) is applied: an explicit event catalogue schema and rows; actionable notices exempt from the throttle; run-bound collision-safe codes; `identity` flag on channel fields and one sanitizer covering `talkers`; the `Incoming` message contract for phase 3; a durable inbox so no message is lost while a chat is in flight; own-message recognition by authenticated identity.
+- [x] Verify: `architecture_trace`; Codex re-reviews before #518 and #519 implementation treats the design as approved.
+- [ ] Completed: implementation in #518, #519.
+
+Trace: R-43 / UC-34 / QAS-35 / DD-229 / DD-230.
+
+### Messenger event catalogue (DD-229) — GitHub #518
+
+- [x] Plan: `messenger/events.rs` holds the catalogue (id, message id, source, actionable, throttle key, detail) as the single source of the event ids; `EVENTS` is derived from it; the Korean and English texts move from the literal `label()` into `messenger.event.<id>` in the message catalogs with identical wording. No behavior change.
+- [x] Verify: `tests/messenger_events.rs` (all nine texts in both languages equal the previous literals; the dialog list equals the catalogue; only tool requests are actionable); the existing messenger tests pass unmodified; i18n and message contracts; Clippy.
+- [ ] Completed: throttle and fold, key set, actionable queue, `resume`/`stop`, channel field list, capability hints (the remaining #518 items).
+
+Trace: R-43 / UC-34 / QAS-35 / DD-229.
+
+### Messenger notice throttle (DD-229) — GitHub #518
+
+- [x] Plan: `messenger/throttle.rs` admits at most ten non-actionable notices a minute per workspace (`messenger-rate.json` in the workspace folder, written atomically, best effort); further notices are counted, logged as `folded`, and reported once as `messenger.folded` ("N more events were not sent…") before the next admitted notice; notices whose catalogue row is actionable are never counted or folded. The per-run duplicate rule (`messenger-sent`) is unchanged, so re-entering a state after a retry still notifies (#72).
+- [x] Verify: unit tests (ten then fold then one summary; actionable bypass; unwritable folder), `tests/messenger.rs` burst test (twelve plan notices send ten, log two `folded`, then one summary of two before the next), existing messenger tests, i18n contracts, Clippy.
+- [ ] Completed: actionable queue beyond 20, `resume`/`stop`, channel field list, capability hints.
+
+Trace: R-43 / UC-34 / QAS-35 / DD-229.
+
+### Messenger conversation: raw message contract (DD-230) — GitHub #519
+
+- [x] Plan: `messenger::Incoming { id, sender, ts, thread, text }` and `Channel::fetch_messages` (default: refused); Slack returns `conversations.history` user messages (bots, edits and anonymous items dropped, `thread_ts` kept) and the company relay returns messages that carry an HMAC over `id|sender|thread|text`, so the sender is authenticated by the transport. `Settings` gains `conversation` (default off) and `talkers` (default empty), read from older files unchanged. Both channels declare the conversation capability. Nothing is polled yet.
+- [x] Verify: `tests/messenger_incoming.rs` (Slack filtering and thread, relay signature over id, sender, thread and text with tampered, forged-sender and wrong-key items refused, defaults and old-file compatibility), `tests/messenger_channels.rs`, the existing messenger and settings tests, Clippy.
+- [ ] Completed: conversation core and limits, worker and chat hand-off, settings dialog, manuals.
+
+Trace: R-43 / UC-35 / QAS-36 / DD-230.
+
+### Messenger conversation: core and limits (DD-230) — GitHub #519
+
+- [x] Plan: `messenger::conversation` decides every raw message in a fixed order: already handled, conversation off, an exact `allow|deny CODE` reply (left to the decision path), sender not a talker (approvers are not talkers), empty, over 2,000 characters, over 6 turns in 10 minutes per sender, queue of 5 full, otherwise queued. Rejections carry a catalogue message id so the sender gets a short reply; one message is handed to the coordinator chat at a time; the operator turn names the sender and marks the text untrusted; answers are cut into at most three messages of 3,000 characters. The remembered inbox (cursor, 500 seen ids, queue, turn times, message in flight) is plain data for the worker.
+- [x] Verify: `tests/unit/messenger_conversation.rs` (queue order and single hand-off, injection and authorization fixtures, disabled settings, every limit, bounded seen ids, answer splitting), Clippy, the message catalogue tests.
+- [ ] Completed: worker and chat hand-off, settings dialog, manuals.
+
+Trace: R-43 / UC-35 / QAS-36 / DD-230.
+
+### Messenger conversation: desktop worker and chat hand-off (DD-230) — GitHub #519
+
+- [x] Plan: while the desktop runs and the conversation is on, each request tick does at most one step: post the finished answer (split in at most three messages), hand the next queued message to the read-only coordinator chat as an untrusted operator turn (never while another chat answers), or start a poll on one short-lived thread (30 s while a conversation is going on, 120 s idle; `AGENTCONDUCTOR_MESSENGER_POLL_SECONDS` only for tests). The first poll only learns where the channel stands, so earlier history is not answered; rejections and queue places are answered with catalogue messages; the inbox (`messenger-conversation.json`) survives restarts; nothing polls while the desktop is closed.
+- [x] Verify: `tests/unit/messenger_talk.rs` (first poll, acknowledgement, rejection, interval, persistence), `tests/messenger_conversation_flow.rs` (fake Slack and coordinator: a talker's question is answered in the channel, a stranger and the history are ignored, the prompt marks the text untrusted), Clippy.
+- [x] Settings and docs: the messenger dialog has the conversation toggle and the talkers list with a hint; the one identity sanitizer (`clear_shared_authority`) also clears `conversation` and `talkers` on export and import; EN and KO manuals and the CHANGELOG describe it.
+- [ ] Completed: merged to main; 0.1.60 backport on request.
+
+Trace: R-43 / UC-35 / QAS-36 / DD-230.
+
+### Messenger decisions: announce queue beyond twenty (DD-229) — GitHub #518
+
+- [x] Plan: at most 20 announced tool requests wait for an answer; further pending requests keep their place and are announced, one per freed slot, on the next poll. A request that is no longer pending at its turn is never announced. Request lifetime still starts at creation (DD-32); a later change may start it at delivery.
+- [x] Verify: `tests/messenger_inbound.rs` (22 pending: 20 announced, none more while full, a denial frees exactly one slot), Clippy.
+- [ ] Completed: merged to main; 0.1.60 backport on request.
+
+Trace: R-43 / UC-34 / QAS-35 / DD-229.
+
 ### 300-line limit: release smoke split — GitHub #472
 
 - [x] Plan: `src/release_smoke.rs` (453 lines) keeps `run_smoke` and the command helpers (152); package validation moves to `release_smoke/package.rs` (75) and the end-to-end workflow case to `release_smoke/workflow.rs` (243). Behavior and the public API (`validate_package`, `ValidatedPackage`, `run_smoke`) are unchanged.
