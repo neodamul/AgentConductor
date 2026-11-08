@@ -276,3 +276,6 @@ button[data-action-icon]{display:inline-flex;align-items:center;justify-content:
 .about-foot span{flex:1;color:var(--soft);font-size:12px}
 /* GitHub #558: the phase groups name themselves next to their icon. */
 .step-group>.tabs-group-name{width:auto;gap:5px}.tabs-group-name .group-label{font-size:12px;font-weight:500;white-space:nowrap}
+
+
+@media(max-width:900px){.agent .tools{gap:1px}.agent .tools>.tb:not(.agent-remove){padding-left:6px;padding-right:6px}.agent .tools>.tb:nth-child(-n+2){padding-left:2px;padding-right:2px}}
