@@ -3126,6 +3126,16 @@ Focused `architecture_trace`, `source_layout`, and `mcp_imports` suites pass
 receipt remains the earlier post-#504 run at `4c2aaabe`; it was not rerun for
 this unrelated extraction. Windows acceptance remains pending.
 
+### Narrow agent action strip — GitHub #424
+Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
+
+- [x] Plan: inspect latest app and approved reference; preserve all actions and the original icon and focus behavior.
+- [x] Red: actual assembled Chrome at 840px renders the tools row at 48px rather than 22px.
+- [x] Task: align narrow-width gaps and non-delete horizontal padding in both the app and approved reference; preserve reorder click widths.
+- [x] Verify: actual Chrome app/reference light/dark × 840/1280 in Korean, English 840px without clipped labels, and existing icon/focus/name/cursor checks; 14 focused Rust tests pass.
+- [ ] Verify: full local regression and Windows platform evidence; screenshot recapture remains deferred.
+- [ ] Complete: issue-linked main PR and platform evidence.
+
 ### Source bound: quota display — GitHub #472
 
 - [x] Plan: split `src/quota/display.rs` (409 lines) with no behaviour change: local time helpers (`display/clock.rs`) and window labels (`display/labels.rs`); `display.rs` keeps the badge and row builders (295 lines) and the public paths are unchanged.
@@ -3133,6 +3143,16 @@ this unrelated extraction. Windows acceptance remains pending.
 - [ ] Completed: the remaining files over 300 lines (tracked on #472).
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Source bound: state memory access — GitHub #472
+
+- [x] Plan: separate memory outbox delivery and search access from state record transactions without changing the public Store API or database schema.
+- [x] Red: the focused layout test rejects the original 318-line state records module.
+- [x] Task: move the three memory access methods into `state/memory.rs`; audit, outbox insertion and receipt writes remain in their original atomic transactions.
+- [x] Verify: memory delivery, recall, state, activity, architecture and layout tests pass locally; all-target Clippy passes.
+- [ ] Complete: full local regression and platform verification, then merge this issue-linked unit; #472 remains open for other files and the global gate.
+
+Trace: R-35 / DD-41.
 
 ### Source bound: messenger secrets — GitHub #472
 
@@ -3308,6 +3328,9 @@ Trace: R-35 / DD-37 / DD-41.
 - [x] Plan: the step cards scroll inside the card (header and footer sticky, margins painted so nothing shows through), the main area no longer scrolls; `.check-row input` stops growing; the white tile path of the Codex logo is hidden in the app and in the approved mock together.
 - [x] Verify: `tests/step_card_css.rs`, browser check of the scroll and the label offsets, `design_parity` (both themes), Clippy.
 - [ ] Completed: merged to main; #544 is also backported to 0.1.60.
+
+Trace: UI387-R5 / R-52 / DD-41.
+
 ### Popup focus ring — GitHub #546
 
 - [x] Plan: `showModal()` marks the dialog `quiet-focus`: the automatically focused control keeps the focus (confirmation dialogs still focus Cancel) but shows no ring until the first key press inside the dialog or until it closes. One script (`dialog_focus.js`) in the Workspace and Room documents.
@@ -3347,3 +3370,11 @@ Trace: R-35 / DD-37 / DD-41.
 - [ ] Completed: merged to main; other files over 300 lines remain under #472 (the native UI probe, quota terminal, test support and room.js lines).
 
 Trace: R-35 / DD-37 / DD-41.
+
+### Source policy clarification — GitHub #472
+
+- [x] Plan and task: restore the user-required 300-line target and bug-first priority to the goal and architecture documents.
+- [x] Verify: the existing 500-line gate is described as transitional; no global compliance claim is made.
+- [ ] Complete: validate architecture references, merge this documentation unit, then finish the remaining splits and change the gate.
+
+Trace: R-35 / BG-05 / SF-12 / QAS-12 / DD-41.
