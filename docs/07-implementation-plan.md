@@ -3251,6 +3251,9 @@ Trace: R-35 / DD-37 / DD-41.
 - [x] Plan: the step cards scroll inside the card (header and footer sticky, margins painted so nothing shows through), the main area no longer scrolls; `.check-row input` stops growing; the white tile path of the Codex logo is hidden in the app and in the approved mock together.
 - [x] Verify: `tests/step_card_css.rs`, browser check of the scroll and the label offsets, `design_parity` (both themes), Clippy.
 - [ ] Completed: merged to main; #544 is also backported to 0.1.60.
+
+Trace: UI387-R5 / R-52 / DD-41.
+
 ### Popup focus ring — GitHub #546
 
 - [x] Plan: `showModal()` marks the dialog `quiet-focus`: the automatically focused control keeps the focus (confirmation dialogs still focus Cancel) but shows no ring until the first key press inside the dialog or until it closes. One script (`dialog_focus.js`) in the Workspace and Room documents.
