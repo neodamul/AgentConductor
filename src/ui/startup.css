@@ -444,4 +444,9 @@ footer.statusbar{gap:10px;line-height:1;padding-right:16px}
 .inspector section{padding:0 0 14px;margin-bottom:0;border-bottom:0}
 .inspector section>.eyebrow{display:block;font-size:13px;font-weight:650;letter-spacing:0;text-transform:none;color:var(--ink);padding:10px 0;margin:0;border-bottom:1px solid var(--line)}
 @media(max-width:850px) and (min-width:700px){.workbench:not(.insp-closed){grid-template-columns:230px minmax(0,1fr) min(330px,35%)}.workbench:not(.insp-closed) .inspector{grid-column:3;grid-row:auto;border-left:1px solid var(--line);border-top:0;overflow:auto}}
+/* GitHub #563: only the Workspace card is 17/22; the other step cards use the mock's card padding 20/24 and 11.5px eyebrow. */
+.step-card:not(.workspace-config-card){padding:20px 24px}
+.step-card:not(.workspace-config-card)>.section-title{top:-20px;margin-top:-20px;padding-top:20px}
+.step-card:not(.workspace-config-card)>.startup-actions,.step-card:not(.workspace-config-card)>.startup-review-footer{bottom:-20px;margin-bottom:-20px;padding-bottom:20px}
+.step-card:not(.workspace-config-card) .eyebrow{font-size:11.5px}
 

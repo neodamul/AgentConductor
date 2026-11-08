@@ -95,6 +95,15 @@ module.exports = [
   ].map(({ mock, app, ...rest }) => ({ ...rest,
     mock: { url: '?theme=light#3', run: "document.getElementById('right-panel-toggle').click()", selector: mock },
     app: { setup: STEPS_ENABLED, run: INSPECTOR_OPEN, selector: app } })),
+  // #563: the Roles and Plan views' card chrome matches the mock's card of that view (hash #N = mock view, tab = app step).
+  ...[[1, 'i', 1, 'roles'], [2, 'a', 2, 'plan']].flatMap(([hash, show, tab, name]) => [
+    { name: `view-card-${name}`, props: ['paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'boxShadow'], keys: ['width', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'boxShadow'], pixel: false,
+      mock: { url: `?theme=light#${hash}`, selector: `.main>.card[data-show="${show}"]` }, app: { setup: STEPS_ENABLED, run: `document.querySelectorAll('#start-step-tabs [role=tab]')[${tab}].click()`, selector: '.step-card:not([hidden])' } },
+    { name: `view-title-${name}`, props: ['fontSize', 'fontWeight', 'color'], keys: ['height', 'fontSize', 'fontWeight', 'color'], pixel: false,
+      mock: { url: `?theme=light#${hash}`, selector: `.main>.card[data-show="${show}"] .cardhead h2` }, app: { setup: STEPS_ENABLED, run: `document.querySelectorAll('#start-step-tabs [role=tab]')[${tab}].click()`, selector: '.step-card:not([hidden]) .step-title' } },
+    { name: `view-eyebrow-${name}`, props: ['fontSize', 'fontWeight', 'color'], keys: ['height', 'fontSize', 'fontWeight', 'color'], pixel: false,
+      mock: { url: `?theme=light#${hash}`, selector: `.main>.card[data-show="${show}"] .cardhead .eyebrow` }, app: { setup: STEPS_ENABLED, run: `document.querySelectorAll('#start-step-tabs [role=tab]')[${tab}].click()`, selector: '.step-card:not([hidden]) .eyebrow' } },
+  ]),
   // Step card (GitHub #408): the header and the action footer stay visible while only the body scrolls.
   { name: 'step-card-fixed-header-footer', viewport: {height:520},
     app: { run: "const m = document.querySelector('.startup-main'); m.scrollTop = Math.floor(m.scrollHeight / 2)" },
