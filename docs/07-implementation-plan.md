@@ -3422,3 +3422,11 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-201 / QAS-199 / DD-94.
 
+### Design census: Roles and Plan view cards — GitHub #563
+
+- [x] Plan: parity entries `view-card-*`, `view-title-*`, `view-eyebrow-*` for the mock's views #1 (Agent roles) and #2 (Plan review) against the app's step cards; the app's non-Workspace step cards take the mock's 20/24 padding (sticky header/footer offsets follow) and the 11.5px eyebrow.
+- [x] Verify: design parity light/dark at 1280 and 840 (177 elements, 0 differences), the full Node UI suite (`node_runtime`).
+- [ ] Remaining in #563: views #5 permission denied, #6 verify, #7 review/merge, #9 new Goal; app menu, workspace overview, coordinator chat, settings, assignment menu, profile edit, close-run, delete-goal and goal-result dialogs; task-detail content.
+
+Trace: R-210 / UC-202 / DD-222.
+
