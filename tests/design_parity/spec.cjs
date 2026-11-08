@@ -76,6 +76,13 @@ module.exports = [
     mock: { url: '?theme=light#0', selector: '.tabs-group-name svg', index: 0 }, app: { selector: '#start-step-tabs .tabs-group-name svg', index: 0 } },
   { name: 'step-group-label', props: ['fontSize', 'fontWeight', 'color'], keys: ['width', 'height', 'fontSize', 'fontWeight', 'color'],
     mock: { url: '?theme=light#0', selector: '.tabs-group-name .group-label', index: 0 }, app: { selector: '#start-step-tabs .tabs-group-name .group-label', index: 0 } },
+  // #562: the footer's status dot and the Workspace folder / branch on its right match the mock's `.status`.
+  { name: 'status-dot', props: ['backgroundColor', 'borderTopLeftRadius'], keys: ['width', 'height', 'backgroundColor', 'borderTopLeftRadius'],
+    mock: { url: '?theme=light#0', selector: '.status .dot' }, app: { selector: '#startup-screen footer.statusbar .dot' } },
+  { name: 'status-repository', props: ['gap'], keys: ['width', 'height', 'gap'],
+    mock: { url: '?theme=light#0', selector: '.status .status-repository' }, app: { selector: '#startup-screen footer.statusbar .status-repository' } },
+  ...['worktree', 'branch'].map(part => ({ name: `status-${part}`, props: ['fontSize', 'color'], keys: ['width', 'height', 'fontSize', 'color'],
+    mock: { url: '?theme=light#0', selector: `.status .status-${part}` }, app: { selector: `#startup-screen footer.statusbar .status-${part}` } })),
   // Step card (GitHub #408): the header and the action footer stay visible while only the body scrolls.
   { name: 'step-card-fixed-header-footer', viewport: {height:520},
     app: { run: "const m = document.querySelector('.startup-main'); m.scrollTop = Math.floor(m.scrollHeight / 2)" },

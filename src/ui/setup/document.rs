@@ -28,7 +28,7 @@ pub(crate) fn document() -> Result<String, String> {
     );
     let script = include_str!("../role_choices.js").to_string()
         + &format!(
-            "{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
+            "{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
             super::super::I18N,
             super::super::JS,
             include_str!("../mcp.js"),
@@ -41,6 +41,7 @@ pub(crate) fn document() -> Result<String, String> {
             include_str!("../rail.js"),
             include_str!("../agent_status.js"),
             include_str!("../quota_ring.js"),
+            include_str!("../status_repository.js"),
             helper_scripts,
             include_str!("../startup.js")
         )

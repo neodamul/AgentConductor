@@ -7,6 +7,7 @@ the GitHub Release notes for its tag.
 ## Unreleased
 
 
+- The footer shows a status dot on the left and, on the right, the Workspace folder and its Git branch with their icons (full path on hover; detached HEAD shows a short commit; nothing without a chosen folder), on the Workspace screen and in the Agent Room (#562).
 - The step-tab groups name themselves: the icon of each group now has its "준비" / "실행" / "마무리" label to its right, like a normal button (#558).
 - Step cards: only the card body scrolls; the Goal header, the stepper, the card header and the action footer stay in place (the plan no longer slides behind the header) (#543).
 - The Codex logo no longer has a white tile, so it sits on its avatar like Claude's without a gray ring (#545).
