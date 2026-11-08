@@ -2546,3 +2546,12 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [ ] Completed: tag v0.1.60 after the merge; the release workflow publishes the assets.
 
 Trace: R-43 / UC-34 / UC-35 / DD-229 / DD-230.
+
+### Save role changes in step 2 and one-row Goal sources — GitHub #564, #560
+
+- [x] Plan: step 2 gets a Save button; `Request::Save` re-assigns a ready plan's tasks through `roles::reassign` (deleted or no-longer-allowed agent -> the role's first agent, its pinned model or none) and keeps the plan, falling back to the old discard rule when a task has no role; prompt optimization joins the Jira, Confluence and preview buttons on one row. Ported to `main` under #565 and #566.
+- [x] Verify: `role_rules` (reassign test), `optimize_ui`, `startup_optimize`, `goal_sources_ui`, `optimize_runtime.cjs`; the assembled page in Chrome at 1280px shows the four source buttons on one row and Save beside Generate plan.
+- [ ] Completed: PR to `release/0.1.x`; tag with 0.1.61 only when the user asks.
+
+Trace: R-47 / UC-34 / DD-55.
+

@@ -6,6 +6,9 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Step 2 (agent roles) has a Save button. Saving agent or role changes (for example after an agent was deleted) re-assigns the tasks of the Goal's reviewed plan to the agents the roles now allow instead of discarding the plan, so there is no need to generate a plan again (#564).
+- The Workspace step puts prompt optimization, Jira, Confluence and document preview on one row, in that order (#560).
+
 ## v0.1.60
 - **Messenger channel interface** (#515, phases #517-#519): Slack and the company webhook now sit behind one channel interface, so another messenger is one implementation. The notices are an enumerated catalogue with localized texts; at most ten a minute per workspace are sent (the rest are counted and reported once), and notices that carry an answer code are never limited. More than 20 pending tool requests are announced 20 at a time, the rest follow in order as answers free slots.
 - **Talk to the coordinator from the messenger** (#519): listed talkers ask the read-only coordinator questions in the Slack channel or company relay and get the answer back (at most three messages). Talkers are separate from approvers, a message is only a question, the first poll skips earlier history, limits (2,000 characters, six messages per ten minutes, queue of five) are answered with a short reply, and it only reads while the desktop is open (30 s in a conversation, 2 min idle).
