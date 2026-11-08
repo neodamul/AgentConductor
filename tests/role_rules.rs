@@ -275,3 +275,50 @@ fn save_workspace_sits_in_step_one() {
         "Save workspace belongs to the workspace section"
     );
 }
+
+#[test]
+fn deleted_or_removed_agents_hand_their_tasks_to_the_roles_first_agent() {
+    // GitHub #564: saving role changes re-assigns the reviewed plan instead of discarding it.
+    use agentconductor::roles::{RoleAgent, reassign};
+    let (_, plan) = support::setup("shared");
+    let first = plan.agents[0].clone();
+    let mut second = first.clone();
+    second.id = "second".into();
+    let profiles = vec![first.clone(), second.clone()];
+    let mut task = plan.tasks[0].clone();
+    task.agent = "gone".into();
+    task.role = Some("development".into());
+    task.model = Some("old-model".into());
+    let mut rules = agentconductor::roles::RoleRules::new();
+    rules.insert(
+        "development".into(),
+        vec![
+            RoleAgent {
+                agent: second.id.clone(),
+                model: None,
+            },
+            RoleAgent {
+                agent: first.id.clone(),
+                model: None,
+            },
+        ],
+    );
+    let mut tasks = vec![task.clone()];
+    reassign(&rules, &profiles, &mut tasks).unwrap();
+    assert_eq!(
+        (tasks[0].agent.as_str(), tasks[0].model.clone()),
+        ("second", None)
+    );
+    task.agent = first.id.clone();
+    let mut kept = vec![task.clone()];
+    reassign(&rules, &profiles, &mut kept).unwrap();
+    assert_eq!(
+        kept[0].agent, first.id,
+        "an agent the role still allows keeps its task"
+    );
+    task.role = None;
+    assert!(
+        reassign(&rules, &profiles, &mut [task]).is_err(),
+        "a task without a role cannot follow the rules"
+    );
+}

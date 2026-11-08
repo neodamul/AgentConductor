@@ -61,12 +61,20 @@ impl Startup {
                 config.active_slug = saved.config.active_slug.clone();
                 config.messenger = saved.config.messenger.clone();
                 // DD-58: keep a reviewed plan unless what it was reviewed against changed.
-                let keep = config.goal == saved.config.goal
+                let same_scope = config.goal == saved.config.goal
                     && config.repository == saved.config.repository
                     && serde_json::to_value(config.workspace_mode).ok()
-                        == serde_json::to_value(saved.config.workspace_mode).ok()
-                    && profiles::execution_view(&config.profiles)?
-                        == profiles::execution_view(&saved.config.profiles)?;
+                        == serde_json::to_value(saved.config.workspace_mode).ok();
+                let same_agents = profiles::execution_view(&config.profiles)?
+                    == profiles::execution_view(&saved.config.profiles)?;
+                // GitHub #564: changed agents or roles re-assign the ready plan instead of discarding it.
+                let followed = same_scope
+                    && (!same_agents || config.roles != saved.config.roles)
+                    && saved.proposal.as_ref().is_some_and(|p| {
+                        p.phase == "ready"
+                            && super::super::assignments::follow_roles(p, &config).is_ok()
+                    });
+                let keep = followed || (same_scope && same_agents);
                 let next = Saved {
                     imports: if config.goal == saved.config.goal {
                         saved.imports.clone()
