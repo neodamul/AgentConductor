@@ -362,7 +362,7 @@ pub async fn query_claude_within(
         .map_err(|e| e.to_string())?;
     let stderr = std::fs::File::create(dir.join("stderr.log")).map_err(|e| e.to_string())?;
     let mut command = Command::new("/usr/bin/script");
-    command
+    settle::session_env::scrub(&mut command)
         .args([
             "-q",
             "/dev/null",
