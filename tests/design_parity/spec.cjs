@@ -74,6 +74,8 @@ module.exports = [
     mock: { url: '?theme=light#0', selector: '.step-group .tab .num', index: 0 }, app: { selector: '#start-step-tabs .tab-number', index: 0 } },
   { name: 'step-group-icon', props: [], keys: ['width', 'height'], pixel: false,
     mock: { url: '?theme=light#0', selector: '.tabs-group-name svg', index: 0 }, app: { selector: '#start-step-tabs .tabs-group-name svg', index: 0 } },
+  { name: 'step-group-label', props: ['fontSize', 'fontWeight', 'color'], keys: ['width', 'height', 'fontSize', 'fontWeight', 'color'],
+    mock: { url: '?theme=light#0', selector: '.tabs-group-name .group-label', index: 0 }, app: { selector: '#start-step-tabs .tabs-group-name .group-label', index: 0 } },
   // Step card (GitHub #408): the header and the action footer stay visible while only the body scrolls.
   { name: 'step-card-fixed-header-footer', viewport: [1280, 520],
     app: { run: "const m = document.querySelector('.startup-main'); m.scrollTop = Math.floor(m.scrollHeight / 2)" },

@@ -3283,3 +3283,11 @@ Trace: R-35 / DD-37 / DD-41.
 - [ ] Completed: merged to main; other files over 300 lines remain under #472 (the native UI probe, quota terminal, test support and room.js lines).
 
 Trace: R-35 / DD-37 / DD-41.
+
+### Step-tab group labels — GitHub #558
+
+- [x] Plan: each step-tab group (`.tabs-group-name`) shows its name (준비 / 실행 / 마무리) to the right of its icon in the app and in the approved mock, with identical rules and a `step-group-label` design-parity entry.
+- [x] Verify: design parity light and dark with 0 differences, `architecture_trace`, `source_layout`.
+- [ ] Completed: PR open.
+
+Trace: UI387-R5 / R-52 / DD-41.
