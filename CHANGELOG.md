@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The footer buttons of every step card (Workspace, Agent roles, Plan) are one size, the Workspace step's 34px with 8/13px padding, 6px corners and 13px text, as in the approved design; before, steps 2 and 3 had taller buttons of different heights (#579).
 - The application menu popup follows the approved design: 8px corners, 230-310px width and 33px rows with 5px radius (its items stay the app's full inventory) (#563).
 - The Goal list slide-over is 730px wide and the coordinator chat panel 460px with 24px padding, like the approved design's slide-over panels; Settings already matched (#563).
 - Dialogs follow the approved design: 24px padding, 12px corners and 700 titles everywhere; the close-window and agent dialogs have the design's widths (620 / 560px) and the Goal result popup is 660px with 25px padding and 14px corners (#563).
