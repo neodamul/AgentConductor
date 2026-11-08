@@ -104,6 +104,11 @@ module.exports = [
     { name: `view-eyebrow-${name}`, props: ['fontSize', 'fontWeight', 'color'], keys: ['height', 'fontSize', 'fontWeight', 'color'], pixel: false,
       mock: { url: `?theme=light#${hash}`, selector: `.main>.card[data-show="${show}"] .cardhead .eyebrow` }, app: { setup: STEPS_ENABLED, run: `document.querySelectorAll('#start-step-tabs [role=tab]')[${tab}].click()`, selector: '.step-card:not([hidden]) .eyebrow' } },
   ]),
+  // #563: the slide-over panels of the design (mock id -> app dialog) share the mock's box and heading.
+  ...[['settings-panel', 'start-settings', 'settings'], ['coordinator-chat-panel', 'start-chat', 'chat'], ['workspace-overview', 'start-goals', 'goals']].flatMap(([mock, app, name]) => [
+    { name: `panel-${name}`, props: ['paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], keys: ['width', 'paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], pixel: false,
+      mock: { url: '?theme=light#0', run: `openSidePanel('${mock}')`, selector: `#${mock}` }, app: { run: `document.getElementById('run-screen').hidden = false; const el = document.getElementById('${app}'); el.showModal ? el.showModal() : (el.hidden = false)`, selector: `#${app}` } },
+  ]),
   // Step card (GitHub #408): the header and the action footer stay visible while only the body scrolls.
   { name: 'step-card-fixed-header-footer', viewport: {height:520},
     app: { run: "const m = document.querySelector('.startup-main'); m.scrollTop = Math.floor(m.scrollHeight / 2)" },

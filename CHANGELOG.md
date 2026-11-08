@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The Goal list slide-over is 730px wide and the coordinator chat panel 460px with 24px padding, like the approved design's slide-over panels; Settings already matched (#563).
 - The Agent roles and Plan step cards use the approved design's card padding (20/24px) and 11.5px eyebrow; only the Workspace card keeps 17/22px (#563).
 - Claude usage lookup: a `/usage` screen that cannot be read (a signed-out Claude CLI or one billed per API use) is reported as soon as it has settled instead of after three minutes, so the refresh icon stops spinning and the message says to sign in with /login (#568).
 

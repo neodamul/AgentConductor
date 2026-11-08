@@ -449,4 +449,7 @@ footer.statusbar{gap:10px;line-height:1;padding-right:16px}
 .step-card:not(.workspace-config-card)>.section-title{top:-20px;margin-top:-20px;padding-top:20px}
 .step-card:not(.workspace-config-card)>.startup-actions,.step-card:not(.workspace-config-card)>.startup-review-footer{bottom:-20px;margin-bottom:-20px;padding-bottom:20px}
 .step-card:not(.workspace-config-card) .eyebrow{font-size:11.5px}
+/* GitHub #563: the Goal list slide-over is 730px and the coordinator chat panel 460px with 24px padding, like the mock's .slide-panel. */
+#start-goals.slide-panel{width:min(730px,calc(100% - 48px))}
+#start-chat.chat-panel{width:min(460px,calc(100% - 48px));padding:24px}
 
