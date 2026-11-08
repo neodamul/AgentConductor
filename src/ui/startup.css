@@ -424,3 +424,5 @@ header.titlebar #start-workspace-menu{font-size:13px}#start-mcp-controls.source-
 .step-card>.startup-actions,.step-card>.startup-review-footer{position:sticky;bottom:-17px;z-index:2;background:var(--surface);margin-bottom:-17px;padding-bottom:17px}
 .step-card>.section-title,#start-panel-workspace>.cardhead{box-shadow:0 14px 0 var(--surface)}
 .step-card>.startup-actions,.step-card>.startup-review-footer{box-shadow:0 -20px 0 var(--surface)}
+/* GitHub #558: the phase groups name themselves next to their icon. */
+.step-group>.tabs-group-name{width:auto;gap:5px}.tabs-group-name .group-label{font-size:12px;font-weight:500;white-space:nowrap}

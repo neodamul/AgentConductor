@@ -3371,6 +3371,14 @@ Trace: R-35 / DD-37 / DD-41.
 
 Trace: R-35 / DD-37 / DD-41.
 
+### Step-tab group labels — GitHub #558
+
+- [x] Plan: each step-tab group (`.tabs-group-name`) shows its name (준비 / 실행 / 마무리) to the right of its icon in the app and in the approved mock, with identical rules and a `step-group-label` design-parity entry.
+- [x] Verify: design parity light and dark with 0 differences, `architecture_trace`, `source_layout`.
+- [ ] Completed: PR open.
+
+Trace: UI387-R5 / R-52 / DD-41.
+
 ### Source policy clarification — GitHub #472
 
 - [x] Plan and task: restore the user-required 300-line target and bug-first priority to the goal and architecture documents.
