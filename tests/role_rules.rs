@@ -151,6 +151,30 @@ fn workspace_saves_valid_rules_and_passes_them_to_planning() {
     };
     assert_eq!(ready["proposal"]["phase"], "ready", "{}", ready["job"]);
     assert_eq!(ready["proposal"]["plan"]["tasks"][1]["role"], "testing");
+    // GitHub #582 (#564): saving changed roles keeps the ready plan and moves its tasks to the agents the roles now allow.
+    let before = ready["proposal"]["plan"]["tasks"][1]["agent"].clone();
+    assert_eq!(before, "mock");
+    save(serde_json::json!({"development":["mock"],"testing":["planner"],"documentation":["mock"],"verification":["planner"]})).unwrap();
+    let after = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    assert_eq!(after["proposal"]["phase"], "ready", "the plan is kept");
+    let tasks = after["proposal"]["plan"]["tasks"].as_array().unwrap();
+    for task in tasks {
+        let role = task["role"].as_str().unwrap();
+        let allowed = if role == "testing" || role == "verification" {
+            "planner"
+        } else {
+            "mock"
+        };
+        assert_eq!(
+            task["agent"], allowed,
+            "task {} of role {role} follows the saved roles",
+            task["id"]
+        );
+    }
+    assert_ne!(
+        after["proposal"]["digest"], ready["proposal"]["digest"],
+        "the reviewed plan changed, so its digest does"
+    );
     drop(startup);
     std::fs::remove_dir_all(root).unwrap();
 }

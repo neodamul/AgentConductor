@@ -3469,3 +3469,11 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-201 / QAS-199 / DD-94.
 
+### End-to-end test: saving roles keeps and re-assigns a ready plan — GitHub #582
+
+- [x] Plan: `workspace_saves_valid_rules_and_passes_them_to_planning` generates a ready plan, saves new roles through `Request::Save` and asserts the plan is kept, every task follows the saved roles and the reviewed digest changes (red when the reassign path is disabled).
+- [x] Verify: `role_rules`, `source_layout`, `architecture_trace`.
+- [ ] Completed: merged on `main`; closes #582.
+
+Trace: R-47 / UC-34 / DD-55.
+
