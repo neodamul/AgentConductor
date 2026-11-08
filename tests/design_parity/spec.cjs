@@ -6,6 +6,7 @@ const BOX = ['borderTopWidth', 'borderTopLeftRadius'];
 const attentionBox = selector => `(() => { const e=document.querySelector(${JSON.stringify(selector)}),box=document.createElement('span');box.id='attention-probe';box.style.cssText='display:inline-flex;flex:none;padding:6px;background:transparent';e.replaceWith(box);box.append(e); })()`;
 // The mock has no disabled step; its tabs are all reachable, so the app is compared with a run available (disabled steps dim by design).
 const STEP_ONE = "document.querySelector('#start-step-tabs [role=tab]').click();";
+const INSPECTOR_OPEN = "(async()=>{document.querySelectorAll('#start-step-tabs [role=tab]')[3].click();await new Promise(r=>setTimeout(r,900));document.querySelector('.inspector-switch').click();})()";
 const STEPS_ENABLED = "SIM.home.run_available=true;SIM.home.run_state='running';";
 // The reference window has a decorative border and outer margin; compare equal inner widths.
 const STEP_REFERENCE_WIDTH = "document.querySelector('.win').style.cssText='width:calc(100vw + 2px);max-width:none'";
@@ -76,6 +77,24 @@ module.exports = [
     mock: { url: '?theme=light#0', selector: '.tabs-group-name svg', index: 0 }, app: { selector: '#start-step-tabs .tabs-group-name svg', index: 0 } },
   { name: 'step-group-label', props: ['fontSize', 'fontWeight', 'color'], keys: ['width', 'height', 'fontSize', 'fontWeight', 'color'],
     mock: { url: '?theme=light#0', selector: '.tabs-group-name .group-label', index: 0 }, app: { selector: '#start-step-tabs .tabs-group-name .group-label', index: 0 } },
+  // #562: the footer's status dot and the Workspace folder / branch on its right match the mock's `.status`.
+  { name: 'status-dot', props: ['backgroundColor', 'borderTopLeftRadius'], keys: ['width', 'height', 'backgroundColor', 'borderTopLeftRadius'],
+    mock: { url: '?theme=light#0', selector: '.status .dot' }, app: { selector: '#startup-screen footer.statusbar .dot' } },
+  { name: 'status-repository', props: ['gap'], keys: ['width', 'height', 'gap'],
+    mock: { url: '?theme=light#0', selector: '.status .status-repository' }, app: { selector: '#startup-screen footer.statusbar .status-repository' } },
+  ...['worktree', 'branch'].map(part => ({ name: `status-${part}`, props: ['fontSize', 'color'], keys: ['width', 'height', 'fontSize', 'color'],
+    mock: { url: '?theme=light#0', selector: `.status .status-${part}` }, app: { selector: `#startup-screen footer.statusbar .status-${part}` } })),
+  // #561: the right task-details panel opened on step 4 matches the mock's `#task-inspector-panel`.
+  ...[
+    { name: 'inspector-panel', props: ['backgroundColor', 'paddingTop', 'paddingLeft', 'borderLeftWidth'], keys: ['width', 'backgroundColor', 'paddingTop', 'paddingLeft', 'borderLeftWidth'], pixel: false, mock: '#task-inspector-panel', app: '.inspector' },
+    { name: 'inspector-heading', props: ['fontSize', 'fontWeight', 'color'], keys: ['height', 'fontSize', 'fontWeight', 'color'], pixel: false, mock: '#task-inspector-title', app: '.inspector-heading h2' },
+    { name: 'inspector-heading-box', props: ['paddingBottom', 'marginBottom', 'borderBottomWidth', 'borderBottomColor'], keys: ['height', 'paddingBottom', 'marginBottom', 'borderBottomWidth', 'borderBottomColor'], pixel: false, mock: '.task-inspector>.panel-heading', app: '.inspector-heading' },
+    { name: 'inspector-section-title', props: ['fontSize', 'fontWeight', 'color', 'paddingTop', 'paddingBottom', 'borderBottomWidth'], keys: ['height', 'fontSize', 'fontWeight', 'color', 'paddingTop', 'paddingBottom', 'borderBottomWidth'], pixel: false, mock: '.task-inspector .task-detail-content>section>h3', app: '.inspector section .eyebrow' },
+    { name: 'inspector-section', props: ['paddingBottom', 'marginBottom', 'borderBottomWidth'], keys: ['paddingBottom', 'marginBottom', 'borderBottomWidth'], pixel: false, mock: '.task-inspector .task-detail-content>section', app: '.inspector section' },
+    { name: 'inspector-context', props: ['fontSize', 'lineHeight', 'color'], keys: ['height', 'fontSize', 'lineHeight', 'color'], pixel: false, mock: '#task-inspector-context', app: '#inspector-context' },
+  ].map(({ mock, app, ...rest }) => ({ ...rest,
+    mock: { url: '?theme=light#3', run: "document.getElementById('right-panel-toggle').click()", selector: mock },
+    app: { setup: STEPS_ENABLED, run: INSPECTOR_OPEN, selector: app } })),
   // Step card (GitHub #408): the header and the action footer stay visible while only the body scrolls.
   { name: 'step-card-fixed-header-footer', viewport: {height:520},
     app: { run: "const m = document.querySelector('.startup-main'); m.scrollTop = Math.floor(m.scrollHeight / 2)" },

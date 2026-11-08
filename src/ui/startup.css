@@ -426,3 +426,22 @@ header.titlebar #start-workspace-menu{font-size:13px}#start-mcp-controls.source-
 .step-card>.startup-actions,.step-card>.startup-review-footer{box-shadow:0 -20px 0 var(--surface)}
 /* GitHub #558: the phase groups name themselves next to their icon. */
 .step-group>.tabs-group-name{width:auto;gap:5px}.tabs-group-name .group-label{font-size:12px;font-weight:500;white-space:nowrap}
+
+/* GitHub #562: footer status dot and the Workspace folder / branch on the right (mock .status, .status-repository). */
+.statusbar .dot{width:8px;height:8px;border-radius:50%;flex:none}.statusbar .d-ok{background:var(--ok)}.statusbar .d-wait{background:#c9881c}
+footer.statusbar{gap:10px;line-height:1;padding-right:16px}
+.status-repository{display:flex;align-items:center;gap:14px;min-width:0;max-width:65%;margin-left:auto;height:24px}
+.status-worktree,.status-branch{display:flex;align-items:center;gap:6px;min-width:0;height:24px}
+.status-repository svg{display:block;flex:none;width:14px;height:14px}
+.status-worktree>span,.status-branch>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* GitHub #561: the right task-details panel matches the mock's `.task-inspector` (330px, page background, 22/18 padding, 18px heading, context line). */
+.workbench{grid-template-columns:250px minmax(390px,1fr) min(330px,35%)}
+.inspector{background:var(--bg);padding:22px 18px}
+.inspector-heading h2{font-size:18px}
+#inspector-context{font-size:12px;line-height:1.6;color:var(--soft);margin:0 0 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inspector-heading{padding-bottom:10px;margin-bottom:10px;border-bottom:1px solid var(--line)}
+.inspector section{padding:0 0 14px;margin-bottom:0;border-bottom:0}
+.inspector section>.eyebrow{display:block;font-size:13px;font-weight:650;letter-spacing:0;text-transform:none;color:var(--ink);padding:10px 0;margin:0;border-bottom:1px solid var(--line)}
+@media(max-width:850px) and (min-width:700px){.workbench:not(.insp-closed){grid-template-columns:230px minmax(0,1fr) min(330px,35%)}.workbench:not(.insp-closed) .inspector{grid-column:3;grid-row:auto;border-left:1px solid var(--line);border-top:0;overflow:auto}}
+

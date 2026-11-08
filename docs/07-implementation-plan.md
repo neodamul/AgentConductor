@@ -3397,6 +3397,23 @@ Trace: R-43 / UC-34 / UC-35 / DD-229 / DD-230.
 
 Trace: R-47 / UC-34 / DD-55.
 
+### Footer worktree and branch identity — GitHub #562
+
+- [x] Plan: the snapshot gains `repository_identity` (folder name, path, branch read from `.git/HEAD` or a linked worktree's `gitdir:` pointer without running git); `status_repository.js` renders the mock's `.status-repository` (folder and branch icons, path/branch titles) in both footers next to a status dot; parity entries `status-dot`, `status-repository`, `status-worktree`, `status-branch` use the mock's sample values through the simulator.
+- [x] Verify: `repository_identity` test, `i18n_contracts`, `messages`, `source_layout`, design parity light/dark 1280 and light 840 with 0 differences (32 entries each).
+- [ ] Completed: PR open; closes #562.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Right task-details panel matches the design — GitHub #561
+
+- [x] Plan: parity entries `inspector-panel`, `inspector-heading`, `inspector-heading-box`, `inspector-context`, `inspector-section-title`, `inspector-section` compare the mock's `#task-inspector-panel` with the app's `.inspector` opened on step 4; the app gets the mock's width, surface, padding, heading, a context line (`room.inspector_empty` before a plan) and section titles/wording; at 700-850px the panel stays a docked third column like the mock.
+- [x] Verify: design parity light/dark at 1280 and 840 (171 elements, 0 differences), `inspector_fold_runtime.cjs`, room runtime tests, `i18n_contracts`, `messages`, `source_layout`, `architecture_trace`.
+- [ ] Remaining in #561: the mock's per-task content (instruction, dependency and test command lines, resume scheduling copy) is not in the app's sections; tracked in #563.
+- [ ] Completed: PR open; #561 closes with it.
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### Claude usage lookup gives up an unreadable screen early — GitHub #568
 
 - [x] Plan: after `/usage` is sent, a screen that parses to no capacity windows and then stays silent for min(wait/4, 20 s) ends the query with the unread reason and the sign-in hint (macOS and Windows collectors); the three-minute limit still applies to a CLI that never answers. Finding: on this Mac the terminal `claude` is signed out (`claude auth status` -> loggedIn false), and an app started from a Claude Code session inherits a session environment that shows API billing, so the lookup waited the full 180 s with the refresh icon spinning.
