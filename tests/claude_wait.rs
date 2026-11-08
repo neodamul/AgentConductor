@@ -56,6 +56,23 @@ async fn a_slow_cli_is_waited_for_and_a_stuck_one_names_the_limit() {
         error.contains("allocated budget must be positive"),
         "{error}"
     );
+    // GitHub #568: a /usage screen that stays unreadable is named once it has settled, not after the full limit.
+    let started = std::time::Instant::now();
+    let error = quota::query_claude_within(
+        &unread,
+        &root.join("unread-fast"),
+        &root,
+        Duration::from_secs(60),
+    )
+    .await
+    .unwrap_err();
+    assert!(error.contains("not understood after /usage"), "{error}");
+    assert!(error.contains("/login"), "{error}");
+    assert!(
+        started.elapsed() < Duration::from_secs(30),
+        "{:?}",
+        started.elapsed()
+    );
     // GitHub #317: an expired or missing login is named at once instead of waiting for the limit.
     let signed_out = AgentProfile {
         environment: [("AC_QUOTA_CASE".to_string(), "signed_out".to_string())].into(),

@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Claude usage lookup: a `/usage` screen that cannot be read (a signed-out Claude CLI or one billed per API use) is reported as soon as it has settled instead of after three minutes, so the refresh icon stops spinning and the message says to sign in with /login (#568).
 
 - The step-tab groups name themselves: the icon of each group now has its "준비" / "실행" / "마무리" label to its right, like a normal button (#558).
 - Step cards: only the card body scrolls; the Goal header, the stepper, the card header and the action footer stay in place (the plan no longer slides behind the header) (#543).
