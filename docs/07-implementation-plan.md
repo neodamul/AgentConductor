@@ -3427,6 +3427,13 @@ Trace: R-201 / QAS-199 / DD-94.
 - [x] Plan: parity entries `dialog-delete-goal`, `dialog-close-run`, `dialog-goal-result`, `dialog-profile-edit` (box) and their titles compare the mock's dialogs with the app's `start-delete-goal`, `start-close-dialog`, `result-dialog` and `start-agent-dialog`; the app's global dialog box becomes the mock's 24px/12px/700 and the three dialogs with their own sizes follow.
 - [x] Verify: design parity light/dark at 1280 and 840 (178 elements; one 0.01% `about-dialog` raster difference in the dark 840 run is the known #482 flake: 0 differences in 3 isolated reruns with and without this change), the full Node UI suite.
 - [ ] Remaining in #563: views #5 #6 #7 #9, app menu, workspace overview, coordinator chat, settings, assignment menu, task-detail content.
+Trace: R-210 / UC-202 / DD-222.
+
+### Design census: Roles and Plan view cards — GitHub #563
+
+- [x] Plan: parity entries `view-card-*`, `view-title-*`, `view-eyebrow-*` for the mock's views #1 (Agent roles) and #2 (Plan review) against the app's step cards; the app's non-Workspace step cards take the mock's 20/24 padding (sticky header/footer offsets follow) and the 11.5px eyebrow.
+- [x] Verify: design parity light/dark at 1280 and 840 (177 elements, 0 differences), the full Node UI suite (`node_runtime`).
+- [ ] Remaining in #563: views #5 permission denied, #6 verify, #7 review/merge, #9 new Goal; app menu, workspace overview, coordinator chat, settings, assignment menu, profile edit, close-run, delete-goal and goal-result dialogs; task-detail content.
 
 Trace: R-210 / UC-202 / DD-222.
 
