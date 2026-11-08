@@ -4,6 +4,7 @@ const {findChrome,launch}=require('./design_parity/cdp.cjs');
 const chrome=findChrome();if(!chrome){console.log('agent buttons skipped: no Chrome');process.exit(77);}
 const root=path.resolve(__dirname,'..'),dir=fs.mkdtempSync(path.join(os.tmpdir(),'ac-agent-buttons-'));
 execFileSync(process.execPath,[path.join(root,'tests/ui_sim/build.cjs'),root,path.join(dir,'app.html')]);
+const narrowMoves=new Map();
 (async()=>{try{for(const width of [840,1280]){const browser=await launch(chrome,{width,height:960});try{for(const theme of ['light','dark']){
  await browser.goto(pathToFileURL(path.join(root,'docs/design/approved-goal-ui/preview.html')).href+'?theme='+theme+'#0');
  const expected=await browser.eval(`(()=>{const e=document.querySelector('.agent .tools');return {width:e.getBoundingClientRect().width,height:e.getBoundingClientRect().height,buttons:[...e.children].map(b=>{const r=b.getBoundingClientRect();return {width:r.width,height:r.height,top:r.top-e.getBoundingClientRect().top};})};})()`);
@@ -18,6 +19,8 @@ execFileSync(process.execPath,[path.join(root,'tests/ui_sim/build.cjs'),root,pat
   }
   const r=row.getBoundingClientRect();return {width:r.width,height:r.height,buttons:buttons.map(b=>{const q=b.getBoundingClientRect();return {width:q.width,height:q.height,top:q.top-r.top};})};
  });})()`);
- for(const row of actual)assert.deepEqual(row,expected,'tools match the approved natural layout; narrow single-row acceptance remains #424');
+ for(const row of actual){assert.deepEqual(row,expected,'tools match the approved natural layout');if(width===840){assert.equal(row.height,22,'all actions fit on one row at the supported narrow width');assert(row.buttons.every(button=>button.top===0),'actions remain on the same row');}}
+ if(width===840)narrowMoves.set(theme,actual[0].buttons.slice(-2).map(button=>button.width));else assert.deepEqual(narrowMoves.get(theme),actual[0].buttons.slice(-2).map(button=>button.width),'reorder target widths remain unchanged at the narrow width');
+ if(width===840){const english=await browser.eval(`(()=>{AC_I18N.set('en');return [...document.querySelectorAll('.profile-tools')].map(row=>({height:row.getBoundingClientRect().height,width:row.getBoundingClientRect().width,buttons:[...row.querySelectorAll('button')].map(button=>({label:button.textContent,width:button.getBoundingClientRect().width})),overflow:[...row.querySelectorAll('button')].some(button=>button.scrollWidth>button.clientWidth)}));})()`);for(const row of english){assert.equal(row.height,22,'English actions fit on one row: '+JSON.stringify(row));assert.equal(row.overflow,false,'English action labels remain visible');}}
  console.log(theme,width,actual.length*5,'agent buttons checked against approved layout');
 }}finally{await browser.close();}}}finally{fs.rmSync(dir,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1;});
