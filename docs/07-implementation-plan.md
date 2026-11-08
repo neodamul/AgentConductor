@@ -3477,3 +3477,11 @@ Trace: R-201 / QAS-199 / DD-94.
 
 Trace: R-47 / UC-34 / DD-55.
 
+### Footer left text matches the design — GitHub #583
+
+- [x] Plan: the Workspace footer's idle text uses `room.connected_local_run` (the Agent Room footer already did) instead of "Local workspace · <path>"; the in-progress and stale texts stay; parity assertion `status-text` pins the idle text.
+- [x] Verify: design parity light/dark at 1280 and 840, the full Node UI suite, `i18n_contracts`, `messages`.
+- [ ] Completed: merged on `main`; closes #583.
+
+Trace: R-210 / UC-202 / DD-222.
+

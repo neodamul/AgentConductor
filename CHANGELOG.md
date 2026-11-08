@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The Workspace footer's idle text is the design's "연결됨 · 로컬 실행" / "Connected · local run" (the folder and branch are named on its right side); progress and stale states keep their own texts (#583).
 - The Claude usage lookup no longer inherits the Claude Code session that started the app (session markers such as CLAUDECODE and CLAUDE_CODE_ENTRYPOINT are dropped; login tokens, keys and provider settings are kept), so an app started from a Claude Code terminal reads the subscription usage instead of reporting API billing or a lost login (#585).
 - The footer buttons of every step card (Workspace, Agent roles, Plan) are one size, the Workspace step's 34px with 8/13px padding, 6px corners and 13px text, as in the approved design; before, steps 2 and 3 had taller buttons of different heights (#579).
 - The application menu popup follows the approved design: 8px corners, 230-310px width and 33px rows with 5px radius (its items stay the app's full inventory) (#563).
