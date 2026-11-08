@@ -3437,3 +3437,11 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Design census: slide-over panels — GitHub #563
+
+- [x] Plan: parity entries `panel-settings`, `panel-chat`, `panel-goals` compare the mock's `#settings-panel`, `#coordinator-chat-panel` and `#workspace-overview` (width, padding, background, left rule) with the app's `start-settings`, `start-chat` and `start-goals`; the Goal list becomes 730px and the chat panel 460px/24px.
+- [x] Verify: design parity light/dark at 1280 and 840 (180 elements, 0 differences), the full Node UI suite; the Goal list opened in the simulator at 1280px shows the wider panel.
+- [ ] Remaining in #563: views #5 #6 #7 #9, app menu popup, assignment menu, task-detail content.
+
+Trace: R-210 / UC-202 / DD-222.
+
