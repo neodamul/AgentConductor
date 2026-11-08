@@ -3386,3 +3386,14 @@ Trace: UI387-R5 / R-52 / DD-41.
 - [ ] Complete: validate architecture references, merge this documentation unit, then finish the remaining splits and change the gate.
 
 Trace: R-35 / BG-05 / SF-12 / QAS-12 / DD-41.
+
+Trace: R-43 / UC-34 / UC-35 / DD-229 / DD-230.
+
+### Save role changes in step 2 and one-row Goal sources — GitHub #564, #560
+
+- [x] Plan: step 2 gets a Save button; `Request::Save` re-assigns a ready plan's tasks through `roles::reassign` (deleted or no-longer-allowed agent -> the role's first agent, its pinned model or none) and keeps the plan, falling back to the old discard rule when a task has no role; prompt optimization joins the Jira, Confluence and preview buttons on one row. Released line: #567; ported to `main` here (#565, #566).
+- [x] Verify: `role_rules` (reassign test), `optimize_ui`, `startup_optimize`, `goal_sources_ui`, `optimize_runtime.cjs`; the assembled page in Chrome at 1280px shows the four source buttons on one row and Save beside Generate plan.
+- [ ] Completed: merged on `release/0.1.x` (#567) and ported to `main`; tag with 0.1.61 / 0.2.0 only when the user asks.
+
+Trace: R-47 / UC-34 / DD-55.
+

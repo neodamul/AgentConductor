@@ -149,3 +149,44 @@ pub fn apply(rules: &RoleRules, tasks: &mut [Task]) -> Result<(), String> {
     }
     Ok(())
 }
+
+/// GitHub #564: moves tasks whose agent left their role (deleted agent, changed rule) to the role's first agent.
+pub fn reassign(
+    rules: &RoleRules,
+    profiles: &[AgentProfile],
+    tasks: &mut [Task],
+) -> Result<(), String> {
+    for task in tasks {
+        if rules.values().all(Vec::is_empty) {
+            if profiles.iter().any(|p| p.id == task.agent) {
+                continue;
+            }
+            return Err(format!(
+                "task {} uses unregistered agent {}",
+                task.id, task.agent
+            ));
+        }
+        let role = task
+            .role
+            .clone()
+            .ok_or_else(|| format!("task {} has no role", task.id))?;
+        let entries = rules
+            .get(&role)
+            .filter(|a| !a.is_empty())
+            .ok_or_else(|| format!("task {} uses role {role}, which has no rule", task.id))?;
+        match entries.iter().find(|e| e.agent == task.agent) {
+            Some(entry) => {
+                task.fallback = entry.fallback.clone();
+                if entry.model.is_some() {
+                    task.model = entry.model.clone();
+                }
+            }
+            None => {
+                task.agent = entries[0].agent.clone();
+                task.model = entries[0].model.clone();
+                task.fallback = entries[0].fallback.clone();
+            }
+        }
+    }
+    Ok(())
+}
