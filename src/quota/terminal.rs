@@ -2,6 +2,7 @@ use super::Snapshot;
 
 mod parse;
 mod screens;
+mod session_env;
 pub use parse::parse_claude_usage;
 #[cfg_attr(not(any(target_os = "macos", windows)), allow(unused_imports))]
 use screens::{TRUST_ANSWERS, TRUST_REFUSED, plain};
@@ -97,6 +98,9 @@ pub async fn query_claude_within(
         .map_err(|e| e.to_string())?;
     let stderr = std::fs::File::create(dir.join("stderr.log")).map_err(|e| e.to_string())?;
     let mut command = Command::new("/usr/bin/script");
+    for (name, _) in std::env::vars().filter(|(name, _)| session_env::is_session_marker(name)) {
+        command.env_remove(name);
+    }
     command
         .args([
             "-q",
