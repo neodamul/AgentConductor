@@ -3405,3 +3405,12 @@ Trace: R-47 / UC-34 / DD-55.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Right task-details panel matches the design — GitHub #561
+
+- [x] Plan: parity entries `inspector-panel`, `inspector-heading`, `inspector-heading-box`, `inspector-context`, `inspector-section-title`, `inspector-section` compare the mock's `#task-inspector-panel` with the app's `.inspector` opened on step 4; the app gets the mock's width, surface, padding, heading, a context line (`room.inspector_empty` before a plan) and section titles/wording; at 700-850px the panel stays a docked third column like the mock.
+- [x] Verify: design parity light/dark at 1280 and 840 (171 elements, 0 differences), `inspector_fold_runtime.cjs`, room runtime tests, `i18n_contracts`, `messages`, `source_layout`, `architecture_trace`.
+- [ ] Remaining in #561: the mock's per-task content (instruction, dependency and test command lines, resume scheduling copy) is not in the app's sections; tracked in #563.
+- [ ] Completed: PR open; #561 closes with it.
+
+Trace: R-210 / UC-202 / DD-222.
+

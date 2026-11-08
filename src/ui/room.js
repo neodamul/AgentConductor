@@ -201,6 +201,7 @@ function renderSnapshot() {
   const stage=r.state==='completed'?'complete':mergeRunning||r.state==='approved'?'merge':['waiting_approval','rejected'].includes(r.state)?'verify':r.tasks.some(t=>t.attempt>0)?'task':'plan';window.acStepper?.paint(stage,mergeRunning);window.acStepper?.available(true);
   AC_I18N.bind($('selected-agent'),()=>(agentName(a)));$('agent-symbol').replaceWith(Object.assign(avatar(a?.parser,agentName(a),'agent-symbol'),{id:'agent-symbol'}));AC_I18N.bind($('selected-task'),()=>(t?.id||''));AC_I18N.bind($('feedback-target'),()=>(agentName(a)+' / '+(t?.id||'')));
   AC_I18N.bind($('task-status'),()=>(statusLabel(t?.status)));$('task-status').className='status-pill tone-'+statusTone(t?.status);
+  AC_I18N.bind($('inspector-context'),()=>(t?agentName(a)+' · '+t.id+' · '+(p?.prompt||'').split('\n')[0]:acMessage("room.inspector_empty")));
   AC_I18N.bind($('paths'),()=>(p?.paths.join('\n')||'—'));AC_I18N.bind($('session-id'),()=>(t?.session_id?acMessage("room.session_168693")+t.session_id:acMessage("room.no_native_session_yet")));
   setOptions($('agent-select'),r.plan.agents.map(a=>({value:a.id,label:agentName(a)+' · '+a.id})),p.agent,t.id+p.agent+JSON.stringify(r.plan.agents.map(a=>a.id)));
   const models=a?.catalog?.models||[];setOptions($('model-select'),models.length?models.map(m=>({value:m,label:m})):[{value:'',label:acMessage("room.no_observed_catalog")}],p.model||models[0]||'',t.id+JSON.stringify(a?.catalog)+String(p.model));
