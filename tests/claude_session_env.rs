@@ -4,7 +4,7 @@
 async fn the_lookup_does_not_inherit_a_claude_code_session() {
     use agentconductor::{plan::AgentProfile, quota};
     use std::time::Duration;
-    // Single test in this process: nothing else reads the environment while it is changed.
+    // SAFETY: this is the only test in this process, so nothing reads the environment while it is changed.
     unsafe {
         std::env::set_var("CLAUDECODE", "1");
         std::env::set_var("CLAUDE_CODE_ENTRYPOINT", "cli");
