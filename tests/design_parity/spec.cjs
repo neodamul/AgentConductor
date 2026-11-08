@@ -77,7 +77,7 @@ module.exports = [
   { name: 'step-group-label', props: ['fontSize', 'fontWeight', 'color'], keys: ['width', 'height', 'fontSize', 'fontWeight', 'color'],
     mock: { url: '?theme=light#0', selector: '.tabs-group-name .group-label', index: 0 }, app: { selector: '#start-step-tabs .tabs-group-name .group-label', index: 0 } },
   // Step card (GitHub #408): the header and the action footer stay visible while only the body scrolls.
-  { name: 'step-card-fixed-header-footer', viewport: [1280, 520],
+  { name: 'step-card-fixed-header-footer', viewport: {height:520},
     app: { run: "const m = document.querySelector('.startup-main'); m.scrollTop = Math.floor(m.scrollHeight / 2)" },
     assert: "(() => { const c = document.querySelector('#start-panel-workspace'), h = c.querySelector('.cardhead').getBoundingClientRect(), f = c.querySelector('.startup-actions').getBoundingClientRect(); return h.top >= 0 && h.bottom <= innerHeight && f.top >= 0 && f.bottom <= innerHeight + 1; })()" },
   // Content-width inner tabs (GitHub #408): 29px high, 7px radius, label + 11px padding, left aligned, not stretched.
@@ -94,10 +94,10 @@ module.exports = [
     mock: { url: '?theme=light#0', selector: '#sidebar-toggle' }, app: { selector: '#start-rail-toggle' } },
   { name: 'rail-toggle-behaviour',
     app: { run: "window.__w = document.querySelector('.startup-main').getBoundingClientRect().width; document.getElementById('start-rail-toggle').click()" },
-    assert: "(() => { const hidden = document.querySelector('.startup-team').getBoundingClientRect().width === 0 && document.querySelector('.startup-main').getBoundingClientRect().width > window.__w + 200; document.getElementById('start-rail-toggle').click(); return hidden && document.querySelector('.startup-team').getBoundingClientRect().width === 250; })()" },
+    assert: "(() => { const hidden = document.querySelector('.startup-team').getBoundingClientRect().width === 0 && document.querySelector('.startup-main').getBoundingClientRect().width > window.__w + 200; document.getElementById('start-rail-toggle').click(); return hidden && document.querySelector('.startup-team').getBoundingClientRect().width === (innerWidth < 900 ? 230 : 250); })()" },
   // Rail width follows the design's breakpoints: 250px, 230px below 900px (GitHub #408).
   { name: 'rail-width-840', viewport: [840, 800], app: {}, assert: "document.querySelector('.startup-team').getBoundingClientRect().width === 230" },
-  { name: 'rail-width-1280', app: {}, assert: "document.querySelector('.startup-team').getBoundingClientRect().width === 250" },
+  { name: 'rail-width-1280', viewport: [1280, 800], app: {}, assert: "document.querySelector('.startup-team').getBoundingClientRect().width === 250" },
   // Result summary (GitHub #408): compact metadata on one ruled line - 16px/650 values, 14px/500 labels.
   { name: 'result-metric-value', props: ['fontSize', 'fontWeight'], keys: ['fontSize', 'fontWeight'], pixel: false,
     mock: { url: '?theme=light#8', selector: '.result-stats strong' }, app: { run: "acResultView.show({goal:'g',branch:'b',repo:'r',commit:'abcdef123456',diff:'diff --git a/x b/x\\n+1\\n',tests:[{task:'t',exit_code:0}],details:[]})", selector: '.result-metric strong' } },

@@ -33,9 +33,15 @@ const MEASURE = (sel, index, props, mark, rel) => `(() => { const e = [...docume
   return o; })()`;
 
 async function visit(browser, side, spec) {
-  if (side === 'mock') { await browser.goto('about:blank'); await browser.goto(MOCK + (spec.url || '?theme=light#0').replace('theme=light', 'theme=' + THEME)); } else {
-    await browser.goto(APP); await browser.eval(`sessionStorage.setItem('SIM_PRESET', ${JSON.stringify(PRESET + (spec.setup || ''))}); location.reload()`);
-    await new Promise(r => setTimeout(r, 1200));
+  if (side === 'mock') {
+    await browser.goto('about:blank'); await browser.goto(MOCK + (spec.url || '?theme=light#0').replace('theme=light', 'theme=' + THEME));
+    // The preview canvas has padding and a frame border; compare the same native client width.
+    await browser.eval(`(() => { const frame=document.querySelector('.win'); if(!frame)throw Error('reference window missing');
+      frame.style.maxWidth='none'; frame.style.width=(innerWidth+frame.offsetWidth-frame.clientWidth)+'px';
+      if(frame.clientWidth!==innerWidth)throw Error('reference client width does not match viewport'); })()`);
+  } else {
+    await browser.goto(APP); await browser.eval(`sessionStorage.setItem('SIM_PRESET', ${JSON.stringify(PRESET + (spec.setup || ''))})`);
+    await browser.goto(APP);
   }
   if (side === 'app') await browser.eval(`document.documentElement.dataset.theme = ${JSON.stringify(THEME)}`);
   if (spec.run) await browser.eval(spec.run);
@@ -82,11 +88,12 @@ async function visit(browser, side, spec) {
         const kept = await browser.eval("!!document.querySelector('[data-parity-target]')");
         await browser.eval(`(() => { document.getElementById('parity-solo')?.remove(); const e = document.querySelector('[data-parity-target]'); if (!e) return; e.setAttribute('style', e.dataset.parityStyle); if (!e.dataset.parityStyle) e.removeAttribute('style'); delete e.dataset.parityStyle; delete e.dataset.parityTarget; })()`);
         if (kept) break;
+        if (attempt === 4) throw new Error(`${x.name}: ${side} changed during all five capture attempts`);
       }
       fs.writeFileSync(path.join(out, `${x.name}.${side}.png`), got[x.name].shots[side]);
     }
     for (const spec of specs) {
-      if (spec.assert) { if (!spec.viewport && WIDTH !== 1280) continue; // authored at 1280
+      if (spec.assert) {
       // behaviour check on the app only: `assert` is evaluated after `run` and must be true
         await browser.viewport(...viewport(spec));
         await visit(browser, 'app', spec.app); const ok = await browser.eval(spec.assert);
