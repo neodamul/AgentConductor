@@ -3461,3 +3461,11 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Claude usage lookup drops inherited session markers — GitHub #585
+
+- [x] Plan: `session_env::is_session_marker` (CLAUDECODE, CLAUDE_AGENT_SDK*, CLAUDE_CODE_* except names with TOKEN, KEY, USE_, PROXY, CERT or CONFIG) is removed from the environment of the usage-lookup `claude` before the profile's own environment is applied, on macOS and Windows; follow-up of #568.
+- [x] Verify: `claude_session_env` (fake CLI reports "not logged in" when it sees a marker or misses the OAuth token; red without the filter), `claude_wait`, `source_layout`, Clippy; the Windows branch is compiled by CI only. Port to `release/0.1.x` for 0.1.61.
+- [ ] Completed: merged on `main` and `release/0.1.x`.
+
+Trace: R-201 / QAS-199 / DD-94.
+
