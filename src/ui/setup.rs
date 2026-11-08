@@ -244,6 +244,7 @@ mod request;
 #[path = "../../tests/unit/startup.rs"]
 mod tests;
 use request::Request;
+mod assignments;
 mod dispatch;
 mod goal_actions;
 mod planning;
