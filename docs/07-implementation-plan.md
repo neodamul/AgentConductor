@@ -3422,3 +3422,11 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-201 / QAS-199 / DD-94.
 
+### Design census: dialogs — GitHub #563
+
+- [x] Plan: parity entries `dialog-delete-goal`, `dialog-close-run`, `dialog-goal-result`, `dialog-profile-edit` (box) and their titles compare the mock's dialogs with the app's `start-delete-goal`, `start-close-dialog`, `result-dialog` and `start-agent-dialog`; the app's global dialog box becomes the mock's 24px/12px/700 and the three dialogs with their own sizes follow.
+- [x] Verify: design parity light/dark at 1280 and 840 (178 elements; one 0.01% `about-dialog` raster difference in the dark 840 run is the known #482 flake: 0 differences in 3 isolated reruns with and without this change), the full Node UI suite.
+- [ ] Remaining in #563: views #5 #6 #7 #9, app menu, workspace overview, coordinator chat, settings, assignment menu, task-detail content.
+
+Trace: R-210 / UC-202 / DD-222.
+
