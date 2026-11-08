@@ -119,7 +119,7 @@ FR-52: provider change replaces all template-derived fields with a unique ID and
 
 ### FR-54 / NFR-27 Interface language
 
-FR-54: persist `language` (`en` default, `ko`), validate it, expose `set_language`, embed it in both pages (`<html lang>`), translate interface strings and dynamically rendered nodes, and leave textareas, inputs' values, logs and agent output unchanged. NFR-27: UTF-8 everywhere; no per-poll work when the language is English (observer disconnected); translation applies only to changed nodes; no new dependency; files under 500 lines. Trace: UC-58.
+FR-54: persist `language` (`en` default, `ko`), validate it, expose `set_language`, embed it in both pages (`<html lang>`), translate interface strings and dynamically rendered nodes, and leave textareas, inputs' values, logs and agent output unchanged. NFR-27: UTF-8 everywhere; no per-poll work when the language is English (observer disconnected); translation applies only to changed nodes; no new dependency; files meet the current R-35 line limit. Trace: UC-58.
 
 FR-55 (R-71): fallback model options come from the fallback agent's catalog; a missing catalog is queued once through the existing discovery queue; the open dialog refreshes without moving focus. NFR-26 applies (no extra polling; one CLI metadata query).
 
@@ -425,7 +425,7 @@ Source: https://learn.microsoft.com/en-us/windows/win32/shell/common-file-dialog
 
 ### FR-128 Workspace transfer menu
 
-Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing is separated into ui/dispatch.rs to retain the 500-line source bound without changing dispatch semantics.
+Use the adjacent localized menu actions Export workspace and Import workspace. The operation remains the existing reviewed workspace configuration/goal archive transfer with local secrets and verification claims handled as before; no raw execution history or extra permission is added by the label change. Native request routing was separated into ui/dispatch.rs without changing dispatch semantics; the then-current 500-line bound is superseded by R-35.
 Trace: R-143 → BG-98 → SF-130 → UC-133 → FR-128 → QAS-139 → DD-152. User, 2026-10-14.
 
 ### FR-129 Semantic and lazy manual display
@@ -609,14 +609,14 @@ Trace: R-174 → BG-129 → SF-162 → UC-165 → FR-160/NFR-70/C-06 → QAS-171
 Each comment names the invariant (valid pointer and lifetime, handle ownership, thread affinity, why the call cannot violate the contract), not a restatement of the call. The lint step is added in the same change that brings the violation count to zero on macOS and Windows.
 
 ### NFR-71 No behavior change and no new tooling
-Comments and one CI step only; no refactoring of unsafe code beyond removing two avoidable `unsafe` sites (a repeated `geteuid` call and a struct-update `zeroed`), no new dependency and no other lint. Each changed Rust file stays within its line limit (500 on `main`, 300 on the Rust line).
+Comments and one CI step only; no refactoring of unsafe code beyond removing two avoidable `unsafe` sites (a repeated `geteuid` call and a struct-update `zeroed`), no new dependency and no other lint. The historical change used the then-current limits; the current target is 300 lines per source and test file under R-35 and #472.
 Trace: R-175 → BG-130 → SF-163 → UC-166 → FR-161/NFR-71 → QAS-172 → DDR-35 → DD-186. GitHub #172, user, 2026-10-24.
 
 ### FR-162 Helper and gate
 The helper offers `lock()`, `set` and `remove`, keeps the first original value of each variable and restores it on drop even when the test panics. A poisoned lock is recovered because the mutex guards no data. The CI gate runs `--lib --bins --tests` on macOS and Windows.
 
 ### NFR-72 No behavior change
-Test assertions and the code under test stay as they are; only how variables are set changes. Each changed Rust file stays within its line limit (500 on `main`, 300 on the Rust line). The helper serializes mutating tests only: it cannot stop a non-mutating thread of the same binary from reading the environment, which is recorded as a documented limit.
+Test assertions and the code under test stay as they are; only how variables are set changes. The historical change used the then-current limits; the current target is 300 lines per source and test file under R-35 and #472. The helper serializes mutating tests only: it cannot stop a non-mutating thread of the same binary from reading the environment, which is recorded as a documented limit.
 Trace: R-176 → BG-131 → SF-164 → UC-167 → FR-162/NFR-72 → QAS-173 → DDR-36 → DD-187. GitHub #176, user, 2026-10-24.
 
 ### FR-163 Skill prompt and result
@@ -626,7 +626,7 @@ The coordinator prompt holds the unmodified skill text and the references it poi
 The workspace screen shows Optimize prompt beside the goal field, disabled while the goal is empty or another job runs. The dialog shows the proposal, the changes and the questions in the interface language. **Use this goal** puts the proposal in the goal field and marks the workspace as changed, **Keep mine** closes the dialog, and neither saves or runs anything.
 
 ### NFR-73 Bounded, attributed, one job at a time
-The goal is limited to 8 KiB, the proposal to 16 KiB, at most 12 changes and 8 questions of 400 characters each, and the job times out after five minutes. It uses the existing single job slot, so it cannot overlap planning, a run or an MCP preview. The vendored files are byte-identical to the pinned upstream commit, and the Apache-2.0 license text and a notice naming the origin ship in the release package. Each changed Rust file stays within its line limit (500 on `main`, 300 on the Rust line).
+The goal is limited to 8 KiB, the proposal to 16 KiB, at most 12 changes and 8 questions of 400 characters each, and the job times out after five minutes. It uses the existing single job slot, so it cannot overlap planning, a run or an MCP preview. The vendored files are byte-identical to the pinned upstream commit, and the Apache-2.0 license text and a notice naming the origin ship in the release package. The historical change used the then-current limits; the current target is 300 lines per source and test file under R-35 and #472.
 Trace: R-177 → BG-132 → SF-165 → UC-168 → FR-163/FR-164/NFR-73 → QAS-174/QAS-175 → DDR-37 → DD-188. GitHub #180, user, 2026-10-27.
 
 ### FR-165 Settings opens the guide and the manual

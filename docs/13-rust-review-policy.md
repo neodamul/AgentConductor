@@ -19,9 +19,7 @@ The checks below already enforce much of the guide and are not duplicated here:
   cover `ptr_arg`, `borrowed_box`, `should_implement_trait`, `new_without_default`,
   `len_without_is_empty`, `wrong_self_convention` and `unnecessary_unwrap`.
 - `tests/source_layout.rs`: no authored file above **500 lines** on `main`, and no test body
-  under `src/`. The Rust migration line additionally keeps every changed Rust file at or
-  below **300 lines**; this policy changes neither limit. Entries elsewhere in the
-  documents that say 300 refer to that Rust-line limit.
+  under `src/`. The required target for source and test files is **300 lines** on every branch; the 500-line main gate is transitional. #472 tracks the remaining refactors and the global 300-line enforcement.
 
 ## Review rules
 
