@@ -6,39 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
-
-- Claude usage lookup: a `/usage` screen that cannot be read (a signed-out Claude CLI or one billed per API use) is reported as soon as it has settled instead of after three minutes, so the refresh icon stops spinning and the message says to sign in with /login (#568).
-
-- The step-tab groups name themselves: the icon of each group now has its "준비" / "실행" / "마무리" label to its right, like a normal button (#558).
-- Step cards: only the card body scrolls; the Goal header, the stepper, the card header and the action footer stay in place (the plan no longer slides behind the header) (#543).
-- The Codex logo no longer has a white tile, so it sits on its avatar like Claude's without a gray ring (#545).
-- Jira items are called issues everywhere they are shown ("Jira 이슈" / "Jira issue": the import button, the reference dialog, the import error text and the documents), not stories.
-- Agent cards show the dual-ring quota icon from the provider's windows; clicking it opens a popup with each window's remaining share, reset time, observation time and, on errors, the failure with a retry (#426).
-
-- UI: every text and control size, weight, colour and padding now follows the approved mock (one strict size scale, no browser-default 16px controls); a typography parity set checks it in both themes (#432).
-- Both manuals have a new section "The goal screen" (1.2a) describing the six-step stepper, the panels, the Goal list actions, the result popup and the status borders.
-- The completed-goal popup shows its summary as one ruled line (changed files, tests passed, lessons) instead of three stacked tiles.
-- The main action buttons of a step (save, generate plan, approve and run, read plan, write plan manually, discard changes) show a small icon in front of their label.
-- A title bar button hides and restores the whole left panel on the Workspace screen and in the Agent Room; the centre uses the freed space.
-- The Goal header is a compact single line (17px) without the small caption above it.
-- The Activity, Changes and tests, Raw logs and Lessons tabs of a task are compact pill-shaped tabs that fit their labels instead of an underlined row.
-- In every step card the title and the action buttons stay visible while only the middle of the card scrolls, so a short window no longer hides Save or Approve.
-- The Prepare, Run and Finish groups of the stepper have their own subdued background colours (light and dark) and a small group icon, as in the approved design.
-- Agent cards no longer print the executable path or a fixed session capacity, have 8px corners with a red removal icon, and task rows in the left panel are quiet rows with a trailing chevron, a hover fill and an accent edge on the selected one; the Agent Room's left panel is now really 250px wide when the task panel is closed.
-- Each Goal in the Goal list has a red trash button (permanent deletion behind a centered confirmation naming the Goal and its exact folder; Cancel is the default), a folder button that opens the Goal's folder in Finder/Explorer, and — for a completed Goal — a **Result** button that opens the same completed-goal popup as the Agent Room.
-- The left panel is 250px wide with equal side padding on the Workspace screen and in the Agent Room, its two tabs are 29px high, the six step tabs are a single 35px row and the version in the title bar is smaller, matching the approved design.
-- The team briefing, the coordinator chat and Settings now open as right-hand slide-overs over the unchanged screen, like the Goal list; only one is open at a time (opening Settings or the briefing closes the chat).
-- Claude Code and Codex now show their own color marks (two MIT-licensed Lobe Icons files embedded in the app and shipped with their license text) instead of the installed application's icon or letters; task avatars are 28px and agent avatars 29px with the status border. OpenCode keeps its installed-application icon.
-- In the Agent Room the task status is shown by the border of the agent's icon (green running or completed, yellow waiting, red failed or blocked) instead of a separate dot; only a running task pulses. The icon is larger so the border reads.
-- When a goal completes, one centered result popup shows where the changes were merged, the changed files, the verification results and the lessons. It opens once when a run completes in the Agent Room and from a new **Result** button in the left panel afterwards.
-- The goals of a workspace open in a slide-over from an outlined **Goal list** button with a count badge, on the Workspace screen and in the Agent Room, instead of an inline card. The list and its actions are unchanged.
-- The Agent Room's task details column is now docked: it starts closed every time a run is opened and is opened and closed only with the panel icon in the titlebar. It no longer remembers its state or opens by itself; when a decision is waiting, the icon shows a blinking dot.
-- The left panel has two tabs on both screens, **Agents** and **Phases & tasks**. The agent cards (with Add, quota, Edit, Models, Remove, order and drag) are also available in the Agent Room; steps 1–2 open on Agents and later steps on Phases & tasks. The Workspace screen lists the plan's tasks under Phases & tasks.
-- One stepper with six steps (Workspace, Agent roles, Plan, Tasks, Verify, Review and merge, grouped Prepare / Run / Finish) now serves both the Workspace settings and the Agent Room. Steps 4–6 open the Room while a run exists and the Room marks the step of the run; steps 1–3 take you back to the Workspace panels. The Room's separate five-stage strip is gone.
-- Closing the window while a run is working now asks first: keep the run going in the background (the default), stop it and close, or cancel. A run keeps working after the app is closed and is shown again when the app reopens.
-- The Agent Room folds a run of thinking updates into one Activity line ("Thinking… n updates") and the run banner says how often the run was interrupted and recovered, with the time and outcome of the last recovery.
-- A custom CLI that refuses a tool (a matched `denial_condition`) now ends its task as **Permission denied** instead of Failed: tasks that depend on it wait, the run is blocked with the tool and the CLI's message, and Resume retries it after the CLI's configuration is changed.
-- Engineering documents: the requirement, use case and quality-scenario documents are consolidated (a reused identifier chain renumbered, superseded and amended entries marked, issue fixes traced, the index rebuilt), a test keeps them consistent, and docs/14 records which requirements are verified by tests and which are not yet implemented.
+- Claude usage lookup: a `/usage` screen that cannot be read (a signed-out Claude CLI or one billed per API use) is reported as soon as it has settled instead of after three minutes, so the refresh icon stops spinning and the message says to sign in with /login (#568, #571).
 
 - Step 2 (agent roles) has a Save button. Saving agent or role changes (for example after an agent was deleted) re-assigns the tasks of the Goal's reviewed plan to the agents the roles now allow instead of discarding the plan, so there is no need to generate a plan again (#564).
 - The Workspace step puts prompt optimization, Jira, Confluence and document preview on one row, in that order (#560).

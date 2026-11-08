@@ -311,7 +311,7 @@ fn collect(
     // Output before the last trust answer is not read again.
     let (mut start, mut answers) = (0, 0);
     let end = Instant::now() + wait;
-    let (mut quiet, settle) = (0u64, super::settled_unreadable(wait));
+    let (mut quiet, limit) = (0u64, super::settle::after(wait));
     let result = (|| {
         loop {
             if Instant::now() >= end {
@@ -374,12 +374,7 @@ fn collect(
                 }
                 Err(_) => {
                     quiet += 1;
-                    if sent
-                        && Duration::from_secs(quiet) >= settle
-                        && let Some(reason) = &unread
-                    {
-                        return Err(super::quota_unreadable(reason));
-                    }
+                    super::settle::check(sent, quiet, limit, unread.as_deref())?;
                 }
             }
         }

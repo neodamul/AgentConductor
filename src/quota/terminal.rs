@@ -168,20 +168,6 @@ fn quota_timeout(sent: bool, wait: std::time::Duration, unread: Option<&str>) ->
     )
 }
 
-/// GitHub #568: a `/usage` screen that stays unreadable and silent is not waited for until the limit
-/// (a signed-out CLI or one billed per API use shows no subscription windows); the screen is named at once.
-const SETTLE_CAP_SECS: u64 = 20;
-
-fn settled_unreadable(wait: std::time::Duration) -> std::time::Duration {
-    (wait / 4).min(std::time::Duration::from_secs(SETTLE_CAP_SECS))
-}
-
-fn quota_unreadable(reason: &str) -> String {
-    format!(
-        "Claude quota screen not understood after /usage: {reason}; if this Claude CLI is signed out or billed per API use, run claude, sign in with /login to your subscription, then refresh; no generation requested"
-    )
-}
-
 pub async fn query_claude(
     profile: &crate::plan::AgentProfile,
     dir: &std::path::Path,
@@ -424,30 +410,23 @@ pub async fn query_claude_within(
         let mut found = None;
         // Output before the last trust answer is not read again.
         let (mut start, mut answers) = (0, 0);
-        let (mut quiet, settle) = (0u64, settled_unreadable(wait));
+        let (mut quiet, limit) = (0u64, settle::after(wait));
         loop {
             let mut buffer = [0; 8192];
             let count = match tokio::time::timeout(Duration::from_secs(1), output.read(&mut buffer))
                 .await
             {
-                Ok(n) => {
-                    quiet = 0;
-                    n.map_err(|e| e.to_string())?
-                }
+                Ok(n) => n.map_err(|e| e.to_string())?,
                 Err(_) if found.is_some() => {
                     return found.ok_or_else(|| "quota missing".to_string());
                 }
                 Err(_) => {
                     quiet += 1;
-                    if sent
-                        && Duration::from_secs(quiet) >= settle
-                        && let Some(reason) = &unread
-                    {
-                        return Err(quota_unreadable(reason));
-                    }
+                    settle::check(sent, quiet, limit, unread.as_deref())?;
                     continue;
                 }
             };
+            quiet = 0;
             if count == 0 {
                 return found.ok_or_else(|| "Claude closed before reporting quota".to_string());
             }
@@ -514,6 +493,7 @@ pub async fn query_claude_within(
     result
 }
 
+mod settle;
 #[cfg(windows)]
 mod windows;
 #[cfg(windows)]
