@@ -120,6 +120,13 @@ module.exports = [
     { name: `panel-${name}`, props: ['paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], keys: ['width', 'paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], pixel: false,
       mock: { url: '?theme=light#0', run: `openSidePanel('${mock}')`, selector: `#${mock}` }, app: { run: `document.getElementById('run-screen').hidden = false; const el = document.getElementById('${app}'); el.showModal ? el.showModal() : (el.hidden = false)`, selector: `#${app}` } },
   ]),
+  // #563: the application menu popup (behavior.md: the mock's short menu is illustrative, so items differ; the box and rows match).
+  ...[
+    { name: 'app-menu-box', props: ['borderTopLeftRadius', 'paddingTop', 'borderTopWidth', 'backgroundColor'], keys: ['borderTopLeftRadius', 'paddingTop', 'borderTopWidth', 'backgroundColor'], mock: '#app-menu', app: '#start-workspace-list' },
+    { name: 'app-menu-item', props: ['borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'fontSize', 'color'], keys: ['height', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'fontSize', 'color'], mock: '#app-menu button', app: '#start-workspace-list button' },
+  ].map(({ mock, app, ...rest }) => ({ ...rest, pixel: false,
+    mock: { url: '?theme=light#0', run: "document.getElementById('app-menu-button').click()", selector: mock },
+    app: { run: "(async () => { document.getElementById('start-app-menu').click(); await new Promise(r => setTimeout(r, 900)); })()", selector: app } })),
   // Step card (GitHub #408): the header and the action footer stay visible while only the body scrolls.
   { name: 'step-card-fixed-header-footer', viewport: {height:520},
     app: { run: "const m = document.querySelector('.startup-main'); m.scrollTop = Math.floor(m.scrollHeight / 2)" },

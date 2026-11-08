@@ -3445,3 +3445,11 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Design census: application menu popup — GitHub #563
+
+- [x] Plan: parity entries `app-menu-box` and `app-menu-item` compare the mock's `#app-menu` with the app's menu popup (radius, padding, row height, font); the item inventory stays the app's (design `behavior.md`: the mock's short menu is illustrative).
+- [x] Verify: design parity light/dark at 1280 and 840 (189 elements, 0 differences), the full Node UI suite.
+- [ ] Remaining in #563: tracked as #579-#585.
+
+Trace: R-210 / UC-202 / DD-222.
+
