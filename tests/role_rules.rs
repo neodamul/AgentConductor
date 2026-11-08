@@ -292,10 +292,12 @@ fn deleted_or_removed_agents_hand_their_tasks_to_the_roles_first_agent() {
             RoleAgent {
                 agent: second.id.clone(),
                 model: None,
+                fallback: None,
             },
             RoleAgent {
                 agent: first.id.clone(),
                 model: None,
+                fallback: None,
             },
         ],
     );

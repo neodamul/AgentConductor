@@ -176,6 +176,7 @@ pub fn reassign(
             .ok_or_else(|| format!("task {} uses role {role}, which has no rule", task.id))?;
         match entries.iter().find(|e| e.agent == task.agent) {
             Some(entry) => {
+                task.fallback = entry.fallback.clone();
                 if entry.model.is_some() {
                     task.model = entry.model.clone();
                 }
@@ -183,6 +184,7 @@ pub fn reassign(
             None => {
                 task.agent = entries[0].agent.clone();
                 task.model = entries[0].model.clone();
+                task.fallback = entries[0].fallback.clone();
             }
         }
     }
