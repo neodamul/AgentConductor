@@ -2555,3 +2555,11 @@ Trace: R-43 / UC-34 / UC-35 / DD-229 / DD-230.
 
 Trace: R-47 / UC-34 / DD-55.
 
+### Claude usage lookup gives up an unreadable screen early — GitHub #568
+
+- [x] Plan: after `/usage` is sent, a screen that parses to no capacity windows and then stays silent for min(wait/4, 20 s) ends the query with the unread reason and the sign-in hint (macOS and Windows collectors); the three-minute limit still applies to a CLI that never answers. Finding: on this Mac the terminal `claude` is signed out (`claude auth status` -> loggedIn false), and an app started from a Claude Code session inherits a session environment that shows API billing, so the lookup waited the full 180 s with the refresh icon spinning.
+- [x] Verify: `claude_wait` (new fast-fail case under 30 s), `claude_quota`, `claude_usage`, Clippy; the Windows branch is compiled by CI only.
+- [ ] Completed: merged on `main` and `release/0.1.x` (0.1.61).
+
+Trace: R-201 / QAS-199 / DD-94.
+

@@ -311,6 +311,7 @@ fn collect(
     // Output before the last trust answer is not read again.
     let (mut start, mut answers) = (0, 0);
     let end = Instant::now() + wait;
+    let (mut quiet, limit) = (0u64, super::settle::after(wait));
     let result = (|| {
         loop {
             if Instant::now() >= end {
@@ -327,6 +328,7 @@ fn collect(
                 .recv_timeout(Duration::from_millis(1000))
             {
                 Ok(chunk) => {
+                    quiet = 0;
                     if data.len() + chunk.len() > 1024 * 1024 {
                         return Err("Claude quota output exceeds 1 MiB".into());
                     }
@@ -370,7 +372,10 @@ fn collect(
                 Err(mpsc::RecvTimeoutError::Disconnected) => {
                     return found.ok_or("Claude closed before reporting quota".into());
                 }
-                Err(_) => {}
+                Err(_) => {
+                    quiet += 1;
+                    super::settle::check(sent, quiet, limit, unread.as_deref())?;
+                }
             }
         }
     })();

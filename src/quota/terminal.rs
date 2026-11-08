@@ -410,6 +410,7 @@ pub async fn query_claude_within(
         let mut found = None;
         // Output before the last trust answer is not read again.
         let (mut start, mut answers) = (0, 0);
+        let (mut quiet, limit) = (0u64, settle::after(wait));
         loop {
             let mut buffer = [0; 8192];
             let count = match tokio::time::timeout(Duration::from_secs(1), output.read(&mut buffer))
@@ -419,8 +420,13 @@ pub async fn query_claude_within(
                 Err(_) if found.is_some() => {
                     return found.ok_or_else(|| "quota missing".to_string());
                 }
-                Err(_) => continue,
+                Err(_) => {
+                    quiet += 1;
+                    settle::check(sent, quiet, limit, unread.as_deref())?;
+                    continue;
+                }
             };
+            quiet = 0;
             if count == 0 {
                 return found.ok_or_else(|| "Claude closed before reporting quota".to_string());
             }
@@ -487,6 +493,7 @@ pub async fn query_claude_within(
     result
 }
 
+mod settle;
 #[cfg(windows)]
 mod windows;
 #[cfg(windows)]
