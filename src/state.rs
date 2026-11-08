@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 
 const SQLITE_BUSY_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(10);
 
+mod memory;
 mod records;
 pub(crate) use records::record_transaction;
 
