@@ -135,6 +135,8 @@ module.exports = [
   ...[[0, 'workspace'], [1, 'roles'], [2, 'plan']].map(([tab, name]) => ({ name: `footer-buttons-one-size-${name}`,
     assert: `(() => { const b = [...document.querySelectorAll('.step-card:not([hidden]) :is(.startup-actions, .startup-review-footer) button')].filter(x => x.getBoundingClientRect().width > 0); return b.length >= 2 && b.every(x => Math.round(x.getBoundingClientRect().height) === 34); })()`,
     app: { setup: STEPS_ENABLED, run: `document.querySelectorAll('#start-step-tabs [role=tab]')[${tab}].click()` } })),
+  // #583: the Workspace footer's idle text is the design's "connected - local run" (the folder is named on the right).
+  { name: 'status-text', assert: "(() => document.getElementById('start-status').textContent.trim() === '연결됨 · 로컬 실행')()", app: { setup: STEPS_ENABLED } },
   // Step card (GitHub #408): the header and the action footer stay visible while only the body scrolls.
   { name: 'step-card-fixed-header-footer', viewport: {height:520},
     app: { run: "const m = document.querySelector('.startup-main'); m.scrollTop = Math.floor(m.scrollHeight / 2)" },
