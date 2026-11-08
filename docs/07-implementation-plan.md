@@ -3067,6 +3067,16 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Source bound: state memory access — GitHub #472
+
+- [x] Plan: separate memory outbox delivery and search access from state record transactions without changing the public Store API or database schema.
+- [x] Red: the focused layout test rejects the original 318-line state records module.
+- [x] Task: move the three memory access methods into `state/memory.rs`; audit, outbox insertion and receipt writes remain in their original atomic transactions.
+- [x] Verify: memory delivery, recall, state, activity, architecture and layout tests pass locally; all-target Clippy passes.
+- [ ] Complete: full local regression and platform verification, then merge this issue-linked unit; #472 remains open for other files and the global gate.
+
+Trace: R-35 / DD-41.
+
 ### Source bound: messenger secrets — GitHub #472
 
 - [x] Plan: split `src/messenger.rs` (389 lines) with no behaviour change: the per-workspace webhook URL and named secrets move to `messenger/secrets.rs` (107 lines), `messenger.rs` keeps settings, payloads and delivery (288 lines); the public paths are re-exported unchanged.
