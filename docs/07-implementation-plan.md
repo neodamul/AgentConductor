@@ -3453,3 +3453,11 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Step footer buttons share one size — GitHub #579
+
+- [x] Plan: user report 2026-11-09 (buttons differed per tab); one rule for every `.startup-actions` / `.startup-review-footer` button of a step card; parity entries `footer-button-{p,q}-{workspace,roles,plan}` compare height, padding, font size and radius with the mock's `.actions .btn`, and `footer-buttons-one-size-*` assert that every footer button of the tab is 34px high (red before the rule: 37.5/39.5px).
+- [x] Verify: design parity light/dark at 1280 and 840 (198 elements, 0 differences), the full Node UI suite.
+- [ ] Completed: PR merged; closes #579.
+
+Trace: R-210 / UC-202 / DD-222.
+

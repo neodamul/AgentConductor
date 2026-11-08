@@ -459,4 +459,6 @@ dialog{padding:24px;border-radius:12px}dialog h2{font-weight:700}
 /* GitHub #563: the application menu popup uses the design's 8px popup radius, 230-310px width and 33px rows with 5px radius. */
 .workspace-list{border-radius:8px;min-width:230px;max-width:310px}
 .workspace-list button{padding:9px 10px;border-radius:5px}
+/* GitHub #579: every step card's footer buttons are the Workspace step's size (mock .actions .btn: 34px, 8px/13px padding, 6px radius, 13px). */
+.step-card :is(.startup-actions,.startup-review-footer) button{box-sizing:border-box;display:inline-flex;align-items:center;gap:6px;height:auto;padding:8px 13px;font-size:13px;line-height:normal;border-radius:6px}
 

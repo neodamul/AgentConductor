@@ -127,6 +127,14 @@ module.exports = [
   ].map(({ mock, app, ...rest }) => ({ ...rest, pixel: false,
     mock: { url: '?theme=light#0', run: "document.getElementById('app-menu-button').click()", selector: mock },
     app: { run: "(async () => { document.getElementById('start-app-menu').click(); await new Promise(r => setTimeout(r, 900)); })()", selector: app } })),
+  // #579: every step card's footer buttons share one size (34px, 8px/13px padding, 6px radius, 13px text).
+  ...[[0, 'j', 0, 'workspace'], [1, 'i', 1, 'roles'], [2, 'a', 2, 'plan']].flatMap(([hash, show, tab, name]) => [['p', 'primary'], ['q', 'quiet']].map(([kind, appClass]) => (
+    { name: `footer-button-${kind}-${name}`, props: ['paddingTop', 'paddingLeft', 'fontSize', 'borderTopLeftRadius'], keys: ['height', 'paddingTop', 'paddingLeft', 'fontSize', 'borderTopLeftRadius'], pixel: false,
+      mock: { url: `?theme=light#${hash}`, selector: `.main>.card[data-show~="${show}"] .actions .btn.${kind}` },
+      app: { setup: STEPS_ENABLED, run: `document.querySelectorAll('#start-step-tabs [role=tab]')[${tab}].click()`, selector: `.step-card:not([hidden]) :is(.startup-actions, .startup-review-footer) button.${appClass}`, index: 0 } }))),
+  ...[[0, 'workspace'], [1, 'roles'], [2, 'plan']].map(([tab, name]) => ({ name: `footer-buttons-one-size-${name}`,
+    assert: `(() => { const b = [...document.querySelectorAll('.step-card:not([hidden]) :is(.startup-actions, .startup-review-footer) button')].filter(x => x.getBoundingClientRect().width > 0); return b.length >= 2 && b.every(x => Math.round(x.getBoundingClientRect().height) === 34); })()`,
+    app: { setup: STEPS_ENABLED, run: `document.querySelectorAll('#start-step-tabs [role=tab]')[${tab}].click()` } })),
   // Step card (GitHub #408): the header and the action footer stay visible while only the body scrolls.
   { name: 'step-card-fixed-header-footer', viewport: {height:520},
     app: { run: "const m = document.querySelector('.startup-main'); m.scrollTop = Math.floor(m.scrollHeight / 2)" },
