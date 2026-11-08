@@ -246,6 +246,8 @@ mod tests;
 use request::Request;
 mod assignments;
 mod dispatch;
+mod identity;
+pub use identity::repository_identity;
 mod goal_actions;
 mod planning;
 mod profiles;

@@ -3397,3 +3397,11 @@ Trace: R-43 / UC-34 / UC-35 / DD-229 / DD-230.
 
 Trace: R-47 / UC-34 / DD-55.
 
+### Footer worktree and branch identity — GitHub #562
+
+- [x] Plan: the snapshot gains `repository_identity` (folder name, path, branch read from `.git/HEAD` or a linked worktree's `gitdir:` pointer without running git); `status_repository.js` renders the mock's `.status-repository` (folder and branch icons, path/branch titles) in both footers next to a status dot; parity entries `status-dot`, `status-repository`, `status-worktree`, `status-branch` use the mock's sample values through the simulator.
+- [x] Verify: `repository_identity` test, `i18n_contracts`, `messages`, `source_layout`, design parity light/dark 1280 and light 840 with 0 differences (32 entries each).
+- [ ] Completed: PR open; closes #562.
+
+Trace: R-210 / UC-202 / DD-222.
+

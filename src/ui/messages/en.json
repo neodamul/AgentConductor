@@ -1320,6 +1320,9 @@
   "about.start": "Get started",
   "startup.talk_to_the_coordinator_from_the_messenger": "Talk to the coordinator from the messenger",
   "startup.let_listed_talkers_ask_the_coordinator_read_only": "Let listed talkers ask the coordinator questions (read-only)",
+  "startup.status_branch": "Branch: {value1}",
+  "startup.status_repository": "Worktree and branch",
+  "startup.status_worktree": "Worktree: {value1}",
   "startup.talkers_comma_separated_user_ids": "Talkers (comma-separated user IDs)",
   "startup.talkers_hint": "Uses the channel above. A talker can only ask questions; an approver is not a talker unless listed here. Messages are read every 30 seconds while a conversation is going on and every 2 minutes otherwise, only while this app is open."
 }

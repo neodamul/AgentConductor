@@ -1320,6 +1320,9 @@
   "about.start": "시작하기",
   "startup.talk_to_the_coordinator_from_the_messenger": "메신저로 코디네이터와 대화",
   "startup.let_listed_talkers_ask_the_coordinator_read_only": "등록한 대화자가 코디네이터에게 질문하도록 허용(읽기 전용)",
+  "startup.status_branch": "브랜치: {value1}",
+  "startup.status_repository": "워크트리와 브랜치",
+  "startup.status_worktree": "워크트리: {value1}",
   "startup.talkers_comma_separated_user_ids": "대화자(쉼표로 구분한 사용자 ID)",
   "startup.talkers_hint": "위의 채널을 그대로 씁니다. 대화자는 질문만 할 수 있고, 승인자는 여기에 적지 않으면 대화자가 아닙니다. 이 앱이 열려 있는 동안에만, 대화 중에는 30초마다 아니면 2분마다 메시지를 읽습니다."
 }
