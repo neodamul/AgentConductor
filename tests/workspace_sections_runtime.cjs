@@ -14,7 +14,7 @@ const preset=`SIM.home.config.goal='Goal A';SIM.home.slugs=[{slug:'goal-a',goal:
   const info=q('start-goal-info'),tabs=q('start-step-tabs');check('fixed Goal information row',!!info&&info.getBoundingClientRect().height===36);
   const tabTop=tabs.getBoundingClientRect().top;info.firstElementChild.textContent='Progress detail '.repeat(40);await wait();check('information updates do not move step tabs',tabs.getBoundingClientRect().top===tabTop);info.firstElementChild.textContent='';
   check('Workspace owns common fields',['start-name','start-coordinator','start-repository','start-worktrees'].every(id=>workspace.contains(q(id))));
-  check('Goal owns objective and imports',['start-goal','start-goal-list-open','start-new-goal','start-mcp-controls','start-optimize-controls'].every(id=>goal.contains(q(id))));
+  check('Goal owns objective and imports',['start-goal','start-goal-list-open','start-new-goal','start-mcp-controls','start-optimize-button'].every(id=>goal.contains(q(id))));
   check('page heading contains no Goal actions',!document.querySelector('.startup-heading #start-new-goal,.startup-heading #start-goal-list-open'));
   check('current Goal is actual selected state',q('start-current-goal').textContent==='Goal A'&&!!q('start-current-goal-state').textContent);
   check('briefing disabled without a run',q('brief-team').disabled);
