@@ -2,6 +2,8 @@
 //! (a signed-out CLI or one billed per API use shows no subscription windows); the screen is named at once.
 use std::time::Duration;
 
+pub(super) mod session_env;
+
 const CAP_SECS: u64 = 20;
 
 /// How long the screen must stay silent before an unreadable answer is final.

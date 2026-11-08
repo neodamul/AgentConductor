@@ -2563,3 +2563,11 @@ Trace: R-47 / UC-34 / DD-55.
 
 Trace: R-201 / QAS-199 / DD-94.
 
+### Claude usage lookup drops inherited session markers — GitHub #589, #585
+
+- [x] Plan: backport of #585 to the 0.1.61 line; the filter lives in `settle/session_env.rs` because `terminal.rs` is at the 500-line gate; macOS `scrub` before the profile environment, Windows filters the environment map.
+- [x] Verify: `claude_session_env`, `claude_wait`, `source_layout`, Clippy; the Windows branch is compiled by CI only.
+- [ ] Completed: merged on `release/0.1.x`; tag with 0.1.61 only when the user asks.
+
+Trace: R-201 / QAS-199 / DD-94.
+
