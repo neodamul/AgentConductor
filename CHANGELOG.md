@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The Agent Room's verify step shows the approved design's card: "5단계 · 실행 · 검증", the coordinator's title and intro, and one row per task with its test command and result (passed / failed / running / waiting) above the coordinator's timeline (#597).
 - The Agent Room's task view is one card under the step tabs, like the approved design: the head reads "4단계 · 실행 · 작업 · 선택한 작업", the task summary, and "agent · task id · first owned path", with the status tag on the right; the activity tabs, instruction box and Stop/Resume/Recover buttons sit inside the card (#580).
 - The task-details panel shows the selected task's instruction, its dependencies and its test command under the ownership path, as in the approved design (#581).
 - The Workspace footer's idle text is the design's "연결됨 · 로컬 실행" / "Connected · local run" (the folder and branch are named on its right side); progress and stale states keep their own texts (#583).

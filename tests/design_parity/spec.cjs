@@ -125,6 +125,19 @@ module.exports = [
     ['meta', ' .cardhead .sub', '.room-card #selected-task', ['fontSize', 'color'], ['height', 'fontSize', 'color']],
   ].map(([name, mock, app, props, keys]) => ({ name: `room-card-${name}`, props, keys, pixel: false,
     mock: { url: '?theme=light#3', selector: `.main>.card[data-show="b"]${mock}` }, app: { setup: STEPS_ENABLED, run: "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click()", selector: app } })),
+  // #597: the Room's verify card (mock view #6 = "f"): coordinator view in the verify stage.
+  ...(() => {
+    const setup = STEPS_ENABLED + "SIM.room.report.state='waiting_approval';SIM.room.report.tasks.forEach(t=>t.status='completed');SIM.room.report.tests=[{task:'task-1',exit_code:0,timed_out:false,output:''}];";
+    const run = "document.querySelectorAll('#start-step-tabs [role=tab]')[4].click(); document.querySelector('.final-step .session-choice').click()";
+    const card = '.main>.card[data-show="f"]';
+    return [['eyebrow', ' .cardhead .eyebrow', '.room-card .eyebrow', ['fontSize', 'fontWeight', 'color'], ['height', 'fontSize', 'fontWeight', 'color']],
+      ['title', ' .cardhead h2', '.room-card #selected-agent', ['fontSize', 'fontWeight', 'color'], ['height', 'fontSize', 'fontWeight', 'color']],
+      ['row', ' .row', '.verify-row', ['borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'fontSize'], ['height', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'fontSize']],
+      ['row-title', ' .row .t', '.verify-row .t', ['fontSize', 'fontWeight'], ['fontSize', 'fontWeight']],
+      ['row-glyph', ' .row .n', '.verify-row .n', ['borderTopLeftRadius', 'backgroundColor', 'fontSize'], ['width', 'height', 'borderTopLeftRadius', 'backgroundColor', 'fontSize']],
+    ].map(([name, mock, app, props, keys]) => ({ name: `verify-card-${name}`, props, keys, pixel: false,
+      mock: { url: '?theme=light#6', selector: card + mock }, app: { setup, run, selector: app } }));
+  })(),
   // #563: the slide-over panels of the design (mock id -> app dialog) share the mock's box and heading.
   ...[['settings-panel', 'start-settings', 'settings'], ['coordinator-chat-panel', 'start-chat', 'chat'], ['workspace-overview', 'start-goals', 'goals']].flatMap(([mock, app, name]) => [
     { name: `panel-${name}`, props: ['paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], keys: ['width', 'paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], pixel: false,
