@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## v0.2.0
 
+- Resume on a failed run now works: it retries the failed tasks (keeping their work and session), runs a failed integration verification again, and restarts the repair rounds, instead of failing again at once; an out-of-scope failure still points to the scope recovery dialog (#625).
+- A built-in CLI (Claude Code, Codex, OpenCode) that prints a plain-text line instead of JSON — a notice or error page from a company gateway or wrapper — no longer fails the task with "invalid JSONL": the line is kept as a warning, the session id and result that follow are still read (so the task can be resumed), and a task that then fails quotes what the CLI printed (#624).
 - The English "Stop run" button no longer shows a doubled stop glyph (#621).
 - The Agent Room card keeps a usable area for the activity, diff, log and lesson tabs when the card is crowded (the review step with its summary); the card scrolls instead of squeezing the tab content to nothing (#619).
 - The English Workspace page title is capitalised ("Workspace settings"), like the card below it (#617).

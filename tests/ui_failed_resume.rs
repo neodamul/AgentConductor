@@ -5,7 +5,7 @@ use std::{fs, path::Path};
 mod support;
 
 #[tokio::test]
-async fn failed_run_resume_is_rejected_before_a_ui_job_is_started() {
+async fn a_scope_failure_resume_points_to_recovery_before_a_ui_job_is_started() {
     let (root, plan) = support::setup("shared");
     let dir = root.join("run");
     workflow::run(plan, &root.join("repo"), &dir, 5)
@@ -14,6 +14,8 @@ async fn failed_run_resume_is_rejected_before_a_ui_job_is_started() {
     let mut store = agentconductor::state::Store::open(dir.join("state.sqlite")).unwrap();
     let mut report = store.document("workflow").unwrap();
     report["state"] = "failed".into();
+    // GitHub #625: only a scope failure is still refused (it has its own recovery); any other failed run is resumed.
+    report["error"] = "out-of-scope change: other.txt".into();
     store
         .record("workflow", &report, "failed run fixture")
         .unwrap();
@@ -30,12 +32,10 @@ async fn failed_run_resume_is_rejected_before_a_ui_job_is_started() {
         .as_bytes(),
     );
 
-    let error = response.expect_err("failed run must not launch resume-due");
+    let error = response.expect_err("a scope failure must not launch resume-due");
     assert_eq!(
         error,
-        agentconductor::ui::messages::text(
-            "native.failed_run_cannot_be_resumed_revise_or_reassign"
-        )
+        agentconductor::ui::messages::text("native.scope_failure_use_recovery")
     );
     assert!(fs::read_dir(&dir).unwrap().all(|entry| {
         !entry

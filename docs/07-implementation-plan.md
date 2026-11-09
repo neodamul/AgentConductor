@@ -3589,3 +3589,19 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #621.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Plain-text lines from built-in CLIs — GitHub #624
+
+- [x] Plan: `Decoder` (`protocol.rs`) keeps a non-JSON line (or non-object JSON) from Claude, Codex and OpenCode as an `EventKind::Warning` text event instead of an error that stopped the worker's read loop (which also lost the session id and result behind it, so Resume could not work, #625); a refusal-like line is still an `Error`, custom profiles keep `on_invalid_json`; the worker quotes the CLI's plain output when the task then fails or has no result (`worker.rs`).
+- [x] Verify: `protocol` (new cases), `custom_cli_denials`, `native_claude`, `native_codex`, `native_opencode`, `cooperative_worker`, `acio_runtime`, `workflow`, `source_layout`, Clippy.
+- [ ] Completed: merged on `main`; closes #624. #625 stays open until the user confirms Resume.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Resume from a failed run — GitHub #625
+
+- [x] Plan: `resume_inner` (`workflow/recovery/resume.rs`) treats a manual Resume of a `failed` run as a restart: failed tasks become `pending` (work and session id kept), `review_round` and the review error are cleared so the repair rounds (DD-132) run again, and a run whose tasks are all completed re-runs its integration verification; the UI maps Resume on a failed run to `resume-due` (an out-of-scope failure still points to scope recovery). A `fail_once_agent` test fixture fails each task's first attempt.
+- [x] Verify: `workflow_resume_failed` (failed task, failed verification), `ui_failed_resume`, `workflow`, `cli_workflow`, `availability_*`, `scope_recovery`, `i18n_contracts`, `messages`, Clippy.
+- [ ] Completed: merged on `main`; #625 stays open until the user confirms Resume.
+
+Trace: R-210 / UC-202 / DD-222.

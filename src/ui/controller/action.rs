@@ -143,10 +143,8 @@ impl Action {
                         crate::ui::messages::text("native.scope_failure_use_recovery").into(),
                     );
                 }
-                return Err(crate::ui::messages::text(
-                    "native.failed_run_cannot_be_resumed_revise_or_reassign",
-                )
-                .into());
+                // GitHub #625: any other failure is retried by Resume (failed tasks, then verification and repair).
+                vec!["resume-due".into()]
             }
             Self::Resume {} => vec!["resume-due".into()],
             Self::Recover {} => vec!["recover".into()],
