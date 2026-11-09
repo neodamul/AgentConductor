@@ -462,3 +462,7 @@ dialog{padding:24px;border-radius:12px}dialog h2{font-weight:700}
 /* GitHub #579: every step card's footer buttons are the Workspace step's size (mock .actions .btn: 34px, 8px/13px padding, 6px radius, 13px). */
 .step-card :is(.startup-actions,.startup-review-footer) button{box-sizing:border-box;display:inline-flex;align-items:center;gap:6px;height:auto;padding:8px 13px;font-size:13px;line-height:normal;border-radius:6px}
 
+/* GitHub #581: the task's instruction, dependencies and test command under the ownership path (mock .task-detail-content). */
+.inspector .task-instruction{margin:7px 0;font-size:12px;line-height:1.6}
+.inspector .task-facts{display:grid;grid-template-columns:80px minmax(0,1fr);gap:9px;margin:10px 0;font-size:12px}
+.inspector .task-facts dt{color:var(--soft)}.inspector .task-facts dd{margin:0;overflow-wrap:anywhere}
