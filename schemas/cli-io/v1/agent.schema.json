@@ -215,6 +215,30 @@
         "session": {
           "type": "object",
           "properties": {
+            "export": {
+              "description": "GitHub #639: how a fallback reads the conversation of a session. file: a file whose name ends with name ({session_id}) below root ({home}); command: the profile's executable with argv ({session_id}), the conversation is its stdout. null in a profile override turns the transfer off.",
+              "oneOf": [
+                {
+                  "type": "object",
+                  "required": ["mode", "root", "name"],
+                  "properties": {
+                    "mode": { "const": "file" },
+                    "root": { "type": "string", "minLength": 1 },
+                    "name": { "type": "string", "minLength": 1 }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "required": ["mode", "argv"],
+                  "properties": {
+                    "mode": { "const": "command" },
+                    "argv": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            },
             "model_args": {
               "type": "array",
               "items": {

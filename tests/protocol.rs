@@ -184,3 +184,21 @@ fn plain_text_alone_is_never_a_success_or_progress_and_a_refusal_still_fails() {
         .unwrap();
     assert_eq!(events[0].kind, EventKind::Error);
 }
+
+// GitHub #637: a refusal sentence printed by a built-in CLI is a denial (permission_denied); a custom profile keeps
+// declaring its own with `denial_condition`, and plain text from it stays an invalid-JSONL error.
+#[test]
+fn a_built_in_refusal_sentence_is_marked_as_a_denial() {
+    for provider in [Provider::Claude, Provider::Codex, Provider::OpenCode] {
+        let events = Decoder::new(provider, 1024)
+            .push(b"Permission denied by the sandbox\n")
+            .unwrap();
+        assert_eq!(events[0].kind, EventKind::Error, "{provider:?}");
+        assert_eq!(events[0].payload["denied"], true, "{provider:?}");
+    }
+    assert!(
+        Decoder::new(Provider::Custom, 1024)
+            .push(b"Permission denied by the sandbox\n")
+            .is_err()
+    );
+}
