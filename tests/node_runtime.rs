@@ -10,9 +10,11 @@ fn every_node_ui_test_passes() {
         .collect();
     scripts.sort();
     assert!(scripts.len() > 20, "the UI tests are found");
-    let failed: Vec<String> = scripts
-        .iter()
-        .filter_map(|script| {
+    // GitHub #651: the page tests are independent, so four run at a time instead of one after another.
+    let next = std::sync::atomic::AtomicUsize::new(0);
+    let failed = std::sync::Mutex::new(Vec::<String>::new());
+    let run = |script: &std::path::PathBuf| -> Option<String> {
+        {
             // A page test that hangs (a browser that never exits) must name itself instead of stalling the whole job.
             let mut child = std::process::Command::new("node")
                 .current_dir(root)
@@ -59,7 +61,24 @@ fn every_node_ui_test_passes() {
                     String::from_utf8_lossy(&stderr)
                 )
             })
-        })
-        .collect();
+        }
+    };
+    std::thread::scope(|scope| {
+        for _ in 0..4 {
+            scope.spawn(|| {
+                loop {
+                    let index = next.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+                    let Some(script) = scripts.get(index) else {
+                        break;
+                    };
+                    if let Some(message) = run(script) {
+                        failed.lock().unwrap().push(message);
+                    }
+                }
+            });
+        }
+    });
+    let mut failed = failed.into_inner().unwrap();
+    failed.sort();
     assert!(failed.is_empty(), "{}", failed.join("\n"));
 }
