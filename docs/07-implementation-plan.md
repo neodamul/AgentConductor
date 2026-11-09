@@ -3611,6 +3611,9 @@ Trace: R-210 / UC-202 / DD-222.
 - [x] Plan: the release workflow publishes a tag with a `-` suffix (`v0.2.0-Beta1`) with `--prerelease`, so GitHub's "latest" and the in-app updater (which reads `releases/latest`) keep offering the stable 0.1.61; the package version stays 0.2.0 and the CHANGELOG section is `v0.2.0-Beta1`. CHANGELOG on `main` gains the `v0.1.61` section (#524).
 - [x] Verify: `release_notes` (workflow contract), `release_docs`, `public_docs`, `release_package`, `manual_renderer`, `release notes v0.2.0-beta.1`, `scripts/check_screenshots.py`.
 - [ ] Completed: tagged `v0.2.0-Beta1` after the full suite on the release commit.
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### Conversation transfer on fallback — GitHub #639
 
 - [x] Plan: `invocation.session.export` in `acio.agent/1` (`file`: a store file ending with `{session_id}` below `{home}`-relative root; `command`: the profile's executable with an argv) is the data form of the CLI's `/export`. `conversation::export` reads it, `flatten` keeps `role: text` of user/assistant turns only (no tool calls, tool output or reasoning; 32 KiB of the newest turns), and `transfer_role` appends it to the handoff as "Previous conversation", an untrusted record; the next agent starts a new provider session (DD-43). Presets: Claude `~/.claude/projects`, Codex `~/.codex/sessions`, OpenCode `session export`. `"export": null` in a profile's agent settings turns it off.
