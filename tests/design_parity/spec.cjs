@@ -69,8 +69,8 @@ module.exports = [
   // #468: the About dialog, opened by update (centered, with the update tag). Captured like every other box (lifted to a fixed
   // spot, so raster phase is identical on both sides); the mock re-centres open dialogs itself, so its observers are detached.
   { name: 'about-dialog', props: [], keys: ['width', 'height'],
-    mock: { url: '?theme=light&about=update#0', setup: 'referenceDialogResize.disconnect();referenceDialogOpen.disconnect();', selector: '#about-dialog' },
-    app: { setup: "SIM.reply.about_status=()=>({version:'0.2.0',show:true,updated:true});", selector: '#about-dialog' } },
+    mock: { url: '?theme=light&about=update#0', setup: 'referenceDialogResize.disconnect();referenceDialogOpen.disconnect();document.head.append(Object.assign(document.createElement(\'style\'),{textContent:\'html,body{background:#fff!important}body *{visibility:hidden!important}#about-dialog,#about-dialog *{visibility:visible!important}\'}));', selector: '#about-dialog' },
+    app: { setup: "SIM.reply.about_status=()=>({version:'0.2.0',show:true,updated:true});document.head.append(Object.assign(document.createElement('style'),{textContent:'html,body{background:#fff!important}body *{visibility:hidden!important}#about-dialog,#about-dialog *{visibility:visible!important}'}));", selector: '#about-dialog' } },
   { name: 'step-number-box', props: [], keys: ['width', 'height'], pixel: false,
     mock: { url: '?theme=light#0', selector: '.step-group .tab .num', index: 0 }, app: { selector: '#start-step-tabs .tab-number', index: 0 } },
   { name: 'step-group-icon', props: [], keys: ['width', 'height'], pixel: false,
