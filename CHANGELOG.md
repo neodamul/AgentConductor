@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Resume on a failed run now works: it retries the failed tasks (keeping their work and session), runs a failed integration verification again, and restarts the repair rounds, instead of failing again at once; an out-of-scope failure still points to the scope recovery dialog (#625).
 - Jira items are called issues everywhere they are shown ("Jira 이슈" / "Jira issue": the import button, the reference dialog, the import error text and the documents), not stories (#440, #584).
 - The Claude usage lookup no longer inherits the Claude Code session that started the app (session markers such as CLAUDECODE and CLAUDE_CODE_ENTRYPOINT are dropped; login tokens, keys and provider settings are kept) (#585, #589).
 - Claude usage lookup: a `/usage` screen that cannot be read (a signed-out Claude CLI or one billed per API use) is reported as soon as it has settled instead of after three minutes, so the refresh icon stops spinning and the message says to sign in with /login (#568, #571).

@@ -64,13 +64,28 @@ async fn resume_inner(
             task.automatic_retries += 1;
         }
     }
+    // GitHub #625 / DD-132: Resume on a failed run retries its failed tasks from the retained work and session
+    // and starts the coordinator's repair rounds again (the dependents blocked by them are retried below).
+    let from_failed = !automatic && report.state == "failed";
+    if from_failed {
+        report.review_round = 0;
+        report.review_error = None;
+        for task in &mut report.tasks {
+            if task.status == "failed" {
+                task.status = "pending".into();
+                task.retry_not_before = 0;
+            }
+        }
+    }
     // Blocked tasks (for example a timed-out session) are retried by Resume.
     for task in &mut report.tasks {
         if task.status == "blocked" && !tool_rejected(dir, task)? {
             task.status = "pending".into();
         }
     }
-    if !report.tasks.iter().any(|t| t.status == "pending") {
+    // A failed integration verification (every task completed) is run again.
+    let reverify = from_failed && report.tasks.iter().all(|t| t.status == "completed");
+    if !reverify && !report.tasks.iter().any(|t| t.status == "pending") {
         if report
             .tasks
             .iter()
