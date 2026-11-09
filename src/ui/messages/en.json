@@ -556,7 +556,7 @@
   "room.stdout_recent_local_tail": "stdout · recent local tail",
   "room.stop_all_active_tasks_and_tests_retain_their": "Stop all active tasks and tests, retain their evidence, and require explicit resume.",
   "room.stop_run": "Stop run",
-  "room.stop_run_f450de": "■ Stop run",
+  "room.stop_run_f450de": "Stop run",
   "room.stop_the_run": "Stop the run",
   "room.stopped": "Stopped",
   "room.targeted_revision_previous_evidence_is_retained": "Targeted revision · previous evidence is retained",
