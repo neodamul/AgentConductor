@@ -3597,3 +3597,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #624. #625 stays open until the user confirms Resume.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Resume from a failed run — GitHub #625
+
+- [x] Plan: `resume_inner` (`workflow/recovery/resume.rs`) treats a manual Resume of a `failed` run as a restart: failed tasks become `pending` (work and session id kept), `review_round` and the review error are cleared so the repair rounds (DD-132) run again, and a run whose tasks are all completed re-runs its integration verification; the UI maps Resume on a failed run to `resume-due` (an out-of-scope failure still points to scope recovery). A `fail_once_agent` test fixture fails each task's first attempt.
+- [x] Verify: `workflow_resume_failed` (failed task, failed verification), `ui_failed_resume`, `workflow`, `cli_workflow`, `availability_*`, `scope_recovery`, `i18n_contracts`, `messages`, Clippy.
+- [ ] Completed: merged on `main`; #625 stays open until the user confirms Resume.
+
+Trace: R-210 / UC-202 / DD-222.
