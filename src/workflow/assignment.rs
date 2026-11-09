@@ -94,6 +94,16 @@ pub(super) fn transfer_role(
         task.artifacts.display(),
         String::from_utf8_lossy(&diff[..diff.len().min(64 * 1024)])
     );
+    // GitHub #639: the old agent's conversation travels with the handoff (its preset's `session.export`).
+    let section = report
+        .plan
+        .agents
+        .iter()
+        .find(|a| a.id == old_agent)
+        .zip(task.session_id.as_deref())
+        .map(|(profile, session)| crate::conversation::section(profile, session, &task.cwd, dir))
+        .unwrap_or_default();
+    let text = format!("{text}{section}");
     fs::write(&handoff, &text).map_err(|e| e.to_string())?;
     store.record("handoff",&serde_json::json!({"task":id,"from":old_agent,"to":agent,"previous_session":task.session_id,"evidence":task.artifacts,"handoff":handoff}),note)?;
     report.plan.tasks[index].agent = agent.into();
@@ -102,7 +112,7 @@ pub(super) fn transfer_role(
         report.plan.tasks[index].fallback = None;
     }
     report.plan.tasks[index].model = model.map(String::from);
-    // Bounded facts only; no free-form cross-agent conversation or foreign native ID.
+    // Bounded facts and the old conversation as an untrusted record (GitHub #639); no foreign native ID is reused.
     report.plan.tasks[index].prompt.push_str("\n\n");
     report.plan.tasks[index].prompt.push_str(&text);
     report.tasks[index].session_id = None;

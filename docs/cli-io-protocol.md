@@ -274,6 +274,7 @@ An in-house CLI has no preset: its owner fills the same fields in its agent sett
 |---|---|
 | `invocation.executable`, `input`, `args`, `control_args`, `full_access` (`append` or `replace_argv`) | the per-provider argv templates and `full_access_args(Provider)` in `src/adapters.rs` |
 | `invocation.session.model_args`, `.model_aliases`, `.selectors`, `.resume` (`append` or `replace_argv`, with `full_access_argv` and `bare_argv`) | the `match profile.parser` branches that add `--model`, `--resume`, `--session`, `exec … resume`, and their ambiguity checks |
+| `invocation.session.export` (`file` with `root` and `name`, or `command` with `argv`; `{home}`, `{session_id}`; `null` in a profile turns it off) | GitHub #639: how a fallback reads the old agent's conversation (the CLI's `/export`) |
 | `invocation.direct_folder` | `direct_folder_args` (Codex's `--skip-git-repo-check` for a folder that is not a Git repository) |
 | `invocation.options` (effort, …) | already settings as `execution_options` (`values`, `model_values`, `default`); same shape, now also carries Claude's five effort levels and Codex's `-c model_reasoning_effort` |
 | `invocation.response_schema` (`args` or `file_args`) | nothing yet; Claude `--json-schema`, Codex `--output-schema` |
