@@ -141,3 +141,46 @@ fn custom_profile_event_mapping_defaults_preserve_the_existing_wire_contract() {
         EventKind::Unknown
     );
 }
+
+/// GitHub #624: a built-in CLI behind a company gateway can print plain text; it is kept as a warning and the
+/// session id and result that follow still arrive, instead of "invalid JSONL" ending the read.
+#[test]
+fn plain_text_lines_from_a_built_in_cli_are_kept_and_do_not_end_the_read() {
+    for provider in [Provider::Claude, Provider::Codex, Provider::OpenCode] {
+        let mut d = Decoder::new(provider, 1 << 20);
+        let mut events = d.push(b"Welcome to the company gateway\n42\n").unwrap();
+        events.extend(
+            d.push(b"{\"type\":\"system\",\"subtype\":\"init\",\"session_id\":\"c-1\"}\n{\"type\":\"result\",\"is_error\":false}\n")
+                .unwrap(),
+        );
+        events.extend(d.finish().unwrap());
+        assert_eq!(events[0].kind, EventKind::Warning, "{provider:?}");
+        assert_eq!(events[0].payload["text"], "Welcome to the company gateway");
+        assert_eq!(
+            events[1].kind,
+            EventKind::Warning,
+            "a bare number is text too"
+        );
+        if provider == Provider::Claude {
+            assert_eq!(events[2].kind, EventKind::Session);
+            assert_eq!(events[3].session_id.as_deref(), Some("c-1"));
+            assert_eq!(events[3].kind, EventKind::Result);
+        }
+    }
+}
+
+#[test]
+fn plain_text_alone_is_never_a_success_or_progress_and_a_refusal_still_fails() {
+    let mut d = Decoder::new(Provider::OpenCode, 1 << 20);
+    let events = d.push(b"working on it\n").unwrap();
+    assert!(
+        events
+            .iter()
+            .all(|e| e.kind != EventKind::Result && e.kind != EventKind::Progress)
+    );
+    let mut d = Decoder::new(Provider::Claude, 1 << 20);
+    let events = d
+        .push(b"Permission denied by non-interactive policy\n")
+        .unwrap();
+    assert_eq!(events[0].kind, EventKind::Error);
+}

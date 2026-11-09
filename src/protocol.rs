@@ -30,7 +30,9 @@ impl Decoder {
             result_pointer: None,
             error_condition: None,
             denial: None,
-            text_mode: false,
+            // GitHub #624: a built-in CLI behind a company gateway or wrapper can print a plain-text line (a notice,
+            // an error page); it is kept as a warning instead of ending the read, so the real result and session id still arrive.
+            text_mode: provider != Provider::Custom,
             acio: false,
             limit,
             buffer: vec![],
@@ -84,7 +86,11 @@ impl Decoder {
             )
         } else {
             (
-                EventKind::Progress,
+                if self.provider == Provider::Custom {
+                    EventKind::Progress
+                } else {
+                    EventKind::Warning
+                },
                 serde_json::json!({"type":"text","text":text}),
             )
         };
@@ -120,7 +126,7 @@ impl Decoder {
         };
         let payload: Value = match serde_json::from_slice(json) {
             Ok(payload) => payload,
-            Err(_) if self.text_mode && self.provider == Provider::Custom => {
+            Err(_) if self.text_mode => {
                 return Ok(vec![self.text_event(start, json)]);
             }
             Err(e) => {
@@ -131,6 +137,9 @@ impl Decoder {
             }
         };
         if !payload.is_object() {
+            if self.text_mode {
+                return Ok(vec![self.text_event(start, json)]);
+            }
             return Err(format!("event must be a JSON object at offset {start}"));
         }
         let session = if self.acio {

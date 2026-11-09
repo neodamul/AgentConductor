@@ -99,6 +99,7 @@ pub(in crate::workflow) async fn worker(
         let mut provider_error = None;
         let mut parse_error = None;
         let mut denied = None;
+        let mut text_seen = false;
         loop {
             let n = file.read(&mut buffer).map_err(|e|e.to_string())?;
             let batch = match if n==0 {decoder.finish()} else {decoder.push(&buffer[..n])} {
@@ -119,6 +120,7 @@ pub(in crate::workflow) async fn worker(
                 if event.kind==EventKind::Denied {
                     denied = agent.denial_condition.as_ref().map(|d| d.describe(&event.payload)).or(denied);
                 }
+                text_seen |= event.kind==EventKind::Warning && event.payload["type"]=="text";
                 terminal |= event.kind==EventKind::Result;
                 progress |= event.kind==EventKind::Progress;
                 serde_json::to_writer(&mut events,&event).map_err(|e|e.to_string())?;
@@ -135,7 +137,9 @@ pub(in crate::workflow) async fn worker(
             }
             // GitHub #341: a declared denial is its own state; a stop or a timeout still wins.
             permission_denied = denied.is_some() && !process.timed_out && !process.stopped;
-            return Err(denied.or(provider_error).unwrap_or_else(||format!("agent exit={:?}, termination_signal={:?}, timed_out={}; inspect retained logs",process.exit_code,process.termination_signal,process.timed_out)));
+            // GitHub #624: plain text the CLI printed instead of JSON is the likeliest cause, so it is quoted.
+            let plain=if text_seen {format!("\nthe CLI printed plain text instead of JSON events:\n{}",crate::coordinator::output_excerpt(&process.stdout,&process.stderr))} else {String::new()};
+            return Err(denied.or(provider_error).unwrap_or_else(||format!("agent exit={:?}, termination_signal={:?}, timed_out={}; inspect retained logs{plain}",process.exit_code,process.termination_signal,process.timed_out)));
         }
         if let Some(error)=parse_error {return Err(format!("{error}\nthe CLI's own output:\n{}",crate::coordinator::output_excerpt(&process.stdout,&process.stderr)));}
         if agent.cooperative == crate::plan::CooperativeMode::CheckpointV1 {
@@ -158,7 +162,7 @@ pub(in crate::workflow) async fn worker(
                 }
             }
         }
-        if !terminal && !(agent.parser==crate::protocol::Provider::OpenCode && progress) {return Err("missing successful provider result".into());}
+        if !terminal && !(agent.parser==crate::protocol::Provider::OpenCode && progress) {return Err(if text_seen {format!("missing successful provider result\nthe CLI printed plain text instead of JSON events:\n{}",crate::coordinator::output_excerpt(&process.stdout,&process.stderr))} else {"missing successful provider result".into()});}
         if worktree {
             let git=Repository::open(&report.cwd)?;
             if git.head()?!=report.base {return Err("agent changed Git HEAD".into());}
