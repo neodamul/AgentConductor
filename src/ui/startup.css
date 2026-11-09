@@ -428,7 +428,7 @@ header.titlebar #start-workspace-menu{font-size:13px}#start-mcp-controls.source-
 .step-group>.tabs-group-name{width:auto;gap:5px}.tabs-group-name .group-label{font-size:12px;font-weight:500;white-space:nowrap}
 
 /* GitHub #562: footer status dot and the Workspace folder / branch on the right (mock .status, .status-repository). */
-.statusbar .dot{width:8px;height:8px;border-radius:50%;flex:none}.statusbar .d-ok{background:var(--ok)}.statusbar .d-wait{background:#c9881c}
+.statusbar .dot{width:8px;height:8px;border-radius:50%;flex:none}.statusbar .d-ok{background:var(--ok)}.statusbar .d-wait{background:var(--dot-wait)}
 footer.statusbar{gap:10px;line-height:1;padding-right:16px}
 .status-repository{display:flex;align-items:center;gap:14px;min-width:0;max-width:65%;margin-left:auto;height:24px}
 .status-worktree,.status-branch{display:flex;align-items:center;gap:6px;min-width:0;height:24px}

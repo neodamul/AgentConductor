@@ -3533,3 +3533,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #600.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Main CI red after the Room card work — GitHub #609
+
+- [x] Plan: `--dot-wait` token in both theme sets (replaces the literal in `startup.css`); `inspector_model.cjs` takes the task id from `#selected-task`'s meta line; parity: title/meta height keys dropped, the footer one-size assertion allows 1.5 px, `tolerance: 0.002` on the text-heavy pixel entries (about-dialog, status-*).
+- [x] Verify: `choice_controls`, `interface_theme`, `design_parity` (all four theme/width combinations) pass locally on macOS.
+- [ ] Completed: merged on `main`; closes #609.
+
+Trace: R-210 / UC-202 / DD-222.
