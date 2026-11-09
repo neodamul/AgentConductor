@@ -44,7 +44,8 @@ async function visit(browser, side, spec) {
     await browser.goto(APP);
   }
   if (side === 'app') await browser.eval(`document.documentElement.dataset.theme = ${JSON.stringify(THEME)}`);
-  if (spec.run) await browser.eval(spec.run);
+  // GitHub #482: the control a run script clicks may render a moment later (quota buttons); retry until it exists.
+  if (spec.run) for (let i = 0; ; i++) { try { await browser.eval(spec.run); break; } catch (e) { if (i >= 50) throw e; await new Promise(r => setTimeout(r, 100)); } }
   await new Promise(r => setTimeout(r, 600));
   // Pulses and slides are checked by their own tests; freeze them so the pixels are comparable.
   await browser.eval("document.head.append(Object.assign(document.createElement('style'), { textContent: '*,*::before,*::after{animation:none!important;transition:none!important}' }))");
