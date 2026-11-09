@@ -58,3 +58,32 @@ async fn resume_runs_a_failed_integration_verification_again() {
     assert!(report.error.is_none());
     fs::remove_dir_all(root).unwrap();
 }
+
+// GitHub #637: a coordinator review that ended blocked without revisions is retried by Resume; a run with nothing
+// to resume says which task or state blocks it.
+#[tokio::test]
+async fn resume_retries_a_blocked_review_and_names_what_blocks_otherwise() {
+    let (root, plan) = support::setup("shared");
+    let dir = root.join("run");
+    workflow::run(plan, &root.join("repo"), &dir, 20)
+        .await
+        .unwrap();
+    let mut store = agentconductor::state::Store::open(dir.join("state.sqlite")).unwrap();
+    let mut report = store.document("workflow").unwrap();
+    report["state"] = "blocked".into();
+    report["latest_review"] =
+        serde_json::json!({"verdict":"blocked","summary":"unclear","evidence":[],"revisions":[]});
+    store
+        .record("workflow", &report, "blocked review fixture")
+        .unwrap();
+    drop(store);
+    let report = workflow::load(&dir).unwrap();
+    assert_eq!(workflow::resume_blocker(&dir, &report).unwrap(), None);
+    let report = workflow::resume_due(&dir, now(), 20).await.unwrap();
+    assert_eq!(report.state, "waiting_approval", "{:?}", report.error);
+    assert!(report.latest_review.is_none());
+    // Everything completed and the run waits for approval: nothing to resume, and the state is named.
+    let blocker = workflow::resume_blocker(&dir, &report).unwrap();
+    assert_eq!(blocker, Some((String::new(), "waiting_approval".into())));
+    fs::remove_dir_all(root).unwrap();
+}
