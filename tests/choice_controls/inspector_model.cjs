@@ -7,8 +7,9 @@ execFileSync('node',[path.join(root,'tests/ui_sim/build.cjs'),root,path.join(dir
 const preset=`SIM.home.run_available=true;SIM.home.run_state='running';SIM.room.report.state='waiting_approval';SIM.room.report.plan.agents.forEach(a=>a.catalog=null);SIM.room.report.tasks.forEach(t=>t.status='pending');SIM.reply.action=p=>({accepted:true,kind:p.action.kind,message:'ok'});window.inspectorFixture=true;`;
 (async()=>{try{for(const width of [840,1280]){const browser=await launch(chrome,{width,height:960});try{for(const theme of ['light','dark']){
  await browser.goto(pathToFileURL(path.join(dir,'app.html')).href+'?run='+theme+width);
+ await browser.eval("window.__beforePreset=true");
  await browser.eval(`PRESET(${JSON.stringify(preset)})`);
- let ready=false;for(let i=0;i<50;i++){try{ready=await browser.eval("!!window.inspectorFixture && !!document.getElementById('start-tab-tasks')");}catch{}if(ready)break;await new Promise(r=>setTimeout(r,50));}
+ let ready=false;for(let i=0;i<50;i++){try{ready=await browser.eval("!window.__beforePreset && !!window.inspectorFixture && !!document.getElementById('start-tab-tasks')");}catch{}if(ready)break;await new Promise(r=>setTimeout(r,50));}
  const result=await browser.eval(`(async()=>{
   const checks=[],check=(name,value)=>{if(!value)throw Error(name);checks.push(name);};
   const wait=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
