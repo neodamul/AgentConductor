@@ -3541,3 +3541,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #609.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Assignment menu parity — GitHub #605
+
+- [x] Plan: the app's choice popup (`.ac-choice-menu`, `anchored_select.js`) already is the mock's `#assignment-menu`; parity entries `assignment-menu-box`, `-heading`, `-option` open both popups and compare box, heading and option styles (no app change).
+- [x] Verify: the three entries in light/dark at 1280 and 840, `architecture_trace`, `messages`.
+- [ ] Completed: merged on `main`; closes #605.
+
+Trace: R-210 / UC-202 / DD-222.
