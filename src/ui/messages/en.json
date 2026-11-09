@@ -1217,5 +1217,9 @@
   "room.verification_test": "Integration verification: test {value1} of {value2} ({value3}) running for {value4}",
   "room.verification_next": "Every task is done; the coordinator is verifying the combined result.",
   "room.stopping_run": "Stopping: waiting for the agents and tests to exit.",
-  "room.runner_absent": "The run's process is not running, but the run is still marked as running. Use Recover to continue it."
+  "room.runner_absent": "The run's process is not running, but the run is still marked as running. Use Recover to continue it.",
+  "native.nothing_to_resume_task": "Nothing to resume: task {value1} is {value2}",
+  "native.nothing_to_resume_run": "Nothing to resume: the run is {value1}",
+  "room.notice_review_blocked": "The coordinator's review is blocked and proposed no revision",
+  "room.notice_reassign": "Reassign an agent"
 }

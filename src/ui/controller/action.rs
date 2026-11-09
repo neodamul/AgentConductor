@@ -136,7 +136,23 @@ impl Action {
                 // GitHub #625: any other failure is retried by Resume (failed tasks, then verification and repair).
                 vec!["resume-due".into()]
             }
-            Self::Resume {} => vec!["resume-due".into()],
+            Self::Resume {} => {
+                // GitHub #637: say what blocks a Resume that would start nothing.
+                if let Some((task, status)) = workflow::resume_blocker(dir, report)? {
+                    return Err(if task.is_empty() {
+                        crate::ui::messages::render(
+                            "native.nothing_to_resume_run",
+                            &[("value1", &status)],
+                        )
+                    } else {
+                        crate::ui::messages::render(
+                            "native.nothing_to_resume_task",
+                            &[("value1", &task), ("value2", &status)],
+                        )
+                    });
+                }
+                vec!["resume-due".into()]
+            }
             Self::Recover {} => vec!["recover".into()],
             Self::ScopeRecovery {
                 task,

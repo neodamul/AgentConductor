@@ -1,6 +1,6 @@
 use super::*;
 mod resume;
-pub use resume::{resume_availability_due, resume_due};
+pub use resume::{resume_availability_due, resume_blocker, resume_due};
 
 /// Durable request; the active coordinator consumes and audits it after draining its jobs.
 pub fn stop(dir: &Path, reason: &str) -> Result<(), String> {

@@ -6,6 +6,9 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Resume says why it has nothing to do ("Nothing to resume: task X is failed" / "재개할 것 없음: 태스크 X가 failed") instead of silently doing nothing (#637).
+- A coordinator review that ends `blocked` without revisions is retried by Resume, and the task notice offers **Retry** and **Reassign an agent** (#637).
+- A refusal sentence printed by a built-in CLI (Claude Code, Codex, OpenCode) ends the task as "Permission denied", like a declared denial, instead of a plain failure (#637).
 - Resume on a failed run now works: it retries the failed tasks (keeping their work and session), runs a failed integration verification again, and restarts the repair rounds, instead of failing again at once; an out-of-scope failure still points to the scope recovery dialog (#625).
 - A built-in CLI (Claude Code, Codex, OpenCode) that prints a plain-text line instead of JSON — a notice or error page from a company gateway or wrapper — no longer fails the task with "invalid JSONL": the line is kept as a warning, the session id and result that follow are still read (so the task can be resumed), and a task that then fails quotes what the CLI printed (#624).
 - Jira items are called issues everywhere they are shown ("Jira 이슈" / "Jira issue": the import button, the reference dialog, the import error text and the documents), not stories (#440, #584).
