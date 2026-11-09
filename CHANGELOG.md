@@ -4,8 +4,9 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
-## v0.2.0
+## v0.2.0-beta.1
 
+- **Beta.** The first 0.2.0 build: the redesigned goal screens (Workspace, Agent roles, Plan, Agent Room with its task, verify and review cards) checked against the approved design in light and dark, English and Korean. It is a pre-release; the stable channel stays on 0.1.61 until 0.2.0 is released.
 - Resume on a failed run now works: it retries the failed tasks (keeping their work and session), runs a failed integration verification again, and restarts the repair rounds, instead of failing again at once; an out-of-scope failure still points to the scope recovery dialog (#625).
 - A built-in CLI (Claude Code, Codex, OpenCode) that prints a plain-text line instead of JSON — a notice or error page from a company gateway or wrapper — no longer fails the task with "invalid JSONL": the line is kept as a warning, the session id and result that follow are still read (so the task can be resumed), and a task that then fails quotes what the CLI printed (#624).
 - The English "Stop run" button no longer shows a doubled stop glyph (#621).
@@ -67,6 +68,13 @@ the GitHub Release notes for its tag.
 
 - Step 2 (agent roles) has a Save button. Saving agent or role changes (for example after an agent was deleted) re-assigns the tasks of the Goal's reviewed plan to the agents the roles now allow instead of discarding the plan, so there is no need to generate a plan again (#564).
 - The Workspace step puts prompt optimization, Jira, Confluence and document preview on one row, in that order (#560).
+
+## v0.1.61
+- Resume on a failed run now works: it retries the failed tasks (keeping their work and session), runs a failed integration verification again, and restarts the repair rounds, instead of failing again at once; an out-of-scope failure still points to the scope recovery dialog (#625).
+- A built-in CLI (Claude Code, Codex, OpenCode) that prints a plain-text line instead of JSON no longer fails the task with "invalid JSONL": the line is kept as a warning, the session id and result that follow are still read, and a task that then fails quotes what the CLI printed (#624).
+- Jira items are called issues everywhere they are shown (#440).
+- The Claude usage lookup no longer inherits the Claude Code session that started the app (#589), and an unreadable `/usage` screen is reported as soon as it has settled (#568).
+- Step 2 (agent roles) has a Save button, and the Workspace step puts prompt optimization, Jira, Confluence and document preview on one row (#564, #560).
 
 ## v0.1.60
 - **Messenger channel interface** (#515, phases #517-#519): Slack and the company webhook now sit behind one channel interface, so another messenger is one implementation. The notices are an enumerated catalogue with localized texts; at most ten a minute per workspace are sent (the rest are counted and reported once), and notices that carry an answer code are never limited. More than 20 pending tool requests are announced 20 at a time, the rest follow in order as answers free slots.

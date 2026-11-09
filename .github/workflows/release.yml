@@ -61,13 +61,16 @@ jobs:
         run: |
           cat release/macos/dist/ARCHIVE-SHA256SUMS release/windows/dist/ARCHIVE-SHA256SUMS > release/SHA256SUMS
           cat release/SHA256SUMS
-      - name: Publish stable release with verified archives
+      - name: Publish release with verified archives
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           # DD-49: the Rust CLI refuses to publish without a reviewed changelog section.
           cargo run --release --locked -- release notes "$GITHUB_REF_NAME" > release/NOTES.md
-          gh release create "$GITHUB_REF_NAME" \
+          # A suffixed tag (v0.2.0-beta.1) is a pre-release: "latest" and the in-app updater keep offering the stable version.
+          prerelease=()
+          case "$GITHUB_REF_NAME" in *-*) prerelease=(--prerelease) ;; esac
+          gh release create "$GITHUB_REF_NAME" "${prerelease[@]}" \
             --repo "$GITHUB_REPOSITORY" \
             --title "AgentConductor $GITHUB_REF_NAME" \
             --notes-file release/NOTES.md \

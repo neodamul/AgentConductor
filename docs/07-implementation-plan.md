@@ -3605,3 +3605,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; #625 stays open until the user confirms Resume.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### 0.2.0 beta pre-release — GitHub #428
+
+- [x] Plan: the release workflow publishes a tag with a suffix (`v0.2.0-beta.1`) with `--prerelease`, so GitHub's "latest" and the in-app updater (which reads `releases/latest`) keep offering the stable 0.1.61; the package version stays 0.2.0 and the CHANGELOG section is `v0.2.0-beta.1`. CHANGELOG on `main` gains the `v0.1.61` section (#524).
+- [x] Verify: `release_notes` (workflow contract), `release_docs`, `public_docs`, `release_package`, `manual_renderer`, `release notes v0.2.0-beta.1`, `scripts/check_screenshots.py`.
+- [ ] Completed: tagged `v0.2.0-beta.1` after the full suite on the release commit.
+
+Trace: R-210 / UC-202 / DD-222.
