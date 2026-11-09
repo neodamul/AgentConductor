@@ -68,7 +68,7 @@ module.exports = [
       mock: { url: '?theme=light#0', run: STEP_REFERENCE_WIDTH, selector: '.tabs .tab', index, rel: '.titlebar' }, app: { selector: '#start-step-tabs [role=tab]', index, rel: 'header.titlebar' } }]),
   // #468: the About dialog, opened by update (centered, with the update tag). Captured like every other box (lifted to a fixed
   // spot, so raster phase is identical on both sides); the mock re-centres open dialogs itself, so its observers are detached.
-  { name: 'about-dialog', tolerance: 0.002, props: [], keys: ['width', 'height'],
+  { name: 'about-dialog', props: [], keys: ['width', 'height'],
     mock: { url: '?theme=light&about=update#0', setup: 'referenceDialogResize.disconnect();referenceDialogOpen.disconnect();', selector: '#about-dialog' },
     app: { setup: "SIM.reply.about_status=()=>({version:'0.2.0',show:true,updated:true});", selector: '#about-dialog' } },
   { name: 'step-number-box', props: [], keys: ['width', 'height'], pixel: false,
@@ -80,9 +80,9 @@ module.exports = [
   // #562: the footer's status dot and the Workspace folder / branch on its right match the mock's `.status`.
   { name: 'status-dot', props: ['backgroundColor', 'borderTopLeftRadius'], keys: ['width', 'height', 'backgroundColor', 'borderTopLeftRadius'],
     mock: { url: '?theme=light#0', selector: '.status .dot' }, app: { selector: '#startup-screen footer.statusbar .dot' } },
-  { name: 'status-repository', tolerance: 0.002, props: ['gap'], keys: ['width', 'height', 'gap'],
+  { name: 'status-repository', props: ['gap'], keys: ['width', 'height', 'gap'],
     mock: { url: '?theme=light#0', selector: '.status .status-repository' }, app: { selector: '#startup-screen footer.statusbar .status-repository' } },
-  ...['worktree', 'branch'].map(part => ({ name: `status-${part}`, tolerance: 0.002, props: ['fontSize', 'color'], keys: ['width', 'height', 'fontSize', 'color'],
+  ...['worktree', 'branch'].map(part => ({ name: `status-${part}`, props: ['fontSize', 'color'], keys: ['width', 'height', 'fontSize', 'color'],
     mock: { url: '?theme=light#0', selector: `.status .status-${part}` }, app: { selector: `#startup-screen footer.statusbar .status-${part}` } })),
   // #561: the right task-details panel opened on step 4 matches the mock's `#task-inspector-panel`.
   ...[

@@ -69,8 +69,10 @@ async function visit(browser, side, spec) {
     for (const { x, side } of jobs) {
       const k = key(side, x); if (k !== current) { await browser.viewport(...viewport(x)); await visit(browser, side, x[side]); current = k; }
       const s = x[side];
-      if (x.hover) { const c = await browser.eval(MEASURE(s.selector, s.index || 0, [], null)); if (c) await browser.hover(c.x + c.width / 2, c.y + c.height / 2); }
+      if (x.hover) { const c = await browser.eval(MEASURE(s.selector, s.index || 0, [], null)); if (c) { await browser.hover(c.x + c.width / 2, c.y + c.height / 2); await new Promise(r => setTimeout(r, 150)); } }
       if (x.focus) { await browser.tab(); await browser.eval(`[...document.querySelectorAll(${JSON.stringify(s.selector)})].filter(e => e.getBoundingClientRect().width > 0)[${s.index || 0}]?.focus()`); }
+      // GitHub #482: raster the same pixels every run - images decoded, fonts loaded, two frames painted.
+      await browser.eval("(async()=>{await document.fonts.ready;await Promise.all([...document.images].map(i=>i.decode().catch(()=>{})));await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));})()");
       const m = await browser.eval(MEASURE(s.selector, s.index || 0, x.props || [], s.mark, s.rel));
       if (x.focus) await browser.eval('document.activeElement && document.activeElement.blur()');
       if (x.hover) await browser.hover(0, 0);
