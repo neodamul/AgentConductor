@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- A built-in CLI (Claude Code, Codex, OpenCode) that prints a plain-text line instead of JSON — a notice or error page from a company gateway or wrapper — no longer fails the task with "invalid JSONL": the line is kept as a warning, the session id and result that follow are still read (so the task can be resumed), and a task that then fails quotes what the CLI printed (#624).
 - The English "Stop run" button no longer shows a doubled stop glyph (#621).
 - The Agent Room card keeps a usable area for the activity, diff, log and lesson tabs when the card is crowded (the review step with its summary); the card scrolls instead of squeezing the tab content to nothing (#619).
 - The English Workspace page title is capitalised ("Workspace settings"), like the card below it (#617).

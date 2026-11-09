@@ -3589,3 +3589,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #621.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Plain-text lines from built-in CLIs — GitHub #624
+
+- [x] Plan: `Decoder` (`protocol.rs`) keeps a non-JSON line (or non-object JSON) from Claude, Codex and OpenCode as an `EventKind::Warning` text event instead of an error that stopped the worker's read loop (which also lost the session id and result behind it, so Resume could not work, #625); a refusal-like line is still an `Error`, custom profiles keep `on_invalid_json`; the worker quotes the CLI's plain output when the task then fails or has no result (`worker.rs`).
+- [x] Verify: `protocol` (new cases), `custom_cli_denials`, `native_claude`, `native_codex`, `native_opencode`, `cooperative_worker`, `acio_runtime`, `workflow`, `source_layout`, Clippy.
+- [ ] Completed: merged on `main`; closes #624. #625 stays open until the user confirms Resume.
+
+Trace: R-210 / UC-202 / DD-222.
