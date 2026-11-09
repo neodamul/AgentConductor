@@ -138,6 +138,22 @@ module.exports = [
     ].map(([name, mock, app, props, keys]) => ({ name: `verify-card-${name}`, props, keys, pixel: false,
       mock: { url: '?theme=light#6', selector: card + mock }, app: { setup, run, selector: app } }));
   })(),
+  // #598: the Room's review card (mock view #7 = "c"): coordinator view once the run waits for approval.
+  ...(() => {
+    const setup = STEPS_ENABLED + "SIM.room.report.state='waiting_approval';SIM.room.report.tasks.forEach(t=>t.status='completed');SIM.room.report.candidate={commit:'abcdef1234567890'};SIM.room.report.tests=[{task:'task-1',exit_code:0,timed_out:false,output:''}];SIM.reply.evidence=()=>({revision:'x1',report:SIM.room.report,truncated:false,test_output:[{task:'task-1',exit_code:0,timed_out:false,stdout:'',stderr:''}],diff:'diff --git a/src/auth/refresh.rs b/src/auth/refresh.rs\\n--- a/src/auth/refresh.rs\\n+++ b/src/auth/refresh.rs\\n@@ -1 +1 @@\\n-a\\n+b\\n+c\\ndiff --git a/docs/security.md b/docs/security.md\\n+++ b/docs/security.md\\n+x\\n'});";
+    const run = "document.querySelectorAll('#start-step-tabs [role=tab]')[5].click(); document.querySelector('.final-step .session-choice').click()";
+    const card = '.main>.card[data-show="c"]';
+    return [['eyebrow', ' .cardhead .eyebrow', '.room-card .eyebrow', ['fontSize', 'fontWeight', 'color'], ['height', 'fontSize', 'fontWeight', 'color']],
+      ['title', ' .cardhead h2', '.room-card #selected-agent', ['fontSize', 'fontWeight', 'color'], ['height', 'fontSize', 'fontWeight', 'color']],
+      ['stat', ' .stat', '.review-summary .stat', ['paddingTop', 'borderTopWidth', 'lineHeight'], ['height', 'paddingTop', 'borderTopWidth', 'lineHeight']],
+      ['stat-label', ' .stat .l', '.review-summary .l', ['fontSize', 'fontWeight', 'color'], ['fontSize', 'fontWeight', 'color']],
+      ['stat-value', ' .stat .v', '.review-summary .v', ['fontSize', 'fontWeight', 'color'], ['fontSize', 'fontWeight', 'color']],
+      ['files', ' .files', '.review-summary .files', ['borderTopLeftRadius', 'fontSize'], ['borderTopLeftRadius', 'fontSize']],
+      ['file-row', ' .files>div', '.review-summary .files>div', ['paddingTop', 'paddingLeft'], ['height', 'paddingTop', 'paddingLeft']],
+      ['file-add', ' .files .add', '.review-summary .add', ['color', 'backgroundColor', 'borderTopLeftRadius', 'paddingTop', 'fontSize'], ['height', 'color', 'backgroundColor', 'borderTopLeftRadius', 'paddingTop', 'fontSize']],
+    ].map(([name, mock, app, props, keys]) => ({ name: `review-card-${name}`, props, keys, pixel: false,
+      mock: { url: '?theme=light#7', selector: card + mock }, app: { setup, run, selector: app } }));
+  })(),
   // #563: the slide-over panels of the design (mock id -> app dialog) share the mock's box and heading.
   ...[['settings-panel', 'start-settings', 'settings'], ['coordinator-chat-panel', 'start-chat', 'chat'], ['workspace-overview', 'start-goals', 'goals']].flatMap(([mock, app, name]) => [
     { name: `panel-${name}`, props: ['paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], keys: ['width', 'paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], pixel: false,
