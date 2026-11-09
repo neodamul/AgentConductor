@@ -184,6 +184,9 @@ module.exports = [
     assert: `(() => { const b = [...document.querySelectorAll('.step-card:not([hidden]) :is(.startup-actions, .startup-review-footer) button')].filter(x => x.getBoundingClientRect().width > 0); return b.length >= 2 && b.every(x => Math.round(x.getBoundingClientRect().height) === 34); })()`,
     app: { setup: STEPS_ENABLED, run: `document.querySelectorAll('#start-step-tabs [role=tab]')[${tab}].click()` } })),
   // #583: the Workspace footer's idle text is the design's "connected - local run" (the folder is named on the right).
+  // #600 (mock view #10): after "New Goal" the head state and the footer note name the new Goal.
+  { name: 'new-goal-state', assert: "(() => document.getElementById('start-current-goal-state').textContent.trim() === '새 목표' && document.getElementById('start-save-note').textContent.trim() === '작업 디렉터리·코디네이터는 유지하고 새 Goal을 추가합니다.')()", app: { setup: "SIM.home.config.goal='';SIM.home.slugs=[{slug:'a',goal:'g',active:false,progress:{}}];" } },
+  { name: 'new-goal-state-default', assert: "(() => document.getElementById('start-save-note').textContent.trim() === 'Workspace 설정과 Goal을 저장한 뒤 역할을 확인합니다.')()", app: { setup: "SIM.home.slugs=[{slug:'a',goal:'g',active:true,progress:{}}];" } },
   { name: 'status-text', assert: "(() => document.getElementById('start-status').textContent.trim() === '연결됨 · 로컬 실행')()", app: { setup: STEPS_ENABLED } },
   // Step card (GitHub #408): the header and the action footer stay visible while only the body scrolls.
   { name: 'step-card-fixed-header-footer', viewport: {height:520},

@@ -1196,6 +1196,8 @@
   "native.goal_run_binding_changed": "The stored run no longer belongs to this goal; review its history before continuing",
   "native.project_belongs_to_workspace": "This project belongs to workspace {name} ({path}). Switch to it from the Workspace menu and choose New goal.",
   "startup.new_goal": "New Goal",
+  "startup.new_goal_pill": "New goal",
+  "startup.new_goal_note": "The working directory and coordinator stay; a new Goal is added.",
   "startup.select_goal": "Select goal",
   "startup.goal_context_changed": "Goal context changed; review a fresh plan before execution",
   "native.update_repository_invalid": "Update repository must be a GitHub owner/name or an https://host/owner/name URL: {value}",
