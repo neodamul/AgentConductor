@@ -27,8 +27,8 @@ remote history already includes it. Revalidate source fingerprints after integra
 
 ## Reconciliation on 2026-10-10
 
-Claude worked in `/Users/me/Development/AgentConductor`; Codex worked in
-`/Users/me/Documents/ChatGPT/AgentConductor`. GitHub main reached `2211ba3`,
+Claude worked in `USERHOME/Development/AgentConductor`; Codex worked in
+`USERHOME/Documents/ChatGPT/AgentConductor`. GitHub main reached `2211ba3`,
 19 commits after `3eb669c`. The first new commit, `cff4646`, incorporated the pending
 Codex continuation work. The older Codex changes were preserved in Git stash
 `codex pre-Claude synchronization: continuation checkpoint preserved`; retain it
@@ -49,7 +49,7 @@ The full product acceptance backlog remains authoritative in the implementation 
 ## Canonical checkout update
 
 The operator confirmed the path change on 2026-10-10. Codex app project registration
-now points to `/Users/me/Development/AgentConductor`. Use that checkout for
+now points to `USERHOME/Development/AgentConductor`. Use that checkout for
 future work. The previous Documents/ChatGPT checkout remains an untouched backup
 of pending implementation and verification. The new checkout received the committed
 handoff and DD-41 patch without replacing `.claude/`. Verification evidence was

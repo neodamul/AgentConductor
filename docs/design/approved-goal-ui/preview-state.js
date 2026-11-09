@@ -183,7 +183,7 @@ function showGoalResult(id){
  const rotation=goal.id==='rotation';
  const summary=document.getElementById('result-summary');summary.replaceChildren();
  const text=document.createElement('p');text.textContent=rotation?'리프레시 토큰 회전과 재사용 탐지를 구현하고, 검토한 변경을 main에 반영했습니다.':'경량 상태 확인 API와 의존 서비스 실패 검사를 구현하고 main에 반영했습니다.';summary.append(text);
- const commit=document.createElement('p');commit.className='result-commit';commit.textContent='승인 완료 · main 반영 · 커밋 '+goal.commit;summary.append(commit);const directory=document.createElement('p');directory.className='result-commit';directory.textContent='반영 위치: /Users/me/Development/auth-service';summary.append(directory);
+ const commit=document.createElement('p');commit.className='result-commit';commit.textContent='승인 완료 · main 반영 · 커밋 '+goal.commit;summary.append(commit);const directory=document.createElement('p');directory.className='result-commit';directory.textContent='반영 위치: USERHOME/Development/auth-service';summary.append(directory);
  const stats=document.createElement('div');stats.className='result-stats';
  [[rotation?'4':'3','변경 파일'],[rotation?'3/3':'8/8','테스트 통과'],[rotation?'2':'1','기록한 교훈']].forEach(([value,label])=>{const tile=document.createElement('div'),number=document.createElement('strong'),caption=document.createElement('span');number.textContent=value;caption.textContent=label;tile.append(number,caption);stats.append(tile);});summary.append(stats);
  document.getElementById('result-lesson').textContent='';
