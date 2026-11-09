@@ -76,7 +76,7 @@ window.acQuotaRing = (() => {
     popup = text('div', '', 'usage-popover'); popup.id = 'usage-popover'; popup.setAttribute('role', 'dialog'); popup.setAttribute('aria-label', acMessage('startup.quota_dialog')); popup.hidden = true;
     const heading = text('div', '', 'usage-heading'), closeButton = text('button', '×', 'usage-close'); closeButton.type = 'button';
     heading.append(text('strong', '', 'usage-agent'), text('span', '', 'sp'), text('span', '', 'usage-reset'), closeButton);
-    const foot = text('div', '', 'usage-observed'), refresh = text('button', '↻', 'usage-refresh'); refresh.type = 'button';
+    const foot = text('div', '', 'usage-observed'), refresh = text('button', '', 'usage-refresh'); refresh.type = 'button'; refresh.append(text('span', '↻', 'usage-glyph'));
     foot.append(document.createElement('span'), refresh);
     popup.append(heading, text('div', '', 'usage-body'), foot);
     closeButton.onclick = () => close(true);
