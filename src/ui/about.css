@@ -16,6 +16,7 @@
 #about-dialog .about-logo{display:flex;width:22px;height:22px}
 #about-dialog .about-logo>svg>path[fill="#fff"]{display:none}
 #about-dialog .about-mono{color:var(--ink)}
+#about-dialog .about-mono>svg{shape-rendering:crispEdges}
 #about-dialog code{font:12px/17px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 #about-dialog .about-cli code{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:4px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;user-select:all}
 #about-dialog p.about-credit{font-size:12px;color:var(--soft);line-height:19px}

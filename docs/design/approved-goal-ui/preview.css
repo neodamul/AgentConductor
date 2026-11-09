@@ -268,7 +268,7 @@ button[data-action-icon]{display:inline-flex;align-items:center;justify-content:
 .about-cli{display:grid;grid-template-columns:22px 92px 1fr auto;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);margin-top:6px}
 .about-cli b{font-size:13px}
 .about-cli .about-btn{min-width:64px}
-.about-logo{display:flex;width:22px;height:22px}.about-logo>svg>path[fill="#fff"]{display:none}.about-mono{color:var(--ink)}
+.about-logo{display:flex;width:22px;height:22px}.about-logo>svg>path[fill="#fff"]{display:none}.about-mono{color:var(--ink)}.about-mono>svg{shape-rendering:crispEdges}
 .about-dialog code{font:12px/17px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 .about-cli code{background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:4px 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;user-select:all}
 .about-credit{font-size:12px;color:var(--soft);line-height:19px}
