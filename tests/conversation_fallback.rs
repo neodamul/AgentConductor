@@ -1,5 +1,7 @@
 //! GitHub #639: a fallback carries the old agent's conversation to the next agent (the preset's `session.export`).
-use agentconductor::{conversation, plan::AgentProfile, protocol::Provider, workflow};
+#[cfg(unix)]
+use agentconductor::workflow;
+use agentconductor::{conversation, plan::AgentProfile, protocol::Provider};
 use std::fs;
 #[path = "support/workflow.rs"]
 mod support;
