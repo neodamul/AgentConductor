@@ -2595,3 +2595,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: released in 0.1.61 and merged on `main`.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Nothing to resume, blocked review choices, built-in refusals — GitHub #637
+
+- [x] Plan: `resume_blocker` (`workflow/recovery/resume.rs`) names the first task that is not completed (or the run state) when Resume would start nothing, and the controller returns "Nothing to resume: task X is <status>" (en/ko). A review with verdict `blocked` and no revisions (`latest_review`) is retried by Resume like a failed run, and the run banner (`room.js`) offers Resume (retry) and Reassign an agent. A refusal sentence from Claude Code, Codex or OpenCode is decoded as an error event with `denied: true`; the worker ends the task as `permission_denied`.
+- [x] Verify: `protocol`, `workflow_resume_failed`, `workflow_builtin_denial`, `ui_failed_resume`, `blocked_review_notice_runtime.cjs`, the Node UI suite, `i18n_contracts`, `messages`, Clippy.
+- [ ] Completed: merged on `main`; closes #637.
+
+Trace: R-210 / UC-202 / DD-222.

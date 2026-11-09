@@ -75,10 +75,12 @@ pub(super) async fn drive(
                 .iter()
                 .map(|id| report.tasks.iter().find(|t| &t.id == id).unwrap())
                 .collect();
-            if deps
-                .iter()
-                .any(|t| matches!(t.status.as_str(), "failed" | "blocked"))
-            {
+            if deps.iter().any(|t| {
+                matches!(
+                    t.status.as_str(),
+                    "failed" | "blocked" | "permission_denied"
+                )
+            }) {
                 report.tasks[i].status = "blocked".into();
                 continue;
             }

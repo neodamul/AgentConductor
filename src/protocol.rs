@@ -198,7 +198,8 @@ impl Decoder {
         let (kind, payload) = if reads_as_refusal(&text) {
             (
                 EventKind::Error,
-                serde_json::json!({"type":"error","message":format!("check the CLI configuration: the CLI printed what reads as a refusal: {text}")}),
+                // A built-in CLI's refusal is a denial (the task ends as permission_denied); a custom profile declares its own.
+                serde_json::json!({"type":"error","denied":self.provider != Provider::Custom,"message":format!("check the CLI configuration: the CLI printed what reads as a refusal: {text}")}),
             )
         } else {
             (

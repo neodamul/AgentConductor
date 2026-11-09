@@ -1,6 +1,6 @@
 use super::*;
 mod resume;
-pub use resume::{resume_availability_due, resume_due};
+pub use resume::{resume_availability_due, resume_blocker, resume_due};
 
 /// Durable request; the active coordinator consumes and audits it after draining its jobs.
 pub fn stop(dir: &Path, reason: &str) -> Result<(), String> {
@@ -119,7 +119,11 @@ pub async fn resume_reviewed_stop(
         "Human resumed confirmed stopped attempts",
     )?;
     for task in &mut report.tasks {
-        if (task.status == "stopped" || task.status == "blocked") && !tool_rejected(dir, task)? {
+        if matches!(
+            task.status.as_str(),
+            "stopped" | "blocked" | "permission_denied"
+        ) && !tool_rejected(dir, task)?
+        {
             if let Some(context) = crate::cooperative::prepare_continuation(
                 &mut store,
                 &task.id,
