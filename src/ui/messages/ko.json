@@ -616,6 +616,7 @@
   "startup.custom_cli_or_path_to_executable": "custom-cli 또는 /path/to/executable",
   "startup.all_phases_are_complete": "전체 {value1}단계 완료",
   "startup.alternate": "대체 → {value1}",
+  "startup.alternate_short": "대체 → {value1}",
   "startup.alternate_1b9971": "대체 에이전트",
   "startup.alternate_agent_on_account_restriction": "대체 에이전트 · 계정 제한 시",
   "startup.alternate_agent_s_model": "대체 에이전트의 모델",

@@ -3627,6 +3627,14 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### English agent card tool row stays on one line — GitHub #654
+
+- [x] Plan: `html[lang=en]` rules in `startup.css` trim the tool buttons' side padding so the row keeps one line at natural size (Korean metrics stay as approved); the card uses `min-height:144px` so many tags add bottom space; the `Alternate → agent` chip switches to `Alt. → agent` only when it cannot fit its row; every UI label uses the display name from `AC_AGENT_NAMES` (`Claude Code`, `Codex`, `OpenCode`) while ids and CLI stay `claude`.
+- [x] Verify: `agent_card_buttons_runtime.cjs` (English, 840/1280, light/dark; fails without the rules), `interface_theme`, the Node UI suite, a screenshot at 1280.
+- [ ] Completed: merged on `main`; closes #654.
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### Update check channel: stable or beta — GitHub #658
 
 - [x] Plan: `update_channel` (`stable` default, `beta`) is saved beside `update_repository`; stable reads `releases/latest`, beta lists `releases?per_page=30` and takes the highest non-draft version; `update::version` orders `x.y.z-BetaN` below `x.y.z` and ignores a company suffix; the Settings dialog carries the selector and `set_update_settings` saves it.
