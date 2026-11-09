@@ -3627,6 +3627,12 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### About dialog uses the app icon and the transparent Codex mark — GitHub #656
+
+- [x] Plan: `about.html` embeds the titlebar's app icon (`img.about-mark`, 44px) in place of the text tile; `about.css` hides the logos' `path[fill="#fff"]` square like the agent card does; the approved mock (`preview.html`/`preview.css`) and its manifest hashes follow.
+- [x] Verify: the Node UI suite and a live render of the dialog header.
+- [ ] Completed: merged on `main`; closes #656.
+
 ### English agent card tool row stays on one line — GitHub #654
 
 - [x] Plan: `html[lang=en]` rules in `startup.css` trim the tool buttons' side padding so the row keeps one line at natural size (Korean metrics stay as approved); the card uses `min-height:144px` so many tags add bottom space; the `Alternate → agent` chip switches to `Alt. → agent` only when it cannot fit its row; every UI label uses the display name from `AC_AGENT_NAMES` (`Claude Code`, `Codex`, `OpenCode`) while ids and CLI stay `claude`.
