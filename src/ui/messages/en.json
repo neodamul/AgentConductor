@@ -616,6 +616,7 @@
   "startup.aipro_or_path_to_executable": "aipro or /path/to/executable",
   "startup.all_phases_are_complete": "All {value1} phases are complete",
   "startup.alternate": "Alternate → {value1}",
+  "startup.alternate_short": "Alt → {value1}",
   "startup.alternate_1b9971": "Alternate",
   "startup.alternate_agent_on_account_restriction": "Alternate agent · on account restriction",
   "startup.alternate_agent_s_model": "Alternate agent's model",
