@@ -3611,5 +3611,10 @@ Trace: R-210 / UC-202 / DD-222.
 - [x] Plan: `invocation.session.export` in `acio.agent/1` (`file`: a store file ending with `{session_id}` below `{home}`-relative root; `command`: the profile's executable with an argv) is the data form of the CLI's `/export`. `conversation::export` reads it, `flatten` keeps `role: text` of user/assistant turns only (no tool calls, tool output or reasoning; 32 KiB of the newest turns), and `transfer_role` appends it to the handoff as "Previous conversation", an untrusted record; the next agent starts a new provider session (DD-43). Presets: Claude `~/.claude/projects`, Codex `~/.codex/sessions`, OpenCode `session export`. `"export": null` in a profile's agent settings turns it off.
 - [x] Verify: `conversation_fallback` (flattening, Claude/Codex stores, OpenCode command, opt-out, reassignment end to end), a check on real Claude and Codex transcripts, the preset schema tests, `role_fallback_runtime`, `fallback`, Clippy.
 - [ ] Completed: merged on `main` for the 0.2.0 beta; closes #639.
+### Nothing to resume, blocked review choices, built-in refusals — GitHub #637
+
+- [x] Plan: `resume_blocker` (`workflow/recovery/resume.rs`) names the first task that is not completed (or the run state) when Resume would start nothing, and the controller returns "Nothing to resume: task X is <status>" (en/ko). A review with verdict `blocked` and no revisions (`latest_review`) is retried by Resume like a failed run, and the task notice (`room_activity.js`) offers Retry and Reassign an agent. A refusal sentence from Claude Code, Codex or OpenCode is decoded as an error event with `denied: true`; the worker ends the task as `permission_denied`.
+- [x] Verify: `protocol`, `workflow_resume_failed`, `workflow_builtin_denial`, `ui_failed_resume`, `blocked_review_notice_runtime.cjs`, the Node UI suite, `i18n_contracts`, `messages`, `interface_theme`, `choice_controls`, `design_parity`, Clippy.
+- [ ] Completed: merged on `main`; closes #637.
 
 Trace: R-210 / UC-202 / DD-222.
