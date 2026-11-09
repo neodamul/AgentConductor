@@ -2579,3 +2579,11 @@ Trace: R-43 / UC-34 / DD-55.
 
 Trace: R-201 / QAS-199 / DD-94.
 
+
+### Plain-text lines from built-in CLIs — GitHub #624
+
+- [x] Plan: `Decoder` (`protocol.rs`) keeps a non-JSON line (or non-object JSON) from Claude, Codex and OpenCode as an `EventKind::Warning` text event instead of an error that stopped the worker's read loop (which also lost the session id and result behind it, so Resume could not work, #625); a refusal-like line is still an `Error`, custom profiles keep `on_invalid_json`; the worker quotes the CLI's plain output when the task then fails or has no result (`worker.rs`).
+- [x] Verify: `protocol` (new cases), `custom_cli_denials`, `native_claude`, `native_codex`, `native_opencode`, `cooperative_worker`, `acio_runtime`, `workflow`, `source_layout`, Clippy.
+- [ ] Completed: merged on `release/0.1.x`; closes #624 (backport of the main fix).
+
+Trace: R-210 / UC-202 / DD-222.
