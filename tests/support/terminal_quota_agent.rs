@@ -39,6 +39,12 @@ fn main(){
         std::io::stdout().flush().unwrap();
         std::thread::sleep(std::time::Duration::from_secs(60)); return;
     }
+    // GitHub #585: a session marker inherited from a Claude Code session, or a lost login token, makes the CLI report "not logged in".
+    if std::env::var_os("AC_QUOTA_REQUIRE_CLEAN_SESSION").is_some() && (std::env::var_os("CLAUDECODE").is_some() || std::env::var_os("CLAUDE_CODE_ENTRYPOINT").is_some() || std::env::var_os("CLAUDE_CODE_OAUTH_TOKEN").is_none()) {
+        println!("Claude Code v2.1.296\nNot logged in · Please run /login\n$");
+        std::io::stdout().flush().unwrap();
+        std::thread::sleep(std::time::Duration::from_secs(60)); return;
+    }
     if std::env::var("AC_QUOTA_CASE").as_deref()==Ok("signed_out"){
         // GitHub #317: a CLI whose login expired (or was never made) says so at the prompt.
         println!("Claude Code v2.1.296\nNot logged in · Please run /login\n$");

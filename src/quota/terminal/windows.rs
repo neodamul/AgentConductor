@@ -168,6 +168,7 @@ impl Session {
             (executable, format!("\"{name}\" {flags}"))
         };
         let mut env: std::collections::BTreeMap<String, (String, String)> = std::env::vars()
+            .filter(|(k, _)| !super::settle::session_env::is_session_marker(k))
             .map(|(k, v)| (k.to_ascii_lowercase(), (k, v)))
             .collect();
         for (k, v) in &p.environment {
