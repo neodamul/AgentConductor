@@ -490,5 +490,6 @@ dialog{padding:24px;border-radius:12px}dialog h2{font-weight:700}
 .event.muted .event-text{font-style:italic}
 /* GitHub #654: English labels are wider; the agent card's tool row stays on one line (Korean metrics are unchanged). */
 html[lang=en] .startup-profile .profile-tools{flex-wrap:nowrap}
-html[lang=en] .profile-tools .small-button{flex:0 1 auto;min-width:0;white-space:nowrap}
+html[lang=en] .profile-tools .small-button{flex:0 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 html[lang=en] .profile-tools .small-button:not(.remove-agent){padding-inline:5px}
+html[lang=en] .profile-tools .small-button.move-agent{padding-inline:2px}
