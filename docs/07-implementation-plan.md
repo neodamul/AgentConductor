@@ -3642,3 +3642,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #658.
 
 Trace: R-210 / UC-202 / DD-135.
+
+### Quota refresh updates the quota ring only — GitHub #663
+
+- [x] Plan: `profiles()` in `startup.js` stamps a card rebuild with the profiles, hints, icons, job state and each agent's own catalog job only; the quota state moves to a second stamp that replaces the `.quota-controls` ring in place (`updateQuotaRings`), so a refresh never recreates Edit, Models, remove or move.
+- [x] Verify: `quota_ring_isolation_runtime.cjs` (fails without the change: the card controls are replaced by a quota refresh), the Node UI suite, the quota ring and popup parity cells.
+- [ ] Completed: merged on `main`; closes #663.
+
+Trace: R-210 / UC-202 / DD-222.

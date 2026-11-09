@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The agent cards' buttons no longer blink at the quota refresh interval: a quota refresh updates the quota ring alone, and a card is rebuilt only when something it shows changes (#663).
 - In English the agent card's tool row (Edit, Models, remove, up, down) stays on one line at both reference widths instead of wrapping its last button (#654).
 - The agent card shows `Claude Code` (not `claude`) everywhere in the UI, keeps bottom space when it carries many tags, and shortens the alternate chip to `Alt. → agent` only when it would wrap; the consent, planning, fallback and room labels use the same display names (#654).
 - Update checks follow a channel chosen in Settings: Stable (default) offers published releases, Beta also offers prereleases such as 0.2.0-Beta1; a release outranks its own betas and the CLI `update` follows the same channel (#658).
