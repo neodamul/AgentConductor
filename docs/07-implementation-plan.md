@@ -3509,3 +3509,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #597.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Review and merge card — GitHub #598
+
+- [x] Plan: the stage of `waiting_approval`/`rejected` is now `merge` (step 6); in the coordinator view `reviewSummary` (`room_activity.js`) fills `#review-summary` above the view tabs from the evidence packet (`acResultView.files/tests`): changed files, integration tests `n/m`, a derived recommendation (all tests pass and no error), and the file list with +/− counts; the evidence is loaded when the run waits for approval. Head keys `room.step_6_review_merge`, `room.review_title`, `room.review_intro`. Parity entries `review-card-*`. The mock's footer (Reject / Request change / Review changes) maps to the Room's existing approve/reject and review controls.
+- [x] Verify: parity entries, design parity light/dark at 1280 and 840, the full Node UI suite, `i18n_contracts`, `messages`, `source_layout`, `architecture_trace`.
+- [ ] Completed: merged on `main`; closes #598.
+
+Trace: R-210 / UC-202 / DD-222.
