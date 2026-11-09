@@ -3674,3 +3674,12 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #667, related to #482.
 
 Trace: R-200 / UC-188 / DD-212.
+
+### A hung webview test fails by name instead of holding the job — GitHub #669
+
+- [x] Plan: `choice_controls.rs` runs each Node script with a 300-second deadline (kill, then fail naming the script and its output), like `node_runtime.rs`; `cdp.cjs` rejects a DevTools call that gets no answer within 90 seconds, naming the method.
+- [x] Verify: `choice_controls` and Clippy pass; the v0.2.0-Beta1 release run showed the failure this prevents (macOS validate cancelled by the 40-minute limit inside this test).
+- [ ] Completed: merged on `main`; closes #669.
+
+Trace: R-210 / UC-202 / DD-222.
+

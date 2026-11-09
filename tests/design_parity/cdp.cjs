@@ -25,7 +25,12 @@ async function launch(chrome, { width = 1280, height = 960, scale = 2 } = {}) {
   await new Promise((res, rej) => { ws.onopen = res; ws.onerror = rej; });
   let id = 0; const waiting = new Map(), events = [];
   ws.onmessage = m => { const d = JSON.parse(m.data); if (d.id && waiting.has(d.id)) { const { res, rej } = waiting.get(d.id); waiting.delete(d.id); d.error ? rej(new Error(d.error.message)) : res(d.result); } else events.push(d); };
-  const send = (method, params = {}) => new Promise((res, rej) => { const n = ++id; waiting.set(n, { res, rej }); ws.send(JSON.stringify({ id: n, method, params })); });
+  // GitHub #669: a DevTools call that gets no answer (a stuck page or renderer) fails by name instead of hanging the whole job.
+  const send = (method, params = {}) => new Promise((res, rej) => {
+    const n = ++id, timer = setTimeout(() => { waiting.delete(n); rej(new Error(`DevTools call ${method} got no answer in 90s`)); }, 90000);
+    waiting.set(n, { res: v => { clearTimeout(timer); res(v); }, rej: e => { clearTimeout(timer); rej(e); } });
+    ws.send(JSON.stringify({ id: n, method, params }));
+  });
   await send('Page.enable'); await send('Page.setLifecycleEventsEnabled', { enabled: true }); await send('Runtime.enable');
   await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: scale, mobile: false });
   // GitHub #527: a hover is measured after two rendered frames and every running transition has ended, not after a fixed 60 ms.
