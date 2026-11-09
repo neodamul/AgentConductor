@@ -3485,3 +3485,11 @@ Trace: R-47 / UC-34 / DD-55.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Task-details content: instruction, dependencies, test command — GitHub #581
+
+- [x] Plan: the inspector's ownership section gains `#task-instruction`, `.task-facts` (dependencies, test command) filled from the plan task (`prompt`, `depends_on`, `test_command`); parity entries `inspector-instruction`, `inspector-facts`, `inspector-fact-label` compare them with the mock's `data-detail-field` lines. The mock's restriction/tools/tokens lines already exist as the availability, tool-request and metrics sections.
+- [x] Verify: parity entries, a simulator DOM check (instruction, "없음", test command), design parity light/dark at 1280 and 840, the full Node UI suite.
+- [ ] Completed: merged on `main`; closes #581.
+
+Trace: R-210 / UC-202 / DD-222.
+
