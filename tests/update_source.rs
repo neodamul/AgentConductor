@@ -78,6 +78,18 @@ fn releases_are_read_from_the_saved_hosts_api() {
         source::api_url(),
         "https://ghe.corp.example/api/v3/repos/team/tool/releases/latest"
     );
+
+    // GitHub #658: the beta channel lists releases; stable is the default and bad values save nothing.
+    assert_eq!(source::channel(), "stable");
+    source::save_channel("beta").unwrap();
+    assert_eq!(
+        source::api_url(),
+        "https://ghe.corp.example/api/v3/repos/team/tool/releases?per_page=30"
+    );
+    assert_eq!(source::settings()["channel"], "beta");
+    assert!(source::save_channel("nightly").is_err());
+    assert_eq!(source::channel(), "beta");
+    source::save_channel("stable").unwrap();
     let shown = source::settings();
     assert_eq!(shown["repository"], "https://ghe.corp.example/team/tool");
     assert_eq!(shown["default_repository"], source::DEFAULT_REPOSITORY);
@@ -112,9 +124,11 @@ fn settings_dialog_edits_and_saves_the_repository() {
     let html = include_str!("../src/ui/startup.html");
     let script = include_str!("../src/ui/startup.js");
     assert!(html.contains("id=\"start-update-repository\""));
+    assert!(html.contains("id=\"start-update-channel\""));
     assert!(!html.contains("start-update-directory"));
     assert!(script.contains("kind:'update_settings'"));
     assert!(script.contains("kind:'set_update_settings'"));
+    assert!(script.contains("channel:q('update-channel').value"));
     let update = include_str!("../src/update.rs");
     assert!(!update.contains("const REPOSITORY"));
     assert!(update.contains("update_source::api_url()"));

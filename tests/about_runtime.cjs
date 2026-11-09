@@ -9,8 +9,10 @@ const cases={first:"SIM.reply.about_status=()=>({version:'0.2.0',show:true,updat
  const result={};
  for(const [name,preset] of Object.entries(cases)){
   await browser.goto(pathToFileURL(path.join(dir,'app.html')).href+'?run='+name+theme+width);
+  await browser.eval("window.__beforePreset=true");
   await browser.eval(`PRESET(${JSON.stringify(preset+'window.aboutFixture=true;')})`);
-  await new Promise(r=>setTimeout(r,1500));
+  for(let i=0;i<300;i++){let ok=false;try{ok=await browser.eval("!window.__beforePreset && window.aboutFixture===true");}catch{}if(ok)break;await new Promise(r=>setTimeout(r,50));}
+  await new Promise(r=>setTimeout(r,500));
   result[name]=await browser.eval(`(async()=>{
    const checks=[],check=(n,v)=>{if(!v)throw Error(n);checks.push(n);};const wait=ms=>new Promise(r=>setTimeout(r,ms));
    document.documentElement.dataset.theme=${JSON.stringify(theme)};

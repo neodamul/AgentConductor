@@ -3618,3 +3618,19 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #637.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Refresh arrow spins alone — GitHub #647
+
+- [x] Plan: the popup's refresh button holds the arrow in `span.usage-glyph`; `.usage-refresh.refreshing .usage-glyph` carries the spin animation instead of the button.
+- [x] Verify: the Node UI suite, `interface_theme`, `choice_controls`, a live render of the popup while busy.
+- [ ] Completed: merged on `main`; closes #647.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Update check channel: stable or beta — GitHub #658
+
+- [x] Plan: `update_channel` (`stable` default, `beta`) is saved beside `update_repository`; stable reads `releases/latest`, beta lists `releases?per_page=30` and takes the highest non-draft version; `update::version` orders `x.y.z-BetaN` below `x.y.z` and ignores a company suffix; the Settings dialog carries the selector and `set_update_settings` saves it.
+- [x] Verify: `update_source`, `update` (unit and integration), `i18n_contracts`, `messages`, Clippy, the Node UI suite.
+- [ ] Completed: merged on `main`; closes #658.
+
+Trace: R-210 / UC-202 / DD-135.
