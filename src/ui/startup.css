@@ -278,7 +278,7 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 .usage-close,.usage-refresh{border:0;background:transparent;color:var(--soft);cursor:pointer;border-radius:5px;padding:3px 6px;font-size:15px}
 .usage-close{line-height:17px}
 .usage-close:hover,.usage-refresh:hover{background:var(--fill)}
-.usage-refresh.refreshing{animation:quota-spin 1s linear infinite}
+.usage-glyph{display:inline-block}.usage-refresh.refreshing .usage-glyph{animation:quota-spin 1s linear infinite}
 .usage-item+.usage-item{margin-top:17px}
 .usage-line{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .usage-line b{font-size:14px;font-variant-numeric:tabular-nums}

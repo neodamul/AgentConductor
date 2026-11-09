@@ -3618,3 +3618,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #637.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Refresh arrow spins alone — GitHub #647
+
+- [x] Plan: the popup's refresh button holds the arrow in `span.usage-glyph`; `.usage-refresh.refreshing .usage-glyph` carries the spin animation instead of the button.
+- [x] Verify: the Node UI suite, `interface_theme`, `choice_controls`, a live render of the popup while busy.
+- [ ] Completed: merged on `main`; closes #647.
+
+Trace: R-210 / UC-202 / DD-222.
