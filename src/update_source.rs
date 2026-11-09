@@ -15,17 +15,42 @@ pub fn repository() -> String {
         .unwrap_or_else(|| DEFAULT_REPOSITORY.into())
 }
 
-/// The latest-release API of the saved repository; release assets come from that release.
+/// GitHub #658: `stable` (default) offers published releases; `beta` also offers prereleases.
+pub const CHANNELS: [&str; 2] = ["stable", "beta"];
+
+pub fn channel() -> String {
+    crate::ui::language::stored_text("update_channel")
+        .filter(|saved| CHANNELS.contains(&saved.as_str()))
+        .unwrap_or_else(|| "stable".into())
+}
+
+pub fn save_channel(channel: &str) -> Result<(), String> {
+    if !CHANNELS.contains(&channel) {
+        return Err(crate::ui::messages::render(
+            "native.update_channel_invalid",
+            &[("value", channel)],
+        ));
+    }
+    crate::ui::language::store("update_channel", channel)
+}
+
+/// The releases API of the saved repository. The stable channel reads `releases/latest`; the beta
+/// channel lists recent releases (prereleases included) and the caller picks the highest version.
 pub fn api_url() -> String {
     let repository = repository();
-    match repository
+    let base = match repository
         .strip_prefix("https://")
         .map(|r| r.split_once('/'))
     {
-        None => format!("https://api.github.com/repos/{repository}/releases/latest"),
-        Some(Some((host, path))) => format!("https://{host}/api/v3/repos/{path}/releases/latest"),
+        None => format!("https://api.github.com/repos/{repository}/releases"),
+        Some(Some((host, path))) => format!("https://{host}/api/v3/repos/{path}/releases"),
         // Unreachable for saved values: normalize_repository always keeps a path.
-        Some(None) => format!("{repository}/releases/latest"),
+        Some(None) => format!("{repository}/releases"),
+    };
+    if channel() == "beta" {
+        format!("{base}?per_page=30")
+    } else {
+        format!("{base}/latest")
     }
 }
 
@@ -78,5 +103,5 @@ pub fn save(repository: &str) -> Result<(), String> {
 }
 
 pub fn settings() -> Value {
-    json!({"repository": saved(), "default_repository": DEFAULT_REPOSITORY})
+    json!({"repository": saved(), "default_repository": DEFAULT_REPOSITORY, "channel": channel()})
 }

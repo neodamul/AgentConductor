@@ -88,13 +88,31 @@ pub fn target() -> Option<&'static str> {
     }
 }
 
-fn version(tag: &str) -> Option<(u64, u64, u64)> {
+/// x.y.z plus an optional `-Beta1` style prerelease. The key orders a prerelease below its
+/// release, and `Beta2` above `Beta1` and `Beta10` above `Beta9`. A local `.suffix` is ignored.
+type Version = (u64, u64, u64, bool, String, u64);
+
+fn version(tag: &str) -> Option<Version> {
     let mut parts = tag.trim().trim_start_matches('v').split('.');
     let mut next = || parts.next()?.parse::<u64>().ok();
-    Some((next()?, next()?, next()?))
+    let (major, minor) = (next()?, next()?);
+    let third = parts.next()?;
+    let digits = third.len() - third.trim_start_matches(|c: char| c.is_ascii_digit()).len();
+    let patch = third[..digits].parse().ok()?;
+    let rest = &third[digits..];
+    if rest.is_empty() {
+        return Some((major, minor, patch, true, String::new(), 0));
+    }
+    let pre = rest
+        .strip_prefix('-')
+        .filter(|pre| !pre.is_empty())?
+        .to_ascii_lowercase();
+    let split = pre.find(|c: char| c.is_ascii_digit()).unwrap_or(pre.len());
+    let number = pre[split..].parse().unwrap_or(0);
+    Some((major, minor, patch, false, pre[..split].to_owned(), number))
 }
 
-/// True when `tag` is a strictly newer x.y.z version than this build.
+/// True when `tag` is a strictly newer version than this build (a release outranks its betas).
 pub fn is_newer(tag: &str) -> bool {
     matches!((version(tag), version(&current())), (Some(a), Some(b)) if a > b)
 }
@@ -150,6 +168,17 @@ fn latest() -> Result<Release, String> {
         &url,
     ])?;
     let value: Value = serde_json::from_slice(&body).map_err(|e| e.to_string())?;
+    // The beta channel gets a list: the highest published version wins, drafts never count.
+    let value = match value.as_array() {
+        Some(list) => list
+            .iter()
+            .filter(|r| r["draft"] != true)
+            .filter_map(|r| Some((version(r["tag_name"].as_str()?)?, r)))
+            .max_by(|a, b| a.0.cmp(&b.0))
+            .map(|(_, r)| r.clone())
+            .ok_or("no release was found")?,
+        None => value,
+    };
     let tag = value["tag_name"]
         .as_str()
         .ok_or("the latest release has no tag")?;
