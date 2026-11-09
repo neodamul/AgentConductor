@@ -80,7 +80,7 @@
  document.querySelector('#assignment-options [data-value="sonnet"]').click();check('model selection immediate',workspaceCoordinator.model==='sonnet');
  i=1;show();openAssignmentPicker('role-1','fallback');
  check('fallback excludes primary',!document.querySelector('#assignment-options [data-value="claude"]'));
- document.querySelector('#assignment-options [data-value="aipro"]').click();check('fallback applies and resets model',roleAssignments[1].fallback==='aipro'&&roleAssignments[1].fallbackModel==='');
+ document.querySelector('#assignment-options [data-value="custom-cli"]').click();check('fallback applies and resets model',roleAssignments[1].fallback==='custom-cli'&&roleAssignments[1].fallbackModel==='');
  const fallbackButton=document.querySelector('[data-assignment-target="role-1"][data-assignment-field="fallback"]');
  check('fallback arrow separates pairs',fallbackButton.previousElementSibling.classList.contains('assignment-fallback-arrow'));
  openAssignmentPicker('role-1','fallbackModel');check('unsupported catalog offers default/manual',document.querySelectorAll('#assignment-options button').length===2);

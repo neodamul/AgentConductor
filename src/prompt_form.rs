@@ -49,7 +49,7 @@ pub fn review(operator_request: Option<&str>, evidence: &str) -> String {
 /// The worker's task block: the plan's instruction, the identity and scope lines other tools read, and the rules.
 pub fn worker_task(instruction: &str, task_id: &str, owned_paths: &[String]) -> String {
     format!(
-        "{instruction}\n\nTask: {task_id}\nOwned paths: {}\nDo not change Git refs/index, deploy, push, transmit externally, or access secrets.\nCreate or change files only inside the owned paths. If your CLI saves its own plans, notes or caches (for example under .aipro/plans/), keep them out of the project directory.\nCheck existing partial changes before continuing.\n",
+        "{instruction}\n\nTask: {task_id}\nOwned paths: {}\nDo not change Git refs/index, deploy, push, transmit externally, or access secrets.\nCreate or change files only inside the owned paths. If your CLI saves its own plans, notes or caches (for example under .custom-cli/plans/), keep them out of the project directory.\nCheck existing partial changes before continuing.\n",
         owned_paths.join(", ")
     )
 }

@@ -25,7 +25,7 @@ The historical checkpoints below retain their original scope and do not describe
 
 Historical DD-41 checkpoint: modular source/test separation, 2026-10-10. Full macOS
 regression: 213 passed, 0 failed, 9 ignored; 57 suites. Files are bounded at 500 lines.
-Canonical development checkout is `/Users/neodamul/Development/AgentConductor`.
+Canonical development checkout is `/Users/me/Development/AgentConductor`.
 Platform CI `38038926444` on `0ab97d8` is terminal: macOS passed; Windows tests and
 formatting passed, but Clippy rejected two `&PathBuf` fixture parameters. These are
 corrected to `&Path`; native Windows verification of this checkpoint remains pending.

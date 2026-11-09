@@ -26,7 +26,7 @@ impl Fixture {
             root,
             startup: Some(startup),
         };
-        f.mutate(json!({"kind":"save","config":{"profiles":[{"id":"aipro","executable":"not-executed","args":[],"permission_mode":"external_sandbox"}],"coordinator":"aipro","roles":{"development":["aipro"]},"repository":f.root.join("project"),"goal":"First goal","name":"Workspace","workspace_mode":"shared"}})).unwrap();
+        f.mutate(json!({"kind":"save","config":{"profiles":[{"id":"custom-cli","executable":"not-executed","args":[],"permission_mode":"external_sandbox"}],"coordinator":"custom-cli","roles":{"development":["custom-cli"]},"repository":f.root.join("project"),"goal":"First goal","name":"Workspace","workspace_mode":"shared"}})).unwrap();
         f
     }
     fn call(&self, v: Value) -> Result<Value, String> {

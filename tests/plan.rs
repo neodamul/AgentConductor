@@ -135,9 +135,9 @@ fn rejects_empty_inputs_and_shell_executable() {
 #[test]
 fn accepts_a_self_hosted_agent_without_vendor_specific_fields() {
     let mut p = plan();
-    p.agents[2].id = "aipro".into();
-    p.agents[2].executable = "aipro".into();
-    p.tasks[2].agent = "aipro".into();
+    p.agents[2].id = "custom-cli".into();
+    p.agents[2].executable = "custom-cli".into();
+    p.tasks[2].agent = "custom-cli".into();
     assert!(p.validate().is_ok());
 }
 

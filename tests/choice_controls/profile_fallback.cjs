@@ -4,7 +4,7 @@ const fs=require('fs'),path=require('path'),os=require('os'),{execFileSync}=requ
 const {findChrome,launch}=require('../design_parity/cdp.cjs');const chrome=findChrome();if(!chrome){console.log('profile fallback skipped: no Chrome');process.exit(77);}
 const root=path.resolve(__dirname,'../..'),dir=fs.mkdtempSync(path.join(os.tmpdir(),'ac-profile-fallback-'));
 execFileSync('node',[path.join(root,'tests/ui_sim/build.cjs'),root,path.join(dir,'app.html')]);
-const preset=`SIM.home.config.profiles.push({id:'aipro',parser:'custom',executable:'not-executed',args:['run','{model}'],permission_mode:'external_sandbox',catalog:null});SIM.reply.catalog=p=>{SIM.home.config.profiles.find(x=>x.id===p.agent).catalog=p.catalog;return {saved:true};};window.profileFixture=true;`;
+const preset=`SIM.home.config.profiles.push({id:'custom-cli',parser:'custom',executable:'not-executed',args:['run','{model}'],permission_mode:'external_sandbox',catalog:null});SIM.reply.catalog=p=>{SIM.home.config.profiles.find(x=>x.id===p.agent).catalog=p.catalog;return {saved:true};};window.profileFixture=true;`;
 (async()=>{try{for(const width of [840,1280]){const browser=await launch(chrome,{width,height:960});try{for(const theme of ['light','dark']){
  await browser.goto(pathToFileURL(path.join(dir,'app.html')).href+'?run='+theme+width);
  await browser.eval("window.__beforePreset=true");
@@ -18,7 +18,7 @@ const preset=`SIM.home.config.profiles.push({id:'aipro',parser:'custom',executab
   check('profile edit button exists',!!edit);edit.click();await wait();
   const agent=document.getElementById('start-fallback-agent'),model=document.getElementById('start-fallback-model');
   check('no alternate agent disables the fallback model',model.disabled);
-  agent.value='aipro';agent.dispatchEvent(new Event('change',{bubbles:true}));await wait();
+  agent.value='custom-cli';agent.dispatchEvent(new Event('change',{bubbles:true}));await wait();
   const trigger=acChoices.buttonFor(model);
   check('fallback model uses the shared anchored choice',!!trigger&&!model.disabled);
   check('catalog-less agent offers manual entry',model.dataset.choiceManual==='true');
@@ -26,7 +26,7 @@ const preset=`SIM.home.config.profiles.push({id:'aipro',parser:'custom',executab
   const input=document.querySelector('#ac-choice-menu input');input.value='internal-model';input.dispatchEvent(new Event('input'));
   document.querySelector('#ac-choice-menu form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
   const deadline=Date.now()+5000;while(model.value!=='internal-model'&&Date.now()<deadline)await new Promise(r=>setTimeout(r,20));
-  check('manual fallback model registers through the native catalog request',SIM.log.some(e=>e.kind==='catalog'&&e.p.agent==='aipro'&&e.p.catalog.origin==='manual'));
+  check('manual fallback model registers through the native catalog request',SIM.log.some(e=>e.kind==='catalog'&&e.p.agent==='custom-cli'&&e.p.catalog.origin==='manual'));
   check('manual fallback model is applied after registration',model.value==='internal-model');
   agent.value='codex';agent.dispatchEvent(new Event('change',{bubbles:true}));await wait();
   check('changing the fallback agent never keeps an incompatible model',model.value!=='internal-model');

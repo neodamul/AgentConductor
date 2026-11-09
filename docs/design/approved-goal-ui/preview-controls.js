@@ -25,7 +25,7 @@ document.querySelectorAll('.main>.card[data-show="b"],.main>.card[data-show="g"]
  [...body.children].filter(child=>child!==tabs).forEach(child=>activity.append(child));tabs.after(activity,details);
  details.innerHTML=`<p class="panel-note">선택한 작업의 상세정보 · 시안 데이터</p>
  <section><h3>소유 경로와 작업</h3><code data-detail-field="ownership"></code><p class="detail-muted" data-detail-field="session"></p><p data-detail-field="instruction"></p><dl><dt>의존성</dt><dd data-detail-field="dependency"></dd><dt>검증 명령</dt><dd><code data-detail-field="test"></code></dd></dl></section>
- <section><h3>담당과 모델</h3><label>에이전트<div class="detail-inline"><select data-detail-agent><option>claude</option><option>codex</option><option>aipro</option></select><button class="btn q" data-detail-assign>재배정</button></div></label><label>세션 모델<div class="detail-inline"><select><option>CLI 기본값</option></select><button class="btn q" data-detail-model-save>적용</button></div></label><p class="detail-muted">실제 앱에서는 해당 에이전트가 제공하는 모델 목록을 사용합니다.</p></section>
+ <section><h3>담당과 모델</h3><label>에이전트<div class="detail-inline"><select data-detail-agent><option>claude</option><option>codex</option><option>custom-cli</option></select><button class="btn q" data-detail-assign>재배정</button></div></label><label>세션 모델<div class="detail-inline"><select><option>CLI 기본값</option></select><button class="btn q" data-detail-model-save>적용</button></div></label><p class="detail-muted">실제 앱에서는 해당 에이전트가 제공하는 모델 목록을 사용합니다.</p></section>
  <section><h3>가용성과 재개 예약</h3><p data-detail-field="restriction"></p><label>재개 시각 · 로컬 시간<div class="detail-inline"><input type="datetime-local" data-detail-resume required><button class="btn q" data-detail-schedule>예약</button></div></label></section>
  <section><h3>검토 후보</h3><p class="detail-muted">검증을 마친 통합 후보의 diff와 테스트를 확인한 뒤 승인합니다.</p><div class="detail-inline"><button class="btn q" data-detail-review>검토·병합로 이동</button><button class="btn q" disabled>승인</button><button class="btn q" disabled>거절</button></div><p class="detail-muted">현재 작업 단계에서는 머지할 수 없습니다.</p></section>
  <section><h3>도구 요청</h3><p data-detail-field="tools"></p></section>
@@ -140,7 +140,7 @@ window.addEventListener('resize',()=>{document.getElementById('agent-status-tip'
 
 (() => {
  const popup=document.getElementById('usage-popover');
- const data={claude:[64,100],codex:[73,92],aipro:null};
+ const data={claude:[64,100],codex:[73,92],custom-cli:null};
  const errors={codex:{title:"사용량 조회 실패",message:"Claude/Codex CLI의 사용량 응답이 제한 시간 안에 도착하지 않았습니다.",detail:"quota query timed out"}};
  let active=null;
  function close(){popup.hidden=true;if(active)active.setAttribute('aria-expanded','false');}

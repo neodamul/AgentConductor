@@ -302,7 +302,7 @@ the GitHub Release notes for its tag.
 - Export workspace and Import workspace are adjacent in the menu, with consistent English/Korean workspace labels.
 
 - A model that replies it is at capacity is retried after a short wait, up to three times, for tasks and the coordinator.
-- Files an agent creates outside its owned paths (for example a CLI's .aipro/plans) are moved out of the project into the run folder.
+- Files an agent creates outside its owned paths (for example a CLI's .custom-cli/plans) are moved out of the project into the run folder.
 - Agent Room task rows show the reviewed task summary with the task ID as a label.
 - A pressed button shows that its work is running until the request and any background job it started end, so it no longer looks disabled.
 - The workspace page and the Agent Room stay open side by side: switch freely during a run; the room keeps its live progress and the workspace's back-to-run button shows the run state.
@@ -327,7 +327,7 @@ Includes every change prepared for v0.1.19, which was not published (its first r
 - Reverted plan/workspace edits no longer leave approval disabled. Actual unsaved edits and background jobs remain guarded with clear reasons.
 - Claude api_error usage_limit_reached / HTTP 429 is parsed as an availability restriction even without type/is_error, retaining explicit reset times and the durable five-hour reviewed fallback policy. Duration telemetry never becomes a reset time.
 
-- Custom agent CLIs (for example aipro set to auto-approve tools) run after plan approval as approving their own tools, like the full-access default, instead of being refused as unverified; no extra setting is needed.
+- Custom agent CLIs (for example custom-cli set to auto-approve tools) run after plan approval as approving their own tools, like the full-access default, instead of being refused as unverified; no extra setting is needed.
 
 - The update dialog shows the actual GitHub release notes beneath the release link in a keyboard-focusable, scrollable text panel.
 

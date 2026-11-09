@@ -613,7 +613,7 @@
   "startup.agentmemory": "agentmemory",
   "startup.agentmemory_port": "agentmemory 포트",
   "startup.agentmemory_preferred": "agentmemory 우선",
-  "startup.aipro_or_path_to_executable": "aipro 또는 /path/to/executable",
+  "startup.custom_cli_or_path_to_executable": "custom-cli 또는 /path/to/executable",
   "startup.all_phases_are_complete": "전체 {value1}단계 완료",
   "startup.alternate": "대체 → {value1}",
   "startup.alternate_1b9971": "대체 에이전트",
