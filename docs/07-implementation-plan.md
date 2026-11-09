@@ -3626,3 +3626,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #647.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### English agent card tool row stays on one line — GitHub #654
+
+- [x] Plan: `html[lang=en]` rules in `startup.css` keep `.startup-profile .profile-tools` on one line (`flex-wrap:nowrap`, buttons may shrink, text buttons use 5px side padding); Korean metrics stay as approved.
+- [x] Verify: `agent_card_buttons_runtime.cjs` (English, 840/1280, light/dark; fails without the rules), `interface_theme`, the Node UI suite, a screenshot at 1280.
+- [ ] Completed: merged on `main`; closes #654.
+
+Trace: R-210 / UC-202 / DD-222.

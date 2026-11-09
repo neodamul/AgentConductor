@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- In English the agent card's tool row (Edit, Models, remove, up, down) stays on one line at both reference widths instead of wrapping its last button (#654).
 - While the usage popup refreshes only the ↻ arrow spins, not the whole button with its hover background (#647).
 - A fallback (or a manual reassignment) hands the old agent's conversation to the next agent: Claude Code and Codex sessions are read from their session stores and OpenCode's with `opencode session export`, flattened to `role: text` lines (tool calls, tool output and reasoning left out, 32 KiB of the newest turns) and added to the handoff as an untrusted record. The way to read a session is preset data (`invocation.session.export`); a profile turns it off with `"export": null` in its agent settings (#639).
 - Resume says why it has nothing to do ("Nothing to resume: task X is failed" / "재개할 것 없음: 태스크 X가 failed") instead of silently doing nothing (#637).
