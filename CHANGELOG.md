@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The English "Stop run" button no longer shows a doubled stop glyph (#621).
 - The Agent Room card keeps a usable area for the activity, diff, log and lesson tabs when the card is crowded (the review step with its summary); the card scrolls instead of squeezing the tab content to nothing (#619).
 - The English Workspace page title is capitalised ("Workspace settings"), like the card below it (#617).
 - Repairs two merge-conflict marker lines left in the design-parity spec and adds a test that fails when any tracked file contains one (#614).

@@ -3581,3 +3581,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #619.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### English Stop run glyph — GitHub #621
+
+- [x] Plan: `room.stop_run_f450de` (en) loses its leading "■"; the stop icon is added by `action_icons.js` (as in Korean).
+- [x] Verify: `i18n_contracts`, `messages`, the Node UI suite, a live-demo recapture of the Room.
+- [ ] Completed: merged on `main`; closes #621.
+
+Trace: R-210 / UC-202 / DD-222.
