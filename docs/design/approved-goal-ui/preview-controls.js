@@ -146,7 +146,7 @@ window.addEventListener('resize',()=>{document.getElementById('agent-status-tip'
  function close(){popup.hidden=true;if(active)active.setAttribute('aria-expanded','false');}
  function open(button){
   close(); active=button; const name=button.dataset.usage,values=data[name];
-  document.getElementById('usage-agent').textContent=name;
+  document.getElementById('usage-agent').textContent={claude:'Claude Code',codex:'Codex'}[name]||name;
   document.getElementById('usage-observed').textContent='방금 확인 · 시안 데이터';
   const error=errors[name];
   const body=document.getElementById('usage-body');
