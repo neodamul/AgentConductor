@@ -163,7 +163,6 @@ module.exports = [
     { name: `task-notice-${name}-title`, props: ['fontWeight', 'fontSize'], keys: ['fontWeight', 'fontSize'], pixel: false,
       mock: { url: `?theme=light#${hash}`, selector: mock + ' b' }, app: { setup, run, selector: app + ' b' } }];
   }),
-<<<<<<< HEAD
   // #605: the choice popup (mock #assignment-menu = app .ac-choice-menu) shares the mock's box, heading and options.
   ...[['box', '#assignment-menu', '.ac-choice-menu:not([hidden])', ['paddingTop', 'borderTopLeftRadius', 'backgroundColor', 'boxShadow', 'fontSize'], ['width', 'paddingTop', 'borderTopLeftRadius', 'backgroundColor', 'boxShadow', 'fontSize']],
     ['heading', '#assignment-menu-heading', '.ac-choice-heading', ['paddingTop', 'paddingLeft', 'fontSize', 'color'], ['height', 'paddingTop', 'paddingLeft', 'fontSize', 'color']],
@@ -171,7 +170,6 @@ module.exports = [
   ].map(([name, mock, app, props, keys]) => ({ name: `assignment-menu-${name}`, props, keys, pixel: false,
     mock: { url: '?theme=light#1', run: "document.querySelector('.assignment-choice').click()", selector: mock },
     app: { run: "document.querySelector('#start-panel-workspace .ac-choice-trigger').click()", selector: app, index: name === 'option' ? 1 : 0 } })),
-=======
   // #607: activity rows (mock `.ev.th` = app `.event.muted`, the thinking row): number column, title, italic detail.
   ...(() => {
     const setup = STEPS_ENABLED + "SIM.reply.task=()=>({task:{id:'task-1'},events:[{seq:3,payload:{type:'thinking_tokens'}},{seq:14,payload:{type:'thinking_tokens'}}],decisions:[],coordinator_decisions:[],knowledge:[],step_lessons:[],usage:null,stdout:'',stderr:''});";
@@ -183,7 +181,6 @@ module.exports = [
     ].map(([name, mock, app, props]) => ({ name: `activity-${name}`, props, keys: props, pixel: false,
       mock: { url: '?theme=light#3', selector: card + mock }, app: { setup, run, selector: app } }));
   })(),
->>>>>>> a769420a (feat: activity rows like the approved design (#607))
   // #563: the slide-over panels of the design (mock id -> app dialog) share the mock's box and heading.
   ...[['settings-panel', 'start-settings', 'settings'], ['coordinator-chat-panel', 'start-chat', 'chat'], ['workspace-overview', 'start-goals', 'goals']].flatMap(([mock, app, name]) => [
     { name: `panel-${name}`, props: ['paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], keys: ['width', 'paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], pixel: false,

@@ -3557,3 +3557,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #607.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Conflict markers in tracked files — GitHub #614
+
+- [x] Plan: `tests/design_parity/spec.cjs` loses the leftover markers (both entries kept); `tests/no_conflict_markers.rs` scans `git ls-files` for lines starting with the seven-character markers.
+- [x] Verify: `node_runtime`, `design_parity` (four combinations), `choice_controls`, `interface_theme`, `no_conflict_markers`, `source_layout`, Clippy.
+- [ ] Completed: merged on `main`; closes #614.
+
+Trace: R-210 / UC-202 / DD-222.
