@@ -49,6 +49,19 @@ pub struct SessionSettings {
     pub selectors: Vec<String>,
     #[serde(default)]
     pub resume: Option<Resume>,
+    /// GitHub #639: how the conversation of a session is read when a fallback hands the work to another agent.
+    #[serde(default)]
+    pub export: Option<Export>,
+}
+
+/// The CLI's own `/export` as data: read its session store, or run a command that prints the session.
+#[derive(Debug, Clone, Deserialize)]
+#[serde(tag = "mode", rename_all = "snake_case")]
+pub enum Export {
+    /// A file whose name ends with `name` (`{session_id}`) anywhere below `root` (`{home}`).
+    File { root: String, name: String },
+    /// The profile's executable with `argv` (`{session_id}`); the conversation is its stdout.
+    Command { argv: Vec<String> },
 }
 
 #[derive(Debug, Clone, Deserialize)]

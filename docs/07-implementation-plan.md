@@ -3605,3 +3605,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; #625 stays open until the user confirms Resume.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Conversation transfer on fallback — GitHub #639
+
+- [x] Plan: `invocation.session.export` in `acio.agent/1` (`file`: a store file ending with `{session_id}` below `{home}`-relative root; `command`: the profile's executable with an argv) is the data form of the CLI's `/export`. `conversation::export` reads it, `flatten` keeps `role: text` of user/assistant turns only (no tool calls, tool output or reasoning; 32 KiB of the newest turns), and `transfer_role` appends it to the handoff as "Previous conversation", an untrusted record; the next agent starts a new provider session (DD-43). Presets: Claude `~/.claude/projects`, Codex `~/.codex/sessions`, OpenCode `session export`. `"export": null` in a profile's agent settings turns it off.
+- [x] Verify: `conversation_fallback` (flattening, Claude/Codex stores, OpenCode command, opt-out, reassignment end to end), a check on real Claude and Codex transcripts, the preset schema tests, `role_fallback_runtime`, `fallback`, Clippy.
+- [ ] Completed: merged on `main` for the 0.2.0 beta; closes #639.
+
+Trace: R-210 / UC-202 / DD-222.

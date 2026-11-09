@@ -68,6 +68,7 @@
       ]
     },
     "session": {
+      "export": {"mode": "file", "root": "{home}/.codex/sessions", "name": "-{session_id}.jsonl"},
       "model_args": [
         "--model",
         "{model}"

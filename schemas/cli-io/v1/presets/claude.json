@@ -69,6 +69,7 @@
       ]
     },
     "session": {
+      "export": {"mode": "file", "root": "{home}/.claude/projects", "name": "{session_id}.jsonl"},
       "model_args": [
         "--model",
         "{model}"
