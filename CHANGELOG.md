@@ -7,6 +7,8 @@ the GitHub Release notes for its tag.
 ## Unreleased
 
 - The About dialog shows the app icon instead of the "ac" tile and its Codex logo has the same transparent background as the agent card (#656).
+- In English the agent card's tool row (Edit, Models, remove, up, down) stays on one line at both reference widths instead of wrapping its last button (#654).
+- The agent card shows `Claude Code` (not `claude`) everywhere in the UI, keeps bottom space when it carries many tags, and shortens the alternate chip to `Alt. → agent` only when it would wrap; the consent, planning, fallback and room labels use the same display names (#654).
 - Update checks follow a channel chosen in Settings: Stable (default) offers published releases, Beta also offers prereleases such as 0.2.0-Beta1; a release outranks its own betas and the CLI `update` follows the same channel (#658).
 - While the usage popup refreshes only the ↻ arrow spins, not the whole button with its hover background (#647).
 - A fallback (or a manual reassignment) hands the old agent's conversation to the next agent: Claude Code and Codex sessions are read from their session stores and OpenCode's with `opencode session export`, flattened to `role: text` lines (tool calls, tool output and reasoning left out, 32 KiB of the newest turns) and added to the handoff as an untrusted record. The way to read a session is preset data (`invocation.session.export`); a profile turns it off with `"export": null` in its agent settings (#639).

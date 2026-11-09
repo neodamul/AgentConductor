@@ -28,6 +28,8 @@ fn parity_driver_dispatches_all_four_platform_matrix_cells() {
     let captured = root.join("calls");
     let out = root.join("evidence");
     let result = Command::new(&driver)
+        // GitHub #651: the cells run as parallel tests; this check appends their calls to one file in turn.
+        .arg("--test-threads=1")
         .env("PATH", std::env::join_paths(paths).unwrap())
         .env("PARITY_OUT", &out)
         .env("AC_PARITY_CAPTURE", &captured)
@@ -73,6 +75,7 @@ fn parity_driver_dispatches_all_four_platform_matrix_cells() {
     );
     let refused =
         Command::new(&driver)
+            .arg("--test-threads=1")
             .env(
                 "PATH",
                 std::env::join_paths(std::iter::once(root.join("bin")).chain(

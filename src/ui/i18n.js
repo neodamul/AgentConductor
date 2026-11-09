@@ -88,3 +88,12 @@ const AC_WAIT=(()=>{
   function text(now=Date.now()){let first=null;for(const w of open.values())if(!first||w.at<first.at)first=w;return first&&now-first.at>=1000?acMessage('common.waiting_reply',{value1:first.kind.replaceAll('_',' '),value2:AC_ELAPSED(first.at,now)}):'';}
   return {watch,text};
 })();
+
+// GitHub #654 (approved design): the UI shows "Claude Code", "Codex" and "OpenCode"; the profile id (`claude`) stays the internal name.
+// Two profiles of one CLI stay apart as "Claude Code · work".
+const AC_AGENT_NAMES = { claude: 'Claude Code', codex: 'Codex', opencode: 'OpenCode' };
+function acAgentName(profile, profiles = []) {
+  const base = AC_AGENT_NAMES[profile?.parser];
+  if (!base) return profile?.id || '';
+  return profiles.filter(p => AC_AGENT_NAMES[p.parser] === base).length > 1 ? `${base} · ${profile.id}` : base;
+}

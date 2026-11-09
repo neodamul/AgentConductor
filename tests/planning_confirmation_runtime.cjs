@@ -1,7 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const source=fs.readFileSync('src/ui/startup.js','utf8'),nodes=new Map();
 function q(id){if(!nodes.has(id))nodes.set(id,{value:'',dataset:{},open:false,showModal(){this.open=true;},close(value){this.returnValue=value;this.open=false;this.onclose?.();}});return nodes.get(id);}
-const errors=[],context={q,notice:(text,error)=>errors.push({text,error}),acMessage:(id,vars)=>JSON.stringify({id,...vars}),AC_I18N:{bind(node,value){node.textContent=typeof value==='function'?value():value;}},state:{revision:'r1'},workspaceEpoch:0,draft:{goal:'Goal A',coordinator:'aipro',repository:'/project',profiles:[{id:'aipro',coordinator_model:'local-v1',catalog:{models:['local-v1']}}]},workspaceReviewKey:JSON.stringify};
+const errors=[],context={q,notice:(text,error)=>errors.push({text,error}),acMessage:(id,vars)=>JSON.stringify({id,...vars}),acAgentName:profile=>profile.id,AC_I18N:{bind(node,value){node.textContent=typeof value==='function'?value():value;}},state:{revision:'r1'},workspaceEpoch:0,draft:{goal:'Goal A',coordinator:'aipro',repository:'/project',profiles:[{id:'aipro',coordinator_model:'local-v1',catalog:{models:['local-v1']}}]},workspaceReviewKey:JSON.stringify};
 vm.createContext(context);
 const begin=source.indexOf('function planningContextKey('),end=source.indexOf('// DD-46:',begin);
 assert(begin>=0&&end>begin,'explicit Goal planning confirmation exists');vm.runInContext(source.slice(begin,end),context);
