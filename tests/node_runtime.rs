@@ -10,7 +10,7 @@ fn every_node_ui_test_passes() {
         .collect();
     scripts.sort();
     assert!(scripts.len() > 20, "the UI tests are found");
-    // GitHub #651: the page tests are independent, so four run at a time instead of one after another.
+    // GitHub #651: the page tests are independent, so two run at a time instead of one after another.
     let next = std::sync::atomic::AtomicUsize::new(0);
     let failed = std::sync::Mutex::new(Vec::<String>::new());
     let run = |script: &std::path::PathBuf| -> Option<String> {
@@ -64,7 +64,7 @@ fn every_node_ui_test_passes() {
         }
     };
     std::thread::scope(|scope| {
-        for _ in 0..4 {
+        for _ in 0..2 {
             scope.spawn(|| {
                 loop {
                     let index = next.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
