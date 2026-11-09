@@ -54,9 +54,9 @@ Example profile fragment:
 
 ```json
 {
-  "id": "aipro",
+  "id": "custom-cli",
   "parser": "custom",
-  "executable": "aipro",
+  "executable": "custom-cli",
   "args": ["--jsonl"],
   "event_types": {"working": "progress", "finished": "result"},
   "session_id_pointer": "/meta/session",

@@ -613,7 +613,7 @@
   "startup.agentmemory": "agentmemory",
   "startup.agentmemory_port": "agentmemory port",
   "startup.agentmemory_preferred": "agentmemory preferred",
-  "startup.aipro_or_path_to_executable": "aipro or /path/to/executable",
+  "startup.custom_cli_or_path_to_executable": "custom-cli or /path/to/executable",
   "startup.all_phases_are_complete": "All {value1} phases are complete",
   "startup.alternate": "Alternate → {value1}",
   "startup.alternate_short": "Alt. → {value1}",

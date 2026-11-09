@@ -10,7 +10,7 @@ mod support;
 
 fn profile(extra: serde_json::Value) -> AgentProfile {
     let mut base = json!({
-        "id": "aipro", "executable": "aipro", "args": ["run", "{task_file}"], "parser": "custom",
+        "id": "custom-cli", "executable": "custom-cli", "args": ["run", "{task_file}"], "parser": "custom",
         "permission_mode": "operator_auto_approve"
     });
     base.as_object_mut()
@@ -180,7 +180,7 @@ mod worker {
     use serde_json::json;
 
     async fn run_with(script: &str, extra: serde_json::Value) -> workflow::Report {
-        let one = json!([{"id":"one.txt","agent":"aipro","prompt":"p","paths":["one.txt"],"test_command":["true"]}]);
+        let one = json!([{"id":"one.txt","agent":"custom-cli","prompt":"p","paths":["one.txt"],"test_command":["true"]}]);
         run_tasks(script, extra, one, false).await
     }
 
@@ -196,7 +196,7 @@ mod worker {
         std::fs::write(&cli, format!("#!/bin/sh\ncat >/dev/null\n{script}\n")).unwrap();
         std::fs::set_permissions(&cli, std::os::unix::fs::PermissionsExt::from_mode(0o755))
             .unwrap();
-        let mut agent = json!({"id":"aipro","executable":cli,"args":["run"],"parser":"custom",
+        let mut agent = json!({"id":"custom-cli","executable":cli,"args":["run"],"parser":"custom",
             "permission_mode":"operator_auto_approve"});
         agent
             .as_object_mut()
@@ -270,8 +270,8 @@ mod worker {
         let script = r#"echo '{"type":"tool","name":"bash","status":"error","message":"Permission denied by non-interactive policy"}'; echo '{"type":"result"}'"#;
         let denial = json!({"denial_condition":{"event_type":"tool","pointer":"/status","equals":"error","tool_pointer":"/name","message_pointer":"/message"}});
         let tasks = json!([
-            {"id":"one.txt","agent":"aipro","prompt":"p","paths":["one.txt"],"test_command":["true"]},
-            {"id":"two.txt","agent":"aipro","prompt":"p","paths":["two.txt"],"test_command":["true"],"depends_on":["one.txt"]}
+            {"id":"one.txt","agent":"custom-cli","prompt":"p","paths":["one.txt"],"test_command":["true"]},
+            {"id":"two.txt","agent":"custom-cli","prompt":"p","paths":["two.txt"],"test_command":["true"],"depends_on":["one.txt"]}
         ]);
         let report = run_tasks(script, denial.clone(), tasks.clone(), false).await;
         assert_eq!(report.tasks[0].status, "permission_denied");

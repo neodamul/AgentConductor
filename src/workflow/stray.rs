@@ -1,5 +1,5 @@
 //! New files an agent left outside every task's owned paths in a project without its own Git
-//! (for example a CLI saving its plans under .aipro/plans/) are moved out of the project into
+//! (for example a CLI saving its plans under .custom-cli/plans/) are moved out of the project into
 //! the run folder before integration, and recorded. Files the operator already had are never
 //! touched: only paths that are new since the run's baseline are moved.
 use super::*;
@@ -47,7 +47,7 @@ pub(super) fn move_stray_files(
             fs::copy(&from, &to).map_err(|e| e.to_string())?;
             fs::remove_file(&from).map_err(|e| e.to_string())?;
         }
-        // Remove directories the move left empty (for example .aipro/plans/).
+        // Remove directories the move left empty (for example .custom-cli/plans/).
         let mut parent = from.parent();
         while let Some(folder) = parent.filter(|p| *p != git.root.as_path()) {
             if fs::remove_dir(folder).is_err() {

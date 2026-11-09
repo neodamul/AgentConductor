@@ -11,7 +11,7 @@ fn the_snapshot_names_agents_that_cannot_answer_chat() {
     let startup = Startup::open(&root, exe).unwrap();
     let state = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     let custom = |id: &str, read_only: serde_json::Value| {
-        json!({"id": id, "executable": "aipro", "args": ["run", "{task_file}"], "parser": "custom",
+        json!({"id": id, "executable": "custom-cli", "args": ["run", "{task_file}"], "parser": "custom",
                "permission_mode": "operator_auto_approve", "read_only_args": read_only})
     };
     let profiles = json!([
@@ -43,7 +43,7 @@ fn the_snapshot_flags_automatic_approval_that_nothing_could_show_refused() {
     let startup = Startup::open(&root, exe).unwrap();
     let state = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     let custom = |id: &str, extra: serde_json::Value| {
-        let mut p = json!({"id": id, "executable": "aipro", "args": ["run", "{task_file}"], "parser": "custom",
+        let mut p = json!({"id": id, "executable": "custom-cli", "args": ["run", "{task_file}"], "parser": "custom",
                "permission_mode": "operator_auto_approve"});
         p.as_object_mut()
             .unwrap()

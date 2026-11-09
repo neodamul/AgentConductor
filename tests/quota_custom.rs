@@ -5,7 +5,7 @@ use serde_json::json;
 fn custom_quota_output_maps_a_configured_json_pointer_to_snapshot() {
     let raw = json!({
         "account": {
-            "source":"aipro quota --json",
+            "source":"custom-cli quota --json",
             "observed_at":1_800_000_000_i64,
             "windows":[{"bucket":"team","label":"weekly","used_percent":27.0,"remaining_percent":73.0,"window_minutes":10080,"resets_at":1_800_100_000_i64}],
             "budgets":[],"plan_type":"enterprise"
@@ -22,11 +22,11 @@ fn custom_quota_output_maps_a_configured_json_pointer_to_snapshot() {
 #[test]
 fn custom_quota_output_rejects_invalid_percent_and_bad_pointer() {
     let profile: AgentProfile = serde_json::from_value(json!({
-        "id":"internal","parser":"custom","executable":"aipro","args":[],
+        "id":"internal","parser":"custom","executable":"custom-cli","args":[],
         "quota_command":{"args":["quota","--json"],"output_pointer":"/quota"}
     }))
     .unwrap();
-    let mut raw = json!({"quota":{"source":"aipro","observed_at":1_800_000_000_i64,"windows":[{"bucket":"team","label":"week","used_percent":140.0}],"budgets":[]}});
+    let mut raw = json!({"quota":{"source":"custom-cli","observed_at":1_800_000_000_i64,"windows":[{"bucket":"team","label":"week","used_percent":140.0}],"budgets":[]}});
     assert!(profile.quota_command.is_some());
     assert!(quota::parse_custom_output(&raw, Some("not/a/pointer")).is_err());
     assert!(quota::parse_custom_output(&raw, Some("/quota")).is_err());

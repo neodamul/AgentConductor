@@ -38,7 +38,7 @@ Current behavior: ordinary process execution writes the initial task to stdin an
 
 Proposed live direction support is capability-specific. A supported runtime control channel could accept a new turn or an interrupt-and-follow-up operation. A cooperative wrapper may deliver an instruction at a tool/hook boundary. Neither mechanism guarantees mid-operation preemption. A runtime exposing neither requires a safe, quiescent transition to a resumed/new attempt with bounded handoff context. A session ID addresses context; it does not by itself create an input channel to an already running process.
 
-The Rust router and durable inbox can therefore replace signal storage/routing while a CLI adapter or cooperative boundary replaces hook-based delivery. No universal steering capability is claimed for Claude, Codex, OpenCode or aipro; each concrete invocation and installed version needs a verified capability contract. This is an extension proposal, not a change to the current runtime.
+The Rust router and durable inbox can therefore replace signal storage/routing while a CLI adapter or cooperative boundary replaces hook-based delivery. No universal steering capability is claimed for Claude, Codex, OpenCode or custom-cli; each concrete invocation and installed version needs a verified capability contract. This is an extension proposal, not a change to the current runtime.
 
 ## Can signals be replaced?
 

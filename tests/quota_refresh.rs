@@ -19,7 +19,7 @@ fn due_map_uses_each_paid_profile_interval_and_omits_custom_agents() {
     let profiles: Vec<agentconductor::plan::AgentProfile> = serde_json::from_value(json!([
         {"id":"claude","parser":"claude","executable":"claude","args":[],"quota_refresh_minutes":1},
         {"id":"codex","parser":"codex","executable":"codex","args":[],"quota_refresh_minutes":5},
-        {"id":"internal","parser":"custom","executable":"aipro","args":[],"quota_refresh_minutes":1}
+        {"id":"internal","parser":"custom","executable":"custom-cli","args":[],"quota_refresh_minutes":1}
     ]))
     .unwrap();
     let last = BTreeMap::from([("claude".into(), 0), ("codex".into(), 0)]);
@@ -32,7 +32,7 @@ fn due_map_uses_each_paid_profile_interval_and_omits_custom_agents() {
 #[test]
 fn due_map_includes_custom_agents_only_when_their_quota_command_is_configured() {
     let profiles: Vec<agentconductor::plan::AgentProfile> = serde_json::from_value(json!([
-        {"id":"internal","parser":"custom","executable":"aipro","args":[],"quota_command":{"args":["quota","--json"]}},
+        {"id":"internal","parser":"custom","executable":"custom-cli","args":[],"quota_command":{"args":["quota","--json"]}},
         {"id":"other","parser":"custom","executable":"other","args":[]}
     ])).unwrap();
     let due = due_by_profile(&profiles, &BTreeMap::new(), 60_000);

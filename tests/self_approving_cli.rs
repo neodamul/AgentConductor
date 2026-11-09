@@ -1,4 +1,4 @@
-//! DD-141 (amended by the user, 2026-10-14): a custom CLI such as aipro runs as approving its
+//! DD-141 (amended by the user, 2026-10-14): a custom CLI such as custom-cli runs as approving its
 //! own tools by default, without an operator checkbox.
 use agentconductor::{ui::setup::Startup, workflow};
 use serde_json::json;
@@ -20,10 +20,10 @@ fn a_custom_cli_is_saved_as_approving_its_own_tools() {
     let state = startup.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
     let mut config = state["config"].clone();
     config["profiles"] = json!([{
-        "id": "aipro", "executable": "aipro", "args": [], "parser": "custom",
+        "id": "custom-cli", "executable": "custom-cli", "args": [], "parser": "custom",
         "permission_mode": "unverified"
     }]);
-    config["coordinator"] = "aipro".into();
+    config["coordinator"] = "custom-cli".into();
     startup
         .dispatch(
             json!({"kind":"save","revision":state["revision"],"config":config})

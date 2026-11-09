@@ -15,7 +15,7 @@ fn validates_a_plan_and_reports_the_default_workspace_mode() {
     let path = std::env::temp_dir().join(format!("ac-cli-plan-{}.json", std::process::id()));
     let plan = serde_json::json!({
         "goal":"refresh token rotation",
-        "agents":[{"id":"custom","executable":"aipro","args":[]}],
+        "agents":[{"id":"custom","executable":"custom-cli","args":[]}],
         "tasks":(["src/auth","tests/auth","docs/auth"].map(|path| serde_json::json!({
             "id":path,"agent":"custom","prompt":"Do the assigned task","paths":[path],
             "test_command":["cargo","test"]

@@ -161,7 +161,7 @@ fn profile_save_request_updates_only_the_profile_registry() {
 
 #[test]
 fn provider_switch_replaces_template_and_generates_reference_rename() {
-    let current = serde_json::json!({"id":"company","parser":"custom","executable":"aipro","args":["--old"],"catalog":{"models":["old"]}});
+    let current = serde_json::json!({"id":"company","parser":"custom","executable":"custom-cli","args":["--old"],"catalog":{"models":["old"]}});
     let template = serde_json::json!({"id":"codex","parser":"codex","executable":"codex","args":["exec","{task_file}"],"input_mode":"file","permission_mode":"native_sandbox","max_sessions":2,"quota_refresh_minutes":5,"catalog":null});
     let profiles = vec![
         current.clone(),
@@ -227,7 +227,7 @@ fn executable_edit_invalidates_observed_models_and_keeps_runtime_preferences() {
 #[test]
 fn editor_switches_all_template_fields_before_saving() {
     let current = serde_json::json!({
-        "id":"company", "parser":"custom", "executable":"aipro", "args":["--old"],
+        "id":"company", "parser":"custom", "executable":"custom-cli", "args":["--old"],
         "input_mode":"stdin", "max_sessions":1, "quota_refresh_minutes":19,
         "catalog":{"models":["old-model"]}, "environment":{"TOKEN":"private"}
     });
@@ -257,11 +257,12 @@ fn editor_switches_all_template_fields_before_saving() {
 #[test]
 fn executable_resolution_only_updates_the_value_that_requested_it() {
     let mut editor = agentconductor::native_ui_probe::workspace::profile_tools::Editor::default();
-    editor
-        .open(&serde_json::json!({"id":"local","parser":"custom","executable":"aipro","args":[]}));
-    editor.apply_resolution("aipro", Some("/tools/aipro"));
-    assert_eq!(editor.executable(), "/tools/aipro");
-    editor.apply_resolution("/tools/aipro", Some("/stale/path"));
+    editor.open(
+        &serde_json::json!({"id":"local","parser":"custom","executable":"custom-cli","args":[]}),
+    );
+    editor.apply_resolution("custom-cli", Some("/tools/custom-cli"));
+    assert_eq!(editor.executable(), "/tools/custom-cli");
+    editor.apply_resolution("/tools/custom-cli", Some("/stale/path"));
     editor.set_executable("/operator/choice");
     assert_eq!(editor.executable(), "/operator/choice");
 }
@@ -312,7 +313,7 @@ fn metadata_work_uses_fast_refresh_but_idle_profiles_do_not() {
 fn catalog_refresh_preserves_unsaved_profiles_and_does_not_apply_stale_catalogs() {
     let mut local = vec![
         serde_json::json!({"id":"claude","parser":"claude","executable":"claude","name":"unsaved"}),
-        serde_json::json!({"id":"new-agent","parser":"custom","executable":"aipro"}),
+        serde_json::json!({"id":"new-agent","parser":"custom","executable":"custom-cli"}),
     ];
     let saved = vec![serde_json::json!({
         "id":"claude","parser":"claude","executable":"claude",

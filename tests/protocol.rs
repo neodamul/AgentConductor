@@ -113,7 +113,7 @@ fn provider_failures_are_errors_and_opencode_step_is_not_result() {
 #[test]
 fn custom_profiles_map_cli_event_names_and_session_paths_from_json() {
     let profile: agentconductor::plan::AgentProfile = serde_json::from_value(serde_json::json!({
-        "id":"internal","parser":"custom","executable":"aipro","args":[],
+        "id":"internal","parser":"custom","executable":"custom-cli","args":[],
         "event_types":{"finished":"result","working":"progress","oops":"error"},
         "session_id_pointer":"/meta/session"
     }))
@@ -128,7 +128,7 @@ fn custom_profiles_map_cli_event_names_and_session_paths_from_json() {
 #[test]
 fn custom_profile_event_mapping_defaults_preserve_the_existing_wire_contract() {
     let profile: agentconductor::plan::AgentProfile = serde_json::from_value(serde_json::json!({
-        "id":"internal","parser":"custom","executable":"aipro","args":[]
+        "id":"internal","parser":"custom","executable":"custom-cli","args":[]
     }))
     .unwrap();
     let mut decoder = Decoder::for_profile(&profile, 1024);

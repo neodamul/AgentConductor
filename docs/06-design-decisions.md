@@ -24,7 +24,7 @@ Related: SF-02/04/06; QAS-02/03/04.
 Target AgentProfile fields: id, transport(cli), executable, argv, resume_argv,
 input_mode(text_stdin/file), output_mode(json/jsonl), parser, environment overrides,
 permission capabilities, timeout policy, allowed scopes. Inject the selected workspace cwd per task.
-Custom CLIs use the same contract; verify actual aipro flags before registration.
+Custom CLIs use the same contract; verify actual custom-cli flags before registration.
 HTTP is a later optional transport, separate from LLM completion APIs.
 Preserve parent authentication environment and HOME; do not register/copy API keys.
 If API-key/endpoint overrides exist, report the authentication route without exposing values.
@@ -1425,9 +1425,9 @@ Example profile fragment:
 
 ```json
 {
-  "id": "aipro",
+  "id": "custom-cli",
   "parser": "custom",
-  "executable": "aipro",
+  "executable": "custom-cli",
   "args": ["--jsonl"],
   "event_types": {"working": "progress", "finished": "result"},
   "session_id_pointer": "/meta/session",

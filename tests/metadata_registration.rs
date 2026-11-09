@@ -58,7 +58,7 @@ fn registration_and_settings_stay_available_while_catalog_requests_are_queued() 
     changed
         .as_array_mut()
         .unwrap()
-        .push(json!({"id":"company","parser":"custom","executable":"aipro","args":[]}));
+        .push(json!({"id":"company","parser":"custom","executable":"custom-cli","args":[]}));
     call(&startup, json!({"kind":"save_profiles","profiles":changed}))
         .expect("register another agent while querying models");
     let queued = call(&startup, json!({"kind":"discover","agent":"second"})).unwrap();
