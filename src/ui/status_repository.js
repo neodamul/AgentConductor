@@ -8,8 +8,9 @@ window.acStatusRepository = (() => {
   function icon(kind) {
     const svg = document.createElementNS(NS, 'svg');
     for (const [k, v] of Object.entries({ viewBox: '0 0 24 24', width: 13, height: 13, fill: 'none', stroke: 'currentColor', 'stroke-width': 1.6, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true' })) svg.setAttribute(k, v);
-    for (const d of ICONS[kind]) { const path = document.createElementNS(NS, 'path'); path.setAttribute('d', d); svg.append(path); }
+    // GitHub #482: the circles are painted before the path, like the approved design (the overlap pixels differ otherwise).
     if (kind === 'branch') for (const [cx, cy] of [[6, 5], [6, 19], [18, 5]]) { const c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', cx); c.setAttribute('cy', cy); c.setAttribute('r', 2); svg.append(c); }
+    for (const d of ICONS[kind]) { const path = document.createElementNS(NS, 'path'); path.setAttribute('d', d); svg.append(path); }
     return svg;
   }
   function part(kind, text, title) {
