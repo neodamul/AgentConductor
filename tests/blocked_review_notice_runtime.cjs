@@ -6,8 +6,9 @@ execFileSync('node',[path.join(root,'tests/ui_sim/build.cjs'),root,path.join(dir
 const preset="SIM.home.run_available=true;SIM.home.run_state='running';SIM.room.report.state='blocked';SIM.room.report.tasks.forEach(t=>t.status='completed');SIM.room.report.latest_review={verdict:'blocked',summary:'The evidence is ambiguous.',evidence:[],revisions:[]};";
 (async()=>{try{const browser=await launch(chrome,{width:1280,height:900});try{
  await browser.goto(pathToFileURL(path.join(dir,'app.html')).href+'?run=blocked');
+ await browser.eval("window.__beforePreset=true");
  await browser.eval(`PRESET(${JSON.stringify(preset)})`);
- let ready=false;for(let i=0;i<60;i++){try{ready=await browser.eval("!!document.getElementById('start-tab-tasks')");}catch{}if(ready)break;await new Promise(r=>setTimeout(r,50));}
+ let ready=false;for(let i=0;i<60;i++){try{ready=await browser.eval("!window.__beforePreset && !!document.getElementById('start-tab-tasks')");}catch{}if(ready)break;await new Promise(r=>setTimeout(r,50));}
  const result=await browser.eval(`(async()=>{
   const until=Date.now()+5000;while(document.getElementById('start-tab-tasks').disabled&&Date.now()<until)await new Promise(r=>setTimeout(r,30));
   document.getElementById('start-tab-tasks').click();
