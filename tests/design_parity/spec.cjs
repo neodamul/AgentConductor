@@ -154,6 +154,15 @@ module.exports = [
     ].map(([name, mock, app, props, keys]) => ({ name: `review-card-${name}`, props, keys, pixel: false,
       mock: { url: '?theme=light#7', selector: card + mock }, app: { setup, run, selector: app } }));
   })(),
+  // #599: the task card's stop reason (mock views #5 "g" = tool request wait, #6 "h" = permission denied).
+  ...[['wait', 4, 'g', 'warn-bg', ".task-notice.warn", "SIM.room.tool_requests=[{id:'tr1',status:'pending',context:{task:'task-1'},request:{tool:'Bash',input:{command:'npm install jsonwebtoken@9'}}}];"],
+    ['denied', 5, 'h', 'err-bg', '.task-notice.err', "SIM.room.report.tasks[0].status='permission_denied';SIM.room.report.tasks[0].error='permission denied: tool bash';"]].flatMap(([name, hash, show, bg, app, preset]) => {
+    const mock = `.main>.card[data-show="${show}"] div[style*="${bg}"]`, setup = STEPS_ENABLED + preset, run = "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click()";
+    return [{ name: `task-notice-${name}`, props: ['paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color', 'fontSize'], keys: ['paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color', 'fontSize'], pixel: false,
+      mock: { url: `?theme=light#${hash}`, selector: mock }, app: { setup, run, selector: app } },
+    { name: `task-notice-${name}-title`, props: ['fontWeight', 'fontSize'], keys: ['fontWeight', 'fontSize'], pixel: false,
+      mock: { url: `?theme=light#${hash}`, selector: mock + ' b' }, app: { setup, run, selector: app + ' b' } }];
+  }),
   // #563: the slide-over panels of the design (mock id -> app dialog) share the mock's box and heading.
   ...[['settings-panel', 'start-settings', 'settings'], ['coordinator-chat-panel', 'start-chat', 'chat'], ['workspace-overview', 'start-goals', 'goals']].flatMap(([mock, app, name]) => [
     { name: `panel-${name}`, props: ['paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], keys: ['width', 'paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], pixel: false,

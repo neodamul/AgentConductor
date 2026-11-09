@@ -3517,3 +3517,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #598.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Task stop reason: tool request wait and permission denied — GitHub #599
+
+- [x] Plan: `#task-notice` under the task card head, filled by `renderNotice` (`room_activity.js`) for the selected task: a `.warn` block when a pending tool request belongs to the task (requested command from `toolSummary`, "the coordinator could not decide, so it asks a person") and an `.err` block when its status is `permission_denied` (the recorded error and the number of tasks that depend on it); hidden otherwise and in the coordinator view. Parity entries `task-notice-wait/denied` (+ `-title`).
+- [x] Verify: parity entries, design parity light/dark at 1280 and 840, the full Node UI suite, `i18n_contracts`, `messages`, `source_layout`, `architecture_trace`.
+- [ ] Completed: merged on `main`; closes #599.
+
+Trace: R-210 / UC-202 / DD-222.

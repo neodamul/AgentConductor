@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The task card names why a task is stopped, like the approved design: a warning block when it waits for a tool decision (the requested command and who decides) and an error block when the CLI denied a tool (the denial and how many dependent tasks are waiting) (#599).
 - Once the run waits for approval the Agent Room shows the approved design's review card: "6단계 · 검토·병합" (the stepper now marks step 6 from approval on), a summary line with the changed-file count, the integration test result and the coordinator's recommendation, and the changed files with their added and removed lines (#598).
 - The Agent Room's verify step shows the approved design's card: "5단계 · 실행 · 검증", the coordinator's title and intro, and one row per task with its test command and result (passed / failed / running / waiting) above the coordinator's timeline (#597).
 - The Agent Room's task view is one card under the step tabs, like the approved design: the head reads "4단계 · 실행 · 작업 · 선택한 작업", the task summary, and "agent · task id · first owned path", with the status tag on the right; the activity tabs, instruction box and Stop/Resume/Recover buttons sit inside the card (#580).
