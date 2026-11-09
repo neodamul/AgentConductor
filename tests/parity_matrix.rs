@@ -75,6 +75,7 @@ fn parity_driver_dispatches_all_four_platform_matrix_cells() {
     );
     let refused =
         Command::new(&driver)
+            .arg("--test-threads=1")
             .env(
                 "PATH",
                 std::env::join_paths(std::iter::once(root.join("bin")).chain(
