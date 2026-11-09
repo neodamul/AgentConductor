@@ -83,12 +83,21 @@ async function visit(browser, side, spec) {
       // captured alone: lifted to the same fixed spot on a white page, at its own measured size, with everything else hidden.
       for (let attempt = 0; attempt < 5; attempt++) {
         await browser.eval(`(() => { const e = [...document.querySelectorAll(${JSON.stringify(s.selector)})].filter(x => x.getBoundingClientRect().width > 0)[${s.index || 0}];
+          if (${x.clone ? 'true' : 'false'}) {
+            // GitHub #482: an element that Windows rasterises differently inside the two pages is compared as a copy with its
+            // computed styles inlined, so both sides draw from the same context.
+            const inline = (s, d) => { const c = getComputedStyle(s); for (const k of c) d.style.setProperty(k, c.getPropertyValue(k)); [...s.children].forEach((ch, i) => inline(ch, d.children[i])); };
+            const copy = e.cloneNode(true); inline(e, copy); copy.dataset.parityClone = '1'; copy.dataset.parityTarget = '1';
+            copy.style.cssText += ';position:fixed;left:100px;top:100px;margin:0;box-sizing:border-box;width:${m.width}px;height:${m.height}px;transform:none;translate:none;z-index:99999';
+            document.body.append(copy);
+          } else {
           e.dataset.parityStyle = e.getAttribute('style') || ''; e.dataset.parityTarget = '1';
           e.style.cssText += '${x.inPlace ? '' : `;position:fixed;left:100px;top:100px;margin:0;box-sizing:border-box;width:${m.width}px;height:${m.height}px;transform:none;translate:none;z-index:99999`}';
-          document.head.append(Object.assign(document.createElement('style'), { id: 'parity-solo', textContent: 'html,body{background:#fff!important}*{visibility:hidden!important}[data-parity-target],[data-parity-target] *{visibility:visible!important}' })); })()`);
+          }
+          document.head.append(Object.assign(document.createElement('style'), { id: 'parity-solo', textContent: 'html,body{background:#fff!important}*{visibility:hidden!important}[data-parity-target],[data-parity-target] *{visibility:visible!important}' + (${x.flat ? 'true' : 'false'} ? '[data-parity-target]{box-shadow:none!important}[data-parity-target]::backdrop{background:transparent!important}' : '') })); })()`);
         got[x.name].shots[side] = await browser.shot(x.inPlace ? { x: m.x, y: m.y, width: m.width, height: m.height } : { x: 100, y: 100, width: m.width, height: m.height });
         const kept = await browser.eval("!!document.querySelector('[data-parity-target]')");
-        await browser.eval(`(() => { document.getElementById('parity-solo')?.remove(); const e = document.querySelector('[data-parity-target]'); if (!e) return; e.setAttribute('style', e.dataset.parityStyle); if (!e.dataset.parityStyle) e.removeAttribute('style'); delete e.dataset.parityStyle; delete e.dataset.parityTarget; })()`);
+        await browser.eval(`(() => { document.getElementById('parity-solo')?.remove(); const e = document.querySelector('[data-parity-target]'); if (!e) return; if (e.dataset.parityClone) { e.remove(); return; } e.setAttribute('style', e.dataset.parityStyle); if (!e.dataset.parityStyle) e.removeAttribute('style'); delete e.dataset.parityStyle; delete e.dataset.parityTarget; })()`);
         if (kept) break;
         if (attempt === 4) throw new Error(`${x.name}: ${side} changed during all five capture attempts`);
       }
