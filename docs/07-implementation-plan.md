@@ -3666,3 +3666,11 @@ Trace: R-210 / UC-202 / DD-135.
 - [ ] Completed: merged on `main`; closes #663.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Recapture the documentation screenshots and settle the About logo edges — GitHub #667, #482
+
+- [x] Plan: recapture the workspace screens (light, dark, Korean) and the agent settings dialog from the live demo (`tests/ui_live_bridge.rs`, `AC_LIVE_DEMO=1`, 1280×892) after the agent cards show the Claude Code name; record the Room screens as checked in `screenshots-current.txt`; draw `.about-mono>svg` with `shape-rendering:crispEdges` in `about.css` and the approved mock so the outer edge of the rect-only OpenCode mark is not anti-aliased differently by some macOS runners.
+- [x] Verify: `scripts/check_screenshots.py` (exit 0), the `about-dialog` parity cell in all four theme/width combinations, the Node UI suite.
+- [ ] Completed: merged on `main`; closes #667, related to #482.
+
+Trace: R-200 / UC-188 / DD-212.
