@@ -163,6 +163,17 @@ module.exports = [
     { name: `task-notice-${name}-title`, props: ['fontWeight', 'fontSize'], keys: ['fontWeight', 'fontSize'], pixel: false,
       mock: { url: `?theme=light#${hash}`, selector: mock + ' b' }, app: { setup, run, selector: app + ' b' } }];
   }),
+  // #607: activity rows (mock `.ev.th` = app `.event.muted`, the thinking row): number column, title, italic detail.
+  ...(() => {
+    const setup = STEPS_ENABLED + "SIM.reply.task=()=>({task:{id:'task-1'},events:[{seq:3,payload:{type:'thinking_tokens'}},{seq:14,payload:{type:'thinking_tokens'}}],decisions:[],coordinator_decisions:[],knowledge:[],step_lessons:[],usage:null,stdout:'',stderr:''});";
+    const run = "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click()", card = '.main>.card[data-show="b"] .ev.th';
+    return [['row', '', '#activity .event.muted', ['paddingTop', 'paddingBottom', 'borderBottomWidth', 'fontSize']],
+      ['number', ' code', '#activity .event.muted .event-seq', ['fontSize', 'color']],
+      ['title', ' b', '#activity .event.muted .event-head', ['fontSize', 'fontWeight', 'color']],
+      ['detail', ' .m', '#activity .event.muted .event-text', ['fontSize', 'fontStyle', 'color']],
+    ].map(([name, mock, app, props]) => ({ name: `activity-${name}`, props, keys: props, pixel: false,
+      mock: { url: '?theme=light#3', selector: card + mock }, app: { setup, run, selector: app } }));
+  })(),
   // #563: the slide-over panels of the design (mock id -> app dialog) share the mock's box and heading.
   ...[['settings-panel', 'start-settings', 'settings'], ['coordinator-chat-panel', 'start-chat', 'chat'], ['workspace-overview', 'start-goals', 'goals']].flatMap(([mock, app, name]) => [
     { name: `panel-${name}`, props: ['paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], keys: ['width', 'paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], pixel: false,
