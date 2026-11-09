@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## v0.2.0-Beta1
 
+- The About dialog's OpenCode mark is drawn with crisp edges, so the design comparison no longer differs by a few edge pixels on some macOS runs (#482); the documentation screenshots show the Claude Code display name and a one-line tool row on the agent cards (#667).
 - **Beta.** The first 0.2.0 build: the redesigned goal screens (Workspace, Agent roles, Plan, Agent Room with its task, verify and review cards) checked against the approved design in light and dark, English and Korean. It is a pre-release; the stable channel stays on 0.1.61 until 0.2.0 is released.
 - The agent cards' buttons no longer blink at the quota refresh interval: a quota refresh updates the quota ring alone, and a card is rebuilt only when something it shows changes (#663).
 - The About dialog shows the app icon instead of the "ac" tile and its Codex logo has the same transparent background as the agent card (#656).
