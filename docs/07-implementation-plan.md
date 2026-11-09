@@ -3573,3 +3573,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #617.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Room card tab area keeps a minimum height — GitHub #619
+
+- [x] Plan: `.room-card .view{min-height:160px}` (was 0, #580) so the tab content never collapses; the card already scrolls (`overflow:auto`).
+- [x] Verify: a recapture of the review step at 1280×892 (live demo run), the full Node UI suite, `design_parity` (four combinations), `choice_controls`, `interface_theme`.
+- [ ] Completed: merged on `main`; closes #619.
+
+Trace: R-210 / UC-202 / DD-222.
