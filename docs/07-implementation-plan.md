@@ -3525,3 +3525,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #599.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### New Goal state on the Workspace step — GitHub #600
+
+- [x] Plan: `renderGoals` (`startup.js`) derives `fresh` (no active Goal, empty goal text, other Goals exist) and binds the head state (`startup.new_goal_pill`) and the footer note `#start-save-note` (`startup.new_goal_note`, else `startup.save_note`); parity assertions `new-goal-state` and `new-goal-state-default` pin both states (mock view #10 shows the same card as view #1 with the "새 목표" pill and note).
+- [x] Verify: the two assertions, design parity light/dark at 1280 and 840, the full Node UI suite, `i18n_contracts`, `messages`, `source_layout`, `architecture_trace`.
+- [ ] Completed: merged on `main`; closes #600.
+
+Trace: R-210 / UC-202 / DD-222.
