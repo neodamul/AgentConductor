@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The Agent Room's task view is one card under the step tabs, like the approved design: the head reads "4단계 · 실행 · 작업 · 선택한 작업", the task summary, and "agent · task id · first owned path", with the status tag on the right; the activity tabs, instruction box and Stop/Resume/Recover buttons sit inside the card (#580).
 - The task-details panel shows the selected task's instruction, its dependencies and its test command under the ownership path, as in the approved design (#581).
 - The Workspace footer's idle text is the design's "연결됨 · 로컬 실행" / "Connected · local run" (the folder and branch are named on its right side); progress and stale states keep their own texts (#583).
 - The Claude usage lookup no longer inherits the Claude Code session that started the app (session markers such as CLAUDECODE and CLAUDE_CODE_ENTRYPOINT are dropped; login tokens, keys and provider settings are kept), so an app started from a Claude Code terminal reads the subscription usage instead of reporting API billing or a lost login (#585).

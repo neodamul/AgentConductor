@@ -118,6 +118,13 @@ module.exports = [
     { name: `view-eyebrow-${name}`, props: ['fontSize', 'fontWeight', 'color'], keys: ['height', 'fontSize', 'fontWeight', 'color'], pixel: false,
       mock: { url: `?theme=light#${hash}`, selector: `.main>.card[data-show="${show}"] .cardhead .eyebrow` }, app: { setup: STEPS_ENABLED, run: `document.querySelectorAll('#start-step-tabs [role=tab]')[${tab}].click()`, selector: '.step-card:not([hidden]) .eyebrow' } },
   ]),
+  // #580: the Room's task view is one step card like the mock's (hash #3 = view "b", tab 3 = Tasks).
+  ...[['card', '', '.room-card', ['paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor'], ['paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor']],
+    ['eyebrow', ' .cardhead .eyebrow', '.room-card .eyebrow', ['fontSize', 'fontWeight', 'color'], ['height', 'fontSize', 'fontWeight', 'color']],
+    ['title', ' .cardhead h2', '.room-card #selected-agent', ['fontSize', 'fontWeight', 'color'], ['height', 'fontSize', 'fontWeight', 'color']],
+    ['meta', ' .cardhead .sub', '.room-card #selected-task', ['fontSize', 'color'], ['height', 'fontSize', 'color']],
+  ].map(([name, mock, app, props, keys]) => ({ name: `room-card-${name}`, props, keys, pixel: false,
+    mock: { url: '?theme=light#3', selector: `.main>.card[data-show="b"]${mock}` }, app: { setup: STEPS_ENABLED, run: "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click()", selector: app } })),
   // #563: the slide-over panels of the design (mock id -> app dialog) share the mock's box and heading.
   ...[['settings-panel', 'start-settings', 'settings'], ['coordinator-chat-panel', 'start-chat', 'chat'], ['workspace-overview', 'start-goals', 'goals']].flatMap(([mock, app, name]) => [
     { name: `panel-${name}`, props: ['paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], keys: ['width', 'paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], pixel: false,

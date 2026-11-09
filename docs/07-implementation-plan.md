@@ -3493,3 +3493,11 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+
+### Agent Room task card — GitHub #580
+
+- [x] Plan: the Room's session heading through the run controls are wrapped in `section.room-card` (the mock's `.main>.card` look: surface, 1px line, radius 0 0 12px 12px, 20/24 padding) and placed under the step tabs by `acStepper.place`; the head is the mock's cardhead (eyebrow `room.step_4_run_tasks_selected_task`, task summary, "agent · id · first path", status tag). Parity entries `room-card-card`, `-eyebrow`, `-title`, `-meta`.
+- [x] Verify: parity entries, design parity light/dark at 1280 and 840, the full Node UI suite, `i18n_contracts`, `messages`.
+- [ ] Completed: merged on `main`; closes #580.
+
+Trace: R-210 / UC-202 / DD-222.
