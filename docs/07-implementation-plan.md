@@ -3626,3 +3626,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #647.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### About dialog uses the app icon and the transparent Codex mark — GitHub #656
+
+- [x] Plan: `about.html` embeds the titlebar's app icon (`img.about-mark`, 44px) in place of the text tile; `about.css` hides the logos' `path[fill="#fff"]` square like the agent card does; the approved mock (`preview.html`/`preview.css`) and its manifest hashes follow.
+- [x] Verify: the Node UI suite and a live render of the dialog header.
+- [ ] Completed: merged on `main`; closes #656.
+
+Trace: R-210 / UC-202 / DD-222.
