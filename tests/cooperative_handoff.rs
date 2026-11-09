@@ -75,19 +75,32 @@ fn completed_handoff_moves_to_the_reviewed_fallback_without_a_competing_writer()
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap()
         .as_millis() as u64;
-    cooperative::issue(
-        &mut store,
-        cooperative::Issue {
-            revision: workflow::revision(&report).unwrap(),
-            task: "one.txt".into(),
-            action: cooperative::Action::Handoff,
-            instruction: "Relinquish at checkpoint".into(),
-            issued_at_ms: now,
-            expires_at_ms: now + 60_000,
-        },
-        now,
-    )
-    .unwrap();
+    // GitHub #666: the ready file can appear a moment before the attempt reaches the ledger; retry until it is active.
+    loop {
+        let issued = cooperative::issue(
+            &mut store,
+            cooperative::Issue {
+                revision: workflow::revision(&report).unwrap(),
+                task: "one.txt".into(),
+                action: cooperative::Action::Handoff,
+                instruction: "Relinquish at checkpoint".into(),
+                issued_at_ms: now,
+                expires_at_ms: now + 60_000,
+            },
+            now,
+        );
+        match issued {
+            Ok(_) => break,
+            Err(error) if error.contains("no active addressed attempt") => {
+                if Instant::now() >= deadline {
+                    let _ = child.kill();
+                    panic!("addressed attempt never became active: {error}");
+                }
+                std::thread::sleep(Duration::from_millis(20));
+            }
+            Err(error) => panic!("{error}"),
+        }
+    }
     std::fs::write(&release, "continue").unwrap();
     wait(
         &|| run.join("task-0/checkpoint-relinquished").exists(),

@@ -3633,6 +3633,8 @@ Trace: R-210 / UC-202 / DD-222.
 - [x] Verify: the Node UI suite and a live render of the dialog header.
 - [ ] Completed: merged on `main`; closes #656.
 
+Trace: R-210 / UC-202 / DD-222.
+
 ### English agent card tool row stays on one line — GitHub #654
 
 - [x] Plan: `html[lang=en]` rules in `startup.css` trim the tool buttons' side padding so the row keeps one line at natural size (Korean metrics stay as approved); the card uses `min-height:144px` so many tags add bottom space; the `Alternate → agent` chip switches to `Alt. → agent` only when it cannot fit its row; every UI label uses the display name from `AC_AGENT_NAMES` (`Claude Code`, `Codex`, `OpenCode`) while ids and CLI stay `claude`.
@@ -3648,3 +3650,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #658.
 
 Trace: R-210 / UC-202 / DD-135.
+
+### Quota refresh updates the quota ring only — GitHub #663
+
+- [x] Plan: `profiles()` in `startup.js` stamps a card rebuild with the profiles, hints, icons, job state and each agent's own catalog job only; the quota state moves to a second stamp that replaces the `.quota-controls` ring in place (`updateQuotaRings`), so a refresh never recreates Edit, Models, remove or move.
+- [x] Verify: `quota_ring_isolation_runtime.cjs` (fails without the change: the card controls are replaced by a quota refresh), the Node UI suite, the quota ring and popup parity cells.
+- [ ] Completed: merged on `main`; closes #663.
+
+Trace: R-210 / UC-202 / DD-222.
