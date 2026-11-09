@@ -35,7 +35,7 @@ let selectedOutlineTask=0;
 const outlineTasks=[
  {title:'토큰 회전 구현',agent:'claude',id:'task-1',path:'src/auth/',instruction:'리프레시 토큰을 회전하고 이전 토큰을 무효화합니다.',dependency:'없음 · 바로 시작',test:'cargo test auth'},
  {title:'재사용 탐지 테스트',agent:'codex',id:'task-2',path:'tests/auth/',instruction:'재사용된 토큰 거부와 동시 요청의 경계 조건을 검증합니다.',dependency:'task-1 완료 후 시작',test:'cargo test rotation'},
- {title:'보안 정책 노트',agent:'aipro',id:'task-3',path:'docs/security.md',instruction:'토큰 회전 정책과 마이그레이션 안내를 문서화합니다.',dependency:'없음 · 병렬 실행',test:'문서 검토'}
+ {title:'보안 정책 노트',agent:'custom-cli',id:'task-3',path:'docs/security.md',instruction:'토큰 회전 정책과 마이그레이션 안내를 문서화합니다.',dependency:'없음 · 병렬 실행',test:'문서 검토'}
 ];
 function selectRail(panel){
 
@@ -183,7 +183,7 @@ function showGoalResult(id){
  const rotation=goal.id==='rotation';
  const summary=document.getElementById('result-summary');summary.replaceChildren();
  const text=document.createElement('p');text.textContent=rotation?'리프레시 토큰 회전과 재사용 탐지를 구현하고, 검토한 변경을 main에 반영했습니다.':'경량 상태 확인 API와 의존 서비스 실패 검사를 구현하고 main에 반영했습니다.';summary.append(text);
- const commit=document.createElement('p');commit.className='result-commit';commit.textContent='승인 완료 · main 반영 · 커밋 '+goal.commit;summary.append(commit);const directory=document.createElement('p');directory.className='result-commit';directory.textContent='반영 위치: /Users/neodamul/Development/auth-service';summary.append(directory);
+ const commit=document.createElement('p');commit.className='result-commit';commit.textContent='승인 완료 · main 반영 · 커밋 '+goal.commit;summary.append(commit);const directory=document.createElement('p');directory.className='result-commit';directory.textContent='반영 위치: USERHOME/Development/auth-service';summary.append(directory);
  const stats=document.createElement('div');stats.className='result-stats';
  [[rotation?'4':'3','변경 파일'],[rotation?'3/3':'8/8','테스트 통과'],[rotation?'2':'1','기록한 교훈']].forEach(([value,label])=>{const tile=document.createElement('div'),number=document.createElement('strong'),caption=document.createElement('span');number.textContent=value;caption.textContent=label;tile.append(number,caption);stats.append(tile);});summary.append(stats);
  document.getElementById('result-lesson').textContent='';

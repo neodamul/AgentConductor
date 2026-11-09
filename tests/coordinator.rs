@@ -75,7 +75,7 @@ fn final_document_requires_typed_model_output_and_a_successful_terminal_event() 
 #[test]
 fn custom_coordinator_event_names_are_read_from_its_agent_profile() {
     let profile: agentconductor::plan::AgentProfile = serde_json::from_value(serde_json::json!({
-        "id":"internal","parser":"custom","executable":"aipro","args":[],
+        "id":"internal","parser":"custom","executable":"custom-cli","args":[],
         "event_types":{"finished":"result"}
     }))
     .unwrap();
@@ -193,12 +193,12 @@ fn a_custom_cli_coordinates_read_only_through_arguments_its_operator_declares() 
     // GitHub #326: the app cannot verify a custom CLI, so the operator names the read-only invocation.
     let mut profile: agentconductor::plan::AgentProfile =
         serde_json::from_value(serde_json::json!({
-            "id": "aipro", "executable": "aipro", "args": ["run", "--auto-approve", "{task_file}"],
+            "id": "custom-cli", "executable": "custom-cli", "args": ["run", "--auto-approve", "{task_file}"],
             "parser": "custom", "permission_mode": "operator_auto_approve"
         }))
         .unwrap();
     let error = coordinator::read_only_args(&profile, "prompt.txt").unwrap_err();
-    assert!(error.contains("aipro"), "{error}");
+    assert!(error.contains("custom-cli"), "{error}");
     profile.read_only_args = Some(vec![
         "run".into(),
         "--read-only".into(),

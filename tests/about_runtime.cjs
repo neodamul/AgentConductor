@@ -9,8 +9,10 @@ const cases={first:"SIM.reply.about_status=()=>({version:'0.2.0',show:true,updat
  const result={};
  for(const [name,preset] of Object.entries(cases)){
   await browser.goto(pathToFileURL(path.join(dir,'app.html')).href+'?run='+name+theme+width);
+  await browser.eval("window.__beforePreset=true");
   await browser.eval(`PRESET(${JSON.stringify(preset+'window.aboutFixture=true;')})`);
-  await new Promise(r=>setTimeout(r,1500));
+  for(let i=0;i<300;i++){let ok=false;try{ok=await browser.eval("!window.__beforePreset && window.aboutFixture===true");}catch{}if(ok)break;await new Promise(r=>setTimeout(r,50));}
+  await new Promise(r=>setTimeout(r,500));
   result[name]=await browser.eval(`(async()=>{
    const checks=[],check=(n,v)=>{if(!v)throw Error(n);checks.push(n);};const wait=ms=>new Promise(r=>setTimeout(r,ms));
    document.documentElement.dataset.theme=${JSON.stringify(theme)};
@@ -26,14 +28,14 @@ const cases={first:"SIM.reply.about_status=()=>({version:'0.2.0',show:true,updat
     check('version shown',document.getElementById('about-meta').textContent.includes('0.2.0'));
     check('start button focused',document.activeElement.id==='about-start');
     check('nothing recorded before closing',seen()===0);
-    d.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));document.getElementById('about-start').click();await wait(200);
+    d.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}));document.getElementById('about-start').click();for(let i=0;i<100&&(d.open||seen()<1);i++)await wait(50);await wait(100);
     check('closing records the version',!d.open&&seen()===1);
    }
    document.getElementById('start-app-menu').click();await wait(300);
    const item=[...document.querySelectorAll('#start-workspace-list button')].find(b=>b.textContent.trim()===acMessage('about.menu'));
    check('menu entry exists',!!item);item.click();await wait(400);
    check('menu opens it without the update tag',d.open&&tag.hidden);
-   document.getElementById('about-close').click();await wait(200);check('close button closes it',!d.open);
+   document.getElementById('about-close').click();for(let i=0;i<100&&d.open;i++)await wait(50);check('close button closes it',!d.open);
    return checks.length;
   })()`);
  }

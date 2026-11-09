@@ -232,7 +232,7 @@ async fn the_coordinator_replaces_a_test_command_that_cannot_work() {
     std::fs::remove_dir_all(root).unwrap();
 }
 
-/// A CLI that saves its own plans inside the project (for example .aipro/plans/) leaves them
+/// A CLI that saves its own plans inside the project (for example .custom-cli/plans/) leaves them
 /// outside every owned path; they are moved into the run folder before integration.
 #[tokio::test]
 async fn files_created_outside_owned_paths_are_moved_out_of_the_project() {
@@ -244,10 +244,13 @@ async fn files_created_outside_owned_paths_are_moved_out_of_the_project() {
     let report = workflow::run(plan, &project, &run, 10).await.unwrap();
     assert_eq!(report.state, "waiting_approval", "{:?}", report.error);
     assert!(
-        !project.join(".aipro").exists(),
+        !project.join(".custom-cli").exists(),
         "stray plans left the project"
     );
-    assert!(run.join("stray-files/.aipro/plans/one.txt.md").is_file());
+    assert!(
+        run.join("stray-files/.custom-cli/plans/one.txt.md")
+            .is_file()
+    );
     assert!(project.join("one.txt").is_file() && project.join("base.txt").is_file());
     let store = agentconductor::state::Store::open(run.join("state.sqlite")).unwrap();
     let moved = store.document("stray_files_moved").unwrap();

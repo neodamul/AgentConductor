@@ -7,7 +7,7 @@ use serde_json::{Value, json};
 
 fn profile() -> AgentProfile {
     serde_json::from_value(json!({
-        "id":"aipro", "executable":"aipro", "parser":"custom", "args":["run"],
+        "id":"custom-cli", "executable":"custom-cli", "parser":"custom", "args":["run"],
         "catalog":{"models":["small","large"],"source":"operator","queried_at":0,"cli_version":"manual","origin":"manual"},
         "model_discovery":{"args":["models","--json"],"models_pointer":"/items","model_pointer":"/id"},
         "execution_options":[
@@ -177,8 +177,8 @@ fn built_in_profiles_do_not_gain_custom_cli_rules() {
 fn task_options_are_exportable_and_rejected_when_invalid_for_selected_model() {
     let profile = serde_json::to_value(profile()).unwrap();
     let mut plan: agentconductor::plan::Plan = serde_json::from_value(json!({
-        "goal":"configure aipro", "agents":[profile], "tasks":[{
-            "id":"one","agent":"aipro","prompt":"work","paths":["src/one"],
+        "goal":"configure custom-cli", "agents":[profile], "tasks":[{
+            "id":"one","agent":"custom-cli","prompt":"work","paths":["src/one"],
             "test_command":["cargo","test"],"model":"large",
             "execution_options":{"reasoning":"high"}
         }]
@@ -207,8 +207,8 @@ fn reassignment_revalidates_persisted_options_against_the_new_agent() {
         .unwrap()
         .model_values = [("small".into(), vec!["low".into()])].into();
     let mut plan: agentconductor::plan::Plan = serde_json::from_value(json!({
-        "goal":"configure aipro", "agents":[profile, replacement], "tasks":[{
-            "id":"one","agent":"aipro","prompt":"work","paths":["src/one"],
+        "goal":"configure custom-cli", "agents":[profile, replacement], "tasks":[{
+            "id":"one","agent":"custom-cli","prompt":"work","paths":["src/one"],
             "test_command":["cargo","test"],"model":"large",
             "execution_options":{"reasoning":"high"}
         }]

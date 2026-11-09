@@ -138,7 +138,7 @@ pub fn show(
                         .clicked()
                     {
                         selected = Some(serde_json::json!({
-                            "id":"local-agent", "parser":"custom", "executable":"aipro",
+                            "id":"local-agent", "parser":"custom", "executable":"custom-cli",
                             "args":[], "input_mode":"stdin", "permission_mode":"unverified",
                             "max_sessions":3, "quota_refresh_minutes":5, "catalog":null
                         }));

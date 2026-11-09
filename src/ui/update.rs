@@ -18,6 +18,9 @@ impl Room {
     pub(super) fn update_source(request: &serde_json::Value) -> Result<serde_json::Value, String> {
         if request["kind"] == "set_update_settings" {
             crate::update_source::save(request["repository"].as_str().unwrap_or_default())?;
+            if let Some(channel) = request["channel"].as_str() {
+                crate::update_source::save_channel(channel)?;
+            }
         }
         Ok(crate::update_source::settings())
     }

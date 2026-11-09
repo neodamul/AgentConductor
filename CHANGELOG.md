@@ -7,6 +7,11 @@ the GitHub Release notes for its tag.
 ## v0.2.0-Beta1
 
 - **Beta.** The first 0.2.0 build: the redesigned goal screens (Workspace, Agent roles, Plan, Agent Room with its task, verify and review cards) checked against the approved design in light and dark, English and Korean. It is a pre-release; the stable channel stays on 0.1.61 until 0.2.0 is released.
+- The agent cards' buttons no longer blink at the quota refresh interval: a quota refresh updates the quota ring alone, and a card is rebuilt only when something it shows changes (#663).
+- The About dialog shows the app icon instead of the "ac" tile and its Codex logo has the same transparent background as the agent card (#656).
+- In English the agent card's tool row (Edit, Models, remove, up, down) stays on one line at both reference widths instead of wrapping its last button (#654).
+- The agent card shows `Claude Code` (not `claude`) everywhere in the UI, keeps bottom space when it carries many tags, and shortens the alternate chip to `Alt. → agent` only when it would wrap; the consent, planning, fallback and room labels use the same display names (#654).
+- Update checks follow a channel chosen in Settings: Stable (default) offers published releases, Beta also offers prereleases such as 0.2.0-Beta1; a release outranks its own betas and the CLI `update` follows the same channel (#658).
 - While the usage popup refreshes only the ↻ arrow spins, not the whole button with its hover background (#647).
 - A fallback (or a manual reassignment) hands the old agent's conversation to the next agent: Claude Code and Codex sessions are read from their session stores and OpenCode's with `opencode session export`, flattened to `role: text` lines (tool calls, tool output and reasoning left out, 32 KiB of the newest turns) and added to the handoff as an untrusted record. The way to read a session is preset data (`invocation.session.export`); a profile turns it off with `"export": null` in its agent settings (#639).
 - Resume says why it has nothing to do ("Nothing to resume: task X is failed" / "재개할 것 없음: 태스크 X가 failed") instead of silently doing nothing (#637).
@@ -311,7 +316,7 @@ the GitHub Release notes for its tag.
 - Export workspace and Import workspace are adjacent in the menu, with consistent English/Korean workspace labels.
 
 - A model that replies it is at capacity is retried after a short wait, up to three times, for tasks and the coordinator.
-- Files an agent creates outside its owned paths (for example a CLI's .aipro/plans) are moved out of the project into the run folder.
+- Files an agent creates outside its owned paths (for example a CLI's .custom-cli/plans) are moved out of the project into the run folder.
 - Agent Room task rows show the reviewed task summary with the task ID as a label.
 - A pressed button shows that its work is running until the request and any background job it started end, so it no longer looks disabled.
 - The workspace page and the Agent Room stay open side by side: switch freely during a run; the room keeps its live progress and the workspace's back-to-run button shows the run state.
@@ -336,7 +341,7 @@ Includes every change prepared for v0.1.19, which was not published (its first r
 - Reverted plan/workspace edits no longer leave approval disabled. Actual unsaved edits and background jobs remain guarded with clear reasons.
 - Claude api_error usage_limit_reached / HTTP 429 is parsed as an availability restriction even without type/is_error, retaining explicit reset times and the durable five-hour reviewed fallback policy. Duration telemetry never becomes a reset time.
 
-- Custom agent CLIs (for example aipro set to auto-approve tools) run after plan approval as approving their own tools, like the full-access default, instead of being refused as unverified; no extra setting is needed.
+- Custom agent CLIs (for example custom-cli set to auto-approve tools) run after plan approval as approving their own tools, like the full-access default, instead of being refused as unverified; no extra setting is needed.
 
 - The update dialog shows the actual GitHub release notes beneath the release link in a keyboard-focusable, scrollable text panel.
 

@@ -264,7 +264,7 @@ Windows CLI-only installations show recognizable provider badges, prefer executa
 
 
 ### R-73 Self-hosted CLI model catalogs without discovery
-A working self-hosted CLI may expose no model-list command. Explain that capability limit and register company-supplied IDs without HTTP endpoints, API keys, guessed IDs or a generation prompt. Preserve existing models when reopening the editor. Source: user confirmed aipro has no /models command, 2026-10-11.
+A working self-hosted CLI may expose no model-list command. Explain that capability limit and register company-supplied IDs without HTTP endpoints, API keys, guessed IDs or a generation prompt. Preserve existing models when reopening the editor. Source: user confirmed custom-cli has no /models command, 2026-10-11.
 
 ### R-74 Slugs are named automatically
 Status: Amended by R-84: a goal in another language gets an English slug; romanization is no longer used.
@@ -566,7 +566,7 @@ Step 1 shows the planning coordinator right of the workspace name and the projec
 Trace: R-139 -> BG-94 -> SF-126 -> UC-129 -> FR-124 -> QAS-135 -> DD-148. Source: user requests, 2026-10-14.
 
 ### R-140 Runs keep going and stay visible
-A model reply such as "Selected model is at capacity" is retried after a short wait, at most three times, for tasks and for the coordinator. Files an agent creates outside its owned paths in a project without its own Git (for example a CLI saving .aipro/plans) are moved out of the project into the run folder and recorded. Agent Room task rows lead with the reviewed task summary. A pressed button shows that its work is running, distinct from a disabled button, until the request and any background job it started end. The workspace page and the Agent Room stay open side by side: the operator switches freely, the room keeps its live progress, and the workspace shows the run state on its back-to-run button.
+A model reply such as "Selected model is at capacity" is retried after a short wait, at most three times, for tasks and for the coordinator. Files an agent creates outside its owned paths in a project without its own Git (for example a CLI saving .custom-cli/plans) are moved out of the project into the run folder and recorded. Agent Room task rows lead with the reviewed task summary. A pressed button shows that its work is running, distinct from a disabled button, until the request and any background job it started end. The workspace page and the Agent Room stay open side by side: the operator switches freely, the room keeps its live progress, and the workspace shows the run state on its back-to-run button.
 Trace: R-140 -> BG-95 -> SF-127 -> UC-130 -> FR-125 -> QAS-136 -> DD-149. Source: user requests, 2026-10-14.
 
 

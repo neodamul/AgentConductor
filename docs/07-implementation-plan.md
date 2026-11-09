@@ -25,7 +25,7 @@ The historical checkpoints below retain their original scope and do not describe
 
 Historical DD-41 checkpoint: modular source/test separation, 2026-10-10. Full macOS
 regression: 213 passed, 0 failed, 9 ignored; 57 suites. Files are bounded at 500 lines.
-Canonical development checkout is `/Users/neodamul/Development/AgentConductor`.
+Canonical development checkout is `USERHOME/Development/AgentConductor`.
 Platform CI `38038926444` on `0ab97d8` is terminal: macOS passed; Windows tests and
 formatting passed, but Clippy rejected two `&PathBuf` fixture parameters. These are
 corrected to `&Path`; native Windows verification of this checkpoint remains pending.
@@ -3632,5 +3632,37 @@ Trace: R-210 / UC-202 / DD-222.
 - [x] Plan: the popup's refresh button holds the arrow in `span.usage-glyph`; `.usage-refresh.refreshing .usage-glyph` carries the spin animation instead of the button.
 - [x] Verify: the Node UI suite, `interface_theme`, `choice_controls`, a live render of the popup while busy.
 - [ ] Completed: merged on `main`; closes #647.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### About dialog uses the app icon and the transparent Codex mark — GitHub #656
+
+- [x] Plan: `about.html` embeds the titlebar's app icon (`img.about-mark`, 44px) in place of the text tile; `about.css` hides the logos' `path[fill="#fff"]` square like the agent card does; the approved mock (`preview.html`/`preview.css`) and its manifest hashes follow.
+- [x] Verify: the Node UI suite and a live render of the dialog header.
+- [ ] Completed: merged on `main`; closes #656.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### English agent card tool row stays on one line — GitHub #654
+
+- [x] Plan: `html[lang=en]` rules in `startup.css` trim the tool buttons' side padding so the row keeps one line at natural size (Korean metrics stay as approved); the card uses `min-height:144px` so many tags add bottom space; the `Alternate → agent` chip switches to `Alt. → agent` only when it cannot fit its row; every UI label uses the display name from `AC_AGENT_NAMES` (`Claude Code`, `Codex`, `OpenCode`) while ids and CLI stay `claude`.
+- [x] Verify: `agent_card_buttons_runtime.cjs` (English, 840/1280, light/dark; fails without the rules), `interface_theme`, the Node UI suite, a screenshot at 1280.
+- [ ] Completed: merged on `main`; closes #654.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Update check channel: stable or beta — GitHub #658
+
+- [x] Plan: `update_channel` (`stable` default, `beta`) is saved beside `update_repository`; stable reads `releases/latest`, beta lists `releases?per_page=30` and takes the highest non-draft version; `update::version` orders `x.y.z-BetaN` below `x.y.z` and ignores a company suffix; the Settings dialog carries the selector and `set_update_settings` saves it.
+- [x] Verify: `update_source`, `update` (unit and integration), `i18n_contracts`, `messages`, Clippy, the Node UI suite.
+- [ ] Completed: merged on `main`; closes #658.
+
+Trace: R-210 / UC-202 / DD-135.
+
+### Quota refresh updates the quota ring only — GitHub #663
+
+- [x] Plan: `profiles()` in `startup.js` stamps a card rebuild with the profiles, hints, icons, job state and each agent's own catalog job only; the quota state moves to a second stamp that replaces the `.quota-controls` ring in place (`updateQuotaRings`), so a refresh never recreates Edit, Models, remove or move.
+- [x] Verify: `quota_ring_isolation_runtime.cjs` (fails without the change: the card controls are replaced by a quota refresh), the Node UI suite, the quota ring and popup parity cells.
+- [ ] Completed: merged on `main`; closes #663.
 
 Trace: R-210 / UC-202 / DD-222.

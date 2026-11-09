@@ -3,11 +3,12 @@ const fs=require('fs'),path=require('path'),os=require('os'),{execFileSync}=requ
 const {findChrome,launch}=require('../design_parity/cdp.cjs');const chrome=findChrome();if(!chrome){console.log('role choices skipped: no Chrome');process.exit(77);}
 const root=path.resolve(__dirname,'../..'),dir=fs.mkdtempSync(path.join(os.tmpdir(),'ac-role-choice-'));
 execFileSync('node',[path.join(root,'tests/ui_sim/build.cjs'),root,path.join(dir,'app.html')]);
-const preset=`SIM.home.config.profiles[0].catalog.models=['shared','opus'];SIM.home.config.profiles[1].catalog.models=['shared','gpt'];SIM.home.config.profiles[1].fallback={agent:'aipro',model:null};SIM.home.config.profiles.push({id:'aipro',parser:'custom',executable:'not-executed',args:['run','{model}'],permission_mode:'external_sandbox',catalog:null});SIM.home.config.roles={development:[{agent:'claude',model:'shared',fallback:{agent:'codex',model:'gpt'}}],testing:[{agent:'codex',fallback:false}]};SIM.reply.catalog=p=>{SIM.home.config.profiles.find(x=>x.id===p.agent).catalog=p.catalog;return {saved:true};};window.roleFixture=true;`;
+const preset=`SIM.home.config.profiles[0].catalog.models=['shared','opus'];SIM.home.config.profiles[1].catalog.models=['shared','gpt'];SIM.home.config.profiles[1].fallback={agent:'custom-cli',model:null};SIM.home.config.profiles.push({id:'custom-cli',parser:'custom',executable:'not-executed',args:['run','{model}'],permission_mode:'external_sandbox',catalog:null});SIM.home.config.roles={development:[{agent:'claude',model:'shared',fallback:{agent:'codex',model:'gpt'}}],testing:[{agent:'codex',fallback:false}]};SIM.reply.catalog=p=>{SIM.home.config.profiles.find(x=>x.id===p.agent).catalog=p.catalog;return {saved:true};};window.roleFixture=true;`;
 (async()=>{try{for(const width of [840,1280]){const browser=await launch(chrome,{width,height:960});try{for(const theme of ['light','dark']){
  await browser.goto(pathToFileURL(path.join(dir,'app.html')).href+'?run='+theme+width);
+ await browser.eval("window.__beforePreset=true");
  await browser.eval(`PRESET(${JSON.stringify(preset)})`);
- let ready=false;for(let i=0;i<50;i++){try{ready=await browser.eval("!!window.roleFixture && !!document.querySelector('tr[data-role=development]')");}catch{}if(ready)break;await new Promise(r=>setTimeout(r,50));}
+ let ready=false;for(let i=0;i<50;i++){try{ready=await browser.eval("!window.__beforePreset && !!window.roleFixture && !!document.querySelector('tr[data-role=development]')");}catch{}if(ready)break;await new Promise(r=>setTimeout(r,50));}
  const result=await browser.eval(`(async()=>{
   const checks=[],check=(name,value)=>{if(!value)throw Error(name);checks.push(name);};
   const wait=()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
@@ -22,15 +23,15 @@ const preset=`SIM.home.config.profiles[0].catalog.models=['shared','opus'];SIM.h
   change(a,'codex');await wait();check('agent change resets even a shared model',m.value==='');
   check('self fallback cleared and its model disabled',f.value===''&&fm.disabled);
   change(f,'__inherit');await wait();check('profile default is inherited without role override',!Object.hasOwn(acRoleChoices.read(document.getElementById('start-roles')).development[0],'fallback'));
-  check('inherited fallback profile is aipro',fm.dataset.modelAgent==='aipro');
-  const coordinator=document.getElementById('start-coordinator');change(coordinator,'aipro');await wait();check('unsupported catalog keeps coordinator default enabled',!document.getElementById('start-coordinator-model').disabled); 
+  check('inherited fallback profile is custom-cli',fm.dataset.modelAgent==='custom-cli');
+  const coordinator=document.getElementById('start-coordinator');change(coordinator,'custom-cli');await wait();check('unsupported catalog keeps coordinator default enabled',!document.getElementById('start-coordinator-model').disabled); 
   acChoices.open(fm);await wait();document.querySelector('#ac-choice-menu [data-value=__manual]').click();
   const input=document.querySelector('#ac-choice-menu input');input.value='internal-model';input.dispatchEvent(new Event('input'));document.querySelector('#ac-choice-menu form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
   const deadline=Date.now()+5000;while(fm.value!=='internal-model'&&Date.now()<deadline)await new Promise(r=>setTimeout(r,20));
-  check('manual model registers through native catalog request',SIM.log.some(e=>e.kind==='catalog'&&e.p.agent==='aipro'&&e.p.catalog.origin==='manual'));
+  check('manual model registers through native catalog request',SIM.log.some(e=>e.kind==='catalog'&&e.p.agent==='custom-cli'&&e.p.catalog.origin==='manual'));
   check('manual model applied after registration',fm.value==='internal-model');
   const rules=acRoleChoices.read(document.getElementById('start-roles'));
-  check('editing inherited fallback model makes a role override',rules.development[0].fallback.agent==='aipro'&&rules.development[0].fallback.model==='internal-model');
+  check('editing inherited fallback model makes a role override',rules.development[0].fallback.agent==='custom-cli'&&rules.development[0].fallback.model==='internal-model');
   check('other role explicit none remains unchanged',rules.testing[0].fallback===false);
   change(f,'');await wait();check('none disables and clears fallback model',fm.disabled&&fm.value==='');
   check('coordinator default is available without a catalog',!document.getElementById('start-coordinator-model').disabled);

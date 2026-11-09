@@ -29,9 +29,9 @@
   }
   function fallbackAgents(select,agent,value){
     const inherited=profile(agent)?.fallback;
-    const suffix=inherited?.agent?': '+inherited.agent:'';
+    const suffix=inherited?.agent?': '+acAgentName(profile(inherited.agent)||{id:inherited.agent},profiles()):'';
     const source=profile(agent),key=p=>p?.quota_group||p?.executable;
-    const items=[[context.inheritToken,()=>message('choices.inherit')+suffix],['',()=>message('choices.none')],...profiles().filter(p=>p.id!==agent).map(p=>[p.id,p.id,!!source&&key(p)===key(source)])];
+    const items=[[context.inheritToken,()=>message('choices.inherit')+suffix],['',()=>message('choices.none')],...profiles().filter(p=>p.id!==agent).map(p=>[p.id,acAgentName(p,profiles()),!!source&&key(p)===key(source)])];
     const signature=JSON.stringify([agent,inherited?.agent,profiles().map(p=>[p.id,key(p)])]);
     if(select.dataset.agents!==signature){options(select,items,value);select.dataset.agents=signature;}
     select.dataset.choiceIcon='fallback';select.disabled=!agent;
@@ -42,7 +42,7 @@
     const a=node('select'),m=node('select'),f=node('select'),fm=node('select');
     const fields=[['agent',a,'room.agent'],['model',m,'startup.model'],['fallback',f,'choices.fallback'],['fallback-model',fm,'startup.model']];
     for(const [name,s,label] of fields){s.dataset.roleField=name;s.id='start-role-'+role+'-'+name;AC_I18N.bind(s,()=>context.labels[role]+' · '+message(label),'aria-label');}
-    a.dataset.choiceIcon='person';const primary=entries[0]?.agent||'',missing=!!primary&&!profile(primary);options(a,[['','—'],...profiles().map(p=>[p.id,p.id]),...(missing?[[primary,primary+' ⚠']]:[])],primary);a.classList.toggle('missing',missing);
+    a.dataset.choiceIcon='person';const primary=entries[0]?.agent||'',missing=!!primary&&!profile(primary);options(a,[['','—'],...profiles().map(p=>[p.id,acAgentName(p,profiles())]),...(missing?[[primary,primary+' ⚠']]:[])],primary);a.classList.toggle('missing',missing);
     models(m,a.value,entries[0]?.model||'');
     const policy=entries[0]?.fallback,legacy=entries[1];
     const fallback=policy===false?'':policy?.agent||legacy?.agent||context.inheritToken;

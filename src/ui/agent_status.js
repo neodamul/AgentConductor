@@ -6,7 +6,7 @@ window.acAgentStatus = (() => {
   let states = {};
   function stamp() {
     for (const card of document.querySelectorAll('#start-profiles .startup-profile, #rail-pane-agents .startup-profile')) {
-      const symbol = card.querySelector('.agent-symbol'), id = card.querySelector('.name-row strong')?.textContent;
+      const symbol = card.querySelector('.agent-symbol'), id = card.dataset.agent;
       if (!symbol) continue;
       const state = states[id];
       if (state) symbol.dataset.state = state; else delete symbol.dataset.state;

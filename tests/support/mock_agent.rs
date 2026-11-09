@@ -465,8 +465,8 @@ fn main() {
             std::fs::write(path, content).unwrap();
             // A CLI that saves its own plan inside the project, outside every owned path.
             if mode == "task-stray" {
-                std::fs::create_dir_all(".aipro/plans").unwrap();
-                std::fs::write(format!(".aipro/plans/{path}.md"), "plan\n").unwrap();
+                std::fs::create_dir_all(".custom-cli/plans").unwrap();
+                std::fs::write(format!(".custom-cli/plans/{path}.md"), "plan\n").unwrap();
             }
             println!("{{\"type\":\"result\",\"payload\":{{\"summary\":\"implemented\"}}}}");
         }
