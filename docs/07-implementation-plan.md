@@ -3611,5 +3611,23 @@ Trace: R-210 / UC-202 / DD-222.
 - [x] Plan: the release workflow publishes a tag with a `-` suffix (`v0.2.0-Beta1`) with `--prerelease`, so GitHub's "latest" and the in-app updater (which reads `releases/latest`) keep offering the stable 0.1.61; the package version stays 0.2.0 and the CHANGELOG section is `v0.2.0-Beta1`. CHANGELOG on `main` gains the `v0.1.61` section (#524).
 - [x] Verify: `release_notes` (workflow contract), `release_docs`, `public_docs`, `release_package`, `manual_renderer`, `release notes v0.2.0-beta.1`, `scripts/check_screenshots.py`.
 - [ ] Completed: tagged `v0.2.0-Beta1` after the full suite on the release commit.
+### Conversation transfer on fallback — GitHub #639
+
+- [x] Plan: `invocation.session.export` in `acio.agent/1` (`file`: a store file ending with `{session_id}` below `{home}`-relative root; `command`: the profile's executable with an argv) is the data form of the CLI's `/export`. `conversation::export` reads it, `flatten` keeps `role: text` of user/assistant turns only (no tool calls, tool output or reasoning; 32 KiB of the newest turns), and `transfer_role` appends it to the handoff as "Previous conversation", an untrusted record; the next agent starts a new provider session (DD-43). Presets: Claude `~/.claude/projects`, Codex `~/.codex/sessions`, OpenCode `session export`. `"export": null` in a profile's agent settings turns it off.
+- [x] Verify: `conversation_fallback` (flattening, Claude/Codex stores, OpenCode command, opt-out, reassignment end to end), a check on real Claude and Codex transcripts, the preset schema tests, `role_fallback_runtime`, `fallback`, Clippy.
+- [ ] Completed: merged on `main` for the 0.2.0 beta; closes #639.
+### Nothing to resume, blocked review choices, built-in refusals — GitHub #637
+
+- [x] Plan: `resume_blocker` (`workflow/recovery/resume.rs`) names the first task that is not completed (or the run state) when Resume would start nothing, and the controller returns "Nothing to resume: task X is <status>" (en/ko). A review with verdict `blocked` and no revisions (`latest_review`) is retried by Resume like a failed run, and the task notice (`room_activity.js`) offers Retry and Reassign an agent. A refusal sentence from Claude Code, Codex or OpenCode is decoded as an error event with `denied: true`; the worker ends the task as `permission_denied`.
+- [x] Verify: `protocol`, `workflow_resume_failed`, `workflow_builtin_denial`, `ui_failed_resume`, `blocked_review_notice_runtime.cjs`, the Node UI suite, `i18n_contracts`, `messages`, `interface_theme`, `choice_controls`, `design_parity`, Clippy.
+- [ ] Completed: merged on `main`; closes #637.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Refresh arrow spins alone — GitHub #647
+
+- [x] Plan: the popup's refresh button holds the arrow in `span.usage-glyph`; `.usage-refresh.refreshing .usage-glyph` carries the spin animation instead of the button.
+- [x] Verify: the Node UI suite, `interface_theme`, `choice_controls`, a live render of the popup while busy.
+- [ ] Completed: merged on `main`; closes #647.
 
 Trace: R-210 / UC-202 / DD-222.

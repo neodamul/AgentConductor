@@ -66,10 +66,13 @@ async fn resume_inner(
     }
     // GitHub #625 / DD-132: Resume on a failed run retries its failed tasks from the retained work and session
     // and starts the coordinator's repair rounds again (the dependents blocked by them are retried below).
-    let from_failed = !automatic && report.state == "failed";
+    // A blocked coordinator review that proposed no revisions is retried the same way: the verification and the
+    // review start again instead of leaving the run with nothing to do.
+    let from_failed = !automatic && (report.state == "failed" || review_blocked(&report));
     if from_failed {
         report.review_round = 0;
         report.review_error = None;
+        report.latest_review = None;
         for task in &mut report.tasks {
             if task.status == "failed" {
                 task.status = "pending".into();
@@ -111,4 +114,38 @@ async fn resume_inner(
     report.diff_hash = None;
     report.error = None;
     drive(report, dir, &mut store, timeout, &mut repository_lease).await
+}
+
+/// A run whose coordinator review ended `blocked` without any revision to apply.
+fn review_blocked(report: &Report) -> bool {
+    report.state == "blocked"
+        && report.tasks.iter().all(|t| t.status == "completed")
+        && report.latest_review.as_ref().is_some_and(|r| {
+            r.verdict == crate::coordinator::Verdict::Blocked && r.revisions.is_empty()
+        })
+}
+
+/// Why Resume has nothing to do: the first task that is not completed as `(task, status)`, or `("", state)` when
+/// every task is completed. `None` when Resume can start something.
+pub fn resume_blocker(dir: &Path, report: &Report) -> Result<Option<(String, String)>, String> {
+    let mut resumable = report.state == "failed" || review_blocked(report);
+    for task in &report.tasks {
+        resumable |= match task.status.as_str() {
+            "pending" | "waiting_availability" => true,
+            "blocked" | "permission_denied" => !tool_rejected(dir, task)?,
+            _ => false,
+        };
+    }
+    if resumable {
+        return Ok(None);
+    }
+    Ok(Some(
+        report
+            .tasks
+            .iter()
+            .find(|t| t.status != "completed")
+            .map_or((String::new(), report.state.clone()), |t| {
+                (t.id.clone(), t.status.clone())
+            }),
+    ))
 }

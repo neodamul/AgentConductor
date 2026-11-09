@@ -31,6 +31,7 @@
       "Follow the attached task scope and completion conditions"
     ],
     "session": {
+      "export": {"mode": "command", "argv": ["session", "export", "{session_id}"]},
       "model_args": [
         "--model",
         "{model}"

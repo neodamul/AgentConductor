@@ -7,6 +7,11 @@ the GitHub Release notes for its tag.
 ## v0.2.0-Beta1
 
 - **Beta.** The first 0.2.0 build: the redesigned goal screens (Workspace, Agent roles, Plan, Agent Room with its task, verify and review cards) checked against the approved design in light and dark, English and Korean. It is a pre-release; the stable channel stays on 0.1.61 until 0.2.0 is released.
+- While the usage popup refreshes only the ↻ arrow spins, not the whole button with its hover background (#647).
+- A fallback (or a manual reassignment) hands the old agent's conversation to the next agent: Claude Code and Codex sessions are read from their session stores and OpenCode's with `opencode session export`, flattened to `role: text` lines (tool calls, tool output and reasoning left out, 32 KiB of the newest turns) and added to the handoff as an untrusted record. The way to read a session is preset data (`invocation.session.export`); a profile turns it off with `"export": null` in its agent settings (#639).
+- Resume says why it has nothing to do ("Nothing to resume: task X is failed" / "재개할 것 없음: 태스크 X가 failed") instead of silently doing nothing (#637).
+- A coordinator review that ends `blocked` without revisions is retried by Resume, and the task notice offers **Retry** and **Reassign an agent** (#637).
+- A refusal sentence printed by a built-in CLI (Claude Code, Codex, OpenCode) ends the task as "Permission denied", like a declared denial, instead of a plain failure (#637).
 - Resume on a failed run now works: it retries the failed tasks (keeping their work and session), runs a failed integration verification again, and restarts the repair rounds, instead of failing again at once; an out-of-scope failure still points to the scope recovery dialog (#625).
 - A built-in CLI (Claude Code, Codex, OpenCode) that prints a plain-text line instead of JSON — a notice or error page from a company gateway or wrapper — no longer fails the task with "invalid JSONL": the line is kept as a warning, the session id and result that follow are still read (so the task can be resumed), and a task that then fails quotes what the CLI printed (#624).
 - The English "Stop run" button no longer shows a doubled stop glyph (#621).
