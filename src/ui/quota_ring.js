@@ -44,7 +44,7 @@ window.acQuotaRing = (() => {
     const entry = entries.get(id), indicator = entry?.indicator;
     if (!popup || !entry) return;
     const error = failed(indicator), body = popup.querySelector('.usage-body');
-    popup.querySelector('.usage-agent').textContent = id;
+    popup.querySelector('.usage-agent').textContent = entry.name || id;
     popup.querySelector('.usage-heading>.usage-reset').textContent = error ? acMessage('startup.quota_error_label') : acMessage('startup.quota_remaining');
     body.replaceChildren();
     if (error) {
@@ -88,7 +88,7 @@ window.acQuotaRing = (() => {
 
   // options: { busy, canRefresh, refresh } -- returns the ring button for the agent card.
   function button(id, indicator, options = {}) {
-    entries.set(id, { indicator, busy: !!options.busy, canRefresh: !!options.canRefresh, refresh: options.refresh });
+    entries.set(id, { indicator, name: options.name, busy: !!options.busy, canRefresh: !!options.canRefresh, refresh: options.refresh });
     const b = document.createElement('button'); b.type = 'button'; b.className = 'usage-button' + (failed(indicator) ? ' error' : '');
     b.setAttribute('aria-controls', 'usage-popover'); b.setAttribute('aria-expanded', String(openId === id));
     const summary = failed(indicator) ? acMessage('startup.quota_open_error') : (indicator?.rings || []).map(r => r.label + ' ' + (pct(r) === null ? '—' : Math.round(pct(r)) + '%')).join(' · ');

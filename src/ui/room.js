@@ -6,7 +6,6 @@ const drafts = new Map();let resumeAfter=null;
 let coordinatorView=false;
 let sessionStamp='', quotaAgent='',quotaActive='';const quotaRefreshed=new Map();
 function statusLight(status){return ['running','completed','ready'].includes(status)?'green':['failed','blocked','permission_denied'].includes(status)?'red':'yellow';}
-const names = {claude:'Claude Code',codex:'Codex',opencode:'OpenCode'};
 const pretty = value => {const key='state.'+String(value||'unknown');return Object.hasOwn(AC_MESSAGES.en,key)?acMessage(key):String(value||acMessage('room.unknown')).replaceAll('_',' ');};
 // Run and task states: a capitalised label and a colour tone, so the final state reads at a glance.
 const STATUS_TONE = {completed:'ok',approved:'ok',merged:'ok',failed:'bad',blocked:'bad',permission_denied:'bad',rejected:'bad',running:'run',pending:'idle',ready:'idle'};
@@ -99,14 +98,14 @@ function renderLive() {
 setInterval(() => { if (!document.hidden && !roomStopped) renderActivity(); }, 1000);
 function planTask() { return snapshot?.report.plan.tasks[selected]; }
 function profile() { return snapshot?.report.plan.agents.find(a=>a.id===planTask()?.agent); }
-function agentName(agent) {return names[agent?.parser]||agent?.id||acMessage("room.agent");}
+function agentName(agent) {return agent?acAgentName(agent,snapshot?.report?.plan?.agents||[]):acMessage("room.agent");}
 // The plan review's one-line task summary: the first line that says what the task does.
 function taskLine(prompt){const line=String(prompt||'').split('\n').map(l=>l.trim().replace(/^[-*]\s+/,'')).find(l=>l&&!/:$/.test(l))||'';return line.length>160?line.slice(0,160)+'…':line;}
 // Task rows lead with the reviewed summary; the task ID stays visible as a small label.
 function taskHeading(id,prompt){const heading=node('span',undefined,'session-task'),summary=taskLine(prompt);heading.append(node('span',id,'task-id'));if(summary)heading.append(node('span',summary,'task-summary'));AC_I18N.bind(heading,()=>(summary?id+' · '+summary:id),"title");return heading;}
 function refreshQuota(agent){quotaActive=agent;quotaRefreshed.set(agent,Date.now());return act({kind:'quota',agent});}
 function renderQuota(agent) {
- setOptions($('quota-agent'),snapshot.report.plan.agents.map(a=>({value:a.id,label:agentName(a)+' · '+a.id})),quotaAgent||agent?.id,JSON.stringify(snapshot.report.plan.agents.map(a=>a.id)));
+ setOptions($('quota-agent'),snapshot.report.plan.agents.map(a=>({value:a.id,label:agentName(a)})),quotaAgent||agent?.id,JSON.stringify(snapshot.report.plan.agents.map(a=>a.id)));
  agent=snapshot.report.plan.agents.find(a=>a.id===$('quota-agent').value)||agent;
  const quota=snapshot.quotas?.[agent?.id];
  AC_I18N.bind($('quota-refresh'),()=>(acMessage("room.refresh_quota")));
@@ -205,7 +204,7 @@ function renderSnapshot() {
   AC_I18N.bind($('inspector-context'),()=>(t?agentName(a)+' · '+t.id+' · '+(p?.prompt||'').split('\n')[0]:acMessage("room.inspector_empty")));
   AC_I18N.bind($('task-instruction'),()=>(p?.prompt||''));AC_I18N.bind($('task-dependency'),()=>(p?.depends_on?.length?p.depends_on.join(', '):acMessage("room.no_dependencies")));AC_I18N.bind($('task-test'),()=>(p?.test_command?.join(' ')||'—'));
   AC_I18N.bind($('paths'),()=>(p?.paths.join('\n')||'—'));AC_I18N.bind($('session-id'),()=>(t?.session_id?acMessage("room.session_168693")+t.session_id:acMessage("room.no_native_session_yet")));
-  setOptions($('agent-select'),r.plan.agents.map(a=>({value:a.id,label:agentName(a)+' · '+a.id})),p.agent,t.id+p.agent+JSON.stringify(r.plan.agents.map(a=>a.id)));
+  setOptions($('agent-select'),r.plan.agents.map(a=>({value:a.id,label:agentName(a)})),p.agent,t.id+p.agent+JSON.stringify(r.plan.agents.map(a=>a.id)));
   const models=a?.catalog?.models||[];setOptions($('model-select'),models.length?models.map(m=>({value:m,label:m})):[{value:'',label:acMessage("room.no_observed_catalog")}],p.model||models[0]||'',t.id+JSON.stringify(a?.catalog)+String(p.model));
   const modelSelect=$('model-select'),manualTask=t.id;modelSelect.dataset.choiceIcon='model';modelSelect.dataset.choiceManual=String(!!a&&canEditTask(t)&&r.state!=='running'&&(!models.length||a.catalog?.origin==='manual'));
   modelSelect.acManualPick=async value=>{if(!canEditTask(t))throw Error(acMessage('choices.agent_changed'));if(!await act({kind:'model',task:manualTask,model:value,register:true}))throw Error(acMessage('choices.registration_failed'));};

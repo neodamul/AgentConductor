@@ -1,6 +1,6 @@
 // GitHub #410: the agent avatar state is the strongest state of the agent's tasks (error > waiting > running > completed).
 const assert = require('node:assert/strict'), fs = require('node:fs'), vm = require('node:vm');
-const cards = ['claude', 'codex', 'aipro'].map(id => { const symbol = { dataset: {} }; return { id, symbol, querySelector(sel) { return sel === '.agent-symbol' ? symbol : { textContent: id }; } }; });
+const cards = ['claude', 'codex', 'aipro'].map(id => { const symbol = { dataset: {} }; return { id, symbol, dataset: { agent: id }, querySelector(sel) { return sel === '.agent-symbol' ? symbol : null; } }; });
 const context = vm.createContext({ window: {}, document: { getElementById: () => null, querySelectorAll: () => cards }, MutationObserver: class { observe() {} } });
 vm.runInContext(fs.readFileSync('src/ui/agent_status.js', 'utf8'), context);
 const tone = s => ({ completed: 'ok', failed: 'bad', running: 'run', pending: 'idle', blocked_on_human: 'wait' }[s] || 'wait');
