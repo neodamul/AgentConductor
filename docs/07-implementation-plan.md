@@ -3634,3 +3634,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #656.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Update check channel: stable or beta — GitHub #658
+
+- [x] Plan: `update_channel` (`stable` default, `beta`) is saved beside `update_repository`; stable reads `releases/latest`, beta lists `releases?per_page=30` and takes the highest non-draft version; `update::version` orders `x.y.z-BetaN` below `x.y.z` and ignores a company suffix; the Settings dialog carries the selector and `set_update_settings` saves it.
+- [x] Verify: `update_source`, `update` (unit and integration), `i18n_contracts`, `messages`, Clippy, the Node UI suite.
+- [ ] Completed: merged on `main`; closes #658.
+
+Trace: R-210 / UC-202 / DD-135.
