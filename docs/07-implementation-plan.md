@@ -3549,3 +3549,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #605.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Activity rows like the mock — GitHub #607
+
+- [x] Plan: `event()` (`room.js`) renders `code.event-seq` first (number or range), then `.event-body` (title, detail), without the dot marker; CSS makes `.event` the mock's `.ev` grid (62px column, 11px padding, bottom rule); the thinking row gets the detail `room.thinking_quiet`. Parity entries `activity-row/number/title/detail` compare the mock's `.ev.th` with `.event.muted`. The mock's 상세 tab is the right-hand task-details panel in the app (#561/#581) and is not duplicated.
+- [x] Verify: parity entries, design parity light/dark at 1280 and 840, the full Node UI suite, `i18n_contracts`, `messages`, `source_layout`, `architecture_trace`.
+- [ ] Completed: merged on `main`; closes #607.
+
+Trace: R-210 / UC-202 / DD-222.

@@ -7,6 +7,7 @@ the GitHub Release notes for its tag.
 ## Unreleased
 
 - Test-suite fixes after the Room card work: the status dot's waiting colour is a theme token, the choice-controls test reads the task id from the card's meta line, and the design-parity checks no longer depend on 1–2 px font-metric differences between macOS and Windows (#609).
+- The Agent Room's activity rows follow the approved design: a number (or range) column, a bold title, a soft detail line and a rule between rows; the "thinking" row says "출력 없이 추론 중입니다." (#607).
 - After "New Goal" (no active Goal, empty text, other Goals exist) the Workspace step shows the design's "새 목표" state in its head and the footer note "작업 디렉터리·코디네이터는 유지하고 새 Goal을 추가합니다." (#600).
 - The design-verification suite now compares the choice popup (agent/model/coordinator menus) with the approved assignment menu: box, heading and options (#605).
 - The task card names why a task is stopped, like the approved design: a warning block when it waits for a tool decision (the requested command and who decides) and an error block when the CLI denied a tool (the denial and how many dependent tasks are waiting) (#599).
