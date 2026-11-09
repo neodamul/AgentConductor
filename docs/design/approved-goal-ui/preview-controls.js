@@ -140,7 +140,7 @@ window.addEventListener('resize',()=>{document.getElementById('agent-status-tip'
 
 (() => {
  const popup=document.getElementById('usage-popover');
- const data={claude:[64,100],codex:[73,92],custom-cli:null};
+ const data={claude:[64,100],codex:[73,92],'custom-cli':null};
  const errors={codex:{title:"사용량 조회 실패",message:"Claude/Codex CLI의 사용량 응답이 제한 시간 안에 도착하지 않았습니다.",detail:"quota query timed out"}};
  let active=null;
  function close(){popup.hidden=true;if(active)active.setAttribute('aria-expanded','false');}

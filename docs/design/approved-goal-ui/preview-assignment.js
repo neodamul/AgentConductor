@@ -1,6 +1,6 @@
 // Fixture catalogs only. Production uses each CLI's actual catalog/capabilities.
-const assignmentCatalog={claude:['sonnet','opus'],codex:['등록 모델 A · 시안','등록 모델 B · 시안'],custom-cli:[]};
-const agentDisplay={claude:'Claude Code',codex:'Codex',custom-cli:'custom-cli'};
+const assignmentCatalog={claude:['sonnet','opus'],codex:['등록 모델 A · 시안','등록 모델 B · 시안'],'custom-cli':[]};
+const agentDisplay={claude:'Claude Code',codex:'Codex','custom-cli':'custom-cli'};
 const roleAssignments=[{role:'계획과 검증',agent:'custom-cli',model:'',fallback:'',fallbackModel:''},{role:'개발',agent:'claude',model:'sonnet',fallback:'codex',fallbackModel:''},{role:'테스트',agent:'codex',model:'',fallback:'custom-cli',fallbackModel:''},{role:'문서',agent:'custom-cli',model:'',fallback:'',fallbackModel:''}];
 let workspaceCoordinator={agent:'custom-cli',model:''},assignmentTarget=null,assignmentField=null,assignmentAnchor=null;
 function assignmentValue(target){return target==='coordinator'?workspaceCoordinator:roleAssignments[Number(target.split('-')[1])];}

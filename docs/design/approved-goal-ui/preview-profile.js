@@ -1,5 +1,5 @@
 // Profile editor reference: fields mirror the current main UI; no executable access.
-const profileFixtures={claude:{provider:'claude',id:'claude',executable:'claude',args:['-p','--output-format','stream-json'],input:'stdin',sessions:3,minutes:5,fallback:'codex',fallbackModel:''},codex:{provider:'codex',id:'codex',executable:'codex',args:['exec','-','--json'],input:'stdin',sessions:3,minutes:5,fallback:'custom-cli',fallbackModel:''},custom-cli:{provider:'custom',id:'custom-cli',executable:'custom-cli',args:[],input:'stdin',sessions:3,minutes:5,fallback:'',fallbackModel:''}};
+const profileFixtures={claude:{provider:'claude',id:'claude',executable:'claude',args:['-p','--output-format','stream-json'],input:'stdin',sessions:3,minutes:5,fallback:'codex',fallbackModel:''},codex:{provider:'codex',id:'codex',executable:'codex',args:['exec','-','--json'],input:'stdin',sessions:3,minutes:5,fallback:'custom-cli',fallbackModel:''},'custom-cli':{provider:'custom',id:'custom-cli',executable:'custom-cli',args:[],input:'stdin',sessions:3,minutes:5,fallback:'',fallbackModel:''}};
 let editingProfile=null,profileOpener=null;
 const profileDialog=document.getElementById('profile-edit-dialog'),profileField=name=>document.getElementById('profile-'+name);
 function refreshProfileFallbackModels(model=''){
