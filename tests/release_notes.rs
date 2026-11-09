@@ -39,8 +39,8 @@ fn stable_release_contract_is_verified_in_rust() {
     assert!(publish.contains("needs: [verify, screenshots]"));
     assert!(publish.contains("contents: write"));
     assert!(publish.contains("gh release create"));
-    // A beta tag (v0.2.0.Beta1) is published as a pre-release; a plain vX.Y.Z tag is stable.
-    assert!(publish.contains("*-*|*.[Bb]eta*) prerelease=(--prerelease)"));
+    // A suffixed tag (v0.2.0-Beta1) is published as a pre-release; a plain vX.Y.Z tag is stable.
+    assert!(publish.contains("*-*) prerelease=(--prerelease)"));
     assert!(publish.contains("SHA256SUMS") && publish.contains("*.zip"));
     for line in [release, validation.as_str()]
         .into_iter()
