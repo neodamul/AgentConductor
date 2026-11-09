@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+## v0.1.61
 - Resume says why it has nothing to do ("Nothing to resume: task X is failed" / "재개할 것 없음: 태스크 X가 failed") instead of silently doing nothing (#637).
 - A coordinator review that ends `blocked` without revisions is retried by Resume, and the run banner offers **Resume** (retry) and **Reassign an agent** (#637).
 - A refusal sentence printed by a built-in CLI (Claude Code, Codex, OpenCode) ends the task as "Permission denied", like a declared denial, instead of a plain failure (#637).
@@ -14,7 +15,6 @@ the GitHub Release notes for its tag.
 - Jira items are called issues everywhere they are shown ("Jira 이슈" / "Jira issue": the import button, the reference dialog, the import error text and the documents), not stories (#440, #584).
 - The Claude usage lookup no longer inherits the Claude Code session that started the app (session markers such as CLAUDECODE and CLAUDE_CODE_ENTRYPOINT are dropped; login tokens, keys and provider settings are kept) (#585, #589).
 - Claude usage lookup: a `/usage` screen that cannot be read (a signed-out Claude CLI or one billed per API use) is reported as soon as it has settled instead of after three minutes, so the refresh icon stops spinning and the message says to sign in with /login (#568, #571).
-
 - Step 2 (agent roles) has a Save button. Saving agent or role changes (for example after an agent was deleted) re-assigns the tasks of the Goal's reviewed plan to the agents the roles now allow instead of discarding the plan, so there is no need to generate a plan again (#564).
 - The Workspace step puts prompt optimization, Jira, Confluence and document preview on one row, in that order (#560).
 
