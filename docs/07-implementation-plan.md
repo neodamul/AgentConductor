@@ -3501,3 +3501,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #580.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Verify step card — GitHub #597
+
+- [x] Plan: the coordinator view (step 5, the "통합 검증" session) gets the mock's verify head (`room.step_5_run_verify`, `room.verify_title`, `room.verify_intro`) and `#verify-rows`, one `.verify-row` per task (glyph, task summary, `test_command`, result from `report.tests`) rendered by `verifyRows` in `room_activity.js`; parity entries `verify-card-eyebrow/title/row/row-title/row-glyph`. The composer and run controls stay as the Room's real actions; the mock's footer note and waiting button are not added.
+- [x] Verify: parity entries, design parity light/dark at 1280 and 840, the full Node UI suite, `i18n_contracts`, `messages`, `source_layout`, `architecture_trace`.
+- [ ] Completed: merged on `main`; closes #597.
+
+Trace: R-210 / UC-202 / DD-222.

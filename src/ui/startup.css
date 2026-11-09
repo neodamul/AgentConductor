@@ -473,3 +473,6 @@ dialog{padding:24px;border-radius:12px}dialog h2{font-weight:700}
 .room-card .session-heading{align-items:flex-start;padding:0 0 12px}.room-card .session-heading>.agent-symbol{display:none}.room-card .session-heading h2{margin:4px 0 2px;line-height:23px}.room-card .session-heading .eyebrow{font-size:11.5px;line-height:13.5px}.room-card #selected-task{font-size:12.5px;line-height:14.5px}
 .room-card .task-activity{margin:0;min-height:0}.room-card .task-activity:empty{display:none}
 .room-card .view-tabs{margin:0 0 8px}.room-card .view{min-height:0;padding:8px 2px}
+/* GitHub #597: the verify card's per-task test rows, like the mock's `.row`. */
+.verify-rows{margin-bottom:8px}.verify-row{display:grid;grid-template-columns:28px 1.6fr 1fr 1fr;align-items:center;gap:10px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:8px;font-size:13px}
+.verify-row .n{width:22px;height:22px;border-radius:5px;background:var(--fill);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}.verify-row .t{font-weight:600}.verify-row .s{color:var(--soft);font-size:12px}.verify-row .verify-pass{color:var(--ok)}.verify-row .verify-run{color:var(--accent-text)}.verify-row .verify-fail{color:var(--err)}
