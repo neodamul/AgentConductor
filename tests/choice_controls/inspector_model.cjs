@@ -25,7 +25,7 @@ const preset=`SIM.home.run_available=true;SIM.home.run_state='running';SIM.room.
   document.querySelector('#ac-choice-menu form').dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
   const deadline=Date.now()+5000;while(!SIM.log.some(e=>e.kind==='action'&&e.p.action.kind==='model')&&Date.now()<deadline)await new Promise(r=>setTimeout(r,20));
   const sent=SIM.log.filter(e=>e.kind==='action'&&e.p.action.kind==='model').map(e=>e.p.action);
-  check('manual id is sent as an explicit register-and-apply action',sent.length===1&&sent[0].model==='operator/own'&&sent[0].register===true&&sent[0].task===document.getElementById('selected-task').textContent);
+  check('manual id is sent as an explicit register-and-apply action',sent.length===1&&sent[0].model==='operator/own'&&sent[0].register===true&&sent[0].task===document.getElementById('selected-task').textContent.split(' · ')[1]);
   return checks;
  })()`);
  console.log(theme,width,result.length,'inspector model checks passed');

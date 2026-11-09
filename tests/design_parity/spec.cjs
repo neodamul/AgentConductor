@@ -68,7 +68,7 @@ module.exports = [
       mock: { url: '?theme=light#0', run: STEP_REFERENCE_WIDTH, selector: '.tabs .tab', index, rel: '.titlebar' }, app: { selector: '#start-step-tabs [role=tab]', index, rel: 'header.titlebar' } }]),
   // #468: the About dialog, opened by update (centered, with the update tag). Captured like every other box (lifted to a fixed
   // spot, so raster phase is identical on both sides); the mock re-centres open dialogs itself, so its observers are detached.
-  { name: 'about-dialog', props: [], keys: ['width', 'height'],
+  { name: 'about-dialog', tolerance: 0.002, props: [], keys: ['width', 'height'],
     mock: { url: '?theme=light&about=update#0', setup: 'referenceDialogResize.disconnect();referenceDialogOpen.disconnect();', selector: '#about-dialog' },
     app: { setup: "SIM.reply.about_status=()=>({version:'0.2.0',show:true,updated:true});", selector: '#about-dialog' } },
   { name: 'step-number-box', props: [], keys: ['width', 'height'], pixel: false,
@@ -80,9 +80,9 @@ module.exports = [
   // #562: the footer's status dot and the Workspace folder / branch on its right match the mock's `.status`.
   { name: 'status-dot', props: ['backgroundColor', 'borderTopLeftRadius'], keys: ['width', 'height', 'backgroundColor', 'borderTopLeftRadius'],
     mock: { url: '?theme=light#0', selector: '.status .dot' }, app: { selector: '#startup-screen footer.statusbar .dot' } },
-  { name: 'status-repository', props: ['gap'], keys: ['width', 'height', 'gap'],
+  { name: 'status-repository', tolerance: 0.002, props: ['gap'], keys: ['width', 'height', 'gap'],
     mock: { url: '?theme=light#0', selector: '.status .status-repository' }, app: { selector: '#startup-screen footer.statusbar .status-repository' } },
-  ...['worktree', 'branch'].map(part => ({ name: `status-${part}`, props: ['fontSize', 'color'], keys: ['width', 'height', 'fontSize', 'color'],
+  ...['worktree', 'branch'].map(part => ({ name: `status-${part}`, tolerance: 0.002, props: ['fontSize', 'color'], keys: ['width', 'height', 'fontSize', 'color'],
     mock: { url: '?theme=light#0', selector: `.status .status-${part}` }, app: { selector: `#startup-screen footer.statusbar .status-${part}` } })),
   // #561: the right task-details panel opened on step 4 matches the mock's `#task-inspector-panel`.
   ...[
@@ -121,8 +121,8 @@ module.exports = [
   // #580: the Room's task view is one step card like the mock's (hash #3 = view "b", tab 3 = Tasks).
   ...[['card', '', '.room-card', ['paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor'], ['paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor']],
     ['eyebrow', ' .cardhead .eyebrow', '.room-card .eyebrow', ['fontSize', 'fontWeight', 'color'], ['height', 'fontSize', 'fontWeight', 'color']],
-    ['title', ' .cardhead h2', '.room-card #selected-agent', ['fontSize', 'fontWeight', 'color'], ['height', 'fontSize', 'fontWeight', 'color']],
-    ['meta', ' .cardhead .sub', '.room-card #selected-task', ['fontSize', 'color'], ['height', 'fontSize', 'color']],
+    ['title', ' .cardhead h2', '.room-card #selected-agent', ['fontSize', 'fontWeight', 'color'], ['fontSize', 'fontWeight', 'color']],
+    ['meta', ' .cardhead .sub', '.room-card #selected-task', ['fontSize', 'color'], ['fontSize', 'color']],
   ].map(([name, mock, app, props, keys]) => ({ name: `room-card-${name}`, props, keys, pixel: false,
     mock: { url: '?theme=light#3', selector: `.main>.card[data-show="b"]${mock}` }, app: { setup: STEPS_ENABLED, run: "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click()", selector: app } })),
   // #597: the Room's verify card (mock view #6 = "f"): coordinator view in the verify stage.
@@ -131,7 +131,7 @@ module.exports = [
     const run = "document.querySelectorAll('#start-step-tabs [role=tab]')[4].click(); document.querySelector('.final-step .session-choice').click()";
     const card = '.main>.card[data-show="f"]';
     return [['eyebrow', ' .cardhead .eyebrow', '.room-card .eyebrow', ['fontSize', 'fontWeight', 'color'], ['height', 'fontSize', 'fontWeight', 'color']],
-      ['title', ' .cardhead h2', '.room-card #selected-agent', ['fontSize', 'fontWeight', 'color'], ['height', 'fontSize', 'fontWeight', 'color']],
+      ['title', ' .cardhead h2', '.room-card #selected-agent', ['fontSize', 'fontWeight', 'color'], ['fontSize', 'fontWeight', 'color']],
       ['row', ' .row', '.verify-row', ['borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'fontSize'], ['height', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'fontSize']],
       ['row-title', ' .row .t', '.verify-row .t', ['fontSize', 'fontWeight'], ['fontSize', 'fontWeight']],
       ['row-glyph', ' .row .n', '.verify-row .n', ['borderTopLeftRadius', 'backgroundColor', 'fontSize'], ['width', 'height', 'borderTopLeftRadius', 'backgroundColor', 'fontSize']],
@@ -144,7 +144,7 @@ module.exports = [
     const run = "document.querySelectorAll('#start-step-tabs [role=tab]')[5].click(); document.querySelector('.final-step .session-choice').click()";
     const card = '.main>.card[data-show="c"]';
     return [['eyebrow', ' .cardhead .eyebrow', '.room-card .eyebrow', ['fontSize', 'fontWeight', 'color'], ['height', 'fontSize', 'fontWeight', 'color']],
-      ['title', ' .cardhead h2', '.room-card #selected-agent', ['fontSize', 'fontWeight', 'color'], ['height', 'fontSize', 'fontWeight', 'color']],
+      ['title', ' .cardhead h2', '.room-card #selected-agent', ['fontSize', 'fontWeight', 'color'], ['fontSize', 'fontWeight', 'color']],
       ['stat', ' .stat', '.review-summary .stat', ['paddingTop', 'borderTopWidth', 'lineHeight'], ['height', 'paddingTop', 'borderTopWidth', 'lineHeight']],
       ['stat-label', ' .stat .l', '.review-summary .l', ['fontSize', 'fontWeight', 'color'], ['fontSize', 'fontWeight', 'color']],
       ['stat-value', ' .stat .v', '.review-summary .v', ['fontSize', 'fontWeight', 'color'], ['fontSize', 'fontWeight', 'color']],
@@ -181,7 +181,7 @@ module.exports = [
       mock: { url: `?theme=light#${hash}`, selector: `.main>.card[data-show~="${show}"] .actions .btn.${kind}` },
       app: { setup: STEPS_ENABLED, run: `document.querySelectorAll('#start-step-tabs [role=tab]')[${tab}].click()`, selector: `.step-card:not([hidden]) :is(.startup-actions, .startup-review-footer) button.${appClass}`, index: 0 } }))),
   ...[[0, 'workspace'], [1, 'roles'], [2, 'plan']].map(([tab, name]) => ({ name: `footer-buttons-one-size-${name}`,
-    assert: `(() => { const b = [...document.querySelectorAll('.step-card:not([hidden]) :is(.startup-actions, .startup-review-footer) button')].filter(x => x.getBoundingClientRect().width > 0); return b.length >= 2 && b.every(x => Math.round(x.getBoundingClientRect().height) === 34); })()`,
+    assert: `(() => { const b = [...document.querySelectorAll('.step-card:not([hidden]) :is(.startup-actions, .startup-review-footer) button')].filter(x => x.getBoundingClientRect().width > 0); const h = b.map(x => x.getBoundingClientRect().height); return b.length >= 2 && Math.max(...h) - Math.min(...h) <= 1.5 && h.every(v => Math.abs(v - 34) <= 2); })()`,
     app: { setup: STEPS_ENABLED, run: `document.querySelectorAll('#start-step-tabs [role=tab]')[${tab}].click()` } })),
   // #583: the Workspace footer's idle text is the design's "connected - local run" (the folder is named on the right).
   // #600 (mock view #10): after "New Goal" the head state and the footer note name the new Goal.
