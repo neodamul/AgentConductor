@@ -146,5 +146,6 @@ fn a_talker_asks_the_coordinator_through_the_channel_and_a_stranger_is_ignored()
     let inbox = std::fs::read_to_string(desktop.join("messenger-conversation.json")).unwrap();
     assert!(inbox.contains("\"in_flight\":null"), "{inbox}");
     drop(startup);
-    std::fs::remove_dir_all(root).unwrap();
+    // GitHub #634: the conversation worker may still be writing; a leftover temp dir is not a failure.
+    let _ = std::fs::remove_dir_all(root);
 }
