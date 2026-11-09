@@ -4,7 +4,7 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
-## v0.2.0-beta.1
+## v0.2.0.Beta1
 
 - **Beta.** The first 0.2.0 build: the redesigned goal screens (Workspace, Agent roles, Plan, Agent Room with its task, verify and review cards) checked against the approved design in light and dark, English and Korean. It is a pre-release; the stable channel stays on 0.1.61 until 0.2.0 is released.
 - Resume on a failed run now works: it retries the failed tasks (keeping their work and session), runs a failed integration verification again, and restarts the repair rounds, instead of failing again at once; an out-of-scope failure still points to the scope recovery dialog (#625).

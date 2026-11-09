@@ -67,9 +67,9 @@ jobs:
         run: |
           # DD-49: the Rust CLI refuses to publish without a reviewed changelog section.
           cargo run --release --locked -- release notes "$GITHUB_REF_NAME" > release/NOTES.md
-          # A suffixed tag (v0.2.0-beta.1) is a pre-release: "latest" and the in-app updater keep offering the stable version.
+          # A beta tag (v0.2.0.Beta1, or v0.2.0-beta.1) is a pre-release: "latest" and the in-app updater keep offering the stable version.
           prerelease=()
-          case "$GITHUB_REF_NAME" in *-*) prerelease=(--prerelease) ;; esac
+          case "$GITHUB_REF_NAME" in *-*|*.[Bb]eta*) prerelease=(--prerelease) ;; esac
           gh release create "$GITHUB_REF_NAME" "${prerelease[@]}" \
             --repo "$GITHUB_REPOSITORY" \
             --title "AgentConductor $GITHUB_REF_NAME" \
