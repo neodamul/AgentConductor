@@ -3565,3 +3565,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #614.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Capitalised English Workspace page title — GitHub #617
+
+- [x] Plan: `pageTitle()` (`startup.js`) uses `startup.workspace_settings_5ebc59` ("Workspace settings") instead of the mid-sentence phrase `startup.workspace_settings`; Korean text is unchanged.
+- [x] Verify: the full Node UI suite, `i18n_contracts`, `messages`, `architecture_trace`, `choice_controls`, `interface_theme`.
+- [ ] Completed: merged on `main`; closes #617.
+
+Trace: R-210 / UC-202 / DD-222.
