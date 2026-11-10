@@ -11,9 +11,9 @@
 :is(#rail-room,#rail-outline) .outline-task .session-symbol.needs-attention.attn-bad::after{background:var(--err)}
 #run-screen #activity-view .task-notice{margin:0 0 12px}
 /* GitHub #727: activity entries read as the mock's rows (time, title, detail, a rule below), the assigned-task entry included. */
-#run-screen #activity .event{padding:0 0 12px;border-bottom:1px solid var(--line)}
-#run-screen #activity .event.plan{background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:0 0 12px}
-#run-screen #activity .event:is(.warning,.error){background:none;border-radius:0;padding:0 0 12px}
+#run-screen #activity .event{padding:11px 0;border-bottom:1px solid var(--line)}
+#run-screen #activity .event.plan{background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:11px 0}
+#run-screen #activity .event:is(.warning,.error){background:none;border-radius:0;padding:11px 0}
 /* GitHub #728: the review/finish cards and the result popup follow the approved mock. */
 #run-screen .goal-bar #show-result{display:none}
 #run-screen #review-summary .stat .v.ok{color:var(--ok)}
