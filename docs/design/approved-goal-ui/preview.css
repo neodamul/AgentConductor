@@ -285,3 +285,18 @@ button[data-action-icon]{display:inline-flex;align-items:center;justify-content:
 .goal-list-row .goal-row-text{white-space:pre-wrap;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin:6px 0 0}.goal-list-row .goal-row-text.open{display:block;-webkit-line-clamp:unset;overflow:visible}.goal-list-row .goal-row-toggle{margin:4px 0 0;padding:0;border:0;background:transparent;color:var(--accent-text);font-size:12px;cursor:pointer}.goal-list-row .goal-row-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 /* The add button is a real button: it opens the agent dialog. */
 button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hover{background:var(--surface)}button.add:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* GitHub #750: one rhythm in the agent dialog: 12px between fields, 6px between a label and its control, 34px single-line controls. */
+.profile-editor-fields{display:flex;flex-direction:column;gap:12px}
+.profile-editor-fields>*,.profile-editor-grid>*{margin:0}
+.profile-editor-fields .profile-editor-grid{gap:12px;align-items:start}
+.profile-editor-fields label{display:flex;flex-direction:column;gap:6px;margin:0;font-size:12px;line-height:18px}
+.profile-editor-fields label[hidden]{display:none}
+.profile-editor-fields .detail-inline{margin:0;gap:8px;flex-wrap:nowrap;align-items:stretch}
+.profile-editor-fields input,.profile-editor-fields .selection-control,.profile-editor-fields .detail-inline>.btn{box-sizing:border-box;height:34px;margin:0}
+.profile-editor-fields .detail-inline>input{height:34px}
+.profile-editor-fields .detail-inline>.btn{padding:0 12px;display:inline-flex;align-items:center;justify-content:center}
+.profile-editor-fields textarea{box-sizing:border-box;display:block;margin:0}
+.profile-editor-fields details>summary{line-height:18px;margin:0 0 6px}
+.profile-editor-fields details>textarea{margin:0}
+.profile-editor-fields .panel-note,.profile-editor-fields .danger-text{margin:0}
+.profile-editor-fields .danger-text:empty{display:none}.profile-editor-fields label>.selection-control{flex:none}.profile-editor-fields .selection-control>.assignment-choice{height:34px;box-sizing:border-box}
