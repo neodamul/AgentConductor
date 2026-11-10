@@ -76,6 +76,9 @@ async function visit(browser, side, spec) {
       await browser.eval("(async()=>{await document.fonts.ready;await Promise.all([...document.images].map(i=>i.decode().catch(()=>{})));await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));})()");
       // GitHub #714: rows a fixture renders after a fetch appear late on slow runners; wait up to 5 s before calling the element missing.
       let m = null; for (let i = 0; i < 50 && !(m = await browser.eval(MEASURE(s.selector, s.index || 0, x.props || [], s.mark, s.rel))); i++) await new Promise(r => setTimeout(r, 100));
+      // GitHub #720: a re-render (a quota poll redraws the agent cards) replaces the hovered element, and the new one is not hovered until the mouse moves again.
+      const hovered = `[...document.querySelectorAll(${JSON.stringify(s.selector)})].filter(x => x.getBoundingClientRect().width > 0)[${s.index || 0}]?.matches(':hover')`;
+      if (x.hover) for (let i = 0; i < 10 && m && !(await browser.eval(hovered)); i++) { await browser.hover(0, 0); await browser.hover(m.x + m.width / 2, m.y + m.height / 2); await new Promise(r => setTimeout(r, 150)); m = await browser.eval(MEASURE(s.selector, s.index || 0, x.props || [], s.mark, s.rel)); }
       if (x.focus) await browser.eval('document.activeElement && document.activeElement.blur()');
       if (x.hover) await browser.hover(0, 0);
       got[x.name] = got[x.name] || { shots: {} }; got[x.name][side] = m;
