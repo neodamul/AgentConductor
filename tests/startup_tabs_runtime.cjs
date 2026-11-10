@@ -3,13 +3,13 @@ const markup=fs.readFileSync('src/ui/startup.html','utf8');
 const nodes=new Map();let focused;
 for(const tag of markup.matchAll(/<(?:button|section)\b[^>]*id="start-((?:tab|panel)-[a-z]+)"[^>]*>/g)){
  const attrs=Object.fromEntries([...tag[0].matchAll(/([\w-]+)="([^"]*)"/g)].map(m=>[m[1],m[2]]));
- nodes.set(tag[1],{attrs,hidden:/\shidden[\s>]/.test(tag[0]),tabIndex:Number(attrs.tabindex),setAttribute(k,v){this.attrs[k]=v;},focus(){focused=this;}});
+ nodes.set(tag[1],{attrs,hidden:/\shidden[\s>]/.test(tag[0]),tabIndex:Number(attrs.tabindex),classList:{toggle(){}},setAttribute(k,v){this.attrs[k]=v;},focus(){focused=this;}});
 }
 const source=fs.readFileSync('src/ui/startup.js','utf8');
 const code=source.slice(source.indexOf(' const stepNames='),source.indexOf(' const copy='));
 nodes.set('save',{});nodes.set('discard',{});
 // Each panel has one action row; showStep moves the single discard button into the open step's row.
-const rows={};for(const [id,node] of nodes)if(id.startsWith('panel-')){const row=rows[id]={held:[],prepend(n){this.held.push(n);}};node.querySelector=()=>row;}
+const rows={};for(const [id,node] of nodes)if(id.startsWith('panel-')){const row=rows[id]={held:[],prepend(n){this.held.push(n);},querySelector:()=>null};node.querySelector=()=>row;}
 const context=vm.createContext({q:id=>nodes.get(id),mirrorProgress(){},pageTitle(){}});vm.runInContext(code,context);
 const names=['workspace','team','review'];
 const discard=nodes.get('discard');
