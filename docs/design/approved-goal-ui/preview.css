@@ -283,3 +283,5 @@ button[data-action-icon]{display:inline-flex;align-items:center;justify-content:
 .main>.head{gap:6px}.goal-info>.pill{flex:none;margin:0 0 0 auto;padding:3px 8px;font-size:11px}
 /* GitHub #753: the goal text in the Goal list keeps its line breaks, collapsed to two lines until expanded. */
 .goal-list-row .goal-row-text{white-space:pre-wrap;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin:6px 0 0}.goal-list-row .goal-row-text.open{display:block;-webkit-line-clamp:unset;overflow:visible}.goal-list-row .goal-row-toggle{margin:4px 0 0;padding:0;border:0;background:transparent;color:var(--accent-text);font-size:12px;cursor:pointer}.goal-list-row .goal-row-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* The add button is a real button: it opens the agent dialog. */
+button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hover{background:var(--surface)}button.add:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
