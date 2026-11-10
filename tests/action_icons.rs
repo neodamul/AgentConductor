@@ -30,13 +30,26 @@ fn every_mapped_action_button_exists_and_every_icon_has_a_mask() {
         icons.insert(icon.to_string());
     }
     assert!(icons.len() >= 5);
+    let icon_css = format!("{CSS}{}", include_str!("../src/ui/run_cards.css"));
     for icon in icons {
         assert!(
-            CSS.contains(&format!("[data-action-icon=\"{icon}\"]{{--ai:url(")),
+            icon_css.contains(&format!("[data-action-icon=\"{icon}\"]{{--ai:url(")),
             "{icon}"
         );
     }
     assert!(CSS.contains(
         "[data-action-icon]{display:flex;align-items:center;gap:6px}[data-action-icon]::before{content:\"\";display:block;flex:none;width:13px;height:13px;"
     ));
+}
+
+#[test]
+fn run_action_buttons_use_shared_svg_icons() {
+    for id in ["verify-stop", "verify-wait", "review-revise", "denied-reassign",
+        "review-deny", "tool-decision-deny", "tool-decision-allow", "denied-resume"] {
+        assert!(JS.contains(&format!("'{id}':")), "{id} lacks an icon mapping");
+    }
+    let run_css = include_str!("../src/ui/run_cards.css");
+    for glyph in ["content:'□ '", "content:'→ '", "content:'× '", "content:'✓ '", "content:'▷ '"] {
+        assert!(!run_css.contains(glyph), "text glyph remains: {glyph}");
+    }
 }

@@ -19,14 +19,13 @@
 #run-screen #review-summary .stat .v.ok{color:var(--ok)}
 #run-screen #verify-judgments{display:block;margin:14px 0 8px}
 #run-screen #verify-judgments[hidden]{display:none}
-#verify-stop::before{content:'□ '}
-#verify-wait::before,#review-revise::before,#denied-reassign::before,#review-primary[data-mode="result"]::before{content:'→ '}
-#review-deny::before,#tool-decision-deny::before{content:'× '}
-#tool-decision-allow::before{content:'✓ '}
-#denied-resume::before{content:'▷ '}
 #result-dialog{position:relative}
 #result-dialog .result-x{position:absolute;top:18px;right:18px;background:none;border:0;font-size:20px;line-height:1;padding:4px 8px;color:var(--ink)}
 #result-dialog .result-metrics .result-metric{display:flex;align-items:baseline;gap:8px}
 #result-dialog .result-metrics .result-metric+.result-metric{border-left:1px solid var(--line);padding-left:16px}
 #result-dialog .result-metrics .result-metric span{color:var(--ink)}
 #result-dialog .result-list li{justify-content:flex-start;gap:0}
+
+[data-action-icon="next"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5%2012h14M13%206l6%206-6%206%22%2F%3E%3C%2Fsvg%3E")}
+[data-action-icon="reject"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M6%206l12%2012M18%206L6%2018%22%2F%3E%3C%2Fsvg%3E")}
+#review-primary[data-mode="result"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5%2012h14M13%206l6%206-6%206%22%2F%3E%3C%2Fsvg%3E")}
