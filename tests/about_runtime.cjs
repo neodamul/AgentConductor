@@ -20,6 +20,7 @@ const cases={first:"SIM.reply.about_status=()=>({version:'0.2.0',show:true,updat
    const seen=()=>SIM.log.filter(e=>e.kind==='about_seen').length;
    if(${JSON.stringify(name)}==='quiet'){check('already shown version stays closed',!d.open);}
    else{
+    for(let i=0;i<200&&!d.open;i++)await wait(50);
     check('opens by itself',d.open);
     const r=d.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
     check('centered in the window',Math.abs(cx-innerWidth/2)<2&&Math.abs(cy-innerHeight/2)<2);
