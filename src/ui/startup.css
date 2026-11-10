@@ -497,18 +497,3 @@ html[lang=en] .profile-tools .small-button:not(.remove-agent):not(.move-agent){p
 html[lang=en] .profile-tools .move-agent{padding-inline:4px}
 /* GitHub #748: the buttons are packed at the right end with a 6px gap; the status pill sits at the right end of the goal-info line. */
 .startup-heading{gap:6px}.goal-info>.status-pill{flex:none;margin:0 0 0 auto;padding:3px 8px;font-size:11px}
-/* GitHub #753: the goal text in the Goal list keeps its line breaks, collapsed to two lines until expanded. */
-.goal-list-row .goal-row-text{white-space:pre-wrap;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin:6px 0 0}.goal-list-row .goal-row-text.open{display:block;-webkit-line-clamp:unset;overflow:visible}.goal-list-row .goal-row-toggle{margin:4px 0 0;padding:0;border:0;background:transparent;color:var(--accent-text);font-size:12px;cursor:pointer}.goal-list-row .goal-row-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-/* GitHub #750: one rhythm in the agent dialog: 12px between fields, 6px between a label and its control, 34px single-line controls. */
-#start-agent-dialog label{display:flex;flex-direction:column;gap:6px;margin:12px 0 0;font-size:12px;line-height:18px}
-#start-agent-dialog .agent-form-grid{gap:12px;margin-top:12px}
-#start-agent-dialog .agent-form-grid>label{margin:0}
-#start-agent-dialog input:not([type=checkbox]),#start-agent-dialog select{height:34px;min-height:0;margin:0}
-#start-agent-dialog label>input,#start-agent-dialog label>select,#start-agent-dialog label>textarea{flex:none}
-#start-agent-dialog textarea{margin:0}
-#start-agent-dialog .executable-row{margin:0;gap:8px;align-items:stretch}
-#start-agent-dialog .executable-row button{height:34px;padding:0 12px}
-#start-agent-dialog .read-only-args{margin:12px 0 0}
-#start-agent-dialog .read-only-args summary{line-height:18px;margin:0 0 6px}
-#start-agent-dialog .read-only-args label{margin:0}
-#start-agent-dialog label.check-row{flex-direction:row}
