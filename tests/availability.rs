@@ -106,4 +106,8 @@ fn workspace_spend_cap_is_a_limit_not_a_plain_failure() {
     let restriction =
         detect(&payload, &payload.to_string(), 100).expect("spend cap restricts the account");
     assert_eq!(restriction.available_at, None);
+    // The exact line the CLI printed, with no spaces, read from stderr or as plain text.
+    let raw = r#"{"error":{"message":"You hit your spend cap set by the owner of your workspace. Ask an owner to increase your spend cap to continue."},"type":"turn.failed"}"#;
+    assert_eq!(payload.to_string(), raw);
+    assert!(detect(&serde_json::Value::Null, raw, 100).is_some());
 }
