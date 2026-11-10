@@ -52,14 +52,13 @@ pub async fn query_claude(
 ) -> Result<Snapshot, String> {
     query_claude_within(profile, dir, cwd, CLAUDE_WAIT).await
 }
+/// GitHub #679: the usage popup recognises this text and shows a hint instead of a failure.
+pub(crate) const NO_PROJECT_FOLDER: &str = "Choose a project folder for this workspace first; Claude reports usage only inside a trusted project folder";
 /// Claude only answers /usage inside a project folder it already trusts.
 #[cfg_attr(not(any(target_os = "macos", windows)), allow(dead_code))]
 fn require_project(cwd: &std::path::Path) -> Result<(), String> {
     if cwd.as_os_str().is_empty() {
-        return Err(
-            "Choose a project folder for this workspace first; Claude reports usage only inside a trusted project folder"
-                .into(),
-        );
+        return Err(NO_PROJECT_FOLDER.into());
     }
     Ok(())
 }

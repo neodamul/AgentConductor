@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The Claude usage popup on a workspace without a project folder says (in the interface language) that usage is read once a folder is chosen, instead of a failed lookup with an untranslated English sentence under "the CLI did not respond" (#679).
 - Optimize prompt saves the workspace draft first, so a coordinator chosen on the screen is used instead of failing with "register an agent CLI … before previewing sources"; without a coordinator it says so and opens the Workspace step (#680).
 - The run screens (steps 4–6) follow the approved design's layout: the left rail is the *Phases and tasks* outline (current Phase and Task, tasks done, elapsed time, the Phase with its task rows and a hint) instead of the session list; the top area is the goal title with the Goal list, people button and one status pill (the run banner now shows only when it has something to decide, fix or resume, and the dead refresh button is gone); the card ends with one direction field and a row with stop / resume / recover, the note and Send; the human-review shortcuts appear only when there is a candidate, a tool request or a result (#675, #676).
 - A completed step in the stepper shows a check mark in place of its number, and the task card's second tab is named "Changes & tests" (Korean "변경과 테스트") as in the approved design (#678).
