@@ -3715,3 +3715,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #675 and #676.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### The Agent roles step copy and role rows follow the mock — GitHub #685 (part 1)
+
+- [x] Plan: step 2's eyebrow, heading, lead and the Fallback / Fallback model column labels use the mock's wording (the stepper tab keeps "Agent roles"); each role is a bordered, rounded row (10/12px padding, 8px radius, 8px gap) under a borderless 11px header row.
+- [x] Verify: parity entries `roles-header`, `roles-row`, `roles-name`, `roles-title` (both themes, 840 and 1280); every Node UI test.
+- [ ] Completed: the step footer (note, Add role, Save and go to step 3) and the move of plan generation / reading / manual writing to step 3 are open decisions on #685, #686; closes #685 when they are done.
+
+Trace: R-210 / UC-202 / DD-222.

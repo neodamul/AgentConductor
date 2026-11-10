@@ -1,3 +1,8 @@
 #start-roles{display:table;table-layout:fixed;width:100%}#start-roles tr:not(.role-planning){display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) 18px minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center;padding:9px 12px;border-bottom:1px solid var(--line)}#start-roles thead,#start-roles tbody{display:block}#start-roles th,#start-roles td{min-width:0;overflow:hidden;text-overflow:ellipsis;padding:0;border:0;text-align:left}#start-roles th{font-size:11px;font-weight:400;color:var(--soft)}#start-roles td{font-size:12px}#start-roles .role-planning{display:flex;gap:8px;padding:9px 12px;color:var(--soft);border-bottom:1px solid var(--line)}#start-roles .role-planning td:last-child{flex:1}#start-roles .role-fallback-arrow{display:flex;justify-content:center;color:var(--soft);overflow:visible}#start-roles .role-fallback-arrow svg{display:block;width:18px;height:18px;flex:none}
 
 #start-roles th,#start-roles td{white-space:nowrap}
+/* GitHub #685: a role is one bordered, rounded row as in the mock; the header row has no border. */
+#start-roles tr:not(.role-planning){border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:8px}
+#start-roles thead tr:not(.role-planning){border:0;border-radius:0;padding:12px 12px 0;margin:0;font-size:11px;color:var(--soft)}
+#start-roles tbody td:first-child{font-size:13px;font-weight:600;color:var(--ink)}
+#start-roles .role-planning{border:1px solid var(--line);border-radius:8px;margin-top:8px}

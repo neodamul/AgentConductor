@@ -275,6 +275,15 @@ module.exports = [
   ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
     mock: { url: '?theme=light#3', selector: mock },
     app: { setup: STEPS_ENABLED, run: "document.getElementById('start-tab-tasks').click()", selector: app } })),
+  // GitHub #685: the Agent roles step against the mock's step 2.
+  ...[
+    ['roles-header', ['fontSize', 'color', 'paddingTop', 'paddingLeft', 'borderTopWidth'], ['height', 'fontSize', 'color', 'paddingTop', 'paddingLeft', 'borderTopWidth'], '.role-choice-header', '#start-roles thead tr'],
+    ['roles-row', ['paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopLeftRadius', 'marginTop'], ['height', 'paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopLeftRadius', 'marginTop'], '.role-choice-row', '#start-roles tbody tr:not(.role-planning)'],
+    ['roles-name', ['fontSize', 'fontWeight'], ['fontSize', 'fontWeight'], '.role-choice-row .t', '#start-roles tbody tr:not(.role-planning) td:first-child'],
+    ['roles-title', ['fontSize', 'fontWeight'], ['height', 'fontSize', 'fontWeight'], '.main>.card[data-show="i"] h2, .card[data-show="i"] h2', '#start-roles-title'],
+  ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
+    mock: { url: '?theme=light#1', selector: mock },
+    app: { run: "document.getElementById('start-tab-team').click()", selector: app } })),
   { name: 'startup-inspector-closed', assert: "document.getElementById('start-inspector').getBoundingClientRect().width===0", app: {} },
   { name: 'startup-inspector-docked', assert: "(()=>{const r=document.querySelector('#start-inspector').getBoundingClientRect();return Math.round(r.right)===innerWidth&&r.top<200&&r.height>300})()",
     app: { run: "document.getElementById('start-inspector-toggle').click()" } },

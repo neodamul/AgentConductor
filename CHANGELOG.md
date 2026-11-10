@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The Agent roles step uses the approved design's copy ("Decide who does what"), column labels (Fallback, Fallback model) and bordered, rounded role rows (#685).
 - The run screens (steps 4–6) follow the approved design's layout: the left rail is the *Phases and tasks* outline (current Phase and Task, tasks done, elapsed time, the Phase with its task rows and a hint) instead of the session list; the top area is the goal title with the Goal list, people button and one status pill (the run banner now shows only when it has something to decide, fix or resume, and the dead refresh button is gone); the card ends with one direction field and a row with stop / resume / recover, the note and Send; the human-review shortcuts appear only when there is a candidate, a tool request or a result (#675, #676).
 - A completed step in the stepper shows a check mark in place of its number, and the task card's second tab is named "Changes & tests" (Korean "변경과 테스트") as in the approved design (#678).
 - The titlebar no longer has the extra "← Workspace" / "← Back to run" buttons the approved design does not have; the stepper moves between the run and the setup steps (#677).
