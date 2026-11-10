@@ -3643,6 +3643,14 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Coordinator chat names a usage limit — GitHub #664
+
+- [x] Plan: `chatFailure` in `src/ui/chat.js` recognises a usage-limit or rate-limit error from the CLI output, reads its reset time ("try again at …") and shows `startup.chat_quota_error` (with `startup.chat_quota_resets`) that points at choosing another coordinator in Agent roles; other failures keep `startup.chat_error`.
+- [x] Verify: `tests/chat_quota_error.cjs` (the real Codex output, no reset time, other errors), `chat_runtime.cjs`, `messages`, `i18n_contracts`, `chat_ui`.
+- [ ] Completed: merged on `main`; closes #664.
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### English agent card tool row stays on one line — GitHub #654
 
 - [x] Plan: `html[lang=en]` rules in `startup.css` trim the tool buttons' side padding so the row keeps one line at natural size (Korean metrics stay as approved); the card uses `min-height:144px` so many tags add bottom space; the `Alternate → agent` chip switches to `Alt. → agent` only when it cannot fit its row; every UI label uses the display name from `AC_AGENT_NAMES` (`Claude Code`, `Codex`, `OpenCode`) while ids and CLI stay `claude`.
@@ -3722,13 +3730,5 @@ Trace: R-210 / UC-202 / DD-222.
 - [x] Plan: `#rail-room` is the mock's outline (head, "Current Phase/Task", "tasks done" and elapsed time from the first task start, the Phase with its description, `outline-task` rows with the agent mark, `T1 summary`, a status badge, the owned paths and a chevron, the hint); `room_rail.js` holds the rail helpers; the goal bar is the Workspace screen's title row with the Goal list, people and a run status pill; the run banner is hidden unless it carries an error, a next step, an action or an attention line; the composer is one direction field above a row of stop, resume, recover (hidden while disabled), the note and Send; the review / tool request shortcuts show only when they apply; `run_screen.css` holds the run rules.
 - [x] Verify: parity entries `run-rail-head`, `run-rail-current`, `run-rail-status`, `run-rail-phase`, `run-rail-task`, `run-rail-task-title`, `run-rail-note`, `run-heading` and the updated `task-avatar`, `task-status-tag`, `room-send-button`, `room-stop-button`, `type-scale-room` (247 elements, 0 differences in both themes at 840 and 1280); every Node UI test and the Rust tests that read the UI sources pass.
 - [ ] Completed: merged on `main`; closes #675 and #676.
-
-Trace: R-210 / UC-202 / DD-222.
-
-### Coordinator chat names a usage limit — GitHub #664
-
-- [x] Plan: `chatFailure` in `src/ui/chat.js` recognises a usage-limit or rate-limit error from the CLI output, reads its reset time ("try again at …") and shows `startup.chat_quota_error` (with `startup.chat_quota_resets`) that points at choosing another coordinator in Agent roles; other failures keep `startup.chat_error`.
-- [x] Verify: `tests/chat_quota_error.cjs` (the real Codex output, no reset time, other errors), `chat_runtime.cjs`, `messages`, `i18n_contracts`, `chat_ui`.
-- [ ] Completed: merged on `main`; closes #664.
 
 Trace: R-210 / UC-202 / DD-222.
