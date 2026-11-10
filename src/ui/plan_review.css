@@ -31,3 +31,10 @@
 #start-run-phase,#run-phase,#start-open{display:none!important}
 /* GitHub #736: every Phase of the Goal is complete, so the left-over proposal is history: no position line, task cards or approve buttons. */
 #start-panel-review.plan-stale :is(#start-plan-note,#start-plan-summary,.startup-review-footer button,.startup-review-footer .note){display:none}
+/* GitHub #736: a Phase's tasks read as the mock's plan rows; the Phase brief that only repeats the task list gives way to them. */
+#start-plan-phases .plan-phase-brief:has(+ .plan-phase-tasks){display:none}
+#start-plan-phases .plan-phase-tasks{list-style:none;padding:0;margin:8px 0 4px}
+#start-plan-phases .plan-phase-tasks li{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:6px 0;background:var(--surface);font-size:13px}
+#start-plan-phases .plan-phase-tasks .task-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#start-plan-phases .plan-phase-tasks .task-title code{color:var(--soft);font-weight:600;margin-right:8px}
+#start-plan-phases .plan-phase-tasks .task-agent{color:var(--soft);font-size:12px}
