@@ -12,7 +12,7 @@
  const stale=()=>AC_STALE(lastSnapshotAt);
  const sources=mcpUi({q,el,request,action,save,mark,capture,poll,state:()=>state,draft:()=>draft,notice,showStep,stale});
  document.body.append(document.getElementById('start-chat'));const chat=chatUi({q,request,state:()=>state,notice,stale});
- const optimize=optimizeUi({q,request,state:()=>state,notice,stale,busy:()=>busy(),applyGoal:text=>{q('goal').value=text;q('goal').dispatchEvent(new Event('input'));}});
+ const optimize=optimizeUi({q,request,state:()=>state,notice,stale,save,capture,draft:()=>draft,showStep,busy:()=>busy(),applyGoal:text=>{q('goal').value=text;q('goal').dispatchEvent(new Event('input'));}});
  q('goal-field').after(q('mcp-controls'));q('mcp-controls').after(q('source-suggestions'));q('mcp-controls').prepend(q('optimize-button'));q('mcp-controls').append(q('optimize-status'));q('optimize-controls').remove();// GitHub #560: optimize, Jira, Confluence and preview share one row.
  const busy=()=>mutating||maintenance||goalChanging||!!planStarting||startPending||state?.job?.state==='running';
  const metadataBusy=(kind,agent)=>state?.metadata_job?.state==='running'&&state.metadata_job.kind===`${kind}:${agent}`||(state?.metadata_queue||[]).some(p=>p.kind===kind&&p.agent===agent);

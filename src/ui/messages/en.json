@@ -813,6 +813,7 @@
   "startup.optimize_use": "Use this goal",
   "startup.optimize_keep": "Keep mine",
   "startup.optimize_credit": "Method: the prompt-optimizer skill by Sentry (Apache-2.0).",
+  "startup.optimize_coordinator_required": "Register an agent CLI and select it as the workspace coordinator before optimizing the goal.",
   "startup.optimize_error": "The coordinator could not rewrite the goal: {value1}",
   "startup.messenger_9a523e": "Messenger",
   "startup.messenger_notifications": "Messenger notifications",

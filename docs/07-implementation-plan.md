@@ -3683,3 +3683,11 @@ Trace: R-200 / UC-188 / DD-212.
 
 Trace: R-210 / UC-202 / DD-222.
 
+
+### Optimize prompt uses the coordinator chosen on the screen — GitHub #680
+
+- [x] Plan: `optimizeUi` captures and saves the draft before `optimize_goal` (the worker reads the saved coordinator), sends the new revision, stops when the save fails, and without a coordinator shows `startup.optimize_coordinator_required` and opens the Workspace step.
+- [x] Verify: `optimize_runtime.cjs` checks the order capture → save → request, the missing coordinator and the failed save; the simulator run saves the workspace and starts the rewrite without an error.
+- [ ] Completed: merged on `main`; closes #680.
+
+Trace: R-210 / UC-202 / DD-222.
