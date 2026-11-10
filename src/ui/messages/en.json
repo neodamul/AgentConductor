@@ -1424,5 +1424,8 @@
   "startup.plan_heading_done": "All {value1} Phases complete · Coordinator {value2}",
   "startup.plan_done_note": "Every Phase is complete; the merged changes and the result are in step 6.",
   "startup.plan_done_result": "View review and result",
-  "startup.plan_after": "after {value1}"
+  "startup.plan_after": "after {value1}",
+  "startup.plan_row_paths": "Owned paths: {value1}",
+  "startup.plan_row_ready": "Starts right away",
+  "startup.plan_row_check": "Check: {value1}"
 }

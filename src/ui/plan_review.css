@@ -50,7 +50,11 @@
 #start-plan-phases .plan-phase>summary strong{color:var(--ink);font-weight:650}
 #start-plan-phases .plan-phase>summary .plan-tag{margin-left:auto}
 #start-plan-phases .plan-phase-list{counter-reset:plan-task}
-#start-plan-phases .plan-phase-tasks li{counter-increment:plan-task;display:grid;grid-template-columns:28px minmax(0,1.4fr) minmax(0,1fr) minmax(0,.8fr) auto;align-items:center;gap:14px;padding:11px 12px}
+#start-plan-phases .plan-phase-tasks li{counter-increment:plan-task;display:grid;grid-template-columns:28px minmax(0,1.4fr) minmax(0,1fr) minmax(0,.8fr) auto auto;align-items:center;gap:14px;padding:11px 12px;cursor:pointer}
+#start-plan-phases .plan-phase-tasks .task-toggle{font-size:12px;color:var(--soft);white-space:nowrap}
+#start-plan-phases .plan-phase-tasks .task-detail{grid-column:2 / -1;border-top:1px solid var(--line);padding-top:8px;cursor:auto}
+#start-plan-phases .plan-phase-tasks .task-detail[hidden]{display:none}
+#start-plan-phases .plan-phase-tasks .task-prompt{white-space:pre-wrap;margin:0 0 6px;font-size:12.5px;line-height:1.6}
 #start-plan-phases .plan-phase-tasks li::before{content:counter(plan-task);display:flex;align-items:center;justify-content:center;width:26px;height:24px;border-radius:5px;background:var(--fill);font-size:12px;font-weight:650;color:var(--ink)}
 #start-plan-phases .plan-phase-tasks .task-title{font-weight:650;color:var(--ink)}
 #start-plan-phases .plan-phase-tasks .task-title code{display:none}

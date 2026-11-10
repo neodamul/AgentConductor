@@ -1424,5 +1424,8 @@
   "startup.plan_heading_done": "전체 {value1}단계 완료 · 코디네이터 {value2}",
   "startup.plan_done_note": "모든 Phase가 완료되었습니다. 반영된 변경과 결과는 6단계에서 확인합니다.",
   "startup.plan_done_result": "검토·결과 보기",
-  "startup.plan_after": "{value1} 이후"
+  "startup.plan_after": "{value1} 이후",
+  "startup.plan_row_paths": "소유 경로: {value1}",
+  "startup.plan_row_ready": "바로 시작",
+  "startup.plan_row_check": "검증: {value1}"
 }
