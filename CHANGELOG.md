@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## v0.2.0
 
+- The `cli_workflow` test retries its fixture cleanup until the detached availability watcher's files are gone instead of failing on the first removal (GitHub #754).
 - **0.2.0.** The redesigned goal screens (Workspace, Agent roles, Plan, Agent Room with its task, verify and approval cards) follow the approved design. Install v0.2.0 from the release page: v0.2.0-Beta1 installs report 0.2.0 and cannot see the final release (#672); later betas carry their suffix.
 - The left rail tabs, the body background, the app icon, the 6px heading gaps and the status pill at the right end of the goal-info line follow the approved mock; the mock's heading row got the same layout (GitHub #745, #746, #747, #748).
 - The approved mock's Goal list shows the goal text collapsed to two lines with its line breaks and a ▸ expand / ▾ collapse button (GitHub #753; the app follows).
