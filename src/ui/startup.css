@@ -236,7 +236,7 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 .startup-tabs [role="tab"]:hover:not([aria-selected="true"]):not(:disabled){background:transparent}
 .startup-tabs [role="tab"] .tab-number{width:16px;height:16px;flex:none;font-size:10px;line-height:18px;background:transparent}
 .startup-tabs [role="tab"][aria-selected="true"] .tab-number{background:var(--accent);color:var(--accent-ink)}
-.startup-tabs [role="tab"].done .tab-number{background:transparent;color:var(--ok)}/* GitHub #678: a completed step shows a check mark in place of its number, as in the mock. */.startup-tabs [role="tab"].done .tab-number{font-size:0}.startup-tabs [role="tab"].done .tab-number::before{content:"✓";font-size:10px}
+.startup-tabs [role="tab"].done .tab-number{background:transparent;color:var(--ok)}/* GitHub #678: a completed step shows a check mark in place of its number, as in the mock. */.startup-tabs [role="tab"].done .tab-number{position:relative;overflow:hidden;text-indent:-99px}.startup-tabs [role="tab"].done .tab-number::before{content:"✓";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-indent:0}
 .startup-tabs [role="tab"]>span:last-child{height:18px;line-height:18px;font-size:12px}
 /* "Discard changes" sits in the step footer beside the primary action (mock .actions .btn.q), with the explanatory note on the left. */
 .startup-actions{display:flex;align-items:center;gap:8px;justify-content:flex-end}

@@ -3707,3 +3707,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #678.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### The run screens follow the approved design — GitHub #675, #676
+
+- [x] Plan: `#rail-room` is the mock's outline (head, "Current Phase/Task", "tasks done" and elapsed time from the first task start, the Phase with its description, `outline-task` rows with the agent mark, `T1 summary`, a status badge, the owned paths and a chevron, the hint); `room_rail.js` holds the rail helpers; the goal bar is the Workspace screen's title row with the Goal list, people and a run status pill; the run banner is hidden unless it carries an error, a next step, an action or an attention line; the composer is one direction field above a row of stop, resume, recover (hidden while disabled), the note and Send; the review / tool request shortcuts show only when they apply; `run_screen.css` holds the run rules.
+- [x] Verify: parity entries `run-rail-head`, `run-rail-current`, `run-rail-status`, `run-rail-phase`, `run-rail-task`, `run-rail-task-title`, `run-rail-note`, `run-heading` and the updated `task-avatar`, `task-status-tag`, `room-send-button`, `room-stop-button`, `type-scale-room` (247 elements, 0 differences in both themes at 840 and 1280); every Node UI test and the Rust tests that read the UI sources pass.
+- [ ] Completed: merged on `main`; closes #675 and #676.
+
+Trace: R-210 / UC-202 / DD-222.
