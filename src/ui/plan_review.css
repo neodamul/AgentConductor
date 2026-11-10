@@ -56,3 +56,4 @@
 #start-plan-phases .plan-phase-tasks .task-title code{display:none}
 #start-plan-phases .plan-phase-tasks :is(.task-agent,.task-check){font-size:12.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #start-plan-phases .plan-phase-head{display:flex;align-items:center;gap:10px;margin:0 0 6px}
+#start-plan-phases :is(.plan-phase,.plan-phase-tasks li).picked{outline:2px solid var(--accent);outline-offset:2px;border-radius:8px}
