@@ -279,3 +279,29 @@ button[data-action-icon]{display:inline-flex;align-items:center;justify-content:
 
 
 @media(max-width:900px){.agent .tools{gap:1px}.agent .tools>.tb:not(.agent-remove){padding-left:6px;padding-right:6px}.agent .tools>.tb:nth-child(-n+2){padding-left:2px;padding-right:2px}}
+/* GitHub #748: the buttons are packed at the right end with a 6px gap; the status pill sits at the right end of the goal-info line. */
+.main>.head{gap:6px}.goal-info>.pill{flex:none;margin:0 0 0 auto;padding:3px 8px;font-size:11px}
+/* GitHub #753: the goal text in the Goal list keeps its line breaks, collapsed to two lines until expanded. */
+.goal-list-row .goal-row-text{white-space:pre-wrap;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin:6px 0 0}.goal-list-row .goal-row-text.open{display:block;-webkit-line-clamp:unset;overflow:visible}.goal-list-row .goal-row-toggle{margin:4px 0 0;padding:0;border:0;background:transparent;color:var(--accent-text);font-size:12px;cursor:pointer}.goal-list-row .goal-row-toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* The add button is a real button: it opens the agent dialog. */
+button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hover{background:var(--surface)}button.add:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+/* GitHub #750: one rhythm in the agent dialog: 12px between fields, 6px between a label and its control, 34px single-line controls. */
+.profile-editor-fields{display:flex;flex-direction:column;gap:12px}
+.profile-editor-fields>*,.profile-editor-grid>*{margin:0}
+.profile-editor-fields .profile-editor-grid{gap:12px;align-items:start}
+.profile-editor-fields label{display:flex;flex-direction:column;gap:6px;margin:0;font-size:12px;line-height:18px}
+.profile-editor-fields label[hidden]{display:none}
+.profile-editor-fields .detail-inline{margin:0;gap:8px;flex-wrap:nowrap;align-items:stretch}
+.profile-editor-fields input,.profile-editor-fields .selection-control,.profile-editor-fields .detail-inline>.btn{box-sizing:border-box;height:34px;margin:0}
+.profile-editor-fields .detail-inline>input{height:34px}
+.profile-editor-fields .detail-inline>.btn{padding:0 12px;display:inline-flex;align-items:center;justify-content:center}
+.profile-editor-fields textarea{box-sizing:border-box;display:block;margin:0}
+.profile-editor-fields details>summary{line-height:18px;margin:0 0 6px}
+.profile-editor-fields details>textarea{margin:0}
+.profile-editor-fields .panel-note,.profile-editor-fields .danger-text{margin:0}
+.profile-editor-fields .danger-text:empty{display:none}.profile-editor-fields label>.selection-control{flex:none}.profile-editor-fields .selection-control>.assignment-choice{height:34px;box-sizing:border-box}
+/* GitHub #751: two-level app menu; the Settings panel links to the workspace settings. */
+.app-menu .menu-group{position:relative}.app-menu .menu-parent{position:relative}.app-menu .menu-parent::after{content:'▸';position:absolute;right:10px;top:50%;transform:translateY(-50%);line-height:1;color:var(--soft)}.app-menu .menu-parent[aria-expanded="true"]{background:var(--fill)}
+.app-menu .submenu{position:absolute;left:calc(100% + 4px);top:-7px;min-width:190px;padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--surface);box-shadow:0 8px 24px #0002}.app-menu .submenu[hidden]{display:none}
+.app-menu .menu-sep{height:1px;margin:4px 2px;background:var(--line)}
+.utility-panel .settings-link{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px}

@@ -76,7 +76,8 @@ $('scope-review').onclick = openScopeReview; $('scope-preview').onclick = previe
 $('scope-task').onchange = scopeFillTask; $('scope-paths').oninput = $('scope-test').oninput = scopeReset;
 // The watched session finished (#109): follow the run to the next running session, or to the integration entry when the run awaits a decision.
 // GitHub #688: entering a review state (also on the first snapshot of a run already waiting) opens the Integration verification entry, whichever task was shown.
-function followTarget(prev, next, selectedId, onCoordinator) { if (onCoordinator) return null; const review = ['waiting_approval', 'approved', 'rejected']; if (review.includes(next.report.state) && (!prev || prev.report.state !== next.report.state)) return { coordinator: true }; if (!prev) return null; const was = prev.report.tasks.find(t => t.id === selectedId), now = next.report.tasks.find(t => t.id === selectedId); if (!was || was.status !== 'running' || !now || now.status === 'running') return null; const active = next.report.tasks.find(t => ['running', 'waiting_tool_approval'].includes(t.status)); if (active) return { id: active.id }; return ['waiting_approval', 'approved', 'rejected'].includes(next.report.state) ? { coordinator: true } : null; }
+// GitHub #735: a finished run opens on the coordinator's result card, like the review states.
+function followTarget(prev, next, selectedId, onCoordinator) { if (onCoordinator) return null; const review = ['waiting_approval', 'approved', 'rejected', 'completed']; if (review.includes(next.report.state) && (!prev || prev.report.state !== next.report.state)) return { coordinator: true }; if (!prev) return null; const was = prev.report.tasks.find(t => t.id === selectedId), now = next.report.tasks.find(t => t.id === selectedId); if (!was || was.status !== 'running' || !now || now.status === 'running') return null; const active = next.report.tasks.find(t => ['running', 'waiting_tool_approval'].includes(t.status)); if (active) return { id: active.id }; return review.includes(next.report.state) ? { coordinator: true } : null; }
 function followProgress(prev) { const target = followTarget(prev, snapshot, task()?.id, coordinatorView); if (!target) return; if (target.coordinator) selectCoordinator(); else selectTask(snapshot.report.tasks.findIndex(t => t.id === target.id)); }
 function formatAge(ms) { const s = Math.max(0, Math.floor(ms / 1000)); if (s < 60) return s + 's'; const m = Math.floor(s / 60); if (m < 60) return m + 'm ' + String(s % 60).padStart(2, '0') + 's'; return Math.floor(m / 60) + 'h ' + String(m % 60).padStart(2, '0') + 'm'; }
 // Facts only (#100): the tool in progress, the age of the last output and the process state; silence is never called thinking or failure.
@@ -102,7 +103,7 @@ function planTask() { return snapshot?.report.plan.tasks[selected]; }
 function profile() { return snapshot?.report.plan.agents.find(a=>a.id===planTask()?.agent); }
 function agentName(agent) {return agent?acAgentName(agent,snapshot?.report?.plan?.agents||[]):acMessage("room.agent");}
 // The plan review's one-line task summary: the first line that says what the task does.
-function taskLine(prompt){const line=String(prompt||'').split('\n').map(l=>l.trim().replace(/^[-*]\s+/,'')).find(l=>l&&!/:$/.test(l))||'';return line.length>160?line.slice(0,160)+'…':line;}
+function taskLine(prompt){const line=String(prompt||'').split('\n').map(l=>l.trim().replace(/^[-*]\s+/,'')).find(l=>l&&!/:$/.test(l)&&!/^<\/?[\w-]+>$/.test(l))||'';return line.length>160?line.slice(0,160)+'…':line;}
 // Task rows lead with the reviewed summary; the task ID stays visible as a small label.
 function taskHeading(id,prompt){const heading=node('span',undefined,'session-task'),summary=taskLine(prompt);heading.append(node('span',id,'task-id'));if(summary)heading.append(node('span',summary,'task-summary'));AC_I18N.bind(heading,()=>(summary?id+' · '+summary:id),"title");return heading;}
 function refreshQuota(agent){quotaActive=agent;quotaRefreshed.set(agent,Date.now());return act({kind:'quota',agent});}
@@ -183,7 +184,7 @@ function renderSnapshot() {
   if(!snapshot)return;syncInspector();watchResult(snapshot);const r=snapshot.report;if(selected>=r.tasks.length)selected=0;
   const t=task(),p=planTask(),a=profile();
   let interrupted=$('run-interruptions');if(!interrupted){interrupted=node('p');interrupted.id='run-interruptions';$('run-banner-progress').parentElement.append(interrupted);}AC_I18N.bind(interrupted,()=>(interruptionText(snapshot.interruptions)));interrupted.hidden=!snapshot.interruptions?.length; let ownership=$('owned-file-warning');if(!ownership){ownership=node('p');ownership.id='owned-file-warning';$('run-banner-progress').parentElement.append(ownership);}const changed=snapshot.owned_changes||[];ownership.hidden=!r.direct_workspace||r.plan.workspace_mode!=='shared'||(!changed.length&&r.state!=='running');AC_I18N.bind(ownership,()=>changed.length?acMessage("room.owned_edit_detected",{paths:changed.join(', ')}):acMessage("room.owned_edit_warning",{paths:r.plan.tasks.flatMap(t=>t.paths).join(', ')}));
-  AC_I18N.bind($('goal'),()=>(r.plan.goal));const project=(r.folder?.original||r.repo).replace(/^\\\\\?\\/,'');AC_I18N.bind($('repository'),()=>(project.split(/[\\/]/).filter(Boolean).pop()||project));AC_I18N.bind($('repository'),()=>(project),"title");
+  AC_I18N.bind($('goal'),()=>(taskLine(r.plan.goal)||r.plan.goal));const project=(r.folder?.original||r.repo).replace(/^\\\\\?\\/,'');AC_I18N.bind($('repository'),()=>(project.split(/[\\/]/).filter(Boolean).pop()||project));AC_I18N.bind($('repository'),()=>(project),"title");
   AC_I18N.bind($('run-state'),()=>(statusLabel(r.state)));$('run-state').className='state-label tone-'+statusTone(r.state);
   renderRail(r,selected);
   const done=r.tasks.filter(t=>t.status==='completed').length,failure=r.error||r.tasks.find(t=>t.status==='failed'&&t.error)?.error||'';
@@ -353,12 +354,12 @@ function decisionEntry(d) {
 }
 function event(label,text,cls='',seq) {
   // GitHub #607: like the mock's `.ev` row: the number (or range) column first, then the title and its detail.
-  const el=node('article',undefined,'event '+cls);el.append(node('code',seq!==undefined?'#'+seq:'','event-seq'));const body=node('div',undefined,'event-body');const head=node('div',undefined,'event-head');head.append(node('span',label));body.append(head,node('p',text,'event-text'));el.append(body);return el;
+  const el=node('article',undefined,'event '+cls);el.append(node('code',seq===undefined?'':/^\d\d:\d\d$/.test(seq)?seq:'#'+seq,'event-seq'));const body=node('div',undefined,'event-body');const head=node('div',undefined,'event-head');head.append(node('span',label));body.append(head,node('p',text,'event-text'));el.append(body);return el;
 }
 function renderTask(data) {
   const t=task(),p=planTask();if(!t||data.task.id!==t.id)return;
   const timeline=[event(acMessage("room.assigned_task"),p.prompt,'plan')];if(t.feedback)timeline.push(event(acMessage("room.you_latest_review"),t.feedback));
-  for(const x of collapseThinking(data.events)){if(x.thinking){const t=x.thinking;timeline.push(event(acMessage("room.thinking_updates",{value1:t.count}),acMessage("room.thinking_quiet"),'muted',t.first===t.last?t.first:`${t.first}–${t.last}`));}else for(const y of transcript(x.event))timeline.push(event(y.label,y.text,y.cls,x.event.seq));}
+  for(const x of collapseThinking(data.events)){if(x.thinking){const t=x.thinking;timeline.push(event(acMessage("room.thinking_updates",{value1:t.count}),acMessage("room.thinking_quiet"),'muted',t.first===t.last?t.first:`${t.first}–${t.last}`));}else for(const y of transcript(x.event))timeline.push(event(y.label,y.text,y.cls,x.event.at?new Date(x.event.at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false}):x.event.seq));}
   for(const d of data.decisions||[])timeline.push(decisionEntry(d));
   for(const d of data.coordinator_decisions||[])if(d.kind!=='tool')timeline.push(judgmentEntry(d));
   if(t.error)timeline.push(event(acMessage("room.coordinator_report"),t.error,'error'));

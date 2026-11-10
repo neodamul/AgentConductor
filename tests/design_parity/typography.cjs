@@ -33,7 +33,7 @@ module.exports = [
   e('rail-sub', ['fontSize', 'color'], '.agent-panel .sub', '#rail-pane-agents p.small'),
   e('agent-name', T, '.agent .name', '.startup-profile .name-row strong'),
   e('agent-meta', ['fontSize', 'color'], '.agent .meta', '.startup-profile .agent-meta'),
-  e('phase-pill', ['fontSize', 'color'], '.head .pill', '#start-phase'),
+  e('phase-pill', ['fontSize', 'color'], '.goal-info>.pill', '#start-phase'),
   e('step-number', ['fontSize', 'fontWeight'], '.step-group .tab .num', '.step-group .tab-number'),
   e('step-label', ['fontSize', 'fontWeight'], '.step-group .tab-label', '.step-group button>span:last-child'),
   e('step-card-title', T, '.cardhead h2', '#start-settings-title'),

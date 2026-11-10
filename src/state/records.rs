@@ -50,6 +50,16 @@ impl Store {
                         params![task, attempt, seq, value],
                     )
                     .map_err(|e| e.to_string())?;
+                    // GitHub #732: when the event was read, kept beside the normalized evidence so replays still compare equal.
+                    let read_ms = std::time::SystemTime::now()
+                        .duration_since(std::time::UNIX_EPOCH)
+                        .map_err(|e| e.to_string())?
+                        .as_millis() as i64;
+                    tx.execute(
+                        "INSERT OR IGNORE INTO task_event_times VALUES(?1,?2,?3,?4)",
+                        params![task, attempt, seq, read_ms],
+                    )
+                    .map_err(|e| e.to_string())?;
                     last = Some(event);
                     let now = std::time::SystemTime::now()
                         .duration_since(std::time::UNIX_EPOCH)
@@ -186,19 +196,26 @@ impl Store {
 
     pub fn task_events(&self, task: &str, attempt: u64) -> Result<Vec<serde_json::Value>, String> {
         let attempt = i64::try_from(attempt).map_err(|_| "attempt overflow")?;
-        let mut query=self.0.prepare("SELECT value FROM task_events WHERE task=?1 AND attempt=?2 ORDER BY seq DESC LIMIT 1000").map_err(|e|e.to_string())?;
+        let mut query=self.0.prepare("SELECT e.value, t.at FROM task_events e LEFT JOIN task_event_times t ON t.task=e.task AND t.attempt=e.attempt AND t.seq=e.seq WHERE e.task=?1 AND e.attempt=?2 ORDER BY e.seq DESC LIMIT 1000").map_err(|e|e.to_string())?;
         let rows = query
-            .query_map(params![task, attempt], |r| r.get::<_, String>(0))
+            .query_map(params![task, attempt], |r| {
+                Ok((r.get::<_, String>(0)?, r.get::<_, Option<i64>>(1)?))
+            })
             .map_err(|e| e.to_string())?;
         let mut result = Vec::new();
         let mut bytes = 0usize;
         for row in rows {
-            let value = row.map_err(|e| e.to_string())?;
+            let (value, at) = row.map_err(|e| e.to_string())?;
             bytes = bytes.saturating_add(value.len());
             if bytes > 1024 * 1024 && !result.is_empty() {
                 break;
             }
-            result.push(serde_json::from_str(&value).map_err(|e| e.to_string())?);
+            let mut event: serde_json::Value =
+                serde_json::from_str(&value).map_err(|e| e.to_string())?;
+            if let Some(at) = at {
+                event["at"] = at.into();
+            }
+            result.push(event);
         }
         result.reverse();
         Ok(result)

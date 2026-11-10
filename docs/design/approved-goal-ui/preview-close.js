@@ -3,5 +3,5 @@ function openClosePreview(){document.getElementById('close-run-dialog').showModa
 document.getElementById('preview-close-window').onclick=()=>{closeAppMenu();openClosePreview();};
 document.getElementById('close-run-dialog').addEventListener('close',event=>{
  document.documentElement.dataset.lastCloseChoice=event.target.returnValue||'cancel';
- document.querySelector('.mock-note').textContent='시안 · 창 닫기 선택: '+(event.target.returnValue==='keep'?'백그라운드에서 계속 실행':event.target.returnValue==='stop'?'실행 중지 후 닫기':'취소')+' · 실제 창이나 작업은 종료하지 않습니다.';
+ document.querySelector('.mock-note').textContent='창 닫기 선택: '+(event.target.returnValue==='keep'?'백그라운드에서 계속 실행':event.target.returnValue==='stop'?'실행 중지 후 닫기':'취소')+'';
 });

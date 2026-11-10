@@ -1270,7 +1270,7 @@
   "room.review_recommend": "Recommend approval",
   "room.review_attention": "Needs attention",
   "room.review_tests_passed": "{value1}/{value2} passed",
-  "room.notice_tool_request": "{value1} requested a tool outside the task",
+  "room.notice_tool_request": "{value1} requested a command outside the task",
   "room.notice_tool_wait": "The coordinator could not decide, so it asks a person.",
   "room.notice_review_blocked": "The coordinator's review is blocked and proposed no revision",
   "room.notice_retry": "Retry",
@@ -1414,5 +1414,18 @@
   "room.verify_judgments": "COORDINATOR JUDGMENTS",
   "room.result_to_goals": "Back to the Goal list",
   "room.result_view_done": "View the finished result",
-  "room.result_location": "Applied in: {value1}"
+  "room.result_location": "Applied in: {value1}",
+  "room.access_network": "network access",
+  "room.access_file_write": "file write",
+  "room.verify_log": "Log",
+  "room.verify_seconds": "{value1}s",
+  "startup.goal_list_empty": "No saved Goal yet in this Workspace.",
+  "startup.goal_list_new": "+ New Goal",
+  "startup.plan_heading_done": "All {value1} Phases complete · Coordinator {value2}",
+  "startup.plan_done_note": "Every Phase is complete; the merged changes and the result are in step 6.",
+  "startup.plan_done_result": "View review and result",
+  "startup.plan_after": "after {value1}",
+  "startup.plan_row_paths": "Owned paths: {value1}",
+  "startup.plan_row_ready": "Starts right away",
+  "startup.plan_row_check": "Check: {value1}"
 }

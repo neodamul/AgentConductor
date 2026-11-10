@@ -122,7 +122,7 @@ function closeSidePanel(id){
 }
 
 const workspaceGoals=[
- {id:'rotation',description:'리프레시 토큰을 쓸 때마다 새로 발급하고, 재사용된 토큰을 탐지하면 세션을 끊는다.',name:'리프레시 토큰 회전을 추가한다',slug:'refresh-token-rotation',state:'running',step:3,position:'Phase 1/1 · Task 1/3',summary:'작업 1/3 완료 · 토큰 회전 구현 중',tests:'통합 테스트 3/3 통과',commit:'3f9a1c2',lesson:'교훈 2개 · 토큰 회전 정책과 테스트 명령 기록'},
+ {id:'rotation',description:'리프레시 토큰을 쓸 때마다 새로 발급한다.\n재사용된 토큰을 탐지하면 세션을 끊는다.\n기존 로그인 흐름과 테스트 명령은 유지한다.\n결과는 변경 파일 목록과 함께 보고한다.',name:'리프레시 토큰 회전을 추가한다',slug:'refresh-token-rotation',state:'running',step:3,position:'Phase 1/1 · Task 1/3',summary:'작업 1/3 완료 · 토큰 회전 구현 중',tests:'통합 테스트 3/3 통과',commit:'3f9a1c2',lesson:'교훈 2개 · 토큰 회전 정책과 테스트 명령 기록'},
 ];
 let pendingGoalDelete=null;
 let selectedGoalId='rotation',resultGoalId='rotation',workspaceVisible=false,reviewOpened=false,resultReturnToList=false;
@@ -132,7 +132,9 @@ function renderWorkspaceGoals(){
  workspaceGoals.forEach(goal=>{
   const row=document.createElement('div');row.className='goal-list-row';
   const info=document.createElement('div'),name=document.createElement('strong'),slug=document.createElement('code'),summary=document.createElement('p');
-  name.textContent=goal.name;slug.textContent=goal.slug;summary.textContent=goal.summary;info.append(name,summary);
+  name.textContent=goal.name;slug.textContent=goal.slug;summary.textContent=goal.summary;name.title=goal.name;info.append(name,summary);
+  // GitHub #753: the goal text keeps its line breaks, shows collapsed and expands on demand.
+  if(goal.description){const text=document.createElement('p'),toggle=document.createElement('button'),label=open=>(open?'▾ 접기':'▸ 펼치기');text.className='goal-row-text';text.textContent=goal.description;toggle.type='button';toggle.className='goal-row-toggle';toggle.textContent=label(false);toggle.setAttribute('aria-expanded','false');toggle.onclick=()=>{const open=toggle.getAttribute('aria-expanded')!=='true';toggle.setAttribute('aria-expanded',String(open));text.classList.toggle('open',open);toggle.textContent=label(open);};info.append(text,toggle);}
   const state=document.createElement('div');state.className='goal-row-state';state.textContent=(goal.state==='completed'?'✓ 완료':goal.state==='draft'?'준비 중':'● 실행 중');
   const position=document.createElement('small');position.style.display='block';position.style.color='var(--soft)';position.textContent=goal.position;state.append(position);
   const action=document.createElement('button');action.className='btn q';action.textContent=goal.state==='completed'?'결과 보기':'이어서 진행';
@@ -200,7 +202,7 @@ function renderMergedState(){
  document.getElementById('review-run-state').textContent=merged?'완료':'승인 대기';
  document.getElementById('review-goal-title').textContent=merged?'검토한 결과가 main에 반영되었습니다':'변경을 검토하고 승인합니다';
  if(merged){updateAgentStates('d');updateTaskOutline('d');}
- const button=document.getElementById('review-main-action');button.textContent=merged?'완료 결과 보기':reviewOpened?'승인하고 머지 (시안)':'변경 검토';
+ const button=document.getElementById('review-main-action');button.textContent=merged?'완료 결과 보기':reviewOpened?'승인하고 머지':'변경 검토';
  document.querySelectorAll('section.card[data-show="c"] .btn:not(#review-main-action)').forEach(control=>control.disabled=merged);
 }
 const goalDrafts={j:'리프레시 토큰을 쓸 때마다 새로 발급하고, 재사용된 토큰을 탐지하면 세션을 끊는다.',e:'로그인 실패가 5번 넘으면 계정을 15분 잠근다. 잠금 해제 API와 테스트를 추가한다.'};
