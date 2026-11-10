@@ -8,9 +8,10 @@ pub(crate) fn document() -> Result<String, String> {
         + include_str!("../optimize.html")
         + include_str!("../about.html");
     let style = format!(
-        "{}\n{}\n{}\n{}\n{}",
+        "{}\n{}\n{}\n{}\n{}\n{}",
         super::super::CSS,
         include_str!("../startup.css"),
+        include_str!("../room_layout.css"),
         include_str!("../mcp.css"),
         include_str!("../chat.css"),
         include_str!("../optimize.css")
