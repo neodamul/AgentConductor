@@ -127,7 +127,8 @@ module.exports = [
     mock: { url: '?theme=light#3', selector: `.main>.card[data-show="b"]${mock}` }, app: { setup: STEPS_ENABLED, run: "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click()", selector: app } })),
   // #597: the Room's verify card (mock view #6 = "f"): coordinator view in the verify stage.
   ...(() => {
-    const setup = STEPS_ENABLED + "SIM.room.report.state='waiting_approval';SIM.room.report.tasks.forEach(t=>t.status='completed');SIM.room.report.tests=[{task:'task-1',exit_code:0,timed_out:false,output:''}];";
+    // GitHub #689: an approval-waiting run shows the summary card; the verify rows belong to the run that is still verifying.
+    const setup = STEPS_ENABLED + "SIM.room.report.state='running';SIM.room.report.tasks.forEach(t=>t.status='completed');SIM.room.report.tests=[{task:'task-1',exit_code:0,timed_out:false,output:''}];";
     const run = "document.querySelectorAll('#start-step-tabs [role=tab]')[4].click(); document.querySelector('.final-step .session-choice').click()";
     const card = '.main>.card[data-show="f"]';
     return [['eyebrow', ' .cardhead .eyebrow', '.room-card .eyebrow', ['fontSize', 'fontWeight', 'color'], ['height', 'fontSize', 'fontWeight', 'color']],
