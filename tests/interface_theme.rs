@@ -11,6 +11,7 @@ mod test_env;
 const ROOM_CSS: &str = include_str!("../src/ui/room.css");
 const MCP_CSS: &str = include_str!("../src/ui/mcp.css");
 const STARTUP_CSS: &str = include_str!("../src/ui/startup.css");
+const RUN_CSS: &str = include_str!("../src/ui/run_screen.css");
 const HTML: &str = include_str!("../src/ui/startup.html");
 const STARTUP_JS: &str = include_str!("../src/ui/startup.js");
 const ROOM_JS: &str = include_str!("../src/ui/room.js");
@@ -46,6 +47,7 @@ fn colors_come_only_from_the_light_and_dark_token_sets() {
     for (name, css) in [
         ("room.css", rest.as_str()),
         ("startup.css", STARTUP_CSS),
+        ("run_screen.css", RUN_CSS),
         ("mcp.css", MCP_CSS),
     ] {
         // Only declaration values count; `#id` selectors are not colors.
@@ -87,18 +89,18 @@ fn settings_offer_light_and_dark() {
 
 #[test]
 fn session_status_is_compact_and_never_leaves_the_rail() {
+    // GitHub #675: the status is a badge on the task row's heading line that never grows past the row.
     let row = &ROOM_JS[ROOM_JS.find("const symbol=avatar(agent?.parser").unwrap()..];
     let row = &row[..row.find("row.prepend(button)").unwrap()];
     assert!(
-        row.contains("'session-symbol'") && row.contains("session-status"),
-        "icon and tag kept"
+        row.contains("'session-symbol'") && row.contains("outline-state-badge"),
+        "icon and badge kept"
     );
-    let rule = block(ROOM_CSS, ".session-choice .session-meta .session-status");
+    let rule = block(RUN_CSS, "#rail-room .outline-state-badge");
     assert!(
-        rule.contains("max-width:100%") && rule.contains("white-space:normal"),
+        rule.contains("flex:none") && rule.contains("white-space:nowrap"),
         "{rule}"
     );
-    assert!(block(ROOM_CSS, ".session-choice .session-meta").contains("flex-wrap:wrap"));
 }
 
 #[test]
