@@ -7,6 +7,7 @@ the GitHub Release notes for its tag.
 ## v0.2.0
 
 - **0.2.0.** The redesigned goal screens (Workspace, Agent roles, Plan, Agent Room with its task, verify and approval cards) follow the approved design. Install v0.2.0 from the release page: v0.2.0-Beta1 installs report 0.2.0 and cannot see the final release (#672); later betas carry their suffix.
+- The Agent Room drops the rail hint, the run folder path in the status bar and the status box of a finished run, as in the approved design; an approved run applies its changes from the review footer (#722).
 - A Codex "spend cap" reply stops that account like a usage limit, so the task moves to its fallback agent instead of retrying on the same one (#712).
 - Step 2 (Agent roles) ends with the approved design's footer: the note about roles being saved with the Goal, *Add roles* (the suggested defaults) and *Save and go to step 3* (it saves and opens the plan, generating one when none exists); reading a Markdown plan and writing one by hand moved to step 3 (#685).
 - Step 3 (Plan) follows the approved design: "Review the plan and start the run" with the proposed task count, the Phase/Task position line with an owned-path overlap check, a detail strip for the selected task (owned paths, dependencies, check) and a footer with the note, *Regenerate plan* and *Approve and run* (#686).
