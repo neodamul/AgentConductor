@@ -24,6 +24,6 @@ function railElapsed(r, now) {
 }
 // The line under the title (the mock's goal-info row): the integration result while a candidate waits for approval.
 function renderGoalInfo(r) {
-  const failed = r.tests.filter(x => x.exit_code !== 0 || x.timed_out), text = r.state === 'waiting_approval' && r.tests.length ? (failed.length ? acMessage('room.goal_info_tests_failed', { value1: failed.length }) : acMessage('room.goal_info_tests_passed')) : '';
+  const failed = r.tests.filter(x => x.exit_code !== 0 || x.timed_out), text = isVerifying(r) ? acMessage('room.goal_info_verifying', { value1: r.tests.length, value2: r.tasks.length }) : r.state === 'waiting_approval' && r.tests.length ? (failed.length ? acMessage('room.goal_info_tests_failed', { value1: failed.length }) : acMessage('room.goal_info_tests_passed')) : '';
   AC_I18N.bind(document.querySelector('#run-goal-info .goal-info-content'), () => text);
 }

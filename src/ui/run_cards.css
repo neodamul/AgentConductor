@@ -1,0 +1,6 @@
+/* GitHub #706: the coordinator cards of steps 5 and 6 carry no status pill; the verification card shows only rows, judgments and its footer. */
+#run-screen .room-card.coordinator-card #task-status{display:none}
+#run-screen .room-card.verifying :is(.view-tabs,.composer){display:none}
+#run-screen .room-card.verifying #activity>:is(.event.plan,.coord-board){display:none}
+#run-screen .review-footer button:disabled{opacity:.55;cursor:default}
+#run-screen .composer-bottom #recover[hidden]{display:none}
