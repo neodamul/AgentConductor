@@ -114,7 +114,7 @@ pub(in crate::workflow) async fn worker(
                 }
                 if event.kind==EventKind::Error {
                     let message=event.payload.to_string();
-                    report.restriction=availability::detect(&event.payload,&message,(now()/1000) as i64);
+                    report.restriction=availability::detect(&event.payload,&message,(now()/1000) as i64).or(report.restriction.take());
                     if event.payload["denied"]==true {denied=denied.or(Some(message.clone()));}
                     provider_error=Some(message);
                 }

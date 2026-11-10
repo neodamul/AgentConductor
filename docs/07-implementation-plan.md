@@ -3699,6 +3699,14 @@ Trace: R-210 / UC-202 / DD-135.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### The run screen follows the mock without a status box and a Human review rail section — GitHub #704
+
+- [x] Plan: the run banner is hidden unless it has an error, *Fix with feedback*, *Scope review*, the next-step button or an attention note (Resume is in the composer, the state is the pill); the rail's *Human review* section is hidden and *Result* moves beside the pill.
+- [x] Verify: `node_runtime`, `choice_controls`, `interface_theme`, `room_task_rows`, parity light 840/1280.
+- [ ] Completed: merged on `main`; closes #704.
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### Quota refresh updates the quota ring only — GitHub #663
 
 - [x] Plan: `profiles()` in `startup.js` stamps a card rebuild with the profiles, hints, icons, job state and each agent's own catalog job only; the quota state moves to a second stamp that replaces the `.quota-controls` ring in place (`updateQuotaRings`), so a refresh never recreates Edit, Models, remove or move.
@@ -3756,6 +3764,14 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+
+### The plan step heading line — GitHub #708
+
+- [x] Plan: `planHeading()` in `startup.js` fills the goal-info line on the plan step with the position (selected task of the plan) and the coordinator.
+- [x] Verify: parity entry `plan-heading-info`; `ui_scripts_parse`, `messages`, `i18n_contracts`.
+- [ ] Completed: merged on `main`; closes #708.
+
+Trace: R-210 / UC-202 / DD-222.
 
 ### The titlebar actions and the docked inspector match the approved mock — GitHub #673
 

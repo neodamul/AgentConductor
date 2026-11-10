@@ -975,6 +975,7 @@
   "startup.plan_paths_clear": "No overlapping owned paths",
   "startup.plan_paths_overlap": "Owned paths overlap: {value1}",
   "startup.plan_detail": "{value1} · {value2} — Owned paths: {value3} / Depends on: {value4} / Check: {value5}",
+  "startup.plan_heading_info": "Phase 1/1 · Task {value1}/{value2} · {value3}   Coordinator {value4}",
   "startup.plan_no_dependencies": "none · starts at once",
   "startup.plan_footer_note": "Approving moves on to step 4, Tasks, on the same screen.",
   "startup.plan_regenerate": "Regenerate plan",
