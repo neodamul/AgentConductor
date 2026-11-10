@@ -351,6 +351,15 @@ module.exports = [
   ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
     mock: { url: '?theme=light#4', selector: mock },
     app: { setup: STEPS_ENABLED + "SIM.room.tool_requests=[{id:'tr1',status:'pending',created_at:Math.floor(Date.now()/1000),context:{task:'task-1'},request:{tool:'Bash',input:{command:'npm install jsonwebtoken@9'}}}];", run: "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click()", selector: app } })),
+  // GitHub #727: the denied card's footer (mock step 4 denied = "h").
+  ...[
+    ['denied-footer-note', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="h"] .actions .note', '#denied-footer .note'],
+    ['denied-footer-reassign', ['fontSize', 'paddingTop', 'borderTopLeftRadius'], ['height', 'fontSize', 'paddingTop', 'borderTopLeftRadius'], '.card[data-show="h"] .btn.q', '#denied-reassign'],
+  ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
+    mock: { url: '?theme=light#5', selector: mock },
+    app: { setup: STEPS_ENABLED + "SIM.room.report.tasks[0].status='permission_denied';SIM.room.report.tasks[0].error='permission denied: tool bash';", run: "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click()", selector: app } })),
+  { name: 'denied-footer-replaces-direction', assert: "(() => !document.getElementById('denied-footer').hidden && document.querySelector('#run-screen .composer').hidden)()",
+    app: { setup: STEPS_ENABLED + "SIM.room.report.tasks[0].status='permission_denied';SIM.room.report.tasks[0].error='permission denied: tool bash';", run: "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click()" } },
   { name: 'tool-decision-replaces-direction', assert: "(() => !document.getElementById('tool-decision').hidden && document.querySelector('#run-screen .composer').hidden && !document.querySelector('dialog[open]'))()",
     app: { setup: STEPS_ENABLED + "SIM.room.tool_requests=[{id:'tr1',status:'pending',created_at:Math.floor(Date.now()/1000),context:{task:'task-1'},request:{tool:'Bash',input:{command:'npm install jsonwebtoken@9'}}}];", run: "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click()" } },
   { name: 'startup-inspector-closed', assert: "document.getElementById('start-inspector').getBoundingClientRect().width===0", app: {} },
