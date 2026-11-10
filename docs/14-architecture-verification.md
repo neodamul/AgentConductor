@@ -450,7 +450,7 @@ Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / NFR-09 / QAS-209 / DD-222.
 The confirmation regression first failed because no confirmation function existed.
 `tests/planning_confirmation_runtime.cjs` covers the current Goal/coordinator/model,
 cancel/Escape, incompatible or missing selection, changed revision/Workspace/model
-and the coordinator-model review key. `tests/planning_confirmation_browser.cjs`
+and the coordinator-model review key. `tests/direct_plan_start_743.cjs`
 checks the assembled page in light/dark at 840/1280px, modal bounds/focus/cursor,
 cancellation, changed Goal and accepted planner request. `tests/goal_planning.rs`
 executes a deterministic CLI through the real planner path, records selected model
@@ -468,7 +468,7 @@ behavior. Native Windows UI acceptance is separate from local macOS evidence.
 
 Trace: R-210 / UC-202 / QAS-209 / DD-222.
 
-`tests/planning_confirmation_browser.cjs` fails with a 1200ms post-prepare
+`tests/direct_plan_start_743.cjs` fails with a 1200ms post-prepare
 snapshot delay before the correction: Import Plan is disabled when clicked,
 no file-picker request is recorded and the first confirmation modal never opens.
 After waiting for real action settlement, all light/dark × 840/1280 configurations
@@ -506,7 +506,7 @@ The inspected baseline is main be76d974: 842 local macOS tests pass, zero fail,
 | R-212 / DD-224 cached quota / #404 #426 | `quota_indicators.rs`, `quota_display.rs` | `startup_quota.rs`, `goal_surfaces_runtime.cjs`, `design_parity.rs` | All four UI states consume snapshot data without provider queries; native startup fixture is Unix-only. |
 | R-213 / DD-225 Goal ownership / #411 | `workspace_goal_rules.rs`, `workspace_delete_default.rs` | `project_goals.rs`, `folder_workflow.rs`, `cli_workflow.rs` | Existing Unix links plus `goal_action_safety.rs` cover root aliases/concurrency. Its Windows junction case still requires Windows execution. |
 | R-210 shared/manual model choices / #409 #430 | `role_rules.rs`, `recovery.rs` | `choice_controls.rs`, `choice_controls/profile_fallback.cjs`, `choice_controls/inspector_model.cjs`, `cli_workflow.rs` | Recovery includes explicit catalog registration and invalid-model non-mutation. |
-| R-210 Goal planner confirmation / #429 #466 | `planning_confirmation_runtime.cjs` | `goal_planning.rs`, `planning_confirmation_browser.cjs` | Delayed post-prepare settlement is mandatory; negative assertions require completed actions. |
+| R-210 Goal planner confirmation / #429 #466 | `planning_confirmation_runtime.cjs` | `goal_planning.rs`, `direct_plan_start_743.cjs` | Delayed post-prepare settlement is mandatory; negative assertions require completed actions. |
 | R-213 New Goal and phase continuation | `goal_controls_runtime.cjs` | `project_goals.rs`, `phased_planning.rs`, `phase_link.rs`, `goal_lifecycle_runtime.cjs` | Joined browser flow proves inherited defaults, saved second Goal and retained next-phase routing. Actual persistence is proved separately by native tests. |
 | Evidence/architecture integrity | `architecture_trace.rs` | No runtime claim: this is a document/source contract | `verification_evidence.rs` rejects missing nested references and traversal. |
 | Design matrix: both themes × 840/1280 | `parity_viewport_runtime.cjs`, `parity_coverage_runtime.cjs`, `parity_matrix.rs` | `design_parity.rs` | Four driver cells and independent capture paths are proven by subprocess capture. Three 840 exclusions are removed; matching operator-ID fixtures pass focused comparisons. Full four-cell local pixel run passes (545.46 seconds). Dedicated 560/1920 and short-height regressions retain their explicit purpose. |
@@ -566,3 +566,7 @@ four cells. It fails before removing the guard and passes afterward. The actual
 allowed only for the version at <=900px, whose font remains compared directly
 with the mock. Do not count the earlier checkpoint as complete four-cell
 behavior coverage; fresh actual matrix evidence is required.
+
+## Issue #743: direct planning and execution
+
+The owner replaced the historical planning and execution confirmation dialogs with direct actions. The planning-context guard and the backend digest, revision, repository-base checks and audit remain. `tests/direct_plan_start_743.cjs` covers direct planning, delayed snapshot settlement and changed Goal rejection; `tests/goal_lifecycle_runtime.cjs` covers direct execution and evidence visibility in both themes and widths. Earlier confirmation-dialog descriptions in this historical record describe the superseded behavior.
