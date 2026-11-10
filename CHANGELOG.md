@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The run card's direction note names its target like the approved design ("<agent> · <task> receives this direction · review opens after verification") (#676).
 - While a plan is under review the left rail shows the same *Phases and tasks* outline as the run (current Phase and Task, review state, the Phase, one row per task with its agent mark and a *Planned* badge); a row opens its task in the plan card (#686).
 - The Agent roles step uses the approved design's copy ("Decide who does what"), column labels (Fallback, Fallback model) and bordered, rounded role rows (#685).
 - The run screens (steps 4–6) follow the approved design's layout: the left rail is the *Phases and tasks* outline (current Phase and Task, tasks done, elapsed time, the Phase with its task rows and a hint) instead of the session list; the top area is the goal title with the Goal list, people button and one status pill (the run banner now shows only when it has something to decide, fix or resume, and the dead refresh button is gone); the card ends with one direction field and a row with stop / resume / recover, the note and Send; the human-review shortcuts appear only when there is a candidate, a tool request or a result (#675, #676).

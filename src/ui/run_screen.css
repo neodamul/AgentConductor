@@ -57,3 +57,6 @@
 #rail-room .gates-nav[hidden]{display:none}
 #run-screen .composer-bottom .note{text-align:left}
 #rail-room #sessions .session::after{display:none}
+/* The target now reads in the note beside the buttons; the label keeps it for assistive technology only. */
+#run-screen .composer label #feedback-target{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#run-screen .composer-bottom #job-state{flex:none}
