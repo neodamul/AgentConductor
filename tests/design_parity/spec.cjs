@@ -295,6 +295,16 @@ module.exports = [
   ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
     mock: { url: '?theme=light#2', selector: mock },
     app: { setup: "SIM.home.proposal=SIM.proposal('ready');", run: "document.getElementById('start-tab-review').click()", selector: app } })),
+  // GitHub #684: a pending tool request is decided in the card footer (mock step 5).
+  ...[
+    ['tool-decision-note', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="g"] .actions .note', '#tool-decision-note'],
+    ['tool-decision-deny', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor'], ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor'], '.card[data-show="g"] .btn.q', '#tool-decision-deny'],
+    ['tool-decision-allow', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color'], ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color'], '.card[data-show="g"] .btn.p', '#tool-decision-allow'],
+  ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
+    mock: { url: '?theme=light#4', selector: mock },
+    app: { setup: STEPS_ENABLED + "SIM.room.tool_requests=[{id:'tr1',status:'pending',created_at:Math.floor(Date.now()/1000),context:{task:'task-1'},request:{tool:'Bash',input:{command:'npm install jsonwebtoken@9'}}}];", run: "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click()", selector: app } })),
+  { name: 'tool-decision-replaces-direction', assert: "(() => !document.getElementById('tool-decision').hidden && document.querySelector('#run-screen .composer').hidden && !document.querySelector('dialog[open]'))()",
+    app: { setup: STEPS_ENABLED + "SIM.room.tool_requests=[{id:'tr1',status:'pending',created_at:Math.floor(Date.now()/1000),context:{task:'task-1'},request:{tool:'Bash',input:{command:'npm install jsonwebtoken@9'}}}];", run: "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click()" } },
   { name: 'startup-inspector-closed', assert: "document.getElementById('start-inspector').getBoundingClientRect().width===0", app: {} },
   { name: 'startup-inspector-docked', assert: "(()=>{const r=document.querySelector('#start-inspector').getBoundingClientRect();return Math.round(r.right)===innerWidth&&r.top<200&&r.height>300})()",
     app: { run: "document.getElementById('start-inspector-toggle').click()" } },

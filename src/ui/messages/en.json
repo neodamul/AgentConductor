@@ -568,6 +568,7 @@
   "room.stopped": "Stopped",
   "room.composer_note": "{value1} · {value2} receives this direction · review opens after verification",
   "room.composer_note_coordinator": "The coordinator receives this direction · review opens after verification",
+  "room.tool_decision_note": "Allowing runs the same input once.",
   "room.targeted_revision_previous_evidence_is_retained": "Targeted revision · previous evidence is retained",
   "room.task_duration": "Task duration",
   "room.task_inspector": "Task inspector",
