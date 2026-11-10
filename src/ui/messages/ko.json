@@ -971,6 +971,7 @@
   "startup.plan_paths_clear": "소유 경로 겹침 없음",
   "startup.plan_paths_overlap": "소유 경로가 겹칩니다: {value1}",
   "startup.plan_detail": "{value1} · {value2} — 소유 경로: {value3} / 의존성: {value4} / 검증: {value5}",
+  "startup.plan_heading_info": "현재 Phase 1/1 · Task {value1}/{value2} · {value3}   코디네이터 {value4}",
   "startup.plan_no_dependencies": "없음 · 바로 시작",
   "startup.plan_footer_note": "승인하면 같은 화면에서 4단계 작업으로 넘어갑니다.",
   "startup.plan_regenerate": "계획 다시 만들기",

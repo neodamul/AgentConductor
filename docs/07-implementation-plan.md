@@ -3749,6 +3749,14 @@ Trace: R-210 / UC-202 / DD-222.
 Trace: R-210 / UC-202 / DD-222.
 
 
+### The plan step heading line — GitHub #708
+
+- [x] Plan: `planHeading()` in `startup.js` fills the goal-info line on the plan step with the position (selected task of the plan) and the coordinator.
+- [x] Verify: parity entry `plan-heading-info`; `ui_scripts_parse`, `messages`, `i18n_contracts`.
+- [ ] Completed: merged on `main`; closes #708.
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### The titlebar actions and the docked inspector match the approved mock — GitHub #673
 
 - [x] Plan: the update icon (the mock's downward arrow) is always in the titlebar and opens the update dialog, accented when an update exists; the right panel toggle is shown on every screen; before a run a docked `#start-inspector` (closed by default, no close button or backdrop, up to 330px / 35% of the window, the `room.inspector_empty` explanation) opens beside the card and independently of the left rail; once a run is open the same toggle drives the Room inspector.
