@@ -155,6 +155,18 @@ module.exports = [
     ].map(([name, mock, app, props, keys]) => ({ name: `review-card-${name}`, props, keys, pixel: false,
       mock: { url: '?theme=light#7', selector: card + mock }, app: { setup, run, selector: app } }));
   })(),
+  // GitHub #706: the verification card's footer and heading line (mock step 5 = "f").
+  ...(() => {
+    const setup = STEPS_ENABLED + "SIM.room.report.state='running';SIM.room.report.tasks.forEach(t=>t.status='completed');SIM.room.report.tests=[{task:'task-1',exit_code:0,timed_out:false,output:''}];";
+    const run = "document.querySelectorAll('#start-step-tabs [role=tab]')[4].click(); (async () => { for (let i = 0; i < 200 && !document.querySelector('.final-step .session-choice'); i++) await new Promise(r => setTimeout(r, 50)); document.querySelector('.final-step .session-choice').click(); for (let i = 0; i < 200 && !document.querySelector('.verify-row'); i++) await new Promise(r => setTimeout(r, 50)); })()";
+    const card = '.main>.card[data-show="f"]';
+    return [['note', ' .actions .note', '#verify-footer .note', ['fontSize', 'color'], ['fontSize', 'color']],
+      ['stop', ' .actions .btn.q', '#verify-stop', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius'], ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius']],
+      ['wait', ' .actions .btn.p', '#verify-wait', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius'], ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius']],
+    ].map(([name, mock, app, props, keys]) => ({ name: `verify-footer-${name}`, props, keys, pixel: false,
+      mock: { url: '?theme=light#6', selector: card + mock }, app: { setup, run, selector: app } }))
+      .concat([{ name: 'verify-no-tabs', assert: "(() => { const c = document.querySelector('#run-screen .room-card'); return c.classList.contains('verifying') && getComputedStyle(c.querySelector('.view-tabs')).display === 'none' && getComputedStyle(c.querySelector('.composer')).display === 'none' && !document.getElementById('verify-footer').hidden && document.getElementById('run-pill').textContent.length > 0; })()", app: { setup, run } }]);
+  })(),
   // GitHub #689: the approval footer and the heading line under the title (mock view #7 = "c").
   ...(() => {
     const setup = STEPS_ENABLED + "SIM.room.report.state='waiting_approval';SIM.room.report.tasks.forEach(t=>t.status='completed');SIM.room.report.candidate={commit:'abcdef1234567890'};SIM.room.report.tests=[{task:'task-1',exit_code:0,timed_out:false,output:''}];SIM.reply.evidence=()=>({revision:'x1',report:SIM.room.report,truncated:false,test_output:[],diff:''});";

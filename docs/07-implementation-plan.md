@@ -3740,6 +3740,14 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### The verification card follows the mock — GitHub #706
+
+- [x] Plan: `room_verify.js` marks the coordinator card while the run verifies (every task completed, state running): no tabs, direction field or status pill, the plan/board events hidden, the footer note with *Stop* and a disabled wait button; the pill says *Verifying* and the heading line counts the integration tests; *Recover* is shown only for interrupted, failed or blocked runs.
+- [x] Verify: parity entries `verify-footer-note|stop|wait` and `verify-no-tabs`; `ui_scripts_parse`, `node_runtime`.
+- [ ] Completed: merged on `main`; closes #706.
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### Optimize prompt uses the coordinator chosen on the screen — GitHub #680
 
 - [x] Plan: `optimizeUi` captures and saves the draft before `optimize_goal` (the worker reads the saved coordinator), sends the new revision, stops when the save fails, and without a coordinator shows `startup.optimize_coordinator_required` and opens the Workspace step.
