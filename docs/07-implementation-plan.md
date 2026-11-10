@@ -3627,6 +3627,14 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### A restricted role moves to its due fallback before later roles start — GitHub #687
+
+- [x] Plan: the scheduler applies due reviewed fallbacks at the top of each iteration while nothing runs (so always before the first launch), keeping the transfer's quiescence rule; a role whose reset is inside the five-hour horizon still waits for its own account; later independent roles then run after it in plan order.
+- [x] Verify: `a_restricted_first_role_with_a_due_fallback_moves_before_later_roles_start` (a real repository fixture: the first role moves, the second is untouched, a reset inside the horizon keeps waiting); lib tests and every fallback / availability integration test pass; the real run's audit trail named the cause (`handoff` recorded only after the other task finished).
+- [ ] Completed: merged on `main`; closes #687.
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### Refresh arrow spins alone — GitHub #647
 
 - [x] Plan: the popup's refresh button holds the arrow in `span.usage-glyph`; `.usage-refresh.refreshing .usage-glyph` carries the spin animation instead of the button.
@@ -3635,11 +3643,27 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### UI requests never wait forever on the job slot — GitHub #691
+
+- [x] Plan: `Controller::lock_job` takes the job slot through `bounded_lock::lock_within` (`try_lock` with a three-second deadline) (poll, action and the automatic resume use it); `busy()` keeps counting an unreadable slot as busy; the goal-change check clones the open controller and releases the room's lock before `busy()`.
+- [x] Verify: `tests/bounded_lock.rs` (a held lock fails after the deadline, a poisoned lock is reported); `source_layout`; the root cause of the frozen window (which thread held the slot) is still open on #691.
+- [ ] Completed: merged on `main`; relates to #691 (stays open until the holder is found).
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### About dialog uses the app icon and the transparent Codex mark — GitHub #656
 
 - [x] Plan: `about.html` embeds the titlebar's app icon (`img.about-mark`, 44px) in place of the text tile; `about.css` hides the logos' `path[fill="#fff"]` square like the agent card does; the approved mock (`preview.html`/`preview.css`) and its manifest hashes follow.
 - [x] Verify: the Node UI suite and a live render of the dialog header.
 - [ ] Completed: merged on `main`; closes #656.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Coordinator chat names a usage limit — GitHub #664
+
+- [x] Plan: `chatFailure` in `src/ui/chat.js` recognises a usage-limit or rate-limit error from the CLI output, reads its reset time ("try again at …") and shows `startup.chat_quota_error` (with `startup.chat_quota_resets`) that points at choosing another coordinator in Agent roles; other failures keep `startup.chat_error`.
+- [x] Verify: `tests/chat_quota_error.cjs` (the real Codex output, no reset time, other errors), `chat_runtime.cjs`, `messages`, `i18n_contracts`, `chat_ui`.
+- [ ] Completed: merged on `main`; closes #664.
 
 Trace: R-210 / UC-202 / DD-222.
 
@@ -3683,6 +3707,14 @@ Trace: R-200 / UC-188 / DD-212.
 
 Trace: R-210 / UC-202 / DD-222.
 
+
+### The usage popup explains a workspace without a project folder — GitHub #679
+
+- [x] Plan: the folder-less lookup error becomes the shared constant `NO_PROJECT_FOLDER`; the indicator carries `error_code: "no_project_folder"` for it; the popup and the ring treat that code as a state to explain (`startup.quota_needs_folder`, English and Korean), not as a failure; every other error keeps the failure box.
+- [x] Verify: `quota_indicators.rs` checks the code and that other errors carry none; `quota_no_folder_runtime.cjs` opens the popup in the simulator for both cases (and fails without the fix).
+- [ ] Completed: merged on `main`; closes #679.
+
+Trace: R-210 / UC-202 / DD-222.
 
 ### Optimize prompt uses the coordinator chosen on the screen — GitHub #680
 

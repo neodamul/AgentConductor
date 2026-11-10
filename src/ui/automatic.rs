@@ -16,7 +16,7 @@ impl Controller {
                 revision.clone(),
             ];
             args.extend(Action::Resume {}.args(&report, &self.dir)?);
-            let mut job = self.job.lock().map_err(|_| "UI recovery state poisoned")?;
+            let mut job = self.lock_job()?;
             self.launch_locked("auto_resume", &args, &revision, &mut job)
         })();
         match result {

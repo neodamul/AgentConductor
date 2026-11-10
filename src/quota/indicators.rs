@@ -63,6 +63,6 @@ pub fn indicators(quotas: &Value, profiles: &[AgentProfile], language: &str, now
         let selected=if !budgets.is_empty() && (enterprise||windows.is_empty()) {&budgets}else{&windows};
         let rings:Vec<_>=selected.iter().take(2).cloned().collect();
         let status=if stale {"stale"}else{status};
-        (profile.id.clone(),json!({"status":status,"rings":rings,"windows":windows,"budgets":budgets,"source":q["source"],"observed_at":q["observed_at"],"plan_type":q["plan_type"],"error":q["error"],"restriction":q["restriction"],"refresh_minutes":profile.quota_refresh_minutes}))
+        (profile.id.clone(),json!({"status":status,"rings":rings,"windows":windows,"budgets":budgets,"source":q["source"],"observed_at":q["observed_at"],"plan_type":q["plan_type"],"error":q["error"],"error_code":(q["error"]==super::NO_PROJECT_FOLDER).then_some("no_project_folder"),"restriction":q["restriction"],"refresh_minutes":profile.quota_refresh_minutes}))
     }).collect())
 }

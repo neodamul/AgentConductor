@@ -8,7 +8,8 @@ window.acQuotaRing = (() => {
   const svg = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
   const text = (tag, value, cls) => { const e = document.createElement(tag); if (cls) e.className = cls; e.textContent = value; return e; };
   const pct = row => row && Number.isFinite(row.remaining_percent) ? Math.max(0, Math.min(100, row.remaining_percent)) : null;
-  const failed = indicator => !!(indicator && indicator.error);
+  // GitHub #679: a workspace without a project folder is a state to explain, not a failed lookup.
+  const failed = indicator => !!(indicator && indicator.error && indicator.error_code !== 'no_project_folder');
   const same = (a, b) => a && b && a.kind === b.kind && a.index === b.index;
 
   function icon(indicator) {
@@ -51,6 +52,8 @@ window.acQuotaRing = (() => {
       const box = text('div', '', 'usage-error'); box.setAttribute('role', 'alert');
       box.append(text('strong', acMessage('startup.quota_error_title')), text('p', acMessage('startup.quota_error_message')), text('p', String(indicator.error)));
       body.append(box);
+    } else if (indicator?.error_code === 'no_project_folder') {
+      body.append(text('p', acMessage('startup.quota_needs_folder'), 'usage-unavailable'));
     } else if (indicator?.status === 'unsupported' || !indicator) {
       body.append(text('p', acMessage('startup.quota_unsupported'), 'usage-unavailable'));
     } else {
