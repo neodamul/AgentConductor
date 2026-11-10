@@ -24,7 +24,7 @@ module.exports = [
   { name: 'task-avatar', props: BOX,
     mock: { url: '?theme=light#3', selector: '.outline-task .outline-agent', index: 0, mark: '.agent-brand-logo' },
     app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';SIM.room.report.plan.tasks[0].agent='claude';", run: "document.getElementById('start-tab-tasks').click()",
-      selector: '.session-choice .session-meta .app-icon.session-symbol', index: 0, mark: 'content' } },
+      selector: '.outline-task .app-icon.session-symbol', index: 0, mark: 'content' } },
   // Shell geometry (GitHub #408). Positions differ because the mock sits in a framed window, so x/y are not compared.
   { name: 'rail', props: [], keys: ['width'], pixel: false,
     mock: { selector: '.rail' }, app: { selector: '.startup-team' } },
@@ -56,7 +56,7 @@ module.exports = [
     app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()", selector: '.session' } },
   { name: 'task-status-tag', props: ['borderTopLeftRadius'], keys: ['height', 'borderTopLeftRadius'], pixel: false,
     mock: { url: '?theme=light#3', selector: '.outline-task .outline-state-badge' },
-    app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()", selector: '.session-choice .session-status' } },
+    app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()", selector: '.outline-task .outline-state-badge' } },
   // Step groups (GitHub #408): a subdued background per Prepare / Run / Finish set with a 14px group icon.
   ...['prepare', 'run', 'finish'].map((group, index) => ({ name: `step-group-${group}`, props: ['borderTopLeftRadius', 'backgroundColor'], keys: ['width', 'height', 'borderTopLeftRadius', 'backgroundColor'],
     mock: { url: '?theme=light#0', run: STEP_REFERENCE_WIDTH, selector: '.tabs .step-group', index }, app: { setup: STEPS_ENABLED, run: STEP_ONE, selector: `#start-step-tabs .step-group[data-group=${group}]` } })),
@@ -255,6 +255,26 @@ module.exports = [
     mock: { url: '?theme=light#0', run: STEP_REFERENCE_WIDTH + ";document.getElementById('right-panel-toggle').click()", selector: '#task-inspector-panel' },
     app: { run: "document.getElementById('start-inspector-toggle').click()", selector: '#start-inspector' } },
   // Closed by default, and docked at the right edge of the window once opened (not in the rail or below the card).
+  // GitHub #677: the titlebar holds only the mock's controls, on the setup steps and while a run is open.
+  { name: 'titlebar-controls', assert: "(() => [...document.querySelectorAll('header.titlebar button')].filter(b => b.getClientRects().length).map(b => b.id).join() === 'start-app-menu,start-rail-toggle,start-workspace-menu,start-update-button,start-chat-button,start-settings-button,start-inspector-toggle')()",
+    app: { setup: STEPS_ENABLED } },
+  // GitHub #678: a completed step shows a check mark in place of its number.
+  { name: 'step-done-number', props: ['color', 'backgroundColor', 'fontSize'], keys: ['width', 'height', 'color', 'backgroundColor'],
+    mock: { url: '?theme=light#3', selector: '.tabs .tab.done .num', index: 0 },
+    app: { setup: STEPS_ENABLED, run: "document.getElementById('start-tab-tasks').click()", selector: '#start-step-tabs [role=tab].done .tab-number', index: 0 } },
+  // GitHub #675 / #676: the run screen's rail and top area against the mock's step 4.
+  ...[
+    ['run-rail-head', ['fontSize', 'fontWeight'], ['height', 'fontSize', 'fontWeight'], '#rail-tasks-panel .railhead h2', '#rail-room .railhead h2'],
+    ['run-rail-current', ['fontSize', 'color'], ['height', 'fontSize', 'color'], '#outline-total', '#rail-current'],
+    ['run-rail-status', ['fontSize', 'color', 'paddingTop', 'paddingBottom', 'borderBottomWidth'], ['height', 'fontSize', 'color', 'paddingTop', 'paddingBottom', 'borderBottomWidth'], '.outline-run-status', '#rail-room .outline-run-status'],
+    ['run-rail-phase', ['fontSize', 'fontWeight', 'paddingTop', 'borderBottomWidth'], ['height', 'fontSize', 'fontWeight', 'paddingTop', 'borderBottomWidth'], '.phase-tree summary', '#rail-room .phase-tree summary'],
+    ['run-rail-task', ['paddingTop', 'paddingLeft', 'borderBottomWidth', 'borderTopLeftRadius'], ['width', 'paddingTop', 'paddingLeft', 'borderBottomWidth', 'borderTopLeftRadius'], '.outline-task', '#rail-room .outline-task'],
+    ['run-rail-task-title', ['fontSize', 'fontWeight'], ['fontSize', 'fontWeight'], '.outline-task strong', '#rail-room .outline-task strong'],
+    ['run-rail-note', ['fontSize', 'color', 'paddingTop', 'borderTopWidth'], ['fontSize', 'color', 'paddingTop', 'borderTopWidth'], '.outline-note', '#rail-room .outline-note'],
+    ['run-heading', ['fontSize', 'fontWeight'], ['height', 'fontSize', 'fontWeight'], '#saved-goal-title', '#run-screen .goal-bar h1'],
+  ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
+    mock: { url: '?theme=light#3', selector: mock },
+    app: { setup: STEPS_ENABLED, run: "document.getElementById('start-tab-tasks').click()", selector: app } })),
   { name: 'startup-inspector-closed', assert: "document.getElementById('start-inspector').getBoundingClientRect().width===0", app: {} },
   { name: 'startup-inspector-docked', assert: "(()=>{const r=document.querySelector('#start-inspector').getBoundingClientRect();return Math.round(r.right)===innerWidth&&r.top<200&&r.height>300})()",
     app: { run: "document.getElementById('start-inspector-toggle').click()" } },

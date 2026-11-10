@@ -17,7 +17,8 @@ pub(crate) fn document() -> Result<String, String> {
     ) + include_str!("../anchored_select.css")
         + include_str!("../role_choices.css")
         + include_str!("../about.css")
-        + include_str!("../titlebar.css");
+        + include_str!("../titlebar.css")
+        + include_str!("../run_screen.css");
     let helper_scripts = concat!(
         include_str!("../dialog_focus.js"),
         include_str!("../brand_avatar.js"),

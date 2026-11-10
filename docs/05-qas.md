@@ -411,7 +411,7 @@ Measure: Claude stream-json, Codex JSONL and OpenCode events render as text, "鈼
 ### QAS-101 Coordinator final step in the task list
 The Agent Room task list shows the step the coordinator runs after the tasks, integration verification of the combined result, as its own entry with its status (pending, running, completed, failed) and which task tests failed, so a run that fails after every task completed shows why without opening other views.
 Trace: R-105 -> BG-60 -> SF-92 -> UC-95 -> FR-90 -> QAS-101 -> DD-113. Source: user request, 2026-10-13.
-Measure: With all tasks completed and t01's test failing on the combined result, the list ends with Coordinator 路 Integration verification 路 Failed: t01-requirements-doc in red; selecting it opens Diff & tests; with all tests passing it shows Completed.
+Measure: With all tasks completed and t01's test failing on the combined result, the list ends with Coordinator 路 Integration verification 路 Failed: t01-requirements-doc in red; selecting it opens Changes & tests; with all tests passing it shows Completed.
 
 ### QAS-102 Decide a live tool request from its window
 When a tool request window opens while the run is working, Allow once and Deny are available at once, without closing the window with Decide later and deciding again from the Tool requests list.

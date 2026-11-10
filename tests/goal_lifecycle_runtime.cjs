@@ -16,7 +16,7 @@ for(const width of [840,1280]){browser=await launch(chrome,{width});for(const th
  q('start-prepare').click();await until(()=>q('start-planning-confirm').open,'planner confirmation');q('start-planning-confirm').close('confirm');
  await until(()=>SIM.home.proposal?.phase==='ready'&&!q('start-run').disabled,'review ready');check('planning uses registered coordinator and model',SIM.home.config.coordinator==='claude'&&SIM.home.config.profiles[0].coordinator_model==='opus');
  q('start-run').click();await until(()=>q('start-consent').open,'exact plan consent');q('start-consent').close('confirm');
- await until(()=>document.body.classList.contains('on-run')&&document.querySelectorAll('.session-choice .task-id').length===3,'running Room');
+ await until(()=>document.body.classList.contains('on-run')&&document.querySelectorAll('.session-choice .task-number').length===3,'running Room');
  check('run starts only after exact consent',SIM.log.filter(e=>e.kind==='start').length===1&&SIM.log.find(e=>e.kind==='start').p.digest==='d1');
  check('result is not shown while running',!q('result-dialog').open);
  window.__acCloseRequested();check('active close dialog focuses keep running',q('start-close-dialog').open&&document.activeElement===q('start-close-keep'));q('start-close-dialog').querySelector('[value=cancel]').click();check('cancel close sends no close command',!SIM.log.some(e=>e.kind==='close_window'));

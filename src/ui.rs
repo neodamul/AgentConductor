@@ -18,6 +18,7 @@ const CSS: &str = include_str!("ui/room.css");
 const JS: &str = concat!(
     include_str!("ui/room_activity.js"),
     include_str!("ui/room_result.js"),
+    include_str!("ui/room_rail.js"),
     include_str!("ui/room.js")
 );
 /// ID catalogs and translation runtime, loaded before either page script.
