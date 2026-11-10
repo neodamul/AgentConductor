@@ -78,7 +78,7 @@
    const button=q('goal-list-open'),brief=document.getElementById('brief-team');
    if(!goalListHome){goalListHome=document.createComment('goal-list');button.before(goalListHome);briefingHome=document.createComment('team-briefing');brief.before(briefingHome);}
    if(onRun){briefingHome.after(brief);document.querySelector('#run-screen .goal-bar').insertBefore(button,brief);brief.disabled=false;brief.onclick=()=>window.acBriefing.open({request:p=>request({...p,room:true}),notice});}
-   else{if(lastStep==='workspace')goalListHome.after(button);else document.querySelector('.startup-heading').insertBefore(button,q('phase'));button.after(brief);brief.disabled=!state?.run_available;brief.onclick=()=>window.acBriefing.open({request:()=>request({kind:'workspace_briefing'}),notice});}
+   else{if(lastStep==='workspace')goalListHome.after(button);else document.querySelector('.startup-heading').append(button);button.after(brief);brief.disabled=!state?.run_available;brief.onclick=()=>window.acBriefing.open({request:()=>request({kind:'workspace_briefing'}),notice});}
   }
   const briefingButton=document.getElementById('brief-team');briefingButton.className='team-brief-button';briefingButton.replaceChildren();briefingButton.innerHTML='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 4a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 4v2"/></svg>';AC_I18N.bind(briefingButton,()=>acMessage('room.team_briefing'),'title');AC_I18N.bind(briefingButton,()=>acMessage('room.team_briefing'),'aria-label');placeGoalList(false);
 

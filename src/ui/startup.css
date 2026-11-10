@@ -495,5 +495,5 @@ dialog{padding:24px;border-radius:12px}dialog h2{font-weight:700}
 /* GitHub #654: English labels are wider; the agent card's tool row keeps one line at the reference widths (Korean metrics are unchanged). */
 html[lang=en] .profile-tools .small-button:not(.remove-agent):not(.move-agent){padding-inline:3px}
 html[lang=en] .profile-tools .move-agent{padding-inline:4px}
-/* GitHub #748: the status pill sits under the buttons at the right end; the buttons are packed with a 6px gap. */
-.startup-heading,#run-screen .goal-bar{display:grid;grid-template-columns:minmax(0,1fr) auto auto;column-gap:6px;row-gap:4px;height:auto;min-height:32px;align-items:center;margin-bottom:4px}.startup-heading>*,#run-screen .goal-bar>*{grid-row:1}.startup-heading>.status-pill,#run-screen .goal-bar>.status-pill{grid-column:1/-1;grid-row:2;justify-self:end;margin:0;padding:3px 8px;font-size:11px}
+/* GitHub #748: the buttons are packed at the right end with a 6px gap; the status pill sits at the right end of the goal-info line. */
+.startup-heading{gap:6px}.goal-info>.status-pill{flex:none;margin:0 0 0 auto;padding:3px 8px;font-size:11px}

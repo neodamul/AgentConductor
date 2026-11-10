@@ -41,7 +41,7 @@
 
 /* GitHub #676: the run screen's top area is the Workspace screen's (same padding, a 32px title row with the Goal list, people and a status pill, then the stepper). */
 #run-screen .center{padding:16px 40px 0;background:var(--surface-2);overflow:hidden}
-#run-screen .goal-bar{align-items:center;height:auto;min-height:32px;flex:none;margin:0 0 4px;gap:4px 6px}
+#run-screen .goal-bar{align-items:center;height:32px;min-height:32px;flex:none;margin:0 0 4px;gap:6px}
 #run-screen .goal-bar h1{font-size:17px;font-weight:650;line-height:1.4;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.2px}
 #run-pill{flex:none;font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px}
 
