@@ -38,3 +38,5 @@
 #start-plan-phases .plan-phase-tasks .task-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #start-plan-phases .plan-phase-tasks .task-title code{color:var(--soft);font-weight:600;margin-right:8px}
 #start-plan-phases .plan-phase-tasks .task-agent{color:var(--soft);font-size:12px}
+/* GitHub #734: the mock's Goal tools row has Jira, Confluence and the optimizer; the preview shows once a document is attached. */
+#start-mcp-preview:disabled{display:none}

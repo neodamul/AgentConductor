@@ -12,5 +12,5 @@ function watchResult(snap) {
 async function openResult() {
   const r = snapshot.report, review = await request({ kind: 'evidence' });
   const details = await Promise.all(r.tasks.map((_, index) => request({ kind: 'task', index }).catch(() => ({}))));
-  acResultView.show({ goal: r.plan.goal, branch: r.branch, repo: r.repo, commit: review.report.candidate?.commit, diff: review.diff, tests: review.test_output, details });
+  acResultView.show({ summary: r.latest_review?.summary, goal: r.plan.goal, branch: r.branch, repo: r.repo, commit: review.report.candidate?.commit, diff: review.diff, tests: review.test_output, details });
 }

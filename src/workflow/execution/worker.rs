@@ -124,7 +124,9 @@ pub(in crate::workflow) async fn worker(
                 text_seen |= event.kind==EventKind::Warning && event.payload["type"]=="text";
                 terminal |= event.kind==EventKind::Result;
                 progress |= event.kind==EventKind::Progress;
-                serde_json::to_writer(&mut events,&event).map_err(|e|e.to_string())?;
+                // GitHub #732: each stored event carries the time it was read, so the activity list shows HH:MM.
+                let mut stored=serde_json::to_value(&event).map_err(|e|e.to_string())?;stored["at"]=(now() as u64).into();
+                serde_json::to_writer(&mut events,&stored).map_err(|e|e.to_string())?;
                 events.write_all(b"\n").map_err(|e|e.to_string())?;
             }
             if n==0 {break;}

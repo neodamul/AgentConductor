@@ -24,7 +24,10 @@ window.acResultView = (() => {
   function show(data) {
     const changed = files(data.diff), outputs = data.tests || [], summary = tests(outputs), notes = lessons(data.details);
     const row = (a, b) => { const el = node('li'); el.append(node('span', a), node('span', () => ' · ' + (typeof b === 'function' ? b() : b))); return el; };
-    AC_I18N.bind($('result-title'), () => acMessage('room.result_title', { value1: data.goal }));
+    // GitHub #733/#737: the title is the Goal's first meaningful line, then the coordinator's summary sentence.
+    const goalLine = String(data.goal || '').split('\n').map(l => l.trim()).find(l => l && !/^<\/?[\w-]+>$/.test(l)) || '';
+    AC_I18N.bind($('result-title'), () => acMessage('room.result_title', { value1: goalLine }));
+    $('result-summary').textContent = data.summary || ''; $('result-summary').hidden = !data.summary;
     AC_I18N.bind($('result-target'), () => acMessage('room.result_target', { value1: data.branch, value2: (data.commit || '').slice(0, 12) }));
     AC_I18N.bind($('result-location'), () => acMessage('room.result_location', { value1: data.repo }));
     const metric = (label, value) => { const el = node('div', undefined, 'result-metric'); el.append(node('span', label), node('strong', String(value))); return el; };

@@ -142,6 +142,7 @@ pub(super) async fn finish(
             git.external_environment()
         };
         for (i, task) in plan.tasks.iter().enumerate() {
+            let started = std::time::Instant::now();
             let process = process::run_until(
                 ProcessSpec {
                     executable: task.test_command[0].clone().into(),
@@ -165,6 +166,7 @@ pub(super) async fn finish(
                 stderr_hash: file_digest(&process.stderr)?,
                 stdout: process.stdout,
                 stderr: process.stderr,
+                duration_ms: Some(started.elapsed().as_millis() as u64),
             };
             let passed = evidence.exit_code == Some(0) && !evidence.timed_out;
             report.tests.push(evidence);
@@ -231,6 +233,7 @@ pub(super) async fn finish(
                 stderr_hash: file_digest(&stderr)?,
                 stdout,
                 stderr,
+                duration_ms: None,
             });
             return Err(format!(
                 "integration verification failed: {path} records a blocking issue for {owner}"

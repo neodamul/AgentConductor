@@ -57,6 +57,9 @@ pub struct TestReport {
     pub stderr: PathBuf,
     pub stdout_hash: String,
     pub stderr_hash: String,
+    /// GitHub #730: how long the integration test ran, shown on the verify card.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub duration_ms: Option<u64>,
 }
 #[derive(Clone, Serialize, Deserialize)]
 pub struct WorkspaceCheckpoint {

@@ -30,3 +30,4 @@
 #result-dialog .result-metrics .result-metric+.result-metric{border-left:1px solid var(--line);padding-left:16px}
 #result-dialog .result-metrics .result-metric span{color:var(--ink)}
 #result-dialog .result-list li{justify-content:flex-start;gap:0}
+#result-dialog .result-summary{font-size:14px;line-height:1.6;margin:6px 0 4px}

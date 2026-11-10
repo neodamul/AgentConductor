@@ -11,7 +11,8 @@
 :is(#rail-room,#rail-outline) .phase-tree summary::before{content:'▸';color:var(--soft)}
 :is(#rail-room,#rail-outline) .phase-tree[open] summary::before{content:'▾'}
 :is(#rail-room,#rail-outline) .phase-name{font-size:13px;font-weight:650}
-:is(#rail-room,#rail-outline) .phase-count{font-size:11px;color:var(--soft);margin-left:auto}
+:is(#rail-room,#rail-outline) .phase-count{font-size:11px;color:var(--soft);margin-left:auto;flex:none;white-space:nowrap}
+:is(#rail-room,#rail-outline) .phase-name{min-width:0}
 :is(#rail-room,#rail-outline) .phase-brief{font-size:11.5px;line-height:1.7;color:var(--soft);margin:10px 0}
 :is(#rail-room,#rail-outline) .outline-note{font-size:11.5px;color:var(--soft);line-height:1.7;border-top:1px solid var(--line);padding-top:12px;margin-top:6px}
 #rail-room #sessions .session{display:block;background:none;box-shadow:none;outline:0;animation:none;padding:0;border:0;border-radius:4px;margin:0}
