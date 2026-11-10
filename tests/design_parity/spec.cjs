@@ -44,6 +44,18 @@ module.exports = [
     mock: { url: '?theme=light#0', selector: '.goal-info>.pill', rel: '.goal-info' }, app: { selector: '#start-goal-info>.status-pill', rel: '#start-goal-info' } },
   { name: 'run-heading-pill', props: [], keys: ['y', 'height'], pixel: false,
     mock: { url: '?theme=light#3', selector: '.goal-info>.pill', rel: '.goal-info' }, app: { setup: STEPS_ENABLED, run: "document.getElementById('start-tab-tasks').click()", selector: '#run-goal-info>.status-pill', rel: '#run-goal-info' } },
+  // GitHub #750: the agent dialog uses one label gap, one field gap and one single-line control height.
+  ...[
+    ['agent-dialog-id-input', ['height', 'borderTopLeftRadius'], '#profile-id', '#start-agent-id', null, null],
+    ['agent-dialog-exe-input', ['height'], '#profile-executable', '#start-executable', null, null],
+    ['agent-dialog-browse', ['height'], '#profile-browse', '#start-executable-browse', null, null],
+    ['agent-dialog-quota-input', ['height'], '#profile-quota-minutes', '#start-quota-minutes', null, null],
+    ['agent-dialog-first-field', ['y'], '#profile-id', '#start-agent-id', '#profile-edit-title', '#start-agent-title'],
+    ['agent-dialog-row-gap', ['y'], '#profile-executable', '#start-executable', '#profile-id', '#start-agent-id'],
+    ['agent-dialog-label-gap', ['y'], '#profile-id', '#start-agent-id', '#profile-edit-dialog .profile-editor-grid>label:nth-child(2)', '#start-agent-dialog .agent-form-grid>label:nth-child(2)'],
+  ].map(([name, keys, mock, app, mockRel, appRel]) => ({ name, props: [], keys, pixel: false,
+    mock: { url: '?theme=light#0', setup: 'referenceDialogResize.disconnect();referenceDialogOpen.disconnect();', run: "document.getElementById('profile-edit-dialog').showModal()", selector: mock, ...(mockRel ? { rel: mockRel } : {}) },
+    app: { run: "document.getElementById('run-screen').hidden = false; document.getElementById('start-agent-dialog').showModal()", selector: app, ...(appRel ? { rel: appRel } : {}) } })),
   // GitHub #746: the body area shows the window surface behind the cards.
   { name: 'main-background', props: ['backgroundColor'], keys: ['backgroundColor'], pixel: false,
     mock: { selector: '.win' }, app: { selector: '.startup-main' } },
