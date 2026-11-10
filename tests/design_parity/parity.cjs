@@ -70,7 +70,7 @@ async function visit(browser, side, spec) {
     for (const { x, side } of jobs) {
       const k = key(side, x); if (k !== current) { await browser.viewport(...viewport(x)); await visit(browser, side, x[side]); current = k; }
       const s = x[side];
-      if (x.hover) { const c = await browser.eval(MEASURE(s.selector, s.index || 0, [], null)); if (c) { await browser.hover(c.x + c.width / 2, c.y + c.height / 2); await new Promise(r => setTimeout(r, 150)); } }
+      if (x.hover) { const c = await browser.eval(MEASURE(s.selector, s.index || 0, [], null)); if (c) for (let i = 0; i < 10; i++) { await browser.hover(c.x + c.width / 2, c.y + c.height / 2); await new Promise(r => setTimeout(r, 150)); if (await browser.eval(`[...document.querySelectorAll(${JSON.stringify(s.selector)})].some(e => e.matches(':hover'))`)) break; } }
       if (x.focus) { await browser.tab(); await browser.eval(`[...document.querySelectorAll(${JSON.stringify(s.selector)})].filter(e => e.getBoundingClientRect().width > 0)[${s.index || 0}]?.focus()`); }
       // GitHub #482: raster the same pixels every run - images decoded, fonts loaded, two frames painted.
       await browser.eval("(async()=>{await document.fonts.ready;await Promise.all([...document.images].map(i=>i.decode().catch(()=>{})));await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));})()");
