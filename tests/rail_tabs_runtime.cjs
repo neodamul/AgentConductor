@@ -13,8 +13,8 @@ function node(id){return{id,hidden:false,tabIndex:0,attrs:{},children:[],setAttr
 let focused,onRun=false;
 const ids=['rail-tab-agents','rail-tab-tasks','rail-pane-agents','rail-outline','rail-outline-body','rail-outline-empty','rail-room'];
 const nodes=Object.fromEntries(ids.map(i=>[i,node(i)]));
-const document={getElementById:i=>nodes[i],body:{classList:{contains:()=>onRun}},createElement:tag=>({tag,children:[],className:'',append(...c){this.children.push(...c);}}),createComment:()=>({})};
-const window={};vm.runInNewContext(fs.readFileSync('src/ui/rail.js','utf8'),{window,document});
+const document={getElementById:i=>nodes[i],body:{classList:{contains:()=>onRun}},createElement:tag=>({tag,children:[],className:'',dataset:{},attrs:{},textContent:'',append(...c){this.children.push(...c);},setAttribute(k,v){this.attrs[k]=v;}}),createComment:()=>({})};
+const window={};vm.runInNewContext(fs.readFileSync('src/ui/rail.js','utf8'),{window,document,acMessage:k=>k});
 const rail=window.acRail,shown=()=>({agents:!nodes['rail-pane-agents'].hidden,outline:!nodes['rail-outline'].hidden,room:!nodes['rail-room'].hidden,tab:nodes['rail-tab-agents'].attrs['aria-selected']==='true'?'agents':'tasks'});
 
 // Steps 1-2 open on Agents; 3-6 on Phases & tasks.
@@ -28,10 +28,15 @@ assert.equal(nodes['rail-tab-agents'].tabIndex,0);assert.equal(nodes['rail-tab-t
 
 // The outline lists the plan's tasks, or says there is no plan yet.
 rail.outline(null);assert.equal(nodes['rail-outline-empty'].hidden,false);assert.equal(nodes['rail-outline-body'].children.length,0);
-rail.outline({tasks:[{id:'task-1',prompt:'Write the parser\nmore detail'},{id:'task-2',prompt:'x'.repeat(300)}]});
-assert.equal(nodes['rail-outline-empty'].hidden,true);const list=nodes['rail-outline-body'].children[0];assert.equal(list.children.length,2);
-assert.deepEqual(list.children[0].children.map(c=>c.textContent??c),['task-1',' ','Write the parser']);
-assert.equal(list.children[1].children[2].textContent.length,120);
+rail.outline({tasks:[{id:'task-1',prompt:'Write the parser\nmore detail',paths:['src/a','src/b','src/c']},{id:'task-2',prompt:'x'.repeat(300)}]});
+assert.equal(nodes['rail-outline-empty'].hidden,true);
+// GitHub #686: the outline is the mock's: current Phase/Task line, review state, the Phase and one row per task, the hint.
+const [sub,status,tree,hint]=nodes['rail-outline-body'].children;
+assert.equal(sub.textContent,'room.rail_current');assert.equal(status.className,'outline-run-status');assert.equal(hint.className,'outline-note');
+const rows=tree.children.slice(1);assert.equal(rows.length,2);
+const title=rows[0].children[1].children[0].children[0];assert.deepEqual(title.children.map(c=>c.textContent??c),['task-1',' ','Write the parser']);
+assert.equal(rows[0].children[1].children[1].textContent,'src/a, src/b','the scope line shows the first two paths');
+assert.equal(rows[1].children[1].children[0].children[0].children[2].length,120);
 
 // Keyboard: arrows and Home/End move between the two tabs and select.
 rail.bind();let prevented=0;const press=(name,key)=>nodes['rail-tab-'+name].onkeydown({key,preventDefault(){prevented++;}});

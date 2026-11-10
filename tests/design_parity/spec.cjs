@@ -284,6 +284,17 @@ module.exports = [
   ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
     mock: { url: '?theme=light#1', selector: mock },
     app: { run: "document.getElementById('start-tab-team').click()", selector: app } })),
+  // GitHub #686: the plan-review rail (mock step 3) is the same outline as the run rail.
+  ...[
+    ['plan-rail-head', ['fontSize', 'fontWeight'], ['height', 'fontSize', 'fontWeight'], '#rail-tasks-panel .railhead h2', '#rail-outline h2'],
+    ['plan-rail-current', ['fontSize', 'color'], ['height', 'fontSize', 'color'], '#outline-total', '#rail-outline .sub'],
+    ['plan-rail-status', ['fontSize', 'color', 'paddingTop', 'paddingBottom', 'borderBottomWidth'], ['height', 'fontSize', 'color', 'paddingTop', 'paddingBottom', 'borderBottomWidth'], '.outline-run-status', '#rail-outline .outline-run-status'],
+    ['plan-rail-phase', ['fontSize', 'fontWeight', 'paddingTop', 'borderBottomWidth'], ['height', 'fontSize', 'fontWeight', 'paddingTop', 'borderBottomWidth'], '.phase-tree summary', '#rail-outline .phase-tree summary'],
+    ['plan-rail-task', ['paddingTop', 'paddingLeft', 'borderBottomWidth', 'borderTopLeftRadius'], ['width', 'paddingTop', 'paddingLeft', 'borderBottomWidth', 'borderTopLeftRadius'], '.outline-task', '#rail-outline .outline-task'],
+    ['plan-rail-note', ['fontSize', 'color', 'paddingTop', 'borderTopWidth'], ['fontSize', 'color', 'paddingTop', 'borderTopWidth'], '.outline-note', '#rail-outline .outline-note'],
+  ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
+    mock: { url: '?theme=light#2', selector: mock },
+    app: { setup: "SIM.home.proposal=SIM.proposal('ready');", run: "document.getElementById('start-tab-review').click()", selector: app } })),
   { name: 'startup-inspector-closed', assert: "document.getElementById('start-inspector').getBoundingClientRect().width===0", app: {} },
   { name: 'startup-inspector-docked', assert: "(()=>{const r=document.querySelector('#start-inspector').getBoundingClientRect();return Math.round(r.right)===innerWidth&&r.top<200&&r.height>300})()",
     app: { run: "document.getElementById('start-inspector-toggle').click()" } },

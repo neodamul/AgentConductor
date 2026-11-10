@@ -3723,3 +3723,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: the step footer (note, Add role, Save and go to step 3) and the move of plan generation / reading / manual writing to step 3 are open decisions on #685, #686; closes #685 when they are done.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### The plan-review rail is the mock's outline — GitHub #686 (part 1)
+
+- [x] Plan: `acRail.outline(plan, makeAvatar)` builds the outline of the run rail for the plan under review (summary line, review state and "not started", the Phase, `outline-task` rows with agent mark, `T1 summary`, a Planned badge, scope and a chevron, the hint); a row opens its task in the plan card; the rail rules in `run_screen.css` apply to both rails.
+- [x] Verify: parity entries `plan-rail-head`, `plan-rail-current`, `plan-rail-status`, `plan-rail-phase`, `plan-rail-task`, `plan-rail-note` with a ready-plan fixture; `rail_tabs_runtime.cjs` checks the outline structure; every Node UI test.
+- [ ] Completed: the plan card's task rows, summary line, detail strip and footer are still open on #686 (the app's collapsible task editors and the explicit generate / regenerate flow need a decision); closes #686 when done.
+
+Trace: R-210 / UC-202 / DD-222.
