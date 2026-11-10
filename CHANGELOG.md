@@ -14,6 +14,7 @@ the GitHub Release notes for its tag.
 - The titlebar shows the approved design's action row on the workspace, roles and plan screens too: the download-arrow update icon is always present (accented when an update exists; it opens the update dialog), then chat, settings and the right panel toggle (#673).
 - The right task panel is available before a run exists: it starts closed, docks on the right (up to 330px / 35% of the window) without a close button or backdrop, shows the "Create a plan and select a task to see its details." explanation, and opens and closes independently of the left rail (#673).
 
+- A coordinator chat that fails because the agent reached its usage limit says so, shows when it can be used again and tells you to choose another agent as the coordinator, instead of printing the raw CLI event lines (#664).
 ## v0.2.0-Beta1
 
 - The About dialog's OpenCode mark is drawn with crisp edges, so the design comparison no longer differs by a few edge pixels on some macOS runs (#482); the documentation screenshots show the Claude Code display name and a one-line tool row on the agent cards (#667).

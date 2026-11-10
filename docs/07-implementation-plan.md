@@ -3643,6 +3643,14 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Coordinator chat names a usage limit — GitHub #664
+
+- [x] Plan: `chatFailure` in `src/ui/chat.js` recognises a usage-limit or rate-limit error from the CLI output, reads its reset time ("try again at …") and shows `startup.chat_quota_error` (with `startup.chat_quota_resets`) that points at choosing another coordinator in Agent roles; other failures keep `startup.chat_error`.
+- [x] Verify: `tests/chat_quota_error.cjs` (the real Codex output, no reset time, other errors), `chat_runtime.cjs`, `messages`, `i18n_contracts`, `chat_ui`.
+- [ ] Completed: merged on `main`; closes #664.
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### English agent card tool row stays on one line — GitHub #654
 
 - [x] Plan: `html[lang=en]` rules in `startup.css` trim the tool buttons' side padding so the row keeps one line at natural size (Korean metrics stay as approved); the card uses `min-height:144px` so many tags add bottom space; the `Alternate → agent` chip switches to `Alt. → agent` only when it cannot fit its row; every UI label uses the display name from `AC_AGENT_NAMES` (`Claude Code`, `Codex`, `OpenCode`) while ids and CLI stay `claude`.

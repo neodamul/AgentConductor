@@ -807,6 +807,8 @@
   "startup.chat_coordinator": "코디네이터",
   "startup.chat_working": "코디네이터가 프로젝트를 읽는 중…",
   "startup.chat_error": "코디네이터가 답하지 못했습니다: {value1}",
+  "startup.chat_quota_error": "코디네이터 에이전트의 사용 한도에 도달했습니다.{value1} 에이전트 역할에서 다른 에이전트를 코디네이터로 지정하거나, 한도가 풀린 뒤 다시 물어보세요.",
+  "startup.chat_quota_resets": " {value1}에 다시 사용할 수 있습니다.",
   "startup.chat_last_output": "마지막 출력 {value1} 전",
   "startup.chat_no_output": "아직 출력 없음",
   "startup.optimize_open": "프롬프트 최적화",
