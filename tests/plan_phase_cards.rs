@@ -9,7 +9,7 @@ fn editable_tasks_sit_inside_the_phase_under_review() {
 #[test]
 fn a_proposal_whose_phase_completed_is_not_under_review() {
     assert!(STARTUP.contains("ph.id===proposed&&ph.stage==='completed'"));
-    assert!(STARTUP.contains("reviewing=stale?null:proposed"));
+    assert!(STARTUP.contains("reviewing=stale?null:(proposed||"));
     assert!(STARTUP.contains("c.hidden=stale"));
 }
 

@@ -305,4 +305,3 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 .app-menu .submenu{position:absolute;left:calc(100% + 4px);top:-7px;min-width:190px;padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--surface);box-shadow:0 8px 24px #0002}.app-menu .submenu[hidden]{display:none}
 .app-menu .menu-sep{height:1px;margin:4px 2px;background:var(--line)}
 .utility-panel .settings-link{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:12px}
-.app-menu button{line-height:15px}

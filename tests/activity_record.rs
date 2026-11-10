@@ -74,5 +74,6 @@ fn task_events_carry_the_time_they_were_read() {
     let events = store.task_events("t", 1).unwrap();
     assert_eq!(events.len(), 1);
     assert!(events[0]["at"].as_i64().unwrap() > 1_700_000_000_000);
+    drop(store);
     std::fs::remove_dir_all(dir).unwrap();
 }
