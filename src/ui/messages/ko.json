@@ -1420,5 +1420,9 @@
   "room.verify_log": "로그",
   "room.verify_seconds": "{value1}초",
   "startup.goal_list_empty": "이 Workspace에 저장된 Goal이 아직 없습니다.",
-  "startup.goal_list_new": "+ 새 Goal"
+  "startup.goal_list_new": "+ 새 Goal",
+  "startup.plan_heading_done": "전체 {value1}단계 완료 · 코디네이터 {value2}",
+  "startup.plan_done_note": "모든 Phase가 완료되었습니다. 반영된 변경과 결과는 6단계에서 확인합니다.",
+  "startup.plan_done_result": "검토·결과 보기",
+  "startup.plan_after": "{value1} 이후"
 }

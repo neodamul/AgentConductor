@@ -30,7 +30,8 @@
 /* GitHub #738: the mock's title bar names only the workspace, and the plan footer has only Regenerate / Approve and run (steps 4-6 open the run). */
 #start-run-phase,#run-phase,#start-open{display:none!important}
 /* GitHub #736: every Phase of the Goal is complete, so the left-over proposal is history: no position line, task cards or approve buttons. */
-#start-panel-review.plan-stale :is(#start-plan-note,#start-plan-summary,.startup-review-footer button,.startup-review-footer .note){display:none}
+#start-panel-review.plan-stale :is(#start-plan-summary,.startup-review-footer button:not(#start-plan-result),.startup-review-footer .note:not(#start-plan-done-note)){display:none}
+#start-panel-review:not(.plan-stale) :is(#start-plan-done-note,#start-plan-result){display:none}
 /* GitHub #736: a Phase's tasks read as the mock's plan rows; the Phase brief that only repeats the task list gives way to them. */
 #start-plan-phases .plan-phase-brief:has(+ .plan-phase-tasks){display:none}
 #start-plan-phases .plan-phase-tasks{list-style:none;padding:0;margin:8px 0 4px}
@@ -40,3 +41,18 @@
 #start-plan-phases .plan-phase-tasks .task-agent{color:var(--soft);font-size:12px}
 /* GitHub #734: the mock's Goal tools row has Jira, Confluence and the optimizer; the preview shows once a document is attached. */
 #start-mcp-preview:disabled{display:none}
+/* GitHub #736: the Phases read as the mock's plan, without the tinted box: a Phase heading, then the mock's task rows (number, title, agent · paths, check, state). */
+#start-plan-phases.plan-phases{background:none;border:0;padding:0;box-shadow:none}
+#start-plan-phases .plan-phase{background:none;border:0;padding:0;margin:0 0 10px;box-shadow:none}
+#start-plan-phases .plan-phase>summary{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:13px;list-style:none;cursor:default}
+#start-plan-phases .plan-phase>summary::-webkit-details-marker{display:none}
+#start-plan-phases .plan-phase>summary .plan-phase-mark{display:none}
+#start-plan-phases .plan-phase>summary strong{color:var(--ink);font-weight:650}
+#start-plan-phases .plan-phase>summary .plan-tag{margin-left:auto}
+#start-plan-phases .plan-phase-list{counter-reset:plan-task}
+#start-plan-phases .plan-phase-tasks li{counter-increment:plan-task;display:grid;grid-template-columns:28px minmax(0,1.4fr) minmax(0,1fr) minmax(0,.8fr) auto;align-items:center;gap:14px;padding:11px 12px}
+#start-plan-phases .plan-phase-tasks li::before{content:counter(plan-task);display:flex;align-items:center;justify-content:center;width:26px;height:24px;border-radius:5px;background:var(--fill);font-size:12px;font-weight:650;color:var(--ink)}
+#start-plan-phases .plan-phase-tasks .task-title{font-weight:650;color:var(--ink)}
+#start-plan-phases .plan-phase-tasks .task-title code{display:none}
+#start-plan-phases .plan-phase-tasks :is(.task-agent,.task-check){font-size:12.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#start-plan-phases .plan-phase-head{display:flex;align-items:center;gap:10px;margin:0 0 6px}

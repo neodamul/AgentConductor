@@ -1420,5 +1420,9 @@
   "room.verify_log": "Log",
   "room.verify_seconds": "{value1}s",
   "startup.goal_list_empty": "No saved Goal yet in this Workspace.",
-  "startup.goal_list_new": "+ New Goal"
+  "startup.goal_list_new": "+ New Goal",
+  "startup.plan_heading_done": "All {value1} Phases complete · Coordinator {value2}",
+  "startup.plan_done_note": "Every Phase is complete; the merged changes and the result are in step 6.",
+  "startup.plan_done_result": "View review and result",
+  "startup.plan_after": "after {value1}"
 }
