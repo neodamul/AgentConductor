@@ -255,6 +255,9 @@ module.exports = [
     mock: { url: '?theme=light#0', run: STEP_REFERENCE_WIDTH + ";document.getElementById('right-panel-toggle').click()", selector: '#task-inspector-panel' },
     app: { run: "document.getElementById('start-inspector-toggle').click()", selector: '#start-inspector' } },
   // Closed by default, and docked at the right edge of the window once opened (not in the rail or below the card).
+  // GitHub #677: the titlebar holds only the mock's controls, on the setup steps and while a run is open.
+  { name: 'titlebar-controls', assert: "(() => [...document.querySelectorAll('header.titlebar button')].filter(b => b.getClientRects().length).map(b => b.id).join() === 'start-app-menu,start-rail-toggle,start-workspace-menu,start-update-button,start-chat-button,start-settings-button,start-inspector-toggle')()",
+    app: { setup: STEPS_ENABLED } },
   { name: 'startup-inspector-closed', assert: "document.getElementById('start-inspector').getBoundingClientRect().width===0", app: {} },
   { name: 'startup-inspector-docked', assert: "(()=>{const r=document.querySelector('#start-inspector').getBoundingClientRect();return Math.round(r.right)===innerWidth&&r.top<200&&r.height>300})()",
     app: { run: "document.getElementById('start-inspector-toggle').click()" } },

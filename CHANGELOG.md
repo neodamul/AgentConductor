@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- The titlebar no longer has the extra "← Workspace" / "← Back to run" buttons the approved design does not have; the stepper moves between the run and the setup steps (#677).
 - The titlebar shows the approved design's action row on the workspace, roles and plan screens too: the download-arrow update icon is always present (accented when an update exists; it opens the update dialog), then chat, settings and the right panel toggle (#673).
 - The right task panel is available before a run exists: it starts closed, docks on the right (up to 330px / 35% of the window) without a close button or backdrop, shows the "Create a plan and select a task to see its details." explanation, and opens and closes independently of the left rail (#673).
 

@@ -3691,3 +3691,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #673.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### The titlebar holds only the mock's controls — GitHub #677
+
+- [x] Plan: the "← Workspace" and "← Back to run" titlebar buttons are hidden; the stepper already moves between the run and the setup steps in both directions.
+- [x] Verify: the app-only parity assertion `titlebar-controls` lists the visible titlebar buttons on the setup steps with a run available (menu, left toggle, Workspace name, update, chat, settings, right toggle).
+- [ ] Completed: merged on `main`; closes #677.
+
+Trace: R-210 / UC-202 / DD-222.
