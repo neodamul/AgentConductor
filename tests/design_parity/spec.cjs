@@ -310,6 +310,14 @@ module.exports = [
   ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
     mock: { url: '?theme=light#2', selector: mock },
     app: { setup: "SIM.home.proposal=SIM.proposal('ready');", run: "document.getElementById('start-tab-review').click()", selector: app } })),
+  // GitHub #685: the roles step footer (mock step 2 = "i").
+  ...[
+    ['roles-footer-note', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="i"] .actions .note', '#start-panel-team .startup-actions .note'],
+    ['roles-footer-add', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius'], ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius'], '.card[data-show="i"] .actions .btn.q', '#start-roles-suggest'],
+    ['roles-footer-next', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color'], ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color'], '.card[data-show="i"] .actions .btn.p', '#start-roles-next'],
+  ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
+    mock: { url: '?theme=light#1', selector: mock },
+    app: { setup: STEPS_ENABLED, run: "document.getElementById('start-tab-team').click()", selector: app } })),
   // GitHub #686: the plan card's position line and footer (mock step 3 = "a").
   ...[
     ['plan-position', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="a"] .phase span:first-child', '#start-plan-summary .plan-position'],

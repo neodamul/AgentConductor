@@ -3764,3 +3764,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #686.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Step 2 roles footer follows the approved design — GitHub #685
+
+- [x] Plan: the roles step ends with the note, *Add roles* (the former *Suggest defaults*, now in the footer) and *Save and go to step 3* (`#start-roles-next`: saves and shows the plan, or starts plan generation when there is none); *Read plan…* and *Write plan manually* sit under the task list of step 3; `#start-prepare` and `#start-roles-save` stay as hidden buttons so every handler and busy state keeps its element.
+- [x] Verify: parity entries `roles-footer-note|add|next`; `folder_workflow`, `plan_size`, `role_rules`, `startup_folder_plan`, `node_runtime`.
+- [ ] Completed: merged on `main`; closes #685.
+
+Trace: R-210 / UC-202 / DD-222.
