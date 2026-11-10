@@ -38,6 +38,11 @@ const title=rows[0].children[1].children[0].children[0];assert.deepEqual(title.c
 assert.equal(rows[0].children[1].children[1].textContent,'src/a, src/b','the scope line shows the first two paths');
 assert.equal(rows[1].children[1].children[0].children[0].children[2].length,120);
 
+// GitHub #736/#737: a phased Goal shows one Phase per group, each holding its own tasks; markup tags never become the name.
+rail.outline(null,{stale:true,phases:[{name:'Spec',stage:'completed',tasks:[{id:'t1',prompt:'<goal>\nWrite specs'}],done:['t1']},{name:'Build',stage:'completed',tasks:[{id:'t2',prompt:'Build it'},{id:'t3',prompt:'Ship it'}],done:[]}]});
+{const kids=nodes['rail-outline-body'].children,trees=kids.filter(k=>k.className==='phase-tree');assert.equal(trees.length,2,'one group per Phase');assert.equal(trees[1].children.length,3,'the second Phase holds its two tasks');
+ assert.equal(trees[0].children[1].children[1].children[0].children[0].children[2],'Write specs','the tag line is skipped');assert.equal(nodes['rail-outline-empty'].hidden,true);}
+
 // Keyboard: arrows and Home/End move between the two tabs and select.
 rail.bind();let prevented=0;const press=(name,key)=>nodes['rail-tab-'+name].onkeydown({key,preventDefault(){prevented++;}});
 rail.select('agents');press('agents','ArrowRight');assert.equal(shown().tab,'tasks');assert.equal(focused,nodes['rail-tab-tasks']);
