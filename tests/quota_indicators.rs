@@ -152,3 +152,13 @@ fn startup_and_run_snapshots_expose_the_same_cached_indicator_without_launching_
     drop(startup);
     fs::remove_dir_all(root).unwrap();
 }
+#[test]
+fn a_workspace_without_a_project_folder_reports_a_code_not_a_failed_lookup() {
+    // GitHub #679: the popup shows a hint for this state; any other error keeps its text and has no code.
+    let text = "Choose a project folder for this workspace first; Claude reports usage only inside a trusted project folder";
+    let v = indicator(json!({"status":"unavailable","error":text}));
+    assert_eq!(v["error_code"], "no_project_folder");
+    assert_eq!(v["error"], text);
+    let other = indicator(json!({"status":"unavailable","error":"quota query timed out"}));
+    assert!(other["error_code"].is_null());
+}

@@ -4,6 +4,10 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## Unreleased
+
+- The Claude usage popup on a workspace without a project folder says (in the interface language) that usage is read once a folder is chosen, instead of a failed lookup with an untranslated English sentence under "the CLI did not respond" (#679).
+
 ## v0.2.0-Beta1
 
 - The About dialog's OpenCode mark is drawn with crisp edges, so the design comparison no longer differs by a few edge pixels on some macOS runs (#482); the documentation screenshots show the Claude Code display name and a one-line tool row on the agent cards (#667).

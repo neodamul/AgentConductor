@@ -3683,3 +3683,11 @@ Trace: R-200 / UC-188 / DD-212.
 
 Trace: R-210 / UC-202 / DD-222.
 
+
+### The usage popup explains a workspace without a project folder — GitHub #679
+
+- [x] Plan: the folder-less lookup error becomes the shared constant `NO_PROJECT_FOLDER`; the indicator carries `error_code: "no_project_folder"` for it; the popup and the ring treat that code as a state to explain (`startup.quota_needs_folder`, English and Korean), not as a failure; every other error keeps the failure box.
+- [x] Verify: `quota_indicators.rs` checks the code and that other errors carry none; `quota_no_folder_runtime.cjs` opens the popup in the simulator for both cases (and fails without the fix).
+- [ ] Completed: merged on `main`; closes #679.
+
+Trace: R-210 / UC-202 / DD-222.
