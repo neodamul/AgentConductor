@@ -50,7 +50,7 @@ pub fn has_release_notes(text: &str) -> bool {
             inside = header
                 .split_whitespace()
                 .next()
-                .map(|s| s.trim_matches(['[', ']']))
+                .map(|s| s.trim_matches(['[', ']']).trim_start_matches('v'))
                 == Some(VERSION);
         } else if inside && line.trim_start().starts_with("- ") {
             return true;

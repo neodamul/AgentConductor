@@ -51,6 +51,9 @@ fn document_markers_and_versioned_sections_are_exact() {
     assert!(has_release_notes(
         "## Unreleased\n\n## [0.2.0] - date\n- shipped"
     ));
+    // The changelog names its sections after the tag (`## v0.2.0`).
+    assert!(has_release_notes("## v0.2.0\n\n- shipped"));
+    assert!(!has_release_notes("## v0.2.0-Beta1\n- beta"));
 }
 #[test]
 fn missing_files_are_blockers_rather_than_assumed_versions() {
