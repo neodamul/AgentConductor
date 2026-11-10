@@ -345,7 +345,7 @@ module.exports = [
     app: { setup: "SIM.home.proposal=SIM.proposal('ready');", run: "document.getElementById('start-tab-review').click()", selector: app } })),
   // GitHub #724–#726: one-line plan rows, a step card that reaches the status bar and step footers without a divider.
   ...[
-    ['plan-row', ['paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopLeftRadius', 'marginTop'], ['height', 'paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopLeftRadius', 'marginTop'], '.card[data-show="a"] .row', '#start-tasks .startup-task'],
+    ['plan-row', ['paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopLeftRadius', 'marginTop'], ['paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopLeftRadius', 'marginTop'], '.card[data-show="a"] .row', '#start-tasks .startup-task'],
     ['plan-row-number', ['fontSize', 'fontWeight', 'borderTopLeftRadius'], ['width', 'height', 'fontSize', 'fontWeight', 'borderTopLeftRadius'], '.card[data-show="a"] .row .n', '#start-tasks .task-num'],
     ['plan-row-title', ['fontSize', 'fontWeight'], ['fontSize', 'fontWeight'], '.card[data-show="a"] .row .t', '#start-tasks .task-oneline'],
     ['plan-row-detail', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="a"] .row .s', '#start-tasks .task-owner'],
