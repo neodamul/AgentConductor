@@ -353,11 +353,11 @@ function decisionEntry(d) {
 }
 function event(label,text,cls='',seq) {
   // GitHub #607: like the mock's `.ev` row: the number (or range) column first, then the title and its detail.
-  const el=node('article',undefined,'event '+cls);el.append(node('code',seq!==undefined?'#'+seq:'','event-seq'));const body=node('div',undefined,'event-body');const head=node('div',undefined,'event-head');head.append(node('span',label));body.append(head,node('p',text,'event-text'));el.append(body);return el;
+  const el=node('article',undefined,'event '+cls);el.append(node('code',seq!==undefined?/^\d\d:\d\d$/.test(seq)?seq:'#'+seq:'','event-seq'));const body=node('div',undefined,'event-body');const head=node('div',undefined,'event-head');head.append(node('span',label));body.append(head,node('p',text,'event-text'));el.append(body);return el;
 }
 function renderTask(data) {
   const t=task(),p=planTask();if(!t||data.task.id!==t.id)return;
-  const timeline=[event(acMessage("room.assigned_task"),p.prompt,'plan')];if(t.feedback)timeline.push(event(acMessage("room.you_latest_review"),t.feedback));
+  const started=Number.isFinite(t.started_ms)&&t.started_ms>0?new Date(t.started_ms).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",hour12:false}):undefined;const timeline=[event(acMessage("room.assigned_task"),p.prompt,'plan',started)];if(t.feedback)timeline.push(event(acMessage("room.you_latest_review"),t.feedback));
   for(const x of collapseThinking(data.events)){if(x.thinking){const t=x.thinking;timeline.push(event(acMessage("room.thinking_updates",{value1:t.count}),acMessage("room.thinking_quiet"),'muted',t.first===t.last?t.first:`${t.first}–${t.last}`));}else for(const y of transcript(x.event))timeline.push(event(y.label,y.text,y.cls,x.event.seq));}
   for(const d of data.decisions||[])timeline.push(decisionEntry(d));
   for(const d of data.coordinator_decisions||[])if(d.kind!=='tool')timeline.push(judgmentEntry(d));
