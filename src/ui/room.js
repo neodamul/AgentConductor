@@ -185,7 +185,7 @@ function renderSnapshot() {
   AC_I18N.bind($('workspace-mode'),()=>(r.plan.workspace_mode==='worktree'?acMessage("room.isolated_worktrees"):acMessage("room.shared_directory")));AC_I18N.bind($('branch'),()=>(r.branch));
   AC_I18N.bind($('run-state'),()=>(statusLabel(r.state)));$('run-state').className='state-label tone-'+statusTone(r.state);AC_I18N.bind($('session-count'),()=>(r.tasks.length));
   const done=r.tasks.filter(t=>t.status==='completed').length,failure=r.error||r.tasks.find(t=>t.status==='failed'&&t.error)?.error||'';
-  const mergeRunning=snapshot.job?.state==='running'&&snapshot.job.kind==='merge';$('run-banner').className='run-banner tone-'+(mergeRunning?'run':statusTone(r.state));AC_I18N.bind($('run-banner-state'),()=>(mergeRunning?acMessage("room.merge_in_progress"):statusLabel(r.state)));
+  const mergeRunning=snapshot.job?.state==='running'&&snapshot.job.kind==='merge';$('run-banner').className='run-banner tone-'+(mergeRunning?'run':statusTone(r.state));AC_I18N.bind($('run-banner-state'),()=>(mergeRunning?acMessage("room.merge_in_progress"):statusLabel(r.state)));AC_I18N.bind($('run-pill'),()=>(mergeRunning?acMessage("room.merge_in_progress"):statusLabel(r.state)));$('run-pill').className='status-pill tone-'+(mergeRunning?'run':statusTone(r.state));
   const ph=snapshot.phase,phIndex=ph?(ph.phases||[]).findIndex(x=>x.id===ph.phase):-1;// DD-122: the titlebar names the run's phase and what it covers, beside the workspace.
   for(const id of ['start-run-phase','run-phase']){const box=document.getElementById(id);if(!box)continue;box.hidden=phIndex<0;AC_I18N.replace(box);if(phIndex>=0){box.append(node('strong',()=>(acMessage("room.phase", {value1:phIndex+1,value2:ph.phases.length,value3:ph.phases[phIndex].name||ph.phase}))),node('span',ph.description||'','run-phase-detail'));AC_I18N.bind(box,()=>(`${ph.slug||''} · ${ph.description||''}`),"title");}}
   AC_I18N.bind($('run-banner-progress'),()=>(mergeRunning?acMessage("room.applying_approved_candidate_to_workspace"):acMessage("room.tasks_completed", {value1:done,value2:r.tasks.length})+(phIndex>=0?acMessage("room.phase_of", {value1:phIndex+1,value2:ph.phases.length,value3:ph.phases[phIndex].name||ph.phase}):'')));
@@ -229,7 +229,7 @@ function renderSnapshot() {
   $('merge').disabled=!idle()||r.state!=='approved'||!currentReview;
   AC_I18N.bind($('merge'),()=>(r.direct_workspace?acMessage("room.accept_changes"):r.folder?acMessage("room.apply_changes"):acMessage("room.merge")));
   AC_I18N.bind($('candidate-note'),()=>(r.direct_workspace?(r.state==='completed'?acMessage("room.accepted_complete"):r.state==='approved'?acMessage("room.approved_accept_changes"):acMessage("room.review_diff_and_tests_before_approval")):r.folder?(r.state==='completed'?acMessage("room.changes_applied_this_run_is_complete"):r.state==='approved'?acMessage("room.approved_applying_changes_remains_a_separate_action"):acMessage("room.review_diff_and_tests_before_approval")):r.state==='completed'?acMessage("room.merged_this_run_is_complete"):r.state==='approved'?acMessage("room.approved_merging_remains_a_separate_action"):review&&!currentReview?acMessage("room.state_changed_inspect_the_latest_evidence"):acMessage("room.review_diff_and_tests_before_approval")));
-  nextStep(r,currentReview);renderQuota(a);renderTools();AC_I18N.bind($('run-path'),()=>(snapshot.run_dir));acStatusRepository.render($('connection').parentElement,window.acRepositoryIdentity);AC_I18N.bind($('connection'),()=>((typeof AC_WAIT!=='undefined'&&AC_WAIT.text())||acMessage("room.connected_local_run")));
+  nextStep(r,currentReview);{const b=$('run-banner');b.hidden=![...b.querySelectorAll('#run-banner-error,#run-banner-next,#banner-next,#banner-fix,#banner-resume,#scope-review,#run-banner-attention')].some(n=>!n.hidden);}renderQuota(a);renderTools();AC_I18N.bind($('run-path'),()=>(snapshot.run_dir));acStatusRepository.render($('connection').parentElement,window.acRepositoryIdentity);AC_I18N.bind($('connection'),()=>((typeof AC_WAIT!=='undefined'&&AC_WAIT.text())||acMessage("room.connected_local_run")));
 }
 // DD-112: provider events read like the CLI transcript; raw JSON stays in the Raw logs tab.
 const clipLines=(text,max=8)=>{const all=String(text??'').replace(/\s+$/,'').split('\n');return all.length>max?all.slice(0,max).join('\n')+acMessage("room.more_lines", {value1:all.length-max}):all.join('\n');};
@@ -316,7 +316,7 @@ function nextStep(r,currentReview) {
     running:[r.tasks.every(t=>t.status==='completed')?acMessage("room.verification_next"):acMessage("room.agents_are_working_decisions_they_need_appear_as"),'',null],
   };
   const [text,label,run]=steps[r.state]||['','',null];
-  AC_I18N.bind($('run-banner-next'),()=>(text?acMessage("room.next")+text:''));$('run-banner-next').hidden=!text;
+  AC_I18N.bind($('run-banner-next'),()=>(text?acMessage("room.next")+text:''));$('run-banner-next').hidden=!text||!label;
   const button=$('banner-next');AC_I18N.bind(button,()=>(label));button.hidden=!label||(!run&&!mergeRunning)||(r.state!=='completed'&&!idle()&&!mergeRunning);button.disabled=mergeRunning;button.classList.toggle('is-busy',mergeRunning);button.onclick=run;
 }
 // Every coordinator judgment is listed (#149); labels are explicit so each ID is checked.
@@ -472,7 +472,7 @@ async function poll(background=false) {
   }catch(e){if(roomStopped)return;pollFailed(e,background);}finally{polling=false;}
 }
 for(const el of document.querySelectorAll('[data-tab]'))el.onclick=()=>el.dataset.tab==='review'?loadReview():changeTab(el.dataset.tab);
-$('brief-team').onclick=briefTeam;$('quota-agent').onchange=()=>{quotaAgent=$('quota-agent').value;renderQuota(profile());};$('quota-refresh').onclick=()=>refreshQuota($('quota-agent').value);$('refresh').onclick=poll;$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('show-result').onclick=()=>openResult().catch(e=>notice(e.message,true));$('result-close').onclick=()=>$('result-dialog').close();$('open-tools').onclick=()=>{deferredTools.clear();if(snapshot)syncToolDialog();if(!$('tool-dialog').open)$('tool-requests').scrollIntoView({behavior:'smooth',block:'center'});};
+$('brief-team').onclick=briefTeam;$('quota-agent').onchange=()=>{quotaAgent=$('quota-agent').value;renderQuota(profile());};$('quota-refresh').onclick=()=>refreshQuota($('quota-agent').value);$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('show-result').onclick=()=>openResult().catch(e=>notice(e.message,true));$('result-close').onclick=()=>$('result-dialog').close();$('open-tools').onclick=()=>{deferredTools.clear();if(snapshot)syncToolDialog();if(!$('tool-dialog').open)$('tool-requests').scrollIntoView({behavior:'smooth',block:'center'});};
 // Input-method composition (e.g. Korean) must finish before text is replaced or sent.
 let composing=false;document.addEventListener('compositionstart',()=>{composing=true;});document.addEventListener('compositionend',()=>{composing=false;});
 $('feedback').oninput=()=>{const key=coordinatorView?COORDINATOR_DRAFT:task()?.id;if(key)drafts.set(key,$('feedback').value);};
