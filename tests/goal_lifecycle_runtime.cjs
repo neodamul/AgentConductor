@@ -13,9 +13,10 @@ for(const width of [840,1280]){browser=await launch(chrome,{width});for(const th
  input('start-new-name','Lifecycle Workspace');q('start-new-create').click();await until(()=>!q('start-new-workspace').open&&!q('start-save').disabled&&q('start-name').value==='Lifecycle Workspace','created Workspace settles');
  check('create Workspace uses real UI request',SIM.log.some(e=>e.kind==='create_workspace'&&e.p.name==='Lifecycle Workspace'));
  input('start-goal','Implement the joined Goal');const inherited=JSON.stringify(SIM.home.config.roles);q('start-save').click();await until(()=>!q('start-panel-team').hidden&&!q('start-prepare').disabled,'saved Goal and Team');
- q('start-prepare').click();await until(()=>q('start-planning-confirm').open,'planner confirmation');q('start-planning-confirm').close('confirm');
+ q('start-prepare').click();check('planning does not open a confirmation',!q('start-planning-confirm')?.open);
  await until(()=>SIM.home.proposal?.phase==='ready'&&!q('start-run').disabled,'review ready');check('planning uses registered coordinator and model',SIM.home.config.coordinator==='claude'&&SIM.home.config.profiles[0].coordinator_model==='opus');
- q('start-run').click();await until(()=>q('start-consent').open,'exact plan consent');q('start-consent').close('confirm');
+ check('plan approval evidence is accessible',!q('start-approval-evidence').hidden&&q('start-consent-evidence').textContent.includes('d1')&&q('start-consent-evidence').textContent.includes('abcdef1234567890'));q('start-approval-evidence').querySelector('summary').focus();check('approval evidence is keyboard focusable',document.activeElement===q('start-approval-evidence').querySelector('summary'));q('start-approval-evidence').open=true;
+ q('start-run').click();check('run does not open a confirmation',!q('start-consent')?.open);
  await until(()=>document.body.classList.contains('on-run')&&document.querySelectorAll('.session-choice .task-number').length===3,'running Room');
  check('run starts only after exact consent',SIM.log.filter(e=>e.kind==='start').length===1&&SIM.log.find(e=>e.kind==='start').p.digest==='d1');
  check('result is not shown while running',!q('result-dialog').open);
