@@ -4,8 +4,9 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
-## Unreleased
+## v0.2.0
 
+- **0.2.0.** The redesigned goal screens (Workspace, Agent roles, Plan, Agent Room with its task, verify and approval cards) follow the approved design. Install v0.2.0 from the release page: v0.2.0-Beta1 installs report 0.2.0 and cannot see the final release (#672); later betas carry their suffix.
 - Step 2 (Agent roles) ends with the approved design's footer: the note about roles being saved with the Goal, *Add roles* (the suggested defaults) and *Save and go to step 3* (it saves and opens the plan, generating one when none exists); reading a Markdown plan and writing one by hand moved to step 3 (#685).
 - Step 3 (Plan) follows the approved design: "Review the plan and start the run" with the proposed task count, the Phase/Task position line with an owned-path overlap check, a detail strip for the selected task (owned paths, dependencies, check) and a footer with the note, *Regenerate plan* and *Approve and run* (#686).
 - While a run waits for approval the task list moves to the *Integration verification* item, and the card follows the approved design: the status pill and the integration result line under the title, the summary and changed files, and a footer with *Reject*, *Request changes* and *Review changes* (*Approve* once the changes were opened); the tabs and the direction field open from those buttons (#688, #689).
@@ -25,7 +26,6 @@ the GitHub Release notes for its tag.
 - The titlebar shows the approved design's action row on the workspace, roles and plan screens too: the download-arrow update icon is always present (accented when an update exists; it opens the update dialog), then chat, settings and the right panel toggle (#673).
 - A UI request no longer waits forever for the run's job slot: after three seconds it fails with "another UI action is still running" instead of parking all eight window requests behind it (the window then showed a stale *waiting for usage limit* and *native controller is busy*), and the goal-change check releases the room's controller lock before it polls the job (#691).
 - The right task panel is available before a run exists: it starts closed, docks on the right (up to 330px / 35% of the window) without a close button or backdrop, shows the "Create a plan and select a task to see its details." explanation, and opens and closes independently of the left rail (#673).
-
 - A coordinator chat that fails because the agent reached its usage limit says so, shows when it can be used again and tells you to choose another agent as the coordinator, instead of printing the raw CLI event lines (#664).
 ## v0.2.0-Beta1
 
