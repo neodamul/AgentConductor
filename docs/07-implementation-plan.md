@@ -3707,6 +3707,14 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### A finished UI job is recorded outside the job slot — GitHub #694
+
+- [x] Plan: `Controller::poll` reads and updates the in-memory job under the slot and writes the finished job to the run's SQLite database after the slot is released (a busy run database cannot hold the slot).
+- [x] Verify: `source_layout`, `architecture_trace`, the UI Rust and Node suites in CI; the live-app stall itself is unreproduced, so #694 stays open until a build with this change runs.
+- [ ] Completed: merged on `main`; relates to #694.
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### Recapture the documentation screenshots and settle the About logo edges — GitHub #667, #482
 
 - [x] Plan: recapture the workspace screens (light, dark, Korean) and the agent settings dialog from the live demo (`tests/ui_live_bridge.rs`, `AC_LIVE_DEMO=1`, 1280×892) after the agent cards show the Claude Code name; record the Room screens as checked in `screenshots-current.txt`; draw `.about-mono>svg` with `shape-rendering:crispEdges` in `about.css` and the approved mock so the outer edge of the rect-only OpenCode mark is not anti-aliased differently by some macOS runners. The parity browser also starts with `--disable-gpu --force-color-profile=srgb`, so a run's corner anti-aliasing no longer varies by one level between runs; `committed_html_is_generated_from_both_manual_sources` needs the HTML manuals re-rendered after the screens change; `planning_confirmation_browser.cjs` waits for the page before clicking.
