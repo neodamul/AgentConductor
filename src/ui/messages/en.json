@@ -806,6 +806,8 @@
   "startup.chat_coordinator": "Coordinator",
   "startup.chat_working": "The coordinator is reading the project…",
   "startup.chat_error": "The coordinator could not answer: {value1}",
+  "startup.chat_quota_error": "The coordinator's agent has reached its usage limit.{value1} Choose another agent as the coordinator in Agent roles, or ask again after the limit resets.",
+  "startup.chat_quota_resets": " It can be used again at {value1}.",
   "startup.chat_last_output": "last output {value1} ago",
   "startup.chat_no_output": "no output yet",
   "startup.optimize_open": "Optimize prompt",

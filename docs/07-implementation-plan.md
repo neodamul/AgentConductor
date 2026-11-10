@@ -3724,3 +3724,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #675 and #676.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Coordinator chat names a usage limit — GitHub #664
+
+- [x] Plan: `chatFailure` in `src/ui/chat.js` recognises a usage-limit or rate-limit error from the CLI output, reads its reset time ("try again at …") and shows `startup.chat_quota_error` (with `startup.chat_quota_resets`) that points at choosing another coordinator in Agent roles; other failures keep `startup.chat_error`.
+- [x] Verify: `tests/chat_quota_error.cjs` (the real Codex output, no reset time, other errors), `chat_runtime.cjs`, `messages`, `i18n_contracts`, `chat_ui`.
+- [ ] Completed: merged on `main`; closes #664.
+
+Trace: R-210 / UC-202 / DD-222.
