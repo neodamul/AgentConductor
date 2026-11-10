@@ -3690,6 +3690,9 @@ Trace: R-210 / UC-202 / DD-222.
 - [x] Verify: `optimize_runtime.cjs` checks the order capture → save → request, the missing coordinator and the failed save; the simulator run saves the workspace and starts the rewrite without an error.
 - [ ] Completed: merged on `main`; closes #680.
 
+Trace: R-210 / UC-202 / DD-222.
+
+
 ### The titlebar actions and the docked inspector match the approved mock — GitHub #673
 
 - [x] Plan: the update icon (the mock's downward arrow) is always in the titlebar and opens the update dialog, accented when an update exists; the right panel toggle is shown on every screen; before a run a docked `#start-inspector` (closed by default, no close button or backdrop, up to 330px / 35% of the window, the `room.inspector_empty` explanation) opens beside the card and independently of the left rail; once a run is open the same toggle drives the Room inspector.
