@@ -3635,6 +3635,14 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Brand marks keep their own gradient ids — GitHub #697
+
+- [x] Plan: `acBrandAvatar` renames the ids inside each cloned mark (and the `url(#id)` references) with a per-copy counter, because duplicated ids made `url(#id)` resolve to the first copy and a hidden or removed first copy blanked the Codex mark.
+- [x] Verify: `tests/brand_avatar_ids.cjs` (fails on the old code with duplicated ids, passes now); `brand_avatar`-related Rust tests.
+- [ ] Completed: merged on `main`; closes #697.
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### Refresh arrow spins alone — GitHub #647
 
 - [x] Plan: the popup's refresh button holds the arrow in `span.usage-glyph`; `.usage-refresh.refreshing .usage-glyph` carries the spin animation instead of the button.
@@ -3682,6 +3690,14 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #658.
 
 Trace: R-210 / UC-202 / DD-135.
+
+### The Claude usage probe resolves its executable — GitHub #696
+
+- [x] Plan: `src/quota/terminal.rs` resolves `profile.executable` with `executable::resolve` (Homebrew, `~/.local/bin`, …) and passes the absolute path to `/usr/bin/script`, which otherwise searched the minimal PATH of an app opened from Finder (`script: claude: No such file or directory`, shown as "Claude closed before reporting quota").
+- [x] Verify: `tests/quota_resolves_claude.rs`; the failure was read from the run's `stdout.terminal` and the app's PATH (`/usr/bin:/bin:/usr/sbin:/sbin`).
+- [ ] Completed: merged on `main`; closes #696.
+
+Trace: R-210 / UC-202 / DD-222.
 
 ### Quota refresh updates the quota ring only — GitHub #663
 
