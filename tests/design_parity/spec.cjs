@@ -129,7 +129,7 @@ module.exports = [
   ...(() => {
     // GitHub #689: an approval-waiting run shows the summary card; the verify rows belong to the run that is still verifying.
     const setup = STEPS_ENABLED + "SIM.room.report.state='running';SIM.room.report.tasks.forEach(t=>t.status='completed');SIM.room.report.tests=[{task:'task-1',exit_code:0,timed_out:false,output:''}];";
-    const run = "document.querySelectorAll('#start-step-tabs [role=tab]')[4].click(); document.querySelector('.final-step .session-choice').click()";
+    const run = "document.querySelectorAll('#start-step-tabs [role=tab]')[4].click(); (async () => { for (let i = 0; i < 200 && !document.querySelector('.final-step .session-choice'); i++) await new Promise(r => setTimeout(r, 50)); document.querySelector('.final-step .session-choice').click(); })()";
     const card = '.main>.card[data-show="f"]';
     return [['eyebrow', ' .cardhead .eyebrow', '.room-card .eyebrow', ['fontSize', 'fontWeight', 'color'], ['height', 'fontSize', 'fontWeight', 'color']],
       ['title', ' .cardhead h2', '.room-card #selected-agent', ['fontSize', 'fontWeight', 'color'], ['fontSize', 'fontWeight', 'color']],
@@ -142,7 +142,7 @@ module.exports = [
   // #598: the Room's review card (mock view #7 = "c"): coordinator view once the run waits for approval.
   ...(() => {
     const setup = STEPS_ENABLED + "SIM.room.report.state='waiting_approval';SIM.room.report.tasks.forEach(t=>t.status='completed');SIM.room.report.candidate={commit:'abcdef1234567890'};SIM.room.report.tests=[{task:'task-1',exit_code:0,timed_out:false,output:''}];SIM.reply.evidence=()=>({revision:'x1',report:SIM.room.report,truncated:false,test_output:[{task:'task-1',exit_code:0,timed_out:false,stdout:'',stderr:''}],diff:'diff --git a/src/auth/refresh.rs b/src/auth/refresh.rs\\n--- a/src/auth/refresh.rs\\n+++ b/src/auth/refresh.rs\\n@@ -1 +1 @@\\n-a\\n+b\\n+c\\ndiff --git a/docs/security.md b/docs/security.md\\n+++ b/docs/security.md\\n+x\\n'});";
-    const run = "document.querySelectorAll('#start-step-tabs [role=tab]')[5].click(); document.querySelector('.final-step .session-choice').click()";
+    const run = "document.querySelectorAll('#start-step-tabs [role=tab]')[5].click(); (async () => { for (let i = 0; i < 200 && !document.querySelector('.final-step .session-choice'); i++) await new Promise(r => setTimeout(r, 50)); document.querySelector('.final-step .session-choice').click(); })()";
     const card = '.main>.card[data-show="c"]';
     return [['eyebrow', ' .cardhead .eyebrow', '.room-card .eyebrow', ['fontSize', 'fontWeight', 'color'], ['height', 'fontSize', 'fontWeight', 'color']],
       ['title', ' .cardhead h2', '.room-card #selected-agent', ['fontSize', 'fontWeight', 'color'], ['fontSize', 'fontWeight', 'color']],
@@ -158,7 +158,7 @@ module.exports = [
   // GitHub #689: the approval footer and the heading line under the title (mock view #7 = "c").
   ...(() => {
     const setup = STEPS_ENABLED + "SIM.room.report.state='waiting_approval';SIM.room.report.tasks.forEach(t=>t.status='completed');SIM.room.report.candidate={commit:'abcdef1234567890'};SIM.room.report.tests=[{task:'task-1',exit_code:0,timed_out:false,output:''}];SIM.reply.evidence=()=>({revision:'x1',report:SIM.room.report,truncated:false,test_output:[],diff:''});";
-    const run = "document.querySelectorAll('#start-step-tabs [role=tab]')[5].click(); document.querySelector('.final-step .session-choice').click()";
+    const run = "document.querySelectorAll('#start-step-tabs [role=tab]')[5].click(); (async () => { for (let i = 0; i < 200 && !document.querySelector('.final-step .session-choice'); i++) await new Promise(r => setTimeout(r, 50)); document.querySelector('.final-step .session-choice').click(); })()";
     const card = '.main>.card[data-show="c"]';
     return [['note', ' .actions .note', '#review-footer .note', ['fontSize', 'color'], ['fontSize', 'color']],
       ['deny', ' .actions .btn.q', '#review-deny', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius'], ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius']],
