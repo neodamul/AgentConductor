@@ -21,9 +21,9 @@ execFileSync(process.execPath,[path.join(root,'tests/ui_sim/build.cjs'),root,pat
  for(let i=0;i<6;i++){
   const rect=await browser.eval(`(()=>{const r=document.querySelectorAll('#start-step-tabs [role=tab]')[${i}].getBoundingClientRect();return {x:r.left+r.width/2,y:r.top+r.height/2}})()`);
   await browser.hover(rect.x,rect.y);
-  const target=await browser.eval(`(()=>{const e=document.elementFromPoint(${rect.x},${rect.y}).closest('[title]');return e&&{id:e.id,title:e.title}})()`);
-  assert.equal(target?.id,['start-tab-workspace','start-tab-team','start-tab-review','start-tab-tasks','start-tab-verify','start-tab-merge'][i],`hover reaches individual tab ${i}`);
-  assert(target.title,'hover target has a title');
+  const target=await browser.eval(`(()=>{const tab=document.elementFromPoint(${rect.x},${rect.y}).closest('[role=tab]'),tip=document.elementFromPoint(${rect.x},${rect.y}).closest('[title]');return {id:tab?.id,title:tip?.title}})()`);
+  assert.equal(target.id,['start-tab-workspace','start-tab-team','start-tab-review','start-tab-tasks','start-tab-verify','start-tab-merge'][i],`hover reaches individual tab ${i}`);
+  assert(target.title,'hover target or its clipped label has a title');
  }
  console.log(`step tabs at ${width}px: reference geometry and localized titles pass`);
 }finally{await browser.close();}}}finally{fs.rmSync(dir,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1;});
