@@ -258,6 +258,10 @@ module.exports = [
   // GitHub #677: the titlebar holds only the mock's controls, on the setup steps and while a run is open.
   { name: 'titlebar-controls', assert: "(() => [...document.querySelectorAll('header.titlebar button')].filter(b => b.getClientRects().length).map(b => b.id).join() === 'start-app-menu,start-rail-toggle,start-workspace-menu,start-update-button,start-chat-button,start-settings-button,start-inspector-toggle')()",
     app: { setup: STEPS_ENABLED } },
+  // GitHub #678: a completed step shows a check mark in place of its number.
+  { name: 'step-done-number', props: ['color', 'backgroundColor', 'fontSize'], keys: ['width', 'height', 'color', 'backgroundColor'],
+    mock: { url: '?theme=light#3', selector: '.tabs .tab.done .num', index: 0 },
+    app: { setup: STEPS_ENABLED, run: "document.getElementById('start-tab-tasks').click()", selector: '#start-step-tabs [role=tab].done .tab-number', index: 0 } },
   { name: 'startup-inspector-closed', assert: "document.getElementById('start-inspector').getBoundingClientRect().width===0", app: {} },
   { name: 'startup-inspector-docked', assert: "(()=>{const r=document.querySelector('#start-inspector').getBoundingClientRect();return Math.round(r.right)===innerWidth&&r.top<200&&r.height>300})()",
     app: { run: "document.getElementById('start-inspector-toggle').click()" } },

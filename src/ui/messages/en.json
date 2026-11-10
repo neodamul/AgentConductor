@@ -375,7 +375,7 @@
   "room.deny_this_exact_request_rework_or_reassignment_is": "Deny this exact request. Rework or reassignment is needed before retry.",
   "room.dependencies": "Dependencies",
   "room.diff_exceeds_the_inline_review_limit_use_the": "The diff preview is shortened. Inspect the complete patch in the CLI; this verified candidate can still be approved.",
-  "room.diff_tests": "Diff & tests",
+  "room.diff_tests": "Changes & tests",
   "room.edit_a_file": "Edit a file",
   "room.edit_a_notebook": "Edit a notebook",
   "room.end": "end",

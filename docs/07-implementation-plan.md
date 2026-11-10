@@ -3699,3 +3699,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #677.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Completed steps show a check mark and the task card tab is named as in the mock — GitHub #678
+
+- [x] Plan: a `done` step shows `✓` (CSS, so every path that marks a step done gets it); the tab formerly named "Diff & tests" is "Changes & tests" / "변경과 테스트"; the manuals and the QAS row use the new name. The activity rows already use the mock's timeline styling (62px time column, bold head, soft text); their content depends on the events a task reports.
+- [x] Verify: parity entry `step-done-number` (colour, background, size and a pixel crop; both themes, 840 and 1280); manuals re-rendered.
+- [ ] Completed: merged on `main`; closes #678.
+
+Trace: R-210 / UC-202 / DD-222.
