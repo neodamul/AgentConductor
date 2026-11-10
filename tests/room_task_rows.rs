@@ -12,15 +12,20 @@ fn the_task_name_leads_and_icon_name_and_status_share_one_line() {
     ));
     assert!(ROOM.contains("head.append(title,badge)"));
     assert!(ROOM.contains("button.append(symbol,copy,chevron())"));
-    assert!(RUN_CSS.contains("#rail-room .outline-task{display:flex;align-items:center;gap:7px"));
-    assert!(RUN_CSS.contains("#rail-room .outline-task .session-symbol.outline-agent"));
+    assert!(RUN_CSS.contains(
+        ":is(#rail-room,#rail-outline) .outline-task{display:flex;align-items:center;gap:7px"
+    ));
+    assert!(
+        RUN_CSS
+            .contains(":is(#rail-room,#rail-outline) .outline-task .session-symbol.outline-agent")
+    );
 }
 
 #[test]
 fn brand_marks_sit_in_a_bordered_container_with_the_specified_mark_size() {
     // GitHub #406 / visual-spec: task avatar 28px with a 20px mark, agent avatar 29px with a 19px mark,
     // both inside the 1.5px border (28 = 1.5 + 2.5 + 20 + 2.5 + 1.5; 29 = 1.5 + 3.5 + 19 + 3.5 + 1.5).
-    assert!(RUN_CSS.contains("#rail-room .outline-task .app-icon.session-symbol.outline-agent{padding:2.5px;background:var(--fill)}"));
+    assert!(RUN_CSS.contains(":is(#rail-room,#rail-outline) .outline-task .app-icon.session-symbol.outline-agent{padding:2.5px;background:var(--fill)}"));
     assert!(CSS.contains(".app-icon.agent-symbol{width:29px;height:29px;box-sizing:border-box;border:1.5px solid var(--line);padding:3.5px;background:var(--fill)}"));
 }
 
@@ -35,13 +40,13 @@ fn the_avatar_border_carries_the_task_status() {
     assert!(!CSS.contains("agent-light"), "and so are its rules");
     for (name, color) in [("green", "ok"), ("yellow", "warn"), ("red", "err")] {
         let rule = format!(
-            "#rail-room .outline-task .session-symbol.outline-agent.st-{name}{{border-color:var(--{color})}}"
+            ":is(#rail-room,#rail-outline) .outline-task .session-symbol.outline-agent.st-{name}{{border-color:var(--{color})}}"
         );
         assert!(RUN_CSS.contains(&rule), "{rule}");
     }
     assert!(CSS.contains("border:1.5px solid"));
     assert!(CSS.contains(".session-symbol.running{animation:agent-pulse"));
-    assert!(RUN_CSS.contains("prefers-reduced-motion:reduce){#rail-room .outline-task .session-symbol.running{animation:none}"));
+    assert!(RUN_CSS.contains("prefers-reduced-motion:reduce){:is(#rail-room,#rail-outline) .outline-task .session-symbol.running{animation:none}"));
 }
 
 #[test]

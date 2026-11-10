@@ -119,7 +119,7 @@ Preview and apply selected documents before planning. Large sources are saved as
 Registration alone does not run an MCP command.
 
 Roles include verification, development, documentation, knowledge assetization and testing.
-Choose agents and optional models/alternates. **Suggest defaults** uses the registered team.
+Choose agents and optional models/alternates. **Add roles** (in the footer) fills the empty roles from the registered team; **Save and go to step 3** saves and opens the plan, generating one when none exists. **Read plan…** and **Write plan manually** are under the task list of step 3, and **Regenerate plan** repeats the generation.
 The coordinator proposes scoped work following these assignments; the Rust engine owns execution and state.
 
 Each goal has a short English slug, such as `ladder_game`, translated from the goal rather than romanized.
@@ -197,8 +197,7 @@ Other requests are sent to the workspace coordinator for an allow/deny decision,
 If the coordinator cannot return a valid decision, a person is asked.
 The coordinator uses existing CLI authentication; it is not a new API service.
 
-The tool request window shows a readable action, exact input under Raw input, live activity and the deadline.
-**Allow once**, **Deny** or **Decide later** controls pending human decisions.
+A pending tool request is decided in the footer of the task card (there is no separate window): the card's notice shows a readable action, the exact input under Raw input, live activity and the deadline, and the footer offers **Allow once** or **Deny**; leaving it pending is the same as deciding later.
 Approvals bind task, session, plan, workspace and input, expire within 900 seconds and are consumed once.
 Waiting for a tool decision is excluded from the task time limit; a timed-out task is blocked for Resume.
 Tool decisions do not approve integration.
@@ -206,6 +205,7 @@ Tool decisions do not approve integration.
 Review **Changes & tests**. A changed verification report containing a Blocking/차단 section fails integration
 for the responsible task. Fix it and rerun verification.
 Large patches show a shortened preview and a command such as `agentconductor diff "<run-directory>"` for the complete patch. Truncation alone does not disable approval: verification hashes the entire patch, including omitted lines. Inspect the complete diff before approving when needed.
+When the run waits for approval, the task list moves to **Integration verification** and the card shows the test result and the changed files; **Review changes** opens the exact evidence (after which **Approve** is offered), **Request changes** opens the direction field and **Reject** declines.
 **Approve** binds the exact candidate, baseline, complete diff hash and passing tests.
 Then use **Merge approved candidate** for Git, **Accept changes** for direct ordinary-folder execution, or **Apply changes** for legacy private-copy runs. Rejecting a direct-folder candidate restores owned files to their recorded baseline only when later manual edits would not be overwritten.
 Any changed evidence revokes approval. Only the human approves final integration.

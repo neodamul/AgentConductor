@@ -18,7 +18,8 @@ pub(crate) fn document() -> Result<String, String> {
         + include_str!("../role_choices.css")
         + include_str!("../about.css")
         + include_str!("../titlebar.css")
-        + include_str!("../run_screen.css");
+        + include_str!("../run_screen.css")
+        + include_str!("../plan_review.css");
     let helper_scripts = concat!(
         include_str!("../dialog_focus.js"),
         include_str!("../brand_avatar.js"),
@@ -29,7 +30,7 @@ pub(crate) fn document() -> Result<String, String> {
     );
     let script = include_str!("../role_choices.js").to_string()
         + &format!(
-            "{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
+            "{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
             super::super::I18N,
             super::super::JS,
             include_str!("../mcp.js"),
@@ -40,6 +41,7 @@ pub(crate) fn document() -> Result<String, String> {
             include_str!("../action_icons.js"),
             include_str!("../stepper.js"),
             include_str!("../rail.js"),
+            include_str!("../plan_review.js"),
             include_str!("../agent_status.js"),
             include_str!("../quota_ring.js"),
             include_str!("../status_repository.js"),

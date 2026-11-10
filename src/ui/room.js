@@ -75,7 +75,8 @@ async function approveScope() {
 $('scope-review').onclick = openScopeReview; $('scope-preview').onclick = previewScope; $('scope-approve').onclick = approveScope;
 $('scope-task').onchange = scopeFillTask; $('scope-paths').oninput = $('scope-test').oninput = scopeReset;
 // The watched session finished (#109): follow the run to the next running session, or to the integration entry when the run awaits a decision.
-function followTarget(prev, next, selectedId, onCoordinator) { if (!prev || onCoordinator) return null; const was = prev.report.tasks.find(t => t.id === selectedId), now = next.report.tasks.find(t => t.id === selectedId); if (!was || was.status !== 'running' || !now || now.status === 'running') return null; const active = next.report.tasks.find(t => ['running', 'waiting_tool_approval'].includes(t.status)); if (active) return { id: active.id }; return ['waiting_approval', 'approved', 'rejected'].includes(next.report.state) ? { coordinator: true } : null; }
+// GitHub #688: entering a review state (also on the first snapshot of a run already waiting) opens the Integration verification entry, whichever task was shown.
+function followTarget(prev, next, selectedId, onCoordinator) { if (onCoordinator) return null; const review = ['waiting_approval', 'approved', 'rejected']; if (review.includes(next.report.state) && (!prev || prev.report.state !== next.report.state)) return { coordinator: true }; if (!prev) return null; const was = prev.report.tasks.find(t => t.id === selectedId), now = next.report.tasks.find(t => t.id === selectedId); if (!was || was.status !== 'running' || !now || now.status === 'running') return null; const active = next.report.tasks.find(t => ['running', 'waiting_tool_approval'].includes(t.status)); if (active) return { id: active.id }; return ['waiting_approval', 'approved', 'rejected'].includes(next.report.state) ? { coordinator: true } : null; }
 function followProgress(prev) { const target = followTarget(prev, snapshot, task()?.id, coordinatorView); if (!target) return; if (target.coordinator) selectCoordinator(); else selectTask(snapshot.report.tasks.findIndex(t => t.id === target.id)); }
 function formatAge(ms) { const s = Math.max(0, Math.floor(ms / 1000)); if (s < 60) return s + 's'; const m = Math.floor(s / 60); if (m < 60) return m + 'm ' + String(s % 60).padStart(2, '0') + 's'; return Math.floor(m / 60) + 'h ' + String(m % 60).padStart(2, '0') + 'm'; }
 // Facts only (#100): the tool in progress, the age of the last output and the process state; silence is never called thinking or failure.
@@ -201,7 +202,7 @@ function renderSnapshot() {
   }),finalRow(final));}
   const stage=r.state==='completed'?'complete':mergeRunning||r.state==='approved'||['waiting_approval','rejected'].includes(r.state)?'merge':r.tasks.some(t=>t.attempt>0)?'task':'plan';window.acStepper?.paint(stage,mergeRunning);window.acStepper?.available(true);
   // GitHub #580: the card head reads like the mock: the task summary leads, then agent · id · first owned path.
-  AC_I18N.bind($('selected-agent'),()=>(taskLine(p?.prompt)||t?.id||agentName(a)));$('agent-symbol').replaceWith(Object.assign(avatar(a?.parser,agentName(a),'agent-symbol'),{id:'agent-symbol'}));AC_I18N.bind($('selected-task'),()=>([agentName(a),t?.id,p?.paths?.[0]].filter(Boolean).join(' · ')));AC_I18N.bind($('session-eyebrow'),()=>(acMessage("room.step_4_run_tasks_selected_task")));$('verify-rows').hidden=true;renderNotice(t,a);AC_I18N.bind($('feedback-target'),()=>(agentName(a)+' / '+(t?.id||'')));
+  AC_I18N.bind($('selected-agent'),()=>(taskLine(p?.prompt)||t?.id||agentName(a)));$('agent-symbol').replaceWith(Object.assign(avatar(a?.parser,agentName(a),'agent-symbol'),{id:'agent-symbol'}));AC_I18N.bind($('selected-task'),()=>([agentName(a),t?.id,p?.paths?.[0]].filter(Boolean).join(' · ')));AC_I18N.bind($('session-eyebrow'),()=>(acMessage("room.step_4_run_tasks_selected_task")));$('verify-rows').hidden=true;renderNotice(t,a);AC_I18N.bind($('feedback-target'),()=>(agentName(a)+' / '+(t?.id||'')));AC_I18N.bind($('composer-note'),()=>acMessage("room.composer_note",{value1:agentName(a),value2:t?.id||''}));
   AC_I18N.bind($('task-status'),()=>(statusLabel(t?.status)));$('task-status').className='status-pill tone-'+statusTone(t?.status);
   AC_I18N.bind($('inspector-context'),()=>(t?agentName(a)+' · '+t.id+' · '+(p?.prompt||'').split('\n')[0]:acMessage("room.inspector_empty")));
   AC_I18N.bind($('task-instruction'),()=>(p?.prompt||''));AC_I18N.bind($('task-dependency'),()=>(p?.depends_on?.length?p.depends_on.join(', '):acMessage("room.no_dependencies")));AC_I18N.bind($('task-test'),()=>(p?.test_command?.join(' ')||'—'));
@@ -215,7 +216,7 @@ function renderSnapshot() {
   const effectiveRestriction=t.restriction||snapshot.quotas?.[a?.id]?.restriction;
   AC_I18N.bind($('restriction'),()=>(effectiveRestriction?(effectiveRestriction.available_at?acMessage("room.available", {value1:new Date(effectiveRestriction.available_at*1000).toLocaleString()}):acMessage("room.reset_time_unknown_choose_a_time_below"))+' · '+((effectiveRestriction.source==='quota_observation'||effectiveRestriction.reason==='room.account_quota_exhausted')?acMessage("room.account_quota_exhausted"):String(effectiveRestriction.reason||effectiveRestriction.message||t.error||'').slice(0,180)):acMessage("room.no_recorded_restriction")));
   renderAvailability(t,a,snapshot.quotas?.[a?.id],(snapshot.availability_timer||[]).find(entry=>entry.task===t.id&&entry.agent===a?.id),snapshot.availability_timer_error);
-  if(coordinatorView){const c=r.plan.agents.find(x=>x.id===snapshot.coordinator)||null;$('task-notice').hidden=true;AC_I18N.bind($('selected-agent'),()=>((reviewMode(r)?acMessage("room.review_title"):acMessage("room.verify_title"))));$('agent-symbol').replaceWith(Object.assign(node('span','◎','agent-symbol'),{id:'agent-symbol'}));AC_I18N.bind($('selected-task'),()=>((reviewMode(r)?acMessage("room.review_intro"):acMessage("room.verify_intro"))));AC_I18N.bind($('session-eyebrow'),()=>(reviewMode(r)?acMessage("room.step_6_review_merge"):acMessage("room.step_5_run_verify")));AC_I18N.bind($('feedback-target'),()=>(acMessage("room.coordinator")));AC_I18N.bind($('task-status'),()=>(statusLabel(final.status)));$('task-status').className='status-pill tone-'+statusTone(final.status);AC_I18N.bind($('paths'),()=>('—'));AC_I18N.bind($('session-id'),()=>(c?acMessage("room.agent_8739d3", {value1:c.id}):''));}
+  if(coordinatorView){const c=r.plan.agents.find(x=>x.id===snapshot.coordinator)||null;$('task-notice').hidden=true;AC_I18N.bind($('selected-agent'),()=>((reviewMode(r)?acMessage("room.review_title"):acMessage("room.verify_title"))));$('agent-symbol').replaceWith(Object.assign(node('span','◎','agent-symbol'),{id:'agent-symbol'}));AC_I18N.bind($('selected-task'),()=>((reviewMode(r)?acMessage("room.review_intro"):acMessage("room.verify_intro"))));AC_I18N.bind($('session-eyebrow'),()=>(reviewMode(r)?acMessage("room.step_6_review_merge"):acMessage("room.step_5_run_verify")));AC_I18N.bind($('feedback-target'),()=>(acMessage("room.coordinator")));AC_I18N.bind($('composer-note'),()=>acMessage("room.composer_note_coordinator"));AC_I18N.bind($('task-status'),()=>(statusLabel(final.status)));$('task-status').className='status-pill tone-'+statusTone(final.status);AC_I18N.bind($('paths'),()=>('—'));AC_I18N.bind($('session-id'),()=>(c?acMessage("room.agent_8739d3", {value1:c.id}):''));}
   renderActivity();
   $('scope-review').hidden = !scopeOffered(snapshot);
   $('stop').disabled=!['running','ready','waiting_availability','waiting_tool_approval','stopped'].includes(r.state);
@@ -231,7 +232,7 @@ function renderSnapshot() {
   $('merge').disabled=!idle()||r.state!=='approved'||!currentReview;
   AC_I18N.bind($('merge'),()=>(r.direct_workspace?acMessage("room.accept_changes"):r.folder?acMessage("room.apply_changes"):acMessage("room.merge")));
   AC_I18N.bind($('candidate-note'),()=>(r.direct_workspace?(r.state==='completed'?acMessage("room.accepted_complete"):r.state==='approved'?acMessage("room.approved_accept_changes"):acMessage("room.review_diff_and_tests_before_approval")):r.folder?(r.state==='completed'?acMessage("room.changes_applied_this_run_is_complete"):r.state==='approved'?acMessage("room.approved_applying_changes_remains_a_separate_action"):acMessage("room.review_diff_and_tests_before_approval")):r.state==='completed'?acMessage("room.merged_this_run_is_complete"):r.state==='approved'?acMessage("room.approved_merging_remains_a_separate_action"):review&&!currentReview?acMessage("room.state_changed_inspect_the_latest_evidence"):acMessage("room.review_diff_and_tests_before_approval")));
-  nextStep(r,currentReview);{const b=$('run-banner');b.hidden=![...b.querySelectorAll('#run-banner-error,#run-banner-next,#banner-next,#banner-fix,#banner-resume,#scope-review,#run-banner-attention')].some(n=>!n.hidden);}renderQuota(a);renderTools();{const g=document.querySelector('.gates-nav');$('open-review').hidden=!['waiting_approval','approved','completed','rejected'].includes(r.state);$('open-tools').hidden=Number($('tool-count').textContent)===0;g.hidden=[...g.querySelectorAll('button')].every(b=>b.hidden);}AC_I18N.bind($('run-path'),()=>(snapshot.run_dir));acStatusRepository.render($('connection').parentElement,window.acRepositoryIdentity);AC_I18N.bind($('connection'),()=>((typeof AC_WAIT!=='undefined'&&AC_WAIT.text())||acMessage("room.connected_local_run")));
+  renderReviewFooter(r);renderGoalInfo(r);nextStep(r,currentReview);{const b=$('run-banner');b.hidden=r.state==='waiting_approval'||![...b.querySelectorAll('#run-banner-error,#run-banner-next,#banner-next,#banner-fix,#banner-resume,#scope-review,#run-banner-attention')].some(n=>!n.hidden);}renderQuota(a);renderTools();{const g=document.querySelector('.gates-nav');$('open-review').hidden=!['waiting_approval','approved','completed','rejected'].includes(r.state);$('open-tools').hidden=Number($('tool-count').textContent)===0;g.hidden=[...g.querySelectorAll('button')].every(b=>b.hidden);}AC_I18N.bind($('run-path'),()=>(snapshot.run_dir));acStatusRepository.render($('connection').parentElement,window.acRepositoryIdentity);AC_I18N.bind($('connection'),()=>((typeof AC_WAIT!=='undefined'&&AC_WAIT.text())||acMessage("room.connected_local_run")));
 }
 // DD-112: provider events read like the CLI transcript; raw JSON stays in the Raw logs tab.
 const clipLines=(text,max=8)=>{const all=String(text??'').replace(/\s+$/,'').split('\n');return all.length>max?all.slice(0,max).join('\n')+acMessage("room.more_lines", {value1:all.length-max}):all.join('\n');};
@@ -363,7 +364,7 @@ function renderTask(data) {
   if(t.error)timeline.push(event(acMessage("room.coordinator_report"),t.error,'error'));
   if(!data.events.length)timeline.push(node('p',()=>(acMessage("room.no_provider_events_have_been_reported_yet")),'empty'));
   const activity=$('activity'),nearBottom=activity.parentElement.scrollHeight-activity.parentElement.scrollTop-activity.parentElement.clientHeight<70;
-  AC_I18N.replace(activity,...timeline);if(nearBottom)activity.parentElement.scrollTop=activity.parentElement.scrollHeight;mirrorToolLog(t.id,timeline);
+  AC_I18N.replace(activity,...timeline);if(nearBottom)activity.parentElement.scrollTop=activity.parentElement.scrollHeight;
   AC_I18N.bind($('stdout'),()=>(data.stdout||acMessage("room.no_output_yet")));AC_I18N.bind($('stderr'),()=>(data.stderr||acMessage("room.no_errors_logged")));
   const notes=data.knowledge.filter(k=>k.task===t.id);const steps=(data.step_lessons||[]).map(l=>{const el=node('article',undefined,'lesson');el.append(node('h3',()=>(acMessage("room.step_lesson_for",{value1:l.task}))),node('p',l.cause,'small muted'),node('p',l.response));return el;});AC_I18N.replace($('lessons'),...steps,...(notes.length?notes.map(k=>{const el=node('article',undefined,'lesson');el.append(node('h3',k.lesson.context),node('span',()=>(acMessage("room.confidence", {value1:pretty(k.status),value2:k.lesson.confidence})),'status-pill'),node('p',k.lesson.response),node('pre',k.lesson.sources.map(s=>s.path+'\n'+s.sha256).join('\n')),node('p',()=>(acMessage("room.revalidate")+k.lesson.revalidate),'small muted'));return el;}):(steps.length?[]:[node('p',()=>(acMessage("room.no_reviewed_lessons_for_this_task_draft_observations")),'empty')])));
   const u=data.usage;AC_I18N.bind($('tokens'),()=>(u&&typeof u.input_tokens==='number'?acMessage("room.in_out", {value1:u.input_tokens.toLocaleString(),value2:(u.output_tokens||0).toLocaleString()}):acMessage("room.not_reported")));
@@ -427,39 +428,24 @@ function toolView(request) {
   const raw=node('details');raw.append(node('summary',()=>(acMessage("room.raw_input"))),node('pre',JSON.stringify(request.input,null,2)));
   view.append(node('strong',summary.action,'tool-action'),list,raw);return view;
 }
-// A live tool request opens a decision window with the task's activity log. Deciding
-// later, approving or letting it expire leaves the log updating until it is closed.
-let toolDialog=null;const deferredTools=new Set();
+// GitHub #684: a live tool request is decided in the task card's footer (as in the mock), not in a modal; the card's notice shows the
+// exact input. A request brings its task forward once; the direction field is replaced by the decision while one is pending.
+let toolBusy=false;const seenTools=new Set();
+function pendingTool(){const t=task();return t?(snapshot.tool_requests||[]).find(r=>r.status==='pending'&&r.context.task===t.id):null;}
 function syncToolDialog() {
-  const dialog=$('tool-dialog'),requests=snapshot.tool_requests||[];
-  const waiting=requests.find(r=>r.status==='pending'&&!deferredTools.has(r.id));
-  if(!dialog.open&&waiting){
-    toolDialog={id:waiting.id,task:waiting.context.task,receipt:waiting};AC_I18N.replace($('tool-dialog-log'));
-    const index=snapshot.report.tasks.findIndex(t=>t.id===waiting.context.task);if(index>=0&&index!==selected)selectTask(index);else loadTask();
-    dialog.showModal();
-  }
-  if(!dialog.open||!toolDialog)return;
-  const current=requests.find(r=>r.id===toolDialog.id),pending=current?.status==='pending',shown=current||toolDialog.receipt;toolDialog.receipt=shown;
-  AC_I18N.bind($('tool-dialog-title'),()=>(toolSummary(shown.request.tool,shown.request.input).action));
-  AC_I18N.bind($('tool-dialog-reason'),()=>(`${shown.request.tool} · ${shown.context.task}`));
-  const stamp=JSON.stringify(shown.request);if($('tool-dialog-input').dataset.stamp!==stamp){$('tool-dialog-input').dataset.stamp=stamp;AC_I18N.replace($('tool-dialog-input'),toolView(shown.request));}
-  const left=Math.max(0,Math.round(shown.created_at+(snapshot.tool_decision_wait_secs||600)-Date.now()/1000));
-  const status=$('tool-dialog-status');status.className='small'+(pending?'':' settled');
-  AC_I18N.bind(status,()=>(pending?acMessage("room.waiting_for_your_decision_time_left", {value1:Math.floor(left/60),value2:String(left%60).padStart(2,'0')}):acMessage("room.no_longer_waiting", {value1:pretty(current?.status||'closed')})));
-  // The paused worker belongs to the running job, so deciding is the live action that
-  // must stay available while that job runs (same rule as the Tool requests list).
+  const requests=snapshot.tool_requests||[],fresh=requests.find(r=>r.status==='pending'&&!seenTools.has(r.id));
+  if(fresh){seenTools.add(fresh.id);const index=snapshot.report.tasks.findIndex(t=>t.id===fresh.context.task);if(index>=0&&index!==selected&&!coordinatorView)selectTask(index);}
+  const waiting=coordinatorView?null:pendingTool(),box=$('tool-decision'),composer=document.querySelector('#run-screen .composer');
+  box.hidden=!waiting;if(composer)composer.hidden=!!waiting;
+  if(!waiting)return;
+  const left=Math.max(0,Math.round(waiting.created_at+(snapshot.tool_decision_wait_secs||600)-Date.now()/1000));
+  AC_I18N.bind($('tool-decision-note'),()=>acMessage("room.tool_decision_note")+' · '+acMessage("room.waiting_for_your_decision_time_left", {value1:Math.floor(left/60),value2:String(left%60).padStart(2,'0')}));
+  // The paused worker belongs to the running job, so deciding is the live action that must stay available while that job runs.
   const live=snapshot.report.state==='running';
-  for(const id of ['tool-dialog-allow','tool-dialog-deny'])$(id).disabled=!pending||!(idle()||live)||toolDialog.deciding;AC_I18N.bind($('tool-dialog-later'),()=>(pending?acMessage("room.decide_later"):acMessage("room.close")));
+  for(const id of ['tool-decision-allow','tool-decision-deny'])$(id).disabled=!(idle()||live)||toolBusy;
 }
-function mirrorToolLog(id,timeline) {
-  if(!$('tool-dialog').open||toolDialog?.task!==id)return;
-  const log=$('tool-dialog-log'),nearBottom=log.scrollHeight-log.scrollTop-log.clientHeight<70||!log.childElementCount;
-  AC_I18N.replace(log,...timeline.map(n=>n.cloneNode(true)));if(nearBottom)log.scrollTop=log.scrollHeight;
-}
-async function decideTool(kind) {if(!toolDialog)return;toolDialog.deciding=true;for(const id of ['tool-dialog-allow','tool-dialog-deny'])$(id).disabled=true;const idleRun=snapshot.report.state!=='running';try{if(await act({kind,sha:toolDialog.id})&&kind==='tool_approve'&&idleRun)resumeAfter='tool_approve';}finally{if(toolDialog)toolDialog.deciding=false;}syncToolDialog();}
-$('tool-dialog-allow').onclick=()=>decideTool('tool_approve');$('tool-dialog-deny').onclick=()=>decideTool('tool_reject');
-$('tool-dialog-later').onclick=()=>$('tool-dialog').close();
-$('tool-dialog').onclose=()=>{if(toolDialog)deferredTools.add(toolDialog.id);toolDialog=null;};
+async function decideTool(kind) {const waiting=pendingTool();if(!waiting||toolBusy)return;toolBusy=true;syncToolDialog();const idleRun=snapshot.report.state!=='running';try{if(await act({kind,sha:waiting.id})&&kind==='tool_approve'&&idleRun)resumeAfter='tool_approve';}finally{toolBusy=false;}syncToolDialog();}
+wireReviewFooter();$('tool-decision-allow').onclick=()=>decideTool('tool_approve');$('tool-decision-deny').onclick=()=>decideTool('tool_reject');
 function autoQuotaRefresh(){if(roomStopped||!snapshot||busy()||snapshot.report.state==='running')return;const agent=snapshot.report.plan.agents.find(a=>['claude','codex'].includes(a.parser)&&snapshot.quota_refresh_due?.[a.id]);if(agent)refreshQuota(agent.id);}
 let pollFailures=0;function pollFailed(e,background){if(!e.transport||!background||++pollFailures>=3){AC_I18N.bind($('connection'),()=>(acMessage("room.local_connection_unavailable")));notice(e.message,true);}}function pollSucceeded(){pollFailures=0;lastSnapshotAt=Date.now();}
 async function poll(background=false) {
@@ -475,7 +461,7 @@ async function poll(background=false) {
   }catch(e){if(roomStopped)return;pollFailed(e,background);}finally{polling=false;}
 }
 for(const el of document.querySelectorAll('[data-tab]'))el.onclick=()=>el.dataset.tab==='review'?loadReview():changeTab(el.dataset.tab);
-$('brief-team').onclick=briefTeam;$('quota-agent').onchange=()=>{quotaAgent=$('quota-agent').value;renderQuota(profile());};$('quota-refresh').onclick=()=>refreshQuota($('quota-agent').value);$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('show-result').onclick=()=>openResult().catch(e=>notice(e.message,true));$('result-close').onclick=()=>$('result-dialog').close();$('open-tools').onclick=()=>{deferredTools.clear();if(snapshot)syncToolDialog();if(!$('tool-dialog').open)$('tool-requests').scrollIntoView({behavior:'smooth',block:'center'});};
+$('brief-team').onclick=briefTeam;$('quota-agent').onchange=()=>{quotaAgent=$('quota-agent').value;renderQuota(profile());};$('quota-refresh').onclick=()=>refreshQuota($('quota-agent').value);$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('show-result').onclick=()=>openResult().catch(e=>notice(e.message,true));$('result-close').onclick=()=>$('result-dialog').close();$('open-tools').onclick=()=>{const waiting=(snapshot?.tool_requests||[]).find(r=>r.status==='pending'),index=waiting?snapshot.report.tasks.findIndex(t=>t.id===waiting.context.task):-1;if(index>=0&&(index!==selected||coordinatorView))selectTask(index);(waiting?$('tool-decision'):$('tool-requests')).scrollIntoView({behavior:'smooth',block:'center'});};
 // Input-method composition (e.g. Korean) must finish before text is replaced or sent.
 let composing=false;document.addEventListener('compositionstart',()=>{composing=true;});document.addEventListener('compositionend',()=>{composing=false;});
 $('feedback').oninput=()=>{const key=coordinatorView?COORDINATOR_DRAFT:task()?.id;if(key)drafts.set(key,$('feedback').value);};

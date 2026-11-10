@@ -1,46 +1,46 @@
 /* The run screen against the approved mock: the task rail (GitHub #675), the top area and the direction block (GitHub #676). */
 /* GitHub #675: the run rail is the mock's Phases and tasks outline (head, current Phase/Task, tasks done and elapsed, the Phase with its task rows, a hint). */
-#rail-room .railhead{display:flex;align-items:flex-end;justify-content:space-between}
-#rail-room .railhead h2{font-size:18px;font-weight:700;margin:0}
-#rail-room>.sub{font-size:12.5px;color:var(--soft);margin-top:10px}
-#rail-room .outline-run-status{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;font-size:11.5px;color:var(--soft);padding:7px 0 10px;border-bottom:1px solid var(--line)}
-#rail-room .outline-run-status strong{font-weight:600;color:var(--ink)}
-#rail-room .phase-tree{margin-top:6px}
-#rail-room .phase-tree summary{display:flex;align-items:center;gap:7px;cursor:pointer;list-style:none;border-bottom:1px solid var(--line);padding:10px 0}
-#rail-room .phase-tree summary::-webkit-details-marker{display:none}
-#rail-room .phase-tree summary::before{content:'▸';color:var(--soft)}
-#rail-room .phase-tree[open] summary::before{content:'▾'}
-#rail-room .phase-name{font-size:13px;font-weight:650}
-#rail-room .phase-count{font-size:11px;color:var(--soft);margin-left:auto}
-#rail-room .phase-brief{font-size:11.5px;line-height:1.7;color:var(--soft);margin:10px 0}
-#rail-room .outline-note{font-size:11.5px;color:var(--soft);line-height:1.7;border-top:1px solid var(--line);padding-top:12px;margin-top:6px}
+:is(#rail-room,#rail-outline) .railhead{display:flex;align-items:flex-end;justify-content:space-between}
+:is(#rail-room,#rail-outline) .railhead h2{font-size:18px;font-weight:700;margin:0}
+#rail-room>.sub,#rail-outline .sub{font-size:12.5px;color:var(--soft);margin-top:10px}
+:is(#rail-room,#rail-outline) .outline-run-status{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;font-size:11.5px;color:var(--soft);padding:7px 0 10px;border-bottom:1px solid var(--line)}
+:is(#rail-room,#rail-outline) .outline-run-status strong{font-weight:600;color:var(--ink)}
+:is(#rail-room,#rail-outline) .phase-tree{margin-top:6px}
+:is(#rail-room,#rail-outline) .phase-tree summary{display:flex;align-items:center;gap:7px;cursor:pointer;list-style:none;border-bottom:1px solid var(--line);padding:10px 0}
+:is(#rail-room,#rail-outline) .phase-tree summary::-webkit-details-marker{display:none}
+:is(#rail-room,#rail-outline) .phase-tree summary::before{content:'▸';color:var(--soft)}
+:is(#rail-room,#rail-outline) .phase-tree[open] summary::before{content:'▾'}
+:is(#rail-room,#rail-outline) .phase-name{font-size:13px;font-weight:650}
+:is(#rail-room,#rail-outline) .phase-count{font-size:11px;color:var(--soft);margin-left:auto}
+:is(#rail-room,#rail-outline) .phase-brief{font-size:11.5px;line-height:1.7;color:var(--soft);margin:10px 0}
+:is(#rail-room,#rail-outline) .outline-note{font-size:11.5px;color:var(--soft);line-height:1.7;border-top:1px solid var(--line);padding-top:12px;margin-top:6px}
 #rail-room #sessions .session{display:block;background:none;box-shadow:none;outline:0;animation:none;padding:0;border:0;border-radius:4px;margin:0}
 #rail-room #sessions .session:hover{background:var(--fill)}
-#rail-room .outline-task{display:flex;align-items:center;gap:7px;text-align:left;width:100%;box-sizing:border-box;padding:11px 6px 11px 8px;margin:2px 0;background:transparent;color:var(--ink);border:0;border-bottom:1px solid var(--line);border-radius:4px;font-family:inherit;cursor:pointer;position:relative}
-#rail-room .outline-task[aria-pressed="true"]{background:var(--accent-soft);box-shadow:inset 2px 0 var(--accent)}
-#rail-room .outline-task:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-#rail-room .outline-task .session-symbol.outline-agent,#rail-room .outline-task .app-icon.session-symbol.outline-agent{display:flex;align-items:center;justify-content:center;flex:none;width:28px;height:28px;margin:2px 0 0;align-self:flex-start;font-size:12px;font-weight:650;border-radius:7px;box-shadow:none;box-sizing:border-box;border:1.5px solid var(--line)}
-#rail-room .outline-task .app-icon.session-symbol.outline-agent{padding:2.5px;background:var(--fill)}
-#rail-room .outline-task .app-icon.session-symbol.outline-agent.st-green,#rail-room .outline-task .session-symbol.outline-agent.st-green{border-color:var(--ok)}
-#rail-room .outline-task .app-icon.session-symbol.outline-agent.st-yellow,#rail-room .outline-task .session-symbol.outline-agent.st-yellow{border-color:var(--warn)}
-#rail-room .outline-task .app-icon.session-symbol.outline-agent.st-red,#rail-room .outline-task .session-symbol.outline-agent.st-red{border-color:var(--err)}
-#rail-room .outline-task .session-symbol.running{animation:agent-pulse 1.6s ease-in-out infinite}
-@media(prefers-reduced-motion:reduce){#rail-room .outline-task .session-symbol.running{animation:none}}
-#rail-room .outline-copy{min-width:0;flex:1}
-#rail-room .outline-task-heading{display:flex;align-items:center;gap:5px;min-width:0}
-#rail-room .outline-task-heading strong{display:block;min-width:0;flex:1;font-size:12px;font-weight:600;line-height:1.6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#rail-room .task-number{font-size:10.5px;font-weight:500;color:var(--soft);margin-right:3px;background:none;padding:0}
-#rail-room .outline-task small.task-description{display:block;font-size:11px;line-height:1.6;margin-top:4px;color:var(--soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#rail-room .outline-state-badge{display:inline-flex;align-items:center;flex:none;font-size:10px;line-height:15px;padding:1px 4px;border-radius:4px;background:var(--fill);color:var(--soft);white-space:nowrap}
-#rail-room .outline-state-badge[data-state="running"],#rail-room .outline-state-badge[data-state="completed"]{background:var(--ok-bg);color:var(--ok)}
-#rail-room .outline-state-badge[data-state="waiting"]{background:var(--warn-bg);color:var(--warn)}
-#rail-room .outline-state-badge[data-state="error"]{background:var(--err-bg);color:var(--err)}
-#rail-room .outline-open-icon{flex:none;color:var(--soft);display:block;margin-top:0}
-#rail-room .outline-task:hover .outline-open-icon,#rail-room .outline-task[aria-pressed="true"] .outline-open-icon{color:var(--accent-text)}
+:is(#rail-room,#rail-outline) .outline-task{display:flex;align-items:center;gap:7px;text-align:left;width:100%;box-sizing:border-box;padding:11px 6px 11px 8px;margin:2px 0;background:transparent;color:var(--ink);border:0;border-bottom:1px solid var(--line);border-radius:4px;font-family:inherit;cursor:pointer;position:relative}
+:is(#rail-room,#rail-outline) .outline-task[aria-pressed="true"]{background:var(--accent-soft);box-shadow:inset 2px 0 var(--accent)}
+:is(#rail-room,#rail-outline) .outline-task:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+:is(#rail-room,#rail-outline) .outline-task .session-symbol.outline-agent,:is(#rail-room,#rail-outline) .outline-task .app-icon.session-symbol.outline-agent{display:flex;align-items:center;justify-content:center;flex:none;width:28px;height:28px;margin:2px 0 0;align-self:flex-start;font-size:12px;font-weight:650;border-radius:7px;box-shadow:none;box-sizing:border-box;border:1.5px solid var(--line)}
+:is(#rail-room,#rail-outline) .outline-task .app-icon.session-symbol.outline-agent{padding:2.5px;background:var(--fill)}
+:is(#rail-room,#rail-outline) .outline-task .app-icon.session-symbol.outline-agent.st-green,:is(#rail-room,#rail-outline) .outline-task .session-symbol.outline-agent.st-green{border-color:var(--ok)}
+:is(#rail-room,#rail-outline) .outline-task .app-icon.session-symbol.outline-agent.st-yellow,:is(#rail-room,#rail-outline) .outline-task .session-symbol.outline-agent.st-yellow{border-color:var(--warn)}
+:is(#rail-room,#rail-outline) .outline-task .app-icon.session-symbol.outline-agent.st-red,:is(#rail-room,#rail-outline) .outline-task .session-symbol.outline-agent.st-red{border-color:var(--err)}
+:is(#rail-room,#rail-outline) .outline-task .session-symbol.running{animation:agent-pulse 1.6s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){:is(#rail-room,#rail-outline) .outline-task .session-symbol.running{animation:none}}
+:is(#rail-room,#rail-outline) .outline-copy{min-width:0;flex:1}
+:is(#rail-room,#rail-outline) .outline-task-heading{display:flex;align-items:center;gap:5px;min-width:0}
+:is(#rail-room,#rail-outline) .outline-task-heading strong{display:block;min-width:0;flex:1;font-size:12px;font-weight:600;line-height:1.6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+:is(#rail-room,#rail-outline) .task-number{font-size:10.5px;font-weight:500;color:var(--soft);margin-right:3px;background:none;padding:0}
+:is(#rail-room,#rail-outline) .outline-task small.task-description{display:block;font-size:11px;line-height:1.6;margin-top:4px;color:var(--soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+:is(#rail-room,#rail-outline) .outline-state-badge{display:inline-flex;align-items:center;flex:none;font-size:10px;line-height:15px;padding:1px 4px;border-radius:4px;background:var(--fill);color:var(--soft);white-space:nowrap}
+:is(#rail-room,#rail-outline) .outline-state-badge[data-state="running"],:is(#rail-room,#rail-outline) .outline-state-badge[data-state="completed"]{background:var(--ok-bg);color:var(--ok)}
+:is(#rail-room,#rail-outline) .outline-state-badge[data-state="waiting"]{background:var(--warn-bg);color:var(--warn)}
+:is(#rail-room,#rail-outline) .outline-state-badge[data-state="error"]{background:var(--err-bg);color:var(--err)}
+:is(#rail-room,#rail-outline) .outline-open-icon{flex:none;color:var(--soft);display:block;margin-top:0}
+:is(#rail-room,#rail-outline) .outline-task:hover .outline-open-icon,:is(#rail-room,#rail-outline) .outline-task[aria-pressed="true"] .outline-open-icon{color:var(--accent-text)}
 
 /* GitHub #676: the run screen's top area is the Workspace screen's (same padding, a 32px title row with the Goal list, people and a status pill, then the stepper). */
 #run-screen .center{padding:16px 40px 0;background:var(--surface);overflow:hidden}
-#run-screen .goal-bar{align-items:center;height:32px;min-height:32px;flex:none;margin:0 0 52px;gap:8px}
+#run-screen .goal-bar{align-items:center;height:32px;min-height:32px;flex:none;margin:0 0 4px;gap:8px}
 #run-screen .goal-bar h1{font-size:17px;font-weight:650;line-height:1.4;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.2px}
 #run-pill{flex:none;font-size:11px;font-weight:600;padding:3px 8px;border-radius:4px}
 
@@ -57,3 +57,24 @@
 #rail-room .gates-nav[hidden]{display:none}
 #run-screen .composer-bottom .note{text-align:left}
 #rail-room #sessions .session::after{display:none}
+/* The target now reads in the note beside the buttons; the label keeps it for assistive technology only. */
+#run-screen .composer label #feedback-target{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+#run-screen .composer-bottom #job-state{flex:none}
+/* GitHub #684: a pending tool request is decided in the card footer, in place of the direction field. */
+#run-screen .tool-decision{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:14px}
+#run-screen .tool-decision[hidden]{display:none}
+#run-screen .tool-decision .note{flex:1 1 160px;font-size:12px;line-height:1.5;margin-right:auto}
+#run-screen .tool-decision button{font-size:13px;line-height:normal;padding:8px 13px;border-radius:6px}
+#run-screen .task-notice-raw{margin-top:8px}
+#run-screen .task-notice-raw summary{cursor:pointer;font-size:12px}
+#run-screen .tool-decision button.quiet{background:transparent}
+/* GitHub #689: the approval-waiting card shows the summary and a footer; the tabs and the direction field wait behind it. */
+#run-screen #run-goal-info{height:36px;min-height:36px;max-height:36px;flex:none;display:flex;align-items:center;gap:12px;margin-bottom:12px}
+#run-screen #run-goal-info .goal-info-content{flex:1;min-width:0;display:flex;align-items:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:12px;line-height:normal;color:var(--soft)}
+#run-screen .room-card.review-only :is(.view-tabs,.view,.composer,#task-status){display:none}
+#run-screen .room-card.revising :is(.view-tabs,.view){display:none}
+#run-screen .review-footer{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:14px}
+#run-screen .review-footer[hidden]{display:none}
+#run-screen .review-footer .note{flex:1 1 160px;font-size:12px;line-height:1.5;margin-right:auto}
+#run-screen .review-footer button{font-size:13px;line-height:normal;padding:8px 13px;border-radius:6px}
+#run-screen .review-footer button.quiet{background:transparent}

@@ -96,7 +96,10 @@ fn session_status_is_compact_and_never_leaves_the_rail() {
         row.contains("'session-symbol'") && row.contains("outline-state-badge"),
         "icon and badge kept"
     );
-    let rule = block(RUN_CSS, "#rail-room .outline-state-badge");
+    let rule = block(
+        RUN_CSS,
+        ":is(#rail-room,#rail-outline) .outline-state-badge",
+    );
     assert!(
         rule.contains("flex:none") && rule.contains("white-space:nowrap"),
         "{rule}"

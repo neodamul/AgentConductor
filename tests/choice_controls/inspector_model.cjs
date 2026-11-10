@@ -4,7 +4,7 @@ const fs=require('fs'),path=require('path'),os=require('os'),{execFileSync}=requ
 const {findChrome,launch}=require('../design_parity/cdp.cjs');const chrome=findChrome();if(!chrome){console.log('inspector model skipped: no Chrome');process.exit(77);}
 const root=path.resolve(__dirname,'../..'),dir=fs.mkdtempSync(path.join(os.tmpdir(),'ac-inspector-model-'));
 execFileSync('node',[path.join(root,'tests/ui_sim/build.cjs'),root,path.join(dir,'app.html')]);
-const preset=`SIM.home.run_available=true;SIM.home.run_state='running';SIM.room.report.state='waiting_approval';SIM.room.report.plan.agents.forEach(a=>a.catalog=null);SIM.room.report.tasks.forEach(t=>t.status='pending');SIM.reply.action=p=>({accepted:true,kind:p.action.kind,message:'ok'});window.inspectorFixture=true;`;
+const preset=`SIM.home.run_available=true;SIM.home.run_state='running';SIM.room.report.state='ready';SIM.room.report.plan.agents.forEach(a=>a.catalog=null);SIM.room.report.tasks.forEach(t=>t.status='pending');SIM.reply.action=p=>({accepted:true,kind:p.action.kind,message:'ok'});window.inspectorFixture=true;`;
 (async()=>{try{for(const width of [840,1280]){const browser=await launch(chrome,{width,height:960});try{for(const theme of ['light','dark']){
  await browser.goto(pathToFileURL(path.join(dir,'app.html')).href+'?run='+theme+width);
  await browser.eval("window.__beforePreset=true");

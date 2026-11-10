@@ -127,8 +127,9 @@ module.exports = [
     mock: { url: '?theme=light#3', selector: `.main>.card[data-show="b"]${mock}` }, app: { setup: STEPS_ENABLED, run: "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click()", selector: app } })),
   // #597: the Room's verify card (mock view #6 = "f"): coordinator view in the verify stage.
   ...(() => {
-    const setup = STEPS_ENABLED + "SIM.room.report.state='waiting_approval';SIM.room.report.tasks.forEach(t=>t.status='completed');SIM.room.report.tests=[{task:'task-1',exit_code:0,timed_out:false,output:''}];";
-    const run = "document.querySelectorAll('#start-step-tabs [role=tab]')[4].click(); document.querySelector('.final-step .session-choice').click()";
+    // GitHub #689: an approval-waiting run shows the summary card; the verify rows belong to the run that is still verifying.
+    const setup = STEPS_ENABLED + "SIM.room.report.state='running';SIM.room.report.tasks.forEach(t=>t.status='completed');SIM.room.report.tests=[{task:'task-1',exit_code:0,timed_out:false,output:''}];";
+    const run = "document.querySelectorAll('#start-step-tabs [role=tab]')[4].click(); (async () => { for (let i = 0; i < 200 && !document.querySelector('.final-step .session-choice'); i++) await new Promise(r => setTimeout(r, 50)); document.querySelector('.final-step .session-choice').click(); })()";
     const card = '.main>.card[data-show="f"]';
     return [['eyebrow', ' .cardhead .eyebrow', '.room-card .eyebrow', ['fontSize', 'fontWeight', 'color'], ['height', 'fontSize', 'fontWeight', 'color']],
       ['title', ' .cardhead h2', '.room-card #selected-agent', ['fontSize', 'fontWeight', 'color'], ['fontSize', 'fontWeight', 'color']],
@@ -141,7 +142,7 @@ module.exports = [
   // #598: the Room's review card (mock view #7 = "c"): coordinator view once the run waits for approval.
   ...(() => {
     const setup = STEPS_ENABLED + "SIM.room.report.state='waiting_approval';SIM.room.report.tasks.forEach(t=>t.status='completed');SIM.room.report.candidate={commit:'abcdef1234567890'};SIM.room.report.tests=[{task:'task-1',exit_code:0,timed_out:false,output:''}];SIM.reply.evidence=()=>({revision:'x1',report:SIM.room.report,truncated:false,test_output:[{task:'task-1',exit_code:0,timed_out:false,stdout:'',stderr:''}],diff:'diff --git a/src/auth/refresh.rs b/src/auth/refresh.rs\\n--- a/src/auth/refresh.rs\\n+++ b/src/auth/refresh.rs\\n@@ -1 +1 @@\\n-a\\n+b\\n+c\\ndiff --git a/docs/security.md b/docs/security.md\\n+++ b/docs/security.md\\n+x\\n'});";
-    const run = "document.querySelectorAll('#start-step-tabs [role=tab]')[5].click(); document.querySelector('.final-step .session-choice').click()";
+    const run = "document.querySelectorAll('#start-step-tabs [role=tab]')[5].click(); (async () => { for (let i = 0; i < 200 && !document.querySelector('.final-step .session-choice'); i++) await new Promise(r => setTimeout(r, 50)); document.querySelector('.final-step .session-choice').click(); })()";
     const card = '.main>.card[data-show="c"]';
     return [['eyebrow', ' .cardhead .eyebrow', '.room-card .eyebrow', ['fontSize', 'fontWeight', 'color'], ['height', 'fontSize', 'fontWeight', 'color']],
       ['title', ' .cardhead h2', '.room-card #selected-agent', ['fontSize', 'fontWeight', 'color'], ['fontSize', 'fontWeight', 'color']],
@@ -153,6 +154,20 @@ module.exports = [
       ['file-add', ' .files .add', '.review-summary .add', ['color', 'backgroundColor', 'borderTopLeftRadius', 'paddingTop', 'fontSize'], ['height', 'color', 'backgroundColor', 'borderTopLeftRadius', 'paddingTop', 'fontSize']],
     ].map(([name, mock, app, props, keys]) => ({ name: `review-card-${name}`, props, keys, pixel: false,
       mock: { url: '?theme=light#7', selector: card + mock }, app: { setup, run, selector: app } }));
+  })(),
+  // GitHub #689: the approval footer and the heading line under the title (mock view #7 = "c").
+  ...(() => {
+    const setup = STEPS_ENABLED + "SIM.room.report.state='waiting_approval';SIM.room.report.tasks.forEach(t=>t.status='completed');SIM.room.report.candidate={commit:'abcdef1234567890'};SIM.room.report.tests=[{task:'task-1',exit_code:0,timed_out:false,output:''}];SIM.reply.evidence=()=>({revision:'x1',report:SIM.room.report,truncated:false,test_output:[],diff:''});";
+    const run = "document.querySelectorAll('#start-step-tabs [role=tab]')[5].click(); (async () => { for (let i = 0; i < 200 && !document.querySelector('.final-step .session-choice'); i++) await new Promise(r => setTimeout(r, 50)); document.querySelector('.final-step .session-choice').click(); })()";
+    const card = '.main>.card[data-show="c"]';
+    return [['note', ' .actions .note', '#review-footer .note', ['fontSize', 'color'], ['fontSize', 'color']],
+      ['deny', ' .actions .btn.q', '#review-deny', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius'], ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius']],
+      ['primary', ' .actions .btn.p', '#review-primary', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color'], ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color']],
+    ].map(([name, mock, app, props, keys]) => ({ name: `review-footer-${name}`, props, keys, pixel: false,
+      mock: { url: '?theme=light#7', selector: card + mock }, app: { setup, run, selector: app } }))
+      .concat([{ name: 'review-heading-info', props: ['fontSize', 'color'], keys: ['height', 'fontSize', 'color'], pixel: false,
+        mock: { url: '?theme=light#7', selector: '.runmeta[data-show="c"] span' }, app: { setup, run, selector: '#run-goal-info .goal-info-content' } },
+      { name: 'review-card-has-no-tabs', assert: "(() => { const c = document.querySelector('#run-screen .room-card'); return c.classList.contains('review-only') && getComputedStyle(c.querySelector('.view-tabs')).display === 'none' && !document.getElementById('review-footer').hidden; })()", app: { setup, run } }]);
   })(),
   // #599: the task card's stop reason (mock views #5 "g" = tool request wait, #6 "h" = permission denied).
   ...[['wait', 4, 'g', 'warn-bg', ".task-notice.warn", "SIM.room.tool_requests=[{id:'tr1',status:'pending',context:{task:'task-1'},request:{tool:'Bash',input:{command:'npm install jsonwebtoken@9'}}}];"],
@@ -275,6 +290,53 @@ module.exports = [
   ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
     mock: { url: '?theme=light#3', selector: mock },
     app: { setup: STEPS_ENABLED, run: "document.getElementById('start-tab-tasks').click()", selector: app } })),
+  // GitHub #685: the Agent roles step against the mock's step 2.
+  ...[
+    ['roles-header', ['fontSize', 'color', 'paddingTop', 'paddingLeft', 'borderTopWidth'], ['height', 'fontSize', 'color', 'paddingTop', 'paddingLeft', 'borderTopWidth'], '.role-choice-header', '#start-roles thead tr'],
+    ['roles-row', ['paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopLeftRadius', 'marginTop'], ['height', 'paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopLeftRadius', 'marginTop'], '.role-choice-row', '#start-roles tbody tr:not(.role-planning)'],
+    ['roles-name', ['fontSize', 'fontWeight'], ['fontSize', 'fontWeight'], '.role-choice-row .t', '#start-roles tbody tr:not(.role-planning) td:first-child'],
+    ['roles-title', ['fontSize', 'fontWeight'], ['height', 'fontSize', 'fontWeight'], '.main>.card[data-show="i"] h2, .card[data-show="i"] h2', '#start-roles-title'],
+  ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
+    mock: { url: '?theme=light#1', selector: mock },
+    app: { run: "document.getElementById('start-tab-team').click()", selector: app } })),
+  // GitHub #686: the plan-review rail (mock step 3) is the same outline as the run rail.
+  ...[
+    ['plan-rail-head', ['fontSize', 'fontWeight'], ['height', 'fontSize', 'fontWeight'], '#rail-tasks-panel .railhead h2', '#rail-outline h2'],
+    ['plan-rail-current', ['fontSize', 'color'], ['height', 'fontSize', 'color'], '#outline-total', '#rail-outline .sub'],
+    ['plan-rail-status', ['fontSize', 'color', 'paddingTop', 'paddingBottom', 'borderBottomWidth'], ['height', 'fontSize', 'color', 'paddingTop', 'paddingBottom', 'borderBottomWidth'], '.outline-run-status', '#rail-outline .outline-run-status'],
+    ['plan-rail-phase', ['fontSize', 'fontWeight', 'paddingTop', 'borderBottomWidth'], ['height', 'fontSize', 'fontWeight', 'paddingTop', 'borderBottomWidth'], '.phase-tree summary', '#rail-outline .phase-tree summary'],
+    ['plan-rail-task', ['paddingTop', 'paddingLeft', 'borderBottomWidth', 'borderTopLeftRadius'], ['width', 'paddingTop', 'paddingLeft', 'borderBottomWidth', 'borderTopLeftRadius'], '.outline-task', '#rail-outline .outline-task'],
+    ['plan-rail-note', ['fontSize', 'color', 'paddingTop', 'borderTopWidth'], ['fontSize', 'color', 'paddingTop', 'borderTopWidth'], '.outline-note', '#rail-outline .outline-note'],
+  ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
+    mock: { url: '?theme=light#2', selector: mock },
+    app: { setup: "SIM.home.proposal=SIM.proposal('ready');", run: "document.getElementById('start-tab-review').click()", selector: app } })),
+  // GitHub #685: the roles step footer (mock step 2 = "i").
+  ...[
+    ['roles-footer-note', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="i"] .actions .note', '#start-panel-team .startup-actions .note'],
+    ['roles-footer-add', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius'], ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius'], '.card[data-show="i"] .actions .btn.q', '#start-roles-suggest'],
+    ['roles-footer-next', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color'], ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color'], '.card[data-show="i"] .actions .btn.p', '#start-roles-next'],
+  ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
+    mock: { url: '?theme=light#1', selector: mock },
+    app: { setup: STEPS_ENABLED, run: "document.getElementById('start-tab-team').click()", selector: app } })),
+  // GitHub #686: the plan card's position line and footer (mock step 3 = "a").
+  ...[
+    ['plan-position', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="a"] .phase span:first-child', '#start-plan-summary .plan-position'],
+    ['plan-footer-note', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="a"] .actions .note', '#start-panel-review .startup-review-footer .note'],
+    ['plan-regenerate', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius'], ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius'], '.card[data-show="a"] .actions .btn.q', '#start-regenerate'],
+    ['plan-approve', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color'], ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color'], '.card[data-show="a"] .actions .btn.p', '#start-run'],
+  ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
+    mock: { url: '?theme=light#2', selector: mock },
+    app: { setup: "SIM.home.proposal=SIM.proposal('ready');", run: "document.getElementById('start-tab-review').click()", selector: app } })),
+  // GitHub #684: a pending tool request is decided in the card footer (mock step 5).
+  ...[
+    ['tool-decision-note', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="g"] .actions .note', '#tool-decision-note'],
+    ['tool-decision-deny', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor'], ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor'], '.card[data-show="g"] .btn.q', '#tool-decision-deny'],
+    ['tool-decision-allow', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color'], ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color'], '.card[data-show="g"] .btn.p', '#tool-decision-allow'],
+  ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
+    mock: { url: '?theme=light#4', selector: mock },
+    app: { setup: STEPS_ENABLED + "SIM.room.tool_requests=[{id:'tr1',status:'pending',created_at:Math.floor(Date.now()/1000),context:{task:'task-1'},request:{tool:'Bash',input:{command:'npm install jsonwebtoken@9'}}}];", run: "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click()", selector: app } })),
+  { name: 'tool-decision-replaces-direction', assert: "(() => !document.getElementById('tool-decision').hidden && document.querySelector('#run-screen .composer').hidden && !document.querySelector('dialog[open]'))()",
+    app: { setup: STEPS_ENABLED + "SIM.room.tool_requests=[{id:'tr1',status:'pending',created_at:Math.floor(Date.now()/1000),context:{task:'task-1'},request:{tool:'Bash',input:{command:'npm install jsonwebtoken@9'}}}];", run: "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click()" } },
   { name: 'startup-inspector-closed', assert: "document.getElementById('start-inspector').getBoundingClientRect().width===0", app: {} },
   { name: 'startup-inspector-docked', assert: "(()=>{const r=document.querySelector('#start-inspector').getBoundingClientRect();return Math.round(r.right)===innerWidth&&r.top<200&&r.height>300})()",
     app: { run: "document.getElementById('start-inspector-toggle').click()" } },
