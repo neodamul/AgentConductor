@@ -45,33 +45,53 @@ impl Controller {
         )
     }
     pub(super) fn poll(&self) -> Result<serde_json::Value, String> {
-        let mut slot = self.lock_job()?;
-        let Some(job) = slot.as_mut() else {
-            return Ok(serde_json::Value::Null);
-        };
-        if !job.finished
-            && let Some(status) = job.child.try_wait().map_err(|e| e.to_string())?
-        {
-            let code = status.code();
-            job.exit = code;
-            job.finished = true;
-            job.owner.phase = "terminal".into();
-            job.owner.exit_code = code;
-            #[cfg(unix)]
+        // GitHub #694: the job slot is held only for reading and updating the in-memory job; the SQLite write of a
+        // finished job happens after the slot is released, so a busy run database cannot park every UI request.
+        let (value, finished_now) = {
+            let mut slot = self.lock_job()?;
+            let Some(job) = slot.as_mut() else {
+                return Ok(serde_json::Value::Null);
+            };
+            let mut finished_now = None;
+            if !job.finished
+                && let Some(status) = job.child.try_wait().map_err(|e| e.to_string())?
             {
-                use std::os::unix::process::ExitStatusExt;
-                job.owner.termination_signal = status.signal();
+                let code = status.code();
+                job.exit = code;
+                job.finished = true;
+                job.owner.phase = "terminal".into();
+                job.owner.exit_code = code;
+                #[cfg(unix)]
+                {
+                    use std::os::unix::process::ExitStatusExt;
+                    job.owner.termination_signal = status.signal();
+                }
+                record_owner(&job.logs, &job.owner)?;
+                finished_now = Some((
+                    serde_json::json!({"id":job.id,"kind":job.label,"exit_code":code,"termination_signal":job.owner.termination_signal}),
+                    crate::ui::messages::render(
+                        "native.ui_action_finished_with_exit_signal",
+                        &[
+                            ("value1", &job.label.to_string()),
+                            ("code", &format!("{:?}", code)),
+                            ("value2", &format!("{:?}", job.owner.termination_signal)),
+                        ],
+                    ),
+                ));
             }
-            record_owner(&job.logs, &job.owner)?;
+            (
+                serde_json::json!({"id":job.id,"kind":job.label,"started_ms":job.started_ms,"state":if !job.finished {"running"} else if job.exit==Some(0) {"completed"} else {"failed"},"exit_code":job.exit,"termination_signal":job.owner.termination_signal,"error":if job.finished && job.exit!=Some(0){tail(&job.logs.join("stderr.log"),4096)?}else{String::new()}}),
+                finished_now,
+            )
+        };
+        if let Some((payload, message)) = finished_now {
             Store::open(self.dir.join("state.sqlite"))?.record(
                 "ui_action_result",
-                &serde_json::json!({"id":job.id,"kind":job.label,"exit_code":code,"termination_signal":job.owner.termination_signal}),
-                &crate::ui::messages::render("native.ui_action_finished_with_exit_signal", &[("value1", &job.label.to_string()), ("code", &format!("{:?}", code)), ("value2", &format!("{:?}", job.owner.termination_signal))]),
+                &payload,
+                &message,
             )?;
         }
-        Ok(
-            serde_json::json!({"id":job.id,"kind":job.label,"started_ms":job.started_ms,"state":if !job.finished {"running"} else if job.exit==Some(0) {"completed"} else {"failed"},"exit_code":job.exit,"termination_signal":job.owner.termination_signal,"error":if job.finished && job.exit!=Some(0){tail(&job.logs.join("stderr.log"),4096)?}else{String::new()}}),
-        )
+        Ok(value)
     }
     pub(super) fn action(&self, request: ActionRequest) -> Result<serde_json::Value, String> {
         if let Action::Stop { reason } = &request.action {
