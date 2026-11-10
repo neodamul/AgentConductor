@@ -299,7 +299,7 @@ impl Controller {
         let events=events.into_iter().rev().take(100).map(|e|{
             if usage.is_null() {usage=e.pointer("/payload/usage").or_else(||e.pointer("/payload/message/usage")).cloned().unwrap_or(serde_json::Value::Null);}
             // DD-112: structured payload for the CLI-like Activity view, long strings clipped.
-            serde_json::json!({"seq":e["seq"],"kind":e["kind"],"session_id":e["session_id"],"raw_offset":e["raw_offset"],"payload":clip_strings(&e["payload"],4000)})
+            serde_json::json!({"seq":e["seq"],"at":e["at"],"kind":e["kind"],"session_id":e["session_id"],"raw_offset":e["raw_offset"],"payload":clip_strings(&e["payload"],4000)})
         }).collect::<Vec<_>>();
         let logs = task.artifacts.join("process");
         // Tool requests the orchestrator decided for this task, shown in Activity.

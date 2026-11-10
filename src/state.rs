@@ -34,6 +34,8 @@ impl Store {
             CREATE TABLE IF NOT EXISTS documents(key TEXT PRIMARY KEY, value TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS task_events(task TEXT NOT NULL, attempt INTEGER NOT NULL, seq INTEGER NOT NULL,
                 value TEXT NOT NULL, PRIMARY KEY(task,attempt,seq));
+            CREATE TABLE IF NOT EXISTS task_event_times(task TEXT NOT NULL, attempt INTEGER NOT NULL, seq INTEGER NOT NULL,
+                at INTEGER NOT NULL, PRIMARY KEY(task,attempt,seq));
             CREATE TABLE IF NOT EXISTS audit(seq INTEGER PRIMARY KEY AUTOINCREMENT, event TEXT NOT NULL, payload TEXT NOT NULL);
             CREATE TABLE IF NOT EXISTS memory_outbox(id INTEGER PRIMARY KEY, content TEXT NOT NULL, delivered INTEGER NOT NULL DEFAULT 0);
             CREATE VIRTUAL TABLE IF NOT EXISTS memory_search USING fts5(memory_id UNINDEXED, content);").map_err(|e| e.to_string())?;

@@ -83,3 +83,5 @@
    decisions are footers in the card, Resume sits in the composer; the result popup opens from a button beside the pill. */
 #rail-room .gates-nav{display:none}
 #run-screen .goal-bar #show-result{font-size:13px;padding:6px 12px;border-radius:6px}
+/* The rail's Phase heading is one line, like the mock's "1. 토큰 회전"; the full name stays in the title. */
+:is(#rail-room,#rail-outline) .phase-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

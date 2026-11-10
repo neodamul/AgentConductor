@@ -59,3 +59,20 @@ fn a_tool_start_is_recorded_and_its_result_clears_it() {
     drop(store);
     std::fs::remove_dir_all(dir).unwrap();
 }
+
+/// GitHub #732: a stored task event comes back with the time it was read, and replaying it is still accepted.
+#[test]
+fn task_events_carry_the_time_they_were_read() {
+    let dir = std::env::temp_dir().join(format!("ac-event-time-{}", std::process::id()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let mut store = Store::open(dir.join("state.sqlite")).unwrap();
+    let e = event(1, json!({"type":"text","part":{"text":"hi"}}));
+    store
+        .append_task_events("t", 1, std::slice::from_ref(&e))
+        .unwrap();
+    store.append_task_events("t", 1, &[e]).unwrap();
+    let events = store.task_events("t", 1).unwrap();
+    assert_eq!(events.len(), 1);
+    assert!(events[0]["at"].as_i64().unwrap() > 1_700_000_000_000);
+    std::fs::remove_dir_all(dir).unwrap();
+}

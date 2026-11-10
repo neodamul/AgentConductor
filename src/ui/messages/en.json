@@ -1418,5 +1418,7 @@
   "room.access_network": "network access",
   "room.access_file_write": "file write",
   "room.verify_log": "Log",
-  "room.verify_seconds": "{value1}s"
+  "room.verify_seconds": "{value1}s",
+  "startup.goal_list_empty": "No saved Goal yet in this Workspace.",
+  "startup.goal_list_new": "+ New Goal"
 }

@@ -1418,5 +1418,7 @@
   "room.access_network": "네트워크 접근",
   "room.access_file_write": "파일 쓰기",
   "room.verify_log": "로그",
-  "room.verify_seconds": "{value1}초"
+  "room.verify_seconds": "{value1}초",
+  "startup.goal_list_empty": "이 Workspace에 저장된 Goal이 아직 없습니다.",
+  "startup.goal_list_new": "+ 새 Goal"
 }
