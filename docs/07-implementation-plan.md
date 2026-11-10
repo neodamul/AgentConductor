@@ -3635,6 +3635,14 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### UI requests never wait forever on the job slot — GitHub #691
+
+- [x] Plan: `Controller::lock_job` takes the job slot through `bounded_lock::lock_within` (`try_lock` with a three-second deadline) (poll, action and the automatic resume use it); `busy()` keeps counting an unreadable slot as busy; the goal-change check clones the open controller and releases the room's lock before `busy()`.
+- [x] Verify: `tests/bounded_lock.rs` (a held lock fails after the deadline, a poisoned lock is reported); `source_layout`; the root cause of the frozen window (which thread held the slot) is still open on #691.
+- [ ] Completed: merged on `main`; relates to #691 (stays open until the holder is found).
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### About dialog uses the app icon and the transparent Codex mark — GitHub #656
 
 - [x] Plan: `about.html` embeds the titlebar's app icon (`img.about-mark`, 44px) in place of the text tile; `about.css` hides the logos' `path[fill="#fff"]` square like the agent card does; the approved mock (`preview.html`/`preview.css`) and its manifest hashes follow.
@@ -3722,13 +3730,5 @@ Trace: R-210 / UC-202 / DD-222.
 - [x] Plan: `#rail-room` is the mock's outline (head, "Current Phase/Task", "tasks done" and elapsed time from the first task start, the Phase with its description, `outline-task` rows with the agent mark, `T1 summary`, a status badge, the owned paths and a chevron, the hint); `room_rail.js` holds the rail helpers; the goal bar is the Workspace screen's title row with the Goal list, people and a run status pill; the run banner is hidden unless it carries an error, a next step, an action or an attention line; the composer is one direction field above a row of stop, resume, recover (hidden while disabled), the note and Send; the review / tool request shortcuts show only when they apply; `run_screen.css` holds the run rules.
 - [x] Verify: parity entries `run-rail-head`, `run-rail-current`, `run-rail-status`, `run-rail-phase`, `run-rail-task`, `run-rail-task-title`, `run-rail-note`, `run-heading` and the updated `task-avatar`, `task-status-tag`, `room-send-button`, `room-stop-button`, `type-scale-room` (247 elements, 0 differences in both themes at 840 and 1280); every Node UI test and the Rust tests that read the UI sources pass.
 - [ ] Completed: merged on `main`; closes #675 and #676.
-
-Trace: R-210 / UC-202 / DD-222.
-
-### UI requests never wait forever on the job slot — GitHub #691
-
-- [x] Plan: `Controller::lock_job` takes the job slot through `bounded_lock::lock_within` (`try_lock` with a three-second deadline) (poll, action and the automatic resume use it); `busy()` keeps counting an unreadable slot as busy; the goal-change check clones the open controller and releases the room's lock before `busy()`.
-- [x] Verify: `tests/bounded_lock.rs` (a held lock fails after the deadline, a poisoned lock is reported); `source_layout`; the root cause of the frozen window (which thread held the slot) is still open on #691.
-- [ ] Completed: merged on `main`; relates to #691 (stays open until the holder is found).
 
 Trace: R-210 / UC-202 / DD-222.

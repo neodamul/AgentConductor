@@ -6,12 +6,12 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
-- A UI request no longer waits forever for the run's job slot: after three seconds it fails with "another UI action is still running" instead of parking all eight window requests behind it (the window then showed a stale *waiting for usage limit* and *native controller is busy*), and the goal-change check releases the room's controller lock before it polls the job (#691).
 - Optimize prompt saves the workspace draft first, so a coordinator chosen on the screen is used instead of failing with "register an agent CLI … before previewing sources"; without a coordinator it says so and opens the Workspace step (#680).
 - The run screens (steps 4–6) follow the approved design's layout: the left rail is the *Phases and tasks* outline (current Phase and Task, tasks done, elapsed time, the Phase with its task rows and a hint) instead of the session list; the top area is the goal title with the Goal list, people button and one status pill (the run banner now shows only when it has something to decide, fix or resume, and the dead refresh button is gone); the card ends with one direction field and a row with stop / resume / recover, the note and Send; the human-review shortcuts appear only when there is a candidate, a tool request or a result (#675, #676).
 - A completed step in the stepper shows a check mark in place of its number, and the task card's second tab is named "Changes & tests" (Korean "변경과 테스트") as in the approved design (#678).
 - The titlebar no longer has the extra "← Workspace" / "← Back to run" buttons the approved design does not have; the stepper moves between the run and the setup steps (#677).
 - The titlebar shows the approved design's action row on the workspace, roles and plan screens too: the download-arrow update icon is always present (accented when an update exists; it opens the update dialog), then chat, settings and the right panel toggle (#673).
+- A UI request no longer waits forever for the run's job slot: after three seconds it fails with "another UI action is still running" instead of parking all eight window requests behind it (the window then showed a stale *waiting for usage limit* and *native controller is busy*), and the goal-change check releases the room's controller lock before it polls the job (#691).
 - The right task panel is available before a run exists: it starts closed, docks on the right (up to 330px / 35% of the window) without a close button or backdrop, shows the "Create a plan and select a task to see its details." explanation, and opens and closes independently of the left rail (#673).
 
 ## v0.2.0-Beta1
