@@ -3683,3 +3683,11 @@ Trace: R-200 / UC-188 / DD-212.
 
 Trace: R-210 / UC-202 / DD-222.
 
+
+### The titlebar actions and the docked inspector match the approved mock — GitHub #673
+
+- [x] Plan: the update icon (the mock's downward arrow) is always in the titlebar and opens the update dialog, accented when an update exists; the right panel toggle is shown on every screen; before a run a docked `#start-inspector` (closed by default, no close button or backdrop, up to 330px / 35% of the window, the `room.inspector_empty` explanation) opens beside the card and independently of the left rail; once a run is open the same toggle drives the Room inspector.
+- [x] Verify: parity entries `titlebar-update`, `titlebar-inspector-toggle`, `startup-inspector-open` (width, colour, padding, border; both themes, 840 and 1280) and the app-only `startup-inspector-closed` / `startup-inspector-docked` assertions (closed by default; docked at the window's right edge); the update-icon test and every startup Node test pass.
+- [ ] Completed: merged on `main`; closes #673.
+
+Trace: R-210 / UC-202 / DD-222.

@@ -245,4 +245,17 @@ module.exports = [
     mock: { selector: '#coordinator-chat-button' }, app: { selector: '#start-chat-button' } },
   { name: 'titlebar-settings', props: ['borderTopLeftRadius', 'borderTopColor'], keys: ['width', 'height', 'borderTopLeftRadius', 'borderTopColor'], pixel: false,
     mock: { selector: '#settings-button' }, app: { selector: '#start-settings-button' } },
+  // GitHub #673: the update icon and the right-panel toggle are always in the titlebar (update, chat, settings, panel toggle).
+  { name: 'titlebar-update', props: ['borderTopLeftRadius', 'borderTopColor'], keys: ['width', 'height', 'borderTopLeftRadius', 'borderTopColor'], pixel: false,
+    mock: { selector: '#update-button' }, app: { selector: '#start-update-button' } },
+  { name: 'titlebar-inspector-toggle', props: ['borderTopLeftRadius', 'borderTopColor'], keys: ['width', 'height', 'borderTopLeftRadius', 'borderTopColor'], pixel: false,
+    mock: { selector: '#right-panel-toggle' }, app: { selector: '#start-inspector-toggle' } },
+  // The docked task inspector is available before any run exists and starts closed, like the mock's.
+  { name: 'startup-inspector-open', props: ['backgroundColor', 'paddingTop', 'paddingLeft', 'borderLeftWidth'], keys: ['width', 'backgroundColor', 'paddingTop', 'paddingLeft', 'borderLeftWidth'], pixel: false,
+    mock: { url: '?theme=light#0', run: STEP_REFERENCE_WIDTH + ";document.getElementById('right-panel-toggle').click()", selector: '#task-inspector-panel' },
+    app: { run: "document.getElementById('start-inspector-toggle').click()", selector: '#start-inspector' } },
+  // Closed by default, and docked at the right edge of the window once opened (not in the rail or below the card).
+  { name: 'startup-inspector-closed', assert: "document.getElementById('start-inspector').getBoundingClientRect().width===0", app: {} },
+  { name: 'startup-inspector-docked', assert: "(()=>{const r=document.querySelector('#start-inspector').getBoundingClientRect();return Math.round(r.right)===innerWidth&&r.top<200&&r.height>300})()",
+    app: { run: "document.getElementById('start-inspector-toggle').click()" } },
 ];
