@@ -27,6 +27,16 @@ pub(super) async fn drive(
             (now() / 1000) as i64,
         )?;
         super::pending_edit::apply(store, &mut report)?;
+        // GitHub #687: a restricted role whose reviewed fallback is already due moves to it before any later role starts, so the plan
+        // order holds. The transfer needs every worker absent, so it happens only while nothing runs (always true before the first launch).
+        if jobs.is_empty()
+            && !dir.join("stop.request").exists()
+            && !report.tasks.iter().any(|t| t.status == "stopped")
+            && apply_fallbacks(&mut report, dir, store)?
+        {
+            save(store, dir, &report)?;
+            continue;
+        }
         let plan = report.plan.clone();
         let ledger = crate::gates::Ledger::open(&dir.join("state.sqlite"))?;
         let mut exclusive = None;
