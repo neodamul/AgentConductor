@@ -84,6 +84,7 @@ async function visit(browser, side, spec) {
       // captured alone: lifted to the same fixed spot on a white page, at its own measured size, with everything else hidden.
       for (let attempt = 0; attempt < 5; attempt++) {
         await browser.eval(`(() => { const e = [...document.querySelectorAll(${JSON.stringify(s.selector)})].filter(x => x.getBoundingClientRect().width > 0)[${s.index || 0}];
+          if (!e) return; // the element re-rendered after it was measured: the capture below finds no target and retries
           if (${x.clone ? 'true' : 'false'}) {
             // GitHub #482: an element that Windows rasterises differently inside the two pages is compared as a copy with its
             // computed styles inlined, so both sides draw from the same context.
