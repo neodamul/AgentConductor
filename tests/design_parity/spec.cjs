@@ -249,6 +249,13 @@ module.exports = [
   ].map(({ mock, app, ...rest }) => ({ ...rest, pixel: false,
     mock: { url: '?theme=light#0', run: "document.getElementById('app-menu-button').click()", selector: mock },
     app: { run: "(async () => { document.getElementById('start-app-menu').click(); await new Promise(r => setTimeout(r, 900)); })()", selector: app } })),
+  // GitHub #751: an open group shows a submenu popup with the same box and rows as the mock.
+  ...[
+    { name: 'app-submenu-box', props: ['borderTopLeftRadius', 'paddingTop', 'borderTopWidth', 'backgroundColor'], keys: ['borderTopLeftRadius', 'paddingTop', 'borderTopWidth', 'backgroundColor'], mock: '#app-menu .submenu:not([hidden])', app: '#start-workspace-list .submenu:not([hidden])' },
+    { name: 'app-submenu-item', props: ['borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'fontSize', 'color'], keys: ['height', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'fontSize', 'color'], mock: '#app-menu .submenu:not([hidden]) button', app: '#start-workspace-list .submenu:not([hidden]) button' },
+  ].map(({ mock, app, ...rest }) => ({ ...rest, pixel: false,
+    mock: { url: '?theme=light#0', run: "document.getElementById('app-menu-button').click(); document.querySelector('#app-menu .menu-parent').click()", selector: mock },
+    app: { run: "(async () => { document.getElementById('start-app-menu').click(); await new Promise(r => setTimeout(r, 900)); document.querySelector('#start-workspace-list .menu-parent').click(); })()", selector: app } })),
   // #579: every step card's footer buttons share one size (34px, 8px/13px padding, 6px radius, 13px text).
   ...[[0, 'j', 0, 'workspace'], [1, 'i', 1, 'roles'], [2, 'a', 2, 'plan']].flatMap(([hash, show, tab, name]) => [['p', 'primary'], ['q', 'quiet']].map(([kind, appClass]) => (
     { name: `footer-button-${kind}-${name}`, props: ['paddingTop', 'paddingLeft', 'fontSize', 'borderTopLeftRadius'], keys: ['height', 'paddingTop', 'paddingLeft', 'fontSize', 'borderTopLeftRadius'], pixel: false,

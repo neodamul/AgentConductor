@@ -202,3 +202,4 @@ document.getElementById('menu-add-agent').onclick=()=>{closeAppMenu();document.g
 document.getElementById('menu-view-rail').onclick=()=>{closeAppMenu();document.getElementById('sidebar-toggle').click();};
 document.getElementById('menu-view-inspector').onclick=()=>{closeAppMenu();document.getElementById('right-panel-toggle').click();};
 document.getElementById('menu-update').onclick=()=>{closeAppMenu();document.getElementById('update-button').click();};
+['menu-new-workspace','menu-open-workspace','menu-manual','menu-tools'].forEach(id=>{document.getElementById(id).onclick=closeAppMenu;});
