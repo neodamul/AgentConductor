@@ -265,14 +265,13 @@ impl Room {
                 None
             };
             if let Some(surface) = self.surface()? {
-                if changing_goal
-                    && self
-                        .controller
-                        .lock()
-                        .map_err(|_| messages::text("native.surface_state_poisoned"))?
-                        .as_ref()
-                        .is_some_and(|run| run.busy())
-                {
+                // GitHub #691: the room's controller lock is released before the (possibly slow) job poll.
+                let open_run = self
+                    .controller
+                    .lock()
+                    .map_err(|_| messages::text("native.surface_state_poisoned"))?
+                    .clone();
+                if changing_goal && open_run.is_some_and(|run| run.busy()) {
                     return Err(
                         messages::text("native.finish_or_stop_run_before_changing_goals").into(),
                     );
