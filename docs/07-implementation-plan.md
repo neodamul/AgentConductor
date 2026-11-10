@@ -3667,6 +3667,14 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### The Claude usage probe resolves its executable — GitHub #696
+
+- [x] Plan: `src/quota/terminal.rs` resolves `profile.executable` with `executable::resolve` (Homebrew, `~/.local/bin`, …) and passes the absolute path to `/usr/bin/script`, which otherwise searched the minimal PATH of an app opened from Finder (`script: claude: No such file or directory`, shown as "Claude closed before reporting quota").
+- [x] Verify: `tests/quota_resolves_claude.rs`; the failure was read from the run's `stdout.terminal` and the app's PATH (`/usr/bin:/bin:/usr/sbin:/sbin`).
+- [ ] Completed: merged on `main`; closes #696.
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### English agent card tool row stays on one line — GitHub #654
 
 - [x] Plan: `html[lang=en]` rules in `startup.css` trim the tool buttons' side padding so the row keeps one line at natural size (Korean metrics stay as approved); the card uses `min-height:144px` so many tags add bottom space; the `Alternate → agent` chip switches to `Alt. → agent` only when it cannot fit its row; every UI label uses the display name from `AC_AGENT_NAMES` (`Claude Code`, `Codex`, `OpenCode`) while ids and CLI stay `claude`.
