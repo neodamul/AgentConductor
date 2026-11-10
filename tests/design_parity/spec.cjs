@@ -343,6 +343,21 @@ module.exports = [
   ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
     mock: { url: '?theme=light#2', selector: mock },
     app: { setup: "SIM.home.proposal=SIM.proposal('ready');", run: "document.getElementById('start-tab-review').click()", selector: app } })),
+  // GitHub #724–#726: one-line plan rows, a step card that reaches the status bar and step footers without a divider.
+  ...[
+    ['plan-row', ['paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopLeftRadius', 'marginTop'], ['paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopLeftRadius', 'marginTop'], '.card[data-show="a"] .row', '#start-tasks .startup-task'],
+    ['plan-row-number', ['fontSize', 'fontWeight', 'borderTopLeftRadius'], ['width', 'height', 'fontSize', 'fontWeight', 'borderTopLeftRadius'], '.card[data-show="a"] .row .n', '#start-tasks .task-num'],
+    ['plan-row-title', ['fontSize', 'fontWeight'], ['fontSize', 'fontWeight'], '.card[data-show="a"] .row .t', '#start-tasks .task-oneline'],
+    ['plan-row-detail', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="a"] .row .s', '#start-tasks .task-owner'],
+    ['plan-footer-box', ['paddingTop', 'borderTopWidth'], ['paddingTop', 'borderTopWidth'], '.card[data-show="a"] > .dir', '#start-panel-review .startup-review-footer'],
+    ['plan-regenerate-fill', ['backgroundColor', 'borderTopWidth'], ['backgroundColor', 'borderTopWidth'], '.card[data-show="a"] .actions .btn.q', '#start-regenerate'],
+  ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
+    mock: { url: '?theme=light#2', selector: mock },
+    app: { setup: "SIM.home.proposal=SIM.proposal('ready');", run: "document.getElementById('start-tab-review').click()", selector: app } })),
+  { name: 'step-card-reaches-status-bar', app: {}, assert: "Math.round(document.getElementById('start-panel-workspace').getBoundingClientRect().bottom) === Math.round(document.querySelector('footer.statusbar').getBoundingClientRect().top)" },
+  { name: 'workspace-footer-order', app: {}, assert: "[...document.querySelector('#start-panel-workspace .startup-actions').children].map(c => c.id).join() === 'start-save-note,start-discard,start-save'" },
+  { name: 'roles-no-planning-row', app: { run: "document.getElementById('start-tab-team').click()" }, assert: "!document.querySelector('#start-roles .role-planning') && getComputedStyle(document.getElementById('start-discard')).display === 'none'" },
+  { name: 'plan-edit-tools-wait-for-an-open-row', app: { setup: "SIM.home.proposal=SIM.proposal('ready');", run: "document.getElementById('start-tab-review').click()" }, assert: "['start-task-tools', 'start-edit', 'start-digest'].every(id => getComputedStyle(document.getElementById(id)).display === 'none') && getComputedStyle(document.querySelector('.plan-sources')).display === 'none'" },
   // GitHub #684: a pending tool request is decided in the card footer (mock step 5).
   ...[
     ['tool-decision-note', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="g"] .actions .note', '#tool-decision-note'],
@@ -351,6 +366,15 @@ module.exports = [
   ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
     mock: { url: '?theme=light#4', selector: mock },
     app: { setup: STEPS_ENABLED + "SIM.room.tool_requests=[{id:'tr1',status:'pending',created_at:Math.floor(Date.now()/1000),context:{task:'task-1'},request:{tool:'Bash',input:{command:'npm install jsonwebtoken@9'}}}];", run: "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click()", selector: app } })),
+  // GitHub #727: the denied card's footer (mock step 4 denied = "h").
+  ...[
+    ['denied-footer-note', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="h"] .actions .note', '#denied-footer .note'],
+    ['denied-footer-reassign', ['fontSize', 'paddingTop', 'borderTopLeftRadius'], ['height', 'fontSize', 'paddingTop', 'borderTopLeftRadius'], '.card[data-show="h"] .btn.q', '#denied-reassign'],
+  ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
+    mock: { url: '?theme=light#5', selector: mock },
+    app: { setup: STEPS_ENABLED + "SIM.room.report.tasks[0].status='permission_denied';SIM.room.report.tasks[0].error='permission denied: tool bash';", run: "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click()", selector: app } })),
+  { name: 'denied-footer-replaces-direction', assert: "(() => !document.getElementById('denied-footer').hidden && document.querySelector('#run-screen .composer').hidden)()",
+    app: { setup: STEPS_ENABLED + "SIM.room.report.tasks[0].status='permission_denied';SIM.room.report.tasks[0].error='permission denied: tool bash';", run: "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click()" } },
   { name: 'tool-decision-replaces-direction', assert: "(() => !document.getElementById('tool-decision').hidden && document.querySelector('#run-screen .composer').hidden && !document.querySelector('dialog[open]'))()",
     app: { setup: STEPS_ENABLED + "SIM.room.tool_requests=[{id:'tr1',status:'pending',created_at:Math.floor(Date.now()/1000),context:{task:'task-1'},request:{tool:'Bash',input:{command:'npm install jsonwebtoken@9'}}}];", run: "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click()" } },
   { name: 'startup-inspector-closed', assert: "document.getElementById('start-inspector').getBoundingClientRect().width===0", app: {} },

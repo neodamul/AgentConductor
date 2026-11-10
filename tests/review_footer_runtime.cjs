@@ -23,5 +23,11 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms)),fail=m=>{throw Error(m);};
  await b.eval("document.getElementById('review-primary').click()");
  const reviewing=await b.eval(`({only:${card}.classList.contains('review-only'),tabs:getComputedStyle(${card}.querySelector('.view-tabs')).display,review:!document.getElementById('review-view').hidden})`);
  if(reviewing.only||reviewing.tabs==='none'||!reviewing.review)fail('Review changes did not open the evidence: '+JSON.stringify(reviewing));
+ // the approved state keeps the footer, and its primary button applies the changes in place of the old status box
+ await b.eval("SIM.room.report.state='approved'");
+ await until("document.getElementById('review-primary').dataset.mode==='merge'&&document.getElementById('review-revise').hidden&&document.getElementById('run-banner').hidden",'approved footer applies the changes');
+ await b.eval("SIM.room.report.state='completed'");
+ await until("!document.getElementById('review-footer').hidden&&document.getElementById('review-primary').dataset.mode==='result'&&document.getElementById('review-deny').hidden&&document.getElementById('run-banner').hidden&&getComputedStyle(document.querySelector('#run-screen .composer')).display==='none'",'completed run: Request changes and View the finished result, no status box');
+ if(await b.eval("!!document.getElementById('run-path')||!!document.querySelector('.rail-footer')"))fail('the run path or the rail footer is still on the screen');
  console.log('review footer: summary-only card, request changes opens the direction field, review changes opens the evidence');
 }finally{await b.close();}}finally{fs.rmSync(dir,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1;});

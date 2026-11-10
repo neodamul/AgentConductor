@@ -4,3 +4,29 @@
 #run-screen .room-card.verifying #activity>:is(.event.plan,.coord-board){display:none}
 #run-screen .review-footer button:disabled{opacity:.55;cursor:default}
 #run-screen .composer-bottom #recover[hidden]{display:none}
+/* GitHub #727: the rail is the mock's task outline only (the verify and review cards open from the stepper); a task waiting on a person carries a "!" mark. */
+#rail-room #sessions .final-step{display:none}
+:is(#rail-room,#rail-outline) .outline-task .session-symbol.needs-attention{position:relative;overflow:visible}
+:is(#rail-room,#rail-outline) .outline-task .session-symbol.needs-attention::after{content:'!';position:absolute;top:-5px;right:-5px;width:13px;height:13px;border-radius:50%;font-size:9px;font-weight:700;line-height:13px;text-align:center;color:var(--attention-ink);background:var(--warn)}
+:is(#rail-room,#rail-outline) .outline-task .session-symbol.needs-attention.attn-bad::after{background:var(--err)}
+#run-screen #activity-view .task-notice{margin:0 0 12px}
+/* GitHub #727: activity entries read as the mock's rows (time, title, detail, a rule below), the assigned-task entry included. */
+#run-screen #activity .event{padding:11px 0;border-bottom:1px solid var(--line)}
+#run-screen #activity .event.plan{background:none;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:11px 0}
+#run-screen #activity .event:is(.warning,.error){background:none;border-radius:0;padding:11px 0}
+/* GitHub #728: the review/finish cards and the result popup follow the approved mock. */
+#run-screen .goal-bar #show-result{display:none}
+#run-screen #review-summary .stat .v.ok{color:var(--ok)}
+#run-screen #verify-judgments{display:block;margin:14px 0 8px}
+#run-screen #verify-judgments[hidden]{display:none}
+#verify-stop::before{content:'□ '}
+#verify-wait::before,#review-revise::before,#denied-reassign::before,#review-primary[data-mode="result"]::before{content:'→ '}
+#review-deny::before,#tool-decision-deny::before{content:'× '}
+#tool-decision-allow::before{content:'✓ '}
+#denied-resume::before{content:'▷ '}
+#result-dialog{position:relative}
+#result-dialog .result-x{position:absolute;top:18px;right:18px;background:none;border:0;font-size:20px;line-height:1;padding:4px 8px;color:var(--ink)}
+#result-dialog .result-metrics .result-metric{display:flex;align-items:baseline;gap:8px}
+#result-dialog .result-metrics .result-metric+.result-metric{border-left:1px solid var(--line);padding-left:16px}
+#result-dialog .result-metrics .result-metric span{color:var(--ink)}
+#result-dialog .result-list li{justify-content:flex-start;gap:0}

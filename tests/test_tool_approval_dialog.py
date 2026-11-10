@@ -47,7 +47,7 @@ assert.deepEqual(flat(toolSummary('mcp__jira__get',{key:'EMM-1',fields:['a']})),
 
     def test_dialog_text_is_translated(self):
         table = (UI / "messages/ko.json").read_text(encoding="utf-8")
-        for key in ["TOOL APPROVAL", "Decide later", "Allow once", "Waiting for your decision. Time left: ", "No longer waiting: ", "Run a command", "Edit a file", "Raw input"]:
+        for key in ["TOOL APPROVAL", "Decide later", "Allow once", "No longer waiting: ", "Run a command", "Edit a file", "Raw input"]:
             self.assertTrue(translated_message(key), key)
 
 

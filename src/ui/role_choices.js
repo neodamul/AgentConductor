@@ -66,8 +66,7 @@
   function render(ctx){
     context=ctx;context.inheritToken='__inherit';while(profiles().some(p=>p.id===context.inheritToken))context.inheritToken+='_';const body=ctx.table.tBodies[0];
     const head=ctx.table.tHead.rows[0];if(head.cells.length===5){const arrow=node('th');arrow.setAttribute('aria-hidden','true');head.insertBefore(arrow,head.cells[3]);}
-    const planning=node('tr');planning.className='role-planning';const name=node('td',()=>message('startup.planning')),description=node('td',()=>message('startup.planning_coordinator_workspace_settings'));description.colSpan=5;planning.append(name,description);
-    body.replaceChildren(planning,...Object.keys(ctx.labels).map(role=>row(role,ctx.getRules()[role]||[])));
+    body.replaceChildren(...Object.keys(ctx.labels).map(role=>row(role,ctx.getRules()[role]||[])));
     stamp=JSON.stringify(ctx.getRules());
   }
   function read(table){

@@ -7,6 +7,18 @@ function renderVerifyFooter(r) {
   card.classList.toggle('coordinator-card', !!coordinatorView);
   card.classList.toggle('verifying', active);
   footer.hidden = !active;
+  $('verify-judgments').hidden = !active;
   $('verify-stop').disabled = $('stop').disabled;
 }
 function wireVerifyFooter() { $('verify-stop').onclick = () => $('stop').click(); }
+// GitHub #727: a task the CLI refused a tool is the mock's denied card: a note, hand the task to another agent, or resume; no direction field.
+function renderDeniedFooter(waiting) {
+  const t = task(), on = !coordinatorView && !waiting && t?.status === 'permission_denied';
+  $('denied-footer').hidden = !on;
+  $('denied-resume').disabled = $('resume').disabled;
+  return on;
+}
+function wireDeniedFooter() {
+  $('denied-resume').onclick = () => $('resume').click();
+  $('denied-reassign').onclick = () => { inspectorState.open = true; paintInspector(); const s = $('agent-select'); (window.acChoices && acChoices.buttonFor(s) || s).focus(); };
+}
