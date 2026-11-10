@@ -7,7 +7,9 @@ const RUN_CSS: &str = include_str!("../src/ui/run_screen.css");
 #[test]
 fn the_task_name_leads_and_icon_name_and_status_share_one_line() {
     // GitHub #675: each row is the mock's outline task: the agent mark, "T1 summary" with a status badge, a one-line scope, a chevron.
-    assert!(ROOM.contains("title.append(node('code',session.id,'task-number'),' ',taskLine(plan.prompt)||'')"));
+    assert!(ROOM.contains(
+        "title.append(node('code',session.id,'task-number'),' ',taskLine(plan.prompt)||'')"
+    ));
     assert!(ROOM.contains("head.append(title,badge)"));
     assert!(ROOM.contains("button.append(symbol,copy,chevron())"));
     assert!(RUN_CSS.contains("#rail-room .outline-task{display:flex;align-items:center;gap:7px"));
@@ -25,12 +27,16 @@ fn brand_marks_sit_in_a_bordered_container_with_the_specified_mark_size() {
 #[test]
 fn the_avatar_border_carries_the_task_status() {
     // GitHub #400: the avatar carries the status as a 1.5px border and only a running one pulses.
-    assert!(ROOM.contains("symbol.classList.add('outline-agent','st-'+statusLight(session.status))"));
+    assert!(
+        ROOM.contains("symbol.classList.add('outline-agent','st-'+statusLight(session.status))")
+    );
     assert!(ROOM.contains("if(session.status==='running')symbol.classList.add('running')"));
     assert!(!ROOM.contains("agent-light"), "the separate dot is gone");
     assert!(!CSS.contains("agent-light"), "and so are its rules");
     for (name, color) in [("green", "ok"), ("yellow", "warn"), ("red", "err")] {
-        let rule = format!("#rail-room .outline-task .session-symbol.outline-agent.st-{name}{{border-color:var(--{color})}}");
+        let rule = format!(
+            "#rail-room .outline-task .session-symbol.outline-agent.st-{name}{{border-color:var(--{color})}}"
+        );
         assert!(RUN_CSS.contains(&rule), "{rule}");
     }
     assert!(CSS.contains("border:1.5px solid"));
