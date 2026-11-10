@@ -11,6 +11,17 @@
 
 Release scope: the published app is the current `main` desktop product. The separate Rust-native UI migration remains in progress and is not represented as complete by this release.
 
+## Stable release 0.2.0 — UI issue batch (2026-11-11)
+
+- [x] Plan: use the approved UI mock as the source of truth; batch the Codex-owned UI fixes to limit expensive CI runs and keep changes issue-traceable.
+- [x] Task: implement #740–#743 and #749 in separate commits on the local UI batch branch; remove the stale tests that asserted the superseded confirmation dialogs and native-title-only hover behavior.
+- [x] Task: fix #752 by bounding and keyboard-enabling the Goal/path identity region in the permanent-delete dialog; retain the irreversible warning and Cancel default.
+- [x] Verify: full local Rust/Node suite before stylesheet split: 922 passed, 16 ignored, 0 failed across 299 suites. After splitting CSS into files below 300 lines, `cargo check`, 11 focused Rust tests, #752's eight-case browser matrix, tab geometry, overflow tooltip and direct-plan-start browser checks passed.
+- [ ] Verify: finish installed-app acceptance #744 for tool wait, permission denied and the New Goal pill. Actual-app phase picking and delete/cancel were verified; the real Goal folder was preserved.
+- [ ] Complete: commit the #752 fix and focused test updates, push the issue-linked batch branch, open one PR for the verified UI issues, then close each issue after its merged app evidence is recorded.
+
+The #752 browser regression is `tests/delete_goal_dialog_752.cjs`; the design rationale is in `knowledge/wiki/goal-deletion-confirmation-layout.md`. #754 is newly filed and labeled `bug`; Claude has been asked to take that independent flaky-test cleanup while Codex completes the UI batch.
+
 ## Reconciled current baseline (2026-10-11)
 
 - [x] Plan: review Claude source `318f930`, added/amended R-36–59 and trace through DD-65; preserve original constraints and latest task/release policy.

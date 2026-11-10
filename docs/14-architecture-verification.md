@@ -570,3 +570,7 @@ behavior coverage; fresh actual matrix evidence is required.
 ## Issue #743: direct planning and execution
 
 The owner replaced the historical planning and execution confirmation dialogs with direct actions. The planning-context guard and the backend digest, revision, repository-base checks and audit remain. `tests/direct_plan_start_743.cjs` covers direct planning, delayed snapshot settlement and changed Goal rejection; `tests/goal_lifecycle_runtime.cjs` covers direct execution and evidence visibility in both themes and widths. Earlier confirmation-dialog descriptions in this historical record describe the superseded behavior.
+
+## Issue #752: bounded permanent-delete confirmation
+
+The Goal name and exact folder path share a bounded, keyboard-scrollable identity region. The irreversible warning and actions stay outside that region, and Cancel remains the focused default. `tests/delete_goal_dialog_752.cjs` verifies long Korean and English Goal/path content at 840 px and 1280 px in both themes; Cancel closes without confirming deletion. The full local suite passed before the stylesheet split (922 passed, 16 ignored, zero failed across 299 suites). After splitting the 499-line startup stylesheet into two files below 300 lines and adding the second file to both native document assembly and the UI simulator, `cargo check --locked`, 11 focused Rust tests, the eight-case #752 browser matrix, tab geometry, overflow-tooltip and direct-plan-start browser checks passed.
