@@ -318,6 +318,10 @@ module.exports = [
   ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
     mock: { url: '?theme=light#1', selector: mock },
     app: { setup: STEPS_ENABLED, run: "document.getElementById('start-tab-team').click()", selector: app } })),
+  // GitHub #708: the line under the goal title on the plan step (mock step 3).
+  { name: 'plan-heading-info', props: ['fontSize', 'color'], keys: ['height', 'fontSize', 'color'], pixel: false,
+    mock: { url: '?theme=light#2', selector: '.runmeta[data-show="a"] span' },
+    app: { setup: "SIM.home.proposal=SIM.proposal('ready');", run: "document.getElementById('start-tab-review').click()", selector: '#start-goal-info .goal-info-content' } },
   // GitHub #686: the plan card's position line and footer (mock step 3 = "a").
   ...[
     ['plan-position', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="a"] .phase span:first-child', '#start-plan-summary .plan-position'],
