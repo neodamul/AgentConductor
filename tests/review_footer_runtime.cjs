@@ -27,7 +27,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms)),fail=m=>{throw Error(m);};
  await b.eval("SIM.room.report.state='approved'");
  await until("document.getElementById('review-primary').dataset.mode==='merge'&&document.getElementById('review-revise').hidden&&document.getElementById('run-banner').hidden",'approved footer applies the changes');
  await b.eval("SIM.room.report.state='completed'");
- await until("document.getElementById('review-footer').hidden&&document.getElementById('run-banner').hidden",'completed run shows no status box');
+ await until("!document.getElementById('review-footer').hidden&&document.getElementById('review-primary').dataset.mode==='result'&&document.getElementById('review-deny').hidden&&document.getElementById('run-banner').hidden&&getComputedStyle(document.querySelector('#run-screen .composer')).display==='none'",'completed run: Request changes and View the finished result, no status box');
  if(await b.eval("!!document.getElementById('run-path')||!!document.querySelector('.rail-footer')"))fail('the run path or the rail footer is still on the screen');
  console.log('review footer: summary-only card, request changes opens the direction field, review changes opens the evidence');
 }finally{await b.close();}}finally{fs.rmSync(dir,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1;});
