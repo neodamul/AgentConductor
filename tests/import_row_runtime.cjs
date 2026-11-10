@@ -10,9 +10,9 @@ const {findChrome,launch}=require('./design_parity/cdp.cjs');
   browser=await launch(chrome);await browser.goto(pathToFileURL(html).href);
   for(const size of [15.5,22]){
    const box=await browser.eval(`(()=>{
-    const row=document.getElementById('start-mcp-controls'),preview=document.getElementById('start-mcp-preview');
+    const row=document.getElementById('start-mcp-controls'),preview=[...row.querySelectorAll('button')].find(b=>b.offsetParent);// #734: the preview is hidden until a document is attached
     preview.style.lineHeight='${size}px';
-    const style=getComputedStyle(preview),buttons=[...row.querySelectorAll('button')];
+    const style=getComputedStyle(preview),buttons=[...row.querySelectorAll('button')].filter(b=>b.offsetParent);
     return {expected:${size}+parseFloat(style.paddingTop)+parseFloat(style.paddingBottom)+parseFloat(style.borderTopWidth)+parseFloat(style.borderBottomWidth),row:row.getBoundingClientRect().height,heights:buttons.map(b=>b.getBoundingClientRect().height)};
    })()`);
    assert.equal(box.row,box.expected,'row expands for a taller fallback text line');
