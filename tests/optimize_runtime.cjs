@@ -14,8 +14,12 @@ const elapsed = fs.readFileSync('src/ui/i18n.js', 'utf8').split('\n').find(l => 
 assert.ok(elapsed, 'AC_ELAPSED exists (GitHub #279)');
 vm.runInContext(elapsed + source + ';this.optimizeUi=optimizeUi;', context);
 (async () => {
-  const ui = context.optimizeUi({ q, request: async p => { calls.push(p); if (reply instanceof Error) throw reply; return reply; },
-    state: () => current, notice: (m, e) => notices.push([m, e]), busy: () => busy, applyGoal: t => applied.push(t) });
+  // GitHub #680: the draft (with its coordinator) is saved before the request, because the worker uses the saved coordinator.
+  const order = []; let drafted = { coordinator: 'claude', profiles: [{ id: 'claude' }] }, saved = true, stepShown = null;
+  els['start-coordinator'] = node();
+  const ui = context.optimizeUi({ q, request: async p => { order.push('request'); calls.push(p); if (reply instanceof Error) throw reply; return reply; },
+    state: () => current, notice: (m, e) => notices.push([m, e]), busy: () => busy, applyGoal: t => applied.push(t),
+    capture: () => order.push('capture'), draft: () => drafted, save: async () => { order.push('save'); return saved; }, showStep: (name, focus) => { stepShown = [name, focus]; } });
   ui.update();
   assert.equal(q('optimize-button').disabled, true, 'an empty goal cannot be optimized');
   q('goal').value = 'make it faster'; ui.update();
@@ -25,6 +29,7 @@ vm.runInContext(elapsed + source + ';this.optimizeUi=optimizeUi;', context);
   busy = false; ui.update();
   await q('optimize-button').onclick();
   assert.deepEqual(JSON.parse(JSON.stringify(calls)), [{ kind: 'optimize_goal', revision: 'rev', goal: 'make it faster' }]);
+  assert.deepEqual(order, ['capture', 'save', 'request'], 'the draft is saved before the rewrite is requested');
   assert.equal(q('optimize-button').disabled, true, 'blocked while the coordinator works');
   assert.match(q('optimize-status').textContent, /^startup\.optimize_working 0:0\d$/, 'the status counts the time (GitHub #273)');
   current = { revision: 'rev', job: { id: 'job-1', state: 'completed' },
@@ -62,6 +67,19 @@ vm.runInContext(elapsed + source + ';this.optimizeUi=optimizeUi;', context);
   reply = new Error('another operation is running'); await q('optimize-button').onclick();
   assert.deepEqual(notices.at(-1), ['another operation is running', true]);
   assert.equal(q('optimize-button').disabled, false);
+  // No coordinator chosen: say so, go to the Workspace step, and send nothing.
+  drafted = { coordinator: '', profiles: [{ id: 'claude' }] }; calls.length = 0; order.length = 0;
+  await q('optimize-button').onclick();
+  assert.deepEqual(notices.at(-1)[1], true);
+  assert.deepEqual(stepShown, ['workspace', true]);
+  assert.deepEqual(calls, [], 'nothing is sent without a coordinator');
+  assert.equal(q('optimize-button').disabled, false);
+  // A failed save sends nothing and leaves the button usable.
+  drafted = { coordinator: 'claude', profiles: [{ id: 'claude' }] }; saved = false; order.length = 0;
+  await q('optimize-button').onclick();
+  assert.deepEqual(order, ['capture', 'capture', 'save'].slice(0, 1).concat(['save']), 'a failed save stops before the request');
+  assert.equal(q('optimize-button').disabled, false);
+  saved = true;
   // GitHub #273: a rewrite still running when the page reopens is followed and its time counted from its start.
   const reopened = context.optimizeUi({ q, request: async () => reply, state: () => current, notice: (m, e) => notices.push([m, e]), busy: () => false, applyGoal: t => applied.push(t) });
   current = { revision: 'rev', job: { id: 'job-4', kind: 'optimize', state: 'running', started_ms: Date.now() - 125000 }, optimize: null };

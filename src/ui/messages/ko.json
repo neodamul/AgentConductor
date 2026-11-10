@@ -819,6 +819,7 @@
   "startup.optimize_use": "이 목표 사용",
   "startup.optimize_keep": "내 목표 유지",
   "startup.optimize_credit": "방법: Sentry의 prompt-optimizer 스킬 (Apache-2.0).",
+  "startup.optimize_coordinator_required": "목표를 최적화하기 전에 에이전트 CLI를 등록하고 워크스페이스 코디네이터로 지정하세요.",
   "startup.optimize_error": "코디네이터가 목표를 다시 쓰지 못했습니다: {value1}",
   "startup.messenger_9a523e": "메신저",
   "startup.messenger_notifications": "메신저 알림",
