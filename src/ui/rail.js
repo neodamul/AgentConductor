@@ -24,7 +24,7 @@ window.acRail=(()=>{
    if(!tasks.length&&!phased){box.replaceChildren();return;}
    const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!=null)n.textContent=text;return n;};
    const line=prompt=>String(prompt||'').split('\n').map(l=>l.trim().replace(/^[-*]\s+/,'')).find(l=>l&&!/:$/.test(l)&&!/^<\/?[\w-]+>$/.test(l))||'';
-   const status=el('div','outline-run-status');status.append(el('strong',null,acMessage(view?.stale?'startup.completed_22a970':'startup.rail_plan_review')),el('span',null,acMessage(view?.stale?'startup.completed_22a970':'startup.rail_not_started')));
+   const status=el('div','outline-run-status');status.append(el('strong',null,acMessage(view?.stale?'startup.completed_22a970':'startup.rail_plan_review')),el('span',null,view?.stale?'':acMessage('startup.rail_not_started')));
    const chevron=()=>{const c=el('span','outline-open-icon');c.setAttribute('aria-hidden','true');c.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>';return c;};
    const row=(task,index,tree,done,editable)=>{
     const b=el('button','outline-task'),mark=makeAvatar?.(task.agent)||el('span',null,'?'),copy=el('span','outline-copy'),top=el('span','outline-task-heading'),title=el('strong'),badge=el('span','outline-state-badge',acMessage(done?'startup.completed_22a970':'startup.rail_task_planned'));
@@ -38,8 +38,8 @@ window.acRail=(()=>{
    const trees=groups.map((g,gi)=>{const tree=el('details','phase-tree'),head=el('summary');tree.open=!!g.current||(view?.stale&&gi===groups.length-1);
     head.append(el('span','phase-name',(gi+1)+'. '+String(g.name||'').slice(0,60)),el('span','phase-count',acMessage(g.stage==='completed'?'startup.completed_22a970':g.current?'room.rail_current_phase':'startup.planned')));tree.append(head);
     (g.tasks||[]).forEach((t,i)=>tree.append(row(t,i,tree,g.stage==='completed'||(g.done||[]).includes(t.id),!!g.current&&!view?.stale)));return tree;});
-   const cur=Math.max(0,groups.findIndex(g=>g.current)),curTasks=groups[cur]?.tasks?.length||0;
-   box.replaceChildren(el('div','sub',acMessage('room.rail_current',{value1:cur+1,value2:groups.length,value3:Math.min(1,curTasks),value4:curTasks})),status,...trees,el('div','outline-note',acMessage('room.rail_note')));
+   const cur=view?.stale?groups.length-1:Math.max(0,groups.findIndex(g=>g.current)),curTasks=groups[cur]?.tasks?.length||0;
+   box.replaceChildren(el('div','sub',acMessage('room.rail_current',{value1:cur+1,value2:groups.length,value3:view?.stale?curTasks:Math.min(1,curTasks),value4:curTasks})),status,...trees,el('div','outline-note',acMessage('room.rail_note')));
   },
   // `host` is the Room's rail while a run is open (null brings the pair back to the Workspace rail).
   move(host){
