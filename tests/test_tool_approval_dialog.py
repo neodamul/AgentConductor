@@ -9,20 +9,17 @@ UI = Path("src/ui")
 
 
 class ToolApprovalDialogTests(unittest.TestCase):
-    def test_live_request_opens_a_decision_window_with_the_activity_log(self):
+    def test_live_request_is_decided_in_the_card_footer(self):
+        # GitHub #684: the mock decides a tool request in the task card footer, not in a modal window.
         html = (UI / "room.html").read_text(encoding="utf-8")
-        for control in ["tool-dialog", "tool-dialog-status", "tool-dialog-log", "tool-dialog-allow", "tool-dialog-deny", "tool-dialog-later"]:
+        for control in ["tool-decision", "tool-decision-note", "tool-decision-allow", "tool-decision-deny"]:
             self.assertIn('id="' + control + '"', html)
+        self.assertNotIn('id="tool-dialog"', html)
         js = (UI / "room.js").read_text(encoding="utf-8")
         self.assertIn("syncToolDialog();", js.split("function renderTools()")[1].split("\nfunction ")[0])
-        self.assertIn("dialog.showModal()", js)
-        # The log mirrors the task timeline on every poll, whatever was decided.
-        self.assertIn("mirrorToolLog(t.id,timeline)", js)
-        self.assertIn("room.no_longer_waiting", js)
-        self.assertIn("kind:'tool_approve'", js.replace("decideTool('tool_approve')", "kind:'tool_approve'"))
-        # Deciding later is remembered per request and the tools link reopens it.
-        self.assertIn("deferredTools.add(toolDialog.id)", js)
-        self.assertIn("deferredTools.clear()", js)
+        self.assertNotIn("showModal()", js.split("function syncToolDialog")[1].split("\nfunction ")[0])
+        self.assertIn("decideTool('tool_approve')", js)
+        self.assertIn("decideTool('tool_reject')", js)
 
     def test_feedback_to_an_idle_run_resumes_it_after_the_revision(self):
         js = (UI / "room.js").read_text(encoding="utf-8")

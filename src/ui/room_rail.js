@@ -22,3 +22,8 @@ function railElapsed(r, now) {
   const h = Math.floor(sec / 3600), m = String(Math.floor(sec % 3600 / 60)).padStart(2, '0'), s = String(sec % 60).padStart(2, '0');
   return acMessage("room.rail_elapsed", { value1: h ? `${h}:${m}:${s}` : `${m}:${s}` });
 }
+// The line under the title (the mock's goal-info row): the integration result while a candidate waits for approval.
+function renderGoalInfo(r) {
+  const failed = r.tests.filter(x => x.exit_code !== 0 || x.timed_out), text = r.state === 'waiting_approval' && r.tests.length ? (failed.length ? acMessage('room.goal_info_tests_failed', { value1: failed.length }) : acMessage('room.goal_info_tests_passed')) : '';
+  AC_I18N.bind(document.querySelector('#run-goal-info .goal-info-content'), () => text);
+}

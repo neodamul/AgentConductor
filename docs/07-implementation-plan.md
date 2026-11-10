@@ -3780,3 +3780,51 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #675 and #676.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### The Agent roles step copy and role rows follow the mock — GitHub #685 (part 1)
+
+- [x] Plan: step 2's eyebrow, heading, lead and the Fallback / Fallback model column labels use the mock's wording (the stepper tab keeps "Agent roles"); each role is a bordered, rounded row (10/12px padding, 8px radius, 8px gap) under a borderless 11px header row.
+- [x] Verify: parity entries `roles-header`, `roles-row`, `roles-name`, `roles-title` (both themes, 840 and 1280); every Node UI test.
+- [ ] Completed: the step footer (note, Add role, Save and go to step 3) and the move of plan generation / reading / manual writing to step 3 are open decisions on #685, #686; closes #685 when they are done.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### The plan-review rail is the mock's outline — GitHub #686 (part 1)
+
+- [x] Plan: `acRail.outline(plan, makeAvatar)` builds the outline of the run rail for the plan under review (summary line, review state and "not started", the Phase, `outline-task` rows with agent mark, `T1 summary`, a Planned badge, scope and a chevron, the hint); a row opens its task in the plan card; the rail rules in `run_screen.css` apply to both rails.
+- [x] Verify: parity entries `plan-rail-head`, `plan-rail-current`, `plan-rail-status`, `plan-rail-phase`, `plan-rail-task`, `plan-rail-note` with a ready-plan fixture; `rail_tabs_runtime.cjs` checks the outline structure; every Node UI test.
+- [ ] Completed: the plan card's task rows, summary line, detail strip and footer are still open on #686 (the app's collapsible task editors and the explicit generate / regenerate flow need a decision); closes #686 when done.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### A tool request is decided in the task card footer — GitHub #684
+
+- [x] Plan: the modal tool dialog is removed; `#tool-decision` (note with the remaining time, Deny, Allow once) replaces the direction field while the shown task has a pending request; a new request brings its task forward once; the card notice keeps the command and a *Raw input* disclosure with the exact request; *Tool requests* in the rail selects the task and scrolls to the footer; Deny and Allow once send `tool_reject` / `tool_approve` with the request id, and Allow once resumes an idle run as before.
+- [x] Verify: parity entries `tool-decision-note`, `tool-decision-deny`, `tool-decision-allow` and the assertion `tool-decision-replaces-direction` (no open dialog); `tool_decision_runtime.cjs` checks the notice and raw input, the footer replacing the direction field, the sent actions and the settled state; every Node UI test.
+- [ ] Completed: merged on `main`; closes #684.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### The approval-waiting state follows the design and the rail follows it — GitHub #688, #689
+
+- [x] Plan: when a run reaches *waiting for approval* (or approved/rejected) the task list selects the Integration verification row once, so the card shows what is decided; the card shows the heading with the *Waiting for approval* pill, the integration result line under the title (tests passed/failed), the summary and the changed-file list, and a footer with the note, *Reject*, *Request changes* and *Review changes* (*Approve* once the evidence was opened and the candidate can be approved). The tabs, the direction field and the run banner stay behind it until *Review changes* or *Request changes* opens them; every capability remains reachable.
+- [x] Verify: `room_follow_focus.cjs` (the follow into the coordinator and its once-only rule); `review_footer_runtime.cjs` (summary-only card, Request changes opens the direction field, Review changes opens the evidence); parity entries `review-footer-note|deny|primary`, `review-heading-info`, `review-card-has-no-tabs`; every Node UI test.
+- [ ] Completed: merged on `main`; closes #688, #689.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Step 3 plan card follows the approved design — GitHub #686
+
+- [x] Plan: `plan_review.js` renders the position line (`Phase 1/1 · Task n/N · title`, owned-path overlap check) and the detail strip of the selected task; clicking a task row selects it; the card heading, intro (task count) and footer (`Regenerate plan` reuses the generate action, `Approve and run`) use the mock's copy; the snapshot id stays visible in the footer; task editing, adding, removing and saving edits stay where they were.
+- [x] Verify: parity entries `plan-position`, `plan-footer-note`, `plan-regenerate`, `plan-approve`; `ui_scripts_parse`, `messages`, `i18n_contracts`, `task_profile_ui`, `task_profile_layout`, `source_layout`, `interface_theme`.
+- [ ] Completed: merged on `main`; closes #686.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Step 2 roles footer follows the approved design — GitHub #685
+
+- [x] Plan: the roles step ends with the note, *Add roles* (the former *Suggest defaults*, now in the footer) and *Save and go to step 3* (`#start-roles-next`: saves and shows the plan, or starts plan generation when there is none); *Read plan…* and *Write plan manually* sit under the task list of step 3; `#start-prepare` and `#start-roles-save` stay as hidden buttons so every handler and busy state keeps its element.
+- [x] Verify: parity entries `roles-footer-note|add|next`; `folder_workflow`, `plan_size`, `role_rules`, `startup_folder_plan`, `node_runtime`.
+- [ ] Completed: merged on `main`; closes #685.
+
+Trace: R-210 / UC-202 / DD-222.
