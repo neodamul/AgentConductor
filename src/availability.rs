@@ -129,6 +129,8 @@ pub fn detect(payload: &Value, message: &str, observed_at: i64) -> Option<Restri
         "out of extra usage",
         "weekly limit",
         "daily limit",
+        // GitHub #712: a workspace spend cap stops the account like a usage limit, so the fallback takes over.
+        "spend cap",
     ]
     .iter()
     .any(|phrase| lower.contains(phrase))

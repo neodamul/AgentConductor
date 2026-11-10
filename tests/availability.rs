@@ -99,3 +99,11 @@ fn observed_codex_weekly_limit_is_a_restriction_that_needs_a_manual_schedule() {
     assert_eq!(restriction.available_at, None);
     assert_eq!(restriction.observed_at, 100);
 }
+
+#[test]
+fn workspace_spend_cap_is_a_limit_not_a_plain_failure() {
+    let payload = json!({"error":{"message":"You hit your spend cap set by the owner of your workspace. Ask an owner to increase your spend cap to continue."},"type":"turn.failed"});
+    let restriction =
+        detect(&payload, &payload.to_string(), 100).expect("spend cap restricts the account");
+    assert_eq!(restriction.available_at, None);
+}
