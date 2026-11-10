@@ -102,7 +102,7 @@ function planTask() { return snapshot?.report.plan.tasks[selected]; }
 function profile() { return snapshot?.report.plan.agents.find(a=>a.id===planTask()?.agent); }
 function agentName(agent) {return agent?acAgentName(agent,snapshot?.report?.plan?.agents||[]):acMessage("room.agent");}
 // The plan review's one-line task summary: the first line that says what the task does.
-function taskLine(prompt){const line=String(prompt||'').split('\n').map(l=>l.trim().replace(/^[-*]\s+/,'')).find(l=>l&&!/:$/.test(l))||'';return line.length>160?line.slice(0,160)+'…':line;}
+function taskLine(prompt){const line=String(prompt||'').split('\n').map(l=>l.trim().replace(/^[-*]\s+/,'')).find(l=>l&&!/:$/.test(l)&&!/^<\/?[\w-]+>$/.test(l))||'';return line.length>160?line.slice(0,160)+'…':line;}
 // Task rows lead with the reviewed summary; the task ID stays visible as a small label.
 function taskHeading(id,prompt){const heading=node('span',undefined,'session-task'),summary=taskLine(prompt);heading.append(node('span',id,'task-id'));if(summary)heading.append(node('span',summary,'task-summary'));AC_I18N.bind(heading,()=>(summary?id+' · '+summary:id),"title");return heading;}
 function refreshQuota(agent){quotaActive=agent;quotaRefreshed.set(agent,Date.now());return act({kind:'quota',agent});}
@@ -183,7 +183,7 @@ function renderSnapshot() {
   if(!snapshot)return;syncInspector();watchResult(snapshot);const r=snapshot.report;if(selected>=r.tasks.length)selected=0;
   const t=task(),p=planTask(),a=profile();
   let interrupted=$('run-interruptions');if(!interrupted){interrupted=node('p');interrupted.id='run-interruptions';$('run-banner-progress').parentElement.append(interrupted);}AC_I18N.bind(interrupted,()=>(interruptionText(snapshot.interruptions)));interrupted.hidden=!snapshot.interruptions?.length; let ownership=$('owned-file-warning');if(!ownership){ownership=node('p');ownership.id='owned-file-warning';$('run-banner-progress').parentElement.append(ownership);}const changed=snapshot.owned_changes||[];ownership.hidden=!r.direct_workspace||r.plan.workspace_mode!=='shared'||(!changed.length&&r.state!=='running');AC_I18N.bind(ownership,()=>changed.length?acMessage("room.owned_edit_detected",{paths:changed.join(', ')}):acMessage("room.owned_edit_warning",{paths:r.plan.tasks.flatMap(t=>t.paths).join(', ')}));
-  AC_I18N.bind($('goal'),()=>(r.plan.goal));const project=(r.folder?.original||r.repo).replace(/^\\\\\?\\/,'');AC_I18N.bind($('repository'),()=>(project.split(/[\\/]/).filter(Boolean).pop()||project));AC_I18N.bind($('repository'),()=>(project),"title");
+  AC_I18N.bind($('goal'),()=>(taskLine(r.plan.goal)||r.plan.goal));const project=(r.folder?.original||r.repo).replace(/^\\\\\?\\/,'');AC_I18N.bind($('repository'),()=>(project.split(/[\\/]/).filter(Boolean).pop()||project));AC_I18N.bind($('repository'),()=>(project),"title");
   AC_I18N.bind($('run-state'),()=>(statusLabel(r.state)));$('run-state').className='state-label tone-'+statusTone(r.state);
   renderRail(r,selected);
   const done=r.tasks.filter(t=>t.status==='completed').length,failure=r.error||r.tasks.find(t=>t.status==='failed'&&t.error)?.error||'';

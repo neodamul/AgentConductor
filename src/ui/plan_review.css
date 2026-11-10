@@ -27,3 +27,5 @@
 #start-panel-review details.startup-task[open]>summary .task-expand,#start-panel-review details.startup-task:not([open])>summary .task-collapse{display:none}
 /* Adding tasks and the other plan sources are editing tools: they show with an opened row or when there is no task yet. */
 #start-panel-review:has(.startup-task):not(:has(.startup-task[open])) :is(#start-task-tools,.plan-sources){display:none}
+/* GitHub #738: the mock's title bar names only the workspace, and the plan footer has only Regenerate / Approve and run (steps 4-6 open the run). */
+#start-run-phase,#run-phase,#start-open{display:none!important}
