@@ -3727,8 +3727,8 @@ Trace: R-210 / UC-202 / DD-222.
 
 ### UI requests never wait forever on the job slot — GitHub #691
 
-- [x] Plan: `Controller::lock_job` takes the job slot with `try_lock` and a three-second deadline (poll, action and the automatic resume use it); `busy()` keeps counting an unreadable slot as busy; the goal-change check clones the open controller and releases the room's lock before `busy()`.
-- [x] Verify: unit test `a_held_job_slot_fails_the_request_instead_of_waiting_forever`; `source_layout`; the root cause of the frozen window (which thread held the slot) is still open on #691.
+- [x] Plan: `Controller::lock_job` takes the job slot through `bounded_lock::lock_within` (`try_lock` with a three-second deadline) (poll, action and the automatic resume use it); `busy()` keeps counting an unreadable slot as busy; the goal-change check clones the open controller and releases the room's lock before `busy()`.
+- [x] Verify: `tests/bounded_lock.rs` (a held lock fails after the deadline, a poisoned lock is reported); `source_layout`; the root cause of the frozen window (which thread held the slot) is still open on #691.
 - [ ] Completed: merged on `main`; relates to #691 (stays open until the holder is found).
 
 Trace: R-210 / UC-202 / DD-222.

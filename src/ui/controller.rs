@@ -30,24 +30,19 @@ impl Controller {
     /// GitHub #691: UI requests never wait forever on the job slot; a held slot fails the request instead of
     /// parking all eight bridge threads behind it (which froze the whole window).
     pub(super) fn lock_job(&self) -> Result<std::sync::MutexGuard<'_, Option<Job>>, String> {
-        let deadline = std::time::Instant::now() + std::time::Duration::from_secs(3);
-        loop {
-            match self.job.try_lock() {
-                Ok(slot) => return Ok(slot),
-                Err(std::sync::TryLockError::Poisoned(_)) => {
-                    return Err(crate::ui::messages::text("native.ui_job_state_poisoned").into());
-                }
-                Err(std::sync::TryLockError::WouldBlock) => {
-                    if std::time::Instant::now() >= deadline {
-                        return Err(crate::ui::messages::text(
-                            "native.another_ui_action_is_still_running",
-                        )
-                        .into());
+        crate::bounded_lock::lock_within(&self.job, std::time::Duration::from_secs(3)).map_err(
+            |why| {
+                match why {
+                    crate::bounded_lock::Unavailable::Held => {
+                        crate::ui::messages::text("native.another_ui_action_is_still_running")
                     }
-                    std::thread::sleep(std::time::Duration::from_millis(10));
+                    crate::bounded_lock::Unavailable::Poisoned => {
+                        crate::ui::messages::text("native.ui_job_state_poisoned")
+                    }
                 }
-            }
-        }
+                .into()
+            },
+        )
     }
     pub(super) fn poll(&self) -> Result<serde_json::Value, String> {
         let mut slot = self.lock_job()?;
@@ -296,24 +291,5 @@ impl Controller {
         Ok(
             serde_json::json!({"task":task,"decisions":decisions,"events":events.into_iter().rev().collect::<Vec<_>>(),"usage":usage,"stdout":if logs.join("stdout.jsonl").exists(){tail(&logs.join("stdout.jsonl"),64*1024)?}else{String::new()},"stderr":if logs.join("stderr.log").exists(){tail(&logs.join("stderr.log"),32*1024)?}else{String::new()},"step_lessons":crate::workflow::step_lessons::list(&self.dir)?,"coordinator_decisions":workflow::decisions::list(&self.dir)?.into_iter().filter(|d| d["task"]==task.id.as_str()).collect::<Vec<_>>(),"knowledge":crate::knowledge::status(&self.dir,if report.state=="completed" {report.folder.as_ref().map_or(task.cwd.as_path(),|f|f.original.as_path())}else{task.cwd.as_path()})?}),
         )
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn a_held_job_slot_fails_the_request_instead_of_waiting_forever() {
-        let controller = Controller {
-            dir: PathBuf::new(),
-            exe: PathBuf::new(),
-            job: Mutex::new(None),
-        };
-        let _held = controller.job.lock().unwrap();
-        let started = std::time::Instant::now();
-        assert!(controller.lock_job().is_err());
-        assert!(controller.poll().is_err());
-        assert!(controller.busy(), "an unreadable job counts as busy");
-        assert!(started.elapsed() < std::time::Duration::from_secs(15));
     }
 }

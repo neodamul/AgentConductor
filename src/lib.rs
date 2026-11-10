@@ -4,6 +4,7 @@ pub mod adapters;
 pub mod agent_settings;
 pub mod archive;
 pub mod availability;
+pub mod bounded_lock;
 pub mod claude_control;
 pub mod cli_io;
 pub mod conversation;
