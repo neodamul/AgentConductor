@@ -3739,3 +3739,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #684.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### The approval-waiting state follows the design and the rail follows it — GitHub #688, #689
+
+- [x] Plan: when a run reaches *waiting for approval* (or approved/rejected) the task list selects the Integration verification row once, so the card shows what is decided; the card shows the heading with the *Waiting for approval* pill, the integration result line under the title (tests passed/failed), the summary and the changed-file list, and a footer with the note, *Reject*, *Request changes* and *Review changes* (*Approve* once the evidence was opened and the candidate can be approved). The tabs, the direction field and the run banner stay behind it until *Review changes* or *Request changes* opens them; every capability remains reachable.
+- [x] Verify: `room_follow_focus.cjs` (the follow into the coordinator and its once-only rule); `review_footer_runtime.cjs` (summary-only card, Request changes opens the direction field, Review changes opens the evidence); parity entries `review-footer-note|deny|primary`, `review-heading-info`, `review-card-has-no-tabs`; every Node UI test.
+- [ ] Completed: merged on `main`; closes #688, #689.
+
+Trace: R-210 / UC-202 / DD-222.

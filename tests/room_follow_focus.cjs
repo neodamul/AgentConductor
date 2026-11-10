@@ -16,4 +16,8 @@ assert.equal(follow(snap('running', a), snap('running', [['a', 'completed'], ['b
 assert.equal(follow(snap('waiting_approval', [['a', 'completed']]), snap('approved', [['a', 'completed']]), 'a', true), null, 'integration view is not moved');
 assert.equal(follow(null, snap('running', a), 'a'), null, 'first snapshot never moves');
 assert.deepEqual(follow(snap('running', a), snap('running', [['a', 'failed'], ['b', 'running']]), 'a'), { id: 'b' }, 'a failed session also hands over');
+// GitHub #688: a run that starts waiting for approval opens Integration verification even if the watched task was not the one that ran last.
+assert.deepEqual(follow(snap('running', [['a', 'completed'], ['b', 'running']]), snap('waiting_approval', [['a', 'completed'], ['b', 'completed']]), 'a'), { coordinator: true }, 'a finished task being reviewed does not keep the rail');
+assert.deepEqual(follow(null, snap('waiting_approval', [['a', 'completed'], ['b', 'completed']]), 'a'), { coordinator: true }, 'opening a run that already waits for approval lands on the integration entry');
+assert.equal(follow(snap('waiting_approval', [['a', 'completed']]), snap('waiting_approval', [['a', 'completed']]), 'a'), null, 'the operator stays on the task they picked afterwards');
 console.log('follow focus ok');

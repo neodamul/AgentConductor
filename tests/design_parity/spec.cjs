@@ -154,6 +154,20 @@ module.exports = [
     ].map(([name, mock, app, props, keys]) => ({ name: `review-card-${name}`, props, keys, pixel: false,
       mock: { url: '?theme=light#7', selector: card + mock }, app: { setup, run, selector: app } }));
   })(),
+  // GitHub #689: the approval footer and the heading line under the title (mock view #7 = "c").
+  ...(() => {
+    const setup = STEPS_ENABLED + "SIM.room.report.state='waiting_approval';SIM.room.report.tasks.forEach(t=>t.status='completed');SIM.room.report.candidate={commit:'abcdef1234567890'};SIM.room.report.tests=[{task:'task-1',exit_code:0,timed_out:false,output:''}];SIM.reply.evidence=()=>({revision:'x1',report:SIM.room.report,truncated:false,test_output:[],diff:''});";
+    const run = "document.querySelectorAll('#start-step-tabs [role=tab]')[5].click(); document.querySelector('.final-step .session-choice').click()";
+    const card = '.main>.card[data-show="c"]';
+    return [['note', ' .actions .note', '#review-footer .note', ['fontSize', 'color'], ['fontSize', 'color']],
+      ['deny', ' .actions .btn.q', '#review-deny', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius'], ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius']],
+      ['primary', ' .actions .btn.p', '#review-primary', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color'], ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color']],
+    ].map(([name, mock, app, props, keys]) => ({ name: `review-footer-${name}`, props, keys, pixel: false,
+      mock: { url: '?theme=light#7', selector: card + mock }, app: { setup, run, selector: app } }))
+      .concat([{ name: 'review-heading-info', props: ['fontSize', 'color'], keys: ['height', 'fontSize', 'color'], pixel: false,
+        mock: { url: '?theme=light#7', selector: '.runmeta[data-show="c"] span' }, app: { setup, run, selector: '#run-goal-info .goal-info-content' } },
+      { name: 'review-card-has-no-tabs', assert: "(() => { const c = document.querySelector('#run-screen .room-card'); return c.classList.contains('review-only') && getComputedStyle(c.querySelector('.view-tabs')).display === 'none' && !document.getElementById('review-footer').hidden; })()", app: { setup, run } }]);
+  })(),
   // #599: the task card's stop reason (mock views #5 "g" = tool request wait, #6 "h" = permission denied).
   ...[['wait', 4, 'g', 'warn-bg', ".task-notice.warn", "SIM.room.tool_requests=[{id:'tr1',status:'pending',context:{task:'task-1'},request:{tool:'Bash',input:{command:'npm install jsonwebtoken@9'}}}];"],
     ['denied', 5, 'h', 'err-bg', '.task-notice.err', "SIM.room.report.tasks[0].status='permission_denied';SIM.room.report.tasks[0].error='permission denied: tool bash';"]].flatMap(([name, hash, show, bg, app, preset]) => {
