@@ -3756,3 +3756,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #688, #689.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Step 3 plan card follows the approved design — GitHub #686
+
+- [x] Plan: `plan_review.js` renders the position line (`Phase 1/1 · Task n/N · title`, owned-path overlap check) and the detail strip of the selected task; clicking a task row selects it; the card heading, intro (task count) and footer (`Regenerate plan` reuses the generate action, `Approve and run`) use the mock's copy; the snapshot id stays visible in the footer; task editing, adding, removing and saving edits stay where they were.
+- [x] Verify: parity entries `plan-position`, `plan-footer-note`, `plan-regenerate`, `plan-approve`; `ui_scripts_parse`, `messages`, `i18n_contracts`, `task_profile_ui`, `task_profile_layout`, `source_layout`, `interface_theme`.
+- [ ] Completed: merged on `main`; closes #686.
+
+Trace: R-210 / UC-202 / DD-222.

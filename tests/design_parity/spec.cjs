@@ -310,6 +310,15 @@ module.exports = [
   ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
     mock: { url: '?theme=light#2', selector: mock },
     app: { setup: "SIM.home.proposal=SIM.proposal('ready');", run: "document.getElementById('start-tab-review').click()", selector: app } })),
+  // GitHub #686: the plan card's position line and footer (mock step 3 = "a").
+  ...[
+    ['plan-position', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="a"] .phase span:first-child', '#start-plan-summary .plan-position'],
+    ['plan-footer-note', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="a"] .actions .note', '#start-panel-review .startup-review-footer .note'],
+    ['plan-regenerate', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius'], ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius'], '.card[data-show="a"] .actions .btn.q', '#start-regenerate'],
+    ['plan-approve', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color'], ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color'], '.card[data-show="a"] .actions .btn.p', '#start-run'],
+  ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
+    mock: { url: '?theme=light#2', selector: mock },
+    app: { setup: "SIM.home.proposal=SIM.proposal('ready');", run: "document.getElementById('start-tab-review').click()", selector: app } })),
   // GitHub #684: a pending tool request is decided in the card footer (mock step 5).
   ...[
     ['tool-decision-note', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="g"] .actions .note', '#tool-decision-note'],

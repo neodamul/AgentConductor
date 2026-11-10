@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Step 3 (Plan) follows the approved design: "Review the plan and start the run" with the proposed task count, the Phase/Task position line with an owned-path overlap check, a detail strip for the selected task (owned paths, dependencies, check) and a footer with the note, *Regenerate plan* and *Approve and run* (#686).
 - While a run waits for approval the task list moves to the *Integration verification* item, and the card follows the approved design: the status pill and the integration result line under the title, the summary and changed files, and a footer with *Reject*, *Request changes* and *Review changes* (*Approve* once the changes were opened); the tabs and the direction field open from those buttons (#688, #689).
 - A tool request is decided in the task card's footer ("Allowing runs the same input once." with *Deny* and *Allow once*) as in the approved design, not in a modal: the card's notice shows the command and a collapsible *Raw input* with the exact request, the footer replaces the direction field while a request is pending, and the remaining decision time is part of the footer note (#684).
 - The run card's direction note names its target like the approved design ("<agent> · <task> receives this direction · review opens after verification") (#676).
