@@ -3635,6 +3635,14 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Brand marks keep their own gradient ids — GitHub #697
+
+- [x] Plan: `acBrandAvatar` renames the ids inside each cloned mark (and the `url(#id)` references) with a per-copy counter, because duplicated ids made `url(#id)` resolve to the first copy and a hidden or removed first copy blanked the Codex mark.
+- [x] Verify: `tests/brand_avatar_ids.cjs` (fails on the old code with duplicated ids, passes now); `brand_avatar`-related Rust tests.
+- [ ] Completed: merged on `main`; closes #697.
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### Refresh arrow spins alone — GitHub #647
 
 - [x] Plan: the popup's refresh button holds the arrow in `span.usage-glyph`; `.usage-refresh.refreshing .usage-glyph` carries the spin animation instead of the button.
