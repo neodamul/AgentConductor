@@ -3690,4 +3690,34 @@ Trace: R-210 / UC-202 / DD-222.
 - [x] Verify: `optimize_runtime.cjs` checks the order capture → save → request, the missing coordinator and the failed save; the simulator run saves the workspace and starts the rewrite without an error.
 - [ ] Completed: merged on `main`; closes #680.
 
+### The titlebar actions and the docked inspector match the approved mock — GitHub #673
+
+- [x] Plan: the update icon (the mock's downward arrow) is always in the titlebar and opens the update dialog, accented when an update exists; the right panel toggle is shown on every screen; before a run a docked `#start-inspector` (closed by default, no close button or backdrop, up to 330px / 35% of the window, the `room.inspector_empty` explanation) opens beside the card and independently of the left rail; once a run is open the same toggle drives the Room inspector.
+- [x] Verify: parity entries `titlebar-update`, `titlebar-inspector-toggle`, `startup-inspector-open` (width, colour, padding, border; both themes, 840 and 1280) and the app-only `startup-inspector-closed` / `startup-inspector-docked` assertions (closed by default; docked at the window's right edge); the update-icon test and every startup Node test pass.
+- [ ] Completed: merged on `main`; closes #673.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### The titlebar holds only the mock's controls — GitHub #677
+
+- [x] Plan: the "← Workspace" and "← Back to run" titlebar buttons are hidden; the stepper already moves between the run and the setup steps in both directions.
+- [x] Verify: the app-only parity assertion `titlebar-controls` lists the visible titlebar buttons on the setup steps with a run available (menu, left toggle, Workspace name, update, chat, settings, right toggle).
+- [ ] Completed: merged on `main`; closes #677.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### Completed steps show a check mark and the task card tab is named as in the mock — GitHub #678
+
+- [x] Plan: a `done` step shows `✓` (CSS, so every path that marks a step done gets it); the tab formerly named "Diff & tests" is "Changes & tests" / "변경과 테스트"; the manuals and the QAS row use the new name. The activity rows already use the mock's timeline styling (62px time column, bold head, soft text); their content depends on the events a task reports.
+- [x] Verify: parity entry `step-done-number` (colour, background, size and a pixel crop; both themes, 840 and 1280); manuals re-rendered.
+- [ ] Completed: merged on `main`; closes #678.
+
+Trace: R-210 / UC-202 / DD-222.
+
+### The run screens follow the approved design — GitHub #675, #676
+
+- [x] Plan: `#rail-room` is the mock's outline (head, "Current Phase/Task", "tasks done" and elapsed time from the first task start, the Phase with its description, `outline-task` rows with the agent mark, `T1 summary`, a status badge, the owned paths and a chevron, the hint); `room_rail.js` holds the rail helpers; the goal bar is the Workspace screen's title row with the Goal list, people and a run status pill; the run banner is hidden unless it carries an error, a next step, an action or an attention line; the composer is one direction field above a row of stop, resume, recover (hidden while disabled), the note and Send; the review / tool request shortcuts show only when they apply; `run_screen.css` holds the run rules.
+- [x] Verify: parity entries `run-rail-head`, `run-rail-current`, `run-rail-status`, `run-rail-phase`, `run-rail-task`, `run-rail-task-title`, `run-rail-note`, `run-heading` and the updated `task-avatar`, `task-status-tag`, `room-send-button`, `room-stop-button`, `type-scale-room` (247 elements, 0 differences in both themes at 840 and 1280); every Node UI test and the Rust tests that read the UI sources pass.
+- [ ] Completed: merged on `main`; closes #675 and #676.
+
 Trace: R-210 / UC-202 / DD-222.

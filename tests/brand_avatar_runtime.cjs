@@ -21,7 +21,7 @@ const {findChrome,launch}=require('./design_parity/cdp.cjs');
   await new Promise(r=>setTimeout(r,1200));
   await browser.eval("document.getElementById('start-tab-tasks').click()");
   await new Promise(r=>setTimeout(r,600));
-  const task=await check('.session-meta .session-symbol');assert.equal(task.width,28);assert.equal(task.mark,20);
+  const task=await check('.outline-task .session-symbol');assert.equal(task.width,28);assert.equal(task.mark,20);
   assert.equal(task.path,agent.path,'both factories use the same pinned asset, not the snapshot URL');
   console.log('brand avatars: trusted inline paths and exact agent/task content boxes pass');
  }finally{if(browser)await browser.close();fs.rmSync(dir,{recursive:true,force:true});}
