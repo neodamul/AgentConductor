@@ -8,3 +8,22 @@
 #start-panel-review .plan-sources{display:flex;align-items:center;gap:8px;margin:10px 0 0;flex-wrap:wrap}
 #start-panel-team .startup-actions .note{flex:1 1 160px;margin-right:auto;font-size:12px;color:var(--soft);line-height:1.5}
 #start-goal-info .goal-info-content{font-size:12px;line-height:normal;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;height:auto;display:block}
+/* GitHub #724: the step card reaches the status bar and its footer sits at the card bottom, without a divider (mock `.card` / `.dir`). */
+.startup-main{padding-bottom:0}
+.startup-main>.step-card:not([hidden]){margin-bottom:0;display:flex;flex-direction:column}
+.startup-main>.step-card>*{flex:none}
+.step-card>:is(.startup-actions,.startup-review-footer){margin-top:auto;border-top:0;padding-top:14px}
+.step-card :is(.startup-actions,.startup-review-footer) button.quiet{background:transparent;border:1px solid var(--line);color:var(--ink)}
+/* GitHub #725 / #726: steps 2 and 3 show Discard and Save plan edits only while there is something to discard or save. */
+:is(#start-panel-team,#start-panel-review) #start-discard:disabled,#start-panel-review #start-edit:disabled,#start-panel-review #start-digest{display:none}
+/* GitHub #726: one line per task (number, title, agent · paths, check or dependency, expand); the fields open under it. */
+#start-panel-review .startup-tasks{gap:0;margin-top:0}
+#start-panel-review .startup-task{border:1px solid var(--line);padding:10px 12px;margin-top:8px;background:var(--surface)}
+#start-panel-review details.startup-task>summary.task-summary{grid-template-columns:28px 1.6fr 1fr 1fr 90px;grid-template-rows:auto;gap:10px;font-size:13px}
+#start-panel-review details.startup-task>summary::before{content:none;display:none}
+#start-panel-review summary .task-num{width:22px;height:22px;border-radius:5px;background:var(--fill);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+#start-panel-review summary .task-oneline{grid-column:auto;font-size:13px;font-weight:600;color:var(--ink)}
+#start-panel-review summary :is(.task-owner,.task-check,.task-toggle){min-width:0;font-size:12px;color:var(--soft);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#start-panel-review details.startup-task[open]>summary .task-expand,#start-panel-review details.startup-task:not([open])>summary .task-collapse{display:none}
+/* Adding tasks and the other plan sources are editing tools: they show with an opened row or when there is no task yet. */
+#start-panel-review:has(.startup-task):not(:has(.startup-task[open])) :is(#start-task-tools,.plan-sources){display:none}

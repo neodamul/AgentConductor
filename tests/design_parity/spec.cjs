@@ -343,6 +343,21 @@ module.exports = [
   ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
     mock: { url: '?theme=light#2', selector: mock },
     app: { setup: "SIM.home.proposal=SIM.proposal('ready');", run: "document.getElementById('start-tab-review').click()", selector: app } })),
+  // GitHub #724–#726: one-line plan rows, a step card that reaches the status bar and step footers without a divider.
+  ...[
+    ['plan-row', ['paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopLeftRadius', 'marginTop'], ['height', 'paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopLeftRadius', 'marginTop'], '.card[data-show="a"] .row', '#start-tasks .startup-task'],
+    ['plan-row-number', ['fontSize', 'fontWeight', 'borderTopLeftRadius'], ['width', 'height', 'fontSize', 'fontWeight', 'borderTopLeftRadius'], '.card[data-show="a"] .row .n', '#start-tasks .task-num'],
+    ['plan-row-title', ['fontSize', 'fontWeight'], ['fontSize', 'fontWeight'], '.card[data-show="a"] .row .t', '#start-tasks .task-oneline'],
+    ['plan-row-detail', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="a"] .row .s', '#start-tasks .task-owner'],
+    ['plan-footer-box', ['paddingTop', 'borderTopWidth'], ['paddingTop', 'borderTopWidth'], '.card[data-show="a"] > .dir', '#start-panel-review .startup-review-footer'],
+    ['plan-regenerate-fill', ['backgroundColor', 'borderTopWidth'], ['backgroundColor', 'borderTopWidth'], '.card[data-show="a"] .actions .btn.q', '#start-regenerate'],
+  ].map(([name, props, keys, mock, app]) => ({ name, props, keys, pixel: false,
+    mock: { url: '?theme=light#2', selector: mock },
+    app: { setup: "SIM.home.proposal=SIM.proposal('ready');", run: "document.getElementById('start-tab-review').click()", selector: app } })),
+  { name: 'step-card-reaches-status-bar', app: {}, assert: "Math.round(document.getElementById('start-panel-workspace').getBoundingClientRect().bottom) === Math.round(document.querySelector('footer.statusbar').getBoundingClientRect().top)" },
+  { name: 'workspace-footer-order', app: {}, assert: "[...document.querySelector('#start-panel-workspace .startup-actions').children].map(c => c.id).join() === 'start-save-note,start-discard,start-save'" },
+  { name: 'roles-no-planning-row', app: { run: "document.getElementById('start-tab-team').click()" }, assert: "!document.querySelector('#start-roles .role-planning') && getComputedStyle(document.getElementById('start-discard')).display === 'none'" },
+  { name: 'plan-edit-tools-wait-for-an-open-row', app: { setup: "SIM.home.proposal=SIM.proposal('ready');", run: "document.getElementById('start-tab-review').click()" }, assert: "['start-task-tools', 'start-edit', 'start-digest'].every(id => getComputedStyle(document.getElementById(id)).display === 'none') && getComputedStyle(document.querySelector('.plan-sources')).display === 'none'" },
   // GitHub #684: a pending tool request is decided in the card footer (mock step 5).
   ...[
     ['tool-decision-note', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="g"] .actions .note', '#tool-decision-note'],

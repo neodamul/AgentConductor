@@ -2,6 +2,7 @@
 const JS: &str = include_str!("../src/ui/action_icons.js");
 const HTML: &str = include_str!("../src/ui/startup.html");
 const MCP_HTML: &str = include_str!("../src/ui/mcp.html");
+const OPTIMIZE_HTML: &str = include_str!("../src/ui/optimize.html");
 const ROOM_HTML: &str = include_str!("../src/ui/room.html");
 const CSS: &str = include_str!("../src/ui/startup.css");
 
@@ -22,7 +23,8 @@ fn every_mapped_action_button_exists_and_every_icon_has_a_mask() {
         assert!(
             HTML.contains(&format!("id=\"{id}\""))
                 || ROOM_HTML.contains(&format!("id=\"{id}\""))
-                || MCP_HTML.contains(&format!("id=\"{id}\"")),
+                || MCP_HTML.contains(&format!("id=\"{id}\""))
+                || OPTIMIZE_HTML.contains(&format!("id=\"{id}\"")),
             "{id} is a real button"
         );
         icons.insert(icon.to_string());
