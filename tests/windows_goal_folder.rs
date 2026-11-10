@@ -8,7 +8,7 @@ mod support;
 const OBSERVE: &str = r#"
 $shell = New-Object -ComObject Shell.Application
 $expected = $env:AC_GOAL_FOLDER.TrimEnd('\')
-$deadline = (Get-Date).AddSeconds(12)
+$deadline = (Get-Date).AddSeconds(30)  # GitHub #716: the first Explorer window on a fresh CI runner can take more than 12 s
 $seen = $false
 do {
   $owned = @()
