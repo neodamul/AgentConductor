@@ -1137,6 +1137,7 @@
   "native.update_job_chat": "coordinator chat",
   "native.update_job_other": "background job",
   "native.update_job_run": "run",
+  "startup.update_check_button": "Check for updates",
   "startup.update_available": "Update available: v{value1}",
   "startup.check_for_updates": "Check for updates…",
   "startup.updates": "Updates",
