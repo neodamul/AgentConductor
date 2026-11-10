@@ -363,7 +363,7 @@ function renderTask(data) {
   if(t.error)timeline.push(event(acMessage("room.coordinator_report"),t.error,'error'));
   if(!data.events.length)timeline.push(node('p',()=>(acMessage("room.no_provider_events_have_been_reported_yet")),'empty'));
   const activity=$('activity'),nearBottom=activity.parentElement.scrollHeight-activity.parentElement.scrollTop-activity.parentElement.clientHeight<70;
-  AC_I18N.replace(activity,...timeline);if(nearBottom)activity.parentElement.scrollTop=activity.parentElement.scrollHeight;mirrorToolLog(t.id,timeline);
+  AC_I18N.replace(activity,...timeline);if(nearBottom)activity.parentElement.scrollTop=activity.parentElement.scrollHeight;
   AC_I18N.bind($('stdout'),()=>(data.stdout||acMessage("room.no_output_yet")));AC_I18N.bind($('stderr'),()=>(data.stderr||acMessage("room.no_errors_logged")));
   const notes=data.knowledge.filter(k=>k.task===t.id);const steps=(data.step_lessons||[]).map(l=>{const el=node('article',undefined,'lesson');el.append(node('h3',()=>(acMessage("room.step_lesson_for",{value1:l.task}))),node('p',l.cause,'small muted'),node('p',l.response));return el;});AC_I18N.replace($('lessons'),...steps,...(notes.length?notes.map(k=>{const el=node('article',undefined,'lesson');el.append(node('h3',k.lesson.context),node('span',()=>(acMessage("room.confidence", {value1:pretty(k.status),value2:k.lesson.confidence})),'status-pill'),node('p',k.lesson.response),node('pre',k.lesson.sources.map(s=>s.path+'\n'+s.sha256).join('\n')),node('p',()=>(acMessage("room.revalidate")+k.lesson.revalidate),'small muted'));return el;}):(steps.length?[]:[node('p',()=>(acMessage("room.no_reviewed_lessons_for_this_task_draft_observations")),'empty')])));
   const u=data.usage;AC_I18N.bind($('tokens'),()=>(u&&typeof u.input_tokens==='number'?acMessage("room.in_out", {value1:u.input_tokens.toLocaleString(),value2:(u.output_tokens||0).toLocaleString()}):acMessage("room.not_reported")));
@@ -427,39 +427,24 @@ function toolView(request) {
   const raw=node('details');raw.append(node('summary',()=>(acMessage("room.raw_input"))),node('pre',JSON.stringify(request.input,null,2)));
   view.append(node('strong',summary.action,'tool-action'),list,raw);return view;
 }
-// A live tool request opens a decision window with the task's activity log. Deciding
-// later, approving or letting it expire leaves the log updating until it is closed.
-let toolDialog=null;const deferredTools=new Set();
+// GitHub #684: a live tool request is decided in the task card's footer (as in the mock), not in a modal; the card's notice shows the
+// exact input. A request brings its task forward once; the direction field is replaced by the decision while one is pending.
+let toolBusy=false;const seenTools=new Set();
+function pendingTool(){const t=task();return t?(snapshot.tool_requests||[]).find(r=>r.status==='pending'&&r.context.task===t.id):null;}
 function syncToolDialog() {
-  const dialog=$('tool-dialog'),requests=snapshot.tool_requests||[];
-  const waiting=requests.find(r=>r.status==='pending'&&!deferredTools.has(r.id));
-  if(!dialog.open&&waiting){
-    toolDialog={id:waiting.id,task:waiting.context.task,receipt:waiting};AC_I18N.replace($('tool-dialog-log'));
-    const index=snapshot.report.tasks.findIndex(t=>t.id===waiting.context.task);if(index>=0&&index!==selected)selectTask(index);else loadTask();
-    dialog.showModal();
-  }
-  if(!dialog.open||!toolDialog)return;
-  const current=requests.find(r=>r.id===toolDialog.id),pending=current?.status==='pending',shown=current||toolDialog.receipt;toolDialog.receipt=shown;
-  AC_I18N.bind($('tool-dialog-title'),()=>(toolSummary(shown.request.tool,shown.request.input).action));
-  AC_I18N.bind($('tool-dialog-reason'),()=>(`${shown.request.tool} · ${shown.context.task}`));
-  const stamp=JSON.stringify(shown.request);if($('tool-dialog-input').dataset.stamp!==stamp){$('tool-dialog-input').dataset.stamp=stamp;AC_I18N.replace($('tool-dialog-input'),toolView(shown.request));}
-  const left=Math.max(0,Math.round(shown.created_at+(snapshot.tool_decision_wait_secs||600)-Date.now()/1000));
-  const status=$('tool-dialog-status');status.className='small'+(pending?'':' settled');
-  AC_I18N.bind(status,()=>(pending?acMessage("room.waiting_for_your_decision_time_left", {value1:Math.floor(left/60),value2:String(left%60).padStart(2,'0')}):acMessage("room.no_longer_waiting", {value1:pretty(current?.status||'closed')})));
-  // The paused worker belongs to the running job, so deciding is the live action that
-  // must stay available while that job runs (same rule as the Tool requests list).
+  const requests=snapshot.tool_requests||[],fresh=requests.find(r=>r.status==='pending'&&!seenTools.has(r.id));
+  if(fresh){seenTools.add(fresh.id);const index=snapshot.report.tasks.findIndex(t=>t.id===fresh.context.task);if(index>=0&&index!==selected&&!coordinatorView)selectTask(index);}
+  const waiting=coordinatorView?null:pendingTool(),box=$('tool-decision'),composer=document.querySelector('#run-screen .composer');
+  box.hidden=!waiting;if(composer)composer.hidden=!!waiting;
+  if(!waiting)return;
+  const left=Math.max(0,Math.round(waiting.created_at+(snapshot.tool_decision_wait_secs||600)-Date.now()/1000));
+  AC_I18N.bind($('tool-decision-note'),()=>acMessage("room.tool_decision_note")+' · '+acMessage("room.waiting_for_your_decision_time_left", {value1:Math.floor(left/60),value2:String(left%60).padStart(2,'0')}));
+  // The paused worker belongs to the running job, so deciding is the live action that must stay available while that job runs.
   const live=snapshot.report.state==='running';
-  for(const id of ['tool-dialog-allow','tool-dialog-deny'])$(id).disabled=!pending||!(idle()||live)||toolDialog.deciding;AC_I18N.bind($('tool-dialog-later'),()=>(pending?acMessage("room.decide_later"):acMessage("room.close")));
+  for(const id of ['tool-decision-allow','tool-decision-deny'])$(id).disabled=!(idle()||live)||toolBusy;
 }
-function mirrorToolLog(id,timeline) {
-  if(!$('tool-dialog').open||toolDialog?.task!==id)return;
-  const log=$('tool-dialog-log'),nearBottom=log.scrollHeight-log.scrollTop-log.clientHeight<70||!log.childElementCount;
-  AC_I18N.replace(log,...timeline.map(n=>n.cloneNode(true)));if(nearBottom)log.scrollTop=log.scrollHeight;
-}
-async function decideTool(kind) {if(!toolDialog)return;toolDialog.deciding=true;for(const id of ['tool-dialog-allow','tool-dialog-deny'])$(id).disabled=true;const idleRun=snapshot.report.state!=='running';try{if(await act({kind,sha:toolDialog.id})&&kind==='tool_approve'&&idleRun)resumeAfter='tool_approve';}finally{if(toolDialog)toolDialog.deciding=false;}syncToolDialog();}
-$('tool-dialog-allow').onclick=()=>decideTool('tool_approve');$('tool-dialog-deny').onclick=()=>decideTool('tool_reject');
-$('tool-dialog-later').onclick=()=>$('tool-dialog').close();
-$('tool-dialog').onclose=()=>{if(toolDialog)deferredTools.add(toolDialog.id);toolDialog=null;};
+async function decideTool(kind) {const waiting=pendingTool();if(!waiting||toolBusy)return;toolBusy=true;syncToolDialog();const idleRun=snapshot.report.state!=='running';try{if(await act({kind,sha:waiting.id})&&kind==='tool_approve'&&idleRun)resumeAfter='tool_approve';}finally{toolBusy=false;}syncToolDialog();}
+$('tool-decision-allow').onclick=()=>decideTool('tool_approve');$('tool-decision-deny').onclick=()=>decideTool('tool_reject');
 function autoQuotaRefresh(){if(roomStopped||!snapshot||busy()||snapshot.report.state==='running')return;const agent=snapshot.report.plan.agents.find(a=>['claude','codex'].includes(a.parser)&&snapshot.quota_refresh_due?.[a.id]);if(agent)refreshQuota(agent.id);}
 let pollFailures=0;function pollFailed(e,background){if(!e.transport||!background||++pollFailures>=3){AC_I18N.bind($('connection'),()=>(acMessage("room.local_connection_unavailable")));notice(e.message,true);}}function pollSucceeded(){pollFailures=0;lastSnapshotAt=Date.now();}
 async function poll(background=false) {
@@ -475,7 +460,7 @@ async function poll(background=false) {
   }catch(e){if(roomStopped)return;pollFailed(e,background);}finally{polling=false;}
 }
 for(const el of document.querySelectorAll('[data-tab]'))el.onclick=()=>el.dataset.tab==='review'?loadReview():changeTab(el.dataset.tab);
-$('brief-team').onclick=briefTeam;$('quota-agent').onchange=()=>{quotaAgent=$('quota-agent').value;renderQuota(profile());};$('quota-refresh').onclick=()=>refreshQuota($('quota-agent').value);$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('show-result').onclick=()=>openResult().catch(e=>notice(e.message,true));$('result-close').onclick=()=>$('result-dialog').close();$('open-tools').onclick=()=>{deferredTools.clear();if(snapshot)syncToolDialog();if(!$('tool-dialog').open)$('tool-requests').scrollIntoView({behavior:'smooth',block:'center'});};
+$('brief-team').onclick=briefTeam;$('quota-agent').onchange=()=>{quotaAgent=$('quota-agent').value;renderQuota(profile());};$('quota-refresh').onclick=()=>refreshQuota($('quota-agent').value);$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('show-result').onclick=()=>openResult().catch(e=>notice(e.message,true));$('result-close').onclick=()=>$('result-dialog').close();$('open-tools').onclick=()=>{const waiting=(snapshot?.tool_requests||[]).find(r=>r.status==='pending'),index=waiting?snapshot.report.tasks.findIndex(t=>t.id===waiting.context.task):-1;if(index>=0&&(index!==selected||coordinatorView))selectTask(index);(waiting?$('tool-decision'):$('tool-requests')).scrollIntoView({behavior:'smooth',block:'center'});};
 // Input-method composition (e.g. Korean) must finish before text is replaced or sent.
 let composing=false;document.addEventListener('compositionstart',()=>{composing=true;});document.addEventListener('compositionend',()=>{composing=false;});
 $('feedback').oninput=()=>{const key=coordinatorView?COORDINATOR_DRAFT:task()?.id;if(key)drafts.set(key,$('feedback').value);};

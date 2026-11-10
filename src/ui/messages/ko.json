@@ -568,6 +568,7 @@
   "room.stopped": "중지됨",
   "room.composer_note": "{value1} · {value2}에 지시를 보냅니다 · 검토는 검증 후에 열립니다",
   "room.composer_note_coordinator": "코디네이터에게 지시를 보냅니다 · 검토는 검증 후에 열립니다",
+  "room.tool_decision_note": "허용하면 같은 입력이 한 번만 실행됩니다.",
   "room.targeted_revision_previous_evidence_is_retained": "수정 요청 · 이전 증거는 보존됨",
   "room.task_duration": "작업 시간",
   "room.task_inspector": "작업 상세",

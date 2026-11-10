@@ -3731,3 +3731,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: the plan card's task rows, summary line, detail strip and footer are still open on #686 (the app's collapsible task editors and the explicit generate / regenerate flow need a decision); closes #686 when done.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### A tool request is decided in the task card footer — GitHub #684
+
+- [x] Plan: the modal tool dialog is removed; `#tool-decision` (note with the remaining time, Deny, Allow once) replaces the direction field while the shown task has a pending request; a new request brings its task forward once; the card notice keeps the command and a *Raw input* disclosure with the exact request; *Tool requests* in the rail selects the task and scrolls to the footer; Deny and Allow once send `tool_reject` / `tool_approve` with the request id, and Allow once resumes an idle run as before.
+- [x] Verify: parity entries `tool-decision-note`, `tool-decision-deny`, `tool-decision-allow` and the assertion `tool-decision-replaces-direction` (no open dialog); `tool_decision_runtime.cjs` checks the notice and raw input, the footer replacing the direction field, the sent actions and the settled state; every Node UI test.
+- [ ] Completed: merged on `main`; closes #684.
+
+Trace: R-210 / UC-202 / DD-222.
