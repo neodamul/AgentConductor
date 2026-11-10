@@ -39,8 +39,6 @@
 #start-plan-phases .plan-phase-tasks .task-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #start-plan-phases .plan-phase-tasks .task-title code{color:var(--soft);font-weight:600;margin-right:8px}
 #start-plan-phases .plan-phase-tasks .task-agent{color:var(--soft);font-size:12px}
-/* GitHub #734: the mock's Goal tools row has Jira, Confluence and the optimizer; the preview shows once a document is attached. */
-#start-mcp-preview:disabled{display:none}
 /* GitHub #736: the Phases read as the mock's plan, without the tinted box: a Phase heading, then the mock's task rows (number, title, agent · paths, check, state). */
 #start-plan-phases.plan-phases{background:none;border:0;padding:0;box-shadow:none}
 #start-plan-phases .plan-phase{background:none;border:0;padding:0;margin:0 0 10px;box-shadow:none}
