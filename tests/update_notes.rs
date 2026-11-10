@@ -56,6 +56,12 @@ fn available_update_uses_a_downward_arrow() {
         .next()
         .unwrap();
     // GitHub #673: the mock's downward-arrow icon (an SVG, not a text glyph) is always in the titlebar.
-    assert!(button.contains("<path d=\"M12 3v12M7 10l5 5 5-5M5 17v4h14v-4\"/>"), "{button}");
-    assert!(!button.contains('⬆') && !button.contains(" hidden>"), "{button}");
+    assert!(
+        button.contains("<path d=\"M12 3v12M7 10l5 5 5-5M5 17v4h14v-4\"/>"),
+        "{button}"
+    );
+    assert!(
+        !button.contains('⬆') && !button.contains(" hidden>"),
+        "{button}"
+    );
 }
