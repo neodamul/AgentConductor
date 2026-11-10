@@ -3683,6 +3683,14 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-135.
 
+### The Claude usage probe resolves its executable — GitHub #696
+
+- [x] Plan: `src/quota/terminal.rs` resolves `profile.executable` with `executable::resolve` (Homebrew, `~/.local/bin`, …) and passes the absolute path to `/usr/bin/script`, which otherwise searched the minimal PATH of an app opened from Finder (`script: claude: No such file or directory`, shown as "Claude closed before reporting quota").
+- [x] Verify: `tests/quota_resolves_claude.rs`; the failure was read from the run's `stdout.terminal` and the app's PATH (`/usr/bin:/bin:/usr/sbin:/sbin`).
+- [ ] Completed: merged on `main`; closes #696.
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### Quota refresh updates the quota ring only — GitHub #663
 
 - [x] Plan: `profiles()` in `startup.js` stamps a card rebuild with the profiles, hints, icons, job state and each agent's own catalog job only; the quota state moves to a second stamp that replaces the `.quota-controls` ring in place (`updateQuotaRings`), so a refresh never recreates Edit, Models, remove or move.

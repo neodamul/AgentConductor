@@ -96,6 +96,10 @@ pub async fn query_claude_within(
     std::fs::set_permissions(dir, std::fs::Permissions::from_mode(0o700))
         .map_err(|e| e.to_string())?;
     let stderr = std::fs::File::create(dir.join("stderr.log")).map_err(|e| e.to_string())?;
+    // GitHub #696: `script` looks the program up in the app's PATH, which is minimal when the app is opened from
+    // Finder; the executable is resolved here with the known install folders instead.
+    let executable = crate::executable::resolve(&profile.executable)
+        .unwrap_or_else(|| profile.executable.clone().into());
     let mut command = Command::new("/usr/bin/script");
     for (name, _) in std::env::vars().filter(|(name, _)| session_env::is_session_marker(name)) {
         command.env_remove(name);
@@ -104,7 +108,7 @@ pub async fn query_claude_within(
         .args([
             "-q",
             "/dev/null",
-            &profile.executable,
+            &executable.to_string_lossy(),
             "--ax-screen-reader",
             "--tools",
             "",
