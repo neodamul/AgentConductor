@@ -3627,6 +3627,14 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### A restricted role moves to its due fallback before later roles start — GitHub #687
+
+- [x] Plan: the scheduler applies due reviewed fallbacks at the top of each iteration while nothing runs (so always before the first launch), keeping the transfer's quiescence rule; a role whose reset is inside the five-hour horizon still waits for its own account; later independent roles then run after it in plan order.
+- [x] Verify: `a_restricted_first_role_with_a_due_fallback_moves_before_later_roles_start` (a real repository fixture: the first role moves, the second is untouched, a reset inside the horizon keeps waiting); lib tests and every fallback / availability integration test pass; the real run's audit trail named the cause (`handoff` recorded only after the other task finished).
+- [ ] Completed: merged on `main`; closes #687.
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### Refresh arrow spins alone — GitHub #647
 
 - [x] Plan: the popup's refresh button holds the arrow in `span.usage-glyph`; `.usage-refresh.refreshing .usage-glyph` carries the spin animation instead of the button.
