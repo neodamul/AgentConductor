@@ -3627,6 +3627,14 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### A restricted role moves to its due fallback before later roles start — GitHub #687
+
+- [x] Plan: the scheduler applies due reviewed fallbacks at the top of each iteration while nothing runs (so always before the first launch), keeping the transfer's quiescence rule; a role whose reset is inside the five-hour horizon still waits for its own account; later independent roles then run after it in plan order.
+- [x] Verify: `a_restricted_first_role_with_a_due_fallback_moves_before_later_roles_start` (a real repository fixture: the first role moves, the second is untouched, a reset inside the horizon keeps waiting); lib tests and every fallback / availability integration test pass; the real run's audit trail named the cause (`handoff` recorded only after the other task finished).
+- [ ] Completed: merged on `main`; closes #687.
+
+Trace: R-210 / UC-202 / DD-222.
+
 ### Refresh arrow spins alone — GitHub #647
 
 - [x] Plan: the popup's refresh button holds the arrow in `span.usage-glyph`; `.usage-refresh.refreshing .usage-glyph` carries the spin animation instead of the button.
@@ -3722,13 +3730,5 @@ Trace: R-210 / UC-202 / DD-222.
 - [x] Plan: `#rail-room` is the mock's outline (head, "Current Phase/Task", "tasks done" and elapsed time from the first task start, the Phase with its description, `outline-task` rows with the agent mark, `T1 summary`, a status badge, the owned paths and a chevron, the hint); `room_rail.js` holds the rail helpers; the goal bar is the Workspace screen's title row with the Goal list, people and a run status pill; the run banner is hidden unless it carries an error, a next step, an action or an attention line; the composer is one direction field above a row of stop, resume, recover (hidden while disabled), the note and Send; the review / tool request shortcuts show only when they apply; `run_screen.css` holds the run rules.
 - [x] Verify: parity entries `run-rail-head`, `run-rail-current`, `run-rail-status`, `run-rail-phase`, `run-rail-task`, `run-rail-task-title`, `run-rail-note`, `run-heading` and the updated `task-avatar`, `task-status-tag`, `room-send-button`, `room-stop-button`, `type-scale-room` (247 elements, 0 differences in both themes at 840 and 1280); every Node UI test and the Rust tests that read the UI sources pass.
 - [ ] Completed: merged on `main`; closes #675 and #676.
-
-Trace: R-210 / UC-202 / DD-222.
-
-### A restricted role moves to its due fallback before later roles start — GitHub #687
-
-- [x] Plan: the scheduler applies due reviewed fallbacks at the top of each iteration while nothing runs (so always before the first launch), keeping the transfer's quiescence rule; a role whose reset is inside the five-hour horizon still waits for its own account; later independent roles then run after it in plan order.
-- [x] Verify: `a_restricted_first_role_with_a_due_fallback_moves_before_later_roles_start` (a real repository fixture: the first role moves, the second is untouched, a reset inside the horizon keeps waiting); lib tests and every fallback / availability integration test pass; the real run's audit trail named the cause (`handoff` recorded only after the other task finished).
-- [ ] Completed: merged on `main`; closes #687.
 
 Trace: R-210 / UC-202 / DD-222.
