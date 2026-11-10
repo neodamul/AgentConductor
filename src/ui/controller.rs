@@ -27,11 +27,25 @@ impl Controller {
             .map(|job| job["state"] == "running")
             .unwrap_or(true)
     }
+    /// GitHub #691: UI requests never wait forever on the job slot; a held slot fails the request instead of
+    /// parking all eight bridge threads behind it (which froze the whole window).
+    pub(super) fn lock_job(&self) -> Result<std::sync::MutexGuard<'_, Option<Job>>, String> {
+        crate::bounded_lock::lock_within(&self.job, std::time::Duration::from_secs(3)).map_err(
+            |why| {
+                match why {
+                    crate::bounded_lock::Unavailable::Held => {
+                        crate::ui::messages::text("native.another_ui_action_is_still_running")
+                    }
+                    crate::bounded_lock::Unavailable::Poisoned => {
+                        crate::ui::messages::text("native.ui_job_state_poisoned")
+                    }
+                }
+                .into()
+            },
+        )
+    }
     pub(super) fn poll(&self) -> Result<serde_json::Value, String> {
-        let mut slot = self
-            .job
-            .lock()
-            .map_err(|_| crate::ui::messages::text("native.ui_job_state_poisoned"))?;
+        let mut slot = self.lock_job()?;
         let Some(job) = slot.as_mut() else {
             return Ok(serde_json::Value::Null);
         };
@@ -84,10 +98,7 @@ impl Controller {
             );
         }
         self.poll()?;
-        let mut slot = self
-            .job
-            .lock()
-            .map_err(|_| crate::ui::messages::text("native.ui_job_state_poisoned"))?;
+        let mut slot = self.lock_job()?;
         if slot.as_ref().is_some_and(|j| !j.finished) {
             return Err(
                 crate::ui::messages::text("native.another_ui_action_is_still_running").into(),
