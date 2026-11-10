@@ -202,7 +202,7 @@ function renderMergedState(){
  document.getElementById('review-run-state').textContent=merged?'완료':'승인 대기';
  document.getElementById('review-goal-title').textContent=merged?'검토한 결과가 main에 반영되었습니다':'변경을 검토하고 승인합니다';
  if(merged){updateAgentStates('d');updateTaskOutline('d');}
- const button=document.getElementById('review-main-action');button.textContent=merged?'완료 결과 보기':reviewOpened?'승인하고 머지 (시안)':'변경 검토';
+ const button=document.getElementById('review-main-action');button.textContent=merged?'완료 결과 보기':reviewOpened?'승인하고 머지':'변경 검토';
  document.querySelectorAll('section.card[data-show="c"] .btn:not(#review-main-action)').forEach(control=>control.disabled=merged);
 }
 const goalDrafts={j:'리프레시 토큰을 쓸 때마다 새로 발급하고, 재사용된 토큰을 탐지하면 세션을 끊는다.',e:'로그인 실패가 5번 넘으면 계정을 15분 잠근다. 잠금 해제 API와 테스트를 추가한다.'};

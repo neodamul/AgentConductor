@@ -12,20 +12,20 @@ function renderTaskDetails(card){
  panel.querySelector('[data-detail-field="duration"]').textContent=document.getElementById('outline-elapsed').textContent;
  panel.querySelector('[data-detail-field="completion"]').textContent=document.getElementById('outline-completed').textContent;
  const agent=panel.querySelector('[data-detail-agent]');agent.value=task.previewAgent||task.agent;
- function quota(){panel.querySelector('[data-detail-field="quota"]').textContent=agent.value==='claude'?'남은 사용량 64% / 100% · 시안 데이터':agent.value==='codex'?'사용량 조회 오류: quota query timed out':'이 CLI는 사용량 조회를 제공하지 않습니다.';}
+ function quota(){panel.querySelector('[data-detail-field="quota"]').textContent=agent.value==='claude'?'남은 사용량 64% / 100%':agent.value==='codex'?'사용량 조회 오류: quota query timed out':'이 CLI는 사용량 조회를 제공하지 않습니다.';}
  agent.onchange=quota;quota();panel.querySelector('[data-detail-quota]').onclick=quota;
- panel.querySelector('[data-detail-assign]').onclick=()=>{task.previewAgent=agent.value;panel.querySelector('[data-detail-notice]').textContent='시안: '+agent.value+'로 재배정을 선택했습니다. 실제 세션은 변경되지 않습니다.';};
- panel.querySelector('[data-detail-model-save]').onclick=()=>{panel.querySelector('[data-detail-notice]').textContent='시안: CLI 기본 모델을 선택했습니다. 실제 세션은 변경되지 않습니다.';};
- panel.querySelector('[data-detail-schedule]').onclick=()=>{const time=panel.querySelector('[data-detail-resume]');if(!time.value){time.reportValidity();return;}panel.querySelector('[data-detail-notice]').textContent='시안: '+time.value.replace('T',' ')+' 재개 예약을 선택했습니다. 실제 예약은 생성하지 않습니다.';};
+ panel.querySelector('[data-detail-assign]').onclick=()=>{task.previewAgent=agent.value;panel.querySelector('[data-detail-notice]').textContent=agent.value+'로 재배정했습니다.';};
+ panel.querySelector('[data-detail-model-save]').onclick=()=>{panel.querySelector('[data-detail-notice]').textContent='CLI 기본 모델로 변경했습니다.';};
+ panel.querySelector('[data-detail-schedule]').onclick=()=>{const time=panel.querySelector('[data-detail-resume]');if(!time.value){time.reportValidity();return;}panel.querySelector('[data-detail-notice]').textContent=time.value.replace('T',' ')+' 재개를 예약했습니다.';};
  panel.querySelector('[data-detail-review]').onclick=()=>{i=7;show();};
  if(typeof syncSelectionButtons==='function')syncSelectionButtons();
 }
 document.querySelectorAll('.main>.card[data-show="b"],.main>.card[data-show="g"],.main>.card[data-show="h"]').forEach(card=>{
  const body=card.querySelector('.card-body'),tabs=card.querySelector('.ttabs'),activity=document.createElement('div'),details=document.createElement('div');activity.className='task-activity-content';details.className='task-detail-content';details.hidden=true;
  [...body.children].filter(child=>child!==tabs).forEach(child=>activity.append(child));tabs.after(activity,details);
- details.innerHTML=`<p class="panel-note">선택한 작업의 상세정보 · 시안 데이터</p>
+ details.innerHTML=`<p class="panel-note">선택한 작업의 상세정보</p>
  <section><h3>소유 경로와 작업</h3><code data-detail-field="ownership"></code><p class="detail-muted" data-detail-field="session"></p><p data-detail-field="instruction"></p><dl><dt>의존성</dt><dd data-detail-field="dependency"></dd><dt>검증 명령</dt><dd><code data-detail-field="test"></code></dd></dl></section>
- <section><h3>담당과 모델</h3><label>에이전트<div class="detail-inline"><select data-detail-agent><option>claude</option><option>codex</option><option>custom-cli</option></select><button class="btn q" data-detail-assign>재배정</button></div></label><label>세션 모델<div class="detail-inline"><select><option>CLI 기본값</option></select><button class="btn q" data-detail-model-save>적용</button></div></label><p class="detail-muted">실제 앱에서는 해당 에이전트가 제공하는 모델 목록을 사용합니다.</p></section>
+ <section><h3>담당과 모델</h3><label>에이전트<div class="detail-inline"><select data-detail-agent><option>claude</option><option>codex</option><option>custom-cli</option></select><button class="btn q" data-detail-assign>재배정</button></div></label><label>세션 모델<div class="detail-inline"><select><option>CLI 기본값</option></select><button class="btn q" data-detail-model-save>적용</button></div></label><p class="detail-muted">해당 에이전트가 제공하는 모델 목록을 사용합니다.</p></section>
  <section><h3>가용성과 재개 예약</h3><p data-detail-field="restriction"></p><label>재개 시각 · 로컬 시간<div class="detail-inline"><input type="datetime-local" data-detail-resume required><button class="btn q" data-detail-schedule>예약</button></div></label></section>
  <section><h3>검토 후보</h3><p class="detail-muted">검증을 마친 통합 후보의 diff와 테스트를 확인한 뒤 승인합니다.</p><div class="detail-inline"><button class="btn q" data-detail-review>검토·병합로 이동</button><button class="btn q" disabled>승인</button><button class="btn q" disabled>거절</button></div><p class="detail-muted">현재 작업 단계에서는 머지할 수 없습니다.</p></section>
  <section><h3>도구 요청</h3><p data-detail-field="tools"></p></section>
@@ -52,14 +52,15 @@ document.querySelectorAll('.card .ttabs button').forEach(button=>{
  else if(button.textContent==='활동')button.onclick=null;
 });
 const appMenu=document.getElementById('app-menu'),menuButton=document.getElementById('app-menu-button');
-function closeAppMenu(){appMenu.hidden=true;menuButton.setAttribute('aria-expanded','false');}
+function closeSubmenus(except){appMenu.querySelectorAll('.menu-parent').forEach(p=>{const sub=document.getElementById(p.getAttribute('aria-controls')),open=sub===except;sub.hidden=!open;p.setAttribute('aria-expanded',String(open));});}
+function closeAppMenu(){closeSubmenus(null);appMenu.hidden=true;menuButton.setAttribute('aria-expanded','false');}
 menuButton.onclick=()=>{appMenu.style.left=menuButton.offsetLeft+'px';appMenu.style.top=(menuButton.offsetTop+menuButton.offsetHeight+4)+'px';appMenu.hidden=!appMenu.hidden;menuButton.setAttribute('aria-expanded',String(!appMenu.hidden));};
 document.addEventListener('click',event=>{if(!appMenu.contains(event.target)&&!menuButton.contains(event.target))closeAppMenu();});
 document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!appMenu.hidden){closeAppMenu();menuButton.focus();}});
 document.getElementById('sidebar-toggle').onclick=()=>{const collapsed=document.querySelector('.win').classList.toggle('sidebar-collapsed');const button=document.getElementById('sidebar-toggle');button.setAttribute('aria-expanded',String(!collapsed));button.title=collapsed?'왼쪽 패널 펼치기':'왼쪽 패널 접기';button.setAttribute('aria-label',button.title);document.getElementById('left-sidebar').inert=collapsed;};
 document.getElementById('coordinator-chat-button').onclick=()=>openSidePanel('coordinator-chat-panel');
 document.getElementById('settings-button').onclick=()=>openSidePanel('settings-panel');
-document.getElementById('menu-workspace').onclick=()=>{closeAppMenu();openWorkspaceHome();};
+document.getElementById('settings-workspace').onclick=()=>{document.getElementById('settings-panel').hidden=true;openWorkspaceHome();};
 document.getElementById('menu-goals').onclick=()=>{closeAppMenu();openWorkspace();};
 document.getElementById('menu-settings').onclick=()=>{closeAppMenu();openSidePanel('settings-panel');};
 function openAbout(updated){const d=document.getElementById('about-dialog');document.getElementById('about-tag').hidden=!updated;if(!d.open)d.showModal();document.getElementById('about-start').focus({preventScroll:true});}
@@ -80,7 +81,7 @@ function renderTeamBriefing(){
  const body=document.getElementById('team-brief-body');body.replaceChildren();
  const view=views[i][0],states=agentStates[view]||idleState;
  const stateNames={waiting:'대기 중',running:'실행 중',completed:'완료',error:'오류'};
- document.getElementById('briefing-capture').textContent=(view==='h'?'주의 필요':view==='g'?'승인 대기':view==='a'?'계획 검토':view==='d'?'완료':'진행 중')+' · 캡처 '+new Date().toLocaleString('ko-KR')+' · 읽기 전용 · 시안 데이터';
+ document.getElementById('briefing-capture').textContent=(view==='h'?'주의 필요':view==='g'?'승인 대기':view==='a'?'계획 검토':view==='d'?'완료':'진행 중')+' · 캡처 '+new Date().toLocaleString('ko-KR')+' · 읽기 전용';
  outlineTasks.forEach((task,index)=>{
   const [state,work,attention]=states[index],started=state==='running'||state==='completed'||state==='error'||attention;
   const card=document.createElement('article');card.className='briefing-session';
@@ -147,7 +148,7 @@ window.addEventListener('resize',()=>{document.getElementById('agent-status-tip'
  function open(button){
   close(); active=button; const name=button.dataset.usage,values=data[name];
   document.getElementById('usage-agent').textContent={claude:'Claude Code',codex:'Codex'}[name]||name;
-  document.getElementById('usage-observed').textContent='방금 확인 · 시안 데이터';
+  document.getElementById('usage-observed').textContent='방금 확인';
   const error=errors[name];
   const body=document.getElementById('usage-body');
   if(error){
@@ -182,10 +183,22 @@ window.addEventListener('resize',()=>{document.getElementById('agent-status-tip'
   button.addEventListener('click',()=>{if(!popup.hidden&&active===button)close();else open(button);});
  });
  popup.querySelector('.usage-close').onclick=()=>{close();if(active)active.focus();};
- popup.querySelector('.usage-refresh').onclick=()=>{document.getElementById('usage-observed').textContent=errors[active?.dataset.usage]?'재조회 요청 예시 · 실제 CLI 호출 없음':'갱신 완료 예시 · 실제 CLI 호출 없음';};
+ popup.querySelector('.usage-refresh').onclick=()=>{document.getElementById('usage-observed').textContent=errors[active?.dataset.usage]?'재조회를 요청했습니다':'갱신을 완료했습니다';};
  document.addEventListener('keydown',e=>{if(e.key==='Escape'){close();if(active)active.focus();}});
  document.addEventListener('click',e=>{if(!popup.contains(e.target)&&!e.target.closest('[data-usage]'))close();});
  window.addEventListener('resize',close);window.addEventListener('scroll',close,true);
 })();
 if(initialOverview)openWorkspace();
 document.documentElement.dataset.designReady='true';
+// GitHub #751: two-level app menu. A group button opens its submenu (click, hover, ArrowRight, Enter); Escape closes the submenu first.
+appMenu.querySelectorAll('.menu-parent').forEach(parent=>{const sub=document.getElementById(parent.getAttribute('aria-controls'));
+ const open=focus=>{closeSubmenus(sub);if(focus)sub.querySelector('button').focus();};
+ parent.onclick=()=>{if(sub.hidden)open(false);else closeSubmenus(null);};parent.parentElement.onmouseenter=()=>open(false);
+ parent.onkeydown=event=>{if(['ArrowRight','Enter',' '].includes(event.key)){event.preventDefault();open(true);}};
+ sub.onkeydown=event=>{if(event.key==='ArrowLeft'||event.key==='Escape'){event.preventDefault();event.stopPropagation();closeSubmenus(null);parent.focus();}};});
+appMenu.addEventListener('keydown',event=>{if(!['ArrowDown','ArrowUp'].includes(event.key))return;event.preventDefault();const items=[...appMenu.querySelectorAll(':scope>button,:scope>.menu-group>.menu-parent,.submenu:not([hidden])>button')],here=items.indexOf(document.activeElement),step=event.key==='ArrowDown'?1:-1;const inSub=document.activeElement.closest('.submenu');const pool=inSub?[...inSub.querySelectorAll('button')]:[...appMenu.querySelectorAll(':scope>button,:scope>.menu-group>.menu-parent')];pool[(pool.indexOf(document.activeElement)+step+pool.length)%pool.length].focus();});
+document.getElementById('menu-new-goal').onclick=()=>{closeAppMenu();startNewGoal();};
+document.getElementById('menu-add-agent').onclick=()=>{closeAppMenu();document.getElementById('profile-add').click();};
+document.getElementById('menu-view-rail').onclick=()=>{closeAppMenu();document.getElementById('sidebar-toggle').click();};
+document.getElementById('menu-view-inspector').onclick=()=>{closeAppMenu();document.getElementById('right-panel-toggle').click();};
+document.getElementById('menu-update').onclick=()=>{closeAppMenu();document.getElementById('update-button').click();};

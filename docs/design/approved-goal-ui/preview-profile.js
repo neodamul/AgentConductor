@@ -24,7 +24,7 @@ function openProfileEditor(agent){
 }
 profileField('fallback').onchange=()=>refreshProfileFallbackModels();profileField('fallback-model').onchange=syncProfileCustom;
 profileField('edit-cancel').onclick=()=>profileDialog.close('cancel');
-profileField('browse').onclick=()=>{profileField('edit-error').textContent='시안: 실제 파일 탐색기는 열지 않습니다. 실행파일 값은 직접 입력할 수 있습니다.';};
+profileField('browse').onclick=()=>{profileField('edit-error').textContent='';profileField('executable').focus();};
 document.getElementById('profile-edit-form').onsubmit=event=>{
  event.preventDefault();try{
   const args=JSON.parse(profileField('args').value||'[]'),readonlyArgs=JSON.parse(profileField('readonly-args').value||'[]');
