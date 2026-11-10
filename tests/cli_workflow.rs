@@ -184,5 +184,17 @@ fn remove_finished_fixture(root: &std::path::Path) {
             std::thread::sleep(std::time::Duration::from_millis(20));
         }
     }
-    std::fs::remove_dir_all(root).unwrap();
+    // GitHub #754: the watcher's children may still hold or create files for a moment; retry until they are gone.
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(20);
+    loop {
+        match std::fs::remove_dir_all(root) {
+            Ok(()) => return,
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => return,
+            Err(e) => assert!(
+                std::time::Instant::now() < deadline,
+                "fixture cleanup kept failing: {e}"
+            ),
+        }
+        std::thread::sleep(std::time::Duration::from_millis(50));
+    }
 }
