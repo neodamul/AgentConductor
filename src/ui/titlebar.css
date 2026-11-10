@@ -2,7 +2,7 @@
 #start-titlebar{--title-brand-width:250px;padding:0;gap:0;letter-spacing:normal}
 #start-titlebar .title-brand{position:relative;display:flex;align-items:center;gap:6px;flex:0 0 var(--title-brand-width);width:var(--title-brand-width);padding:0 14px;height:100%;min-width:0}
 #start-titlebar .title-brand strong{font-size:14px;white-space:nowrap}
-#start-titlebar .title-brand .brand-mark{width:26px;height:26px;margin:0}
+#start-titlebar .title-brand .brand-mark{width:22px;height:22px;margin:0}
 #start-titlebar .title-brand .app-version{color:var(--soft);font-size:10px;white-space:nowrap;margin-left:auto;margin-right:6px}
 #start-titlebar .title-divider{position:absolute;right:0;margin:0;display:block;width:1px;height:18px;background:var(--bar-line)}
 #start-titlebar .title-actions{display:flex;align-items:center;gap:8px;padding:0 12px;flex:1;min-width:0;height:100%}

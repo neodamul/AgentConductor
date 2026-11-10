@@ -30,6 +30,23 @@ module.exports = [
     mock: { selector: '.rail' }, app: { selector: '.startup-team' } },
   { name: 'rail-tab', props: ['borderTopLeftRadius', 'fontSize'], keys: ['width', 'height', 'borderTopLeftRadius', 'fontSize'], pixel: false,
     mock: { selector: '.rail-tabs button', index: 1 }, app: { selector: '#rail-tabs [role=tab]', index: 1 } },
+  // GitHub #745: the selected and the unselected rail tab differ in fill and text colour.
+  { name: 'rail-tab-selected', props: ['backgroundColor', 'color', 'fontWeight', 'borderTopColor'], keys: ['backgroundColor', 'color', 'fontWeight', 'borderTopColor'], pixel: false,
+    mock: { selector: '.rail-tabs button[aria-selected="true"]' }, app: { selector: '#rail-tabs [role=tab][aria-selected=true]' } },
+  { name: 'rail-tab-unselected', props: ['backgroundColor', 'color', 'fontWeight', 'borderTopColor'], keys: ['backgroundColor', 'color', 'fontWeight', 'borderTopColor'], pixel: false,
+    mock: { selector: '.rail-tabs button[aria-selected="false"]' }, app: { selector: '#rail-tabs [role=tab][aria-selected=false]' } },
+  // GitHub #748: the Goal list button, the team button and the status text sit 12px apart.
+  { name: 'heading-gap', props: ['columnGap', 'rowGap'], keys: ['columnGap', 'rowGap', 'height'], pixel: false,
+    mock: { url: '?theme=light#0', selector: '.main>.head' }, app: { selector: '.startup-heading' } },
+  { name: 'run-heading-gap', props: ['columnGap', 'rowGap'], keys: ['columnGap', 'rowGap', 'height'], pixel: false,
+    mock: { url: '?theme=light#3', selector: '.main>.head' }, app: { setup: STEPS_ENABLED, run: "document.getElementById('start-tab-tasks').click()", selector: '#run-screen .goal-bar' } },
+  { name: 'heading-pill', props: [], keys: ['y', 'height'], pixel: false,
+    mock: { url: '?theme=light#0', selector: '.main>.head>.pill', rel: '.main>.head' }, app: { selector: '.startup-heading>.status-pill', rel: '.startup-heading' } },
+  { name: 'run-heading-pill', props: [], keys: ['y', 'height'], pixel: false,
+    mock: { url: '?theme=light#3', selector: '.main>.head>.pill', rel: '.main>.head' }, app: { setup: STEPS_ENABLED, run: "document.getElementById('start-tab-tasks').click()", selector: '#run-screen .goal-bar>.status-pill', rel: '#run-screen .goal-bar' } },
+  // GitHub #746: the body area shows the window surface behind the cards.
+  { name: 'main-background', props: ['backgroundColor'], keys: ['backgroundColor'], pixel: false,
+    mock: { selector: '.win' }, app: { selector: '.startup-main' } },
   { name: 'step-tab', props: ['borderTopLeftRadius'], keys: ['height', 'borderTopLeftRadius'], pixel: false,
     mock: { url: '?theme=light#0', selector: '.tabs .tab', index: 1 }, app: { selector: '#start-step-tabs [role=tab]', index: 1 } },
   { name: 'app-version', props: ['fontSize'], keys: ['fontSize'], pixel: false,

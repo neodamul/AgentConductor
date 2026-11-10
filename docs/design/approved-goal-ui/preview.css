@@ -279,3 +279,5 @@ button[data-action-icon]{display:inline-flex;align-items:center;justify-content:
 
 
 @media(max-width:900px){.agent .tools{gap:1px}.agent .tools>.tb:not(.agent-remove){padding-left:6px;padding-right:6px}.agent .tools>.tb:nth-child(-n+2){padding-left:2px;padding-right:2px}}
+/* GitHub #748: the status pill sits under the buttons at the right end; the buttons are packed with a 6px gap. */
+.main>.head{display:grid;grid-template-columns:minmax(0,1fr) auto auto;column-gap:6px;row-gap:4px;height:auto;align-items:center}.main>.head>*{grid-row:1}.main>.head>.pill{grid-column:1/-1;grid-row:2;justify-self:end;margin:0}
