@@ -8,14 +8,14 @@ const acPlanReview = (() => {
   }
   return {
     // `box` holds the two lines; `select(index)` re-renders the strip when another row is opened.
-    render(box, tasks, selected = 0, titleOf = task => task.id) {
+    render(box, tasks, selected = 0, titleOf = task => task.id, phase = {phase: 1, phase_total: 1}) {
       box.replaceChildren();
       if (!tasks.length) { box.hidden = true; return; }
       box.hidden = false;
       const picked = tasks[Math.min(selected, tasks.length - 1)], title = titleOf(picked) || picked.id, clash = conflicts(tasks);
       const line = document.createElement('p'), strip = document.createElement('p');
       line.className = 'plan-position'; strip.className = 'plan-detail';
-      AC_I18N.bind(line, () => acMessage('startup.plan_position', { value1: Math.min(selected, tasks.length - 1) + 1, value2: tasks.length, value3: title, value4: clash.length ? acMessage('startup.plan_paths_overlap', { value1: clash.join(', ') }) : acMessage('startup.plan_paths_clear') }));
+      AC_I18N.bind(line, () => acMessage('startup.plan_position', { ...phase, value1: Math.min(selected, tasks.length - 1) + 1, value2: tasks.length, value3: title, value4: clash.length ? acMessage('startup.plan_paths_overlap', { value1: clash.join(', ') }) : acMessage('startup.plan_paths_clear') }));
       AC_I18N.bind(strip, () => detail(picked, title));
       box.append(line, strip);
     },
