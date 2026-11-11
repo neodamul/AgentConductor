@@ -357,3 +357,21 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 .sessions-confirm-actions{display:flex;gap:8px;justify-content:flex-end}
 .btn.danger{background:var(--err);border-color:var(--err);color:#fff}
 #sessions-dialog .result-actions{justify-content:space-between}
+/* The Goal heading of the run steps shows one line; its toggle unfolds the whole Goal below the heading. */
+#saved-goal-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.goal-title-toggle{flex:none;border:0;background:transparent;color:var(--accent-text);font:inherit;font-size:12px;cursor:pointer;padding:2px 4px;margin-right:auto}
+.goal-title-toggle:hover{text-decoration:underline}
+.goal-title-text{margin:-4px 0 10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-size:13px;line-height:1.6;white-space:pre-wrap;max-height:160px;overflow:auto}
+.goal-title-text[hidden]{display:none}
+
+/* A changed file row in the Goal result unfolds its diff in place. */
+.result-section .file-diff-toggle{display:flex;width:100%;border:0;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer;padding:0}
+.result-section .file-diff-toggle::before{content:'\25B8';color:var(--soft);font-size:10px;margin-right:6px;line-height:inherit}
+.result-section .file-diff-toggle[aria-expanded="true"]::before{content:'\25BE'}
+.result-section .file-diff-toggle:hover{color:var(--accent-text)}
+.result-section .file-diff{margin:6px 0 2px;padding:8px 10px;max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:6px;background:var(--bg);font:11px/1.6 Menlo,Consolas,monospace;white-space:pre}
+.result-section .file-diff[hidden]{display:none}
+.result-section .file-diff .diff-line{display:block;margin:0;padding:0 2px;border:0;border-radius:0;box-shadow:none;min-height:0}
+.result-section .file-diff .diff-line.add{color:var(--ok);background:var(--ok-bg)}
+.result-section .file-diff .diff-line.remove{color:var(--err);background:var(--err-bg)}
+.result-section .file-diff .diff-line.hunk{color:var(--soft)}

@@ -16,13 +16,14 @@ const context=vm.createContext({window:{}});vm.runInContext(view,context);vm.run
 const run=code=>JSON.parse(JSON.stringify(vm.runInContext(code,context)));
 // Changed files come from the candidate diff with +/- counts.
 const diff=['diff --git a/src/a.rs b/src/a.rs','index 1..2 100644','--- a/src/a.rs','+++ b/src/a.rs','@@ -1 +1,2 @@','-old','+new','+more','diff --git a/docs/b.md b/docs/b.md','--- a/docs/b.md','+++ b/docs/b.md','@@ -0,0 +1 @@','+text'].join('\n');
-assert.deepEqual(run(`window.acResultView.files(${JSON.stringify(diff)})`),[{path:'src/a.rs',add:2,del:1},{path:'docs/b.md',add:1,del:0}]);
+assert.deepEqual(run(`window.acResultView.files(${JSON.stringify(diff)})`),[{path:'src/a.rs',add:2,del:1,lines:['@@ -1 +1,2 @@','-old','+new','+more']},{path:'docs/b.md',add:1,del:0,lines:['@@ -0,0 +1 @@','+text']}]);
+// GitHub #826: each file keeps its hunks (headers dropped) so its row can unfold the diff.
 assert.deepEqual(run("window.acResultView.files('')"),[]);assert.deepEqual(run('window.acResultView.files(null)'),[]);
 // Passed tests are the ones that exited 0 without timing out.
 assert.deepEqual(run("window.acResultView.tests([{task:'t1',exit_code:0},{task:'t2',exit_code:1},{task:'t3',exit_code:0,timed_out:true}])"),{passed:1,total:3});
 assert.deepEqual(run('window.acResultView.tests([])'),{passed:0,total:0});
 const phases=[{phase:'p1',evidence:{diff:['diff --git a/src/a.rs b/src/a.rs','+one'].join('\n'),test_output:[{task:'unit',exit_code:0}]}},{phase:'p2',evidence:{diff:['diff --git a/src/a.rs b/src/a.rs','+two','diff --git a/docs.md b/docs.md','+doc'].join('\n'),test_output:[{task:'docs',exit_code:1}]}}];
-assert.deepEqual(run(`window.acResultView.phaseFiles(${JSON.stringify(phases)})`),[{path:'src/a.rs',phases:['p1','p2']},{path:'docs.md',phases:['p2']}],'files are unique across Phase results');
+assert.deepEqual(run(`window.acResultView.phaseFiles(${JSON.stringify(phases)})`),[{path:'src/a.rs',phases:['p1','p2'],lines:['+one','+two']},{path:'docs.md',phases:['p2'],lines:['+doc']}],'files are unique across Phase results and keep every Phase\'s hunks');
 assert.deepEqual(run(`window.acResultView.phaseTests(${JSON.stringify(phases)})`).map(t=>t.task),['p1 · unit','p2 · docs'],'tests retain their Phase identity');
 // The popup opens once when a run completes while watched, never for a run that was already finished.
 assert.equal(run("resultTransition(null,'completed')"),false,'first snapshot of a finished run: no popup');

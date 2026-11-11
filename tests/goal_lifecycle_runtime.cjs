@@ -15,7 +15,8 @@ for(const width of [840,1280]){browser=await launch(chrome,{width});for(const th
  input('start-goal','Implement the joined Goal');const inherited=JSON.stringify(SIM.home.config.roles);q('start-save').click();await until(()=>!q('start-panel-team').hidden&&!q('start-prepare').disabled,'saved Goal and Team');
  q('start-prepare').click();check('planning does not open a confirmation',!q('start-planning-confirm')?.open);
  await until(()=>SIM.home.proposal?.phase==='ready'&&!q('start-run').disabled,'review ready');check('planning uses registered coordinator and model',SIM.home.config.coordinator==='claude'&&SIM.home.config.profiles[0].coordinator_model==='opus');
- check('plan approval evidence is accessible',!q('start-approval-evidence').hidden&&q('start-consent-evidence').textContent.includes('d1')&&q('start-consent-evidence').textContent.includes('abcdef1234567890'));q('start-approval-evidence').querySelector('summary').focus();check('approval evidence is keyboard focusable',document.activeElement===q('start-approval-evidence').querySelector('summary'));q('start-approval-evidence').open=true;
+ check('the plan screen has no legacy approval evidence disclosure',!q('start-approval-evidence')&&!q('start-consent-evidence'));
+ check('Remove task explains manual additions',document.querySelectorAll('.task-remove').length>0&&[...document.querySelectorAll('.task-remove')].every(b=>b.title===acMessage('startup.remove_task_hint')));
  q('start-run').click();check('run does not open a confirmation',!q('start-consent')?.open);
  await until(()=>document.body.classList.contains('on-run')&&document.querySelectorAll('.session-choice .task-number').length===3,'running Room');
  check('run starts only after exact consent',SIM.log.filter(e=>e.kind==='start').length===1&&SIM.log.find(e=>e.kind==='start').p.digest==='d1');
@@ -29,6 +30,7 @@ for(const width of [840,1280]){browser=await launch(chrome,{width});for(const th
  document.querySelector('.goal-folder').click();await until(()=>SIM.log.some(e=>e.kind==='goal_folder'&&e.p.open),'folder action');
  for(const d of document.querySelectorAll('dialog.slide-panel[open]'))d.close();
  q('start-new-goal').click();await until(()=>SIM.log.some(e=>e.kind==='new_goal')&&q('start-goal').value===''&&!q('start-save').disabled,'new Goal');
+ check('a new Goal clears the previous plan task-count introduction',q('start-plan-note').textContent===acMessage('startup.generate_a_plan_then_review_each_role_scope'));
  check('new Goal keeps team defaults',JSON.stringify(SIM.home.config.roles)===inherited&&SIM.home.config.profiles[0].coordinator_model==='opus');
  input('start-goal','Continue a second Goal');q('start-save').click();await until(()=>!q('start-save').disabled,'second Goal saved');check('second Goal persisted before deletion '+JSON.stringify({goal:SIM.home.config.goal,saves:SIM.log.filter(e=>e.kind==='save').map(e=>e.p.config.goal)}),SIM.home.config.goal==='Continue a second Goal');
  q('start-goal-list-open').click();await until(()=>document.querySelector('.goal-trash:not(:disabled)'),'delete historical row');document.querySelector('.goal-trash:not(:disabled)').click();await until(()=>q('start-delete-goal').open,'delete confirmation');
@@ -38,6 +40,9 @@ for(const width of [840,1280]){browser=await launch(chrome,{width});for(const th
  check('inactive Goal deletion preserves new Goal',SIM.home.config.goal==='Continue a second Goal');
  for(const d of document.querySelectorAll('dialog.slide-panel[open]'))d.close();FLOW.phaseHistory();document.dispatchEvent(new Event('visibilitychange'));
  await until(()=>q('start-plan-phases').querySelector('button'),'retained phase continuation');q('start-plan-phases').querySelector('button').click();await until(()=>SIM.log.some(e=>e.kind==='next_phase')&&!q('start-save').disabled,'next phase');
+ q('start-tab-review').click();await until(()=>!q('start-panel-review').hidden&&q('start-goal-info').querySelector('.goal-info-content').textContent.includes('Phase'),'multi-Phase plan step');
+ check('plan heading uses the Goal-wide Phase position '+q('start-goal-info').textContent,q('start-goal-info').textContent.includes('Phase 2/2'));
+ check('selected task summary uses the same Phase position',q('start-plan-summary').querySelector('.plan-position').textContent.includes('Phase 2/2'));
  check('retained phase continuation launches no new planner',SIM.log.filter(e=>e.kind==='prepare').length===1&&SIM.home.proposal.slug_phase==='02-next');
  // GitHub #812: the Phase completion popup continues into the next Phase's plan; without one it offers the Goal list.
  {const next=await window.acNextPhase.info();check('the popup learns the next Phase',next&&next.id==='02-next'&&next.number===2&&next.total===2);

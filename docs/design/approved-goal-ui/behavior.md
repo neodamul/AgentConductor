@@ -206,3 +206,28 @@ Stop requests the durable stop before closing. Reopening restores the recorded r
 The merged host's fallback for a second close within 10 seconds or an unresponsive page remains
 backend behavior, not an extra mock feature. The menu's Close action opens this preview safely;
 choosing an option never closes the browser or stops a real process in the reference.
+
+## Plan approval presentation
+
+GitHub #830: Plan approval proceeds directly from the reviewed plan into execution.
+Do not display the legacy Exact plan approval evidence disclosure or reopen a separate
+confirmation dialog. The start request still carries the exact reviewed plan digest;
+backend validation of plan identity, permissions, and scope remains mandatory.
+
+## Task removal hint
+
+GitHub #833: expanded Plan tasks show a localized tooltip on Remove task:
+"Only manually added tasks can be removed." The hint also applies when the
+control is disabled and must update when the UI language changes.
+
+## Plan introduction freshness
+
+GitHub #831: when a Goal or Workspace has no current plan proposal, show the
+instruction to generate a plan. Clear the previous Goal's task-count introduction
+before planning begins; only describe proposed tasks once that proposal exists.
+
+## Goal-wide Phase position
+
+GitHub #832: the Plan heading and selected task summary use the current proposal's
+Phase in the active Goal's full Phase list. Task position remains local to that
+Phase. Single-Phase plans without Phase metadata retain Phase 1/1.
