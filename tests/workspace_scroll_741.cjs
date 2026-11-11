@@ -27,16 +27,19 @@ const { findChrome, launch } = require('./design_parity/cdp.cjs');
         body.scrollTo({top: body.scrollHeight, behavior: 'instant'});
         await wait(100);
         const row = document.getElementById('start-mcp-controls').getBoundingClientRect();
+        const footerTop = footer.getBoundingClientRect().top;
         return { exists: true, overflow: body.scrollHeight > body.clientHeight,
-          rowVisible: row.height > 0 && row.bottom <= footer.getBoundingClientRect().top,
+          rowVisible: row.height > 0 && row.bottom <= footerTop,
+          rowClearance: footerTop - row.bottom,
           footerFixed: Math.abs(top - footer.getBoundingClientRect().top) < 1,
           width: innerWidth, scrollTop: body.scrollTop, scrollHeight: body.scrollHeight,
           clientHeight: body.clientHeight, rowTop: row.top, rowBottom: row.bottom,
-          footerTop: footer.getBoundingClientRect().top };
+          footerTop };
       })()`);
       assert(result.exists, `workspace body must be independently scrollable: ${JSON.stringify(result)}`);
       assert(result.overflow, `a tall goal must overflow the body: ${JSON.stringify(result)}`);
       assert(result.rowVisible, `Goal tools must be visible above the footer: ${JSON.stringify(result)}`);
+      assert(result.rowClearance >= 1, `Goal tools need at least 1px clearance above the footer: ${JSON.stringify(result)}`);
       assert(result.footerFixed, `footer must remain stationary: ${JSON.stringify(result)}`);
       await browser.close(); browser = null;
     }

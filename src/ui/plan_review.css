@@ -62,5 +62,5 @@
 
 /* Keep Workspace actions fixed while long Goal content scrolls. */
 .startup-main>.workspace-config-card:not([hidden]){overflow:hidden}
-.startup-main>.workspace-config-card>#start-workspace-body{flex:1 1 auto;min-height:0;overflow:auto}
+.startup-main>.workspace-config-card>#start-workspace-body{flex:1 1 auto;min-height:0;overflow:auto;padding-bottom:2px}
 .workspace-config-card>.startup-actions{position:static;margin-bottom:0;padding-bottom:0;box-shadow:none}
