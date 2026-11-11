@@ -163,3 +163,4 @@
 - [Goal planning confirmation](goal-planning-confirmation.md) — inherited defaults, explicit planner evidence and stale-context rejection (#429).
 
 - [Milestone release verification](release-verification.md) — truthful evidence, responsive matrix, Goal safety and non-publishing release gate (#420).
+- [Workspace scroll clearance](workspace-scroll-741.md): Windows fractional-pixel footer overlap, clearance assertion, and minimal scroll padding fix (#741).
