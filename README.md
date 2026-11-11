@@ -15,6 +15,9 @@ The workflow images below are approved design mockups with sample workspace data
 ![Approved task screen design preview in dark theme](docs/assets/ui-approved-tasks-dark.png)
 
 These are screenshots from the 0.2.0 application:
+![AgentConductor 0.2.0 Workspace in the light theme](docs/assets/ui-workspace-current.png)
+![AgentConductor 0.2.0 Workspace in the dark theme](docs/assets/ui-workspace-dark-current.png)
+![AgentConductor 0.2.0 Workspace in Korean](docs/assets/ui-workspace-korean-current.png)
 ![AgentConductor 0.2.0 Agent Room](docs/assets/ui-agent-room-current.png)
 ![AgentConductor 0.2.0 dark Agent Room](docs/assets/ui-agent-room-dark-current.png)
 ![AgentConductor 0.2.0 agent settings](docs/assets/ui-agent-settings-current.png)

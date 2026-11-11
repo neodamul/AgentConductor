@@ -48,6 +48,10 @@ Data moves to `~/.agentconductor/workspace-trash/<id>` for recovery.
 
 ![Approved workspace design preview with sample data](assets/ui-approved-workspace-design.png)
 
+![AgentConductor 0.2.0 Workspace in the light theme](assets/ui-workspace-current.png)
+
+![AgentConductor 0.2.0 Workspace in the dark theme](assets/ui-workspace-dark-current.png)
+
 Use **☰ → Help → User manual** for offline help in the current interface language. HTML manuals preserve tables, code, links and screenshots. The [standalone HTML manual](user-manual.html) can also be opened separately.
 
 **Settings** includes:

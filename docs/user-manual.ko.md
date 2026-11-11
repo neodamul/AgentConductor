@@ -49,6 +49,8 @@ Agent Room에서도 같은 제목 표시줄을 사용합니다. 기존 실행이
 
 ![예시 데이터를 사용한 승인된 워크스페이스 디자인 미리보기](assets/ui-approved-workspace-design.png)
 
+![AgentConductor 0.2.0 한국어 워크스페이스 화면](assets/ui-workspace-korean-current.png)
+
 ![밝은 테마의 승인된 작업 화면 디자인 미리보기](assets/ui-approved-tasks-light.png)
 
 ![어두운 테마의 승인된 작업 화면 디자인 미리보기](assets/ui-approved-tasks-dark.png)
