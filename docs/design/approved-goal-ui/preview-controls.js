@@ -61,7 +61,6 @@ document.getElementById('sidebar-toggle').onclick=()=>{const collapsed=document.
 document.getElementById('coordinator-chat-button').onclick=()=>openSidePanel('coordinator-chat-panel');
 document.getElementById('settings-button').onclick=()=>openSidePanel('settings-panel');
 document.getElementById('menu-workspace-settings').onclick=()=>{closeAppMenu();openWorkspaceHome();};
-document.getElementById('menu-goals').onclick=()=>{closeAppMenu();openWorkspace();};
 document.getElementById('menu-settings').onclick=()=>{closeAppMenu();openSidePanel('settings-panel');};
 function openAbout(updated){const d=document.getElementById('about-dialog');document.getElementById('about-tag').hidden=!updated;if(!d.open)d.showModal();document.getElementById('about-start').focus({preventScroll:true});}
 document.getElementById('menu-about').onclick=()=>{closeAppMenu();openAbout(false);};
@@ -197,7 +196,6 @@ appMenu.querySelectorAll('.menu-parent').forEach(parent=>{const sub=document.get
  parent.onkeydown=event=>{if(['ArrowRight','Enter',' '].includes(event.key)){event.preventDefault();open(true);}};
  sub.onkeydown=event=>{if(event.key==='ArrowLeft'||event.key==='Escape'){event.preventDefault();event.stopPropagation();closeSubmenus(null);parent.focus();}};});
 appMenu.addEventListener('keydown',event=>{if(!['ArrowDown','ArrowUp'].includes(event.key))return;event.preventDefault();const items=[...appMenu.querySelectorAll(':scope>button,:scope>.menu-group>.menu-parent,.submenu:not([hidden])>button')],here=items.indexOf(document.activeElement),step=event.key==='ArrowDown'?1:-1;const inSub=document.activeElement.closest('.submenu');const pool=inSub?[...inSub.querySelectorAll('button')]:[...appMenu.querySelectorAll(':scope>button,:scope>.menu-group>.menu-parent')];pool[(pool.indexOf(document.activeElement)+step+pool.length)%pool.length].focus();});
-document.getElementById('menu-new-goal').onclick=()=>{closeAppMenu();startNewGoal();};
 document.getElementById('menu-add-agent').onclick=()=>{closeAppMenu();document.getElementById('profile-add').click();};
 document.getElementById('menu-view-rail').onclick=()=>{closeAppMenu();document.getElementById('sidebar-toggle').click();};
 document.getElementById('menu-view-inspector').onclick=()=>{closeAppMenu();document.getElementById('right-panel-toggle').click();};

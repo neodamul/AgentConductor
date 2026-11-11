@@ -1377,8 +1377,6 @@
   "startup.menu_add_agent": "Add agent…",
   "startup.menu_rail": "Collapse or expand the left panel",
   "startup.menu_inspector": "Task details panel",
-  "startup.menu_goals": "Goal list",
-  "startup.menu_new_goal": "New Goal",
   "startup.menu_close_window": "Close window…",
   "startup.goal_row_trash": "Delete Goal {value1} permanently",
   "startup.goal_row_no_result": "This Goal has no recorded result.",
