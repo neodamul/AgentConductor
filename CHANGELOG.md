@@ -4,9 +4,12 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
-## v0.2.1
+## v0.2.2
 
 - The titlebar Workspace name is a plain label: no hover background, no pointer cursor and no click (GitHub #768).
+
+## v0.2.1
+
 - The Agent Room asks Claude for its usage on every OS and for any Claude executable name, like the workspace screen; it used to query only a macOS executable named exactly `claude`, so Windows and renamed builds showed no current usage. Usage values stay shown for twice the refresh interval instead of exactly the 5-minute default, and a hidden budget shows `-` instead of `null` (GitHub #766).
 
 ## v0.2.0
