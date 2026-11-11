@@ -282,6 +282,13 @@ module.exports = [
     mock: { url: '?theme=light#3', selector: '.ttabs .on' }, app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()", selector: '.view-tabs .tab.active' } },
   { name: 'view-tabs-baseline', props: ['borderBottomWidth', 'borderBottomColor', 'columnGap'], keys: ['borderBottomWidth', 'borderBottomColor', 'columnGap'], pixel: false,
     mock: { url: '?theme=light#3', selector: '.ttabs' }, app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()", selector: '.view-tabs' } },
+  // GitHub #817: in the Room the left panel and its selected tab share the mock's panel color.
+  { name: 'room-rail-background', props: ['backgroundColor'], keys: ['backgroundColor'], pixel: false,
+    mock: { url: '?theme=light#3', selector: '.rail' }, app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()", selector: '#run-screen .rail' } },
+  { name: 'room-rail-tab-selected', props: ['backgroundColor', 'borderTopColor', 'color'], keys: ['backgroundColor', 'borderTopColor', 'color'], pixel: false,
+    mock: { url: '?theme=light#3', selector: '.rail-tabs button[aria-selected="true"]' }, app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()", selector: '#rail-tabs [role=tab][aria-selected=true]' } },
+  { name: 'room-rail-tab-matches-panel', assert: "(() => { const t = document.querySelector('#rail-tabs [role=tab][aria-selected=true]'), r = t.getBoundingClientRect(), behind = document.elementsFromPoint(r.left + r.width / 2, r.bottom + 30).find(e => getComputedStyle(e).backgroundColor !== 'rgba(0, 0, 0, 0)'); return document.body.classList.contains('on-run') && getComputedStyle(t).backgroundColor === getComputedStyle(behind).backgroundColor; })()",
+    app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()" } },
   { name: 'view-tabs-not-stretched', assert: "(() => { const t = [...document.querySelectorAll('.view-tabs .tab')]; const w = document.querySelector('.view-tabs').getBoundingClientRect().width; return t.length >= 4 && t.every(x => x.getBoundingClientRect().width < w / 3); })()",
     app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()" } },
   // Compact Goal header (GitHub #408): 17px semibold single line.
