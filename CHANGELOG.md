@@ -11,6 +11,9 @@ the GitHub Release notes for its tag.
 - When an agent CLI quits before reading its request, the error says so instead of only "Broken pipe" (GitHub #774).
 - The Agent Room's quota refresh no longer leaves a quota-query folder in the run folder each time (GitHub #780).
 - A failed integration check with no output says "(no output)" in the run banner instead of ending at a colon (GitHub #782).
+- The out-of-scope recovery dialog keeps its buttons in view while it scrolls (GitHub #784).
+- Task activity no longer shows "Unknown" for a finished event that carries no status (GitHub #785).
+- Arrow keys move through the application menu again, and opening it no longer logs an error (GitHub #786).
 
 ## v0.2.1
 

@@ -95,3 +95,5 @@ for (const lang of ['en', 'ko']) for (const key of ['startup.read_only_args', 's
 // GitHub #331: a refusal that lists the blocking work keeps its line breaks and scrolls instead of growing off the screen.
 assert.ok(fs.readFileSync('src/ui/startup.css', 'utf8').includes('.notice{white-space:pre-line;max-height:60vh;overflow:auto}'), 'the notice keeps line breaks');
 console.log('progress runtime: pending reasons, verification, run attention, staleness and start time are shown');
+// GitHub #785: a result event without text or subtype shows no detail, not "Unknown".
+assert.ok(room.includes("raw.subtype?statusLabel(raw.subtype):''"), 'a result without a status has no detail line');
