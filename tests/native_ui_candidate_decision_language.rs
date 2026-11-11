@@ -7,6 +7,11 @@ use serde_json::json;
 fn labels(state: &mut State, snapshot: &serde_json::Value) -> Vec<String> {
     let context = egui::Context::default();
     context.enable_accesskit();
+    let mut first = context.run_ui(Default::default(), |ui| {
+        room::show(state, Some(snapshot), false, None, "ko", ui);
+    });
+    first.textures_delta.set.clear();
+    first.textures_delta.free.clear();
     let mut output = context.run_ui(Default::default(), |ui| {
         room::show(state, Some(snapshot), false, None, "ko", ui);
     });

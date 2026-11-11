@@ -8343,3 +8343,12 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Confirm package coverage: workflow `platform-validation.yml` runs both `windows_workspace_reopen` and `windows_schedule` against the exact packaged Windows executable.
 - [ ] Exact-package verify: run [41594888214](https://github.com/neodamul/AgentConductor/actions/runs/41594888214) was in progress when inspected; previous run [41535022980](https://github.com/neodamul/AgentConductor/actions/runs/41535022980) was cancelled. No Windows package result is claimed.
 - [ ] Complete: close #226/#310 only after the package report proves survivor-workspace recovery and persisted schedule timestamp. Issue #9 remains 22/50; PR #22 remains Draft.
+
+### 2026-11-11 — Stabilize candidate decision modal accessibility test — issue #9
+
+- [x] Plan: exact-head PR #22 run `41647040730` failed on both macOS and Windows because the localized candidate-confirmation modal labels were absent from the first egui frame's AccessKit tree.
+- [x] Red: locally reproduced the same failing assertion with `cargo test --locked --offline --features native-ui-probe --test native_ui_candidate_decision_language`.
+- [x] Task: render one setup frame before collecting the modal's AccessKit labels; product UI behavior is unchanged.
+- [x] Verify: the focused localization test passes; `source_layout` passes after deleting generated `tests/__pycache__`; `cargo fmt --all -- --check` and `git diff --check` pass. The touched test file is 93 lines.
+- [x] Assetize: record the two-frame modal test rule in `knowledge/wiki/native-modal-test-frame.md`; AgentMemory service is unavailable in this environment, so no remote memory write is claimed.
+- [ ] Complete: push the test-only correction and inspect its exact-head macOS/Windows CI. Acceptance remains **22/50**; this fix adds no UI parity credit.

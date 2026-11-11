@@ -2027,6 +2027,10 @@ Compared the closed PR's event, worker-concurrency, chat-persistence, timeout, a
 # [2026-11-03] plan / task / verify | Restore ValuePattern input for Windows package Goal field — issue #9
 
 Exact packaged run `41520505534` failed because the Goal edit read back empty and UIA focus had returned to the top-level window after Unicode `SendInput`. This contradicted the existing `windows-uia-text-input.md` decision. Added five failing source-contract assertions first, then changed the driver to `SetFocus` + `ValuePattern.SetValue` + bounded readback and aligned the lifecycle contract. Local Windows-driver/lifecycle/source-layout tests pass 19 with 1 ignored. A new remote run is required: `41545058701` targets pre-correction head `21eb66f4` and cannot validate this correction. Packaged acceptance stays 22/25. Raw evidence: `../raw/2026-11-03-windows-uia-setvalue-followup.md`.
+
+# [2026-11-11] plan / task / verify | Initialize candidate modal before AccessKit assertions — issue #9
+
+PR #22 exact-head run `41647040730` failed its candidate decision localization test on macOS and Windows. Local red reproduction confirmed that the helper collected AccessKit nodes on the same frame that initialized `egui::Modal`; rendering one setup frame first makes the localized confirmation labels observable. Focused test and `source_layout` pass, and the generated `tests/__pycache__` files were removed. Product UI is unchanged; exact-head platform CI is still required. See `native-modal-test-frame.md`. AgentMemory REST was unavailable, so this knowledge remains in the repository wiki only.
 # 2026-11-03
 
 - Added interaction/render regressions for the Workspace worktree checkbox and coordinator blocker warning. The checkbox persists `worktree`; the blocker now has a tinted, wrapped panel. The initial tests failed against the prior radio-group/inline-text rendering, then passed with the changes. This does not count as overall UI parity acceptance.
