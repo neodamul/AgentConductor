@@ -28,7 +28,10 @@ window.acAppMenu = (() => {
   function items({ el, rows, create, open, updates, about, close, workspaceSettings, rules, messenger, exportWorkspace, importWorkspace, tools, manual }) {
     const act = (key, run) => leaf(el, key, () => { close(); run(); });
     const nodes = [
-      group(el, 'startup.menu_workspace', [...rows, ...(rows.length ? [el('hr')] : []), act('startup.menu_goals', () => click('goal-list-open')), act('startup.menu_new_goal', () => click('new-goal')), create, open, act('startup.menu_workspace_settings', workspaceSettings), act('startup.plan_rules', rules), act('startup.messenger', messenger), act('startup.export_settings', exportWorkspace), act('startup.import_settings', importWorkspace)]),
+      group(el, 'startup.menu_workspace', [...rows, ...(rows.length ? [el('hr')] : []), create, open, act('startup.menu_workspace_settings', workspaceSettings), act('startup.export_settings', exportWorkspace), act('startup.import_settings', importWorkspace)]),
+      // Plan rules and Messenger sit one level up, beside the groups; the Goal list and New Goal live on the screen itself.
+      act('startup.plan_rules', rules),
+      act('startup.messenger', messenger),
       group(el, 'startup.menu_agents', [act('startup.menu_add_agent', () => click('add'))]),
       group(el, 'startup.menu_view', [act('startup.menu_rail', () => click('rail-toggle')), act('startup.menu_inspector', () => click('inspector-toggle'))]),
       act('startup.menu_settings', () => click('settings-button')),

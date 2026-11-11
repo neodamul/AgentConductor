@@ -28,6 +28,7 @@ the GitHub Release notes for its tag.
 - The Workspace task-details switch keeps showing the Workspace panel's real state after the Agent Room repaints (GitHub #788).
 - Opening the application menu moves keyboard focus into it, so the arrow keys work at once (GitHub #789).
 - The Goal list opened from the Agent Room (for example from the completion popup) shows each Goal's current state, such as Completed (GitHub #797).
+- The ☰ menu drops Goal list and New Goal (both stay on the screen) and lists Plan rules… and Messenger… at its top level instead of under Workspace (app and mock, GitHub #808).
 
 ## v0.2.1
 

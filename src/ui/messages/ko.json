@@ -1377,8 +1377,6 @@
   "startup.menu_add_agent": "에이전트 추가…",
   "startup.menu_rail": "왼쪽 패널 접기·펼치기",
   "startup.menu_inspector": "작업 상세 패널",
-  "startup.menu_goals": "Goal 목록",
-  "startup.menu_new_goal": "새 Goal",
   "startup.menu_close_window": "창 닫기…",
   "startup.goal_row_trash": "Goal {value1} 영구 삭제",
   "startup.goal_row_no_result": "이 Goal에 기록된 결과가 없습니다.",
