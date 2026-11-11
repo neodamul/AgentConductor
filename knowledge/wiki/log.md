@@ -647,3 +647,7 @@ Recorded the reviewed behavior/visual contract, local light/dark images, source 
 ## 2026-11-11 Unified native tool-decision modal (#382)
 
 Recorded the single-modal receipt-selection rule, current-revision and approved-refresh eligibility, exact action event preservation, local regression evidence, and the separate live-package limit in `native-tool-decision-modal.md`.
+
+## 2026-11-11 Workspace scroll clearance (#741)
+
+Windows rounded the last Workspace tools row onto the fixed footer by 0.125 CSS px. The focused regression now requires at least 1 px clearance, and 2 px of scroll-body bottom padding passes at 840 px and 1280 px. The local AgentMemory REST service was unavailable during this save, so the unit record is preserved in this wiki log and page pending AgentMemory recovery.
