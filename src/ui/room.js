@@ -246,7 +246,7 @@ function transcript(e) {
     case 'system':add(acMessage("room.session"),raw.subtype==='init'?acMessage("startup.started")+(raw.model?' · '+raw.model:''):statusLabel(raw.subtype),'status');break;
     case 'assistant':for(const c of raw.message?.content||[]){if(c.type==='text'&&c.text?.trim())add(acMessage("room.agent"),c.text);else if(c.type==='tool_use')add(acMessage("room.tool"),toolLine(c.name,c.input),'tool');else if(c.type==='thinking'&&c.thinking)add(acMessage("room.thinking"),clipLines(c.thinking,4),'muted');}break;
     case 'user':for(const c of raw.message?.content||[])if(c.type==='tool_result')add(c.is_error?acMessage("room.tool_error"):acMessage("room.result"),clipLines(resultText(c.content))||acMessage("common.no_output"),c.is_error?'error':'result');break;
-    case 'result':add(raw.is_error?acMessage("room.failed_031a8f"):acMessage("room.finished"),typeof raw.result==='string'?raw.result:statusLabel(raw.subtype),raw.is_error?'error':'status');break;
+    case 'result':add(raw.is_error?acMessage("room.failed_031a8f"):acMessage("room.finished"),typeof raw.result==='string'?raw.result:raw.subtype?statusLabel(raw.subtype):'',raw.is_error?'error':'status');break;
     case 'thread.started':add(acMessage("room.session"),acMessage("startup.started"),'status');break;
     case 'turn.completed':if(raw.usage)add(acMessage("room.usage"),acMessage("room.in_out", {value1:raw.usage.input_tokens??0,value2:raw.usage.output_tokens??0}),'muted');break;
     case 'turn.failed':case 'error':add(acMessage("room.error"),raw.error?.message||raw.message||acMessage("room.error"),'error');break;

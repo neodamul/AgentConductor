@@ -36,7 +36,7 @@ window.acAppMenu = (() => {
       el('hr'),
       act('startup.menu_close_window', () => window.__acCloseRequested?.()),
     ];
-    queueMicrotask(() => bindArrows(document.getElementById('workspace-list')));
+    queueMicrotask(() => bindArrows(document.getElementById('start-workspace-list')));
     return nodes;
   }
   return { items };
