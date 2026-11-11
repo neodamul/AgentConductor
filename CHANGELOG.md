@@ -36,6 +36,7 @@ the GitHub Release notes for its tag.
 - The finished-job notice names the action in the interface language ("시작 완료" instead of "start 완료") and no longer repeats a job that had already finished when the window opened (GitHub #820).
 - The result popup opened from the Goal list before the Agent Room has been opened no longer traps the window: its × and main buttons work everywhere (GitHub #821).
 - The Workspace step shows the Goal list and team briefing in the page heading like the other steps; + New Goal stays in the Goal section (app and mock, GitHub #824).
+- The Goal completion popup's folded sections show their item count and a visible Expand/Collapse toggle (app and mock, GitHub #822).
 
 ## v0.2.1
 
