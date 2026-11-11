@@ -30,7 +30,10 @@ class SignalSettings(unittest.TestCase):
         self.assertIn('start-tools-guide', settings)
         self.assertIn('start-manual-open', settings)
         js = (ROOT / "src/ui/startup.js").read_text(encoding="utf-8")
-        self.assertIn("exporter,importer,el('hr'),updates", js)
+        # GitHub #751: the chooser lists workspaces only; the maintenance actions live in Settings.
+        self.assertIn("[...rows,...(rows.length?[el('hr')]:[]),create,open]", js)
+        for button in ('start-rules-open', 'start-messenger-open', 'start-export-settings', 'start-import-settings', 'start-cache-button'):
+            self.assertIn(button, settings)
         self.assertIn("q('tools-guide').onclick=()=>{q('settings').close('cancel');q('tools').showModal();}", js)
     def test_signal_settings_are_translated(self):
         table = (ROOT / "src/ui/messages/ko.json").read_text(encoding="utf-8")
