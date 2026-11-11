@@ -47,9 +47,9 @@ Agent Room에서도 같은 제목 표시줄을 사용합니다. 기존 실행이
 이력은 `~/.agentconductor/workspace-trash/<id>`에 옮겨져 복구할 수 있습니다.
 **최근 목록에서 숨기기**는 데이터 삭제가 아닙니다.
 
-![워크스페이스와 목표 설정](assets/ui-workspace-korean-current.png)
+![AgentConductor 0.2.0 워크스페이스와 목표 설정](assets/ui-workspace-korean-current.png)
 
-![어두운 한국어 워크스페이스](assets/ui-workspace-dark-current.png)
+![AgentConductor 0.2.0 어두운 워크스페이스](assets/ui-workspace-dark-current.png)
 
 **☰ → 도움말 → 사용자 매뉴얼**에서 현재 언어의 오프라인 설명서를 엽니다. HTML 설명서는 표·코드·링크·화면 이미지를 서식 그대로 표시합니다. [HTML 설명서](user-manual.ko.html)도 따로 열 수 있습니다.
 
@@ -101,7 +101,7 @@ Agent Room에서도 같은 제목 표시줄을 사용합니다. 기존 실행이
 실행 구성을 바꾸면 계획을 다시 검토해야 합니다. 모델/쿼터 관측만 갱신한 경우에는 계획을 버리지 않습니다.
 메타데이터 수집은 한 번에 하나씩 수행되며 대기 요청이 다른 편집을 막지 않습니다.
 
-![에이전트 실행파일과 갱신 주기 설정](assets/ui-agent-settings-current.png)
+![AgentConductor 0.2.0 에이전트 실행파일과 갱신 주기 설정](assets/ui-agent-settings-current.png)
 
 
 자체 CLI를 저장하면 CLI가 도구 사용을 스스로 승인하는 모드가 자동 적용되며 별도 체크박스는 필요하지 않습니다. 계획과 최종 병합 승인은 계속 필요합니다. 명시적으로 읽기 전용이나 외부 샌드박스로 설정한 프로필은 해당 제한을 유지합니다.

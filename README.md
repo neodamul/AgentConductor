@@ -6,10 +6,14 @@ company's own CLI — work on one repository as a team, while you stay in contro
 You describe a goal. AgentConductor splits it into scoped tasks, runs agents in parallel,
 tests the combined result and asks for your approval before merging. It runs on your computer and reuses signed-in agent CLIs — no API keys, no cloud service.
 
-![Workspace](docs/assets/ui-workspace-current.png) ![Workspace in Korean](docs/assets/ui-workspace-korean-current.png) ![Dark workspace](docs/assets/ui-workspace-dark-current.png)
-![Agent Room](docs/assets/ui-agent-room-current.png) ![Dark Agent Room in Korean](docs/assets/ui-agent-room-dark-current.png) ![Agent settings](docs/assets/ui-agent-settings-current.png)
+## Version 0.2.0 screenshots
 
-![The installed macOS app (v0.2.0): the Agent Room with the phased plan of a finished Goal](docs/assets/ui-native-current.png)
+![AgentConductor 0.2.0 workspace](docs/assets/ui-workspace-current.png)
+![AgentConductor 0.2.0 workspace in Korean](docs/assets/ui-workspace-korean-current.png)
+![AgentConductor 0.2.0 dark workspace](docs/assets/ui-workspace-dark-current.png)
+![AgentConductor 0.2.0 Agent Room](docs/assets/ui-agent-room-current.png)
+![AgentConductor 0.2.0 dark Agent Room](docs/assets/ui-agent-room-dark-current.png)
+![AgentConductor 0.2.0 agent settings](docs/assets/ui-agent-settings-current.png)
 
 > **Version:** 0.2.0 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **⚙ Settings → User manual** opens the offline manual.
 

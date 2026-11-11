@@ -46,7 +46,7 @@ Only saved app-owned workspace data can be removed; the project is preserved.
 Data moves to `~/.agentconductor/workspace-trash/<id>` for recovery.
 **Remove from recents** hides an entry without deleting it.
 
-![Workspace and goal configuration](assets/ui-workspace-current.png)
+![AgentConductor 0.2.0 workspace and goal configuration](assets/ui-workspace-current.png)
 
 Use **☰ → Help → User manual** for offline help in the current interface language. HTML manuals preserve tables, code, links and screenshots. The [standalone HTML manual](user-manual.html) can also be opened separately.
 
@@ -60,9 +60,9 @@ Use **☰ → Help → User manual** for offline help in the current interface l
 
 Settings has **Agent tools guide…** for optional agentmemory, RTK, Ponytail, Graphify and CocoIndex installation instructions. These tools are not bundled or required by the app.
 
-![Korean workspace](assets/ui-workspace-korean-current.png)
+![AgentConductor 0.2.0 Korean workspace](assets/ui-workspace-korean-current.png)
 
-![Dark Korean workspace](assets/ui-workspace-dark-current.png)
+![AgentConductor 0.2.0 dark workspace](assets/ui-workspace-dark-current.png)
 
 ### 1.2a The goal screen
 One screen serves the whole job. A single stepper with six steps — **Workspace**, **Agent roles**, **Plan**, **Tasks**, **Verify** and **Review and merge** — is grouped as Prepare, Run and Finish; the first three open the workspace settings and the last three open the Agent Room while a run exists, and the Room marks the step the run is in. The left panel has two tabs, **Agents** and **Phase·Task**, and the panel icon at the left of the title bar hides or restores it. Task details open in a column on the right with the icon at the right of the title bar; it starts closed every time and never opens by itself.
@@ -97,7 +97,7 @@ Saving **Use profile** is asynchronous and closes after success; validation erro
 Changing execution settings requires reviewing a plan again. Metadata-only refresh does not invalidate it.
 One metadata collector runs at a time; queued requests do not block unrelated editing.
 
-![Agent profile and refresh settings](assets/ui-agent-settings-current.png)
+![AgentConductor 0.2.0 agent profile and refresh settings](assets/ui-agent-settings-current.png)
 
 
 Saving a custom CLI applies the mode in which the CLI approves its own tool use automatically; no checkbox is needed. Plan and final merge approval remain required. Explicit read-only or external-sandbox profiles retain their restrictions.
