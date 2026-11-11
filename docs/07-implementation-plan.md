@@ -11,6 +11,15 @@
 
 Release scope: the published app is the current `main` desktop product. The separate Rust-native UI migration remains in progress and is not represented as complete by this release.
 
+## Stable release v0.2.0 — final recovery and publication (2026-11-11)
+
+- [x] Plan: release only after every issue in milestone 0.2.0 was closed; keep the separately postponed Rust-native UI migration outside this release.
+- [x] Task: stabilize #742's headless Chrome regression with load-aware CDP navigation in PR #764; merge at `65c7e9e057819df68e8986ca5fe9f4f743754228`. Correct the release checklist to reflect the postponed native UI scope.
+- [x] Verify: the focused #742 test passed three consecutive local runs; `cargo fmt --check`, warning-denied Clippy, all 45 Python package tests, screenshot verification, manual/release documentation suites and the explicit milestone readiness gate passed.
+- [x] Verify: release workflow run [42973629043, attempt 2](https://github.com/neodamul/AgentConductor/actions/runs/42973629043) passed screenshot/readiness, macOS and Windows validation, exact-package execution and publication.
+- [x] Verify: downloaded macOS and Windows ZIPs match the published `SHA256SUMS`; each package's internal binary checksum passes; both manifests name source commit `65c7e9e057819df68e8986ca5fe9f4f743754228`; Markdown and rendered English/Korean manuals match the tagged source (normalizing Windows CRLF).
+- [x] Complete: published stable [AgentConductor v0.2.0](https://github.com/neodamul/AgentConductor/releases/tag/v0.2.0) with macOS Apple silicon and Windows x86_64 packages, checksums, dependency licenses, SBOM, screenshots, README and offline English/Korean manuals. Issue #765 is closed; the 0.2.0 milestone has no open issues.
+
 ## Stable release 0.2.0 — UI issue batch (2026-11-11)
 
 - [x] Plan: use the approved mock as the source of truth and consolidate Codex's #740–#743/#749/#752 fixes with Claude's #750/#751/#753 changes into one issue-linked PR to avoid separate platform-CI cycles.
@@ -33,7 +42,7 @@ Release scope: the published app is the current `main` desktop product. The sepa
 - [x] Task: add approved workspace and light/dark task design previews to README and both Markdown manuals; regenerate the committed offline HTML manuals.
 - [x] Task: record artwork provenance, icon parity, screenshot warning regression and cross-PR conflict in the LLM wiki with source fingerprints.
 - [x] Verify: About icon byte-parity and cross-theme/viewport UI checks pass; fresh workspace captures contain no coordinator warning; offline manual generation, `manual_renderer` and `public_docs` pass locally.
-- [x] Complete: keep the approved design previews and current runtime captures clearly distinguished in public documentation; no release was created.
+- [x] Complete: keep the approved design previews and current runtime captures clearly distinguished in public documentation; published stable v0.2.0 after the final recovery gate above.
 ## Stable release 0.2.0 — native tool-decision modal bug #382 (2026-11-11)
 
 - [x] Plan: keep the R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 trace; route deferred and approved-refresh decisions through the current modal while preserving exact evidence, revision, busy guards, defer, Cancel and event payloads.
