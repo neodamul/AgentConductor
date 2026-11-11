@@ -219,3 +219,9 @@ backend validation of plan identity, permissions, and scope remains mandatory.
 GitHub #833: expanded Plan tasks show a localized tooltip on Remove task:
 "Only manually added tasks can be removed." The hint also applies when the
 control is disabled and must update when the UI language changes.
+
+## Plan introduction freshness
+
+GitHub #831: when a Goal or Workspace has no current plan proposal, show the
+instruction to generate a plan. Clear the previous Goal's task-count introduction
+before planning begins; only describe proposed tasks once that proposal exists.

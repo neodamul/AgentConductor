@@ -30,6 +30,7 @@ for(const width of [840,1280]){browser=await launch(chrome,{width});for(const th
  document.querySelector('.goal-folder').click();await until(()=>SIM.log.some(e=>e.kind==='goal_folder'&&e.p.open),'folder action');
  for(const d of document.querySelectorAll('dialog.slide-panel[open]'))d.close();
  q('start-new-goal').click();await until(()=>SIM.log.some(e=>e.kind==='new_goal')&&q('start-goal').value===''&&!q('start-save').disabled,'new Goal');
+ check('a new Goal clears the previous plan task-count introduction',q('start-plan-note').textContent===acMessage('startup.generate_a_plan_then_review_each_role_scope'));
  check('new Goal keeps team defaults',JSON.stringify(SIM.home.config.roles)===inherited&&SIM.home.config.profiles[0].coordinator_model==='opus');
  input('start-goal','Continue a second Goal');q('start-save').click();await until(()=>!q('start-save').disabled,'second Goal saved');check('second Goal persisted before deletion '+JSON.stringify({goal:SIM.home.config.goal,saves:SIM.log.filter(e=>e.kind==='save').map(e=>e.p.config.goal)}),SIM.home.config.goal==='Continue a second Goal');
  q('start-goal-list-open').click();await until(()=>document.querySelector('.goal-trash:not(:disabled)'),'delete historical row');document.querySelector('.goal-trash:not(:disabled)').click();await until(()=>q('start-delete-goal').open,'delete confirmation');
