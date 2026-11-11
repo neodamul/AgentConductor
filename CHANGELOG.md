@@ -33,6 +33,8 @@ the GitHub Release notes for its tag.
 - When Phases remain, the Phase completion popup reads as that Phase's result and its main action plans the next Phase (step 3) instead of returning to the Goal list; the Goal list stays the action after the last Phase (app and mock, GitHub #812).
 - The Tasks step's inner tabs (Activity, Changes & tests, Raw logs, Lessons) are folder tabs on a baseline like the mock; the selected tab joins the panel below (GitHub #815).
 - In the Agent Room (Tasks, Verify, Review) the left panel uses the mock's panel color, so the selected rail tab matches the panel behind it (GitHub #817).
+- The finished-job notice names the action in the interface language ("시작 완료" instead of "start 완료") and no longer repeats a job that had already finished when the window opened (GitHub #820).
+- The result popup opened from the Goal list before the Agent Room has been opened no longer traps the window: its × and main buttons work everywhere (GitHub #821).
 
 ## v0.2.1
 

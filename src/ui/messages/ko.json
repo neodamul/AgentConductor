@@ -1206,6 +1206,7 @@
   "state.native_callback": "네이티브 콜백",
   "state.native_sandbox": "네이티브 샌드박스",
   "state.pending": "대기",
+  "state.mcp": "MCP 미리보기",
   "state.plan": "계획",
   "state.planning": "계획 중",
   "state.prepared": "준비됨",
