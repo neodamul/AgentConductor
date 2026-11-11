@@ -33,3 +33,10 @@ document.querySelectorAll('[data-assignment-target]').forEach(button=>button.onc
 refreshAssignmentChoices();
 const initialPicker=new URLSearchParams(location.search).get('picker');
 if(initialPicker==='coordinator'||/^role-[0-3]$/.test(initialPicker||''))setTimeout(()=>openAssignmentPicker(initialPicker),100);
+// Apply agent role defaults: Claude Code verifies, Codex develops and documents, the custom CLI tests; each keeps the other as fallback.
+function applyRoleDefaults(){
+ const defaults={'계획과 검증':['claude','codex'],'개발':['codex','claude'],'테스트':['custom-cli','claude'],'문서':['codex','claude']};
+ roleAssignments.forEach(item=>{const [agent,fallback]=defaults[item.role]||['claude',''];Object.assign(item,{agent,model:'',fallback,fallbackModel:''});});
+ Object.assign(workspaceCoordinator,{agent:roleAssignments[0].agent,model:''});
+ refreshAssignmentChoices();
+}

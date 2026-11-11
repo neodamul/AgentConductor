@@ -122,7 +122,7 @@ Preview and apply selected documents before planning. Large sources are saved as
 Registration alone does not run an MCP command.
 
 Roles include verification, development, documentation, knowledge assetization and testing.
-Choose agents and optional models/alternates. **Add roles** (in the footer) fills the empty roles from the registered team; **Save and go to step 3** saves and opens the plan, generating one when none exists. **Read plan…** and **Write plan manually** are under the task list of step 3, and **Regenerate plan** repeats the generation.
+Choose agents and optional models/alternates. **Apply agent role defaults** (in the footer) assigns the registered team to every role by default (Claude Code verifies, Codex develops and documents, OpenCode or a custom CLI tests, each with a fallback); **Save and go to step 3** saves and opens the plan, generating one when none exists. **Read plan…** and **Write plan manually** are under the task list of step 3, and **Regenerate plan** repeats the generation.
 The coordinator proposes scoped work following these assignments; the Rust engine owns execution and state.
 
 Each goal has a short English slug, such as `ladder_game`, translated from the goal rather than romanized.
