@@ -474,7 +474,7 @@
   "room.not_reported": "보고되지 않음",
   "room.observed": "{value1} · 조회 {value2}",
   "room.observed_bcdb80": "{value1} · 조회 {value2} · {value3}",
-  "room.on_macos_query_claude_usage_without_generation_otherwise": "macOS에서는 생성 없이 Claude /usage를 조회합니다. 다른 환경에서는 소유한 스트림 메타데이터를 확인합니다.",
+  "room.on_macos_query_claude_usage_without_generation_otherwise": "생성 없이 Claude /usage를 조회합니다.",
   "room.ownership": "소유 경로와 작업",
   "room.passed": "{value1}개 통과",
   "room.pattern": "패턴",

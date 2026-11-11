@@ -206,7 +206,9 @@ fn enterprise_individual_budget_is_available_without_rolling_windows() {
         agentconductor::quota::stored(&store, &profile, 1001).unwrap()["status"],
         "available"
     );
-    assert!(agentconductor::quota::stored(&store,&profile,1301).unwrap()["budgets"][0]["remaining_percent"].is_null());
+    // GitHub #766: values hide only after twice the refresh interval.
+    let hidden = 1001 + agentconductor::quota::fresh_limit(profile.quota_refresh_minutes);
+    assert!(agentconductor::quota::stored(&store,&profile,hidden).unwrap()["budgets"][0]["remaining_percent"].is_null());
     drop(store);
     std::fs::remove_file(path).unwrap();
 }

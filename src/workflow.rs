@@ -196,31 +196,16 @@ pub async fn refresh_quota(dir: &Path, agent: &str) -> Result<(), String> {
         .iter()
         .find(|profile| profile.id == agent)
         .ok_or("unknown quota agent")?;
-    if cfg!(target_os = "macos")
-        && profile.parser == crate::protocol::Provider::Claude
-        && Path::new(&profile.executable)
-            .file_name()
-            .and_then(|s| s.to_str())
-            == Some("claude")
-    {
-        let query_dir = dir.join(format!(
-            "quota-query-{}",
-            crate::native_guard::session_id()?
-        ));
-        let result = crate::quota::query_claude(profile, &query_dir, &report.repo).await;
-        let mut store = Store::open(dir.join("state.sqlite"))?;
-        return crate::quota::persist(&mut store, profile, result);
-    }
-    if profile.parser == crate::protocol::Provider::Claude {
-        let mut store = Store::open(dir.join("state.sqlite"))?;
-        let current = crate::quota::stored(&store, profile, (now() / 1000) as i64)?;
-        return store.record("quota-check", &serde_json::json!({"agent":agent,"status":current["status"],"observed_at":current["observed_at"]}), "Checked retained Claude quota; no new observation or process requested");
-    }
     let query_dir = dir.join(format!(
         "quota-query-{}",
         crate::native_guard::session_id()?
     ));
-    let result = crate::quota::query(profile, &query_dir).await;
+    // GitHub #766: the room asks Claude /usage like the workspace screen does, for any Claude profile on any OS.
+    let result = if profile.parser == crate::protocol::Provider::Claude {
+        crate::quota::query_claude(profile, &query_dir, &report.repo).await
+    } else {
+        crate::quota::query(profile, &query_dir).await
+    };
     let mut store = Store::open(dir.join("state.sqlite"))?;
     crate::quota::persist(&mut store, profile, result)
 }

@@ -44,7 +44,7 @@ pub fn indicators(quotas: &Value, profiles: &[AgentProfile], language: &str, now
         let capable=matches!(profile.parser,crate::protocol::Provider::Claude|crate::protocol::Provider::Codex)||profile.quota_command.is_some();
         let status = if !capable && q["observed_at"].is_null() && q["windows"].as_array().is_none_or(Vec::is_empty) && q["budgets"].as_array().is_none_or(Vec::is_empty) {"unsupported"} else {q["status"].as_str().unwrap_or("unavailable")};
         let age=q["observed_at"].as_i64().and_then(|at| now.checked_sub(at));
-        let old=age.is_none_or(|age| !(0..=300).contains(&age));
+        let old=age.is_none_or(|age| !(0..=super::fresh_limit(profile.quota_refresh_minutes)).contains(&age));
         let stale=status=="stale" || q["stale"]==true || (status=="available" && old);
         let fresh=status=="available" && !stale;
         let valid=|row:&Value| fresh && row["resets_at"].as_i64().is_none_or(|at|at>now);

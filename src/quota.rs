@@ -61,8 +61,12 @@ pub struct View {
 impl Snapshot {
     /// Never extrapolate capacity from old data or an expired reset window.
     pub fn view(&self, now: i64) -> View {
+        self.view_within(now, 300)
+    }
+    /// Like `view`, hiding values older than `limit` seconds.
+    pub fn view_within(&self, now: i64, limit: i64) -> View {
         let age = now.checked_sub(self.observed_at);
-        let old = age.is_none_or(|age| !(0..=300).contains(&age));
+        let old = age.is_none_or(|age| !(0..=limit).contains(&age));
         let mut stale = old;
         let windows = self
             .windows
@@ -119,6 +123,10 @@ fn profile_digest(profile: &crate::plan::AgentProfile) -> Result<String, String>
         &serde_json::to_vec(&profile).map_err(|e| e.to_string())?,
     ))
 }
+/// GitHub #766: a value stays shown for twice its refresh interval (at least 5 minutes), so a due refresh lands before it hides.
+pub fn fresh_limit(refresh_minutes: u16) -> i64 {
+    (2 * i64::from(refresh_minutes) * 60).max(300)
+}
 pub fn persist(
     store: &mut crate::state::Store,
     profile: &crate::plan::AgentProfile,
@@ -157,7 +165,7 @@ pub fn stored(
     }
     let snapshot: Snapshot =
         serde_json::from_value(value["snapshot"].clone()).map_err(|e| e.to_string())?;
-    let view = snapshot.view(now);
+    let view = snapshot.view_within(now, fresh_limit(profile.quota_refresh_minutes));
     let mut value = serde_json::to_value(&view).map_err(|e| e.to_string())?;
     value["status"] = if view.windows.iter().all(|w| w.used_percent.is_none())
         && !snapshot.budgets.iter().any(Budget::available)

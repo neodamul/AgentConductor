@@ -58,7 +58,9 @@ fn stale_expired_and_invalid_values_never_fill_a_ring() {
         let v = indicator(value);
         assert!(v["rings"][0]["remaining_percent"].is_null(), "{v}");
     }
-    let q = json!({"agent":{"status":"available","observed_at":NOW-301,"windows":[{"remaining_percent":73}]}});
+    // GitHub #766: a value hides only after twice the refresh interval.
+    let old = NOW - 1 - quota::fresh_limit(profile("agent").quota_refresh_minutes);
+    let q = json!({"agent":{"status":"available","observed_at":old,"windows":[{"remaining_percent":73}]}});
     let v = quota::indicators(&q, &[profile("agent")], "en", NOW);
     assert!(v["agent"]["rings"][0]["remaining_percent"].is_null());
 }
