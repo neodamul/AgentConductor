@@ -97,3 +97,5 @@ assert.ok(fs.readFileSync('src/ui/startup.css', 'utf8').includes('.notice{white-
 console.log('progress runtime: pending reasons, verification, run attention, staleness and start time are shown');
 // GitHub #785: a result event without text or subtype shows no detail, not "Unknown".
 assert.ok(room.includes("raw.subtype?statusLabel(raw.subtype):''"), 'a result without a status has no detail line');
+// GitHub #795: the roles footer button says what it does (apply the agent role defaults), as in the mock.
+assert.ok(fs.readFileSync('src/ui/startup.html','utf8').includes('<button id="start-roles-suggest" type="button" class="quiet"><span data-i18n="startup.roles_apply_defaults">') && startup.includes("q('roles-suggest').onclick=") && fs.readFileSync('docs/design/approved-goal-ui/preview.html','utf8').includes('에이전트 역할 기본값 적용'), 'the roles footer applies the agent role defaults in the app and the mock');

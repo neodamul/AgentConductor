@@ -16,6 +16,7 @@ the GitHub Release notes for its tag.
 - Arrow keys move through the application menu again, and opening it no longer logs an error (GitHub #786).
 - New Goal keeps a saved Goal that was not planned yet in the Goal list instead of dropping it (GitHub #791).
 - The manual no longer says the titlebar Workspace name opens Workspace settings (GitHub #792).
+- The roles step's footer button is *Apply agent role defaults* again (app and mock); *Add roles* hid that it assigns the default team (GitHub #795).
 
 ## v0.2.1
 

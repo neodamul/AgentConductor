@@ -88,6 +88,7 @@
  const manual=document.getElementById('assignment-manual-model');check('manual requires value',!document.getElementById('assignment-manual-form').checkValidity());manual.value='team-fallback-example';document.getElementById('assignment-manual-form').requestSubmit();
  check('fallback model saved',roleAssignments[1].fallbackModel==='team-fallback-example'&&selectionMenu.hidden);
  openAssignmentPicker('role-1','fallback');document.querySelector('#assignment-options [data-value=""]').click();check('no fallback disables its model',document.querySelector('[data-assignment-target="role-1"][data-assignment-field="fallbackModel"]').disabled);
+ {const saved=roleAssignments.map(item=>({...item})),coordinator={...workspaceCoordinator};document.querySelector('[data-role-defaults]').click();check('apply agent role defaults assigns every role',roleAssignments.every(item=>item.agent&&item.fallback&&item.agent!==item.fallback&&!item.model)&&roleAssignments[1].agent==='codex'&&document.querySelector('[data-assignment-target="role-1"][data-assignment-field="agent"] span').textContent==='Codex');saved.forEach((item,k)=>Object.assign(roleAssignments[k],item));Object.assign(workspaceCoordinator,coordinator);refreshAssignmentChoices();}
  openSidePanel('settings-panel');await wait();
  const themeButton=nativeSelectionButtons.get(document.getElementById('mock-theme'));themeButton.click();
  check('settings uses same anchored menu',!selectionMenu.hidden&&selectionAnchor===themeButton&&!selectionMenu.hasAttribute('aria-modal'));
