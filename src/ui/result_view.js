@@ -38,7 +38,8 @@ window.acResultView = (() => {
     AC_I18N.replace($('result-lessons'), ...(notes.length ? notes.map(l => node('li', l)) : [node('li', () => acMessage('room.result_no_lessons'), 'muted')]));
     // The dialog ships inside the Room section, which is hidden on the Workspace screen: hoist it so both can open it.
     if ($('result-dialog').parentElement !== document.body) document.body.append($('result-dialog'));
-    if (!$('result-dialog').open) $('result-dialog').showModal();
+    // GitHub #799: each opening starts with the sections collapsed.
+    if (!$('result-dialog').open) { $('result-dialog').querySelectorAll('details.result-section').forEach(d => { d.open = false; }); $('result-dialog').showModal(); }
   }
   return { files, tests, lessons, show };
 })();

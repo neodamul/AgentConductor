@@ -308,3 +308,6 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 
 /* The Workspace name is a label: no hover, no click. */
 .titlebar .workspace-home{cursor:default;pointer-events:none}
+
+/* The result sections of a completed Goal expand and collapse; they start collapsed. */
+#result-detail .result-section summary{display:flex;align-items:center;gap:6px;margin:15px 0 7px;cursor:pointer;list-style:none}#result-detail .result-section summary::-webkit-details-marker{display:none}#result-detail .result-section summary::before{content:'\25B8';color:var(--soft);font-size:11px}#result-detail .result-section[open] summary::before{content:'\25BE'}#result-detail .result-section summary h3{margin:0}

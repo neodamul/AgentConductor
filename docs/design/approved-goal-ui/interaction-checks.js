@@ -97,6 +97,7 @@
  i=7;show();showGoalResult('rotation');document.getElementById('goal-result-dialog').close();openWorkspace();await wait();
  const resultButton=document.querySelector('.goal-row-actions button');resultButton.click();
  check('list uses shared result popup',document.getElementById('goal-result-dialog').open);
+ {const sections=[...document.querySelectorAll('#result-detail details.result-section')];check('result sections start collapsed',sections.length===3&&sections.every(d=>!d.open));sections[0].querySelector('summary').click();check('a result section expands on click',sections[0].open&&sections[0].querySelector('li').offsetHeight>0);sections[0].querySelector('summary').click();check('a result section collapses again',!sections[0].open);}
  document.getElementById('goal-result-dialog').close();
  check('result leaves list in place',document.getElementById('workspace-overview').classList.contains('is-open'));
  const trash=document.querySelector('.goal-trash'),row=trash.closest('.goal-list-row');

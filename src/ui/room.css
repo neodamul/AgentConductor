@@ -102,3 +102,6 @@ body.rail-hidden .workbench{grid-template-columns:0 minmax(390px,1fr) 306px}body
 .result-metrics{gap:0;align-items:center;flex-wrap:wrap}.result-metric{flex-direction:row;align-items:baseline;gap:6px;padding:0 12px;font-size:14px;font-weight:500}.result-metric:first-child{padding-left:0}.result-metric strong{font-size:16px;font-weight:650}
 /* #546: no ring on the automatically focused control until a key is pressed in the dialog. */
 dialog.quiet-focus :focus-visible{outline:none}
+
+/* GitHub #799: the result popup's sections expand and collapse; they start collapsed, as in the mock. */
+.result-section summary{display:flex;align-items:center;gap:6px;margin:15px 0 7px;cursor:pointer;list-style:none}.result-section summary::-webkit-details-marker{display:none}.result-section summary::before{content:'\25B8';color:var(--soft);font-size:11px}.result-section[open] summary::before{content:'\25BE'}.result-section summary h3{margin:0;font-size:13px;font-weight:700}
