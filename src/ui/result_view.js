@@ -8,14 +8,18 @@ window.acResultView = (() => {
     const list = []; let current;
     for (const line of String(diff || '').split('\n')) {
       const header = fileHeader.exec(line);
-      if (header) { current = { path: header[1], add: 0, del: 0 }; list.push(current); }
-      else if (current && line.startsWith('+') && !line.startsWith('+++')) current.add++;
-      else if (current && line.startsWith('-') && !line.startsWith('---')) current.del++;
+      if (header) { current = { path: header[1], add: 0, del: 0, lines: [] }; list.push(current); continue; }
+      if (!current) continue;
+      // GitHub #826: keep the hunks so a row can unfold its diff; bounded so a huge file cannot flood the popup.
+      if (/^(index |--- |\+\+\+ |new file|deleted file|similarity|rename )/.test(line)) continue;
+      if (current.lines.length < 400) current.lines.push(line);
+      if (line.startsWith('+')) current.add++;
+      else if (line.startsWith('-')) current.del++;
     }
     return list;
   }
   function tests(outputs) { const list = outputs || []; return { passed: list.filter(t => t.exit_code === 0 && !t.timed_out).length, total: list.length }; }
-  function phaseFiles(phases) { const map = new Map(); for (const phase of phases || []) for (const file of files(phase.evidence?.diff)) { const item = map.get(file.path) || { path: file.path, phases: [] }; item.phases.push(phase.phase); map.set(file.path, item); } return [...map.values()]; }
+  function phaseFiles(phases) { const map = new Map(); for (const phase of phases || []) for (const file of files(phase.evidence?.diff)) { const item = map.get(file.path) || { path: file.path, phases: [], lines: [] }; item.phases.push(phase.phase); item.lines.push(...file.lines); map.set(file.path, item); } return [...map.values()]; }
   function phaseTests(phases) { return (phases || []).flatMap(phase => (phase.evidence?.test_output || []).map(test => ({ ...test, task: `${phase.phase} · ${test.task}` }))); }
   function lessons(details) {
     const out = [];
@@ -46,7 +50,17 @@ window.acResultView = (() => {
     AC_I18N.bind($('result-location'), () => acMessage('room.result_location', { value1: data.repo }));
     const metric = (label, value) => { const el = node('div', undefined, 'result-metric'); el.append(node('span', label), node('strong', String(value))); return el; };
     AC_I18N.replace($('result-metrics'), metric(() => acMessage('room.result_metric_files'), changed.length), metric(() => acMessage('room.result_metric_tests'), `${summary.passed}/${summary.total}`), metric(() => acMessage('room.result_metric_lessons'), notes.length));
-    AC_I18N.replace($('result-files'), ...changed.map(f => row(f.path, f.phases ? f.phases.join(' · ') : `+${f.add} / −${f.del}`)));
+    // GitHub #826: each changed file is a button that unfolds its diff below it.
+    const fileRow = f => {
+      const item = node('li', undefined, 'file-row'), button = node('button', undefined, 'file-diff-toggle'), pre = node('pre', undefined, 'file-diff');
+      button.type = 'button'; button.setAttribute('aria-expanded', 'false'); pre.hidden = true;
+      button.append(node('span', f.path), node('span', () => ' · ' + (f.phases ? f.phases.join(' · ') : `+${f.add} / −${f.del}`)));
+      for (const text of f.lines || []) pre.append(node('span', text || ' ', 'diff-line' + (text.startsWith('@@') ? ' hunk' : text.startsWith('+') ? ' add' : text.startsWith('-') ? ' remove' : '')));
+      button.disabled = !(f.lines || []).length;
+      button.onclick = () => { const open = pre.hidden; pre.hidden = !open; button.setAttribute('aria-expanded', String(open)); };
+      item.append(button, pre); return item;
+    };
+    AC_I18N.replace($('result-files'), ...changed.map(fileRow));
     AC_I18N.replace($('result-tests'), ...outputs.map(t => row(t.task, () => acMessage(t.exit_code === 0 && !t.timed_out ? 'room.result_test_passed' : 'room.result_test_failed'))));
     AC_I18N.replace($('result-lessons'), ...(notes.length ? notes.map(l => node('li', l)) : [node('li', () => acMessage('room.result_no_lessons'), 'muted')]));
     // GitHub #821: the popup owns its buttons, so they work from the Goal list before the Room script has run.

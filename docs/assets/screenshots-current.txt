@@ -1,3 +1,4 @@
+Confirmed 2026-11-12 against the following commit (changed files in the Goal completion popup unfold their diff, #826): the popup is not on a captured screen, so the captured screens are unchanged and were checked, not recaptured.
 Confirmed 2026-11-12 against the following commit (the task steps' Goal heading gets an Expand/Collapse toggle, #827): the captured Agent Room screens show the review step, which gains only the small toggle link beside the heading; they are left as captured until the next recapture.
 Confirmed 2026-11-12 against the following commit (the Goal completion popup's sections show counts and Expand/Collapse toggles, #822): the popup is not on a captured screen, so the captured screens are unchanged and were checked, not recaptured.
 Confirmed 2026-11-12 against the following commit (the Workspace step's Goal list and team briefing move to the page heading, #824): the captured workspace screens show the old placement until the next recapture.

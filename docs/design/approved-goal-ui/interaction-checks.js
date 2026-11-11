@@ -157,6 +157,11 @@
   toggle.click();check('Expand shows the whole Goal',!text.hidden&&text.textContent===(selectedGoal().description||selectedGoal().name)&&text.textContent.length>0&&toggle.textContent==='▾ 접기'&&toggle.getAttribute('aria-expanded')==='true');
   toggle.click();check('Collapse folds it again',text.hidden&&toggle.textContent==='▸ 펼치기');
   i=0;show();check('the Workspace step has no Goal toggle',getComputedStyle(toggle).display==='none'&&getComputedStyle(text).display==='none');i=view;show();}
+ {const view=i;i=7;show();showGoalResult('rotation');const files=document.querySelector('#result-detail .result-section');files.open=true;const row=files.querySelector('.file-diff-toggle'),pre=files.querySelector('.file-diff');
+  check('changed file rows are buttons with a folded diff',!!row&&row.getAttribute('aria-expanded')==='false'&&pre.hidden&&row.textContent.length>0);
+  row.click();check('a click unfolds that file\'s diff with added and removed lines',!pre.hidden&&pre.querySelector('.diff-line.hunk')&&pre.querySelector('.diff-line.add')&&row.getAttribute('aria-expanded')==='true'&&files.querySelectorAll('.file-diff:not([hidden])').length===1);
+  row.click();check('a second click folds it again',pre.hidden&&row.getAttribute('aria-expanded')==='false');
+  document.getElementById('goal-result-dialog').close();i=view;show();}
  check('no script errors',!document.documentElement.dataset.designError);
  document.documentElement.dataset.interactionResult=JSON.stringify({theme:initialTheme,width:innerWidth,checks});
 })().catch(error=>document.documentElement.dataset.designError=error.message);
