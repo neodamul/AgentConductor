@@ -73,6 +73,7 @@ try{
   if(mode==='profile-edit'||mode==='profile-edit-bottom'){await call('Runtime.evaluate',{expression:'selectRail("agents");'+frameWait,awaitPromise:true});action='openProfileEditor("claude");'+(mode==='profile-edit-bottom'?'const fields=document.querySelector(".profile-editor-fields");fields.scrollTop=fields.scrollHeight;':'');}
   if(mode==='close-confirmation')action='openClosePreview()';
   if(mode==='settings')action='document.getElementById("settings-button").click()';
+  if(mode==='result-file-diff')action='showGoalResult("rotation");const box=document.querySelector("#result-detail .result-section");box.open=true;box.querySelector(".file-diff-toggle").click()';
   if(mode==='goal-title-open')action='document.getElementById("goal-title-toggle").click()';
   if(mode==='mcp')action='openMcp()';
   if(mode==='mcp-add')action='openMcp();openMcpEditor(null)';
