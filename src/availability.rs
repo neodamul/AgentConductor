@@ -129,6 +129,7 @@ pub fn detect(payload: &Value, message: &str, observed_at: i64) -> Option<Restri
         "out of extra usage",
         "weekly limit",
         "daily limit",
+        "spend cap",
     ]
     .iter()
     .any(|phrase| lower.contains(phrase))
@@ -211,6 +212,16 @@ pub fn detect(payload: &Value, message: &str, observed_at: i64) -> Option<Restri
         }
         .into(),
     })
+}
+
+/// Preserve an earlier limit when a later error event has no availability signal.
+pub fn update_from_error(
+    previous: Option<Restriction>,
+    payload: &Value,
+    message: &str,
+    observed_at: i64,
+) -> Option<Restriction> {
+    detect(payload, message, observed_at).or(previous)
 }
 
 fn temporary_status(value: &Value) -> bool {

@@ -140,7 +140,7 @@ pub(crate) async fn worker(
                 }
                 if event.kind==EventKind::Error {
                     let message=event.payload.to_string();
-                    report.restriction=availability::detect(&event.payload,&message,(now()/1000) as i64);
+                    report.restriction=availability::update_from_error(report.restriction.take(),&event.payload,&message,(now()/1000) as i64);
                     provider_error=Some(message);
                 }
                 if event.kind == EventKind::Denied {

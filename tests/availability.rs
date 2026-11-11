@@ -1,4 +1,4 @@
-use agentconductor::availability::{detect, parse_time};
+use agentconductor::availability::{Restriction, detect, parse_time, update_from_error};
 use serde_json::json;
 
 #[test]
@@ -98,4 +98,33 @@ fn observed_codex_weekly_limit_is_a_restriction_that_needs_a_manual_schedule() {
     let restriction = detect(&payload, message, 100).expect("usage limit is a restriction");
     assert_eq!(restriction.available_at, None);
     assert_eq!(restriction.observed_at, 100);
+}
+
+#[test]
+fn codex_workspace_spend_cap_is_an_agent_availability_restriction() {
+    let raw = r#"{"error":{"message":"You hit your spend cap set by the owner of your workspace. Ask an owner to increase your spend cap to continue."},"type":"turn.failed"}"#;
+    let payload = serde_json::from_str(raw).unwrap();
+    let restriction = detect(&payload, raw, 100).expect("spend cap is a restriction");
+    assert_eq!(restriction.available_at, None);
+    assert_eq!(restriction.observed_at, 100);
+}
+
+#[test]
+fn a_later_non_limit_error_does_not_clear_the_detected_restriction() {
+    let previous = Restriction {
+        available_at: None,
+        observed_at: 100,
+        reason: "workspace spend cap".into(),
+        source: "usage_limit".into(),
+    };
+    let current = update_from_error(
+        Some(previous.clone()),
+        &json!({"error":{"message":"another event"}}),
+        "another event",
+        101,
+    )
+    .expect("the earlier restriction remains in force");
+
+    assert_eq!(current.reason, previous.reason);
+    assert_eq!(current.observed_at, previous.observed_at);
 }

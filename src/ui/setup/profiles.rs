@@ -205,6 +205,7 @@ pub(crate) fn validate_profiles(profiles: &[AgentProfile]) -> Result<(), String>
                 depends_on: vec![],
                 test_command: vec!["true".into()],
                 model: None,
+                fallback: None,
                 role: None,
                 execution_options: Default::default(),
                 task_type: None,

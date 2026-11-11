@@ -70,6 +70,7 @@ fn main() {
             }
             println!("integration tests passed");
         }
+        Some("test-pass") => println!("integration tests passed"),
         Some("test") | Some("test-wait") => {
             if std::env::args().nth(1).as_deref() == Some("test-wait") {
                 println!("integration test started");
@@ -107,7 +108,8 @@ fn main() {
         | Some("dependency")
         | Some("quota")
         | Some("quota-once")
-        | Some("quota-known") => {
+        | Some("quota-known")
+        | Some("spend-cap") => {
             let mut prompt = String::new();
             std::io::stdin().read_to_string(&mut prompt).unwrap();
             let task = prompt
@@ -126,6 +128,10 @@ fn main() {
             } else {
                 original
             };
+            if std::env::args().nth(1).as_deref() == Some("spend-cap") {
+                println!(r#"{{"type":"turn.failed","error":{{"message":"You hit your spend cap set by the owner of your workspace. Ask an owner to increase your spend cap to continue."}}}}"#);
+                std::process::exit(1);
+            }
             if std::env::args().nth(1).as_deref() == Some("custom-task") {
                 println!("{{\"schema\":\"acio.event/1\",\"seq\":1,\"ts\":\"2026-10-28T01:00:00Z\",\"type\":\"session\",\"session_id\":\"vendor-{path}\",\"data\":{{\"session_id\":\"vendor-{path}\",\"effective\":{{\"task_type\":\"code\"}}}}}}");
             } else {

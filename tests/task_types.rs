@@ -1,4 +1,4 @@
-use agentconductor::plan::{Task, TaskType};
+use agentconductor::plan::{Fallback, Task, TaskType};
 use serde_json::json;
 
 fn task(extra: serde_json::Value) -> Task {
@@ -25,6 +25,16 @@ fn task_type_is_optional_and_old_task_documents_round_trip() {
             .unwrap()
             .get("task_type")
             .is_none()
+    );
+}
+
+#[test]
+fn task_fallback_is_optional_and_round_trips_existing_workspace_plans() {
+    let task = task(json!({"fallback":{"agent":"codex","model":null}}));
+    assert_eq!(
+        task.fallback
+            .map(|fallback| (fallback.agent, fallback.model)),
+        Some(("codex".into(), None))
     );
 }
 

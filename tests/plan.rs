@@ -42,6 +42,7 @@ fn plan() -> Plan {
             .enumerate()
             .map(|(i, path)| Task {
                 model: None,
+                fallback: None,
                 role: None,
                 execution_options: Default::default(),
                 task_type: None,

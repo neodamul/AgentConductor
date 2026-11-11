@@ -2031,6 +2031,10 @@ Exact packaged run `41520505534` failed because the Goal edit read back empty an
 # [2026-11-11] plan / task / verify | Initialize candidate modal before AccessKit assertions — issue #9
 
 PR #22 exact-head run `41647040730` failed its candidate decision localization test on macOS and Windows. Local red reproduction confirmed that the helper collected AccessKit nodes on the same frame that initialized `egui::Modal`; rendering one setup frame first makes the localized confirmation labels observable. Focused test and `source_layout` pass, and the generated `tests/__pycache__` files were removed. Product UI is unchanged; exact-head platform CI is still required. See `native-modal-test-frame.md`. AgentMemory REST was unavailable, so this knowledge remains in the repository wiki only.
+
+# [2026-11-11] plan / task / verify | Port Codex workspace spend-cap fallback — bug #712
+
+The #713 main fix was missing from the Rust root: the exact Codex spend-cap event left a task failed and never produced a fallback reservation. TDD reproduced the failure through a local CLI process, then `availability::detect` classified `spend cap` and `update_from_error` retained the prior restriction across unrelated later errors. The regression advances the run after five hours, applies only its reviewed `backup` agent, and verifies task completion. Four focused suites pass 14 tests; source layout, formatting, and diff checks pass. Requirements R-127/BG-82/SF-114/UC-117/FR-112/QAS-123/DD-136 now state the provider-cap and sticky-restriction contract. See `codex-spend-cap-fallback.md`. AgentMemory REST is unavailable; the LLM Wiki is the durable record.
 # 2026-11-03
 
 - Added interaction/render regressions for the Workspace worktree checkbox and coordinator blocker warning. The checkbox persists `worktree`; the blocker now has a tinted, wrapped panel. The initial tests failed against the prior radio-group/inline-text rendering, then passed with the changes. This does not count as overall UI parity acceptance.

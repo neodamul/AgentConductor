@@ -8352,3 +8352,12 @@ Checklist of what the operator sees, by request (after #273, #279 and #285):
 - [x] Verify: the focused localization test passes; `source_layout` passes after deleting generated `tests/__pycache__`; `cargo fmt --all -- --check` and `git diff --check` pass. The touched test file is 93 lines.
 - [x] Assetize: record the two-frame modal test rule in `knowledge/wiki/native-modal-test-frame.md`; AgentMemory service is unavailable in this environment, so no remote memory write is claimed.
 - [ ] Complete: push the test-only correction and inspect its exact-head macOS/Windows CI. Acceptance remains **22/50**; this fix adds no UI parity credit.
+
+### 2026-11-11 — Port Codex workspace spend-cap fallback bug #712 to Rust
+
+- [x] Plan: follow existing R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136 availability behavior. Main fix #713 classifies a Codex workspace spend cap as a restriction and preserves an earlier restriction across later non-limit errors.
+- [x] Red: with `spend cap` removed from the Rust detector, a real mock Codex `turn.failed` event left the run `failed` instead of `waiting_availability`; the scheduled fallback could not start.
+- [x] Task: recognize `spend cap`; retain the previous restriction if a later error carries no limit evidence; add a Rust CLI fixture and end-to-end resume-to-reviewed-fallback test.
+- [x] Verify: 14 tests pass across availability, timer, Claude availability workflow, and Codex spend-cap fallback suites. The mock workflow proves the task is reassigned to `backup` and completes. `source_layout` passes 2 tests; warning-denied all-target Clippy, rustfmt, and diff checks pass. All touched source/test files are below 300 lines.
+- [x] Assetize: update the architecture trace and LLM Wiki. AgentMemory is unavailable here; no server write is claimed.
+- [ ] Complete: commit/push the Rust port and verify the exact head. PR #22 remains conflicting with the latest `main`; issue #9 acceptance stays **22/50**.
