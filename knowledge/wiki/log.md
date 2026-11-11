@@ -651,3 +651,7 @@ Recorded the single-modal receipt-selection rule, current-revision and approved-
 ## 2026-11-11 Workspace scroll clearance (#741)
 
 Windows rounded the last Workspace tools row onto the fixed footer by 0.125 CSS px. The focused regression now requires at least 1 px clearance, and 2 px of scroll-body bottom padding passes at 840 px and 1280 px. The local AgentMemory REST service was unavailable during this save, so the unit record is preserved in this wiki log and page pending AgentMemory recovery.
+
+## 2026-11-11 Application menu and Goal-list parity (#750–#753)
+
+The combined UI branch groups commands by Workspace, Agents, View, and Help; keyboard navigation opens and closes nested groups while restoring focus. Goal text preserves line breaks and supports accessible expand/collapse. Agent dialog controls use one spacing rhythm, and plan-source actions are hidden to match the approved mock. Local menu, Goal-row, and plan-source parity checks pass. AgentMemory REST save is pending service recovery; this LLM-wiki entry preserves the implementation contract.
