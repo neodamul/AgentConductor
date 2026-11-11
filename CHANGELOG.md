@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## v0.2.2
 
+- Opening a different run clears prior candidate, test, diff and approval surfaces before loading the new run (GitHub #794).
 - The titlebar Workspace name is a plain label: no hover background, no pointer cursor and no click (GitHub #768).
 - The plan step no longer keeps an old planning failure ("Logs: undefined") after a plan is written or the Goal changes (GitHub #773).
 - When an agent CLI quits before reading its request, the error says so instead of only "Broken pipe" (GitHub #774).
