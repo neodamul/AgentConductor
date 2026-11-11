@@ -154,10 +154,8 @@ impl Startup {
             if !saved.config.slugs.iter().any(|item| &item.slug == slug) {
                 return Err(messages::text("native.goal_is_not_registered").into());
             }
-        } else if saved.config.active_slug.is_none()
-            && !saved.config.goal.trim().is_empty()
-            && self.last_run(saved).is_some()
-        {
+        } else if saved.config.active_slug.is_none() && !saved.config.goal.trim().is_empty() {
+            // GitHub #791 / R-55: a saved Goal is kept as a slug even before it has a plan or run.
             self.create_slug(saved, None)?;
         }
         let mut next = saved.clone();

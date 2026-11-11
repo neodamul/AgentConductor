@@ -119,3 +119,26 @@ fn new_goal_uses_confirmed_profile_model_without_rewriting_previous_plan() {
     drop(startup);
     fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn new_goal_keeps_a_saved_goal_that_was_never_planned() {
+    // GitHub #791: R-55 says goals accumulate and a slug may exist without a plan; New Goal used to drop
+    // a saved Goal that had no run yet.
+    let (root, plan) = support::setup("shared");
+    let s = Startup::open(
+        &root.join("desktop"),
+        Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+    )
+    .unwrap();
+    mutate(&s, json!({"kind":"save","config":{"profiles":plan.agents,"repository":root.join("repo"),"goal":"Keep this goal","coordinator":"mock","workspace_mode":"shared"}})).unwrap();
+    mutate(&s, json!({"kind":"new_goal"})).unwrap();
+    let v = snapshot(&s);
+    assert_eq!(v["config"]["goal"], "");
+    let slugs = v["slugs"].as_array().unwrap();
+    assert!(
+        slugs.iter().any(|slug| slug["goal"] == "Keep this goal"),
+        "{v}"
+    );
+    drop(s);
+    fs::remove_dir_all(root).unwrap();
+}

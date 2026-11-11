@@ -14,6 +14,8 @@ the GitHub Release notes for its tag.
 - The out-of-scope recovery dialog keeps its buttons in view while it scrolls (GitHub #784).
 - Task activity no longer shows "Unknown" for a finished event that carries no status (GitHub #785).
 - Arrow keys move through the application menu again, and opening it no longer logs an error (GitHub #786).
+- New Goal keeps a saved Goal that was not planned yet in the Goal list instead of dropping it (GitHub #791).
+- The manual no longer says the titlebar Workspace name opens Workspace settings (GitHub #792).
 
 ## v0.2.1
 
