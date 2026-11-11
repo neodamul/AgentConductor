@@ -5,7 +5,13 @@ pub(super) fn state(
 ) -> Result<serde_json::Value, String> {
     let mut current = broker.poll()?;
     let Some(job) = stored else {
-        return Ok(current);
+        // GitHub #773: a finished job the workspace no longer records (a written plan, a Goal switch) is not shown
+        // again; a running one still keeps the window busy.
+        return Ok(if current["state"] == "running" {
+            current
+        } else {
+            serde_json::Value::Null
+        });
     };
     let log = broker
         .dir

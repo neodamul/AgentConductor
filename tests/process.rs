@@ -200,6 +200,26 @@ async fn closes_stdin_and_drains_large_stderr_preserving_raw_bytes() {
     std::fs::remove_dir_all(cwd).unwrap();
 }
 
+#[cfg(unix)]
+#[tokio::test]
+async fn a_cli_that_quits_before_reading_its_request_is_named_as_such() {
+    // GitHub #774: the error used to read only "write agent input: Broken pipe".
+    let mut s = spec("echo");
+    s.executable = "/usr/bin/true".into();
+    s.args.clear();
+    s.input = vec![b'x'; 1024 * 1024];
+    let cwd = s.cwd.clone();
+    let Err(error) = run(s).await else {
+        panic!("a CLI that quit early must not succeed")
+    };
+    assert!(
+        error.contains("exited before reading the request")
+            || error.contains("요청을 읽기 전에 종료"),
+        "{error}"
+    );
+    std::fs::remove_dir_all(cwd).unwrap();
+}
+
 #[tokio::test]
 async fn records_nonzero_exit_without_retrying() {
     let s = spec("fail");

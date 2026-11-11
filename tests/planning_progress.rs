@@ -116,3 +116,33 @@ fn job_snapshot_carries_start_time_and_log_after_reopen() {
     drop(reopened);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn a_finished_job_the_workspace_no_longer_records_is_not_shown() {
+    // GitHub #773: after a plan job, a written plan cleared the stored job, yet the window kept
+    // showing the old job (without its log, so the failure box read "Logs: undefined").
+    let (root, plan) = support::setup("shared");
+    let mut profiles = plan.agents;
+    let mut planner = profiles[0].clone();
+    planner.id = "planner".into();
+    planner.args = vec!["plan".into()];
+    planner.permission_mode = "read_only".into();
+    profiles.push(planner);
+    let startup = Startup::open(
+        &root.join("desktop"),
+        Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+    )
+    .unwrap();
+    mutate(&startup, serde_json::json!({"kind":"save","config":{"profiles":profiles,"repository":root.join("repo"),"goal":"Three files","coordinator":"planner","workspace_mode":"shared"}})).unwrap();
+    mutate(&startup, serde_json::json!({"kind":"prepare"})).unwrap();
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(10);
+    while snapshot(&startup)["job"]["state"] == "running" {
+        assert!(std::time::Instant::now() < deadline);
+        std::thread::sleep(std::time::Duration::from_millis(20));
+    }
+    mutate(&startup, serde_json::json!({"kind":"draft"})).unwrap();
+    let job = snapshot(&startup)["job"].clone();
+    assert!(job.is_null(), "{job}");
+    drop(startup);
+    std::fs::remove_dir_all(root).unwrap();
+}
