@@ -20,9 +20,9 @@ Release scope: the published app is the current `main` desktop product. The sepa
 - [x] Complete: #745–#748 were already implemented in merged PR #739/main commit `f2cc86fe`; added verification notes and closed all four issues.
 - [x] Complete: #382 was merged in PR #758 at `7c1cc097`; verified closed.
 - [x] Complete: PR #756 merged at `d530a9d7`; its combined tree includes Codex PR #757's head `92bca622`. GitHub closed #740–#743, #749–#753 from the merged PR references.
-- [ ] Verify: follow-up CI fix for the #749 screen-walk harness. The consolidated run `42947188574` failed on both platforms because its fixture started with an active run, which auto-opened the Agent Room before the test walked Workspace tabs. Set the fixture to idle and navigate to Tasks explicitly; targeted local simulator and Rust wrapper pass.
-- [ ] Verify: #744 remains open for native-app checks of tool-wait and permission-denied cards and last-Goal/New Goal. Simulator checks pass, but the running app has an existing user workspace; it was left untouched.
-- [ ] Complete: do not mark v0.2.0 releasable until #744 and the Rust release quality gates are complete. The separate Rust migration PR #22 remains Draft at 22/50 and is not part of the shipped-app merge batch.
+- [x] Verify: fix the #749 screen-walk fixture to start idle, wait for startup readiness, and open the Room through the existing action. The exact-head macOS/Windows CI batch `42952073854` passed; local Rust wrapper passed three consecutive runs. Merged in PR #760 at `45640aa8`.
+- [x] Complete: #744 was closed by the owner after recording that the unclicked tool-wait, permission-denied, and New Goal actions were covered by automated evidence and would not block this release. Native phase picking and safe delete-cancel behavior were recorded separately.
+- [ ] Complete: do not mark v0.2.0 releasable until the 10 remaining open Rust migration issues (#189, #226, #257, #283, #310, #345, #346, #348, #372, #374) and release gates are resolved. The separate Rust migration PR #22 remains Draft at 22/50 and is not part of the shipped-app merge batch.
 ## Stable release 0.2.0 — native tool-decision modal bug #382 (2026-11-11)
 
 - [x] Plan: keep the R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 trace; route deferred and approved-refresh decisions through the current modal while preserving exact evidence, revision, busy guards, defer, Cancel and event payloads.
