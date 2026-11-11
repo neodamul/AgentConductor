@@ -71,7 +71,6 @@ document.getElementById('goal-picker').onclick=openWorkspace;
 document.querySelector('section.card[data-show="j e"] .btn.q').onclick=()=>{selectedGoalId='rotation';openWorkspace();};
 document.getElementById('overview-new-goal').onclick=startNewGoal;
 document.getElementById('workspace-new-goal').onclick=startNewGoal;
-document.getElementById('workspace-goals-button').onclick=openWorkspace;
 // A finished Phase with Phases left continues to the next Phase's plan; only the last Phase returns to the Goal list.
 document.getElementById('result-to-workspace').onclick=()=>{resultReturnToList=false;document.getElementById('goal-result-dialog').close();const goal=workspaceGoals.find(item=>item.id===resultGoalId);if(goal?.nextPhase){selectedGoalId=goal.id;workspaceVisible=false;i=2;show();}else openWorkspace();};
 document.getElementById('goal-result-close').onclick=()=>document.getElementById('goal-result-dialog').close();

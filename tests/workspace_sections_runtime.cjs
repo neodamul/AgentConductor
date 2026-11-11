@@ -14,13 +14,13 @@ const preset=`SIM.home.config.goal='Goal A';SIM.home.slugs=[{slug:'goal-a',goal:
   const info=q('start-goal-info'),tabs=q('start-step-tabs');check('fixed Goal information row',!!info&&info.getBoundingClientRect().height===36);
   const tabTop=tabs.getBoundingClientRect().top;info.firstElementChild.textContent='Progress detail '.repeat(40);await wait();check('information updates do not move step tabs',tabs.getBoundingClientRect().top===tabTop);info.firstElementChild.textContent='';
   check('Workspace owns common fields',['start-name','start-coordinator','start-repository','start-worktrees'].every(id=>workspace.contains(q(id))));
-  check('Goal owns objective and imports',['start-goal','start-goal-list-open','start-new-goal','start-mcp-controls','start-optimize-button'].every(id=>goal.contains(q(id))));
-  check('page heading contains no Goal actions',!document.querySelector('.startup-heading #start-new-goal,.startup-heading #start-goal-list-open'));
+  check('Goal owns objective, New Goal and imports',['start-goal','start-new-goal','start-mcp-controls','start-optimize-button'].every(id=>goal.contains(q(id))));
+  check('page heading holds the Goal list and briefing but not New Goal (#824)',!document.querySelector('.startup-heading #start-new-goal')&&!!document.querySelector('.startup-heading #start-goal-list-open')&&!!document.querySelector('.startup-heading #brief-team'));
   check('current Goal is actual selected state',q('start-current-goal').textContent==='Goal A'&&!!q('start-current-goal-state').textContent);
   check('briefing disabled without a run',q('brief-team').disabled);
   q('start-goal-list-open').click();check('existing Goal list opens',q('start-goals').open);q('start-goals-close').click();
   q('start-tab-team').click();check('Goal list stays reachable on Team',q('start-goal-list-open').getBoundingClientRect().width>0);check('Team title is the actual Goal',q('start-page-title').textContent==='Goal A');
-  q('start-tab-workspace').click();check('Goal list returns to Goal section',goal.contains(q('start-goal-list-open')));
+  q('start-tab-workspace').click();check('Goal list stays in the heading on Workspace (#824)',document.querySelector('.startup-heading').contains(q('start-goal-list-open')));
   SIM.home.run_available=true;SIM.home.run_state='running';const until=Date.now()+12000;while(q('brief-team').disabled&&Date.now()<until)await new Promise(r=>setTimeout(r,30));
   check('existing run enables briefing',!q('brief-team').disabled);q('brief-team').click();
   const briefingUntil=Date.now()+5000;while(!q('briefing-dialog').open&&Date.now()<briefingUntil)await new Promise(r=>setTimeout(r,30));
@@ -31,7 +31,7 @@ const preset=`SIM.home.config.goal='Goal A';SIM.home.slugs=[{slug:'goal-a',goal:
   check('Room retains same Goal list button',!!document.querySelector('#run-screen .goal-bar #start-goal-list-open'));
   check('single briefing and Goal controls',document.querySelectorAll('#brief-team').length===1&&document.querySelectorAll('#start-goal-list-open').length===1);
   q('startup-home').click();const homeUntil=Date.now()+5000;while(document.body.classList.contains('on-run')&&Date.now()<homeUntil)await new Promise(r=>setTimeout(r,30));
-  check('return from Room restores both Goal controls',goal.contains(q('start-goal-list-open'))&&goal.contains(q('brief-team')));q('brief-team').click();const again=Date.now()+5000;while(!q('briefing-dialog').open&&Date.now()<again)await new Promise(r=>setTimeout(r,30));check('Workspace briefing still works after Room',q('briefing-dialog').open);q('briefing-dialog').close();
+  check('return from Room restores both Goal controls to the heading',document.querySelector('.startup-heading').contains(q('start-goal-list-open'))&&document.querySelector('.startup-heading').contains(q('brief-team')));q('brief-team').click();const again=Date.now()+5000;while(!q('briefing-dialog').open&&Date.now()<again)await new Promise(r=>setTimeout(r,30));check('Workspace briefing still works after Room',q('briefing-dialog').open);q('briefing-dialog').close();
   return out;
  })()`);console.log(theme,width,checks.length,'Workspace section checks passed');
 }}finally{await b.close();}}}finally{fs.rmSync(dir,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1;});

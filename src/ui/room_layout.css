@@ -88,7 +88,7 @@ header.titlebar #start-workspace-menu{height:auto;padding:5px 7px;border:0;borde
 
 header.titlebar #start-workspace-menu{font-size:13px}#start-mcp-controls.source-actions button{padding:5px 8px}
 
-#start-goal-count{display:inline-flex;align-items:center;justify-content:center;margin-left:4px;min-width:18px;height:18px;padding:1px 5px;border-radius:4px;background:var(--fill);color:var(--soft);font-size:11px;line-height:18px;font-variant-numeric:tabular-nums}
+#start-goal-count{display:inline-flex;align-items:center;justify-content:center;margin-left:0;min-width:18px;height:18px;padding:1px 5px;border-radius:4px;background:var(--fill);color:var(--soft);font-size:11px;line-height:18px;font-variant-numeric:tabular-nums}
 
 /* #427: section structure and spacing from the approved Workspace card. */
 
