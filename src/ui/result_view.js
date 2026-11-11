@@ -44,6 +44,13 @@ window.acResultView = (() => {
     AC_I18N.replace($('result-files'), ...changed.map(f => row(f.path, f.phases ? f.phases.join(' · ') : `+${f.add} / −${f.del}`)));
     AC_I18N.replace($('result-tests'), ...outputs.map(t => row(t.task, () => acMessage(t.exit_code === 0 && !t.timed_out ? 'room.result_test_passed' : 'room.result_test_failed'))));
     AC_I18N.replace($('result-lessons'), ...(notes.length ? notes.map(l => node('li', l)) : [node('li', () => acMessage('room.result_no_lessons'), 'muted')]));
+    // GitHub #821: the popup owns its buttons, so they work from the Goal list before the Room script has run.
+    $('result-x').onclick = () => $('result-dialog').close();
+    $('result-close').onclick = () => {
+      const next = $('result-dialog').dataset.nextPhase; $('result-dialog').close();
+      if (next) window.acNextPhase?.plan();
+      else if (!document.getElementById('start-goals')?.open) document.getElementById('start-goal-list-open')?.click();
+    };
     // The dialog ships inside the Room section, which is hidden on the Workspace screen: hoist it so both can open it.
     if ($('result-dialog').parentElement !== document.body) document.body.append($('result-dialog'));
     // GitHub #799: each opening starts with the sections collapsed.

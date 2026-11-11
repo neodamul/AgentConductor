@@ -1206,6 +1206,7 @@
   "state.native_callback": "native callback",
   "state.native_sandbox": "native sandbox",
   "state.pending": "pending",
+  "state.mcp": "MCP preview",
   "state.plan": "plan",
   "state.planning": "planning",
   "state.prepared": "prepared",
