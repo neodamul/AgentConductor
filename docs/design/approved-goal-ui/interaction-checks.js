@@ -120,7 +120,7 @@
  check('ellipsis labels retain title', [...document.querySelectorAll('.tab-label')].every(el=>getComputedStyle(el).textOverflow==='ellipsis'&&el.title.endsWith(el.textContent)));
  check('phase groups share distinct backgrounds',new Set([...document.querySelectorAll('.step-group')].map(group=>getComputedStyle(group).backgroundColor)).size===3&&[...document.querySelectorAll('.step-group')].map(group=>group.querySelectorAll('.tab').length).join('/')==='3/2/1');
  check('phase group icons retain names',[...document.querySelectorAll('.tabs-group-name')].map(el=>el.getAttribute('aria-label')).join('/')==='준비/실행/마무리');
- check('enabled buttons use pointer',[...document.querySelectorAll('button:not(:disabled)')].every(button=>getComputedStyle(button).cursor==='pointer'));
+ check('enabled buttons use pointer',[...document.querySelectorAll('button:not(:disabled):not(.workspace-home)')].every(button=>getComputedStyle(button).cursor==='pointer'));
  check('agent trash uses shared SVG',[...document.querySelectorAll('.agent-remove')].every(button=>button.querySelector('svg path').getAttribute('d')==='M3 6h18M9 6V4h6v2M5 6l1 14h12l1-14M10 10v6M14 10v6'));
  check('agent brands replace card initials',document.querySelectorAll('.agent .status-icon .agent-brand-logo').length===2);
  check('agent trash balances tools',[...document.querySelectorAll('.agent-remove svg')].every(svg=>getComputedStyle(svg).width==='13px'));

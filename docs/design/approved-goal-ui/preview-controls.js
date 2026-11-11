@@ -68,7 +68,7 @@ document.getElementById('menu-about').onclick=()=>{closeAppMenu();openAbout(fals
 document.getElementById('about-close').onclick=document.getElementById('about-start').onclick=()=>document.getElementById('about-dialog').close();
 document.querySelectorAll('.about-copy').forEach(b=>b.onclick=()=>{navigator.clipboard?.writeText(b.parentElement.querySelector('code').textContent);const t=b.textContent;b.textContent='복사됨';setTimeout(()=>{b.textContent=t;},1200);});
 document.getElementById('chat-preview-form').onsubmit=event=>{event.preventDefault();const input=document.getElementById('chat-preview-input');if(!input.value.trim())return;const row=document.createElement('p');row.textContent=input.value.trim();document.getElementById('chat-preview').append(row);input.value='';};
-document.getElementById('workspace-home').onclick=openWorkspaceHome;document.getElementById('goal-picker').onclick=openWorkspace;
+document.getElementById('goal-picker').onclick=openWorkspace;
 document.querySelector('section.card[data-show="j e"] .btn.q').onclick=()=>{selectedGoalId='rotation';openWorkspace();};
 document.getElementById('overview-new-goal').onclick=startNewGoal;
 document.getElementById('workspace-new-goal').onclick=startNewGoal;
