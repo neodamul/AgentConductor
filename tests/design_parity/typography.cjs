@@ -56,7 +56,7 @@ module.exports = [
   e('browse', B, '.project-input .btn', '#start-browse'),
   e('goal-list-button', B, '#workspace-goals-button', '#start-goal-list-open'),
   e('new-goal-button', B, '#workspace-new-goal', '#start-new-goal'),
-  e('import-button', B, '.goal-import-actions .btn', '#start-jira-reference'),
+  e('import-button', B, '.goal-import-actions .btn:nth-child(2)', '#start-jira-reference'),
   e('save-button', B, '.actions .btn.p', '#start-save'),
   e('statusbar', ['fontSize', 'color'], '.status span', '#start-status'),
   // Every visible text in each screen state uses one size of the mock's scale (no 15/19/20/22/26px).
