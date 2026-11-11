@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## v0.2.1
 
+- The titlebar Workspace name is a plain label: no hover background, no pointer cursor and no click (GitHub #768).
 - The Agent Room asks Claude for its usage on every OS and for any Claude executable name, like the workspace screen; it used to query only a macOS executable named exactly `claude`, so Windows and renamed builds showed no current usage. Usage values stay shown for twice the refresh interval instead of exactly the 5-minute default, and a hidden budget shows `-` instead of `null` (GitHub #766).
 
 ## v0.2.0
