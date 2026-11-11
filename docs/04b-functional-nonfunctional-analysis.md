@@ -467,6 +467,7 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 
 ### FR-136 Keep application, UI interaction, and release tooling in Rust
 Replace project-authored JavaScript UI logic and Python release/manual/verification scripts with Rust implementations. Preserve the existing user workflows, keyboard/accessibility behavior, offline documentation, cross-platform package contents, and low-resource target. No interpreter for project-authored JavaScript or Python may be needed to run or build the release. External agent CLIs and operating-system runtimes are explicit integration boundaries.
+In the native Agent Room, route allow, deny, and eligible refresh actions for pending, deferred, and approved receipts through the existing tool-decision modal; do not render a second inline confirmation. Bind confirmation to the current request ID, action, evidence, and revision, and preserve busy guards, Cancel, defer, and event payloads.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 
 ### FR-137 Keep planning startup requests and recovery coherent

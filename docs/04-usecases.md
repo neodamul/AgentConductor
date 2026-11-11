@@ -637,6 +637,7 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 
 ### UC-141 Build and release AgentConductor using Rust
 A maintainer changes an application screen, verifies the behavior with Rust tests, builds the release binary, produces bilingual manuals and release archives, and validates the packages without running project-owned JavaScript or Python code. The installed application provides the same accessible, bilingual controls without a JavaScript UI runtime.
+Within the native Agent Room, every explicit allow, deny, or refresh action for pending, deferred, or refresh-eligible approved tool requests uses the existing decision modal. The modal binds the action to the exact request and current revision; Cancel and defer retain their distinct behavior.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 
 ### UC-142 Retry a plan after slow or failed preparation

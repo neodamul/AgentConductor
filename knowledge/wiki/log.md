@@ -643,3 +643,7 @@ Scheduled workspace and room polls are marked as background observation and supp
 ## 2026-11-04 Approved Goal UI (#387)
 
 Recorded the reviewed behavior/visual contract, local light/dark images, source fingerprints, and Claude handoff in `approved-goal-ui.md`. Design evidence remains separate from product implementation acceptance; Rust work remains paused.
+
+## 2026-11-11 Unified native tool-decision modal (#382)
+
+Recorded the single-modal receipt-selection rule, current-revision and approved-refresh eligibility, exact action event preservation, local regression evidence, and the separate live-package limit in `native-tool-decision-modal.md`.
