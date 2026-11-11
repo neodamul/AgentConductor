@@ -16,7 +16,8 @@ const { findChrome, launch } = require('./design_parity/cdp.cjs');
     browser = await launch(chrome, { width: 1280 });
     await browser.goto(pathToFileURL(file).href);
     const preset = "SIM.home.run_available=true;SIM.home.run_state='running';SIM.room.report.tasks[0].started_ms=1700000000000;";
-    await browser.eval(`sessionStorage.setItem('SIM_PRESET',${JSON.stringify(preset)});location.reload()`);
+    await browser.eval(`sessionStorage.setItem('SIM_PRESET',${JSON.stringify(preset)})`);
+    await browser.goto(pathToFileURL(file).href);
     const result = await browser.eval(`(async () => {
       for (let n=0;n<200 && !document.querySelector('#start-step-tabs [role=tab]');n++) await new Promise(r=>setTimeout(r,50));
       document.querySelectorAll('#start-step-tabs [role=tab]')[3].click();
