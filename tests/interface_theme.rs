@@ -11,6 +11,7 @@ mod test_env;
 const ROOM_CSS: &str = include_str!("../src/ui/room.css");
 const MCP_CSS: &str = include_str!("../src/ui/mcp.css");
 const STARTUP_CSS: &str = include_str!("../src/ui/startup.css");
+const ROOM_LAYOUT_CSS: &str = include_str!("../src/ui/room_layout.css");
 const RUN_CSS: &str = include_str!("../src/ui/run_screen.css");
 const HTML: &str = include_str!("../src/ui/startup.html");
 const STARTUP_JS: &str = include_str!("../src/ui/startup.js");
@@ -47,6 +48,7 @@ fn colors_come_only_from_the_light_and_dark_token_sets() {
     for (name, css) in [
         ("room.css", rest.as_str()),
         ("startup.css", STARTUP_CSS),
+        ("room_layout.css", ROOM_LAYOUT_CSS),
         ("run_screen.css", RUN_CSS),
         ("mcp.css", MCP_CSS),
     ] {

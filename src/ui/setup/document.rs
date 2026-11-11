@@ -8,9 +8,10 @@ pub(crate) fn document() -> Result<String, String> {
         + include_str!("../optimize.html")
         + include_str!("../about.html");
     let style = format!(
-        "{}\n{}\n{}\n{}\n{}",
+        "{}\n{}\n{}\n{}\n{}\n{}",
         super::super::CSS,
         include_str!("../startup.css"),
+        include_str!("../room_layout.css"),
         include_str!("../mcp.css"),
         include_str!("../chat.css"),
         include_str!("../optimize.css")
@@ -25,6 +26,7 @@ pub(crate) fn document() -> Result<String, String> {
     let helper_scripts = concat!(
         include_str!("../dialog_focus.js"),
         include_str!("../app_menu.js"),
+        include_str!("../overflow_tooltip.js"),
         include_str!("../brand_avatar.js"),
         include_str!("../team_briefing.js"),
         include_str!("../about.js"),

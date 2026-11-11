@@ -11,6 +11,21 @@
 
 Release scope: the published app is the current `main` desktop product. The separate Rust-native UI migration remains in progress and is not represented as complete by this release.
 
+## Stable release 0.2.0 — UI issue batch (2026-11-11)
+
+- [x] Plan: use the approved UI mock as the source of truth; batch the Codex-owned UI fixes to limit expensive CI runs and keep changes issue-traceable.
+- [x] Task: implement #740–#743 and #749 in separate commits on `codex/issue-740-752-ui`; remove the stale tests that asserted the superseded confirmation dialogs and native-title-only hover behavior.
+- [x] Task: fix #752 by bounding and keyboard-enabling the Goal/path identity region in the permanent-delete dialog; retain the irreversible warning and Cancel default.
+- [x] Verify: full local Rust/Node suite before the stylesheet split and latest-main rebase: 922 passed, 16 ignored, 0 failed across 299 suites. After rebase, `cargo check`, 11 focused Rust tests, #752's eight-case browser matrix, Goal lifecycle (light/dark, 840/1280), tab geometry (650/840/1280), overflow tooltip and direct-plan-start browser checks passed. A second full local suite is still required after the latest-main rebase.
+- [x] Verify: latest local macOS bundle from PR #757 shows only Phase 1's T1–T3 after selecting Phase 1. The long-Goal delete dialog shows the Goal, exact folder, irreversible warning and focused Cancel; Cancel preserves the Goal.
+- [x] Verify: the latest-main full suite exposed stale source assertions after CSS moved into `room_layout.css`/`plan_review.css`, plus a Windows-only scroll fixture timing failure. Updated the source contracts to inspect the assembled styles and made the fixture scroll instant with geometry diagnostics; the full local suite passed 922 tests with 16 ignored across 299 suites in 709.70s before PR #755's merge commit. After rebasing onto that commit, focused layout, settings and scroll suites passed again (6 tests); formatting and whitespace checks pass.
+- [x] Task: pushed issue-linked branch and opened PR #757 for #740–#743, #749 and #752. Fixed the initial CI failures, refreshed the branch onto current main, and pushed the code, plan and wiki update as `58c2707`; exact-head platform checks are pending.
+- [x] Complete: #745–#748 were already implemented in merged PR #739/main commit `f2cc86fe`; added verification notes and closed all four issues.
+- [ ] Verify: finish installed-app acceptance #744 for tool-wait and permission-denied cards, plus the last-Goal/New Goal pill flow. No Goal was irreversibly deleted and no real agent was run.
+- [ ] Complete: run the full local suite after the latest-main rebase, merge PR #757 after its exact-head checks pass, and close #740–#743, #749 and #752 with merged-app evidence.
+
+The #752 browser regression is `tests/delete_goal_dialog_752.cjs`; the design rationale is in `knowledge/wiki/goal-deletion-confirmation-layout.md`. Claude owns #750/#751/#753 via PR #756. PR #755 for #754 passed macOS/Windows validation and packaging and merged to main as `4407a196`. PR #756 checks are running on head `66d4f8d` against its earlier base `a683ba1`; refresh onto current main after the active checks finish. PR #757's old exact-head CI failed both platform test steps: macOS reported two stale CSS source assertions; Windows reported those assertions plus `workspace_scroll_741.cjs` visibility after scrolling. The fixes and cross-platform test note are pushed as `58c2707`; exact-head macOS/Windows checks are pending.
+
 ## Reconciled current baseline (2026-10-11)
 
 - [x] Plan: review Claude source `318f930`, added/amended R-36–59 and trace through DD-65; preserve original constraints and latest task/release policy.

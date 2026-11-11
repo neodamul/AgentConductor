@@ -1,0 +1,243 @@
+/* Room task view sizes from the mock (GitHub #432). */
+#selected-agent{font-size:18px;font-weight:700}
+#task-status{font-size:12px;font-weight:400}
+.view-tabs .tab.active{font-size:13px}
+.composer label>span{font-size:11.5px}
+#send-feedback{box-sizing:border-box;height:34px}
+#stop{box-sizing:border-box;height:34px;font-size:13px}
+/* Quota ring and popup (mock .usage-button / .usage-popover, GitHub #426). */
+.quota-controls{margin-left:auto;position:relative;flex:none;display:flex;align-items:center}
+.usage-button{font:revert;width:30px;height:30px;padding:1px;border:0;border-radius:7px;background:transparent;color:var(--soft);display:grid;place-items:center;cursor:pointer}
+.usage-button:hover,.usage-button[aria-expanded="true"]{background:var(--fill);color:var(--ink)}
+.usage-button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.usage-button svg{display:block;width:27px;height:27px}
+.usage-track{stroke:var(--line);fill:none}
+.usage-value{stroke:currentColor;fill:none;stroke-linecap:round}
+.usage-button.error{color:var(--err)}
+.usage-button,.usage-button *{cursor:pointer}
+.usage-value.quota-short{stroke:var(--quota-short)}
+.usage-value.quota-long{stroke:var(--quota-long)}
+.usage-popover{position:fixed;z-index:30;width:274px;padding:17px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 32px rgba(0,0,0,.1333);color:var(--ink);font-size:13px}
+.usage-popover[hidden]{display:none}
+.usage-popover .usage-heading{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.usage-heading .sp{flex:1}
+.usage-heading strong{font-size:14px}
+.usage-heading .usage-reset{font-size:11px;color:var(--soft)}
+.usage-close,.usage-refresh{border:0;background:transparent;color:var(--soft);cursor:pointer;border-radius:5px;padding:3px 6px;font-size:15px}
+.usage-close{line-height:17px}
+.usage-close:hover,.usage-refresh:hover{background:var(--fill)}
+.usage-glyph{display:inline-block}.usage-refresh.refreshing .usage-glyph{animation:quota-spin 1s linear infinite}
+.usage-item+.usage-item{margin-top:17px}
+.usage-line{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.usage-line b{font-size:14px;font-variant-numeric:tabular-nums}
+.usage-meter{height:5px;background:var(--fill);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.usage-meter span{height:100%;display:block;background:var(--soft);border-radius:3px}
+.usage-item .usage-reset,.usage-observed{font-size:11px;color:var(--soft)}
+.usage-observed{border-top:1px solid var(--line);padding-top:12px;margin-top:15px;display:flex;align-items:center;justify-content:space-between}
+.usage-unavailable{font-size:12px;color:var(--soft);line-height:1.6;margin:0}
+.usage-error{padding:12px;border-radius:7px;background:var(--err-bg);color:var(--err);font-size:12px;line-height:1.6}
+.usage-error strong{display:block;margin-bottom:5px}
+.usage-error p{margin:0;overflow-wrap:anywhere}
+.usage-item.quota-short{--quota-color:var(--quota-short)}
+.usage-item.quota-long{--quota-color:var(--quota-long)}
+.usage-item .usage-line>span{display:inline-flex;align-items:center;gap:6px}
+.usage-item .usage-line>span::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--quota-color,var(--soft));flex:none}
+.usage-item .usage-meter>span{background:var(--quota-color,var(--soft))}
+/* Card header (mock .agent .top): avatar, name block, quota ring and reorder handle share one centre line;
+   the ring spans both text lines like the avatar and the handle is a 10x20px dotted grip (four dot rows), centred on the ring. */
+.profile-top{align-items:center}
+.profile-top .quota-controls{position:static;margin:0 0 0 auto;flex:none}
+/* The mock's import row: buttons stretch to the tallest one (its Hangul-only label sets the row height on Windows). */
+#start-mcp-controls{align-items:normal;gap:6px;flex-wrap:nowrap}
+/* The mock declares the colour scheme, so native controls and text rendering follow the theme. */
+:root{color-scheme:light}:root[data-theme="dark"]{color-scheme:dark}
+/* #435 rail: section head, hint and agent cards follow the mock's box model (card fixed at 144px, one row of tools). */
+#rail-tabs{margin-bottom:10px}
+#rail-pane-agents{display:flex;flex-direction:column;gap:10px;padding-top:10px}
+#rail-pane-agents .section-title{display:flex;align-items:flex-end;justify-content:space-between;margin:0}
+#rail-pane-agents .section-title h2{margin:2px 0 4px;font-size:18px}
+#start-add{box-sizing:border-box;height:auto;padding:4px 9px;font:inherit;font-size:12px;line-height:normal;border-radius:6px}
+#rail-pane-agents p.small{margin:0;line-height:normal}
+#start-profiles{display:flex;flex-direction:column;gap:10px}
+.startup-profile{box-sizing:border-box;min-height:144px;flex:none;display:flex;flex-direction:column;gap:6px;margin:0}
+.startup-profile .profile-top{gap:7px;padding:0}
+.startup-profile .name-row{font-size:14px}.startup-profile .profile-name strong{line-height:normal}
+.startup-profile .agent-facts{gap:5px;margin:0}.startup-profile .agent-facts .fact{border-radius:4px}
+.startup-profile code.agent-exe{display:none}
+.startup-profile .profile-tools{margin:auto 0 0;gap:4px}
+.startup-profile .profile-tools button{padding:2px 6px;min-height:22px;height:auto;line-height:16px;font-size:11px;font-family:inherit;column-gap:normal}.startup-profile .profile-tools .remove-agent{width:auto;min-width:22px;padding:2px 4px}
+.startup-profile .profile-tools button:first-child{font-family:revert}.startup-profile .profile-tools .move-agent{min-width:0}
+.startup-profile .drag-handle{position:static;flex:none;width:10px;height:20px;margin:0 0 0 4px;font-size:0;background:radial-gradient(circle,var(--line-strong) 1.2px,transparent 1.6px) 0 0/5px 5px}
+/* Room action buttons (mock .dir .btn): flex, 6px gap, leading 13px icon, 8px 13px padding; labels are the mock's. */
+[data-action-icon="send"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='black'%20stroke-width='1.6'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Cpath%20d='M21%203L10%2014M21%203l-7%2018-4-7-7-4z'/%3E%3C/svg%3E")}[data-action-icon="stop"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='black'%20stroke-width='1.6'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Crect%20x='6'%20y='6'%20width='12'%20height='12'%20rx='1.5'/%3E%3C/svg%3E")}
+#send-feedback,#stop{display:flex;align-items:center;gap:6px;padding:8px 13px;line-height:normal;height:auto}
+#send-feedback{border:1px solid var(--accent)}
+#stop{background:transparent}
+
+/* #435 Workspace controls use the approved mock's natural box model and labels. */
+header.titlebar #start-workspace-menu{height:auto;padding:5px 7px;border:0;border-radius:5px;background:transparent;color:var(--ink);font:inherit;cursor:pointer;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#rail-tabs{gap:3px}
+#start-browse{display:flex;align-items:center;gap:6px;padding:5px 10px}
+#start-goal-list-open{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:auto;padding:4px 9px;border:1px solid var(--line-strong);border-radius:6px;background:var(--surface);color:var(--ink);font-size:12px;line-height:18px;cursor:pointer}
+#start-new-goal{display:flex;align-items:center;gap:6px;height:auto;padding:5px 9px}
+#start-mcp-controls button{display:flex;align-items:center;gap:6px;height:auto;padding:5px 8px;font-size:11.5px}
+#start-save,.step-card #start-discard{display:flex;align-items:center;gap:6px;height:auto;padding:8px 13px;line-height:normal}
+[data-action-icon="folder"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M3%207V4h7l2%203h9v13H3z%22%2F%3E%3C%2Fsvg%3E")}
+[data-action-icon="plus"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%205v14M5%2012h14%22%2F%3E%3C%2Fsvg%3E")}[data-action-icon="back"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M10%205l-7%207%207%207M3%2012h18%22%2F%3E%3C%2Fsvg%3E")}[data-action-icon="check"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M5%2012l4%204L19%206%22%2F%3E%3C%2Fsvg%3E")}[data-action-icon="sliders"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M4%207h16M4%2017h16%20M8%204v6M16%2014v6%22%2F%3E%3C%2Fsvg%3E")}
+[data-action-icon="link"]{--ai:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.6%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M10%2013a5%205%200%200%200%207%200l3-3a5%205%200%200%200-7-7l-2%202%20M14%2011a5%205%200%200%200-7%200l-3%203a5%205%200%200%200%207%207l2-2%22%2F%3E%3C%2Fsvg%3E")}
+
+header.titlebar #start-workspace-menu{font-size:13px}#start-mcp-controls.source-actions button{padding:5px 8px}
+
+#start-goal-count{display:inline-flex;align-items:center;justify-content:center;margin-left:4px;min-width:18px;height:18px;padding:1px 5px;border-radius:4px;background:var(--fill);color:var(--soft);font-size:11px;line-height:18px;font-variant-numeric:tabular-nums}
+
+/* #427: section structure and spacing from the approved Workspace card. */
+
+.team-brief-button{height:28px;padding:4px 11px;border:1px solid var(--line-strong);border-radius:6px;background:var(--surface);color:var(--ink);font:12px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;white-space:nowrap;cursor:pointer;flex:none}
+
+.team-brief-button:hover{background:var(--fill)}
+.team-brief-button:disabled{opacity:.45;cursor:default}
+
+
+.workspace-config-card{padding:17px 22px}
+.workspace-config-card>.cardhead{margin-bottom:0}
+.workspace-config-section{padding:14px 0;border-bottom:1px solid var(--line)}
+.workspace-goal-section{padding:14px 0 0}
+.config-section-head{display:flex;align-items:center;gap:14px;justify-content:space-between;margin-bottom:10px}
+.config-section-head h3{font-size:14px;margin:0}
+.config-section-head>span,.config-section-head p{font-size:11.5px;color:var(--soft);margin:3px 0 0}
+.workspace-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px 12px}
+.workspace-fields label,.goal-input-label{display:block;font-size:12px;color:var(--ink)}
+.workspace-fields input,.workspace-fields select{width:100%;height:33px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);font:13px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:6px 9px;margin-top:4px}
+.project-input{display:flex;align-items:center;gap:8px}
+.project-input input{flex:1;min-width:0}
+.project-input button{height:33px;margin-top:4px;padding:5px 10px;white-space:nowrap}
+.worktree-option{display:block;font-size:11.5px;color:var(--soft);margin-top:9px}
+.workspace-path-note{font-size:11px;color:var(--soft);margin:7px 0 0}
+.goal-section-actions{display:flex;gap:6px;flex:none}
+.goal-section-actions button{font-size:12px;padding:5px 9px;cursor:pointer}
+.goal-selection-context{display:flex;gap:10px;align-items:center;font-size:12px;padding:7px 9px;background:var(--bg);border-radius:6px;margin-bottom:9px}
+.goal-selection-context>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.goal-selection-context>span:last-child{font-size:11px;color:var(--soft);white-space:nowrap}
+.workspace-goal-section .goal-input{height:65px;min-height:65px;margin:5px 0 8px}
+.goal-import-actions{display:flex;gap:6px}
+.goal-import-actions button{font-size:11.5px;padding:5px 8px}
+.workspace-config-card>.dir{padding-top:10px}
+.workspace-config-card>.dir .note{font-size:11px}
+.workspace-config-section{padding-top:24px;padding-bottom:20px}
+.workspace-goal-section{padding-top:24px}
+
+
+.team-brief-button,.goal-section-actions .team-brief-button{width:28px;height:28px;padding:0;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.team-brief-button svg{display:block;width:18px;height:18px;flex:none}
+.goal-section-actions{align-items:center}
+
+
+.goal-list-button,.goal-section-actions .goal-list-button,.head>.goal-list-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:28px;padding:4px 9px;border:1px solid var(--line-strong);border-radius:6px;background:var(--surface);color:var(--ink);font-size:12px;line-height:18px;cursor:pointer}
+
+#start-panel-workspace>.cardhead{display:flex;align-items:flex-start;gap:10px;padding-bottom:12px}
+#start-panel-workspace>.cardhead h2{margin:4px 0 2px;font-size:18px}
+#start-panel-workspace>.cardhead .sub{font-size:12.5px;color:var(--soft);margin:0;line-height:normal}
+#start-workspace-section .workspace-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px 12px;border:0;margin:0;padding:0;align-items:start}
+#start-workspace-section .field-name{max-width:none}.workspace-fields .project-field{grid-column:1/-1}
+#start-workspace-section label{display:block;font-size:12px;color:var(--ink);font-weight:400;margin:0}
+#start-workspace-section .repository-row{display:flex;align-items:center;gap:8px;margin:0}
+#start-workspace-section .repository-row input{flex:1;min-width:0}
+#start-workspace-section .repository-row button{margin-top:4px;white-space:nowrap}
+#start-workspace-section .worktree-option{display:block;font-size:11.5px;color:var(--soft);margin-top:9px}
+#start-workspace-section .worktree-option input{width:auto;height:auto;flex:none;padding:0;margin:0;vertical-align:middle}
+#start-workspace-section h3,#start-goal-section h3{font-weight:700}
+#start-goal-section .goal-input-label{margin:0;font-weight:400}
+#start-goal-field{margin:0}#start-goal-field textarea{height:65px;min-height:65px;margin:5px 0 8px}
+#start-goal-section .source-actions{gap:6px;margin:0}
+#start-goal-section .source-actions button{font-size:11.5px;padding:5px 8px}
+#start-goal-section .team-brief-button,#run-screen .goal-bar .team-brief-button{border:1px solid var(--line);border-radius:6px;background:var(--fill);color:var(--ink);cursor:pointer}
+#start-goal-section .team-brief-button svg,#run-screen .goal-bar .team-brief-button svg{display:block;width:18px;height:18px;flex:none}
+
+#start-panel-workspace>.cardhead{position:sticky;top:0;z-index:2;background:var(--surface)}#start-panel-workspace>.cardhead .eyebrow{font-size:11.5px}
+
+#start-goal-section .team-brief-button,#run-screen .goal-bar .team-brief-button{border-color:var(--line-strong);background:var(--surface)}
+
+#start-goal-info{height:36px;min-height:36px;max-height:36px;flex:none;display:flex;align-items:center;gap:12px;margin-bottom:12px}
+#start-goal-info .goal-info-content{flex:1;min-width:0;height:30px;display:flex;align-items:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+
+.startup-main{padding-top:14px}.startup-heading h1{letter-spacing:-.2px}
+
+@media(max-width:900px){.startup-profile .profile-tools{gap:1px}.startup-profile .profile-tools button:not(.remove-agent){padding-left:6px;padding-right:6px}.startup-profile .profile-tools button:nth-child(-n+2){padding-left:2px;padding-right:2px}}
+/* #543: only the card body scrolls; the Goal header, the stepper, the card header and its footer stay put. */
+.startup-main{display:flex;flex-direction:column;overflow:hidden}
+.startup-main>*{flex:none}
+.startup-main>.step-card:not([hidden]){flex:1 1 auto;min-height:0;overflow:auto}
+/* The card keeps its 17px padding; header and footer reach into it (negative margin, same padding) so nothing scrolls through the gap. */
+.step-card>.section-title,#start-panel-workspace>.cardhead{position:sticky;top:-17px;margin-top:-17px;padding-top:17px}
+.step-card>.startup-actions,.step-card>.startup-review-footer{position:sticky;bottom:-17px;z-index:2;background:var(--surface);margin-bottom:-17px;padding-bottom:17px}
+.step-card>.section-title,#start-panel-workspace>.cardhead{box-shadow:0 14px 0 var(--surface)}
+.step-card>.startup-actions,.step-card>.startup-review-footer{box-shadow:0 -20px 0 var(--surface)}
+/* GitHub #558: the phase groups name themselves next to their icon. */
+.step-group>.tabs-group-name{width:auto;gap:5px}.tabs-group-name .group-label{font-size:12px;font-weight:500;white-space:nowrap}
+
+/* GitHub #562: footer status dot and the Workspace folder / branch on the right (mock .status, .status-repository). */
+.statusbar .dot{width:8px;height:8px;border-radius:50%;flex:none}.statusbar .d-ok{background:var(--ok)}.statusbar .d-wait{background:var(--dot-wait)}
+footer.statusbar{gap:10px;line-height:1;padding-right:16px}
+.status-repository{display:flex;align-items:center;gap:14px;min-width:0;max-width:65%;margin-left:auto;height:24px}
+.status-worktree,.status-branch{display:flex;align-items:center;gap:6px;min-width:0;height:24px}
+.status-repository svg{display:block;flex:none;width:14px;height:14px}
+.status-worktree>span,.status-branch>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* GitHub #561: the right task-details panel matches the mock's `.task-inspector` (330px, page background, 22/18 padding, 18px heading, context line). */
+.workbench{grid-template-columns:250px minmax(390px,1fr) min(330px,35%)}
+.inspector{background:var(--bg);padding:22px 18px}
+.inspector-heading h2{font-size:18px}
+#inspector-context{font-size:12px;line-height:1.6;color:var(--soft);margin:0 0 10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.inspector-heading{padding-bottom:10px;margin-bottom:10px;border-bottom:1px solid var(--line)}
+.inspector section{padding:0 0 14px;margin-bottom:0;border-bottom:0}
+.inspector section>.eyebrow{display:block;font-size:13px;font-weight:650;letter-spacing:0;text-transform:none;color:var(--ink);padding:10px 0;margin:0;border-bottom:1px solid var(--line)}
+@media(max-width:850px) and (min-width:700px){.workbench:not(.insp-closed){grid-template-columns:230px minmax(0,1fr) min(330px,35%)}.workbench:not(.insp-closed) .inspector{grid-column:3;grid-row:auto;border-left:1px solid var(--line);border-top:0;overflow:auto}}
+/* GitHub #563: dialogs use the mock's 24px padding, 12px corners and 700 titles; the close-run and agent dialogs have their own widths. */
+dialog{padding:24px;border-radius:12px}dialog h2{font-weight:700}
+#start-close-dialog{width:min(620px,90vw)}#start-agent-dialog{width:min(560px,90vw)}
+#result-dialog.result-dialog{width:min(660px,92vw);padding:25px;border-radius:14px}
+/* GitHub #563: only the Workspace card is 17/22; the other step cards use the mock's card padding 20/24 and 11.5px eyebrow. */
+.step-card:not(.workspace-config-card){padding:20px 24px}
+.step-card:not(.workspace-config-card)>.section-title{top:-20px;margin-top:-20px;padding-top:20px}
+.step-card:not(.workspace-config-card)>.startup-actions,.step-card:not(.workspace-config-card)>.startup-review-footer{bottom:-20px;margin-bottom:-20px;padding-bottom:20px}
+.step-card:not(.workspace-config-card) .eyebrow{font-size:11.5px}
+/* GitHub #563: the Goal list slide-over is 730px and the coordinator chat panel 460px with 24px padding, like the mock's .slide-panel. */
+#start-goals.slide-panel{width:min(730px,calc(100% - 48px))}
+#start-chat.chat-panel{width:min(460px,calc(100% - 48px));padding:24px}
+/* GitHub #563: the application menu popup uses the design's 8px popup radius, 230-310px width and 33px rows with 5px radius. */
+.workspace-list{border-radius:8px;min-width:230px;max-width:310px}
+.workspace-list button{padding:9px 10px;border-radius:5px}
+/* GitHub #579: every step card's footer buttons are the Workspace step's size (mock .actions .btn: 34px, 8px/13px padding, 6px radius, 13px). */
+.step-card :is(.startup-actions,.startup-review-footer) button{box-sizing:border-box;display:inline-flex;align-items:center;gap:6px;height:auto;padding:8px 13px;font-size:13px;line-height:normal;border-radius:6px}
+
+/* GitHub #581: the task's instruction, dependencies and test command under the ownership path (mock .task-detail-content). */
+.inspector .task-instruction{margin:7px 0;font-size:12px;line-height:1.6}
+.inspector .task-facts{display:grid;grid-template-columns:80px minmax(0,1fr);gap:9px;margin:10px 0;font-size:12px}
+.inspector .task-facts dt{color:var(--soft)}.inspector .task-facts dd{margin:0;overflow-wrap:anywhere}
+
+/* GitHub #580: the Room's step content is one card under the step tabs, like the mock's `.main>.card`. */
+.center{display:flex;flex-direction:column;min-height:0}
+.room-card{background:var(--surface);border:1px solid var(--line);border-top:0;border-radius:0 0 12px 12px;padding:20px 24px;display:flex;flex-direction:column;flex:1 1 0;min-height:0;overflow:auto}
+.room-card .session-heading{align-items:flex-start;padding:0 0 12px}.room-card .session-heading>.agent-symbol{display:none}.room-card .session-heading h2{margin:4px 0 2px;line-height:23px}.room-card .session-heading .eyebrow{font-size:11.5px;line-height:13.5px}.room-card #selected-task{font-size:12.5px;line-height:14.5px}
+.room-card .task-activity{margin:0;min-height:0}.room-card .task-activity:empty{display:none}
+.room-card .view-tabs{margin:0 0 8px}.room-card .view{min-height:160px;padding:8px 2px}
+/* GitHub #597: the verify card's per-task test rows, like the mock's `.row`. */
+.verify-rows{margin-bottom:8px}.verify-row{display:grid;grid-template-columns:28px 1.6fr 1fr 1fr auto;align-items:center;gap:10px;border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:8px;font-size:13px}
+.verify-row .n{width:22px;height:22px;border-radius:5px;background:var(--fill);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}.verify-row .t{font-weight:600}.verify-row .s{color:var(--soft);font-size:12px}.verify-row .verify-pass{color:var(--ok)}.verify-row .verify-run{color:var(--accent-text)}.verify-row .verify-fail{color:var(--err)}
+/* GitHub #598: the review card's summary, like the mock's `.stat` and `.files`. */
+.review-summary .stat{display:flex;align-items:center;flex-wrap:wrap;margin-top:14px;padding:12px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);line-height:1.5}
+.review-summary .st{display:inline-flex;align-items:baseline;gap:6px;padding:0 12px}.review-summary .st:first-child{padding-left:0}.review-summary .st+.st{border-left:1px solid var(--line)}
+.review-summary .l{font-size:14px;font-weight:500;color:var(--ink)}.review-summary .v{font-size:16px;font-weight:650;color:var(--ink)}
+.review-summary .files{margin:12px 0 8px;font-size:12.5px;border:1px solid var(--line);border-radius:8px}.review-summary .files>div{display:flex;gap:10px;padding:8px 12px;border-bottom:1px solid var(--line)}.review-summary .files>div:last-child{border:0}
+.review-summary .add{color:var(--ok);margin-left:auto;font-size:12px;border:1px solid var(--line);background:var(--fill);border-radius:6px;padding:4px 9px}.review-summary .del{color:var(--err)}
+/* GitHub #599: the task card's stop reason, like the mock's warn/err block. */
+.task-notice{margin:0 0 12px;border-radius:8px;padding:12px 14px;font-size:13px}.task-notice.warn{background:var(--warn-bg);color:var(--warn)}.task-notice.err{background:var(--err-bg);color:var(--err)}.task-notice-detail{margin-top:4px}.task-notice-actions{display:flex;gap:8px;margin-top:8px}
+/* GitHub #607: activity rows like the mock's `.ev`: a 62px number column, a bold title, a soft detail line, a rule between rows. */
+.event{display:grid;grid-template-columns:62px minmax(0,1fr);gap:0;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}
+.event-seq{font-size:12px;color:var(--soft);font-weight:400}.event-head{display:block;color:var(--ink);font-weight:650;font-size:13px;margin-bottom:2px}.event-text{font-size:13px;line-height:normal;margin:0;color:var(--soft)}
+.event.muted .event-text{font-style:italic}
+/* GitHub #654: English labels are wider; the agent card's tool row keeps one line at the reference widths (Korean metrics are unchanged). */
+html[lang=en] .profile-tools .small-button:not(.remove-agent):not(.move-agent){padding-inline:3px}
+html[lang=en] .profile-tools .move-agent{padding-inline:4px}
+/* GitHub #748: the buttons are packed at the right end with a 6px gap; the status pill sits at the right end of the goal-info line. */
+.startup-heading{gap:6px}.goal-info>.status-pill{flex:none;margin:0 0 0 auto;padding:3px 8px;font-size:11px}

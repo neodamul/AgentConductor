@@ -35,7 +35,11 @@ fn settings_are_grouped_with_goal_first_and_repository_beside_worktrees() {
     assert!(settings < name && name < coordinator && coordinator < repository && repository < goal);
     assert!(repository < browse && browse < worktrees);
     // The path width applies to the path field only, never to the worktree checkbox: the checkbox sits outside the row.
-    let css = include_str!("../src/ui/startup.css");
+    let css = [
+        include_str!("../src/ui/startup.css"),
+        include_str!("../src/ui/room_layout.css"),
+    ]
+    .concat();
     assert!(
         !css.contains("\n.repository-row input{"),
         "an unscoped row rule would size the checkbox"
