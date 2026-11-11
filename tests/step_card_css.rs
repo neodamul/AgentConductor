@@ -1,20 +1,29 @@
 //! #543/#544/#545: layout rules of the step cards, check rows and the Codex logo are contract-tested
 //! at source level; the rendered result is covered by design_parity.
 const STARTUP: &str = include_str!("../src/ui/startup.css");
+fn layout() -> String {
+    [
+        include_str!("../src/ui/startup.css"),
+        include_str!("../src/ui/room_layout.css"),
+        include_str!("../src/ui/plan_review.css"),
+    ]
+    .concat()
+}
 const ROOM: &str = include_str!("../src/ui/room.css");
 const MOCK: &str = include_str!("../docs/design/approved-goal-ui/preview.css");
 
 #[test]
 fn only_the_step_card_body_scrolls_and_its_header_and_footer_stay() {
-    assert!(STARTUP.contains(".startup-main{display:flex;flex-direction:column;overflow:hidden}"));
-    assert!(STARTUP.contains(
+    let layout = layout();
+    assert!(layout.contains(".startup-main{display:flex;flex-direction:column;overflow:hidden}"));
+    assert!(layout.contains(
         ".startup-main>.step-card:not([hidden]){flex:1 1 auto;min-height:0;overflow:auto}"
     ));
     assert!(
-        STARTUP.contains(".step-card>.section-title{position:sticky;top:0")
-            || STARTUP.contains(".step-card .section-title{position:sticky;top:0")
+        layout.contains(".step-card>.section-title{position:sticky;top:0")
+            || layout.contains(".step-card .section-title{position:sticky;top:0")
     );
-    assert!(STARTUP.contains("position:sticky;bottom:0"));
+    assert!(layout.contains("position:sticky;bottom:0"));
 }
 
 #[test]

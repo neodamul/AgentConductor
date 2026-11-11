@@ -24,17 +24,20 @@ const { findChrome, launch } = require('./design_parity/cdp.cjs');
         document.getElementById('start-goal').style.height = '360px';
         const footer = document.querySelector('#start-panel-workspace .startup-actions');
         const top = footer.getBoundingClientRect().top;
-        body.scrollTop = body.scrollHeight;
-        await wait(50);
+        body.scrollTo({top: body.scrollHeight, behavior: 'instant'});
+        await wait(100);
         const row = document.getElementById('start-mcp-controls').getBoundingClientRect();
         return { exists: true, overflow: body.scrollHeight > body.clientHeight,
           rowVisible: row.height > 0 && row.bottom <= footer.getBoundingClientRect().top,
-          footerFixed: Math.abs(top - footer.getBoundingClientRect().top) < 1 };
+          footerFixed: Math.abs(top - footer.getBoundingClientRect().top) < 1,
+          width: innerWidth, scrollTop: body.scrollTop, scrollHeight: body.scrollHeight,
+          clientHeight: body.clientHeight, rowTop: row.top, rowBottom: row.bottom,
+          footerTop: footer.getBoundingClientRect().top };
       })()`);
-      assert(result.exists, 'workspace body must be independently scrollable');
-      assert(result.overflow, 'a tall goal must overflow the body');
-      assert(result.rowVisible, 'Goal tools must be visible above the footer');
-      assert(result.footerFixed, 'footer must remain stationary');
+      assert(result.exists, `workspace body must be independently scrollable: ${JSON.stringify(result)}`);
+      assert(result.overflow, `a tall goal must overflow the body: ${JSON.stringify(result)}`);
+      assert(result.rowVisible, `Goal tools must be visible above the footer: ${JSON.stringify(result)}`);
+      assert(result.footerFixed, `footer must remain stationary: ${JSON.stringify(result)}`);
       await browser.close(); browser = null;
     }
   } finally {
