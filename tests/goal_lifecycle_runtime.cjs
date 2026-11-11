@@ -15,7 +15,7 @@ for(const width of [840,1280]){browser=await launch(chrome,{width});for(const th
  input('start-goal','Implement the joined Goal');const inherited=JSON.stringify(SIM.home.config.roles);q('start-save').click();await until(()=>!q('start-panel-team').hidden&&!q('start-prepare').disabled,'saved Goal and Team');
  q('start-prepare').click();check('planning does not open a confirmation',!q('start-planning-confirm')?.open);
  await until(()=>SIM.home.proposal?.phase==='ready'&&!q('start-run').disabled,'review ready');check('planning uses registered coordinator and model',SIM.home.config.coordinator==='claude'&&SIM.home.config.profiles[0].coordinator_model==='opus');
- check('plan approval evidence is accessible',!q('start-approval-evidence').hidden&&q('start-consent-evidence').textContent.includes('d1')&&q('start-consent-evidence').textContent.includes('abcdef1234567890'));q('start-approval-evidence').querySelector('summary').focus();check('approval evidence is keyboard focusable',document.activeElement===q('start-approval-evidence').querySelector('summary'));q('start-approval-evidence').open=true;
+ check('the plan screen has no legacy approval evidence disclosure',!q('start-approval-evidence')&&!q('start-consent-evidence'));
  q('start-run').click();check('run does not open a confirmation',!q('start-consent')?.open);
  await until(()=>document.body.classList.contains('on-run')&&document.querySelectorAll('.session-choice .task-number').length===3,'running Room');
  check('run starts only after exact consent',SIM.log.filter(e=>e.kind==='start').length===1&&SIM.log.find(e=>e.kind==='start').p.digest==='d1');

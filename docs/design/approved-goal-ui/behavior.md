@@ -206,3 +206,10 @@ Stop requests the durable stop before closing. Reopening restores the recorded r
 The merged host's fallback for a second close within 10 seconds or an unresponsive page remains
 backend behavior, not an extra mock feature. The menu's Close action opens this preview safely;
 choosing an option never closes the browser or stops a real process in the reference.
+
+## Plan approval presentation
+
+GitHub #830: Plan approval proceeds directly from the reviewed plan into execution.
+Do not display the legacy Exact plan approval evidence disclosure or reopen a separate
+confirmation dialog. The start request still carries the exact reviewed plan digest;
+backend validation of plan identity, permissions, and scope remains mandatory.
