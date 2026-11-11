@@ -16,7 +16,7 @@ STATES = [
     ("09-result", 8), ("10-new-goal", 9),
 ]
 EXTRAS = ["inspector", "inspector-bottom", "goal-list", "delete-warning", "briefing", "chat",
-          "settings", "quota-healthy", "quota-error", "quota-unsupported", "left-collapsed", "fullscreen", "coordinator-picker", "role-picker", "fallback-picker", "fallback-model-picker", "profile-edit", "profile-edit-bottom", "close-confirmation", "result-next-phase", "mcp", "mcp-add"]
+          "settings", "quota-healthy", "quota-error", "quota-unsupported", "left-collapsed", "fullscreen", "coordinator-picker", "role-picker", "fallback-picker", "fallback-model-picker", "profile-edit", "profile-edit-bottom", "close-confirmation", "sessions", "sessions-confirm", "result-next-phase", "mcp", "mcp-add"]
 
 
 

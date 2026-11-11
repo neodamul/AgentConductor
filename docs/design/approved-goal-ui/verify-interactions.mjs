@@ -73,6 +73,7 @@ try{
   if(mode==='profile-edit'||mode==='profile-edit-bottom'){await call('Runtime.evaluate',{expression:'selectRail("agents");'+frameWait,awaitPromise:true});action='openProfileEditor("claude");'+(mode==='profile-edit-bottom'?'const fields=document.querySelector(".profile-editor-fields");fields.scrollTop=fields.scrollHeight;':'');}
   if(mode==='close-confirmation')action='openClosePreview()';
   if(mode==='settings')action='document.getElementById("settings-button").click()';
+  if(mode==='sessions'||mode==='sessions-confirm'){await call('Runtime.evaluate',{expression:'selectRail("agents");'+frameWait,awaitPromise:true});action='openSessions("claude")'+(mode==='sessions-confirm'?';document.getElementById("sessions-clean-finished").click()':'');}
   if(mode==='mcp')action='openMcp()';
   if(mode==='mcp-add')action='openMcp();openMcpEditor(null)';
   if(mode==='result-next-phase')action='workspaceGoals[0].nextPhase={number:2,total:2};showGoalResult("rotation")';

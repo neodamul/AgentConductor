@@ -152,6 +152,17 @@
   action.click();check('the next Phase plan opens step 3',!document.getElementById('goal-result-dialog').open&&i===2&&!document.getElementById('workspace-overview').classList.contains('is-open'));
   delete goal.nextPhase;showGoalResult('rotation');check('the last Phase offers the Goal list',document.getElementById('goal-result-eyebrow').textContent==='목표 완료'&&action.textContent.trim()==='목표 목록으로');
   document.getElementById('goal-result-dialog').close();Object.assign(goal,saved);if(added)workspaceGoals.splice(workspaceGoals.indexOf(goal),1);i=view;show();}
+ {const saved=JSON.parse(JSON.stringify(agentSessions));selectRail('agents');await wait();
+  const button=document.querySelector('[data-sessions="claude"]');check('agent cards count their sessions',button.querySelector('.session-count').textContent==='3'&&button.classList.contains('has-running')&&document.querySelector('[data-sessions="custom-cli"] .session-count').textContent==='0');
+  button.click();check('sessions open per agent with a state summary',sessionsDialog.open&&sessionsField('title').textContent==='Claude Code · 세션'&&document.querySelectorAll('#sessions-list .session-row').length===3&&sessionsField('summary').textContent.includes('실행 중 1'));
+  const rows=[...document.querySelectorAll('#sessions-list .session-row')];check('each row shows state, task, Goal and times',rows[0].querySelector('.session-state.running')&&rows[0].textContent.includes('T1 토큰 회전 구현')&&rows[0].textContent.includes('시작 21:02')&&rows[2].querySelector('.session-state.stale'));
+  check('running sessions stop, finished ones clean up',rows[0].querySelector('button').textContent==='중지'&&rows[1].querySelector('button').textContent==='정리'&&sessionsField('clean-finished').textContent==='끝난 세션 정리 (2)');
+  rows[0].querySelector('button').click();check('stopping keeps the session as stopped',document.querySelector('#sessions-list .session-row .session-state').textContent==='중지됨'&&sessionsField('clean-finished').textContent==='끝난 세션 정리 (3)'&&!button.classList.contains('has-running'));
+  sessionsField('clean-finished').click();check('cleanup asks for confirmation first',!sessionsField('confirm').hidden&&document.querySelectorAll('#sessions-list .session-row').length===3);
+  sessionsField('confirm-cancel').click();check('cancel keeps every session',sessionsField('confirm').hidden&&document.querySelectorAll('#sessions-list .session-row').length===3);
+  sessionsField('clean-finished').click();sessionsField('confirm-ok').click();check('confirmed cleanup removes finished sessions and updates the card',document.querySelectorAll('#sessions-list .session-row').length===0&&button.querySelector('.session-count').textContent==='0'&&sessionsField('clean-finished').disabled);
+  sessionsField('close').click();document.querySelector('[data-sessions="custom-cli"]').click();check('an agent without sessions shows an empty state',document.querySelector('#sessions-list .panel-note')?.textContent.includes('세션이 없습니다'));sessionsField('close').click();
+  Object.keys(agentSessions).forEach(k=>agentSessions[k]=saved[k]);renderSessionButtons();check('sessions close',!sessionsDialog.open);}
  check('no script errors',!document.documentElement.dataset.designError);
  document.documentElement.dataset.interactionResult=JSON.stringify({theme:initialTheme,width:innerWidth,checks});
 })().catch(error=>document.documentElement.dataset.designError=error.message);
