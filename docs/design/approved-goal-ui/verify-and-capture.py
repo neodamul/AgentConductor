@@ -63,7 +63,7 @@ def palette_checks():
 
 def main():
     source_files=['preview.html','preview.css','preview-state.js','preview-controls.js',
-                  'preview-tooltips.js','preview-selection.js','preview-assignment.js','preview-action-icons.js','preview-profile.js','preview-close.js','preview-dialog-layout.js']
+                  'preview-tooltips.js','preview-selection.js','preview-assignment.js','preview-action-icons.js','preview-profile.js','preview-close.js','preview-dialog-layout.js','preview-mcp.js','preview-sessions.js']
     before={name:hashlib.sha256((ROOT/name).read_bytes()).hexdigest() for name in source_files}
     report={'kind':'design-reference-only','approved_date':'2026-11-04',
             'viewport':[1280,960],'contrast':palette_checks(),'source_sha256':before,'captures':[]}
@@ -74,6 +74,11 @@ def main():
     (ROOT/'verification.json').write_text(json.dumps(report,separators=(',',':'))+'\n')
     subprocess.run(['rtk','proxy','node',str(ROOT/'verify-interactions.mjs')],check=True)
     assert before=={name:hashlib.sha256((ROOT/name).read_bytes()).hexdigest() for name in source_files},'Preview changed during capture'
+    # GitHub #849: the manifest records the bytes of the verified snapshot (every file but itself).
+    manifest=json.loads((ROOT/'manifest.json').read_text())
+    manifest['artifacts']={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()
+                           for p in sorted(ROOT.rglob('*')) if p.is_file() and p.name!='manifest.json'}
+    (ROOT/'manifest.json').write_text(json.dumps(manifest,separators=(',',':'))+'\n')
     print('Verified',len(report['captures']),'captures and',len(report['contrast']),'contrast pairs.')
 
 
