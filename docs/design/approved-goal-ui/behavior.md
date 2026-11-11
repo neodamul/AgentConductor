@@ -213,3 +213,9 @@ GitHub #830: Plan approval proceeds directly from the reviewed plan into executi
 Do not display the legacy Exact plan approval evidence disclosure or reopen a separate
 confirmation dialog. The start request still carries the exact reviewed plan digest;
 backend validation of plan identity, permissions, and scope remains mandatory.
+
+## Task removal hint
+
+GitHub #833: expanded Plan tasks show a localized tooltip on Remove task:
+"Only manually added tasks can be removed." The hint also applies when the
+control is disabled and must update when the UI language changes.
