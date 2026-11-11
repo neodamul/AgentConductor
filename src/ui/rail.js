@@ -37,7 +37,7 @@ window.acRail=(()=>{
     return b;};
    // GitHub #736: a phased Goal lists every Phase with its own tasks; the Phase under review holds the editable plan.
    const groups=phased?view.phases:[{name:line(plan.goal),current:true,tasks,done:[]}];
-   const pickedPhase=(gs,v)=>picked!=null&&picked<gs.length?picked:v?.stale?gs.length-1:Math.max(0,gs.findIndex(g=>g.current));
+   const pickedPhase=(gs,v)=>v?.stale?gs.length-1:picked!=null&&picked<gs.length?picked:Math.max(0,gs.findIndex(g=>g.current));
    const trees=groups.map((g,gi)=>{const tree=el('details','phase-tree'),head=el('summary');tree.open=gi===pickedPhase(groups,view);
     head.onclick=e=>{e.preventDefault();picked=window.acPlanPick=gi;for(const [i,t] of trees.entries())t.open=i===gi;document.dispatchEvent(new CustomEvent('ac-plan-phase',{detail:gi}));};head.append(el('span','phase-name',(gi+1)+'. '+String(g.name||'').slice(0,60)),el('span','phase-count',acMessage(g.stage==='completed'?'startup.completed_22a970':g.current?'room.rail_current_phase':'startup.planned')));tree.append(head);const raw=String(g.brief||'').trim(),brief=/^tasks?:/i.test(raw)?'':line(raw);if(brief)tree.append(el('p','phase-brief',brief.slice(0,120)));
     (g.tasks||[]).forEach((t,i)=>tree.append(row(t,i,tree,g.stage==='completed'||(g.done||[]).includes(t.id),!!g.current&&!view?.stale)));return tree;});

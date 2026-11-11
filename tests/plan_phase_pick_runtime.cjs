@@ -25,5 +25,8 @@ const preset=`SIM.home.proposal=SIM.proposal('ready');SIM.home.slugs=[{slug:'g',
  const open=await b.eval("(()=>{const d=document.querySelector('#start-plan-phases .plan-phase-tasks li .task-detail');return !d.hidden&&/Write the spec/.test(d.textContent)&&/docs\\/spec\\.md/.test(d.textContent);})()");
  if(!open)fail('expanding a row shows the task detail');
  if(await b.eval("[...document.querySelectorAll('#start-tasks details.startup-task')].some(d=>d.getBoundingClientRect().height>0)"))fail('the editable plan must stay hidden while another Phase is picked');
+ await b.eval("SIM.home.slugs[0].progress.current_phase=null;SIM.home.slugs[0].progress.stage='completed';SIM.home.slugs[0].progress.phases.forEach(p=>{p.stage='completed';p.completed=[...p.task]});SIM.home.proposal.slug_phase='p2'");await wait(5500);
+ const completed=await b.eval("({heading:document.querySelector('#start-plan-phases .plan-phase summary strong')?.textContent,railOpen:[...document.querySelectorAll('#rail-outline-body .phase-tree')].map(t=>t.open),status:document.querySelector('#rail-outline-body .outline-run-status')?.textContent})");
+ if(!/Build/.test(completed.heading)||JSON.stringify(completed.railOpen)!=='[false,true]'||!/완료|Done|Completed/i.test(completed.status))fail('a completed Goal opens its final Phase and completed status: '+JSON.stringify(completed));
  console.log('plan phase pick: one Phase listed, rail follows, rows expand and show their state');
 }finally{await b.close();}}finally{fs.rmSync(dir,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1;});
