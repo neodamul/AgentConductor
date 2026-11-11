@@ -337,3 +337,9 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 .mcp-secret{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr) auto;gap:6px}
 .mcp-secret .btn{padding:4px 10px}
 #mcp-dialog .result-actions[hidden],#mcp-dialog section[hidden]{display:none}
+/* The Goal heading of the run steps shows one line; its toggle unfolds the whole Goal below the heading. */
+#saved-goal-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.goal-title-toggle{flex:none;border:0;background:transparent;color:var(--accent-text);font:inherit;font-size:12px;cursor:pointer;padding:2px 4px;margin-right:auto}
+.goal-title-toggle:hover{text-decoration:underline}
+.goal-title-text{margin:-4px 0 10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-size:13px;line-height:1.6;white-space:pre-wrap;max-height:160px;overflow:auto}
+.goal-title-text[hidden]{display:none}

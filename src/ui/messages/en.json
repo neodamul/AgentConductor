@@ -372,6 +372,8 @@
   "native.workspace_settings_file_exceeds_256_kib": "workspace settings file exceeds 256 KiB",
   "native.workspace_surface_unavailable": "workspace surface unavailable",
   "quota.five_hours": "5-hour",
+  "room.goal_collapse": "▾ Collapse",
+  "room.goal_expand": "▸ Expand",
   "room.04_complete": "04 Complete",
   "room.a": "a",
   "room.accepted_waiting_for_the_coordinator": "{value1} accepted; waiting for the coordinator.",
