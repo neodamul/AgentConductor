@@ -34,7 +34,8 @@ class SignalSettings(unittest.TestCase):
         js = (ROOT / "src/ui/startup.js").read_text(encoding="utf-8")
         # GitHub #751: the Workspace name opens no chooser; the application menu carries the recents and the actions.
         self.assertIn("window.acAppMenu.items({el,rows,create,open", js)
-        self.assertIn("q('workspace-menu').onclick=()=>menuActions.workspaceSettings()", js)
+        # GitHub #751: the titlebar Workspace name is a plain label; Workspace settings live in the menu.
+        self.assertNotIn("q('workspace-menu').onclick", js)
         self.assertIn("tools:()=>q('tools').showModal()", js)
     def test_signal_settings_are_translated(self):
         table = (ROOT / "src/ui/messages/ko.json").read_text(encoding="utf-8")
