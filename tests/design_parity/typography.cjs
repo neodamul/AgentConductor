@@ -48,13 +48,13 @@ module.exports = [
   e('workspace-path-note', T, '.workspace-path-note', '#start-workspace-section .workspace-path-note'),
   e('goal-context-title', T, '#workspace-current-goal', '#start-current-goal'),
   e('goal-context-state', T, '#workspace-current-goal-state', '#start-current-goal-state'),
-  e('workspace-briefing-button', B, '#workspace-team-brief-button', '#brief-team'),
+  e('workspace-briefing-button', B, '#team-brief-button', '#brief-team'),
 
   { name:'workspace-section-box', props:['paddingTop','paddingBottom','borderBottomWidth','borderBottomColor'], keys:['paddingTop','paddingBottom','borderBottomWidth','borderBottomColor'],pixel:false,mock:{selector:'.workspace-config-section'},app:{selector:'#start-workspace-section'} },
   { name:'goal-context-box',props:['paddingTop','paddingRight','paddingBottom','paddingLeft','backgroundColor','borderTopLeftRadius','columnGap'],keys:['paddingTop','paddingRight','paddingBottom','paddingLeft','backgroundColor','borderTopLeftRadius','columnGap'],pixel:false,mock:{selector:'.goal-selection-context'},app:{selector:'#start-goal-section .goal-selection-context'} },
 
   e('browse', B, '.project-input .btn', '#start-browse'),
-  e('goal-list-button', B, '#workspace-goals-button', '#start-goal-list-open'),
+  e('goal-list-button', B, '#goal-picker', '#start-goal-list-open'),
   e('new-goal-button', B, '#workspace-new-goal', '#start-new-goal'),
   e('import-button', B, '.goal-import-actions .btn:nth-child(2)', '#start-jira-reference'),
   e('save-button', B, '.actions .btn.p', '#start-save'),
@@ -71,7 +71,7 @@ module.exports = [
       window.__offScale = bad; return bad.length === 0; })()` })),
   // Hover treatment (preview.css): the same fill / colour / border appears under the pointer.
   ...[['workspace-home', '#workspace-home', '#start-workspace-menu'], ['titlebar-icon', '#settings-button', '#start-settings-button'],
-    ['goal-list-button', '#workspace-goals-button', '#start-goal-list-open'], ['agent-remove', '.agent .tools button', '.profile-tools .remove-agent']
+    ['goal-list-button', '#goal-picker', '#start-goal-list-open'], ['agent-remove', '.agent .tools button', '.profile-tools .remove-agent']
   ].map(([name, mock, app]) => ({ name: 'hover-' + name, hover: true, props: ['backgroundColor', 'color', 'borderTopColor'], keys: name === 'agent-remove' ? ['backgroundColor', 'color', 'borderTopColor'] : ['backgroundColor', 'color'], pixel: false,
     mock: { selector: mock, index: name === 'agent-remove' ? 1 : 0 }, app: { selector: app } })),
   // Keyboard focus ring (preview.css): 2px accent outline.

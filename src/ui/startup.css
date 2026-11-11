@@ -174,7 +174,7 @@ header.titlebar>strong{font-size:14px;font-weight:700;line-height:17px}
 .step-group button[aria-selected=true]>span:last-child{font-weight:650}
 .field-name label,.field-coordinator label,.workspace-settings label{font-weight:400}
 #start-browse{box-sizing:border-box;height:33px;font-size:13px;padding:0 10px}
-#start-goal-list-open{box-sizing:border-box;height:28px;font-size:12px;padding:0 9px}
+#start-goal-list-open{box-sizing:border-box;height:28px;font-family:inherit;font-size:12px;padding:0 9px}
 #start-new-goal{box-sizing:border-box;height:27px;font-size:12px;padding:0 9px}
 #start-optimize-controls .small-button{box-sizing:border-box;height:26px;font-size:11.5px;padding:0 8px}
 #start-save{box-sizing:border-box;height:34px;font-size:13px;padding:0 13px;border-color:var(--accent)}
