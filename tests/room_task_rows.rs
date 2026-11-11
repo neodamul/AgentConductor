@@ -8,7 +8,7 @@ const RUN_CSS: &str = include_str!("../src/ui/run_screen.css");
 fn the_task_name_leads_and_icon_name_and_status_share_one_line() {
     // GitHub #675: each row is the mock's outline task: the agent mark, "T1 summary" with a status badge, a one-line scope, a chevron.
     assert!(ROOM.contains(
-        "title.append(node('code',session.id,'task-number'),' ',taskLine(plan.prompt)||'')"
+        "title.append(node('code','T'+(index+1),'task-number'),' ',taskLine(plan.prompt)||'')"
     ));
     assert!(ROOM.contains("head.append(title,badge)"));
     assert!(ROOM.contains("button.append(symbol,copy,chevron())"));
