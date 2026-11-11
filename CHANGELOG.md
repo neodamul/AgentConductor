@@ -18,6 +18,7 @@ the GitHub Release notes for its tag.
 - The manual no longer says the titlebar Workspace name opens Workspace settings (GitHub #792).
 - The roles step's footer button is *Apply agent role defaults* again (app and mock); *Add roles* hid that it assigns the default team (GitHub #795).
 - A completed Goal's Phase rail opens on the final Phase instead of a previously selected historical Phase (GitHub #775).
+- A completed run's review screen reports its applied result and historical approval instead of asking for approval (GitHub #776).
 
 ## v0.2.1
 
