@@ -6,6 +6,9 @@ the GitHub Release notes for its tag.
 
 ## v0.2.0
 
+- The titlebar Workspace name no longer opens a menu (it opens the Workspace settings step); recent workspaces, New/Open workspace, Workspace settings, plan rules, messenger and export/import are in the Workspace group of the application menu, the manual and Agent tools guide only in Help, and Settings keeps MCP servers, cache, update channel, language, theme and signal transport (GitHub #751). The mock matches. The online manuals (EN/KO) describe the new menu.
+- The application menu is a two-level menu (Workspace, Agents, View, Settings, Help, Close window) with keyboard and hover navigation (GitHub #751).
+- The app's agent dialog uses the mock's rhythm (12px between fields, 6px label gap, 34px controls) and a Goal row shows its goal text with line breaks, collapsed to two lines with an expand button (GitHub #750, #753).
 - The `cli_workflow` test retries its fixture cleanup until the detached availability watcher's files are gone instead of failing on the first removal (GitHub #754).
 - **0.2.0.** The redesigned goal screens (Workspace, Agent roles, Plan, Agent Room with its task, verify and approval cards) follow the approved design. Install v0.2.0 from the release page: v0.2.0-Beta1 installs report 0.2.0 and cannot see the final release (#672); later betas carry their suffix.
 - The left rail tabs, the body background, the app icon, the 6px heading gaps and the status pill at the right end of the goal-info line follow the approved mock; the mock's heading row got the same layout (GitHub #745, #746, #747, #748).

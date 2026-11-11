@@ -21,7 +21,10 @@ fn page_offers_slug_progress_next_phase_and_rules() {
     }
     for text in ["Plan next phase", "Plan rules…"] {
         assert!(
-            catalog::shows(SCRIPT, text) || catalog::shows(HTML, text),
+            catalog::shows(SCRIPT, text)
+                || catalog::shows(HTML, text)
+                || (text == "Plan rules…"
+                    && include_str!("../src/ui/app_menu.js").contains("'startup.plan_rules'")),
             "missing {text}"
         );
     }

@@ -221,7 +221,9 @@ fn a_burst_is_limited_to_ten_a_minute_and_reported_once() {
 
 #[test]
 fn workspace_menu_opens_the_messenger_dialog() {
-    assert!(SCRIPT.contains("\"startup.messenger\""));
+    let menu = include_str!("../src/ui/app_menu.js");
+    assert!(menu.contains("act('startup.messenger', messenger)"));
+    assert!(SCRIPT.contains("messenger:()=>openMessenger()"));
     let dialog = &HTML[HTML.find("<dialog id=\"start-messenger\"").expect("dialog")..];
     let dialog = &dialog[..dialog.find("</dialog>").unwrap()];
     for id in [

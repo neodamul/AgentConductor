@@ -44,6 +44,18 @@ module.exports = [
     mock: { url: '?theme=light#0', selector: '.goal-info>.pill', rel: '.goal-info' }, app: { selector: '#start-goal-info>.status-pill', rel: '#start-goal-info' } },
   { name: 'run-heading-pill', props: [], keys: ['y', 'height'], pixel: false,
     mock: { url: '?theme=light#3', selector: '.goal-info>.pill', rel: '.goal-info' }, app: { setup: STEPS_ENABLED, run: "document.getElementById('start-tab-tasks').click()", selector: '#run-goal-info>.status-pill', rel: '#run-goal-info' } },
+  // GitHub #750: the agent dialog uses one label gap, one field gap and one single-line control height.
+  ...[
+    ['agent-dialog-id-input', ['height', 'borderTopLeftRadius'], '#profile-id', '#start-agent-id', null, null],
+    ['agent-dialog-exe-input', ['height'], '#profile-executable', '#start-executable', null, null],
+    ['agent-dialog-browse', ['height'], '#profile-browse', '#start-executable-browse', null, null],
+    ['agent-dialog-quota-input', ['height'], '#profile-quota-minutes', '#start-quota-minutes', null, null],
+    ['agent-dialog-first-field', ['y'], '#profile-id', '#start-agent-id', '#profile-edit-title', '#start-agent-title'],
+    ['agent-dialog-row-gap', ['y'], '#profile-executable', '#start-executable', '#profile-id', '#start-agent-id'],
+    ['agent-dialog-label-gap', ['y'], '#profile-id', '#start-agent-id', '#profile-edit-dialog .profile-editor-grid>label:nth-child(2)', '#start-agent-dialog .agent-form-grid>label:nth-child(2)'],
+  ].map(([name, keys, mock, app, mockRel, appRel]) => ({ name, props: [], keys, pixel: false,
+    mock: { url: '?theme=light#0', setup: 'referenceDialogResize.disconnect();referenceDialogOpen.disconnect();', run: "document.getElementById('profile-edit-dialog').showModal()", selector: mock, ...(mockRel ? { rel: mockRel } : {}) },
+    app: { run: "document.getElementById('run-screen').hidden = false; document.getElementById('start-agent-dialog').showModal()", selector: app, ...(appRel ? { rel: appRel } : {}) } })),
   // GitHub #746: the body area shows the window surface behind the cards.
   { name: 'main-background', props: ['backgroundColor'], keys: ['backgroundColor'], pixel: false,
     mock: { selector: '.win' }, app: { selector: '.startup-main' } },
@@ -237,6 +249,13 @@ module.exports = [
   ].map(({ mock, app, ...rest }) => ({ ...rest, pixel: false,
     mock: { url: '?theme=light#0', run: "document.getElementById('app-menu-button').click()", selector: mock },
     app: { run: "(async () => { document.getElementById('start-app-menu').click(); await new Promise(r => setTimeout(r, 900)); })()", selector: app } })),
+  // GitHub #751: an open group shows a submenu popup with the same box and rows as the mock.
+  ...[
+    { name: 'app-submenu-box', props: ['borderTopLeftRadius', 'paddingTop', 'borderTopWidth', 'backgroundColor'], keys: ['borderTopLeftRadius', 'paddingTop', 'borderTopWidth', 'backgroundColor'], mock: '#app-menu .submenu:not([hidden])', app: '#start-workspace-list .submenu:not([hidden])' },
+    { name: 'app-submenu-item', props: ['borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'fontSize', 'color'], keys: ['height', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'fontSize', 'color'], mock: '#app-menu .submenu:not([hidden]) button', app: '#start-workspace-list .submenu:not([hidden]) button' },
+  ].map(({ mock, app, ...rest }) => ({ ...rest, pixel: false,
+    mock: { url: '?theme=light#0', run: "document.getElementById('app-menu-button').click(); document.querySelector('#app-menu .menu-parent').click()", selector: mock },
+    app: { run: "(async () => { document.getElementById('start-app-menu').click(); await new Promise(r => setTimeout(r, 900)); document.querySelector('#start-workspace-list .menu-parent').click(); })()", selector: app } })),
   // #579: every step card's footer buttons share one size (34px, 8px/13px padding, 6px radius, 13px text).
   ...[[0, 'j', 0, 'workspace'], [1, 'i', 1, 'roles'], [2, 'a', 2, 'plan']].flatMap(([hash, show, tab, name]) => [['p', 'primary'], ['q', 'quiet']].map(([kind, appClass]) => (
     { name: `footer-button-${kind}-${name}`, props: ['paddingTop', 'paddingLeft', 'fontSize', 'borderTopLeftRadius'], keys: ['height', 'paddingTop', 'paddingLeft', 'fontSize', 'borderTopLeftRadius'], pixel: false,
@@ -375,6 +394,8 @@ module.exports = [
   { name: 'workspace-footer-order', app: {}, assert: "[...document.querySelector('#start-panel-workspace .startup-actions').children].map(c => c.id).join() === 'start-save-note,start-discard,start-save'" },
   { name: 'roles-no-planning-row', app: { run: "document.getElementById('start-tab-team').click()" }, assert: "!document.querySelector('#start-roles .role-planning') && getComputedStyle(document.getElementById('start-discard')).display === 'none'" },
   { name: 'plan-edit-tools-wait-for-an-open-row', app: { setup: "SIM.home.proposal=SIM.proposal('ready');", run: "document.getElementById('start-tab-review').click()" }, assert: "['start-task-tools', 'start-edit', 'start-digest'].every(id => getComputedStyle(document.getElementById(id)).display === 'none') && getComputedStyle(document.querySelector('.plan-sources')).display === 'none'" },
+  { name: 'plan-sources-row-is-not-in-the-mock', app: { setup: "SIM.home.proposal=SIM.proposal('ready');", run: "document.getElementById('start-tab-review').click(); document.querySelector('.startup-task')?.setAttribute('open', '')" }, assert: "!!document.querySelector('.startup-task[open]') && getComputedStyle(document.querySelector('.plan-sources')).display === 'none'" },
+  { name: 'plan-sources-row-is-not-in-the-empty-plan', app: { setup: "SIM.home.proposal=null;", run: "document.getElementById('start-tab-review').click()" }, assert: "getComputedStyle(document.querySelector('.plan-sources')).display === 'none'" },
   // GitHub #684: a pending tool request is decided in the card footer (mock step 5).
   ...[
     ['tool-decision-note', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="g"] .actions .note', '#tool-decision-note'],

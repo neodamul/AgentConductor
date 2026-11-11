@@ -1,5 +1,21 @@
 # Goal planning confirmation
 
+## Current decision — #743
+
+The operator starts planning or approves the displayed plan directly, without a
+second confirmation dialog. The planning action validates the coordinator and
+model and snapshots the execution context before asynchronous save and baseline
+checks. A changed context prevents planning. The plan screen exposes the reviewed
+digest, repository base and task details in an expandable evidence section. Rust
+still validates the digest, revision and repository base and records approval;
+risky tool actions and final merge retain their existing approval gates.
+
+`tests/direct_plan_start_743.cjs` covers direct planning, delayed refresh and
+changed Goal rejection. `tests/goal_lifecycle_runtime.cjs` checks evidence and
+the direct start request at both supported widths and themes. Native application
+acceptance remains outstanding. The following sections record the superseded
+confirmation-dialog design and its historical regressions.
+
 Trace: R-210 → BG-165 → SF-198 → UC-202 → FR-204/NFR-09 → QAS-209 → DD-222. GitHub #429.
 
 New Goal inherits Workspace coordinator, per-profile planning model and worker-role defaults;

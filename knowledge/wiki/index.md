@@ -71,6 +71,7 @@
 
 - [Omitted crate license texts](upstream-license-texts.md): exact upstream notice provenance, fail-closed packaging and Windows CI evidence.
 - [public-docs](public-docs.md) — README as product introduction, manual as reference (DD-42)
+- [Cross-platform UI test contracts](ui-ci-contracts.md): stylesheet assembly assertions and scroll fixture diagnostics from PR #757.
 - [reviewed-handoff](reviewed-handoff.md) — completed handoff continues on the reviewed fallback (DD-43)
 - [memory-discovery](memory-discovery.md) — scoped agentmemory discovery without exact IDs (DD-44)
 - [workspace-ux-and-planning](workspace-ux-and-planning.md) — numbered workspace flow, role rules, persistence and planning inputs (DD-45 … DD-60)
@@ -162,3 +163,4 @@
 - [Goal planning confirmation](goal-planning-confirmation.md) — inherited defaults, explicit planner evidence and stale-context rejection (#429).
 
 - [Milestone release verification](release-verification.md) — truthful evidence, responsive matrix, Goal safety and non-publishing release gate (#420).
+- [Workspace scroll clearance](workspace-scroll-741.md): Windows fractional-pixel footer overlap, clearance assertion, and minimal scroll padding fix (#741).

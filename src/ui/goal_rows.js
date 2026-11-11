@@ -49,6 +49,15 @@ window.acGoalRows = (() => {
   // item: the row built by startup.js; ctx: { request, revision, poll, notice, busy, actions: [existing row buttons] }.
   function decorate(item, s, ctx) {
     const info = document.createElement('div'); info.className = 'goal-row-info'; info.append(...item.childNodes);
+    // GitHub #753: the goal text keeps its line breaks, shows two lines and expands on demand.
+    const text = info.querySelector('.small.muted');
+    if (text && text.textContent.trim()) {
+      const toggle = document.createElement('button'); toggle.type = 'button'; toggle.className = 'goal-row-toggle'; toggle.setAttribute('aria-expanded', 'false');
+      const label = () => acMessage(toggle.getAttribute('aria-expanded') === 'true' ? 'startup.goal_row_collapse' : 'startup.goal_row_expand');
+      text.classList.add('goal-row-text'); AC_I18N.bind(toggle, label);
+      toggle.onclick = () => { const open = toggle.getAttribute('aria-expanded') !== 'true'; toggle.setAttribute('aria-expanded', String(open)); text.classList.toggle('open', open); AC_I18N.bind(toggle, label); };
+      text.after(toggle);
+    }
     const actions = document.createElement('div'); actions.className = 'goal-row-actions';
     const folder = iconButton('goal-folder', FOLDER, 'startup.goal_row_folder', s.slug, () => ctx.request({ kind: 'goal_folder', slug: s.slug, open: true }).catch(e => ctx.notice(e.message, true)));
     actions.append(folder);
