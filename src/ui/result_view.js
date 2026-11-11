@@ -22,6 +22,11 @@ window.acResultView = (() => {
     for (const d of details || []) { for (const l of d.step_lessons || []) out.push(l.response); for (const k of d.knowledge || []) out.push(k.lesson?.response); }
     return [...new Set(out.filter(Boolean))];
   }
+  function syncSection(section) {
+    const summary = section.querySelector('summary'), toggle = summary.querySelector('.result-section-toggle');
+    summary.setAttribute('aria-expanded', String(section.open));
+    AC_I18N.bind(toggle, () => acMessage(section.open ? 'room.result_collapse' : 'room.result_expand'));
+  }
   // data: { goal, branch, repo, commit, diff, tests (test_output list), details (per-task data) }
   function show(data) {
     const changed = data.phaseResults?.length ? phaseFiles(data.phaseResults) : files(data.diff), outputs = data.phaseResults?.length ? phaseTests(data.phaseResults) : data.tests || [], summary = tests(outputs), notes = lessons(data.details);
@@ -51,10 +56,17 @@ window.acResultView = (() => {
       if (next) window.acNextPhase?.plan();
       else if (!document.getElementById('start-goals')?.open) document.getElementById('start-goal-list-open')?.click();
     };
+    const sections = [...$('result-dialog').querySelectorAll('details.result-section')];
+    sections.forEach((section, index) => {
+      section.querySelector('.result-section-count').textContent = ` · ${[changed.length, outputs.length, notes.length][index]}`;
+      if (!section.dataset.toggleBound) { section.addEventListener('toggle', () => syncSection(section)); section.dataset.toggleBound = 'true'; }
+    });
     // The dialog ships inside the Room section, which is hidden on the Workspace screen: hoist it so both can open it.
     if ($('result-dialog').parentElement !== document.body) document.body.append($('result-dialog'));
     // GitHub #799: each opening starts with the sections collapsed.
-    if (!$('result-dialog').open) { $('result-dialog').querySelectorAll('details.result-section').forEach(d => { d.open = false; }); $('result-dialog').showModal(); }
+    if (!$('result-dialog').open) sections.forEach(section => { section.open = false; });
+    sections.forEach(syncSection);
+    if (!$('result-dialog').open) $('result-dialog').showModal();
   }
   return { files, tests, lessons, phaseFiles, phaseTests, show };
 })();
