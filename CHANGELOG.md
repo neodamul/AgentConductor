@@ -10,6 +10,7 @@ the GitHub Release notes for its tag.
 - The plan step no longer keeps an old planning failure ("Logs: undefined") after a plan is written or the Goal changes (GitHub #773).
 - When an agent CLI quits before reading its request, the error says so instead of only "Broken pipe" (GitHub #774).
 - The Agent Room's quota refresh no longer leaves a quota-query folder in the run folder each time (GitHub #780).
+- A failed integration check with no output says "(no output)" in the run banner instead of ending at a colon (GitHub #782).
 
 ## v0.2.1
 
