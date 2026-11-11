@@ -4,6 +4,10 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.2.1
+
+- The Agent Room asks Claude for its usage on every OS and for any Claude executable name, like the workspace screen; it used to query only a macOS executable named exactly `claude`, so Windows and renamed builds showed no current usage. Usage values stay shown for twice the refresh interval instead of exactly the 5-minute default, and a hidden budget shows `-` instead of `null` (GitHub #766).
+
 ## v0.2.0
 
 - The titlebar Workspace name no longer opens a menu (it opens the Workspace settings step); recent workspaces, New/Open workspace, Workspace settings, plan rules, messenger and export/import are in the Workspace group of the application menu, the manual and Agent tools guide only in Help, and Settings keeps MCP servers, cache, update channel, language, theme and signal transport (GitHub #751). The mock matches. The online manuals (EN/KO) describe the new menu.

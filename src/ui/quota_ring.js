@@ -28,7 +28,7 @@ window.acQuotaRing = (() => {
     line.append(text('span', item.label || ''), text('b', item.unlimited ? acMessage('startup.quota_unlimited') : value === null ? '—' : Math.round(value) + '%'));
     const meter = text('div', '', 'usage-meter'), fill = document.createElement('span'); fill.style.width = (item.unlimited ? 100 : value ?? 0) + '%'; meter.append(fill);
     box.append(line, meter);
-    const detail = item.kind === 'budget' && item.allocated != null ? [item.remaining + ' / ' + item.allocated + (item.unit ? ' ' + item.unit : ''), item.reset_label].filter(Boolean).join(' · ') : item.reset_label;
+    const detail = item.kind === 'budget' && item.allocated != null ? [(item.remaining ?? '-') + ' / ' + item.allocated + (item.unit ? ' ' + item.unit : ''), item.reset_label].filter(Boolean).join(' · ') : item.reset_label;
     if (detail) box.append(text('div', detail, 'usage-reset'));
     return box;
   }

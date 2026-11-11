@@ -123,7 +123,9 @@ fn new_event_replaces_windows_and_profile_changes_invalidate() {
 mod support;
 #[cfg(unix)]
 #[tokio::test]
-async fn refresh_keeps_original_timestamp_and_revision_without_launching_cli() {
+async fn room_refresh_queries_claude_whatever_the_executable_is_called() {
+    // GitHub #766: the room used to query only a macOS executable named exactly `claude`; any other name
+    // recorded a no-op check, so Windows (claude.exe) and renamed builds never got a new reading.
     let (root, mut plan) = support::setup("shared");
     plan.agents.push(profile());
     let run = root.join("run");
@@ -131,42 +133,39 @@ async fn refresh_keeps_original_timestamp_and_revision_without_launching_cli() {
         .await
         .unwrap();
     let before = agentconductor::workflow::revision(&report).unwrap();
-    let mut store = Store::open(run.join("state.sqlite")).unwrap();
-    quota::persist(
-        &mut store,
-        &profile(),
-        quota::parse_claude_event(&event(json!(0.27)), 1000),
-    )
-    .unwrap();
-    drop(store);
     agentconductor::workflow::refresh_quota(&run, "claude")
         .await
         .unwrap();
     let store = Store::open(run.join("state.sqlite")).unwrap();
-    let data = quota::stored(&store, &profile(), 1301).unwrap();
-    assert_eq!(data["observed_at"], 1000);
-    assert_eq!(data["status"], "stale");
+    let record = store
+        .optional_document("quota/claude")
+        .unwrap()
+        .expect("the refresh queried Claude and recorded the result");
+    assert!(
+        record["snapshot"].is_null() && record["error"].is_string(),
+        "{record}"
+    );
     assert_eq!(
         before,
         agentconductor::workflow::revision(&agentconductor::workflow::load(&run).unwrap()).unwrap()
     );
-    let room = agentconductor::ui::Room::open(
-        &run,
-        std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
-    )
-    .unwrap();
-    let board = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
-    assert_eq!(board["quotas"]["claude"]["observed_at"], 1000);
-    assert_eq!(board["quotas"]["claude"]["status"], "stale");
-    drop(room);
-    assert!(!std::fs::read_dir(&run).unwrap().any(|p| {
-        p.unwrap()
-            .file_name()
-            .to_string_lossy()
-            .starts_with("quota-query-")
-    }));
     drop(store);
     std::fs::remove_dir_all(root).unwrap();
+}
+#[test]
+fn values_stay_shown_for_twice_the_refresh_interval() {
+    assert_eq!(quota::fresh_limit(5), 600);
+    assert_eq!(quota::fresh_limit(1), 300);
+    let value = quota::parse_claude_event(&event(json!(0.27)), 1000).unwrap();
+    let limit = quota::fresh_limit(5);
+    assert_eq!(
+        value.view_within(1000 + limit, limit).windows[0].remaining_percent,
+        Some(73.0)
+    );
+    assert_eq!(
+        value.view_within(1001 + limit, limit).windows[0].remaining_percent,
+        None
+    );
 }
 #[test]
 fn claude_decoder_classifies_quota_without_treating_it_as_task_completion() {

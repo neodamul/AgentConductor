@@ -80,7 +80,7 @@ fn milestone_020_release_gate() {
             "--repo",
             "neodamul/AgentConductor",
             "--milestone",
-            "0.2.0",
+            env!("CARGO_PKG_VERSION"),
             "--state",
             "open",
             "--limit",

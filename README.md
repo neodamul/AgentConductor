@@ -22,7 +22,7 @@ These are screenshots from the 0.2.0 application:
 ![AgentConductor 0.2.0 dark Agent Room](docs/assets/ui-agent-room-dark-current.png)
 ![AgentConductor 0.2.0 agent settings](docs/assets/ui-agent-settings-current.png)
 
-> **Version:** 0.2.0 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **⚙ Settings → User manual** opens the offline manual.
+> **Version:** 0.2.1 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **⚙ Settings → User manual** opens the offline manual.
 
 ## What it does
 

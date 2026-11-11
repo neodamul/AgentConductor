@@ -474,7 +474,7 @@
   "room.not_reported": "Not reported",
   "room.observed": "{value1} · observed {value2}",
   "room.observed_bcdb80": "{value1} · observed {value2} · {value3}",
-  "room.on_macos_query_claude_usage_without_generation_otherwise": "On macOS, query Claude /usage without generation; otherwise check owned stream metadata.",
+  "room.on_macos_query_claude_usage_without_generation_otherwise": "Query Claude /usage without generation.",
   "room.ownership": "FILES AND TASK",
   "room.passed": "{value1} passed",
   "room.pattern": "Pattern",
