@@ -145,6 +145,15 @@ async fn room_refresh_queries_claude_whatever_the_executable_is_called() {
         record["snapshot"].is_null() && record["error"].is_string(),
         "{record}"
     );
+    // GitHub #780: the query folder does not pile up in the run folder.
+    assert!(
+        !std::fs::read_dir(&run).unwrap().any(|e| e
+            .unwrap()
+            .file_name()
+            .to_string_lossy()
+            .starts_with("quota-query-")),
+        "a quota-query folder was left in the run folder"
+    );
     assert_eq!(
         before,
         agentconductor::workflow::revision(&agentconductor::workflow::load(&run).unwrap()).unwrap()

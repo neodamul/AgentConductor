@@ -206,6 +206,8 @@ pub async fn refresh_quota(dir: &Path, agent: &str) -> Result<(), String> {
     } else {
         crate::quota::query(profile, &query_dir).await
     };
+    // GitHub #780: the result lives in state.sqlite; Clear cache never reaches run folders, so drop the query folder now.
+    let _ = std::fs::remove_dir_all(&query_dir);
     let mut store = Store::open(dir.join("state.sqlite"))?;
     crate::quota::persist(&mut store, profile, result)
 }
