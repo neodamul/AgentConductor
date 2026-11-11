@@ -15,6 +15,8 @@ window.acResultView = (() => {
     return list;
   }
   function tests(outputs) { const list = outputs || []; return { passed: list.filter(t => t.exit_code === 0 && !t.timed_out).length, total: list.length }; }
+  function phaseFiles(phases) { const map = new Map(); for (const phase of phases || []) for (const file of files(phase.evidence?.diff)) { const item = map.get(file.path) || { path: file.path, phases: [] }; item.phases.push(phase.phase); map.set(file.path, item); } return [...map.values()]; }
+  function phaseTests(phases) { return (phases || []).flatMap(phase => (phase.evidence?.test_output || []).map(test => ({ ...test, task: `${phase.phase} · ${test.task}` }))); }
   function lessons(details) {
     const out = [];
     for (const d of details || []) { for (const l of d.step_lessons || []) out.push(l.response); for (const k of d.knowledge || []) out.push(k.lesson?.response); }
@@ -22,18 +24,18 @@ window.acResultView = (() => {
   }
   // data: { goal, branch, repo, commit, diff, tests (test_output list), details (per-task data) }
   function show(data) {
-    const changed = files(data.diff), outputs = data.tests || [], summary = tests(outputs), notes = lessons(data.details);
+    const changed = data.phaseResults?.length ? phaseFiles(data.phaseResults) : files(data.diff), outputs = data.phaseResults?.length ? phaseTests(data.phaseResults) : data.tests || [], summary = tests(outputs), notes = lessons(data.details);
     const row = (a, b) => { const el = node('li'); el.append(node('span', a), node('span', () => ' · ' + (typeof b === 'function' ? b() : b))); return el; };
     // GitHub #733/#737: the title is the Goal's first meaningful line, then the coordinator's summary sentence.
     const goalLine = String(data.goal || '').split('\n').map(l => l.trim()).find(l => l && !/^<\/?[\w-]+>$/.test(l)) || '';
     AC_I18N.bind($('result-title'), () => acMessage('room.result_title', { value1: goalLine }));
     $('result-title').title = goalLine;
-    $('result-summary').textContent = data.summary || ''; $('result-summary').hidden = !data.summary;
+    $('result-summary').textContent = data.phaseResults?.length ? acMessage('room.result_all_phases', { value1: data.phaseResults.length, value2: data.summary || '' }) : data.summary || ''; $('result-summary').hidden = !data.phaseResults?.length && !data.summary;
     AC_I18N.bind($('result-target'), () => acMessage('room.result_target', { value1: data.branch, value2: (data.commit || '').slice(0, 12) }));
     AC_I18N.bind($('result-location'), () => acMessage('room.result_location', { value1: data.repo }));
     const metric = (label, value) => { const el = node('div', undefined, 'result-metric'); el.append(node('span', label), node('strong', String(value))); return el; };
     AC_I18N.replace($('result-metrics'), metric(() => acMessage('room.result_metric_files'), changed.length), metric(() => acMessage('room.result_metric_tests'), `${summary.passed}/${summary.total}`), metric(() => acMessage('room.result_metric_lessons'), notes.length));
-    AC_I18N.replace($('result-files'), ...changed.map(f => row(f.path, `+${f.add} / −${f.del}`)));
+    AC_I18N.replace($('result-files'), ...changed.map(f => row(f.path, f.phases ? f.phases.join(' · ') : `+${f.add} / −${f.del}`)));
     AC_I18N.replace($('result-tests'), ...outputs.map(t => row(t.task, () => acMessage(t.exit_code === 0 && !t.timed_out ? 'room.result_test_passed' : 'room.result_test_failed'))));
     AC_I18N.replace($('result-lessons'), ...(notes.length ? notes.map(l => node('li', l)) : [node('li', () => acMessage('room.result_no_lessons'), 'muted')]));
     // The dialog ships inside the Room section, which is hidden on the Workspace screen: hoist it so both can open it.
@@ -41,5 +43,5 @@ window.acResultView = (() => {
     // GitHub #799: each opening starts with the sections collapsed.
     if (!$('result-dialog').open) { $('result-dialog').querySelectorAll('details.result-section').forEach(d => { d.open = false; }); $('result-dialog').showModal(); }
   }
-  return { files, tests, lessons, show };
+  return { files, tests, lessons, phaseFiles, phaseTests, show };
 })();

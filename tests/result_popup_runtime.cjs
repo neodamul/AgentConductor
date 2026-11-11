@@ -21,6 +21,9 @@ assert.deepEqual(run("window.acResultView.files('')"),[]);assert.deepEqual(run('
 // Passed tests are the ones that exited 0 without timing out.
 assert.deepEqual(run("window.acResultView.tests([{task:'t1',exit_code:0},{task:'t2',exit_code:1},{task:'t3',exit_code:0,timed_out:true}])"),{passed:1,total:3});
 assert.deepEqual(run('window.acResultView.tests([])'),{passed:0,total:0});
+const phases=[{phase:'p1',evidence:{diff:['diff --git a/src/a.rs b/src/a.rs','+one'].join('\n'),test_output:[{task:'unit',exit_code:0}]}},{phase:'p2',evidence:{diff:['diff --git a/src/a.rs b/src/a.rs','+two','diff --git a/docs.md b/docs.md','+doc'].join('\n'),test_output:[{task:'docs',exit_code:1}]}}];
+assert.deepEqual(run(`window.acResultView.phaseFiles(${JSON.stringify(phases)})`),[{path:'src/a.rs',phases:['p1','p2']},{path:'docs.md',phases:['p2']}],'files are unique across Phase results');
+assert.deepEqual(run(`window.acResultView.phaseTests(${JSON.stringify(phases)})`).map(t=>t.task),['p1 · unit','p2 · docs'],'tests retain their Phase identity');
 // The popup opens once when a run completes while watched, never for a run that was already finished.
 assert.equal(run("resultTransition(null,'completed')"),false,'first snapshot of a finished run: no popup');
 assert.equal(run("resultTransition('running','completed')"),true);

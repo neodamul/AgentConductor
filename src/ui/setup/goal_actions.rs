@@ -105,6 +105,7 @@ impl Startup {
         let mut report = serde_json::Value::Null;
         let mut evidence = serde_json::Value::Null;
         let mut details = Vec::new();
+        let mut phase_results = Vec::new();
         if let Some(run) = &run {
             let controller = Controller {
                 dir: run.clone(),
@@ -123,9 +124,84 @@ impl Startup {
             if workflow::revision(&workflow::load(run)?)? != evidence["revision"] {
                 return Err("Goal result changed while collecting evidence; refresh".into());
             }
+            let root = crate::slugs::root(
+                &saved.config.repository,
+                &self.broker.dir,
+                &saved.config.name,
+                slug,
+            );
+            let root = root.canonicalize().map_err(|e| e.to_string())?;
+            for item in fs::read_dir(&self.broker.dir).map_err(|e| e.to_string())? {
+                let item = item.map_err(|e| e.to_string())?;
+                let Some(name) = item.file_name().to_str().map(str::to_owned) else {
+                    continue;
+                };
+                let Some(run_name) = name.strip_suffix(".slug-phase.json") else {
+                    continue;
+                };
+                let meta = fs::symlink_metadata(item.path()).map_err(|e| e.to_string())?;
+                if !meta.is_file() || !crate::folder::ordinary(&meta) {
+                    continue;
+                }
+                let marker: serde_json::Value =
+                    serde_json::from_slice(&fs::read(item.path()).map_err(|e| e.to_string())?)
+                        .map_err(|e| e.to_string())?;
+                if PathBuf::from(marker["root"].as_str().ok_or("invalid phase link")?)
+                    .canonicalize()
+                    .ok()
+                    .as_ref()
+                    != Some(&root)
+                {
+                    continue;
+                }
+                let Some(phase) = marker["phase"].as_str() else {
+                    continue;
+                };
+                let Ok(phase_run) =
+                    self.verified_goal_run(saved, slug, &self.broker.dir.join(run_name))
+                else {
+                    continue;
+                };
+                let phase_report = workflow::load(&phase_run)?;
+                let controller = Controller {
+                    dir: phase_run.clone(),
+                    exe: self.broker.exe.clone(),
+                    job: Mutex::new(None),
+                };
+                let phase_evidence = controller.evidence()?;
+                if workflow::revision(&phase_report)? != phase_evidence["revision"] {
+                    return Err("Goal Phase changed while collecting evidence; refresh".into());
+                }
+                let mut phase_details = Vec::new();
+                for index in 0..phase_report.tasks.len() {
+                    phase_details.push(controller.task(index)?);
+                }
+                phase_results.push(serde_json::json!({
+                    "phase": phase,
+                    "state": phase_report.state,
+                    "report": phase_evidence["report"],
+                    "evidence": phase_evidence,
+                    "details": phase_details,
+                }));
+            }
+            let order: Vec<String> = crate::slug_progress::progress(&root)["phases"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .filter_map(|phase| phase["id"].as_str().map(str::to_owned))
+                .collect();
+            phase_results.sort_by_key(|result| {
+                (
+                    order
+                        .iter()
+                        .position(|id| id == result["phase"].as_str().unwrap_or(""))
+                        .unwrap_or(usize::MAX),
+                    result["phase"].as_str().unwrap_or("").to_owned(),
+                )
+            });
         }
         Ok(
-            serde_json::json!({"slug":slug,"goal":entry.goal,"run":run,"report":report,"evidence":evidence,"details":details}),
+            serde_json::json!({"slug":slug,"goal":entry.goal,"run":run,"report":report,"evidence":evidence,"details":details,"phase_results":phase_results}),
         )
     }
 }

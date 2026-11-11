@@ -44,7 +44,8 @@ window.acGoalRows = (() => {
   async function showResult(ctx, s) {
     const r = await ctx.request({ kind: 'goal_result', slug: s.slug });
     if (!r.report) { ctx.notice(() => acMessage('startup.goal_row_no_result'), true); return; }
-    acResultView.show({ summary: r.report.latest_review?.summary, goal: r.goal || r.report.plan?.goal || s.slug, branch: r.report.branch, repo: r.report.repo, commit: r.evidence?.report?.candidate?.commit, diff: r.evidence?.diff, tests: r.evidence?.test_output, details: r.details });
+    const phaseResults = r.phase_results?.length > 1 ? r.phase_results : null;
+    acResultView.show({ summary: r.report.latest_review?.summary, goal: r.goal || r.report.plan?.goal || s.slug, branch: r.report.branch, repo: r.report.repo, commit: r.evidence?.report?.candidate?.commit, diff: r.evidence?.diff, tests: r.evidence?.test_output, details: r.details, phaseResults });
   }
   // item: the row built by startup.js; ctx: { request, revision, poll, notice, busy, actions: [existing row buttons] }.
   function decorate(item, s, ctx) {

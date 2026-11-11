@@ -337,6 +337,7 @@
   "room.choose_a_valid_local_date_and_time": "올바른 로컬 날짜와 시간을 고르세요.",
   "room.result_eyebrow": "목표 완료",
   "room.result_title": "{value1} — 완료",
+  "room.result_all_phases": "목표 전체 · {value1}개 Phase. {value2}",
   "room.result_target": "승인 완료 · {value1} 반영 · 커밋 {value2}",
   "room.result_files": "변경 파일",
   "room.result_tests": "검증 결과",
