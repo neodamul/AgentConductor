@@ -25,7 +25,8 @@ module.exports = [
   { ...e('agent-top-box', ['width', 'height'], '.agent .top', '.startup-profile .profile-top'), mock:{selector:'.agent .top',run:"document.querySelector('.agent .name').textContent='claude';"} },
   { ...e('agent-name-box', ['width', 'height', 'fontSize'], '.agent .name', '.startup-profile .name-row'), mock:{selector:'.agent .name',run:"document.querySelector('.agent .name').textContent='claude';"} },
   e('agent-facts-box', ['width', 'height', 'columnGap', 'rowGap'], '.agent .facts', '.startup-profile .agent-facts'),
-  e('agent-fact-box', B.filter(k => k !== 'width'), '.agent .fact', '.startup-profile .fact'),
+  // GitHub #828: the session chip has its own entry (agent-sessions-chip); this compares the plain facts.
+  e('agent-fact-box', B.filter(k => k !== 'width'), '.agent .fact:not(.agent-sessions)', '.startup-profile .fact:not(.agent-sessions)'),
   e('agent-tools-box', ['width', 'height', 'columnGap'], '.agent .tools', '.startup-profile .profile-tools'),
   e('agent-tool-edit', B, '.agent .tools button', '.startup-profile .profile-tools button'),
   e('agent-tool-remove', B, '.agent .tools .agent-remove', '.startup-profile .remove-agent'),

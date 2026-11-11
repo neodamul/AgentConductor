@@ -240,6 +240,7 @@ pub(crate) use document::document;
 mod baseline;
 mod messenger;
 mod request;
+mod sessions;
 #[cfg(test)]
 #[path = "../../tests/unit/startup.rs"]
 mod tests;
