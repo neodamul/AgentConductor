@@ -394,6 +394,8 @@ module.exports = [
   { name: 'workspace-footer-order', app: {}, assert: "[...document.querySelector('#start-panel-workspace .startup-actions').children].map(c => c.id).join() === 'start-save-note,start-discard,start-save'" },
   { name: 'roles-no-planning-row', app: { run: "document.getElementById('start-tab-team').click()" }, assert: "!document.querySelector('#start-roles .role-planning') && getComputedStyle(document.getElementById('start-discard')).display === 'none'" },
   { name: 'plan-edit-tools-wait-for-an-open-row', app: { setup: "SIM.home.proposal=SIM.proposal('ready');", run: "document.getElementById('start-tab-review').click()" }, assert: "['start-task-tools', 'start-edit', 'start-digest'].every(id => getComputedStyle(document.getElementById(id)).display === 'none') && getComputedStyle(document.querySelector('.plan-sources')).display === 'none'" },
+  { name: 'plan-sources-row-is-not-in-the-mock', app: { setup: "SIM.home.proposal=SIM.proposal('ready');", run: "document.getElementById('start-tab-review').click(); document.querySelector('.startup-task')?.setAttribute('open', '')" }, assert: "!!document.querySelector('.startup-task[open]') && getComputedStyle(document.querySelector('.plan-sources')).display === 'none'" },
+  { name: 'plan-sources-row-is-not-in-the-empty-plan', app: { setup: "SIM.home.proposal=null;", run: "document.getElementById('start-tab-review').click()" }, assert: "getComputedStyle(document.querySelector('.plan-sources')).display === 'none'" },
   // GitHub #684: a pending tool request is decided in the card footer (mock step 5).
   ...[
     ['tool-decision-note', ['fontSize', 'color'], ['fontSize', 'color'], '.card[data-show="g"] .actions .note', '#tool-decision-note'],
