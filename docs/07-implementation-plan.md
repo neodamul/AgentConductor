@@ -11,6 +11,13 @@
 
 Release scope: the published app is the current `main` desktop product. The separate Rust-native UI migration remains in progress and is not represented as complete by this release.
 
+## Stable release 0.2.0 — native tool-decision modal bug #382 (2026-11-11)
+
+- [x] Plan: keep the R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 trace; route deferred and approved-refresh decisions through the current modal while preserving exact evidence, revision, busy guards, defer, Cancel and event payloads.
+- [ ] Task: add failing Rust accessibility-tree regressions for deferred and approved-refresh confirmation, then split `room_actions.rs` below the 300-line source limit and remove the duplicate inline renderer.
+- [ ] Verify: focused modal, eligibility and action-payload tests; full local suite, formatting, lint and source/test layout guard.
+- [ ] Complete: open the issue-linked PR with `Closes #382`; merge only after local verification and macOS/Windows checks.
+
 ## Reconciled current baseline (2026-10-11)
 
 - [x] Plan: review Claude source `318f930`, added/amended R-36–59 and trace through DD-65; preserve original constraints and latest task/release policy.
