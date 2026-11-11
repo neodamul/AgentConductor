@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.2.0 redesigns the goal screen: one six-step stepper for the Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task) with fixed-size agent cards, a quota ring with a usage popup on every agent, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, one centered result popup when a goal completes, and status borders on the agent icons. Every text size, control and colour follows the approved design.
+The app version is beside the title. Version 0.2.0 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
 
 ### 1.1a Application updates
 
@@ -46,7 +46,7 @@ Only saved app-owned workspace data can be removed; the project is preserved.
 Data moves to `~/.agentconductor/workspace-trash/<id>` for recovery.
 **Remove from recents** hides an entry without deleting it.
 
-![AgentConductor 0.2.0 workspace and goal configuration](assets/ui-workspace-current.png)
+![Approved workspace design preview with sample data](assets/ui-approved-workspace-design.png)
 
 Use **☰ → Help → User manual** for offline help in the current interface language. HTML manuals preserve tables, code, links and screenshots. The [standalone HTML manual](user-manual.html) can also be opened separately.
 
@@ -60,9 +60,9 @@ Use **☰ → Help → User manual** for offline help in the current interface l
 
 Settings has **Agent tools guide…** for optional agentmemory, RTK, Ponytail, Graphify and CocoIndex installation instructions. These tools are not bundled or required by the app.
 
-![AgentConductor 0.2.0 Korean workspace](assets/ui-workspace-korean-current.png)
+![Approved task screen design preview in the light theme](assets/ui-approved-tasks-light.png)
 
-![AgentConductor 0.2.0 dark workspace](assets/ui-workspace-dark-current.png)
+![Approved task screen design preview in the dark theme](assets/ui-approved-tasks-dark.png)
 
 ### 1.2a The goal screen
 One screen serves the whole job. A single stepper with six steps — **Workspace**, **Agent roles**, **Plan**, **Tasks**, **Verify** and **Review and merge** — is grouped as Prepare, Run and Finish; the first three open the workspace settings and the last three open the Agent Room while a run exists, and the Room marks the step the run is in. The left panel has two tabs, **Agents** and **Phase·Task**, and the panel icon at the left of the title bar hides or restores it. Task details open in a column on the right with the icon at the right of the title bar; it starts closed every time and never opens by itself.

@@ -6,11 +6,15 @@ company's own CLI — work on one repository as a team, while you stay in contro
 You describe a goal. AgentConductor splits it into scoped tasks, runs agents in parallel,
 tests the combined result and asks for your approval before merging. It runs on your computer and reuses signed-in agent CLIs — no API keys, no cloud service.
 
-## Version 0.2.0 screenshots
+## Interface previews and screenshots
 
-![AgentConductor 0.2.0 workspace](docs/assets/ui-workspace-current.png)
-![AgentConductor 0.2.0 workspace in Korean](docs/assets/ui-workspace-korean-current.png)
-![AgentConductor 0.2.0 dark workspace](docs/assets/ui-workspace-dark-current.png)
+The workflow images below are approved design mockups with sample workspace data; they show the intended layout and are not screenshots of a running session.
+
+![Approved workspace design preview](docs/assets/ui-approved-workspace-design.png)
+![Approved task screen design preview in light theme](docs/assets/ui-approved-tasks-light.png)
+![Approved task screen design preview in dark theme](docs/assets/ui-approved-tasks-dark.png)
+
+These are screenshots from the 0.2.0 application:
 ![AgentConductor 0.2.0 Agent Room](docs/assets/ui-agent-room-current.png)
 ![AgentConductor 0.2.0 dark Agent Room](docs/assets/ui-agent-room-dark-current.png)
 ![AgentConductor 0.2.0 agent settings](docs/assets/ui-agent-settings-current.png)

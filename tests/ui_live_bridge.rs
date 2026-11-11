@@ -86,7 +86,7 @@ fn serve_the_live_page() {
         std::fs::copy(support::fixture(), bin.join("local-agent")).unwrap();
         let catalog = |models: &[&str]| json!({"models":models,"source":"cli","queried_at":1793400000,"cli_version":"demo"});
         saved["config"]["profiles"] = json!([
-            {"id":"claude","executable":bin.join("claude"),"args":[],"parser":"claude","permission_mode":"native_callback","max_sessions":3,"catalog":catalog(&["opus","sonnet","haiku"])},
+            {"id":"claude","executable":bin.join("claude"),"args":[],"read_only_args":["-p","--output-format","stream-json","--verbose","--tools","Read,Grep,Glob","--strict-mcp-config","--mcp-config","{\"mcpServers\":{}}","--no-chrome","--disable-slash-commands"],"parser":"claude","permission_mode":"native_callback","max_sessions":3,"catalog":catalog(&["opus","sonnet","haiku"])},
             {"id":"codex","executable":bin.join("codex"),"args":[],"parser":"codex","permission_mode":"native_sandbox","max_sessions":3,"catalog":catalog(&["gpt-5","gpt-5-codex"])},
             {"id":"local-agent","executable":bin.join("local-agent"),"args":["task-slow"],"parser":"custom","permission_mode":"external_sandbox","max_sessions":3}
         ]);
@@ -97,6 +97,13 @@ fn serve_the_live_page() {
     }
     std::fs::write(&path, saved.to_string()).unwrap();
     let room = Arc::new(Room::startup(&desktop, exe).unwrap());
+    if std::env::var_os("AC_LIVE_DEMO").is_some() {
+        let snapshot = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+        assert!(
+            snapshot["chat_blockers"].get("claude").is_none(),
+            "the documentation demo must not show a coordinator warning"
+        );
+    }
     // Built per request, so a language or theme change shows after a reload, as in the app.
     let page = |room: &Room| {
         room.document()

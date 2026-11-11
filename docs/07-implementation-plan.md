@@ -25,6 +25,14 @@ Release scope: the published app is the current `main` desktop product. The sepa
 - [x] Verify: regenerate both offline HTML manuals with `cargo run --release --locked -- manual render`; `manual_renderer` and `public_docs` pass (7 tests). Screenshot freshness is checked after this documentation commit.
 - [x] Complete: #744 was closed by the owner after recording that the unclicked tool-wait, permission-denied, and New Goal actions were covered by automated evidence and would not block this release. Native phase picking and safe delete-cancel behavior were recorded separately.
 - [ ] Complete: do not mark v0.2.0 releasable until the 10 remaining open Rust migration issues (#189, #226, #257, #283, #310, #345, #346, #348, #372, #374) and release gates are resolved. The separate Rust migration PR #22 remains Draft at 22/50 and is not part of the shipped-app merge batch.
+
+### Stable release 0.2.0 — documentation artwork and About mark (2026-11-11)
+
+- [x] Plan: use approved Goal UI mockups in public README/manuals only with clear sample-data preview labels; identify runtime captures separately.
+- [x] Task: refresh live workspace screenshots with a read-only demo coordinator so the UI contains no coordinator-unavailable warning; sync the About dialog's embedded mark to `src/ui/assets/ac-64.png`.
+- [x] Task: add approved workspace and light/dark task design previews to README and both Markdown manuals; regenerate the committed offline HTML manuals.
+- [x] Verify: About icon byte-parity and cross-theme/viewport UI checks pass; fresh workspace captures contain no coordinator warning; offline manual generation, `manual_renderer` and `public_docs` pass locally.
+- [x] Complete: keep the approved design previews and current runtime captures clearly distinguished in public documentation; no release was created.
 ## Stable release 0.2.0 — native tool-decision modal bug #382 (2026-11-11)
 
 - [x] Plan: keep the R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 trace; route deferred and approved-refresh decisions through the current modal while preserving exact evidence, revision, busy guards, defer, Cancel and event payloads.
