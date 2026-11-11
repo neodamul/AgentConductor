@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## v0.2.2
 
+- MCP server settings use a guided registration form, discover tools after saving, bind Jira and Confluence to discovered read-only tools, and keep OpenCode JSON/JSONC in Advanced (GitHub #809).
 - Goal completion results include verified evidence from every linked Phase run, deduplicate changed files, and retain Phase identity for test results (GitHub #778).
 - Opening a different run clears prior candidate, test, diff and approval surfaces before loading the new run (GitHub #794).
 - The titlebar Workspace name is a plain label: no hover background, no pointer cursor and no click (GitHub #768).
