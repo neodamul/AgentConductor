@@ -22,6 +22,10 @@ the GitHub Release notes for its tag.
 - Execution rail rows use compact task ordinals so long persistent IDs do not hide task descriptions (GitHub #777).
 - The completed Goal result popup's changed files, tests and lessons expand and collapse, starting collapsed (app and mock, GitHub #799).
 - The native window caption is AgentConductor for every stage instead of always naming the Agent Room (GitHub #772).
+- Closing the Goal list returns keyboard focus to its button (GitHub #787).
+- The Workspace task-details switch keeps showing the Workspace panel's real state after the Agent Room repaints (GitHub #788).
+- Opening the application menu moves keyboard focus into it, so the arrow keys work at once (GitHub #789).
+- The Goal list opened from the Agent Room (for example from the completion popup) shows each Goal's current state, such as Completed (GitHub #797).
 
 ## v0.2.1
 
