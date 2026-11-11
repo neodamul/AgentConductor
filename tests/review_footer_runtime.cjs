@@ -28,6 +28,8 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms)),fail=m=>{throw Error(m);};
  await until("document.getElementById('review-primary').dataset.mode==='merge'&&document.getElementById('review-revise').hidden&&document.getElementById('run-banner').hidden",'approved footer applies the changes');
  await b.eval("SIM.room.report.state='completed'");
  await until("!document.getElementById('review-footer').hidden&&document.getElementById('review-primary').dataset.mode==='result'&&document.getElementById('review-deny').hidden&&document.getElementById('run-banner').hidden&&getComputedStyle(document.querySelector('#run-screen .composer')).display==='none'",'completed run: Request changes and View the finished result, no status box');
+ const completedCopy=await b.eval("({title:document.getElementById('selected-agent').textContent,intro:document.getElementById('selected-task').textContent})");
+ if(/approve|승인/.test(completedCopy.title+' '+completedCopy.intro)&&!/approved|승인/.test(completedCopy.title+' '+completedCopy.intro))fail('completed review must not ask for approval: '+JSON.stringify(completedCopy));
  if(await b.eval("!!document.getElementById('run-path')||!!document.querySelector('.rail-footer')"))fail('the run path or the rail footer is still on the screen');
  console.log('review footer: summary-only card, request changes opens the direction field, review changes opens the evidence');
 }finally{await b.close();}}finally{fs.rmSync(dir,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1;});
