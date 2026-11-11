@@ -25,6 +25,12 @@ Release scope: the published app is the current `main` desktop product. The sepa
 - [ ] Complete: run the full local suite after the latest-main rebase, merge PR #757 after its exact-head checks pass, and close #740–#743, #749 and #752 with merged-app evidence.
 
 The #752 browser regression is `tests/delete_goal_dialog_752.cjs`; the design rationale is in `knowledge/wiki/goal-deletion-confirmation-layout.md`. Claude owns #750/#751/#753 via PR #756. PR #755 for #754 passed macOS/Windows validation and packaging and merged to main as `4407a196`. PR #756 checks are running on head `66d4f8d` against its earlier base `a683ba1`; refresh onto current main after the active checks finish. PR #757's old exact-head CI failed both platform test steps: macOS reported two stale CSS source assertions; Windows reported those assertions plus `workspace_scroll_741.cjs` visibility after scrolling. The fixes and cross-platform test note are pushed as `58c2707`; exact-head macOS/Windows checks are pending.
+## Stable release 0.2.0 — native tool-decision modal bug #382 (2026-11-11)
+
+- [x] Plan: keep the R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 trace; route deferred and approved-refresh decisions through the current modal while preserving exact evidence, revision, busy guards, defer, Cancel and event payloads.
+- [x] Task: added failing Rust accessibility-tree regressions for deferred and approved-refresh confirmation, split `room_actions.rs` below 300 lines, and removed the duplicate inline renderer.
+- [x] Verify: focused modal, eligibility, action-payload, and source-layout suites pass (17 tests); `cargo fmt --check` and warning-denied Clippy pass; full native-feature Rust suite passes (277 passed, 2 ignored across 67 suites). Touched Rust files remain below 300 lines.
+- [ ] Complete: open the issue-linked PR with `Closes #382`; merge only after local verification and macOS/Windows checks.
 
 ## Reconciled current baseline (2026-10-11)
 
