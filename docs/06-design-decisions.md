@@ -1399,6 +1399,7 @@ Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159.
 
 ### DD-160 Replace project-owned non-Rust execution with Rust
 Keep the Rust application and authenticated CLI process boundary. Migrate UI behavior, release/package/manual generation, and repository-owned checks to Rust; preserve external authenticated CLI tools as process boundaries. A framework is allowed only for a fully native Rust UI that removes the embedded JavaScript runtime and passes the existing resource/accessibility QAS. Convert one bounded path at a time; preserve every workflow and package check before removing its former implementation.
+For native tool decisions, reuse the existing modal for every confirmation path. Selecting a deferred or approved receipt first makes that receipt the modal's current target; an approved receipt is eligible only for a current Refresh confirmation. Keep one request ID, action, evidence snapshot, and revision bound throughout the confirm/cancel transition. Do not retain the inline confirmation renderer.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160. User, 2026-10-15.
 
 ### DD-161 Prototype a native Rust UI with eframe/egui

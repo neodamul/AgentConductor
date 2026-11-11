@@ -28,6 +28,13 @@ Release scope: the published app is the current `main` desktop product. The sepa
 
 The #752 browser regression is `tests/delete_goal_dialog_752.cjs`; the design rationale is in `knowledge/wiki/goal-deletion-confirmation-layout.md`. Claude owns #750/#751/#753 via PR #756. PR #755 for #754 passed macOS/Windows validation and packaging and merged to main as `4407a196`. PR #756 is rebased onto `4407a196` at head `bb66f3c`; workflow run `42933120032` is running (the prior run was cancelled after the branch moved). PR #757's old exact-head CI failed both platform test steps: macOS reported two stale CSS source assertions; Windows reported those assertions plus `workspace_scroll_741.cjs` visibility after scrolling. Follow-up reproduced the Windows 0.125 px footer overlap; the regression now requires at least 1 px clearance and the scroll body adds 2 px bottom padding. The fix is locally under validation; PR #757 still needs exact-head macOS/Windows CI and latest-main integration before merge. The exact rebased local all-target suite previously passed (922 tests, 16 ignored, 711.77s).
 
+## Stable release 0.2.0 — native tool-decision modal bug #382 (2026-11-11)
+
+- [x] Plan: keep the R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 trace; route deferred and approved-refresh decisions through the current modal while preserving exact evidence, revision, busy guards, defer, Cancel and event payloads.
+- [x] Task: added failing Rust accessibility-tree regressions for deferred and approved-refresh confirmation, split `room_actions.rs` below 300 lines, and removed the duplicate inline renderer.
+- [x] Verify: focused modal, eligibility, action-payload, and source-layout suites pass (17 tests); `cargo fmt --check` and warning-denied Clippy pass; full native-feature Rust suite passes (277 passed, 2 ignored across 67 suites). Touched Rust files remain below 300 lines.
+- [x] Complete: merged as PR #758 to main at `7c1cc09743ed5c3089389fcea21986a94c11e7c5`; verified issue #382 closed.
+
 ## Reconciled current baseline (2026-10-11)
 
 - [x] Plan: review Claude source `318f930`, added/amended R-36–59 and trace through DD-65; preserve original constraints and latest task/release policy.
