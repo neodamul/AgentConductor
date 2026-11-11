@@ -431,6 +431,8 @@
   "room.result_all_phases": "Whole Goal · {value1} Phases. {value2}",
   "room.result_target": "Approved · applied to {value1} · commit {value2}",
   "room.result_files": "Changed files",
+  "room.result_expand": "Expand",
+  "room.result_collapse": "Collapse",
   "room.result_tests": "Verification",
   "room.result_lessons": "Lessons",
   "room.result_open": "Result",

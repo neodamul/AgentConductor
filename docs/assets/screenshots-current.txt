@@ -1,3 +1,4 @@
+Confirmed 2026-11-12 against the following commit (the Goal completion popup's sections show counts and Expand/Collapse toggles, #822): the popup is not on a captured screen, so the captured screens are unchanged and were checked, not recaptured.
 Confirmed 2026-11-12 against the following commit (the Workspace step's Goal list and team briefing move to the page heading, #824): the captured workspace screens show the old placement until the next recapture.
 Confirmed 2026-11-12 against the following commit (the Agent Room's left panel uses the mock's panel color, #817): the captured Agent Room screens change only by the rail's slightly lighter shade; they are left as captured until the next recapture.
 Confirmed 2026-11-12 against the following commit (the Tasks step's inner tabs become folder tabs on a baseline, #815): the captured Agent Room screens show the review step, which has no inner tabs, so they are unchanged and were checked, not recaptured.
