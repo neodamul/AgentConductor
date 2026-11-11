@@ -305,3 +305,6 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 .app-menu .submenu{position:absolute;left:calc(100% + 4px);top:-7px;min-width:190px;padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--surface);box-shadow:0 8px 24px #0002}.app-menu .submenu[hidden]{display:none}
 .app-menu .menu-sep{height:1px;margin:4px 2px;background:var(--line)}
 .utility-panel .settings-actions{display:flex;flex-wrap:wrap;gap:8px}.utility-panel .settings-actions .btn{font-size:12px;padding:6px 10px;white-space:nowrap}
+
+/* The Workspace name is a label: no hover, no click. */
+.titlebar .workspace-home{cursor:default;pointer-events:none}

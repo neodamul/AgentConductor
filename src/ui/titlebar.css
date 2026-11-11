@@ -14,3 +14,6 @@
 /* GitHub #751: two-level application menu. */
 #start-workspace-list .menu-group{position:relative}#start-workspace-list .menu-parent{position:relative}#start-workspace-list .menu-parent::after{content:'▸';position:absolute;right:10px;top:50%;transform:translateY(-50%);line-height:1;color:var(--soft)}#start-workspace-list .menu-parent[aria-expanded="true"]{background:var(--fill)}
 #start-workspace-list .submenu{position:absolute;left:calc(100% + 4px);top:-7px;min-width:190px;padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--surface);box-shadow:0 12px 30px rgba(30,40,28,.18)}#start-workspace-list .submenu[hidden]{display:none}
+
+/* GitHub #751: the Workspace name is a label; it opens nothing, so it has no hover or click. */
+header.titlebar #start-workspace-menu{cursor:default;pointer-events:none}
