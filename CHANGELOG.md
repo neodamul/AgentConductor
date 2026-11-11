@@ -8,6 +8,7 @@ the GitHub Release notes for its tag.
 
 - In the Goal completion popup each changed file unfolds its diff in place when clicked (app and mock, GitHub #826).
 - The task steps show the Goal heading on one line with an Expand/Collapse toggle that unfolds the whole Goal below it (app and mock, GitHub #827).
+- The approved design manifest again records the exact bytes of every mock file; the capture script refreshes it after a passing run and a test catches drift (GitHub #849).
 
 ## v0.2.2
 

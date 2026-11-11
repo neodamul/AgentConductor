@@ -2,3 +2,5 @@
 licenses/upstream/**/LICENSE -text
 # Vendored skill text must match the recorded SHA-256 sums on every platform.
 third_party/** -text
+# The approved design manifest records exact bytes (GitHub #849).
+docs/design/approved-goal-ui/** -text
