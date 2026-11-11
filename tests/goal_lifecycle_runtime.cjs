@@ -40,6 +40,9 @@ for(const width of [840,1280]){browser=await launch(chrome,{width});for(const th
  check('inactive Goal deletion preserves new Goal',SIM.home.config.goal==='Continue a second Goal');
  for(const d of document.querySelectorAll('dialog.slide-panel[open]'))d.close();FLOW.phaseHistory();document.dispatchEvent(new Event('visibilitychange'));
  await until(()=>q('start-plan-phases').querySelector('button'),'retained phase continuation');q('start-plan-phases').querySelector('button').click();await until(()=>SIM.log.some(e=>e.kind==='next_phase')&&!q('start-save').disabled,'next phase');
+ q('start-tab-review').click();await until(()=>!q('start-panel-review').hidden&&q('start-goal-info').querySelector('.goal-info-content').textContent.includes('Phase'),'multi-Phase plan step');
+ check('plan heading uses the Goal-wide Phase position '+q('start-goal-info').textContent,q('start-goal-info').textContent.includes('Phase 2/2'));
+ check('selected task summary uses the same Phase position',q('start-plan-summary').querySelector('.plan-position').textContent.includes('Phase 2/2'));
  check('retained phase continuation launches no new planner',SIM.log.filter(e=>e.kind==='prepare').length===1&&SIM.home.proposal.slug_phase==='02-next');
  // GitHub #812: the Phase completion popup continues into the next Phase's plan; without one it offers the Goal list.
  {const next=await window.acNextPhase.info();check('the popup learns the next Phase',next&&next.id==='02-next'&&next.number===2&&next.total===2);

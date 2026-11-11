@@ -225,3 +225,9 @@ control is disabled and must update when the UI language changes.
 GitHub #831: when a Goal or Workspace has no current plan proposal, show the
 instruction to generate a plan. Clear the previous Goal's task-count introduction
 before planning begins; only describe proposed tasks once that proposal exists.
+
+## Goal-wide Phase position
+
+GitHub #832: the Plan heading and selected task summary use the current proposal's
+Phase in the active Goal's full Phase list. Task position remains local to that
+Phase. Single-Phase plans without Phase metadata retain Phase 1/1.
