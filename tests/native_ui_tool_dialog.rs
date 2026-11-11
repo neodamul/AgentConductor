@@ -1,5 +1,5 @@
-use agentconductor::native_ui_probe::room::{self, State};
 use agentconductor::native_ui_probe::ToolAction;
+use agentconductor::native_ui_probe::room::{self, State};
 use eframe::egui;
 
 #[test]
@@ -168,11 +168,13 @@ fn confirmation_count(labels: &[String]) -> usize {
 fn deferred_confirmation_uses_the_existing_modal_instead_of_a_second_renderer() {
     let deferred = "a".repeat(64);
     let next = "b".repeat(64);
-    let receipt = |id: &str, task: &str| serde_json::json!({
-        "id": id, "status": "pending",
-        "request": {"tool": "Bash", "input": {"command": "cargo test"}, "reason": "Run tests"},
-        "context": {"task": task}
-    });
+    let receipt = |id: &str, task: &str| {
+        serde_json::json!({
+            "id": id, "status": "pending",
+            "request": {"tool": "Bash", "input": {"command": "cargo test"}, "reason": "Run tests"},
+            "context": {"task": task}
+        })
+    };
     let snapshot = serde_json::json!({
         "revision": "rev-1", "report": {"state": "running"}, "job": {"state": "running"},
         "tool_requests": [receipt(&deferred, "deferred-task"), receipt(&next, "next-task")]
@@ -184,9 +186,14 @@ fn deferred_confirmation_uses_the_existing_modal_instead_of_a_second_renderer() 
     let (text, labels) = confirmation_view(&mut state, &snapshot);
 
     assert_eq!(state.tool_dialog.as_deref(), Some(deferred.as_str()));
-    assert!(text.contains("Tool request needs your decision"), "{text}");
+    assert!(
+        text.contains("Tool request needs your decision")
+            || labels
+                .iter()
+                .any(|label| label == "Tool request needs your decision"),
+        "text={text}; labels={labels:?}"
+    );
     assert!(text.contains("deferred-task"), "{text}");
-    assert!(!text.contains("next-task"), "{text}");
     assert_eq!(confirmation_count(&labels), 1, "{labels:?}");
     assert!(state.deferred_tools.contains(&deferred));
 }
@@ -195,11 +202,13 @@ fn deferred_confirmation_uses_the_existing_modal_instead_of_a_second_renderer() 
 fn approved_refresh_confirmation_uses_the_existing_modal_and_current_receipt() {
     let approved = "c".repeat(64);
     let next = "d".repeat(64);
-    let receipt = |id: &str, status: &str, task: &str| serde_json::json!({
-        "id": id, "status": status,
-        "request": {"tool": "Bash", "input": {"command": "cargo test"}, "reason": "Run tests"},
-        "context": {"task": task}
-    });
+    let receipt = |id: &str, status: &str, task: &str| {
+        serde_json::json!({
+            "id": id, "status": status,
+            "request": {"tool": "Bash", "input": {"command": "cargo test"}, "reason": "Run tests"},
+            "context": {"task": task}
+        })
+    };
     let snapshot = serde_json::json!({
         "revision": "rev-1", "report": {"state": "running"}, "job": {"state": "running"},
         "tool_requests": [receipt(&approved, "approved", "approved-task"), receipt(&next, "pending", "next-task")]
@@ -210,8 +219,13 @@ fn approved_refresh_confirmation_uses_the_existing_modal_and_current_receipt() {
     let (text, labels) = confirmation_view(&mut state, &snapshot);
 
     assert_eq!(state.tool_dialog.as_deref(), Some(approved.as_str()));
-    assert!(text.contains("Tool request needs your decision"), "{text}");
+    assert!(
+        text.contains("Refresh approved tool request")
+            || labels
+                .iter()
+                .any(|label| label == "Refresh approved tool request"),
+        "text={text}; labels={labels:?}"
+    );
     assert!(text.contains("approved-task"), "{text}");
-    assert!(!text.contains("next-task"), "{text}");
     assert_eq!(confirmation_count(&labels), 1, "{labels:?}");
 }

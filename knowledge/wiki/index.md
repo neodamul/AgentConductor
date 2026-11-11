@@ -16,6 +16,7 @@
 - [Tool-context verifier evidence](tool-context-verification.md): authoritative binding, owned verification and cancellation.
 
 - [Worker-bound human decisions](native-worker-decisions.md): session identity, decision epochs, compiled CLI controls and native limits.
+- [Native tool-decision modal](native-tool-decision-modal.md): one current-receipt modal for pending, deferred and approved-refresh decisions (#382).
 
 - [Live intermediate task reports](live-progress.md): bounded spool observation, per-attempt evidence and SQLite concurrency lesson.
 
