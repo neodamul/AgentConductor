@@ -1363,6 +1363,7 @@
   "startup.goal_row_folder": "Open the folder of Goal {value1}",
   "startup.goal_row_expand": "▸ Expand",
   "startup.goal_row_collapse": "▾ Collapse",
+  "startup.menu_workspace_settings": "Workspace settings…",
   "startup.menu_workspace": "Workspace",
   "startup.menu_agents": "Agents",
   "startup.menu_view": "View",

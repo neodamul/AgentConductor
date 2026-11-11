@@ -39,16 +39,15 @@ fn translated_message(message: &str) -> bool {
 }
 
 #[test]
-fn guide_and_manual_open_from_settings_not_the_workspace_menu() {
+fn guide_and_manual_open_from_the_help_menu_not_settings() {
     let settings = dialog("start-settings");
-    assert!(settings.contains("id=\"start-tools-guide\""));
-    assert!(settings.contains("id=\"start-manual-open\""));
-    assert!(SCRIPT.contains(
-        "q('tools-guide').onclick=()=>{q('settings').close('cancel');q('tools').showModal();}"
-    ));
-    assert!(SCRIPT.contains(
-        "q('manual-open').onclick=()=>{q('settings').close('cancel');AC_MANUAL.open(request);}"
-    ));
+    assert!(!settings.contains("id=\"start-tools-guide\""));
+    assert!(!settings.contains("id=\"start-manual-open\""));
+    assert!(SCRIPT.contains("tools:()=>q('tools').showModal()"));
+    assert!(SCRIPT.contains("manual:()=>AC_MANUAL.open(request)"));
+    let menu = include_str!("../src/ui/app_menu.js");
+    assert!(menu.contains("act('startup.user_manual', manual)"));
+    assert!(menu.contains("act('startup.agent_tools_guide', tools)"));
     for removed in ["startup.agent_tools_guide", "startup.user_manual"] {
         assert!(
             !SCRIPT.contains(removed),

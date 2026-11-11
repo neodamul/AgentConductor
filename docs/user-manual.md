@@ -27,7 +27,7 @@ The installer downloads the matching macOS/Windows archive and its `SHA256SUMS`,
 `agentconductor update` installs a newer release over the executable without restarting it; finish or stop work before running the command. The current updater makes unauthenticated GitHub requests and does not reuse GitHub CLI credentials: private or restricted releases require manual download with your authorized browser or GitHub CLI. Do not add model API keys for application updates.
 
 ### 1.2 Workspaces and settings
-You can create, open and switch workspaces while planning or a run is in progress. The previous workspace keeps working in the background; reopen it from the workspace menu to read its current plan, progress and logs. Saved settings and execution evidence stay with that workspace. Switching does not stop or approve work. Finish or stop active work before deleting its workspace. Export/import continues to share the reviewed workspace configuration archive; it does not transfer live processes.
+You can create, open and switch workspaces while planning or a run is in progress. The previous workspace keeps working in the background; reopen it from **☰ → Workspace** to read its current plan, progress and logs. Saved settings and execution evidence stay with that workspace. Switching does not stop or approve work. Finish or stop active work before deleting its workspace. Export/import continues to share the reviewed workspace configuration archive; it does not transfer live processes.
 
 
 A workspace holds goals, plans, role assignments and local history. Name it, choose an
@@ -35,7 +35,7 @@ existing project folder with **Browse…** or type the path, then **Save workspa
 Git worktree isolation is optional; shared execution is the default.
 Saving updates the name in the titlebar immediately and selects **Agent roles**. Tab changes preserve draft inputs; unsaved changes still require **Save workspace**.
 
-Use **Workspace ▾** to switch, create or open workspaces. The **☰** application menu groups the rest in two levels: **Workspace** (Goal list, New goal, New workspace…, Open existing workspace…), **Agents** (Add agent…), **View** (collapse the left panel, task details panel), **Settings…**, **Help** (Check for updates…, User manual, Agent tools guide, About) and **Close window…**. Plan rules, messenger and exporting or importing a workspace are in ⚙ **Settings**. The same titlebar is available in Agent Room.
+The **☰** application menu groups everything in two levels: **Workspace** (recent workspaces to switch to, Goal list, New goal, New workspace…, Open existing workspace…, Workspace settings…, Plan rules…, Messenger…, Export workspace…, Import workspace…), **Agents** (Add agent…), **View** (collapse the left panel, task details panel), **Settings…** (MCP servers, cache, update channel, language, theme, signal transport), **Help** (Check for updates…, User manual, Agent tools guide, About) and **Close window…**. The Workspace name in the titlebar opens the Workspace settings step. The same titlebar is available in Agent Room.
 A workspace with an existing run opens its work view when appropriate; returning to
 Workspace does not start a new plan. Unsaved changes require a choice before navigation.
 
@@ -48,7 +48,7 @@ Data moves to `~/.agentconductor/workspace-trash/<id>` for recovery.
 
 ![Workspace and goal configuration](assets/ui-workspace-current.png)
 
-Use **⚙ Settings → User manual** for offline help in the current interface language. HTML manuals preserve tables, code, links and screenshots. The [standalone HTML manual](user-manual.html) can also be opened separately.
+Use **☰ → Help → User manual** for offline help in the current interface language. HTML manuals preserve tables, code, links and screenshots. The [standalone HTML manual](user-manual.html) can also be opened separately.
 
 **Settings** includes:
 - **Interface language**: English or 한국어. Typed goals, prompts and raw evidence are never translated.
@@ -129,7 +129,7 @@ Do not edit progress files by hand; the app checks their identity.
 
 The project folder is above the goal; the coordinator is beside the workspace name. `jira:` and `confluence:` references become tags with hover summaries and delete like text. MCP lookups show progress; Preview opens immediately, then fills with the lookup result.
 
-**Settings** places **Export workspace…** beside **Import workspace…**. Review transferred configuration on the destination machine; local secrets and verification claims are not blindly copied.
+**☰ → Workspace** places **Export workspace…** beside **Import workspace…**. Review transferred configuration on the destination machine; local secrets and verification claims are not blindly copied.
 
 ### 1.5 Plan and approval
 
@@ -147,7 +147,7 @@ Each task shows the kind of work the coordinator chose (classify or extract, sum
 **Goals & progress** shows each goal's phase tags and description.
 After integrating a phase, **Plan phase n** loads the next saved phase without another planning call.
 Replanning an existing phased goal loads its current phase with current profiles.
-**Settings → Plan rules…** supports machine-wide rules or a workspace override.
+**☰ → Workspace → Plan rules…** supports machine-wide rules or a workspace override.
 
 For an ordinary folder, planning uses a temporary snapshot. Approved shared execution works directly in the selected folder, using Git metadata under `~/.agentconductor/project-history/` without creating `.git` in the project. Worktree mode isolates execution instead; review the candidate before applying it. Once the run is merged or rejected, its worktrees are removed from the repository; the diff, test results and logs stay in the run folder. Shared execution changes are already visible while agents work.
 For a committed repository a clean baseline is required. Review the dialog before **Commit and continue**.
@@ -253,11 +253,11 @@ Reviewed lessons include evidence and source hashes, are mirrored to Markdown wi
 and become stale when their source changes. They grant no permissions.
 Manual memory sync/import is optional.
 
-**Settings → Export workspace…** shares profiles, roles and verified goal archives.
+**☰ → Workspace → Export workspace…** shares profiles, roles and verified goal archives.
 Secrets, environment values and local model observations remain on the machine.
 Review archives before sharing; imported capability claims require local confirmation.
 
-**Settings → Messenger…** supports Slack/webhooks and optional allow/deny replies from listed approvers.
+**☰ → Workspace → Messenger…** supports Slack/webhooks and optional allow/deny replies from listed approvers.
 Webhook/bot tokens and relay secrets stay local. Goal text is included only by explicit choice.
 Remote replies never approve a plan or merge.
 

@@ -1,5 +1,5 @@
-// GitHub #751: the application menu groups related actions into two levels (group, then item); the preferences and
-// maintenance actions live in Settings. A group opens by click, hover, ArrowRight/Enter/Space; Escape closes the submenu first.
+// GitHub #751: the application menu groups related actions into two levels (group, then item); the Workspace group holds everything about the Workspace;
+// preferences and maintenance actions live in Settings. A group opens by click, hover, ArrowRight/Enter/Space; Escape closes the submenu first.
 window.acAppMenu = (() => {
   const click = id => document.getElementById('start-' + id)?.click();
   function closeGroups(menu, except) {
@@ -20,19 +20,19 @@ window.acAppMenu = (() => {
     if (list.dataset.arrows) return; list.dataset.arrows = '1';
     list.addEventListener('keydown', e => {
       if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return; e.preventDefault();
-      const sub = document.activeElement.closest('.submenu'), pool = sub ? [...sub.querySelectorAll(':scope>button')] : [...list.querySelectorAll(':scope>button,:scope>.menu-group>.menu-parent')];
+      const sub = document.activeElement.closest('.submenu'), pool = sub ? [...sub.querySelectorAll(':scope>button,:scope>.workspace-row>button')] : [...list.querySelectorAll(':scope>button,:scope>.menu-group>.menu-parent')];
       if (pool.length) pool[(pool.indexOf(document.activeElement) + (e.key === 'ArrowDown' ? 1 : -1) + pool.length) % pool.length].focus();
     });
   }
   // create/open/updates/about are the existing Workspace and update buttons; close hides the menu; the rest reuse the titlebar and Settings controls.
-  function items({ el, create, open, updates, about, close }) {
+  function items({ el, rows, create, open, updates, about, close, workspaceSettings, rules, messenger, exportWorkspace, importWorkspace, tools, manual }) {
     const act = (key, run) => leaf(el, key, () => { close(); run(); });
     const nodes = [
-      group(el, 'startup.menu_workspace', [act('startup.menu_goals', () => click('goal-list-open')), act('startup.menu_new_goal', () => click('new-goal')), create, open]),
+      group(el, 'startup.menu_workspace', [...rows, ...(rows.length ? [el('hr')] : []), act('startup.menu_goals', () => click('goal-list-open')), act('startup.menu_new_goal', () => click('new-goal')), create, open, act('startup.menu_workspace_settings', workspaceSettings), act('startup.plan_rules', rules), act('startup.messenger', messenger), act('startup.export_settings', exportWorkspace), act('startup.import_settings', importWorkspace)]),
       group(el, 'startup.menu_agents', [act('startup.menu_add_agent', () => click('add'))]),
       group(el, 'startup.menu_view', [act('startup.menu_rail', () => click('rail-toggle')), act('startup.menu_inspector', () => click('inspector-toggle'))]),
       act('startup.menu_settings', () => click('settings-button')),
-      group(el, 'startup.menu_help', [updates, act('startup.user_manual', () => click('manual-open')), act('startup.agent_tools_guide', () => click('tools-guide')), about]),
+      group(el, 'startup.menu_help', [updates, act('startup.user_manual', manual), act('startup.agent_tools_guide', tools), about]),
       el('hr'),
       act('startup.menu_close_window', () => window.__acCloseRequested?.()),
     ];

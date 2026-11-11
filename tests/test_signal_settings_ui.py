@@ -24,17 +24,18 @@ class SignalSettings(unittest.TestCase):
         checks = "syncSignalSettings();const a=require('node:assert/strict');a.equal(q('signal-server').hidden,true);q('signal-transport').value='agentmemory';syncSignalSettings();a.equal(q('signal-server').hidden,false);q('signal-transport').value='local';syncSignalSettings();a.equal(q('signal-server').hidden,true);a.equal(q('signal-port').value,'3111');"
         subprocess.run(['node','-e',fixture+match.group(0)+checks],check=True)
         self.assertIn("q('signal-transport').onchange=syncSignalSettings", js)
-    def test_tools_guide_and_manual_are_in_settings_not_workspace_menu(self):
+    def test_workspace_actions_live_in_the_menu_not_in_settings(self):
         html = (ROOT / "src/ui/startup.html").read_text(encoding="utf-8")
         settings = html.split('<dialog id="start-settings"')[1].split("</dialog>")[0]
-        self.assertIn('start-tools-guide', settings)
-        self.assertIn('start-manual-open', settings)
-        js = (ROOT / "src/ui/startup.js").read_text(encoding="utf-8")
-        # GitHub #751: the chooser lists workspaces only; the maintenance actions live in Settings.
-        self.assertIn("[...rows,...(rows.length?[el('hr')]:[]),create,open]", js)
-        for button in ('start-rules-open', 'start-messenger-open', 'start-export-settings', 'start-import-settings', 'start-cache-button'):
+        for button in ('start-mcp-settings', 'start-cache-button'):
             self.assertIn(button, settings)
-        self.assertIn("q('tools-guide').onclick=()=>{q('settings').close('cancel');q('tools').showModal();}", js)
+        for button in ('start-rules-open', 'start-messenger-open', 'start-export-settings', 'start-import-settings', 'start-tools-guide', 'start-manual-open'):
+            self.assertNotIn(button, settings)
+        js = (ROOT / "src/ui/startup.js").read_text(encoding="utf-8")
+        # GitHub #751: the Workspace name opens no chooser; the application menu carries the recents and the actions.
+        self.assertIn("window.acAppMenu.items({el,rows,create,open", js)
+        self.assertIn("q('workspace-menu').onclick=()=>menuActions.workspaceSettings()", js)
+        self.assertIn("tools:()=>q('tools').showModal()", js)
     def test_signal_settings_are_translated(self):
         table = (ROOT / "src/ui/messages/ko.json").read_text(encoding="utf-8")
         for key in ["Signal transport", "Local Rust", "agentmemory preferred", "agentmemory port", "No signal sent yet.", "Last signal: "]:
