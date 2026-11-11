@@ -16,6 +16,7 @@ for(const width of [840,1280]){browser=await launch(chrome,{width});for(const th
  q('start-prepare').click();check('planning does not open a confirmation',!q('start-planning-confirm')?.open);
  await until(()=>SIM.home.proposal?.phase==='ready'&&!q('start-run').disabled,'review ready');check('planning uses registered coordinator and model',SIM.home.config.coordinator==='claude'&&SIM.home.config.profiles[0].coordinator_model==='opus');
  check('the plan screen has no legacy approval evidence disclosure',!q('start-approval-evidence')&&!q('start-consent-evidence'));
+ check('Remove task explains manual additions',document.querySelectorAll('.task-remove').length>0&&[...document.querySelectorAll('.task-remove')].every(b=>b.title===acMessage('startup.remove_task_hint')));
  q('start-run').click();check('run does not open a confirmation',!q('start-consent')?.open);
  await until(()=>document.body.classList.contains('on-run')&&document.querySelectorAll('.session-choice .task-number').length===3,'running Room');
  check('run starts only after exact consent',SIM.log.filter(e=>e.kind==='start').length===1&&SIM.log.find(e=>e.kind==='start').p.digest==='d1');
