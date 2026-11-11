@@ -4,6 +4,10 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.2.3
+
+- The task steps show the Goal heading on one line with an Expand/Collapse toggle that unfolds the whole Goal below it (app and mock, GitHub #827).
+
 ## v0.2.2
 
 - MCP server settings use a guided registration form, discover tools after saving, bind Jira and Confluence to discovered read-only tools, and keep OpenCode JSON/JSONC in Advanced (GitHub #809).

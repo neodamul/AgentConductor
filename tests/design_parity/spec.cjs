@@ -292,6 +292,9 @@ module.exports = [
   // GitHub #824: on the Workspace step the Goal list and team briefing sit in the page heading like the other steps; New Goal stays in the Goal section.
   { name: 'workspace-goal-controls-in-heading', assert: "(() => { const h = document.querySelector('.startup-heading'), g = document.getElementById('start-goal-list-open'), b = document.getElementById('brief-team'), n = document.getElementById('start-new-goal'); return h.contains(g) && h.contains(b) && g.nextElementSibling === b && !h.contains(n) && g.getBoundingClientRect().width > 0; })()",
     app: { run: "document.getElementById('start-tab-workspace')?.click()" } },
+  // GitHub #827: the folded Goal heading's Expand toggle matches the mock.
+  { name: 'goal-title-toggle', props: ['fontSize', 'color', 'paddingLeft', 'backgroundColor', 'borderTopWidth'], keys: ['fontSize', 'color', 'paddingLeft', 'backgroundColor', 'borderTopWidth'], pixel: false,
+    mock: { url: '?theme=light#3', selector: '#goal-title-toggle' }, app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()", selector: '#goal-toggle' } },
   { name: 'view-tabs-not-stretched', assert: "(() => { const t = [...document.querySelectorAll('.view-tabs .tab')]; const w = document.querySelector('.view-tabs').getBoundingClientRect().width; return t.length >= 4 && t.every(x => x.getBoundingClientRect().width < w / 3); })()",
     app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()" } },
   // Compact Goal header (GitHub #408): 17px semibold single line.

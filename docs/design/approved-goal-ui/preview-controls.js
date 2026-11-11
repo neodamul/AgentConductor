@@ -201,3 +201,10 @@ document.getElementById('menu-view-rail').onclick=()=>{closeAppMenu();document.g
 document.getElementById('menu-view-inspector').onclick=()=>{closeAppMenu();document.getElementById('right-panel-toggle').click();};
 document.getElementById('menu-update').onclick=()=>{closeAppMenu();document.getElementById('update-button').click();};
 ['menu-new-workspace','menu-open-workspace','menu-rules','menu-messenger','menu-export','menu-import','menu-manual','menu-tools'].forEach(id=>{document.getElementById(id).onclick=closeAppMenu;});
+// The Goal heading of the run steps is folded to one line; the toggle shows the whole Goal and folds it again.
+function syncGoalTitle(open){
+ const toggle=document.getElementById('goal-title-toggle'),text=document.getElementById('goal-title-text'),goal=selectedGoal();
+ text.textContent=goal.description||goal.name;text.hidden=!open;toggle.setAttribute('aria-expanded',String(open));toggle.textContent=open?'▾ 접기':'▸ 펼치기';
+}
+document.getElementById('goal-title-toggle').onclick=()=>syncGoalTitle(document.getElementById('goal-title-toggle').getAttribute('aria-expanded')!=='true');
+syncGoalTitle(false);

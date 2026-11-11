@@ -85,3 +85,7 @@
 #run-screen .goal-bar #show-result{font-size:13px;padding:6px 12px;border-radius:6px}
 /* The rail's Phase heading is one line, like the mock's "1. 토큰 회전"; the full name stays in the title. */
 :is(#rail-room,#rail-outline) .phase-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* GitHub #827: the Goal heading's Expand/Collapse toggle and the unfolded Goal, as in the mock. */
+.goal-bar .goal-title-toggle{flex:none;border:0;background:transparent;color:var(--accent-text);font:inherit;font-size:12px;cursor:pointer;padding:2px 4px;margin-right:auto}.goal-bar .goal-title-toggle:hover{text-decoration:underline}
+.goal-title-text{margin:-4px 0 10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-size:13px;line-height:1.6;white-space:pre-wrap;max-height:160px;overflow:auto}.goal-title-text[hidden]{display:none}

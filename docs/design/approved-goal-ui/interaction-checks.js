@@ -152,6 +152,11 @@
   action.click();check('the next Phase plan opens step 3',!document.getElementById('goal-result-dialog').open&&i===2&&!document.getElementById('workspace-overview').classList.contains('is-open'));
   delete goal.nextPhase;showGoalResult('rotation');check('the last Phase offers the Goal list',document.getElementById('goal-result-eyebrow').textContent==='목표 완료'&&action.textContent.trim()==='목표 목록으로');
   document.getElementById('goal-result-dialog').close();Object.assign(goal,saved);if(added)workspaceGoals.splice(workspaceGoals.indexOf(goal),1);i=view;show();}
+ {const view=i;i=3;show();const toggle=document.getElementById('goal-title-toggle'),text=document.getElementById('goal-title-text');
+  check('the task step shows the Goal folded with an Expand toggle',getComputedStyle(toggle).display!=='none'&&toggle.textContent==='▸ 펼치기'&&text.hidden&&getComputedStyle(document.getElementById('saved-goal-title')).whiteSpace==='nowrap');
+  toggle.click();check('Expand shows the whole Goal',!text.hidden&&text.textContent===(selectedGoal().description||selectedGoal().name)&&text.textContent.length>0&&toggle.textContent==='▾ 접기'&&toggle.getAttribute('aria-expanded')==='true');
+  toggle.click();check('Collapse folds it again',text.hidden&&toggle.textContent==='▸ 펼치기');
+  i=0;show();check('the Workspace step has no Goal toggle',getComputedStyle(toggle).display==='none'&&getComputedStyle(text).display==='none');i=view;show();}
  check('no script errors',!document.documentElement.dataset.designError);
  document.documentElement.dataset.interactionResult=JSON.stringify({theme:initialTheme,width:innerWidth,checks});
 })().catch(error=>document.documentElement.dataset.designError=error.message);
