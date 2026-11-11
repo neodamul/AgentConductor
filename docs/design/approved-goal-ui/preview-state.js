@@ -194,6 +194,10 @@ function showGoalResult(id){
  section('변경 파일',rotation?['src/auth/refresh.rs · +84 / −12','src/auth/store.rs · +21 / −3','tests/auth/rotation.rs · +66 / −0','docs/security.md · +18 / −2']:['src/health.rs','tests/health.rs','docs/health.md']);
  section('검증 결과',rotation?['cargo test auth · 통과','cargo test rotation · 통과','보안 정책 문서 검토 · 통과']:['상태 확인 및 의존 서비스 실패 테스트 · 8/8 통과']);
  section('남긴 교훈',rotation?['테스트 명령은 cargo test auth로 범위를 좁혀 실행한다.','refresh.rs와 store.rs의 토큰 상태 변경을 함께 검토한다.']:['의존 서비스 실패 시 반환하는 상태와 응답 규칙을 문서화한다.']);
+ // A Phase result names the Phase and offers its next Phase's plan; the last Phase offers the Goal list.
+ const next=goal.nextPhase;document.getElementById('goal-result-eyebrow').textContent=next?'Phase '+(next.number-1)+'/'+next.total+' 완료':'목표 완료';
+ if(next)document.getElementById('goal-result-title').textContent=goal.name+' — Phase '+(next.number-1)+' 완료';
+ document.getElementById('result-to-workspace').textContent=next?'다음 Phase 계획 ('+next.number+'/'+next.total+')':'목표 목록으로';
  const dialog=document.getElementById('goal-result-dialog');if(!dialog.open)dialog.showModal();
  renderMergedState();
 }

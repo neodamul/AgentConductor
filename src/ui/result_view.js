@@ -28,7 +28,13 @@ window.acResultView = (() => {
     const row = (a, b) => { const el = node('li'); el.append(node('span', a), node('span', () => ' · ' + (typeof b === 'function' ? b() : b))); return el; };
     // GitHub #733/#737: the title is the Goal's first meaningful line, then the coordinator's summary sentence.
     const goalLine = String(data.goal || '').split('\n').map(l => l.trim()).find(l => l && !/^<\/?[\w-]+>$/.test(l)) || '';
-    AC_I18N.bind($('result-title'), () => acMessage('room.result_title', { value1: goalLine }));
+    // GitHub #812: a Phase with Phases left reads as that Phase's result and continues to the next Phase's plan.
+    const next = data.nextPhase;
+    $('result-dialog').dataset.nextPhase = next ? next.id : '';
+    AC_I18N.bind($('result-eyebrow'), () => next ? acMessage('room.result_eyebrow_phase', { value1: next.number - 1, value2: next.total }) : acMessage('room.result_eyebrow'));
+    $('result-close-icon').textContent = next ? '→ ' : '☰ ';
+    AC_I18N.bind($('result-close-label'), () => next ? acMessage('room.result_next_phase', { value1: next.number, value2: next.total }) : acMessage('room.result_to_goals'));
+    AC_I18N.bind($('result-title'), () => next ? acMessage('room.result_title_phase', { value1: goalLine, value2: next.number - 1 }) : acMessage('room.result_title', { value1: goalLine }));
     $('result-title').title = goalLine;
     $('result-summary').textContent = data.phaseResults?.length ? acMessage('room.result_all_phases', { value1: data.phaseResults.length, value2: data.summary || '' }) : data.summary || ''; $('result-summary').hidden = !data.phaseResults?.length && !data.summary;
     AC_I18N.bind($('result-target'), () => acMessage('room.result_target', { value1: data.branch, value2: (data.commit || '').slice(0, 12) }));

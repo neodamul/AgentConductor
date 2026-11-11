@@ -29,6 +29,7 @@ the GitHub Release notes for its tag.
 - Opening the application menu moves keyboard focus into it, so the arrow keys work at once (GitHub #789).
 - The Goal list opened from the Agent Room (for example from the completion popup) shows each Goal's current state, such as Completed (GitHub #797).
 - The ☰ menu drops Goal list and New Goal (both stay on the screen) and lists Plan rules… and Messenger… at its top level instead of under Workspace (app and mock, GitHub #808).
+- When Phases remain, the Phase completion popup reads as that Phase's result and its main action plans the next Phase (step 3) instead of returning to the Goal list; the Goal list stays the action after the last Phase (app and mock, GitHub #812).
 
 ## v0.2.1
 

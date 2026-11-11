@@ -14,5 +14,6 @@ async function openResult() {
   const details = await Promise.all(r.tasks.map((_, index) => request({ kind: 'task', index }).catch(() => ({}))));
   const history = snapshot.phase?.slug ? await request({ kind: 'goal_result', slug: snapshot.phase.slug }).catch(() => null) : null;
   const phaseResults = history?.phase_results?.length > 1 ? history.phase_results : null;
-  acResultView.show({ summary: r.latest_review?.summary, goal: r.plan.goal, branch: r.branch, repo: r.repo, commit: review.report.candidate?.commit, diff: review.diff, tests: review.test_output, details, phaseResults });
+  const nextPhase = await window.acNextPhase?.info?.();
+  acResultView.show({ nextPhase, summary: r.latest_review?.summary, goal: r.plan.goal, branch: r.branch, repo: r.repo, commit: review.report.candidate?.commit, diff: review.diff, tests: review.test_output, details, phaseResults });
 }

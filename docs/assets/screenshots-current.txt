@@ -1,3 +1,4 @@
+Confirmed 2026-11-12 against the following commit (the Phase completion popup offers the next Phase plan when Phases remain, #812): the popup is not on a captured screen, so the captured screens are unchanged and were checked, not recaptured.
 Confirmed 2026-11-11 against the following commit (the completed Goal result popup's sections expand and collapse, #799): the result popup is not on a captured screen, so the captured screens are unchanged and were checked, not recaptured.
 Confirmed 2026-11-11 against the following commit (the roles step footer button reads Apply agent role defaults, #795): the roles step is not on a captured screen, so the captured screens are unchanged and were checked, not recaptured.
 Confirmed 2026-11-11 against the following commit (the out-of-scope recovery dialog keeps its action row in view while it scrolls, #784): the dialog is not on a captured screen, so the captured screens are unchanged and were checked, not recaptured.

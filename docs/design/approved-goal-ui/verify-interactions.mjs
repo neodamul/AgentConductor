@@ -73,6 +73,7 @@ try{
   if(mode==='profile-edit'||mode==='profile-edit-bottom'){await call('Runtime.evaluate',{expression:'selectRail("agents");'+frameWait,awaitPromise:true});action='openProfileEditor("claude");'+(mode==='profile-edit-bottom'?'const fields=document.querySelector(".profile-editor-fields");fields.scrollTop=fields.scrollHeight;':'');}
   if(mode==='close-confirmation')action='openClosePreview()';
   if(mode==='settings')action='document.getElementById("settings-button").click()';
+  if(mode==='result-next-phase')action='workspaceGoals[0].nextPhase={number:2,total:2};showGoalResult("rotation")';
   if(mode.startsWith('quota-')){
    await call('Runtime.evaluate',{expression:'selectRail("agents");'+frameWait,awaitPromise:true});
    const index=['quota-healthy','quota-error','quota-unsupported'].indexOf(mode);action='document.querySelectorAll(".usage-button")['+index+'].click()';
