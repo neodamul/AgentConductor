@@ -46,7 +46,9 @@ fn native_workspace_save_uses_the_async_worker_and_refreshes_persisted_state() {
     let canonical = root.join("repository").canonicalize().unwrap();
     let expected = canonical.to_str().unwrap();
     assert_eq!(
-        after["config"]["repository"].as_str().map(|s| s.trim_start_matches(r"\\?\")),
+        after["config"]["repository"]
+            .as_str()
+            .map(|s| s.trim_start_matches(r"\\?\")),
         Some(expected.trim_start_matches(r"\\?\"))
     );
     drop(worker);
