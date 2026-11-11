@@ -31,6 +31,7 @@ Release scope: the published app is the current `main` desktop product. The sepa
 - [x] Plan: use approved Goal UI mockups in public README/manuals only with clear sample-data preview labels; identify runtime captures separately.
 - [x] Task: refresh live workspace screenshots with a read-only demo coordinator so the UI contains no coordinator-unavailable warning; sync the About dialog's embedded mark to `src/ui/assets/ac-64.png`.
 - [x] Task: add approved workspace and light/dark task design previews to README and both Markdown manuals; regenerate the committed offline HTML manuals.
+- [x] Task: record artwork provenance, icon parity, screenshot warning regression and cross-PR conflict in the LLM wiki with source fingerprints.
 - [x] Verify: About icon byte-parity and cross-theme/viewport UI checks pass; fresh workspace captures contain no coordinator warning; offline manual generation, `manual_renderer` and `public_docs` pass locally.
 - [x] Complete: keep the approved design previews and current runtime captures clearly distinguished in public documentation; no release was created.
 ## Stable release 0.2.0 — native tool-decision modal bug #382 (2026-11-11)

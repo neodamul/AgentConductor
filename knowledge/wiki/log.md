@@ -655,3 +655,7 @@ Windows rounded the last Workspace tools row onto the fixed footer by 0.125 CSS 
 ## 2026-11-11 Application menu and Goal-list parity (#750–#753)
 
 The combined UI branch groups commands by Workspace, Agents, View, and Help; keyboard navigation opens and closes nested groups while restoring focus. Goal text preserves line breaks and supports accessible expand/collapse. Agent dialog controls use one spacing rhythm, and plan-source actions are hidden to match the approved mock. Local menu, Goal-row, and plan-source parity checks pass. AgentMemory REST save is pending service recovery; this LLM-wiki entry preserves the implementation contract.
+
+## 2026-11-11 Public artwork and About icon follow-up
+
+PR #761 now labels approved mockups as sample-data design previews, refreshes the live workspace captures without a coordinator warning, and synchronizes the About image with the canonical app icon. The About runtime/byte-parity and public-doc tests pass. Review found PR #762's independent workspace capture still has the warning; the clean fixture and assets were linked in that PR for reconciliation. The Rust migration remains incomplete at 22/50; Windows package acceptance is still outstanding for bug reports #189, #226, and #310.
