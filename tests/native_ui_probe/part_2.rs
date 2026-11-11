@@ -42,13 +42,12 @@ fn native_workspace_save_uses_the_async_worker_and_refreshes_persisted_state() {
 
     assert_eq!(after["config"]["goal"], "Rotate refresh tokens");
     assert_eq!(after["config"]["name"], "Auth workspace");
+    // Windows canonical paths carry the verbatim `\\?\` prefix; the saved repository is the plain path.
+    let canonical = root.join("repository").canonicalize().unwrap();
+    let expected = canonical.to_str().unwrap();
     assert_eq!(
-        after["config"]["repository"],
-        root.join("repository")
-            .canonicalize()
-            .unwrap()
-            .to_str()
-            .unwrap()
+        after["config"]["repository"].as_str().map(|s| s.trim_start_matches(r"\\?\")),
+        Some(expected.trim_start_matches(r"\\?\"))
     );
     drop(worker);
     drop(room);
