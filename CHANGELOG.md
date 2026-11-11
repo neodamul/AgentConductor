@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## v0.2.0
 
+- The Workspace chooser lists only workspaces plus New and Open; plan rules, messenger and export/import live in Settings, and the online manuals (EN/KO) describe the two-level menu, the Settings actions and the expandable Goal row (GitHub #751, #753).
 - The application menu is a two-level menu (Workspace, Agents, View, Settings, Help, Close window); plan rules, messenger, export/import and the other maintenance actions moved into Settings (GitHub #751).
 - The app's agent dialog uses the mock's rhythm (12px between fields, 6px label gap, 34px controls) and a Goal row shows its goal text with line breaks, collapsed to two lines with an expand button (GitHub #750, #753).
 - The `cli_workflow` test retries its fixture cleanup until the detached availability watcher's files are gone instead of failing on the first removal (GitHub #754).

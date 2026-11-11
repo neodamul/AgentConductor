@@ -18,7 +18,7 @@ The app version is beside the title. Version 0.2.0 redesigns the goal screen: on
 
 ### 1.1a Application updates
 
-The app checks GitHub Releases in the background every **10 minutes**. A newer installable release shows an update icon left of Settings. Choose **Workspace ▾ → Check for updates**, read the scrollable release notes beneath the link, inspect the current/latest versions and choose **Update and restart**. Finish or stop runs and active app jobs first; the desktop refuses installation while any saved workspace has running work.
+The app checks GitHub Releases in the background every **10 minutes**. A newer installable release shows an update icon left of Settings. Choose **☰ → Help → Check for updates…**, read the scrollable release notes beneath the link, inspect the current/latest versions and choose **Update and restart**. Finish or stop runs and active app jobs first; the desktop refuses installation while any saved workspace has running work.
 
 **Settings → Update repository** chooses where updates come from: a GitHub `owner/name`, or an `https://host/owner/name` URL of an in-house GitHub-compatible server. Leave it empty for the default. Release notes, the archive and `SHA256SUMS` come from that repository's latest release, so only use a repository you trust.
 
@@ -35,8 +35,7 @@ existing project folder with **Browse…** or type the path, then **Save workspa
 Git worktree isolation is optional; shared execution is the default.
 Saving updates the name in the titlebar immediately and selects **Agent roles**. Tab changes preserve draft inputs; unsaved changes still require **Save workspace**.
 
-Use **Workspace ▾** to create, open or switch workspaces, edit plan rules, share settings,
-or configure messenger notifications. The same titlebar is available in Agent Room.
+Use **Workspace ▾** to switch, create or open workspaces. The **☰** application menu groups the rest in two levels: **Workspace** (Goal list, New goal, New workspace…, Open existing workspace…), **Agents** (Add agent…), **View** (collapse the left panel, task details panel), **Settings…**, **Help** (Check for updates…, User manual, Agent tools guide, About) and **Close window…**. Plan rules, messenger and exporting or importing a workspace are in ⚙ **Settings**. The same titlebar is available in Agent Room.
 A workspace with an existing run opens its work view when appropriate; returning to
 Workspace does not start a new plan. Unsaved changes require a choice before navigation.
 
@@ -68,11 +67,11 @@ Settings has **Agent tools guide…** for optional agentmemory, RTK, Ponytail, G
 ### 1.2a The goal screen
 One screen serves the whole job. A single stepper with six steps — **Workspace**, **Agent roles**, **Plan**, **Tasks**, **Verify** and **Review and merge** — is grouped as Prepare, Run and Finish; the first three open the workspace settings and the last three open the Agent Room while a run exists, and the Room marks the step the run is in. The left panel has two tabs, **Agents** and **Phase·Task**, and the panel icon at the left of the title bar hides or restores it. Task details open in a column on the right with the icon at the right of the title bar; it starts closed every time and never opens by itself.
 
-**Goal list** (next to the goal title) opens the workspace's goals in a panel that slides in from the right, on the workspace screen and in the Agent Room. Each goal row has a red trash button (permanent deletion), a folder button that opens the goal's folder in Finder or Explorer and, for a completed goal, **Result**. Deleting asks first: the confirmation names the goal and its exact folder, warns that the whole folder is deleted without backup and without going to the Trash, and **Cancel** is the default. Running work of that goal is stopped before anything is removed; only that goal's own folder is deleted, never the project folder, and a folder that is not owned by the app is refused.
+**Goal list** (next to the goal title) opens the workspace's goals in a panel that slides in from the right, on the workspace screen and in the Agent Room. Each goal row has a red trash button (permanent deletion), a folder button that opens the goal's folder in Finder or Explorer and, for a completed goal, **Result**. The goal text of a row keeps its line breaks, shows two lines and expands with **▸ Expand** (**▾ Collapse** closes it). Deleting asks first: the confirmation names the goal and its exact folder, warns that the whole folder is deleted without backup and without going to the Trash, and **Cancel** is the default. Running work of that goal is stopped before anything is removed; only that goal's own folder is deleted, never the project folder, and a folder that is not owned by the app is refused.
 
 When a goal completes, one popup shows where the changes were merged, the changed files, the verification results and the lessons; **Result** in the Goal list or in the Agent Room opens the same popup. The team briefing, the chat with the coordinator and Settings also slide in from the right, one at a time. Claude Code and Codex show their own marks; the border of an agent's icon shows its state (green running or completed, yellow waiting, red failed or blocked).
 
-**About** (last item of the application menu) shows what AgentConductor is, its credits and how to install the three agent CLIs: `npm install -g @anthropic-ai/claude-code`, `npm install -g @openai/codex` and `npm install -g opencode-ai`, each with a copy button. It also opens by itself once on the first start after an install or an update; **Get started** or Escape closes it, and it stays quiet until the next version.
+**About** (last item of **Help** in the application menu) shows what AgentConductor is, its credits and how to install the three agent CLIs: `npm install -g @anthropic-ai/claude-code`, `npm install -g @openai/codex` and `npm install -g opencode-ai`, each with a copy button. It also opens by itself once on the first start after an install or an update; **Get started** or Escape closes it, and it stays quiet until the next version.
 
 ### 1.3 Agents and models
 
@@ -130,7 +129,7 @@ Do not edit progress files by hand; the app checks their identity.
 
 The project folder is above the goal; the coordinator is beside the workspace name. `jira:` and `confluence:` references become tags with hover summaries and delete like text. MCP lookups show progress; Preview opens immediately, then fills with the lookup result.
 
-The menu places **Export workspace** beside **Import workspace**. Review transferred configuration on the destination machine; local secrets and verification claims are not blindly copied.
+**Settings** places **Export workspace…** beside **Import workspace…**. Review transferred configuration on the destination machine; local secrets and verification claims are not blindly copied.
 
 ### 1.5 Plan and approval
 
@@ -148,7 +147,7 @@ Each task shows the kind of work the coordinator chose (classify or extract, sum
 **Goals & progress** shows each goal's phase tags and description.
 After integrating a phase, **Plan phase n** loads the next saved phase without another planning call.
 Replanning an existing phased goal loads its current phase with current profiles.
-**Plan rules…** supports machine-wide rules or a workspace override.
+**Settings → Plan rules…** supports machine-wide rules or a workspace override.
 
 For an ordinary folder, planning uses a temporary snapshot. Approved shared execution works directly in the selected folder, using Git metadata under `~/.agentconductor/project-history/` without creating `.git` in the project. Worktree mode isolates execution instead; review the candidate before applying it. Once the run is merged or rejected, its worktrees are removed from the repository; the diff, test results and logs stay in the run folder. Shared execution changes are already visible while agents work.
 For a committed repository a clean baseline is required. Review the dialog before **Commit and continue**.
@@ -254,11 +253,11 @@ Reviewed lessons include evidence and source hashes, are mirrored to Markdown wi
 and become stale when their source changes. They grant no permissions.
 Manual memory sync/import is optional.
 
-**Export workspace…** shares profiles, roles and verified goal archives.
+**Settings → Export workspace…** shares profiles, roles and verified goal archives.
 Secrets, environment values and local model observations remain on the machine.
 Review archives before sharing; imported capability claims require local confirmation.
 
-**Messenger…** supports Slack/webhooks and optional allow/deny replies from listed approvers.
+**Settings → Messenger…** supports Slack/webhooks and optional allow/deny replies from listed approvers.
 Webhook/bot tokens and relay secrets stay local. Goal text is included only by explicit choice.
 Remote replies never approve a plan or merge.
 
