@@ -3,7 +3,9 @@ const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('nod
 const html=fs.readFileSync('src/ui/room.html','utf8'),room=fs.readFileSync('src/ui/room.js','utf8'),source=fs.readFileSync('src/ui/room_result.js','utf8'),view=fs.readFileSync('src/ui/result_view.js','utf8'),ui=fs.readFileSync('src/ui.rs','utf8'),document_rs=fs.readFileSync('src/ui/setup/document.rs','utf8');
 const dialog=html.match(/<dialog id="result-dialog"[\s\S]*?<\/dialog>/)[0];
 for(const id of ['result-title','result-target','result-metrics','result-files','result-tests','result-lessons','result-close'])assert.match(dialog,new RegExp(`id="${id}"`),id);
-assert.doesNotMatch(dialog,/<details|new.goal|start.new/i,'everything is shown at once, no expander and no new-goal shortcut');
+assert.doesNotMatch(dialog,/new.goal|start.new/i,'no new-goal shortcut');
+// GitHub #799: changed files, tests and lessons expand and collapse, and each opening starts collapsed.
+assert.equal((dialog.match(/<details class="result-section"><summary><h3>/g)||[]).length,3,'three collapsible sections');assert.match(view,/details\.result-section'\)\.forEach\(d => \{ d\.open = false; \}\)/,'sections reset to collapsed on open');
 assert.match(html,/id="show-result"[^>]*hidden/,'the rail has a Result button, hidden until the run is completed');
 assert.match(room,/watchResult\(snapshot\)/);assert.match(ui,/room_result\.js/);assert.match(document_rs,/result_view\.js/,'the shared renderer is a top-level script, also used by the Goal list');
 

@@ -159,7 +159,8 @@ pub fn open(room: Arc<super::super::Room>) -> Result<(), String> {
         window,
         "setTitle:",
         string(crate::ui::messages::text(
-            "native.agentconductor_agent_room",
+            // GitHub #772: one neutral caption for every stage of the unified window.
+            "native.window_title",
         ))?,
     );
     // SAFETY: objc_msgSend is cast to `setMinSize:` and `setReleasedWhenClosed:`'s signatures; `window` is live.

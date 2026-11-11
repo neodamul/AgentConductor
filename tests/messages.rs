@@ -53,3 +53,22 @@ fn javascript_localization_preserves_user_content_when_switching_languages() {
         String::from_utf8_lossy(&result.stderr)
     );
 }
+
+#[test]
+fn the_native_window_caption_names_no_single_stage() {
+    // GitHub #772: the unified window showed "Agent Room" while Workspace settings was on screen.
+    for messages in [
+        include_str!("../src/ui/messages/en.json"),
+        include_str!("../src/ui/messages/ko.json"),
+    ] {
+        let messages: serde_json::Value = serde_json::from_str(messages).unwrap();
+        assert_eq!(messages["native.window_title"], "AgentConductor");
+        assert!(messages.get("native.agentconductor_agent_room").is_none());
+    }
+    for source in [
+        include_str!("../src/ui/native/cocoa.rs"),
+        include_str!("../src/ui/native/webview2.rs"),
+    ] {
+        assert!(source.contains("\"native.window_title\""));
+    }
+}

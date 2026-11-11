@@ -26,7 +26,8 @@ pub fn open(room: Arc<super::super::Room>) -> Result<(), String> {
     let mut event_loop = EventLoopBuilder::<Reply>::with_user_event().build();
     let window = WindowBuilder::new()
         .with_title(crate::ui::messages::text(
-            "native.agentconductor_agent_room",
+            // GitHub #772: one neutral caption for every stage of the unified window.
+            "native.window_title",
         ))
         .with_window_icon(Some(
             tao::window::Icon::from_rgba(include_bytes!("../assets/ac-64.rgba").to_vec(), 64, 64)

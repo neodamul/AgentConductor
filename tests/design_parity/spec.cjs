@@ -292,6 +292,11 @@ module.exports = [
   { name: 'rail-width-840', viewport: [840, 800], app: {}, assert: "document.querySelector('.startup-team').getBoundingClientRect().width === 230" },
   { name: 'rail-width-1280', viewport: [1280, 800], app: {}, assert: "document.querySelector('.startup-team').getBoundingClientRect().width === 250" },
   // Result summary (GitHub #408): compact metadata on one ruled line - 16px/650 values, 14px/500 labels.
+  // GitHub #799: the result sections expand and collapse like the mock's.
+  { name: 'result-section-summary', props: ['marginTop', 'marginBottom', 'display', 'columnGap', 'cursor'], keys: ['marginTop', 'marginBottom', 'display', 'columnGap', 'cursor'], pixel: false,
+    mock: { url: '?theme=light#8', selector: '#result-detail .result-section summary' }, app: { run: "acResultView.show({goal:'g',branch:'b',repo:'r',commit:'abcdef123456',diff:'diff --git a/x b/x\\n+1\\n',tests:[{task:'t',exit_code:0}],details:[]})", selector: '#result-dialog .result-section summary' } },
+  { name: 'result-section-title', props: ['fontSize', 'fontWeight'], keys: ['fontSize', 'fontWeight'], pixel: false,
+    mock: { url: '?theme=light#8', selector: '#result-detail .result-section summary h3' }, app: { run: "acResultView.show({goal:'g',branch:'b',repo:'r',commit:'abcdef123456',diff:'diff --git a/x b/x\\n+1\\n',tests:[{task:'t',exit_code:0}],details:[]})", selector: '#result-dialog .result-section summary h3' } },
   { name: 'result-metric-value', props: ['fontSize', 'fontWeight'], keys: ['fontSize', 'fontWeight'], pixel: false,
     mock: { url: '?theme=light#8', selector: '.result-stats strong' }, app: { run: "acResultView.show({goal:'g',branch:'b',repo:'r',commit:'abcdef123456',diff:'diff --git a/x b/x\\n+1\\n',tests:[{task:'t',exit_code:0}],details:[]})", selector: '.result-metric strong' } },
   { name: 'result-metric-label', props: ['fontSize', 'fontWeight'], keys: ['fontSize', 'fontWeight'], pixel: false,
