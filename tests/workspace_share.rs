@@ -171,8 +171,8 @@ fn workspace_menu_offers_export_and_import_with_preview() {
     let script = include_str!("../src/ui/startup.js");
     let html = include_str!("../src/ui/startup.html");
     assert!(
-        script.contains("\"startup.export_settings\"")
-            && script.contains("\"startup.import_settings\"")
+        include_str!("../src/ui/app_menu.js").contains("'startup.export_settings'")
+            && include_str!("../src/ui/app_menu.js").contains("'startup.import_settings'")
     );
     assert!(
         script.contains("kind:'preview_settings'") && script.contains("kind:'import_settings'")
