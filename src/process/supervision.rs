@@ -263,7 +263,13 @@ pub(super) async fn run_with_control(
         }
     }
     if status.success() && !timed_out && !stopped {
-        input_result.map_err(|e| format!("write agent input: {e}"))?;
+        // GitHub #774: say the CLI quit before reading its request, not only "Broken pipe".
+        input_result.map_err(|e| {
+            crate::ui::messages::render(
+                "native.agent_exited_before_reading_input",
+                &[("e", &e.to_string())],
+            )
+        })?;
     }
     Ok(ProcessResult {
         exit_code: status.code(),
