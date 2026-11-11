@@ -274,9 +274,14 @@ module.exports = [
     app: { run: "const m = document.querySelector('.startup-main'); m.scrollTop = Math.floor(m.scrollHeight / 2)" },
     assert: "(() => { const c = document.querySelector('#start-panel-workspace'), h = c.querySelector('.cardhead').getBoundingClientRect(), f = c.querySelector('.startup-actions').getBoundingClientRect(); return h.top >= 0 && h.bottom <= innerHeight && f.top >= 0 && f.bottom <= innerHeight + 1; })()" },
   // Content-width inner tabs (GitHub #408): 29px high, 7px radius, label + 11px padding, left aligned, not stretched.
-  { name: 'view-tab', props: ['borderTopLeftRadius', 'fontSize'], keys: ['height', 'borderTopLeftRadius', 'fontSize'], pixel: false,
+  { name: 'view-tab', props: ['borderTopLeftRadius', 'borderBottomLeftRadius', 'fontSize', 'fontWeight', 'lineHeight', 'paddingLeft', 'marginBottom', 'borderTopWidth', 'borderBottomWidth', 'backgroundColor', 'color'], keys: ['height', 'borderTopLeftRadius', 'borderBottomLeftRadius', 'fontSize', 'fontWeight', 'lineHeight', 'paddingLeft', 'marginBottom', 'borderTopWidth', 'borderBottomWidth', 'backgroundColor', 'color'], pixel: false,
     mock: { url: '?theme=light#3', selector: '.ttabs span', index: 1 },
     app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()", selector: '.view-tabs .tab', index: 1 } },
+  // GitHub #815: the selected tab and the row's baseline match the mock's folder tabs.
+  { name: 'view-tab-selected', props: ['borderTopLeftRadius', 'borderBottomLeftRadius', 'fontSize', 'fontWeight', 'paddingLeft', 'borderTopWidth', 'borderTopColor', 'borderBottomColor', 'backgroundColor', 'color'], keys: ['height', 'borderTopLeftRadius', 'borderBottomLeftRadius', 'fontSize', 'fontWeight', 'paddingLeft', 'borderTopWidth', 'borderTopColor', 'borderBottomColor', 'backgroundColor', 'color'], pixel: false,
+    mock: { url: '?theme=light#3', selector: '.ttabs .on' }, app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()", selector: '.view-tabs .tab.active' } },
+  { name: 'view-tabs-baseline', props: ['borderBottomWidth', 'borderBottomColor', 'columnGap'], keys: ['borderBottomWidth', 'borderBottomColor', 'columnGap'], pixel: false,
+    mock: { url: '?theme=light#3', selector: '.ttabs' }, app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()", selector: '.view-tabs' } },
   { name: 'view-tabs-not-stretched', assert: "(() => { const t = [...document.querySelectorAll('.view-tabs .tab')]; const w = document.querySelector('.view-tabs').getBoundingClientRect().width; return t.length >= 4 && t.every(x => x.getBoundingClientRect().width < w / 3); })()",
     app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()" } },
   // Compact Goal header (GitHub #408): 17px semibold single line.
