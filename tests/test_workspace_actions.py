@@ -17,5 +17,5 @@ class WorkspaceActions(unittest.TestCase):
         html=Path('src/ui/startup.html').read_text(encoding="utf-8")+Path('src/ui/mcp.html').read_text(encoding="utf-8")
         ko=Path('src/ui/messages/ko.json').read_text(encoding="utf-8")
         self.assertIn('startup.mcp_servers',html)
-        self.assertIn('mcp.register_mcp_servers',html)
+        self.assertIn('mcp.manage_mcp_servers',html)  # GitHub #809 renamed the dialog heading
         self.assertNotIn('MCP 문서 연결',ko)
