@@ -39,6 +39,13 @@ for(const width of [840,1280]){browser=await launch(chrome,{width});for(const th
  for(const d of document.querySelectorAll('dialog.slide-panel[open]'))d.close();FLOW.phaseHistory();document.dispatchEvent(new Event('visibilitychange'));
  await until(()=>q('start-plan-phases').querySelector('button'),'retained phase continuation');q('start-plan-phases').querySelector('button').click();await until(()=>SIM.log.some(e=>e.kind==='next_phase')&&!q('start-save').disabled,'next phase');
  check('retained phase continuation launches no new planner',SIM.log.filter(e=>e.kind==='prepare').length===1&&SIM.home.proposal.slug_phase==='02-next');
+ // GitHub #812: the Phase completion popup continues into the next Phase's plan; without one it offers the Goal list.
+ {const next=await window.acNextPhase.info();check('the popup learns the next Phase',next&&next.id==='02-next'&&next.number===2&&next.total===2);
+  const data={goal:'g',branch:'b',repo:'r',commit:'abcdef123456',diff:'',tests:[],details:[]};acResultView.show({...data,nextPhase:next});
+  check('a Phase with Phases left offers the next Phase plan',document.getElementById('result-close-label').textContent===acMessage('room.result_next_phase',{value1:2,value2:2})&&document.getElementById('result-eyebrow').textContent===acMessage('room.result_eyebrow_phase',{value1:1,value2:2}));
+  const before=SIM.log.filter(e=>e.kind==='next_phase').length;document.getElementById('result-close').click();await until(()=>!document.getElementById('result-dialog').open&&!q('start-panel-review').hidden,'next Phase plan step');
+  check('the next Phase plan opens in step 3 without a second planner',!q('start-panel-review').hidden&&SIM.log.filter(e=>e.kind==='next_phase').length===before&&SIM.log.filter(e=>e.kind==='prepare').length===1);
+  acResultView.show(data);check('the last Phase offers the Goal list',document.getElementById('result-close-label').textContent===acMessage('room.result_to_goals')&&document.getElementById('result-eyebrow').textContent===acMessage('room.result_eyebrow'));document.getElementById('result-dialog').close();}
  check('no UI runtime errors',flowErrors.length===0);return checks;
  })()`);assert(checked.length>=12);console.log(theme,width,checked.length,'joined Goal lifecycle checks passed');
 }await browser.close();browser=null;}
