@@ -431,6 +431,8 @@
   "room.result_all_phases": "목표 전체 · {value1}개 Phase. {value2}",
   "room.result_target": "승인 완료 · {value1} 반영 · 커밋 {value2}",
   "room.result_files": "변경 파일",
+  "room.result_expand": "펼치기",
+  "room.result_collapse": "접기",
   "room.result_tests": "검증 결과",
   "room.result_lessons": "남긴 교훈",
   "room.result_open": "결과 보기",
