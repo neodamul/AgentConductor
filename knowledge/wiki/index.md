@@ -71,6 +71,7 @@
 
 - [Omitted crate license texts](upstream-license-texts.md): exact upstream notice provenance, fail-closed packaging and Windows CI evidence.
 - [public-docs](public-docs.md) — README as product introduction, manual as reference (DD-42)
+- [Public UI artwork](public-ui-artwork.md): distinguish approved sample-data mockups from clean runtime captures; About icon byte parity and PR #762 warning conflict.
 - [Cross-platform UI test contracts](ui-ci-contracts.md): stylesheet assembly assertions and scroll fixture diagnostics from PR #757.
 - [reviewed-handoff](reviewed-handoff.md) — completed handoff continues on the reviewed fallback (DD-43)
 - [memory-discovery](memory-discovery.md) — scoped agentmemory discovery without exact IDs (DD-44)

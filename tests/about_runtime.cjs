@@ -1,8 +1,15 @@
 // #468: the About dialog opens centered on the first start after an install or update, records the version when it is
 // closed, and is reachable from the menu; copy buttons put the install command on the clipboard.
-const fs=require('fs'),path=require('path'),os=require('os'),{execFileSync}=require('child_process'),{pathToFileURL}=require('url');
+const assert=require('assert/strict'),fs=require('fs'),path=require('path'),os=require('os'),{execFileSync}=require('child_process'),{pathToFileURL}=require('url');
 const {findChrome,launch}=require('./design_parity/cdp.cjs');const chrome=findChrome();if(!chrome){console.log('about skipped: no Chrome');process.exit(77);}
 const root=path.resolve(__dirname,'..'),dir=fs.mkdtempSync(path.join(os.tmpdir(),'ac-about-'));
+const about=fs.readFileSync(path.join(root,'src/ui/about.html'),'utf8').match(/class="about-mark" src="data:image\/png;base64,([^"]+)"/);
+assert.ok(about,'About embeds its application mark');
+const mark=fs.readFileSync(path.join(root,'src/ui/assets/ac-64.png'));
+assert.deepEqual(Buffer.from(about[1],'base64'),mark,'About uses the current application icon asset');
+const reference=fs.readFileSync(path.join(root,'docs/design/approved-goal-ui/preview.html'),'utf8').match(/class="about-mark" src="data:image\/png;base64,([^\"]+)"/);
+assert.ok(reference,'approved design reference embeds its About mark');
+assert.deepEqual(Buffer.from(reference[1],'base64'),mark,'approved design and app use the same mark');
 execFileSync('node',[path.join(root,'tests/ui_sim/build.cjs'),root,path.join(dir,'app.html')]);
 const cases={first:"SIM.reply.about_status=()=>({version:'0.2.0',show:true,updated:false});",update:"SIM.reply.about_status=()=>({version:'0.2.0',show:true,updated:true});",quiet:"SIM.reply.about_status=()=>({version:'0.2.0',show:false,updated:false});"};
 (async()=>{try{for(const width of [840,1280])for(const theme of ['light','dark']){const browser=await launch(chrome,{width,height:960});try{
