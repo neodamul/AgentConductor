@@ -55,6 +55,48 @@ fn historical_result_does_not_switch_goal_and_rejects_external_run_binding() {
 }
 
 #[test]
+fn goal_result_includes_only_phase_runs_linked_to_the_same_goal() {
+    let mut f = Fixture::new();
+    let first = f.report("completed");
+    let second = f.root.join("workspace/run-second");
+    fs::create_dir(&second).unwrap();
+    fs::copy(first.join("report.json"), second.join("report.json")).unwrap();
+    fs::copy(first.join("state.sqlite"), second.join("state.sqlite")).unwrap();
+    let unrelated = f.root.join("workspace/run-unrelated");
+    fs::create_dir(&unrelated).unwrap();
+    fs::copy(first.join("report.json"), unrelated.join("report.json")).unwrap();
+    fs::copy(first.join("state.sqlite"), unrelated.join("state.sqlite")).unwrap();
+    for (run, phase) in [(&first, "phase-1"), (&second, "phase-2")] {
+        fs::write(
+            run.with_file_name(format!(
+                "{}.slug-phase.json",
+                run.file_name().unwrap().to_string_lossy()
+            )),
+            serde_json::to_vec(&json!({"root":f.folder(),"phase":phase})).unwrap(),
+        )
+        .unwrap();
+    }
+    fs::create_dir(f.root.join("project/other_goal")).unwrap();
+    fs::write(
+        unrelated.with_file_name("run-unrelated.slug-phase.json"),
+        serde_json::to_vec(&json!({"root":f.root.join("project/other_goal"),"phase":"other"}))
+            .unwrap(),
+    )
+    .unwrap();
+    f.edit_saved(|s| {
+        s["config"]["slugs"][0]["last_run"] = json!(second);
+        s["config"]["active_slug"] = json!("first_goal");
+    });
+    let result = f
+        .call(json!({"kind":"goal_result","slug":"first_goal"}))
+        .unwrap();
+    let phases = result["phase_results"].as_array().unwrap();
+    assert_eq!(phases.len(), 2);
+    assert_eq!(phases[0]["phase"], "phase-1");
+    assert_eq!(phases[1]["phase"], "phase-2");
+}
+
+#[test]
 fn deletion_requires_exact_confirmation_and_stale_revision_changes_nothing() {
     let f = Fixture::new();
     let mut req = f.delete();

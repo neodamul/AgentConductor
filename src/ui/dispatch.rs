@@ -106,6 +106,15 @@ impl Room {
         if kind["kind"] == "close_window" {
             return self.close_window(kind["stop"] == true);
         }
+        // A completed Room asks the Workspace surface for the Goal-wide history across Phase runs.
+        if from_room && kind["kind"] == "goal_result" {
+            return self
+                .surface()?
+                .ok_or(crate::ui::messages::text(
+                    "native.startup_surface_unavailable",
+                ))?
+                .dispatch(bytes);
+        }
         // DD-135: update checks and installs work from any surface.
         if let Some(update @ ("update_status" | "check_update" | "apply_update")) =
             kind["kind"].as_str()

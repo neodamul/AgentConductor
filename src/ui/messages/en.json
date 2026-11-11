@@ -337,6 +337,7 @@
   "room.choose_a_valid_local_date_and_time": "Choose a valid local date and time.",
   "room.result_eyebrow": "Goal completed",
   "room.result_title": "{value1} — completed",
+  "room.result_all_phases": "Whole Goal · {value1} Phases. {value2}",
   "room.result_target": "Approved · applied to {value1} · commit {value2}",
   "room.result_files": "Changed files",
   "room.result_tests": "Verification",
