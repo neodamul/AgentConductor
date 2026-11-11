@@ -238,6 +238,8 @@ pub use assignment::*;
 pub use session_model::*;
 mod recovery;
 pub use recovery::*;
+mod sessions;
+pub use sessions::*;
 pub mod amendments;
 pub use amendments::amendment_undo;
 mod coordinator_request;

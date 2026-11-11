@@ -13,6 +13,9 @@ impl Startup {
             | Request::DeleteGoal { .. }
             | Request::StopPlanning {}
             | Request::CachePreview {}
+            | Request::AgentSessions {}
+            | Request::StopSession { .. }
+            | Request::CleanSessions { .. }
             | Request::Chat { .. }
             | Request::ChatHistory {}
             | Request::ChatReset {}

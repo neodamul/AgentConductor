@@ -62,6 +62,15 @@ impl Startup {
         if matches!(request, Request::StopPlanning {}) {
             return self.stop_planning(&mut saved);
         }
+        if matches!(request, Request::AgentSessions {}) {
+            return self.agent_sessions();
+        }
+        if let Request::StopSession { run } = &request {
+            return self.stop_session(run);
+        }
+        if let Request::CleanSessions { sessions } = &request {
+            return self.clean_sessions(sessions);
+        }
         if matches!(request, Request::CachePreview {}) {
             return self.cache_preview(&saved);
         }
@@ -202,6 +211,9 @@ impl Startup {
             | Request::GoalFolder { .. }
             | Request::DeleteGoal { .. }
             | Request::CachePreview {}
+            | Request::AgentSessions {}
+            | Request::StopSession { .. }
+            | Request::CleanSessions { .. }
             | Request::ChatHistory {}
             | Request::ChatReset {}
             | Request::CacheClear { .. }

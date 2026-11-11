@@ -29,6 +29,7 @@ pub(crate) fn document() -> Result<String, String> {
         include_str!("../overflow_tooltip.js"),
         include_str!("../brand_avatar.js"),
         include_str!("../team_briefing.js"),
+        include_str!("../agent_sessions.js"),
         include_str!("../about.js"),
         "\n",
         include_str!("../manual.js")

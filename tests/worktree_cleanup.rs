@@ -74,3 +74,38 @@ async fn releasing_a_run_before_it_is_deleted_leaves_the_repository_clean() {
     workflow::release_run_worktrees(&root.join("no-such-run"));
     std::fs::remove_dir_all(root).unwrap();
 }
+
+/// GitHub #828: a finished session's clean-up removes only its own worktree and keeps the logs;
+/// a run that is still active keeps every checkout.
+#[tokio::test]
+async fn cleaning_a_session_removes_only_its_worktree_once_the_run_is_finished() {
+    let (root, mut plan) = support::setup("worktree");
+    plan.agents[0].args = vec!["quota".into()];
+    let (repo, run) = (root.join("repo"), root.join("run"));
+    let report = workflow::run(plan, &repo, &run, 10).await.unwrap();
+    let task = report.tasks[0].id.clone();
+    assert!(
+        workflow::clean_session(&run, &task).is_err(),
+        "run still active"
+    );
+    assert!(run.join("workspace-0").exists());
+
+    workflow::stop(&run, "review").unwrap();
+    workflow::clean_session(&run, &task).unwrap();
+    assert!(!run.join("workspace-0").exists());
+    assert!(
+        run.join("workspace-1").exists(),
+        "other sessions keep theirs"
+    );
+    assert!(
+        report.tasks[0]
+            .artifacts
+            .join(workflow::SESSION_CLEANED)
+            .is_file()
+    );
+    assert!(
+        report.tasks[0].artifacts.is_dir(),
+        "logs stay until cache clean-up"
+    );
+    std::fs::remove_dir_all(root).unwrap();
+}

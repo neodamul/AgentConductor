@@ -21,6 +21,13 @@ pub(super) enum Request {
     },
     StopPlanning {},
     CachePreview {},
+    AgentSessions {},
+    StopSession {
+        run: String,
+    },
+    CleanSessions {
+        sessions: Vec<(String, String)>,
+    },
     CacheClear {
         digest: String,
     },

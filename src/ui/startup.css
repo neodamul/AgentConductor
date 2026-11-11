@@ -254,3 +254,21 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 .startup-profile .agent-symbol[data-attention="true"]::after{content:'!';position:absolute;right:-5px;top:-5px;display:grid;place-items:center;width:12px;height:12px;border-radius:50%;background:var(--state-color);color:var(--attention-ink);font-size:9px;font-weight:700;border:1px solid var(--surface)}
 @keyframes agent-status-pulse{0%,100%{border-color:var(--state-color)}50%{border-color:var(--line)}}
 @media(prefers-reduced-motion:reduce){.startup-profile .agent-symbol[data-state="running"]{animation:none}}
+/* GitHub #828: each agent's sessions with their state, stop and clean-up actions. */
+.agent-sessions{font-family:inherit;cursor:pointer;border:1px solid var(--line)}.agent-sessions:hover{border-color:var(--accent)}.agent-sessions .session-count{display:inline-block;margin-left:4px;font-weight:650}
+.agent-sessions.has-running{background:var(--ok-bg);color:var(--ok);border-color:transparent}
+.sessions-list{display:flex;flex-direction:column;gap:8px;margin:4px 0 6px}
+.session-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.session-row>div:first-of-type{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.session-row strong{font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.session-row small{color:var(--soft);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.session-state{flex:none;font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;background:var(--fill);color:var(--soft)}
+.session-state.running{background:var(--ok-bg);color:var(--ok)}
+.session-state.waiting,.session-state.stale{background:var(--warn-bg);color:var(--warn)}
+.session-state.failed{background:var(--err-bg);color:var(--err)}
+.session-row button{flex:none;padding:4px 10px;font-size:12px}
+.sessions-confirm{margin-top:10px;padding:10px 12px;border:1px solid var(--err);border-radius:8px;background:var(--err-bg);font-size:12px}
+.sessions-confirm p{margin:0 0 8px;color:var(--ink)}
+.sessions-confirm-actions{display:flex;gap:8px;justify-content:flex-end}
+#start-agent-sessions .sessions-actions{justify-content:space-between}
+#start-agent-sessions{width:560px;max-width:calc(100vw - 32px)}
