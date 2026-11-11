@@ -165,10 +165,13 @@ let inspectorHome = null;
 function paintInspector() {
   const closed = !inspectorState.open;
   document.querySelector('.workbench').classList.toggle('insp-closed', closed);
+  // GitHub #788: off the run screen the shared titlebar switch shows the Workspace panel's own state, not the Room's.
+  const workspace = !document.body.classList.contains('on-run');
   for (const toggle of document.querySelectorAll('.inspector-switch')) {
-    toggle.setAttribute('aria-expanded', String(!closed)); toggle.classList.toggle('on', !closed);
-    AC_I18N.bind(toggle, () => acMessage(closed ? 'room.inspector_unfold' : 'room.inspector_fold'), 'aria-label');
-    toggle.querySelector('.inspector-alert').hidden = !(closed && inspectorState.key);
+    const shut = workspace && toggle.id === 'start-inspector-toggle' ? !document.querySelector('.startup-shell')?.classList.contains('insp-open') : closed;
+    toggle.setAttribute('aria-expanded', String(!shut)); toggle.classList.toggle('on', !shut);
+    AC_I18N.bind(toggle, () => acMessage(shut ? 'room.inspector_unfold' : 'room.inspector_fold'), 'aria-label');
+    toggle.querySelector('.inspector-alert').hidden = !(shut && inspectorState.key);
   }
   // While a decision is open the candidate review (approve / reject) is the first section.
   const candidate = document.querySelector('.candidate-inspector'), heading = document.querySelector('.inspector-heading');
@@ -178,7 +181,7 @@ function paintInspector() {
 }
 function syncInspector() { inspectorState = inspectorStep(inspectorState, { type: 'snapshot', key: decisionKey(snapshot) }); paintInspector(); }
 const toggleInspector = () => { inspectorState = inspectorStep(inspectorState, { type: 'toggle' }); paintInspector(); };
-window.acInspector = { toggle: toggleInspector }; $('inspector-toggle').onclick = toggleInspector;
+window.acInspector = { toggle: toggleInspector, paint: paintInspector }; $('inspector-toggle').onclick = toggleInspector;
 paintInspector();
 function renderSnapshot() {
   if(!snapshot)return;syncInspector();watchResult(snapshot);const r=snapshot.report;if(selected>=r.tasks.length)selected=0;
