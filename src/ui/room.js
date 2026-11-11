@@ -1,5 +1,7 @@
 'use strict';
 const $ = id => document.getElementById(id);
+function resetReviewEvidence(){for(const id of ['review-summary','verify-rows','review-stale'])$(id).hidden=true;$('review-summary').replaceChildren();$('verify-rows').replaceChildren();$('test-results').replaceChildren();$('diff').replaceChildren(node('span',()=>acMessage('room.no_candidate_has_been_loaded')));$('diff').classList.add('empty');AC_I18N.bind($('review-caption'),()=>(acMessage('room.load_a_candidate_to_review_its_exact_evidence')));$('approve').disabled=true;$('merge').disabled=true;}
+resetReviewEvidence();
 let snapshot = null, selected = 0, review = null, polling = false, activeTab = 'activity', lastJob = null;
 const drafts = new Map();let resumeAfter=null;
 // DD-117: the coordinator row is selectable like a task row and shows its own work.
