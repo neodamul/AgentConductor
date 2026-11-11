@@ -17,7 +17,11 @@ the GitHub Release notes for its tag.
 - New Goal keeps a saved Goal that was not planned yet in the Goal list instead of dropping it (GitHub #791).
 - The manual no longer says the titlebar Workspace name opens Workspace settings (GitHub #792).
 - The roles step's footer button is *Apply agent role defaults* again (app and mock); *Add roles* hid that it assigns the default team (GitHub #795).
+- A completed Goal's Phase rail opens on the final Phase instead of a previously selected historical Phase (GitHub #775).
+- A completed run's review screen reports its applied result and historical approval instead of asking for approval (GitHub #776).
+- Execution rail rows use compact task ordinals so long persistent IDs do not hide task descriptions (GitHub #777).
 - The completed Goal result popup's changed files, tests and lessons expand and collapse, starting collapsed (app and mock, GitHub #799).
+- The native window caption is AgentConductor for every stage instead of always naming the Agent Room (GitHub #772).
 
 ## v0.2.1
 

@@ -27,6 +27,7 @@ window.acResultView = (() => {
     // GitHub #733/#737: the title is the Goal's first meaningful line, then the coordinator's summary sentence.
     const goalLine = String(data.goal || '').split('\n').map(l => l.trim()).find(l => l && !/^<\/?[\w-]+>$/.test(l)) || '';
     AC_I18N.bind($('result-title'), () => acMessage('room.result_title', { value1: goalLine }));
+    $('result-title').title = goalLine;
     $('result-summary').textContent = data.summary || ''; $('result-summary').hidden = !data.summary;
     AC_I18N.bind($('result-target'), () => acMessage('room.result_target', { value1: data.branch, value2: (data.commit || '').slice(0, 12) }));
     AC_I18N.bind($('result-location'), () => acMessage('room.result_location', { value1: data.repo }));

@@ -10,6 +10,8 @@ assert.match(html,/id="show-result"[^>]*hidden/,'the rail has a Result button, h
 assert.match(room,/watchResult\(snapshot\)/);assert.match(ui,/room_result\.js/);assert.match(document_rs,/result_view\.js/,'the shared renderer is a top-level script, also used by the Goal list');
 
 assert.match(view,/document\.body\.append\(\$\('result-dialog'\)\)/,'hoisted out of the hidden Room section so the Goal list can open it');
+assert.match(view,/\$\('result-title'\)\.title\s*=\s*goalLine/,'full Goal remains available as the result heading tooltip');
+assert.match(fs.readFileSync('src/ui/room_layout.css','utf8'),/#result-dialog #result-title\{[^}]*-webkit-line-clamp:3/,'long Goal heading is limited to three lines');
 const context=vm.createContext({window:{}});vm.runInContext(view,context);vm.runInContext(source,context);
 const run=code=>JSON.parse(JSON.stringify(vm.runInContext(code,context)));
 // Changed files come from the candidate diff with +/- counts.
