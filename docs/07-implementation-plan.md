@@ -19,9 +19,10 @@ Release scope: the published app is the current `main` desktop product. The sepa
 - [x] Verify locally on the combined tree: 7 Rust tests across 6 suites; Goal text and menu runtime tests; 72 menu checks across 840/1280 × light/dark; #752's eight-case dialog matrix; tool-decision, permission-denied and Phase-pick simulator cases; and two plan-source parity cells (0 element differences). `git diff --check` passes. The shared `src/ui/room.js` (482 lines) and `tests/design_parity/spec.cjs` (421 lines) still exceed the 300-line goal and must be split under the existing source-layout work before final delivery.
 - [x] Complete: #745–#748 were already implemented in merged PR #739/main commit `f2cc86fe`; added verification notes and closed all four issues.
 - [x] Complete: #382 was merged in PR #758 at `7c1cc097`; verified closed.
-- [ ] Verify: push the consolidated head to PR #756 and run one exact-head macOS/Windows validation batch. Prior PR runs are superseded.
+- [x] Complete: PR #756 merged at `d530a9d7`; its combined tree includes Codex PR #757's head `92bca622`. GitHub closed #740–#743, #749–#753 from the merged PR references.
+- [ ] Verify: follow-up CI fix for the #749 screen-walk harness. The consolidated run `42947188574` failed on both platforms because its fixture started with an active run, which auto-opened the Agent Room before the test walked Workspace tabs. Set the fixture to idle and navigate to Tasks explicitly; targeted local simulator and Rust wrapper pass.
 - [ ] Verify: #744 remains open for native-app checks of tool-wait and permission-denied cards and last-Goal/New Goal. Simulator checks pass, but the running app has an existing user workspace; it was left untouched.
-- [ ] Complete: merge PR #756 after the consolidated checks pass; close PR #757 as superseded and close #740–#743, #749, #750–#753 from the merged PR. Do not release v0.2.0 until #744 and release gates are complete.
+- [ ] Complete: do not mark v0.2.0 releasable until #744 and the Rust release quality gates are complete. The separate Rust migration PR #22 remains Draft at 22/50 and is not part of the shipped-app merge batch.
 ## Stable release 0.2.0 — native tool-decision modal bug #382 (2026-11-11)
 
 - [x] Plan: keep the R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160 trace; route deferred and approved-refresh decisions through the current modal while preserving exact evidence, revision, busy guards, defer, Cancel and event payloads.
