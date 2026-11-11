@@ -35,7 +35,7 @@ existing project folder with **Browse…** or type the path, then **Save workspa
 Git worktree isolation is optional; shared execution is the default.
 Saving updates the name in the titlebar immediately and selects **Agent roles**. Tab changes preserve draft inputs; unsaved changes still require **Save workspace**.
 
-The **☰** application menu groups everything in two levels: **Workspace** (recent workspaces to switch to, Goal list, New goal, New workspace…, Open existing workspace…, Workspace settings…, Plan rules…, Messenger…, Export workspace…, Import workspace…), **Agents** (Add agent…), **View** (collapse the left panel, task details panel), **Settings…** (MCP servers, cache, update channel, language, theme, signal transport), **Help** (Check for updates…, User manual, Agent tools guide, About) and **Close window…**. The Workspace name in the titlebar is a label; open Workspace settings… from the Workspace group. The same titlebar is available in Agent Room.
+The **☰** application menu groups related items: **Workspace** (recent workspaces to switch to, New workspace…, Open existing workspace…, Workspace settings…, Export workspace…, Import workspace…), followed by the top-level **Plan rules…** and **Messenger…** actions; **Agents** (Add agent…), **View** (collapse the left panel, task details panel), **Settings…** (MCP servers, cache, update channel, language, theme, signal transport), **Help** (Check for updates…, User manual, Agent tools guide, About) and **Close window…**. Use the on-screen **Goal list** and **+ New Goal** buttons for goals. The Workspace name in the titlebar is a label; open Workspace settings… from the Workspace group. The same titlebar is available in Agent Room.
 A workspace with an existing run opens its work view when appropriate; returning to
 Workspace does not start a new plan. Unsaved changes require a choice before navigation.
 
@@ -151,7 +151,7 @@ Each task shows the kind of work the coordinator chose (classify or extract, sum
 **Goals & progress** shows each goal's phase tags and description.
 After integrating a phase, **Plan phase n** loads the next saved phase without another planning call.
 Replanning an existing phased goal loads its current phase with current profiles.
-**☰ → Workspace → Plan rules…** supports machine-wide rules or a workspace override.
+**☰ → Plan rules…** supports machine-wide rules or a workspace override.
 
 For an ordinary folder, planning uses a temporary snapshot. Approved shared execution works directly in the selected folder, using Git metadata under `~/.agentconductor/project-history/` without creating `.git` in the project. Worktree mode isolates execution instead; review the candidate before applying it. Once the run is merged or rejected, its worktrees are removed from the repository; the diff, test results and logs stay in the run folder. Shared execution changes are already visible while agents work.
 For a committed repository a clean baseline is required. Review the dialog before **Commit and continue**.
@@ -261,7 +261,7 @@ Manual memory sync/import is optional.
 Secrets, environment values and local model observations remain on the machine.
 Review archives before sharing; imported capability claims require local confirmation.
 
-**☰ → Workspace → Messenger…** supports Slack/webhooks and optional allow/deny replies from listed approvers.
+**☰ → Messenger…** supports Slack/webhooks and optional allow/deny replies from listed approvers.
 Webhook/bot tokens and relay secrets stay local. Goal text is included only by explicit choice.
 Remote replies never approve a plan or merge.
 

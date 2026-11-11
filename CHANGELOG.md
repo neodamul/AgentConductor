@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## v0.2.2
 
+- Goal list and New Goal stay in the Workspace screen; Plan rules and Messenger are top-level menu actions after Workspace (app, mock and manuals, GitHub #808).
 - Goal completion results include verified evidence from every linked Phase run, deduplicate changed files, and retain Phase identity for test results (GitHub #778).
 - Opening a different run clears prior candidate, test, diff and approval surfaces before loading the new run (GitHub #794).
 - The titlebar Workspace name is a plain label: no hover background, no pointer cursor and no click (GitHub #768).
