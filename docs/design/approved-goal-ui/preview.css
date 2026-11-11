@@ -238,11 +238,11 @@ button:not(:disabled),a[href],summary,[role="button"]:not([aria-disabled="true"]
 
 .goal-list-button,.goal-section-actions .goal-list-button,.head>.goal-list-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:28px;padding:4px 9px;border:1px solid var(--line-strong);border-radius:6px;background:var(--surface);color:var(--ink);font-size:12px;line-height:18px;cursor:pointer}.goal-list-icon{width:14px;height:14px;display:block;flex:none}.goal-list-button:hover{background:var(--fill)}.goal-list-button[data-action-icon]::before{display:none}
 
-#profile-edit-dialog,#close-run-dialog{width:560px;max-width:calc(100vw - 32px);max-height:85vh;padding:24px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:13px/1.6 -apple-system,BlinkMacSystemFont,sans-serif}#profile-edit-dialog::backdrop,#close-run-dialog::backdrop{background:rgba(0,0,0,.3)}#profile-edit-dialog h2,#close-run-dialog h2{font-size:18px;margin:0 0 12px}.profile-editor-fields{max-height:58vh;overflow:auto;padding-right:5px}.profile-editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.profile-editor-fields label{display:block;font-size:12px;margin:12px 0 6px}.profile-editor-fields label[hidden]{display:none}.profile-editor-fields input,.profile-editor-fields textarea{width:100%;min-width:0;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);font:inherit;padding:7px 9px}.profile-editor-fields textarea{resize:vertical}.profile-editor-fields .detail-inline>input{flex:1;width:100px}.profile-editor-fields .detail-inline>.btn{flex:none}.profile-editor-fields .selection-control{margin-top:4px}#close-run-dialog{width:620px}#close-run-dialog .result-actions{flex-wrap:wrap}
+#profile-edit-dialog,#close-run-dialog,#mcp-dialog{width:560px;max-width:calc(100vw - 32px);max-height:85vh;padding:24px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:13px/1.6 -apple-system,BlinkMacSystemFont,sans-serif}#profile-edit-dialog::backdrop,#close-run-dialog::backdrop,#mcp-dialog::backdrop{background:rgba(0,0,0,.3)}#profile-edit-dialog h2,#close-run-dialog h2,#mcp-dialog h2{font-size:18px;margin:0 0 12px}.profile-editor-fields{max-height:58vh;overflow:auto;padding-right:5px}.profile-editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.profile-editor-fields label{display:block;font-size:12px;margin:12px 0 6px}.profile-editor-fields label[hidden]{display:none}.profile-editor-fields input,.profile-editor-fields textarea{width:100%;min-width:0;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);font:inherit;padding:7px 9px}.profile-editor-fields textarea{resize:vertical}.profile-editor-fields .detail-inline>input{flex:1;width:100px}.profile-editor-fields .detail-inline>.btn{flex:none}.profile-editor-fields .selection-control{margin-top:4px}#close-run-dialog{width:620px}#close-run-dialog .result-actions{flex-wrap:wrap}
 
 button[data-action-icon]{display:inline-flex;align-items:center;justify-content:center;gap:6px}button[data-action-icon]::before{content:"";display:block;width:13px;height:13px;flex:none;background:currentColor;mask-image:var(--action-icon);-webkit-mask-image:var(--action-icon);mask-size:contain;mask-repeat:no-repeat;mask-position:center}.assignment-choice[data-action-icon]{justify-content:flex-start}
 
-#goal-result-dialog,#delete-goal-dialog,#profile-edit-dialog,#close-run-dialog{position:fixed;right:auto;bottom:auto;margin:0;transform:none;max-width:var(--reference-dialog-width,90vw);max-height:var(--reference-dialog-height,85vh)}.profile-editor-fields{max-height:min(58vh,calc(var(--reference-dialog-height,85vh) - 160px))}
+#goal-result-dialog,#delete-goal-dialog,#profile-edit-dialog,#close-run-dialog,#mcp-dialog{position:fixed;right:auto;bottom:auto;margin:0;transform:none;max-width:var(--reference-dialog-width,90vw);max-height:var(--reference-dialog-height,85vh)}.profile-editor-fields{max-height:min(58vh,calc(var(--reference-dialog-height,85vh) - 160px))}
 /* Reorder handle: a dotted grip, 20px (four dot rows) and centred beside the 30px quota ring. */
 .agent .grip{font-size:0;display:block;flex:none;width:10px;height:20px;margin-left:4px;background:radial-gradient(circle,var(--line-strong) 1.2px,transparent 1.6px) 0 0/5px 5px}
 
@@ -311,3 +311,29 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 
 /* The result sections of a completed Goal expand and collapse; they start collapsed. */
 #result-detail .result-section summary{display:flex;align-items:center;gap:6px;margin:15px 0 7px;cursor:pointer;list-style:none}#result-detail .result-section summary::-webkit-details-marker{display:none}#result-detail .result-section summary::before{content:'\25B8';color:var(--soft);font-size:11px}#result-detail .result-section[open] summary::before{content:'\25BE'}#result-detail .result-section summary h3{margin:0}
+
+/* MCP servers: saved-server rows, a short add/edit form and tool dropdowns for Goal documents. */
+#mcp-dialog .profile-editor-fields select{width:100%;min-width:0;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);font:inherit;padding:7px 9px}
+.mcp-servers{display:flex;flex-direction:column;gap:8px;margin:12px 0 10px}
+.mcp-server{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.mcp-server>div:first-child{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.mcp-server strong{font-size:13px}
+.mcp-server small{color:var(--soft);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mcp-status{font-size:11px;color:var(--soft)}
+.mcp-status::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;background:var(--soft);vertical-align:1px}
+.mcp-status.ok{color:var(--ok)}.mcp-status.ok::before{background:var(--ok)}
+.mcp-status.error{color:var(--err)}.mcp-status.error::before{background:var(--err)}
+.mcp-status.checking::before{background:var(--warn)}
+.mcp-server-actions{display:flex;gap:6px;flex:none}
+.mcp-server-actions .btn{padding:4px 9px;font-size:12px}
+.mcp-subhead{font-size:13px;margin:18px 0 0}
+#mcp-advanced{margin-top:14px;font-size:12px}
+#mcp-advanced summary{cursor:pointer;color:var(--soft)}
+#mcp-advanced textarea{margin-top:8px;font:12px/1.5 Menlo,Consolas,monospace}
+.mcp-json-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:8px}
+.mcp-secret-head{display:flex;align-items:center;justify-content:space-between;font-size:12px;margin:12px 0 6px}
+.mcp-secret-head .btn{padding:3px 9px;font-size:12px}
+.mcp-secrets{display:flex;flex-direction:column;gap:6px}
+.mcp-secret{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr) auto;gap:6px}
+.mcp-secret .btn{padding:4px 10px}
+#mcp-dialog .result-actions[hidden],#mcp-dialog section[hidden]{display:none}
