@@ -762,3 +762,5 @@ SF-198 / #429 amendment (2026-11-04): Reuse the existing modal and revision-guar
 
 ### SF-203 About dialog with first-start display
 A centered About dialog (description, credits, CLI install guide with copyable commands) shown once per app version and always available from the application menu. Trace: BG-170.
+
+SF-198 / #865 amendment: agent registration has one visible entry point on the Agents rail rather than a duplicate application-menu group.
