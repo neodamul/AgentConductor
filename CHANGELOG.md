@@ -11,6 +11,12 @@ the GitHub Release notes for its tag.
 - The MCP server form says API tokens and other secrets must be registered as environment variables ({env:VARIABLE}, or Bearer {env:VARIABLE}); literal values are not saved (app and mock, GitHub #887).
 - MCP settings keep every server's discovered tools: reopening the settings or restarting the app shows them again without rediscovery, and only a server whose config changed returns to undiscovered (before, only the last discovered server kept its tools) (GitHub #893).
 - Every status tag uses the agent tag design: the heading status pill, the Phase·Task outline badges and the session states get the thin same-hue border, 4px corners and compact padding, and "running" uses one info color everywhere (app and mock, GitHub #892).
+- In the task detail the Goal folds and unfolds (collapsed by default) and keeps its line breaks (GitHub #878).
+- Raw logs keep their line breaks instead of one block (GitHub #879).
+- On the Plan step, selecting a task from an earlier Phase in the Phase·Task panel opens it read-only instead of an empty main area (GitHub #880).
+- Messenger settings keep the draft and show save errors inline until the save succeeds (GitHub #881).
+- MCP settings show only server registration and status; the duplicate tool list and binding forms are gone (GitHub #882).
+- The approved mock and design parity cover the 0.2.5 screen fixes, and README and the EN/KO manuals with their screenshots describe 0.2.5 (GitHub #890, #891).
 
 ## v0.2.4
 
