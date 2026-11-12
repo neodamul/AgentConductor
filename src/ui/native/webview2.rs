@@ -122,6 +122,22 @@ pub fn open(room: Arc<super::super::Room>) -> Result<(), String> {
                 }
             }
             Event::WindowEvent {
+                event: WindowEvent::Resized(_) | WindowEvent::ScaleFactorChanged { .. },
+                ..
+            } => {
+                // #853: keep the WebView viewport in physical client pixels, including DPI changes.
+                let size = window.inner_size();
+                if size.width > 0 && size.height > 0 {
+                    let bounds = wry::Rect {
+                        position: wry::dpi::PhysicalPosition::new(0, 0).into(),
+                        size: wry::dpi::PhysicalSize::new(size.width, size.height).into(),
+                    };
+                    if let Err(error) = webview.set_bounds(bounds) {
+                        eprintln!("WebView2 viewport resize failed: {error}");
+                    }
+                }
+            }
+            Event::WindowEvent {
                 event: WindowEvent::CloseRequested,
                 ..
             } => {

@@ -661,3 +661,4 @@ The combined UI branch groups commands by Workspace, Agents, View, and Help; key
 PR #761 now labels approved mockups as sample-data design previews, refreshes the live workspace captures without a coordinator warning, and synchronizes the About image with the canonical app icon. The About runtime/byte-parity and public-doc tests pass. Review found PR #762's independent workspace capture still has the warning; the clean fixture and assets were linked in that PR for reconciliation. The Rust migration remains incomplete at 22/50; Windows package acceptance is still outstanding for bug reports #189, #226, and #310.
 
 - 2026-11-12: Restored #857 conditional update indication; recorded regression commit29f85beb and available-update-only visual fixtures.
+- 2026-11-12: Recorded #853 internal v0.2.1 resize report, explicit physical viewport synchronization, and the outstanding Windows acceptance requirement.
