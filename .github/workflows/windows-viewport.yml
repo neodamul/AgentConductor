@@ -7,6 +7,7 @@ on:
       - "tests/windows_desktop.rs"
       - ".github/workflows/windows-viewport.yml"
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read

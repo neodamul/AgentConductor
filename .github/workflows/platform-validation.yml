@@ -16,6 +16,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  windows-viewport:
+    if: github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/windows-viewport.yml
+
   validate:
     strategy:
       fail-fast: false
