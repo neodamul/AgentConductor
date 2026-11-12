@@ -23,7 +23,7 @@ The following application UI images use local sample data; no live agents or pro
 ![AgentConductor application UI · agent settings](docs/assets/ui-agent-settings-current.png)
 ![MCP server settings with saved discovery status](docs/assets/ui-mcp-current.png)
 
-> **Version:** 0.2.6 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **☰ → Help → User manual** opens the offline manual.
+> **Version:** 0.2.7 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **☰ → Help → User manual** opens the offline manual.
 
 ## What it does
 
