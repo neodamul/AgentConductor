@@ -81,7 +81,7 @@ fn publishing_waits_for_the_screenshot_check_with_full_history() {
         "the check needs the full history"
     );
     assert!(
-        workflow.contains("needs: [verify, screenshots]"),
+        workflow.contains("needs: [prior, verify, package, screenshots]"),
         "a release is published only after the screenshot check"
     );
 }

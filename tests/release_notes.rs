@@ -36,13 +36,21 @@ fn stable_release_contract_is_verified_in_rust() {
     assert!(release.contains("uses: ./.github/workflows/platform-validation.yml"));
     let publish = &release[release.find("  publish:").unwrap()..];
     // GitHub #290: publishing also waits for the screenshot check.
-    assert!(publish.contains("needs: [verify, screenshots]"));
+    // GitHub #876: and for the packages and a validation run here or reused from main for this commit.
+    assert!(publish.contains("needs: [prior, verify, package, screenshots]"));
+    assert!(publish.contains("needs.prior.outputs.verified == 'true'"));
+    assert!(release.contains("uses: ./.github/workflows/native-package.yml"));
+    assert!(
+        release.contains(".commit.tree.sha"),
+        "reuse matches the exact source tree"
+    );
     assert!(publish.contains("contents: write"));
     assert!(publish.contains("gh release create"));
     // A suffixed tag (v0.2.0-Beta1) is published as a pre-release; a plain vX.Y.Z tag is stable.
     assert!(publish.contains("*-*) prerelease=(--prerelease)"));
     assert!(publish.contains("SHA256SUMS") && publish.contains("*.zip"));
-    for line in [release, validation.as_str()]
+    let package = normalize_lines(include_str!("../.github/workflows/native-package.yml"));
+    for line in [release, validation.as_str(), package.as_str()]
         .into_iter()
         .flat_map(str::lines)
     {

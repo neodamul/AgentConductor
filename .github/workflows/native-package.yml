@@ -1,0 +1,53 @@
+name: Native package
+
+# GitHub #876: the release and Platform validation both call this; it builds, renders the manuals, packages and runs the exact release binary.
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  native-package:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    env:
+      CARGO_TERM_COLOR: never
+    steps:
+      - name: Checkout validated source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2, MIT
+        with:
+          persist-credentials: false
+      # GitHub #876: reuse dependencies and the release build between runs (official MIT cache action).
+      - name: Restore Cargo release cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0, MIT
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            target
+          key: cargo-release-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
+          restore-keys: cargo-release-${{ runner.os }}-
+      - name: Build native release executable
+        run: cargo build --release --locked
+      - name: Render bilingual manuals with the Rust binary
+        run: cargo run --release --locked -- manual render
+      - name: Package and execute the exact release binary
+        run: cargo run --release --locked -- package-release
+      - name: Retain verified package and execution evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2, MIT
+        with:
+          name: native-package-${{ matrix.os }}-${{ github.sha }}
+          path: |
+            dist/*.zip
+            dist/ARCHIVE-SHA256SUMS
+            .agentconductor/verification/packaged-workflow/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 14

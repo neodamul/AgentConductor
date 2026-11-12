@@ -7,6 +7,11 @@ on:
   pull_request:
   workflow_dispatch:
   workflow_call:
+    inputs:
+      package:
+        description: Build the native packages too (a release packages in its own job).
+        type: boolean
+        default: true
 
 permissions:
   contents: read
@@ -72,36 +77,7 @@ jobs:
       - name: Require a safety comment on every unsafe block
         run: cargo clippy --lib --bins --tests --locked --features native-ui-probe -- -D clippy::undocumented_unsafe_blocks
 
+  # GitHub #876: packaging needs no test result, so it runs beside validation; a release skips it here and packages itself.
   native-package:
-    needs: validate
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
-    timeout-minutes: 25
-    env:
-      CARGO_TERM_COLOR: never
-    steps:
-      - name: Checkout validated source
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2, MIT
-        with:
-          persist-credentials: false
-      - name: Build native release executable
-        run: cargo build --release --locked
-      - name: Render bilingual manuals with the Rust binary
-        run: cargo run --release --locked -- manual render
-      - name: Package and execute the exact release binary
-        run: cargo run --release --locked -- package-release
-      - name: Retain verified package and execution evidence
-        if: always()
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2, MIT
-        with:
-          name: native-package-${{ matrix.os }}-${{ github.sha }}
-          path: |
-            dist/*.zip
-            dist/ARCHIVE-SHA256SUMS
-            .agentconductor/verification/packaged-workflow/
-          include-hidden-files: true
-          if-no-files-found: warn
-          retention-days: 14
+    if: inputs.package != false
+    uses: ./.github/workflows/native-package.yml
