@@ -42,3 +42,4 @@
 .source-review .source-meta{flex:1;min-width:0;font-size:12px;line-height:1.6;color:var(--soft)}
 .source-review [hidden]{display:none!important}
 #start-source-status.over{color:var(--err)}
+.import-divider{flex:none;width:1px;align-self:stretch;margin:3px 4px;background:var(--line)}

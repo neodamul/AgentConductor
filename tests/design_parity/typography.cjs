@@ -16,7 +16,9 @@ module.exports = [
   e('rail-eyebrow', T, '.railhead .eyebrow', '.startup-team .eyebrow'),
   e('rail-title', T, '.railhead h2', '.startup-team h2'),
   e('import-row-box', ['height', 'columnGap', 'alignItems', 'flexWrap', 'display'], '.goal-import-actions', '#start-mcp-controls'),
-  e('import-preview-button', B.filter(k => k !== 'width'), '.goal-import-actions .btn:nth-child(3)', '#start-mcp-preview'),
+  e('import-preview-button', B.filter(k => k !== 'width'), '#workspace-preview-documents', '#start-mcp-preview'),
+  // #918: one reference button, separated from Optimize prompt by a divider.
+  e('import-divider', ['width', 'height', 'backgroundColor', 'marginLeft', 'marginRight'], '.goal-import-actions .import-divider', '#start-mcp-controls .import-divider'),
   e('rail-head-box', ['width', 'height'], '.railhead', '#rail-pane-agents .section-title'),
   e('rail-add-box', B, '.railhead .add', '#start-add'),
   e('rail-sub-box', ['width', 'height'], '.agent-panel .sub', '#rail-pane-agents p.small'),
@@ -58,7 +60,7 @@ module.exports = [
   e('browse', B, '.project-input .btn', '#start-browse'),
   e('goal-list-button', B, '#goal-picker', '#start-goal-list-open'),
   e('new-goal-button', B, '#workspace-new-goal', '#start-new-goal'),
-  e('import-button', B, '.goal-import-actions .btn:nth-child(2)', '#start-jira-reference'),
+  e('import-button', B, '#source-reference', '#start-reference'),
   e('save-button', B, '.actions .btn.p', '#start-save'),
   e('statusbar', ['fontSize', 'color'], '.status span', '#start-status'),
   // Every visible text in each screen state uses one size of the mock's scale (no 15/19/20/22/26px).

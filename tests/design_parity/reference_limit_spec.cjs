@@ -9,5 +9,5 @@ const entry = (name, props, n, mockSel, appSel) => ({ name: 'reference-limit-' +
 module.exports = [
   entry('count', TEXT, 4, '#source-status', '#start-source-status'),
   entry('over', TEXT, 6, '#source-status.over', '#start-source-status.over'),
-  entry('add-disabled', ['opacity', 'cursor'], 5, '#source-jira', '#start-jira-reference'),
+  entry('add-disabled', ['opacity', 'cursor'], 5, '#source-reference', '#start-reference'),
 ];
