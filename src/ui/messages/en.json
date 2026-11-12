@@ -1522,6 +1522,8 @@
   "sessions.confirm_many": "{value1} finished sessions will be cleaned up: their session records and task folders (worktrees) are removed, and logs stay until the cache is cleared. This cannot be undone.",
   "native.bug_report_invalid": "Invalid bug report request: {error}",
   "native.bug_report_browser_failed": "Cannot open the bug report in your browser: {error}",
+  "startup.release_notes": "Release notes",
+  "startup.release_notes_opened": "Opened the {version} release notes in the browser.",
   "startup.report_bug": "Report a bug…",
   "startup.bug_report_opened": "Opened a bug report for {value1} in your browser. Sign in to GitHub if needed, then review and submit.",
   "startup.models_listed": "Queried models",
