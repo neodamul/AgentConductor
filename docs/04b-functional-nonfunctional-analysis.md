@@ -795,3 +795,5 @@ FR-204 / #878–#880 correction: preserve task text line structure, initial Goal
 
 
 FR-28 / NFR-17 / #881: commit notification preferences before dismissing the editor; reject duplicate submissions, display storage errors locally, and retain the previous saved preference on failure. No implicit opt-in or secret export is introduced.
+
+FR-119 / #882 correction: normal settings omits manual tool bindings/catalog text while preserving server status, schema/read validation, internal goal_sources compatibility and JSON import/export.

@@ -686,3 +686,5 @@ Recorded the shared update/report repository contract, fixed privacy-preserving 
 Recorded actual regression paths and source fingerprints: shared standalone Goal styles/new-Goal collapse, display-only JSON message line breaks, and Phase-before-task selection with read-only history. Goal9×4, log7×4 and Phase7×8 local runtime assertions pass alongside focused parity/picker checks.
 
 2026-11-12: #881 reproduced save-before-close loss and documented acknowledgement, retry, restart persistence and safe import behavior.
+
+2026-11-12: #882 removed redundant normal-settings catalogs/bindings while preserving coordinator selection and internal configuration; source fingerprints and local verification recorded.

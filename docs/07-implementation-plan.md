@@ -3943,6 +3943,17 @@ Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / QAS-209 / DD-222.
 - [x] Task: reproduce premature dialog dismissal before persistence acknowledgement.
 - [x] Task: retain the draft until save success and show failure inline.
 - [x] Verify: delayed/failing/retried/busy saves, opt-in/opt-out, cancellation, restart persistence and import security. Local browser regression covers light/dark; focused Rust tests cover persistence, hostile import, architecture, i18n and generated manuals.
-- [ ] Completed: merge, close issue, record evidence and clean the completed branch.
+- [x] Completed: PR #884 merged and #881 closed; source-fingerprinted wiki and bilingual manuals updated.
 
 The reported association with updates is not confirmed; the reproducible UI path closes before the native save completes, including a failed save.
+
+
+### MCP settings shows server registration only — GitHub #882 (0.2.5)
+
+Trace: R-134 / BG-89 / SF-121 / UC-124 / FR-119 / QAS-130 / DD-143.
+- [x] Plan: remove duplicate tools text and manual bindings; retain internal compatibility and coordinator auto-selection. Checked owner-claude absence and assigned owner-codex before editing.
+- [x] Task: remove obsolete normal controls/handlers/styles/translations in product and approved mock; update public guidance.
+- [x] Verify: regression before removal, server discovery/status/error tests, internal configuration round trips and coordinator-selection native tests; canonical mock capture.
+- [x] Completed: implementation, local verification, bilingual manuals and source-fingerprinted wiki reviewed. Final merge/closure is tracked by PR #885; completed branch cleanup follows merge.
+
+#882 local evidence: obsolete-control regression failed before removal; registration/discovery/errors/automatic preview and internal-binding round trips pass. Actual MCP settings passes6checks ×4variants. Rust coordinator source selection4tests and source binding compatibility2tests pass; total focused Rust suite25passes. Canonical preview157interactions ×4variants,72captures and34contrast pairs pass.

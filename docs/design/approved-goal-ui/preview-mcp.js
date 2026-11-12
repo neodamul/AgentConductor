@@ -1,4 +1,4 @@
-// MCP servers: a list of saved servers, a short add/edit form, automatic tool discovery and dropdowns that bind Goal documents.
+// MCP servers: a list of saved servers, a short add/edit form, automatic tool discovery; document tools are selected by the coordinator.
 // Fixture servers only; production stores the same fields and discovers each server's real read-only tools.
 const mcpServers=[
  {name:'atlassian',kind:'remote',url:'https://mcp.example.internal/atlassian',command:'',secrets:[['Authorization','Bearer {env:ATLASSIAN_TOKEN}']],state:'ok',tools:['jira_get_issue','jira_search','confluence_get_page','confluence_search']},
@@ -9,15 +9,6 @@ const mcpDialog=document.getElementById('mcp-dialog'),mcpField=name=>document.ge
 let mcpEditing=null;
 function mcpKindLabel(server){return server.kind==='remote'?'원격 URL':'로컬 명령';}
 function mcpStatus(server){return server.state==='checking'?'도구 확인 중…':server.state==='ok'?'도구 '+server.tools.length+'개 확인됨':'연결 실패 · '+server.error;}
-function mcpToolChoices(){return mcpServers.filter(server=>server.state==='ok').flatMap(server=>server.tools.map(tool=>server.name+' · '+tool));}
-function renderMcpBindings(){
- const choices=mcpToolChoices();
- [['jira','jira_'],['confluence','confluence_']].forEach(([key,prefix])=>{
-  const select=mcpField(key),preferred=choices.filter(choice=>choice.includes(prefix)),rest=choices.filter(choice=>!choice.includes(prefix));
-  select.replaceChildren(new Option('연결 안 함',''),...[...preferred,...rest].map(choice=>new Option(choice,choice)));
-  if(!choices.includes(mcpBindings[key]))mcpBindings[key]='';select.value=mcpBindings[key];
- });
-}
 function renderMcpServers(){
  const list=mcpField('servers');list.replaceChildren();
  if(!mcpServers.length){const empty=document.createElement('p');empty.className='panel-note';empty.textContent='등록된 서버가 없습니다. + 서버 추가로 시작하세요.';list.append(empty);}
@@ -35,7 +26,7 @@ function renderMcpServers(){
   row.append(info,actions);list.append(row);
  });
 }
-function renderMcp(){renderMcpServers();renderMcpBindings();}
+function renderMcp(){renderMcpServers();}
 function discoverMcp(server){
  server.state='checking';renderMcp();
  setTimeout(()=>{
@@ -76,8 +67,6 @@ mcpField('add').onclick=()=>openMcpEditor(null);
 mcpField('edit-cancel').onclick=()=>{mcpEditing=null;showMcpView(false);};
 mcpField('close').onclick=()=>mcpDialog.close();
 mcpField('open').onclick=()=>openMcp();
-mcpField('jira').onchange=()=>{mcpBindings.jira=mcpField('jira').value;};
-mcpField('confluence').onchange=()=>{mcpBindings.confluence=mcpField('confluence').value;};
 mcpField('form').onsubmit=event=>{
  event.preventDefault();
  const name=mcpField('name').value.trim(),kind=mcpField('kind').value;

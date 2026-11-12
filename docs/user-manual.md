@@ -63,7 +63,7 @@ Use **☰ → Help → User manual** for offline help in the current interface l
 **Settings** includes:
 - **Interface language**: English or 한국어. Typed goals, prompts and raw evidence are never translated.
 - **Theme**: Light (default, neutral surfaces with a blue accent) or Dark (sage accents on dark surfaces). Save to apply immediately. The choice is stored with language in `~/.agentconductor/preferences.json` and follows you across workspaces. Both themes retain the same controls and information.
-- **MCP servers…**: add local commands or remote URLs with a guided form. Saving discovers tools; bind Jira and Confluence to discovered read-only tools and enter required arguments. Open Advanced for OpenCode JSON/JSONC import and export. Use `{env:VARIABLE}` references for credentials. [MCP guide](mcp-sources.md).
+- **MCP servers…**: add local commands or remote URLs with a guided form. Saving discovers tools and shows the server status/count. The workspace coordinator selects suitable read tools and arguments when you preview Goal sources; no manual tool mapping is required. Open Advanced for OpenCode JSON/JSONC import and export. Use `{env:VARIABLE}` references for credentials. [MCP guide](mcp-sources.md).
 - **Signal transport**: Local Rust (default) or agentmemory preferred, with local fallback. The server port appears only for agentmemory; switching to Local Rust preserves its value.
 - **Clear cache…**: review paths and sizes before permanently removing eligible disposable metadata.
 

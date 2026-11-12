@@ -874,3 +874,5 @@ UC-202 / #878–#880 correction: expand a multiline Goal in Tasks/Verify/Review;
 
 
 UC-34 / #881: the operator changes workspace notification opt-in and saves. While persistence is pending the dialog stays open; failure preserves the draft for retry or cancellation. Success closes it; reopening reads the persisted preference.
+
+UC-124 / #882 correction: register an MCP server, enter a Jira/Confluence reference in the Goal, and preview imports; no tool-selection combo boxes or per-tool argument form is required.
