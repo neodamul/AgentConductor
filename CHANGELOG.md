@@ -9,6 +9,7 @@ the GitHub Release notes for its tag.
 - Releases publish faster: the release reuses a passing validation of the same source tree (release PR or main) instead of validating again, packages beside validation instead of after it, and caches the Cargo release build (GitHub #876).
 - MCP settings say beside the JSON import that it uses the OpenCode MCP configuration format: its "mcp" servers are imported and other OpenCode settings are ignored (app and mock, GitHub #886).
 - The MCP server form says API tokens and other secrets must be registered as environment variables ({env:VARIABLE}, or Bearer {env:VARIABLE}); literal values are not saved (app and mock, GitHub #887).
+- MCP settings keep every server's discovered tools: reopening the settings or restarting the app shows them again without rediscovery, and only a server whose config changed returns to undiscovered (before, only the last discovered server kept its tools) (GitHub #893).
 
 ## v0.2.4
 

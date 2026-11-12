@@ -62,11 +62,20 @@ pub struct StoredJob {
     pub(super) started_ms: u64,
 }
 #[derive(Clone, Serialize, Deserialize)]
+pub struct CatalogFile {
+    pub(super) file: String,
+    pub(super) config: String,
+}
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Saved {
     #[serde(default)]
     pub(super) imports: Option<crate::mcp::Applied>,
     #[serde(default)]
     pub(super) mcp_result: Option<String>,
+    /// GitHub #893: each server's last tool discovery (result file and the server config it ran with), kept across
+    /// reopen and restart; a changed server config makes it stale.
+    #[serde(default)]
+    pub(super) mcp_catalogs: std::collections::BTreeMap<String, CatalogFile>,
     #[serde(default)]
     pub(super) chat_result: Option<String>,
     #[serde(default)]

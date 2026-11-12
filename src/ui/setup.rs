@@ -56,6 +56,7 @@ impl Startup {
             let s = Saved {
                 imports: None,
                 mcp_result: None,
+                mcp_catalogs: Default::default(),
                 chat_result: None,
                 optimize_result: None,
                 // DD-72: no pre-registered agents; templates stay available in + Add.
