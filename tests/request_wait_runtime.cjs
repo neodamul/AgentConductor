@@ -14,7 +14,7 @@ const ctx = vm.createContext({ document, Date: clock, Promise, acMessage });
 assert.ok(i18n.includes('const AC_WAIT='), 'AC_WAIT exists');
 const line = h => i18n.slice(i18n.indexOf(h), i18n.indexOf('\n', i18n.indexOf(h)) + 1);
 vm.runInContext(line('const AC_ELAPSED=') + i18n.slice(i18n.indexOf('const AC_PRESS=')) + ';this.AC_WAIT=AC_WAIT;', ctx);
-const button = () => { const classes = new Set(); return { dataset: {}, closest() { return this; }, classList: { toggle(c, on) { on ? classes.add(c) : classes.delete(c); }, contains: c => classes.has(c) }, setAttribute() {}, removeAttribute() {} }; };
+const button = () => { const classes = new Set(); return { dataset: {}, closest() { return this; }, getClientRects: () => [{}], classList: { toggle(c, on) { on ? classes.add(c) : classes.delete(c); }, contains: c => classes.has(c) }, setAttribute() {}, removeAttribute() {} }; };
 (async () => {
   const test = button(); clickHandler({ target: test });
   let finish; const pending = ctx.AC_WAIT.watch('test_messenger', new Promise(r => { finish = r; }));

@@ -11,6 +11,7 @@ the GitHub Release notes for its tag.
 - The approved design manifest again records the exact bytes of every mock file; the capture script refreshes it after a passing run and a test catches drift (GitHub #849).
 - Each agent card shows a Sessions chip; it lists that agent's task sessions across this Workspace's runs with state, Goal/task and times, stops a running session's run, and cleans up finished, failed or stale sessions (removing their task worktree, keeping logs until cache clean-up) after a confirmation (app and mock, GitHub #828).
 - In the task inspector, picking another agent lists that agent's models at once, and Assign sets the agent and the picked model together; Set applies only to the current agent (GitHub #852).
+- A pressed button keeps its moving progress bar until the last request it started ends (a quick request no longer clears it early), the bar stays on the visible button when it starts work through a hidden one (Next or Regenerate starting the plan) and while the plan starts and is generated; the mock shows the bar on every action that starts work (GitHub #856).
 
 ## v0.2.2
 
