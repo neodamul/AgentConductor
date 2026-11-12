@@ -3892,6 +3892,14 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Remove redundant menu commands — GitHub #865, #866, #867 (0.2.4)
+
+Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / QAS-209 / DD-222.
+- [x] Plan: remove duplicate agent registration, Workspace settings and panel View commands; preserve rail Add, Workspace step and titlebar toggles. Each issue has an owner-codex linked branch; the shared menu changes are validated together.
+- [x] Task: remove each duplicate and unused keys/handlers in product and preview; update both manuals.
+- [x] Verify: demonstrate old menu expectations fail, then test remaining groups and replacement entry points in Workspace and Room; canonical mock capture and manual generation.
+- [ ] Completed: reviewed merge, issue closures, knowledge record and branch cleanup.
+
 ### Standard GitHub bug reports — GitHub #862 (0.2.4)
 
 Trace: R-216 / BG-171 / SF-204 / UC-208 / FR-210 / NFR-97 / QAS-215 / DDR-63 / DD-231.

@@ -665,6 +665,12 @@ PR #761 now labels approved mockups as sample-data design previews, refreshes th
 
 - 2026-11-12: #853 real Windows resize/maximize/restore/grow and Workspace save acceptance passed (run43140902234, job130927346501); archived measured window/document bounds.
 
+## 2026-11-12 Duplicate application-menu cleanup (#865–#867)
+
+Removed redundant Agents, Workspace settings and View commands while preserving the rail, stepper and titlebar entry points. Recorded per-issue Red/Green evidence, final 41-check × 4 runtime suite, 28 Rust tests, canonical preview and generated manuals in `application-menu-cleanup.md`.
+
 ## 2026-11-12 Standard GitHub bug reports (#862)
 
 Recorded the shared update/report repository contract, fixed privacy-preserving template, browser-managed login, local Rust/menu/mock evidence and remaining Windows/Enterprise manual acceptance limits in `bug-reporting.md`.
+
+- 2026-11-12: PR #872 integrates #864 and #873 while preserving bug reporting and all menu removals. Local combined checks:41 menu +8 bug-report checks per variant; canonical preview157 interactions per variant. Earlier observations above remain historical.

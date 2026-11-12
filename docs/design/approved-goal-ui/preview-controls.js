@@ -60,7 +60,6 @@ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!appMenu.hi
 document.getElementById('sidebar-toggle').onclick=()=>{const collapsed=document.querySelector('.win').classList.toggle('sidebar-collapsed');const button=document.getElementById('sidebar-toggle');button.setAttribute('aria-expanded',String(!collapsed));button.title=collapsed?'왼쪽 패널 펼치기':'왼쪽 패널 접기';button.setAttribute('aria-label',button.title);document.getElementById('left-sidebar').inert=collapsed;};
 document.getElementById('coordinator-chat-button').onclick=()=>openSidePanel('coordinator-chat-panel');
 document.getElementById('settings-button').onclick=()=>openSidePanel('settings-panel');
-document.getElementById('menu-workspace-settings').onclick=()=>{closeAppMenu();openWorkspaceHome();};
 document.getElementById('menu-settings').onclick=()=>{closeAppMenu();openSidePanel('settings-panel');};
 function openAbout(updated){const d=document.getElementById('about-dialog');document.getElementById('about-tag').hidden=!updated;if(!d.open)d.showModal();document.getElementById('about-start').focus({preventScroll:true});}
 document.getElementById('menu-about').onclick=()=>{closeAppMenu();openAbout(false);};
@@ -196,9 +195,6 @@ appMenu.querySelectorAll('.menu-parent').forEach(parent=>{const sub=document.get
  parent.onkeydown=event=>{if(['ArrowRight','Enter',' '].includes(event.key)){event.preventDefault();open(true);}};
  sub.onkeydown=event=>{if(event.key==='ArrowLeft'||event.key==='Escape'){event.preventDefault();event.stopPropagation();closeSubmenus(null);parent.focus();}};});
 appMenu.addEventListener('keydown',event=>{if(!['ArrowDown','ArrowUp'].includes(event.key))return;event.preventDefault();const items=[...appMenu.querySelectorAll(':scope>button,:scope>.menu-group>.menu-parent,.submenu:not([hidden])>button')],here=items.indexOf(document.activeElement),step=event.key==='ArrowDown'?1:-1;const inSub=document.activeElement.closest('.submenu');const pool=inSub?[...inSub.querySelectorAll('button')]:[...appMenu.querySelectorAll(':scope>button,:scope>.menu-group>.menu-parent')];pool[(pool.indexOf(document.activeElement)+step+pool.length)%pool.length].focus();});
-document.getElementById('menu-add-agent').onclick=()=>{closeAppMenu();document.getElementById('profile-add').click();};
-document.getElementById('menu-view-rail').onclick=()=>{closeAppMenu();document.getElementById('sidebar-toggle').click();};
-document.getElementById('menu-view-inspector').onclick=()=>{closeAppMenu();document.getElementById('right-panel-toggle').click();};
 document.getElementById('menu-update').onclick=()=>{closeAppMenu();document.getElementById('update-button').click();};
 document.getElementById('menu-report-bug').onclick=()=>{closeAppMenu();const body='## Summary\nDescribe the bug.\n\n## Steps to reproduce\n1. \n2. \n\n## Expected behavior\n\n## Actual behavior\n\n## Environment\n- AgentConductor: design preview\n';window.open('https://github.com/neodamul/AgentConductor/issues/new?body='+encodeURIComponent(body),'_blank','noopener');};
 ['menu-new-workspace','menu-open-workspace','menu-rules','menu-messenger','menu-export','menu-import','menu-manual','menu-tools'].forEach(id=>{document.getElementById(id).onclick=closeAppMenu;});

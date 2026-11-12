@@ -855,5 +855,11 @@ R-210 / #429 amendment (2026-11-04): New Goal seeds Workspace coordinator, its p
 Show a centered About dialog on the first start after an install or an update and keep it reachable from the application menu at any time. It states in a few sentences what AgentConductor is, lists credits, and tells the operator that Claude Code, Codex and OpenCode CLIs must be installed to use the agents, with one short install command each (for example `npm install -g @anthropic-ai/claude-code`). The dialog is dismissed once per version; the choice is kept in the operator's preferences. Source: user request, 2026-11-04.
 Trace: R-215 → BG-170 → SF-203 → UC-207 → FR-209 / NFR-96 → QAS-214 → DDR-62 → DD-227. GitHub #468.
 
+R-210 / #865 amendment: remove the duplicate Agents menu group; agent registration remains available through the Agents tab Add button.
+
+R-210 / #866 amendment: Workspace settings are reached through the Workspace step; remove the redundant Workspace menu command while retaining recent/New/Open/Export/Import.
+
+R-210 / #867 amendment: remove the duplicate View menu group; preserve panel navigation through the titlebar toggles.
+
 ### R-216 Standardized bug reporting to the configured GitHub repository
 Offer Report a bug in Help. Open the existing default browser on the configured repository's new-issue page with an English reproduction/expected/actual/environment template. Use exactly the updater repository preference, including Enterprise HTTPS hosts; GitHub handles login and the operator reviews/submits the issue. Include only version, OS and architecture automatically. Trace: R-216 → BG-171 → SF-204 → UC-208 → FR-210 / NFR-97 → QAS-215 → DDR-63 → DD-231. GitHub #862.

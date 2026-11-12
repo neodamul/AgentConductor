@@ -170,4 +170,6 @@
 - [Update indicator visibility](update-indicator-visibility.md) — #857 conditional titlebar state and regression lesson.
 - [Windows viewport resizing](windows-viewport-resizing.md) — #853 physical bounds and native acceptance status.
 
+- [Application menu entry points](application-menu-cleanup.md): duplicate navigation removal and replacement-entry-point verification (#865–#867).
+
 - [Browser-based bug reporting](bug-reporting.md): shared update/report repository, native URL validation, browser login and verification limits (#862).
