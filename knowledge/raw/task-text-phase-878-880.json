@@ -1,0 +1,50 @@
+{
+  "retrieved_at": "2026-11-12",
+  "issues": [
+    878,
+    879,
+    880
+  ],
+  "sources": [
+    {
+      "path": "src/ui/room.css",
+      "sha256": "4a0a53743b79c6a71d54f59655e58935afb8d07d94e72c63c3ae821dee47dbb9"
+    },
+    {
+      "path": "src/ui/room.js",
+      "sha256": "7d8ee832c4a3074f5ece77903243705547c6e7284d489ca6879204601253910b"
+    },
+    {
+      "path": "src/ui/room_activity.js",
+      "sha256": "f76206df76e0cac9d45715bc89b2e579a9b6ad48c27ba50d31688b954ddb3472"
+    },
+    {
+      "path": "src/ui/rail.js",
+      "sha256": "650902fd99a6a505f80bcbac49be30dc83b844373e7254469653dbdafa1a06ed"
+    },
+    {
+      "path": "src/ui/startup.js",
+      "sha256": "73b0692d302209436cc0ba46864967671e876ee17b275a7d135309fd450a6e06"
+    },
+    {
+      "path": "tests/goal_text_878.cjs",
+      "sha256": "cac59443ba5acbeea08e59ea178fa82df530c02e56115cd4db46400524298a36"
+    },
+    {
+      "path": "tests/raw_log_runtime_879.cjs",
+      "sha256": "ab9ddcc14ecd3be4d15f6b94c055b29504e0e9be458e587f35f66a84fe260515"
+    },
+    {
+      "path": "tests/phase_task_880.cjs",
+      "sha256": "c29f311df18cc3a2c1218825833e707eedcf8f7b19631bd51a70395fa1c92ed7"
+    }
+  ],
+  "verification": {
+    "goal": "New Goal collapse failed before fix;9checks x4 screen variants plus4 expanded-Goal style comparisons pass. Workspace pre-wrap already existed; standalone shared stylesheet was missing it.",
+    "logs": "Formatter missing before fix; pure formatter +7checks x4 Task/Coordinator screen variants pass; raw bytes/path escapes retained.",
+    "phase": "Phase4 toPhase1 task selection failed before fix;7checks x8 active/completed screen variants +existing picker regression pass."
+  },
+  "limits": [
+    "No final physical Windows UI acceptance performed for this unit."
+  ]
+}

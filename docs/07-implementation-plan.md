@@ -3919,3 +3919,19 @@ Trace: R-216 / BG-171 / SF-204 / UC-208 / FR-210 / NFR-97 / QAS-215 / DDR-63 / D
 Local evidence: 26 Rust regression tests passed; manual browser-opening test passed separately on macOS. Shared menu checks: 8 × 4 variants. Approved mock: 149 interactions × 4 variants, 72 captures and 28 contrast pairs. Windows browser launching and internal Enterprise authentication are not manually verified.
 
 Integration completion: #864 merged as `c1ffa8d5`; #872 merged as `c0cb1aa0`. The panel-glyph record completes with the merge of PR #871. Final cleanup removes the superseded Codex issue branches after verifying their changes are present on main.
+
+### Readable task text and historical Phase navigation — GitHub #878, #879, #880 (0.2.5)
+
+Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / QAS-209 / DD-222.
+- [x] Plan: preserve multiline Goal/log evidence and route historical Phase task selection without mutating current work. All three issues were unowned and labeled owner-codex before editing; separate main-based linked branches record each unit.
+- [x] Task #878: apply the approved bounded pre-wrap Goal style and preserve collapsed defaults for new Goals.
+- [x] Task #879: render readable structured log text with record boundaries; preserve raw artifacts and scroll bounds.
+- [x] Task #880: select the matching historical Phase and show/open the requested task details read-only.
+- [x] Verify: demonstrate each regression before its fix; run shared runtime checks, focused design parity, architecture/i18n/manual checks locally.
+- [ ] Completed: reviewed merge, issue closure, source-fingerprinted wiki and temporary/branch cleanup.
+
+#878 local evidence: the new-Goal collapse regression failed before the fix; final Goal runtime checks pass9 ×4variants, including standalone shared styling, and expanded-Goal design parity passes4variants. Existing Workspace pre-wrap was already present; the fix centralizes it instead of adding duplicate styling.
+
+#879 local evidence: formatter tests failed before implementation; nested JSON records now render decoded message line breaks while plain/malformed tails, path escapes and source bytes remain unchanged. Actual Task/Coordinator runtime passes7checks ×4variants, including visual row separation, safe text rendering and bounded wrapping/scrolling.
+
+#880 local evidence: Phase4→Phase1 task selection failed before the fix. Final runtime passes7checks ×8 active/completed ×light/dark ×840/1280 variants, including repeated task IDs, expanded historical detail, current editable surface restoration and zero proposal mutation/work launch. Existing Phase picker regression passes.

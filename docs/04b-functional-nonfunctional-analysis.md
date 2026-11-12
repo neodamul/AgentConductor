@@ -790,3 +790,5 @@ Use the updater repository preference; validate the target and encode a fixed Ma
 
 ### NFR-97 Bug reports are light and explicit
 No API token, HTTP client, browser profile inspection, extra dependency or background polling. The native opener accepts only a server-generated HTTPS issue URL and never shell-evaluates it. Automatic context excludes user paths, Goals, logs, secrets and agent conversations. Browser launch errors remain visible. Trace: FR-210.
+
+FR-204 / #878–#880 correction: preserve task text line structure, initial Goal collapse and per-Phase selection identity. Keep raw artifact bytes unchanged and bound rendered evidence. Historical navigation must not mutate the active proposal.
