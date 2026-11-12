@@ -39,7 +39,11 @@ pub(crate) fn document() -> Result<String, String> {
             "{}\nwindow.startRoom=function(){{ {} }};\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}\n{}",
             super::super::I18N,
             super::super::JS,
-            include_str!("../mcp.js"),
+            concat!(
+                include_str!("../workspace_controls.js"),
+                "\n",
+                include_str!("../mcp.js")
+            ),
             include_str!("../chat.js"),
             include_str!("../optimize.js"),
             include_str!("../result_view.js"),

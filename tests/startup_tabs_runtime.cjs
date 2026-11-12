@@ -23,17 +23,9 @@ key('workspace','ArrowLeft','review');key('review','ArrowRight','workspace');key
 vm.runInContext("showStep('review')",context);active('review');vm.runInContext("showStep('invalid')",context);active('review');
 console.log('Startup tabs: click, keyboard, accessibility and draft preservation passed');
 
-// A manual Save advances only after persistence succeeds; internal saves do not route.
-const saveStart=source.indexOf("q('save').onclick="),saveEnd=source.indexOf(";q('add')",saveStart);
-vm.runInContext(source.slice(saveStart,saveEnd)+';',context);
-(async()=>{
- let saved=true;const calls=[];context.save=async(...args)=>{calls.push(args);return saved;};
- await nodes.get('save').onclick({type:'click'});active('team');assert.equal(focused,nodes.get('tab-team'));assert.deepEqual(calls[0],[false]);
- vm.runInContext("showStep('workspace')",context);saved=false;
- await nodes.get('save').onclick({type:'click'});active('workspace');
- assert.match(markup,/<button id="start-save" class="primary">/);
- console.log('Workspace Save: green action, successful next-tab and failed-save retention passed');
-})().catch(error=>{console.error(error);process.exitCode=1;});
+// Save persistence/navigation is exercised against the assembled UI in workspace_save_905.cjs.
+assert.match(markup,/<button id="start-save" class="primary">/);
+assert.match(markup,/<button id="start-save-only"[^>]*>/);
 // The discard button follows the open step.
 nodes.get('tab-review').onclick();assert.equal(rows['panel-review'].held.at(-1),discard);
 nodes.get('tab-team').onclick();assert.equal(rows['panel-team'].held.at(-1),discard);

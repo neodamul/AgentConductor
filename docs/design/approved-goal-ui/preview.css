@@ -413,3 +413,6 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 
 /* #898: restrained blue highlights stay beneath the plain-text Goal editor. */
 .source-goal-field{position:relative}#goal-entry{position:relative;z-index:1;background:transparent}#reference-goal-tags{position:absolute;z-index:0;box-sizing:border-box;border:1px solid transparent;white-space:pre-wrap;overflow-wrap:break-word;overflow:hidden;color:transparent;pointer-events:none;scrollbar-gutter:stable}#reference-goal-tags .goal-tag{color:transparent;background:var(--info-bg);border-radius:4px;box-shadow:0 0 0 1px var(--info)}
+
+/* #906: validation never replaces the focus indicator. */
+[aria-invalid="true"]{border-color:var(--err)!important}

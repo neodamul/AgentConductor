@@ -41,7 +41,7 @@ You can create, open and switch workspaces while planning or a run is in progres
 A workspace holds goals, plans, role assignments and local history. Name it, choose an
 existing project folder with **Browse…** or type the path, then **Save workspace**.
 Git worktree isolation is optional; shared execution is the default.
-Saving updates the name in the titlebar immediately and selects **Agent roles**. Tab changes preserve draft inputs; unsaved changes still require **Save workspace**.
+Choose **Save** to persist edits and stay on Workspace, or **Save and go to step 2** to save and open **Agent roles**. Empty or invalid required controls have a red border until corrected; a CLI default model is valid. When the Goal has unapplied Jira/Confluence references, saving succeeds and reminds you to preview, review and apply the documents before planning. Tab changes preserve drafts but do not save them.
 
 The **☰** application menu groups everything in two levels: **Workspace** (recent workspaces to switch to, New workspace…, Open existing workspace…, Export workspace…, Import workspace…), **Plan rules…**, **Messenger…**, **Settings…** (MCP servers, cache, update channel, language, theme, signal transport), **Help** (Check for updates…, Report a bug…, User manual, Agent tools guide, About) and **Close window…**. The Workspace name in the titlebar is a label; open the Workspace step to edit its settings. The same titlebar is available in Agent Room.
 A workspace with an existing run opens its work view when appropriate; returning to

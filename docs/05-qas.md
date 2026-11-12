@@ -889,3 +889,6 @@ QAS-130 / #898: source tags remain visible/aligned at840/1280px in both themes, 
 
 
 QAS-130 / #901: the exact reported inspect response with arguments: {} completes offline preview. Null/omitted inspection arguments also work; nonempty values, unknown fields, and read/helper without arguments are rejected.
+
+
+QAS-130 / QAS-66 / #905 / #906: in both themes and narrow/wide layouts, invalid states use --err and aria-invalid, become normal after correction, and retain focus indicators. Plain Save stays on Workspace; continue saves before navigation; invalid backend saves retain edits. No extra polling or duplicate reference discovery.

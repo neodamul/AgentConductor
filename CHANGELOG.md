@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased — 0.2.6
 
+- Add a Workspace Save action, unapplied-document guidance, and accessible required-input borders.
+
 - Fix MCP preview rejecting harmless empty arguments during schema inspection.
 
 - Restore visible editable `[Jira:KEY]` and `[Confluence:ID]` Goal tags while preserving legacy reference syntax.

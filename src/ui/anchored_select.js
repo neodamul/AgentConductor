@@ -30,7 +30,7 @@
     if(button.querySelector('.ac-choice-value').textContent!==shown)button.querySelector('.ac-choice-value').textContent=shown;
     button.disabled=select.disabled;button.title=select.title||shown;button.classList.toggle('missing',select.classList.contains('missing'));
     const labelText=select.getAttribute('aria-label')||[...select.labels||[]].map(e=>{const label=e.cloneNode(true);label.querySelectorAll('select,button,.ac-selection-control').forEach(n=>n.remove());return label.textContent.trim();}).join(' ')||select.id||text('choices.select');
-    button.setAttribute('aria-label',labelText);
+    button.setAttribute('aria-label',labelText);const invalid=select.getAttribute('aria-invalid');if(invalid===null)button.removeAttribute('aria-invalid');else button.setAttribute('aria-invalid',invalid);
     const icons={person:'M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0 M4 21v-2a8 8 0 0 1 16 0v2',model:'M6 6h12v12H6z M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4',fallback:'M4 7h15l-4-4M20 17H5l4 4',sliders:'M4 7h16M4 17h16 M8 4v6M16 14v6'};
     const key=select.dataset.choiceIcon||(/model|모델/i.test(select.id+' '+labelText)?'model':/fallback|대체/i.test(select.id+' '+labelText)?'fallback':/agent|provider|에이전트|코디네이터|종류|계정/i.test(select.id+' '+labelText)?'person':'sliders');
     const svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="'+icons[key]+'"/></svg>';
