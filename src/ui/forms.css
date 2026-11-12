@@ -16,3 +16,6 @@
 
 /* #890: persistence errors belong to the open editor, not the global toast layer. */
 #start-messenger-error{position:static;width:auto}
+
+/* #898: keep the source-tag layer visible through the only editable field. */
+#start-goal-field textarea{background:transparent}

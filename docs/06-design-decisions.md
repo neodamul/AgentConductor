@@ -1729,3 +1729,13 @@ DD-143 / #882 correction: delete the obsolete normal-settings binding form and d
 
 
 DD-222 / DD-79 / DD-143 / #890: complete missing approved reference states and dedicated parity entries; reuse the existing interaction runner, screenshot manifest and parity harness. Any real discrepancy found must be repaired rather than hidden by tolerance increases.
+
+DD-143 / #898: make reference kinds case-insensitive, render the exact source span (including brackets), and restore a transparent textarea over the colored tag layer. Align the layer to editor geometry. Send complete bounded source Markdown inline for summaries, retain the full local artifact for all sources, and unify MCP coordinator-step timeout/error context without changing MCP server RPC limits.
+
+DD-143 / #898 evidence update: the operator supplied a Windows diagnosis confirming that a canonical `\\?\C:\...` schema path was treated as UNC by Claude Read, followed by the selection90second timeout; first replies also took40–50seconds. Reuse git::git_path for every MCP schema/source path exposed to a CLI and the shared coordinator task-file argument. OS-native filesystem operations retain their canonical paths; genuine network UNC paths are not rewritten as drive paths.
+
+DD-143 / #898 follow-up: the operator clarified the sequence: guessed issueIdOrKey did not match the server's real getIssue schema; reading the full schema then exposed the Windows path failure. Keep the discovered schema as authority. A schema-invalid selection is returned to the coordinator with the exact schema/error within the existing8-round bound, before tools/call. Tests use issueKey, fieldIds and expand as required fields without hard-coding these names in production.
+
+DD-143 / #898 proposal review: normalize CLI-facing Windows paths and inline complete small schemas are implemented. The separate40–50second startup delay and a cancelled SessionStart hook were reported, but a causal link is unconfirmed; user-installed hooks are not disabled. The increased bounded CLI step allowance accommodates slow startup without changing MCP network/RPC limits or weakening schema validation.
+
+DD-143 / #898 budget bound: selection rounds and capacity/format retries share one300second deadline per reference; each summary has its own300second bound. A larger per-call allowance must not multiply into40minutes of selection retries. Timeout cancellation uses the existing owned process containment; a regression checks that a cancelled CLI cannot write late output.

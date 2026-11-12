@@ -800,3 +800,5 @@ FR-119 / #882 correction: normal settings omits manual tool bindings/catalog tex
 
 
 FR-204 / FR-28 / FR-119 / #890: parity compares reference and assembled product state geometry/style plus explicit content/interaction assertions; semantic runtime tests remain necessary alongside visual comparisons.
+
+FR-119 / #898: normalize reference identities while preserving authored display text and UTF-16 offsets. Keep highlights aligned with their editor. Avoid file-tool calls for complete source text that fits within the coordinator prompt bound; preserve file-backed full evidence for large sources.

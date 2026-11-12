@@ -7,6 +7,7 @@ const messenger="SIM.reply.messenger=()=>({settings:{enabled:true,kind:'slack',e
 const saveMessenger="(async()=>{document.getElementById('start-app-menu').click();for(let i=0;i<100&&!document.querySelector('#start-workspace-list button');i++)await new Promise(r=>setTimeout(r,20));[...document.querySelectorAll('#start-workspace-list button')].find(b=>b.textContent===acMessage('startup.messenger')).click();for(let i=0;i<100&&!document.getElementById('start-messenger').open;i++)await new Promise(r=>setTimeout(r,20));document.getElementById('start-messenger-save').click();await new Promise(r=>setTimeout(r,200));})()";
 const mcp="(async()=>{document.getElementById('start-settings-button').click();document.getElementById('start-mcp-settings').click();await new Promise(r=>setTimeout(r,200));})()";
 module.exports=[
+ ...require('./source_tags_spec.cjs'),
  {name:'evidence-raw-log',props:['whiteSpace','overflowWrap','maxHeight','overflowY','fontSize','lineHeight','paddingTop','paddingLeft','borderTopWidth','borderTopLeftRadius','backgroundColor'],pixel:false,
  mock:{url:'?theme=light#3',run:'openRawLogs()',selector:'#preview-stdout'},app:{setup:logs,run:runLogs,selector:'#stdout'}},
  {name:'evidence-raw-line-breaks',assert:"document.getElementById('stdout').textContent.includes('리프레시 토큰\\n이전 토큰 무효화')&&document.getElementById('stdout').textContent.includes('session_id')",app:{setup:logs,run:runLogs}},

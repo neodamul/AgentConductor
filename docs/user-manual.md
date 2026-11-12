@@ -125,10 +125,10 @@ If a new workspace chooses a folder already owned by another workspace, saving r
 
 
 Use the persistent **Workspace settings**, **Agent roles** and **Review the plan** tabs. Switching tabs preserves unsaved inputs; only **Save workspace** or **Save plan edits** persists them. Planning completion selects the review tab automatically.
-Describe the goal and choose the planning coordinator. Insert explicit `jira:EMM-52599`
-and `confluence:53553565` references after registering MCP servers.
+Describe the goal and choose the planning coordinator. Insert `[Jira:EMM-52599]`
+and `[Confluence:53553565]` references after registering MCP servers.
 Preview and apply selected documents before planning. Large sources are saved as full local Markdown, summarized by the coordinator and checked against their hashes; source changes require renewed review.
-Registration alone does not run an MCP command.
+Saving a server form discovers its tools; it does not retrieve documents. Document reads occur only when you request a source preview.
 
 Roles include verification, development, documentation, knowledge assetization and testing.
 Choose agents and optional models/alternates. **Apply agent role defaults** (in the footer) assigns the registered team to every role by default (Claude Code verifies, Codex develops and documents, OpenCode or a custom CLI tests, each with a fallback); **Save and go to step 3** saves and opens the plan, generating one when none exists. **Read plan…** and **Write plan manually** are under the task list of step 3, and **Regenerate plan** repeats the generation.
@@ -145,6 +145,8 @@ The project folder is above the goal; the coordinator is beside the workspace na
 **☰ → Workspace** places **Export workspace…** beside **Import workspace…**. Review transferred configuration on the destination machine; local secrets and verification claims are not blindly copied.
 
 ![Registered MCP servers and discovered-tool status](assets/ui-mcp-current.png)
+
+Source tags use subdued blue highlights while remaining editable text. `[Jira:KEY]` and `[Confluence:ID]` are the preferred display format; existing lowercase `jira:`/`confluence:` references remain accepted. MCP previews use each server's actual required schema. Small complete schemas/sources are supplied directly to the coordinator; larger evidence remains in local files with CLI-compatible Windows paths. Selection/retries share a five-minute budget per reference; summaries have a separate five-minute budget. Timeout errors name the stage and retain local logs; no preview is automatically approved.
 
 ### 1.5 Plan and approval
 

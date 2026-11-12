@@ -79,3 +79,41 @@ fn source_suggestions_cover_jira_confluence_explicit_refs_and_limits() {
     drop(room);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn bracketed_display_references_preserve_utf16_ranges_and_canonical_keys() {
+    let (room, root) = startup();
+    let goal = "😀 [Jira:EMM-51214] [Confluence:2571110463] jira:EMM-51214";
+    let result = analysis(&room, goal);
+    assert_eq!(
+        result["references"],
+        serde_json::json!(["jira:EMM-51214", "confluence:2571110463"])
+    );
+    let ranges = result["reference_ranges"].as_array().unwrap();
+    assert_eq!(ranges.len(), 3);
+    let utf16: Vec<_> = goal.encode_utf16().collect();
+    let selected: Vec<_> = ranges
+        .iter()
+        .map(|r| {
+            String::from_utf16(
+                &utf16[r["start"].as_u64().unwrap() as usize..r["end"].as_u64().unwrap() as usize],
+            )
+            .unwrap()
+        })
+        .collect();
+    assert_eq!(
+        selected,
+        [
+            "[Jira:EMM-51214]",
+            "[Confluence:2571110463]",
+            "jira:EMM-51214"
+        ]
+    );
+    assert!(suggestions(&room, goal).is_empty());
+    let imported = agentconductor::mcp::references(goal).unwrap();
+    assert_eq!(imported.len(), 2);
+    assert_eq!(imported[0].key(), "jira:EMM-51214");
+    assert_eq!(imported[1].key(), "confluence:2571110463");
+    drop(room);
+    std::fs::remove_dir_all(root).unwrap();
+}

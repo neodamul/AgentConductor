@@ -1,0 +1,7 @@
+// #898: compare the actual overlay with the independently authored bracketed-tag reference.
+const value='Implement [Jira:EMM-51214] using [Confluence:2571110463]';
+const setup=`SIM.home.config.goal=${JSON.stringify(value)};SIM.reply.mcp_source_suggestions=()=>({references:['jira:EMM-51214','confluence:2571110463'],reference_ranges:[{reference:'jira:EMM-51214',start:10,end:26},{reference:'confluence:2571110463',start:33,end:56}],suggestions:[]});`;
+const openMock=`i=0;show();document.getElementById('goal-entry').value=${JSON.stringify(value)};document.getElementById('goal-entry').dispatchEvent(new Event('input'));`;
+module.exports=[{name:'source-tag-chip',props:['backgroundColor','borderTopLeftRadius','boxShadow','color'],keys:['backgroundColor','borderTopLeftRadius','boxShadow','color'],pixel:false,mock:{url:'?theme=light#0',run:openMock,selector:'#reference-goal-tags mark'},app:{setup,selector:'#start-goal-tags mark'}},
+{name:'source-tag-editor-transparent',props:['backgroundColor'],keys:['backgroundColor'],pixel:false,mock:{url:'?theme=light#0',run:openMock,selector:'#goal-entry'},app:{setup,selector:'#start-goal'}},
+{name:'source-tag-alignment',assert:"(()=>{const a=document.getElementById('start-goal').getBoundingClientRect(),b=document.getElementById('start-goal-tags').getBoundingClientRect();return Math.abs(a.left-b.left)<1&&Math.abs(a.top-b.top)<1&&Math.abs(a.width-b.width)<1&&Math.abs(a.height-b.height)<1&&document.getElementById('start-goal-tags').textContent.includes('[Jira:EMM-51214]');})()",app:{setup}}];

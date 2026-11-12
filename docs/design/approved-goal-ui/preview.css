@@ -410,3 +410,6 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 .pill,.head>.pill,.goal-info>.pill{padding:1px 7px}
 .session-state{padding:1px 7px}
 .pill.run,.outline-state-badge[data-state="running"],.session-state.running{background:var(--info-bg);color:var(--info)}
+
+/* #898: restrained blue highlights stay beneath the plain-text Goal editor. */
+.source-goal-field{position:relative}#goal-entry{position:relative;z-index:1;background:transparent}#reference-goal-tags{position:absolute;z-index:0;box-sizing:border-box;border:1px solid transparent;white-space:pre-wrap;overflow-wrap:break-word;overflow:hidden;color:transparent;pointer-events:none;scrollbar-gutter:stable}#reference-goal-tags .goal-tag{color:transparent;background:var(--info-bg);border-radius:4px;box-shadow:0 0 0 1px var(--info)}

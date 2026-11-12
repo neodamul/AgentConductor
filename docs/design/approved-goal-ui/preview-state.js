@@ -227,7 +227,7 @@ updateAgentStates(v);
 updateTaskOutline(v);
  document.querySelectorAll('[data-team-brief]').forEach(button=>button.disabled=['j','i','e'].includes(v));
  document.getElementById('saved-goal-title').title=document.getElementById('saved-goal-title').textContent;
-document.getElementById('label').textContent=`${i+1} / ${views.length}  ${views[i][1]}`;location.hash=i;if(selectedGoal().state==='completed'&&v==='c'){const tab=document.querySelector('.tabs .tab[data-step="6"]');tab.classList.add('done');tab.querySelector('.num').textContent='✓';}if(popupResult)showGoalResult('rotation');}
+document.getElementById('label').textContent=`${i+1} / ${views.length}  ${views[i][1]}`;location.hash=i;if(selectedGoal().state==='completed'&&v==='c'){const tab=document.querySelector('.tabs .tab[data-step="6"]');tab.classList.add('done');tab.querySelector('.num').textContent='✓';}if(popupResult)showGoalResult('rotation');if(typeof renderSourceTags==='function')renderSourceTags();}
 prev.onclick=()=>{workspaceVisible=false;i=(i+views.length-1)%views.length;show()};next.onclick=()=>{workspaceVisible=false;i=(i+1)%views.length;show()};show();
 
 

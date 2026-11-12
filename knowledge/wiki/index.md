@@ -183,3 +183,5 @@
 - [Approved screen evidence and fixture-state matching](design-evidence-states.md) — #890.
 
 - [Reproducible public screenshot gallery](reproducible-public-gallery.md) — #891, sample-data labels and offline image packaging.
+
+- [Windows MCP schema preview and source tags](windows-mcp-schema-preview.md) — #898, exact schema, path boundary and bounded retries.

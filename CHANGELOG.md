@@ -4,6 +4,12 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## Unreleased — 0.2.6
+
+- Restore visible editable `[Jira:KEY]` and `[Confluence:ID]` Goal tags while preserving legacy reference syntax.
+- Normalize Windows CLI-facing source/schema paths, provide bounded complete schemas inline and correct schema-invalid read arguments before MCP transmission.
+- Share a five-minute selection/retry budget, retain full local evidence and show stage-specific timeout errors.
+
 ## v0.2.5
 
 - Releases publish faster: the release reuses a passing validation of the same source tree (release PR or main) instead of validating again, packages beside validation instead of after it, and caches the Cargo release build (GitHub #876).

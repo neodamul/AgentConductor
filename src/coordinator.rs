@@ -187,9 +187,10 @@ pub async fn run_json_within(
         return Err("coordinator prompt exceeds 128 KiB".into());
     }
     let task_file = dir.join("prompt.txt");
+    let cli_task_file = PathBuf::from(crate::git::git_path(task_file.as_os_str()));
     let args = read_only_args(
         profile,
-        task_file
+        cli_task_file
             .to_str()
             .ok_or("non-UTF8 coordinator context path")?,
     )?;
