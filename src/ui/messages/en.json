@@ -1535,5 +1535,7 @@
   "mcp.import_format_hint": "JSON import uses the same format as the OpenCode MCP configuration: its \"mcp\" servers are imported and other OpenCode settings are ignored.",
   "mcp.selection_step": "tool selection",
   "mcp.summary_step": "source summary",
-  "mcp.coordinator_step_timed_out": "{reference}: {stage} did not finish within {seconds} seconds. No source was approved. Check the local CLI logs and retry."
+  "mcp.coordinator_step_timed_out": "{reference}: {stage} did not finish within {seconds} seconds. No source was approved. Check the local CLI logs and retry.",
+  "startup.save_only": "Save",
+  "startup.preview_before_planning": "To include referenced documents in the plan, review and apply them in Preview documents. Your workspace has been saved."
 }

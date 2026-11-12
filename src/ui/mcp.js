@@ -1,5 +1,6 @@
 // DD-68: on-demand configuration; DD-138 coordinator-selected document reads.
-function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,showStep,stale=()=>''}) {
+function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,showStep,stale=()=>'',onReferences=()=>{}}) {
+ let sourceReferences=[],sourceReady=false;
  let shown=null,review=null,suggestionsStamp=null,sourceCount=0,pendingDiscovery=null,previewing=false,failedShown=null,goalStamp=null,goalRangeStamp=null;const catalogs=new Map(),notes=new Map();
  // Goal references (jira:KEY, confluence:ID) are drawn as tags behind the editable text, so they
  // stay plain text to type or delete; hovering one shows its title and summary once read.
@@ -42,16 +43,16 @@ function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,sh
  function showPreview(p){review=p;AC_I18N.replace(q('mcp-records'),...p.records.map(r=>{const section=el('section',undefined,'source-record'),label=el('label',undefined,'startup-check'),input=el('input');input.type='checkbox';input.checked=true;input.disabled=r.reference.kind==='jira';input.value=r.reference.kind+':'+r.reference.id;label.append(input,el('strong',input.value));const source=el('pre',()=>acMessage('mcp.version_updated_retrieved_sha_256',{value1:r.server,value2:r.tool,value3:r.title||acMessage('mcp.title_not_supplied'),value4:r.url||acMessage('mcp.url_not_supplied'),value5:r.version||acMessage('mcp.not_supplied'),value6:r.updated_at||acMessage('mcp.not_supplied'),value7:new Date(p.fetched_at*1000).toLocaleString(),value8:r.sha256}),'small muted'),summary=p.summaries?.[input.value];section.append(label,source);if(summary){section.append(el('p',()=>acMessage('mcp.source_summary',{path:state().root+'/mcp/'+summary.markdown_file}),'small source-path'),el('pre',summary.text,'source-body'));const detail=el('details');detail.append(el('summary',()=>acMessage('mcp.full_source')));detail.ontoggle=()=>{if(detail.open&&detail.childNodes.length===1)detail.append(el('pre',r.body,'source-body'));};section.append(detail);}else section.append(el('pre',r.body,'source-body'));return section;}));const failures=p.failures.map(f=>f.reference.kind+':'+f.reference.id+': '+f.error).join('\n');AC_I18N.bind(q('mcp-failures'),()=>failures);q('mcp-failures').hidden=!failures;q('mcp-apply').disabled=!p.records.length||p.failures.some(f=>f.reference.kind==='jira');previewing=false;q('mcp-loading').hidden=true;rememberNotes(p);if(!q('mcp-review').open)q('mcp-review').showModal();}
  function renderSuggestions(suggestions){AC_I18N.replace(q('source-suggestions'),...suggestions.map(ref=>{const b=el('button',()=>acMessage('mcp.use',{value1:ref}),'quiet small-button');b.type='button';b.onclick=()=>{const[k,id]=ref.split(':');q('source-kind').value=k;q('source-id').value=id;q('source-reference').showModal();};return b;}));q('source-suggestions').hidden=!suggestions.length;}
  function updateSourceSuggestions(goal){
-  suggestionsStamp=goal;sourceCount=0;
+  suggestionsStamp=goal;sourceCount=0;sourceReferences=[];sourceReady=false;
   goalTags(goal,[]);
-  if(!goal.trim()){renderSuggestions([]);return;}
+  if(!goal.trim()){sourceReady=true;renderSuggestions([]);onReferences();return;}
   request({kind:'mcp_source_suggestions',goal}).then(result=>{
    if(suggestionsStamp!==goal)return;
-   sourceCount=Array.isArray(result.references)?result.references.length:0;
+   sourceReferences=Array.isArray(result.references)?result.references:[];sourceCount=sourceReferences.length;sourceReady=true;
    goalTags(goal,Array.isArray(result.reference_ranges)?result.reference_ranges:[]);
    renderSuggestions(Array.isArray(result.suggestions)?result.suggestions:[]);
    // GitHub #279: the preview button and source line follow the answer at once, not at the next refresh.
-   update();
+   update();onReferences();
   }).catch(()=>{if(suggestionsStamp===goal)renderSuggestions([]);});
  }
  function update(){
@@ -78,5 +79,5 @@ function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,sh
    else showPreview(result);
   }
  }
- return {update,wantsResult:job=>q('mcp-dialog').open||job?.kind==='mcp'&&job.state==='completed'&&job.id!==shown};
+ return {update,referenceState:()=>({goal:suggestionsStamp,references:sourceReferences,ready:sourceReady}),wantsResult:job=>q('mcp-dialog').open||job?.kind==='mcp'&&job.state==='completed'&&job.id!==shown};
 }

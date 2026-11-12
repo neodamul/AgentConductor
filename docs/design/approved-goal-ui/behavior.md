@@ -250,3 +250,8 @@ Normal MCP settings lists registered servers, discovery status and errors, and t
 
 ## 0.2.5 evidence states (#890)
 The plan reference includes a completed earlier Phase whose task opens read-only details immediately; selecting it again keeps it open, while the current Phase restores the editable plan. Raw logs retain record metadata and message line breaks in bounded scrolling blocks. The messenger editor stays open while saving and retains its draft plus an in-flow error on persistence failure. MCP settings shows server rows and discovery status/count/errors, without a duplicate text catalog or manual bindings. Dedicated parity entries compare these evidence surfaces; content and navigation assertions accompany style checks. Screenshot filenames explicitly identify history, raw logs, saving and failure states.
+
+
+## Workspace save and required-state feedback (#905 / #906)
+
+Save persists edits and stays on Workspace; Save and go to step2 persists before navigation. Unapplied current Jira/Confluence references trigger a non-blocking reminder to preview, review and apply sources before planning. Empty required controls and invalid values use the theme error border and aria-invalid until corrected. A CLI default model remains valid when its agent is selected; keep visible focus styling.
