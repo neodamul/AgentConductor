@@ -700,3 +700,5 @@ Recorded actual regression paths and source fingerprints: shared standalone Goal
 - #905/#906: shared canonical source-state validation and Save/stay action; runtime, source-layout, i18n and local parity evidence recorded.
 
 - #899: first-agent coordinator default for fresh Workspaces, with persistence/order/empty-team and saved-choice coverage.
+
+- #916/#917: reproduced guide resets and full-width checkboxes, fixed shared UI/reference, and verified100source-review parity entries plus selected payloads.

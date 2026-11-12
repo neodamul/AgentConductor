@@ -75,7 +75,7 @@ browser or retry loop.
 
 ## Import a goal
 
-1. Use **+ Jira issue** / **+ Confluence page**, or type explicit references:
+1. Use **Jira / Confluence** (choose the source in the dialog), or type explicit references:
    `Implement jira:EMM-52599. References confluence:53553565, confluence:548443335.`
 2. Unqualified issue keys and a `References (...)` / `참고 (...)` list offer **Use …**
    suggestions. Confirm the ID in the reference dialog; arbitrary prose numbers are

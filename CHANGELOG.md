@@ -4,6 +4,11 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## Unreleased — 0.2.7
+
+- Keep the document preview guide under user control during progress updates.
+- Keep review-card headers inside the dialog and show required/optional checkbox selection clearly.
+
 ## v0.2.6
 
 - Document preview explains its four steps and shows one live card per referenced document (step, elapsed time, coordinator/MCP log); failed documents can be retried while documents already read are kept (#903).

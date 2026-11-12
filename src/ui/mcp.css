@@ -43,3 +43,9 @@
 .source-review [hidden]{display:none!important}
 #start-source-status.over{color:var(--err)}
 .import-divider{flex:none;width:1px;align-self:stretch;margin:3px 4px;background:var(--line)}
+
+/* #917: headers keep native checkbox semantics without inheriting text-input geometry. */
+.source-review .source-doc-head input[type=checkbox]{appearance:none;box-sizing:border-box;display:grid;place-content:center;flex:0 0 16px;width:16px;height:16px;margin:0;padding:0;border:1px solid var(--line-strong);border-radius:3px;background:var(--surface);opacity:1}
+.source-review .source-doc-head input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
+.source-review .source-doc-head input[type=checkbox]:checked::after{content:"";width:7px;height:4px;border-left:2px solid var(--accent-ink);border-bottom:2px solid var(--accent-ink);transform:translateY(-1px) rotate(-45deg)}
+.source-review .source-ref{min-width:0;max-width:35%;overflow:hidden;text-overflow:ellipsis}

@@ -4018,3 +4018,12 @@ Trace: R-101 / BG-56 / SF-88 / UC-91 / FR-86 / QAS-97 / DD-109.
 - [x] Task: reproduce empty coordinator with a registered master list, then default fresh Workspaces in list order.
 - [x] Verify: new/create/reopen/persistence, non-first valid selection and empty-team regressions; source layout and architecture checks.
 - [x] Completed: implementation, local verification and wiki/memory recorded; linked PR tracks merge/closure and owned cleanup.
+
+### Preview disclosure and review-card geometry — GitHub #916 / #917 (0.2.7)
+
+Trace: R-134 / BG-89 / SF-121 / UC-124 / FR-119 / QAS-130 / DD-143.
+- [x] Plan: claim owner-codex, coordinate #918 with Claude, inspect all guide/card callers and supplied Windows image (layout only; no private document contents retained).
+- [x] Task: mock first and runtime Red for guide reset and oversized checkbox/header overflow.
+- [x] Task: preserve disclosure and fit accessible, visibly selected source controls.
+- [x] Verify: local runtime in both themes/two widths, focused parity, existing MCP/read-only/i18n/architecture checks and approved-reference manifest refresh.
+- [x] Completed: local implementation/review and wiki/memory evidence recorded; linked PR tracks merge/closure and owned cleanup. Physical Windows acceptance remains separate.

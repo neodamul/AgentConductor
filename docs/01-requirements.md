@@ -884,3 +884,6 @@ R-134 / R-43 / #905 / #906 (0.2.6): allow saving Workspace step without navigati
 
 
 R-101 / #899 (0.2.6): a newly created Workspace with registered agents but no valid coordinator defaults to the first agent in list order. Preserve a valid coordinator and leave an empty team unset.
+
+
+R-134 / #916 / #917 (0.2.7): preserve the operator-controlled preview-guide disclosure across progress/result refreshes. Review card headers must fit the dialog, keep full reference/title available, and visibly match checked/required source state.
