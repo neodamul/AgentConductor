@@ -134,3 +134,73 @@ fn worker_preview_apply_and_portable_export_keep_private_bodies_local() {
     drop(s);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn every_discovered_server_keeps_its_tools_after_reopening_893() {
+    let root = std::env::temp_dir().join(format!(
+        "ac-mcp-catalogs-{}",
+        agentconductor::native_guard::session_id().unwrap()
+    ));
+    std::fs::create_dir(&root).unwrap();
+    let root = root.canonicalize().unwrap();
+    let exe = std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor"));
+    let server = || json!({"type":"local","command":[if cfg!(windows){"python"}else{"python3"},concat!(env!("CARGO_MANIFEST_DIR"),"/tests/support/mcp_server.py")]});
+    let s = Startup::open(&root, exe).unwrap();
+    let state = snapshot(&s);
+    let settings =
+        json!({"mcp":{"one":server(),"two":server(),"three":server()},"goal_sources":{}});
+    s.dispatch(
+        json!({"kind":"mcp_save","revision":state["revision"],"settings":settings.to_string()})
+            .to_string()
+            .as_bytes(),
+    )
+    .unwrap();
+    for name in ["one", "two", "three"] {
+        let state = snapshot(&s);
+        s.dispatch(
+            json!({"kind":"mcp_discover","revision":state["revision"],"server":name})
+                .to_string()
+                .as_bytes(),
+        )
+        .unwrap();
+        for _ in 0..300 {
+            if snapshot(&s)["job"]["state"] != "running" {
+                break;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(50));
+        }
+        assert_eq!(snapshot(&s)["job"]["state"], "completed", "{name}");
+    }
+    drop(s);
+    // Reopen: all three discoveries come back, not only the last one.
+    let s = Startup::open(&root, exe).unwrap();
+    let catalogs = snapshot(&s)["mcp_catalogs"].clone();
+    for name in ["one", "two", "three"] {
+        assert!(
+            catalogs[name]["tools"]
+                .as_array()
+                .is_some_and(|t| !t.is_empty()),
+            "{name}: {catalogs}"
+        );
+    }
+    // A changed server config makes only its stored discovery stale; a removed server drops it.
+    let state = snapshot(&s);
+    let mut changed = server();
+    changed["timeout"] = json!(9000);
+    let settings = json!({"mcp":{"one":changed,"two":server()},"goal_sources":{}});
+    s.dispatch(
+        json!({"kind":"mcp_save","revision":state["revision"],"settings":settings.to_string()})
+            .to_string()
+            .as_bytes(),
+    )
+    .unwrap();
+    let catalogs = snapshot(&s)["mcp_catalogs"].clone();
+    assert!(
+        catalogs.get("one").is_none()
+            && catalogs.get("three").is_none()
+            && catalogs["two"]["tools"].is_array(),
+        "{catalogs}"
+    );
+    drop(s);
+    std::fs::remove_dir_all(root).unwrap();
+}

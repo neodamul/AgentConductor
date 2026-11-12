@@ -93,6 +93,7 @@ impl Startup {
                     } else {
                         None
                     },
+                    mcp_catalogs: saved.mcp_catalogs.clone(),
                     chat_result: saved.chat_result.clone(),
                     optimize_result: saved.optimize_result.clone(),
                     config,

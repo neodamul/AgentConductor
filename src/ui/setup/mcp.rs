@@ -20,6 +20,9 @@ impl Startup {
             next.proposal = None;
             next.job = None;
         }
+        // GitHub #893: a removed or renamed server drops its stored discovery.
+        next.mcp_catalogs
+            .retain(|server, _| next.config.mcp.contains_key(server));
         self.store(&next)?;
         *s = next;
         crate::state::Store::open(self.broker.dir.join("state.sqlite"))?.record(
@@ -57,6 +60,16 @@ impl Startup {
             if server.is_some() { "tools" } else { "preview" }
         );
         s.mcp_result = Some(name.clone());
+        if let Some(server) = server {
+            let config = serde_json::to_string(&settings.mcp[server]).map_err(|e| e.to_string())?;
+            s.mcp_catalogs.insert(
+                server.into(),
+                super::model::CatalogFile {
+                    file: name.clone(),
+                    config,
+                },
+            );
+        }
         let mut args = vec![
             if server.is_some() {
                 "mcp-discover"
@@ -86,6 +99,30 @@ impl Startup {
         let data = crate::mcp::load(&self.broker.dir.join("mcp").join(name))?;
         serde_json::from_slice(&data)
             .map_err(|_| crate::ui::messages::text("native.invalid_mcp_result").into())
+    }
+    /// GitHub #893: every server's last successful discovery whose config is unchanged, keyed by server.
+    pub(super) fn mcp_catalogs(&self, s: &Saved) -> serde_json::Value {
+        let settings = s.config.mcp_settings();
+        let catalogs: serde_json::Map<String, serde_json::Value> = s
+            .mcp_catalogs
+            .iter()
+            .filter(|(server, stored)| {
+                settings
+                    .mcp
+                    .get(*server)
+                    .and_then(|c| serde_json::to_string(c).ok())
+                    .as_deref()
+                    == Some(stored.config.as_str())
+            })
+            .filter_map(|(server, stored)| {
+                let data =
+                    crate::mcp::load(&self.broker.dir.join("mcp").join(&stored.file)).ok()?;
+                let result: serde_json::Value = serde_json::from_slice(&data).ok()?;
+                result.get("tools")?;
+                Some((server.clone(), result))
+            })
+            .collect();
+        serde_json::Value::Object(catalogs)
     }
     /// Title and a short summary of each applied goal source, for the goal's reference tags.
     pub(super) fn source_notes(&self, s: &Saved) -> serde_json::Value {

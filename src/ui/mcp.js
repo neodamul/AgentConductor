@@ -68,11 +68,13 @@ function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,sh
   q('mcp-preview').disabled=job?.state==='running'||!sourceCount;
   AC_I18N.bind(q('source-status'),()=>looking?acMessage('mcp.lookup_running')+since:s.imports?acMessage('mcp.applied_sources',{value1:s.imports.selected.length}):sourceCount?acMessage('mcp.references_to_preview',{value1:sourceCount}):'');
   q('mcp-settings').disabled=job?.state==='running';
+  // GitHub #893: stored discoveries come back for every server whose config is unchanged, after reopen or restart.
+  if(s.mcp_catalogs){let added=false;for(const[server,result]of Object.entries(s.mcp_catalogs)){const config=state().config.mcp?.[server];if(!config||catalogFor(server)||pendingDiscovery?.server===server)continue;catalogs.set(server,{tools:result.tools,config:JSON.stringify(config)});added=true;}if(added&&q('mcp-dialog').open)render();}
   if(job?.kind==='mcp'&&job.state==='completed'&&job.id!==shown&&s.mcp_result){
    shown=job.id;const result=s.mcp_result;
    if(result.tools){const server=result.server,config=state().config.mcp[server];if(config&&(!pendingDiscovery||pendingDiscovery.server===server&&pendingDiscovery.config===JSON.stringify(config))){catalogs.set(server,{tools:result.tools,config:JSON.stringify(config)});discoveryErrors.delete(server);}pendingDiscovery=null;render();}
    else showPreview(result);
   }
  }
- return {update,wantsResult:job=>job?.kind==='mcp'&&job.state==='completed'&&job.id!==shown};
+ return {update,wantsResult:job=>q('mcp-dialog').open||job?.kind==='mcp'&&job.state==='completed'&&job.id!==shown};
 }
