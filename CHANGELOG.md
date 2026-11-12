@@ -8,6 +8,9 @@ the GitHub Release notes for its tag.
 
 - Agent cards use one tag design: the coordinator leads with a purple role tag and its card carries a purple band, work states (running, waiting, failed, done) show as colored tags with counts before the Sessions tag, and the agent's facts (models, permission, alternate) are neutral; every tag has a thin same-hue border and 4px corners, and cards grow with their tags (app and mock, GitHub #869).
 - Hovering or focusing an agent's models tag lists the queried model IDs, at most eight with a remainder line (app and mock, GitHub #870).
+- Help → Report a bug opens the update repository's GitHub issue form in your browser with a standard template (summary, steps, expected and actual behavior, app version, OS and architecture); GitHub handles sign-in and submission, and nothing is uploaded by the app (GitHub #862).
+- The app menu drops entries that duplicate on-screen controls: Agents → Add agent (the Agents tab's + Add), Workspace → Workspace settings (the Workspace step) and the View menu (the titlebar panel buttons) (GitHub #865, #866, #867).
+- The titlebar's left and right panel buttons use the same icon size (GitHub #868).
 
 ## v0.2.3
 
