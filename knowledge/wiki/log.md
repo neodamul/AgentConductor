@@ -668,3 +668,15 @@ PR #761 now labels approved mockups as sample-data design previews, refreshes th
 ## 2026-11-12 Matching panel glyphs (#868)
 
 Reproduced the right titlebar SVG mismatch (mock 18px, app 16px), aligned it to 18px, and added independent left/right geometry entries to `tests/design_parity/spec.cjs`. All eight light/dark × 840/1280 comparisons and 32 titlebar runtime checks per variant passed. Existing public screenshots retain the earlier glyph pending recapture.
+
+## 2026-11-12 Duplicate application-menu cleanup (#865–#867)
+
+Removed redundant Agents, Workspace settings and View commands while preserving the rail, stepper and titlebar entry points. Recorded per-issue Red/Green evidence, final 41-check × 4 runtime suite, 28 Rust tests, canonical preview and generated manuals in `application-menu-cleanup.md`.
+
+## 2026-11-12 Standard GitHub bug reports (#862)
+
+Recorded the shared update/report repository contract, fixed privacy-preserving template, browser-managed login, local Rust/menu/mock evidence and remaining Windows/Enterprise manual acceptance limits in `bug-reporting.md`.
+
+- 2026-11-12: PR #872 integrates #864 and #873 while preserving bug reporting and all menu removals. Local combined checks:41 menu +8 bug-report checks per variant; canonical preview157 interactions per variant. Earlier observations above remain historical.
+
+- 2026-11-12: Sequential integration: #864 → #872 (`c0cb1aa0`) → #871. Preserved report/login routing, Claude agent-card changes, streamlined navigation and matching panel glyphs; per-unit local checks are recorded in the linked issues and PRs.

@@ -20,11 +20,17 @@ The app version is beside the title. Version 0.2.3 uses one six-step stepper for
 
 The app checks GitHub Releases in the background every **10 minutes**. A newer installable release shows an update icon left of Settings. Choose **☰ → Help → Check for updates…**, read the scrollable release notes beneath the link, inspect the current/latest versions and choose **Update and restart**. Finish or stop runs and active app jobs first; the desktop refuses installation while any saved workspace has running work.
 
-**Settings → Update repository** chooses where updates come from: a GitHub `owner/name`, or an `https://host/owner/name` URL of an in-house GitHub-compatible server. Leave it empty for the default. Release notes, the archive and `SHA256SUMS` come from that repository's latest release, so only use a repository you trust.
+**Settings → GitHub repository** chooses where updates come from: a GitHub `owner/name`, or an `https://host/owner/name` URL of an in-house GitHub-compatible server. Leave it empty for the default. Release notes, the archive and `SHA256SUMS` come from that repository's latest release, so only use a repository you trust.
 
 The installer downloads the matching macOS/Windows archive and its `SHA256SUMS`, checks the archive hash, replaces the executable or macOS bundle and restarts with the same arguments. It needs `curl`, access to GitHub and permission to write the installation location. On failure, inspect the update dialog; do not assume a newer version was installed.
 
 `agentconductor update` installs a newer release over the executable without restarting it; finish or stop work before running the command. The current updater makes unauthenticated GitHub requests and does not reuse GitHub CLI credentials: private or restricted releases require manual download with your authorized browser or GitHub CLI. Do not add model API keys for application updates.
+
+### 1.1b Bug reports
+
+Choose **☰ → Help → Report a bug…**. The default browser opens the configured GitHub repository's issue editor with sections for the summary, reproduction steps, expected/actual behavior and version/OS/architecture. Sign in to GitHub if requested, finish the report and submit it there. Opening the editor does not create an issue. Paths, logs, Goals and agent conversations are not attached automatically.
+
+The target uses **Settings → GitHub repository**, shared with application updates. Set `owner/name` or an Enterprise `https://host/owner/name` URL; leave it empty for the default repository.
 
 ### 1.2 Workspaces and settings
 You can create, open and switch workspaces while planning or a run is in progress. The previous workspace keeps working in the background; reopen it from **☰ → Workspace** to read its current plan, progress and logs. Saved settings and execution evidence stay with that workspace. Switching does not stop or approve work. Finish or stop active work before deleting its workspace. Export/import continues to share the reviewed workspace configuration archive; it does not transfer live processes.
@@ -35,7 +41,7 @@ existing project folder with **Browse…** or type the path, then **Save workspa
 Git worktree isolation is optional; shared execution is the default.
 Saving updates the name in the titlebar immediately and selects **Agent roles**. Tab changes preserve draft inputs; unsaved changes still require **Save workspace**.
 
-The **☰** application menu groups everything in two levels: **Workspace** (recent workspaces to switch to, New workspace…, Open existing workspace…, Workspace settings…, Export workspace…, Import workspace…), **Plan rules…**, **Messenger…**, **Agents** (Add agent…), **View** (collapse the left panel, task details panel), **Settings…** (MCP servers, cache, update channel, language, theme, signal transport), **Help** (Check for updates…, User manual, Agent tools guide, About) and **Close window…**. The Workspace name in the titlebar is a label; open Workspace settings… from the Workspace group. The same titlebar is available in Agent Room.
+The **☰** application menu groups everything in two levels: **Workspace** (recent workspaces to switch to, New workspace…, Open existing workspace…, Export workspace…, Import workspace…), **Plan rules…**, **Messenger…**, **Settings…** (MCP servers, cache, update channel, language, theme, signal transport), **Help** (Check for updates…, Report a bug…, User manual, Agent tools guide, About) and **Close window…**. The Workspace name in the titlebar is a label; open the Workspace step to edit its settings. The same titlebar is available in Agent Room.
 A workspace with an existing run opens its work view when appropriate; returning to
 Workspace does not start a new plan. Unsaved changes require a choice before navigation.
 

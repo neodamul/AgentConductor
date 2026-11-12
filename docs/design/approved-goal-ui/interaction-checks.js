@@ -188,6 +188,9 @@
   check('the busy action keeps its own colors',getComputedStyle(button).backgroundColor===before&&!button.disabled);
   const cancel=document.getElementById('profile-edit-cancel');check('every work action can show the bar, openers and Cancel cannot',[...document.querySelectorAll('.btn')].filter(startsWork).length>=25&&!startsWork(cancel)&&!startsWork(document.getElementById('mcp-open')));
   await new Promise(resolve=>setTimeout(resolve,1300));check('the bar ends when the work finishes',!button.classList.contains('is-busy')&&!button.hasAttribute('aria-busy'));i=view;show();}
+ check('duplicate menu commands are absent (#865–867)',!document.getElementById('submenu-agents')&&!document.getElementById('submenu-view')&&!document.getElementById('menu-workspace-settings')&&!!document.getElementById('profile-add')&&!!document.getElementById('sidebar-toggle')&&!!document.getElementById('right-panel-toggle'));
+
+ {const previous=window.open;let opened;try{window.open=(url,target,features)=>{opened={url,target,features};return null;};document.getElementById('menu-report-bug').click();check('Help opens a standard GitHub bug draft in the browser',opened?.url.startsWith('https://github.com/neodamul/AgentConductor/issues/new?body=')&&decodeURIComponent(opened.url).includes('## Steps to reproduce')&&opened.target==='_blank'&&opened.features==='noopener');}finally{window.open=previous;}}
  check('no script errors',!document.documentElement.dataset.designError);
  document.documentElement.dataset.interactionResult=JSON.stringify({theme:initialTheme,width:innerWidth,checks});
 })().catch(error=>document.documentElement.dataset.designError=error.message);

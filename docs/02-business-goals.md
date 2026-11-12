@@ -656,3 +656,6 @@ BG-165 / #429 amendment (2026-11-04): Operators can reuse team defaults for a ne
 
 ### BG-170 A new operator knows what the app is and what to install
 After installing or updating, the operator immediately learns what AgentConductor does, who is credited and which agent CLIs must be installed, and can find the same information again later. Trace: R-215.
+
+### BG-171 Report actionable bugs without another account integration
+Operators report reproducible defects to the correct public or internal repository using their existing browser GitHub session and a consistent template. Trace: R-216.

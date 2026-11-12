@@ -231,3 +231,14 @@ before planning begins; only describe proposed tasks once that proposal exists.
 GitHub #832: the Plan heading and selected task summary use the current proposal's
 Phase in the active Goal's full Phase list. Task position remains local to that
 Phase. Single-Phase plans without Phase metadata retain Phase 1/1.
+
+## Menu entry points (0.2.4)
+
+The Workspace group retains recent/New/Open/Export/Import actions. Workspace settings are opened through step 1. There is no Agents or View group: use Add in the Agents rail and the titlebar panel toggles. Plan rules, Messenger, Settings, Help and Close remain available. These changes remove duplicate navigation only.
+
+## Bug reports
+
+Help → Report a bug opens a prefilled issue composer in the default browser. The
+application target shares the updater repository preference, including Enterprise
+HTTPS hosts. GitHub handles login and final submission; automatic context is limited
+to version, OS and architecture. The preview demonstrates the same Help action.

@@ -25,17 +25,15 @@ window.acAppMenu = (() => {
     });
   }
   // create/open/updates/about are the existing Workspace and update buttons; close hides the menu; the rest reuse the titlebar and Settings controls.
-  function items({ el, rows, create, open, updates, about, close, workspaceSettings, rules, messenger, exportWorkspace, importWorkspace, tools, manual }) {
+  function items({ el, rows, create, open, updates, about, close, rules, messenger, exportWorkspace, importWorkspace, tools, manual, report }) {
     const act = (key, run) => leaf(el, key, () => { close(); run(); });
     const nodes = [
-      group(el, 'startup.menu_workspace', [...rows, ...(rows.length ? [el('hr')] : []), create, open, act('startup.menu_workspace_settings', workspaceSettings), act('startup.export_settings', exportWorkspace), act('startup.import_settings', importWorkspace)]),
+      group(el, 'startup.menu_workspace', [...rows, ...(rows.length ? [el('hr')] : []), create, open, act('startup.export_settings', exportWorkspace), act('startup.import_settings', importWorkspace)]),
       // Plan rules and Messenger sit one level up, beside the groups; the Goal list and New Goal live on the screen itself.
       act('startup.plan_rules', rules),
       act('startup.messenger', messenger),
-      group(el, 'startup.menu_agents', [act('startup.menu_add_agent', () => click('add'))]),
-      group(el, 'startup.menu_view', [act('startup.menu_rail', () => click('rail-toggle')), act('startup.menu_inspector', () => click('inspector-toggle'))]),
       act('startup.menu_settings', () => click('settings-button')),
-      group(el, 'startup.menu_help', [updates, act('startup.user_manual', manual), act('startup.agent_tools_guide', tools), about]),
+      group(el, 'startup.menu_help', [updates, act('startup.report_bug', report), act('startup.user_manual', manual), act('startup.agent_tools_guide', tools), about]),
       el('hr'),
       act('startup.menu_close_window', () => window.__acCloseRequested?.()),
     ];
