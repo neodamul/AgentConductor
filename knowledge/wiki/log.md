@@ -688,3 +688,7 @@ Recorded actual regression paths and source fingerprints: shared standalone Goal
 2026-11-12: #881 reproduced save-before-close loss and documented acknowledgement, retry, restart persistence and safe import behavior.
 
 2026-11-12: #882 removed redundant normal-settings catalogs/bindings while preserving coordinator selection and internal configuration; source fingerprints and local verification recorded.
+
+2026-11-12: #890 adds missing approved states, fixes in-flow messenger error and MCP row surface, and records the difference between semantic checks and screen parity.
+
+2026-11-12: #891 refreshes the public gallery and bilingual manuals with reproducible sample-data UI images, asserted screen selection and generated offline HTML.

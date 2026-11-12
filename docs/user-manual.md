@@ -33,6 +33,8 @@ Choose **☰ → Help → Report a bug…**. The default browser opens the confi
 The target uses **Settings → GitHub repository**, shared with application updates. Set `owner/name` or an Enterprise `https://host/owner/name` URL; leave it empty for the default repository.
 
 ### 1.2 Workspaces and settings
+
+Application images below render the current product UI with deterministic local sample data in the browser verification harness. They do not show signed-in agents or a live project run. Approved design previews are labeled separately.
 You can create, open and switch workspaces while planning or a run is in progress. The previous workspace keeps working in the background; reopen it from **☰ → Workspace** to read its current plan, progress and logs. Saved settings and execution evidence stay with that workspace. Switching does not stop or approve work. Finish or stop active work before deleting its workspace. Export/import continues to share the reviewed workspace configuration archive; it does not transfer live processes.
 
 
@@ -54,18 +56,20 @@ Data moves to `~/.agentconductor/workspace-trash/<id>` for recovery.
 
 ![Approved workspace design preview with sample data](assets/ui-approved-workspace-design.png)
 
-![AgentConductor 0.2.0 Workspace in the light theme](assets/ui-workspace-current.png)
+![AgentConductor Workspace in the light theme](assets/ui-workspace-current.png)
 
-![AgentConductor 0.2.0 Workspace in the dark theme](assets/ui-workspace-dark-current.png)
+![AgentConductor Workspace in the dark theme](assets/ui-workspace-dark-current.png)
 
 Use **☰ → Help → User manual** for offline help in the current interface language. HTML manuals preserve tables, code, links and screenshots. The [standalone HTML manual](user-manual.html) can also be opened separately.
 
 **Settings** includes:
 - **Interface language**: English or 한국어. Typed goals, prompts and raw evidence are never translated.
 - **Theme**: Light (default, neutral surfaces with a blue accent) or Dark (sage accents on dark surfaces). Save to apply immediately. The choice is stored with language in `~/.agentconductor/preferences.json` and follows you across workspaces. Both themes retain the same controls and information.
-- **MCP servers…**: add local commands or remote URLs with a guided form. Saving discovers tools and shows the server status/count. The workspace coordinator selects suitable read tools and arguments when you preview Goal sources; no manual tool mapping is required. Open Advanced for OpenCode JSON/JSONC import and export. Use `{env:VARIABLE}` references for credentials. [MCP guide](mcp-sources.md).
+- **MCP servers…**: add local commands or remote URLs with a guided form. Saving discovers tools and shows the server status/count. The workspace coordinator selects suitable read tools and arguments when you preview Goal sources; no manual tool mapping is required. Open Advanced for OpenCode JSON/JSONC import and export. Discovered tool catalogs are stored per server and restored when reopening Settings or restarting the app. Changing a server invalidates its old catalog and requires discovery again. The JSON import hint identifies the OpenCode MCP configuration format; it does not import unrelated OpenCode preferences. The add/edit form explains that API tokens belong in environment variables: use `{env:VARIABLE}` references for credentials. [MCP guide](mcp-sources.md).
 - **Signal transport**: Local Rust (default) or agentmemory preferred, with local fallback. The server port appears only for agentmemory; switching to Local Rust preserves its value.
 - **Clear cache…**: review paths and sizes before permanently removing eligible disposable metadata.
+
+**☰ → Messenger…** saves notification preferences only after local persistence succeeds. While saving, the dialog remains open and prevents duplicate submission. Failure keeps your draft and shows an error inside the dialog; retry Save or Cancel. Already saved workspace preferences survive restart. Importing settings from another machine intentionally requires local notification setup. No notification is sent just by saving the settings.
 
 Settings has **Agent tools guide…** for optional agentmemory, RTK, Ponytail, Graphify and CocoIndex installation instructions. These tools are not bundled or required by the app.
 
@@ -106,7 +110,7 @@ Saving **Use profile** is asynchronous and closes after success; validation erro
 Changing execution settings requires reviewing a plan again. Metadata-only refresh does not invalidate it.
 One metadata collector runs at a time; queued requests do not block unrelated editing.
 
-![AgentConductor 0.2.0 agent profile and refresh settings](assets/ui-agent-settings-current.png)
+![AgentConductor agent profile and refresh settings](assets/ui-agent-settings-current.png)
 
 
 Saving a custom CLI applies the mode in which the CLI approves its own tool use automatically; no checkbox is needed. Plan and final merge approval remain required. Explicit read-only or external-sandbox profiles retain their restrictions.
@@ -140,6 +144,8 @@ The project folder is above the goal; the coordinator is beside the workspace na
 
 **☰ → Workspace** places **Export workspace…** beside **Import workspace…**. Review transferred configuration on the destination machine; local secrets and verification claims are not blindly copied.
 
+![Registered MCP servers and discovered-tool status](assets/ui-mcp-current.png)
+
 ### 1.5 Plan and approval
 
 **Generate plan** reads a temporary snapshot and requests analysis plus ordered phases.
@@ -163,6 +169,8 @@ For a committed repository a clean baseline is required. Review the dialog befor
 OS files can be ignored locally without changing `.gitignore`.
 Shared ordinary-folder execution uses existing local dependencies. Worktree execution needs its own dependency setup.
 The planner is told whether the project uses Git. For ordinary folders it proposes direct-file or project-runner checks instead of Git-dependent tests; any retained Git test command resolves through the external history. If evidence shows a test command cannot work here, the coordinator can replace it with a command verifying the same work, records the old/new command and reason, and reruns verification. It must not weaken a test that can run. Final candidate approval remains yours.
+
+On the Plan step, select a task from any Phase in **Phase·Task** to open its matching details. Earlier Phases are read-only; selecting the same history again keeps it expanded. Select a current Phase task to return to its editable proposal. This also works when reviewing a completed Goal.
 
 ### 1.6 Agent Room and feedback
 
@@ -194,6 +202,9 @@ On reopening, automatic recovery checks that the interrupted run and its owned p
 In ordinary-folder projects, new files outside every owned task scope are moved to `<RUN>/stray-files/` before integration and recorded, for example a CLI’s `.custom-cli/plans`. Existing operator files are preserved. Git repositories do not use this automatic move.
 
 When a task leaves its owned paths, the coordinator first decides it: it may add the exact file or nested path (or a task dependency) as a typed amendment, which is checked against the plan rules (safe, non-overlapping paths, known and acyclic dependencies), limited to five per run, listed with the coordinator's judgments with an **Undo amendment** button, and the run continues. Each run records a charter (the goal and every task's original paths, test command and dependencies) that the coordinator receives with every review; amendments may add at most eight paths in total beyond it, each shows its drift, and a scope change you approve replaces the charter. A whole top-level directory, secrets or key paths, anything the rules refuse, more than eight added paths (`goal_drift`) and the sixth amendment stop the run (state blocked) with the reason for you to decide. If a finished run fails with `out-of-scope change`, feedback cannot widen a task's owned paths. Choose **Review recovery plan** on the failed run: it lists every offending file, each task's approved paths and the files moved to `stray-files`; edit the owned paths and the test command, **Preview change** (it validates overlaps and shows which moved files would be restored, never overwriting a different file; the recovery copies stay), then **Approve plan change** and press **Resume**. Finished work is reused, earlier evidence is kept and integration verification runs again.
+
+The task Goal starts collapsed. **Expand** preserves authored line breaks in a bounded scrolling area; changing Goals collapses it again. **Raw logs** retains event metadata and displays JSON message line breaks without changing the original local artifacts. Plain text remains plain text.
+
 
 ### 1.7 Tool decisions and verification
 
@@ -519,10 +530,3 @@ Standalone web search is optional. Follow your company's managed configuration w
 Workspace Settings selects Local Rust or agentmemory preferred. Installing an optional helper does not select a backend. Local Rust needs no agentmemory MCP tool or server; workers report through their normal CLI output. The app owns signal delivery and durable evidence. Registered checkpoint workers use the exact executable path supplied by the app and its local poll/ack/report commands; other CLI sessions must not invent checkpoint capabilities. A missing optional memory tool is not a task failure.
 
 Windows path selection uses the standard Common Item Dialog directly, with no PowerShell or C# startup. Cancel leaves the field unchanged; choosing a folder or file fills the field and saving validates it.
-
-### Reading task text and Phase history
-
-The task Goal starts collapsed; Expand preserves authored line breaks in a bounded scrolling area. A different Goal starts collapsed again. Raw logs retain event metadata while displaying JSON message line breaks; plain output is unchanged and original artifacts stay on disk. On the Plan step, selecting any listed Phase task opens its matching details. Historical tasks are read-only, including after Goal completion; selecting a current task restores its editable proposal.
-
-
-Notification settings remain open until saving succeeds. If local persistence fails, the error appears inside the dialog and your draft remains available for retry or Cancel. Updating the application does not require re-enabling an already saved workspace preference; importing settings from another machine intentionally requires local notification setup.
