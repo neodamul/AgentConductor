@@ -36,7 +36,7 @@ function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,sh
  q('mcp-import').onclick=async()=>{if(await action({kind:'mcp_save',settings:q('mcp-json').value})){catalogs.clear();discoveryErrors.clear();draft().mcp=state().config.mcp;draft().goal_sources=state().config.goal_sources;render();notice(()=>acMessage('mcp.imported_settings'));}};
  q('mcp-preview').onclick=async()=>{capture();const c=draft();if(!c.coordinator||!c.profiles?.some(p=>p.id===c.coordinator)){notice(()=>acMessage('mcp.coordinator_required'),true);showStep?.('workspace',true);q('coordinator').focus?.();return;}if(!await save())return;
   // The review window opens at once and shows the lookup in progress; records fill in when it ends.
-  review=null;previewing=true;lastProgress=null;AC_I18N.replace(q('mcp-records'));AC_I18N.bind(q('mcp-meta'),()=>'');q('mcp-guide').open=true;q('mcp-retry').hidden=true;q('mcp-failures').hidden=true;q('mcp-apply').disabled=true;q('mcp-loading').hidden=false;if(!q('mcp-review').open)q('mcp-review').showModal();
+  review=null;previewing=true;lastProgress=null;AC_I18N.replace(q('mcp-records'));AC_I18N.bind(q('mcp-meta'),()=>'');q('mcp-retry').hidden=true;q('mcp-failures').hidden=true;q('mcp-apply').disabled=true;q('mcp-loading').hidden=false;if(!q('mcp-review').open)q('mcp-review').showModal();
   if(!await action({kind:'mcp_preview'})){previewing=false;q('mcp-loading').hidden=true;q('mcp-review').close();}};
  // GitHub #903: only the documents the last preview failed to read are fetched again.
  q('mcp-retry').onclick=async()=>{const kept=review;review=null;previewing=true;lastProgress=null;q('mcp-retry').hidden=true;q('mcp-apply').disabled=true;if(!await action({kind:'mcp_preview',retry:true})){previewing=false;showPreview(kept);}};
@@ -53,10 +53,10 @@ function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,sh
   const running=['selection','reading','summary'].includes(doc.stage),failed=doc.stage==='failed';
   const card=mk('section','source-doc'+(running?' running':'')+(failed?' failed':''));card.dataset.reference=doc.reference;card.dataset.stage=doc.stage;
   const head=mk('div','source-doc-head');
-  if(review){const pick=mk('input');pick.type='checkbox';pick.value=doc.reference;pick.checked=!!record;pick.disabled=!record||doc.reference.startsWith('jira:');head.append(pick);}
+  if(review){const pick=mk('input');pick.type='checkbox';pick.value=doc.reference;pick.checked=!!record;pick.disabled=!record||doc.reference.startsWith('jira:');pick.setAttribute('aria-label',doc.reference);head.append(pick);}
   const [kind,id]=doc.reference.split(':');
-  head.append(mk('span','source-ref',(kind==='jira'?'Jira':'Confluence')+':'+id));
-  const title=doc.title||record?.title;head.append(mk('strong','source-title'+(title?'':' pending'),title||acMessage(failed?'mcp.title_not_supplied':'mcp.title_pending')));
+  const ref=mk('span','source-ref',(kind==='jira'?'Jira':'Confluence')+':'+id);ref.title=ref.textContent;head.append(ref);
+  const title=doc.title||record?.title;head.append(mk('strong','source-title'+(title?'':' pending'),title||acMessage(failed?'mcp.title_not_supplied':'mcp.title_pending')));head.querySelector('.source-title').title=title||'';
   const label=failed?'stage_failed':doc.stage==='done'?(review?'stage_review':'stage_done'):'stage_'+doc.stage;
   head.append(mk('span','source-state '+(failed?'failed':doc.stage==='waiting'?'waiting':['done','summary_wait'].includes(doc.stage)?'ready':'running'),sourceT(label)));
   head.append(mk('span','source-time',doc.started_ms?sourceDuration((doc.ended_ms||now)-doc.started_ms):'—'));
@@ -77,13 +77,13 @@ function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,sh
  const runningDoc=progress=>progress?.documents?.find(d=>['selection','reading','summary'].includes(d.stage));
  function sourceStatus(progress,now){const doc=runningDoc(progress);return doc?sourceT('status_running',{done:progress.documents.filter(d=>d.stage==='done'||d.stage==='summary_wait').length,total:progress.documents.length,reference:doc.reference,stage:sourceT('stage_'+doc.stage),elapsed:sourceDuration(now-progress.started_ms)}):'';}
  let lastProgress=null;
- function renderProgress(progress){if(!progress?.documents?.length||review)return;lastProgress=progress;const now=Date.now();q('mcp-loading').hidden=true;q('mcp-guide').open=true;AC_I18N.replace(q('mcp-records'),...progress.documents.map(doc=>sourceCard(doc,{now,review:false})));AC_I18N.bind(q('mcp-meta'),()=>sourceMeta(progress,false,now));q('mcp-retry').hidden=true;}
+ function renderProgress(progress){if(!progress?.documents?.length||review)return;lastProgress=progress;const now=Date.now();q('mcp-loading').hidden=true;AC_I18N.replace(q('mcp-records'),...progress.documents.map(doc=>sourceCard(doc,{now,review:false})));AC_I18N.bind(q('mcp-meta'),()=>sourceMeta(progress,false,now));q('mcp-retry').hidden=true;}
  function showPreview(p){review=p;const records=new Map(p.records.map(r=>[r.reference.kind+':'+r.reference.id,r])),failures=new Map(p.failures.map(f=>[f.reference.kind+':'+f.reference.id,f.error]));
   // Progress from before #903, or a missing progress file, falls back to the result itself.
   const known=lastProgress?.documents?.length&&lastProgress.documents.every(d=>records.has(d.reference)||failures.has(d.reference))?lastProgress:{started_ms:p.fetched_at*1000,documents:[...records.keys(),...failures.keys()].map(reference=>({reference,stage:records.has(reference)?'done':'failed',log:[]}))};
   const docs=known.documents.map(d=>records.has(d.reference)?{...d,stage:'done'}:{...d,stage:'failed',error:d.error||failures.get(d.reference)});const progress={...known,documents:docs},now=Date.now();
   AC_I18N.replace(q('mcp-records'),...docs.map(doc=>sourceCard(doc,{now,record:records.get(doc.reference),summary:p.summaries?.[doc.reference],review:true})));
-  AC_I18N.bind(q('mcp-meta'),()=>sourceMeta(progress,true,now));q('mcp-guide').open=false;q('mcp-failures').hidden=true;q('mcp-retry').hidden=!p.failures.length;
+  AC_I18N.bind(q('mcp-meta'),()=>sourceMeta(progress,true,now));q('mcp-failures').hidden=true;q('mcp-retry').hidden=!p.failures.length;
   q('mcp-apply').disabled=!p.records.length||p.failures.some(f=>f.reference.kind==='jira');previewing=false;lastProgress=null;q('mcp-loading').hidden=true;rememberNotes(p);if(!q('mcp-review').open)q('mcp-review').showModal();}
  function renderSuggestions(suggestions){AC_I18N.replace(q('source-suggestions'),...suggestions.map(ref=>{const b=el('button',()=>acMessage('mcp.use',{value1:ref}),'quiet small-button');b.type='button';b.onclick=()=>{const[k,id]=ref.split(':');q('source-kind').value=k;q('source-id').value=id;q('source-reference').showModal();};return b;}));q('source-suggestions').hidden=!suggestions.length;}
  function updateSourceSuggestions(goal){

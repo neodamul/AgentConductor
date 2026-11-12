@@ -255,3 +255,8 @@ The plan reference includes a completed earlier Phase whose task opens read-only
 ## Workspace save and required-state feedback (#905 / #906)
 
 Save persists edits and stays on Workspace; Save and go to step2 persists before navigation. Unapplied current Jira/Confluence references trigger a non-blocking reminder to preview, review and apply sources before planning. Empty required controls and invalid values use the theme error border and aria-invalid until corrected. A CLI default model remains valid when its agent is selected; keep visible focus styling.
+
+
+## Source review disclosure and selection (#916 / #917)
+
+The guide starts expanded and remains under operator control across progress, completion, retries and reopening. Card rendering never sets disclosure state. Source headers keep fixed16px checkbox controls, bounded reference/title ellipses with full tooltips and state/time inside the dialog. Checked required sources remain visibly checked while disabled; optional selections remain editable. Apply sends exactly checked references and retains required-Jira enforcement.

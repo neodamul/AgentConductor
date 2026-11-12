@@ -1,0 +1,45 @@
+{
+  "issues": [
+    916,
+    917
+  ],
+  "milestone": "0.2.7",
+  "trace": "R-134 / BG-89 / SF-121 / UC-124 / FR-119 / QAS-130 / DD-143",
+  "sources": [
+    {
+      "path": "src/ui/mcp.js",
+      "sha256": "d8596cbc239cc020078e0bddeeadcaffb5bfacef8863755f14c226846c2ea894"
+    },
+    {
+      "path": "src/ui/mcp.css",
+      "sha256": "57669a2f95800c680bdb65b505cb1616fc3f247489ce06497ef6070dfd111c13"
+    },
+    {
+      "path": "src/ui/mcp.html",
+      "sha256": "4a7eda8197a8ee6da9ff3fdc7be9187c46f2f3e6cd5cc36a903a8d907b16756f"
+    },
+    {
+      "path": "tests/source_review_916.cjs",
+      "sha256": "f9226ac52ff54b69050d91e002a13f7700f48b341adc1c518f2d47898595f1a1"
+    },
+    {
+      "path": "tests/design_parity/source_review_spec.cjs",
+      "sha256": "e13b6450725d788736f30b7184729cdf4552b098c6a7ff9a837952ce289df8aa"
+    }
+  ],
+  "diagnosis": [
+    "Guide rendering explicitly assigned details.open on each progress/result refresh.",
+    "Global text-input width100% reached source checkboxes; source references were not bounded. The operator screenshot supports the layout diagnosis; private document contents were not retained."
+  ],
+  "verification": [
+    "Both faults reproduced locally before fixes: manual collapse overwritten; source-ref outside card.",
+    "Runtime4theme/width variants: manual collapse and expansion persist, long IDs/titles fit, checkbox checked/required state is visible and labelled, optional uncheck changes exact Apply payload.",
+    "25source-review parity entries x4variants pass,0differences.",
+    "Canonical182interactions x4,88captures and34contrast pairs pass via verify-and-capture.py; manifest test passes.",
+    "Existing MCP routing/import/schema/read-only, architecture, localization, layout and manuals checks pass."
+  ],
+  "limits": [
+    "Assembled UI and local browser fixtures; physical Windows/WebView2 acceptance not run.",
+    "No new release or version bump."
+  ]
+}

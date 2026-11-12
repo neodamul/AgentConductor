@@ -17,10 +17,10 @@ function sourceCard(doc,{now,record,summary,review,t,size}){
  const running=['selection','reading','summary'].includes(doc.stage),failed=doc.stage==='failed';
  const card=mk('section','source-doc'+(running?' running':'')+(failed?' failed':''));card.dataset.reference=doc.reference;card.dataset.stage=doc.stage;
  const head=mk('div','source-doc-head');
- if(review){const pick=mk('input');pick.type='checkbox';pick.value=doc.reference;pick.checked=!!record;pick.disabled=!record||doc.reference.startsWith('jira:');head.append(pick);}
+ if(review){const pick=mk('input');pick.type='checkbox';pick.value=doc.reference;pick.checked=!!record;pick.disabled=!record||doc.reference.startsWith('jira:');pick.setAttribute('aria-label',doc.reference);head.append(pick);}
  const [kind,id]=doc.reference.split(':');
- head.append(mk('span','source-ref',(kind==='jira'?'Jira':'Confluence')+':'+id));
- const title=doc.title||record?.title;head.append(mk('strong','source-title'+(title?'':' pending'),title||t(failed?'title_missing':'title_pending')));
+ const ref=mk('span','source-ref',(kind==='jira'?'Jira':'Confluence')+':'+id);ref.title=ref.textContent;head.append(ref);
+ const title=doc.title||record?.title;head.append(mk('strong','source-title'+(title?'':' pending'),title||t(failed?'title_missing':'title_pending')));head.querySelector('.source-title').title=title||'';
  const label=failed?'stage_failed':doc.stage==='done'?(review?'stage_review':'stage_done'):'stage_'+doc.stage;
  head.append(mk('span','source-state '+(failed?'failed':doc.stage==='waiting'?'waiting':['done','summary_wait'].includes(doc.stage)?'ready':'running'),t(label)));
  head.append(mk('span','source-time',doc.started_ms?sourceDuration((doc.ended_ms||now)-doc.started_ms):'—'));
@@ -57,7 +57,6 @@ const sourcePreview={records:[
 function renderSourceReview(mode){
  const finished=mode==='review',progress=finished?sourceFinished:sourceRunning,now=finished?sourceStart+640_000:sourceNow;
  const records=new Map(sourcePreview.records.map(r=>[r.reference.kind+':'+r.reference.id,r]));
- document.getElementById('source-guide').open=!finished;
  document.getElementById('source-docs').replaceChildren(...progress.documents.map(doc=>sourceCard(doc,{now,record:finished?records.get(doc.reference):null,summary:finished?sourcePreview.summaries[doc.reference]:null,review:finished,t:sourceT,size:sourceSize})));
  document.getElementById('source-meta').textContent=sourceMeta(progress,finished,now,sourceT);
  document.getElementById('source-retry').hidden=!(finished&&progress.documents.some(d=>d.stage==='failed'));

@@ -14,11 +14,13 @@ const entry = (name, props, mockSel, appSel, final = false, index = 0) => ({ nam
   mock: { url: `?theme=light&sources=${final ? 'review' : 'running'}#0`, selector: '#source-review ' + mockSel, index },
   app: { setup: progress(final), run: final ? REVIEW : OPEN, selector: '#start-mcp-review ' + appSel, index } });
 module.exports = [
+  entry('selected-checkbox', ['appearance','flexBasis','paddingLeft','borderTopWidth','borderTopColor','borderTopLeftRadius','backgroundColor','opacity'], '.source-doc-head input', '.source-doc-head input', true),
+  {name:'source-review-head-contained',app:{setup:progress(true),run:REVIEW},assert:"(()=>{const d=document.getElementById('start-mcp-review');return d.scrollWidth<=d.clientWidth+1&&[...d.querySelectorAll('.source-doc-head')].every(h=>[...h.children].every(n=>n.getBoundingClientRect().right<=h.getBoundingClientRect().right+1));})()"},
   entry('guide', [...BOXED, ...TEXT, 'marginBottom'], '.source-guide', '.source-guide'),
   entry('guide-note', [...TEXT, 'marginTop'], '.source-guide p', '.source-guide p'),
   entry('card', [...BOXED, 'marginBottom', 'boxShadow'], '.source-doc', '.source-doc'),
   entry('card-running', ['borderTopColor', 'boxShadow'], '.source-doc.running', '.source-doc.running'),
-  entry('ref-tag', [...BOXED, ...TEXT], '.source-ref', '.source-ref'),
+  entry('ref-tag', [...BOXED, ...TEXT, 'maxWidth', 'textOverflow', 'overflowX'], '.source-ref', '.source-ref'),
   entry('state-ready', [...BOXED, ...TEXT], '.source-state.ready', '.source-state.ready'),
   entry('state-running', ['backgroundColor', 'color'], '.source-state.running', '.source-state.running'),
   entry('state-waiting', ['backgroundColor', 'color'], '.source-state.waiting', '.source-state.waiting'),

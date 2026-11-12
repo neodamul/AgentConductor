@@ -187,3 +187,5 @@
 - [Windows MCP schema preview and source tags](windows-mcp-schema-preview.md) — #898, exact schema, path boundary and bounded retries.
 
 - [Workspace save feedback](workspace-save-feedback.md) — plain Save, applied-source reminders and accessible required-input states.
+
+- [Source review feedback](source-review-feedback.md) — operator disclosure, bounded headers and real checkbox selection.
