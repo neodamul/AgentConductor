@@ -327,6 +327,10 @@ module.exports = [
   // Left rail toggle (GitHub #408): a 32px titlebar button hides and restores the whole rail; the centre takes the space.
   { name: 'rail-toggle-button', props: ['borderTopLeftRadius'], keys: ['width', 'height', 'borderTopLeftRadius'], pixel: false,
     mock: { url: '?theme=light#0', selector: '#sidebar-toggle' }, app: { selector: '#start-rail-toggle' } },
+  // #868: both panel glyphs follow the same 18px approved titlebar size.
+  ...[['left', '#sidebar-toggle', '#start-rail-toggle'], ['right', '#right-panel-toggle', '#start-inspector-toggle']].map(([side, mock, app]) => ({
+    name: 'panel-toggle-icon-' + side, keys: ['width', 'height'], pixel: false,
+    mock: { selector: mock + ' svg' }, app: { selector: app + ' svg' } })),
   { name: 'rail-toggle-behaviour',
     app: { run: "window.__w = document.querySelector('.startup-main').getBoundingClientRect().width; document.getElementById('start-rail-toggle').click()" },
     assert: "(() => { const hidden = document.querySelector('.startup-team').getBoundingClientRect().width === 0 && document.querySelector('.startup-main').getBoundingClientRect().width > window.__w + 200; document.getElementById('start-rail-toggle').click(); return hidden && document.querySelector('.startup-team').getBoundingClientRect().width === (innerWidth < 900 ? 230 : 250); })()" },

@@ -3892,13 +3892,21 @@ Trace: R-210 / UC-202 / DD-222.
 
 Trace: R-210 / UC-202 / DD-222.
 
+### Matching titlebar panel glyphs — GitHub #868 (0.2.4)
+
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+- [x] Plan: both 32px panel buttons use 18px glyphs from the approved preview; retain existing toggle behavior and accessibility.
+- [x] Task: align the right SVG with the left; add independent parity entries for both glyphs.
+- [x] Verify: demonstrate the right-glyph mismatch before fixing it, then run both parity entries and shared titlebar runtime checks.
+- [x] Completed: reviewed merge, issue closure, knowledge record and branch cleanup.
+
 ### Remove redundant menu commands — GitHub #865, #866, #867 (0.2.4)
 
 Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / QAS-209 / DD-222.
 - [x] Plan: remove duplicate agent registration, Workspace settings and panel View commands; preserve rail Add, Workspace step and titlebar toggles. Each issue has an owner-codex linked branch; the shared menu changes are validated together.
 - [x] Task: remove each duplicate and unused keys/handlers in product and preview; update both manuals.
 - [x] Verify: demonstrate old menu expectations fail, then test remaining groups and replacement entry points in Workspace and Room; canonical mock capture and manual generation.
-- [ ] Completed: reviewed merge, issue closures, knowledge record and branch cleanup.
+- [x] Completed: reviewed merge, issue closures, knowledge record and branch cleanup.
 
 ### Standard GitHub bug reports — GitHub #862 (0.2.4)
 
@@ -3906,6 +3914,8 @@ Trace: R-216 / BG-171 / SF-204 / UC-208 / FR-210 / NFR-97 / QAS-215 / DDR-63 / D
 - [x] Plan: use the updater repository preference and the default browser's existing GitHub login; standard English issue template; native validated HTTPS URL; no extra authentication or background service.
 - [x] Task: implement native draft/open request, shared Help action, localized shared-repository settings text and user documentation.
 - [x] Verify: Rust normalization/encoding/preferences/error coverage; Workspace/Room menu runtime tests; local formatting/lint and build checks; manual browser destination check without submitting an issue.
-- [ ] Completed: reviewed PR with milestone 0.2.4, merged, knowledge asset recorded and temporary artifacts/branch cleaned.
+- [x] Completed: reviewed PR with milestone 0.2.4, merged, knowledge asset recorded and temporary artifacts/branch cleaned.
 
 Local evidence: 26 Rust regression tests passed; manual browser-opening test passed separately on macOS. Shared menu checks: 8 × 4 variants. Approved mock: 149 interactions × 4 variants, 72 captures and 28 contrast pairs. Windows browser launching and internal Enterprise authentication are not manually verified.
+
+Integration completion: #864 merged as `c1ffa8d5`; #872 merged as `c0cb1aa0`. The panel-glyph record completes with the merge of PR #871. Final cleanup removes the superseded Codex issue branches after verifying their changes are present on main.
