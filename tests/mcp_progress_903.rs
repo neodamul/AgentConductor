@@ -73,7 +73,7 @@ async fn progress_file_tracks_every_document_and_retry_carries_read_documents() 
             .iter()
             .all(|d| d.stage == "done" && d.log.iter().any(|e| e.event == "carried"))
     );
-    // A changed goal does not reuse the earlier documents.
+    // A changed goal does not carry the earlier documents over; it reads again (with the stored call, #904).
     let mut progress = Progress::off();
     let changed = mcp::preview_with_progress(
         &settings,
@@ -85,7 +85,15 @@ async fn progress_file_tracks_every_document_and_retry_carries_read_documents() 
     )
     .await
     .unwrap();
-    assert!(changed.records.is_empty());
-    assert_eq!(progress.documents[0].stage, "failed");
+    assert_eq!(changed.records.len(), 1);
+    let log: Vec<_> = progress.documents[0]
+        .log
+        .iter()
+        .map(|e| e.event.as_str())
+        .collect();
+    assert!(
+        !log.contains(&"carried") && log.contains(&"read_done"),
+        "{log:?}"
+    );
     std::fs::remove_dir_all(root).unwrap();
 }

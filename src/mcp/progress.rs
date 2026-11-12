@@ -110,27 +110,30 @@ impl Progress {
     }
     fn write(&self) {
         let Some(path) = &self.path else { return };
-        let Ok(data) = serde_json::to_vec(self) else {
-            return;
-        };
-        if let Some(dir) = path.parent() {
-            let _ = std::fs::create_dir_all(dir);
+        if let Ok(data) = serde_json::to_vec(self) {
+            write_atomic(path, &data);
         }
-        let tmp = path.with_extension("tmp");
-        let mut options = std::fs::OpenOptions::new();
-        options.write(true).create(true).truncate(true);
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::OpenOptionsExt;
-            options.mode(0o600);
-        }
-        use std::io::Write;
-        let ok = options
-            .open(&tmp)
-            .and_then(|mut f| f.write_all(&data))
-            .is_ok();
-        if ok {
-            let _ = std::fs::rename(&tmp, path);
-        }
+    }
+}
+/// Replaces a small mutable state file (0600) via a temporary file; failures are ignored by design.
+pub(super) fn write_atomic(path: &std::path::Path, data: &[u8]) {
+    if let Some(dir) = path.parent() {
+        let _ = std::fs::create_dir_all(dir);
+    }
+    let tmp = path.with_extension("tmp");
+    let mut options = std::fs::OpenOptions::new();
+    options.write(true).create(true).truncate(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        options.mode(0o600);
+    }
+    use std::io::Write;
+    if options
+        .open(&tmp)
+        .and_then(|mut f| f.write_all(data))
+        .is_ok()
+    {
+        let _ = std::fs::rename(&tmp, path);
     }
 }

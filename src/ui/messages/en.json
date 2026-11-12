@@ -1578,5 +1578,8 @@
   "mcp.status_running": "Document lookup {done}/{total} · {reference} {stage} · {elapsed}",
   "mcp.provenance": "{server} · {tool} · version {version} · SHA-256 {sha}",
   "mcp.duration_seconds": "{s}s",
-  "mcp.duration_minutes": "{m}m {s}s"
+  "mcp.duration_minutes": "{m}m {s}s",
+  "mcp.log_stored_call": "Saved read call used: {detail}",
+  "mcp.log_stored_discarded": "Saved read call discarded (settings or schema changed): {detail}",
+  "mcp.log_stored_failed": "Saved read call failed · selecting again: {detail}"
 }

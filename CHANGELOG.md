@@ -12,6 +12,7 @@ the GitHub Release notes for its tag.
 - Normalize Windows CLI-facing source/schema paths, provide bounded complete schemas inline and correct schema-invalid read arguments before MCP transmission.
 - Share a five-minute selection/retry budget, retain full local evidence and show stage-specific timeout errors.
 - Document preview explains its four steps and shows one live card per referenced document (step, elapsed time, coordinator/MCP log); failed documents can be retried while documents already read are kept (#903).
+- Reuse the last successful read tool and arguments per reference kind, skipping coordinator selection and schema loading; a changed server, tool schema or a failing call falls back to normal selection (#904).
 
 ## v0.2.5
 

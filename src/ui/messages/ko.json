@@ -1578,5 +1578,8 @@
   "mcp.status_running": "문서 조회 {done}/{total} · {reference} {stage} · {elapsed}",
   "mcp.provenance": "{server} · {tool} · 버전 {version} · SHA-256 {sha}",
   "mcp.duration_seconds": "{s}초",
-  "mcp.duration_minutes": "{m}분 {s}초"
+  "mcp.duration_minutes": "{m}분 {s}초",
+  "mcp.log_stored_call": "저장된 조회 도구 사용: {detail}",
+  "mcp.log_stored_discarded": "저장된 조회 도구 폐기(설정·스키마 변경): {detail}",
+  "mcp.log_stored_failed": "저장된 조회 도구 실패 · 다시 선택: {detail}"
 }

@@ -1,5 +1,6 @@
 //! DD-143: coordinator chooses exact read tools from enabled registered servers.
 use super::Progress;
+use super::read_calls;
 use super::selection::Selection;
 use super::{
     Binding, Preview, Reference, Settings,
@@ -52,6 +53,69 @@ fn bounded(s: &str, limit: usize) -> String {
     }
     s[..end].to_string()
 }
+/// GitHub #904: the last successful read call for this reference kind, used without the coordinator while
+/// its server settings, tool and schema are unchanged; any doubt or error discards it.
+async fn stored(
+    settings: &Settings,
+    root: &Path,
+    r: &Reference,
+    sessions: &mut BTreeMap<String, Session>,
+    progress: &mut Progress,
+) -> Option<super::Record> {
+    let call = read_calls::get(root, &r.kind)?;
+    let label = format!("{} · {}", call.server, call.tool);
+    let usable = (|| {
+        let config = settings.mcp.get(&call.server).filter(|c| c.enabled())?;
+        if read_calls::digest(&serde_json::to_value(config).ok()?) != call.server_sha256 {
+            return None;
+        }
+        let tool = sessions
+            .get(&call.server)?
+            .tools
+            .iter()
+            .find(|t| t["name"] == call.tool.as_str() && eligible(t))?;
+        if read_calls::digest(&tool["inputSchema"]) != call.schema_sha256 {
+            return None;
+        }
+        let arguments = read_calls::arguments(&call.template, &r.id);
+        super::schema::validate(&arguments, &tool["inputSchema"], 0).ok()?;
+        contains_id(&arguments, &r.id).then_some(arguments)
+    })();
+    let Some(arguments) = usable else {
+        progress.log(r, "stored_discarded", label);
+        read_calls::forget(root, &r.kind);
+        return None;
+    };
+    progress.stage(r, "reading");
+    progress.log(r, "stored_call", label);
+    progress.log(
+        r,
+        "mcp_call",
+        super::coordinator::STEP_TIMEOUT.as_secs().to_string(),
+    );
+    let mut chosen = settings.clone();
+    chosen.goal_sources.insert(
+        r.kind.clone(),
+        Binding {
+            server: call.server.clone(),
+            tool: call.tool.clone(),
+            arguments,
+            read_only: true,
+        },
+    );
+    let session = sessions.get_mut(&call.server)?;
+    match imports::read_one(&chosen, r, &mut session.client, &session.tools).await {
+        Ok(record) => {
+            progress.log(r, "read_done", record.body.len().to_string());
+            Some(record)
+        }
+        Err(error) => {
+            progress.log(r, "stored_failed", bounded(&error, 160));
+            read_calls::forget(root, &r.kind);
+            None
+        }
+    }
+}
 async fn select(
     settings: &Settings,
     root: &Path,
@@ -61,6 +125,9 @@ async fn select(
     sessions: &mut BTreeMap<String, Session>,
     progress: &mut Progress,
 ) -> Result<super::Record, String> {
+    if let Some(record) = stored(settings, root, r, sessions, progress).await {
+        return Ok(record);
+    }
     let mut catalog = Vec::new();
     for (name, s) in sessions.iter() {
         for tool in &s.tools {
@@ -209,13 +276,14 @@ async fn select(
                 json!({"server":server,"tool":tool,"result":bounded(&reply.to_string(),4096)}),
             );
         } else {
+            let schema = t["inputSchema"].clone();
             let mut chosen = settings.clone();
             chosen.goal_sources.insert(
                 r.kind.clone(),
                 Binding {
-                    server,
-                    tool,
-                    arguments,
+                    server: server.clone(),
+                    tool: tool.clone(),
+                    arguments: arguments.clone(),
                     read_only: true,
                 },
             );
@@ -227,6 +295,21 @@ async fn select(
             );
             let record = imports::read_one(&chosen, r, &mut session.client, &session.tools).await?;
             progress.log(r, "read_done", record.body.len().to_string());
+            if let Some(config) = settings
+                .mcp
+                .get(&server)
+                .and_then(|c| serde_json::to_value(c).ok())
+            {
+                read_calls::remember(
+                    root,
+                    r,
+                    &server,
+                    read_calls::digest(&config),
+                    &tool,
+                    &schema,
+                    &arguments,
+                );
+            }
             return Ok(record);
         }
     }
