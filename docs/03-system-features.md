@@ -773,3 +773,6 @@ SF-198 / #867 amendment: left/right panels use the existing titlebar toggles wit
 A shared Help action opens a standard issue draft in the default browser. Its target follows the updater repository setting and changing that setting affects the next report. Trace: BG-171.
 
 SF-198 / #878–#880 correction: task evidence remains readable, bounded and scrollable, and Goal-wide plan navigation resolves each selection in its own Phase.
+
+
+SF-37 / #881: notification settings retain their draft and show an inline persistence error until a save succeeds; saving never sends a test message.

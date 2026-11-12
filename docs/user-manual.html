@@ -272,4 +272,5 @@ supports_standalone_web_search = true</code></pre>
 <p>Windows path selection uses the standard Common Item Dialog directly, with no PowerShell or C# startup. Cancel leaves the field unchanged; choosing a folder or file fills the field and saving validates it.</p>
 <h3>Reading task text and Phase history</h3>
 <p>The task Goal starts collapsed; Expand preserves authored line breaks in a bounded scrolling area. A different Goal starts collapsed again. Raw logs retain event metadata while displaying JSON message line breaks; plain output is unchanged and original artifacts stay on disk. On the Plan step, selecting any listed Phase task opens its matching details. Historical tasks are read-only, including after Goal completion; selecting a current task restores its editable proposal.</p>
+<p>Notification settings remain open until saving succeeds. If local persistence fails, the error appears inside the dialog and your draft remains available for retry or Cancel. Updating the application does not require re-enabling an already saved workspace preference; importing settings from another machine intentionally requires local notification setup.</p>
 </body></html>

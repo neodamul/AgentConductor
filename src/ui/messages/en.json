@@ -1543,5 +1543,6 @@
   "sessions.tag_running": "Running",
   "sessions.tag_waiting": "Waiting",
   "sessions.tag_failed": "Failed",
-  "sessions.tag_done": "Done"
+  "sessions.tag_done": "Done",
+  "startup.messenger_save_busy": "Another action is finishing. Keep this draft open and try Save again."
 }
