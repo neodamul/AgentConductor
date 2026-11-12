@@ -1096,7 +1096,7 @@ Move a confirmed idle app-owned workspace to .agentconductor/workspace-trash usi
 ### DD-98 Register MCP servers in Settings
 Trace: R-90 -> BG-45 -> SF-77 -> UC-80 -> FR-75 -> QAS-86 -> DD-98.
 Settings registers arbitrary local/remote MCP servers in OpenCode format. Jira/Confluence document import is a separate optional binding, not the name of server registration.
-Rename registration controls and translations; retain generic MCP definitions and optional document bindings.
+Rename registration controls and translations; retain generic MCP definitions and optional document bindings. GitHub #886: the hint is a localized secondary note (`mcp.import_format_hint`) after the import/export buttons, referenced by the JSON field's `aria-describedby`; the parser (`Settings::parse`, unknown top-level keys ignored, server objects strict) is unchanged.
 
 DD-96 amendment: successful reaped startup command records must not probe a historical PID as current ownership. Preserve checks for live, failed, malformed and unknown records. Actual macOS failure was PID reuse by mediaanalysisd; no unrelated process was killed. Creation keeps its title and inline failure feedback until success.
 

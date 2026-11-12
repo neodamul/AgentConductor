@@ -337,7 +337,7 @@ Confirm exact saved workspace name/path, refuse live or unknown execution, archi
 
 
 ### R-90 Register MCP servers in Settings
-Settings registers arbitrary local/remote MCP servers in OpenCode format. Jira/Confluence document import is a separate optional binding, not the name of server registration. Source: user correction, 2026-10-12.
+Settings registers arbitrary local/remote MCP servers in OpenCode format. Jira/Confluence document import is a separate optional binding, not the name of server registration. Source: user correction, 2026-10-12. GitHub #886: beside the JSON import controls, a hint says the import uses the OpenCode MCP configuration format — its `mcp` servers are imported and other OpenCode settings are ignored.
 
 
 ### R-91 Save an edited agent profile visibly

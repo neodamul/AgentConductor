@@ -392,3 +392,4 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 .agent .model-list{display:none;position:absolute;left:0;top:calc(100% + 5px);z-index:20;min-width:160px;padding:6px 9px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);color:var(--ink);font-weight:400;line-height:1.6;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.12)}
 .agent .model-list b{display:block;font-weight:400;font-size:11px;color:var(--soft)}.agent .model-list span{display:block;font-size:12px}.agent .model-list .more{color:var(--soft)}
 .agent .fact.models:hover .model-list,.agent .fact.models.open .model-list{display:block}
+#mcp-advanced .mcp-import-format{margin:8px 0 0}

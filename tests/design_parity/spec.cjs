@@ -306,6 +306,10 @@ module.exports = [
   // GitHub #828: the agent card's session chip and a session row match the mock.
   { name: 'agent-sessions-chip', props: ['fontSize', 'paddingLeft', 'paddingTop', 'borderTopWidth', 'borderTopLeftRadius', 'backgroundColor', 'color'], keys: ['fontSize', 'paddingLeft', 'paddingTop', 'borderTopWidth', 'borderTopLeftRadius', 'backgroundColor', 'color'], pixel: false,
     mock: { url: '?theme=light#1', run: "agentSessions.claude=agentSessions.claude.filter(s=>s.state==='done');renderSessionButtons()", selector: '[data-sessions="claude"]' }, app: { run: "(async()=>{SIM.reply.agent_sessions=()=>({claude:[]});await acSessions.refresh();})()", selector: '[data-sessions="claude"]' } },
+  // GitHub #886: the OpenCode format hint beside the MCP JSON import matches the mock's secondary note.
+  { name: 'mcp-import-format-hint', props: ['fontSize', 'lineHeight', 'color', 'marginTop', 'whiteSpace'], keys: ['fontSize', 'lineHeight', 'color', 'marginTop', 'whiteSpace'], pixel: false,
+    mock: { url: '?theme=light#1', run: "openMcp();document.getElementById('mcp-advanced').open=true", selector: '#mcp-import-format' },
+    app: { run: "(async()=>{document.getElementById('start-settings-button').click();document.getElementById('start-mcp-settings').click();await new Promise(r=>setTimeout(r,300));document.getElementById('start-mcp-advanced').open=true;})()", selector: '#start-mcp-import-format' } },
   // GitHub #869/#870: the coordinator role tag and band, a work-state tag, an info tag and the model list match the mock.
   { name: 'agent-role-tag', props: ['fontSize', 'paddingLeft', 'paddingTop', 'borderTopWidth', 'borderTopLeftRadius', 'backgroundColor', 'color', 'borderTopColor'], keys: ['fontSize', 'paddingLeft', 'paddingTop', 'borderTopWidth', 'borderTopLeftRadius', 'backgroundColor', 'color', 'borderTopColor'], pixel: false,
     mock: { url: '?theme=light#1', selector: '.agent .fact.role' }, app: { selector: '.startup-profile .fact.role' } },
