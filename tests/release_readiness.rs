@@ -136,7 +136,7 @@ fn publishing_020_is_guarded_by_the_readiness_check() {
         "cargo test --locked --test release_readiness milestone_020_release_gate -- --ignored"
     ));
     assert!(
-        workflow.contains("needs: [verify, screenshots]"),
+        workflow.contains("needs: [prior, verify, package, screenshots]"),
         "publication must depend on the gate job"
     );
 }

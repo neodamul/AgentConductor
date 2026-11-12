@@ -12,8 +12,50 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # GitHub #876: the tagged source was usually validated already (release PR or main push); reuse that run, waiting
+  # while main is still validating this commit, and validate here only when none passed.
+  prior:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      verified: ${{ steps.find.outputs.verified }}
+    steps:
+      - name: Find a passing validation of this exact source tree
+        id: find
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # A PR run on the release branch or the main push run validated the same tree; each commit's tree is looked up once.
+          tree=$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA" --jq .commit.tree.sha)
+          seen=$(mktemp)
+          verified=false
+          for attempt in $(seq 1 110); do
+            runs=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow platform-validation.yml --limit 40 --json headSha,status,conclusion)
+            for sha in $(jq -r '[.[] | select(.conclusion == "success") | .headSha] | unique | .[]' <<<"$runs"); do
+              if grep -q "^$sha$" "$seen"; then continue; fi
+              echo "$sha" >> "$seen"
+              if [ "$(gh api "repos/$GITHUB_REPOSITORY/commits/$sha" --jq .commit.tree.sha)" = "$tree" ]; then verified=true; echo "Validated by the run on $sha"; break 2; fi
+            done
+            # Wait only while a validation of this very commit is still running (the main push run after the merge).
+            if [ "$(jq --arg sha "$GITHUB_SHA" '[.[] | select(.headSha == $sha and .status != "completed")] | length' <<<"$runs")" -eq 0 ]; then break; fi
+            sleep 30
+          done
+          echo "Reusing a passing validation of tree $tree: $verified"
+          echo "verified=$verified" >> "$GITHUB_OUTPUT"
+
   verify:
+    needs: prior
+    if: needs.prior.outputs.verified != 'true'
     uses: ./.github/workflows/platform-validation.yml
+    with:
+      package: false
+
+  # GitHub #876: packaging runs beside validation instead of after it.
+  package:
+    uses: ./.github/workflows/native-package.yml
 
   # GitHub #290: the captured screens are as new as the interface (or a commit confirms them).
   screenshots:
@@ -37,7 +79,9 @@ jobs:
         run: cargo test --locked --test release_readiness milestone_020_release_gate -- --ignored
 
   publish:
-    needs: [verify, screenshots]
+    needs: [prior, verify, package, screenshots]
+    # Publish only with packages, the screenshot check and a validation that ran here or passed on main for this commit.
+    if: ${{ !cancelled() && needs.package.result == 'success' && needs.screenshots.result == 'success' && (needs.verify.result == 'success' || (needs.verify.result == 'skipped' && needs.prior.outputs.verified == 'true')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     permissions:
@@ -47,6 +91,17 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2, MIT
         with:
           persist-credentials: false
+      # GitHub #876: reuse dependencies and the release build between runs (official MIT cache action).
+      - name: Restore Cargo release cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0, MIT
+        with:
+          path: |
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+            target
+          key: cargo-publish-${{ runner.os }}-${{ hashFiles('Cargo.lock') }}
+          restore-keys: cargo-publish-${{ runner.os }}-
       - name: Download verified macOS package
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2, MIT
         with:
