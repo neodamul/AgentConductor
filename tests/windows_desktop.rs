@@ -82,14 +82,14 @@ $original = ViewBounds
 $transform.Resize($original[0] * 0.85, $original[1] * 0.85)
 WaitContentResize $original 'shrink'
 $small = ViewBounds
-$transform.Resize($original[0], $original[1])
-WaitContentResize $small 'grow'
-$normal = ViewBounds
 $state.SetWindowVisualState([System.Windows.Automation.WindowVisualState]::Maximized)
-WaitContentResize $normal 'maximize'
+WaitContentResize $small 'maximize'
 $large = ViewBounds
 $state.SetWindowVisualState([System.Windows.Automation.WindowVisualState]::Normal)
 WaitContentResize $large 'restore'
+$restored = ViewBounds
+$transform.Resize($original[0], $original[1])
+WaitContentResize $restored 'grow'
 Write-Output 'RESIZE_VERIFIED'
 $goal.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('Windows UIA goal 윈도우')
 Start-Sleep -Milliseconds 500
