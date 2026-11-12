@@ -1,3 +1,16 @@
+// #879: pretty-print records and decode only JSON string line breaks; literal path escapes stay intact.
+function readableRawLog(raw){
+ return String(raw||'').split('\n').map(line=>{
+  if(line.length>65536)return line;
+  try{
+   const value=JSON.parse(line);if(!value||typeof value!=='object')return line;
+   const pretty=JSON.stringify(value,null,2);if(pretty.length>262144)return line;
+   return pretty.replace(/"(?:[^"\\]|\\.)*"/g,token=>{
+    const text=JSON.parse(token);return text.includes('\n')?'"'+text.split('\n').map(part=>JSON.stringify(part).slice(1,-1)).join('\n')+'"':token;
+   });
+  }catch{return line;}
+ }).join('\n');
+}
 // R-120 / DD-129: consecutive thinking updates read as one line; events carry no time, so the line names their range.
 const thinkingUpdate=e=>{const r=e?.payload||{};return r.type==='thinking_tokens'||(r.type==='system'&&r.subtype==='thinking_tokens');};
 function collapseThinking(events){const out=[];for(const e of events){const last=out.at(-1);if(!thinkingUpdate(e))out.push({event:e});else if(last?.thinking){last.thinking.count++;last.thinking.last=e.seq;}else out.push({thinking:{count:1,first:e.seq,last:e.seq}});}return out;}

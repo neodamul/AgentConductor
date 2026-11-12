@@ -3925,9 +3925,11 @@ Integration completion: #864 merged as `c1ffa8d5`; #872 merged as `c0cb1aa0`. Th
 Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / QAS-209 / DD-222.
 - [x] Plan: preserve multiline Goal/log evidence and route historical Phase task selection without mutating current work. All three issues were unowned and labeled owner-codex before editing; separate main-based linked branches record each unit.
 - [x] Task #878: apply the approved bounded pre-wrap Goal style and preserve collapsed defaults for new Goals.
-- [ ] Task #879: render readable structured log text with record boundaries; preserve raw artifacts and scroll bounds.
+- [x] Task #879: render readable structured log text with record boundaries; preserve raw artifacts and scroll bounds.
 - [ ] Task #880: select the matching historical Phase and show/open the requested task details read-only.
 - [ ] Verify: demonstrate each regression before its fix; run shared runtime checks, focused design parity, architecture/i18n/manual checks locally.
 - [ ] Completed: reviewed merge, issue closure, source-fingerprinted wiki and temporary/branch cleanup.
 
 #878 local evidence: the new-Goal collapse regression failed before the fix; final Goal runtime checks pass9 ×4variants, including standalone shared styling, and expanded-Goal design parity passes4variants. Existing Workspace pre-wrap was already present; the fix centralizes it instead of adding duplicate styling.
+
+#879 local evidence: formatter tests failed before implementation; nested JSON records now render decoded message line breaks while plain/malformed tails, path escapes and source bytes remain unchanged. Actual Task/Coordinator runtime passes7checks ×4variants, including visual row separation, safe text rendering and bounded wrapping/scrolling.

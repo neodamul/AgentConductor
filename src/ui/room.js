@@ -307,7 +307,7 @@ function renderCoordinator(data) {
   if(r.error)timeline.push(event(acMessage("room.run_error"),r.error,'error'));
   const activity=$('activity'),nearBottom=activity.parentElement.scrollHeight-activity.parentElement.scrollTop-activity.parentElement.clientHeight<70;
   AC_I18N.replace(activity,...timeline);if(nearBottom)activity.parentElement.scrollTop=activity.parentElement.scrollHeight;
-  AC_I18N.bind($('stdout'),()=>(data.stdout||acMessage("room.no_verification_output_yet")));AC_I18N.bind($('stderr'),()=>(data.stderr||acMessage("room.no_errors_logged")));
+  AC_I18N.bind($('stdout'),()=>(readableRawLog(data.stdout)||acMessage("room.no_verification_output_yet")));AC_I18N.bind($('stderr'),()=>(readableRawLog(data.stderr)||acMessage("room.no_errors_logged")));
   AC_I18N.replace($('lessons'),node('p',()=>(acMessage("room.lessons_belong_to_tasks_select_a_task_to")),'empty'));
 }
 // DD-119: the banner always says what to do next and offers that action.
@@ -372,7 +372,7 @@ function renderTask(data) {
   if(!data.events.length)timeline.push(node('p',()=>(acMessage("room.no_provider_events_have_been_reported_yet")),'empty'));
   const activity=$('activity'),nearBottom=activity.parentElement.scrollHeight-activity.parentElement.scrollTop-activity.parentElement.clientHeight<70;
   AC_I18N.replace(activity,...timeline);if(nearBottom)activity.parentElement.scrollTop=activity.parentElement.scrollHeight;
-  AC_I18N.bind($('stdout'),()=>(data.stdout||acMessage("room.no_output_yet")));AC_I18N.bind($('stderr'),()=>(data.stderr||acMessage("room.no_errors_logged")));
+  AC_I18N.bind($('stdout'),()=>(readableRawLog(data.stdout)||acMessage("room.no_output_yet")));AC_I18N.bind($('stderr'),()=>(readableRawLog(data.stderr)||acMessage("room.no_errors_logged")));
   const notes=data.knowledge.filter(k=>k.task===t.id);const steps=(data.step_lessons||[]).map(l=>{const el=node('article',undefined,'lesson');el.append(node('h3',()=>(acMessage("room.step_lesson_for",{value1:l.task}))),node('p',l.cause,'small muted'),node('p',l.response));return el;});AC_I18N.replace($('lessons'),...steps,...(notes.length?notes.map(k=>{const el=node('article',undefined,'lesson');el.append(node('h3',k.lesson.context),node('span',()=>(acMessage("room.confidence", {value1:pretty(k.status),value2:k.lesson.confidence})),'status-pill'),node('p',k.lesson.response),node('pre',k.lesson.sources.map(s=>s.path+'\n'+s.sha256).join('\n')),node('p',()=>(acMessage("room.revalidate")+k.lesson.revalidate),'small muted'));return el;}):(steps.length?[]:[node('p',()=>(acMessage("room.no_reviewed_lessons_for_this_task_draft_observations")),'empty')])));
   const u=data.usage;AC_I18N.bind($('tokens'),()=>(u&&typeof u.input_tokens==='number'?acMessage("room.in_out", {value1:u.input_tokens.toLocaleString(),value2:(u.output_tokens||0).toLocaleString()}):acMessage("room.not_reported")));
   const duration=t.started_ms?(Number(t.finished_ms||Date.now())-Number(t.started_ms))/1000:null;AC_I18N.bind($('duration'),()=>(duration===null?'—':`${Math.max(0,duration).toFixed(1)}s`));
