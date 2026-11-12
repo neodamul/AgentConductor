@@ -11,3 +11,7 @@ Selection rounds and provider capacity/format retries share one five-minute dead
 Source references retain canonical lowercase identities while their visible bracketed text stays editable. Highlight only exact UTF-16 source spans; preserve a transparent editor and aligned backing layer.
 
 The MCP contract already provides `name` and `inputSchema` through `tools/list`, and `tools/call` accepts the name plus arguments. The failed request did not reach Jira: repeated cold CLI starts and the redundant schema Read were orchestration overhead, not proof of a slow Jira API. A schema identifies names/types/required fields, while reference-specific values still need resolution. [MCP tool specification](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/main/docs/specification/2025-06-18/server/tools.mdx).
+
+## Inspect contract compatibility
+
+Source: [fingerprinted #901 regression](../raw/mcp-inspect-contract-901.json). A valid server/tool can be reported as unavailable when response parsing fails: the generic prompt listed arguments for every action, but strict Inspect forbade that field. Accept only absent/null/empty-object arguments for inspection and advertise action-specific fields. Keep unknown-field, nonempty-argument and downstream read-only/schema rejection. Inspection itself must not invoke tools/call; trace the final read separately.

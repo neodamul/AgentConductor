@@ -875,3 +875,6 @@ R-134 / #882 correction: MCP settings registers servers and reports discovery st
 R-210 / R-43 / R-134 / #890 verification amendment: the approved reference must expose historical Phase task navigation, multiline raw logs, notification save pending/error states and server-only MCP discovery. Screen changes require explicit design-parity coverage in both themes at840/1280px.
 
 R-134 / #898 (0.2.6): restore plain-text [Jira:KEY] and [Confluence:ID] tags with a visible subdued blue background; keep canonical internal reference keys and existing lowercase input compatibility. Document previews must avoid unnecessary read-tool round trips for bounded source text and provide a bounded coordinator allowance with clear stage-specific timeout errors.
+
+
+R-134 / #901 (0.2.6): MCP schema inspection accepts an omitted, null, or empty-object arguments field without invoking a tool. Keep strict rejection of unknown fields and nonempty inspection arguments.

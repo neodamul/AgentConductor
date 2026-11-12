@@ -1739,3 +1739,6 @@ DD-143 / #898 follow-up: the operator clarified the sequence: guessed issueIdOrK
 DD-143 / #898 proposal review: normalize CLI-facing Windows paths and inline complete small schemas are implemented. The separate40–50second startup delay and a cancelled SessionStart hook were reported, but a causal link is unconfirmed; user-installed hooks are not disabled. The increased bounded CLI step allowance accommodates slow startup without changing MCP network/RPC limits or weakening schema validation.
 
 DD-143 / #898 budget bound: selection rounds and capacity/format retries share one300second deadline per reference; each summary has its own300second bound. A larger per-call allowance must not multiply into40minutes of selection retries. Timeout cancellation uses the existing owned process containment; a regression checks that a cancelled CLI cannot write late output.
+
+
+DD-143 / #901: keep deny_unknown_fields and deserialize harmless inspect arguments as unit after explicit empty/null validation. Extract the selection contract to a small module to keep routing below300lines. Prompt each action with its actual fields; do not disable strict parsing globally or add a retry for this deterministic contract mismatch.

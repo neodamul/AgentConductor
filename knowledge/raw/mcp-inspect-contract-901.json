@@ -1,0 +1,38 @@
+{
+  "issue": 901,
+  "milestone": "0.2.6",
+  "sources": [
+    {
+      "path": "src/mcp/routing.rs",
+      "sha256": "f70c83ab99824143f500a53ca5f5654d6ba789c7db43e08ecf180e4d56da3c9d"
+    },
+    {
+      "path": "src/mcp/selection.rs",
+      "sha256": "688f62fd1ed3b1c70244b54b9e2123d4569a50c50f7cd9a571876d0e2549cd31"
+    },
+    {
+      "path": "tests/support/mcp_selection.rs",
+      "sha256": "27af755119d2fb8ada464dbd57bbb5ec72461c01e7adad6820ca4cebd503f4a6"
+    },
+    {
+      "path": "tests/support/mcp_coordinator.py",
+      "sha256": "62609d740c71ee8b27ebd12f49fbe73dc02672a218c2d225916923fcac70adee"
+    },
+    {
+      "path": "tests/mcp_preview_898.rs",
+      "sha256": "ddbbdb446fcb8d9855ae0322993b5391a57beaf99f6b6e493b4f3eec95582e37"
+    }
+  ],
+  "diagnosis": "Generic selection instructions advertised arguments for every action, while strict Inspect parsing rejected arguments: {}. Offline regression reproduced the exact reported Korean invalid_selection message.",
+  "decision": "Use action-specific instructions. Accept absent/null/empty object inspect arguments only; reject nonempty values and unknown fields without disabling deny_unknown_fields or adding deterministic-error retries.",
+  "verification": [
+    "Six offline preview scenarios pass; inspected scenarios make only one final tools/call.",
+    "Two selection-contract tests cover compatible input and strict failures.",
+    "Existing MCP automatic routing4, imports2, architecture7, source-layout1 tests pass.",
+    "Changed Rust files pass rustfmt; clippy lib/bin with -D warnings passes."
+  ],
+  "limits": [
+    "Physical Windows and authenticated company MCP acceptance not performed.",
+    "No new release or version bump."
+  ]
+}
