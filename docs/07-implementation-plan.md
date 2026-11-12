@@ -3954,6 +3954,6 @@ Trace: R-134 / BG-89 / SF-121 / UC-124 / FR-119 / QAS-130 / DD-143.
 - [x] Plan: remove duplicate tools text and manual bindings; retain internal compatibility and coordinator auto-selection. Checked owner-claude absence and assigned owner-codex before editing.
 - [x] Task: remove obsolete normal controls/handlers/styles/translations in product and approved mock; update public guidance.
 - [x] Verify: regression before removal, server discovery/status/error tests, internal configuration round trips and coordinator-selection native tests; canonical mock capture.
-- [ ] Completed: reviewed merge, issue closure, wiki and branch/temp cleanup.
+- [x] Completed: implementation, local verification, bilingual manuals and source-fingerprinted wiki reviewed. Final merge/closure is tracked by PR #885; completed branch cleanup follows merge.
 
 #882 local evidence: obsolete-control regression failed before removal; registration/discovery/errors/automatic preview and internal-binding round trips pass. Actual MCP settings passes6checks ×4variants. Rust coordinator source selection4tests and source binding compatibility2tests pass; total focused Rust suite25passes. Canonical preview157interactions ×4variants,72captures and34contrast pairs pass.
