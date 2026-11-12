@@ -3967,4 +3967,3 @@ Trace: R-210 / R-43 / R-134 / UC-202 / UC-34 / UC-124 / QAS-209 / QAS-66 / QAS-1
 - [x] Task: historical Phase selection, multiline raw logs, pending/failed notification save and MCP parity coverage; real in-flow messenger error correction.
 - [ ] Verify: canonical reference captures/manifest and complete local parity in light/dark at840/1280px.
 - [ ] Completed: review, merge, close and notify release owner.
-
