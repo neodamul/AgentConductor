@@ -393,3 +393,9 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 .agent .model-list b{display:block;font-weight:400;font-size:11px;color:var(--soft)}.agent .model-list span{display:block;font-size:12px}.agent .model-list .more{color:var(--soft)}
 .agent .fact.models:hover .model-list,.agent .fact.models.open .model-list{display:block}
 #mcp-advanced .mcp-import-format{margin:8px 0 0}
+/* GitHub #892: every status tag (heading pills, task outline badges, session states) uses the agent tag design:
+   a thin same-hue border, 4px corners, compact padding; running = info, waiting = warn, failed = err, done = ok, others neutral. */
+.pill,.outline-state-badge,.session-state{border:1px solid color-mix(in srgb,currentColor 32%,transparent);border-radius:4px;line-height:1.35}
+.pill,.head>.pill,.goal-info>.pill{padding:1px 7px}
+.session-state{padding:1px 7px}
+.pill.run,.outline-state-badge[data-state="running"],.session-state.running{background:var(--info-bg);color:var(--info)}

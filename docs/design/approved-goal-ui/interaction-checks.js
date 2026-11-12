@@ -194,6 +194,11 @@
  {const hint=document.getElementById('mcp-import-format'),advanced=document.getElementById('mcp-advanced');
   check('the JSON import says it uses the OpenCode MCP format beside the import controls',!!hint&&advanced.contains(hint)&&hint.previousElementSibling.querySelector('#mcp-import')&&hint.textContent.includes('OpenCode MCP')&&document.getElementById('mcp-json').getAttribute('aria-describedby')==='mcp-import-format');}
  {const hint=document.getElementById('mcp-secret-hint');check('#887: the server form says API tokens must be registered as environment variables',!!hint&&document.getElementById('mcp-edit-view').contains(hint)&&hint.textContent.includes('API 토큰')&&hint.textContent.includes('{env:VARIABLE}')&&hint.previousElementSibling.id==='mcp-secrets');}
+ {const view=i;const kinds=new Map();for(const v of [0,3,6]){i=v;show();for(const t of document.querySelectorAll('.pill,.outline-state-badge'))if(t.getClientRects().length)kinds.set(t.className.split(' ')[0]+':'+(t.dataset.state||t.className),t);}
+  openSessions('claude');for(const t of document.querySelectorAll('#sessions-list .session-state'))kinds.set('session:'+t.className,t);
+  const tags=[...kinds.values()];check('#892: every status tag has a thin border and 4px corners',tags.length>=6&&tags.every(t=>{const c=getComputedStyle(t);return c.borderTopWidth==='1px'&&c.borderTopStyle==='solid'&&c.borderTopLeftRadius==='4px';}));
+  const run=document.querySelector('#sessions-list .session-state.running'),fact=document.querySelector('[data-state-tag="running"]');check('#892: running uses the same info color everywhere',!!run&&!!fact&&getComputedStyle(run).color===getComputedStyle(fact).color);
+  sessionsField('close').click();i=view;show();}
  check('no script errors',!document.documentElement.dataset.designError);
  document.documentElement.dataset.interactionResult=JSON.stringify({theme:initialTheme,width:innerWidth,checks});
 })().catch(error=>document.documentElement.dataset.designError=error.message);

@@ -40,7 +40,8 @@ module.exports = [
     mock: { url: '?theme=light#0', selector: '.main>.head' }, app: { selector: '.startup-heading' } },
   { name: 'run-heading-gap', props: ['columnGap'], keys: ['columnGap', 'height'], pixel: false,
     mock: { url: '?theme=light#3', selector: '.main>.head' }, app: { setup: STEPS_ENABLED, run: "document.getElementById('start-tab-tasks').click()", selector: '#run-screen .goal-bar' } },
-  { name: 'heading-pill', props: [], keys: ['y', 'height'], pixel: false,
+  // GitHub #892: status tags share the agent tag border, corners and padding.
+  { name: 'heading-pill', props: ['borderTopWidth', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft'], keys: ['y', 'height', 'borderTopWidth', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft'], pixel: false,
     mock: { url: '?theme=light#0', selector: '.goal-info>.pill', rel: '.goal-info' }, app: { selector: '#start-goal-info>.status-pill', rel: '#start-goal-info' } },
   { name: 'run-heading-pill', props: [], keys: ['y', 'height'], pixel: false,
     mock: { url: '?theme=light#3', selector: '.goal-info>.pill', rel: '.goal-info' }, app: { setup: STEPS_ENABLED, run: "document.getElementById('start-tab-tasks').click()", selector: '#run-goal-info>.status-pill', rel: '#run-goal-info' } },
@@ -83,7 +84,7 @@ module.exports = [
   { name: 'task-row', props: ['borderTopLeftRadius'], keys: ['width', 'borderTopLeftRadius'], pixel: false,
     mock: { url: '?theme=light#3', selector: '.outline-task' },
     app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()", selector: '.session' } },
-  { name: 'task-status-tag', props: ['borderTopLeftRadius'], keys: ['height', 'borderTopLeftRadius'], pixel: false,
+  { name: 'task-status-tag', props: ['borderTopLeftRadius', 'borderTopWidth', 'backgroundColor', 'color'], keys: ['height', 'borderTopLeftRadius', 'borderTopWidth', 'backgroundColor', 'color'], pixel: false,
     mock: { url: '?theme=light#3', selector: '.outline-task .outline-state-badge' },
     app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()", selector: '.outline-task .outline-state-badge' } },
   // Step groups (GitHub #408): a subdued background per Prepare / Run / Finish set with a 14px group icon.
@@ -328,7 +329,7 @@ module.exports = [
     app: { run: "const t=document.querySelector('.startup-profile .fact.models');t.focus();t.dispatchEvent(new FocusEvent('focusin',{bubbles:true}))", selector: '.startup-profile .fact.models .model-list' } },
   { name: 'agent-session-row', props: ['paddingLeft', 'paddingTop', 'borderTopWidth', 'borderTopLeftRadius', 'backgroundColor', 'columnGap'], keys: ['paddingLeft', 'paddingTop', 'borderTopWidth', 'borderTopLeftRadius', 'backgroundColor', 'columnGap'], pixel: false,
     mock: { url: '?theme=light#1', run: "openSessions('claude')", selector: '#sessions-list .session-row' }, app: { run: "(async()=>{SIM.reply.agent_sessions=()=>({claude:[{run:'run-a',task:'t1',label:'T1 Rotate tokens',goal:'Rotate tokens',state:'running',started_ms:Date.now(),last_ms:Date.now(),note:null,cleanable:false,stoppable:true}]});await acSessions.refresh();acSessions.open('claude');await acSessions.refresh();})()", selector: '#start-agent-sessions-list .session-row' } },
-  { name: 'agent-session-state', props: ['fontSize', 'fontWeight', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color'], keys: ['fontSize', 'fontWeight', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'color'], pixel: false,
+  { name: 'agent-session-state', props: ['fontSize', 'fontWeight', 'paddingLeft', 'paddingTop', 'borderTopWidth', 'borderTopLeftRadius', 'backgroundColor', 'color'], keys: ['fontSize', 'fontWeight', 'paddingLeft', 'paddingTop', 'borderTopWidth', 'borderTopLeftRadius', 'backgroundColor', 'color'], pixel: false,
     mock: { url: '?theme=light#1', run: "openSessions('claude')", selector: '#sessions-list .session-state.running' }, app: { run: "(async()=>{SIM.reply.agent_sessions=()=>({claude:[{run:'run-a',task:'t1',label:'T1 Rotate tokens',goal:'Rotate tokens',state:'running',started_ms:Date.now(),last_ms:Date.now(),note:null,cleanable:false,stoppable:true}]});await acSessions.refresh();acSessions.open('claude');await acSessions.refresh();})()", selector: '#start-agent-sessions-list .session-state.running' } },
   { name: 'view-tabs-not-stretched', assert: "(() => { const t = [...document.querySelectorAll('.view-tabs .tab')]; const w = document.querySelector('.view-tabs').getBoundingClientRect().width; return t.length >= 4 && t.every(x => x.getBoundingClientRect().width < w / 3); })()",
     app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()" } },
