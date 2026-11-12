@@ -19,3 +19,7 @@
 
 /* #898: keep the source-tag layer visible through the only editable field. */
 #start-goal-field textarea{background:transparent}
+
+/* #906: validation keeps the existing focus outline and theme error token. */
+#start-panel-workspace [aria-invalid="true"]{border-color:var(--err)!important}
+#start-save-only{display:flex;align-items:center;gap:6px;padding:8px 13px}

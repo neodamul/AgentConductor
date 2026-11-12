@@ -1,0 +1,26 @@
+{
+  "issue": 899,
+  "milestone": "0.2.6",
+  "trace": "R-101 / BG-56 / SF-88 / UC-91 / FR-86 / QAS-97 / DD-109",
+  "sources": [
+    {
+      "path": "src/ui/setup.rs",
+      "sha256": "5e3c82d6a266f2e8ec569d8dccabb42e7fadd206e9c796d674c0e4925c12e94c"
+    },
+    {
+      "path": "tests/workspace_coordinator_default.rs",
+      "sha256": "9e57daac18f1c76c0647f732b058211919d3cb5de90b4480f1efc97387380e0d"
+    }
+  ],
+  "verification": [
+    "Red: a fresh Workspace loaded ordered master profiles but returned coordinator empty.",
+    "Green: first list entry, not alphabetical order, is selected and persisted before Save; menu creation shares the behavior.",
+    "Reopen preserves a valid non-first selection; empty master list remains unset.",
+    "Agent master-list deletion/restore, profile persistence, workspace registry/settings and empty-default regressions pass.",
+    "Architecture/source layout and rustfmt/clippy lib/bin with warnings denied pass."
+  ],
+  "limits": [
+    "Local native-dispatch tests; physical Windows UI not exercised.",
+    "No release or version bump."
+  ]
+}

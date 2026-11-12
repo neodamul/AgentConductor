@@ -1,5 +1,6 @@
 // DD-68: on-demand configuration; DD-138 coordinator-selected document reads.
-function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,showStep,stale=()=>''}) {
+function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,showStep,stale=()=>'',onReferences=()=>{}}) {
+ let sourceReferences=[],sourceReady=false;
  let shown=null,review=null,suggestionsStamp=null,sourceCount=0,pendingDiscovery=null,previewing=false,failedShown=null,goalStamp=null,goalRangeStamp=null;const catalogs=new Map(),notes=new Map();
  // Goal references (jira:KEY, confluence:ID) are drawn as tags behind the editable text, so they
  // stay plain text to type or delete; hovering one shows its title and summary once read.
@@ -85,16 +86,16 @@ function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,sh
   q('mcp-apply').disabled=!p.records.length||p.failures.some(f=>f.reference.kind==='jira');previewing=false;lastProgress=null;q('mcp-loading').hidden=true;rememberNotes(p);if(!q('mcp-review').open)q('mcp-review').showModal();}
  function renderSuggestions(suggestions){AC_I18N.replace(q('source-suggestions'),...suggestions.map(ref=>{const b=el('button',()=>acMessage('mcp.use',{value1:ref}),'quiet small-button');b.type='button';b.onclick=()=>{const[k,id]=ref.split(':');q('source-kind').value=k;q('source-id').value=id;q('source-reference').showModal();};return b;}));q('source-suggestions').hidden=!suggestions.length;}
  function updateSourceSuggestions(goal){
-  suggestionsStamp=goal;sourceCount=0;
+  suggestionsStamp=goal;sourceCount=0;sourceReferences=[];sourceReady=false;
   goalTags(goal,[]);
-  if(!goal.trim()){renderSuggestions([]);return;}
+  if(!goal.trim()){sourceReady=true;renderSuggestions([]);onReferences();return;}
   request({kind:'mcp_source_suggestions',goal}).then(result=>{
    if(suggestionsStamp!==goal)return;
-   sourceCount=Array.isArray(result.references)?result.references.length:0;
+   sourceReferences=Array.isArray(result.references)?result.references:[];sourceCount=sourceReferences.length;sourceReady=true;
    goalTags(goal,Array.isArray(result.reference_ranges)?result.reference_ranges:[]);
    renderSuggestions(Array.isArray(result.suggestions)?result.suggestions:[]);
    // GitHub #279: the preview button and source line follow the answer at once, not at the next refresh.
-   update();
+   update();onReferences();
   }).catch(()=>{if(suggestionsStamp===goal)renderSuggestions([]);});
  }
  function update(){
@@ -123,5 +124,5 @@ function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,sh
    else showPreview(result);
   }
  }
- return {update,wantsResult:job=>q('mcp-dialog').open||job?.kind==='mcp'&&job.state==='completed'&&job.id!==shown};
+ return {update,referenceState:()=>({goal:suggestionsStamp,references:sourceReferences,ready:sourceReady}),wantsResult:job=>q('mcp-dialog').open||job?.kind==='mcp'&&job.state==='completed'&&job.id!==shown};
 }
