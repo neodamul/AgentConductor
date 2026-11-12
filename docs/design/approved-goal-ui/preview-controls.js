@@ -200,6 +200,7 @@ document.getElementById('menu-add-agent').onclick=()=>{closeAppMenu();document.g
 document.getElementById('menu-view-rail').onclick=()=>{closeAppMenu();document.getElementById('sidebar-toggle').click();};
 document.getElementById('menu-view-inspector').onclick=()=>{closeAppMenu();document.getElementById('right-panel-toggle').click();};
 document.getElementById('menu-update').onclick=()=>{closeAppMenu();document.getElementById('update-button').click();};
+document.getElementById('menu-report-bug').onclick=()=>{closeAppMenu();const body='## Summary\nDescribe the bug.\n\n## Steps to reproduce\n1. \n2. \n\n## Expected behavior\n\n## Actual behavior\n\n## Environment\n- AgentConductor: design preview\n';window.open('https://github.com/neodamul/AgentConductor/issues/new?body='+encodeURIComponent(body),'_blank','noopener');};
 ['menu-new-workspace','menu-open-workspace','menu-rules','menu-messenger','menu-export','menu-import','menu-manual','menu-tools'].forEach(id=>{document.getElementById(id).onclick=closeAppMenu;});
 // The Goal heading of the run steps is folded to one line; the toggle shows the whole Goal and folds it again.
 function syncGoalTitle(open){

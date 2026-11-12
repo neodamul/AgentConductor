@@ -1,0 +1,36 @@
+{
+  "issue": 862,
+  "retrieved_at": "2026-11-12",
+  "revision": "1e6454db86e4ab1766f867f4d55483455694e730",
+  "sources": [
+    {
+      "path": "src/bug_report.rs",
+      "sha256": "086f2e50ba3ba7cd525d9a38c190f52d5fb364d3bb0c0e75bd05389648f37fc7"
+    },
+    {
+      "path": "src/ui/app_menu.js",
+      "sha256": "80fcbec03b7c4a202f9b90474900318ea30766c136999ec876a3c396dc621760"
+    },
+    {
+      "path": "src/ui/startup.js",
+      "sha256": "5a8a1c068f0f84b2c16935d42ed3e09e5d6bf0e22313c78e04f079833b058c29"
+    },
+    {
+      "path": "tests/bug_report.rs",
+      "sha256": "f78b102495760438e498c771d95d0fe606a6d20db20e9387fc62034057c9b1be"
+    },
+    {
+      "path": "tests/bug_report_runtime.cjs",
+      "sha256": "33b8ff4c3cd2bb2cba854507dc2c39bd2d513d4c58be8ef96717a94522bac5cd"
+    }
+  ],
+  "observations": [
+    "Local Rust tests: bug_report 3 passed; browser-opening test separately executed successfully on macOS.",
+    "Authenticated Safari showed the prefilled issue composer. Anonymous browser redirected to GitHub login with draft URL preserved. No issue submitted.",
+    "Workspace and Room menu checks: 8 checks on each of light/dark at 840/1280 widths.",
+    "Approved mock verifier: 149 interaction checks per variant, 72 captures, 28 contrast pairs."
+  ],
+  "limits": [
+    "No physical Windows browser launch or internal GitHub Enterprise authentication exercised."
+  ]
+}

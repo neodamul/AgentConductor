@@ -169,3 +169,5 @@
 
 - [Update indicator visibility](update-indicator-visibility.md) — #857 conditional titlebar state and regression lesson.
 - [Windows viewport resizing](windows-viewport-resizing.md) — #853 physical bounds and native acceptance status.
+
+- [Browser-based bug reporting](bug-reporting.md): shared update/report repository, native URL validation, browser login and verification limits (#862).

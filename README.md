@@ -22,7 +22,7 @@ These are screenshots from the 0.2.0 application:
 ![AgentConductor 0.2.0 dark Agent Room](docs/assets/ui-agent-room-dark-current.png)
 ![AgentConductor 0.2.0 agent settings](docs/assets/ui-agent-settings-current.png)
 
-> **Version:** 0.2.3 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **⚙ Settings → User manual** opens the offline manual.
+> **Version:** 0.2.3 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **☰ → Help → User manual** opens the offline manual.
 
 ## What it does
 
@@ -32,6 +32,7 @@ These are screenshots from the 0.2.0 application:
 - **Live team view** — status lights, a live line per running task (tool, time since last output, process state), logs, diffs and tests.
 - **Steer while it runs** — send feedback, reassign agents or models (even for tasks not started yet), stop and resume, or chat with the coordinator in a read-only chat (the chat-bubble button), and recover from an out-of-scope failure through a reviewed plan change.
 - **Imports and lessons** — Jira/Confluence goal sources through company MCP servers ([guide](docs/mcp-sources.md)); reviewed lessons are reused in later tasks.
+- **Actionable bug reports** — open a standard GitHub issue draft in your browser, using the same public or internal repository configured for updates.
 - **Local and private** — one native executable with SQLite inside; data stays local; checksum-verified updates from the Workspace menu. **agentmemory is optional.**
 
 ## How orchestration works

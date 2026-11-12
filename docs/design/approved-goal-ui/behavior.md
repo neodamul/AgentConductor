@@ -231,3 +231,10 @@ before planning begins; only describe proposed tasks once that proposal exists.
 GitHub #832: the Plan heading and selected task summary use the current proposal's
 Phase in the active Goal's full Phase list. Task position remains local to that
 Phase. Single-Phase plans without Phase metadata retain Phase 1/1.
+
+## Bug reports
+
+Help → Report a bug opens a prefilled issue composer in the default browser. The
+application target shares the updater repository preference, including Enterprise
+HTTPS hosts. GitHub handles login and final submission; automatic context is limited
+to version, OS and architecture. The preview demonstrates the same Help action.
