@@ -90,6 +90,7 @@ When a goal completes, one popup shows where the changes were merged, the change
 
 The app-owned workspaces share one machine-wide CLI list, `~/.agentconductor/agents.json`.
 Deleting a workspace does not remove this list. Role assignments belong to each workspace.
+A new workspace automatically selects the first registered agent as coordinator. An existing valid selection is preserved; an empty team remains unset.
 Drag cards or use **Move up/Move down** to reorder agent selections.
 An assignment to a missing agent is highlighted and prevents planning until corrected.
 

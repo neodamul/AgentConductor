@@ -887,3 +887,6 @@ UC-124 / #901: a coordinator returns inspect with arguments: {}; the application
 
 
 UC-124 / UC-34 / #905 / #906: save current Workspace and stay, or save and continue to Team. For unapplied Goal references show a Preview documents reminder after save. Required controls show accessible invalid state; applying current sources clears the preview marker.
+
+
+UC-91 / #899: create a Workspace using the machine agent list; Workspace settings and the agent coordinator badge immediately agree on the first registered agent, persisted before any user Save. Reopening an existing valid non-first selection preserves it.
