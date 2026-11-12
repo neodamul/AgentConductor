@@ -3957,3 +3957,14 @@ Trace: R-134 / BG-89 / SF-121 / UC-124 / FR-119 / QAS-130 / DD-143.
 - [x] Completed: implementation, local verification, bilingual manuals and source-fingerprinted wiki reviewed. Final merge/closure is tracked by PR #885; completed branch cleanup follows merge.
 
 #882 local evidence: obsolete-control regression failed before removal; registration/discovery/errors/automatic preview and internal-binding round trips pass. Actual MCP settings passes6checks ×4variants. Rust coordinator source selection4tests and source binding compatibility2tests pass; total focused Rust suite25passes. Canonical preview157interactions ×4variants,72captures and34contrast pairs pass.
+
+
+### Complete approved reference coverage — GitHub #890 (0.2.5)
+
+Trace: R-210 / R-43 / R-134 / UC-202 / UC-34 / UC-124 / QAS-209 / QAS-66 / QAS-130 / DD-222 / DD-79 / DD-143.
+- [x] Plan: claim owner-codex after Claude handoff; audit missing states and callers.
+- [x] Task: add interaction regressions before reference implementation.
+- [x] Task: historical Phase selection, multiline raw logs, pending/failed notification save and MCP parity coverage; real in-flow messenger error correction.
+- [ ] Verify: canonical reference captures/manifest and complete local parity in light/dark at840/1280px.
+- [ ] Completed: review, merge, close and notify release owner.
+

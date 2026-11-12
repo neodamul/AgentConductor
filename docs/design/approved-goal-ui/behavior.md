@@ -246,3 +246,7 @@ to version, OS and architecture. The preview demonstrates the same Help action.
 ## MCP registration and automatic tool selection (#882)
 
 Normal MCP settings lists registered servers, discovery status and errors, and the add/edit form. It has no Jira/Confluence tool-binding selectors, argument form or duplicate text catalog. The workspace coordinator chooses tools and schema-valid arguments for Goal source preview; compatible legacy binding data remains internal and round-trippable through advanced JSON.
+
+
+## 0.2.5 evidence states (#890)
+The plan reference includes a completed earlier Phase whose task opens read-only details immediately; selecting it again keeps it open, while the current Phase restores the editable plan. Raw logs retain record metadata and message line breaks in bounded scrolling blocks. The messenger editor stays open while saving and retains its draft plus an in-flow error on persistence failure. MCP settings shows server rows and discovery status/count/errors, without a duplicate text catalog or manual bindings. Dedicated parity entries compare these evidence surfaces; content and navigation assertions accompany style checks. Screenshot filenames explicitly identify history, raw logs, saving and failure states.

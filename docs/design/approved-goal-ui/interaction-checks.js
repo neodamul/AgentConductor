@@ -194,6 +194,13 @@
  {const hint=document.getElementById('mcp-import-format'),advanced=document.getElementById('mcp-advanced');
   check('the JSON import says it uses the OpenCode MCP format beside the import controls',!!hint&&advanced.contains(hint)&&hint.previousElementSibling.querySelector('#mcp-import')&&hint.textContent.includes('OpenCode MCP')&&document.getElementById('mcp-json').getAttribute('aria-describedby')==='mcp-import-format');}
  {const hint=document.getElementById('mcp-secret-hint');check('#887: the server form says API tokens must be registered as environment variables',!!hint&&document.getElementById('mcp-edit-view').contains(hint)&&hint.textContent.includes('API 토큰')&&hint.textContent.includes('{env:VARIABLE}')&&hint.previousElementSibling.id==='mcp-secrets');}
+ // #890: approved states for the 0.2.5 fixes must be reachable, not only described.
+ {i=2;show();enablePhaseHistory();document.querySelector('[data-history-task]').click();
+ check('#880: selecting an earlier Phase opens its read-only task',!document.getElementById('history-detail').hidden&&document.getElementById('history-detail').textContent.includes('리프레시 토큰')&&!document.getElementById('history-detail').querySelector('input,textarea'));
+ document.querySelector('[data-history-task]').click();check('#880: reselecting the same history keeps it open',!document.getElementById('history-detail').hidden);
+ document.querySelector('[data-current-history-task]').click();check('#880: current Phase restores the editable plan',document.getElementById('history-phase').hidden);}
+ {i=3;show();openRawLogs();const log=document.getElementById('preview-stdout');check('#879: raw logs retain multiline text and metadata',log.textContent.includes('리프레시 토큰\n이전 토큰 무효화')&&log.textContent.includes('session_id')&&getComputedStyle(log).whiteSpace==='pre-wrap');document.querySelector('.card[data-show="b"] .ttabs button').click();}
+ {openMessengerPreview();messengerPreviewState('saving');check('#881: pending save keeps the form open and disabled',messengerPreview.open&&document.getElementById('messenger-preview-save').disabled);messengerPreviewState('error');check('#881: failed save retains draft and inline error',messengerPreview.open&&!document.getElementById('messenger-preview-save').disabled&&!document.getElementById('messenger-preview-error').hidden&&getComputedStyle(document.getElementById('messenger-preview-error')).position==='static');messengerPreview.close();}
  check('no script errors',!document.documentElement.dataset.designError);
  document.documentElement.dataset.interactionResult=JSON.stringify({theme:initialTheme,width:innerWidth,checks});
 })().catch(error=>document.documentElement.dataset.designError=error.message);

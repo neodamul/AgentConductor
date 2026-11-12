@@ -876,3 +876,6 @@ UC-202 / #878–#880 correction: expand a multiline Goal in Tasks/Verify/Review;
 UC-34 / #881: the operator changes workspace notification opt-in and saves. While persistence is pending the dialog stays open; failure preserves the draft for retry or cancellation. Success closes it; reopening reads the persisted preference.
 
 UC-124 / #882 correction: register an MCP server, enter a Jira/Confluence reference in the Goal, and preview imports; no tool-selection combo boxes or per-tool argument form is required.
+
+
+UC-202 / UC-34 / UC-124 / #890: operators can select an earlier Phase task read-only and return to the current plan, inspect multiline logs, recover a failed settings save, and discover MCP tools without a redundant tools form. The approved reference demonstrates each state.

@@ -870,3 +870,6 @@ R-210 / #878, #879, #880 amendment (2026-11-12): expanded task Goals preserve au
 R-43 / #881 correction (2026-11-12): a workspace notification preference is saved only after local persistence acknowledges success. A pending or failed save must not dismiss the dialog or discard its draft. Existing opt-in survives restart; intentional opt-out and sanitized imports remain respected.
 
 R-134 / #882 correction: MCP settings registers servers and reports discovery status only; remove manual Jira/Confluence tool-binding controls and duplicate textual catalogs. Keep compatible internal configuration; the workspace coordinator selects read tools automatically.
+
+
+R-210 / R-43 / R-134 / #890 verification amendment: the approved reference must expose historical Phase task navigation, multiline raw logs, notification save pending/error states and server-only MCP discovery. Screen changes require explicit design-parity coverage in both themes at840/1280px.
