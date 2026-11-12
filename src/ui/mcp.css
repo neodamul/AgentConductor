@@ -41,3 +41,4 @@
 .source-review .source-foot{display:flex;justify-content:flex-end;gap:10px;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
 .source-review .source-meta{flex:1;min-width:0;font-size:12px;line-height:1.6;color:var(--soft)}
 .source-review [hidden]{display:none!important}
+#start-source-status.over{color:var(--err)}

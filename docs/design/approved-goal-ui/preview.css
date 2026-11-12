@@ -452,6 +452,8 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 #source-review{width:min(760px,calc(100vw - 60px));max-height:85vh;overflow:auto;padding:26px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--ink);font:13px/1.6 -apple-system,BlinkMacSystemFont,sans-serif;position:fixed;right:auto;bottom:auto;margin:0;transform:none;max-width:var(--reference-dialog-width,90vw);max-height:var(--reference-dialog-height,85vh)}
 #source-review::backdrop{background:rgba(0,0,0,.3)}
 #source-review h2{font-size:21px;margin:10px 0 12px}
-.source-status{font-size:12px;color:var(--soft);align-self:center}
+.source-status{font-size:13px;line-height:1.5;color:var(--soft);align-self:center}
 /* #906: validation never replaces the focus indicator. */
 [aria-invalid="true"]{border-color:var(--err)!important}
+.source-status.over{color:var(--err)}
+.goal-import-actions button:disabled{opacity:.42}

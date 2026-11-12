@@ -89,7 +89,6 @@
   "mcp.rediscover": "Rediscover",
   "mcp.reference_arguments_mismatch": "The selected document arguments do not contain the requested reference ID.",
   "mcp.reference_not_read": "{value1} — not read yet. Use Preview to read it through MCP.",
-  "mcp.references_to_preview": "References to preview: {value1}",
   "mcp.register_mcp_servers": "Register MCP servers",
   "mcp.registration_intro": "Servers used to import Jira and Confluence documents into Goals. Credentials come from environment variables or your company proxy; model API keys are not needed.",
   "mcp.remote_url": "Remote URL",
@@ -1583,5 +1582,8 @@
   "mcp.duration_minutes": "{m}m {s}s",
   "mcp.log_stored_call": "Saved read call used: {detail}",
   "mcp.log_stored_discarded": "Saved read call discarded (settings or schema changed): {detail}",
-  "mcp.log_stored_failed": "Saved read call failed · selecting again: {detail}"
+  "mcp.log_stored_failed": "Saved read call failed · selecting again: {detail}",
+  "mcp.too_many_references": "A Goal can reference at most {limit} Jira/Confluence documents ({count} now). Remove one to preview.",
+  "mcp.references_count": "References {count}/{limit}",
+  "mcp.reference_limit_reached": "A Goal can reference at most {limit} documents."
 }

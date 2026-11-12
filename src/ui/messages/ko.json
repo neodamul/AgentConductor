@@ -89,7 +89,6 @@
   "mcp.rediscover": "다시 확인",
   "mcp.reference_arguments_mismatch": "선택한 문서 조회 인자에 요청한 참조 ID가 없습니다.",
   "mcp.reference_not_read": "{value1} — 아직 조회하지 않았습니다. MCP 미리보기로 조회하세요.",
-  "mcp.references_to_preview": "미리 볼 참조: {value1}",
   "mcp.register_mcp_servers": "MCP 서버 등록",
   "mcp.registration_intro": "Jira·Confluence 문서를 Goal로 가져올 때 쓰는 서버입니다. 인증은 환경 변수나 사내 프록시가 맡으며 모델 API 키는 필요 없습니다.",
   "mcp.remote_url": "원격 URL",
@@ -1583,5 +1582,8 @@
   "mcp.duration_minutes": "{m}분 {s}초",
   "mcp.log_stored_call": "저장된 조회 도구 사용: {detail}",
   "mcp.log_stored_discarded": "저장된 조회 도구 폐기(설정·스키마 변경): {detail}",
-  "mcp.log_stored_failed": "저장된 조회 도구 실패 · 다시 선택: {detail}"
+  "mcp.log_stored_failed": "저장된 조회 도구 실패 · 다시 선택: {detail}",
+  "mcp.too_many_references": "Goal에는 Jira·Confluence 문서를 {limit}개까지 넣을 수 있습니다(현재 {count}개). 하나를 지우면 미리볼 수 있습니다.",
+  "mcp.references_count": "참조 {count}/{limit}",
+  "mcp.reference_limit_reached": "Goal에는 참조 문서를 {limit}개까지 넣을 수 있습니다."
 }

@@ -66,7 +66,20 @@ function renderSourceReview(mode){
  document.getElementById('source-status').textContent=finished||!running?'':sourceT('status_running',{done:progress.documents.filter(d=>d.stage==='done'||d.stage==='summary_wait').length,total:progress.documents.length,reference:running.reference,stage:sourceT('stage_'+running.stage),elapsed:sourceDuration(now-progress.started_ms)});
 }
 function openSourceReview(mode='running'){renderSourceReview(mode);const d=document.getElementById('source-review');if(!d.open)d.showModal();}
-document.getElementById('source-preview').onclick=()=>openSourceReview('running');
+// #906 adds the Goal's Preview documents button; the status line follows it.
+const sourcePreviewButton=document.getElementById('workspace-preview-documents');sourcePreviewButton.after(document.getElementById('source-status'));
+sourcePreviewButton.addEventListener('click',()=>openSourceReview('running'));
 document.getElementById('source-close').onclick=()=>document.getElementById('source-review').close();
 document.getElementById('source-retry').onclick=()=>openSourceReview('running');
 {const mode=new URLSearchParams(location.search).get('sources');if(mode)openSourceReview(mode);}
+// GitHub #907: a Goal holds at most five distinct references; adding stops at five and a sixth blocks preview.
+const SOURCE_LIMIT=5;
+function sourceLimit(){
+ const refs=new Set([...document.getElementById('goal-entry').value.matchAll(/\[(Jira|Confluence):([^\]]+)\]/g)].map(m=>m[1].toLowerCase()+':'+m[2]));
+ const count=refs.size,full=count>=SOURCE_LIMIT,over=count>SOURCE_LIMIT,status=document.getElementById('source-status');
+ for(const id of ['source-jira','source-confluence']){const b=document.getElementById(id);b.disabled=full;b.title=full?'Goal에는 참조 문서를 5개까지 넣을 수 있습니다.':'';}
+ sourcePreviewButton.disabled=!count||over;
+ status.classList.toggle('over',over);
+ status.textContent=over?'Goal에는 Jira·Confluence 문서를 5개까지 넣을 수 있습니다(현재 '+count+'개). 하나를 지우면 미리볼 수 있습니다.':count?'참조 '+count+'/'+SOURCE_LIMIT:'';
+}
+document.getElementById('goal-entry').addEventListener('input',sourceLimit);

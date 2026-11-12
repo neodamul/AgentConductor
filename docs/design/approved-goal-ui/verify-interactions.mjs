@@ -79,6 +79,7 @@ try{
   if(mode==='raw-log-multiline')action='i=3;show();openRawLogs()';
   if(mode==='plan-history')action='i=2;show();enablePhaseHistory();document.querySelector("[data-history-task]").click()';
   if(mode==='messenger-saving'||mode==='messenger-error')action='openMessengerPreview();messengerPreviewState('+JSON.stringify(mode==='messenger-saving'?'saving':'error')+');document.getElementById("messenger-preview-error").scrollIntoView({block:"center"})';
+  if(mode==='source-limit')action="i=0;show();document.getElementById('goal-entry').value='[Jira:A-1] [Jira:A-2] [Confluence:3] [Confluence:4] [Jira:A-5] [Jira:A-6]';document.getElementById('goal-entry').dispatchEvent(new Event('input'));document.getElementById('source-status').scrollIntoView({block:'center'})";
   if(mode==='source-review-running'||mode==='source-review-done')action='i=0;show();openSourceReview('+JSON.stringify(mode==='source-review-done'?'review':'running')+')';
   if(mode==='goal-source-tags')action="i=0;show();document.getElementById('goal-entry').value='Implement [Jira:EMM-51214] using [Confluence:2571110463]';document.getElementById('goal-entry').dispatchEvent(new Event('input'))";
   if(mode==='mcp')action='openMcp()';
