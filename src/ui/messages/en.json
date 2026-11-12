@@ -1533,5 +1533,11 @@
   "sessions.clean_finished": "Clean up finished",
   "sessions.clean_finished_count": "Clean up finished ({value1})",
   "sessions.confirm_one": "This session will be cleaned up: its session record and task folder (worktree) are removed, and logs stay until the cache is cleared. This cannot be undone.",
-  "sessions.confirm_many": "{value1} finished sessions will be cleaned up: their session records and task folders (worktrees) are removed, and logs stay until the cache is cleared. This cannot be undone."
+  "sessions.confirm_many": "{value1} finished sessions will be cleaned up: their session records and task folders (worktrees) are removed, and logs stay until the cache is cleared. This cannot be undone.",
+  "startup.models_listed": "Queried models",
+  "startup.models_more": "+{value1} more",
+  "sessions.tag_running": "Running",
+  "sessions.tag_waiting": "Waiting",
+  "sessions.tag_failed": "Failed",
+  "sessions.tag_done": "Done"
 }

@@ -16,7 +16,7 @@ try{const file=path.join(dir,'app.html');execFileSync(process.execPath,['tests/u
   await until(()=>document.querySelector('[data-sessions="claude"]'),'chip');await acSessions.refresh();
   await until(()=>document.querySelector('[data-sessions="claude"] .session-count')?.textContent==='3','chip count');
   const chip=document.querySelector('[data-sessions="claude"]');
-  check('the agent card counts its sessions and marks running ones',chip.classList.contains('has-running')&&chip.textContent.startsWith(acMessage('sessions.chip')));
+  check('the agent card counts its sessions and shows its work states (#869)',chip.textContent.startsWith(acMessage('sessions.chip'))&&[...chip.parentElement.querySelectorAll('[data-state-tag]')].map(t=>t.dataset.stateTag+t.querySelector('.state-count').textContent).join()==='running1,failed1,done1'&&chip.previousElementSibling.dataset.stateTag==='done');
   chip.click();await until(()=>document.getElementById('start-agent-sessions').open&&q('list').children.length===3,'dialog');
   const rows=()=>[...q('list').querySelectorAll('.session-row')];
   check('rows show state, task and Goal',rows()[0].querySelector('.session-state.running')&&rows()[0].textContent.includes('Rotate tokens'));
