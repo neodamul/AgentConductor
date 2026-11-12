@@ -1,4 +1,6 @@
+//! GitHub #828: a session's state in the agent sessions list.
 use super::session_state;
+
 #[test]
 fn a_running_task_in_a_finished_run_is_stale() {
     assert_eq!(session_state("running", "stopped"), "stale");

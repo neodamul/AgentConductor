@@ -109,5 +109,5 @@ impl Startup {
 }
 
 #[cfg(test)]
-#[path = "../../../tests/unit/agent_session_state.rs"]
+#[path = "../../../tests/unit/agent_sessions.rs"]
 mod session_tests;
