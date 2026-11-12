@@ -115,7 +115,7 @@ impl Room {
                 ))?
                 .dispatch(bytes);
         }
-        if kind["kind"] == "report_bug" {
+        if matches!(kind["kind"].as_str(), Some("report_bug" | "release_notes")) {
             return crate::bug_report::handle(kind);
         }
         // DD-135: update checks and installs work from any surface.

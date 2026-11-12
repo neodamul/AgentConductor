@@ -1521,6 +1521,8 @@
   "sessions.confirm_many": "끝난 세션 {value1}개를 정리합니다. 세션 기록과 작업 폴더(worktree)를 지우고, 로그는 캐시 정리 전까지 남깁니다. 되돌릴 수 없습니다.",
   "native.bug_report_invalid": "잘못된 버그 신고 요청입니다: {error}",
   "native.bug_report_browser_failed": "브라우저에서 버그 신고를 열 수 없습니다: {error}",
+  "startup.release_notes": "릴리즈 노트",
+  "startup.release_notes_opened": "브라우저에서 {version} 릴리즈 노트를 열었습니다.",
   "startup.report_bug": "버그 신고…",
   "startup.bug_report_opened": "브라우저에서 {value1} 버그 신고를 열었습니다. 필요하면 GitHub에 로그인한 뒤 내용을 검토하고 등록하세요.",
   "startup.models_listed": "조회한 모델",

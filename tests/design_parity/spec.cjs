@@ -260,6 +260,10 @@ module.exports = [
   ].map(({ mock, app, ...rest }) => ({ ...rest, pixel: false,
     mock: { url: '?theme=light#0', run: "document.getElementById('app-menu-button').click(); document.querySelector('#app-menu .menu-parent').click()", selector: mock },
     app: { run: "(async () => { document.getElementById('start-app-menu').click(); await new Promise(r => setTimeout(r, 900)); document.querySelector('#start-workspace-list .menu-parent').click(); })()", selector: app } })),
+  // #921: Help lists Release notes second, right after Check for updates, with the same row style.
+  { name: 'app-help-release-notes', props: ['borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'fontSize', 'color'], keys: ['height', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'fontSize', 'color'], pixel: false,
+    mock: { url: '?theme=light#0', run: "document.getElementById('app-menu-button').click(); document.querySelector('[aria-controls=submenu-help]').click()", selector: '#submenu-help > button', index: 1 },
+    app: { run: "(async () => { document.getElementById('start-app-menu').click(); await new Promise(r => setTimeout(r, 900)); [...document.querySelectorAll('#start-workspace-list .menu-parent')].at(-1).click(); })()", selector: '#start-workspace-list .submenu:not([hidden]) > button', index: 1 } },
   // #579: every step card's footer buttons share one size (34px, 8px/13px padding, 6px radius, 13px text).
   ...[[0, 'j', 0, 'workspace'], [1, 'i', 1, 'roles'], [2, 'a', 2, 'plan']].flatMap(([hash, show, tab, name]) => [['p', 'primary'], ['q', 'quiet']].map(([kind, appClass]) => (
     { name: `footer-button-${kind}-${name}`, props: ['paddingTop', 'paddingLeft', 'fontSize', 'borderTopLeftRadius'], keys: ['height', 'paddingTop', 'paddingLeft', 'fontSize', 'borderTopLeftRadius'], pixel: false,

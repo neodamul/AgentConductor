@@ -9,6 +9,11 @@ enum Request {
         #[serde(default)]
         open: bool,
     },
+    // #921: the release page of the running version, on the same repository.
+    ReleaseNotes {
+        #[serde(default)]
+        open: bool,
+    },
 }
 
 fn encoded(text: &str) -> String {
@@ -24,7 +29,7 @@ fn encoded(text: &str) -> String {
     result
 }
 
-pub fn draft(repository: &str) -> Result<Value, String> {
+fn base(repository: &str) -> Result<(String, String), String> {
     let repository = crate::update_source::normalize_repository(repository)?;
     let repository = if repository.is_empty() {
         crate::update_source::DEFAULT_REPOSITORY.to_owned()
@@ -36,6 +41,18 @@ pub fn draft(repository: &str) -> Result<Value, String> {
     } else {
         format!("https://github.com/{repository}")
     };
+    Ok((repository, base))
+}
+
+pub fn release_notes(repository: &str) -> Result<Value, String> {
+    let (repository, base) = base(repository)?;
+    let version = env!("CARGO_PKG_VERSION");
+    let url = format!("{base}/releases/tag/v{version}");
+    Ok(json!({"repository":repository,"version":version,"url":url,"opened":false}))
+}
+
+pub fn draft(repository: &str) -> Result<Value, String> {
+    let (repository, base) = base(repository)?;
     let body = format!(
         "## Summary\nDescribe the bug.\n\n## Steps to reproduce\n1. \n2. \n\n## Expected behavior\n\n## Actual behavior\n\n## Environment\n- AgentConductor: {}\n- OS: {}\n- Architecture: {}\n",
         crate::update::current(),
@@ -47,13 +64,17 @@ pub fn draft(repository: &str) -> Result<Value, String> {
 }
 
 pub fn handle(request: Value) -> Result<Value, String> {
-    let Request::ReportBug { open } = serde_json::from_value(request).map_err(|error| {
+    let request = serde_json::from_value(request).map_err(|error| {
         crate::ui::messages::render(
             "native.bug_report_invalid",
             &[("error", &error.to_string())],
         )
     })?;
-    let mut report = draft(&crate::update_source::repository())?;
+    let repository = crate::update_source::repository();
+    let (mut report, open) = match request {
+        Request::ReportBug { open } => (draft(&repository)?, open),
+        Request::ReleaseNotes { open } => (release_notes(&repository)?, open),
+    };
     if open {
         open_browser(report["url"].as_str().expect("draft URL is a string"))?;
         report["opened"] = true.into();
