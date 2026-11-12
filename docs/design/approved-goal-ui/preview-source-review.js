@@ -66,7 +66,9 @@ function renderSourceReview(mode){
  document.getElementById('source-status').textContent=finished||!running?'':sourceT('status_running',{done:progress.documents.filter(d=>d.stage==='done'||d.stage==='summary_wait').length,total:progress.documents.length,reference:running.reference,stage:sourceT('stage_'+running.stage),elapsed:sourceDuration(now-progress.started_ms)});
 }
 function openSourceReview(mode='running'){renderSourceReview(mode);const d=document.getElementById('source-review');if(!d.open)d.showModal();}
-document.getElementById('source-preview').onclick=()=>openSourceReview('running');
+// #906 adds the Goal's Preview documents button; the status line follows it.
+const sourcePreviewButton=document.getElementById('workspace-preview-documents');sourcePreviewButton.after(document.getElementById('source-status'));
+sourcePreviewButton.addEventListener('click',()=>openSourceReview('running'));
 document.getElementById('source-close').onclick=()=>document.getElementById('source-review').close();
 document.getElementById('source-retry').onclick=()=>openSourceReview('running');
 {const mode=new URLSearchParams(location.search).get('sources');if(mode)openSourceReview(mode);}
