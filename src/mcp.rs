@@ -1,5 +1,6 @@
 //! DD-68: on-demand read-only goal sources; no resident MCP daemon.
 mod config;
+mod coordinator;
 mod http;
 mod imports;
 mod jsonc;

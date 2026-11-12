@@ -879,3 +879,5 @@ UC-124 / #882 correction: register an MCP server, enter a Jira/Confluence refere
 
 
 UC-202 / UC-34 / UC-124 / #890: operators can select an earlier Phase task read-only and return to the current plan, inspect multiline logs, recover a failed settings save, and discover MCP tools without a redundant tools form. The approved reference demonstrates each state.
+
+UC-124 / #898: insert or type bracketed Jira/Confluence references, see tags while editing, preview sources and understand which bounded coordinator step timed out. User reported Windows preview failure after more than two minutes; no authenticated Windows reproduction is yet available.

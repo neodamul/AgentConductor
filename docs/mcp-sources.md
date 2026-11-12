@@ -5,9 +5,13 @@ connection map follows [OpenCode MCP configuration](https://opencode.ai/docs/mcp
 AgentConductor reads MCP directly; OpenCode installation and model API keys are not
 required. Local document bodies stay in the workspace.
 
+Preferred Goal references are `[Jira:EMM-51214]` and `[Confluence:2571110463]`. They stay plain editable text with subdued blue highlights; existing lowercase references remain compatible. The coordinator uses the exact discovered schema, including all required fields; AgentConductor does not assume an identifier field name such as `issueIdOrKey`. Invalid arguments are rejected before MCP transmission and returned with schema feedback for bounded correction.
+
+Selection and retries share a five-minute deadline per reference; each document summary has a separate five-minute deadline. Small complete schemas and source Markdown are passed in stdin to avoid file-tool round trips. Larger evidence remains file-backed; Windows extended drive prefixes are removed only at the CLI-facing boundary. Read-only checks, hashes and human review still apply. A reported slow/cancelled startup hook is not automatically disabled.
+
 ## Register a local server
 
-Paste JSON or JSONC, then **Save MCP settings**. Saving does not start a server.
+Use **Add server** or **Edit** for the guided form; saving registers the server and discovers its tools. For OpenCode JSON/JSONC, open **Advanced JSON import/export** and import the definitions; importing JSON alone does not start a server.
 Replace the example command with your installed, licensed company MCP command.
 Use environment references for credentials. AgentConductor does not install a server.
 
@@ -25,7 +29,7 @@ Use environment references for credentials. AgentConductor does not install a se
 }
 ```
 
-Select a saved server to view or edit **Selected server configuration**, then **Save selected server**. Discovery uses that server and the catalog always belongs to it. Switching servers preserves other configurations; changing a server invalidates its previous catalog. **Discover tools** is optional inspection.
+Each saved server row has **Edit**, **Rediscover** and **Remove** actions. Discovery belongs to that server and its result survives reopening or restart. Editing one server preserves the others; changing its definition invalidates that server's previous catalog. Discovery lists tools; document reads occur only when you request a source preview.
 
 Register an agent CLI and choose it as the workspace planning coordinator. On **Preview imports**, it discovers enabled server catalogs, chooses an exact read-only tool and schema-valid arguments for each reference, and can query read-only metadata helpers for required cloud/tenant IDs. AgentConductor validates server, tool, read annotations, schema and reference ID before calling. Writes and undiscovered choices are refused. Missing coordinators show registration guidance before a worker starts.
 

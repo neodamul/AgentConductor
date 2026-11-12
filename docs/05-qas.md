@@ -884,3 +884,5 @@ QAS-130 / #882 correction: removing normal binding controls leaves server regist
 
 
 QAS-209 / QAS-66 / QAS-130 / #890: approved mock interactions and app/reference parity must pass light/dark at840/1280px for historical Phase details, multiline raw logs, recoverable save errors and MCP server status. Record platform limitations honestly.
+
+QAS-130 / #898: source tags remain visible/aligned at840/1280px in both themes, including emoji before references. Preview CLI steps have an explicit bounded allowance rather than hidden90/180second cutoffs; timeouts identify the reference and selection/summary stage without a raw JSON tail. Network and tool schema/write safeguards remain unchanged.

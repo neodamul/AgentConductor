@@ -3977,3 +3977,17 @@ Trace: R-200 / QAS-209 / DD-212.
 - [x] Task: refresh7 product-UI sample renders,3 separately labeled approved previews, and both generated HTML manuals. scripts/capture_docs.cjs reproduces the gallery without running real agents.
 - [x] Verify: release_docs, public_docs, manual_renderer/manual_menu pass; product UI images inspected and capture targets asserted. Screenshot freshness checked after commit.
 - [x] Completed: README/EN/KO source and HTML manuals plus public images reviewed; merge/closure tracked by the linked PR. Final0.2.5 version bump/tag remains with Claude.
+
+### Restore source tags and bound preview coordinator steps — GitHub #898 (0.2.6)
+
+Trace: R-134 / BG-89 / SF-121 / UC-124 / FR-119 / QAS-130 / DD-143.
+- [x] Plan: create0.2.6, assign #898 owner-codex, trace display and coordinator paths; user confirms Windows failure after more than2minutes.
+- [x] Task: write bracket/Unicode and visible-tag regression tests first.
+- [x] Task: restore approved bracketed blue tags and source compatibility.
+- [x] Task: inline bounded full schemas/sources, normalize Windows CLI paths, validate/correct real required arguments, and share a five-minute selection/retry deadline.
+- [x] Verify: tag runtime5checks x4variants,12focused parity comparisons, canonical168interactions x4/82captures/34contrast, native inline/file-schema/required-argument scenarios, shared deadline/process cleanup and existing MCP/coordinator/i18n/security checks locally. Windows-specific runtime acceptance remains unverified.
+- [x] Completed: implementation, source-fingerprinted wiki, manuals and local verification reviewed; merge/closure is tracked by the linked PR, followed by owned temporary/branch cleanup.
+
+#898 diagnosis evidence: user photos identify selection-stage schema Read with an extended Windows path; follow-up confirms Claude rejected it as UNC. Fix both the bounded stdin route and ordinary-path fallback rather than only raising the timeout. Customer identifiers, payloads and private paths are not copied into public artifacts.
+
+#898 caller evidence: getIssue argument names vary by server. A regression starts with an incorrect issueIdOrKey and verifies it never reaches MCP; corrected issueKey/fieldIds/expand are obtained from the discovered schema, not a product-specific field-name guess.

@@ -1,0 +1,62 @@
+{
+  "issue": 898,
+  "milestone": "0.2.6",
+  "sources": [
+    {
+      "path": "src/coordinator.rs",
+      "sha256": "7dfa3d5afe0191986d9d98b6eff817ee67cdb1351113127d8d6fb4633cb29f08"
+    },
+    {
+      "path": "src/mcp/coordinator.rs",
+      "sha256": "594e73b76c2ce7744418e46a800ccf8dc0931f456478b3160b00f348d60f79fc"
+    },
+    {
+      "path": "src/mcp/routing.rs",
+      "sha256": "aa5045e10eb1fabfb5e678cf2a8217ebe494f5fde522c4721c3e8eca38c944fa"
+    },
+    {
+      "path": "src/mcp/sources.rs",
+      "sha256": "cffbf87c6d37b9aad1a733159d85473cd32c858b74d3aad41bb9e873563280c2"
+    },
+    {
+      "path": "src/mcp/imports/references.rs",
+      "sha256": "6f39570aadbde0f79dc28e7609a5d45d8d8b827e64f54140ce903fcf4b444577"
+    },
+    {
+      "path": "src/ui/source_references.rs",
+      "sha256": "937747be604bd2762f94e10b6271cb17f46b5906402ec523e87b47acc6ae3431"
+    },
+    {
+      "path": "src/ui/mcp.js",
+      "sha256": "53a65f3510a4d9afce77575ea24509ca46212bb767e6ea35d1c2fb8935fabca4"
+    },
+    {
+      "path": "src/ui/forms.css",
+      "sha256": "32b6f69557b6856e0af982f11d5ec89b210d8280c702a3481ac857ff05159073"
+    },
+    {
+      "path": "tests/mcp_preview_898.rs",
+      "sha256": "bb2935917e954201fb33f14d1342d2b53cf17f603eecaab7fa8fa7e8f1fc5d60"
+    },
+    {
+      "path": "tests/goal_tags_898.cjs",
+      "sha256": "1431dd2201d4ecbc97d00c23610e4062839caff7635b619b1f13e860b2496aaa"
+    }
+  ],
+  "diagnosis": [
+    "Operator evidence confirms incorrect guessed getIssue arguments followed by schema-file Read rejection of a Windows extended drive path and90second selection timeout.",
+    "Do not infer server field names; issueKey/fieldIds/expand are fixture-discovered requirements, not production constants.",
+    "A reported cancelled SessionStart hook and40\u201350second startup delay remain unconfirmed as a causal link; hooks are preserved."
+  ],
+  "verification": [
+    "Tag runtime5checks x4variants;12focused parity checks pass.",
+    "Canonical168interaction checks x4;82captures;34contrast pairs pass.",
+    "Four source-preview cases cover complete inline schema, complete large file-backed schema, bounded inline source summary and invalid-argument correction before MCP transmission.",
+    "Shared budget expiry and process cancellation tests pass; existing MCP write/schema/identity guards, coordinator requests, architecture, localization, source layout and generated manuals pass.",
+    "Changed Rust files pass rustfmt; clippy -Dwarnings passes."
+  ],
+  "limits": [
+    "No physical Windows/authenticated enterprise-server acceptance.",
+    "Version remains0.2.5 until0.2.6 release is requested and validated."
+  ]
+}

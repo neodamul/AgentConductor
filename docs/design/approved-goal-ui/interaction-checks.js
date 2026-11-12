@@ -206,6 +206,7 @@
   const tags=[...kinds.values()];check('#892: every status tag has a thin border and 4px corners',tags.length>=6&&tags.every(t=>{const c=getComputedStyle(t);return c.borderTopWidth==='1px'&&c.borderTopStyle==='solid'&&c.borderTopLeftRadius==='4px';}));
   const run=document.querySelector('#sessions-list .session-state.running'),fact=document.querySelector('[data-state-tag="running"]');check('#892: running uses the same info color everywhere',!!run&&!!fact&&getComputedStyle(run).color===getComputedStyle(fact).color);
   sessionsField('close').click();i=view;show();}
+ {const input=document.getElementById('goal-entry'),before=input.value;i=0;show();input.value='😀 [Jira:EMM-51214] [Confluence:2571110463]';input.dispatchEvent(new Event('input'));const tags=[...document.querySelectorAll('#reference-goal-tags mark')];check('#898: bracketed source tags keep their exact text and visible background',tags.length===2&&tags[0].textContent==='[Jira:EMM-51214]'&&getComputedStyle(input).backgroundColor==='rgba(0, 0, 0, 0)'&&getComputedStyle(tags[0]).backgroundColor!=='rgba(0, 0, 0, 0)');input.value=before;input.dispatchEvent(new Event('input'));}
  check('no script errors',!document.documentElement.dataset.designError);
  document.documentElement.dataset.interactionResult=JSON.stringify({theme:initialTheme,width:innerWidth,checks});
 })().catch(error=>document.documentElement.dataset.designError=error.message);

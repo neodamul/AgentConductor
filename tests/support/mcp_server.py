@@ -25,11 +25,15 @@ for line in sys.stdin:
             result["nextCursor"] = "again"
         if mode == "schema":
             result["tools"][0]["inputSchema"]["required"] = ["tenant"]
-        if mode in ("sources", "large_sources", "cloud_sources"):
+        if mode in ("sources", "large_sources", "cloud_sources", "inline_sources", "schema_file_sources"):
             result["tools"] = [
                 {"name": "jira_get_issue", "inputSchema": {"type": "object", "properties": {"issue_key": {"type": "string"}}, "required": ["issue_key"], "additionalProperties": False}, "annotations": {"readOnlyHint": True}},
                 {"name": "confluence_get_page", "inputSchema": {"type": "object", "properties": {"page_id": {"type": "string"}}, "required": ["page_id"], "additionalProperties": False}, "annotations": {"readOnlyHint": True}},
             ]
+        if mode == "schema_file_sources":
+            result["tools"][0]["inputSchema"]["description"]="schema evidence "*10000+"SCHEMA_TAIL_REQUIRED"
+        if mode == "strict_issue":
+            result["tools"] = [{"name":"getIssue","inputSchema":{"type":"object","properties":{"issueKey":{"type":"string"},"fieldIds":{"type":"array","items":{"type":"string"}},"expand":{"type":"string"}},"required":["issueKey","fieldIds","expand"],"additionalProperties":False},"annotations":{"readOnlyHint":True}}]
         if mode == "cloud_sources":
             for tool in result["tools"]:
                 tool["inputSchema"]["properties"]["cloudId"] = {"type": "string"}
@@ -40,7 +44,7 @@ for line in sys.stdin:
             result["tools"].extend({"name":"get_dummy_"+str(i),"description":"metadata "*100,"inputSchema":{"type":"object"},"annotations":{"readOnlyHint":True}} for i in range(127))
     elif method == "tools/call":
         args = request["params"]["arguments"]
-        key = args.get("id") or args.get("issue_key") or args.get("page_id")
+        key = args.get("id") or args.get("issue_key") or args.get("page_id") or args.get("issueKey")
         if request["params"]["name"] == "getAccessibleAtlassianResources":
             result = {"structuredContent":[{"id":"tenant-1","url":"https://example.org"}]}
         elif mode == "cloud_sources" and args.get("cloudId") != "tenant-1":
@@ -51,6 +55,8 @@ for line in sys.stdin:
             result = {"structuredContent": {"id": key, "title": "Rotation", "description": "Use single-use refresh tokens.", "acceptanceCriteria": ["Replay is rejected"], "url": "https://example.org/browse/" + key}}
     else:
         raise RuntimeError("unexpected method")
+    if mode == "inline_sources" and method == "tools/call":
+        result["structuredContent"]["description"] = "Requirement details. " * 300 + "TAIL_REQUIREMENT: retain audit history"
     if mode == "large_sources" and method == "tools/call":
         result["structuredContent"]["description"] = "큰 문서 요구사항\n" * 20000 + "TAIL_REQUIREMENT: retain audit history"
     if mode == "oversized":

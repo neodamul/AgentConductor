@@ -17,7 +17,8 @@ pub fn references(goal: &str) -> Result<Vec<Reference>, String> {
         let Some((kind, id)) = token.split_once(':') else {
             continue;
         };
-        if !["jira", "confluence"].contains(&kind) {
+        let kind = kind.to_ascii_lowercase();
+        if !["jira", "confluence"].contains(&kind.as_str()) {
             continue;
         }
         let valid = if kind == "confluence" {
@@ -37,7 +38,7 @@ pub fn references(goal: &str) -> Result<Vec<Reference>, String> {
             return Err("invalid jira:KEY-123 or confluence:PAGE_ID reference".into());
         }
         let r = Reference {
-            kind: kind.into(),
+            kind,
             id: id.into(),
         };
         if !refs.contains(&r) {

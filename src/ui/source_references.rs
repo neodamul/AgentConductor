@@ -38,8 +38,12 @@ pub(crate) fn reference_ranges(goal: &str) -> Vec<(String, usize, usize)> {
 
 fn explicit_ranges(goal: &str) -> Vec<(String, usize, usize)> {
     let mut references = Vec::new();
+    let lower = goal.to_ascii_lowercase();
     for (prefix, kind) in [("jira:", "jira"), ("confluence:", "confluence")] {
-        for (index, _) in goal.match_indices(prefix) {
+        for (index, _) in lower.match_indices(prefix) {
+            if index > 0 && word(goal.as_bytes()[index - 1]) {
+                continue;
+            }
             let start = index + prefix.len();
             let end = goal[start..]
                 .find(|c: char| !c.is_ascii_alphanumeric() && c != '_' && c != '-')
@@ -51,11 +55,17 @@ fn explicit_ranges(goal: &str) -> Vec<(String, usize, usize)> {
                     && id.bytes().all(|c| c.is_ascii_digit()))
             {
                 let end = start + id.len();
+                let (display_start, display_end) =
+                    if goal[..index].ends_with('[') && goal[end..].starts_with(']') {
+                        (index - 1, end + 1)
+                    } else {
+                        (index, end)
+                    };
                 references.push((
                     index,
                     format!("{kind}:{id}"),
-                    goal[..index].encode_utf16().count(),
-                    goal[..end].encode_utf16().count(),
+                    goal[..display_start].encode_utf16().count(),
+                    goal[..display_end].encode_utf16().count(),
                 ));
             }
         }
