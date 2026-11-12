@@ -217,3 +217,5 @@ document.addEventListener('click',event=>{
  button.classList.add('is-busy');button.setAttribute('aria-busy','true');clearTimeout(button.busyTimer);
  button.busyTimer=setTimeout(()=>{button.classList.remove('is-busy');button.removeAttribute('aria-busy');},1200);
 },true);
+// GitHub #870: keyboard focus on a models tag opens its model list as hover does.
+for(const [kind,on] of [['focusin',true],['focusout',false]])document.addEventListener(kind,event=>event.target.closest?.('.agent .fact.models')?.classList.toggle('open',on));

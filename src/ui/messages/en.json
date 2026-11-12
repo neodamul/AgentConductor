@@ -1543,5 +1543,11 @@
   "native.bug_report_invalid": "Invalid bug report request: {error}",
   "native.bug_report_browser_failed": "Cannot open the bug report in your browser: {error}",
   "startup.report_bug": "Report a bug…",
-  "startup.bug_report_opened": "Opened a bug report for {value1} in your browser. Sign in to GitHub if needed, then review and submit."
+  "startup.bug_report_opened": "Opened a bug report for {value1} in your browser. Sign in to GitHub if needed, then review and submit.",
+  "startup.models_listed": "Queried models",
+  "startup.models_more": "+{value1} more",
+  "sessions.tag_running": "Running",
+  "sessions.tag_waiting": "Waiting",
+  "sessions.tag_failed": "Failed",
+  "sessions.tag_done": "Done"
 }

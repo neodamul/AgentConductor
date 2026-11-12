@@ -1543,5 +1543,11 @@
   "native.bug_report_invalid": "잘못된 버그 신고 요청입니다: {error}",
   "native.bug_report_browser_failed": "브라우저에서 버그 신고를 열 수 없습니다: {error}",
   "startup.report_bug": "버그 신고…",
-  "startup.bug_report_opened": "브라우저에서 {value1} 버그 신고를 열었습니다. 필요하면 GitHub에 로그인한 뒤 내용을 검토하고 등록하세요."
+  "startup.bug_report_opened": "브라우저에서 {value1} 버그 신고를 열었습니다. 필요하면 GitHub에 로그인한 뒤 내용을 검토하고 등록하세요.",
+  "startup.models_listed": "조회한 모델",
+  "startup.models_more": "+{value1}개 더",
+  "sessions.tag_running": "실행 중",
+  "sessions.tag_waiting": "대기",
+  "sessions.tag_failed": "실패",
+  "sessions.tag_done": "완료"
 }

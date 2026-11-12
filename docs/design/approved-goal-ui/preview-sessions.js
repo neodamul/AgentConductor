@@ -20,7 +20,12 @@ function renderSessionButtons(){
  document.querySelectorAll('[data-sessions]').forEach(button=>{
   const list=agentSessions[button.dataset.sessions]||[],running=list.filter(s=>s.state==='running'||s.state==='waiting').length;
   button.replaceChildren('세션',Object.assign(document.createElement('span'),{className:'session-count',textContent:String(list.length)}));
-  button.classList.toggle('has-running',running>0);
+  // GitHub #869: work-state tags with counts sit before the Sessions tag; a state with none is hidden.
+  button.parentElement.querySelectorAll('[data-state-tag]').forEach(tag=>tag.remove());
+  for(const [state,label,members] of [['running','실행 중',['running']],['waiting','대기',['waiting']],['failed','실패',['failed','stale']],['done','완료',['done','stopped']]]){
+   const n=list.filter(s=>members.includes(s.state)).length;if(!n)continue;
+   const tag=document.createElement('span');tag.className='fact state-'+state;tag.dataset.stateTag=state;tag.append(label,Object.assign(document.createElement('span'),{className:'state-count',textContent:String(n)}));button.before(tag);
+  }
   button.setAttribute('aria-label',(agentDisplay[button.dataset.sessions]||button.dataset.sessions)+' 세션 '+list.length+'개'+(running?' · 진행 중 '+running+'개':''));
  });
 }
