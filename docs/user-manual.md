@@ -28,7 +28,7 @@ The installer downloads the matching macOS/Windows archive and its `SHA256SUMS`,
 
 ### 1.1b Bug reports
 
-Choose **☰ → Help → Report a bug…**. The default browser opens the configured GitHub repository's issue editor with sections for the summary, reproduction steps, expected/actual behavior and version/OS/architecture. Sign in to GitHub if requested, finish the report and submit it there. Opening the editor does not create an issue. Paths, logs, Goals and agent conversations are not attached automatically.
+Choose **☰ → Help → Report a bug…**. The default browser opens the configured GitHub repository's issue editor with sections for the summary, reproduction steps, expected/actual behavior and version/OS/architecture. Sign in to GitHub if requested, finish the report and submit it there. Opening the editor does not create an issue. Paths, logs, Goals and agent conversations are not attached automatically. **☰ → Help → Release notes** opens the release page of the running version on the same repository.
 
 The target uses **Settings → GitHub repository**, shared with application updates. Set `owner/name` or an Enterprise `https://host/owner/name` URL; leave it empty for the default repository.
 
@@ -43,7 +43,7 @@ existing project folder with **Browse…** or type the path, then **Save workspa
 Git worktree isolation is optional; shared execution is the default.
 Choose **Save** to persist edits and stay on Workspace, or **Save and go to step 2** to save and open **Agent roles**. Empty or invalid required controls have a red border until corrected; a CLI default model is valid. When the Goal has unapplied Jira/Confluence references, saving succeeds and reminds you to preview, review and apply the documents before planning. Tab changes preserve drafts but do not save them.
 
-The **☰** application menu groups everything in two levels: **Workspace** (recent workspaces to switch to, New workspace…, Open existing workspace…, Export workspace…, Import workspace…), **Plan rules…**, **Messenger…**, **Settings…** (MCP servers, cache, update channel, language, theme, signal transport), **Help** (Check for updates…, Report a bug…, User manual, Agent tools guide, About) and **Close window…**. The Workspace name in the titlebar is a label; open the Workspace step to edit its settings. The same titlebar is available in Agent Room.
+The **☰** application menu groups everything in two levels: **Workspace** (recent workspaces to switch to, New workspace…, Open existing workspace…, Export workspace…, Import workspace…), **Plan rules…**, **Messenger…**, **Settings…** (MCP servers, cache, update channel, language, theme, signal transport), **Help** (Check for updates…, Release notes, Report a bug…, User manual, Agent tools guide, About) and **Close window…**. The Workspace name in the titlebar is a label; open the Workspace step to edit its settings. The same titlebar is available in Agent Room.
 A workspace with an existing run opens its work view when appropriate; returning to
 Workspace does not start a new plan. Unsaved changes require a choice before navigation.
 

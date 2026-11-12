@@ -4027,3 +4027,11 @@ Trace: R-134 / BG-89 / SF-121 / UC-124 / FR-119 / QAS-130 / DD-143.
 - [x] Task: preserve disclosure and fit accessible, visibly selected source controls.
 - [x] Verify: local runtime in both themes/two widths, focused parity, existing MCP/read-only/i18n/architecture checks and approved-reference manifest refresh.
 - [x] Completed: local implementation/review and wiki/memory evidence recorded; linked PR tracks merge/closure and owned cleanup. Physical Windows acceptance remains separate.
+
+### One reference button and Help release notes — GitHub #918 / #921 (0.2.7)
+
+Trace: R-134 / R-216 / SF-121 / SF-204 / UC-124 / UC-208 / FR-119 / FR-210 / QAS-130 / QAS-215 / DD-143 / DD-231.
+- [x] Plan: claim owner-claude, inspect every caller of the reference buttons and the Help menu.
+- [x] Task: mock first (merged button, divider, Release notes item), then the app and native `release_notes` request.
+- [x] Verify: runtime tests in both themes, parity entries, mock interaction checks, Rust bug-report/i18n contracts.
+- [x] Completed: combined PR with #918 and #921; merge and cleanup tracked by the PR.

@@ -1751,3 +1751,7 @@ DD-109 / #899: after master-list adoption in Startup::open, initialize and persi
 
 
 DD-143 / #916 / #917: remove render-time details.open assignments and use a markup default. Override full-width generic input geometry only for source checkboxes; render selected controls consistently using theme tokens, preserve focus/accessibility, and truncate bounded reference/title text with full tooltips.
+
+DD-143 / #918: replace the two kind-preset buttons with `#start-reference`; no new dialog or state.
+
+DD-231 / #921: extend the bug-report request enum with ReleaseNotes and share repository normalization and browser launch.

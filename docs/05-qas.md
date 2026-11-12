@@ -898,3 +898,7 @@ QAS-97 / #899: first-agent default is deterministic and persisted across reopen;
 
 
 QAS-130 / #916 / #917: both themes and840/1280px widths preserve manual disclosure over progress/result updates; long headers remain inside cards with no dialog horizontal overflow; checked required/optional sources render distinctly and Apply sends exactly the selected references.
+
+QAS-130 / #918: the merged button, divider and over-limit disabled state match the approved mock in both themes (parity entries type-import-divider, type-import-button, reference-limit-add-disabled).
+
+QAS-215 / #921: the Help order and request payload are checked in both themes; the URL is derived only from a validated repository and the build version.
