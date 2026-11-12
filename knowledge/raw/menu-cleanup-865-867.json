@@ -1,0 +1,33 @@
+{
+  "retrieved_at": "2026-11-12",
+  "issues": [
+    865,
+    866,
+    867
+  ],
+  "sources": [
+    {
+      "path": "src/ui/app_menu.js",
+      "sha256": "2e5a040bbe1ad2c78d702cd5a86c2fa8e161ea403422a7a23d47e8d488a78b91"
+    },
+    {
+      "path": "src/ui/startup.js",
+      "sha256": "1128a38fd2285c60b36f235891f91a9971b4bd43b6ee4570f90f3a9e5928dc49"
+    },
+    {
+      "path": "tests/titlebar_menu_runtime.cjs",
+      "sha256": "2675a0ed2870a4eb145b309dcd5f20754da56dad016be38eb837a63b7d7bf4f9"
+    },
+    {
+      "path": "docs/design/approved-goal-ui/preview.html",
+      "sha256": "4009c068a0d39a9e7a9049c76a4001eca138a939f823506a281b927c606f19cb"
+    }
+  ],
+  "verification": {
+    "red": "Original Agents, Workspace settings and View entries failed their new runtime expectations before removal.",
+    "green": "41 titlebar checks per light/dark at840/1280;28 Rust regression tests; UI scripts parse; mock149 interactions per variant,72 captures,28 contrast pairs."
+  },
+  "limits": [
+    "Browser-based assembled UI verification; no installed Windows package interaction in this unit."
+  ]
+}

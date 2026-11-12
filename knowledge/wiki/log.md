@@ -664,3 +664,7 @@ PR #761 now labels approved mockups as sample-data design previews, refreshes th
 - 2026-11-12: Recorded #853 internal v0.2.1 resize report, explicit physical viewport synchronization, and the outstanding Windows acceptance requirement.
 
 - 2026-11-12: #853 real Windows resize/maximize/restore/grow and Workspace save acceptance passed (run43140902234, job130927346501); archived measured window/document bounds.
+
+## 2026-11-12 Duplicate application-menu cleanup (#865–#867)
+
+Removed redundant Agents, Workspace settings and View commands while preserving the rail, stepper and titlebar entry points. Recorded per-issue Red/Green evidence, final 41-check × 4 runtime suite, 28 Rust tests, canonical preview and generated manuals in `application-menu-cleanup.md`.

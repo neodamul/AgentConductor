@@ -864,3 +864,5 @@ Actor: operator. On the first start after an install or an update the About dial
 UC-202 / #865 amendment: select Agents in the rail, then Add to register a CLI; the application menu has no Agents group.
 
 UC-202 / #866 amendment: select the Workspace step to edit its settings; existing Workspace menu switching and export/import continue unchanged.
+
+UC-202 / #867 amendment: click either titlebar panel button to open or close the corresponding panel in Workspace and Room.

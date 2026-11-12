@@ -766,3 +766,5 @@ A centered About dialog (description, credits, CLI install guide with copyable c
 SF-198 / #865 amendment: agent registration has one visible entry point on the Agents rail rather than a duplicate application-menu group.
 
 SF-198 / #866 amendment: the stepper is the sole Workspace settings navigation; the Workspace menu retains switching and file operations.
+
+SF-198 / #867 amendment: left/right panels use the existing titlebar toggles without a second View menu.

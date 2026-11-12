@@ -858,3 +858,5 @@ Trace: R-215 → BG-170 → SF-203 → UC-207 → FR-209 / NFR-96 → QAS-214 �
 R-210 / #865 amendment: remove the duplicate Agents menu group; agent registration remains available through the Agents tab Add button.
 
 R-210 / #866 amendment: Workspace settings are reached through the Workspace step; remove the redundant Workspace menu command while retaining recent/New/Open/Export/Import.
+
+R-210 / #867 amendment: remove the duplicate View menu group; preserve panel navigation through the titlebar toggles.

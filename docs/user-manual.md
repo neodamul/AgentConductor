@@ -35,7 +35,7 @@ existing project folder with **Browse…** or type the path, then **Save workspa
 Git worktree isolation is optional; shared execution is the default.
 Saving updates the name in the titlebar immediately and selects **Agent roles**. Tab changes preserve draft inputs; unsaved changes still require **Save workspace**.
 
-The **☰** application menu groups everything in two levels: **Workspace** (recent workspaces to switch to, New workspace…, Open existing workspace…, Export workspace…, Import workspace…), **Plan rules…**, **Messenger…**, **View** (collapse the left panel, task details panel), **Settings…** (MCP servers, cache, update channel, language, theme, signal transport), **Help** (Check for updates…, User manual, Agent tools guide, About) and **Close window…**. The Workspace name in the titlebar is a label; open the Workspace step to edit its settings. The same titlebar is available in Agent Room.
+The **☰** application menu groups everything in two levels: **Workspace** (recent workspaces to switch to, New workspace…, Open existing workspace…, Export workspace…, Import workspace…), **Plan rules…**, **Messenger…**, **Settings…** (MCP servers, cache, update channel, language, theme, signal transport), **Help** (Check for updates…, User manual, Agent tools guide, About) and **Close window…**. The Workspace name in the titlebar is a label; open the Workspace step to edit its settings. The same titlebar is available in Agent Room.
 A workspace with an existing run opens its work view when appropriate; returning to
 Workspace does not start a new plan. Unsaved changes require a choice before navigation.
 

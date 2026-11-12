@@ -32,7 +32,6 @@ window.acAppMenu = (() => {
       // Plan rules and Messenger sit one level up, beside the groups; the Goal list and New Goal live on the screen itself.
       act('startup.plan_rules', rules),
       act('startup.messenger', messenger),
-      group(el, 'startup.menu_view', [act('startup.menu_rail', () => click('rail-toggle')), act('startup.menu_inspector', () => click('inspector-toggle'))]),
       act('startup.menu_settings', () => click('settings-button')),
       group(el, 'startup.menu_help', [updates, act('startup.user_manual', manual), act('startup.agent_tools_guide', tools), about]),
       el('hr'),

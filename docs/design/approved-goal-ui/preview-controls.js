@@ -195,8 +195,6 @@ appMenu.querySelectorAll('.menu-parent').forEach(parent=>{const sub=document.get
  parent.onkeydown=event=>{if(['ArrowRight','Enter',' '].includes(event.key)){event.preventDefault();open(true);}};
  sub.onkeydown=event=>{if(event.key==='ArrowLeft'||event.key==='Escape'){event.preventDefault();event.stopPropagation();closeSubmenus(null);parent.focus();}};});
 appMenu.addEventListener('keydown',event=>{if(!['ArrowDown','ArrowUp'].includes(event.key))return;event.preventDefault();const items=[...appMenu.querySelectorAll(':scope>button,:scope>.menu-group>.menu-parent,.submenu:not([hidden])>button')],here=items.indexOf(document.activeElement),step=event.key==='ArrowDown'?1:-1;const inSub=document.activeElement.closest('.submenu');const pool=inSub?[...inSub.querySelectorAll('button')]:[...appMenu.querySelectorAll(':scope>button,:scope>.menu-group>.menu-parent')];pool[(pool.indexOf(document.activeElement)+step+pool.length)%pool.length].focus();});
-document.getElementById('menu-view-rail').onclick=()=>{closeAppMenu();document.getElementById('sidebar-toggle').click();};
-document.getElementById('menu-view-inspector').onclick=()=>{closeAppMenu();document.getElementById('right-panel-toggle').click();};
 document.getElementById('menu-update').onclick=()=>{closeAppMenu();document.getElementById('update-button').click();};
 ['menu-new-workspace','menu-open-workspace','menu-rules','menu-messenger','menu-export','menu-import','menu-manual','menu-tools'].forEach(id=>{document.getElementById(id).onclick=closeAppMenu;});
 // The Goal heading of the run steps is folded to one line; the toggle shows the whole Goal and folds it again.
