@@ -784,3 +784,9 @@ The backend reports the running version and whether it was already acknowledged 
 
 ### NFR-96 About is light and never blocks work
 No background work, no network access and no extra dependency; a missing or corrupt preference counts as unseen and never fails startup; the dialog follows the approved mock in both themes and at 840 and 1280 px. Trace: FR-209.
+
+### FR-210 Bug report composition and target routing
+Use the updater repository preference; validate the target and encode a fixed Markdown template into its HTTPS new-issue URL. Help remains available before a Workspace exists and during runs. The browser performs authentication and final submission. Trace: UC-208.
+
+### NFR-97 Bug reports are light and explicit
+No API token, HTTP client, browser profile inspection, extra dependency or background polling. The native opener accepts only a server-generated HTTPS issue URL and never shell-evaluates it. Automatic context excludes user paths, Goals, logs, secrets and agent conversations. Browser launch errors remain visible. Trace: FR-210.

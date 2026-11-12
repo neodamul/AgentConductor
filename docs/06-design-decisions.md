@@ -1705,3 +1705,11 @@ DD-222 / #865 correction: remove the redundant Agents menu group and its unused 
 DD-222 / #866 correction: remove the redundant Workspace settings menu callback and message; preserve stepper navigation and the other Workspace menu actions. Trace: R-210 / UC-202 / QAS-209.
 
 DD-222 / #867 correction: remove redundant View menu actions and unused localization keys/preview handlers; retain the existing titlebar panel event routing. Trace: R-210 / UC-202 / QAS-209.
+
+### DD-231 Native bug-report URL composition with browser submission
+Trace: DDR-63 / R-216 / UC-208. GitHub #862.
+- Add one direct asynchronous Help request, available on both surfaces. Rust builds a draft from the shared update repository and a fixed English Markdown template including application version, OS and architecture.
+- Revalidate persisted repository input through the existing normalizer. Percent-encode the UTF-8 template using unreserved URL characters. No arbitrary URL or shell command comes from the page.
+- Launch the default browser through the existing OS subprocess wrapper on macOS/Linux and the existing Windows Shell API dependency. Surface launch failures; keep GitHub credentials and login exclusively in the browser.
+- Settings identifies the existing repository field as shared by updates and bug reports. No extra configuration, networking dependency, polling or private diagnostic collection is introduced.
+- The app opens a draft; it does not claim an issue was submitted. Actual editing and submission occur on GitHub after any required login.

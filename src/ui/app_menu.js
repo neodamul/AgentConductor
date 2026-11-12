@@ -25,7 +25,7 @@ window.acAppMenu = (() => {
     });
   }
   // create/open/updates/about are the existing Workspace and update buttons; close hides the menu; the rest reuse the titlebar and Settings controls.
-  function items({ el, rows, create, open, updates, about, close, rules, messenger, exportWorkspace, importWorkspace, tools, manual }) {
+  function items({ el, rows, create, open, updates, about, close, rules, messenger, exportWorkspace, importWorkspace, tools, manual, report }) {
     const act = (key, run) => leaf(el, key, () => { close(); run(); });
     const nodes = [
       group(el, 'startup.menu_workspace', [...rows, ...(rows.length ? [el('hr')] : []), create, open, act('startup.export_settings', exportWorkspace), act('startup.import_settings', importWorkspace)]),
@@ -33,7 +33,7 @@ window.acAppMenu = (() => {
       act('startup.plan_rules', rules),
       act('startup.messenger', messenger),
       act('startup.menu_settings', () => click('settings-button')),
-      group(el, 'startup.menu_help', [updates, act('startup.user_manual', manual), act('startup.agent_tools_guide', tools), about]),
+      group(el, 'startup.menu_help', [updates, act('startup.report_bug', report), act('startup.user_manual', manual), act('startup.agent_tools_guide', tools), about]),
       el('hr'),
       act('startup.menu_close_window', () => window.__acCloseRequested?.()),
     ];

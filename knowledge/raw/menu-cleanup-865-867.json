@@ -8,11 +8,11 @@
   "sources": [
     {
       "path": "src/ui/app_menu.js",
-      "sha256": "2e5a040bbe1ad2c78d702cd5a86c2fa8e161ea403422a7a23d47e8d488a78b91"
+      "sha256": "26e2bff6b65ab24c7a64ef6556abf546c3a1710fcf1db1a9de61c7df26c472c7"
     },
     {
       "path": "src/ui/startup.js",
-      "sha256": "1128a38fd2285c60b36f235891f91a9971b4bd43b6ee4570f90f3a9e5928dc49"
+      "sha256": "ab6a12eeb4186468c0610f9c6d620ec3e6d39ef8a0156ec96890f873b5e6119a"
     },
     {
       "path": "tests/titlebar_menu_runtime.cjs",
@@ -20,14 +20,15 @@
     },
     {
       "path": "docs/design/approved-goal-ui/preview.html",
-      "sha256": "4009c068a0d39a9e7a9049c76a4001eca138a939f823506a281b927c606f19cb"
+      "sha256": "3ede6d2b0116033c351dabf0fe4bf6167fd514c6f52ce7cac16e758cdf0ee40b"
     }
   ],
   "verification": {
     "red": "Original Agents, Workspace settings and View entries failed their new runtime expectations before removal.",
-    "green": "41 titlebar checks per light/dark at840/1280;28 Rust regression tests; UI scripts parse; mock149 interactions per variant,72 captures,28 contrast pairs."
+    "green": "41 titlebar checks and8 bug-report checks per light/dark at840/1280;34 Rust regression tests; mock157 interactions per variant,72 captures,34 contrast pairs."
   },
   "limits": [
     "Browser-based assembled UI verification; no installed Windows package interaction in this unit."
-  ]
+  ],
+  "integration_base": "c1ffa8d52c47d14897fc0adced398b529d15a71d"
 }

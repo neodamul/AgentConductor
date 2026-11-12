@@ -866,3 +866,6 @@ UC-202 / #865 amendment: select Agents in the rail, then Add to register a CLI; 
 UC-202 / #866 amendment: select the Workspace step to edit its settings; existing Workspace menu switching and export/import continue unchanged.
 
 UC-202 / #867 amendment: click either titlebar panel button to open or close the corresponding panel in Workspace and Room.
+
+### UC-208 Report a bug to GitHub
+Actor: operator. From Workspace or Room, select Help → Report a bug. The native backend validates the currently configured updater repository and opens its issue composer with the standard template and application/platform version context. GitHub prompts for login when needed. The operator edits and submits there. In Settings, changing the shared updates/reporting repository redirects subsequent reports, including to Enterprise hosts. Invalid settings or browser-launch failure show an error; no issue is claimed created by the app. Trace: SF-204.

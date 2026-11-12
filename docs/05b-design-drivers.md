@@ -191,3 +191,6 @@ Usage is evidence supplied by the CLI event stream; the ledger is append-only an
 
 ### Driver DDR-62 One acknowledgement per version, stored where preferences live
 The About state is a single version string in the existing preferences file, so no new store, migration or service exists. Trace: QAS-214.
+
+### Driver DDR-63 Reuse the configured repository and browser authentication
+Avoid a second repository store and GitHub OAuth/API client. Share the validated updater preference and delegate issue editing, sign-in and submission to the browser. Trace: QAS-215.
