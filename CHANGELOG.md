@@ -4,21 +4,18 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
-## Unreleased — 0.2.6
+## v0.2.6
 
-- Step panels no longer draw the WebView focus ring (light-blue border over the status bar) after a dialog returns focus (#914).
-- Default a new Workspace coordinator to its first registered agent without replacing saved choices.
-
-- Add a Workspace Save action, unapplied-document guidance, and accessible required-input borders.
-
-- Fix MCP preview rejecting harmless empty arguments during schema inspection.
-
-- Restore visible editable `[Jira:KEY]` and `[Confluence:ID]` Goal tags while preserving legacy reference syntax.
-- Normalize Windows CLI-facing source/schema paths, provide bounded complete schemas inline and correct schema-invalid read arguments before MCP transmission.
-- Share a five-minute selection/retry budget, retain full local evidence and show stage-specific timeout errors.
 - Document preview explains its four steps and shows one live card per referenced document (step, elapsed time, coordinator/MCP log); failed documents can be retried while documents already read are kept (#903).
 - Reuse the last successful read tool and arguments per reference kind, skipping coordinator selection and schema loading; a changed server, tool schema or a failing call falls back to normal selection (#904).
 - Limit a Goal to five distinct Jira/Confluence references: the source line shows the count, adding stops at five and a sixth reference blocks preview with an inline error (#907).
+- Add a Workspace Save action, unapplied-document guidance, and accessible required-input borders (#905, #906).
+- Default a new Workspace coordinator to its first registered agent without replacing saved choices (#899).
+- Step panels no longer draw the WebView focus ring over the status bar, and edge fields keep their whole focus ring (#914).
+- Fix MCP preview rejecting harmless empty arguments during schema inspection (#901).
+- Restore visible editable `[Jira:KEY]` and `[Confluence:ID]` Goal tags while preserving legacy reference syntax (#898).
+- Normalize Windows CLI-facing source/schema paths, provide bounded complete schemas inline and correct schema-invalid read arguments before MCP transmission (#898).
+- Share a five-minute selection/retry budget, retain full local evidence and show stage-specific timeout errors (#898).
 
 ## v0.2.5
 
