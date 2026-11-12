@@ -808,3 +808,6 @@ FR-119 / #901: action-specific response instructions and Rust deserialization mu
 
 
 FR-119 / FR-28 / #905 / #906: reuse canonical reference discovery for a shared unapplied-source predicate. Save remains non-blocking; source preview needs review/application before planning context inclusion. Preserve backend validation, async I/O, default-model selection and stale-goal handling.
+
+
+FR-86 / #899: derive the default only at fresh Workspace initialization after master-agent adoption. Do not sort providers, launch a CLI, modify existing unresolved assignments, or invent an agent for an empty list.

@@ -881,3 +881,6 @@ R-134 / #901 (0.2.6): MCP schema inspection accepts an omitted, null, or empty-o
 
 
 R-134 / R-43 / #905 / #906 (0.2.6): allow saving Workspace step without navigation; warn non-blockingly when current document references are not applied. Mark empty/invalid required Workspace controls with the existing error color until corrected, without treating a CLI default model as invalid.
+
+
+R-101 / #899 (0.2.6): a newly created Workspace with registered agents but no valid coordinator defaults to the first agent in list order. Preserve a valid coordinator and leave an empty team unset.

@@ -1745,3 +1745,6 @@ DD-143 / #901: keep deny_unknown_fields and deserialize harmless inspect argumen
 
 
 DD-143 / DD-79 / #905 / #906: add a small Workspace controls helper using existing save/action paths and canonical MCP reference state. Both save buttons share busy guards; remind only after successful saves. Mirror invalid state onto anchored agent/model choice buttons. Keep preview dialog and routing ownership with Claude.
+
+
+DD-109 / #899: after master-list adoption in Startup::open, initialize and persist a fresh Workspace coordinator from profiles.first() only when no valid assignment exists. Existing saved Workspaces keep their assignment/reassignment behavior.

@@ -4010,3 +4010,11 @@ Trace: R-134 / R-43 / BG-89 / SF-121 / UC-124 / UC-34 / FR-119 / FR-28 / QAS-130
 - [x] Task: implement shared validation/source feedback and plain Save.
 - [x] Verify: light/dark narrow/wide runtime and parity, lifecycle/local native/i18n checks.
 - [x] Completed: implementation, local review and wiki/memory complete; merge/closure/cleanup tracked by the linked PR.
+
+### Default new Workspace coordinator — GitHub #899 (0.2.6)
+
+Trace: R-101 / BG-56 / SF-88 / UC-91 / FR-86 / QAS-97 / DD-109.
+- [x] Plan: claim owner-codex, inspect master-list adoption and creation/reopen callers.
+- [x] Task: reproduce empty coordinator with a registered master list, then default fresh Workspaces in list order.
+- [x] Verify: new/create/reopen/persistence, non-first valid selection and empty-team regressions; source layout and architecture checks.
+- [x] Completed: implementation, local verification and wiki/memory recorded; linked PR tracks merge/closure and owned cleanup.

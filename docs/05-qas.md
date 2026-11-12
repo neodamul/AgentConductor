@@ -892,3 +892,6 @@ QAS-130 / #901: the exact reported inspect response with arguments: {} completes
 
 
 QAS-130 / QAS-66 / #905 / #906: in both themes and narrow/wide layouts, invalid states use --err and aria-invalid, become normal after correction, and retain focus indicators. Plain Save stays on Workspace; continue saves before navigation; invalid backend saves retain edits. No extra polling or duplicate reference discovery.
+
+
+QAS-97 / #899: first-agent default is deterministic and persisted across reopen; valid non-first assignments survive, empty teams remain empty, and initialization makes no agent process call.

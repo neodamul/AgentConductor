@@ -698,3 +698,5 @@ Recorded actual regression paths and source fingerprints: shared standalone Goal
 - #901: reproduced misleading invalid-selection error from inspect arguments:{}, aligned strict action contracts, and verified offline preview/authorization regressions. See windows-mcp-schema-preview.md and raw/mcp-inspect-contract-901.json.
 
 - #905/#906: shared canonical source-state validation and Save/stay action; runtime, source-layout, i18n and local parity evidence recorded.
+
+- #899: first-agent coordinator default for fresh Workspaces, with persistence/order/empty-team and saved-choice coverage.
