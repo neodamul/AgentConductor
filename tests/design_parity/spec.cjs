@@ -349,9 +349,9 @@ module.exports = [
     mock: { selector: '#coordinator-chat-button' }, app: { selector: '#start-chat-button' } },
   { name: 'titlebar-settings', props: ['borderTopLeftRadius', 'borderTopColor'], keys: ['width', 'height', 'borderTopLeftRadius', 'borderTopColor'], pixel: false,
     mock: { selector: '#settings-button' }, app: { selector: '#start-settings-button' } },
-  // GitHub #673: the update icon and the right-panel toggle are always in the titlebar (update, chat, settings, panel toggle).
+  // #857: compare the update icon only when a newer release is known; the inspector toggle is always present.
   { name: 'titlebar-update', props: ['borderTopLeftRadius', 'borderTopColor'], keys: ['width', 'height', 'borderTopLeftRadius', 'borderTopColor'], pixel: false,
-    mock: { selector: '#update-button' }, app: { selector: '#start-update-button' } },
+    mock: { selector: '#update-button' }, app: { setup: "SIM.reply.check_update=SIM.reply.update_status=()=>({phase:'idle',current:'1.0.0',latest:'1.1.0',newer:true});", selector: '#start-update-button' } },
   { name: 'titlebar-inspector-toggle', props: ['borderTopLeftRadius', 'borderTopColor'], keys: ['width', 'height', 'borderTopLeftRadius', 'borderTopColor'], pixel: false,
     mock: { selector: '#right-panel-toggle' }, app: { selector: '#start-inspector-toggle' } },
   // The docked task inspector is available before any run exists and starts closed, like the mock's.
@@ -360,7 +360,7 @@ module.exports = [
     app: { run: "document.getElementById('start-inspector-toggle').click()", selector: '#start-inspector' } },
   // Closed by default, and docked at the right edge of the window once opened (not in the rail or below the card).
   // GitHub #677: the titlebar holds only the mock's controls, on the setup steps and while a run is open.
-  { name: 'titlebar-controls', assert: "(() => [...document.querySelectorAll('header.titlebar button')].filter(b => b.getClientRects().length).map(b => b.id).join() === 'start-app-menu,start-rail-toggle,start-workspace-menu,start-update-button,start-chat-button,start-settings-button,start-inspector-toggle')()",
+  { name: 'titlebar-controls', assert: "(() => [...document.querySelectorAll('header.titlebar button')].filter(b => b.getClientRects().length).map(b => b.id).join() === 'start-app-menu,start-rail-toggle,start-workspace-menu,start-chat-button,start-settings-button,start-inspector-toggle')()",
     app: { setup: STEPS_ENABLED } },
   // GitHub #678: a completed step shows a check mark in place of its number.
   { name: 'step-done-number', props: ['color', 'backgroundColor', 'fontSize'], keys: ['width', 'height', 'color', 'backgroundColor'],

@@ -1,0 +1,9 @@
+{
+  "retrieved_at": "2026-11-12",
+  "issue": "https://github.com/neodamul/AgentConductor/issues/857",
+  "regression_commit": "29f85beb",
+  "regression_source": "src/ui/startup.js renderUpdate",
+  "observation": "The change removed hidden = !newer and only toggled a CSS class.",
+  "source_sha256": "a79e5d9434e36225890e6d406aa178991f6acd0f8a0ab3db700adcace8124853",
+  "verification": "14 assembled-UI assertions across four theme/width cells; titlebar/menu32 per cell; i18n runtime"
+}
