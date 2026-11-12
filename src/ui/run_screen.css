@@ -90,3 +90,4 @@
 .status-pill,.session-state,.plan-tag,:is(#rail-room,#rail-outline) .outline-state-badge{border:1px solid color-mix(in srgb,currentColor 32%,transparent);border-radius:4px;line-height:1.35}
 .goal-info>.status-pill,#run-goal-info>.status-pill,.session-state{padding:1px 7px}
 :is(#rail-room,#rail-outline) .outline-state-badge[data-state="running"],.session-state.running{background:var(--info-bg);color:var(--info)}
+.status-pill[class*=tone-]{padding:1px 7px}

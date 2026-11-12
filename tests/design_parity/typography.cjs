@@ -108,7 +108,7 @@ module.exports = [
   // Room (run steps): same elements as the mock's task view, measured in the simulator's running run.
   ...(() => { const room = { setup: "SIM.home.run_available=true;SIM.home.run_state='running';SIM.room.report.plan.tasks[0].agent='claude';", run: "document.getElementById('start-tab-tasks').click()" };
     const r = (name, keys, mock, app) => ({ name: 'room-' + name, props: keys.filter(k => k !== 'height' && k !== 'width'), keys, pixel: false, mock: { url: '?theme=light#3', selector: mock }, app: { ...room, selector: app } });
-    return [r('goal-title', T, '#saved-goal-title', '#goal'), r('task-title', T, '.cardhead h2', '#selected-agent'), r('task-status', ['fontSize', 'fontWeight'], '.cardhead .pill', '#task-status'),
+    return [r('goal-title', T, '#saved-goal-title', '#goal'), r('task-title', T, '.cardhead h2', '#selected-agent'), r('task-status', ['fontSize', 'fontWeight', 'paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopLeftRadius'], '.cardhead .pill', '#task-status'),
       r('view-tab-selected', ['fontSize', 'fontWeight'], '.ttabs button.on', '.view-tabs .tab.active'), r('view-tab-idle', ['fontSize', 'fontWeight'], '.ttabs span', '.view-tabs .tab:not(.active)'),
       r('composer-label', T, '.dir .eyebrow', '.composer label>span'), r('send-button', B, '.dir .btn.p', '#send-feedback'), r('stop-button', B, '.dir .btn.q', '#stop')]; })(),
   // Quota ring and popup (GitHub #426): icon geometry and pixels, popup geometry and pixels, healthy and error.
