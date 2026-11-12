@@ -1539,5 +1539,11 @@
   "sessions.clean_finished": "끝난 세션 정리",
   "sessions.clean_finished_count": "끝난 세션 정리 ({value1})",
   "sessions.confirm_one": "이 세션을 정리합니다. 세션 기록과 작업 폴더(worktree)를 지우고, 로그는 캐시 정리 전까지 남깁니다. 되돌릴 수 없습니다.",
-  "sessions.confirm_many": "끝난 세션 {value1}개를 정리합니다. 세션 기록과 작업 폴더(worktree)를 지우고, 로그는 캐시 정리 전까지 남깁니다. 되돌릴 수 없습니다."
+  "sessions.confirm_many": "끝난 세션 {value1}개를 정리합니다. 세션 기록과 작업 폴더(worktree)를 지우고, 로그는 캐시 정리 전까지 남깁니다. 되돌릴 수 없습니다.",
+  "startup.models_listed": "조회한 모델",
+  "startup.models_more": "+{value1}개 더",
+  "sessions.tag_running": "실행 중",
+  "sessions.tag_waiting": "대기",
+  "sessions.tag_failed": "실패",
+  "sessions.tag_done": "완료"
 }

@@ -20,13 +20,14 @@ module.exports = [
   e('rail-head-box', ['width', 'height'], '.railhead', '#rail-pane-agents .section-title'),
   e('rail-add-box', B, '.railhead .add', '#start-add'),
   e('rail-sub-box', ['width', 'height'], '.agent-panel .sub', '#rail-pane-agents p.small'),
-  e('agent-card-box', B, '.agent', '.startup-profile'),
+  // GitHub #869: compare the non-coordinator codex card; the first cards carry different work-state tags.
+  e('agent-card-box', B, '.agent:has([data-sessions="codex"])', '.startup-profile[data-agent="codex"]'),
   // Names are operator data: compare the same registered ID to avoid a false narrow-screen wrap.
   { ...e('agent-top-box', ['width', 'height'], '.agent .top', '.startup-profile .profile-top'), mock:{selector:'.agent .top',run:"document.querySelector('.agent .name').textContent='claude';"} },
   { ...e('agent-name-box', ['width', 'height', 'fontSize'], '.agent .name', '.startup-profile .name-row'), mock:{selector:'.agent .name',run:"document.querySelector('.agent .name').textContent='claude';"} },
-  e('agent-facts-box', ['width', 'height', 'columnGap', 'rowGap'], '.agent .facts', '.startup-profile .agent-facts'),
-  // GitHub #828: the session chip has its own entry (agent-sessions-chip); this compares the plain facts.
-  e('agent-fact-box', B.filter(k => k !== 'width'), '.agent .fact:not(.agent-sessions)', '.startup-profile .fact:not(.agent-sessions)'),
+  e('agent-facts-box', ['width', 'height', 'columnGap', 'rowGap'], '.agent:has([data-sessions="codex"]) .facts:not(.work-facts)', '.startup-profile[data-agent="codex"] .agent-facts:not(.work-facts)'),
+  // GitHub #828/#869: the session chip has its own entry (agent-sessions-chip); this compares the models tag.
+  e('agent-fact-box', B.filter(k => k !== 'width'), '.agent .fact.models', '.startup-profile .fact.models'),
   e('agent-tools-box', ['width', 'height', 'columnGap'], '.agent .tools', '.startup-profile .profile-tools'),
   e('agent-tool-edit', B, '.agent .tools button', '.startup-profile .profile-tools button'),
   e('agent-tool-remove', B, '.agent .tools .agent-remove', '.startup-profile .remove-agent'),

@@ -43,7 +43,8 @@ def palette_checks():
     for theme,tokens in [('light',light),('dark',dark)]:
         for fg,bg in [('--ink','--bg'),('--ink','--surface'),('--soft','--bg'),
                       ('--soft','--surface'),('--accent-ink','--accent'),
-                      ('--warn','--warn-bg'),('--err','--err-bg')]:
+                      ('--warn','--warn-bg'),('--err','--err-bg'),('--role','--role-bg'),
+                      ('--info','--info-bg'),('--ok','--ok-bg')]:
             ratio=contrast(tokens[fg],tokens[bg])
             assert ratio>=4.5,(theme,fg,bg,ratio)
             output.append({'theme':theme,'pair':[fg,bg],'contrast':round(ratio,2)})
