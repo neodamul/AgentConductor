@@ -13,3 +13,6 @@
 #start-agent-dialog .read-only-args summary{line-height:18px;margin:0 0 6px}
 #start-agent-dialog .read-only-args label{margin:0}
 #start-agent-dialog label.check-row{flex-direction:row}
+
+/* #890: persistence errors belong to the open editor, not the global toast layer. */
+#start-messenger-error{position:static;width:auto}

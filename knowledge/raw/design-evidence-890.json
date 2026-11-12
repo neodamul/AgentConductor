@@ -1,0 +1,34 @@
+{
+  "issue": 890,
+  "sources": [
+    {
+      "path": "src/ui/forms.css",
+      "sha256": "611f497bd70d8861370e012d228dd9ed774e94e51eba6628165f9fefaf850485"
+    },
+    {
+      "path": "src/ui/mcp.css",
+      "sha256": "9ccae6c97a655c676f2c514feebdbada0b154df1c3dfe3142d145ceb25acc018"
+    },
+    {
+      "path": "tests/design_parity/evidence_spec.cjs",
+      "sha256": "2becd3ca0b3786110a53d181f396a9f4473ca1a160fcbc6174b74943f912f6c1"
+    },
+    {
+      "path": "docs/design/approved-goal-ui/preview-evidence.js",
+      "sha256": "735b2f3d18758b131a1a2e8fc41aa7b936bcdbf05bbfdb7ae8f36a3984df6cd1"
+    }
+  ],
+  "findings": [
+    "The reference lacked Phase history, multiline logs and notification save states.",
+    "The real messenger error inherited fixed-position toast styling; inline positioning was regression-tested.",
+    "MCP row surface differed from the approved reference. Compare identical discovery states to avoid confusing fixture differences with product defects."
+  ],
+  "verification": [
+    "Reference165checks x4 variants;80captures;34contrastpairs pass.",
+    "Full parity baselines357(light1280),347(dark1280),347(light840),347(dark840). First3runs exposed only MCP surface/state differences; all affected entries rerun in4variants pass8/8. Final dark840 full run passes347/347. No unresolved differences.",
+    "Notification runtime12checks x2themes and focused Rust architecture/localization/persistence/import tests pass."
+  ],
+  "limits": [
+    "No physical Windows UI or authenticated provider acceptance."
+  ]
+}

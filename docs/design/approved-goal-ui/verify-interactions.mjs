@@ -76,6 +76,9 @@ try{
   if(mode==='sessions'||mode==='sessions-confirm'){await call('Runtime.evaluate',{expression:'selectRail("agents");'+frameWait,awaitPromise:true});action='openSessions("claude")'+(mode==='sessions-confirm'?';document.getElementById("sessions-clean-finished").click()':'');}
   if(mode==='result-file-diff')action='showGoalResult("rotation");const box=document.querySelector("#result-detail .result-section");box.open=true;box.querySelector(".file-diff-toggle").click()';
   if(mode==='goal-title-open')action='document.getElementById("goal-title-toggle").click()';
+  if(mode==='raw-log-multiline')action='i=3;show();openRawLogs()';
+  if(mode==='plan-history')action='i=2;show();enablePhaseHistory();document.querySelector("[data-history-task]").click()';
+  if(mode==='messenger-saving'||mode==='messenger-error')action='openMessengerPreview();messengerPreviewState('+JSON.stringify(mode==='messenger-saving'?'saving':'error')+');document.getElementById("messenger-preview-error").scrollIntoView({block:"center"})';
   if(mode==='mcp')action='openMcp()';
   if(mode==='mcp-add')action='openMcp();openMcpEditor(null)';
   if(mode==='result-next-phase')action='workspaceGoals[0].nextPhase={number:2,total:2};showGoalResult("rotation")';

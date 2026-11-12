@@ -16,7 +16,7 @@ STATES = [
     ("09-result", 8), ("10-new-goal", 9),
 ]
 EXTRAS = ["inspector", "inspector-bottom", "goal-list", "delete-warning", "briefing", "chat",
-          "settings", "quota-healthy", "quota-error", "quota-unsupported", "left-collapsed", "fullscreen", "coordinator-picker", "role-picker", "fallback-picker", "fallback-model-picker", "profile-edit", "profile-edit-bottom", "close-confirmation", "sessions", "sessions-confirm", "result-file-diff", "goal-title-open", "result-next-phase", "mcp", "mcp-add"]
+          "settings", "quota-healthy", "quota-error", "quota-unsupported", "left-collapsed", "fullscreen", "coordinator-picker", "role-picker", "fallback-picker", "fallback-model-picker", "profile-edit", "profile-edit-bottom", "close-confirmation", "sessions", "sessions-confirm", "result-file-diff", "goal-title-open", "result-next-phase", "mcp", "mcp-add", "raw-log-multiline", "plan-history", "messenger-saving", "messenger-error"]
 
 
 
@@ -64,7 +64,7 @@ def palette_checks():
 
 def main():
     source_files=['preview.html','preview.css','preview-state.js','preview-controls.js',
-                  'preview-tooltips.js','preview-selection.js','preview-assignment.js','preview-action-icons.js','preview-profile.js','preview-close.js','preview-dialog-layout.js','preview-mcp.js','preview-sessions.js']
+                  'preview-tooltips.js','preview-selection.js','preview-assignment.js','preview-action-icons.js','preview-profile.js','preview-close.js','preview-evidence.js','preview-dialog-layout.js','preview-mcp.js','preview-sessions.js']
     before={name:hashlib.sha256((ROOT/name).read_bytes()).hexdigest() for name in source_files}
     report={'kind':'design-reference-only','approved_date':'2026-11-04',
             'viewport':[1280,960],'contrast':palette_checks(),'source_sha256':before,'captures':[]}

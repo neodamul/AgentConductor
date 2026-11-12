@@ -3957,3 +3957,23 @@ Trace: R-134 / BG-89 / SF-121 / UC-124 / FR-119 / QAS-130 / DD-143.
 - [x] Completed: implementation, local verification, bilingual manuals and source-fingerprinted wiki reviewed. Final merge/closure is tracked by PR #885; completed branch cleanup follows merge.
 
 #882 local evidence: obsolete-control regression failed before removal; registration/discovery/errors/automatic preview and internal-binding round trips pass. Actual MCP settings passes6checks ×4variants. Rust coordinator source selection4tests and source binding compatibility2tests pass; total focused Rust suite25passes. Canonical preview157interactions ×4variants,72captures and34contrast pairs pass.
+
+
+### Complete approved reference coverage — GitHub #890 (0.2.5)
+
+Trace: R-210 / R-43 / R-134 / UC-202 / UC-34 / UC-124 / QAS-209 / QAS-66 / QAS-130 / DD-222 / DD-79 / DD-143.
+- [x] Plan: claim owner-codex after Claude handoff; audit missing states and callers.
+- [x] Task: add interaction regressions before reference implementation.
+- [x] Task: historical Phase selection, multiline raw logs, pending/failed notification save and MCP parity coverage; real in-flow messenger error correction.
+- [x] Verify: canonical165interaction checks x4,80captures and34contrast pairs pass. Full parity baselines:357(light1280),347(dark1280),347(light840),347(dark840). Initial MCP surface/state differences repaired; both affected entries rerun in all4variants pass8/8, with no unresolved differences. Final dark840 full run passes347/347.
+- [x] Completed: implementation, reference assets and local checks reviewed; merge/closure tracked by the linked PR and release owner notified.
+
+
+### Release documentation and public gallery — GitHub #891 (0.2.5)
+
+Trace: R-200 / QAS-209 / DD-212.
+- [x] Plan: claim owner-codex; read merged #878–#887 and #893 behavior; coordinate #892 final tags with Claude.
+- [x] Task: integrate readable text/history, notification save acknowledgement, MCP import/token hints and persistent per-server catalogs in EN/KO manuals and README.
+- [x] Task: refresh7 product-UI sample renders,3 separately labeled approved previews, and both generated HTML manuals. scripts/capture_docs.cjs reproduces the gallery without running real agents.
+- [x] Verify: release_docs, public_docs, manual_renderer/manual_menu pass; product UI images inspected and capture targets asserted. Screenshot freshness checked after commit.
+- [x] Completed: README/EN/KO source and HTML manuals plus public images reviewed; merge/closure tracked by the linked PR. Final0.2.5 version bump/tag remains with Claude.

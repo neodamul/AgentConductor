@@ -39,3 +39,17 @@ Recaptured 2026-11-09 at 1280×892 from a live demo run (tests/ui_live_bridge.rs
 Recaptured 2026-11-02 for the workspace screens (light, dark, Korean) and the agent settings dialog (#325, #326). Checked 2026-11-02 against the changes since (#331): a notice style that keeps line breaks and scrolls, which is not on a captured screen. The agent room screens are unchanged and were checked, not recaptured.
 Checked 2026-11-03 against the changes since (#337): no interface change.
 Checked 2026-11-03 against the changes since (#341): a badge on the agent card built from existing styles, which is not on a captured screen.
+Public gallery refreshed 2026-11-12 for the 0.2.5 documentation gate (#891).
+Source: current product HTML/CSS/JavaScript, assembled by tests/ui_sim/build.cjs; the script scripts/capture_docs.cjs renders deterministic local sample data through the browser verification harness. These are product UI renders, not native-window or authenticated-provider evidence. No external agent, MCP service or operator project was invoked.
+Viewport:1280x892 CSS pixels; device scale2. Light/dark and EN/KO as named by each image. Cargo.toml supplies the displayed sample app version; the release owner performs the final package/docs version bump.
+
+ui-workspace-current.png — English, light, workspace settings.
+ui-workspace-dark-current.png — English, dark, workspace settings.
+ui-workspace-korean-current.png — Korean, light, workspace settings.
+ui-agent-room-current.png — English, light, active task sample.
+ui-agent-room-dark-current.png — Korean, dark, active task sample.
+ui-agent-settings-current.png — English, light, agent profile editor.
+ui-mcp-current.png — English, light, registered server with restored discovered-tool catalog (#893).
+
+Approved design previews remain separately labeled and copied from docs/design/approved-goal-ui/images; they are not running-session screenshots.
+#890 evidence states are separately captured and verified in the approved reference (history, multiline raw logs, pending/failed notification save). Runtime tests verify the real notification error stays in-flow inside the open form.

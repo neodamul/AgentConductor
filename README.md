@@ -14,13 +14,14 @@ The workflow images below are approved design mockups with sample workspace data
 ![Approved task screen design preview in light theme](docs/assets/ui-approved-tasks-light.png)
 ![Approved task screen design preview in dark theme](docs/assets/ui-approved-tasks-dark.png)
 
-These are screenshots from the 0.2.0 application:
-![AgentConductor 0.2.0 Workspace in the light theme](docs/assets/ui-workspace-current.png)
-![AgentConductor 0.2.0 Workspace in the dark theme](docs/assets/ui-workspace-dark-current.png)
-![AgentConductor 0.2.0 Workspace in Korean](docs/assets/ui-workspace-korean-current.png)
-![AgentConductor 0.2.0 Agent Room](docs/assets/ui-agent-room-current.png)
-![AgentConductor 0.2.0 dark Agent Room](docs/assets/ui-agent-room-dark-current.png)
-![AgentConductor 0.2.0 agent settings](docs/assets/ui-agent-settings-current.png)
+The following application UI images use local sample data; no live agents or projects are connected.
+![AgentConductor application UI · Workspace in the light theme](docs/assets/ui-workspace-current.png)
+![AgentConductor application UI · Workspace in the dark theme](docs/assets/ui-workspace-dark-current.png)
+![AgentConductor application UI · Workspace in Korean](docs/assets/ui-workspace-korean-current.png)
+![AgentConductor application UI · Agent Room](docs/assets/ui-agent-room-current.png)
+![AgentConductor application UI · dark Agent Room](docs/assets/ui-agent-room-dark-current.png)
+![AgentConductor application UI · agent settings](docs/assets/ui-agent-settings-current.png)
+![MCP server settings with saved discovery status](docs/assets/ui-mcp-current.png)
 
 > **Version:** 0.2.4 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **☰ → Help → User manual** opens the offline manual.
 
@@ -29,9 +30,9 @@ These are screenshots from the 0.2.0 application:
 - **One goal, a team of agents** — scoped tasks with dependencies, tests and their own agent sessions; files never overlap between tasks.
 - **Mix agents and custom CLIs** — Claude Code, Codex, OpenCode or company commands, described by workspace JSON profiles.
 - **You approve every important step** — the plan and the final merge; tool decisions are recorded.
-- **Live team view** — status lights, a live line per running task (tool, time since last output, process state), readable multiline logs, diffs and tests.
+- **Live team view** — status lights, a live line per running task (tool, time since last output, process state), readable multiline logs, Phase-scoped task history, diffs and tests.
 - **Steer while it runs** — send feedback, reassign agents or models (even for tasks not started yet), stop and resume, or chat with the coordinator in a read-only chat (the chat-bubble button), and recover from an out-of-scope failure through a reviewed plan change.
-- **Imports and lessons** — Jira/Confluence goal sources through company MCP servers, with automatic read-tool selection by the coordinator ([guide](docs/mcp-sources.md)); reviewed lessons are reused in later tasks.
+- **Imports and lessons** — Jira/Confluence goal sources through company MCP servers, with automatic read-tool selection by the coordinator and saved per-server tool catalogs ([guide](docs/mcp-sources.md)); reviewed lessons are reused in later tasks.
 - **Actionable bug reports** — open a standard GitHub issue draft in your browser, using the same public or internal repository configured for updates.
 - **Local and private** — one native executable with SQLite inside; data stays local; checksum-verified updates from the Workspace menu. **agentmemory is optional.**
 

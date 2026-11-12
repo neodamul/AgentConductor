@@ -87,6 +87,6 @@
 :is(#rail-room,#rail-outline) .phase-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* GitHub #892: every status tag (heading pills, task outline badges, session states) uses the agent tag design:
    a thin same-hue border, 4px corners, compact padding; running = info, waiting = warn, failed = err, done = ok, others neutral. */
-.status-pill,.session-state,:is(#rail-room,#rail-outline) .outline-state-badge{border:1px solid color-mix(in srgb,currentColor 32%,transparent);border-radius:4px;line-height:1.35}
+.status-pill,.session-state,.plan-tag,:is(#rail-room,#rail-outline) .outline-state-badge{border:1px solid color-mix(in srgb,currentColor 32%,transparent);border-radius:4px;line-height:1.35}
 .goal-info>.status-pill,#run-goal-info>.status-pill,.session-state{padding:1px 7px}
 :is(#rail-room,#rail-outline) .outline-state-badge[data-state="running"],.session-state.running{background:var(--info-bg);color:var(--info)}
