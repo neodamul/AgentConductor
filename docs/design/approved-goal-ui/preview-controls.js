@@ -208,3 +208,11 @@ function syncGoalTitle(open){
 }
 document.getElementById('goal-title-toggle').onclick=()=>syncGoalTitle(document.getElementById('goal-title-toggle').getAttribute('aria-expanded')!=='true');
 syncGoalTitle(false);
+// GitHub #856: a pressed action keeps its colors and shows a moving bar along its bottom edge while its work runs.
+// Buttons that only open, add a row, cancel or close do no work, so they show no bar.
+const startsWork=button=>!button.disabled&&button.value!=='cancel'&&!button.hasAttribute('data-role-defaults')&&!/…$/.test(button.textContent.trim())&&!/cancel|close|clean-finished|mcp-add|secret-add/.test(button.id);
+document.addEventListener('click',event=>{
+ const button=event.target.closest?.('.btn');if(!button||!startsWork(button))return;
+ button.classList.add('is-busy');button.setAttribute('aria-busy','true');clearTimeout(button.busyTimer);
+ button.busyTimer=setTimeout(()=>{button.classList.remove('is-busy');button.removeAttribute('aria-busy');},1200);
+},true);

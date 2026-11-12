@@ -122,7 +122,7 @@
  check('ellipsis labels retain title', [...document.querySelectorAll('.tab-label')].every(el=>getComputedStyle(el).textOverflow==='ellipsis'&&el.title.endsWith(el.textContent)));
  check('phase groups share distinct backgrounds',new Set([...document.querySelectorAll('.step-group')].map(group=>getComputedStyle(group).backgroundColor)).size===3&&[...document.querySelectorAll('.step-group')].map(group=>group.querySelectorAll('.tab').length).join('/')==='3/2/1');
  check('phase group icons retain names',[...document.querySelectorAll('.tabs-group-name')].map(el=>el.getAttribute('aria-label')).join('/')==='준비/실행/마무리');
- check('enabled buttons use pointer',[...document.querySelectorAll('button:not(:disabled):not(.workspace-home)')].every(button=>getComputedStyle(button).cursor==='pointer'));
+ check('enabled buttons use pointer',[...document.querySelectorAll('button:not(:disabled):not(.workspace-home):not(.is-busy)')].every(button=>getComputedStyle(button).cursor==='pointer'));
  check('agent trash uses shared SVG',[...document.querySelectorAll('.agent-remove')].every(button=>button.querySelector('svg path').getAttribute('d')==='M3 6h18M9 6V4h6v2M5 6l1 14h12l1-14M10 10v6M14 10v6'));
  check('agent brands replace card initials',document.querySelectorAll('.agent .status-icon .agent-brand-logo').length===2);
  check('agent trash balances tools',[...document.querySelectorAll('.agent-remove svg')].every(svg=>getComputedStyle(svg).width==='13px'));
@@ -173,6 +173,12 @@
   row.click();check('a click unfolds that file\'s diff with added and removed lines',!pre.hidden&&pre.querySelector('.diff-line.hunk')&&pre.querySelector('.diff-line.add')&&row.getAttribute('aria-expanded')==='true'&&files.querySelectorAll('.file-diff:not([hidden])').length===1);
   row.click();check('a second click folds it again',pre.hidden&&row.getAttribute('aria-expanded')==='false');
   document.getElementById('goal-result-dialog').close();i=view;show();}
+ {const view=i;i=2;show();const card=[...document.querySelectorAll('.main>.card')].find(el=>getComputedStyle(el).display!=='none');const button=[...card.querySelectorAll('.actions .btn')].find(b=>!b.disabled);
+  const before=getComputedStyle(button).backgroundColor;button.click();const bar=getComputedStyle(button,'::after');
+  check('a pressed step action shows a moving bar on its bottom edge',button.classList.contains('is-busy')&&button.getAttribute('aria-busy')==='true'&&bar.animationName==='ac-busy'&&bar.height==='3px'&&bar.bottom==='0px'&&bar.position==='absolute'&&getComputedStyle(button).cursor==='progress');
+  check('the busy action keeps its own colors',getComputedStyle(button).backgroundColor===before&&!button.disabled);
+  const cancel=document.getElementById('profile-edit-cancel');check('every work action can show the bar, openers and Cancel cannot',[...document.querySelectorAll('.btn')].filter(startsWork).length>=25&&!startsWork(cancel)&&!startsWork(document.getElementById('mcp-open')));
+  await new Promise(resolve=>setTimeout(resolve,1300));check('the bar ends when the work finishes',!button.classList.contains('is-busy')&&!button.hasAttribute('aria-busy'));i=view;show();}
  check('no script errors',!document.documentElement.dataset.designError);
  document.documentElement.dataset.interactionResult=JSON.stringify({theme:initialTheme,width:innerWidth,checks});
 })().catch(error=>document.documentElement.dataset.designError=error.message);

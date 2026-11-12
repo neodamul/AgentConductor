@@ -73,10 +73,12 @@ const AC_STALE=(at,now=Date.now())=>at&&now-at>6000?acMessage('common.no_new_sta
 // track() covers a request; hold() keeps the mark while a background job started by it runs.
 const AC_PRESS=(()=>{
   let last=null,lastAt=0;
-  document.addEventListener('click',e=>{const b=e.target?.closest?.('button');if(b){last=b;lastAt=Date.now();}},true);
+  // GitHub #856: a visible button that clicks a hidden one (Next → prepare) keeps the mark, so the bar stays where it was pressed.
+  document.addEventListener('click',e=>{const b=e.target?.closest?.('button');if(b?.getClientRects().length){last=b;lastAt=Date.now();}},true);
   function mark(b,on){if(!b?.classList)return;b.classList.toggle('is-busy',!!on);if(on)b.setAttribute('aria-busy','true');else b.removeAttribute('aria-busy');}
-  function track(promise){const b=Date.now()-lastAt<2000?last:null;if(!b)return promise;mark(b,true);return Promise.resolve(promise).finally(()=>{if(!b.dataset.held)mark(b,false);});}
-  function hold(b,on){if(!b?.classList)return;if(on)b.dataset.held='1';else delete b.dataset.held;mark(b,on);}
+  // A press can start several requests; the bar stays until the last one ends (GitHub #856).
+  function track(promise){const b=Date.now()-lastAt<2000?last:null;if(!b)return promise;b.dataset.pending=String((+b.dataset.pending||0)+1);mark(b,true);return Promise.resolve(promise).finally(()=>{const left=(+b.dataset.pending||1)-1;if(left)b.dataset.pending=String(left);else{delete b.dataset.pending;if(!b.dataset.held)mark(b,false);}});}
+  function hold(b,on){if(!b?.classList)return;if(on){b.dataset.held='1';mark(b,true);}else if(b.dataset.held){delete b.dataset.held;if(!b.dataset.pending)mark(b,false);}}
   return {track,hold};
 })();
 // GitHub #285: a request the operator started (not a refresh) marks the pressed button and, once it
