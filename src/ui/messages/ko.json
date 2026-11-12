@@ -1327,8 +1327,8 @@
   "startup.update_channel_beta": "베타",
   "startup.update_channel_hint": "정식은 배포된 릴리스만 알려 줍니다. 베타는 0.2.0-Beta1 같은 사전 릴리스도 알려 줍니다.",
   "startup.update_channel_stable": "정식",
-  "startup.update_repository": "업데이트 저장소",
-  "startup.update_source_hint": "GitHub owner/name 또는 사내 GitHub 호환 서버의 https://host/owner/name URL입니다. 비워 두면 기본값을 씁니다. 업데이트는 이 저장소에서 설치되므로 신뢰하는 저장소만 사용하세요.",
+  "startup.update_repository": "GitHub 저장소",
+  "startup.update_source_hint": "업데이트와 버그 신고에 같은 저장소를 사용합니다. GitHub owner/name 또는 사내 GitHub 호환 서버의 https://host/owner/name URL입니다. 비워 두면 기본값을 씁니다. 업데이트는 이 저장소에서 설치되므로 신뢰하는 저장소만 사용하세요.",
   "room.step_4_run_tasks_selected_task": "4단계 · 실행 · 작업 · 선택한 작업",
   "room.step_5_run_verify": "5단계 · 실행 · 검증",
   "room.verify_title": "코디네이터가 합친 결과를 검증합니다",
@@ -1539,5 +1539,9 @@
   "sessions.clean_finished": "끝난 세션 정리",
   "sessions.clean_finished_count": "끝난 세션 정리 ({value1})",
   "sessions.confirm_one": "이 세션을 정리합니다. 세션 기록과 작업 폴더(worktree)를 지우고, 로그는 캐시 정리 전까지 남깁니다. 되돌릴 수 없습니다.",
-  "sessions.confirm_many": "끝난 세션 {value1}개를 정리합니다. 세션 기록과 작업 폴더(worktree)를 지우고, 로그는 캐시 정리 전까지 남깁니다. 되돌릴 수 없습니다."
+  "sessions.confirm_many": "끝난 세션 {value1}개를 정리합니다. 세션 기록과 작업 폴더(worktree)를 지우고, 로그는 캐시 정리 전까지 남깁니다. 되돌릴 수 없습니다.",
+  "native.bug_report_invalid": "잘못된 버그 신고 요청입니다: {error}",
+  "native.bug_report_browser_failed": "브라우저에서 버그 신고를 열 수 없습니다: {error}",
+  "startup.report_bug": "버그 신고…",
+  "startup.bug_report_opened": "브라우저에서 {value1} 버그 신고를 열었습니다. 필요하면 GitHub에 로그인한 뒤 내용을 검토하고 등록하세요."
 }

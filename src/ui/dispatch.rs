@@ -115,6 +115,9 @@ impl Room {
                 ))?
                 .dispatch(bytes);
         }
+        if kind["kind"] == "report_bug" {
+            return crate::bug_report::handle(kind);
+        }
         // DD-135: update checks and installs work from any surface.
         if let Some(update @ ("update_status" | "check_update" | "apply_update")) =
             kind["kind"].as_str()
