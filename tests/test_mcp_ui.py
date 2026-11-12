@@ -32,7 +32,9 @@ class McpUi(unittest.TestCase):
         for key in ["MCP servers…", "Preview imports", "Apply selected sources", "Saved server", "Discover tools"]:
             self.assertTrue(translated_message(key), key)
         js = (ROOT / "src/ui/mcp.js").read_text(encoding="utf-8")
-        self.assertIn("source=el('pre'", js)
+        # #903: source text and summaries are shown as plain text, never through the translation table.
+        self.assertIn("mk('pre','source-body',record.body)", js)
+        self.assertIn("mk('div','source-summary',summary.text)", js)
     def test_coordinator_selects_tools_and_server_operations_stay_connected(self):
         subprocess.run(["node", "tests/mcp_bindings_runtime.cjs"], cwd=ROOT, check=True, capture_output=True)
 if __name__ == "__main__": unittest.main()
