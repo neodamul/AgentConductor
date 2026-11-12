@@ -71,7 +71,10 @@ function WaitContentResize($before, $action) {
     $dw = $after[0] - $before[0]; $dh = $after[1] - $before[1]
     if (([Math]::Abs($dw) -gt 30 -or [Math]::Abs($dh) -gt 30) -and
         [Math]::Abs(($after[2] - $before[2]) - $dw) -lt 12 -and
-        [Math]::Abs(($after[3] - $before[3]) - $dh) -lt 12) { return }
+        [Math]::Abs(($after[3] - $before[3]) - $dh) -lt 12) {
+      Write-Output "RESIZE_${action}: before=$before after=$after"
+      return
+    }
     Start-Sleep -Milliseconds 100
   } while ((Get-Date) -lt $until)
   throw "CONTENT_DID_NOT_RESIZE: $action before=$before after=$after"
@@ -113,7 +116,12 @@ fn webview2_workspace_is_rendered_accessible_and_saves_through_ui_automation() {
         .args(["-NoProfile", "-NonInteractive", "-Command", SCRIPT])
         .output()
         .unwrap();
-    let report = String::from_utf8_lossy(&driver.stdout).to_string();
+    let report = format!(
+        "{}\n{}",
+        String::from_utf8_lossy(&driver.stdout),
+        String::from_utf8_lossy(&driver.stderr)
+    );
+    println!("{report}");
     let saved = Instant::now() + Duration::from_secs(10);
     let mut goal = String::new();
     while Instant::now() < saved {
