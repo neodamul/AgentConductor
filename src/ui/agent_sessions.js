@@ -3,6 +3,7 @@
 window.acSessions=(()=>{
  const $=id=>document.getElementById('start-agent-sessions-'+id),dialog=()=>document.getElementById('start-agent-sessions');
  const STATE={running:'sessions.state_running',waiting:'sessions.state_waiting',done:'sessions.state_done',failed:'sessions.state_failed',stale:'sessions.state_stale',stopped:'sessions.state_stopped'};
+ const TAGS=[['running','sessions.tag_running',['running']],['waiting','sessions.tag_waiting',['waiting']],['failed','sessions.tag_failed',['failed','stale']],['done','sessions.tag_done',['done','stopped']]];
  const finished=s=>['done','failed','stale','stopped'].includes(s.state),active=s=>s.state==='running'||s.state==='waiting';
  let all={},agent=null,label=id=>id,request=null,pending=null,soon;
  const time=ms=>{const d=new Date(ms);return d.toDateString()===new Date().toDateString()?d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):d.toLocaleString([],{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});};
@@ -10,7 +11,10 @@ window.acSessions=(()=>{
   for(const button of document.querySelectorAll('[data-sessions]')){
    const list=all[button.dataset.sessions]||[],running=list.filter(active).length,count=document.createElement('span');
    count.className='session-count';count.textContent=String(list.length);
-   button.replaceChildren(acMessage('sessions.chip'),count);button.classList.toggle('has-running',running>0);
+   button.replaceChildren(acMessage('sessions.chip'),count);
+   // GitHub #869: work-state tags with counts sit before the Sessions tag; a state with none is hidden.
+   button.parentElement?.querySelectorAll('[data-state-tag]').forEach(tag=>tag.remove());
+   for(const [state,key,members] of TAGS){const n=list.filter(s=>members.includes(s.state)).length;if(!n)continue;const tag=document.createElement('span'),num=document.createElement('span');tag.className='fact state-'+state;tag.dataset.stateTag=state;num.className='state-count';num.textContent=String(n);tag.append(acMessage(key),num);button.before(tag);}
    button.setAttribute('aria-label',acMessage('sessions.chip_label',{value1:label(button.dataset.sessions),value2:list.length,value3:running}));
   }
  }
@@ -52,7 +56,7 @@ window.acSessions=(()=>{
  $('close').onclick=()=>dialog().close();
  return{
   // `labelOf` names an agent id; `send` is the startup request bridge.
-  chip(id,send,labelOf){request=send;label=labelOf;const b=document.createElement('button');b.type='button';b.className='fact agent-sessions';b.dataset.sessions=id;b.setAttribute('aria-haspopup','dialog');b.onclick=()=>this.open(id);clearTimeout(soon);soon=setTimeout(refresh,0);return b;},
+  chip(id,send,labelOf){request=send;label=labelOf;const b=document.createElement('button');b.type='button';b.className='fact info agent-sessions';b.dataset.sessions=id;b.setAttribute('aria-haspopup','dialog');b.onclick=()=>this.open(id);clearTimeout(soon);soon=setTimeout(refresh,0);return b;},
   refresh,paintChips,
   open(id){agent=id;pending=null;$('confirm').hidden=true;status('');paint();if(!dialog().open)dialog().showModal();refresh();}
  };
