@@ -14,5 +14,5 @@ assert.equal(gate('running', 'completed'), false, 'a finished task cannot');
 assert.equal(gate('running', 'pending', { state: 'running' }), false, 'a busy UI job blocks it');
 assert.equal(gate('stopped', 'running'), true, 'a stopped run keeps its existing rules');
 assert.equal(gate('completed', 'pending'), false, 'a merged run is immutable');
-assert.ok(source.includes("$('set-model').disabled=!canEditTask(t)||!models.length;$('reassign').disabled=!canEditTask(t);"), 'both buttons use the gate');
+assert.ok(source.includes("$('set-model').disabled=!canEditTask(t)||!models.length||moved;$('reassign').disabled=!canEditTask(t);"), 'both buttons use the gate');
 console.log('edit gate ok');

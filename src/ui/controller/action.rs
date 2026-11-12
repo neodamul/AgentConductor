@@ -28,6 +28,9 @@ pub(in crate::ui) enum Action {
     Reassign {
         task: String,
         agent: String,
+        /// GitHub #852: the model picked for the new agent in the same step; none keeps the CLI default.
+        #[serde(default)]
+        model: Option<String>,
     },
     Model {
         task: String,
@@ -114,7 +117,11 @@ impl Action {
             Self::Revise { task, feedback } => {
                 vec!["revise".into(), task.clone(), feedback.clone()]
             }
-            Self::Reassign { task, agent } => vec!["reassign".into(), task.clone(), agent.clone()],
+            Self::Reassign { task, agent, model } => {
+                let mut args = vec!["reassign".into(), task.clone(), agent.clone()];
+                args.extend(model.clone());
+                args
+            }
             Self::Model {
                 task,
                 model,
