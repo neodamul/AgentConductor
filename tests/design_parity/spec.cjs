@@ -295,6 +295,9 @@ module.exports = [
   // GitHub #827: the folded Goal heading's Expand toggle matches the mock.
   { name: 'goal-title-toggle', props: ['fontSize', 'color', 'paddingLeft', 'backgroundColor', 'borderTopWidth'], keys: ['fontSize', 'color', 'paddingLeft', 'backgroundColor', 'borderTopWidth'], pixel: false,
     mock: { url: '?theme=light#3', selector: '#goal-title-toggle' }, app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click()", selector: '#goal-toggle' } },
+  { name: 'goal-expanded-text', props: ['whiteSpace','maxHeight','overflowY','fontSize','lineHeight'], keys: ['whiteSpace','maxHeight','overflowY','fontSize','lineHeight'], pixel: false,
+    mock: { url: '?theme=light#3', run: "document.getElementById('goal-title-toggle').click()", selector: '.goal-title-text' },
+    app: { setup: "SIM.home.run_available=true;SIM.home.run_state='running';", run: "document.getElementById('start-tab-tasks').click();document.getElementById('goal-toggle').click()", selector: '#goal-full' } },
   // GitHub #826: a changed file row and its unfolded diff match the mock.
   { name: 'result-file-diff-toggle', props: ['fontSize', 'paddingLeft', 'backgroundColor', 'borderTopWidth'], keys: ['fontSize', 'paddingLeft', 'backgroundColor', 'borderTopWidth'], pixel: false,
     mock: { url: '?theme=light#8', run: "document.querySelector('#result-detail details.result-section').open=true;document.querySelector('#result-detail .file-diff-toggle').click()", selector: '#result-detail .file-diff-toggle' }, app: { run: "acResultView.show({goal:'g',branch:'b',repo:'r',commit:'abcdef123456',diff:'diff --git a/x b/x\\n@@ -1 +1 @@\\n-a\\n+b\\n',tests:[{task:'t',exit_code:0}],details:[]});document.querySelector('#result-dialog details.result-section').open=true;document.querySelector('#result-dialog .file-diff-toggle').click()", selector: '#result-dialog .file-diff-toggle' } },

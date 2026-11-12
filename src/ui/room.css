@@ -119,3 +119,6 @@ dialog.quiet-focus :focus-visible{outline:none}
 .result-section .file-diff .diff-line.add{color:var(--ok);background:var(--ok-bg)}
 .result-section .file-diff .diff-line.remove{color:var(--err);background:var(--err-bg)}
 .result-section .file-diff .diff-line.hunk{color:var(--soft)}
+
+/* #878: Workspace and standalone Room share the same bounded multiline Goal. */
+.goal-title-toggle{flex:none;border:0;background:transparent;color:var(--accent-text);font:inherit;font-size:12px;cursor:pointer;padding:2px 4px;margin-right:auto}.goal-title-toggle:hover{text-decoration:underline}.goal-title-text{margin:-4px 0 10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font-size:13px;line-height:1.6;white-space:pre-wrap;max-height:160px;overflow:auto}.goal-title-text[hidden]{display:none}

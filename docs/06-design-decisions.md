@@ -1715,3 +1715,7 @@ Trace: DDR-63 / R-216 / UC-208. GitHub #862.
 - Launch the default browser through the existing OS subprocess wrapper on macOS/Linux and the existing Windows Shell API dependency. Surface launch failures; keep GitHub credentials and login exclusively in the browser.
 - Settings identifies the existing repository field as shared by updates and bug reports. No extra configuration, networking dependency, polling or private diagnostic collection is introduced.
 - The app opens a draft; it does not claim an issue was submitted. Actual editing and submission occur on GitHub after any required login.
+
+DD-222 / #878–#880 correction: reuse the approved pre-wrapped, height-bounded Goal surface; decode structured log message text only at the presentation boundary while preserving source evidence; route historical rail selections by both Phase and task identity before selecting the target detail row. Trace: R-210 / SF-198 / UC-202 / FR-204 / QAS-209.
+
+DD-222 / #878 implementation finding: Workspace already includes pre-wrap Goal styling from run_screen.css; standalone Room embeds only room.css. Move the shared toggle/text rules into room.css instead of duplicating them. Reset expansion when the rendered Goal text changes, while ordinary polls retain the operator's expanded view.
