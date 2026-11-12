@@ -1,0 +1,27 @@
+{
+  "issue": 881,
+  "sources": [
+    {
+      "path": "src/ui/startup.js",
+      "sha256": "15dcb8f99d02aa5b7e063007c3ce85fff3c164c24e9684aa661455624dba878a"
+    },
+    {
+      "path": "src/ui/startup.html",
+      "sha256": "faafe9b71ec5e982bec44c7cc7cada885e3ad0b944e223a522486105deb6a98c"
+    },
+    {
+      "path": "tests/messenger_save_881.cjs",
+      "sha256": "43ab7bffcb280222c907d2696d905e0ca7054053ded3ed241cb0100b5b73f741"
+    },
+    {
+      "path": "tests/messenger_settings.rs",
+      "sha256": "4df070a7cd3720cf8aa8863c47de79583e92f648116ccbf446b572d9931b969e"
+    }
+  ],
+  "finding": "Dialog closed before save acknowledgement; delayed save reproduced premature dismissal. Submit-before-close retains failed or busy drafts.",
+  "limits": [
+    "Updater-specific reset unconfirmed.",
+    "No live external notification sent.",
+    "No physical Windows UI acceptance."
+  ]
+}

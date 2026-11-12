@@ -523,3 +523,6 @@ Windows path selection uses the standard Common Item Dialog directly, with no Po
 ### Reading task text and Phase history
 
 The task Goal starts collapsed; Expand preserves authored line breaks in a bounded scrolling area. A different Goal starts collapsed again. Raw logs retain event metadata while displaying JSON message line breaks; plain output is unchanged and original artifacts stay on disk. On the Plan step, selecting any listed Phase task opens its matching details. Historical tasks are read-only, including after Goal completion; selecting a current task restores its editable proposal.
+
+
+Notification settings remain open until saving succeeds. If local persistence fails, the error appears inside the dialog and your draft remains available for retry or Cancel. Updating the application does not require re-enabling an already saved workspace preference; importing settings from another machine intentionally requires local notification setup.

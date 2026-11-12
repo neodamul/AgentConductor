@@ -1543,5 +1543,6 @@
   "sessions.tag_running": "실행 중",
   "sessions.tag_waiting": "대기",
   "sessions.tag_failed": "실패",
-  "sessions.tag_done": "완료"
+  "sessions.tag_done": "완료",
+  "startup.messenger_save_busy": "다른 작업이 마무리 중입니다. 이 입력을 유지하고 저장을 다시 눌러 주세요."
 }

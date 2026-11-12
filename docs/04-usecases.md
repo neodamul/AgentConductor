@@ -871,3 +871,6 @@ UC-202 / #867 amendment: click either titlebar panel button to open or close the
 Actor: operator. From Workspace or Room, select Help → Report a bug. The native backend validates the currently configured updater repository and opens its issue composer with the standard template and application/platform version context. GitHub prompts for login when needed. The operator edits and submits there. In Settings, changing the shared updates/reporting repository redirects subsequent reports, including to Enterprise hosts. Invalid settings or browser-launch failure show an error; no issue is claimed created by the app. Trace: SF-204.
 
 UC-202 / #878–#880 correction: expand a multiline Goal in Tasks/Verify/Review; read multiline stdout/stderr; select a historical Phase task from the plan rail and see its details without editing the current proposal.
+
+
+UC-34 / #881: the operator changes workspace notification opt-in and saves. While persistence is pending the dialog stays open; failure preserves the draft for retry or cancellation. Success closes it; reopening reads the persisted preference.

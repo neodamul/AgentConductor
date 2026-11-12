@@ -3928,10 +3928,21 @@ Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / QAS-209 / DD-222.
 - [x] Task #879: render readable structured log text with record boundaries; preserve raw artifacts and scroll bounds.
 - [x] Task #880: select the matching historical Phase and show/open the requested task details read-only.
 - [x] Verify: demonstrate each regression before its fix; run shared runtime checks, focused design parity, architecture/i18n/manual checks locally.
-- [ ] Completed: reviewed merge, issue closure, source-fingerprinted wiki and temporary/branch cleanup.
+- [x] Completed: PR #883 merged; #878, #879 and #880 closed; source-fingerprinted wiki recorded.
 
 #878 local evidence: the new-Goal collapse regression failed before the fix; final Goal runtime checks pass9 ×4variants, including standalone shared styling, and expanded-Goal design parity passes4variants. Existing Workspace pre-wrap was already present; the fix centralizes it instead of adding duplicate styling.
 
 #879 local evidence: formatter tests failed before implementation; nested JSON records now render decoded message line breaks while plain/malformed tails, path escapes and source bytes remain unchanged. Actual Task/Coordinator runtime passes7checks ×4variants, including visual row separation, safe text rendering and bounded wrapping/scrolling.
 
 #880 local evidence: Phase4→Phase1 task selection failed before the fix. Final runtime passes7checks ×8 active/completed ×light/dark ×840/1280 variants, including repeated task IDs, expanded historical detail, current editable surface restoration and zero proposal mutation/work launch. Existing Phase picker regression passes.
+
+
+### Workspace notification save acknowledgement — GitHub #881 (0.2.5)
+
+- [x] Plan: trace R-43 / BG-18 / SF-37 / UC-34 / FR-28 / QAS-66 / DD-79.
+- [x] Task: reproduce premature dialog dismissal before persistence acknowledgement.
+- [x] Task: retain the draft until save success and show failure inline.
+- [x] Verify: delayed/failing/retried/busy saves, opt-in/opt-out, cancellation, restart persistence and import security. Local browser regression covers light/dark; focused Rust tests cover persistence, hostile import, architecture, i18n and generated manuals.
+- [ ] Completed: merge, close issue, record evidence and clean the completed branch.
+
+The reported association with updates is not confirmed; the reproducible UI path closes before the native save completes, including a failed save.
