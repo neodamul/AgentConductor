@@ -201,6 +201,11 @@
  document.querySelector('[data-current-history-task]').click();check('#880: current Phase restores the editable plan',document.getElementById('history-phase').hidden);}
  {i=3;show();openRawLogs();const log=document.getElementById('preview-stdout');check('#879: raw logs retain multiline text and metadata',log.textContent.includes('리프레시 토큰\n이전 토큰 무효화')&&log.textContent.includes('session_id')&&getComputedStyle(log).whiteSpace==='pre-wrap');document.querySelector('.card[data-show="b"] .ttabs button').click();}
  {openMessengerPreview();messengerPreviewState('saving');check('#881: pending save keeps the form open and disabled',messengerPreview.open&&document.getElementById('messenger-preview-save').disabled);messengerPreviewState('error');check('#881: failed save retains draft and inline error',messengerPreview.open&&!document.getElementById('messenger-preview-save').disabled&&!document.getElementById('messenger-preview-error').hidden&&getComputedStyle(document.getElementById('messenger-preview-error')).position==='static');messengerPreview.close();}
+ {const view=i;const kinds=new Map();for(const v of [0,3,6]){i=v;show();for(const t of document.querySelectorAll('.pill,.outline-state-badge,.plan-tag'))if(t.getClientRects().length)kinds.set(t.className.split(' ')[0]+':'+(t.dataset.state||t.className),t);}
+  openSessions('claude');for(const t of document.querySelectorAll('#sessions-list .session-state'))kinds.set('session:'+t.className,t);
+  const tags=[...kinds.values()];check('#892: every status tag has a thin border and 4px corners',tags.length>=6&&tags.every(t=>{const c=getComputedStyle(t);return c.borderTopWidth==='1px'&&c.borderTopStyle==='solid'&&c.borderTopLeftRadius==='4px';}));
+  const run=document.querySelector('#sessions-list .session-state.running'),fact=document.querySelector('[data-state-tag="running"]');check('#892: running uses the same info color everywhere',!!run&&!!fact&&getComputedStyle(run).color===getComputedStyle(fact).color);
+  sessionsField('close').click();i=view;show();}
  check('no script errors',!document.documentElement.dataset.designError);
  document.documentElement.dataset.interactionResult=JSON.stringify({theme:initialTheme,width:innerWidth,checks});
 })().catch(error=>document.documentElement.dataset.designError=error.message);

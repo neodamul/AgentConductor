@@ -10,6 +10,7 @@ the GitHub Release notes for its tag.
 - MCP settings say beside the JSON import that it uses the OpenCode MCP configuration format: its "mcp" servers are imported and other OpenCode settings are ignored (app and mock, GitHub #886).
 - The MCP server form says API tokens and other secrets must be registered as environment variables ({env:VARIABLE}, or Bearer {env:VARIABLE}); literal values are not saved (app and mock, GitHub #887).
 - MCP settings keep every server's discovered tools: reopening the settings or restarting the app shows them again without rediscovery, and only a server whose config changed returns to undiscovered (before, only the last discovered server kept its tools) (GitHub #893).
+- Every status tag uses the agent tag design: the heading status pill, the Phase·Task outline badges and the session states get the thin same-hue border, 4px corners and compact padding, and "running" uses one info color everywhere (app and mock, GitHub #892).
 
 ## v0.2.4
 
