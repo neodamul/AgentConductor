@@ -179,3 +179,7 @@
 - [Notification settings save acknowledgement](messenger-save-acknowledgement.md) — #881, persistence before dismissal.
 
 - [MCP server settings and automatic reads](mcp-server-settings.md) — #882, internal compatibility without manual binding UI.
+
+- [Approved screen evidence and fixture-state matching](design-evidence-states.md) — #890.
+
+- [Reproducible public screenshot gallery](reproducible-public-gallery.md) — #891, sample-data labels and offline image packaging.

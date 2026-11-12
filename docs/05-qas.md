@@ -881,3 +881,6 @@ QAS-209 / #878–#880 correction: a multi-line Goal or provider message remains 
 QAS-66 / #881: a delayed or rejected local notification save leaves the dialog and draft visible; retry persists the selected state, Cancel does not write, and restarting the existing workspace preserves its acknowledged preference.
 
 QAS-130 / #882 correction: removing normal binding controls leaves server registration/discovery and coordinator-selected preview functional; an existing internal binding survives unrelated saves and JSON round trips.
+
+
+QAS-209 / QAS-66 / QAS-130 / #890: approved mock interactions and app/reference parity must pass light/dark at840/1280px for historical Phase details, multiline raw logs, recoverable save errors and MCP server status. Record platform limitations honestly.

@@ -54,7 +54,7 @@ function updateTaskOutline(view){
  document.getElementById('outline-completed').textContent=view==='a'?'계획 검토 중':'작업 '+states.filter(status=>status==='completed').length+'/3 완료';
  const elapsed={a:'시작 전',b:'경과 06:42',g:'경과 07:10',h:'경과 07:10',f:'경과 16:20',c:'경과 18:05',d:'총 21:40'};
  document.getElementById('outline-elapsed').textContent=elapsed[view]||'시작 전';
- document.querySelectorAll('[data-task-index]').forEach((button,index)=>{
+ document.querySelectorAll('[data-task-index]').forEach(button=>{const index=Number(button.dataset.taskIndex);
  button.setAttribute('aria-pressed',String(index===selectedOutlineTask));button.querySelector('.outline-agent').dataset.state=states[index];
  const status=view==='a'?'계획됨 · '+outlineTasks[index].dependency:states[index]==='completed'?'완료':states[index]==='error'?'권한 거부':states[index]==='running'?'실행 중':view==='g'&&index===0?'도구 승인 대기':'대기 · '+outlineTasks[index].dependency;
  const badge=button.querySelector('.outline-state-badge');badge.dataset.state=states[index];badge.textContent=view==='a'?'예정':states[index]==='completed'?'완료':states[index]==='running'?'실행 중':states[index]==='error'?'막힘':view==='g'&&index===0?'승인 대기':'대기';

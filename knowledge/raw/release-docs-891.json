@@ -1,0 +1,61 @@
+{
+  "issue": 891,
+  "source_files": [
+    {
+      "path": "README.md",
+      "sha256": "d9c8a58fae0d488ee1f4ed76dd1f52af702a4f0efd88f5ea8b8b6bd82cb81a11"
+    },
+    {
+      "path": "docs/user-manual.md",
+      "sha256": "830a32b55c15421e5282ea8ec159c93bb4c7c49f6446fdfc2efd5f4601860987"
+    },
+    {
+      "path": "docs/user-manual.ko.md",
+      "sha256": "ae0bf3d2e827c73beed3f31d8b1298a59fd8ee8f1c6f6a33bfbdaa2868a1fd36"
+    },
+    {
+      "path": "scripts/capture_docs.cjs",
+      "sha256": "a8fbc117b139da71ca1d776869839909e18934323a2fe1827458811f81978a2d"
+    },
+    {
+      "path": "docs/assets/screenshots-current.txt",
+      "sha256": "a16bdf8839ff1d09c25ea9b50f0c0b4d13b4648a2255469c1ad4ef11d7c03664"
+    }
+  ],
+  "images": [
+    {
+      "path": "docs/assets/ui-agent-room-current.png",
+      "sha256": "a59d82348d9886661ba63a21ae8298c6438a075a5debd067b7b9a234db63f7a1"
+    },
+    {
+      "path": "docs/assets/ui-agent-room-dark-current.png",
+      "sha256": "d8e305a102e12c337a3b58324d781f5b55891c44dd1c1342dd8ce3b790a2dd74"
+    },
+    {
+      "path": "docs/assets/ui-agent-settings-current.png",
+      "sha256": "deb23c618493624d1094a1b5ce51ce6f22ac9cbf06bc0420f0ac65a275951bf6"
+    },
+    {
+      "path": "docs/assets/ui-mcp-current.png",
+      "sha256": "75e535d408b73d306980c6d66ea14805da9e46bdfe8aacaeb26133eebeab23ae"
+    },
+    {
+      "path": "docs/assets/ui-workspace-current.png",
+      "sha256": "9bc2d62fa6322b808a40aaee5d8169fa5d9399b33dec295547ce20e4101bdec4"
+    },
+    {
+      "path": "docs/assets/ui-workspace-dark-current.png",
+      "sha256": "e696f170ef53b9774eb13a69bd53c78ef14e61ff49e89956cd2b7966c5ea0b38"
+    },
+    {
+      "path": "docs/assets/ui-workspace-korean-current.png",
+      "sha256": "741b07b9796152e0ae12beb2c4ba5896d96f174d91f48a720bc5770da920c8df"
+    }
+  ],
+  "coverage": "Seven current product UI renders in a local deterministic browser harness, plus separately labeled approved previews. No operator workspace or live CLI is used. Capture script asserts the intended task screen before writing.",
+  "version": "Cargo and public documentation remain0.2.4 until the release owner performs the final0.2.5 bump.",
+  "limits": [
+    "No physical Windows or signed-in agent acceptance.",
+    "Claude-owned #892 tags are a separate outstanding release gate."
+  ]
+}

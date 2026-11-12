@@ -778,3 +778,6 @@ SF-198 / #878–#880 correction: task evidence remains readable, bounded and scr
 SF-37 / #881: notification settings retain their draft and show an inline persistence error until a save succeeds; saving never sends a test message.
 
 SF-121 / #882 correction: server discovery feeds coordinator-selected document reads rather than a second user-maintained mapping form.
+
+
+SF-198 / SF-37 / SF-121 / #890: reference interactions cover historical task selection, readable log metadata, recoverable notification-save errors and MCP discovery status without manual bindings.
