@@ -664,3 +664,7 @@ PR #761 now labels approved mockups as sample-data design previews, refreshes th
 - 2026-11-12: Recorded #853 internal v0.2.1 resize report, explicit physical viewport synchronization, and the outstanding Windows acceptance requirement.
 
 - 2026-11-12: #853 real Windows resize/maximize/restore/grow and Workspace save acceptance passed (run43140902234, job130927346501); archived measured window/document bounds.
+
+## 2026-11-12 Matching panel glyphs (#868)
+
+Reproduced the right titlebar SVG mismatch (mock 18px, app 16px), aligned it to 18px, and added independent left/right geometry entries to `tests/design_parity/spec.cjs`. All eight light/dark × 840/1280 comparisons and 32 titlebar runtime checks per variant passed. Existing public screenshots retain the earlier glyph pending recapture.

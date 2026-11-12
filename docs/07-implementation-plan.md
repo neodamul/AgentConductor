@@ -3891,3 +3891,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #685.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Matching titlebar panel glyphs — GitHub #868 (0.2.4)
+
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+- [x] Plan: both 32px panel buttons use 18px glyphs from the approved preview; retain existing toggle behavior and accessibility.
+- [x] Task: align the right SVG with the left; add independent parity entries for both glyphs.
+- [x] Verify: demonstrate the right-glyph mismatch before fixing it, then run both parity entries and shared titlebar runtime checks.
+- [ ] Completed: reviewed merge, issue closure, knowledge record and branch cleanup.
