@@ -102,7 +102,7 @@ document.getElementById('team-brief-close').addEventListener('click',()=>closeSi
 document.getElementById('goal-entry').addEventListener('input',event=>{
  const view=views[i][0];if(view==='j'||view==='e')goalDrafts[view]=event.target.value;
 });
-document.querySelector('section.card[data-show="j e"] .btn.p').addEventListener('click',()=>{
+function saveWorkspacePreview(advance=true){
  const value=document.getElementById('goal-entry').value.trim();
  if(!value){document.getElementById('goal-entry').focus();return;}
  const slug=document.getElementById('goal-slug-entry').value.trim();
@@ -113,8 +113,9 @@ document.querySelector('section.card[data-show="j e"] .btn.p').addEventListener(
  if(!goal){goal={id:'draft-'+workspaceGoals.length,name:value,slug,state:'draft',step:1,position:'역할 확인 전',summary:'목표 저장 · 역할 확인 필요'};workspaceGoals.push(goal);selectedGoalId=goal.id;}
  goal.name=value;goal.description=value;goal.slug=slug;goal.step=1;
  document.getElementById('saved-goal-title').textContent=value;
- i=1;show();
-});
+ if(advance){i=1;show();}
+}
+document.querySelector('section.card[data-show="j e"] .btn.p').addEventListener('click',()=>saveWorkspacePreview(true));
 
 
 document.querySelectorAll('[data-rail]').forEach(button=>button.addEventListener('click',()=>selectRail(button.dataset.rail)));

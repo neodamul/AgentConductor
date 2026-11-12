@@ -1536,6 +1536,8 @@
   "mcp.selection_step": "tool selection",
   "mcp.summary_step": "source summary",
   "mcp.coordinator_step_timed_out": "{reference}: {stage} did not finish within {seconds} seconds. No source was approved. Check the local CLI logs and retry.",
+  "startup.save_only": "Save",
+  "startup.preview_before_planning": "To include referenced documents in the plan, review and apply them in Preview documents. Your workspace has been saved.",
   "mcp.preview_title": "Import referenced documents",
   "mcp.guide_title": "How document preview works",
   "mcp.guide_select_title": "Tool selection",

@@ -1536,6 +1536,8 @@
   "mcp.selection_step": "도구 선택",
   "mcp.summary_step": "문서 요약",
   "mcp.coordinator_step_timed_out": "{reference}: {stage} 단계가 {seconds}초 안에 끝나지 않았습니다. 문서는 승인되지 않았습니다. 로컬 CLI 로그를 확인하고 다시 시도하세요.",
+  "startup.save_only": "저장",
+  "startup.preview_before_planning": "참조 문서를 계획에 포함하려면 문서 미리보기에서 검토하고 적용하세요. 저장은 완료되었습니다.",
   "mcp.preview_title": "참조 문서 가져오기",
   "mcp.guide_title": "문서 미리보기는 이렇게 진행됩니다",
   "mcp.guide_select_title": "도구 선택",

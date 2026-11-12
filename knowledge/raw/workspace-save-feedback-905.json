@@ -1,0 +1,40 @@
+{
+  "issues": [
+    905,
+    906
+  ],
+  "milestone": "0.2.6",
+  "sources": [
+    {
+      "path": "src/ui/workspace_controls.js",
+      "sha256": "b12dda7a59623bf27cc944be4766a5aeb55cf5ff59679a8c41ed14a45a185fb3"
+    },
+    {
+      "path": "src/ui/startup.js",
+      "sha256": "24a3436300b4f238afd0eef765e04d733199589edea8d5654ec119164a4604f9"
+    },
+    {
+      "path": "src/ui/mcp.js",
+      "sha256": "7b41b0b8eb78acecf010ab656146fd04900f05b659aec9c278ca176cebc47e79"
+    },
+    {
+      "path": "tests/workspace_save_905.cjs",
+      "sha256": "041f88ab80341dba7d2d3459e04d231512e29cf733ecc0709ab46be4f835a6ef"
+    },
+    {
+      "path": "tests/design_parity/workspace_save_spec.cjs",
+      "sha256": "45420cbf738e0b8460dc2b2f4e178a2a5d81ec26d1685cf5175fa6aa7ec31cb9"
+    }
+  ],
+  "verification": [
+    "New assembled-product regression failed before implementation because plain Save was absent.",
+    "Save/stay, save/continue, non-blocking source reminder, applied-source clearing, invalid inputs, anchored choice accessibility, CLI default model, busy guards and failure retention pass in light/dark at840/1280.",
+    "Existing Goal lifecycle26checks x4, anchored choice, startup tabs, architecture, source layout, localization, action icon, manual/public docs checks pass locally.",
+    "Canonical171interactions x4,82captures pass; focused save/invalid-state parity run separately.",
+    "Rust lib/bin clippy -Dwarnings passes."
+  ],
+  "limits": [
+    "Fixture-backed assembled UI, not physical Windows/provider acceptance.",
+    "No release or version bump; default JS UI maintained."
+  ]
+}

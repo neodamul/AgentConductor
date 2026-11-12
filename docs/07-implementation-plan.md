@@ -4001,3 +4001,20 @@ Trace: R-134 / BG-89 / SF-121 / UC-124 / FR-119 / QAS-130 / DD-143.
 - [x] Completed: implementation and local verification reviewed, collaboration memory/wiki recorded; merge/closure and branch cleanup are tracked by the linked PR.
 
 #901 evidence: the exact arguments:{} fixture reproduced the reported Korean invalid-selection error before the fix. Six offline preview scenarios now pass, including omitted/null/empty inspect arguments and exactly one final tools/call; strict contract unit tests, MCP read-only/schema guards, architecture/source-layout checks, rustfmt and clippy pass. No real Windows/company-server run or release performed.
+
+### Workspace save and required-state feedback — GitHub #905 / #906 (0.2.6)
+
+Trace: R-134 / R-43 / BG-89 / SF-121 / UC-124 / UC-34 / FR-119 / FR-28 / QAS-130 / QAS-66 / DD-143 / DD-79.
+- [x] Plan: claim both issues, coordinate shared MCP source-state lines with Claude; preserve preview/routing ownership.
+- [x] Task: update approved mock and add failing save/invalid-state runtime tests.
+- [x] Task: implement shared validation/source feedback and plain Save.
+- [x] Verify: light/dark narrow/wide runtime and parity, lifecycle/local native/i18n checks.
+- [x] Completed: implementation, local review and wiki/memory complete; merge/closure/cleanup tracked by the linked PR.
+
+### Default new Workspace coordinator — GitHub #899 (0.2.6)
+
+Trace: R-101 / BG-56 / SF-88 / UC-91 / FR-86 / QAS-97 / DD-109.
+- [x] Plan: claim owner-codex, inspect master-list adoption and creation/reopen callers.
+- [x] Task: reproduce empty coordinator with a registered master list, then default fresh Workspaces in list order.
+- [x] Verify: new/create/reopen/persistence, non-first valid selection and empty-team regressions; source layout and architecture checks.
+- [x] Completed: implementation, local verification and wiki/memory recorded; linked PR tracks merge/closure and owned cleanup.

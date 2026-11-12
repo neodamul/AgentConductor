@@ -50,10 +50,11 @@ impl Startup {
         }
         let lease = crate::leases::Lease::acquire(&root.join("startup.lock"))?;
         let settings = root.join("startup.json");
-        let mut saved: Saved = if settings.exists() {
+        let fresh = !settings.exists();
+        let mut saved: Saved = if !fresh {
             read(&settings)?
         } else {
-            let s = Saved {
+            Saved {
                 imports: None,
                 mcp_result: None,
                 mcp_catalogs: Default::default(),
@@ -74,11 +75,18 @@ impl Startup {
                 metadata_settled: None,
                 metadata_error: None,
                 last_run: None,
-            };
-            write(&settings, &s)?;
-            s
+            }
         };
         master::adopt(&root, &mut saved.config.profiles);
+        if fresh {
+            saved.config.coordinator = saved
+                .config
+                .profiles
+                .first()
+                .map(|p| p.id.clone())
+                .unwrap_or_default();
+            write(&settings, &saved)?;
+        }
         saved.last_run.as_deref().map(crate::workflow::sync_phase);
         // A reviewed plan whose private folder copy is gone (for example after the legacy
         // folder-history copies were removed) can no longer start; it is finished history.
