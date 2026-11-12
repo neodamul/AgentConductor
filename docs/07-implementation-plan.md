@@ -3891,3 +3891,11 @@ Trace: R-210 / UC-202 / DD-222.
 - [ ] Completed: merged on `main`; closes #685.
 
 Trace: R-210 / UC-202 / DD-222.
+
+### Standard GitHub bug reports — GitHub #862 (0.2.4)
+
+Trace: R-216 / BG-171 / SF-204 / UC-208 / FR-210 / NFR-97 / QAS-215 / DDR-63 / DD-231.
+- [x] Plan: use the updater repository preference and the default browser's existing GitHub login; standard English issue template; native validated HTTPS URL; no extra authentication or background service.
+- [ ] Task: implement native draft/open request, shared Help action, localized shared-repository settings text and user documentation.
+- [ ] Verify: Rust normalization/encoding/preferences/error coverage; Workspace/Room menu runtime tests; local formatting/lint and build checks; manual browser destination check without submitting an issue.
+- [ ] Completed: reviewed PR with milestone 0.2.4, merged, knowledge asset recorded and temporary artifacts/branch cleaned.

@@ -871,3 +871,6 @@ QAS-209 / #429 amendment (2026-11-04): Given inherited coordinator/model default
 
 ### QAS-214 About appears exactly when it should
 Stimulus: first start, second start of the same version, first start of a newer version, menu access, a corrupt preference file. Response: shown on the first and on the newer version only, always from the menu without recording, quiet and non-failing on corrupt data. Measure: Rust preference tests, real-browser dialog checks (4 theme/width cells) and a strict pixel comparison with the approved mock. Trace: NFR-96.
+
+### QAS-215 Correct repository, safe template, quiet runtime
+Stimulus: report from Workspace/Room, change repository from public to Enterprise, use invalid repository text, or fail browser launch. Response: valid drafts target the same repository as updates and carry encoded reproduction/expected/actual/version/OS sections; invalid targets launch nothing; errors are visible; GitHub owns login/submission. Measure: Rust routing/encoding/preference tests and assembled-UI menu tests in both themes/widths; no new polling or dependency. Trace: NFR-97.
