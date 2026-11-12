@@ -89,12 +89,14 @@ fn agent_list_is_saved_alone_and_survives_reopen() {
 fn agent_cards_are_compact_and_informative() {
     let cards = &SCRIPT[SCRIPT.find("function profiles(").unwrap()..];
     let cards = &cards[..cards.find("\n").unwrap()];
-    for field in [
-        "agent-meta",
-        "catalog.models.length",
-        "permission_mode",
-        "fallback",
-    ] {
+    for field in ["agent-meta", "modelsFact(", "permission_mode", "fallback"] {
         assert!(cards.contains(field), "card misses {field}");
     }
+    // GitHub #870: the models tag (count and hover list) is built by modelsFact.
+    let models = &SCRIPT[SCRIPT.find("function modelsFact(").unwrap()..];
+    let models = &models[..models.find("\n").unwrap()];
+    assert!(
+        models.contains("models.length"),
+        "the models tag misses its count"
+    );
 }
