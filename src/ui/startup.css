@@ -256,7 +256,7 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 @media(prefers-reduced-motion:reduce){.startup-profile .agent-symbol[data-state="running"]{animation:none}}
 /* GitHub #828: each agent's sessions with their state, stop and clean-up actions. */
 .agent-sessions{font-family:inherit;cursor:pointer;border:1px solid var(--line)}.agent-sessions:hover{border-color:var(--accent)}.agent-sessions .session-count{display:inline-block;margin-left:4px;font-weight:650}
-.agent-sessions.has-running{background:var(--ok-bg);color:var(--ok);border-color:transparent}
+
 .sessions-list{display:flex;flex-direction:column;gap:8px;margin:4px 0 6px}
 .session-row{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}
 .session-row>div:first-of-type{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
@@ -272,3 +272,18 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 .sessions-confirm-actions{display:flex;gap:8px;justify-content:flex-end}
 #start-agent-sessions .sessions-actions{justify-content:space-between}
 #start-agent-sessions{width:560px;max-width:calc(100vw - 32px)}
+/* GitHub #869/#870: role, work-state and info tags with thin same-hue borders and 4px corners; the coordinator card carries a role band; the models tag lists its models. */
+.startup-profile .agent-facts{gap:4px}.startup-profile .agent-facts+.agent-facts{margin-top:-2px}
+.startup-profile .agent-facts .fact{padding:1px 7px;line-height:1.35;border:1px solid color-mix(in srgb,currentColor 32%,transparent);border-radius:4px}
+.startup-profile .agent-facts .fact.info{background:var(--fill);color:var(--soft);border-color:var(--line-strong)}
+.startup-profile .agent-facts .fact.role{background:var(--role-bg);color:var(--role);font-weight:650}.startup-profile .agent-facts .fact.role::before{content:"\265B";margin-right:4px}
+.startup-profile .agent-facts .fact.state-running{background:var(--info-bg);color:var(--info)}.startup-profile .agent-facts .fact.state-waiting{background:var(--warn-bg);color:var(--warn)}
+.startup-profile .agent-facts .fact.state-failed{background:var(--err-bg);color:var(--err)}.startup-profile .agent-facts .fact.state-done{background:var(--ok-bg);color:var(--ok)}
+.startup-profile .agent-facts .fact.warn{background:var(--warn-bg);color:var(--warn)}
+.startup-profile .agent-facts .fact .state-count,.startup-profile .agent-sessions .session-count{font-weight:650;margin-left:3px}
+.startup-profile .agent-facts .fact.state-running::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-right:4px;vertical-align:1px}
+.startup-profile.coordinator{border-color:color-mix(in srgb,var(--role) 40%,var(--line));box-shadow:inset 3px 0 0 var(--role)}
+.startup-profile .fact.models{position:relative;cursor:default}
+.startup-profile .model-list{display:none;position:absolute;left:0;top:calc(100% + 5px);z-index:20;min-width:160px;padding:6px 9px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);color:var(--ink);font-weight:400;line-height:1.6;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.12)}
+.startup-profile .model-list b{display:block;font-weight:400;font-size:11px;color:var(--soft)}.startup-profile .model-list span{display:block;font-size:12px}.startup-profile .model-list .more{color:var(--soft)}
+.startup-profile .fact.models:hover .model-list,.startup-profile .fact.models.open .model-list{display:block}

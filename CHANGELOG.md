@@ -4,6 +4,11 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.2.4
+
+- Agent cards use one tag design: the coordinator leads with a purple role tag and its card carries a purple band, work states (running, waiting, failed, done) show as colored tags with counts before the Sessions tag, and the agent's facts (models, permission, alternate) are neutral; every tag has a thin same-hue border and 4px corners, and cards grow with their tags (app and mock, GitHub #869).
+- Hovering or focusing an agent's models tag lists the queried model IDs, at most eight with a remainder line (app and mock, GitHub #870).
+
 ## v0.2.3
 
 - In the Goal completion popup each changed file unfolds its diff in place when clicked (app and mock, GitHub #826).
