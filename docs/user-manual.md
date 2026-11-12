@@ -519,3 +519,10 @@ Standalone web search is optional. Follow your company's managed configuration w
 Workspace Settings selects Local Rust or agentmemory preferred. Installing an optional helper does not select a backend. Local Rust needs no agentmemory MCP tool or server; workers report through their normal CLI output. The app owns signal delivery and durable evidence. Registered checkpoint workers use the exact executable path supplied by the app and its local poll/ack/report commands; other CLI sessions must not invent checkpoint capabilities. A missing optional memory tool is not a task failure.
 
 Windows path selection uses the standard Common Item Dialog directly, with no PowerShell or C# startup. Cancel leaves the field unchanged; choosing a folder or file fills the field and saving validates it.
+
+### Reading task text and Phase history
+
+The task Goal starts collapsed; Expand preserves authored line breaks in a bounded scrolling area. A different Goal starts collapsed again. Raw logs retain event metadata while displaying JSON message line breaks; plain output is unchanged and original artifacts stay on disk. On the Plan step, selecting any listed Phase task opens its matching details. Historical tasks are read-only, including after Goal completion; selecting a current task restores its editable proposal.
+
+
+Notification settings remain open until saving succeeds. If local persistence fails, the error appears inside the dialog and your draft remains available for retry or Cancel. Updating the application does not require re-enabling an already saved workspace preference; importing settings from another machine intentionally requires local notification setup.

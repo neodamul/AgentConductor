@@ -877,4 +877,7 @@ Stimulus: report from Workspace/Room, change repository from public to Enterpris
 
 QAS-209 / #878–#880 correction: a multi-line Goal or provider message remains visibly multi-line; with Phase 4 active, selecting Phase 1 task displays that task read-only, while returning to Phase 4 retains its editable proposal.
 
+
+QAS-66 / #881: a delayed or rejected local notification save leaves the dialog and draft visible; retry persists the selected state, Cancel does not write, and restarting the existing workspace preserves its acknowledged preference.
+
 QAS-130 / #882 correction: removing normal binding controls leaves server registration/discovery and coordinator-selected preview functional; an existing internal binding survives unrelated saves and JSON round trips.

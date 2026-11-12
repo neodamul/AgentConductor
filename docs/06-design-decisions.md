@@ -1720,4 +1720,9 @@ DD-222 / #878–#880 correction: reuse the approved pre-wrapped, height-bounded 
 
 DD-222 / #878 implementation finding: Workspace already includes pre-wrap Goal styling from run_screen.css; standalone Room embeds only room.css. Move the shared toggle/text rules into room.css instead of duplicating them. Reset expansion when the rendered Goal text changes, while ordinary polls retain the operator's expanded view.
 
+DD-222 / #880 implementation: a rail task selection synchronously selects its Phase before locating the task, carries the task ID to open its historical detail, and never toggles an already-open selection closed. Explicit history selection also works for a finished Goal; final-Phase default selection resets only on Goal/workspace or completion-context changes. Historical tasks remain read-only and current proposal tasks remain editable.
+
+
+DD-79 / #881 correction: replace save-on-close with submit-before-close, reusing the existing asynchronous action/persistence path. Disable duplicate submission and cancellation during the acknowledged save, retain the draft and inline error on failure, and reset dialog return state when reopening. Source investigation found no updater-specific preference reset; that hypothesis remains unconfirmed. Trace: R-43 / BG-18 / SF-37 / UC-34 / FR-28 / NFR-17 / QAS-66.
+
 DD-143 / #882 correction: delete the obsolete normal-settings binding form and duplicate catalog; preserve internal goal_sources serialization and the existing automatic coordinator routing. This removes UI duplication without changing tool-call authorization or source review. Trace: R-134 / SF-121 / UC-124 / FR-119 / QAS-130.

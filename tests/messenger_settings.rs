@@ -33,20 +33,16 @@ fn settings_save_export_and_import_without_the_url() {
 
     let settings = serde_json::json!({"enabled":true,"kind":"webhook","events":["completed","failed"],"template":"{\"body\":\"{{text}}\"}","include_goal":false,"decisions":true,"conversation":false,"talkers":[],"slack_channel":null,"approvers":["kim"]});
     let bad = serde_json::json!({"enabled":true,"kind":"webhook","events":[],"template":"not json {{text}}","include_goal":false});
-    assert!(
-        mutate(
-            &a,
-            serde_json::json!({"kind":"save_messenger","settings":bad})
-        )
-        .is_err()
-    );
-    assert!(
-        mutate(
-            &a,
-            serde_json::json!({"kind":"save_messenger","settings":settings,"url":"http://insecure"})
-        )
-        .is_err()
-    );
+    assert!(mutate(
+        &a,
+        serde_json::json!({"kind":"save_messenger","settings":bad})
+    )
+    .is_err());
+    assert!(mutate(
+        &a,
+        serde_json::json!({"kind":"save_messenger","settings":settings,"url":"http://insecure"})
+    )
+    .is_err());
     let saved = mutate(
         &a,
         serde_json::json!({"kind":"save_messenger","settings":settings,"url":URL}),
@@ -68,17 +64,24 @@ fn settings_save_export_and_import_without_the_url() {
         !read.to_string().contains("very-secret"),
         "the URL is never returned"
     );
+    // Acknowledged settings survive a restart with a replacement application executable.
+    drop(a);
+    let updated_exe = root.join("updated-agentconductor");
+    std::os::unix::fs::symlink(exe, &updated_exe).unwrap();
+    let a = Startup::open(&root.join("dev-a"), &updated_exe).unwrap();
+    assert_eq!(
+        a.dispatch(br#"{"kind":"messenger"}"#).unwrap()["settings"],
+        settings
+    );
     // A plain workspace save keeps the messenger settings.
     let config = snapshot(&a)["config"].clone();
     let mut without = config.clone();
     without.as_object_mut().unwrap().remove("messenger");
     mutate(&a, serde_json::json!({"kind":"save","config":without})).unwrap();
     assert_eq!(snapshot(&a)["config"]["messenger"], settings);
-    assert!(
-        !std::fs::read_to_string(root.join("dev-a/startup.json"))
-            .unwrap()
-            .contains("very-secret")
-    );
+    assert!(!std::fs::read_to_string(root.join("dev-a/startup.json"))
+        .unwrap()
+        .contains("very-secret"));
 
     mutate(
         &a,

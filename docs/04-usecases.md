@@ -872,4 +872,7 @@ Actor: operator. From Workspace or Room, select Help → Report a bug. The nativ
 
 UC-202 / #878–#880 correction: expand a multiline Goal in Tasks/Verify/Review; read multiline stdout/stderr; select a historical Phase task from the plan rail and see its details without editing the current proposal.
 
+
+UC-34 / #881: the operator changes workspace notification opt-in and saves. While persistence is pending the dialog stays open; failure preserves the draft for retry or cancellation. Success closes it; reopening reads the persisted preference.
+
 UC-124 / #882 correction: register an MCP server, enter a Jira/Confluence reference in the Goal, and preview imports; no tool-selection combo boxes or per-tool argument form is required.

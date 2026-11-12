@@ -173,3 +173,7 @@
 - [Application menu entry points](application-menu-cleanup.md): duplicate navigation removal and replacement-entry-point verification (#865–#867).
 
 - [Browser-based bug reporting](bug-reporting.md): shared update/report repository, native URL validation, browser login and verification limits (#862).
+
+- [Task text and Phase history](task-text-and-phase-history.md): shared Goal layout, safe readable JSON logs and Phase-scoped task navigation (#878–#880).
+
+- [Notification settings save acknowledgement](messenger-save-acknowledgement.md) — #881, persistence before dismissal.

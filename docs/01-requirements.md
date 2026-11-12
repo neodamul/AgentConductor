@@ -866,4 +866,7 @@ Offer Report a bug in Help. Open the existing default browser on the configured 
 
 R-210 / #878, #879, #880 amendment (2026-11-12): expanded task Goals preserve authored line breaks and start collapsed; Raw logs preserve record boundaries and decoded message line breaks; selecting any listed Phase task must render its matching read-only details instead of an empty pane.
 
+
+R-43 / #881 correction (2026-11-12): a workspace notification preference is saved only after local persistence acknowledges success. A pending or failed save must not dismiss the dialog or discard its draft. Existing opt-in survives restart; intentional opt-out and sanitized imports remain respected.
+
 R-134 / #882 correction: MCP settings registers servers and reports discovery status only; remove manual Jira/Confluence tool-binding controls and duplicate textual catalogs. Keep compatible internal configuration; the workspace coordinator selects read tools automatically.

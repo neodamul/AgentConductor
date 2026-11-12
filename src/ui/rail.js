@@ -27,20 +27,24 @@ window.acRail=(()=>{
    const line=prompt=>String(prompt||'').split('\n').map(l=>l.trim().replace(/^[-*]\s+/,'')).find(l=>l&&!/:$/.test(l)&&!/^<\/?[\w-]+>$/.test(l))||'';
    const status=el('div','outline-run-status');const total=phased?view.phases.reduce((n,g)=>n+(g.tasks||[]).length,0):tasks.length;status.append(el('strong',null,view?.stale?acMessage('room.rail_done',{value1:total,value2:total}):acMessage('startup.rail_plan_review')),el('span',null,view?.stale?'':acMessage('startup.rail_not_started')));
    const chevron=()=>{const c=el('span','outline-open-icon');c.setAttribute('aria-hidden','true');c.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>';return c;};
-   let number=0;const row=(task,index,tree,done,editable)=>{number++;
+   let number=0;const row=(task,index,tree,done,editable,phaseIndex)=>{number++;
     const b=el('button','outline-task'),mark=makeAvatar?.(task.agent)||el('span',null,'?'),copy=el('span','outline-copy'),top=el('span','outline-task-heading'),title=el('strong'),badge=el('span','outline-state-badge',acMessage(done?'startup.completed_22a970':'startup.rail_task_planned'));
     b.type='button';mark.classList?.add('outline-agent',done?'st-green':'st-yellow');badge.dataset.state=done?'completed':'waiting';
     title.append(el('code','task-number',phased?'T'+number:task.id),' ',(line(task.prompt)||task.id).slice(0,120));top.append(title,badge);copy.append(top,el('small','task-description',(task.paths||[]).slice(0,2).join(', ')||'—'));
-    b.setAttribute('aria-pressed',String(editable&&index===0));b.append(mark,copy,chevron());
-    if(!editable)b.onclick=()=>{for(const other of tree.closest('#rail-outline-body').querySelectorAll('.outline-task'))other.setAttribute('aria-pressed',String(other===b));const li=[...document.querySelectorAll('#start-plan-phases .plan-phase-tasks li')].find(x=>x.querySelector('code')?.textContent===task.id);if(li){li.scrollIntoView({block:'nearest'});li.classList.add('picked');setTimeout(()=>li.classList.remove('picked'),1600);}};
-    if(editable)b.onclick=()=>{for(const other of tree.querySelectorAll('.outline-task'))other.setAttribute('aria-pressed',String(other===b));const card=document.querySelectorAll('#start-tasks details.startup-task')[index];if(card){card.open=true;card.scrollIntoView({block:'nearest'});}};
+    b.setAttribute('aria-pressed',String(window.acPlanTask?picked===phaseIndex&&window.acPlanTask===task.id:editable&&index===0));b.append(mark,copy,chevron());
+    b.onclick=()=>{picked=window.acPlanPick=phaseIndex;window.acPlanTask=task.id;
+     const box=tree.closest('#rail-outline-body');for(const other of box.querySelectorAll('.outline-task'))other.setAttribute('aria-pressed',String(other===b));for(const [i,t]of [...box.querySelectorAll('.phase-tree')].entries())t.open=i===phaseIndex;
+     document.dispatchEvent(new CustomEvent('ac-plan-phase',{detail:{phase:phaseIndex,task:task.id}}));
+     if(editable){const card=document.querySelectorAll('#start-tasks details.startup-task')[index];if(card){card.open=true;card.scrollIntoView({block:'nearest'});}}
+     else{const li=[...document.querySelectorAll('#start-plan-phases .plan-phase-tasks li')].find(x=>x.querySelector('code')?.textContent===task.id);if(li){if(li.querySelector('.task-detail')?.hidden)li.click();li.scrollIntoView({block:'nearest'});li.classList.add('picked');setTimeout(()=>li.classList.remove('picked'),1600);}}
+    };
     return b;};
    // GitHub #736: a phased Goal lists every Phase with its own tasks; the Phase under review holds the editable plan.
    const groups=phased?view.phases:[{name:line(plan.goal),current:true,tasks,done:[]}];
-   const pickedPhase=(gs,v)=>v?.stale?gs.length-1:picked!=null&&picked<gs.length?picked:Math.max(0,gs.findIndex(g=>g.current));
+   const pickedPhase=(gs,v)=>picked!=null&&picked>=0&&picked<gs.length?picked:v?.stale?gs.length-1:Math.max(0,gs.findIndex(g=>g.current));
    const trees=groups.map((g,gi)=>{const tree=el('details','phase-tree'),head=el('summary');tree.open=gi===pickedPhase(groups,view);
-    head.onclick=e=>{e.preventDefault();picked=window.acPlanPick=gi;for(const [i,t] of trees.entries())t.open=i===gi;document.dispatchEvent(new CustomEvent('ac-plan-phase',{detail:gi}));};head.append(el('span','phase-name',(gi+1)+'. '+String(g.name||'').slice(0,60)),el('span','phase-count',acMessage(g.stage==='completed'?'startup.completed_22a970':g.current?'room.rail_current_phase':'startup.planned')));tree.append(head);const raw=String(g.brief||'').trim(),brief=/^tasks?:/i.test(raw)?'':line(raw);if(brief)tree.append(el('p','phase-brief',brief.slice(0,120)));
-    (g.tasks||[]).forEach((t,i)=>tree.append(row(t,i,tree,g.stage==='completed'||(g.done||[]).includes(t.id),!!g.current&&!view?.stale)));return tree;});
+    head.onclick=e=>{e.preventDefault();picked=window.acPlanPick=gi;window.acPlanTask=null;for(const [i,t] of trees.entries())t.open=i===gi;document.dispatchEvent(new CustomEvent('ac-plan-phase',{detail:gi}));};head.append(el('span','phase-name',(gi+1)+'. '+String(g.name||'').slice(0,60)),el('span','phase-count',acMessage(g.stage==='completed'?'startup.completed_22a970':g.current?'room.rail_current_phase':'startup.planned')));tree.append(head);const raw=String(g.brief||'').trim(),brief=/^tasks?:/i.test(raw)?'':line(raw);if(brief)tree.append(el('p','phase-brief',brief.slice(0,120)));
+    (g.tasks||[]).forEach((t,i)=>tree.append(row(t,i,tree,g.stage==='completed'||(g.done||[]).includes(t.id),!!g.current&&!view?.stale,gi)));return tree;});
    const cur=view?.stale?groups.length-1:Math.max(0,groups.findIndex(g=>g.current)),curTasks=groups[cur]?.tasks?.length||0;
    box.replaceChildren(el('div','sub',acMessage('room.rail_current',{value1:cur+1,value2:groups.length,value3:view?.stale?curTasks:Math.min(1,curTasks),value4:curTasks})),status,...trees,el('div','outline-note',acMessage('room.rail_note')));
   },
