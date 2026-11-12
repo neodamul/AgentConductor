@@ -189,3 +189,5 @@
 - [Workspace save feedback](workspace-save-feedback.md) — plain Save, applied-source reminders and accessible required-input states.
 
 - [Source review feedback](source-review-feedback.md) — operator disclosure, bounded headers and real checkbox selection.
+
+- [UI regression boundaries](ui-regression-boundaries.md) — navigation, complete-save barriers and full capture provenance.

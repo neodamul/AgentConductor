@@ -15,6 +15,7 @@ check('read card reports the size in its steps',cards[0].querySelectorAll('.sour
 check('waiting card has no time yet',cards[2].querySelector('.source-time').textContent==='—'&&!cards[2].querySelector('.source-log'));
 check('status beside the Goal buttons names the running document',q('source-status').textContent.includes('confluence:22')&&q('source-status').textContent.includes('2/3')===false&&q('source-status').textContent.includes('1/3'));
 check('guide is open while running',q('mcp-guide').open&&q('mcp-retry').hidden&&q('mcp-meta').textContent.length>0);
+q('mcp-guide').querySelector('summary').click();check('operator can collapse the guide',!q('mcp-guide').open);
 let packet=null;SIM.reply.mcp_preview=p=>{packet=p;return {accepted:true};};
 SIM.home.job={id:'j1',kind:'mcp',state:'completed',started_ms:t0};
 SIM.home.mcp_progress.documents[0].stage='done';SIM.home.mcp_progress.documents[1].stage='done';SIM.home.mcp_progress.documents[1].ended_ms=t0+340000;
@@ -25,9 +26,10 @@ await until(()=>q('mcp-review').open&&q('mcp-records').querySelector('.source-su
 const done=[...q('mcp-records').querySelectorAll('.source-doc')];
 check('review cards keep the order and carry summaries',done.length===3&&done[0].querySelector('.source-summary').textContent==='Summary one'&&done[1].querySelector('input').checked);
 check('failed card shows the failed step and error',done[2].querySelector('.source-step.failed')&&done[2].querySelector('.source-step.failed').textContent.length>0&&done[2].querySelector('.source-error').textContent==='timed out'&&done[2].querySelector('input').disabled);
-check('a failed Jira document blocks apply and offers retry',q('mcp-apply').disabled&&!q('mcp-retry').hidden&&!q('mcp-guide').open);
+check('a failed Jira document blocks apply and offers retry',q('mcp-apply').disabled&&!q('mcp-retry').hidden);
+check('guide preserves manual collapse after results',!q('mcp-guide').open);
 check('focus starts on Close, not the guide',document.activeElement===q('mcp-review-close'));
 const head=done[0].querySelector('.source-doc-head').getBoundingClientRect();check('card head is one line',head.height<30);
 q('mcp-retry').click();await until(()=>packet,'retry request');check('retry asks only for failed documents',packet.kind==='mcp_preview'&&packet.retry===true);
-q('mcp-review').close();return '11 preview window checks passed';})()`));}
+q('mcp-review').close();return '13 preview window checks passed';})()`));}
 }finally{if(b)await b.close();fs.rmSync(dir,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1;});
