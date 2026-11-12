@@ -6,6 +6,7 @@ the GitHub Release notes for its tag.
 
 ## Unreleased — 0.2.6
 
+- Step panels no longer draw the WebView focus ring (light-blue border over the status bar) after a dialog returns focus (#914).
 - Default a new Workspace coordinator to its first registered agent without replacing saved choices.
 
 - Add a Workspace Save action, unapplied-document guidance, and accessible required-input borders.
