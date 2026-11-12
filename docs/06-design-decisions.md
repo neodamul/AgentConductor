@@ -1719,3 +1719,5 @@ Trace: DDR-63 / R-216 / UC-208. GitHub #862.
 DD-222 / #878–#880 correction: reuse the approved pre-wrapped, height-bounded Goal surface; decode structured log message text only at the presentation boundary while preserving source evidence; route historical rail selections by both Phase and task identity before selecting the target detail row. Trace: R-210 / SF-198 / UC-202 / FR-204 / QAS-209.
 
 DD-222 / #878 implementation finding: Workspace already includes pre-wrap Goal styling from run_screen.css; standalone Room embeds only room.css. Move the shared toggle/text rules into room.css instead of duplicating them. Reset expansion when the rendered Goal text changes, while ordinary polls retain the operator's expanded view.
+
+DD-222 / #880 implementation: a rail task selection synchronously selects its Phase before locating the task, carries the task ID to open its historical detail, and never toggles an already-open selection closed. Explicit history selection also works for a finished Goal; final-Phase default selection resets only on Goal/workspace or completion-context changes. Historical tasks remain read-only and current proposal tasks remain editable.

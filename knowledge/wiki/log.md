@@ -680,3 +680,7 @@ Recorded the shared update/report repository contract, fixed privacy-preserving 
 - 2026-11-12: PR #872 integrates #864 and #873 while preserving bug reporting and all menu removals. Local combined checks:41 menu +8 bug-report checks per variant; canonical preview157 interactions per variant. Earlier observations above remain historical.
 
 - 2026-11-12: Sequential integration: #864 → #872 (`c0cb1aa0`) → #871. Preserved report/login routing, Claude agent-card changes, streamlined navigation and matching panel glyphs; per-unit local checks are recorded in the linked issues and PRs.
+
+## 2026-11-12 Readable task text and Phase history (#878–#880)
+
+Recorded actual regression paths and source fingerprints: shared standalone Goal styles/new-Goal collapse, display-only JSON message line breaks, and Phase-before-task selection with read-only history. Goal9×4, log7×4 and Phase7×8 local runtime assertions pass alongside focused parity/picker checks.
