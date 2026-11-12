@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased — 0.2.6
 
+- Fix MCP preview rejecting harmless empty arguments during schema inspection.
+
 - Restore visible editable `[Jira:KEY]` and `[Confluence:ID]` Goal tags while preserving legacy reference syntax.
 - Normalize Windows CLI-facing source/schema paths, provide bounded complete schemas inline and correct schema-invalid read arguments before MCP transmission.
 - Share a five-minute selection/retry budget, retain full local evidence and show stage-specific timeout errors.

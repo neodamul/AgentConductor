@@ -15,11 +15,14 @@ if prompt["task"] == "summarize":
     assert "TAIL_REQUIREMENT" in raw or "Replay is rejected" in raw
     reply={"summary":"Preserve single-use refresh tokens. Replay is rejected. TAIL_REQUIREMENT: retain audit history"}
 else:
-    if mode in ("schema_inline", "schema_file"):
+    if mode in ("schema_inline", "schema_inline_null", "schema_inline_omitted", "schema_file"):
         observations=prompt["observations"]
         assert all(not o.get("schema_path","").startswith(chr(92)*2+"?") for o in observations)
         if not observations:
-            print(json.dumps({"type":"result","payload":{"selection":{"action":"inspect","server":"docs","tool":"jira_get_issue"}}}));sys.exit(0)
+            selection={"action":"inspect","server":"docs","tool":"jira_get_issue"}
+            if mode != "schema_inline_omitted":
+                selection["arguments"]=None if mode == "schema_inline_null" else {}
+            print(json.dumps({"type":"result","payload":{"selection":selection}}));sys.exit(0)
         if mode == "schema_file":
             schema_path=next(o["schema_path"] for o in observations if "schema_path" in o)
             assert not schema_path.startswith(chr(92)*2+"?")

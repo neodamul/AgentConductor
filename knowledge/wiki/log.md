@@ -694,3 +694,5 @@ Recorded actual regression paths and source fingerprints: shared standalone Goal
 2026-11-12: #891 refreshes the public gallery and bilingual manuals with reproducible sample-data UI images, asserted screen selection and generated offline HTML.
 
 2026-11-13: #898 restores visible bracketed source tags, removes avoidable schema file reads, normalizes Windows CLI paths and bounds validated retries; screenshots/tests and reported-hook uncertainty are recorded.
+
+- #901: reproduced misleading invalid-selection error from inspect arguments:{}, aligned strict action contracts, and verified offline preview/authorization regressions. See windows-mcp-schema-preview.md and raw/mcp-inspect-contract-901.json.

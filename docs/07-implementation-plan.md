@@ -3991,3 +3991,13 @@ Trace: R-134 / BG-89 / SF-121 / UC-124 / FR-119 / QAS-130 / DD-143.
 #898 diagnosis evidence: user photos identify selection-stage schema Read with an extended Windows path; follow-up confirms Claude rejected it as UNC. Fix both the bounded stdin route and ordinary-path fallback rather than only raising the timeout. Customer identifiers, payloads and private paths are not copied into public artifacts.
 
 #898 caller evidence: getIssue argument names vary by server. A regression starts with an incorrect issueIdOrKey and verifies it never reaches MCP; corrected issueKey/fieldIds/expand are obtained from the discovered schema, not a product-specific field-name guess.
+
+### Align MCP inspect response contract — GitHub #901 (0.2.6)
+
+Trace: R-134 / BG-89 / SF-121 / UC-124 / FR-119 / QAS-130 / DD-143.
+- [x] Plan: claim owner-codex, link the issue branch, and trace the screenshot/error to strict Inspect parsing and the generic prompt.
+- [x] Task: reproduce arguments:{} rejection before fixing; align action-specific instructions and allow harmless inspection arguments only.
+- [x] Verify: local selection-contract and end-to-end preview regressions; preserve schema/write/reference guards.
+- [x] Completed: implementation and local verification reviewed, collaboration memory/wiki recorded; merge/closure and branch cleanup are tracked by the linked PR.
+
+#901 evidence: the exact arguments:{} fixture reproduced the reported Korean invalid-selection error before the fix. Six offline preview scenarios now pass, including omitted/null/empty inspect arguments and exactly one final tools/call; strict contract unit tests, MCP read-only/schema guards, architecture/source-layout checks, rustfmt and clippy pass. No real Windows/company-server run or release performed.

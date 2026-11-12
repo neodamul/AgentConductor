@@ -8,6 +8,8 @@ use serde_json::json;
 async fn inspected_schema_and_bounded_source_are_supplied_inline() {
     for (server_mode, coordinator_mode) in [
         ("sources", "schema_inline"),
+        ("sources", "schema_inline_null"),
+        ("sources", "schema_inline_omitted"),
         ("inline_sources", "inline"),
         ("strict_issue", "strict_issue"),
         ("schema_file_sources", "schema_file"),
@@ -41,6 +43,15 @@ async fn inspected_schema_and_bounded_source_are_supplied_inline() {
                 .unwrap()
                 .contains("Replay is rejected")
         );
+        if coordinator_mode.starts_with("schema_") {
+            let calls = std::fs::read_to_string(root.join("trace"))
+                .unwrap()
+                .lines()
+                .map(|line| serde_json::from_str::<serde_json::Value>(line).unwrap())
+                .filter(|entry| entry["method"] == "tools/call")
+                .count();
+            assert_eq!(calls, 1, "inspection must not invoke a tool");
+        }
         if server_mode == "strict_issue" {
             let calls: Vec<serde_json::Value> = std::fs::read_to_string(root.join("trace"))
                 .unwrap()

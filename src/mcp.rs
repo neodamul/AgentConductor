@@ -6,6 +6,7 @@ mod imports;
 mod jsonc;
 mod routing;
 mod schema;
+mod selection;
 mod sources;
 mod transport;
 pub use config::{Binding, Server, Settings};
