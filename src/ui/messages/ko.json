@@ -104,7 +104,7 @@
   "mcp.save_binding": "문서 소스 저장",
   "mcp.save_mcp_settings": "MCP 설정 저장",
   "mcp.saved_server": "저장된 서버",
-  "mcp.secret_env_hint": "{env:VARIABLE} 참조를 사용하세요. 인증 값은 서버 실행 시에만 채워집니다.",
+  "mcp.secret_env_hint": "API 토큰 같은 비밀값은 환경 변수로 등록해야 합니다. {env:VARIABLE}(또는 Bearer {env:VARIABLE})로 적으면 서버 실행 시에만 값이 채워지며, 값을 그대로 적으면 저장되지 않습니다.",
   "mcp.select_server_to_view_tools": "도구를 보려면 서버를 선택하세요.",
   "mcp.selected_source_evidence_approved_locally_generate_a_plan": "선택한 문서를 로컬에 승인했습니다. 준비되면 계획을 생성하세요.",
   "mcp.selection_exhausted": "코디네이터가 8단계 내에 문서 조회 도구를 선택하지 못했습니다.",

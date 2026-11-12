@@ -193,6 +193,7 @@
  {const previous=window.open;let opened;try{window.open=(url,target,features)=>{opened={url,target,features};return null;};document.getElementById('menu-report-bug').click();check('Help opens a standard GitHub bug draft in the browser',opened?.url.startsWith('https://github.com/neodamul/AgentConductor/issues/new?body=')&&decodeURIComponent(opened.url).includes('## Steps to reproduce')&&opened.target==='_blank'&&opened.features==='noopener');}finally{window.open=previous;}}
  {const hint=document.getElementById('mcp-import-format'),advanced=document.getElementById('mcp-advanced');
   check('the JSON import says it uses the OpenCode MCP format beside the import controls',!!hint&&advanced.contains(hint)&&hint.previousElementSibling.querySelector('#mcp-import')&&hint.textContent.includes('OpenCode MCP')&&document.getElementById('mcp-json').getAttribute('aria-describedby')==='mcp-import-format');}
+ {const hint=document.getElementById('mcp-secret-hint');check('#887: the server form says API tokens must be registered as environment variables',!!hint&&document.getElementById('mcp-edit-view').contains(hint)&&hint.textContent.includes('API 토큰')&&hint.textContent.includes('{env:VARIABLE}')&&hint.previousElementSibling.id==='mcp-secrets');}
  check('no script errors',!document.documentElement.dataset.designError);
  document.documentElement.dataset.interactionResult=JSON.stringify({theme:initialTheme,width:innerWidth,checks});
 })().catch(error=>document.documentElement.dataset.designError=error.message);
