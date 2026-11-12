@@ -1748,3 +1748,6 @@ DD-143 / DD-79 / #905 / #906: add a small Workspace controls helper using existi
 
 
 DD-109 / #899: after master-list adoption in Startup::open, initialize and persist a fresh Workspace coordinator from profiles.first() only when no valid assignment exists. Existing saved Workspaces keep their assignment/reassignment behavior.
+
+
+DD-143 / #916 / #917: remove render-time details.open assignments and use a markup default. Override full-width generic input geometry only for source checkboxes; render selected controls consistently using theme tokens, preserve focus/accessibility, and truncate bounded reference/title text with full tooltips.

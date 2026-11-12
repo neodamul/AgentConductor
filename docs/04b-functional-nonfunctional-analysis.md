@@ -811,3 +811,6 @@ FR-119 / FR-28 / #905 / #906: reuse canonical reference discovery for a shared u
 
 
 FR-86 / #899: derive the default only at fresh Workspace initialization after master-agent adoption. Do not sort providers, launch a CLI, modify existing unresolved assignments, or invent an agent for an empty list.
+
+
+FR-119 / #916 / #917: set the guide default in markup, never in periodic card rendering. Scope checkbox sizing/checked presentation to source headers, bound long reference text, retain real checkbox/disabled semantics and exact selected-source payloads.

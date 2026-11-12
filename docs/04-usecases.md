@@ -890,3 +890,6 @@ UC-124 / UC-34 / #905 / #906: save current Workspace and stay, or save and conti
 
 
 UC-91 / #899: create a Workspace using the machine agent list; Workspace settings and the agent coordinator badge immediately agree on the first registered agent, persisted before any user Save. Reopening an existing valid non-first selection preserves it.
+
+
+UC-124 / #916 / #917: collapse or expand the guide while sources load; keep that choice as progress completes. Review long source identifiers/titles without horizontal scrolling; required Jira sources remain checked and optional sources can be unchecked before Apply.

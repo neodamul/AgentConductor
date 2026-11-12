@@ -149,6 +149,8 @@ The project folder is above the goal; the coordinator is beside the workspace na
 
 Source tags use subdued blue highlights while remaining editable text. `[Jira:KEY]` and `[Confluence:ID]` are the preferred display format; existing lowercase `jira:`/`confluence:` references remain accepted. MCP previews use each server's actual required schema. Small complete schemas/sources are supplied directly to the coordinator; larger evidence remains in local files with CLI-compatible Windows paths. Selection/retries share a five-minute budget per reference; summaries have a separate five-minute budget. Timeout errors name the stage and retain local logs; no preview is automatically approved.
 
+The document preview guide keeps your expanded/collapsed choice while progress and results update. Required Jira sources remain visibly checked and cannot be deselected; optional documents can be unchecked before Apply. Long reference/title labels are shortened inside the card; hover to read the full label.
+
 ### 1.5 Plan and approval
 
 **Generate plan** reads a temporary snapshot and requests analysis plus ordered phases.

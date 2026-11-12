@@ -895,3 +895,6 @@ QAS-130 / QAS-66 / #905 / #906: in both themes and narrow/wide layouts, invalid 
 
 
 QAS-97 / #899: first-agent default is deterministic and persisted across reopen; valid non-first assignments survive, empty teams remain empty, and initialization makes no agent process call.
+
+
+QAS-130 / #916 / #917: both themes and840/1280px widths preserve manual disclosure over progress/result updates; long headers remain inside cards with no dialog horizontal overflow; checked required/optional sources render distinctly and Apply sends exactly the selected references.
