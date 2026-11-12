@@ -35,8 +35,39 @@ pub(super) async fn summarize(
     p: &mut Preview,
     profile: &AgentProfile,
     goal: &str,
+    progress: &mut super::Progress,
 ) -> Result<(), String> {
-    for r in &p.records {
+    for i in 0..p.records.len() {
+        let r = &p.records[i];
+        if p.summaries.contains_key(&r.reference.key()) {
+            continue;
+        }
+        let reference = r.reference.clone();
+        progress.stage(&reference, "summary");
+        let summarized = summarize_one(root, r, p, profile, goal, progress).await;
+        match summarized {
+            Ok(summary) => {
+                progress.log(&reference, "summary_done", "");
+                progress.stage(&reference, "done");
+                p.summaries.insert(reference.key(), summary);
+            }
+            Err(error) => {
+                progress.fail(&reference, &error);
+                return Err(error);
+            }
+        }
+    }
+    Ok(())
+}
+async fn summarize_one(
+    root: &Path,
+    r: &Record,
+    p: &Preview,
+    profile: &AgentProfile,
+    goal: &str,
+    progress: &mut super::Progress,
+) -> Result<Summary, String> {
+    {
         let md = markdown(r);
         let md_hash = digest(md.as_bytes());
         let name = format!("source-{md_hash}.md");
@@ -44,6 +75,7 @@ pub(super) async fn summarize(
         let text = if r.body.len() <= 3072 {
             r.body.clone()
         } else {
+            progress.log(&r.reference, "summary", profile.id.clone());
             let source_path = root
                 .join("mcp")
                 .join(&name)
@@ -73,19 +105,15 @@ pub(super) async fn summarize(
         if text.trim().is_empty() || text.len() > 3072 {
             return Err(crate::ui::messages::text("mcp.invalid_summary").into());
         }
-        p.summaries.insert(
-            r.reference.key(),
-            Summary {
-                text: text.clone(),
-                sha256: digest(text.as_bytes()),
-                source_sha256: r.sha256.clone(),
-                markdown_file: name,
-                markdown_sha256: md_hash,
-                coordinator: profile.id.clone(),
-            },
-        );
+        Ok(Summary {
+            text: text.clone(),
+            sha256: digest(text.as_bytes()),
+            source_sha256: r.sha256.clone(),
+            markdown_file: name,
+            markdown_sha256: md_hash,
+            coordinator: profile.id.clone(),
+        })
     }
-    Ok(())
 }
 pub(super) fn validate(root: &Path, p: &Preview) -> Result<(), String> {
     for (key, s) in &p.summaries {

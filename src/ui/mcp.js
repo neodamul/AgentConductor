@@ -34,12 +34,55 @@ function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,sh
  q('mcp-import').onclick=async()=>{if(await action({kind:'mcp_save',settings:q('mcp-json').value})){catalogs.clear();discoveryErrors.clear();draft().mcp=state().config.mcp;draft().goal_sources=state().config.goal_sources;render();notice(()=>acMessage('mcp.imported_settings'));}};
  q('mcp-preview').onclick=async()=>{capture();const c=draft();if(!c.coordinator||!c.profiles?.some(p=>p.id===c.coordinator)){notice(()=>acMessage('mcp.coordinator_required'),true);showStep?.('workspace',true);q('coordinator').focus?.();return;}if(!await save())return;
   // The review window opens at once and shows the lookup in progress; records fill in when it ends.
-  review=null;previewing=true;AC_I18N.replace(q('mcp-records'));q('mcp-failures').hidden=true;q('mcp-apply').disabled=true;q('mcp-loading').hidden=false;if(!q('mcp-review').open)q('mcp-review').showModal();
+  review=null;previewing=true;lastProgress=null;AC_I18N.replace(q('mcp-records'));AC_I18N.bind(q('mcp-meta'),()=>'');q('mcp-guide').open=true;q('mcp-retry').hidden=true;q('mcp-failures').hidden=true;q('mcp-apply').disabled=true;q('mcp-loading').hidden=false;if(!q('mcp-review').open)q('mcp-review').showModal();
   if(!await action({kind:'mcp_preview'})){previewing=false;q('mcp-loading').hidden=true;q('mcp-review').close();}};
+ // GitHub #903: only the documents the last preview failed to read are fetched again.
+ q('mcp-retry').onclick=async()=>{const kept=review;review=null;previewing=true;lastProgress=null;q('mcp-retry').hidden=true;q('mcp-apply').disabled=true;if(!await action({kind:'mcp_preview',retry:true})){previewing=false;showPreview(kept);}};
  for(const kind of ['jira','confluence'])q(kind+'-reference').onclick=()=>{q('source-kind').value=kind;q('source-id').value='';q('source-reference').showModal();};
  q('source-add').onclick=()=>{const kind=q('source-kind').value,id=q('source-id').value.trim();const valid=kind==='jira'?/^[A-Z][A-Z0-9_]*-\d+$/.test(id):/^\d{1,32}$/.test(id);if(!valid){notice(()=>(acMessage("mcp.enter_a_jira_issue_key_or_numeric_confluence")),true);return;}q('goal').value=q('goal').value.trimEnd()+` [${kind==='jira'?'Jira':'Confluence'}:${id}]`;capture();mark();q('source-reference').close();};
  q('mcp-apply').onclick=async()=>{if(!review)return;const selected=[...q('mcp-records').querySelectorAll('input:checked')].map(n=>n.value);const r=await action({kind:'mcp_apply',preview_id:review.id,selected});if(r){q('mcp-review').close();notice(()=>(acMessage("mcp.selected_source_evidence_approved_locally_generate_a_plan")));}};
- function showPreview(p){review=p;AC_I18N.replace(q('mcp-records'),...p.records.map(r=>{const section=el('section',undefined,'source-record'),label=el('label',undefined,'startup-check'),input=el('input');input.type='checkbox';input.checked=true;input.disabled=r.reference.kind==='jira';input.value=r.reference.kind+':'+r.reference.id;label.append(input,el('strong',input.value));const source=el('pre',()=>acMessage('mcp.version_updated_retrieved_sha_256',{value1:r.server,value2:r.tool,value3:r.title||acMessage('mcp.title_not_supplied'),value4:r.url||acMessage('mcp.url_not_supplied'),value5:r.version||acMessage('mcp.not_supplied'),value6:r.updated_at||acMessage('mcp.not_supplied'),value7:new Date(p.fetched_at*1000).toLocaleString(),value8:r.sha256}),'small muted'),summary=p.summaries?.[input.value];section.append(label,source);if(summary){section.append(el('p',()=>acMessage('mcp.source_summary',{path:state().root+'/mcp/'+summary.markdown_file}),'small source-path'),el('pre',summary.text,'source-body'));const detail=el('details');detail.append(el('summary',()=>acMessage('mcp.full_source')));detail.ontoggle=()=>{if(detail.open&&detail.childNodes.length===1)detail.append(el('pre',r.body,'source-body'));};section.append(detail);}else section.append(el('pre',r.body,'source-body'));return section;}));const failures=p.failures.map(f=>f.reference.kind+':'+f.reference.id+': '+f.error).join('\n');AC_I18N.bind(q('mcp-failures'),()=>failures);q('mcp-failures').hidden=!failures;q('mcp-apply').disabled=!p.records.length||p.failures.some(f=>f.reference.kind==='jira');previewing=false;q('mcp-loading').hidden=true;rememberNotes(p);if(!q('mcp-review').open)q('mcp-review').showModal();}
+ // GitHub #903: one card per Goal reference with its step, elapsed time and live log (same structure as the approved mock).
+ const sourceT=(key,vars)=>acMessage(`mcp.${key}`,vars);
+ function sourceDuration(ms){const s=Math.max(0,Math.round(ms/1000));return s<60?sourceT('duration_seconds',{s}):sourceT('duration_minutes',{m:Math.floor(s/60),s:String(s%60).padStart(2,'0')});}
+ function sourceSize(bytes){return bytes<1024?bytes+' B':Math.round(bytes/1024)+' KB';}
+ function sourceFailedStep(doc){const events=doc.log.map(e=>e.event);return events.includes('summary')?2:events.includes('mcp_call')?1:0;}
+ function sourceCard(doc,{now,record,summary,review}){
+  const mk=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
+  const running=['selection','reading','summary'].includes(doc.stage),failed=doc.stage==='failed';
+  const card=mk('section','source-doc'+(running?' running':'')+(failed?' failed':''));card.dataset.reference=doc.reference;card.dataset.stage=doc.stage;
+  const head=mk('div','source-doc-head');
+  if(review){const pick=mk('input');pick.type='checkbox';pick.value=doc.reference;pick.checked=!!record;pick.disabled=!record||doc.reference.startsWith('jira:');head.append(pick);}
+  const [kind,id]=doc.reference.split(':');
+  head.append(mk('span','source-ref',(kind==='jira'?'Jira':'Confluence')+':'+id));
+  const title=doc.title||record?.title;head.append(mk('strong','source-title'+(title?'':' pending'),title||acMessage(failed?'mcp.title_not_supplied':'mcp.title_pending')));
+  const label=failed?'stage_failed':doc.stage==='done'?(review?'stage_review':'stage_done'):'stage_'+doc.stage;
+  head.append(mk('span','source-state '+(failed?'failed':doc.stage==='waiting'?'waiting':['done','summary_wait'].includes(doc.stage)?'ready':'running'),sourceT(label)));
+  head.append(mk('span','source-time',doc.started_ms?sourceDuration((doc.ended_ms||now)-doc.started_ms):'—'));
+  card.append(head);
+  const current={waiting:-1,selection:0,reading:1,summary_wait:2,summary:2,done:3}[doc.stage]??sourceFailedStep(doc);
+  const steps=mk('ol','source-steps');['step_select','step_read','step_summary','step_review'].forEach((key,i)=>steps.append(mk('li','source-step'+(failed?(i<current?' done':i===current?' failed':''):(i<current?' done':i===current?' current':'')),sourceT(key))));
+  card.append(steps);
+  if(running||failed){const lines=(doc.log||[]).map(e=>{const at=Math.max(0,Math.round((e.at_ms-doc.started_ms)/1000));return String(Math.floor(at/60)).padStart(2,'0')+':'+String(at%60).padStart(2,'0')+' '+sourceT('log_'+e.event,{detail:e.event==='read_done'?sourceSize(Number(e.detail)):e.detail});});if(lines.length)card.append(mk('div','source-log',lines.join('\n')));}
+  if(failed&&doc.error)card.append(mk('p','source-error',doc.error));
+  if(record){
+   if(summary)card.append(mk('div','source-summary',summary.text));
+   const full=mk('details','source-full');full.append(mk('summary','',sourceT('full_source_size',{size:sourceSize(record.body.length)})));full.ontoggle=()=>{if(full.open&&full.childNodes.length===1)full.append(mk('pre','source-body',record.body));};card.append(full);
+   card.append(mk('p','source-provenance',sourceT('provenance',{server:record.server,tool:record.tool,version:record.version||'—',sha:record.sha256.slice(0,8)})));
+  }
+  return card;
+ }
+ function sourceMeta(progress,finished,now){const docs=progress.documents,done=docs.filter(d=>d.stage==='done'||!finished&&d.stage==='summary_wait').length,failed=docs.filter(d=>d.stage==='failed').length,end=finished?Math.max(progress.started_ms,...docs.map(d=>d.ended_ms||progress.started_ms)):now;const elapsed=sourceDuration(end-progress.started_ms);return finished?sourceT('meta_done',{done,failed,elapsed}):sourceT('meta_running',{total:docs.length,done,elapsed});}
+ const runningDoc=progress=>progress?.documents?.find(d=>['selection','reading','summary'].includes(d.stage));
+ function sourceStatus(progress,now){const doc=runningDoc(progress);return doc?sourceT('status_running',{done:progress.documents.filter(d=>d.stage==='done'||d.stage==='summary_wait').length,total:progress.documents.length,reference:doc.reference,stage:sourceT('stage_'+doc.stage),elapsed:sourceDuration(now-progress.started_ms)}):'';}
+ let lastProgress=null;
+ function renderProgress(progress){if(!progress?.documents?.length||review)return;lastProgress=progress;const now=Date.now();q('mcp-loading').hidden=true;q('mcp-guide').open=true;AC_I18N.replace(q('mcp-records'),...progress.documents.map(doc=>sourceCard(doc,{now,review:false})));AC_I18N.bind(q('mcp-meta'),()=>sourceMeta(progress,false,now));q('mcp-retry').hidden=true;}
+ function showPreview(p){review=p;const records=new Map(p.records.map(r=>[r.reference.kind+':'+r.reference.id,r])),failures=new Map(p.failures.map(f=>[f.reference.kind+':'+f.reference.id,f.error]));
+  // Progress from before #903, or a missing progress file, falls back to the result itself.
+  const known=lastProgress?.documents?.length&&lastProgress.documents.every(d=>records.has(d.reference)||failures.has(d.reference))?lastProgress:{started_ms:p.fetched_at*1000,documents:[...records.keys(),...failures.keys()].map(reference=>({reference,stage:records.has(reference)?'done':'failed',log:[]}))};
+  const docs=known.documents.map(d=>records.has(d.reference)?{...d,stage:'done'}:{...d,stage:'failed',error:d.error||failures.get(d.reference)});const progress={...known,documents:docs},now=Date.now();
+  AC_I18N.replace(q('mcp-records'),...docs.map(doc=>sourceCard(doc,{now,record:records.get(doc.reference),summary:p.summaries?.[doc.reference],review:true})));
+  AC_I18N.bind(q('mcp-meta'),()=>sourceMeta(progress,true,now));q('mcp-guide').open=false;q('mcp-failures').hidden=true;q('mcp-retry').hidden=!p.failures.length;
+  q('mcp-apply').disabled=!p.records.length||p.failures.some(f=>f.reference.kind==='jira');previewing=false;lastProgress=null;q('mcp-loading').hidden=true;rememberNotes(p);if(!q('mcp-review').open)q('mcp-review').showModal();}
  function renderSuggestions(suggestions){AC_I18N.replace(q('source-suggestions'),...suggestions.map(ref=>{const b=el('button',()=>acMessage('mcp.use',{value1:ref}),'quiet small-button');b.type='button';b.onclick=()=>{const[k,id]=ref.split(':');q('source-kind').value=k;q('source-id').value=id;q('source-reference').showModal();};return b;}));q('source-suggestions').hidden=!suggestions.length;}
  function updateSourceSuggestions(goal){
   suggestionsStamp=goal;sourceCount=0;
@@ -68,7 +111,9 @@ function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,sh
   }
   if(goal!==suggestionsStamp)updateSourceSuggestions(goal);
   q('mcp-preview').disabled=job?.state==='running'||!sourceCount;
-  AC_I18N.bind(q('source-status'),()=>looking?acMessage('mcp.lookup_running')+since:s.imports?acMessage('mcp.applied_sources',{value1:s.imports.selected.length}):sourceCount?acMessage('mcp.references_to_preview',{value1:sourceCount}):'');
+  // A lookup still running after the workspace reopened keeps its progress, so its window can show the result.
+  if(looking&&s.mcp_progress?.documents){previewing=true;renderProgress(s.mcp_progress);}
+  AC_I18N.bind(q('source-status'),()=>looking&&runningDoc(s.mcp_progress)?sourceStatus(s.mcp_progress,Date.now()):looking?acMessage('mcp.lookup_running')+since:s.imports?acMessage('mcp.applied_sources',{value1:s.imports.selected.length}):sourceCount?acMessage('mcp.references_to_preview',{value1:sourceCount}):'');
   q('mcp-settings').disabled=job?.state==='running';
   // GitHub #893: stored discoveries come back for every server whose config is unchanged, after reopen or restart.
   if(s.mcp_catalogs){let added=false;for(const[server,result]of Object.entries(s.mcp_catalogs)){const config=state().config.mcp?.[server];if(!config||catalogFor(server)||pendingDiscovery?.server===server)continue;catalogs.set(server,{tools:result.tools,config:JSON.stringify(config)});added=true;}if(added&&q('mcp-dialog').open)render();}

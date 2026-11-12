@@ -4,6 +4,7 @@ mod coordinator;
 mod http;
 mod imports;
 mod jsonc;
+mod progress;
 mod routing;
 mod schema;
 mod selection;
@@ -16,7 +17,8 @@ pub use imports::{
 pub const MAX_RESPONSE: usize = 8 * 1024 * 1024;
 pub const MAX_SOURCE: usize = 4 * 1024 * 1024;
 pub const MAX_ARTIFACT: usize = 64 * 1024 * 1024;
-pub use routing::{coordinator_profile, preview_with_coordinator};
+pub use progress::Progress;
+pub use routing::{coordinator_profile, preview_with_coordinator, preview_with_progress};
 pub use sources::Summary;
 pub const MAX_CONTEXT: usize = 48 * 1024;
 pub use imports::{load, store};

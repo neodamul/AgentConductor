@@ -21,8 +21,8 @@ impl Startup {
             | Request::ChatReset {}
             | Request::CacheClear { .. } => unreachable!(),
             Request::McpSave { settings, .. } => self.save_mcp(saved, &settings),
-            Request::McpDiscover { server, .. } => self.launch_mcp(saved, Some(&server)),
-            Request::McpPreview { .. } => self.launch_mcp(saved, None),
+            Request::McpDiscover { server, .. } => self.launch_mcp(saved, Some(&server), false),
+            Request::McpPreview { retry, .. } => self.launch_mcp(saved, None, retry),
             Request::OptimizeGoal { goal, .. } => self.launch_optimize(saved, goal),
             Request::McpApply {
                 preview_id,

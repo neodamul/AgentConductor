@@ -6,3 +6,38 @@
 #start-mcp-advanced .mcp-import-format{font-size:12px;line-height:1.6;margin:8px 0 0}
 /* GitHub #887: the API token hint in the server form, as in the mock. */
 #start-mcp-edit-view .mcp-secret-hint{font-size:12px;line-height:1.6;margin:0}
+/* GitHub #903: document preview guide and per-document progress cards (same block in the approved mock). */
+.source-review .source-guide{margin:0 0 14px;padding:10px 14px;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-size:13px;line-height:1.6;color:var(--ink)}
+.source-review .source-guide>summary{font-weight:650;cursor:pointer}
+.source-review .source-guide ol{margin:6px 0;padding-left:20px}
+.source-review .source-guide li{margin:2px 0}
+.source-review .source-guide p{margin:0;font-size:12px;line-height:1.6;color:var(--soft)}
+.source-review .source-doc{min-width:0;margin:0 0 8px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+.source-review .source-doc.running{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.source-review .source-doc-head{display:flex;align-items:center;gap:8px;min-width:0}
+.source-review .source-doc-head input{flex:none;margin:0}
+.source-review .source-ref,.source-review .source-state{flex:none;padding:1px 7px;border:1px solid color-mix(in srgb,currentColor 32%,transparent);border-radius:4px;font-size:12px;font-weight:650;line-height:1.35;white-space:nowrap}
+.source-review .source-ref{background:var(--info-bg);color:var(--info)}
+.source-review .source-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:650;line-height:1.5;color:var(--ink)}
+.source-review .source-title.pending{font-weight:400;color:var(--soft)}
+.source-review .source-state.waiting{background:var(--fill);color:var(--soft)}
+.source-review .source-state.running{background:var(--info-bg);color:var(--info)}
+.source-review .source-state.ready{background:var(--ok-bg);color:var(--ok)}
+.source-review .source-state.failed{background:var(--err-bg);color:var(--err)}
+.source-review .source-time{flex:none;font-size:12px;line-height:1.5;color:var(--soft);font-variant-numeric:tabular-nums}
+.source-review .source-steps{display:flex;gap:4px;margin:8px 0 0;padding:0;list-style:none}
+.source-review .source-step{flex:1;min-width:0;padding-top:3px;border-top:3px solid var(--fill);font-size:11.5px;line-height:1.5;color:var(--soft)}
+.source-review .source-step.done{border-top-color:var(--ok);color:var(--ok)}
+.source-review .source-step.current{border-top-color:var(--accent);color:var(--accent-text);font-weight:650}
+.source-review .source-step.failed{border-top-color:var(--err);color:var(--err);font-weight:650}
+.source-review .source-step.done::after{content:" ✓"}
+.source-review .source-step.failed::after{content:" ✕"}
+.source-review .source-log{margin:8px 0 0;padding:6px 10px;border-radius:6px;background:var(--bg);font:11.5px/1.6 Menlo,Consolas,monospace;color:var(--soft);white-space:pre-wrap;overflow-wrap:anywhere}
+.source-review .source-error{margin:6px 0 0;font-size:12px;line-height:1.6;color:var(--err);overflow-wrap:anywhere}
+.source-review .source-summary{margin:8px 0 0;padding:8px 10px;border-radius:6px;background:var(--bg);font-size:12.5px;line-height:1.6;color:var(--ink);white-space:pre-wrap;overflow-wrap:anywhere}
+.source-review .source-full>summary{margin-top:6px;font-size:12px;line-height:1.6;color:var(--accent-text);cursor:pointer}
+.source-review .source-full .source-body{max-height:240px;margin:6px 0 0;padding:10px 12px;overflow:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface-2);font:12px/1.6 Menlo,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere}
+.source-review .source-provenance{margin:4px 0 0;font-size:12px;line-height:1.6;color:var(--soft);overflow-wrap:anywhere}
+.source-review .source-foot{display:flex;justify-content:flex-end;gap:10px;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.source-review .source-meta{flex:1;min-width:0;font-size:12px;line-height:1.6;color:var(--soft)}
+.source-review [hidden]{display:none!important}

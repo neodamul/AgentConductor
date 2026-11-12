@@ -2,12 +2,19 @@
 pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
     match args {
         [kind, root, name, rest @ ..]
-            if (kind == "mcp-import" && rest.is_empty())
+            if (kind == "mcp-import" && rest.len() <= 1)
                 || (kind == "mcp-discover" && rest.len() == 1) =>
         {
             Some((|| {
                 let root = std::path::Path::new(root);
-                if !name.ends_with(".json") || name.contains(['/', '\\']) || name.len() > 100 {
+                let valid =
+                    |n: &str| n.ends_with(".json") && !n.contains(['/', '\\']) && n.len() <= 100;
+                if !valid(name)
+                    || (kind == "mcp-import"
+                        && rest
+                            .first()
+                            .is_some_and(|n| !valid(n) || !n.starts_with("preview-")))
+                {
                     return Err("invalid MCP result name".into());
                 }
                 let saved: serde_json::Value =
@@ -27,11 +34,25 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                             &profiles,
                             saved["config"]["coordinator"].as_str().unwrap_or(""),
                         )?;
-                        agentconductor::mcp::preview_with_coordinator(
+                        // GitHub #903: progress-<id>.json beside preview-<id>.json; a retry keeps the previous result's read documents.
+                        let mut progress = agentconductor::mcp::Progress::file(
+                            root.join("mcp")
+                                .join(name.replacen("preview-", "progress-", 1)),
+                        );
+                        let keep = rest.first().and_then(|previous| {
+                            serde_json::from_slice(
+                                &agentconductor::mcp::load(&root.join("mcp").join(previous))
+                                    .ok()?,
+                            )
+                            .ok()
+                        });
+                        agentconductor::mcp::preview_with_progress(
                             &settings,
                             saved["config"]["goal"].as_str().unwrap_or(""),
                             root,
                             profile,
+                            &mut progress,
+                            keep,
                         )
                         .await
                         .and_then(|p| serde_json::to_value(p).map_err(|e| e.to_string()))

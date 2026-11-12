@@ -38,8 +38,13 @@ impl Startup {
         &self,
         s: &mut Saved,
         server: Option<&str>,
+        retry: bool,
     ) -> Result<serde_json::Value, String> {
         let settings = s.config.mcp_settings();
+        let previous = s
+            .mcp_result
+            .clone()
+            .filter(|name| retry && server.is_none() && name.starts_with("preview-"));
         settings.validate()?;
         if let Some(name) = server {
             if !settings.mcp.contains_key(name) {
@@ -83,6 +88,7 @@ impl Startup {
         if let Some(server) = server {
             args.push(server.into());
         }
+        args.extend(previous);
         self.launch(s, "mcp", args)
     }
     pub(super) fn mcp_result(
@@ -99,6 +105,27 @@ impl Startup {
         let data = crate::mcp::load(&self.broker.dir.join("mcp").join(name))?;
         serde_json::from_slice(&data)
             .map_err(|_| crate::ui::messages::text("native.invalid_mcp_result").into())
+    }
+    /// GitHub #903: per-document progress of the current document preview, while its job is known.
+    pub(super) fn mcp_progress(&self, s: &Saved, job: &serde_json::Value) -> serde_json::Value {
+        let Some(name) = s
+            .mcp_result
+            .as_deref()
+            .filter(|n| n.starts_with("preview-"))
+        else {
+            return serde_json::Value::Null;
+        };
+        if job["kind"] != "mcp" {
+            return serde_json::Value::Null;
+        }
+        crate::mcp::load(&self.broker.dir.join("mcp").join(name.replacen(
+            "preview-",
+            "progress-",
+            1,
+        )))
+        .ok()
+        .and_then(|data| serde_json::from_slice(&data).ok())
+        .unwrap_or(serde_json::Value::Null)
     }
     /// GitHub #893: every server's last successful discovery whose config is unchanged, keyed by server.
     pub(super) fn mcp_catalogs(&self, s: &Saved) -> serde_json::Value {

@@ -11,6 +11,7 @@ the GitHub Release notes for its tag.
 - Restore visible editable `[Jira:KEY]` and `[Confluence:ID]` Goal tags while preserving legacy reference syntax.
 - Normalize Windows CLI-facing source/schema paths, provide bounded complete schemas inline and correct schema-invalid read arguments before MCP transmission.
 - Share a five-minute selection/retry budget, retain full local evidence and show stage-specific timeout errors.
+- Document preview explains its four steps and shows one live card per referenced document (step, elapsed time, coordinator/MCP log); failed documents can be retried while documents already read are kept (#903).
 
 ## v0.2.5
 
