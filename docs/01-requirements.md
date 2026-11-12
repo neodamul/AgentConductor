@@ -865,3 +865,5 @@ R-210 / #867 amendment: remove the duplicate View menu group; preserve panel nav
 Offer Report a bug in Help. Open the existing default browser on the configured repository's new-issue page with an English reproduction/expected/actual/environment template. Use exactly the updater repository preference, including Enterprise HTTPS hosts; GitHub handles login and the operator reviews/submits the issue. Include only version, OS and architecture automatically. Trace: R-216 → BG-171 → SF-204 → UC-208 → FR-210 / NFR-97 → QAS-215 → DDR-63 → DD-231. GitHub #862.
 
 R-210 / #878, #879, #880 amendment (2026-11-12): expanded task Goals preserve authored line breaks and start collapsed; Raw logs preserve record boundaries and decoded message line breaks; selecting any listed Phase task must render its matching read-only details instead of an empty pane.
+
+R-134 / #882 correction: MCP settings registers servers and reports discovery status only; remove manual Jira/Confluence tool-binding controls and duplicate textual catalogs. Keep compatible internal configuration; the workspace coordinator selects read tools automatically.

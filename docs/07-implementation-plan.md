@@ -3933,3 +3933,13 @@ Trace: R-210 / BG-165 / SF-198 / UC-202 / FR-204 / QAS-209 / DD-222.
 #878 local evidence: the new-Goal collapse regression failed before the fix; final Goal runtime checks pass9 ×4variants, including standalone shared styling, and expanded-Goal design parity passes4variants. Existing Workspace pre-wrap was already present; the fix centralizes it instead of adding duplicate styling.
 
 #879 local evidence: formatter tests failed before implementation; nested JSON records now render decoded message line breaks while plain/malformed tails, path escapes and source bytes remain unchanged. Actual Task/Coordinator runtime passes7checks ×4variants, including visual row separation, safe text rendering and bounded wrapping/scrolling.
+
+### MCP settings shows server registration only — GitHub #882 (0.2.5)
+
+Trace: R-134 / BG-89 / SF-121 / UC-124 / FR-119 / QAS-130 / DD-143.
+- [x] Plan: remove duplicate tools text and manual bindings; retain internal compatibility and coordinator auto-selection. Checked owner-claude absence and assigned owner-codex before editing.
+- [x] Task: remove obsolete normal controls/handlers/styles/translations in product and approved mock; update public guidance.
+- [x] Verify: regression before removal, server discovery/status/error tests, internal configuration round trips and coordinator-selection native tests; canonical mock capture.
+- [ ] Completed: reviewed merge, issue closure, wiki and branch/temp cleanup.
+
+#882 local evidence: obsolete-control regression failed before removal; registration/discovery/errors/automatic preview and internal-binding round trips pass. Actual MCP settings passes6checks ×4variants. Rust coordinator source selection4tests and source binding compatibility2tests pass; total focused Rust suite25passes. Canonical preview157interactions ×4variants,72captures and34contrast pairs pass.

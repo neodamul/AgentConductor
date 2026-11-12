@@ -876,3 +876,5 @@ Stimulus: first start, second start of the same version, first start of a newer 
 Stimulus: report from Workspace/Room, change repository from public to Enterprise, use invalid repository text, or fail browser launch. Response: valid drafts target the same repository as updates and carry encoded reproduction/expected/actual/version/OS sections; invalid targets launch nothing; errors are visible; GitHub owns login/submission. Measure: Rust routing/encoding/preference tests and assembled-UI menu tests in both themes/widths; no new polling or dependency. Trace: NFR-97.
 
 QAS-209 / #878–#880 correction: a multi-line Goal or provider message remains visibly multi-line; with Phase 4 active, selecting Phase 1 task displays that task read-only, while returning to Phase 4 retains its editable proposal.
+
+QAS-130 / #882 correction: removing normal binding controls leaves server registration/discovery and coordinator-selected preview functional; an existing internal binding survives unrelated saves and JSON round trips.

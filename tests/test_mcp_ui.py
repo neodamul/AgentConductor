@@ -7,13 +7,15 @@ class McpUi(unittest.TestCase):
     def test_operator_can_configure_discover_preview_and_apply(self):
         html = (ROOT / "src/ui/mcp.html").read_text(encoding="utf-8")
         js = (ROOT / "src/ui/mcp.js").read_text(encoding="utf-8")
-        for control in ["mcp-servers", "mcp-add", "mcp-kind", "mcp-name", "mcp-url", "mcp-executable", "mcp-arguments", "mcp-secrets", "mcp-jira", "mcp-confluence", "mcp-advanced", "mcp-edit-save", "mcp-preview", "mcp-apply", "source-reference"]:
+        for control in ["mcp-servers", "mcp-add", "mcp-kind", "mcp-name", "mcp-url", "mcp-executable", "mcp-arguments", "mcp-secrets", "mcp-advanced", "mcp-edit-save", "mcp-preview", "mcp-apply", "source-reference"]:
             self.assertIn('id="start-' + control + '"', html)
         for action in ["mcp_save", "mcp_discover", "mcp_preview", "mcp_apply"]:
             self.assertIn(action, js)
         self.assertIn('id="start-mcp-list-view"', html)
         self.assertIn('id="start-mcp-edit-view"', html)
-        self.assertIn("readOnlyHint===true", js)
+        for obsolete in ["mcp-jira", "mcp-confluence", "mcp-bindings-save", "mcp-tools"]:
+            self.assertNotIn('id="start-' + obsolete + '"', html)
+        self.assertNotIn("function bindingFor", js)
         self.assertIn("await discoverServer(name)", js)
         self.assertLess(html.index('id="start-mcp-advanced"'), html.index('id="start-mcp-json"'))
         self.assertNotIn("innerHTML", js)

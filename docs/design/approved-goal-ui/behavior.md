@@ -242,3 +242,7 @@ Help → Report a bug opens a prefilled issue composer in the default browser. T
 application target shares the updater repository preference, including Enterprise
 HTTPS hosts. GitHub handles login and final submission; automatic context is limited
 to version, OS and architecture. The preview demonstrates the same Help action.
+
+## MCP registration and automatic tool selection (#882)
+
+Normal MCP settings lists registered servers, discovery status and errors, and the add/edit form. It has no Jira/Confluence tool-binding selectors, argument form or duplicate text catalog. The workspace coordinator chooses tools and schema-valid arguments for Goal source preview; compatible legacy binding data remains internal and round-trippable through advanced JSON.
