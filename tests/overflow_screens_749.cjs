@@ -15,10 +15,11 @@ const { findChrome, launch } = require('./design_parity/cdp.cjs');
     browser = await launch(chrome, { width: 840, height: 892 });
     await browser.goto(pathToFileURL(file).href);
     const preset = "SIM.home.run_available=true;SIM.home.run_state=null;SIM.home.proposal=SIM.proposal('ready');SIM.home.config.goal='A very long Goal title which must not be lost when it is truncated '.repeat(5);";
-    await browser.eval(`sessionStorage.setItem('SIM_PRESET',${JSON.stringify(preset)});location.reload()`);
+    await browser.eval(`sessionStorage.setItem('SIM_PRESET',${JSON.stringify(preset)})`);
+    await browser.goto(pathToFileURL(file).href);
     const report = await browser.eval(`(async () => {
       const delay=()=>new Promise(r=>setTimeout(r,80));
-      for(let n=0;n<200&&(!document.querySelector('#start-tab-workspace')?.onclick||!SIM.log.some(x=>x.kind==='snapshot'));n++)await delay();
+      for(let n=0;n<200&&(!document.querySelector('#start-tab-workspace')?.onclick||document.getElementById('start-name').value!==SIM.home.config.name||document.getElementById('start-save').disabled);n++)await delay();
       const errors=[];let checked=0;
       for(let step=0;step<4;step++) {
         const tab=document.querySelectorAll('#start-step-tabs [role=tab]')[step];if(step===3)document.querySelector('#start-open').click();else tab.click();const reached=()=>step===3?document.body.classList.contains('on-run'):document.querySelectorAll('#start-step-tabs [role=tab]')[step]?.getAttribute('aria-selected')==='true';for(let n=0;n<100&&!reached();n++)await delay();if(!reached()){errors.push({step,error:'step did not become selected'});continue;}
