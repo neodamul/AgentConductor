@@ -11,6 +11,8 @@ impl Reference {
         format!("{}:{}", self.kind, self.id)
     }
 }
+/// GitHub #907: a Goal holds at most five distinct Jira/Confluence references.
+pub const MAX_REFERENCES: usize = 5;
 pub fn references(goal: &str) -> Result<Vec<Reference>, String> {
     let mut refs = vec![];
     for token in goal.split(|c: char| !c.is_ascii_alphanumeric() && ![':', '-', '_'].contains(&c)) {
@@ -45,8 +47,14 @@ pub fn references(goal: &str) -> Result<Vec<Reference>, String> {
             refs.push(r);
         }
     }
-    if refs.len() > 12 {
-        return Err("at most twelve goal references".into());
+    if refs.len() > MAX_REFERENCES {
+        return Err(crate::ui::messages::render(
+            "mcp.too_many_references",
+            &[
+                ("limit", &MAX_REFERENCES.to_string()),
+                ("count", &refs.len().to_string()),
+            ],
+        ));
     }
     Ok(refs)
 }

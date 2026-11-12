@@ -41,6 +41,9 @@ pub(super) enum Request {
     },
     McpPreview {
         revision: String,
+        /// GitHub #903: fetch only the documents the last preview failed to read.
+        #[serde(default)]
+        retry: bool,
     },
     Chat {
         revision: String,

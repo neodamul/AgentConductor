@@ -14,6 +14,8 @@ module.exports = [
   ...require('./typography.cjs'),
   ...require('./evidence_spec.cjs'),
   ...require('./choice_spec.cjs'),
+  ...require('./source_review_spec.cjs'),
+  ...require('./reference_limit_spec.cjs'),
   { name: 'agent-avatar', props: BOX, // the mock's first agent waits for a decision: yellow border and the attention marker
    
     mock: { url: '?theme=light#0', selector: '.status-icon', index: 0, mark: '.agent-brand-logo' },
