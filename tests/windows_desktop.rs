@@ -57,6 +57,43 @@ while ((Get-Date) -lt $deadline -and -not ($heading -and $goal -and $save)) {
 if (-not $heading) { Write-Output 'NO_HEADING'; $window.FindAll($T::Descendants, $C) | Select-Object -First 30 | ForEach-Object { Write-Output $_.Current.Name }; exit 3 }
 if (-not $goal) { Write-Output 'NO_GOAL'; exit 4 }
 if (-not $save) { Write-Output 'NO_SAVE'; exit 5 }
+# #853: compare client-content growth, not just the native window rectangle.
+function ViewBounds {
+  $doc = $window.FindFirst($T::Descendants, [System.Windows.Automation.PropertyCondition]::new([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::Document))
+  if (-not $doc) { throw 'NO_WEBVIEW_DOCUMENT' }
+  $w = $window.Current.BoundingRectangle; $d = $doc.Current.BoundingRectangle
+  return @($w.Width, $w.Height, $d.Width, $d.Height)
+}
+function WaitContentResize($before, $action) {
+  $until = (Get-Date).AddSeconds(8)
+  do {
+    $after = ViewBounds
+    $dw = $after[0] - $before[0]; $dh = $after[1] - $before[1]
+    if (([Math]::Abs($dw) -gt 30 -or [Math]::Abs($dh) -gt 30) -and
+        [Math]::Abs(($after[2] - $before[2]) - $dw) -lt 12 -and
+        [Math]::Abs(($after[3] - $before[3]) - $dh) -lt 12) {
+      Write-Output "RESIZE_${action}: before=$before after=$after"
+      return
+    }
+    Start-Sleep -Milliseconds 100
+  } while ((Get-Date) -lt $until)
+  throw "CONTENT_DID_NOT_RESIZE: $action before=$before after=$after"
+}
+$transform = $window.GetCurrentPattern([System.Windows.Automation.TransformPattern]::Pattern)
+$state = $window.GetCurrentPattern([System.Windows.Automation.WindowPattern]::Pattern)
+$original = ViewBounds
+$transform.Resize($original[0] * 0.85, $original[1] * 0.85)
+WaitContentResize $original 'shrink'
+$small = ViewBounds
+$state.SetWindowVisualState([System.Windows.Automation.WindowVisualState]::Maximized)
+WaitContentResize $small 'maximize'
+$large = ViewBounds
+$state.SetWindowVisualState([System.Windows.Automation.WindowVisualState]::Normal)
+WaitContentResize $large 'restore'
+$restored = ViewBounds
+$transform.Resize($original[0], $original[1])
+WaitContentResize $restored 'grow'
+Write-Output 'RESIZE_VERIFIED'
 $goal.GetCurrentPattern([System.Windows.Automation.ValuePattern]::Pattern).SetValue('Windows UIA goal 윈도우')
 Start-Sleep -Milliseconds 500
 $save.GetCurrentPattern([System.Windows.Automation.InvokePattern]::Pattern).Invoke()
@@ -79,7 +116,12 @@ fn webview2_workspace_is_rendered_accessible_and_saves_through_ui_automation() {
         .args(["-NoProfile", "-NonInteractive", "-Command", SCRIPT])
         .output()
         .unwrap();
-    let report = String::from_utf8_lossy(&driver.stdout).to_string();
+    let report = format!(
+        "{}\n{}",
+        String::from_utf8_lossy(&driver.stdout),
+        String::from_utf8_lossy(&driver.stderr)
+    );
+    println!("{report}");
     let saved = Instant::now() + Duration::from_secs(10);
     let mut goal = String::new();
     while Instant::now() < saved {
@@ -114,6 +156,10 @@ fn webview2_workspace_is_rendered_accessible_and_saves_through_ui_automation() {
     assert!(
         report.contains("ABOUT_DISMISSED"),
         "first start shows the About dialog (#468): {report}"
+    );
+    assert!(
+        report.contains("RESIZE_VERIFIED"),
+        "native viewport resizing: {report}"
     );
     assert!(report.contains("DRIVEN"), "UI Automation driver: {report}");
     assert_eq!(goal, "Windows UIA goal 윈도우");
