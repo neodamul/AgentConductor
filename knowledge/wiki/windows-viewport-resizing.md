@@ -1,6 +1,6 @@
 # Windows viewport resizing
 
-Verified: 2026-11-12. Status: implementation pending native Windows acceptance.
+Verified: 2026-11-12. Status: native Windows resize acceptance passed.
 
 ## Context and observation
 
@@ -19,8 +19,13 @@ There is no polling, new thread, dependency, or change to close/IPC approval han
 The Windows UI Automation acceptance compares document size changes with window
 size changes for shrinking, growing, maximizing and restoring. Physical dimensions
 avoid applying DPI scaling twice. Local macOS formatting and close behavior checks
-pass; macOS skipping the Windows test is not Windows verification. Revalidate on
-Windows/WebView2 updates, multi-monitor DPI changes, and any desktop shell change.
+pass. The real Windows job [130927346501](https://github.com/neodamul/AgentConductor/actions/runs/43140902234/job/130927346501)
+passed resize and Workspace save acceptance on commit `6edd985b`. Maximization grew
+the window and document by the same 64 × 57 pixels; all four size transitions passed.
+[Measurement evidence](../../docs/evidence/windows-resize-853-20261112.json) records the bounds.
+Main integration changed only the canonical unit-test location, not the tested shell
+or acceptance code. Multi-monitor DPI transitions and the original internal v0.2.1
+binary were not exercised. Revalidate on Windows/WebView2 or desktop shell changes.
 
 Sources: [observation](../raw/windows-resize-853.json),
 [Windows shell](../../src/ui/native/webview2.rs),

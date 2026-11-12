@@ -662,3 +662,5 @@ PR #761 now labels approved mockups as sample-data design previews, refreshes th
 
 - 2026-11-12: Restored #857 conditional update indication; recorded regression commit29f85beb and available-update-only visual fixtures.
 - 2026-11-12: Recorded #853 internal v0.2.1 resize report, explicit physical viewport synchronization, and the outstanding Windows acceptance requirement.
+
+- 2026-11-12: #853 real Windows resize/maximize/restore/grow and Workspace save acceptance passed (run43140902234, job130927346501); archived measured window/document bounds.

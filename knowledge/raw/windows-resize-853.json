@@ -6,5 +6,7 @@
   "reported_history": "User reports resizing worked before v0.2.0",
   "source_file": "src/ui/native/webview2.rs",
   "working_tree_sha256": "4638d1003ce2e58d7a0799c852e7be7d4d5fc92e6a48fb415a94fdbc14133390",
-  "status": "Windows native execution pending"
+  "status": "Native Windows resize acceptance passed",
+  "verification_run": 43140902234,
+  "verification_job": 130927346501
 }

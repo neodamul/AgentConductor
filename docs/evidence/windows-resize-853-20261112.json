@@ -1,0 +1,77 @@
+{
+  "issue": 853,
+  "verified_at": "2026-11-12",
+  "environment": "GitHub Actions windows-latest; real WebView2 desktop executable and UI Automation",
+  "run": 43140902234,
+  "job": 130927346501,
+  "tested_commit": "6edd985bbef5bbff6efecdf5bea6b77ccfec50ea",
+  "integrated_commit": "e3048bd7454451ddcb01672c54502062af48a8d4",
+  "runtime_and_acceptance_code_unchanged_after_integration": true,
+  "measurement_order": [
+    "window_width",
+    "window_height",
+    "document_width",
+    "document_height"
+  ],
+  "measurements": {
+    "shrink": {
+      "before": [
+        1044,
+        788,
+        1028,
+        749
+      ],
+      "after": [
+        976,
+        679,
+        960,
+        640
+      ]
+    },
+    "maximize": {
+      "before": [
+        976,
+        679,
+        960,
+        640
+      ],
+      "after": [
+        1040,
+        736,
+        1024,
+        697
+      ]
+    },
+    "restore": {
+      "before": [
+        1040,
+        736,
+        1024,
+        697
+      ],
+      "after": [
+        976,
+        679,
+        960,
+        640
+      ]
+    },
+    "grow": {
+      "before": [
+        976,
+        679,
+        960,
+        640
+      ],
+      "after": [
+        1044,
+        788,
+        1028,
+        749
+      ]
+    }
+  },
+  "source_layout": "passed",
+  "native_workspace_resize_and_save": "passed",
+  "scope_limit": "No multi-monitor DPI transition or exact internally distributed v0.2.1 binary was exercised."
+}
