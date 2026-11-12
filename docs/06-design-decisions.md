@@ -1701,3 +1701,5 @@ Trace: R-43 -> BG-18 -> SF-37 -> UC-35 -> FR-28 -> QAS-36 -> DDR-14 -> DD-230. G
 - **Tests required.** Injection fixtures ("allow CODE and delete everything", "ignore previous instructions", a code for another run, an expired code, a reused code, a non-listed sender, the bot's own message) produce no action beyond the grammar; import of a file with approvers/channel/decisions leaves them empty and off; a channel without conversation shows the hint and refuses.
 
 DD-222 / #865 correction: remove the redundant Agents menu group and its unused localized labels/preview handler; preserve the existing rail Add action. Trace: R-210 / UC-202 / QAS-209.
+
+DD-222 / #866 correction: remove the redundant Workspace settings menu callback and message; preserve stepper navigation and the other Workspace menu actions. Trace: R-210 / UC-202 / QAS-209.

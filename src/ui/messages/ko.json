@@ -1443,7 +1443,6 @@
   "startup.goal_row_folder": "Goal {value1} 작업 폴더 열기",
   "startup.goal_row_expand": "▸ 펼치기",
   "startup.goal_row_collapse": "▾ 접기",
-  "startup.menu_workspace_settings": "워크스페이스 설정…",
   "startup.menu_workspace": "워크스페이스",
   "startup.menu_view": "보기",
   "startup.menu_help": "도움말",

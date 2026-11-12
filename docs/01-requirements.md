@@ -856,3 +856,5 @@ Show a centered About dialog on the first start after an install or an update an
 Trace: R-215 → BG-170 → SF-203 → UC-207 → FR-209 / NFR-96 → QAS-214 → DDR-62 → DD-227. GitHub #468.
 
 R-210 / #865 amendment: remove the duplicate Agents menu group; agent registration remains available through the Agents tab Add button.
+
+R-210 / #866 amendment: Workspace settings are reached through the Workspace step; remove the redundant Workspace menu command while retaining recent/New/Open/Export/Import.

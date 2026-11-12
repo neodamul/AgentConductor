@@ -60,7 +60,6 @@ document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!appMenu.hi
 document.getElementById('sidebar-toggle').onclick=()=>{const collapsed=document.querySelector('.win').classList.toggle('sidebar-collapsed');const button=document.getElementById('sidebar-toggle');button.setAttribute('aria-expanded',String(!collapsed));button.title=collapsed?'왼쪽 패널 펼치기':'왼쪽 패널 접기';button.setAttribute('aria-label',button.title);document.getElementById('left-sidebar').inert=collapsed;};
 document.getElementById('coordinator-chat-button').onclick=()=>openSidePanel('coordinator-chat-panel');
 document.getElementById('settings-button').onclick=()=>openSidePanel('settings-panel');
-document.getElementById('menu-workspace-settings').onclick=()=>{closeAppMenu();openWorkspaceHome();};
 document.getElementById('menu-settings').onclick=()=>{closeAppMenu();openSidePanel('settings-panel');};
 function openAbout(updated){const d=document.getElementById('about-dialog');document.getElementById('about-tag').hidden=!updated;if(!d.open)d.showModal();document.getElementById('about-start').focus({preventScroll:true});}
 document.getElementById('menu-about').onclick=()=>{closeAppMenu();openAbout(false);};
