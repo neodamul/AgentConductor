@@ -1,0 +1,36 @@
+{
+  "issue": 882,
+  "sources": [
+    {
+      "path": "src/ui/mcp.js",
+      "sha256": "2b9fca3fa2681ae259ffdccc507f84cc94223ee0dfc9bad3805a1ae8db03909f"
+    },
+    {
+      "path": "src/ui/mcp.html",
+      "sha256": "e8499eefb17a4cd2cd3d771ed013fb297d5c634046fb3ccbbac8902e9897ed46"
+    },
+    {
+      "path": "src/ui/mcp.css",
+      "sha256": "9ca62ee93b879666fd2ad0afb13e0283a1bb7b6c4a72ac615e89e38cefbb4398"
+    },
+    {
+      "path": "tests/mcp_bindings_runtime.cjs",
+      "sha256": "b8ca18f11a6f00f769bb5648d15a28c99e33ebf12668e17ffab0563545588d80"
+    },
+    {
+      "path": "tests/mcp_settings_882.cjs",
+      "sha256": "fae4f6d91ea7f1deb9b4c5678e74babf47052f3ed71d31ab3ad6c2581a835b7f"
+    }
+  ],
+  "verification": [
+    "Obsolete binding-control access reproduced before removal.",
+    "Actual settings:6checks x4 screen variants pass.",
+    "Registration/discovery/failure/automatic preview and internal JSON round trips pass.",
+    "Rust focused suite30tests pass including coordinator selection/read safety and legacy compatibility.",
+    "Canonical mock157interactions x4variants,72captures and34contrastpairs passed."
+  ],
+  "limits": [
+    "No physical Windows UI acceptance.",
+    "Live Jira/Confluence services were not invoked."
+  ]
+}

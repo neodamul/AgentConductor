@@ -177,3 +177,5 @@
 - [Task text and Phase history](task-text-and-phase-history.md): shared Goal layout, safe readable JSON logs and Phase-scoped task navigation (#878–#880).
 
 - [Notification settings save acknowledgement](messenger-save-acknowledgement.md) — #881, persistence before dismissal.
+
+- [MCP server settings and automatic reads](mcp-server-settings.md) — #882, internal compatibility without manual binding UI.
