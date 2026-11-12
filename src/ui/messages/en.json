@@ -1531,5 +1531,6 @@
   "sessions.tag_waiting": "Waiting",
   "sessions.tag_failed": "Failed",
   "sessions.tag_done": "Done",
-  "startup.messenger_save_busy": "Another action is finishing. Keep this draft open and try Save again."
+  "startup.messenger_save_busy": "Another action is finishing. Keep this draft open and try Save again.",
+  "mcp.import_format_hint": "JSON import uses the same format as the OpenCode MCP configuration: its \"mcp\" servers are imported and other OpenCode settings are ignored."
 }
