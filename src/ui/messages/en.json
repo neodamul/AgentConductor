@@ -104,7 +104,7 @@
   "mcp.save_binding": "Save document source",
   "mcp.save_mcp_settings": "Save MCP settings",
   "mcp.saved_server": "Saved server",
-  "mcp.secret_env_hint": "Use {env:VARIABLE} references; credentials are filled only when the server runs.",
+  "mcp.secret_env_hint": "API tokens and other secrets must be registered as environment variables: write {env:VARIABLE} (or Bearer {env:VARIABLE}). The value is filled only when the server runs; literal values are not saved.",
   "mcp.select_server_to_view_tools": "Choose a server to view its tools.",
   "mcp.selected_source_evidence_approved_locally_generate_a_plan": "Selected source evidence approved locally. Generate a plan when ready.",
   "mcp.selection_exhausted": "The coordinator could not select a document read tool after eight steps.",
