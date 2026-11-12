@@ -898,3 +898,6 @@ QAS-97 / #899: first-agent default is deterministic and persisted across reopen;
 
 
 QAS-130 / #916 / #917: both themes and840/1280px widths preserve manual disclosure over progress/result updates; long headers remain inside cards with no dialog horizontal overflow; checked required/optional sources render distinctly and Apply sends exactly the selected references.
+
+
+QAS-209 / #919: UI regressions wait for the new document and observable completed saves before subsequent actions. Capture provenance covers every loaded reference script; artifact hashes come from the verified snapshot. Timeout diagnostics identify the unmet condition without hiding failures.

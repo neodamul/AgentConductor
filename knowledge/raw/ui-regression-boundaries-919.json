@@ -1,0 +1,43 @@
+{
+  "issue": 919,
+  "milestone": "0.2.7",
+  "sources": [
+    {
+      "path": "tests/overflow_screens_749.cjs",
+      "sha256": "1de703ee1c5d9c1b9e06f4df3ab968438b30840c095869e3316bfc4c77355fd1"
+    },
+    {
+      "path": "tests/workspace_save_905.cjs",
+      "sha256": "08bf3edd60d6328f080d3de838d6b9645fe005429e8db50c2e66f2c9ca9d87a3"
+    },
+    {
+      "path": "tests/test_design_manifest.py",
+      "sha256": "39833d177a48441a2ff185107a1af9a4ebe48b2f766191776c6c3c3eb02eb5e3"
+    },
+    {
+      "path": "docs/design/approved-goal-ui/verify-and-capture.py",
+      "sha256": "e1e169cf33d6337773cc0b0232bfba8f7e7e7f8bb3ad4a4e92cc6fdef986662d"
+    },
+    {
+      "path": "tests/source_progress_903.cjs",
+      "sha256": "77c72d2822ff1951a0f5ef3d4133995de0c4897bacbbaf8a0b328e8add98cb7b"
+    }
+  ],
+  "original_evidence": "GitHub run43283697892: macOS workspace-save did-not-settle and Windows47stale design artifacts; Claude also reported a later overflow navigation-context failure.",
+  "diagnosis": [
+    "Overflow test triggered location.reload inside evaluation then evaluated the outgoing page.",
+    "Save test began the next failure scenario after button unlock but before the previous save completion feedback.",
+    "Capture provenance omitted a loaded preview-workspace.js; the new coverage regression failed before correction.",
+    "Two Python wrappers repeated UI scripts already discovered by Rust node_runtime; remove wrappers, preserve scripts/coverage."
+  ],
+  "verification": [
+    "Overflow screen walk passes locally with navigation lifecycle barrier and snapshot readiness.",
+    "Workspace-save test passes four theme/width variants with completed-save barrier and condition diagnostics.",
+    "Canonical182x4/88captures/34contrast regenerated with all loaded scripts pinned; both manifest tests pass.",
+    "Full local Node suite ran all root .cjs scripts in262seconds; only source_progress_903 expected obsolete auto-collapse. Updated caller retains failed-Jira/retry/focus assertions; targeted13checks x2themes pass."
+  ],
+  "limits": [
+    "No fresh all-green aggregate invocation after the isolated old-expectation test update; all other scripts passed the full run.",
+    "No remote CI or physical Windows acceptance claimed."
+  ]
+}

@@ -63,7 +63,7 @@ def palette_checks():
 
 
 def main():
-    source_files=['preview.html','preview.css','preview-state.js','preview-controls.js',
+    source_files=['preview.html','preview.css','preview-state.js','preview-workspace.js','preview-controls.js',
                   'preview-tooltips.js','preview-selection.js','preview-assignment.js','preview-action-icons.js','preview-profile.js','preview-close.js','preview-evidence.js','preview-source-tags.js','preview-dialog-layout.js','preview-mcp.js','preview-sessions.js','preview-source-review.js']
     before={name:hashlib.sha256((ROOT/name).read_bytes()).hexdigest() for name in source_files}
     report={'kind':'design-reference-only','approved_date':'2026-11-04',

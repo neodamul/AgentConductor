@@ -4027,3 +4027,13 @@ Trace: R-134 / BG-89 / SF-121 / UC-124 / FR-119 / QAS-130 / DD-143.
 - [x] Task: preserve disclosure and fit accessible, visibly selected source controls.
 - [x] Verify: local runtime in both themes/two widths, focused parity, existing MCP/read-only/i18n/architecture checks and approved-reference manifest refresh.
 - [x] Completed: local implementation/review and wiki/memory evidence recorded; linked PR tracks merge/closure and owned cleanup. Physical Windows acceptance remains separate.
+
+### Deterministic UI regression boundaries — GitHub #919 (0.2.7)
+
+Trace: R-210 / QAS-209 / DD-222.
+- [x] Plan: inspect failed run43283697892 and shared browser/save/capture callers; register Type Bug and linked owner-codex branch.
+- [x] Task: Red coverage for missing capture provenance; replace navigation/save races with observed lifecycle/completion barriers.
+- [x] Verify: original targeted runtime tests, new source review and manifest/capture checks locally, with useful timeout diagnostics.
+- [x] Completed: local implementation/review and wiki/memory recorded; linked PR tracks merge/closure and cleanup.
+
+#919 full local Node run: all root .cjs scripts executed; only source_progress_903 failed because it still expected automatic guide collapse. Preserve failure/retry/focus assertions and explicitly collapse the guide before completion; targeted13checks per theme then pass. No claim of a fresh all-green aggregate invocation after that isolated test change.
