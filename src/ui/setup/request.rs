@@ -76,6 +76,10 @@ pub(super) enum Request {
         /// Boxed: the workspace configuration dwarfs every other request.
         config: Box<Config>,
     },
+    SaveAutoMerge {
+        revision: String,
+        enabled: bool,
+    },
     Quota {
         revision: String,
         agent: String,

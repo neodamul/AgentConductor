@@ -31,6 +31,13 @@ impl Startup {
                 selected,
                 ..
             } => self.apply_mcp(saved, &preview_id, &selected),
+            Request::SaveAutoMerge { enabled, .. } => {
+                let mut next = saved.clone();
+                next.config.auto_merge = enabled;
+                self.store(&next)?;
+                *saved = next;
+                Ok(serde_json::json!({"saved":true}))
+            }
             Request::Save { config, .. } => {
                 let mut config = *config;
                 // DD-131: a changed executable drops full access before validation.

@@ -71,7 +71,8 @@
 
 /* #943: use the approved compact re-plan tags and existing semantic colors. */
 .auto-merge-option{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--soft);margin:0 0 10px}
-.auto-merge-option input{width:13px;height:13px;margin:0;cursor:pointer}
+.auto-merge-option[hidden]{display:none}
+.auto-merge-option input{flex:0 0 13px;width:13px;height:13px;margin:0;cursor:pointer}
 #start-panel-review .auto-merge-option{flex-basis:100%;margin:0 0 2px}
 .plan-change{margin-left:6px;font-size:13px;font-weight:600;padding:0}.plan-change[data-change="changed"]{background:var(--warn-bg);color:var(--warn)}.plan-change[data-change="added"]{background:var(--ok-bg);color:var(--ok)}.plan-change[data-change="removed"]{background:var(--fill);color:var(--soft)}
 .plan-change-reason{grid-column:2/-1;margin-top:-4px;font-size:11.5px;line-height:1.5;color:var(--soft)}
