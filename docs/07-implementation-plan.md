@@ -4056,3 +4056,11 @@ Trace: R-127 / BG-82 / SF-114 / UC-117 / FR-112 / QAS-123 / DD-136.
 - [x] Completed: local implementation, diff review and evidence recorded; linked PR tracks merge/closure and owned artifact/branch cleanup.
 
 #925 evidence: Red reproduced four timer failures and the actual subprocess run stuck in waiting_availability. Green:87 local tests (37 focused availability/fallback,31 library,7 architecture,5 independent watcher,1 Claude API workflow,4 manual renderer,1 manual menu,1 source layout); Clippy with warnings denied and changed-file formatting pass. Shared/worktree partial work, dependency completion, Stop, missing ownership evidence, task override/disabled fallback, unavailable chains and merge approval remain covered. English/Korean HTML manuals regenerated with the existing Rust renderer. No physical Windows/provider-account validation or release performed.
+
+### Meaningful planned verification commands — GitHub #928 / #929 (0.2.8)
+
+Trace: R-190 / BG-145 / SF-178 / UC-181 / FR-182 / QAS-188 / DD-202.
+- [x] Plan: claim owner-claude and issue-linked branch; inspect planner prompt, validation and retry.
+- [x] Task: reject vacuous test commands in the planner and retry once; prompt rules for documentation checks and load-only red-phase test tasks.
+- [x] Verify: plan, prompt_order, planning_overlap_repair and planner fixture tests.
+- [x] Completed: linked PR tracks merge and branch cleanup.

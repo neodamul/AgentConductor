@@ -894,3 +894,5 @@ R-216 / #921 (0.2.7): Help lists Release notes between Check for updates and Rep
 
 
 R-127 / #925 (0.2.8): a usage-limited task immediately uses an available reviewed fallback, regardless of reset distance or missing reset. Preserve plan/dependency order, explicit task overrides (including disabled fallback), account separation, and quiescent ownership. Manual reservations and transient-capacity retries retain their deadlines.
+
+R-190 / #928 / #929 (0.2.8): a planned test_command must fail when its task's deliverable is missing; checks that always pass (`git status`, `true`, `echo`, `ls`) are rejected. A test-first task whose tests are meant to fail until a later task implements the code only checks that its tests exist and load, so integration verification does not fail the run on intended red tests.

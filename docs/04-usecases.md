@@ -900,3 +900,5 @@ UC-208 / #921: select Help → Release notes; the default browser opens the rele
 
 
 UC-117 / #925: given an exhausted T1 account and a ready T2, transfer T1 to its reviewed available fallback at the next safe scheduler boundary and launch in dependency/plan order. If no fallback is usable, permit independent T2 and retain a real reset reservation; do not invent a reset.
+
+UC-181 / #928 / #929: the coordinator returns a plan; a task whose test_command is `git status` fails validation and the planner retries once with the correction; a write-failing-tests task gets `node --check` (or similar) and the implementing task runs the tests.

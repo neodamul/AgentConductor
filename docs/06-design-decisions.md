@@ -1763,3 +1763,5 @@ DD-231 / #921: extend the bug-report request enum with ReleaseNotes and share re
 
 
 DD-136 / #925 supersedes the five-hour fallback horizon for usage restrictions. Reuse fallback_due for immediate eligibility, preserving transient_capacity/manual_schedule deadlines. Derive the first fallback from Task::fallback_for, then traverse reviewed profile fallbacks with cycle detection. The watcher chooses the earliest valid source reset or fallback wake; unknown exhausted chains have no immediate repeating timer. Keep all-worker quiescence before Git handoff/invalidating dependents.
+
+DD-202 / #928 / #929: reuse the one-retry contract. The check runs in the planner after Plan::validate (plain and per phase), not inside Plan::validate, so saved plans and setup profiles with `true` stay valid. Red-phase tests are handled in the prompt (load-only check) instead of an expected-failure flag, because integration verification reruns every task's command after the implementation makes the tests pass.

@@ -91,6 +91,11 @@ fn the_planning_prompt_puts_source_documents_first_and_the_json_contract_last() 
             && format.contains("\"phases\"")
             && format.contains("Done when:")
     );
+    // GitHub #928/#929: no check that passes without the deliverable; red tests only load.
+    assert!(
+        format.contains("never a check that passes without it, such as `git status`")
+            && format.contains("must not run those tests")
+    );
     for early in [document, task] {
         assert!(
             !early.contains("Return only a JSON object"),

@@ -790,3 +790,5 @@ SF-204 / #921: release notes for the running version are reachable from Help.
 
 
 SF-114 / #925: share immediate quota fallback eligibility between scheduler and durable watcher; preserve original-account reset recovery when all fallback accounts are unavailable.
+
+SF-178 / #928 / #929: planning rejects vacuous verification commands and asks for load-only checks on red-phase test tasks.
