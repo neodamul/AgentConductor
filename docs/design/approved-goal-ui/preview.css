@@ -464,3 +464,5 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 .source-review .source-doc-head input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
 .source-review .source-doc-head input[type=checkbox]:checked::after{content:"";width:7px;height:4px;border-left:2px solid var(--accent-ink);border-bottom:2px solid var(--accent-ink);transform:translateY(-1px) rotate(-45deg)}
 .source-review .source-ref{min-width:0;max-width:35%;overflow:hidden;text-overflow:ellipsis}
+
+#profile-edit-dialog label.check-row{flex-direction:row;align-items:flex-start;gap:8px}#profile-edit-dialog .check-row input[type=checkbox]{width:16px;height:16px;flex:0 0 16px;margin:2px 0 0;padding:0}

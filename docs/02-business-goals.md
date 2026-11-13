@@ -665,3 +665,6 @@ BG-82 / #925: keep earlier planned work progressing on reviewed alternative capa
 
 
 BG-165 / #927: keep the run screen consistent with the approved mock without hiding failure evidence or recovery actions.
+
+
+BG-77 / #931: prevent false completion and repeated paid requests when organization policy denies the permission requested by a Claude profile.

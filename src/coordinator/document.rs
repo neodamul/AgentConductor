@@ -66,7 +66,12 @@ pub fn read_profile_document(
     stdout: &Path,
     field: &str,
 ) -> Result<Value, String> {
-    read_document_inner(profile.parser, Some(profile), stdout, field)
+    // Coordinators use restricted argv even when their worker profile requests full access.
+    let mut execution = profile.clone();
+    if execution.parser == Provider::Claude && execution.permission_mode == "full_access" {
+        execution.permission_mode = "read_only".into();
+    }
+    read_document_inner(execution.parser, Some(&execution), stdout, field)
 }
 
 fn read_document_inner(

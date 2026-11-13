@@ -825,3 +825,5 @@ FR-112 / #925: quota fallback has zero policy delay; task-level overrides govern
 
 FR-204 / #927: delete banner markup, styles and handlers rather than hiding an idle instance. Preserve disabled/busy guards, safe text output, localized labels and approved candidate checks; warnings must not occupy the area above the task card.
 FR-182 / #928 / #929: `plan::is_vacuous_check` classifies argv (also `sh -c`/`cmd /c` wrapped) whose program is true, :, echo, printf, ls, dir, pwd or git status/log/branch/show/rev-parse; `plan::VACUOUS_CHECK` keys the existing retry. Stored plans are not revalidated, so older runs still load.
+
+FR-107 / #931: validate observed rather than inferred permission capability; a zero exit and is_error:false do not override nonempty permission_denials. Fail closed on unverified full-access result; preserve normal/callback/custom/Codex behavior. Metadata remains asynchronous and bounded; no new dependency, API key, generated permission probe, or automatic policy/configuration rewrite.
