@@ -66,6 +66,7 @@ async fn automatic_merge_is_default_off_and_never_bypasses_stop_or_evidence() {
     assert_eq!(workflow::load(&dir).unwrap().state, "completed");
     let store = agentconductor::state::Store::open(dir.join("state.sqlite")).unwrap();
     assert_eq!(store.document("approval").unwrap()["automatic"], true);
+    drop(store); // Windows requires the SQLite handle closed before deleting its files.
     fs::remove_dir_all(root).unwrap();
 }
 

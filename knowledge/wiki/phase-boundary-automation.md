@@ -11,3 +11,5 @@ Reuse existing child-process jobs and state updates. Stop persists a chain pause
 Stream hashes of full test logs while passing bounded excerpts to the coordinator. Preserve explicit truncation and fail on altered evidence. Only backfill older outcome receipts from exact retained Goal-root links; never guess another Goal's results.
 
 See `docs/evidence/943-whole-app-validation.md` for verification and limits.
+
+#952: Windows refuses fixture deletion while a test-owned SQLite Store is alive. Explicitly drop the Store after its last assertion and before removing the fixture; do not ignore deletion errors or weaken merge assertions.

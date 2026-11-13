@@ -4161,3 +4161,10 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 - [x] Task: synchronize version, reviewed release notes, README and bilingual manual sources.
 - [ ] Verify: refresh sample gallery and generated HTML; local exact-source package smoke; combined macOS/Windows Release workflow.
 - [ ] Completed: confirm published stable archives/checksums/manuals, record evidence and clean task-owned temporary files and merged branches.
+
+## #952 — Windows automatic-merge test fixture cleanup
+
+- [x] Plan: release Windows evidence reproduces OS error 32 after behavior assertions; existing cross-platform verification requirement applies.
+- [x] Task: close the test-owned SQLite handle before deleting its fixture. Product code and gate assertions are unchanged.
+- [x] Verify: 3 automatic-merge, 7 architecture and 1 source-layout tests passed locally; formatting passed. Windows release revalidation remains a publication gate.
+- [ ] Completed: merge linked PR, close issue and confirm stable release.
