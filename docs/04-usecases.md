@@ -943,3 +943,6 @@ UC-135 / #933 / #934: the operator sets a project folder while Claude usage show
 
 
 #960: Select Diff and tests in run A. Same-run snapshots keep it selected. Start run B (including a recreated Room): Activity is selected; a late run-A evidence response cannot switch it back.
+
+
+#957: In Review and merge, click a changed file to expand its diff, inspect additions/deletions, and click again to collapse. Polling keeps the row open and focus intact; existing approval gates remain.

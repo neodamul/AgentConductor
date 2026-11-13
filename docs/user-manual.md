@@ -553,3 +553,6 @@ During next-Phase re-planning, Step 3 names the previous and target Phases and s
 
 
 Each newly opened run starts on Activity. Within the same run, periodic refresh keeps the tab you selected. Evidence returned for a previous run is not displayed in the new run.
+
+
+In Review and merge, click a changed file to expand its diff below the filename and added/deleted line counts. Click it again to collapse. Background refresh keeps an unchanged file open and preserves keyboard focus. This uses the same per-file view as the finished-result popup; approval and merge still use the captured evidence.

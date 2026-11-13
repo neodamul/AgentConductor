@@ -203,3 +203,6 @@ DD-136 / #925 driver: provider capacity and reviewed alternatives determine elig
 
 
 #960: Keep UI state local to run identity without storage, extra polling or dependencies.
+
+
+#957: Share the existing file-diff component; preserve approved look and feel, keyboard accessibility and low redraw overhead.

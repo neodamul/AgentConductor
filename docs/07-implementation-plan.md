@@ -4210,3 +4210,12 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 - [x] Task: actual DOM reproduced "New run inherited review tab"; reset first/new-run tab and discard obsolete evidence.
 - [x] Verify: five actual Room boundaries passed (including background summary); live sessions (#955), auto-merge notices (#959), and seven native routing/focus/docs/layout checks passed.
 - [x] Completed: manuals/HTML/wiki updated, linked issue branch prepared for PR/merge; CI remains batched.
+
+## #957 — Expandable review file diffs
+
+- [x] Plan: import approved mock aed43254; trace feature/use case/QAS/design; inspect existing result renderer.
+- [x] Task: reproduced absent file toggles; shared bounded file-row renderer with Step 6 and kept unchanged summary DOM during polling.
+- [x] Verify: four real-DOM conditions; 56 approved element comparisons (zero differences); 756 mock interactions; existing result and #960 DOM regressions; 18 native routing/focus/docs/layout/trace checks and two manifest checks passed.
+- [x] Completed: manuals/HTML/wiki updated; linked branch prepared for PR/merge and batched CI handoff.
+
+#957: the comparison index and extracted files are each <=300 lines; all 429 generated entries remained identical during extraction.

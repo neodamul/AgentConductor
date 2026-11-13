@@ -704,3 +704,6 @@ BG-132 amendment (#935, #936): resolve ambiguous goals inside the existing revie
 
 
 #960: Start each execution in its live activity context instead of displaying evidence left over from another run.
+
+
+#957: Let operators inspect individual changed files before merge using the same interaction as the result dialog.
