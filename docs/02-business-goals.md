@@ -698,3 +698,6 @@ BG-132 amendment (#935, #936): resolve ambiguous goals inside the existing revie
 
 
 #959: Keep multi-Phase execution continuous through reviewed quota fallbacks without broadening approval or review permissions.
+
+
+#958: Keep operators informed of the actual next Phase while asynchronous re-planning runs; do not present a previous plan as current.

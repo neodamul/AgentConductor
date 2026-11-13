@@ -197,3 +197,6 @@ Avoid a second repository store and GitHub OAuth/API client. Share the validated
 
 
 DD-136 / #925 driver: provider capacity and reviewed alternatives determine eligibility; an arbitrary five-hour threshold must not delay ready work. Retain exclusive worker ownership and bounded reset reservations.
+
+
+#958: Asynchronous state clarity with no extra worker, timer, dependency or duplicate progress banner.

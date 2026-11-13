@@ -857,3 +857,6 @@ FR-130 / #933 / #934: autoDiscover also queries a Claude profile whose indicator
 
 
 #959: Consent may be carried only if it was enabled and its previous digest exactly matched the pre-transfer plan. Missing, disabled or mismatched consent is never reauthorized; no general mutation path refreshes it.
+
+
+#958: Pending and ready plan identities include target Phase, proposal directory and lifecycle. Hide historical task presentation only during pending re-planning; preserve normal history and dirty edits across unrelated snapshots.

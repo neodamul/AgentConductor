@@ -937,3 +937,6 @@ UC-135 / #933 / #934: the operator sets a project folder while Claude usage show
 
 
 #959: Opt into a multi-Phase plan, exhaust the primary agent and transfer to its reviewed fallback. Verified work merges automatically. A manual reassignment, changed scope, Stop, permission or review gate still requires operator action with an explanation.
+
+
+#958: After Phase 2 merges, open Phase 3 planning. See Phase 2 → Phase 3 in-progress heading, existing elapsed/output progress, no old tasks, disabled approval; when ready review Phase 3 normally.

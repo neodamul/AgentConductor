@@ -826,3 +826,6 @@ SF-132 / #933 / #934: icon-only usage retry; automatic Claude usage query after 
 
 
 #959: Rebind exact consent only at trusted automatic-fallback transitions, audit old/new plan digests, and surface failed merge jobs separately from human action jobs.
+
+
+#958: Step 3 distinguishes pending next-Phase planning from ready review using the proposal target and running job.

@@ -79,3 +79,5 @@
 .plan-removed .task-oneline{text-decoration:line-through;color:var(--soft)}
 #start-panel-review .plan-removed>summary{display:grid;grid-template-columns:28px 1.6fr 1fr 1fr 90px;gap:10px;cursor:pointer}
 #start-panel-review .plan-removed .task-oneline{grid-column:2/-1}
+
+#start-panel-review.plan-pending :is(#start-plan-phases,#start-plan-summary,#start-task-tools,.plan-sources){display:none}
