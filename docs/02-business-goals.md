@@ -710,3 +710,6 @@ BG-132 amendment (#935, #936): resolve ambiguous goals inside the existing revie
 
 
 #962: Prevent duplicate destructive session actions and keep operators oriented after asynchronous completion.
+
+
+#963: Keep the selected task context distinct from integration evidence so operators do not mistake another scope for the current work.

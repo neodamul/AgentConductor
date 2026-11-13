@@ -4246,3 +4246,10 @@ Local verification includes a successful current-source build, all-target Clippy
 - [x] Task: reproduced duplicate submission; added single-flight mutation, stale-read invalidation, focus restoration and approved confirmation styling.
 - [x] Verify: actual dialog duplicate/pending/failure/focus/stale-read checks passed, alongside all nine existing session checks and the #955 observer regression; approved danger controls checked in Light/Dark.
 - [x] Completed: bilingual manuals/HTML/wiki updated; linked PR prepared for immediate merge before 0.2.10 release.
+
+## #963 — Task and integration review separation
+
+- [x] Plan: user transferred ownership; trace selected-task presentation through QAS/design.
+- [x] Task: reproduced integration summary remaining above a selected task; hide it on the existing task render path.
+- [x] Verify: actual review footer regression passes task → integration visibility plus unchanged revise/review/approved/completed footer behavior.
+- [x] Completed: bilingual manuals/HTML and wiki updated; linked PR prepared for merge before release.

@@ -869,3 +869,6 @@ FR-130 / #933 / #934: autoDiscover also queries a Claude profile whose indicator
 
 
 #962: Reject duplicate mutation calls and empty clean selections. Invalidate inventory reads issued before mutation; coalesce refreshes requested during it. Preserve backend session ownership and deletion validation.
+
+
+#963: Reset integration-only surfaces in the task render path; preserve loaded evidence and selection state.

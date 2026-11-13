@@ -8,7 +8,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms)),fail=m=>{throw Error(m);};
 (async()=>{try{const b=await launch(chrome,{width:1280,height:900});try{
  await b.goto(pathToFileURL(path.join(dir,'app.html')).href);await wait(1500);
  const until=async(code,name)=>{for(let i=0;i<150;i++){if(await b.eval(code).catch(()=>false))return;await wait(100);}fail('timed out: '+name);};
- await b.eval("SIM.home.run_available=true;SIM.home.run_state='running';SIM.room.report.state='waiting_approval';SIM.room.report.tasks.forEach(t=>t.status='completed');SIM.room.report.candidate={commit:'abcdef1234567890'};SIM.room.report.tests=[{task:'task-1',exit_code:0,timed_out:false,output:''}];");
+ await b.eval("SIM.home.run_available=true;SIM.home.run_state='running';SIM.room.report.state='waiting_approval';SIM.room.report.tasks.forEach(t=>t.status='completed');SIM.room.report.candidate={commit:'abcdef1234567890'};SIM.room.report.tests=[{task:'task-1',exit_code:0,timed_out:false,output:''}];SIM.reply.evidence=()=>({report:SIM.room.report,test_output:[],diff:'',truncated:false});");
  await until("!document.getElementById('start-tab-tasks').disabled",'run steps available');
  await b.eval("document.getElementById('start-tab-tasks').click()");
  // the rail follows into the integration row by itself
@@ -17,6 +17,11 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms)),fail=m=>{throw Error(m);};
  const shown=await b.eval(`({only:${card}.classList.contains('review-only'),tabs:getComputedStyle(${card}.querySelector('.view-tabs')).display,composer:getComputedStyle(${card}.querySelector('.composer')).display,banner:!document.getElementById('run-banner'),info:document.querySelector('#run-goal-info .goal-info-content').textContent.trim()})`);
  if(!shown.only||shown.tabs!=='none'||shown.composer!=='none')fail('the card still shows tabs or the direction field: '+JSON.stringify(shown));
  if(!shown.banner)fail('the run banner repeats the approval state');if(!shown.info)fail('no integration result line under the title');
+ await until("!document.getElementById('review-summary').hidden",'integration review summary');
+ await b.eval("document.querySelector('#sessions .session:not(.final-step) .session-choice').click()");
+ if(!await b.eval("document.getElementById('review-summary').hidden&&document.getElementById('verify-rows').hidden"))fail('selected task retained integration summary (#963)');
+ await b.eval("document.querySelector('.final-step .session-choice').click()");
+ await until("!document.getElementById('review-summary').hidden",'integration summary restored after task selection');
  await b.eval("document.getElementById('review-revise').click()");
  const revising=await b.eval(`({only:${card}.classList.contains('review-only'),composer:getComputedStyle(${card}.querySelector('.composer')).display,footer:!document.getElementById('review-footer').hidden})`);
  if(revising.only||revising.composer==='none'||!revising.footer)fail('Request changes did not open the direction field: '+JSON.stringify(revising));

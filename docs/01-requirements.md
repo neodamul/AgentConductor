@@ -937,3 +937,6 @@ R-145 / #933 / #934 (0.2.8): the usage popup's retry after a failed query is the
 
 
 #962: Session cleanup and stop operations are single-flight, expose progress, keep dialog focus and use the approved destructive-action style.
+
+
+#963: Selecting a task in Review and merge shows only that task; integration review summary returns only when its coordinator row is selected.

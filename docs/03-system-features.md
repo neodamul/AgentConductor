@@ -838,3 +838,6 @@ SF-132 / #933 / #934: icon-only usage retry; automatic Claude usage query after 
 
 
 #962: Session dialog mutation guard, pending feedback, safe focus restoration and destructive confirmation appearance.
+
+
+#963: Selected-task and coordinator-review presentation are mutually exclusive.
