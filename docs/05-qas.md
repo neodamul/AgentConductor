@@ -944,3 +944,4 @@ QAS-141 / #933 / #934: tests/quota_folder_934.cjs (no folder: no query; folder s
 
 
 #959: Shared/worktree quota fallbacks retain exact automatic consent and audit the rebinding. Tampered/disabled consent and manual reassignment stay blocked; changed and unchanged three-Phase chains complete with existing gates preserved. Failed auto-merge jobs show a single actionable notice.
+#958: Given Phase 2 merged and the Phase 3 re-plan job running, Step 3 shows "Phase 2 결과로 Phase 3을 다시 계획하는 중입니다", a progress row, no Phase 2 task rows and disabled approval; when the plan is ready it shows the Phase 3 re-plan.

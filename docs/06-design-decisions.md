@@ -1797,3 +1797,4 @@ DD-62 amendment (#954): Merge automatically is a Phase-boundary option, so the r
 
 
 #959: Local evidence confirmed consent enabled, reviewed fallback transfers, and executed-plan agent/fallback/prompt changes causing digest mismatch. Rebind only in automatic quota/checkpoint fallback call sites after their existing quiescence, policy and scope checks; retain generic transfer/manual edit behavior and review_round blocking. Worker false results become errors; Room receives a separate error field so manual action jobs are not overwritten.
+DD-62 amendment (#958): the re-plan heading follows the running plan job's target Phase, not the last stored proposal; while that job runs the card shows a pending state instead of stale rows.
