@@ -154,6 +154,8 @@ The document preview guide keeps your expanded/collapsed choice while progress a
 
 ### 1.5 Plan and approval
 
+For a phased Goal, the Plan heading identifies the reviewing Phase by position and name. Its tasks appear once as editable rows. Use the left outline to inspect completed or later Phases, then return to review without losing edits. Task-ID-only summaries are omitted; meaningful historical context is retained.
+
 **Generate plan** reads a temporary snapshot and requests analysis plus ordered phases.
 Claude and Codex planning use native JSON Schema output contracts; OpenCode and custom CLIs receive the same contract in their prompt. Phases, tasks, file scopes, dependencies and test arguments remain arrays. Invalid replies still fail validation and never approve execution. The app manages `--json-schema` / `--output-schema`; leave those flags out of registered profile arguments to avoid a schema conflict. The retained `output-schema.json` beside the planning prompt helps diagnose output errors.
 Generate plan clears the previous visible failure immediately and selects Review. The current coordinator CLI icon pulses without status color; progress follows the new job. Preparation shows elapsed time before the coordinator starts. Disabled approval shows its reason: save actual edits or wait for the active job. Reverting edits does not block approval. A failure keeps its cause in **Review the plan**; expand **Error details** to inspect and copy the retained CLI or parsing output before retrying. Logs remain available.

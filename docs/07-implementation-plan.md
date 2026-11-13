@@ -4130,3 +4130,11 @@ Trace: R-122 / BG-77 / SF-109 / UC-112 / FR-107 / QAS-118 / DD-131 / DD-33.
 Evidence: [planning read recovery](evidence/942-planning-read-recovery.md). Source-only fix commit 8bac96c6 is isolated for release maintenance. Actual private replay recovered four phases/ten tasks with all planner validations, without generation or user workspace writes. Release cancellation and subsequent draft withdrawal are recorded separately; publication remains on hold.
 
 Final local acceptance: 45 focused plus 36 broader checks passed; source-only fix 8bac96c6, signed local app installed with the original Workspace restored. Actual Claude regeneration completed and four phases/task review with Approve and run enabled was observed. Execution approval was left to the operator. v0.2.8 remains draft after publish/cancel-race withdrawal; old published tag/assets are preserved.
+
+
+## #944 — Plan review duplicate Phase summary
+
+- [x] Plan: trace requirements through use case, QAS and DD-125 amendment.
+- [x] Task: add a failing runtime regression, remove the duplicate box, and add heading parity coverage.
+- [x] Verify: local runtime, Phase history/edit preservation, theme/viewport parity and source checks.
+- [x] Completed: committed/pushed code, tests, manuals and wiki; PR #947 tracks final merge and issue closure. Collaboration recorded in AgentMemory.

@@ -677,3 +677,6 @@ BG-132 amendment (#935, #936): resolve ambiguous goals inside the existing revie
 
 
 #942: preserve reliable planning without broadening permissions or consuming another generation after a recovered source probe.
+
+
+#944: Reduce planning review noise while preserving task editing, Phase navigation and safe execution approval.

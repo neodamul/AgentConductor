@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Show reviewing Phase context in the Plan heading and editable tasks only once; retain Phase history and unsaved task edits (#944).
+
 - Remove the postponed alternate Rust UI, its dedicated validation and unused dependencies; retain the supported desktop UI and shared Rust backend (#940).
 
 - Accept validated read-only planning after denied source probes recover through allowed snapshot reads; preserve strict worker permission checks and actionable unresolved errors (#942).
