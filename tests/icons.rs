@@ -119,7 +119,10 @@ fn installed_macos_applications_provide_their_icons() {
 fn pages_render_application_icons_only_for_built_in_agents() {
     for script in [
         include_str!("../src/ui/startup.js"),
-        include_str!("../src/ui/room.js"),
+        concat!(
+            include_str!("../src/ui/room.js"),
+            include_str!("../src/ui/room_render.js")
+        ),
     ] {
         assert!(script.contains("function avatar("));
         assert!(script.contains("app-icon"));

@@ -1,6 +1,12 @@
 //! GitHub #122: the Agent Room offers the recovery panel for out-of-scope failures.
 const HTML: &str = include_str!("../src/ui/room.html");
-const SCRIPT: &str = include_str!("../src/ui/room.js");
+const SCRIPT: &str = concat!(
+    concat!(
+        include_str!("../src/ui/room.js"),
+        include_str!("../src/ui/room_render.js")
+    ),
+    include_str!("../src/ui/room_recovery.js")
+);
 
 #[test]
 fn the_room_embeds_the_recovery_button_dialog_and_wiring() {

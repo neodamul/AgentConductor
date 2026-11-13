@@ -132,7 +132,10 @@ async fn a_failing_coordinator_is_recorded_and_bad_requests_are_refused() {
 
 #[test]
 fn the_room_sends_coordinator_feedback_through_its_own_action() {
-    let js = include_str!("../src/ui/room.js");
+    let js = concat!(
+        include_str!("../src/ui/room.js"),
+        include_str!("../src/ui/room_render.js")
+    );
     assert!(js.contains("coordinator_request"));
     assert!(js.contains("COORDINATOR_DRAFT"));
     let enabled = js

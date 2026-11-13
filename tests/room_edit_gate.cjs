@@ -1,6 +1,6 @@
 // GitHub #103: agent and model controls work for a task that has not started, even while others run.
 const fs = require('node:fs'), vm = require('node:vm'), assert = require('node:assert/strict');
-const source = fs.readFileSync('src/ui/room.js', 'utf8');
+const source = (fs.readFileSync('src/ui/room.js', 'utf8') + fs.readFileSync('src/ui/room_render.js', 'utf8'));
 const start = source.indexOf('function canEditTask(');
 assert.ok(start >= 0, 'room.js defines canEditTask');
 const gate = (state, status, job) => {

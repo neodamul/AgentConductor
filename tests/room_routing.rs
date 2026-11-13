@@ -35,7 +35,10 @@ fn marked_requests_go_to_the_room_and_others_to_the_workspace() {
 #[test]
 fn the_page_keeps_the_room_running_when_going_home() {
     let startup = include_str!("../src/ui/startup.js");
-    let room = include_str!("../src/ui/room.js");
+    let room = concat!(
+        include_str!("../src/ui/room.js"),
+        include_str!("../src/ui/room_render.js")
+    );
     assert!(room.contains("JSON.stringify({...packet,room:true})"));
     assert!(!startup.contains("request({kind:'home'});window.stopRoom"));
     assert!(

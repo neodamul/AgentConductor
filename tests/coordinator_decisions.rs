@@ -120,7 +120,10 @@ fn a_review_that_blocks_or_accepts_is_listed_too() {
 
 #[test]
 fn the_room_shows_every_judgment_in_the_run_and_the_task() {
-    let js = include_str!("../src/ui/room.js");
+    let js = concat!(
+        include_str!("../src/ui/room.js"),
+        include_str!("../src/ui/room_render.js")
+    );
     assert!(js.contains("function judgmentEntry"));
     assert!(js.contains("data.coordinator_decisions"));
     assert!(js.contains("data.decisions_all") || js.contains("data.judgments"));

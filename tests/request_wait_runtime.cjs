@@ -3,7 +3,7 @@
 const vm = require('node:vm'), fs = require('node:fs'), assert = require('node:assert/strict');
 // Windows checkouts may have CRLF line ends.
 const read = f => fs.readFileSync(f, 'utf8').replace(/\r\n/g, '\n');
-const i18n = read('src/ui/i18n.js'), startup = read('src/ui/startup.js'), room = read('src/ui/room.js');
+const i18n = read('src/ui/i18n.js'), startup = read('src/ui/startup.js'), room = read('src/ui/room.js')+read('src/ui/room_render.js');
 const catalog = JSON.parse(fs.readFileSync('src/ui/messages/en.json', 'utf8'));
 assert.ok(catalog['common.waiting_reply'] && JSON.parse(fs.readFileSync('src/ui/messages/ko.json', 'utf8'))['common.waiting_reply'], 'the line is in both catalogs');
 let clickHandler = null, now = 1_000_000;

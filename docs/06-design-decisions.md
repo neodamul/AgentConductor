@@ -1763,3 +1763,6 @@ DD-231 / #921: extend the bug-report request enum with ReleaseNotes and share re
 
 
 DD-136 / #925 supersedes the five-hour fallback horizon for usage restrictions. Reuse fallback_due for immediate eligibility, preserving transient_capacity/manual_schedule deadlines. Derive the first fallback from Task::fallback_for, then traverse reviewed profile fallbacks with cycle detection. The watcher chooses the earliest valid source reset or fallback wake; unknown exhausted chains have no immediate repeating timer. Keep all-worker quiescence before Git handoff/invalidating dependents.
+
+
+DD-222 / #927: reuse task-notice/error tokens and review-footer controls for diagnostic evidence and recovery. Remove duplicated next-step/banner Resume paths; existing review/result footer and composer remain authoritative. Update reference failure states first and cover runtime behavior plus design parity.

@@ -91,3 +91,6 @@
 .goal-info>.status-pill,#run-goal-info>.status-pill,.session-state{padding:1px 7px}
 :is(#rail-room,#rail-outline) .outline-state-badge[data-state="running"],.session-state.running{background:var(--info-bg);color:var(--info)}
 .status-pill[class*=tone-]{padding:1px 7px}
+
+#run-screen .room-card.repair-pending .composer{display:none}
+#run-screen .room-card.repair-pending.coordinator-card :is(.view-tabs,#task-status){display:none}

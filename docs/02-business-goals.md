@@ -662,3 +662,6 @@ Operators report reproducible defects to the correct public or internal reposito
 
 
 BG-82 / #925: keep earlier planned work progressing on reviewed alternative capacity instead of leaving it parked while later work starts.
+
+
+BG-165 / #927: keep the run screen consistent with the approved mock without hiding failure evidence or recovery actions.

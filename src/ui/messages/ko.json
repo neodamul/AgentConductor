@@ -1586,5 +1586,6 @@
   "mcp.log_stored_failed": "저장된 조회 도구 실패 · 다시 선택: {detail}",
   "mcp.too_many_references": "Goal에는 Jira·Confluence 문서를 {limit}개까지 넣을 수 있습니다(현재 {count}개). 하나를 지우면 미리볼 수 있습니다.",
   "mcp.references_count": "참조 {count}/{limit}",
-  "mcp.reference_limit_reached": "Goal에는 참조 문서를 {limit}개까지 넣을 수 있습니다."
+  "mcp.reference_limit_reached": "Goal에는 참조 문서를 {limit}개까지 넣을 수 있습니다.",
+  "room.recovery_footer_note": "원인을 확인하고 다시 진행합니다."
 }

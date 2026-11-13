@@ -15,7 +15,10 @@ const ROOM_LAYOUT_CSS: &str = include_str!("../src/ui/room_layout.css");
 const RUN_CSS: &str = include_str!("../src/ui/run_screen.css");
 const HTML: &str = include_str!("../src/ui/startup.html");
 const STARTUP_JS: &str = include_str!("../src/ui/startup.js");
-const ROOM_JS: &str = include_str!("../src/ui/room.js");
+const ROOM_JS: &str = concat!(
+    include_str!("../src/ui/room.js"),
+    include_str!("../src/ui/room_render.js")
+);
 
 fn block<'a>(css: &'a str, selector: &str) -> &'a str {
     let start = css.find(&format!("{selector}{{")).expect(selector) + selector.len() + 1;

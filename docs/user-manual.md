@@ -179,7 +179,7 @@ On the Plan step, select a task from any Phase in **Phase·Task** to open its ma
 
 ### 1.6 Agent Room and feedback
 
-The status banner explains the run state, task/phase progress, failure cause and next action. After tasks pass, the stage rail continues through Verify, Merge and Workspace finalization; while an approved candidate is merging, the primary action shows "Merging approved changes" and stays disabled.
+The title status pill shows the run state; task/phase progress stays in the left outline. Failure output and attention, interruption or owned-file warnings appear inside the task card, with **Fix with feedback** or **Scope review** in its footer. Fix with feedback opens the failed task and drafts its direction; **Resume** stays in the composer. There is no separate run-status banner. After tests pass, use the existing review footer to inspect, approve and apply the exact candidate; its primary action stays disabled while merging. The completed footer opens the result and the Goal list path remains available.
 Session rows show the reviewed task summary and task ID first, followed by the small agent icon, agent name and status tag. Long or translated statuses wrap within the rail. The left list uses green/yellow/red lights; running lights pulse and
 tasks awaiting a decision blink. Reduced-motion settings suppress animation.
 Usage badges stay in workspace agent cards, so the task list remains compact. The Account capacity inspector also shows Enterprise allocations as a remaining percentage. An outline identifies the selected task.

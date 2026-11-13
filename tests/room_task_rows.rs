@@ -1,6 +1,9 @@
 //! Compact task rows in the Agent Room. User requests 2026-10-14 (R-128 / DD-137 amendment): the
 //! task name leads; a small icon, the agent name and a compact status tag share the next line.
-const ROOM: &str = include_str!("../src/ui/room.js");
+const ROOM: &str = concat!(
+    include_str!("../src/ui/room.js"),
+    include_str!("../src/ui/room_render.js")
+);
 const CSS: &str = include_str!("../src/ui/room.css");
 const RUN_CSS: &str = include_str!("../src/ui/run_screen.css");
 
@@ -50,7 +53,7 @@ fn the_avatar_border_carries_the_task_status() {
 }
 
 #[test]
-fn approval_and_merge_are_separate_visible_stages_and_merge_keeps_progress_in_the_banner() {
+fn approval_and_merge_are_separate_visible_stages_and_merge_keeps_progress_in_the_status_pill() {
     // GitHub #390: the stages are steps 4-6 of the one stepper (startup.html), marked from the Room.
     let html = include_str!("../src/ui/startup.html");
     for step in ["start-tab-tasks", "start-tab-verify", "start-tab-merge"] {

@@ -1,6 +1,6 @@
 // GitHub #95: Send feedback works for a task that is running; the backend queues it.
 const fs = require('node:fs'), vm = require('node:vm'), assert = require('node:assert/strict');
-const source = fs.readFileSync('src/ui/room.js', 'utf8');
+const source = (fs.readFileSync('src/ui/room.js', 'utf8') + fs.readFileSync('src/ui/room_render.js', 'utf8'));
 const start = source.indexOf('function feedbackEnabled(');
 assert.ok(start >= 0, 'room.js defines feedbackEnabled');
 const end = source.indexOf('\n', start);

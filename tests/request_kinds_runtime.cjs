@@ -6,7 +6,7 @@
 //   direct  everything else; AC_WAIT marks the pressed button and names the request after 1 s
 const fs = require('node:fs'), assert = require('node:assert/strict');
 const read = f => fs.readFileSync(`src/ui/${f}`, 'utf8').replace(/\r\n/g, '\n');
-const pages = ['startup.js', 'room.js', 'mcp.js', 'chat.js', 'optimize.js', 'manual.js', 'team_briefing.js'];
+const pages = ['startup.js', 'room.js', 'room_render.js', 'room_recovery.js', 'mcp.js', 'chat.js', 'optimize.js', 'manual.js', 'team_briefing.js'];
 const found = new Set();
 for (const page of pages) for (const m of read(page).matchAll(/\bkind:\s*'([a-z_]+)'/g)) found.add(m[1]);
 
@@ -20,7 +20,7 @@ const JOBS = [
   { kinds: ['chat'], file: 'chat.js', text: 'chat_job' },
   { kinds: ['discover'], file: 'startup.js', text: 'kind===`catalog:${p.id}`' },
   { kinds: ['apply_update'], file: 'startup.js', text: "updateSince('installing')" },
-  // Room actions run as controller jobs shown in the banner; the usage refresh marks its button (and counts its time once #297 lands).
+  // Room actions run as controller jobs shown in the card/composer; the usage refresh marks its button (and counts its time once #297 lands).
   { kinds: ['approve', 'merge', 'reject', 'revise', 'recover', 'resume', 'reassign', 'schedule', 'model', 'stop', 'coordinator_request', 'scope_recovery'], file: 'room.js', text: 'room.in_progress' },
   { kinds: ['quota'], file: 'startup.js', text: "metadataBusy('quota',p.id)" },
 ];

@@ -32,7 +32,7 @@
 })();
 // Probes: what the operator sees in the given elements ("(hidden)" when not on screen) and which buttons are marked busy.
 window.PROBE = ids => { ids = ids || ['start-phase', 'start-status', 'start-step-progress', 'start-plan-progress', 'start-run-progress', 'start-notice', 'start-optimize-status']; const v = id => { const e = document.getElementById(id); if (!e) return null; for (let n = e; n; n = n.parentElement) if (n.hidden || getComputedStyle(n).display === 'none') return '(hidden)'; return e.textContent.trim().replace(/\s+/g, ' ').slice(0, 220); }; const out = {}; for (const id of ids) out[id] = v(id); out.busy = [...document.querySelectorAll('.is-busy')].map(b => b.id || b.textContent.trim()).join(','); return out; };
-window.ROOM = () => PROBE(['run-banner-state', 'run-banner-progress', 'run-banner-next', 'run-banner-attention', 'job-state', 'task-status', 'task-activity', 'connection', 'notice']);
+window.ROOM = () => PROBE(['run-pill', 'run-error', 'run-attention', 'job-state', 'task-status', 'task-activity', 'connection', 'notice']);
 window.wait = ms => new Promise(r => setTimeout(r, ms));
 // A hidden browser pane fires no dialog close event; CONFIRM closes a dialog as the confirm button would.
 window.CONFIRM = id => { const d = document.getElementById(id); d.close('confirm'); d.dispatchEvent(new Event('close')); };
