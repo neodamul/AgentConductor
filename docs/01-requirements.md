@@ -625,7 +625,7 @@ A project folder has one active owning workspace. New goals are added within it;
 Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159. GitHub #6, user2026-10-15.
 
 ### R-151 Rust-only application and release toolchain
-Status: In progress on the Rust migration line (GitHub #9 and its follow-ups); `main` still ships the JavaScript pages that R-196, R-198, R-199 and R-202 govern, so this requirement is not met on `main`.
+Status: UI migration retired by user request in #940 (0.2.9). The retained Rust backend/tooling and current WebView desktop remain supported. The original all-Rust UI requirement below is historical; it is not a pending implementation target.
 All application behavior, user-interface interaction, release packaging, manual generation, and project-owned verification tooling shall be implemented in Rust. The distributed application shall not execute JavaScript or Python. Replace project-authored JavaScript and Python in these paths with Rust; do not vendor non-Rust implementation source from third-party projects. Preserve user-selected external agent CLIs and operating-system services as process/runtime boundaries.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160. Source: user, 2026-10-15.
 
@@ -904,3 +904,5 @@ R-122 / #931 (0.2.8): Claude full_access is a requested capability, not proof of
 
 R-177 amendment (#935, #936, 0.2.8): optimization result lists use the dialog body scale. The operator can answer the confirmation list and request a new proposal without applying the old one.
 R-145 / #933 / #934 (0.2.8): the usage popup's retry after a failed query is the same icon-only control as refresh (labelled for assistive technology), and Claude usage that could not be read for lack of a project folder is queried automatically once a folder is set.
+
+#940 (0.2.9) supersedes the postponed Rust UI migration: remove its implementation, optional launch target and dedicated validation, and remove dependencies used only by that UI. Keep the current desktop UI and shared Rust backend.

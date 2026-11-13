@@ -1,5 +1,7 @@
 # Architecture verification
 
+Update (#940, 0.2.9): alternate-UI test citations are removed; the original baseline counts below are historical, not a fresh run. Rust UI migration is retired, while the remaining current desktop/backend evidence stays in scope.
+
 Date: 2026-11-03. Issue: GitHub #349. Baseline: `main` at v0.1.58 (b747e392) plus this change.
 
 This record checks the implementation against the consolidated architecture in
@@ -50,7 +52,7 @@ the tests that exercise it and says whether the behavior is present on `main`.
 
 | Requirement | Kind | Detail |
 |---|---|---|
-| R-151 | in progress | Rust-only UI is on the migration line (#9); `main` ships the JS pages. |
+| R-151 | retired | Rust-only UI is on the migration line (#9); `main` ships the JS pages. |
 | R-174 | policy | Applied in review and by the CI Clippy gates (docs/13); not a test. |
 
 ## Requirement evidence
@@ -69,12 +71,12 @@ the tests that exercise it and says whether the behavior is present on `main`.
 | R-49 Model lists prepared per agent | current | `agent_tools_guide.rs`, `app_brand.rs`, `empty_default_agents.rs`, `macos_bundle.rs` (+12) | passes |
 | R-51 Compact agent list | current | `agent_tools_guide.rs`, `app_brand.rs`, `empty_default_agents.rs`, `icons.rs` (+14) | passes |
 | R-66 New workspaces start without agents | superseded by R-101 | — (see the replacing requirement) | — |
-| R-67 Agent preferences and consistent native identity | current | `agent_tools_guide.rs`, `app_brand.rs`, `macos_bundle.rs`, `native_room_render.rs` (+8) | passes |
-| R-68 Provider choice defines the whole agent profile | current | `agent_tools_guide.rs`, `app_brand.rs`, `macos_bundle.rs`, `native_room_render.rs` (+8) | passes |
+| R-67 Agent preferences and consistent native identity | current | `agent_tools_guide.rs`, `app_brand.rs`, `macos_bundle.rs` (+8) | passes |
+| R-68 Provider choice defines the whole agent profile | current | `agent_tools_guide.rs`, `app_brand.rs`, `macos_bundle.rs` (+8) | passes |
 | R-71 Fallback model choices are always offered | current | `fallback_models.rs` | passes |
 | R-72 Windows CLI metadata and provider visibility | current | `windows_icons.rs`, `windows_metadata.rs` | passes |
 | R-73 Self-hosted CLI model catalogs without discovery | current | `model_catalogs.rs`, `test_custom_model_catalog.py` | passes |
-| R-78 Nonblocking agent registration and metadata | current | `agent_tools_guide.rs`, `app_brand.rs`, `macos_bundle.rs`, `native_room_render.rs` (+7) | passes |
+| R-78 Nonblocking agent registration and metadata | current | `agent_tools_guide.rs`, `app_brand.rs`, `macos_bundle.rs` (+7) | passes |
 | R-91 Save an edited agent profile visibly | current | `profile_persistence.rs`, `test_profile_save_feedback.py` | passes |
 | R-101 Agent CLI list is a master list | current | `agent_master_list.rs`, `workspace_registry.rs` | passes |
 | R-102 Reorder agent cards | current | `agent_order_runtime.cjs` (added; the drag gesture itself is not driven) | passes |
@@ -95,7 +97,7 @@ the tests that exercise it and says whether the behavior is present on `main`.
 | R-26 Per-agent availability fallback | current | `fallback.rs`, `fallback_models.rs` | passes |
 | R-60 Collect Claude subscription quota without extra generation | amended by R-97, R-148, R-201 | `claude_quota.rs`, `claude_usage.rs` | passes |
 | R-61 Inline agent quota — Show paid CLI remaining capacity beside | amended by R-64, R-108, R-130 | `quota_display.rs`, `startup_quota.rs` | passes |
-| R-63 Agent-specific refresh and action icons | current | `agent_tools_guide.rs`, `app_brand.rs`, `macos_bundle.rs`, `native_room_render.rs` (+7) | passes |
+| R-63 Agent-specific refresh and action icons | current | `agent_tools_guide.rs`, `app_brand.rs`, `macos_bundle.rs` (+7) | passes |
 | R-64 Compact quota windows | amended by R-130 | `quota_display.rs` | passes |
 | R-69 Show when exhausted quota returns | superseded by R-130 | — (see the replacing requirement) | — |
 | R-75 Enterprise quota budgets | current | `quota.rs`, `quota_custom.rs` | passes |
@@ -123,7 +125,7 @@ the tests that exercise it and says whether the behavior is present on `main`.
 | R-52 Shareable workspace settings (export/import) | current | `workspace_share.rs` | passes |
 | R-58 Export/import includes slug archives | current | `architecture_trace.rs`, `archive.rs`, `phase_link.rs`, `phased_planning.rs` (+7) | passes |
 | R-70 Interface language | current | `coordinator.rs`, `fallback_models.rs`, `i18n_runtime.cjs`, `interface_language.rs` (+1) | passes |
-| R-88 Reliable named workspace creation | current | `agent_tools_guide.rs`, `app_brand.rs`, `macos_bundle.rs`, `native_room_render.rs` (+7) | passes |
+| R-88 Reliable named workspace creation | current | `agent_tools_guide.rs`, `app_brand.rs`, `macos_bundle.rs` (+7) | passes |
 | R-89 Delete an unwanted workspace | current | `agent_tools_guide.rs`, `app_brand.rs`, `empty_default_agents.rs`, `macos_bundle.rs` (+12) | passes |
 | R-95 Abandon a blocked planning workspace | amended by R-209 | `planning_stop.rs` | passes |
 | R-98 Planning start and workspace naming feedback | amended by R-209 | `test_planning_feedback.py` | passes |
@@ -168,7 +170,7 @@ the tests that exercise it and says whether the behavior is present on `main`.
 | R-129 Plans know whether the project uses Git, and verification co | current | `folder_workflow.rs` | passes |
 | R-135 Clear retry feedback and show coordinator activity | current | `planning_progress_runtime.cjs`, `test_planning_progress.py` | passes |
 | R-146 Schema-constrained planning replies | amended by GitHub #337 | `planning_failure_detail.rs`, `planning_schema.rs` | passes |
-| R-152 Recover clearly from a slow plan retry | current | `agent_tools_guide.rs`, `app_brand.rs`, `macos_bundle.rs`, `native_room_render.rs` (+7) | passes |
+| R-152 Recover clearly from a slow plan retry | current | `agent_tools_guide.rs`, `app_brand.rs`, `macos_bundle.rs` (+7) | passes |
 | R-177 The operator can improve a goal with the bundled prompt-opti | current | `optimize_runtime.cjs`, `optimize_ui.rs`, `prompt_optimizer.rs`, `prompt_optimizer_ask.rs` (+2) | passes |
 | R-190 The planning contract matches plan validation | current | `plan.rs`, `planning_overlap_repair.rs`, `planning_schema.rs` | passes |
 | R-193 A task's facts line stays readable in the plan review | current | `task_profile_layout.rs` | passes |
@@ -185,7 +187,7 @@ the tests that exercise it and says whether the behavior is present on `main`.
 | R-30 Live human tool decisions | current | `baseline_commit.rs`, `korean_input.rs`, `live_tool_decision.rs`, `native_claude.rs` (+4) | passes |
 | R-80 Work in ordinary project folders | amended by R-124 | `folder_workflow.rs`, `snapshot_without_git.rs` | passes |
 | R-96 Agents work inside the workspace sandbox; the coordinator de | amended by R-107, R-122 | `full_access_profiles.rs`, `guard_policy.rs` | passes |
-| R-106 Decide a live tool request from its window | current | `native_ui_tool_dialog.rs`, `test_tool_approval_dialog.py` | passes |
+| R-106 Decide a live tool request from its window | current | `test_tool_approval_dialog.py` | passes |
 | R-107 Coordinator decides routine requests and records each decisi | current | `coordinator_decisions.rs`, `native_guard_coordinator_requests.rs` | passes |
 | R-113 A blocking verification finding fails integration verificati | current | `verification_blockers.rs` | passes |
 | R-118 A run survives closing or losing the desktop app | current | `close_window.rs`, `close_dialog_runtime.cjs` (GitHub #377) | passes |
@@ -278,7 +280,7 @@ the tests that exercise it and says whether the behavior is present on `main`.
 
 | Requirement | Status | Test evidence | Result |
 |---|---|---|---|
-| R-23 Cross-platform development continuity | current | `agent_tools_guide.rs`, `app_brand.rs`, `macos_bundle.rs`, `native_room_render.rs` (+11) | passes |
+| R-23 Cross-platform development continuity | current | `agent_tools_guide.rs`, `app_brand.rs`, `macos_bundle.rs` (+11) | passes |
 | R-76 Foreground pickers and console-free desktop execution | current | `windows_console.rs`, `windows_desktop.rs` | passes |
 | R-82 Picked project paths are used exactly on Windows | current | `picker_output.rs`, `windows_console.rs` | passes |
 | R-87 Readable Windows project paths | merged into R-103 | — (see the replacing requirement) | — |
@@ -317,7 +319,7 @@ the tests that exercise it and says whether the behavior is present on `main`.
 | R-35 Maintainable source layout | current | `architecture_trace.rs`, `idle_footprint.rs` | passes |
 | R-65 Idle footprint within the resource budget | current | `agent_tools_guide.rs`, `app_brand.rs`, `idle_footprint.rs`, `macos_bundle.rs` (+10) | passes |
 | R-94 Bound and clear disposable caches | current | `cache_cleanup.rs` | passes |
-| R-151 Rust-only application and release toolchain | in progress (not on main) | `agent_tools_guide.rs`, `app_brand.rs`, `macos_bundle.rs`, `native_room_render.rs` (+7) | in progress |
+| R-151 Rust-only application and release toolchain | retired UI migration (#940) | `agent_tools_guide.rs`, `app_brand.rs`, `macos_bundle.rs` (+7) | retired |
 | R-171 CI tests synchronize on observable readiness | current | `support/process_run.rs`, `ui_live_bridge.rs` | passes |
 | R-174 New Rust code follows a short, evidence-based review policy | current | — | policy |
 | R-175 Every unsafe operation states why it is sound | current | `icons.rs`, `leases.rs` | passes |

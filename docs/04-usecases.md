@@ -636,6 +636,7 @@ Complete a goal; select New goal in the same workspace/project; save another goa
 Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159. GitHub #6, user2026-10-15.
 
 ### UC-141 Build and release AgentConductor using Rust
+Status: Alternate UI migration retired by #940 (0.2.9); the migration scenario below is historical.
 A maintainer changes an application screen, verifies the behavior with Rust tests, builds the release binary, produces bilingual manuals and release archives, and validates the packages without running project-owned JavaScript or Python code. The installed application provides the same accessible, bilingual controls without a JavaScript UI runtime.
 Within the native Agent Room, every explicit allow, deny, or refresh action for pending, deferred, or refresh-eligible approved tool requests uses the existing decision modal. The modal binds the action to the exact request and current revision; Cancel and defer retain their distinct behavior.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
@@ -910,3 +911,5 @@ UC-112 / #931: register or refresh a Claude profile using the existing asynchron
 
 UC-168 amendment (#935, #936): review a proposal, answer its confirmation questions, request re-optimization using the proposed goal and the answers, then review the new result. Failure preserves the current proposal and answers; Use this goal remains an explicit action.
 UC-135 / #933 / #934: the operator sets a project folder while Claude usage shows the folder hint; the next poll queries usage without a retry click. A failed query shows the ↻ icon labelled Retry usage query.
+
+#940: a developer builds, tests and packages the retained app without the retired UI target or UI-only dependencies; users keep the same workspace, desktop and backend behavior.

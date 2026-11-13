@@ -195,3 +195,5 @@
 - [Claude effective permission policy](claude-permission-policy.md) — requested versus effective mode, denial handling and explicit callbacks (#931).
 
 - [Optimizer clarifications](optimizer-clarifications.md) — answer review questions and re-optimize without automatically applying the result (#935/#936).
+
+- [Alternate Rust UI retirement](rust-ui-retirement.md) — removed implementation, dedicated validation and unused dependency graph (#940).

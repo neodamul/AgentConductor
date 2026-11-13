@@ -645,6 +645,7 @@ A native regression completes real fixture work, starts a new goal, confirms no 
 Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159. GitHub #6, user2026-10-15.
 
 ### QAS-147 Rust-only application and release verification
+Status: Alternate UI migration retired by #940 (0.2.9); the migration scenario below is historical.
 Source and artifact inspection finds no project-authored JavaScript or Python in the installed application or required release path; Rust tests cover UI actions and release/manual generation. macOS and Windows artifacts start without a Node.js or Python runtime, preserve current interactions/accessibility, and meet the existing idle-resource budget. Third-party implementation source is not copied into the packages. In the native Agent Room, pending, deferred, and refresh-eligible approved tool requests use one existing decision modal; no inline duplicate confirmation appears. The modal presents the exact request/context, binds the chosen action to the current request ID and revision, keeps decisions disabled while busy, and preserves Cancel and Decide later semantics.
 Trace: R-151 → BG-106 → SF-138 → UC-141 → FR-136 → QAS-147 → DD-160.
 
@@ -918,3 +919,5 @@ QAS-118 / #931: deterministic process fixtures vary effective mode, missing meta
 
 QAS-174 amendment (#935, #936): test answer -> coordinator request -> new proposal and remaining questions, failures retaining input, duplicate-request prevention, empty/oversized answers and original-goal preservation. Compare list/answer typography in both themes and narrow/wide layouts.
 QAS-141 / #933 / #934: tests/quota_folder_934.cjs (no folder: no query; folder set: one query; repeated folder error: no loop) and the quota-retry-icon-only / quota-popup-error-retry parity entries.
+
+#940: Cargo metadata has no retired UI feature/binary/eframe graph; retained desktop/backend checks and packaging/license tests pass. Compare dependency identities before/after to ensure unrelated versions do not change.

@@ -1,5 +1,7 @@
 # Implementation plan and TDD
 
+> Current scope (#940): the postponed alternate Rust UI and its dedicated validation have been removed. Earlier migration checklists below are historical and must not be scheduled or executed.
+
 ## Stable release 0.1.30 checklist (2026-10-19)
 
 - [x] Plan: confirm the latest main commit and verify that `v0.1.30` is unused remotely.
@@ -4103,3 +4105,15 @@ Trace: R-145 / BG-100 / SF-132 / UC-135 / FR-130 / QAS-141 / DD-154.
 - [x] Task: mock and app retry icon-only; automatic Claude usage query when the folder hint clears.
 - [x] Verify: quota_folder_934 (red before the fix), parity entries, related runtime tests, mock captures.
 - [x] Completed: linked PR tracks merge and branch cleanup.
+
+### Retire the postponed Rust UI — GitHub #940 (0.2.9)
+
+Trace: R-151 / BG-106 / SF-138 / UC-141 / FR-136 / QAS-147 / DD-160 / DD-161.
+
+- [x] Plan: register/claim issue-linked branch; inventory callers, tests, CI, dependency graph and license provenance; document the superseding decision.
+- [x] Task: Red removal contract; delete alternate UI source, launch feature/binary and dedicated validation.
+- [x] Task: prune unreachable dependencies and unused OSS/license artifacts; preserve current desktop and backend.
+- [x] Verify: local retained build/tests, license/package validation, Clippy and unchanged retained dependency versions.
+- [x] Completed: implementation, local diff review, wiki and evidence recorded; linked PR tracks merge/closure, memory/signal and owned cleanup.
+
+Evidence: [retirement verification](evidence/940-rust-ui-retirement.md). Local all-target build and Clippy (warnings and undocumented unsafe blocks denied) passed; 61 retained Rust tests and 47 Python verification tests passed. The retained packaging fixture moved to support without behavior changes to keep modified files below 300 lines. No physical Windows desktop execution or release is claimed.
