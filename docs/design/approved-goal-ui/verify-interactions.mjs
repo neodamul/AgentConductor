@@ -84,6 +84,7 @@ try{
   if(mode==='source-limit')action="i=0;show();document.getElementById('goal-entry').value='[Jira:A-1] [Jira:A-2] [Confluence:3] [Confluence:4] [Jira:A-5] [Jira:A-6]';document.getElementById('goal-entry').dispatchEvent(new Event('input'));document.getElementById('source-status').scrollIntoView({block:'center'})";
   if(mode==='source-review-running'||mode==='source-review-done')action='i=0;show();openSourceReview('+JSON.stringify(mode==='source-review-done'?'review':'running')+')';
   if(mode==='goal-source-tags')action="i=0;show();document.getElementById('goal-entry').value='Implement [Jira:EMM-51214] using [Confluence:2571110463]';document.getElementById('goal-entry').dispatchEvent(new Event('input'))";
+  if(mode==='optimize'||mode==='optimize-answered')action="i=0;show();openOptimizePreview();"+(mode==='optimize-answered'?"document.getElementById('optimize-preview-answers').value='Windows';document.getElementById('optimize-preview-answers').dispatchEvent(new Event('input'));document.getElementById('optimize-preview-again').click();":'');
   if(mode==='mcp')action='openMcp()';
   if(mode==='mcp-add')action='openMcp();openMcpEditor(null)';
   if(mode==='result-next-phase')action='workspaceGoals[0].nextPhase={number:2,total:2};showGoalResult("rotation")';

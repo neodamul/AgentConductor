@@ -1591,5 +1591,7 @@
   "startup.claude_callback_choice": "Claude 도구 결정을 AgentConductor에서 처리 (native_callback)",
   "startup.claude_full_access_requested": "전체 권한 요청",
   "startup.claude_permission_unverified": "Claude 전체 권한은 아직 검증되지 않은 요청입니다. 모델 새로고침으로 생성 없이 실제 모드를 확인하며 실행 시작 때 다시 검사합니다. 고급 CLI 설정에서 native_callback을 선택할 수 있습니다.",
-  "startup.claude_permission_mismatch": "조직 또는 CLI 정책으로 요청한 Claude 전체 권한이 부여되지 않았습니다. 메타데이터를 확인하고 고급 CLI 설정에서 native_callback을 선택하세요. 앱이 조직 정책을 변경하지는 않습니다."
+  "startup.claude_permission_mismatch": "조직 또는 CLI 정책으로 요청한 Claude 전체 권한이 부여되지 않았습니다. 메타데이터를 확인하고 고급 CLI 설정에서 native_callback을 선택하세요. 앱이 조직 정책을 변경하지는 않습니다.",
+  "startup.optimize_answers": "확인 질문에 대한 답변",
+  "startup.optimize_again": "답변으로 다시 최적화"
 }

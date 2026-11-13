@@ -796,3 +796,6 @@ SF-198 / #927: show run diagnostics within the card and recovery actions in its 
 SF-178 / #928 / #929: planning rejects vacuous verification commands and asks for load-only checks on red-phase test tasks.
 
 SF-109 / #931: share effective-mode/result-denial interpretation across CLI metadata verification and execution; retain mode evidence, diagnostic logs and partial files, and expose actionable configuration hints.
+
+
+SF-165 amendment (#935, #936): provide a bounded clarification answer field and asynchronous re-optimization; replace proposal, changes and remaining questions only after a successful response.

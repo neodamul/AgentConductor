@@ -29,11 +29,35 @@ pub struct Proposal {
     pub questions: Vec<String>,
 }
 
-/// The coordinator prompt for one goal; the goal is the only operator-controlled text.
+/// The coordinator prompt for one goal, optionally clarified by operator answers.
 pub fn build_prompt(goal: &str, language: &str) -> Result<String, String> {
+    build_prompt_with_answers(goal, language, "")
+}
+
+pub fn build_prompt_with_answers(
+    goal: &str,
+    language: &str,
+    answers: &str,
+) -> Result<String, String> {
+    if answers.len() > MAX_GOAL_BYTES {
+        return Err("clarification answers exceed 8192 bytes".into());
+    }
+    let clarification = if answers.trim().is_empty() {
+        String::new()
+    } else {
+        format!(
+            "## Operator clarification answers\n\n{}\n\n",
+            answers.trim()
+        )
+    };
     let goal = goal.trim();
-    if goal.is_empty() || goal.len() > MAX_GOAL_BYTES {
-        return Err("the goal needs 1..8192 bytes of text".into());
+    let limit = if clarification.is_empty() {
+        MAX_GOAL_BYTES
+    } else {
+        MAX_OPTIMIZED_BYTES
+    };
+    if goal.is_empty() || goal.len() > limit {
+        return Err(format!("the goal needs 1..{limit} bytes of text"));
     }
     // GitHub #211: Document (the skill, its references and the goal), Task (what to do), Format (the answer's shape).
     Ok(format!(
@@ -43,12 +67,13 @@ pub fn build_prompt(goal: &str, language: &str) -> Result<String, String> {
 ## Reference: model-family-notes\n\n{MODEL_NOTES}\n\n\
 ## Reference: transformed-examples\n\n{EXAMPLES}\n\n\
 ## Goal to rewrite\n\n{goal}\n\n\
-# Task\n\nYou are the planning coordinator of AgentConductor. The operator wrote the goal above \
+{clarification}# Task\n\nYou are the planning coordinator of AgentConductor. The operator wrote the goal above \
 for a team of coding agents. Rewrite it with the prompt-optimizer skill above.\n\
 Rules:\n\
 - You run read-only (Read, Grep, Glob only): you cannot change files or run commands. \
 Inspect the project folder only to inventory the files that govern the goal, such as \
 AGENTS.md or docs, and name them by repo-relative path.\n\
+- Incorporate the operator clarification answers when present; ask only about unresolved ambiguity.\n\
 - Keep the operator's intent, scope and wording of names, commands and paths. Do not invent \
 requirements; when something is missing, ask in `questions` instead.\n\
 - Apply the skill once. No eval cases can be run here, so do not claim measured results; \
@@ -108,8 +133,9 @@ pub async fn optimize(
     dir: &Path,
     goal: &str,
     language: &str,
+    answers: &str,
 ) -> Result<Proposal, String> {
-    let prompt = build_prompt(goal, language)?;
+    let prompt = build_prompt_with_answers(goal, language, answers)?;
     let reply = coordinator::run_json_within(
         profile,
         project,

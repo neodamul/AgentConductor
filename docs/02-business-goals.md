@@ -668,3 +668,6 @@ BG-165 / #927: keep the run screen consistent with the approved mock without hid
 
 
 BG-77 / #931: prevent false completion and repeated paid requests when organization policy denies the permission requested by a Claude profile.
+
+
+BG-132 amendment (#935, #936): resolve ambiguous goals inside the existing review dialog while retaining operator control over applying the result.
