@@ -62,6 +62,14 @@ impl Decoder {
         decoder
     }
 
+    /// Read-only proposals may recover denied read probes; worker completion remains strict.
+    pub(crate) fn for_coordinator(profile: &crate::plan::AgentProfile, limit: usize) -> Self {
+        let mut decoder = Self::for_profile(profile, limit);
+        decoder.claude_permission.full_access = false;
+        decoder.claude_permission.read_only_coordinator = true;
+        decoder
+    }
+
     pub fn push(&mut self, bytes: &[u8]) -> Result<Vec<Event>, String> {
         let mut events = vec![];
         for part in bytes.split_inclusive(|b| *b == b'\n') {
