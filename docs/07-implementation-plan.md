@@ -4159,12 +4159,12 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 
 - [x] Plan: close milestone issues #943 and #948; retain supported WebView UI and shared Rust backend.
 - [x] Task: synchronize version, reviewed release notes, README and bilingual manual sources.
-- [ ] Verify: refresh sample gallery and generated HTML; local exact-source package smoke; combined macOS/Windows Release workflow.
-- [ ] Completed: confirm published stable archives/checksums/manuals, record evidence and clean task-owned temporary files and merged branches.
+- [x] Verify: refreshed gallery/generated HTML; local packaged workflow; both platform validation and package jobs passed in Release [43434847822](https://github.com/neodamul/AgentConductor/actions/runs/43434847822).
+- [x] Completed: stable [v0.2.9](https://github.com/neodamul/AgentConductor/releases/tag/v0.2.9) published; both downloaded archives, binary hashes, exact source, bilingual manuals and license inventory verified. Evidence: `docs/evidence/0.2.9-release.md`; completed branches and task-owned temporary files cleaned.
 
 ## #952 — Windows automatic-merge test fixture cleanup
 
 - [x] Plan: release Windows evidence reproduces OS error 32 after behavior assertions; existing cross-platform verification requirement applies.
 - [x] Task: close the test-owned SQLite handle before deleting its fixture. Product code and gate assertions are unchanged.
 - [x] Verify: 3 automatic-merge, 7 architecture and 1 source-layout tests passed locally; formatting passed. Windows release revalidation remains a publication gate.
-- [ ] Completed: merge linked PR, close issue and confirm stable release.
+- [x] Completed: PR #953 merged, #952 closed, Windows full validation passed and stable v0.2.9 published.
