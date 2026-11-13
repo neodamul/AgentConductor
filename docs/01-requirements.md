@@ -903,3 +903,4 @@ R-122 / #931 (0.2.8): Claude full_access is a requested capability, not proof of
 
 
 R-177 amendment (#935, #936, 0.2.8): optimization result lists use the dialog body scale. The operator can answer the confirmation list and request a new proposal without applying the old one.
+R-145 / #933 / #934 (0.2.8): the usage popup's retry after a failed query is the same icon-only control as refresh (labelled for assistive technology), and Claude usage that could not be read for lack of a project folder is queried automatically once a folder is set.

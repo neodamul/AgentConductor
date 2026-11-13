@@ -830,3 +830,4 @@ FR-107 / #931: validate observed rather than inferred permission capability; a z
 
 
 FR-163 amendment (#935, #936): send bounded answers and their question context with the current proposed goal. Keep the workflow read-only, asynchronous, and revision-checked. Do not mutate the saved goal until explicit acceptance; empty answers cannot trigger another generation.
+FR-130 / #933 / #934: autoDiscover also queries a Claude profile whose indicator carries error_code no_project_folder once the saved config has a repository, at most once a minute, besides the existing refresh_due schedule.

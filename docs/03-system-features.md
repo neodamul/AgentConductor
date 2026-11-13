@@ -799,3 +799,4 @@ SF-109 / #931: share effective-mode/result-denial interpretation across CLI meta
 
 
 SF-165 amendment (#935, #936): provide a bounded clarification answer field and asynchronous re-optimization; replace proposal, changes and remaining questions only after a successful response.
+SF-132 / #933 / #934: icon-only usage retry; automatic Claude usage query after a project folder is set.

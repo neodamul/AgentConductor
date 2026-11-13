@@ -1772,3 +1772,4 @@ DD-131 / #931: add a small stateful Claude permission classifier to the shared D
 
 
 DD-188 amendment (#935, #936): reuse the optimize job and existing read-only coordinator, with an optional bounded answers field in its private input. Add one answer field for the confirmation list and a retry action in the same dialog; use 13px secondary text and existing input/button tokens. No new worker, polling loop, dependency or automatic goal acceptance.
+DD-154 / #933 / #934: key the automatic Claude query on the folder-hint indicator too, not only on the cleared refresh stamp, so any path that sets the folder triggers it; a one-minute guard prevents a loop. The retry keeps the refresh glyph and changes only its label, as the mock now does.

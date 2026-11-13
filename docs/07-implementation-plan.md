@@ -4096,3 +4096,10 @@ Trace: R-177 / BG-132 / SF-165 / UC-168 / FR-163 / QAS-174 / DD-188.
 - [x] Completed: implementation, local review, manuals, wiki and evidence recorded; linked PR tracks merge/closure, memory/signal and cleanup.
 
 Evidence: [optimizer clarification checks](evidence/936-optimizer-clarifications.md). 33 focused Rust/docs tests, all 104 Node UI scripts, four actual browser theme/width workflows, 16 focused parity entries, 183 reference interactions per configuration, four new reference captures, manifest integrity, Clippy with warnings denied, formatting and changed-source 300-line checks passed locally. Authenticated provider rewriting quality and physical Windows acceptance are not claimed.
+### Agent card usage retry and folder re-check — GitHub #933 / #934 (0.2.8)
+
+Trace: R-145 / BG-100 / SF-132 / UC-135 / FR-130 / QAS-141 / DD-154.
+- [x] Plan: claim owner-claude and issue-linked branch; inspect quota_ring.js and startup autoDiscover.
+- [x] Task: mock and app retry icon-only; automatic Claude usage query when the folder hint clears.
+- [x] Verify: quota_folder_934 (red before the fix), parity entries, related runtime tests, mock captures.
+- [x] Completed: linked PR tracks merge and branch cleanup.
