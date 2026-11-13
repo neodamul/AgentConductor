@@ -836,3 +836,6 @@ FR-130 / #933 / #934: autoDiscover also queries a Claude profile whose indicator
 
 
 #942: recovery is scoped to the read-only coordinator parser, supported by matching read-tool call/results and successful final output. Do not relax worker denial checks, grant external directory access, or use native_callback guidance for a noninteractive planning failure.
+
+
+#944: Remove redundant reviewing-Phase summaries and task-ID-only briefs. Preserve meaningful historical briefs, task expansion, editing controls and approval state. No new requests or polling.

@@ -924,3 +924,6 @@ QAS-141 / #933 / #934: tests/quota_folder_934.cjs (no folder: no query; folder s
 
 
 #942: replay recovered read-only planning, unresolved/late/write denials, malformed/missing final JSON and strict worker denial cases; test snapshot execution guidance. Replay the local captured failure without a generation request; keep private input out of committed evidence.
+
+
+#944: Given a multi-Phase ready proposal, opening Plan review shows one editable task list and its Phase identity. Selecting history hides editors; returning restores them and preserves edits. Test both themes and narrow/wide viewports.

@@ -1777,3 +1777,6 @@ DD-154 / #933 / #934: key the automatic Claude query on the folder-hint indicato
 
 
 #942 corrects DD-131: keep worker policy fail-closed, but add explicit read-only coordinator decoding. Bounded tool-call/result evidence can recognize a recovered denied read probe; only a successful final response with valid requested JSON is accepted. Guide planners to relative paths in the disposable snapshot rather than original absolute source paths.
+
+
+DD-125 amendment (#944): Reuse the Plan card eyebrow and existing position line for Phase context. Render reviewing task cards directly, without a Phase details wrapper. Omit generated task-ID-list briefs from every Phase; retain meaningful history summaries. Existing rail selection and approval handlers remain authoritative.

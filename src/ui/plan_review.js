@@ -7,6 +7,11 @@ const acPlanReview = (() => {
     return acMessage('startup.plan_detail', { value1: task.id, value2: title, value3: paths, value4: deps || acMessage('startup.plan_no_dependencies'), value5: test });
   }
   return {
+    meaningfulBrief(spec) {
+      const ids = new Set((spec.specs || []).map(task => task.id));
+      const lines = String(spec.brief || "").split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+      return lines.some(line => !/^Tasks?:$/i.test(line) && !ids.has(line.replace(/^[-*]\s+/, "")));
+    },
     // `box` holds the two lines; `select(index)` re-renders the strip when another row is opened.
     render(box, tasks, selected = 0, titleOf = task => task.id, phase = {phase: 1, phase_total: 1}) {
       box.replaceChildren();

@@ -916,3 +916,6 @@ UC-135 / #933 / #934: the operator sets a project folder while Claude usage show
 
 
 #942: a planning coordinator attempts an original source path, is denied, then reads its permitted snapshot and returns a valid plan. Accept that recovered proposal for human review; if source access remains unresolved or output invalid, retain an actionable error.
+
+
+#944: The operator opens Plan review, reads the Phase position/name in its heading, edits tasks once, and can select earlier/later Phases in the rail without losing unsaved edits.

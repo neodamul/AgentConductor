@@ -2,8 +2,8 @@
 const STARTUP: &str = include_str!("../src/ui/startup.js");
 
 #[test]
-fn editable_tasks_sit_inside_the_phase_under_review() {
-    assert!(STARTUP.contains("if(ph.id===reviewing)item.append(...cards)"));
+fn editable_tasks_replace_the_reviewing_phase_wrapper() {
+    assert!(STARTUP.contains("if(ph.id===reviewing){list.append(...cards);return;}"));
 }
 
 #[test]

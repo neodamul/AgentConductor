@@ -805,3 +805,6 @@ SF-132 / #933 / #934: icon-only usage retry; automatic Claude usage query after 
 
 
 #942: distinguish read-only coordinator result recovery from strict worker completion; preserve raw denial evidence and validate structured plans.
+
+
+#944: One authoritative editable task list per reviewing Phase; completed and future Phases remain selectable read-only history.

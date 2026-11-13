@@ -909,3 +909,6 @@ R-145 / #933 / #934 (0.2.8): the usage popup's retry after a failed query is the
 
 
 #942 (release blocker, 0.2.8): read-only planning must not reject a valid result solely because denied source probes were followed by successful allowed reads. Unresolved/tool-write denials and worker permission failures remain errors.
+
+
+#944: Plan review must show each editable task once. Identify the reviewing Phase in the Plan heading/position line, without a duplicate Phase box, task-ID brief or editing instruction.
