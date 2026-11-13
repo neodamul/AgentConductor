@@ -247,3 +247,17 @@ document.addEventListener('keydown',event=>{
 document.getElementById('delete-goal-dialog').addEventListener('close',event=>{
  if(event.target.returnValue==='delete'&&pendingGoalDelete){const index=workspaceGoals.findIndex(goal=>goal.id===pendingGoalDelete);if(index>=0)workspaceGoals.splice(index,1);if(selectedGoalId===pendingGoalDelete){selectedGoalId=workspaceGoals[0]?.id||'draft';i=workspaceGoals.length?0:9;goalDrafts[workspaceGoals.length?'j':'e']=workspaceGoals[0]?.description||'';show();}refreshWorkspaceGoalSection();renderWorkspaceGoals();document.getElementById('overview-new-goal').focus({preventScroll:true});}pendingGoalDelete=null;
 });
+
+// #927: verification failure stays inside the card, never in a status box above it.
+function previewRunFailure(kind='test') {
+ i=6;workspaceVisible=false;show();
+ const card=document.querySelector('.main>.card[data-show="f"]'),body=card.querySelector('.card-body');
+ let error=card.querySelector('.preview-run-error');if(!error){error=document.createElement('pre');error.className='preview-run-error';body.prepend(error);}
+ error.textContent=kind==='scope'?'out-of-scope change: outside.txt':'Integration verification failed for task-1: assertion failed: expected token rotation';
+ error.style.cssText='margin:0 0 12px;border-radius:8px;padding:12px 14px;font-size:13px;background:var(--err-bg);color:var(--err);white-space:pre-wrap;overflow-wrap:anywhere;max-height:160px;overflow:auto';
+ const actions=card.querySelector('.dir .actions');actions.replaceChildren();
+ const note=document.createElement('span');note.className='note';note.textContent='원인을 확인하고 다시 진행합니다.';
+ const button=document.createElement('button');button.className='btn p';button.textContent=kind==='scope'?'범위 검토':'피드백으로 수정';button.dataset.recovery=kind;button.dataset.actionIcon=kind==='scope'?'list':'edit';
+ button.onclick=()=>{button.dataset.opened='true';};actions.append(note,button);
+ const pill=document.querySelector('.head .pill');if(pill){pill.textContent='실패';pill.style.background='var(--err-bg)';pill.style.color='var(--err)';}
+}

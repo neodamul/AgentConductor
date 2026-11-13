@@ -14,7 +14,7 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms)),fail=m=>{throw Error(m);};
  // the rail follows into the integration row by itself
  await until("document.querySelector('.final-step .session-choice.active, .final-step .session-choice[aria-current=true], .final-step.active')&&!document.getElementById('review-footer').hidden",'footer shown on the integration row');
  const card="document.querySelector('#run-screen .room-card')";
- const shown=await b.eval(`({only:${card}.classList.contains('review-only'),tabs:getComputedStyle(${card}.querySelector('.view-tabs')).display,composer:getComputedStyle(${card}.querySelector('.composer')).display,banner:document.getElementById('run-banner').hidden,info:document.querySelector('#run-goal-info .goal-info-content').textContent.trim()})`);
+ const shown=await b.eval(`({only:${card}.classList.contains('review-only'),tabs:getComputedStyle(${card}.querySelector('.view-tabs')).display,composer:getComputedStyle(${card}.querySelector('.composer')).display,banner:!document.getElementById('run-banner'),info:document.querySelector('#run-goal-info .goal-info-content').textContent.trim()})`);
  if(!shown.only||shown.tabs!=='none'||shown.composer!=='none')fail('the card still shows tabs or the direction field: '+JSON.stringify(shown));
  if(!shown.banner)fail('the run banner repeats the approval state');if(!shown.info)fail('no integration result line under the title');
  await b.eval("document.getElementById('review-revise').click()");
@@ -25,9 +25,9 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms)),fail=m=>{throw Error(m);};
  if(reviewing.only||reviewing.tabs==='none'||!reviewing.review)fail('Review changes did not open the evidence: '+JSON.stringify(reviewing));
  // the approved state keeps the footer, and its primary button applies the changes in place of the old status box
  await b.eval("SIM.room.report.state='approved'");
- await until("document.getElementById('review-primary').dataset.mode==='merge'&&document.getElementById('review-revise').hidden&&document.getElementById('run-banner').hidden",'approved footer applies the changes');
+ await until("document.getElementById('review-primary').dataset.mode==='merge'&&document.getElementById('review-revise').hidden&&!document.getElementById('run-banner')",'approved footer applies the changes');
  await b.eval("SIM.room.report.state='completed'");
- await until("!document.getElementById('review-footer').hidden&&document.getElementById('review-primary').dataset.mode==='result'&&document.getElementById('review-deny').hidden&&document.getElementById('run-banner').hidden&&getComputedStyle(document.querySelector('#run-screen .composer')).display==='none'",'completed run: Request changes and View the finished result, no status box');
+ await until("!document.getElementById('review-footer').hidden&&document.getElementById('review-primary').dataset.mode==='result'&&document.getElementById('review-deny').hidden&&!document.getElementById('run-banner')&&getComputedStyle(document.querySelector('#run-screen .composer')).display==='none'",'completed run: Request changes and View the finished result, no status box');
  const completedCopy=await b.eval("({title:document.getElementById('selected-agent').textContent,intro:document.getElementById('selected-task').textContent})");
  if(/approve|승인/.test(completedCopy.title+' '+completedCopy.intro)&&!/approved|승인/.test(completedCopy.title+' '+completedCopy.intro))fail('completed review must not ask for approval: '+JSON.stringify(completedCopy));
  if(await b.eval("!!document.getElementById('run-path')||!!document.querySelector('.rail-footer')"))fail('the run path or the rail footer is still on the screen');

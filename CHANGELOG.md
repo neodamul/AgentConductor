@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Remove the run-status banner in every state; keep failure output, attention warnings and recovery actions inside the task card and existing review/composer controls (#927).
+
 - Immediately continue usage-limited tasks on an available reviewed fallback instead of waiting five hours; retain task overrides, reset recovery, partial work and approval gates (#925).
 
 ## v0.2.7

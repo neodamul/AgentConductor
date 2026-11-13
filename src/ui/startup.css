@@ -192,8 +192,7 @@ h1,.goal-bar h1{font-size:17px}
 h3,.briefing-session h3,.tool-action,.startup-goal>h3.step-title,.role-rules h3{font-size:14px}
 dialog h2{font-size:18px}
 .quota-refresh,.settings-button{font-size:12px}
-.run-banner strong{font-size:18px}
-.run-banner button.primary,.run-controls #resume.primary,.result-metric strong{font-size:13px}
+.run-controls #resume.primary,.result-metric strong{font-size:13px}
 .result-metric strong{font-size:16px}
 #branch.muted{font-size:12px}
 .nav-action{font-size:13px}

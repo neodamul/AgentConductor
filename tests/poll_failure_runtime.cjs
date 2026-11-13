@@ -1,7 +1,7 @@
 // GitHub #221: a background poll that times out must not raise a toast on its own, and a page-side timeout is
 // reported to the native side so the diagnostics log shows it.
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-const source=fs.readFileSync('src/ui/startup.js','utf8'),room=fs.readFileSync('src/ui/room.js','utf8');
+const source=fs.readFileSync('src/ui/startup.js','utf8'),room=(fs.readFileSync('src/ui/room.js','utf8') + fs.readFileSync('src/ui/room_render.js', 'utf8'));
 const notices=[];
 const context={notice:(text,error)=>notices.push({text,error}),acMessage:key=>key};
 vm.createContext(context);

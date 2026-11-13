@@ -1,7 +1,10 @@
 //! User requests 2026-10-14: the Agent Room's account usage shows Enterprise budgets as a
 //! remaining percentage like the agent cards, and the task shown on the right has a strong
 //! border in the list.
-const ROOM: &str = include_str!("../src/ui/room.js");
+const ROOM: &str = concat!(
+    include_str!("../src/ui/room.js"),
+    include_str!("../src/ui/room_render.js")
+);
 const CSS: &str = include_str!("../src/ui/room.css");
 
 #[test]

@@ -1,6 +1,6 @@
 // GitHub #273 (DD-208): every waiting state of the pages has a visible, current sign.
 const fs = require('node:fs'), vm = require('node:vm'), assert = require('node:assert/strict');
-const room = fs.readFileSync('src/ui/room.js', 'utf8'), startup = fs.readFileSync('src/ui/startup.js', 'utf8'), i18n = fs.readFileSync('src/ui/i18n.js', 'utf8');
+const room = (fs.readFileSync('src/ui/room.js', 'utf8') + fs.readFileSync('src/ui/room_render.js', 'utf8') + fs.readFileSync('src/ui/room_recovery.js','utf8')), startup = fs.readFileSync('src/ui/startup.js', 'utf8'), i18n = fs.readFileSync('src/ui/i18n.js', 'utf8');
 const grab = (source, head) => { const s = source.indexOf(head); assert.ok(s >= 0, `${head} exists`); return source.slice(s, source.indexOf('\n', s)) + '\n'; };
 const catalog = JSON.parse(fs.readFileSync('src/ui/messages/en.json', 'utf8'));
 const acMessage = (id, v = {}) => { assert.ok(catalog[id] !== undefined, `${id} is in the catalog`); return catalog[id].replace(/\{(\w+)\}/g, (_, k) => String(v[k])); };
@@ -81,9 +81,9 @@ assert.ok(fs.readFileSync('src/ui/startup.html', 'utf8').includes('<select id="s
 assert.ok(startup.includes('coordinator_model') && startup.includes('function coordinatorModels('), 'the selector reads and writes the coordinator profile');
 assert.ok(/q\('coordinator'\)\.classList\.toggle\('missing'[^\n]*coordinatorModels\(\)/.test(startup), 'the selector follows the coordinator selector');
 for (const lang of ['en', 'ko']) assert.ok(JSON.parse(fs.readFileSync(`src/ui/messages/${lang}.json`, 'utf8'))['startup.coordinator_model'], `${lang} names the selector`);
-// GitHub #323: the failure banner and the drafted retry feedback show the whole bounded output (both streams), not its first lines.
+// GitHub #323: the task-card failure output and the drafted retry feedback show the whole bounded output (both streams), not its first lines.
 assert.ok(!room.includes('clipLines(broken.output') && !room.includes('clipLines(test.output'), 'the integration failure text is not cut to its first lines');
-assert.ok(room.includes('value2:broken.output||') && room.includes('value1:test.output||acMessage("common.no_output")'), 'the banner and the feedback use the labeled output');
+assert.ok(room.includes('value2:broken.output||') && room.includes('value1:test.output||acMessage("common.no_output")'), 'the card and the feedback use the labeled output');
 // GitHub #326: a custom CLI declares its read-only arguments in the agent form, and the settings warn when the coordinator cannot answer chat.
 assert.ok(fs.readFileSync('src/ui/startup.html', 'utf8').includes('<textarea id="start-read-only-args"'), 'the agent form has the read-only arguments field');
 assert.ok(startup.includes('read_only_args') && startup.includes('state?.chat_blockers?.[draft.coordinator]'), 'the form saves them and the coordinator warning reads the snapshot');

@@ -1,6 +1,6 @@
 // GitHub #122: the recovery panel previews, requires approval of that exact preview, then applies it.
 const fs = require('node:fs'), vm = require('node:vm'), assert = require('node:assert/strict');
-const source = fs.readFileSync('src/ui/room.js', 'utf8');
+const source = (fs.readFileSync('src/ui/room.js', 'utf8') + fs.readFileSync('src/ui/room_render.js', 'utf8'));
 const start = source.indexOf('function scopeLines('), endMarker = "$('scope-task').onchange = scopeFillTask; $('scope-paths').oninput = $('scope-test').oninput = scopeReset;";
 const end = source.indexOf(endMarker) + endMarker.length;
 assert.ok(start >= 0 && end > start, 'room.js defines the recovery panel');

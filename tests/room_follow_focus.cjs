@@ -1,9 +1,9 @@
 // GitHub #109: the selected session follows the run when the one being watched finishes.
 const fs = require('node:fs'), vm = require('node:vm'), assert = require('node:assert/strict');
-const source = fs.readFileSync('src/ui/room.js', 'utf8');
+const source = (fs.readFileSync('src/ui/room.js', 'utf8') + fs.readFileSync('src/ui/room_render.js', 'utf8') + fs.readFileSync('src/ui/room_verify.js','utf8'));
 const start = source.indexOf('function followTarget(');
 assert.ok(start >= 0, 'room.js defines followTarget');
-const context = vm.createContext({});
+const context = vm.createContext({isFailedVerification:r=>r.state==='failed'&&r.tasks.every(t=>t.status==='completed')&&(r.tests||[]).some(t=>t.exit_code!==0||t.timed_out),});
 vm.runInContext(source.slice(start, source.indexOf('\n', start)), context);
 const snap = (state, statuses) => ({ report: { state, tasks: statuses.map(([id, status]) => ({ id, status })) } });
 const follow = (prev, next, id, onCoordinator = false) => JSON.parse(vm.runInContext(`JSON.stringify(followTarget(${JSON.stringify(prev)}, ${JSON.stringify(next)}, ${JSON.stringify(id)}, ${onCoordinator}))`, context));

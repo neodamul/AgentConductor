@@ -63,7 +63,10 @@ fn quota_badges_cover_stale_unavailable_unlimited_reset_and_localized_labels() {
 #[test]
 fn quota_badge_rendering_is_native_snapshot_data() {
     let startup = include_str!("../src/ui/startup.js");
-    let room = include_str!("../src/ui/room.js");
+    let room = concat!(
+        include_str!("../src/ui/room.js"),
+        include_str!("../src/ui/room_render.js")
+    );
     assert!(!startup.contains("function quotaBadge"));
     assert!(!room.contains("function quotaBadge"));
     // GitHub #426: the card shows the dual-ring icon built from `quota_indicators`; refresh lives in its popup.
@@ -115,7 +118,10 @@ fn room_window_labels_use_rust_localized_agent_intervals() {
 
 #[test]
 fn room_uses_rust_window_labels_instead_of_javascript_formatters() {
-    let room = include_str!("../src/ui/room.js");
+    let room = concat!(
+        include_str!("../src/ui/room.js"),
+        include_str!("../src/ui/room_render.js")
+    );
     assert!(!room.contains("function quotaWindowLabel"));
     assert!(!room.contains("function quotaSummary"));
     assert!(room.contains("snapshot.quota_window_labels?.[agent?.id]"));
@@ -157,7 +163,10 @@ fn room_budget_rows_are_localized_rust_snapshot_data() {
     let ko = budget_rows(&quotas, "ko");
     assert_eq!(ko["enterprise"][0]["headline"], "64% 남음 · 개인 할당량");
 
-    let room = include_str!("../src/ui/room.js");
+    let room = concat!(
+        include_str!("../src/ui/room.js"),
+        include_str!("../src/ui/room_render.js")
+    );
     let controller = include_str!("../src/ui/controller/quota_snapshot.rs");
     assert!(controller.contains("\"quota_budget_rows\""));
     assert!(room.contains("snapshot.quota_budget_rows?.[agent?.id]"));
@@ -202,7 +211,10 @@ fn room_quota_reset_times_are_localized_rust_snapshot_data() {
             .unwrap()
             .starts_with("재설정 2027-")
     );
-    let room = include_str!("../src/ui/room.js");
+    let room = concat!(
+        include_str!("../src/ui/room.js"),
+        include_str!("../src/ui/room_render.js")
+    );
     let controller = include_str!("../src/ui/controller/quota_snapshot.rs");
     assert!(controller.contains("\"quota_window_reset_labels\""));
     assert!(room.contains("snapshot.quota_window_reset_labels?.[agent?.id]"));

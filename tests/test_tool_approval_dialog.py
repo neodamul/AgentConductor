@@ -15,14 +15,14 @@ class ToolApprovalDialogTests(unittest.TestCase):
         for control in ["tool-decision", "tool-decision-note", "tool-decision-allow", "tool-decision-deny"]:
             self.assertIn('id="' + control + '"', html)
         self.assertNotIn('id="tool-dialog"', html)
-        js = (UI / "room.js").read_text(encoding="utf-8")
+        js = ((UI / "room.js").read_text(encoding="utf-8") + (UI / "room_render.js").read_text(encoding="utf-8"))
         self.assertIn("syncToolDialog();", js.split("function renderTools()")[1].split("\nfunction ")[0])
         self.assertNotIn("showModal()", js.split("function syncToolDialog")[1].split("\nfunction ")[0])
         self.assertIn("decideTool('tool_approve')", js)
         self.assertIn("decideTool('tool_reject')", js)
 
     def test_feedback_to_an_idle_run_resumes_it_after_the_revision(self):
-        js = (UI / "room.js").read_text(encoding="utf-8")
+        js = ((UI / "room.js").read_text(encoding="utf-8") + (UI / "room_render.js").read_text(encoding="utf-8"))
         send = js.split("$('send-feedback').onclick=")[1].split("\n")[0]
         self.assertIn("resumeAfter='revise'", send)
         self.assertIn("resumeAfter&&job.kind===resumeAfter", js)
@@ -31,7 +31,7 @@ class ToolApprovalDialogTests(unittest.TestCase):
 
     @unittest.skipUnless(shutil.which("node"), "Node runs the pure tool summary helper")
     def test_tool_requests_read_as_actions_with_labelled_inputs(self):
-        js = (UI / "room.js").read_text(encoding="utf-8")
+        js = ((UI / "room.js").read_text(encoding="utf-8") + (UI / "room_render.js").read_text(encoding="utf-8"))
         match = re.search(r"function toolSummary\(tool,input\) \{.*?\n\}\n", js, re.S)
         self.assertIsNotNone(match)
         script = match.group(0) + r"""

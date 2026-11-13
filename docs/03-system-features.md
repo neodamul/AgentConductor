@@ -790,3 +790,6 @@ SF-204 / #921: release notes for the running version are reachable from Help.
 
 
 SF-114 / #925: share immediate quota fallback eligibility between scheduler and durable watcher; preserve original-account reset recovery when all fallback accounts are unavailable.
+
+
+SF-198 / #927: show run diagnostics within the card and recovery actions in its footer; never create a separate run-status banner.

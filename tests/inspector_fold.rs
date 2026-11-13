@@ -3,7 +3,10 @@ use std::process::Command;
 
 const HTML: &str = include_str!("../src/ui/room.html");
 const CSS: &str = include_str!("../src/ui/room.css");
-const JS: &str = include_str!("../src/ui/room.js");
+const JS: &str = concat!(
+    include_str!("../src/ui/room.js"),
+    include_str!("../src/ui/room_render.js")
+);
 
 #[test]
 fn the_fold_logic_follows_the_decision_rules() {

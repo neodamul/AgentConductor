@@ -1,6 +1,6 @@
 // GitHub #100: the task header's activity line states facts and elapsed time, never a cause.
 const fs = require('node:fs'), vm = require('node:vm'), assert = require('node:assert/strict');
-const source = fs.readFileSync('src/ui/room.js', 'utf8');
+const source = (fs.readFileSync('src/ui/room.js', 'utf8') + fs.readFileSync('src/ui/room_render.js', 'utf8'));
 const grab = name => { const s = source.indexOf(`function ${name}(`); assert.ok(s >= 0, `room.js defines ${name}`); return source.slice(s, source.indexOf('\n', s)); };
 const templates = {
   'room.activity_last_output': 'last {value1}', 'room.activity_no_output': 'no output',

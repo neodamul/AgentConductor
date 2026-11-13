@@ -1,6 +1,6 @@
 // GitHub #267 (DD-206): the coordinator Activity tab starts with a status board and does not draw the workflow rows.
 const fs = require('node:fs'), vm = require('node:vm'), assert = require('node:assert/strict');
-const source = fs.readFileSync('src/ui/room.js', 'utf8');
+const source = (fs.readFileSync('src/ui/room.js', 'utf8') + fs.readFileSync('src/ui/room_render.js', 'utf8'));
 const line = name => { const at = source.indexOf('function ' + name + '('); assert.ok(at >= 0, name + ' exists in room.js'); return source.slice(at, source.indexOf('\n', at)); };
 const context = vm.createContext({});
 vm.runInContext(line('shownHistory') + ';' + line('boardCounts') + ';this.shownHistory=shownHistory;this.boardCounts=boardCounts;', context);

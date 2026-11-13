@@ -1,7 +1,7 @@
 // GitHub #341: a task the CLI refused is shown as its own state ("Permission denied"), red like a
 // failure, in both languages.
 const fs = require('node:fs'), vm = require('node:vm'), assert = require('node:assert/strict');
-const lines = fs.readFileSync('src/ui/room.js', 'utf8').split('\n');
+const lines = (fs.readFileSync('src/ui/room.js', 'utf8') + fs.readFileSync('src/ui/room_render.js', 'utf8')).split('\n');
 const pick = start => lines.find(l => l.startsWith(start));
 const code = ['function statusLight(', 'const pretty =', 'const STATUS_TONE =', 'const statusTone =', 'const STATUS_LABELS =', 'const statusLabel ='].map(pick);
 assert.ok(code.every(Boolean), 'room.js defines the status helpers');

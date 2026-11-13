@@ -1586,5 +1586,6 @@
   "mcp.log_stored_failed": "Saved read call failed · selecting again: {detail}",
   "mcp.too_many_references": "A Goal can reference at most {limit} Jira/Confluence documents ({count} now). Remove one to preview.",
   "mcp.references_count": "References {count}/{limit}",
-  "mcp.reference_limit_reached": "A Goal can reference at most {limit} documents."
+  "mcp.reference_limit_reached": "A Goal can reference at most {limit} documents.",
+  "room.recovery_footer_note": "Inspect the cause, then choose how to continue."
 }

@@ -900,3 +900,6 @@ UC-208 / #921: select Help → Release notes; the default browser opens the rele
 
 
 UC-117 / #925: given an exhausted T1 account and a ready T2, transfer T1 to its reviewed available fallback at the next safe scheduler boundary and launch in dependency/plan order. If no fallback is usable, permit independent T2 and retain a real reset reservation; do not invent a reset.
+
+
+UC-202 / #927: on a failed integration test, inspect the complete safe text output in the task card and draft feedback with its repair action. On scope failure, open the existing scope review from the footer. Stale/absent runners and interruptions remain visible within the card; completed runs retain the review/result path.

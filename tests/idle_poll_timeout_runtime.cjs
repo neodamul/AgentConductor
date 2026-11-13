@@ -119,7 +119,7 @@ async function backgroundPollTimeoutsAreSilent() {
   global.snapshot = {report: {plan: {agents: []}}};
   global.AC_I18N = {bind() {}};
   global.$ = () => ({});
-  const room = fs.readFileSync('src/ui/room.js', 'utf8');
+  const room = (fs.readFileSync('src/ui/room.js', 'utf8') + fs.readFileSync('src/ui/room_render.js', 'utf8'));
   assert.match(room, /await poll\(true\);roomSchedule\(\)/, 'room timer uses silent poll mode');
   assert.match(room, /poll\(true\)\.then\(roomSchedule\)/, 'room startup and visibility resume use silent poll mode');
   const roomStart = room.indexOf('async function poll(background=false)');

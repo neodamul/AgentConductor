@@ -24,6 +24,13 @@ function railElapsed(r, now) {
 }
 // The line under the title (the mock's goal-info row): the integration result while a candidate waits for approval.
 function renderGoalInfo(r) {
-  const failed = r.tests.filter(x => x.exit_code !== 0 || x.timed_out), text = isVerifying(r) ? acMessage('room.goal_info_verifying', { value1: r.tests.length, value2: r.tasks.length }) : r.state === 'waiting_approval' && r.tests.length ? (failed.length ? acMessage('room.goal_info_tests_failed', { value1: failed.length }) : acMessage('room.goal_info_tests_passed')) : '';
+  const failed = r.tests.filter(x => x.exit_code !== 0 || x.timed_out), text = isVerifying(r) ? acMessage('room.goal_info_verifying', { value1: r.tests.length, value2: r.tasks.length }) : r.state === 'waiting_approval' && r.tests.length ? (failed.length ? acMessage('room.goal_info_tests_failed', { value1: failed.length }) : acMessage('room.goal_info_tests_passed')) : r.state==='approved'?acMessage('room.approved_merging_remains_a_separate_action'):r.state==='completed'?completedStep(document.getElementById('startup-home')):'';
   AC_I18N.bind(document.querySelector('#run-goal-info .goal-info-content'), () => text);
+}
+
+function completedStep(home) {
+ const ph=snapshot.phase,phases=ph?.phases||[],i=phases.findIndex(x=>x.id===ph?.phase),n=phases.findIndex(x=>x.id===ph?.current_phase);
+ if(i<0)return home?acMessage('room.this_run_is_complete_return_to_the_workspace'):acMessage('room.this_run_is_complete');
+ if(n<0)return acMessage('room.phase_of_is_complete_and_with_it_every',{value1:i+1,value2:phases.length});
+ return acMessage('room.phase_of_is_complete_phase_is_next_go',{value1:i+1,value2:phases.length,value3:phases[i].name||ph.phase,value4:n+1,value5:phases[n].name||ph.current_phase,value6:n+1});
 }
