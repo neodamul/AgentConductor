@@ -930,3 +930,6 @@ R-145 / #933 / #934 (0.2.8): the usage popup's retry after a failed query is the
 
 #959: Already-reviewed automatic fallback transitions preserve an existing exact automatic-merge opt-in; manual/unapproved plan changes do not. A blocked automatic merge reports its reason.
 #958: While the next Phase is being re-planned, Step 3 names the phases being re-planned and never presents the previous Phase's re-plan as the new one.
+
+
+#960: A new Agent Room run opens on Activity; a snapshot of the same run preserves the operator-selected tab.

@@ -4203,3 +4203,10 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 - [x] Task: reproduce stale Phase 1→2 heading during Phase 3 planning; bind pending target, clear old rows/tools, reset selected Phase for a new target.
 - [x] Verify: four actual DOM ready→pending→ready conditions; 14 approved entries ×4 theme/width cells (56 comparisons), zero differences; 752 mock interaction checks; 8 focused Rust checks, all-target Clippy and formatting passed.
 - [x] Completed: manuals/HTML/wiki updated; linked branch prepared for PR/merge and combined CI.
+
+## #960 — New-run Activity tab
+
+- [x] Plan: trace run-scoped tab state and approved default Activity; no mock change needed.
+- [x] Task: actual DOM reproduced "New run inherited review tab"; reset first/new-run tab and discard obsolete evidence.
+- [x] Verify: five actual Room boundaries passed (including background summary); live sessions (#955), auto-merge notices (#959), and seven native routing/focus/docs/layout checks passed.
+- [x] Completed: manuals/HTML/wiki updated, linked issue branch prepared for PR/merge; CI remains batched.

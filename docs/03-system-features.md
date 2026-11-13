@@ -829,3 +829,6 @@ SF-132 / #933 / #934: icon-only usage retry; automatic Claude usage query after 
 
 
 #958: Step 3 distinguishes pending next-Phase planning from ready review using the proposal target and running job.
+
+
+#960: Scope Room tab state and loaded review evidence to run identity.

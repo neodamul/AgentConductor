@@ -238,12 +238,12 @@ async function decision(title,description,evidence,needsReason=false,confirm=acM
   return new Promise(resolve=>dialog.addEventListener('close',()=>resolve(dialog.returnValue==='confirm'?(needsReason?$('dialog-reason').value:true):null),{once:true}));
 }
 async function briefTeam(){return window.acBriefing.open({request,notice});}
-async function loadReview() {
-  try{const next=await request({kind:'evidence'});if(roomStopped)return;review=next;if(coordinatorView)reviewSummary(snapshot.report);AC_I18N.bind($('review-caption'),()=>(review.report.candidate?acMessage("room.candidate_exact_captured_evidence", {value1:review.report.candidate.commit.slice(0,12)}):acMessage("room.no_candidate_is_available")));
+async function loadReview(activate=true) {
+  try{const run=snapshot?.run_dir,next=await request({kind:'evidence'});if(roomStopped||snapshot?.run_dir!==run)return;review=next;if(coordinatorView)reviewSummary(snapshot.report);AC_I18N.bind($('review-caption'),()=>(review.report.candidate?acMessage("room.candidate_exact_captured_evidence", {value1:review.report.candidate.commit.slice(0,12)}):acMessage("room.no_candidate_is_available")));
     AC_I18N.replace($('test-results'),...review.test_output.map(t=>{const el=node('article',undefined,'test-result'+(t.exit_code!==0||t.timed_out?' failed':''));el.append(node('strong',()=>(acMessage("room.exit", {value1:t.exit_code===0&&!t.timed_out?'✓':'×',value2:t.task,value3:t.exit_code??acMessage("room.unknown"),value4:t.timed_out?acMessage("common.timeout"):''}))));if(t.stdout||t.stderr)el.append(node('pre',t.stdout+'\n'+t.stderr));return el;}));
     AC_I18N.replace($('diff'),...review.diff.split('\n').map(line=>node('span',line||' ','diff-line'+(line.startsWith('+')?' add':line.startsWith('-')?' remove':line.startsWith('@@')?' hunk':''))));
     if(review.truncated){$('diff').append(node('span','…','diff-line muted'),node('span',()=>acMessage("room.full_diff_cli",{command:'agentconductor diff "'+snapshot.run_dir+'"'}),'diff-line muted'));notice(()=>acMessage("room.diff_exceeds_the_inline_review_limit_use_the"));}
-    changeTab('review');renderSnapshot();
+    if(activate)changeTab('review');renderSnapshot();
   }catch(e){notice(e.message,true);}
 }
 // GitHub #684: a live tool request is decided in the task card's footer (as in the mock), not in a modal; the card's notice shows the
@@ -267,7 +267,7 @@ function autoQuotaRefresh(){if(roomStopped||!snapshot||busy()||snapshot.report.s
 let pollFailures=0;function pollFailed(e,background){if(!e.transport||!background||++pollFailures>=3){AC_I18N.bind($('connection'),()=>(acMessage("room.local_connection_unavailable")));notice(e.message,true);}}function pollSucceeded(){pollFailures=0;lastSnapshotAt=Date.now();}
 async function poll(background=false) {
   if(polling||roomStopped)return;polling=true;
-  try{const kinds=JSON.stringify([...new Set((snapshot?.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());const next=await request({kind:'snapshot',quota_refresh_last:Object.fromEntries(quotaRefreshed),icons:!snapshot||kinds!==iconKinds});if(roomStopped)return;if(next.phase_transition&&window.acNextPhase?.follow){await window.acNextPhase.follow();return;}pollSucceeded();if(next.icons){iconCache=next.icons;iconKinds=JSON.stringify([...new Set((next.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());}const before=snapshot;snapshot=next;window.acSessions?.observe(snapshot);followProgress(before);const job=snapshot.job;
+  try{const kinds=JSON.stringify([...new Set((snapshot?.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());const next=await request({kind:'snapshot',quota_refresh_last:Object.fromEntries(quotaRefreshed),icons:!snapshot||kinds!==iconKinds});if(roomStopped)return;if(next.phase_transition&&window.acNextPhase?.follow){await window.acNextPhase.follow();return;}pollSucceeded();if(next.icons){iconCache=next.icons;iconKinds=JSON.stringify([...new Set((next.report?.plan?.agents||[]).map(a=>a.parser||'custom'))].sort());}const before=snapshot;snapshot=next;if(!before||before.run_dir!==snapshot.run_dir){review=null;resetReviewEvidence();changeTab('activity');}window.acSessions?.observe(snapshot);followProgress(before);const job=snapshot.job;
     if(snapshot.automatic_merge_error&&poll.autoMergeError!==snapshot.automatic_merge_error.id){poll.autoMergeError=snapshot.automatic_merge_error.id;notice(snapshot.automatic_merge_error.error||acMessage('native.automatic_merge_paused_gate'),true);}
     if(job&&job.state!=='running'&&lastJob!==job.id&&job.kind!=='quota'){lastJob=job.id;
       // Feedback or an approval sent to a run that is not running continues it.

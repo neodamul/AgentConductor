@@ -200,3 +200,6 @@ DD-136 / #925 driver: provider capacity and reviewed alternatives determine elig
 
 
 #958: Asynchronous state clarity with no extra worker, timer, dependency or duplicate progress banner.
+
+
+#960: Keep UI state local to run identity without storage, extra polling or dependencies.

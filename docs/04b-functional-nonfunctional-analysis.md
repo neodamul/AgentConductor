@@ -860,3 +860,6 @@ FR-130 / #933 / #934: autoDiscover also queries a Claude profile whose indicator
 
 
 #958: Pending and ready plan identities include target Phase, proposal directory and lifecycle. Hide historical task presentation only during pending re-planning; preserve normal history and dirty edits across unrelated snapshots.
+
+
+#960: Compare run_dir on accepted snapshots, including the first snapshot in a reused DOM. Do not reset tabs on unchanged snapshots; discard obsolete evidence responses.

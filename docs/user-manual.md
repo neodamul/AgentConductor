@@ -550,3 +550,6 @@ Windows path selection uses the standard Common Item Dialog directly, with no Po
 
 
 During next-Phase re-planning, Step 3 names the previous and target Phases and shows live planning progress. Previous task rows are hidden and approval stays disabled until the new plan is ready.
+
+
+Each newly opened run starts on Activity. Within the same run, periodic refresh keeps the tab you selected. Evidence returned for a previous run is not displayed in the new run.

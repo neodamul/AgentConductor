@@ -701,3 +701,6 @@ BG-132 amendment (#935, #936): resolve ambiguous goals inside the existing revie
 
 
 #958: Keep operators informed of the actual next Phase while asynchronous re-planning runs; do not present a previous plan as current.
+
+
+#960: Start each execution in its live activity context instead of displaying evidence left over from another run.
