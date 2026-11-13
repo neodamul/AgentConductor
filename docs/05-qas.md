@@ -933,3 +933,5 @@ QAS-141 / #933 / #934: tests/quota_folder_934.cjs (no folder: no query; folder s
 
 
 #948: Given a long verification command/path, Plan review remains a single-line summary at 840/1280px in Light/Dark; hover and expansion retain the complete value.
+
+#958: Given Phase 2 merged and the Phase 3 re-plan job running, Step 3 shows "Phase 2 결과로 Phase 3을 다시 계획하는 중입니다", a progress row, no Phase 2 task rows and disabled approval; when the plan is ready it shows the Phase 3 re-plan.

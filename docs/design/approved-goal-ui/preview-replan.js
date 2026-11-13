@@ -11,6 +11,16 @@ const changeLabel={changed:'변경',added:'추가',removed:'제외'};
 function renderPlanCard(){
  const card=document.getElementById('plan-card');if(!card)return;
  const rows=document.getElementById('plan-rows'),next=replanPhase;
+ // #958: while the next phase is still being re-planned, say so for the right phases and do not show the previous plan as the new one.
+ const actions=card.querySelectorAll('.dir .btn');actions.forEach(b=>b.disabled=!!next?.pending);card.classList.toggle('plan-pending-card',!!next?.pending);
+ if(next?.pending){
+  document.getElementById('plan-eyebrow').textContent='3단계 · 계획 · Phase '+next.number+'/'+next.total;
+  document.getElementById('plan-heading').textContent='Phase '+(next.number-1)+' 결과로 Phase '+next.number+'을 다시 계획하는 중입니다';
+  document.getElementById('plan-sub').textContent='코디네이터가 Phase '+(next.number-1)+' 병합 결과와 남은 계획을 검토하고 있습니다. 계획이 나오면 처음 계획과 달라진 작업에 표시와 이유가 붙습니다.';
+  const row=document.createElement('div');row.className='row plan-pending';row.setAttribute('role','status');row.textContent='Phase '+(next.number-1)+' 병합 결과(변경 4개 파일 · 통합 테스트 통과)를 읽고 Phase '+next.number+' 작업을 만드는 중…';rows.replaceChildren(row);
+  document.querySelectorAll('[data-current-position]').forEach(e=>e.textContent='현재 Phase '+next.number+'/'+next.total+' · 계획 중');
+  document.querySelector('.auto-merge-option').hidden=false;document.getElementById('plan-approve-note').textContent='계획이 나오면 검토하고 승인할 수 있습니다.';return;
+ }
  document.getElementById('plan-eyebrow').textContent=next?'3단계 · 계획 · Phase '+next.number+'/'+next.total:'3단계 · 계획';
  document.getElementById('plan-heading').textContent=next?'Phase '+(next.number-1)+' 결과로 Phase '+next.number+'을 다시 계획했습니다':'계획을 검토하고 실행을 시작합니다';
  document.getElementById('plan-sub').textContent=next?'코디네이터가 Phase '+(next.number-1)+' 병합 결과(변경 4개 파일 · 통합 테스트 통과)를 보고 처음 계획을 고쳤습니다. 달라진 작업에는 표시와 이유가 붙습니다.':'코디네이터가 목표와 저장소를 분석해 작업 3개를 제안했습니다. 작업을 펼쳐 지시와 담당을 고칠 수 있습니다.';
@@ -34,9 +44,9 @@ function renderAutoMergeNote(){
 }
 document.getElementById('auto-merge').onchange=renderAutoMergeNote;
 // When the re-plan changes nothing the plan stop is skipped and the next phase starts at once.
-function previewReplan(number,total,unchanged){
+function previewReplan(number,total,unchanged,pending){
  if(number&&unchanged){i=3;show();document.getElementById('run-meta').replaceChildren(Object.assign(document.createElement('span'),{textContent:'Phase '+number+'/'+total+' · Phase '+(number-1)+' 결과로 다시 검토했고 계획 변경이 없어 바로 시작했습니다'}));return;}
- replanPhase=number?{number,total}:null;renderPlanCard();
+ replanPhase=number?{number,total,pending:!!pending}:null;renderPlanCard();
 }
 renderPlanCard();
 // Any other navigation shows the first plan again; previewReplan runs after show() on the next-phase path.

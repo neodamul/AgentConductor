@@ -1786,3 +1786,5 @@ DD-62 amendment (#943): Reuse read-only snapshot planning to re-plan the next Ph
 
 
 #948: Reuse the shared Plan row CSS and existing i18n title binding. Ellipsis applies only to summary metadata, leaving the editable command unchanged; no dependency or background work is added.
+
+DD-62 amendment (#958): the re-plan heading follows the running plan job's target Phase, not the last stored proposal; while that job runs the card shows a pending state instead of stale rows.
