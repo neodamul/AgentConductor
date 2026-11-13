@@ -178,10 +178,11 @@ pub async fn generate_from(
             Ok(tasks) => tasks,
             Err(error)
                 if error.contains("unsafe or overlapping scope")
-                    || error.contains(crate::plan::EMPTY_PATHS) =>
+                    || error.contains(crate::plan::EMPTY_PATHS)
+                    || error.contains(crate::plan::VACUOUS_CHECK) =>
             {
                 let retry = format!(
-                    "{prompt}\n\nThe previous plan failed validation: {error}. Return a corrected complete plan. Keep each task's intent but give every task, a verification task too, at least one literal repo-relative file or directory path, unique and disjoint within its phase. Do not use category labels such as `score:` as paths."
+                    "{prompt}\n\nThe previous plan failed validation: {error}. Return a corrected complete plan. Keep each task's intent but give every task, a verification task too, at least one literal repo-relative file or directory path, unique and disjoint within its phase. Do not use category labels such as `score:` as paths. Every test_command must fail when the task's deliverable is missing."
                 );
                 fs::write(&task_file, &retry).map_err(|e| e.to_string())?;
                 let retried = runner::run(
@@ -216,6 +217,7 @@ pub async fn generate_from(
     crate::plan::trim_directory_slashes(&mut plan.tasks);
     crate::roles::apply(roles, &mut plan.tasks)?;
     plan.validate()?;
+    crate::plan::reject_vacuous_checks(&plan.tasks)?;
     fs::write(
         dir.join("plan.json"),
         serde_json::to_vec_pretty(&plan).map_err(|e| e.to_string())?,
@@ -278,6 +280,7 @@ fn phased(
         };
         check
             .validate()
+            .and_then(|()| crate::plan::reject_vacuous_checks(&phase.tasks))
             .map_err(|e| format!("phase {}: {e}", phase.id))?;
     }
     crate::phases::write(root, &analysis, &phases)?;

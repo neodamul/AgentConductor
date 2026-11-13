@@ -4067,6 +4067,13 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Completed: local implementation, diff review, wiki and verification evidence recorded; linked PR tracks merge/closure, completion signal and owned cleanup.
 
 #927 evidence: Red found the run-banner element in the actual failed-state page. Final local aggregate:102 Node UI scripts passed;108 related Rust cases passed (one additional installed-OpenCode integration ignored);6 Python manifest/tool-dialog checks passed;16 focused parity entries passed across light/dark and840/1280. The reference interaction checker passed183checks per theme/width and verified92capture states (88existing plus4failure/scope images); existing image noise was excluded from the diff. Clippy with warnings denied, rustfmt,300line checks and generated EN/KO manual consistency passed. Transcripts/task/tool/coordinator render blocks moved byte-for-byte; embedding and simulator share the same fragments. No physical Windows/live CLI validation or release performed.
+### Meaningful planned verification commands — GitHub #928 / #929 (0.2.8)
+
+Trace: R-190 / BG-145 / SF-178 / UC-181 / FR-182 / QAS-188 / DD-202.
+- [x] Plan: claim owner-claude and issue-linked branch; inspect planner prompt, validation and retry.
+- [x] Task: reject vacuous test commands in the planner and retry once; prompt rules for documentation checks and load-only red-phase test tasks.
+- [x] Verify: plan, prompt_order, planning_overlap_repair and planner fixture tests.
+- [x] Completed: linked PR tracks merge and branch cleanup.
 
 ### Effective Claude permissions — GitHub #931 (0.2.8)
 

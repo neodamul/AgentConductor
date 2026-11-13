@@ -85,6 +85,52 @@ mod validation;
 /// A task, a verification task too, owns at least one path; the planner's scope correction retry keys on this text.
 pub const EMPTY_PATHS: &str = "paths is empty; every task, a verification task too, must own at least one literal repo-relative file or directory";
 
+/// GitHub #929: the planner's correction retry keys on this text.
+pub const VACUOUS_CHECK: &str = "test_command passes even when the task produced nothing (for example `git status`, `true`, `echo`, `ls`); give a check that fails when the owned files are missing or wrong";
+
+/// GitHub #929: a check that exits 0 whatever the task did (`git status`, `true`, `echo`,
+/// `ls`, also wrapped in `sh -c`) verifies nothing, so a planned task may not use one.
+pub fn is_vacuous_check(command: &[String]) -> bool {
+    let name = |s: &str| {
+        let base = s
+            .rsplit(['/', '\\'])
+            .next()
+            .unwrap_or(s)
+            .to_ascii_lowercase();
+        base.strip_suffix(".exe").map(str::to_owned).unwrap_or(base)
+    };
+    let words: Vec<String> = match command {
+        [shell, flag, script]
+            if matches!(
+                name(shell).as_str(),
+                "sh" | "bash" | "zsh" | "cmd" | "powershell" | "pwsh"
+            ) && matches!(flag.to_ascii_lowercase().as_str(), "-c" | "/c" | "-command") =>
+        {
+            script.split_whitespace().map(str::to_owned).collect()
+        }
+        _ => command.to_vec(),
+    };
+    match words.as_slice() {
+        [] => false,
+        [first, rest @ ..] => match name(first).as_str() {
+            "true" | ":" | "echo" | "ls" | "dir" | "pwd" | "printf" => true,
+            "git" => matches!(
+                rest.first().map(String::as_str),
+                Some("status" | "log" | "branch" | "show" | "rev-parse")
+            ),
+            _ => false,
+        },
+    }
+}
+
+/// GitHub #929: rejects planned tasks whose test_command cannot fail.
+pub fn reject_vacuous_checks(tasks: &[Task]) -> Result<(), String> {
+    match tasks.iter().find(|t| is_vacuous_check(&t.test_command)) {
+        Some(task) => Err(format!("task {}: {VACUOUS_CHECK}", task.id)),
+        None => Ok(()),
+    }
+}
+
 /// Coordinators often write a directory scope as `docs/`. A slash-free directory path
 /// already covers everything inside it (see `overlaps`), so trailing slashes are trimmed
 /// before validation instead of rejecting the plan as an unsafe scope.
