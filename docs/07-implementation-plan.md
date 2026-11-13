@@ -4253,3 +4253,10 @@ Local verification includes a successful current-source build, all-target Clippy
 - [x] Task: reproduced integration summary remaining above a selected task; hide it on the existing task render path.
 - [x] Verify: actual review footer regression passes task → integration visibility plus unchanged revise/review/approved/completed footer behavior.
 - [x] Completed: bilingual manuals/HTML and wiki updated; linked PR prepared for merge before release.
+
+## #972 — Slack integration verification
+
+- [x] Plan: inspect existing settings, channels, transport, inbound authorization and update persistence.
+- [x] Task: document invitation vs webhook setup; use existing tests and a disposable local TLS receiver.
+- [x] Verify: 22 focused native checks, 24 UI checks and both opt-in real-curl/local-TLS tests passed; four local notices include the decision acknowledgment.
+- [ ] Completed: evidence/manuals/wiki updated; actual Slack message now requested. Supplied invitation is at signup; user login and target channel are pending.

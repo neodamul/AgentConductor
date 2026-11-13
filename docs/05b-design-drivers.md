@@ -212,3 +212,6 @@ DD-136 / #925 driver: provider capacity and reviewed alternatives determine elig
 
 
 #963: Use the existing task renderer boundary; no additional state, requests or redraw loop.
+
+
+#972 verification: existing Slack/webhook configuration, per-workspace enablement, local secrets and allowlisted inbound behavior were checked under R-43 / DD-79 / DD-81. See `docs/evidence/972-slack-verification.md`; no product behavior was added.

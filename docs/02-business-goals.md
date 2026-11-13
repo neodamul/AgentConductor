@@ -713,3 +713,6 @@ BG-132 amendment (#935, #936): resolve ambiguous goals inside the existing revie
 
 
 #963: Keep the selected task context distinct from integration evidence so operators do not mistake another scope for the current work.
+
+
+#972 verification: existing Slack/webhook configuration, per-workspace enablement, local secrets and allowlisted inbound behavior were checked under R-43 / DD-79 / DD-81. See `docs/evidence/972-slack-verification.md`; no product behavior was added.

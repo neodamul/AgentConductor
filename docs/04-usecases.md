@@ -952,3 +952,6 @@ UC-135 / #933 / #934: the operator sets a project folder while Claude usage show
 
 
 #963: From the integration summary select a task: hide integration summary and verification rows. Select integration again: restore the summary and footer.
+
+
+#972 verification: existing Slack/webhook configuration, per-workspace enablement, local secrets and allowlisted inbound behavior were checked under R-43 / DD-79 / DD-81. See `docs/evidence/972-slack-verification.md`; no product behavior was added.

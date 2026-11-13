@@ -940,3 +940,6 @@ R-145 / #933 / #934 (0.2.8): the usage popup's retry after a failed query is the
 
 
 #963: Selecting a task in Review and merge shows only that task; integration review summary returns only when its coordinator row is selected.
+
+
+#972 verification: existing Slack/webhook configuration, per-workspace enablement, local secrets and allowlisted inbound behavior were checked under R-43 / DD-79 / DD-81. See `docs/evidence/972-slack-verification.md`; no product behavior was added.
