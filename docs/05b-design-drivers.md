@@ -206,3 +206,6 @@ DD-136 / #925 driver: provider capacity and reviewed alternatives determine elig
 
 
 #957: Share the existing file-diff component; preserve approved look and feel, keyboard accessibility and low redraw overhead.
+
+
+#962: Single-flight destructive actions with stable accessible focus and no extra timer or inventory polling.

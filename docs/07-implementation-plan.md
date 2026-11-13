@@ -4239,3 +4239,10 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 GitHub milestone state: **7 of 9 issues closed**. #954, #955, #957, #958, #959, #960 and #961 are merged on main. #962 and #963 remain open with owner-claude; Codex requested status/handoff and did not change their implementation.
 
 Local verification includes a successful current-source build, all-target Clippy and formatting, all 114 top-level UI runtime scripts, all 47 Python/script checks, focused native workflow/routing/trace tests, and approved re-plan/review element comparisons. No per-fix remote CI was started. Windows packaging and combined release CI remain pending; 0.2.10 is not published.
+
+## #962 — Safe session cleanup
+
+- [x] Plan: user transferred ownership from Claude; trace duplicate action/focus/style through QAS/design.
+- [x] Task: reproduced duplicate submission; added single-flight mutation, stale-read invalidation, focus restoration and approved confirmation styling.
+- [x] Verify: actual dialog duplicate/pending/failure/focus/stale-read checks passed, alongside all nine existing session checks and the #955 observer regression; approved danger controls checked in Light/Dark.
+- [x] Completed: bilingual manuals/HTML/wiki updated; linked PR prepared for immediate merge before 0.2.10 release.

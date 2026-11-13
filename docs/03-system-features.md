@@ -835,3 +835,6 @@ SF-132 / #933 / #934: icon-only usage retry; automatic Claude usage query after 
 
 
 #957: Expandable Step 6 changed-file rows with per-file diff, line counts and stable background-refresh behavior.
+
+
+#962: Session dialog mutation guard, pending feedback, safe focus restoration and destructive confirmation appearance.

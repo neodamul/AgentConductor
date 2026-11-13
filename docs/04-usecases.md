@@ -946,3 +946,6 @@ UC-135 / #933 / #934: the operator sets a project folder while Claude usage show
 
 
 #957: In Review and merge, click a changed file to expand its diff, inspect additions/deletions, and click again to collapse. Polling keeps the row open and focus intact; existing approval gates remain.
+
+
+#962: Confirm finished-session cleanup twice quickly: send one request, disable dialog actions while pending, then focus the available cleanup or Close control. Failure retains sessions and permits retry.

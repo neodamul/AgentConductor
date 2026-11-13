@@ -707,3 +707,6 @@ BG-132 amendment (#935, #936): resolve ambiguous goals inside the existing revie
 
 
 #957: Let operators inspect individual changed files before merge using the same interaction as the result dialog.
+
+
+#962: Prevent duplicate destructive session actions and keep operators oriented after asynchronous completion.

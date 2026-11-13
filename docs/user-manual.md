@@ -556,3 +556,6 @@ Each newly opened run starts on Activity. Within the same run, periodic refresh 
 
 
 In Review and merge, click a changed file to expand its diff below the filename and added/deleted line counts. Click it again to collapse. Background refresh keeps an unchanged file open and preserves keyboard focus. This uses the same per-file view as the finished-result popup; approval and merge still use the captured evidence.
+
+
+Session cleanup and stop actions accept one request at a time. While a request is pending, the dialog shows progress and disables its actions. After cleanup, focus returns to Clean up finished, or Close when no cleanable sessions remain. Failed operations retain the list and show an error for retry.

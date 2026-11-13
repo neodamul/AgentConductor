@@ -1,6 +1,6 @@
 // #955: session-changing snapshots request one inventory; unchanged snapshots request none.
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-const nodes=new Map(),empty=()=>({dataset:{},hidden:true,open:false,setAttribute(){},replaceChildren(){},append(){},focus(){}});
+const nodes=new Map(),empty=()=>({dataset:{},hidden:true,open:false,addEventListener(){},setAttribute(){},replaceChildren(){},append(){},focus(){}});
 const calls=[],waiters=[];let delayed=false;
 const context={window:{},document:{getElementById:id=>{if(!nodes.has(id))nodes.set(id,empty());return nodes.get(id);},querySelectorAll:()=>[],createElement:empty},acMessage:key=>key,setTimeout:()=>0,clearTimeout(){}};
 vm.createContext(context);vm.runInContext(fs.readFileSync('src/ui/agent_sessions.js','utf8'),context);

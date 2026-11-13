@@ -1804,3 +1804,6 @@ DD-62 amendment (#958): the re-plan heading follows the running plan job's targe
 DD amendment (#957): Step 6 reuses the result dialog's `.file-diff-toggle`/`.file-diff` rendering for its changed-file list instead of a second diff viewer.
 
 #957 verification maintenance: split the pre-existing 497-line parity spec into bounded files sharing the same constants; JSON serialization before/after confirms all 429 comparison entries are identical.
+
+
+#962: Guard the shared session act path, disable actions during it and restore focus to cleanup/Close. Reuse existing inventory observer and reject pre-mutation reads by generation; use scoped approved danger-button CSS.
