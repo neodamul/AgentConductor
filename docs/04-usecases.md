@@ -940,3 +940,6 @@ UC-135 / #933 / #934: the operator sets a project folder while Claude usage show
 
 
 #958: After Phase 2 merges, open Phase 3 planning. See Phase 2 → Phase 3 in-progress heading, existing elapsed/output progress, no old tasks, disabled approval; when ready review Phase 3 normally.
+
+
+#960: Select Diff and tests in run A. Same-run snapshots keep it selected. Start run B (including a recreated Room): Activity is selected; a late run-A evidence response cannot switch it back.
