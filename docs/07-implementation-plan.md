@@ -4138,3 +4138,12 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 - [x] Task: add a failing runtime regression, remove the duplicate box, and add heading parity coverage.
 - [x] Verify: local runtime, Phase history/edit preservation, theme/viewport parity and source checks.
 - [x] Completed: committed/pushed code, tests, manuals and wiki; PR #947 tracks final merge and issue closure. Collaboration recorded in AgentMemory.
+
+
+## #943 — Outcome-based Phase re-planning and optional automatic merge
+
+- [x] Plan: trace requirement through Goal/Feature/Use Case/QAS/DD-62; inspect Claude mock branch.
+- [x] Task: failing outcome/change/gate tests, re-plan worker and Phase adoption.
+- [x] Task: default-off automatic merge, Stop-aware continuation, change-review UI and parity.
+- [x] Verify: local focused regressions and whole-application ad hoc checklist, including workspace/agents/MCP/goals/planning/execution/recovery/approval/merge/quota.
+- [ ] Completed: manuals/wiki, commit/push and Claude handoff for batched CI; close only after acceptance.

@@ -29,7 +29,7 @@ pub fn drop_satisfied_dependencies(phases: &mut [PhaseSpec]) {
     }
 }
 
-fn safe_id(id: &str) -> Result<(), String> {
+pub(crate) fn safe_id(id: &str) -> Result<(), String> {
     let ok = !id.is_empty()
         && id.len() <= 40
         && id
@@ -42,7 +42,7 @@ fn safe_id(id: &str) -> Result<(), String> {
     }
 }
 
-fn task_markdown(phase: &PhaseSpec, task: &Task) -> String {
+pub(crate) fn task_markdown(phase: &PhaseSpec, task: &Task) -> String {
     format!(
         "# {}\n\nPhase: {} ({})\nRole: {}\nAgent: {}{}\nOwned paths: {}\nDepends on: {}\nTest: {}\n\n{}\n",
         task.id,

@@ -87,6 +87,16 @@ pub(super) async fn run_inner(
     }
     fs::create_dir(run_dir).map_err(|e| format!("create new run directory: {e}"))?;
     let dir = run_dir.canonicalize().map_err(|e| e.to_string())?;
+    if run_dir
+        .parent()
+        .is_some_and(|p| p.join("phase-chain.stop").exists())
+    {
+        fs::write(
+            dir.join("stop.request"),
+            "{\"reason\":\"Phase chain paused\"}",
+        )
+        .map_err(|e| e.to_string())?;
+    }
     if dir.starts_with(&git.root) {
         return Err("run directory must be outside the repository".into());
     }

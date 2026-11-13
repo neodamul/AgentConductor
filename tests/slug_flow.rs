@@ -90,26 +90,15 @@ fn goal_to_slug_phases_runs_and_rules() {
     workflow::merge(run).unwrap();
     assert_eq!(progress(&tree)["current_phase"], "02-docs");
 
-    // The next phase comes from the slug tree, without another coordinator run.
-    mutate(&startup, serde_json::json!({"kind":"next_phase"})).unwrap();
+    // #943: a merged result now launches a coordinator job for the next Phase.
+    // The dedicated phase_replan_runtime tests verify its changed/unchanged output paths.
     let next = snapshot(&startup);
-    assert!(
-        next["job"].is_null() || next["job"]["kind"] != "plan",
-        "no coordinator job"
-    );
+    assert_eq!(next["job"]["kind"], "plan");
     assert_eq!(next["proposal"]["slug_phase"], "02-docs");
-    assert_eq!(next["proposal"]["plan"]["tasks"][0]["id"], "c");
-
-    // Generate plan for a goal that already has a plan reloads its current phase.
-    let loaded = mutate(&startup, serde_json::json!({"kind":"prepare"})).unwrap();
-    assert_eq!(loaded["phase"], "02-docs");
-    let again = snapshot(&startup);
-    assert!(
-        again["job"].is_null() || again["job"]["kind"] != "plan",
-        "no coordinator job"
-    );
-    assert_eq!(again["proposal"]["phase"], "ready");
-    assert_eq!(again["proposal"]["slug_phase"], "02-docs");
+    startup.dispatch(b"{\"kind\":\"stop_planning\"}").unwrap();
+    let stopped = settle(&startup);
+    assert_eq!(stopped["job"]["state"], "stopped");
+    assert_eq!(progress(&tree)["current_phase"], "02-docs");
 
     // Global rules can be edited too; the workspace override can be cleared.
     mutate(&startup, serde_json::json!({"kind":"save_plan_rules","scope":"global","text":"# Global\n- One rule"})).unwrap();

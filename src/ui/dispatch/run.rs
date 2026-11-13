@@ -37,6 +37,13 @@ impl Room {
             return workflow::recovery_preview(&controller.dir, task, paths, test_command.clone());
         }
         if let Some(startup) = self.surface()? {
+            if let Request::Action {
+                action: Action::Stop { reason },
+                ..
+            } = &request
+            {
+                startup.pause_phase_chain(reason)?;
+            }
             startup.poll_job()?;
         }
         match request {
@@ -49,7 +56,18 @@ impl Room {
             Request::Snapshot {
                 icons,
                 quota_refresh_last,
-            } => controller.snapshot(icons, &quota_refresh_last),
+            } => {
+                let mut snapshot = controller.snapshot(icons, &quota_refresh_last)?;
+                if let Some(startup) = self.surface()? {
+                    if let Some(next) = startup.phase_transition(&controller.dir) {
+                        snapshot["phase_transition"] = next;
+                    }
+                    if let Some(job) = startup.automatic_phase_job() {
+                        snapshot["job"] = job;
+                    }
+                }
+                Ok(snapshot)
+            }
             Request::Evidence {} => controller.evidence(),
             Request::Task { index } => controller.task(index),
             Request::Coordinator {} => controller.coordinator(),

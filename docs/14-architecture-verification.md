@@ -578,3 +578,10 @@ The owner replaced the historical planning and execution confirmation dialogs wi
 The Goal name and exact folder path share a bounded, keyboard-scrollable identity region. The irreversible warning and actions stay outside that region, and Cancel remains the focused default. `tests/delete_goal_dialog_752.cjs` verifies long Korean and English Goal/path content at 840 px and 1280 px in both themes; Cancel closes without confirming deletion. The full local suite passed before the stylesheet split (922 passed, 16 ignored, zero failed across 299 suites). After splitting the 499-line startup stylesheet into two files below 300 lines and adding the second file to both native document assembly and the UI simulator, `cargo check --locked`, 11 focused Rust tests, the eight-case #752 browser matrix, tab geometry, overflow-tooltip and direct-plan-start browser checks passed.
 
 DD-136 / #925: fresh short/unknown resets now transfer at a quiescent scheduler boundary; task-level policies govern the watcher, and exhausted chains retain an earlier real source reset. Local evidence: tests/immediate_fallback.rs, tests/availability_timer.rs, tests/availability_watcher.rs, tests/claude_api_workflow.rs and tests/unit/workflow.rs. Physical Windows acceptance remains unverified.
+
+
+### #943 — Phase boundary automation
+
+DD-62 now re-plans only the next Phase using hash-verified merged diff, test logs and normalized final responses. Original tasks remain comparison evidence; changes require review, and identical effective tasks with unchanged execution profiles may continue. Default-off automatic merge uses the existing exact candidate/evidence binding. Stop markers prevent automatic merge, re-planning and new workers; explicit resume retains revision checking. No additional polling loop or provider API was introduced.
+
+Evidence: `tests/phase_replan_runtime.rs`, `tests/phase_replan_changes.rs`, `tests/phase_auto_merge.rs`, `tests/phase_replan_runtime.cjs` and `tests/design_parity/phase_replan_spec.cjs`. Whole-application ad hoc results are recorded separately in `docs/evidence/943-whole-app-validation.md`.

@@ -97,7 +97,7 @@ pub fn expect_revision(dir: &Path, expected: &str) -> Result<(), String> {
         ))
         .map_err(|_| "reviewed revision was already bound".into())
 }
-fn file_digest(path: &Path) -> Result<String, String> {
+pub(crate) fn file_digest(path: &Path) -> Result<String, String> {
     let mut file = fs::File::open(path).map_err(|e| e.to_string())?;
     let mut hash = Sha256::new();
     let mut bytes = [0; 8192];
@@ -253,6 +253,8 @@ mod phase_link;
 pub use phase_link::*;
 pub mod blockers;
 
+mod auto_merge;
+pub use auto_merge::{automatic_merge, set_auto_merge};
 mod automatic;
 pub use automatic::*;
 mod repair;

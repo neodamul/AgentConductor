@@ -24,6 +24,7 @@ pub mod memory;
 pub mod messenger;
 pub mod models;
 pub mod native_guard;
+pub mod phase_replan;
 pub mod phases;
 pub mod plan;
 pub mod plan_rules;

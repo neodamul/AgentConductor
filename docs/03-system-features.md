@@ -808,3 +808,6 @@ SF-132 / #933 / #934: icon-only usage retry; automatic Claude usage query after 
 
 
 #944: One authoritative editable task list per reviewing Phase; completed and future Phases remain selectable read-only history.
+
+
+#943: Outcome-grounded next-Phase planning, task change comparison, default-off automatic merge, durable audit and Stop-aware continuation.

@@ -927,3 +927,6 @@ QAS-141 / #933 / #934: tests/quota_folder_934.cjs (no folder: no query; folder s
 
 
 #944: Given a multi-Phase ready proposal, opening Plan review shows one editable task list and its Phase identity. Selecting history hides editors; returning restores them and preserves edits. Test both themes and narrow/wide viewports.
+
+
+#943: Given a merged Phase, the next planner input contains its merged diff, tests and task outcome. Invalid/stale output cannot start. A byte-equivalent effective task plan can continue; any changed task requires review. Auto-merge off preserves manual approval. Stop, failed verification, scope/tool/permission/review blockers and stale evidence prevent automatic merge or continuation.

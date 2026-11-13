@@ -113,6 +113,15 @@ impl Startup {
         digest: String,
         revision: String,
     ) -> Result<serde_json::Value, String> {
+        self.start_plan_as(saved, digest, revision, false)
+    }
+    pub(in crate::ui::setup) fn start_plan_as(
+        &self,
+        saved: &mut Saved,
+        digest: String,
+        revision: String,
+        automatic: bool,
+    ) -> Result<serde_json::Value, String> {
         let proposal = saved
             .proposal
             .as_ref()
@@ -157,34 +166,40 @@ impl Startup {
         }
         self.source_context(saved)?;
         workflow::validate_permissions(&plan)?;
-        let repo = Repository::open(
-            proposal
-                .workspace
-                .as_deref()
-                .unwrap_or(&saved.config.repository),
-        )?;
-        if let Some(source) = crate::folder::load(&repo.root)? {
-            source.validate()?;
-        }
-        repo.clean()?;
-        if repo.head()? != proposal.repository_base {
-            return Err(crate::ui::messages::text(
-                "native.repository_changed_since_planning_generate_a_new_plan",
-            )
-            .into());
-        }
+        // Automatic continuation is admitted here; repository scans stay in startup-run.
+        let repository = if automatic {
+            saved.config.repository.clone()
+        } else {
+            let repo = Repository::open(
+                proposal
+                    .workspace
+                    .as_deref()
+                    .unwrap_or(&saved.config.repository),
+            )?;
+            if let Some(source) = crate::folder::load(&repo.root)? {
+                source.validate()?;
+            }
+            repo.clean()?;
+            if repo.head()? != proposal.repository_base {
+                return Err(crate::ui::messages::text(
+                    "native.repository_changed_since_planning_generate_a_new_plan",
+                )
+                .into());
+            }
+            crate::folder::activate(&repo, &saved.config.repository)?.root
+        };
         crate::state::Store::open(self.broker.dir.join("state.sqlite"))?.record(
-            "plan_execution_consent",
+            if automatic {"automatic_phase_consent"} else {"plan_execution_consent"},
             &serde_json::json!({"digest":digest,"revision":revision,"repository_base":proposal.repository_base,"plan":path}),
-            crate::ui::messages::text("native.human_approved_the_exact_reviewed_startup_plan"),
+            if automatic {"Unchanged Phase continued under the original reviewed plan"} else {crate::ui::messages::text("native.human_approved_the_exact_reviewed_startup_plan")},
         )?;
-        let repo = crate::folder::activate(&repo, &saved.config.repository)?;
         let run = proposal.run.clone();
         workflow::set_auto_resume(&run, saved.config.auto_resume)?;
+        workflow::set_auto_merge(&run, saved.config.auto_merge, &plan)?;
         let mut args = vec![
             "startup-run".into(),
             path.to_string_lossy().into(),
-            repo.root.to_string_lossy().into(),
+            repository.to_string_lossy().into(),
             run.to_string_lossy().into(),
             digest,
             proposal.repository_base.clone(),
@@ -196,6 +211,19 @@ impl Startup {
                 &saved.config.name,
                 slug,
             );
+            if automatic {
+                let progress = crate::slug_progress::progress(&root);
+                let phases = progress["phases"].as_array().ok_or("missing phases")?;
+                let number = phases
+                    .iter()
+                    .position(|p| p["id"] == *phase)
+                    .ok_or("unknown Phase")?
+                    + 1;
+                write(
+                    &run.with_extension("phase-continuation.json"),
+                    &serde_json::json!({"number":number,"total":phases.len(),"previous":number-1,"unchanged":true}),
+                )?;
+            }
             workflow::link_phase_at_launch(&run, &root, phase)?;
             args.extend([
                 "--phase".into(),
@@ -223,6 +251,9 @@ impl Startup {
                 serde_json::to_vec_pretty(coordinator).map_err(|e| e.to_string())?,
             )
             .map_err(|e| e.to_string())?;
+        }
+        if !automatic {
+            let _ = fs::remove_file(self.broker.dir.join("phase-chain.stop"));
         }
         saved.proposal.as_mut().unwrap().phase = "starting".into();
         saved.last_run = Some(run.clone());

@@ -65,6 +65,7 @@ impl Controller {
             serde_json::json!({"report":value,"revision":revision,"interruptions":workflow::interruptions(&store)?,"activity":crate::briefing::running_activity(&store, &report, (now as u64) * 1000)?,"quotas":quotas,"quota_window_labels":quota_window_labels,"quota_indicators":quota_indicators,"quota_window_reset_labels":quota_window_reset_labels,"quota_budget_rows":quota_budget_rows,"quota_refresh_due":quota_refresh_due,"job":job,"tool_requests":approvals,"coordinator":crate::native_guard::orchestrator_profile(&self.dir).map(|p| p.id),"decision_count":workflow::decisions::count(&self.dir)?,"tool_decision_wait_secs":crate::native_guard::decision_wait(),"run_dir":self.dir,"phase":workflow::phase_status(&self.dir),"owned_changes":owned_changes,"availability_timer":if self.dir.join("stop.request").exists(){vec![]}else{workflow::availability_timer(&report,now)} ,"availability_timer_error":availability_status.err(),"runner":crate::briefing::runner(&self.dir,&report),"stopping":self.dir.join("stop.request").exists(),"verification":crate::briefing::verification(&self.dir,&report)}),
         )
         .map(|mut snapshot| {
+            snapshot["phase_continuation"]=fs::read(self.dir.with_extension("phase-continuation.json")).ok().and_then(|bytes|serde_json::from_slice::<serde_json::Value>(&bytes).ok()).unwrap_or_default();
             if icons {
                 snapshot["icons"] = serde_json::json!(crate::icons::icon_map(
                     report.plan.agents.iter().map(|a| a.parser),

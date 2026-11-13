@@ -82,6 +82,8 @@ impl Startup {
         self.talk_tick(&mut saved);
         let job = self.job(&saved)?;
         self.settle(&mut saved, &job)?;
+        self.phase_tick(&mut saved, &job)?;
+        let job = self.job(&saved)?;
         crate::ui::diagnostics::step("advance", stepping.elapsed());
         if let Request::Snapshot {
             icons,

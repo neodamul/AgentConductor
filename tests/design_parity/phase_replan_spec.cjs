@@ -1,0 +1,13 @@
+// #943: compare the implementation with Claude's approved re-plan state.
+const setup="SIM.home.proposal=SIM.proposal('ready');SIM.home.proposal.slug_phase='p2';const tasks=SIM.home.proposal.plan.tasks;SIM.home.proposal.replan={unchanged:false,completed_phases:[{phase:'p1'}],changes:[{id:tasks[0].id,kind:'changed',fields:['prompt']},{id:tasks[1].id,kind:'added',fields:[]},{id:'removed',kind:'removed',fields:[],task:{id:'removed',prompt:'Previous audit note',paths:['docs/audit.md']}}]};SIM.home.slugs=[{slug:'g',goal:'g',active:true,plan:{phases:[]},progress:{current_phase:'p2',phases:[{id:'p1',name:'Initial',stage:'completed',task:[],completed:[],verification:[]},{id:'p2',name:'Next',stage:'task',task:tasks.map(t=>t.id),completed:[],verification:[]}]}}];";
+const app={setup,run:"document.getElementById('start-tab-review').click()"},mock={url:'?theme=light#2',run:'previewReplan(2,2,false)'};
+module.exports=[
+ {name:'phase-replan-heading',props:['fontSize','fontWeight','color'],keys:['fontSize','fontWeight','color'],pixel:false,mock:{...mock,selector:'#plan-heading'},app:{...app,selector:'#start-panel-review .step-title'}},
+ {name:'phase-replan-approve-note',props:['fontSize','color'],keys:['fontSize','color'],pixel:false,mock:{...mock,selector:'#plan-approve-note'},app:{...app,selector:'#start-panel-review .startup-review-footer .note'}},
+ {name:'phase-replan-auto-note',assert:"document.getElementById('start-auto-merge').checked&&document.querySelector('#start-panel-review .startup-review-footer .note').textContent===acMessage('startup.auto_merge_note')",app:{...app,setup:setup+'SIM.home.config.auto_merge=true;'}},
+
+ ...['changed','added','removed'].map(kind=>({name:'phase-replan-tag-'+kind,props:['fontSize','fontWeight','color','backgroundColor','borderTopLeftRadius'],keys:['fontSize','fontWeight','color','backgroundColor','borderTopLeftRadius'],pixel:false,mock:{...mock,selector:'.row[data-change='+kind+'] .plan-change'},app:{...app,selector:'#start-panel-review .plan-change[data-change='+kind+']'}})),
+ {name:'phase-replan-reason',props:['fontSize','lineHeight','color'],keys:['fontSize','lineHeight','color'],pixel:false,mock:{...mock,selector:'.plan-change-reason'},app:{...app,selector:'#start-panel-review .plan-change-reason'}},
+ {name:'phase-replan-auto-option',props:['fontSize','columnGap','color'],keys:['fontSize','columnGap','color'],pixel:false,mock:{...mock,selector:'.auto-merge-option'},app:{...app,selector:'.auto-merge-option'}},
+ {name:'phase-replan-safe-review',assert:"!document.getElementById('start-auto-merge').checked&&document.querySelectorAll('#start-tasks .startup-task').length===3&&!document.querySelector('#start-plan-removed input')&&!SIM.log.some(p=>p.kind==='start')",app},
+];

@@ -4,7 +4,7 @@
 company's own CLI — work on one repository as a team, while you stay in control.**
 
 You describe a goal. AgentConductor splits it into scoped tasks, runs agents in parallel,
-tests the combined result and asks for your approval before merging. It runs on your computer and reuses signed-in agent CLIs — no API keys, no cloud service.
+tests the combined result and asks for your approval before merging by default. It runs on your computer and reuses signed-in agent CLIs — no API keys, no cloud service.
 
 ## Interface previews and screenshots
 
@@ -29,7 +29,8 @@ The following application UI images use local sample data; no live agents or pro
 
 - **One goal, a team of agents** — scoped tasks with dependencies, tests and their own agent sessions; files never overlap between tasks.
 - **Mix agents and custom CLIs** — Claude Code, Codex, OpenCode or company commands, described by workspace JSON profiles.
-- **You approve every important step** — the plan and the final merge; tool decisions are recorded.
+- **Review stays in your hands** — approve changed plans and final merges by default; optional automatic merge accepts only exact verified candidates, preserving Stop and blocking gates.
+- **Plans adapt between Phases** — the coordinator re-plans the next Phase from merged outcomes, shows added/changed/removed tasks, and continues unchanged plans without a redundant stop.
 - **Live team view** — status lights, a live line per running task (tool, time since last output, process state), readable multiline logs, Phase-scoped task history, diffs and tests.
 - **Steer while it runs** — send feedback, reassign agents or models (even for tasks not started yet), stop and resume, or chat with the coordinator in a read-only chat (the chat-bubble button), and recover from an out-of-scope failure through a reviewed plan change.
 - **Imports and lessons** — Jira/Confluence goal sources through company MCP servers, with automatic read-tool selection by the coordinator and saved per-server tool catalogs ([guide](docs/mcp-sources.md)); reviewed lessons are reused in later tasks.
@@ -38,7 +39,7 @@ The following application UI images use local sample data; no live agents or pro
 
 ## How orchestration works
 
-The **engine** (a built-in program, no LLM) starts agent sessions, enforces scopes and dependencies, runs tests, merges results into one candidate and records every step. The optional **coordinator** (an agent you pick) proposes the plan and reviews results; **Write plan manually** uses no LLM. The final merge always needs your approval.
+The **engine** (a built-in program, no LLM) starts agent sessions, enforces scopes and dependencies, runs tests, merges results into one candidate and records every step. The optional **coordinator** (an agent you pick) proposes the plan and reviews results; **Write plan manually** uses no LLM. Final merge approval is required by default; **Merge automatically** is an explicit opt-in and never bypasses verification or blocking gates.
 
 ## How roles are assigned
 

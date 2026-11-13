@@ -41,6 +41,12 @@ impl Startup {
                 for agent in public["agents"].as_array_mut().unwrap() {
                     agent.as_object_mut().unwrap().remove("environment");
                 }
+                if p.directory.join("replan.json").exists() {
+                    value["replan"] =
+                        crate::phase_replan::metadata(&p.directory.join("replan.json"))?;
+                }
+                value["automatic_continuation"] =
+                    p.directory.join("auto-consent.json").exists().into();
                 value["plan"] = public;
                 value["digest"] = digest.into();
                 value["task_profiles"] = profiles.into();

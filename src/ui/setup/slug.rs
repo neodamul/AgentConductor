@@ -161,6 +161,7 @@ impl Startup {
         let mut next = saved.clone();
         self.archive_goal_run(&mut next)?;
         next.config.active_slug = selected.clone();
+        next.config.auto_merge = false;
         next.last_run = None;
         next.config.goal.clear();
         if let Some(slug) = selected {

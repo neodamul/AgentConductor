@@ -912,3 +912,6 @@ R-145 / #933 / #934 (0.2.8): the usage popup's retry after a failed query is the
 
 
 #944: Plan review must show each editable task once. Identify the reviewing Phase in the Plan heading/position line, without a duplicate Phase box, task-ID brief or editing instruction.
+
+
+#943: After a merged Phase, re-plan only the next Phase using the Goal, original analysis, remaining plan and verified completed outcomes. Show added/changed/removed tasks before approval. An unchanged effective plan may continue under the original consent. Merge automatically is opt-in and never bypasses blocking gates.

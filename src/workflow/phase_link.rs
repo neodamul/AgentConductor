@@ -123,6 +123,7 @@ pub fn sync_phase(dir: &Path) -> Result<(), String> {
     }
     if state == "completed" {
         crate::phases::advance_phase(&root, phase, "completed")?;
+        crate::phase_replan::record_outcome(&root, phase, dir)?;
     }
     Ok(())
 }

@@ -5,6 +5,10 @@ const MAX_DOCUMENT: u64 = 64 * 1024;
 
 impl Startup {
     pub(super) fn stop_planning(&self, saved: &mut Saved) -> Result<serde_json::Value, String> {
+        write(
+            &self.broker.dir.join("phase-chain.stop"),
+            &serde_json::json!({"paused":true}),
+        )?;
         if !saved.metadata_queue.is_empty() {
             saved.metadata_queue.clear();
             self.store(saved)?;
@@ -187,7 +191,7 @@ impl Startup {
 }
 
 impl Startup {
-    /// DD-62: the next phase comes from the slug tree; no coordinator runs.
+    /// #943: subsequent Phases are re-planned from completed outcomes.
     pub(super) fn next_phase(&self, saved: &mut Saved) -> Result<serde_json::Value, String> {
         let slug = saved
             .config
@@ -213,6 +217,9 @@ impl Startup {
             workspace_mode: saved.config.workspace_mode,
         };
         let plan = crate::phases::run_plan(&root, &phase, &base)?;
+        if self.phase_requires_replan(&root, &phase)? {
+            return self.launch_phase_replan(saved, &root, &phase, plan);
+        }
         let repo = self.execution_repository(saved)?;
         repo.clean()?;
         let directory = self

@@ -12,6 +12,8 @@ pub struct Config {
     #[serde(default = "automatic::enabled")]
     pub auto_resume: bool,
     #[serde(default)]
+    pub auto_merge: bool,
+    #[serde(default)]
     pub mcp: std::collections::BTreeMap<String, crate::mcp::Server>,
     #[serde(default)]
     pub goal_sources: std::collections::BTreeMap<String, crate::mcp::Binding>,
@@ -143,6 +145,7 @@ pub fn defaults() -> Result<Config, String> {
     profiles.iter_mut().for_each(profiles::derive_permission);
     Ok(Config {
         auto_resume: true,
+        auto_merge: false,
         mcp: Default::default(),
         goal_sources: Default::default(),
         profiles,

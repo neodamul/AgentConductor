@@ -54,5 +54,11 @@ pub async fn repair(dir: &Path, timeout: u64, mut report: Report) -> Result<Repo
             .as_secs() as i64;
         report = resume_due(dir, now, timeout).await?;
     }
+    if report.state == "waiting_approval"
+        && REVIEWED_REVISION.get().is_none()
+        && super::automatic_merge(dir)?
+    {
+        return load(dir);
+    }
     Ok(report)
 }

@@ -120,6 +120,8 @@ mod manual_commands;
 mod mcp_commands;
 #[path = "commands/optimize.rs"]
 mod optimize_commands;
+#[path = "commands/phase_replan.rs"]
+mod phase_replan_commands;
 
 fn execute_args(args: &[String]) -> Result<(), String> {
     if let Some(result) = io_commands::execute(args) {
@@ -132,6 +134,9 @@ fn execute_args(args: &[String]) -> Result<(), String> {
         return result;
     }
     if let Some(result) = chat_commands::execute(args) {
+        return result;
+    }
+    if let Some(result) = phase_replan_commands::execute(args) {
         return result;
     }
     if let Some(result) = optimize_commands::execute(args) {

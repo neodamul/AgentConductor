@@ -10,6 +10,18 @@ impl Startup {
             && s.proposal.as_ref().is_some_and(|p| p.phase == "planning")
         {
             let p = s.proposal.as_mut().unwrap();
+            if p.directory.join("replan-base.json").exists() {
+                let base: serde_json::Value = read(&p.directory.join("replan-base.json"))?;
+                p.workspace = Some(PathBuf::from(
+                    base["workspace"]
+                        .as_str()
+                        .ok_or("missing re-plan workspace")?,
+                ));
+                p.repository_base = base["repository_base"]
+                    .as_str()
+                    .ok_or("missing re-plan base")?
+                    .into();
+            }
             let mut plan: Plan = read(&p.directory.join("plan.json"))?;
             if plan.goal != s.config.goal
                 || profiles::execution_view(&plan.agents)?
@@ -43,6 +55,7 @@ impl Startup {
                     .map(str::to_owned);
             }
             self.store(s)?;
+            self.continue_unchanged_phase(s)?;
         } else if s
             .job
             .as_ref()
