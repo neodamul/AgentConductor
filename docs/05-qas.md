@@ -918,6 +918,6 @@ QAS-118 / #931: deterministic process fixtures vary effective mode, missing meta
 
 
 QAS-174 amendment (#935, #936): test answer -> coordinator request -> new proposal and remaining questions, failures retaining input, duplicate-request prevention, empty/oversized answers and original-goal preservation. Compare list/answer typography in both themes and narrow/wide layouts.
-
+QAS-141 / #933 / #934: tests/quota_folder_934.cjs (no folder: no query; folder set: one query; repeated folder error: no loop) and the quota-retry-icon-only / quota-popup-error-retry parity entries.
 
 #940: Cargo metadata has no retired UI feature/binary/eframe graph; retained desktop/backend checks and packaging/license tests pass. Compare dependency identities before/after to ensure unrelated versions do not change.

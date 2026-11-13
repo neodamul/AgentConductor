@@ -160,7 +160,7 @@ window.addEventListener('resize',()=>{document.getElementById('agent-status-tip'
   } else {
     body.innerHTML=values?values.map((value,index)=>`<div class="usage-item ${index?'quota-long':'quota-short'}"><div class="usage-line"><span>${index?'주간':'5시간'}</span><b>${value}%</b></div><div class="usage-meter"><span style="width:${value}%"></span></div><div class="usage-reset">${index?'금요일 오전 9:00 초기화':'오후 4:30 초기화'}</div></div>`).join(''):'<p class="usage-unavailable">이 CLI는 사용량 정보를 제공하지 않습니다.<br>수치를 추정하지 않습니다.</p>';
   }
-  popup.querySelector('.usage-refresh').textContent=error?'↻ 다시 조회':'↻';
+  {const r=popup.querySelector('.usage-refresh'),l=error?'사용량 다시 조회':'선택한 에이전트 사용량 새로고침';r.textContent='↻';r.setAttribute('aria-label',l);r.title=l;}
   popup.querySelector('.usage-heading>.usage-reset').textContent=error?'조회 오류':'남은 사용량';
   popup.hidden=false;button.setAttribute('aria-expanded','true');
   const rect=button.getBoundingClientRect();

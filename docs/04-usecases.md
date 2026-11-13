@@ -910,6 +910,6 @@ UC-112 / #931: register or refresh a Claude profile using the existing asynchron
 
 
 UC-168 amendment (#935, #936): review a proposal, answer its confirmation questions, request re-optimization using the proposed goal and the answers, then review the new result. Failure preserves the current proposal and answers; Use this goal remains an explicit action.
-
+UC-135 / #933 / #934: the operator sets a project folder while Claude usage shows the folder hint; the next poll queries usage without a retry click. A failed query shows the ↻ icon labelled Retry usage query.
 
 #940: a developer builds, tests and packages the retained app without the retired UI target or UI-only dependencies; users keep the same workspace, desktop and backend behavior.
