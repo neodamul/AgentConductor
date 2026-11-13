@@ -933,3 +933,5 @@ QAS-141 / #933 / #934: tests/quota_folder_934.cjs (no folder: no query; folder s
 
 
 #948: Given a long verification command/path, Plan review remains a single-line summary at 840/1280px in Light/Dark; hover and expansion retain the complete value.
+
+#963: Given a run waiting for approval or completed, picking a task hides the review summary, and picking the integration row shows it again.

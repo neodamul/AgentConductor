@@ -31,5 +31,11 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms)),fail=m=>{throw Error(m);};
  const completedCopy=await b.eval("({title:document.getElementById('selected-agent').textContent,intro:document.getElementById('selected-task').textContent})");
  if(/approve|승인/.test(completedCopy.title+' '+completedCopy.intro)&&!/approved|승인/.test(completedCopy.title+' '+completedCopy.intro))fail('completed review must not ask for approval: '+JSON.stringify(completedCopy));
  if(await b.eval("!!document.getElementById('run-path')||!!document.querySelector('.rail-footer')"))fail('the run path or the rail footer is still on the screen');
+ // GitHub #963: picking a task in the rail shows that task's card, not the review summary on top of it; the integration row brings it back.
+ await until("!document.getElementById('review-summary').hidden",'review summary on the integration row');
+ await b.eval("[...document.querySelectorAll('.session-choice')].find(x=>!x.closest('.final-step')).click()");
+ await until("document.getElementById('review-summary').hidden&&/4/.test(document.getElementById('session-eyebrow').textContent)",'a picked task hides the review summary');
+ await b.eval("document.querySelector('.final-step .session-choice').click()");
+ await until("!document.getElementById('review-summary').hidden",'the integration row shows the review summary again');
  console.log('review footer: summary-only card, request changes opens the direction field, review changes opens the evidence');
 }finally{await b.close();}}finally{fs.rmSync(dir,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1;});

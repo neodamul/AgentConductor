@@ -918,3 +918,5 @@ R-145 / #933 / #934 (0.2.8): the usage popup's retry after a failed query is the
 
 
 #948: Collapsed Plan task rows must stay compact for long verification commands and paths, while retaining the full values on hover and in the expanded editor.
+
+#963: On Review and merge, a task picked in the rail shows only that task's card; the integration row's review summary is not drawn over it.
