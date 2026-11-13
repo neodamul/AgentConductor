@@ -14,5 +14,5 @@ fn main() {
         assert!(prompt.contains(&std::env::var("AC_PLAN_EXPECT").unwrap_or_else(|_| "unsafe or overlapping scope".into())));
         ("[\"selection.rs\"]", "[\"rules.rs\"]")
     };
-    println!(r#"{{"type":"result","structured_output":{{"analysis":"analysis","phases":[{{"id":"01-game-selection","name":"selection","tasks":[{{"id":"a","agent":"claude","prompt":"a","paths":{},"depends_on":[],"test_command":["true"]}},{{"id":"b","agent":"claude","prompt":"b","paths":{},"depends_on":[],"test_command":["true"]}}]}}]}}}}"#, paths.0, paths.1);
+    println!(r#"{{"type":"result","structured_output":{{"analysis":"analysis","phases":[{{"id":"01-game-selection","name":"selection","tasks":[{{"id":"a","agent":"claude","prompt":"a","paths":{},"depends_on":[],"test_command":["test","-e","."]}},{{"id":"b","agent":"claude","prompt":"b","paths":{},"depends_on":[],"test_command":["test","-e","."]}}]}}]}}}}"#, paths.0, paths.1);
 }

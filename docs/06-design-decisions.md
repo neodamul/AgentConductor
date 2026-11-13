@@ -1766,3 +1766,4 @@ DD-136 / #925 supersedes the five-hour fallback horizon for usage restrictions. 
 
 
 DD-222 / #927: reuse task-notice/error tokens and review-footer controls for diagnostic evidence and recovery. Remove duplicated next-step/banner Resume paths; existing review/result footer and composer remain authoritative. Update reference failure states first and cover runtime behavior plus design parity.
+DD-202 / #928 / #929: reuse the one-retry contract. The check runs in the planner after Plan::validate (plain and per phase), not inside Plan::validate, so saved plans and setup profiles with `true` stay valid. Red-phase tests are handled in the prompt (load-only check) instead of an expected-failure flag, because integration verification reruns every task's command after the implementation makes the tests pass.

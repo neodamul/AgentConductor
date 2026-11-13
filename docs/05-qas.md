@@ -911,3 +911,4 @@ QAS-123 / #925: a fresh short or unknown usage reset with a reviewed available f
 
 
 QAS-209 / #927: in failed, scope-failed, running/stale, approval and completed states at narrow/wide widths in both themes, no run-banner element exists; failure output and safe recovery controls remain reachable and do not overflow.
+QAS-188 / #928 / #929: unit tests cover vacuous and meaningful commands (git diff --check, node --check, test -s, grep) and the task-named error; the planning prompt test asserts both rules.

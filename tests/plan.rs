@@ -222,3 +222,36 @@ fn a_rejected_task_is_named_with_its_field() {
     plan.tasks[1].id = " ".into();
     assert!(plan.validate().unwrap_err().contains("task id is empty"));
 }
+
+#[test]
+fn checks_that_pass_without_the_deliverable_are_vacuous() {
+    use agentconductor::plan::{is_vacuous_check, reject_vacuous_checks};
+    let v = |c: &[&str]| is_vacuous_check(&c.iter().map(|s| s.to_string()).collect::<Vec<_>>());
+    for c in [
+        &["git", "status"][..],
+        &["git", "status", "--short"],
+        &["/usr/bin/true"],
+        &["echo", "done"],
+        &["ls", "docs"],
+        &["sh", "-c", "git status --porcelain"],
+        &["cmd", "/c", "echo ok"],
+    ] {
+        assert!(v(c), "{c:?}");
+    }
+    for c in [
+        &["git", "diff", "--check"][..],
+        &["node", "--check", "tests/a.test.js"],
+        &["test", "-s", "docs/guide.md"],
+        &["sh", "-c", "grep -q Usage docs/guide.md"],
+        &["cargo", "test"],
+    ] {
+        assert!(!v(c), "{c:?}");
+    }
+    let mut p = plan();
+    p.tasks[0].test_command = vec!["git".into(), "status".into()];
+    let err = reject_vacuous_checks(&p.tasks).unwrap_err();
+    assert!(
+        err.starts_with(&format!("task {}:", p.tasks[0].id)),
+        "{err}"
+    );
+}
