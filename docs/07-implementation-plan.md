@@ -4219,3 +4219,10 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 - [x] Completed: manuals/HTML/wiki updated; linked branch prepared for PR/merge and batched CI handoff.
 
 #957: the comparison index and extracted files are each <=300 lines; all 429 generated entries remained identical during extraction.
+
+### #954 regression fixture follow-up
+
+- [x] Plan: run the complete local UI/script suite after integrating 0.2.10 units.
+- [x] Task: reproduce approval_feedback_runtime.cjs failure (missing planPhase); load the real helper and provide the checkbox parent in its VM fixture.
+- [x] Verify: approval guards and single/multi-Phase visibility pass; all 47 Python/script checks pass.
+- [x] Completed: follow-up linked branch prepared for merge; no product logic or remote CI changed.
