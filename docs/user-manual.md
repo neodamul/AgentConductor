@@ -309,6 +309,8 @@ There is no resident cleanup daemon. Cargo build output is separate from applica
 
 Long command and agent/path summaries are truncated to keep Plan rows compact. Hover to read the full value, or expand the task to inspect and edit its command.
 
+Session counts and work-state tags update automatically when task sessions change, including in the Agent Room; opening the sessions dialog is not required.
+
 ## Part 2 — Command-line reference
 
 Run directories must be outside the repository, and the repository must start clean.
