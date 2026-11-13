@@ -1623,5 +1623,6 @@
   "native.automatic_merge_paused_review": "Automatic merge paused: coordinator review or revisions require your review. Inspect the task evidence and approve the merge manually.",
   "native.automatic_merge_paused_gate": "Automatic merge paused by an approval, permission, Stop or consent gate. Inspect task details and retained evidence before continuing.",
   "startup.replan_pending_title": "Re-planning Phase {value2} from Phase {value1} results",
-  "startup.replan_pending_intro": "The coordinator is reviewing merged results, verification and remaining work to prepare the next Phase. Review and approval become available when the plan is ready."
+  "startup.replan_pending_intro": "The coordinator is reviewing merged results, verification and remaining work to prepare the next Phase. Review and approval become available when the plan is ready.",
+  "sessions.updating": "Updating sessions…"
 }

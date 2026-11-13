@@ -949,3 +949,6 @@ QAS-141 / #933 / #934: tests/quota_folder_934.cjs (no folder: no query; folder s
 
 #960: Real DOM regression covers unchanged snapshots, changed run_dir, a recreated Room and delayed previous-run evidence without executing an external agent.
 #957: Given Step 6 with changed files, clicking a file row shows its hunks with added/removed lines below the row, keeps the +/- counts, and a second click folds it.
+
+
+#962: Actual DOM checks cover duplicate click/handler calls, pending cancellation, single-last-session focus, failure recovery and obsolete inventory responses; compare danger button in both themes.

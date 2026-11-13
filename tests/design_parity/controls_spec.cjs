@@ -1,6 +1,10 @@
 // Extracted from spec.cjs to keep each comparison file under 300 lines.
 const {STEPS_ENABLED,STEP_REFERENCE_WIDTH}=require('./spec_context.cjs');
 module.exports=[
+  {name:'sessions-danger-confirm',props:['fontSize','fontWeight','backgroundColor','color','borderTopColor','paddingTop','paddingLeft'],keys:['height','fontSize','fontWeight','backgroundColor','color','borderTopColor','paddingTop','paddingLeft'],pixel:false,
+   mock:{url:'?theme=light#1',run:"openSessions('claude');document.getElementById('sessions-clean-finished').click()",selector:'#sessions-confirm-ok'},
+   app:{run:"(async()=>{SIM.reply.agent_sessions=()=>({claude:[{run:'r',task:'t',label:'T1 done',goal:'g',state:'done',started_ms:1,last_ms:1,cleanable:true,stoppable:false}]});await acSessions.refresh();acSessions.open('claude');await acSessions.refresh();document.getElementById('start-agent-sessions-clean-finished').click();})()",selector:'#start-agent-sessions-confirm-ok'}},
+
   // GitHub #826: a changed file row and its unfolded diff match the mock.
   { name: 'result-file-diff-toggle', props: ['fontSize', 'paddingLeft', 'backgroundColor', 'borderTopWidth'], keys: ['fontSize', 'paddingLeft', 'backgroundColor', 'borderTopWidth'], pixel: false,
     mock: { url: '?theme=light#8', run: "document.querySelector('#result-detail details.result-section').open=true;document.querySelector('#result-detail .file-diff-toggle').click()", selector: '#result-detail .file-diff-toggle' }, app: { run: "acResultView.show({goal:'g',branch:'b',repo:'r',commit:'abcdef123456',diff:'diff --git a/x b/x\\n@@ -1 +1 @@\\n-a\\n+b\\n',tests:[{task:'t',exit_code:0}],details:[]});document.querySelector('#result-dialog details.result-section').open=true;document.querySelector('#result-dialog .file-diff-toggle').click()", selector: '#result-dialog .file-diff-toggle' } },

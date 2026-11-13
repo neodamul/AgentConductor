@@ -286,3 +286,6 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 .startup-profile .model-list{display:none;position:absolute;left:0;top:calc(100% + 5px);z-index:20;min-width:160px;padding:6px 9px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);color:var(--ink);font-weight:400;line-height:1.6;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.12)}
 .startup-profile .model-list b{display:block;font-weight:400;font-size:11px;color:var(--soft)}.startup-profile .model-list span{display:block;font-size:12px}.startup-profile .model-list .more{color:var(--soft)}
 .startup-profile .fact.models:hover .model-list,.startup-profile .fact.models.open .model-list{display:block}
+
+#start-agent-sessions .sessions-confirm-actions button{font:400 13px Arial,sans-serif;padding:8px 13px}
+#start-agent-sessions-confirm-ok{background:var(--err);border-color:var(--err);color:#fff}

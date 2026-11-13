@@ -866,3 +866,6 @@ FR-130 / #933 / #934: autoDiscover also queries a Claude profile whose indicator
 
 
 #957: Reuse bounded, text-only result diff parsing/rendering. Retain binary notices and avoid rebuilding an unchanged interactive review summary on periodic snapshots.
+
+
+#962: Reject duplicate mutation calls and empty clean selections. Invalidate inventory reads issued before mutation; coalesce refreshes requested during it. Preserve backend session ownership and deletion validation.
