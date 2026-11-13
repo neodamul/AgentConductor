@@ -4137,4 +4137,4 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 - [x] Plan: trace requirements through use case, QAS and DD-125 amendment.
 - [x] Task: add a failing runtime regression, remove the duplicate box, and add heading parity coverage.
 - [x] Verify: local runtime, Phase history/edit preservation, theme/viewport parity and source checks.
-- [ ] Completed: commit/push, merge issue-linked PR, close issue and record collaboration.
+- [x] Completed: committed/pushed code, tests, manuals and wiki; PR #947 tracks final merge and issue closure. Collaboration recorded in AgentMemory.
