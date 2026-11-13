@@ -1801,3 +1801,6 @@ DD-62 amendment (#958): the re-plan heading follows the running plan job's targe
 
 
 #960: Use existing changeTab on the first/new-run snapshot and clear in-memory review. Capture run_dir before requesting evidence and ignore a response whose run changed; existing stopped-Room guard remains.
+DD amendment (#957): Step 6 reuses the result dialog's `.file-diff-toggle`/`.file-diff` rendering for its changed-file list instead of a second diff viewer.
+
+#957 verification maintenance: split the pre-existing 497-line parity spec into bounded files sharing the same constants; JSON serialization before/after confirms all 429 comparison entries are identical.

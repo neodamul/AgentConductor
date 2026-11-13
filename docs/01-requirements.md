@@ -933,3 +933,4 @@ R-145 / #933 / #934 (0.2.8): the usage popup's retry after a failed query is the
 
 
 #960: A new Agent Room run opens on Activity; a snapshot of the same run preserves the operator-selected tab.
+#957: Step 6 Review and merge lets the operator unfold each changed file's diff in place from the file list, as the result dialog does.

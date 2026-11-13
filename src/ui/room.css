@@ -113,7 +113,7 @@ dialog.quiet-focus :focus-visible{outline:none}
 .result-section .file-diff-toggle:not(:disabled):hover{color:var(--accent-text)}
 .result-section .file-diff{margin:6px 0 2px;padding:8px 10px;max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:6px;background:var(--bg);font:11px/1.6 Menlo,Consolas,monospace;white-space:pre}
 .result-section .file-diff[hidden]{display:none}
-.result-section .file-diff .diff-line{display:block;margin:0;padding:0 2px;border:0;border-radius:0;box-shadow:none;min-height:0}
+.result-section .file-diff .diff-line{display:block;margin:0;padding:0 2px;border:0;border-radius:0;box-shadow:none;min-height:0;background:transparent}
 .result-section .file-diff .diff-line.add{color:var(--ok);background:var(--ok-bg)}
 .result-section .file-diff .diff-line.remove{color:var(--err);background:var(--err-bg)}
 .result-section .file-diff .diff-line.hunk{color:var(--soft)}

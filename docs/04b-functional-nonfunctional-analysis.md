@@ -863,3 +863,6 @@ FR-130 / #933 / #934: autoDiscover also queries a Claude profile whose indicator
 
 
 #960: Compare run_dir on accepted snapshots, including the first snapshot in a reused DOM. Do not reset tabs on unchanged snapshots; discard obsolete evidence responses.
+
+
+#957: Reuse bounded, text-only result diff parsing/rendering. Retain binary notices and avoid rebuilding an unchanged interactive review summary on periodic snapshots.

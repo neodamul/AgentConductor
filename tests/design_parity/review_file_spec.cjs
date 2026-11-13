@@ -1,0 +1,10 @@
+// #957: Step 6 closed file controls and open diff retain the approved result interaction.
+const setup="SIM.home.run_available=true;SIM.home.run_state='waiting_approval';SIM.room.report.state='waiting_approval';SIM.room.report.tasks.forEach(t=>t.status='completed');SIM.room.report.candidate={commit:'abcdef1234567890'};SIM.reply.evidence=()=>({revision:'x1',report:SIM.room.report,test_output:[],truncated:false,diff:'diff --git a/src/auth/refresh.rs b/src/auth/refresh.rs\\n@@ -1 +1 @@\\n-old\\n+new'});";
+const run="(async()=>{while(!document.querySelector('.final-step .session-choice'))await new Promise(r=>setTimeout(r,30));document.querySelector('.final-step .session-choice').click();while(!document.querySelector('#review-summary .file-diff-toggle'))await new Promise(r=>setTimeout(r,30));})()";
+const open=run.replace('})()',"document.querySelector('#review-summary .file-diff-toggle').click();})()");
+const mock={url:'?theme=light#7'},app={setup,run};
+module.exports=[
+ {name:'review-file-toggle',props:['fontSize','color','columnGap','paddingTop','borderTopWidth'],keys:['height','fontSize','color','columnGap','paddingTop','borderTopWidth'],pixel:false,mock:{...mock,selector:'.files .file-diff-toggle'},app:{...app,selector:'#review-summary .file-diff-toggle'}},
+ {name:'review-file-open-diff',props:['fontSize','lineHeight','paddingTop','paddingLeft','borderTopWidth','borderTopLeftRadius','backgroundColor','maxHeight'],keys:['fontSize','lineHeight','paddingTop','paddingLeft','borderTopWidth','borderTopLeftRadius','backgroundColor','maxHeight'],pixel:false,mock:{...mock,run:"document.querySelector('.files .file-diff-toggle').click()",selector:'.files .file-diff'},app:{setup,run:open,selector:'#review-summary .file-diff'}},
+ ...['add','remove','hunk'].map(kind=>({name:'review-file-line-'+kind,props:['fontSize','lineHeight','color','backgroundColor','paddingLeft'],keys:['fontSize','lineHeight','color','backgroundColor','paddingLeft'],pixel:false,mock:{...mock,run:"document.querySelector('.files .file-diff-toggle').click()",selector:'.files .file-diff .'+kind},app:{setup,run:open,selector:'#review-summary .file-diff .'+kind}})),
+];

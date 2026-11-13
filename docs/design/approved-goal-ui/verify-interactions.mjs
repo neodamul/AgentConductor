@@ -90,6 +90,7 @@ try{
   if(mode==='plan-replan-unchanged')action='workspaceGoals[0].nextPhase={number:2,total:2,unchanged:true};showGoalResult("rotation");document.getElementById("result-to-workspace").click()';
   if(mode==='plan-replan'||mode==='plan-replan-auto')action='workspaceGoals[0].nextPhase={number:2,total:2};showGoalResult("rotation");document.getElementById("result-to-workspace").click()'+(mode==='plan-replan-auto'?';document.getElementById("auto-merge").click()':'');
   if(mode==='plan-replan-pending')action='workspaceGoals[0].nextPhase={number:3,total:3,pending:true};showGoalResult("rotation");document.getElementById("result-to-workspace").click()';
+  if(mode==='review-file-diff')action='i=7;show();document.querySelector(".files .file-diff-toggle").click()';
   if(mode==='result-next-phase')action='workspaceGoals[0].nextPhase={number:2,total:2};showGoalResult("rotation")';
   if(mode.startsWith('quota-')){
    await call('Runtime.evaluate',{expression:'selectRail("agents");'+frameWait,awaitPromise:true});

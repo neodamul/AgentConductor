@@ -832,3 +832,6 @@ SF-132 / #933 / #934: icon-only usage retry; automatic Claude usage query after 
 
 
 #960: Scope Room tab state and loaded review evidence to run identity.
+
+
+#957: Expandable Step 6 changed-file rows with per-file diff, line counts and stable background-refresh behavior.
