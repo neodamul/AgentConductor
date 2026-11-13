@@ -1787,5 +1787,13 @@ DD-62 amendment (#943): Reuse read-only snapshot planning to re-plan the next Ph
 
 #948: Reuse the shared Plan row CSS and existing i18n title binding. Ellipsis applies only to summary metadata, leaving the editable command unchanged; no dependency or background work is added.
 
+DD-62 amendment (#954): Merge automatically is a Phase-boundary option, so the review footer hides it for single-Phase plans; its toggle persists only `auto_merge` quietly instead of reusing the full workspace Save.
+
+
+#955: Observe both Workspace and Room because Startup polling stops in Room. Hash run identity/state, task ID/status/start/finish and assigned agent from the report already loaded for run_state. Add no timer or inventory scan to snapshot generation.
+
+
+#961: Replace only the chat stale-state gate with the current chat revision. Workspace polling pauses in Room until a chat is busy, so the initial question can carry old phase/job context. Existing chatSync follows the accepted job; no new poll loop or retry that could duplicate a question is needed.
+
 
 #959: Local evidence confirmed consent enabled, reviewed fallback transfers, and executed-plan agent/fallback/prompt changes causing digest mismatch. Rebind only in automatic quota/checkpoint fallback call sites after their existing quiescence, policy and scope checks; retain generic transfer/manual edit behavior and review_round blocking. Worker false results become errors; Room receives a separate error field so manual action jobs are not overwritten.

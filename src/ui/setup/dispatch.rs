@@ -189,6 +189,7 @@ impl Startup {
             | Request::OptimizeGoal { revision, .. }
             | Request::McpApply { revision, .. }
             | Request::Save { revision, .. }
+            | Request::SaveAutoMerge { revision, .. }
             | Request::Quota { revision, .. }
             | Request::Discover { revision, .. }
             | Request::Catalog { revision, .. }

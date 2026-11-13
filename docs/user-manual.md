@@ -170,7 +170,7 @@ Each task shows the kind of work the coordinator chose (classify or extract, sum
 **Goals & progress** shows each goal's phase tags and description.
 After merging a Phase, the coordinator re-plans only the next Phase from the Goal, original analysis, remaining work and completed diff/test/final-report evidence. Added, changed and removed tasks show their differences from the first plan. Changed tasks or execution settings require review; an identical effective plan starts automatically and the run information line explains why. Later Phases remain unchanged until their turn.
 
-**Merge automatically after verification passes** is off by default. Select it before starting a reviewed plan to allow exact verified candidates to merge automatically. Verification failures, scope/tool/permission/review blockers, conflicts, stale evidence and Stop still halt progression; automation does not expand permissions. Stop pauses the whole chain, including re-planning and the next start, until explicit resume or execution approval. Automatic plan continuation and merge approvals are audited separately from human decisions. An already-reviewed automatic fallback preserves the existing merge opt-in. Manual reassignment or other unapproved plan changes do not renew it. If a merge pauses for review or another gate, the Room reports the reason; inspect its evidence and use the existing manual approval controls. With the option off, each final merge still requires approval. A new/selected Goal starts with automatic merge off.
+**Merge automatically after verification passes** is off by default and appears only for plans with multiple Phases. Toggling it saves only this option silently; other unsaved Workspace or task edits remain unsaved. Select it before starting a reviewed plan to allow exact verified candidates to merge automatically. Verification failures, scope/tool/permission/review blockers, conflicts, stale evidence and Stop still halt progression; automation does not expand permissions. Stop pauses the whole chain, including re-planning and the next start, until explicit resume or execution approval. Automatic plan continuation and merge approvals are audited separately from human decisions. An already-reviewed automatic fallback preserves the existing merge opt-in. Manual reassignment or other unapproved plan changes do not renew it. If a merge pauses for review or another gate, the Room reports the reason; inspect its evidence and use the existing manual approval controls. With the option off, each final merge still requires approval. A new/selected Goal starts with automatic merge off.
 
 Re-planning runs in an existing background CLI job. The open application advances Phase boundaries using its existing state updates; reopening restores retained evidence. Large logs are hash-verified and summarized with explicit truncation rather than copied without limits. Missing or changed completed evidence prevents continuation instead of inventing results.
 **☰ → Workspace → Plan rules…** supports machine-wide rules or a workspace override.
@@ -308,6 +308,10 @@ Eligible cache is trimmed to eight newest folders plus protected references at i
 There is no resident cleanup daemon. Cargo build output is separate from application cache.
 
 Long command and agent/path summaries are truncated to keep Plan rows compact. Hover to read the full value, or expand the task to inspect and edit its command.
+
+Session counts and work-state tags update automatically when task sessions change, including in the Agent Room; opening the sessions dialog is not required.
+
+Coordinator chat answers from the current Workspace context even if a Goal finished since the last displayed snapshot. Read-only questions do not require a manual refresh; reviewed changes and execution approvals retain their existing revision checks.
 
 ## Part 2 — Command-line reference
 
