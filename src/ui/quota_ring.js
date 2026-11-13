@@ -63,7 +63,8 @@ window.acQuotaRing = (() => {
     }
     popup.querySelector('.usage-observed>span').textContent = observed(indicator);
     const refresh = popup.querySelector('.usage-refresh');
-    refresh.textContent = error ? acMessage('startup.quota_retry') : '↻';
+    // #933: icon only, as in the mock; the label tells retry from refresh.
+    const label = acMessage(error ? 'startup.quota_retry' : 'startup.quota_refresh'); refresh.setAttribute('aria-label', label); refresh.title = label;
     refresh.hidden = !entry.canRefresh; refresh.disabled = !!entry.busy; refresh.classList.toggle('refreshing', !!entry.busy);
   }
 

@@ -904,3 +904,5 @@ UC-117 / #925: given an exhausted T1 account and a ready T2, transfer T1 to its 
 
 UC-202 / #927: on a failed integration test, inspect the complete safe text output in the task card and draft feedback with its repair action. On scope failure, open the existing scope review from the footer. Stale/absent runners and interruptions remain visible within the card; completed runs retain the review/result path.
 UC-181 / #928 / #929: the coordinator returns a plan; a task whose test_command is `git status` fails validation and the planner retries once with the correction; a write-failing-tests task gets `node --check` (or similar) and the implementing task runs the tests.
+
+UC-135 / #933 / #934: the operator sets a project folder while Claude usage shows the folder hint; the next poll queries usage without a retry click. A failed query shows the ↻ icon labelled Retry usage query.

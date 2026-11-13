@@ -898,3 +898,5 @@ R-127 / #925 (0.2.8): a usage-limited task immediately uses an available reviewe
 
 R-210 / #927 (0.2.8): remove the run status banner in every state. Preserve diagnostics, interrupted/owned-file warnings, scope recovery and feedback repair in the task card/footer; keep status in the title pill, Resume in the composer and approval/next-result actions in existing review footers.
 R-190 / #928 / #929 (0.2.8): a planned test_command must fail when its task's deliverable is missing; checks that always pass (`git status`, `true`, `echo`, `ls`) are rejected. A test-first task whose tests are meant to fail until a later task implements the code only checks that its tests exist and load, so integration verification does not fail the run on intended red tests.
+
+R-145 / #933 / #934 (0.2.8): the usage popup's retry after a failed query is the same icon-only control as refresh (labelled for assistive technology), and Claude usage that could not be read for lack of a project folder is queried automatically once a folder is set.

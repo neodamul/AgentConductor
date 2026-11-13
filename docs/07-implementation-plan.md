@@ -4074,3 +4074,11 @@ Trace: R-190 / BG-145 / SF-178 / UC-181 / FR-182 / QAS-188 / DD-202.
 - [x] Task: reject vacuous test commands in the planner and retry once; prompt rules for documentation checks and load-only red-phase test tasks.
 - [x] Verify: plan, prompt_order, planning_overlap_repair and planner fixture tests.
 - [x] Completed: linked PR tracks merge and branch cleanup.
+
+### Agent card usage retry and folder re-check — GitHub #933 / #934 (0.2.8)
+
+Trace: R-145 / BG-100 / SF-132 / UC-135 / FR-130 / QAS-141 / DD-154.
+- [x] Plan: claim owner-claude and issue-linked branch; inspect quota_ring.js and startup autoDiscover.
+- [x] Task: mock and app retry icon-only; automatic Claude usage query when the folder hint clears.
+- [x] Verify: quota_folder_934 (red before the fix), parity entries, related runtime tests, mock captures.
+- [x] Completed: linked PR tracks merge and branch cleanup.

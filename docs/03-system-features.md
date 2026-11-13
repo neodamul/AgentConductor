@@ -794,3 +794,5 @@ SF-114 / #925: share immediate quota fallback eligibility between scheduler and 
 
 SF-198 / #927: show run diagnostics within the card and recovery actions in its footer; never create a separate run-status banner.
 SF-178 / #928 / #929: planning rejects vacuous verification commands and asks for load-only checks on red-phase test tasks.
+
+SF-132 / #933 / #934: icon-only usage retry; automatic Claude usage query after a project folder is set.
