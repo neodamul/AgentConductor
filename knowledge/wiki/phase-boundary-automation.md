@@ -13,3 +13,5 @@ Stream hashes of full test logs while passing bounded excerpts to the coordinato
 See `docs/evidence/943-whole-app-validation.md` for verification and limits.
 
 #952: Windows refuses fixture deletion while a test-owned SQLite Store is alive. Explicitly drop the Store after its last assertion and before removing the fixture; do not ignore deletion errors or weaken merge assertions.
+
+#954: Automation toggles must use a boolean-only, revision-bound native request; never capture/save the whole Workspace or clear dirty edits. Global input flex rules can stretch checkboxes even when width is fixed, so pin their flex basis and let explicit hidden styling override a flex label.

@@ -5,7 +5,7 @@ const chrome=findChrome();if(!chrome)process.exit(77);
 const root=path.resolve(__dirname,'..'),dir=fs.mkdtempSync(path.join(os.tmpdir(),'ac-replan-ui-'));
 execFileSync('node',[path.join(root,'tests/ui_sim/build.cjs'),root,path.join(dir,'app.html')]);
 const setup=`SIM.home.proposal=SIM.proposal('ready');SIM.home.proposal.slug='g';SIM.home.proposal.slug_phase='p2';
-SIM.reply.save=p=>{SIM.home.config=p.config;return {saved:true};};
+SIM.reply.save_auto_merge=p=>{SIM.home.config.auto_merge=p.enabled;return {saved:true};};
 const before=JSON.parse(JSON.stringify(SIM.plan.tasks));const current=SIM.home.proposal.plan.tasks;
 current[0].prompt+=' Changed from completed results';const gone=current.pop();const added=JSON.parse(JSON.stringify(gone));added.id='added-task';added.prompt='Add missing migration';added.paths=['migrations/new.sql'];current.push(added);
 SIM.home.proposal.replan={unchanged:false,completed_phases:[{phase:'p1'}],changes:[{id:current[0].id,kind:'changed',fields:['prompt']},{id:added.id,kind:'added',fields:[]},{id:gone.id,kind:'removed',fields:[],task:gone}]};
@@ -20,7 +20,7 @@ await check('added changed removed tags and reasons',"['added','changed','remove
 await check('removed task has no editable controls',"!document.querySelector('#start-plan-removed input,#start-plan-removed textarea,#start-plan-removed select')&&document.querySelectorAll('#start-tasks .startup-task').length===3");
 await check('automatic merge defaults off',"!document.getElementById('start-auto-merge').checked");
 await b.eval("document.getElementById('start-auto-merge').click()");await wait(400);
-await check('opt-in saved through native bridge',"SIM.log.some(p=>p.kind==='save'&&p.p.config.auto_merge===true)");
+await check('opt-in saved through native bridge',"SIM.log.some(p=>p.kind==='save_auto_merge'&&p.p.enabled===true)");
 await check('automatic merge safety note',"document.querySelector('#start-panel-review .startup-review-footer .note').textContent===acMessage('startup.auto_merge_note')");
 await b.eval("document.querySelector('#start-tasks .startup-task').open=true;const input=document.querySelector('#start-tasks textarea[data-key=prompt]');input.value+=' operator edit';input.dispatchEvent(new Event('input',{bubbles:true}));document.getElementById('start-edit').click()");await wait(400);
 await check('edit packet excludes removed task',"SIM.log.some(p=>p.kind==='edit'&&p.p.tasks.length===3&&p.p.tasks.some(t=>t.prompt.includes('operator edit'))&&!p.p.tasks.some(t=>t.id==='task-3'))");

@@ -4169,9 +4169,9 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 - [x] Verify: 3 automatic-merge, 7 architecture and 1 source-layout tests passed locally; formatting passed. Windows release revalidation remains a publication gate.
 - [x] Completed: PR #953 merged, #952 closed, Windows full validation passed and stable v0.2.9 published.
 
-## #961 — Read-only chat after Goal completion
+## #954 — Phase-only automatic merge option
 
-- [x] Plan: trace Goal/Feature/Use Case/QAS/design; inspect retained private evidence and Room chat lifecycle.
-- [x] Task: reproduce stale-state rejection with a deterministic Rust CLI; accept read-only questions from current context while keeping write guards.
-- [x] Verify: 18 local Rust checks including current-context CLI answer, one-chat slot, stale-write rejection, slow-Git independence, chat history/async behavior, docs and source layout; all-target Clippy/format passed.
-- [x] Completed: manuals/HTML/wiki and evidence limitations recorded, linked branch committed/pushed for Claude review and batch CI; close after merge.
+- [x] Plan: use approved Claude mock 16805b02 and DD-62 requirement/QAS amendment.
+- [x] Task: reproduce single-phase visibility and absent narrow request; add revision-bound flag-only persistence, hidden-state CSS and fixed-size checkbox.
+- [x] Verify: 21 focused Rust tests, 8 DOM states and existing re-plan UI passed; 12 approved mock entries ×4 theme/width cells (48 comparisons), zero differences; all-target Clippy and formatting passed.
+- [x] Completed: bilingual manuals/HTML and wiki updated; linked issue branch committed/pushed for Claude review and combined CI. Issue closes only when its PR merges.

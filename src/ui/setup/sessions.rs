@@ -17,6 +17,34 @@ fn session_state(status: &str, run_state: &str) -> &'static str {
     }
 }
 
+// #955: reuse the loaded report; do not scan every saved session on every snapshot.
+pub(super) fn session_revision(run: &Path, report: &workflow::Report) -> String {
+    let tasks: Vec<_> = report
+        .tasks
+        .iter()
+        .map(|task| {
+            let agent = report
+                .plan
+                .tasks
+                .iter()
+                .find(|planned| planned.id == task.id)
+                .map(|planned| &planned.agent);
+            serde_json::json!([
+                task.id,
+                task.status,
+                task.started_ms,
+                task.finished_ms,
+                agent
+            ])
+        })
+        .collect();
+    workflow::digest(
+        serde_json::json!([run, report.state, tasks])
+            .to_string()
+            .as_bytes(),
+    )
+}
+
 impl Startup {
     fn session_run(&self, run: &str) -> Result<PathBuf, String> {
         if !run.starts_with("run-") || run.contains(['/', '\\']) || run.contains("..") {

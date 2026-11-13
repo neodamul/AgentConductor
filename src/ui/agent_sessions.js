@@ -5,7 +5,7 @@ window.acSessions=(()=>{
  const STATE={running:'sessions.state_running',waiting:'sessions.state_waiting',done:'sessions.state_done',failed:'sessions.state_failed',stale:'sessions.state_stale',stopped:'sessions.state_stopped'};
  const TAGS=[['running','sessions.tag_running',['running']],['waiting','sessions.tag_waiting',['waiting']],['failed','sessions.tag_failed',['failed','stale']],['done','sessions.tag_done',['done','stopped']]];
  const finished=s=>['done','failed','stale','stopped'].includes(s.state),active=s=>s.state==='running'||s.state==='waiting';
- let all={},agent=null,label=id=>id,request=null,pending=null,soon;
+ let all={},agent=null,label=id=>id,request=null,pending=null,soon,observed='',refreshing=false,refreshAgain=false;
  const time=ms=>{const d=new Date(ms);return d.toDateString()===new Date().toDateString()?d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):d.toLocaleString([],{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});};
  function paintChips(){
   for(const button of document.querySelectorAll('[data-sessions]')){
@@ -49,7 +49,8 @@ window.acSessions=(()=>{
   try{all=await request(packet);}catch(e){status(String(e?.message||e));}
   pending=null;$('confirm').hidden=true;paintChips();if(dialog().open)paint();
  }
- async function refresh(){if(!request)return;try{all=await request({kind:'agent_sessions'});paintChips();if(dialog().open)paint();}catch{}}
+ async function refresh(){if(!request||refreshing)return;refreshing=true;const stamp=observed;try{const next=await request({kind:'agent_sessions'});if(stamp===observed){all=next;paintChips();if(dialog().open)paint();}}catch{}finally{refreshing=false;if(refreshAgain){refreshAgain=false;refresh();}}}
+ function observe(next){const report=next.report,key=JSON.stringify([next.root||next.run_dir,next.session_revision??(report?[report.state,report.tasks.map(t=>[t.id,t.status,t.started_ms,t.finished_ms,report.plan.tasks.find(p=>p.id===t.id)?.agent])]:next.run_state)]);if(key===observed)return;observed=key;if(refreshing)refreshAgain=true;else refresh();}
  $('confirm-cancel').onclick=()=>{pending=null;$('confirm').hidden=true;$('clean-finished').focus();};
  $('confirm-ok').onclick=()=>act({kind:'clean_sessions',sessions:pending});
  $('clean-finished').onclick=()=>ask((all[agent]||[]).filter(s=>finished(s)&&s.cleanable));
@@ -57,7 +58,7 @@ window.acSessions=(()=>{
  return{
   // `labelOf` names an agent id; `send` is the startup request bridge.
   chip(id,send,labelOf){request=send;label=labelOf;const b=document.createElement('button');b.type='button';b.className='fact info agent-sessions';b.dataset.sessions=id;b.setAttribute('aria-haspopup','dialog');b.onclick=()=>this.open(id);clearTimeout(soon);soon=setTimeout(refresh,0);return b;},
-  refresh,paintChips,
+  refresh,paintChips,observe,
   open(id){agent=id;pending=null;$('confirm').hidden=true;status('');paint();if(!dialog().open)dialog().showModal();refresh();}
  };
 })();

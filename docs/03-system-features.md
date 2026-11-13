@@ -816,4 +816,4 @@ SF-132 / #933 / #934: icon-only usage retry; automatic Claude usage query after 
 #948: Truncate collapsed task metadata with ellipses and expose full translated tooltip values.
 
 
-#961: Resolve coordinator chat against current saved context while retaining input/profile validation and the single-chat slot.
+#954: Show the automatic-merge checkbox only for multi-Phase plans and persist only its flag, without a Workspace-saved announcement.

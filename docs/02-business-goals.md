@@ -688,4 +688,4 @@ BG-132 amendment (#935, #936): resolve ambiguous goals inside the existing revie
 #948: Review every planned task without long command lines obscuring other tasks.
 
 
-#961: Allow operators to ask about completed work without an unactionable manual-refresh error.
+#954: Operators can opt into multi-Phase automation without unintentionally saving unrelated Workspace edits.
