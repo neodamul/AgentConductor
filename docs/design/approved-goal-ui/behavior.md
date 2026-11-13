@@ -260,3 +260,8 @@ Save persists edits and stays on Workspace; Save and go to step2 persists before
 ## Source review disclosure and selection (#916 / #917)
 
 The guide starts expanded and remains under operator control across progress, completion, retries and reopening. Card rendering never sets disclosure state. Source headers keep fixed16px checkbox controls, bounded reference/title ellipses with full tooltips and state/time inside the dialog. Checked required sources remain visibly checked while disabled; optional selections remain editable. Apply sends exactly checked references and retains required-Jira enforcement.
+
+
+## Optimizer confirmation review (#935/#936)
+
+The optimization result uses 13px secondary lists with 1.6 line height. Confirmation questions reveal one labeled multiline answer field and a Re-optimize with answers action. Empty input disables that action. A request uses the visible proposed goal and the confirmation/answer context, retaining the original workspace goal until Use this goal. While work runs, show existing elapsed/busy feedback and prevent duplicate requests; failed work retains the result and answers. A successful reply replaces the goal proposal, changes and remaining questions; no remaining questions hides the answer section.

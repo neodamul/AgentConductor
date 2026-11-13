@@ -42,6 +42,7 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
             &root.join(format!("optimize-run-{id}")),
             input["goal"].as_str().unwrap_or(""),
             input["language"].as_str().unwrap_or("English"),
+            input["answers"].as_str().unwrap_or(""),
         ))?;
         agentconductor::mcp::store(
             root,

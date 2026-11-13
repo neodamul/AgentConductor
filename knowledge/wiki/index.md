@@ -193,3 +193,5 @@
 - [UI regression boundaries](ui-regression-boundaries.md) — navigation, complete-save barriers and full capture provenance.
 
 - [Claude effective permission policy](claude-permission-policy.md) — requested versus effective mode, denial handling and explicit callbacks (#931).
+
+- [Optimizer clarifications](optimizer-clarifications.md) — answer review questions and re-optimize without automatically applying the result (#935/#936).

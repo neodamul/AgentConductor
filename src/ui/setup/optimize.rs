@@ -7,20 +7,23 @@ impl Startup {
         &self,
         s: &mut Saved,
         goal: String,
+        answers: String,
     ) -> Result<serde_json::Value, String> {
         let language = if crate::ui::language::load() == "ko" {
             "Korean"
         } else {
             "English"
         };
-        crate::prompt_optimizer::build_prompt(&goal, language)?;
+        crate::prompt_optimizer::build_prompt_with_answers(&goal, language, &answers)?;
         crate::mcp::coordinator_profile(&s.config.profiles, &s.config.coordinator)?;
         let id = crate::native_guard::session_id()?;
         crate::mcp::store(
             &self.broker.dir,
             &format!("optimize-input-{id}.json"),
-            &serde_json::to_vec(&serde_json::json!({"goal": goal, "language": language}))
-                .map_err(|e| e.to_string())?,
+            &serde_json::to_vec(
+                &serde_json::json!({"goal": goal, "language": language, "answers": answers}),
+            )
+            .map_err(|e| e.to_string())?,
         )?;
         s.optimize_result = Some(format!("optimize-{id}.json"));
         self.launch(

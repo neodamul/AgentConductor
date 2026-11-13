@@ -32,6 +32,7 @@ async fn the_coordinator_proposal_is_returned_and_the_skill_prompt_reaches_it() 
         &root.join("optimize-run"),
         "make checkout faster",
         "English",
+        "",
     )
     .await
     .unwrap();

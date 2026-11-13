@@ -1591,5 +1591,7 @@
   "startup.claude_callback_choice": "Route Claude tool decisions through AgentConductor (native_callback)",
   "startup.claude_full_access_requested": "Full access requested",
   "startup.claude_permission_unverified": "Claude full access is requested, not yet verified. Refresh Models to observe the effective mode without generation; it is checked again at run startup. Use advanced CLI settings for native_callback.",
-  "startup.claude_permission_mismatch": "Organization or CLI policy did not grant the requested Claude full access. Review the retained metadata and select native_callback in advanced CLI settings; the app does not override organization policy."
+  "startup.claude_permission_mismatch": "Organization or CLI policy did not grant the requested Claude full access. Review the retained metadata and select native_callback in advanced CLI settings; the app does not override organization policy.",
+  "startup.optimize_answers": "Answers to the confirmation questions",
+  "startup.optimize_again": "Re-optimize with answers"
 }

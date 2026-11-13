@@ -7,6 +7,7 @@ const messenger="SIM.reply.messenger=()=>({settings:{enabled:true,kind:'slack',e
 const saveMessenger="(async()=>{document.getElementById('start-app-menu').click();for(let i=0;i<100&&!document.querySelector('#start-workspace-list button');i++)await new Promise(r=>setTimeout(r,20));[...document.querySelectorAll('#start-workspace-list button')].find(b=>b.textContent===acMessage('startup.messenger')).click();for(let i=0;i<100&&!document.getElementById('start-messenger').open;i++)await new Promise(r=>setTimeout(r,20));document.getElementById('start-messenger-save').click();await new Promise(r=>setTimeout(r,200));})()";
 const mcp="(async()=>{document.getElementById('start-settings-button').click();document.getElementById('start-mcp-settings').click();await new Promise(r=>setTimeout(r,200));})()";
 module.exports=[
+ ...require('./optimizer_spec.cjs'),
  ...require('./claude_permission_spec.cjs'),
  ...require('./run_recovery_spec.cjs'),
  ...require('./source_tags_spec.cjs'),

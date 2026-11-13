@@ -24,6 +24,7 @@ fn optimize_requests_are_validated_and_the_snapshot_carries_an_optimize_slot() {
                 .as_bytes(),
         )
     };
+    assert!(room.dispatch(json!({"kind":"optimize_goal","revision":revision,"goal":"Goal","answers":"x".repeat(8193)}).to_string().as_bytes()).is_err(),"oversized answers reject before launching a worker");
     assert!(send("   ").is_err(), "empty goal");
     assert!(send(&"a".repeat(9000)).is_err(), "goal over 8 KiB");
     assert!(

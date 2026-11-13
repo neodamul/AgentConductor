@@ -914,3 +914,6 @@ QAS-209 / #927: in failed, scope-failed, running/stale, approval and completed s
 QAS-188 / #928 / #929: unit tests cover vacuous and meaningful commands (git diff --check, node --check, test -s, grep) and the task-named error; the planning prompt test asserts both rules.
 
 QAS-118 / #931: deterministic process fixtures vary effective mode, missing metadata, denial arrays, successful results, partial work and delayed writes. A mismatch cancels the owned process before later writes, never yields a candidate or auto-retry; stale observations do not grant access. Validate callback persistence, metadata no-generation behavior, resume and fallback boundaries in local ad-hoc runs.
+
+
+QAS-174 amendment (#935, #936): test answer -> coordinator request -> new proposal and remaining questions, failures retaining input, duplicate-request prevention, empty/oversized answers and original-goal preservation. Compare list/answer typography in both themes and narrow/wide layouts.
