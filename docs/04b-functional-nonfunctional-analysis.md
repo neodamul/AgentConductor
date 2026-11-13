@@ -822,4 +822,6 @@ FR-210 / #921: a release_notes request carries only its kind; the backend builds
 
 FR-112 / #925: quota fallback has zero policy delay; task-level overrides govern both transfer and watcher. Keep temporary model-capacity retry, manual scheduling, Stop, loop detection, verification and merge approval safeguards. NFR: no busy timer loop when all account reset times are unknown.
 
+
+FR-204 / #927: delete banner markup, styles and handlers rather than hiding an idle instance. Preserve disabled/busy guards, safe text output, localized labels and approved candidate checks; warnings must not occupy the area above the task card.
 FR-182 / #928 / #929: `plan::is_vacuous_check` classifies argv (also `sh -c`/`cmd /c` wrapped) whose program is true, :, echo, printf, ls, dir, pwd or git status/log/branch/show/rev-parse; `plan::VACUOUS_CHECK` keys the existing retry. Stored plans are not revalidated, so older runs still load.

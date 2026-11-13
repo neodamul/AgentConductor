@@ -1,6 +1,6 @@
 // GitHub #146, amended by #394 / R-210: the docked task detail column starts closed, only a toggle opens it and a decision lights the toggle.
 const fs = require('node:fs'), vm = require('node:vm'), assert = require('node:assert/strict');
-const source = fs.readFileSync('src/ui/room.js', 'utf8');
+const source = (fs.readFileSync('src/ui/room.js', 'utf8') + fs.readFileSync('src/ui/room_render.js', 'utf8'));
 const start = source.indexOf('// inspector-fold'), end = source.indexOf('// inspector-fold-end');
 assert.ok(start >= 0 && end > start, 'room.js marks the inspector fold block');
 assert.ok(!/localStorage/.test(source.slice(start, end)), 'the open/closed choice is not remembered');

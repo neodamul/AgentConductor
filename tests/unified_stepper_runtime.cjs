@@ -1,6 +1,6 @@
 // GitHub #390 / R-210: one six-step stepper shared by the Workspace screen and the Agent Room.
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-const html=fs.readFileSync('src/ui/startup.html','utf8'),room=fs.readFileSync('src/ui/room.html','utf8'),roomJs=fs.readFileSync('src/ui/room.js','utf8');
+const html=fs.readFileSync('src/ui/startup.html','utf8'),room=fs.readFileSync('src/ui/room.html','utf8'),roomJs=(fs.readFileSync('src/ui/room.js','utf8') + fs.readFileSync('src/ui/room_render.js', 'utf8'));
 
 // Markup: six tabs in order inside one tablist, grouped Prepare / Run / Finish.
 const nav=html.match(/<nav id="start-step-tabs"[\s\S]*?<\/nav>/)[0];

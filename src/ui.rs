@@ -11,16 +11,16 @@ use std::{
     process::{Child, Stdio},
     sync::{Arc, Mutex},
 };
-
 const HTML: &str = include_str!("ui/room.html");
 const CSS: &str = include_str!("ui/room.css");
-// R-120: the Activity helpers come first so room.js stays within the file-size bound.
 const JS: &str = concat!(
     include_str!("ui/room_activity.js"),
     include_str!("ui/room_result.js"),
     include_str!("ui/room_rail.js"),
     include_str!("ui/room_review.js"),
     include_str!("ui/room_verify.js"),
+    include_str!("ui/room_recovery.js"),
+    include_str!("ui/room_render.js"),
     include_str!("ui/room.js")
 );
 /// ID catalogs and translation runtime, loaded before either page script.

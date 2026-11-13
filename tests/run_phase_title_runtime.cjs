@@ -1,7 +1,7 @@
 // R-114 / DD-122 (verified for GitHub #349): beside the workspace name, the run screen names the
 // phase it executes (n of m and its name) with what it covers, and hides the box without a phase.
 const fs = require('node:fs'), vm = require('node:vm'), assert = require('node:assert/strict');
-const source = fs.readFileSync('src/ui/room.js', 'utf8');
+const source = (fs.readFileSync('src/ui/room.js', 'utf8') + fs.readFileSync('src/ui/room_render.js', 'utf8'));
 const lines = source.split('\n');
 const at = lines.findIndex(l => l.includes('DD-122: the titlebar names the run'));
 assert.ok(at >= 0, 'room.js marks the run phase block');

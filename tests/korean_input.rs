@@ -27,7 +27,10 @@ async fn korean_goal_round_trips_into_the_planning_prompt_and_plan() {
 
 #[test]
 fn native_forms_never_act_on_or_overwrite_text_during_input_method_composition() {
-    let room = include_str!("../src/ui/room.js");
+    let room = concat!(
+        include_str!("../src/ui/room.js"),
+        include_str!("../src/ui/room_render.js")
+    );
     let startup = include_str!("../src/ui/startup.js");
     // The send shortcut must not fire while a syllable is still being composed.
     assert!(room.contains("e.isComposing"));

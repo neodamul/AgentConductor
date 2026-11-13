@@ -1,6 +1,6 @@
 // GitHub #398 / R-210: a centered result popup shows the whole outcome of a completed goal at once.
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-const html=fs.readFileSync('src/ui/room.html','utf8'),room=fs.readFileSync('src/ui/room.js','utf8'),source=fs.readFileSync('src/ui/room_result.js','utf8'),view=fs.readFileSync('src/ui/result_view.js','utf8'),ui=fs.readFileSync('src/ui.rs','utf8'),document_rs=fs.readFileSync('src/ui/setup/document.rs','utf8');
+const html=fs.readFileSync('src/ui/room.html','utf8'),room=(fs.readFileSync('src/ui/room.js','utf8') + fs.readFileSync('src/ui/room_render.js', 'utf8')),source=fs.readFileSync('src/ui/room_result.js','utf8'),view=fs.readFileSync('src/ui/result_view.js','utf8'),ui=fs.readFileSync('src/ui.rs','utf8'),document_rs=fs.readFileSync('src/ui/setup/document.rs','utf8');
 const dialog=html.match(/<dialog id="result-dialog"[\s\S]*?<\/dialog>/)[0];
 for(const id of ['result-title','result-target','result-metrics','result-files','result-tests','result-lessons','result-close'])assert.match(dialog,new RegExp(`id="${id}"`),id);
 assert.doesNotMatch(dialog,/new.goal|start.new/i,'no new-goal shortcut');

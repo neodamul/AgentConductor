@@ -4057,6 +4057,16 @@ Trace: R-127 / BG-82 / SF-114 / UC-117 / FR-112 / QAS-123 / DD-136.
 
 #925 evidence: Red reproduced four timer failures and the actual subprocess run stuck in waiting_availability. Green:87 local tests (37 focused availability/fallback,31 library,7 architecture,5 independent watcher,1 Claude API workflow,4 manual renderer,1 manual menu,1 source layout); Clippy with warnings denied and changed-file formatting pass. Shared/worktree partial work, dependency completion, Stop, missing ownership evidence, task override/disabled fallback, unavailable chains and merge approval remain covered. English/Korean HTML manuals regenerated with the existing Rust renderer. No physical Windows/provider-account validation or release performed.
 
+### Banner-free run recovery — GitHub #927 (0.2.8)
+
+Trace: R-210 / UC-202 / QAS-209 / DD-222.
+- [x] Plan: claim linked owner-codex branch; acknowledge Claude and inspect banner callers and approved mock.
+- [x] Task: reference failure state and Red runtime/parity cases.
+- [x] Task: remove banner; retain failure/scope/attention/next-action evidence in card/footer/composer.
+- [x] Verify: light/dark narrow/wide runtime, reference parity, related UI regressions and local Rust/layout/i18n checks.
+- [x] Completed: local implementation, diff review, wiki and verification evidence recorded; linked PR tracks merge/closure, completion signal and owned cleanup.
+
+#927 evidence: Red found the run-banner element in the actual failed-state page. Final local aggregate:102 Node UI scripts passed;108 related Rust cases passed (one additional installed-OpenCode integration ignored);6 Python manifest/tool-dialog checks passed;16 focused parity entries passed across light/dark and840/1280. The reference interaction checker passed183checks per theme/width and verified92capture states (88existing plus4failure/scope images); existing image noise was excluded from the diff. Clippy with warnings denied, rustfmt,300line checks and generated EN/KO manual consistency passed. Transcripts/task/tool/coordinator render blocks moved byte-for-byte; embedding and simulator share the same fragments. No physical Windows/live CLI validation or release performed.
 ### Meaningful planned verification commands — GitHub #928 / #929 (0.2.8)
 
 Trace: R-190 / BG-145 / SF-178 / UC-181 / FR-182 / QAS-188 / DD-202.

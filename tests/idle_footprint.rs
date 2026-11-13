@@ -6,7 +6,10 @@ use std::path::Path;
 mod support;
 
 const STARTUP: &str = include_str!("../src/ui/startup.js");
-const ROOM: &str = include_str!("../src/ui/room.js");
+const ROOM: &str = concat!(
+    include_str!("../src/ui/room.js"),
+    include_str!("../src/ui/room_render.js")
+);
 
 #[test]
 fn both_pages_use_adaptive_refresh_and_pause_when_hidden() {

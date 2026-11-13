@@ -1,5 +1,5 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
-const source=fs.readFileSync('src/ui/room.js','utf8');const buttons=new Map([['approve',{}]]),calls=[];
+const source=(fs.readFileSync('src/ui/room.js','utf8') + fs.readFileSync('src/ui/room_render.js', 'utf8'));const buttons=new Map([['approve',{}]]),calls=[];
 const review={revision:'exact',truncated:true,report:{candidate:{commit:'verified-candidate'},diff_hash:'complete-patch-hash',tests:[{}]}};
 const context=vm.createContext({review,snapshot:{revision:'exact'},$:id=>buttons.get(id),acMessage:id=>id,decision:async()=>true,act:async(...args)=>calls.push(args)});
 const gate=source.slice(source.indexOf('const currentReview='),source.indexOf(';',source.indexOf('const currentReview=')));

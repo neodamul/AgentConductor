@@ -909,4 +909,6 @@ QAS-215 / #921: the Help order and request payload are checked in both themes; t
 
 QAS-123 / #925: a fresh short or unknown usage reset with a reviewed available fallback yields an immediate fallback reservation and runnable T1 before later starts. An unavailable chain uses the earliest real source/target reset; manual/transient schedules do not transfer. Deterministic offline process tests cover fallback, partial work, target restriction and ownership refusal.
 
+
+QAS-209 / #927: in failed, scope-failed, running/stale, approval and completed states at narrow/wide widths in both themes, no run-banner element exists; failure output and safe recovery controls remain reachable and do not overflow.
 QAS-188 / #928 / #929: unit tests cover vacuous and meaningful commands (git diff --check, node --check, test -s, grep) and the task-named error; the planning prompt test asserts both rules.

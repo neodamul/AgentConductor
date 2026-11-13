@@ -6,9 +6,9 @@ GitHub #44 addresses a run that appeared unexplained when a long-running agent s
 
 - A worker wall-timeout increments `TaskReport.timeouts` and retains its attempt directory, process ownership record, stdout/stderr, and partial workspace.
 - The scheduler records `task_timeout_resume`, keeps the task pending, and schedules a retry after `min(task timeout, 60 seconds)`. Each attempt receives a fresh artifact directory while continuing from retained files/session context.
-- The report exposes the timeout message while the retry is pending; the existing run banner reads the report-level error.
+- The report exposes the timeout message while the retry is pending; the task card reads the report-level error (#927).
 - The scheduler checks `stop.request` before launching pending tasks. A Stop during backoff therefore ends the run without starting another attempt.
-- If the run ends with a blocked task, finalization copies that task's cause into `Report.error` for the same banner and report consumers.
+- If the run ends with a blocked task, finalization copies that task's cause into `Report.error` for the same task-card diagnostics and report consumers.
 
 ## Verification
 
