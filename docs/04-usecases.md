@@ -925,3 +925,6 @@ UC-135 / #933 / #934: the operator sets a project folder while Claude usage show
 
 
 #948 — Review long task commands: open Plan, inspect a compact row, hover command/path metadata for its complete value, and expand the row to inspect or edit the original command.
+
+
+#961: After a Goal completes or its bookkeeping changes, send a coordinator question from the existing Room screen; answer from current context without resending or changing write permissions.

@@ -6,20 +6,16 @@ impl Startup {
     pub(super) fn dispatch_chat(
         &self,
         saved: &mut Saved,
-        revision: &str,
+        _revision: &str,
         text: &str,
     ) -> Result<serde_json::Value, String> {
-        if revision != self.chat_revision(saved)? {
-            return Err(crate::ui::messages::text(
-                "native.startup_state_changed_since_review_refresh_before_acting",
-            )
-            .into());
-        }
+        // #961: read-only questions use current context; mutable phase bookkeeping is not consent.
+        let revision = self.chat_revision(saved)?;
         // GitHub #261: a chat is read-only; a plan or start job running beside it is no reason to refuse it.
         if self.chat_job(saved)?["state"] == "running" {
             return Err(crate::ui::messages::text("native.chat_still_answering").into());
         }
-        self.launch_chat(saved, text.to_owned(), revision)
+        self.launch_chat(saved, text.to_owned(), &revision)
     }
 
     pub(super) fn launch_chat(

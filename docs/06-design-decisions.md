@@ -1786,3 +1786,6 @@ DD-62 amendment (#943): Reuse read-only snapshot planning to re-plan the next Ph
 
 
 #948: Reuse the shared Plan row CSS and existing i18n title binding. Ellipsis applies only to summary metadata, leaving the editable command unchanged; no dependency or background work is added.
+
+
+#961: Replace only the chat stale-state gate with the current chat revision. Workspace polling pauses in Room until a chat is busy, so the initial question can carry old phase/job context. Existing chatSync follows the accepted job; no new poll loop or retry that could duplicate a question is needed.

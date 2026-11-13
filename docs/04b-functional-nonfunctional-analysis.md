@@ -845,3 +845,6 @@ FR-130 / #933 / #934: autoDiscover also queries a Claude profile whose indicator
 
 
 #948: Preserve full command values and existing editor behavior; constrain collapsed row height at narrow and normal widths in both themes.
+
+
+#961: The stale revision is observational for read-only chat, not write consent. Keep current coordinator validation, bounded question/history, one active chat and existing asynchronous processing.

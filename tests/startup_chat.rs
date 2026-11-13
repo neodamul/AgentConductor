@@ -142,7 +142,7 @@ fn chat_submission_does_not_wait_for_repository_head() {
 }
 
 #[test]
-fn chat_rejects_a_stale_saved_context_without_a_git_head_lookup() {
+fn chat_validates_current_coordinator_after_state_drift_without_git() {
     let root = std::env::temp_dir().join(format!("ac-chat-stale-context-{}", std::process::id()));
     let repository = root.join("repo");
     std::fs::create_dir_all(&repository).unwrap();
@@ -182,8 +182,9 @@ fn chat_rejects_a_stale_saved_context_without_a_git_head_lookup() {
     );
     let error = result.unwrap_err();
     assert!(
-        error.contains("startup state changed since review"),
-        "stale chat must be rejected before attempting coordinator launch: {error}"
+        !error.contains("startup state changed since review")
+            && error == agentconductor::ui::messages::text("mcp.coordinator_required"),
+        "read-only chat uses current coordinator validation rather than a stale-state error: {error}"
     );
     drop(room);
     drop(environment);

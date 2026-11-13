@@ -309,6 +309,8 @@ There is no resident cleanup daemon. Cargo build output is separate from applica
 
 Long command and agent/path summaries are truncated to keep Plan rows compact. Hover to read the full value, or expand the task to inspect and edit its command.
 
+Coordinator chat answers from the current Workspace context even if a Goal finished since the last displayed snapshot. Read-only questions do not require a manual refresh; reviewed changes and execution approvals retain their existing revision checks.
+
 ## Part 2 — Command-line reference
 
 Run directories must be outside the repository, and the repository must start clean.

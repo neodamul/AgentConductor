@@ -4168,3 +4168,10 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 - [x] Task: close the test-owned SQLite handle before deleting its fixture. Product code and gate assertions are unchanged.
 - [x] Verify: 3 automatic-merge, 7 architecture and 1 source-layout tests passed locally; formatting passed. Windows release revalidation remains a publication gate.
 - [x] Completed: PR #953 merged, #952 closed, Windows full validation passed and stable v0.2.9 published.
+
+## #961 — Read-only chat after Goal completion
+
+- [x] Plan: trace Goal/Feature/Use Case/QAS/design; inspect retained private evidence and Room chat lifecycle.
+- [x] Task: reproduce stale-state rejection with a deterministic Rust CLI; accept read-only questions from current context while keeping write guards.
+- [x] Verify: 18 local Rust checks including current-context CLI answer, one-chat slot, stale-write rejection, slow-Git independence, chat history/async behavior, docs and source layout; all-target Clippy/format passed.
+- [x] Completed: manuals/HTML/wiki and evidence limitations recorded, linked branch committed/pushed for Claude review and batch CI; close after merge.
