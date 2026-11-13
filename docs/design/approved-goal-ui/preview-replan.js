@@ -26,6 +26,8 @@ function renderPlanCard(){
   }));
  }
  document.querySelectorAll('[data-current-position]').forEach(e=>e.textContent=next?'현재 Phase '+next.number+'/'+next.total+' · 작업 2개 · 1개 제외':'현재 Phase 1/1 · Task 1/3');
+ // #954: Merge automatically only matters when there is a next phase to re-plan.
+ document.querySelector('.auto-merge-option').hidden=!(next&&next.total>1);
  renderAutoMergeNote();
 }
 function renderAutoMergeNote(){

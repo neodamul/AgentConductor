@@ -933,3 +933,5 @@ QAS-141 / #933 / #934: tests/quota_folder_934.cjs (no folder: no query; folder s
 
 
 #948: Given a long verification command/path, Plan review remains a single-line summary at 840/1280px in Light/Dark; hover and expansion retain the complete value.
+
+#954: Given a single-Phase plan, the plan review shows no Merge automatically option; given a multi-Phase plan, toggling it persists `auto_merge` alone, keeps other unsaved edits and shows no "Workspace saved" notice.
