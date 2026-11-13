@@ -48,7 +48,7 @@ const fixture=done=>specs.find(s=>s.name==='source-review-'+(done?'summary':'car
     checks[1].click();check('optional source can be unchecked',!checks[1].checked);
     return 'guide persistence, bounded headers and source selection passed';
    })()`);console.log(theme,width,result);
-   if(width===840){assert(await browser.eval("document.getElementById('start-mcp-review').open"));fs.writeFileSync('/private/tmp/ac-916-'+theme+'.png',await browser.shot());}
+   if(width===840)assert(await browser.eval("document.getElementById('start-mcp-review').open"));
    await browser.eval(`(async()=>{const q=id=>document.getElementById('start-'+id),expected=q('mcp-records').querySelector('input:checked').value;SIM.reply.mcp_apply=p=>{SIM.applied=p.selected;SIM.home.imports={selected:p.selected};return {applied:true};};q('mcp-apply').click();const end=Date.now()+12000;while(!SIM.applied||q('mcp-review').open){if(Date.now()>end)throw Error('Apply did not finish');await wait(25);}if(SIM.applied.length!==1||SIM.applied[0]!==expected)throw Error('only selected reference is applied');})()`);
   }
  }finally{if(browser)await browser.close();fs.rmSync(dir,{recursive:true,force:true});}
