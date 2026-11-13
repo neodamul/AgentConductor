@@ -33,7 +33,11 @@ function renderAutoMergeNote(){
  document.getElementById('plan-approve-note').textContent=on?'검증을 통과하면 승인 없이 병합하고 다음 Phase를 다시 계획합니다. 검증 실패·범위 검토·도구 승인은 멈추고 기다립니다.':'승인하면 같은 화면에서 4단계 작업으로 넘어갑니다.';
 }
 document.getElementById('auto-merge').onchange=renderAutoMergeNote;
-function previewReplan(number,total){replanPhase=number?{number,total}:null;renderPlanCard();}
+// When the re-plan changes nothing the plan stop is skipped and the next phase starts at once.
+function previewReplan(number,total,unchanged){
+ if(number&&unchanged){i=3;show();document.getElementById('run-meta').replaceChildren(Object.assign(document.createElement('span'),{textContent:'Phase '+number+'/'+total+' · Phase '+(number-1)+' 결과로 다시 검토했고 계획 변경이 없어 바로 시작했습니다'}));return;}
+ replanPhase=number?{number,total}:null;renderPlanCard();
+}
 renderPlanCard();
 // Any other navigation shows the first plan again; previewReplan runs after show() on the next-phase path.
-const showFirstPlan=show;show=function(){replanPhase=null;showFirstPlan();renderPlanCard();};
+const showFirstPlan=show;show=function(){replanPhase=null;showFirstPlan();document.getElementById('run-meta').replaceChildren();renderPlanCard();};
