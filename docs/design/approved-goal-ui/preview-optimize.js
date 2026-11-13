@@ -9,3 +9,5 @@ document.getElementById('optimize-preview-answers').oninput=event=>{document.get
 document.getElementById('optimize-preview-again').onclick=()=>{document.getElementById('optimize-preview-goal').textContent+=' 테스트 환경: '+document.getElementById('optimize-preview-answers').value;document.getElementById('optimize-preview-changes').innerHTML='<li>답변한 테스트 환경을 반영했습니다.</li>';document.getElementById('optimize-preview-questions').hidden=true;document.getElementById('optimize-preview-questions-title').hidden=true;document.getElementById('optimize-preview-answer-section').hidden=true;};
 document.getElementById('optimize-preview-keep').onclick=()=>optimizePreview.close();
 document.getElementById('optimize-preview-use').onclick=()=>optimizePreview.close();
+
+if(new URLSearchParams(location.search).has("optimize"))openOptimizePreview();
