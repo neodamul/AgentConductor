@@ -814,3 +814,6 @@ SF-132 / #933 / #934: icon-only usage retry; automatic Claude usage query after 
 
 
 #948: Truncate collapsed task metadata with ellipses and expose full translated tooltip values.
+
+
+#959: Rebind exact consent only at trusted automatic-fallback transitions, audit old/new plan digests, and surface failed merge jobs separately from human action jobs.

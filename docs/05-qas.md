@@ -933,3 +933,6 @@ QAS-141 / #933 / #934: tests/quota_folder_934.cjs (no folder: no query; folder s
 
 
 #948: Given a long verification command/path, Plan review remains a single-line summary at 840/1280px in Light/Dark; hover and expansion retain the complete value.
+
+
+#959: Shared/worktree quota fallbacks retain exact automatic consent and audit the rebinding. Tampered/disabled consent and manual reassignment stay blocked; changed and unchanged three-Phase chains complete with existing gates preserved. Failed auto-merge jobs show a single actionable notice.

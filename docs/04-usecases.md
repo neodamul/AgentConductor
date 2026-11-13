@@ -925,3 +925,6 @@ UC-135 / #933 / #934: the operator sets a project folder while Claude usage show
 
 
 #948 — Review long task commands: open Plan, inspect a compact row, hover command/path metadata for its complete value, and expand the row to inspect or edit the original command.
+
+
+#959: Opt into a multi-Phase plan, exhaust the primary agent and transfer to its reviewed fallback. Verified work merges automatically. A manual reassignment, changed scope, Stop, permission or review gate still requires operator action with an explanation.

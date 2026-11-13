@@ -4168,3 +4168,10 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 - [x] Task: close the test-owned SQLite handle before deleting its fixture. Product code and gate assertions are unchanged.
 - [x] Verify: 3 automatic-merge, 7 architecture and 1 source-layout tests passed locally; formatting passed. Windows release revalidation remains a publication gate.
 - [x] Completed: PR #953 merged, #952 closed, Windows full validation passed and stable v0.2.9 published.
+
+## #959 — Automatic merge after reviewed fallback
+
+- [x] Plan: confirm consent mismatch and reviewed fallback in private run evidence; trace requirements through QAS/design.
+- [x] Task: reproduce consent mismatch and silent success; carry exact opt-in only at reviewed automatic fallback sites, audit it and show blocked-job reasons.
+- [x] Verify: shared/worktree fallback, disabled/tampered consent, manual reassignment, changed/unchanged three-Phase chains, actual failed-worker Room snapshot and DOM notice; 32 focused Rust checks, Clippy/format passed.
+- [x] Completed: manuals/HTML/wiki and private-evidence findings recorded; linked branch committed/pushed for batch integration and CI.

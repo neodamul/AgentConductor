@@ -845,3 +845,6 @@ FR-130 / #933 / #934: autoDiscover also queries a Claude profile whose indicator
 
 
 #948: Preserve full command values and existing editor behavior; constrain collapsed row height at narrow and normal widths in both themes.
+
+
+#959: Consent may be carried only if it was enabled and its previous digest exactly matched the pre-transfer plan. Missing, disabled or mismatched consent is never reauthorized; no general mutation path refreshes it.

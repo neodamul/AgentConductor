@@ -13,3 +13,5 @@ Stream hashes of full test logs while passing bounded excerpts to the coordinato
 See `docs/evidence/943-whole-app-validation.md` for verification and limits.
 
 #952: Windows refuses fixture deletion while a test-owned SQLite Store is alive. Explicitly drop the Store after its last assertion and before removing the fixture; do not ignore deletion errors or weaken merge assertions.
+
+#959: A reviewed fallback changes task agent/model/fallback and appends handoff context, invalidating a whole-plan digest. Carry an existing exact opt-in only at trusted automatic fallback call sites, and audit both digests. Never reauthorize missing/disabled/mismatched consent or manual reassignment. Preserve review/permission/Stop/test gates. A false background merge outcome must report its pause reason rather than complete silently; expose it separately from the current human action job.

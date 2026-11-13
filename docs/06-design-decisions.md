@@ -1786,3 +1786,6 @@ DD-62 amendment (#943): Reuse read-only snapshot planning to re-plan the next Ph
 
 
 #948: Reuse the shared Plan row CSS and existing i18n title binding. Ellipsis applies only to summary metadata, leaving the editable command unchanged; no dependency or background work is added.
+
+
+#959: Local evidence confirmed consent enabled, reviewed fallback transfers, and executed-plan agent/fallback/prompt changes causing digest mismatch. Rebind only in automatic quota/checkpoint fallback call sites after their existing quiescence, policy and scope checks; retain generic transfer/manual edit behavior and review_round blocking. Worker false results become errors; Room receives a separate error field so manual action jobs are not overwritten.
