@@ -952,3 +952,6 @@ QAS-141 / #933 / #934: tests/quota_folder_934.cjs (no folder: no query; folder s
 
 
 #962: Actual DOM checks cover duplicate click/handler calls, pending cancellation, single-last-session focus, failure recovery and obsolete inventory responses; compare danger button in both themes.
+
+
+#963: Existing real-DOM review footer regression selects task → integration and asserts summary hidden → restored while all footer behaviors still work.

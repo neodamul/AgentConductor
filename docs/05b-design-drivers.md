@@ -209,3 +209,6 @@ DD-136 / #925 driver: provider capacity and reviewed alternatives determine elig
 
 
 #962: Single-flight destructive actions with stable accessible focus and no extra timer or inventory polling.
+
+
+#963: Use the existing task renderer boundary; no additional state, requests or redraw loop.

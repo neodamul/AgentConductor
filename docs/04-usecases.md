@@ -949,3 +949,6 @@ UC-135 / #933 / #934: the operator sets a project folder while Claude usage show
 
 
 #962: Confirm finished-session cleanup twice quickly: send one request, disable dialog actions while pending, then focus the available cleanup or Close control. Failure retains sessions and permits retry.
+
+
+#963: From the integration summary select a task: hide integration summary and verification rows. Select integration again: restore the summary and footer.

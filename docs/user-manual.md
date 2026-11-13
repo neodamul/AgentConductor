@@ -559,3 +559,6 @@ In Review and merge, click a changed file to expand its diff below the filename 
 
 
 Session cleanup and stop actions accept one request at a time. While a request is pending, the dialog shows progress and disables its actions. After cleanup, focus returns to Clean up finished, or Close when no cleanable sessions remain. Failed operations retain the list and show an error for retry.
+
+
+In Review and merge, selecting a task in the Steps/Tasks list shows that task without the integration summary. Select the integration row to return to its changed files, tests and decision controls.

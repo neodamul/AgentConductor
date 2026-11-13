@@ -1807,3 +1807,6 @@ DD amendment (#957): Step 6 reuses the result dialog's `.file-diff-toggle`/`.fil
 
 
 #962: Guard the shared session act path, disable actions during it and restore focus to cleanup/Close. Reuse existing inventory observer and reject pre-mutation reads by generation; use scoped approved danger-button CSS.
+
+
+#963: Hide review-summary next to verify-rows on the task path. The integration renderer already restores visibility before its unchanged-evidence cache check.
