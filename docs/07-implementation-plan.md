@@ -4174,49 +4174,49 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 - [x] Plan: use approved Claude mock 16805b02 and DD-62 requirement/QAS amendment.
 - [x] Task: reproduce single-phase visibility and absent narrow request; add revision-bound flag-only persistence, hidden-state CSS and fixed-size checkbox.
 - [x] Verify: 21 focused Rust tests, 8 DOM states and existing re-plan UI passed; 12 approved mock entries ×4 theme/width cells (48 comparisons), zero differences; all-target Clippy and formatting passed.
-- [x] Completed: bilingual manuals/HTML and wiki updated; linked issue branch committed/pushed for Claude review and combined CI. Issue closes only when its PR merges.
+- [x] Completed: bilingual manuals/HTML and wiki updated; merged in PR 956; #954 closed. Remote CI remains grouped with the release batch.
 
 ## #955 — Live session counts
 
 - [x] Plan: trace Goal/Feature/Use Case/QAS/design; inspect Workspace and Room polling.
 - [x] Task: failing VM/native regressions; narrow session revision and shared coalesced observer.
 - [x] Verify: real Room DOM 0→1 and running→done without dialog; unchanged-query suppression and in-flight coalescing VM checks; 23 focused Rust tests and all-target Clippy passed.
-- [x] Completed: manuals/HTML/wiki updated, linked branch committed/pushed for Claude batch CI with #954; close issue after merge.
+- [x] Completed: manuals/HTML/wiki updated, merged in PR 964; #955 closed. Remote CI remains batched.
 
 ## #961 — Read-only chat after Goal completion
 
 - [x] Plan: trace Goal/Feature/Use Case/QAS/design; inspect retained private evidence and Room chat lifecycle.
 - [x] Task: reproduce stale-state rejection with a deterministic Rust CLI; accept read-only questions from current context while keeping write guards.
 - [x] Verify: 18 local Rust checks including current-context CLI answer, one-chat slot, stale-write rejection, slow-Git independence, chat history/async behavior, docs and source layout; all-target Clippy/format passed.
-- [x] Completed: manuals/HTML/wiki and evidence limitations recorded, linked branch committed/pushed for Claude review and batch CI; close after merge.
+- [x] Completed: manuals/HTML/wiki and evidence limitations recorded, merged in PR 965; #961 closed. Remote CI remains batched.
 
 ## #959 — Automatic merge after reviewed fallback
 
 - [x] Plan: confirm consent mismatch and reviewed fallback in private run evidence; trace requirements through QAS/design.
 - [x] Task: reproduce consent mismatch and silent success; carry exact opt-in only at reviewed automatic fallback sites, audit it and show blocked-job reasons.
 - [x] Verify: shared/worktree fallback, disabled/tampered consent, manual reassignment, changed/unchanged three-Phase chains, actual failed-worker Room snapshot and DOM notice; 32 focused Rust checks, Clippy/format passed.
-- [x] Completed: manuals/HTML/wiki and private-evidence findings recorded; linked branch committed/pushed for batch integration and CI.
+- [x] Completed: manuals/HTML/wiki and private-evidence findings recorded; merged in PR 966; #959 closed. Remote CI remains batched.
 
 ## #958 — Pending next-Phase re-plan
 
 - [x] Plan: import approved mock 9d6ff974; trace requirements through QAS/design.
 - [x] Task: reproduce stale Phase 1→2 heading during Phase 3 planning; bind pending target, clear old rows/tools, reset selected Phase for a new target.
 - [x] Verify: four actual DOM ready→pending→ready conditions; 14 approved entries ×4 theme/width cells (56 comparisons), zero differences; 752 mock interaction checks; 8 focused Rust checks, all-target Clippy and formatting passed.
-- [x] Completed: manuals/HTML/wiki updated; linked branch prepared for PR/merge and combined CI.
+- [x] Completed: manuals/HTML/wiki updated; merged in PR 967; #958 closed. Remote CI remains batched.
 
 ## #960 — New-run Activity tab
 
 - [x] Plan: trace run-scoped tab state and approved default Activity; no mock change needed.
 - [x] Task: actual DOM reproduced "New run inherited review tab"; reset first/new-run tab and discard obsolete evidence.
 - [x] Verify: five actual Room boundaries passed (including background summary); live sessions (#955), auto-merge notices (#959), and seven native routing/focus/docs/layout checks passed.
-- [x] Completed: manuals/HTML/wiki updated, linked issue branch prepared for PR/merge; CI remains batched.
+- [x] Completed: manuals/HTML/wiki updated, merged in PR 968; #960 closed. CI remains batched.
 
 ## #957 — Expandable review file diffs
 
 - [x] Plan: import approved mock aed43254; trace feature/use case/QAS/design; inspect existing result renderer.
 - [x] Task: reproduced absent file toggles; shared bounded file-row renderer with Step 6 and kept unchanged summary DOM during polling.
 - [x] Verify: four real-DOM conditions; 56 approved element comparisons (zero differences); 756 mock interactions; existing result and #960 DOM regressions; 18 native routing/focus/docs/layout/trace checks and two manifest checks passed.
-- [x] Completed: manuals/HTML/wiki updated; linked branch prepared for PR/merge and batched CI handoff.
+- [x] Completed: manuals/HTML/wiki updated; merged in PR 969; #957 closed. CI remains batched.
 
 #957: the comparison index and extracted files are each <=300 lines; all 429 generated entries remained identical during extraction.
 
@@ -4225,4 +4225,17 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 - [x] Plan: run the complete local UI/script suite after integrating 0.2.10 units.
 - [x] Task: reproduce approval_feedback_runtime.cjs failure (missing planPhase); load the real helper and provide the checkbox parent in its VM fixture.
 - [x] Verify: approval guards and single/multi-Phase visibility pass; all 47 Python/script checks pass.
-- [x] Completed: follow-up linked branch prepared for merge; no product logic or remote CI changed.
+- [x] Completed: follow-up merged in PR 970; no product logic or remote CI changed.
+
+### #954 / #960 complete UI regression contracts
+
+- [x] Plan: inspect all failures from the complete 114-script local UI batch (111 passed, three stale test contracts failed).
+- [x] Task: classify save_auto_merge as a direct write; replace the exact loadReview function-string assertion with executed delayed-response guards. The missing approval fixture was already merged in PR 970.
+- [x] Verify: all three failed scripts pass individually; a complete 114-script rerun passed (333.72 s), as did all 47 Python/script checks. Guard mutation checks detect removal of either stopped-Room or changed-run protection.
+- [x] Completed: rerun result recorded; linked follow-up branch ready for immediate merge before combined CI.
+
+## 0.2.10 integrated checkpoint — 2026-11-14
+
+GitHub milestone state: **7 of 9 issues closed**. #954, #955, #957, #958, #959, #960 and #961 are merged on main. #962 and #963 remain open with owner-claude; Codex requested status/handoff and did not change their implementation.
+
+Local verification includes a successful current-source build, all-target Clippy and formatting, all 114 top-level UI runtime scripts, all 47 Python/script checks, focused native workflow/routing/trace tests, and approved re-plan/review element comparisons. No per-fix remote CI was started. Windows packaging and combined release CI remain pending; 0.2.10 is not published.
