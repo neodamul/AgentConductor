@@ -1810,3 +1810,6 @@ DD amendment (#957): Step 6 reuses the result dialog's `.file-diff-toggle`/`.fil
 
 
 #963: Hide review-summary next to verify-rows on the task path. The integration renderer already restores visibility before its unchanged-evidence cache check.
+
+
+#972 verification: existing Slack/webhook configuration, per-workspace enablement, local secrets and allowlisted inbound behavior were checked under R-43 / DD-79 / DD-81. See `docs/evidence/972-slack-verification.md`; no product behavior was added.

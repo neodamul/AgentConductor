@@ -292,6 +292,8 @@ Review archives before sharing; imported capability claims require local confirm
 Webhook/bot tokens and relay secrets stay local. Goal text is included only by explicit choice.
 Remote replies never approve a plan or merge.
 
+For Slack, enable **Send notifications in this workspace**, choose events and save an Incoming Webhook URL from your Slack app. A workspace invitation (`join.slack.com`) is for joining Slack; it is not a webhook and does not connect the application. Use **Send test message** after configuration. Optional inbound decisions or coordinator questions also need a bot token, channel ID and the appropriate approver/talker IDs. Secrets stay on this machine and are not restored by importing shared settings.
+
 With **Talk to the coordinator from the messenger**, the people listed as talkers can ask the
 read-only coordinator questions in the same channel and get the answer back (at most three
 messages). Talkers are separate from approvers, and a message is only a question: it can never

@@ -955,3 +955,6 @@ QAS-141 / #933 / #934: tests/quota_folder_934.cjs (no folder: no query; folder s
 
 
 #963: Existing real-DOM review footer regression selects task → integration and asserts summary hidden → restored while all footer behaviors still work.
+
+
+#972 verification: existing Slack/webhook configuration, per-workspace enablement, local secrets and allowlisted inbound behavior were checked under R-43 / DD-79 / DD-81. See `docs/evidence/972-slack-verification.md`; no product behavior was added.

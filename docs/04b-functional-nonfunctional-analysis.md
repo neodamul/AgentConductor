@@ -872,3 +872,6 @@ FR-130 / #933 / #934: autoDiscover also queries a Claude profile whose indicator
 
 
 #963: Reset integration-only surfaces in the task render path; preserve loaded evidence and selection state.
+
+
+#972 verification: existing Slack/webhook configuration, per-workspace enablement, local secrets and allowlisted inbound behavior were checked under R-43 / DD-79 / DD-81. See `docs/evidence/972-slack-verification.md`; no product behavior was added.
