@@ -1787,5 +1787,4 @@ DD-62 amendment (#943): Reuse read-only snapshot planning to re-plan the next Ph
 
 #948: Reuse the shared Plan row CSS and existing i18n title binding. Ellipsis applies only to summary metadata, leaving the editable command unchanged; no dependency or background work is added.
 
-
-#955: Observe both Workspace and Room because Startup polling stops in Room. Hash run identity/state, task ID/status/start/finish and assigned agent from the report already loaded for run_state. Add no timer or inventory scan to snapshot generation.
+DD-62 amendment (#954): Merge automatically is a Phase-boundary option, so the review footer hides it for single-Phase plans; its toggle persists only `auto_merge` quietly instead of reusing the full workspace Save.

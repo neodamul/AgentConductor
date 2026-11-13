@@ -927,4 +927,4 @@ UC-135 / #933 / #934: the operator sets a project folder while Claude usage show
 #948 — Review long task commands: open Plan, inspect a compact row, hover command/path metadata for its complete value, and expand the row to inspect or edit the original command.
 
 
-#955: During execution, select Agents and observe session counts/state changes without opening the dialog; unchanged snapshots do not trigger inventory queries.
+#954: On a multi-Phase Plan, toggle automatic merge while Workspace or task edits remain unsaved; save only the option, retain dirty fields and review blockers, and update the safety note. Single-Phase plans hide the option.

@@ -847,4 +847,4 @@ FR-130 / #933 / #934: autoDiscover also queries a Claude profile whose indicator
 #948: Preserve full command values and existing editor behavior; constrain collapsed row height at narrow and normal widths in both themes.
 
 
-#955: Reuse existing snapshots and the loaded report; publish a narrow session revision, with at most one inventory request and one pending follow-up.
+#954: Reuse revision checks and atomic settings storage for a boolean-only request. Preserve unrelated dirty fields and reject unexpected payload fields; compact checkbox geometry remains stable across themes and widths.
