@@ -674,3 +674,6 @@ BG-132 amendment (#935, #936): resolve ambiguous goals inside the existing revie
 
 
 #940: reduce source, dependency and validation overhead by retiring the unshipped alternate UI while retaining the working desktop application.
+
+
+#942: preserve reliable planning without broadening permissions or consuming another generation after a recovered source probe.

@@ -15,3 +15,10 @@ A nonempty or malformed `permission_denials` result is an error even with exit c
 - [Managed settings](https://code.claude.com/docs/en/settings) govern organization restrictions.
 - A local initialize-only CLI probe confirmed `current_permission_mode`; no user prompt was sent.
 - Test actual invocation context: a worker permission profile is not the coordinator's restricted execution profile.
+
+
+## Read-only coordinator correction (#942)
+
+The strict worker rule is not a blanket coordinator rule. A planner may first probe an original absolute project path, be denied, then read its allowed exported snapshot and emit valid structured output. Applying the worker rule to that recovered proposal was a release-blocking regression in 0.2.8.
+
+Coordinator decoding now bounds and matches read tool calls/results, requires observed failures matching denial IDs and later successful reads of the denied tool kinds, rejects late/unresolved/write/malformed or incomplete-history denials, and still validates the requested final JSON. Worker decoding remains strict in every permission mode. Raw events retain the denial evidence. Planning prompts explicitly require snapshot-relative paths. The real local failure replay recovered four phases and ten tasks with role/plan/check/phase validation, without another generation request or user workspace write.

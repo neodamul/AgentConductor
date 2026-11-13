@@ -913,3 +913,6 @@ UC-168 amendment (#935, #936): review a proposal, answer its confirmation questi
 UC-135 / #933 / #934: the operator sets a project folder while Claude usage shows the folder hint; the next poll queries usage without a retry click. A failed query shows the ↻ icon labelled Retry usage query.
 
 #940: a developer builds, tests and packages the retained app without the retired UI target or UI-only dependencies; users keep the same workspace, desktop and backend behavior.
+
+
+#942: a planning coordinator attempts an original source path, is denied, then reads its permitted snapshot and returns a valid plan. Accept that recovered proposal for human review; if source access remains unresolved or output invalid, retain an actionable error.

@@ -4,13 +4,17 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## Unreleased
+
+- Remove the postponed alternate Rust UI, its dedicated validation and unused dependencies; retain the supported desktop UI and shared Rust backend (#940).
+
+- Accept validated read-only planning after denied source probes recover through allowed snapshot reads; preserve strict worker permission checks and actionable unresolved errors (#942).
+
 ## v0.2.8
 
 - Reject planned verification commands that pass without the deliverable (`git status`, `true`, `echo`, `ls`); test-first tasks only check that their intentionally failing tests load (#928, #929).
 
 - The usage retry after a failed query is the icon-only refresh control; Claude usage is queried automatically once a project folder is set (#933, #934).
-
-- Remove the postponed alternate Rust UI, its dedicated validation and unused dependencies; retain the supported desktop UI and shared Rust backend (#940).
 
 - Match optimizer result lists to the dialog text scale and let operators answer confirmation questions to request a fresh proposal without applying it automatically (#935, #936).
 

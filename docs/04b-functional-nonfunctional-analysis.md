@@ -833,3 +833,6 @@ FR-163 amendment (#935, #936): send bounded answers and their question context w
 FR-130 / #933 / #934: autoDiscover also queries a Claude profile whose indicator carries error_code no_project_folder once the saved config has a repository, at most once a minute, besides the existing refresh_due schedule.
 
 #940: remove only alternate-UI source/tests/features and unreachable open-source graph entries. Retain native platform window/transport and CLI permission/worker verification. Lockfile and license provenance must match remaining packages.
+
+
+#942: recovery is scoped to the read-only coordinator parser, supported by matching read-tool call/results and successful final output. Do not relax worker denial checks, grant external directory access, or use native_callback guidance for a noninteractive planning failure.

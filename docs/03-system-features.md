@@ -802,3 +802,6 @@ SF-165 amendment (#935, #936): provide a bounded clarification answer field and 
 SF-132 / #933 / #934: icon-only usage retry; automatic Claude usage query after a project folder is set.
 
 #940: the production desktop has one supported WebView shell; the optional eframe UI and its launch/validation feature are removed.
+
+
+#942: distinguish read-only coordinator result recovery from strict worker completion; preserve raw denial evidence and validate structured plans.
