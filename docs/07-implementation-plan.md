@@ -4168,3 +4168,10 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 - [x] Task: close the test-owned SQLite handle before deleting its fixture. Product code and gate assertions are unchanged.
 - [x] Verify: 3 automatic-merge, 7 architecture and 1 source-layout tests passed locally; formatting passed. Windows release revalidation remains a publication gate.
 - [x] Completed: PR #953 merged, #952 closed, Windows full validation passed and stable v0.2.9 published.
+
+## #955 — Live session counts
+
+- [x] Plan: trace Goal/Feature/Use Case/QAS/design; inspect Workspace and Room polling.
+- [x] Task: failing VM/native regressions; narrow session revision and shared coalesced observer.
+- [x] Verify: real Room DOM 0→1 and running→done without dialog; unchanged-query suppression and in-flight coalescing VM checks; 23 focused Rust tests and all-target Clippy passed.
+- [x] Completed: manuals/HTML/wiki updated, linked branch committed/pushed for Claude batch CI with #954; close issue after merge.

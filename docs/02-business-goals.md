@@ -686,3 +686,6 @@ BG-132 amendment (#935, #936): resolve ambiguous goals inside the existing revie
 
 
 #948: Review every planned task without long command lines obscuring other tasks.
+
+
+#955: Provide trustworthy live agent status with bounded background resource use.

@@ -933,3 +933,6 @@ QAS-141 / #933 / #934: tests/quota_folder_934.cjs (no folder: no query; folder s
 
 
 #948: Given a long verification command/path, Plan review remains a single-line summary at 840/1280px in Light/Dark; hover and expansion retain the complete value.
+
+
+#955: A started timestamp appearing after running status updates the count on the next snapshot. Identical snapshots and unrelated test output cause no inventory scan.
