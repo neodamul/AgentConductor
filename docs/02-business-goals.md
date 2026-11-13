@@ -683,3 +683,6 @@ BG-132 amendment (#935, #936): resolve ambiguous goals inside the existing revie
 
 
 #943: Adapt later work to verified results while reducing redundant review stops, retaining explicit operator control and bounded resource use.
+
+
+#948: Review every planned task without long command lines obscuring other tasks.

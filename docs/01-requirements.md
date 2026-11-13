@@ -915,3 +915,6 @@ R-145 / #933 / #934 (0.2.8): the usage popup's retry after a failed query is the
 
 
 #943: After a merged Phase, re-plan only the next Phase using the Goal, original analysis, remaining plan and verified completed outcomes. Show added/changed/removed tasks before approval. An unchanged effective plan may continue under the original consent. Merge automatically is opt-in and never bypasses blocking gates.
+
+
+#948: Collapsed Plan task rows must stay compact for long verification commands and paths, while retaining the full values on hover and in the expanded editor.

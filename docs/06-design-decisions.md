@@ -1783,3 +1783,6 @@ DD-125 amendment (#944): Reuse the Plan card eyebrow and existing position line 
 
 
 DD-62 amendment (#943): Reuse read-only snapshot planning to re-plan the next Phase only. Preserve original Phase definitions as comparison evidence; adopt approved tasks into that Phase before execution. Existing native background jobs own slow planning and merge operations. Persist default-off auto-merge consent per run, bound to the plan digest, and reuse exact candidate/evidence binding. Stop markers suspend continuation until explicit resume. Keep automatic approvals auditable and distinct from human approvals.
+
+
+#948: Reuse the shared Plan row CSS and existing i18n title binding. Ellipsis applies only to summary metadata, leaving the editable command unchanged; no dependency or background work is added.

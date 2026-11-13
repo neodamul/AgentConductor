@@ -307,6 +307,8 @@ reviewed plans, diffs, tests, audit and workspace recovery remain.
 Eligible cache is trimmed to eight newest folders plus protected references at idle startup/settlement.
 There is no resident cleanup daemon. Cargo build output is separate from application cache.
 
+Long command and agent/path summaries are truncated to keep Plan rows compact. Hover to read the full value, or expand the task to inspect and edit its command.
+
 ## Part 2 — Command-line reference
 
 Run directories must be outside the repository, and the repository must start clean.

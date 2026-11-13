@@ -842,3 +842,6 @@ FR-130 / #933 / #934: autoDiscover also queries a Claude profile whose indicator
 
 
 #943: Preserve later Phase definitions, registered CLI profiles and all existing validation. Reuse asynchronous CLI subprocess jobs, with no new resident polling loop or dependency. Keep raw outcome evidence local and bounded. Record automatic plan continuation and exact candidate approval distinctly from human actions.
+
+
+#948: Preserve full command values and existing editor behavior; constrain collapsed row height at narrow and normal widths in both themes.
