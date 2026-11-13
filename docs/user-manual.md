@@ -170,7 +170,7 @@ Each task shows the kind of work the coordinator chose (classify or extract, sum
 **Goals & progress** shows each goal's phase tags and description.
 After merging a Phase, the coordinator re-plans only the next Phase from the Goal, original analysis, remaining work and completed diff/test/final-report evidence. Added, changed and removed tasks show their differences from the first plan. Changed tasks or execution settings require review; an identical effective plan starts automatically and the run information line explains why. Later Phases remain unchanged until their turn.
 
-**Merge automatically after verification passes** is off by default and appears only for plans with multiple Phases. Toggling it saves only this option silently; other unsaved Workspace or task edits remain unsaved. Select it before starting a reviewed plan to allow exact verified candidates to merge automatically. Verification failures, scope/tool/permission/review blockers, conflicts, stale evidence and Stop still halt progression; automation does not expand permissions. Stop pauses the whole chain, including re-planning and the next start, until explicit resume or execution approval. Automatic plan continuation and merge approvals are audited separately from human decisions. With the option off, each final merge still requires approval. A new/selected Goal starts with automatic merge off.
+**Merge automatically after verification passes** is off by default and appears only for plans with multiple Phases. Toggling it saves only this option silently; other unsaved Workspace or task edits remain unsaved. Select it before starting a reviewed plan to allow exact verified candidates to merge automatically. Verification failures, scope/tool/permission/review blockers, conflicts, stale evidence and Stop still halt progression; automation does not expand permissions. Stop pauses the whole chain, including re-planning and the next start, until explicit resume or execution approval. Automatic plan continuation and merge approvals are audited separately from human decisions. An already-reviewed automatic fallback preserves the existing merge opt-in. Manual reassignment or other unapproved plan changes do not renew it. If a merge pauses for review or another gate, the Room reports the reason; inspect its evidence and use the existing manual approval controls. With the option off, each final merge still requires approval. A new/selected Goal starts with automatic merge off.
 
 Re-planning runs in an existing background CLI job. The open application advances Phase boundaries using its existing state updates; reopening restores retained evidence. Large logs are hash-verified and summarized with explicit truncation rather than copied without limits. Missing or changed completed evidence prevents continuation instead of inventing results.
 **☰ → Workspace → Plan rules…** supports machine-wide rules or a workspace override.
@@ -310,3 +310,240 @@ There is no resident cleanup daemon. Cargo build output is separate from applica
 Long command and agent/path summaries are truncated to keep Plan rows compact. Hover to read the full value, or expand the task to inspect and edit its command.
 
 Session counts and work-state tags update automatically when task sessions change, including in the Agent Room; opening the sessions dialog is not required.
+
+Coordinator chat answers from the current Workspace context even if a Goal finished since the last displayed snapshot. Read-only questions do not require a manual refresh; reviewed changes and execution approvals retain their existing revision checks.
+
+## Part 2 — Command-line reference
+
+Run directories must be outside the repository, and the repository must start clean.
+`RUN` is a run directory, `TASK` a task ID, `AGENT` a registered agent ID.
+
+### 2.1 Workspace and agents
+
+| Command | Purpose |
+|---|---|
+| `agentconductor` | Open the most recently used saved workspace. With none saved, the app asks you to name the first one. |
+| `agentconductor ui-new <workspace-dir>` | Open a desktop workspace in a chosen directory. |
+| `agentconductor ui <run-dir>` | Open the Agent Room for an existing run (one window per run). |
+| `agentconductor profiles <profiles.json>` | Write provider profile templates to review. |
+| `agentconductor models-discover <profiles.json> AGENT <new-dir>` | Query a CLI's model catalog without a generation prompt. |
+| `agentconductor catalog-import <profiles.json> AGENT <catalog.json>` | Import an operator-observed catalog when a CLI cannot list models. |
+
+### 2.2 Plan and run
+
+| Command | Purpose |
+|---|---|
+| `agentconductor plan <profiles.json> <coordinator> <repo> <new-plan-dir> "<goal>"` | Ask a read-only coordinator for a plan (1–12 tasks); `[roles.json]` adds role rules, `--from plan.md` converts an existing plan document; `--rules rules.md` adds plan rules; `--phases slug-dir` asks for an analysis and ordered phases and records them in a slug work tree. |
+| `agentconductor validate <plan.json>` | Validate a plan and print its digest. |
+| `agentconductor run <plan.json> <repo> <new-run-dir> <digest> [--phase slug-dir phase-id]` | Execute the approved plan; `--phase` moves that slug phase's tasks to verification and, after merge, to completed. |
+| `agentconductor status RUN` | Show run and task state. |
+| `agentconductor update` | Install the latest GitHub release over this executable (no restart). |
+| `agentconductor logs RUN TASK` | Show a task's logs. |
+| `agentconductor progress RUN TASK` | Show recent normalized events of the current attempt. |
+| `agentconductor diff RUN` | Capture the integrated candidate diff and tests. |
+| `agentconductor approve RUN <candidate-sha>` | Approve the exact candidate. |
+| `agentconductor reject RUN "<reason>"` | Reject the candidate. |
+| `agentconductor merge RUN` | Merge the approved candidate. |
+
+A plan file can also be written by hand: a `tasks` array where each task has `id`,
+`agent`, `prompt`, `paths`, `depends_on` and `test_command`, plus the agent profiles and
+optional `"workspace_mode": "worktree"`. Validate it to obtain the digest.
+
+### 2.3 Sessions, limits and recovery
+
+| Command | Purpose |
+|---|---|
+| `agentconductor sessions RUN` | List task sessions. |
+| `agentconductor briefing RUN` | Read-only team briefing. |
+| `agentconductor quota-refresh RUN AGENT` | Refresh account quota from Codex or Claude CLI metadata. |
+| `agentconductor schedule RUN TASK <YYYY-MM-DDTHH:MM:SS+HH:MM>` | Schedule a limited session. |
+| `agentconductor reassign RUN TASK AGENT [model]` | Move a task to another agent. |
+| `agentconductor session-model RUN TASK <model> [--register]` | Change a session's observed model; `--register` first adds a model id the CLI did not report to that agent's catalog as a manual entry (stopped run only). |
+| `agentconductor revise RUN TASK "<feedback>"` | Targeted feedback (up to 16 KiB). |
+| `agentconductor stop RUN "<reason>"` | Stop processes, keeping logs and partial files. |
+| `agentconductor resume RUN` | Explicitly resume a stopped run. |
+| `agentconductor resume-due RUN` | Resume scheduled work that is due. |
+| `agentconductor watch RUN` | Keep resuming due work while running. |
+| `agentconductor recover RUN` | After a crash, confirm processes are gone and mark the run stopped. |
+
+A cooperative custom CLI that completes a `handoff` request continues automatically on its
+reviewed fallback agent once its processes have exited; without a fallback the task stops
+and waits for you. A `pause` always stops.
+
+Fallback in a profile:
+
+```json
+"quota_group": "company-codex-account",
+"fallback": { "agent": "company-cli", "model": null }
+```
+
+### 2.4 Tool requests
+
+| Command | Purpose |
+|---|---|
+| `agentconductor tool-requests RUN` | List pending tool requests. |
+| `agentconductor tool-approve RUN <request-sha256> [seconds]` | Allow one exact request. |
+| `agentconductor tool-reject RUN <request-sha256>` | Deny it. |
+| `agentconductor tool-refresh RUN <request-sha256>` | Create a new pending request (never renews approval). |
+
+### 2.5 Review
+
+| Command | Purpose |
+|---|---|
+| `agentconductor review RUN <coordinator>` | Request a quality-review proposal and its SHA-256. |
+| `agentconductor apply-review RUN <proposal-sha256>` | Apply an inspected proposal. |
+| `agentconductor review-apply RUN <coordinator>` | Review and apply immediately. |
+
+### 2.6 Knowledge and memory
+
+| Command | Purpose |
+|---|---|
+| `agentconductor knowledge-digest <lesson.json>` | Print a lesson draft's digest. |
+| `agentconductor knowledge-accept RUN <lesson.json> <digest>` | Promote a reviewed lesson. |
+| `agentconductor knowledge-status RUN` | Show lessons and their freshness. |
+| `agentconductor recall RUN "<query>"` | Search local lessons offline. |
+| `agentconductor memory-sync RUN <port>` | Publish reviewed summaries to local agentmemory. |
+| `agentconductor memory-publish <port> <envelope.json>` | Publish a checkpoint envelope. |
+| `agentconductor memory-read <port> <memory-id>` | Read one memory by exact ID. |
+| `agentconductor memory-import RUN <port> <memory-id>` | Import a validated checkpoint observation. |
+| `agentconductor memory-discover RUN <port>` | Find and import new checkpoint reports for every cooperative task without memory IDs. |
+
+A lesson draft is JSON with `task`, `context`, `failure`, `cause`, `response`,
+`evidence`, `confidence` (0–1), `revalidate` and `sources` (repository-relative `path`
+and current `sha256`).
+
+### 2.7 Cooperative checkpoints (custom CLIs)
+
+A custom CLI that polls safely can register `"cooperative": "checkpoint_v1"` with exactly
+one `{session_id}` argument. The engine supplies `AC_CHECKPOINT_RUN_DIR`,
+`AC_CHECKPOINT_ADDRESS_FILE` and `AC_CHECKPOINT_EXECUTABLE`. Full contract:
+[cooperative checkpoints](https://github.com/neodamul/AgentConductor/blob/main/docs/11-cooperative-checkpoints.md).
+
+| Command | Purpose |
+|---|---|
+| `agentconductor checkpoint-issue RUN <issue.json>` | Address a pause/handoff request to a worker. |
+| `agentconductor checkpoint-poll RUN <address.json>` | Worker polls for requests. |
+| `agentconductor checkpoint-ack RUN <ack.json>` | Worker acknowledges a request. |
+| `agentconductor checkpoint-report RUN <progress.json>` | Worker reports bounded progress. |
+
+### 2.8 Diagnostics
+
+| Command | Purpose |
+|---|---|
+| `agentconductor normalize <claude\|codex\|opencode\|custom> <stdout.jsonl>` | Normalize a CLI's JSONL output into events. |
+| `agentconductor io schema <input\|event\|describe\|control\|agent>` | Print an acio schema (the CLI I/O protocol, `docs/cli-io-protocol.md`). |
+| `agentconductor io describe <executable>` | Run `<executable> --acio-describe` and print the validated capability document of an acio CLI. |
+| `agentconductor io validate <kind> <file\|-> [--coordinator]` | Check a document (`input`, `describe`, `agent`, `control`, `event`) or a captured stream (`events`, `controls`) against the schemas and the stream rules. |
+| `agentconductor io conformance <executable>` | Run an acio CLI through the contract and print a pass/fail table (see 2.9). |
+
+### 2.9 Integrating a CLI
+
+A CLI you cannot change needs nothing here. Register it as a custom agent (its command line and, if it prints JSON, where its result and session ID are). AgentConductor sends it every prompt in one fixed layout: a Document block with the material, a Task block with the instructions and rules, and a Format block with the shape of the answer. It also checks the answer itself: a coordinator reply that is not the requested JSON is asked for once more, with the reason, before the run reports an error. The steps below are only for a CLI whose owner can change it and wants richer data (streaming text, usage, typed results). The contract is in `docs/cli-io-protocol.md`; `schemas/cli-io/v1/examples/minimal-cli.sh` shows a conforming CLI in 25 lines.
+
+1. **Read the input.** The first stdin line is an `acio.input/1` document (`agentconductor io schema input` prints its schema). Anything else on stdin later is a control line (cancel, user message, tool decision).
+2. **Write events.** Print one `acio.event/1` JSON line per event on stdout (`seq` from 1, a `session` event first, a `result` event last). Diagnostics go to stderr only.
+3. **Describe yourself.** `<executable> --acio-describe` prints an `acio.describe/1` document: name, version, `acio.versions`, whether the CLI can run read-only, and which controls it honors.
+4. **Exit codes.** 0 on success, 2 for an input it rejects, 1 for a failed run (see the protocol for the full list).
+5. **Check it.** Run `agentconductor io conformance ./my-cli`. It describes the CLI, asks it a read-only question and validates the event stream, then feeds it an invalid input and expects exit code 2. A failed check prints why; the command exits with an error unless every check passes. Use `io validate events <file>` on a captured stream to find the first bad line.
+6. **Register it.** Add a custom agent profile with `protocol: acio` and the CLI's command line; `agentconductor io describe <executable>` prints the capability document to copy from. Per-agent differences (arguments, effort, response schema) belong in `agent_settings`, not in code.
+
+The conformance run uses a temporary read-only workspace root and never asks the CLI to change a file. It does not test cancellation or oversized lines yet.
+
+## Part 3 — Validation and troubleshooting
+
+The packaged native executable is checked on macOS and Windows using deterministic offline workers,
+including Git/ordinary-folder projects, shared/worktree execution and refused unapproved integration.
+This does not establish acceptance of your company's agent, Enterprise account or live messenger.
+
+Previously exercised CLI contracts: Claude Code 2.1.287; Codex 0.162.0 tasks/resume and
+0.162.1 quota metadata; OpenCode 2.0.25; agentmemory server 0.9.29.
+Installed provider versions may differ. Unknown output stays unavailable or fails safely.
+
+- **Missing executable / Windows error 193**: use the actual native or npm `.cmd` launcher; Edit → Browse can override discovery.
+- **Quota unavailable**: inspect the tooltip, finish CLI theme/login setup and refresh. No allocation means no invented percentage.
+- **Missing role agent**: select a registered agent for every highlighted assignment.
+- **Dirty baseline**: inspect listed files before committing, stashing or choosing Stop.
+- **Blocked/failed run**: inspect the cause and test output; Fix with feedback, correct configuration and Resume.
+- **Interrupted ownership**: Recover only after owned processes are confirmed gone. Reopening permits bounded automatic continuation only after verified process absence; manually stopped runs remain stopped.
+- **Changed source/approval**: plan or verify again. Ordinary-folder application has backups and a receipt; interrupted application is not replayed blindly.
+- **MCP timeout**: inspect the registered command/server and its bounded timeout; keep raw logs private.
+- **Window already open**: use or close the existing window rather than opening another.
+- **Request timed out (kind)**: see “Diagnosing "Request timed out"” below; the log is `~/.agentconductor/request-diagnostics.log`.
+
+### Diagnosing "Request timed out"
+
+The page waits 15 seconds for each reply from the application. The toast names the request kind, for example `Request timed out (chat)`. A request only starts work: a coordinator answer that takes minutes is a running job, not a timed-out request.
+
+**Where to look.** `~/.agentconductor/request-diagnostics.log` (Windows: `%USERPROFILE%\.agentconductor\request-diagnostics.log`); the previous log is `request-diagnostics.log.1`. Each file holds at most 256 KiB. Lines are `<unix milliseconds> start kind=<kind> bytes=<n>` and `<unix milliseconds> done kind=<kind> ms=<n> ok=<true|false> [error="<reason>"]`. `start` is written only for `chat`; `done` is written for every `chat` request and for any request that took 1000 ms or more. A line `step name=<lock|advance|snapshot> ms=<n>` is written when waiting for the settings lock (`lock`), advancing the state (`advance`) or building a snapshot (`snapshot`) took 500 ms or more; `lock` is the time a request spent queued behind another one. Nothing is written for fast requests. Convert the toast time with `date -r <seconds>` (macOS) and compare it with the line times.
+
+**How to decide.** Take the lines around the toast (30 seconds before it):
+
+| What the log shows | Meaning | Next step |
+|---|---|---|
+| No `start kind=chat` near the toast | The request never reached the application. The delay is in the window or its web view (hidden or throttled page, busy web view), not in the request handling. | Ask whether the window was in the background; try again in front. Report the operating system and web view version. |
+| `start` without a later `done` | The handler is still running or blocked. | Wait a minute and read the log again. If `done` never comes, collect the running processes of the application and its children and report them. |
+| `done ... ok=true ms=` 15000 or more | The application answered, but too late. | Look at other `done` lines in the same period: a slow `snapshot`, `baseline_status` or `quota` holds the shared state and delays the others. That kind is the cause; report its `ms`. |
+| `done ... ok=true ms=` under 15000, toast still shown | The reply was produced in time but reached the page late. | Treat it like the first row (window or web view). |
+| `done ... ok=false error="..."` | The request was refused or failed; this is not a timeout. | Read the reason. "startup operation still running" means the previous job has not finished. |
+
+Include the last 50 lines of both files, the request kind from the toast and the time of the toast when you report a timeout.
+
+**Page-side timeouts.** Whenever the page gives up on a reply it also writes `<unix milliseconds> client-timeout of=<kind> waited=<ms> hidden=<true|false>`. `waited` is what the page's own clock measured: about 15000 is a real 15-second wait with no reply; a much larger value, or `hidden=true`, means the page itself was suspended (window in the background, display or machine sleep) and the timeout says nothing about the request. A `client-timeout` with no slow `done` line for the same kind means the application was not slow: the reply never reached the page. The background refresh that keeps the screen current retries a missed reply quietly and shows the toast only after three misses in a row (about 45 seconds), so a toast for `snapshot` means three consecutive misses.
+
+## Optional tool commands
+
+Run these yourself in the indicated agent CLI or a terminal; the app never installs them.
+
+- `brew install uv`
+- `winget install astral-sh.uv`
+- `npx -y @agentmemory/agentmemory@latest`
+- `/plugin marketplace add rohitg00/agentmemory`
+- `/plugin install agentmemory`
+- `codex plugin marketplace add rohitg00/agentmemory`
+- `codex plugin add agentmemory@agentmemory`
+- `/plugin marketplace add DietrichGebert/ponytail`
+- `/plugin install ponytail@ponytail`
+- `codex plugin marketplace add DietrichGebert/ponytail`
+- `codex plugin add ponytail@ponytail`
+- `brew install rtk`
+- `winget install rtk-ai.rtk`
+- `rtk init -g`
+- `rtk init -g --codex`
+- `rtk gain`
+- `uv tool install graphifyy`
+- `graphify install`
+- `graphify install --platform codex`
+- `graphify update .`
+- `uv tool install --upgrade 'cocoindex-code[full]'`
+- `/plugin marketplace add cocoindex-io/cocoindex-code`
+- `/plugin install cocoindex-code@cocoindex-code`
+- `codex mcp add cocoindex-code -- ccc mcp`
+- `ccc init`
+- `ccc index`
+
+Claude API usage_limit_reached / HTTP 429 responses enter availability waiting even without the usual event type. Explicit resets are scheduled; duration telemetry is not a resume time. Unknown resets retain the original restriction time and permit an available reviewed fallback immediately.
+
+### Codex reconnects in Enterprise networks
+
+AgentConductor keeps explicit reconnect attempts and WebSocket-to-HTTP fallback notices as visible warnings; a successful final turn can continue planning and execution. Terminal failures, missing final output, failed exit codes and timeouts remain failures.
+
+If your company network repeatedly blocks WebSockets, merge this into `%USERPROFILE%\.codex\config.toml` (or `$CODEX_HOME/config.toml` when set). Put `model_provider` before the first TOML table; update existing keys instead of duplicating them. The provider table name is **model_providers**, plural. Existing CLI sign-in is retained; no API key is added. Restart Codex sessions after saving.
+
+```toml
+model_provider = "openai-https"
+
+[model_providers.openai-https]
+name = "OpenAI"
+wire_api = "responses"
+requires_openai_auth = true
+supports_websockets = false
+supports_standalone_web_search = true
+```
+
+Standalone web search is optional. Follow your company's managed configuration when it locks provider selection. AgentConductor does not rewrite your global Codex configuration automatically. [Official configuration reference](https://learn.chatgpt.com/docs/config-file/config-reference).
+
+### Signals and optional helper tools
+
+Workspace Settings selects Local Rust or agentmemory preferred. Installing an optional helper does not select a backend. Local Rust needs no agentmemory MCP tool or server; workers report through their normal CLI output. The app owns signal delivery and durable evidence. Registered checkpoint workers use the exact executable path supplied by the app and its local poll/ack/report commands; other CLI sessions must not invent checkpoint capabilities. A missing optional memory tool is not a task failure.
+
+Windows path selection uses the standard Common Item Dialog directly, with no PowerShell or C# startup. Cancel leaves the field unchanged; choosing a folder or file fills the field and saving validates it.

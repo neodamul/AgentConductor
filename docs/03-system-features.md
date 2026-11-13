@@ -817,3 +817,12 @@ SF-132 / #933 / #934: icon-only usage retry; automatic Claude usage query after 
 
 
 #954: Show the automatic-merge checkbox only for multi-Phase plans and persist only its flag, without a Workspace-saved announcement.
+
+
+#955: Share change-based session refresh between Workspace and Room, coalescing in-flight requests.
+
+
+#961: Resolve coordinator chat against current saved context while retaining input/profile validation and the single-chat slot.
+
+
+#959: Rebind exact consent only at trusted automatic-fallback transitions, audit old/new plan digests, and surface failed merge jobs separately from human action jobs.

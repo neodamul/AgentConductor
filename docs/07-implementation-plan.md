@@ -4175,3 +4175,24 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 - [x] Task: reproduce single-phase visibility and absent narrow request; add revision-bound flag-only persistence, hidden-state CSS and fixed-size checkbox.
 - [x] Verify: 21 focused Rust tests, 8 DOM states and existing re-plan UI passed; 12 approved mock entries ×4 theme/width cells (48 comparisons), zero differences; all-target Clippy and formatting passed.
 - [x] Completed: bilingual manuals/HTML and wiki updated; linked issue branch committed/pushed for Claude review and combined CI. Issue closes only when its PR merges.
+
+## #955 — Live session counts
+
+- [x] Plan: trace Goal/Feature/Use Case/QAS/design; inspect Workspace and Room polling.
+- [x] Task: failing VM/native regressions; narrow session revision and shared coalesced observer.
+- [x] Verify: real Room DOM 0→1 and running→done without dialog; unchanged-query suppression and in-flight coalescing VM checks; 23 focused Rust tests and all-target Clippy passed.
+- [x] Completed: manuals/HTML/wiki updated, linked branch committed/pushed for Claude batch CI with #954; close issue after merge.
+
+## #961 — Read-only chat after Goal completion
+
+- [x] Plan: trace Goal/Feature/Use Case/QAS/design; inspect retained private evidence and Room chat lifecycle.
+- [x] Task: reproduce stale-state rejection with a deterministic Rust CLI; accept read-only questions from current context while keeping write guards.
+- [x] Verify: 18 local Rust checks including current-context CLI answer, one-chat slot, stale-write rejection, slow-Git independence, chat history/async behavior, docs and source layout; all-target Clippy/format passed.
+- [x] Completed: manuals/HTML/wiki and evidence limitations recorded, linked branch committed/pushed for Claude review and batch CI; close after merge.
+
+## #959 — Automatic merge after reviewed fallback
+
+- [x] Plan: confirm consent mismatch and reviewed fallback in private run evidence; trace requirements through QAS/design.
+- [x] Task: reproduce consent mismatch and silent success; carry exact opt-in only at reviewed automatic fallback sites, audit it and show blocked-job reasons.
+- [x] Verify: shared/worktree fallback, disabled/tampered consent, manual reassignment, changed/unchanged three-Phase chains, actual failed-worker Room snapshot and DOM notice; 32 focused Rust checks, Clippy/format passed.
+- [x] Completed: manuals/HTML/wiki and private-evidence findings recorded; linked branch committed/pushed for batch integration and CI.

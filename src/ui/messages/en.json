@@ -1619,5 +1619,7 @@
   "startup.replan_field_task_type": "task type",
   "startup.replan_field_order": "task order",
   "room.phase_unchanged_started": "Phase {value1}/{value2} · Re-checked against Phase {value3} results and started unchanged",
-  "startup.replan_intro_profiles": "Execution profiles changed since the completed Phase. Review this plan before starting, even if task text is unchanged."
+  "startup.replan_intro_profiles": "Execution profiles changed since the completed Phase. Review this plan before starting, even if task text is unchanged.",
+  "native.automatic_merge_paused_review": "Automatic merge paused: coordinator review or revisions require your review. Inspect the task evidence and approve the merge manually.",
+  "native.automatic_merge_paused_gate": "Automatic merge paused by an approval, permission, Stop or consent gate. Inspect task details and retained evidence before continuing."
 }

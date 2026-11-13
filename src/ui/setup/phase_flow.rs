@@ -171,7 +171,7 @@ impl Startup {
             return None;
         }
         let job = self.job(&saved).ok()?;
-        (job["state"] == "running").then_some(job)
+        (job["state"] == "running" || job["state"] == "failed").then_some(job)
     }
     pub(crate) fn phase_transition(&self, run: &Path) -> Option<serde_json::Value> {
         let saved = self.saved.try_lock().ok()?;

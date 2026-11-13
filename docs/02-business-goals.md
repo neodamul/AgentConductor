@@ -689,3 +689,12 @@ BG-132 amendment (#935, #936): resolve ambiguous goals inside the existing revie
 
 
 #954: Operators can opt into multi-Phase automation without unintentionally saving unrelated Workspace edits.
+
+
+#955: Provide trustworthy live agent status with bounded background resource use.
+
+
+#961: Allow operators to ask about completed work without an unactionable manual-refresh error.
+
+
+#959: Keep multi-Phase execution continuous through reviewed quota fallbacks without broadening approval or review permissions.

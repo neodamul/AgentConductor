@@ -848,3 +848,12 @@ FR-130 / #933 / #934: autoDiscover also queries a Claude profile whose indicator
 
 
 #954: Reuse revision checks and atomic settings storage for a boolean-only request. Preserve unrelated dirty fields and reject unexpected payload fields; compact checkbox geometry remains stable across themes and widths.
+
+
+#955: Reuse existing snapshots and the loaded report; publish a narrow session revision, with at most one inventory request and one pending follow-up.
+
+
+#961: The stale revision is observational for read-only chat, not write consent. Keep current coordinator validation, bounded question/history, one active chat and existing asynchronous processing.
+
+
+#959: Consent may be carried only if it was enabled and its previous digest exactly matched the pre-transfer plan. Missing, disabled or mismatched consent is never reauthorized; no general mutation path refreshes it.

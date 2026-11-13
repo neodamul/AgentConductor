@@ -63,3 +63,23 @@ pub fn automatic_merge(dir: &Path) -> Result<bool, String> {
     super::approval::merge(dir)?;
     Ok(true)
 }
+
+// Only reviewed automatic fallback call sites may carry an existing exact consent forward.
+pub(super) fn carry_fallback_consent(
+    dir: &Path,
+    before: &Plan,
+    after: &Plan,
+    store: &mut Store,
+) -> Result<(), String> {
+    let consent: serde_json::Value = match fs::read(dir.with_extension("auto-merge.json")) {
+        Ok(bytes) => serde_json::from_slice(&bytes).map_err(|e| e.to_string())?,
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return Ok(()),
+        Err(e) => return Err(e.to_string()),
+    };
+    let previous = digest(&serde_json::to_vec(before).map_err(|e| e.to_string())?);
+    if consent["enabled"] != true || consent["plan_digest"] != previous {
+        return Ok(());
+    }
+    set_auto_merge(dir, true, after)?;
+    store.record("automatic_merge_fallback_consent", &serde_json::json!({"previous_plan_digest":previous,"plan_digest":digest(&serde_json::to_vec(after).map_err(|e|e.to_string())?),"reviewed_fallback":true}), "Automatic merge consent carried across an already reviewed fallback; all other gates remain")
+}

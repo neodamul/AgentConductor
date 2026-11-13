@@ -63,7 +63,11 @@ impl Room {
                         snapshot["phase_transition"] = next;
                     }
                     if let Some(job) = startup.automatic_phase_job() {
-                        snapshot["job"] = job;
+                        if job["state"] == "failed" {
+                            snapshot["automatic_merge_error"] = job;
+                        } else {
+                            snapshot["job"] = job;
+                        }
                     }
                 }
                 Ok(snapshot)

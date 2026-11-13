@@ -1619,5 +1619,7 @@
   "startup.replan_field_task_type": "작업 유형",
   "startup.replan_field_order": "작업 순서",
   "room.phase_unchanged_started": "Phase {value1}/{value2} · Phase {value3} 결과로 다시 검토했고 계획 변경이 없어 바로 시작했습니다",
-  "startup.replan_intro_profiles": "완료된 Phase 이후 에이전트 실행 설정이 바뀌었습니다. 작업 내용이 같아도 시작하기 전에 계획을 검토하세요."
+  "startup.replan_intro_profiles": "완료된 Phase 이후 에이전트 실행 설정이 바뀌었습니다. 작업 내용이 같아도 시작하기 전에 계획을 검토하세요.",
+  "native.automatic_merge_paused_review": "자동 병합이 중지되었습니다. 코디네이터 리뷰 또는 재작업으로 사람의 검토가 필요합니다. 작업 증거를 확인하고 병합을 직접 승인하세요.",
+  "native.automatic_merge_paused_gate": "승인·권한·중지 또는 동의 검증으로 자동 병합이 중지되었습니다. 작업 상세와 보존된 증거를 확인한 뒤 진행하세요."
 }

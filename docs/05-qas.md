@@ -935,3 +935,12 @@ QAS-141 / #933 / #934: tests/quota_folder_934.cjs (no folder: no query; folder s
 #948: Given a long verification command/path, Plan review remains a single-line summary at 840/1280px in Light/Dark; hover and expansion retain the complete value.
 
 #954: Given a single-Phase plan, the plan review shows no Merge automatically option; given a multi-Phase plan, toggling it persists `auto_merge` alone, keeps other unsaved edits and shows no "Workspace saved" notice.
+
+
+#955: A started timestamp appearing after running status updates the count on the next snapshot. Identical snapshots and unrelated test output cause no inventory scan.
+
+
+#961: Between a displayed snapshot and chat submission, change chat_result and completed-Goal context; a deterministic CLI answers using the latest Goal. A concurrent question and stale write request remain rejected; chat submission performs no Git HEAD lookup.
+
+
+#959: Shared/worktree quota fallbacks retain exact automatic consent and audit the rebinding. Tampered/disabled consent and manual reassignment stay blocked; changed and unchanged three-Phase chains complete with existing gates preserved. Failed auto-merge jobs show a single actionable notice.
