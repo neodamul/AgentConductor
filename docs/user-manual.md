@@ -258,8 +258,8 @@ Claude metadata collection recognizes `$`, `>` and `❯` prompts and its known f
 A reported restriction applies to the quota group. An explicit reset prefills **Resume at** and shows a countdown.
 An independent coordinator stores the reservation and resumes at that deadline, even after the app closes.
 Reopening restores a missing coordinator; reassignment cancels the old reservation, and **Stop** cancels automatic continuation.
-If the reset requires more than five hours of waiting, the coordinator uses only the fallback in the reviewed plan.
-With no known reset, that policy applies five hours after the original restriction.
+For a usage limit, the coordinator immediately selects an available fallback from the reviewed task/profile policy, even if the reset is soon or unknown.
+Transfers run at a safe boundary after active workers exit; independent work already running is not interrupted. Manual resume reservations and temporary model-capacity retries retain their deadlines.
 Without an available planned fallback, the task waits. Unknown timezones are not guessed; use **Resume at** to specify a time.
 The inspector shows the scheduled local time and remaining countdown, or a paused-timer reason. You can override the prefilled time. Up to three automatic resume attempts are admitted; changing a manual schedule renews the retry allowance. Reservation ownership belongs to the lightweight Rust coordinator, not an LLM session or a browser timer; only one watcher owns each run. Inspect retained evidence before restoring a reservation with unknown process ownership.
 A transfer starts a new provider session after the current owner exits; files and logs remain.
@@ -509,7 +509,7 @@ Run these yourself in the indicated agent CLI or a terminal; the app never insta
 - `ccc init`
 - `ccc index`
 
-Claude API usage_limit_reached / HTTP 429 responses enter availability waiting even without the usual event type. Explicit resets are scheduled; duration telemetry is not a resume time. Unknown resets retain the original restriction time and the reviewed five-hour fallback policy.
+Claude API usage_limit_reached / HTTP 429 responses enter availability waiting even without the usual event type. Explicit resets are scheduled; duration telemetry is not a resume time. Unknown resets retain the original restriction time and permit an available reviewed fallback immediately.
 
 ### Codex reconnects in Enterprise networks
 

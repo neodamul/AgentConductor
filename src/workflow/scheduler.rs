@@ -27,8 +27,8 @@ pub(super) async fn drive(
             (now() / 1000) as i64,
         )?;
         super::pending_edit::apply(store, &mut report)?;
-        // GitHub #687: a restricted role whose reviewed fallback is already due moves to it before any later role starts, so the plan
-        // order holds. The transfer needs every worker absent, so it happens only while nothing runs (always true before the first launch).
+        // GitHub #687 / #925: transfer a quota-limited role before later ready work starts.
+        // Git handoff and dependent invalidation require all workers to be absent.
         if jobs.is_empty()
             && !dir.join("stop.request").exists()
             && !report.tasks.iter().any(|t| t.status == "stopped")

@@ -180,7 +180,7 @@ fn the_independent_coordinator_resumes_due_work_without_a_ui() {
 }
 
 #[test]
-fn metadata_sync_does_not_move_the_original_five_hour_deadline() {
+fn metadata_sync_retains_the_original_restriction_time() {
     let (root, run, report) = fixture(3600);
     workflow::refresh_availability(&run, now()).unwrap();
     let first = report.tasks[0].restriction.as_ref().unwrap().observed_at;
@@ -218,5 +218,38 @@ fn human_stop_cancels_the_watcher_and_its_durable_reservation() {
             .is_empty()
     );
     assert_eq!(workflow::load(&run).unwrap().state, "stopped");
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[test]
+fn the_independent_coordinator_immediately_uses_an_unknown_reset_fallback() {
+    let (root, run, mut report) = fixture(3600);
+    report.plan.agents[0].fallback = Some(agentconductor::plan::Fallback {
+        agent: "backup".into(),
+        model: None,
+    });
+    report
+        .account_restrictions
+        .get_mut("paid")
+        .unwrap()
+        .available_at = None;
+    for task in &mut report.tasks {
+        task.restriction.as_mut().unwrap().available_at = None;
+    }
+    persist(&run, &report);
+    workflow::ensure_availability_watcher(&run, Path::new(env!("CARGO_BIN_EXE_agentconductor")))
+        .unwrap();
+    wait_for(|| workflow::load(&run).unwrap().state == "waiting_approval");
+    wait_for(|| owner(&run).phase == "terminal" && owner(&run).ensure_quiescent().is_ok());
+    let finished = workflow::load(&run).unwrap();
+    assert!(finished.tasks.iter().all(|task| task.status == "completed"));
+    assert!(
+        finished
+            .plan
+            .tasks
+            .iter()
+            .all(|task| task.agent == "backup")
+    );
+    assert!(workflow::merge(&run).is_err());
     std::fs::remove_dir_all(root).unwrap();
 }

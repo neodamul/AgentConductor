@@ -4,6 +4,10 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## Unreleased
+
+- Immediately continue usage-limited tasks on an available reviewed fallback instead of waiting five hours; retain task overrides, reset recovery, partial work and approval gates (#925).
+
 ## v0.2.7
 
 - Keep the document preview guide under user control during progress updates (#916).

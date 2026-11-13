@@ -18,24 +18,24 @@ fn waiting(at: Option<i64>, fallback: bool) -> Report {
     serde_json::from_value(json!({"schema_version":1,"state":"waiting_availability","repo":"repo","base":"base","branch":"main","plan":{"goal":"three tasks","workspace_mode":"shared","agents":[agent,{"id":"backup","executable":"backup","args":[]}],"tasks":[{"id":"one","agent":"paid","prompt":"one","paths":["one"],"test_command":["test"]}]},"tasks":[{"id":"one","status":"waiting_availability","attempt":1,"restriction":restriction,"cwd":"repo","started_ms":null,"finished_ms":null,"session_id":null,"error":"quota","base":"base","snapshot":null,"artifacts":"artifacts","retry_not_before":0}],"candidate":null,"tests":[],"diff_hash":null,"error":null,"verification_cwd":"repo","account_restrictions":{"paid-account":restriction}})).unwrap()
 }
 #[test]
-fn a_known_reset_within_five_hours_waits_and_the_boundary_is_inclusive() {
+fn a_fresh_short_reset_uses_the_reviewed_fallback_immediately() {
     let r = waiting(Some(103600), true);
     let t = workflow::availability_timer(&r, 100000);
     assert_eq!(t.len(), 1);
-    assert_eq!(t[0].kind, "resume");
-    assert_eq!(t[0].at, 103600);
+    assert_eq!(t[0].kind, "fallback");
+    assert_eq!(t[0].at, 100000);
     assert_eq!(
         workflow::availability_timer(&waiting(Some(118000), true), 100000)[0].kind,
-        "resume"
+        "fallback"
     );
 }
 #[test]
-fn long_resets_use_only_a_reviewed_fallback_and_unknown_resets_get_five_hours() {
+fn long_and_unknown_resets_use_only_a_reviewed_fallback_without_delay() {
     let t = workflow::availability_timer(&waiting(Some(118001), true), 100000);
     assert_eq!(t[0].kind, "fallback");
     assert_eq!(t[0].at, 100000);
     let t = workflow::availability_timer(&waiting(None, true), 100001);
-    assert_eq!(t[0].at, 118000);
+    assert_eq!(t[0].at, 100001);
     assert_eq!(t[0].kind, "fallback");
     assert!(workflow::availability_timer(&waiting(None, false), 100000).is_empty());
     assert_eq!(
@@ -59,7 +59,7 @@ fn reassignment_stop_and_completed_work_have_no_stale_timer() {
 }
 #[test]
 fn durable_reload_keeps_the_deadline_and_exhausted_retry_budget_does_not_spin() {
-    let r = waiting(Some(103600), true);
+    let r = waiting(Some(103600), false);
     let restored: Report = serde_json::from_slice(&serde_json::to_vec(&r).unwrap()).unwrap();
     assert_eq!(
         workflow::availability_timer(&restored, 100000),
@@ -78,4 +78,42 @@ fn only_fresh_exhausted_shared_windows_supply_an_account_deadline() {
     assert_eq!(r.available_at, None);
     assert!(agentconductor::quota::restriction(&json!({"status":"stale","observed_at":100,"windows":[{"label":"five_hour","remaining_percent":0,"resets_at":200}]}),100).is_none());
     assert!(agentconductor::quota::restriction(&json!({"status":"available","observed_at":100,"windows":[{"label":"seven_day_opus","remaining_percent":0,"resets_at":200}]}),100).is_none());
+}
+
+#[test]
+fn task_override_and_disabled_fallback_control_the_timer() {
+    let mut r = waiting(None, false);
+    r.plan.tasks[0].fallback = Some(serde_json::from_value(json!({"agent":"backup"})).unwrap());
+    assert_eq!(workflow::availability_timer(&r, 100000)[0].at, 100000);
+    r.plan.agents[0].fallback = Some(serde_json::from_value(json!({"agent":"backup"})).unwrap());
+    r.plan.tasks[0].fallback = Some(serde_json::from_value(json!(false)).unwrap());
+    assert!(workflow::availability_timer(&r, 100000).is_empty());
+}
+
+#[test]
+fn an_unavailable_fallback_keeps_the_source_reset_and_unknown_resets_do_not_spin() {
+    let mut r = waiting(Some(103600), true);
+    let mut target = r.tasks[0].restriction.clone().unwrap();
+    target.available_at = Some(120000);
+    r.account_restrictions
+        .insert("backup".into(), target.clone());
+    let timer = workflow::availability_timer(&r, 100000);
+    assert_eq!(timer[0].kind, "resume");
+    assert_eq!(timer[0].at, 103600);
+    r.tasks[0].restriction.as_mut().unwrap().available_at = None;
+    assert_eq!(workflow::availability_timer(&r, 100000)[0].at, 120000);
+    target.available_at = None;
+    r.account_restrictions.insert("backup".into(), target);
+    assert!(workflow::availability_timer(&r, 100000).is_empty());
+}
+
+#[test]
+fn transient_capacity_and_manual_reservations_do_not_switch_accounts() {
+    for source in ["transient_capacity", "manual_schedule"] {
+        let mut r = waiting(Some(100060), true);
+        r.tasks[0].restriction.as_mut().unwrap().source = source.into();
+        let timer = workflow::availability_timer(&r, 100000);
+        assert_eq!(timer[0].kind, "resume", "{source}");
+        assert_eq!(timer[0].at, 100060);
+    }
 }

@@ -354,7 +354,7 @@ Trace: R-126 -> BG-81 -> SF-113 -> UC-116 -> FR-111 -> QAS-122 -> DD-135. Source
 
 
 ### FR-112 Availability deadline and fallback lifecycle
-Persist account availability deadlines and coordinator instructions in the run store. Parse an explicit Claude reset timezone, reflect the local resume time and countdown, and resume due work once under run ownership. A reviewed fallback is eligible if the reset exceeds five hours, or no reset is known and five hours elapsed since the original restriction. Reassignment removes the task reservation; Stop cancels automatic continuation; completed work never restarts. App exit does not own the watcher; reopening restores a missing watcher with an exclusive lease. Unknown zones, incomplete reset windows and profile/model changes never invent a deadline.
+Persist account availability deadlines and coordinator instructions in the run store. Parse an explicit Claude reset timezone, reflect the local resume time and countdown, and resume due work once under run ownership. For usage restrictions, an available reviewed fallback is eligible immediately, even with a short or unknown reset (#925). Manual reservations and transient-capacity retries retain their own deadlines. Reassignment removes the task reservation; Stop cancels automatic continuation; completed work never restarts. App exit does not own the watcher; reopening restores a missing watcher with an exclusive lease. Unknown zones, incomplete reset windows and profile/model changes never invent a deadline.
 Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. Source: user, 2026-10-14.
 
 FR-113 (UC-118): persist `theme` (`light` default, `dark`) in `preferences.json`, embed it as `data-theme`, expose `set_theme`, apply it without reload; no hard-coded colors outside the token blocks; session status tags wrap within the rail. NFR-49: no new fonts, images or animation; contrast ≥ WCAG AA for body text in both themes; no extra polling.
@@ -395,7 +395,7 @@ Retrying plan generation clears the previous visible failure immediately, switch
 
 ### FR-121 Normalized approval readiness and API restriction persistence
 
-Plans reverted to their saved values can be approved; actual workspace/plan edits and active jobs still block approval with localized reasons. Compare normalized editable task values against a saved snapshot, retaining null/default semantics and preserving the baseline across local task add/remove. Claude api_error usage_limit_reached / HTTP 429 is an Error even without type/is_error. Persist a quota restriction without inventing utilization or a reset from duration fields; explicit retry/reset timestamps bind the durable reservation and reviewed five-hour fallback. Show the usage-limit reason instead of an opaque telemetry JSON blob. Trace: R-136 → BG-91 → SF-123 → UC-126 → FR-121 → QAS-132 → DD-145. Source: user, 2026-10-14.
+Plans reverted to their saved values can be approved; actual workspace/plan edits and active jobs still block approval with localized reasons. Compare normalized editable task values against a saved snapshot, retaining null/default semantics and preserving the baseline across local task add/remove. Claude api_error usage_limit_reached / HTTP 429 is an Error even without type/is_error. Persist a quota restriction without inventing utilization or a reset from duration fields; explicit retry/reset timestamps bind the durable reservation and reviewed immediate quota fallback. Show the usage-limit reason instead of an opaque telemetry JSON blob. Trace: R-136 → BG-91 → SF-123 → UC-126 → FR-121 → QAS-132 → DD-145. Source: user, 2026-10-14.
 
 
 ### FR-122 / FR-123 Narrow recovery and offline localized guidance
@@ -818,3 +818,6 @@ FR-119 / #916 / #917: set the guide default in markup, never in periodic card re
 FR-119 / #918: reuse the existing reference dialog and limit state for the single button; the dialog keeps the last chosen source.
 
 FR-210 / #921: a release_notes request carries only its kind; the backend builds `<repository>/releases/tag/v<version>` from the validated updater repository and opens it like bug reports.
+
+
+FR-112 / #925: quota fallback has zero policy delay; task-level overrides govern both transfer and watcher. Keep temporary model-capacity retry, manual scheduling, Stop, loop detection, verification and merge approval safeguards. NFR: no busy timer loop when all account reset times are unknown.

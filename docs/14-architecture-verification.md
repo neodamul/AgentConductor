@@ -102,7 +102,7 @@ the tests that exercise it and says whether the behavior is present on `main`.
 | R-85 Enterprise usage as a percentage | current | `quota.rs`, `quota_display.rs` | passes |
 | R-86 Claude capacity on Windows reports why it is unavailable | current | `claude_usage.rs`, `support/terminal_quota_agent.rs`, `test_planning_feedback.py`, `windows_metadata.rs` | passes |
 | R-97 Usage query accepts the Claude folder-trust prompt | current | `claude_prompt.rs`, `windows_metadata.rs` | passes |
-| R-127 Durable quota resume and five-hour fallback | current | `availability_timer.rs`, `availability_watcher.rs`, `quota_reset_zones.rs` | passes |
+| R-127 Durable quota resume and immediate reviewed fallback | current | `availability_timer.rs`, `availability_watcher.rs`, `quota_reset_zones.rs` | passes |
 | R-130 Compact quota cards and readable step explanations | current | `quota_display.rs` | passes |
 | R-136 Approval readiness and Claude API usage limits | current | `claude_api_limit.rs`, `claude_api_workflow.rs` | passes |
 | R-145 Saved-project Claude quota retry | current | `quota_refresh.rs`, `test_quota_project.py` | passes |
@@ -574,3 +574,5 @@ The owner replaced the historical planning and execution confirmation dialogs wi
 ## Issue #752: bounded permanent-delete confirmation
 
 The Goal name and exact folder path share a bounded, keyboard-scrollable identity region. The irreversible warning and actions stay outside that region, and Cancel remains the focused default. `tests/delete_goal_dialog_752.cjs` verifies long Korean and English Goal/path content at 840 px and 1280 px in both themes; Cancel closes without confirming deletion. The full local suite passed before the stylesheet split (922 passed, 16 ignored, zero failed across 299 suites). After splitting the 499-line startup stylesheet into two files below 300 lines and adding the second file to both native document assembly and the UI simulator, `cargo check --locked`, 11 focused Rust tests, the eight-case #752 browser matrix, tab geometry, overflow-tooltip and direct-plan-start browser checks passed.
+
+DD-136 / #925: fresh short/unknown resets now transfer at a quiescent scheduler boundary; task-level policies govern the watcher, and exhausted chains retain an earlier real source reset. Local evidence: tests/immediate_fallback.rs, tests/availability_timer.rs, tests/availability_watcher.rs, tests/claude_api_workflow.rs and tests/unit/workflow.rs. Physical Windows acceptance remains unverified.

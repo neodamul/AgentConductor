@@ -1,6 +1,7 @@
 //! DD-136: coordinator reservations live in run state, never in a page timer.
 use super::*;
-pub const FALLBACK_WAIT_SECONDS: i64 = 5 * 60 * 60;
+// Kept in the persisted timer contract; reviewed quota fallbacks have no policy delay.
+pub const FALLBACK_WAIT_SECONDS: i64 = 0;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct AvailabilityTimer {
     pub task: String,
@@ -10,17 +11,16 @@ pub struct AvailabilityTimer {
     pub kind: String,
 }
 pub(super) fn fallback_due(r: &availability::Restriction, now: i64) -> bool {
-    match r.available_at {
-        Some(at) => at > now && at.saturating_sub(r.observed_at) > FALLBACK_WAIT_SECONDS,
-        None => now.saturating_sub(r.observed_at) >= FALLBACK_WAIT_SECONDS,
-    }
+    !matches!(r.source.as_str(), "transient_capacity" | "manual_schedule")
+        && r.available_at.is_none_or(|at| at > now)
 }
-fn fallback_wake(report: &Report, source: &str, current: i64) -> Option<i64> {
-    let mut p = report.plan.agents.iter().find(|a| a.id == source)?;
-    let mut visited = std::collections::HashSet::from([p.id.as_str()]);
+fn fallback_wake(report: &Report, index: usize, current: i64) -> Option<i64> {
+    let task = &report.plan.tasks[index];
+    let mut policy = task.fallback_for(&report.plan.agents).ok().flatten();
+    let mut visited = std::collections::HashSet::from([task.agent.as_str()]);
     let mut resets = vec![];
-    while let Some(policy) = &p.fallback {
-        let target = report.plan.agents.iter().find(|a| a.id == policy.agent)?;
+    while let Some(fallback) = policy {
+        let target = report.plan.agents.iter().find(|a| a.id == fallback.agent)?;
         if !visited.insert(target.id.as_str()) {
             break;
         }
@@ -35,10 +35,11 @@ fn fallback_wake(report: &Report, source: &str, current: i64) -> Option<i64> {
                 }
             }
         }
-        p = target;
+        policy = target.fallback.as_ref();
     }
     resets.into_iter().min()
 }
+
 pub fn availability_timer(report: &Report, now: i64) -> Vec<AvailabilityTimer> {
     if !matches!(report.state.as_str(), "waiting_availability" | "ready") {
         return vec![];
@@ -57,21 +58,17 @@ pub fn availability_timer(report: &Report, now: i64) -> Vec<AvailabilityTimer> {
                 .agents
                 .iter()
                 .find(|a| a.id == report.plan.tasks[i].agent)?;
-            let fallback = p.fallback.is_some();
-            let (kind, at) = if fallback && fallback_due(r, now) {
-                ("fallback", fallback_wake(report, &p.id, now)?)
-            } else if let Some(at) = r.available_at {
-                if t.automatic_retries >= 3 {
-                    return None;
-                }
-                ("resume", at.max(t.retry_not_before))
-            } else if fallback {
-                (
-                    "fallback",
-                    r.observed_at.saturating_add(FALLBACK_WAIT_SECONDS),
-                )
-            } else {
-                return None;
+            let resume = r
+                .available_at
+                .filter(|_| t.automatic_retries < 3)
+                .map(|at| at.max(t.retry_not_before));
+            let fallback = fallback_due(r, now)
+                .then(|| fallback_wake(report, i, now))
+                .flatten();
+            let (kind, at) = match (fallback, resume) {
+                (Some(at), resume) if resume.is_none_or(|reset| at <= reset) => ("fallback", at),
+                (_, Some(at)) => ("resume", at),
+                _ => return None,
             };
             Some(AvailabilityTimer {
                 task: t.id.clone(),
@@ -227,7 +224,7 @@ pub(super) fn record_timer(
             "Original restriction time retained across retries; reassign and Stop cancel it",
         )?;
     }
-    let value = serde_json::json!({"schema":1,"entries":if dir.join("stop.request").exists(){vec![]}else{availability_timer(report,now)},"fallback_wait_seconds":FALLBACK_WAIT_SECONDS,"instruction":"reload run/assignment before acting; cancel reassign/Stop; resume once at due; only reviewed fallback after five-hour horizon"});
+    let value = serde_json::json!({"schema":1,"entries":if dir.join("stop.request").exists(){vec![]}else{availability_timer(report,now)},"fallback_wait_seconds":FALLBACK_WAIT_SECONDS,"instruction":"reload run/assignment before acting; cancel reassign/Stop; resume once at due; use available reviewed quota fallback immediately; preserve manual/transient deadlines"});
     if store.optional_document("availability_timer")?.as_ref() != Some(&value) {
         store.record("availability_timer",&value,"Coordinator availability reservation updated; assignments and Stop remain authoritative")?;
     }

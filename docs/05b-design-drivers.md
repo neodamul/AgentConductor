@@ -194,3 +194,6 @@ The About state is a single version string in the existing preferences file, so 
 
 ### Driver DDR-63 Reuse the configured repository and browser authentication
 Avoid a second repository store and GitHub OAuth/API client. Share the validated updater preference and delegate issue editing, sign-in and submission to the browser. Trace: QAS-215.
+
+
+DD-136 / #925 driver: provider capacity and reviewed alternatives determine eligibility; an arbitrary five-hour threshold must not delay ready work. Retain exclusive worker ownership and bounded reset reservations.
