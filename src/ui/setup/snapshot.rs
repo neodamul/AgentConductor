@@ -61,11 +61,16 @@ impl Startup {
             })
             .collect();
         // GitHub #341: agents whose configuration probably needs more, as message ids the page renders.
+        let permission_store = crate::state::Store::open(self.broker.dir.join("state.sqlite"))?;
         let config_hints: std::collections::BTreeMap<_, _> = saved
             .config
             .profiles
             .iter()
-            .filter_map(|p| p.configuration_hint().map(|hint| (p.id.clone(), hint)))
+            .filter_map(|p| {
+                crate::protocol::claude_permissions::configuration_hint(p, &permission_store)
+                    .or_else(|| p.configuration_hint())
+                    .map(|hint| (p.id.clone(), hint))
+            })
             .collect();
         let quotas = self.quota_snapshot(saved)?;
         let language = crate::ui::language::load();

@@ -1,12 +1,14 @@
 use serde_json::Value;
 
 mod classify;
+pub mod claude_permissions;
 mod types;
 use classify::{acio_kind, codex_reconnecting, excerpt, reads_as_refusal};
 pub use types::{Event, EventKind, Protocol, Provider};
 
 pub struct Decoder {
     provider: Provider,
+    claude_permission: claude_permissions::Policy,
     event_types: std::collections::BTreeMap<String, EventKind>,
     session_id_pointer: Option<String>,
     result_pointer: Option<String>,
@@ -25,6 +27,7 @@ impl Decoder {
     pub fn new(provider: Provider, limit: usize) -> Self {
         Self {
             provider,
+            claude_permission: Default::default(),
             event_types: Default::default(),
             session_id_pointer: None,
             result_pointer: None,
@@ -44,6 +47,7 @@ impl Decoder {
 
     pub fn for_profile(profile: &crate::plan::AgentProfile, limit: usize) -> Self {
         let mut decoder = Self::new(profile.parser, limit);
+        decoder.claude_permission.full_access = profile.permission_mode == "full_access";
         decoder.acio = profile.protocol == Some(Protocol::Acio);
         if profile.parser == Provider::Custom {
             decoder.event_types.clone_from(&profile.event_types);
@@ -164,6 +168,11 @@ impl Decoder {
         if let Some(id) = session.and_then(Value::as_str) {
             self.session_id = Some(id.into());
         }
+        let payload = if self.provider == Provider::Claude {
+            self.claude_permission.normalize(payload)
+        } else {
+            payload
+        };
         let event_type = payload.get("type").and_then(Value::as_str).unwrap_or("");
         let configured_error = self.provider == Provider::Custom
             && self.error_condition.as_ref().is_some_and(|condition| {

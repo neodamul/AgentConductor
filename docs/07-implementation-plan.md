@@ -4075,6 +4075,16 @@ Trace: R-190 / BG-145 / SF-178 / UC-181 / FR-182 / QAS-188 / DD-202.
 - [x] Verify: plan, prompt_order, planning_overlap_repair and planner fixture tests.
 - [x] Completed: linked PR tracks merge and branch cleanup.
 
+### Effective Claude permissions — GitHub #931 (0.2.8)
+
+Trace: R-122 / BG-77 / SF-109 / UC-112 / FR-107 / QAS-118 / DD-131.
+- [x] Plan: claim the issue-linked owner-codex branch, coordinate Claude #928/#929 and inspect decoder/profile/metadata/worker paths.
+- [x] Task: Red coverage for effective-mode mismatch, zero-exit permission denials, invalid callback argv, restricted coordinator invocation and quota-noise precedence.
+- [x] Task: verify permission before forwarding the user prompt; normalize denials; reuse asynchronous metadata evidence; offer explicit callback setup.
+- [x] Verify: local protocol/workflow/coordinator regressions, broad ad-hoc execution matrix, UI setup, docs/manuals and source bounds.
+- [x] Completed: implementation, local diff review, wiki and verification evidence recorded; linked PR tracks merge/closure, completion signal and owned cleanup.
+
+Evidence: [ad-hoc matrix](evidence/931-permission-ad-hoc.md). Local checks: 68 focused Rust cases; 47 broader Workspace/Goal/workflow cases; 19 documentation/architecture/i18n cases; library and repeated Stop/fallback/workflow safety checks; all 103 root Node UI scripts; callback save/reopen in four theme/width combinations; eight focused parity entries; 183 reference interaction checks per theme/width; six refreshed reference captures; design manifest integrity, Clippy with warnings denied, changed-file formatting and 300-line limits. The installed Claude initialize-only probe confirmed mode metadata without a user-generation prompt. Physical Windows/company policy acceptance and release are not claimed.
 ### Agent card usage retry and folder re-check — GitHub #933 / #934 (0.2.8)
 
 Trace: R-145 / BG-100 / SF-132 / UC-135 / FR-130 / QAS-141 / DD-154.

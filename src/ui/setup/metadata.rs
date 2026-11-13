@@ -242,6 +242,17 @@ impl Startup {
                             if let Some(catalog) = &observed.catalog {
                                 validate_catalog(catalog)?;
                             }
+                            if current.parser == crate::protocol::Provider::Claude {
+                                let permission = saved
+                                    .metadata_input
+                                    .as_ref()
+                                    .and_then(|path| path.parent())
+                                    .map(|dir| dir.join("discovery/permission.json"));
+                                if let Some(path) = permission.filter(|p| p.exists()) {
+                                    let evidence: serde_json::Value = read(&path)?;
+                                    crate::state::Store::open(self.broker.dir.join("state.sqlite"))?.record(&format!("claude_permission/{agent}"),&evidence,"Effective Claude permission mode observed without generation")?;
+                                }
+                            }
                             current.catalog = observed.catalog.clone();
                         }
                     }

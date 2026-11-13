@@ -17,7 +17,7 @@ function openProfileEditor(agent){
  document.getElementById('profile-edit-title').textContent=agent==='new'?'에이전트 추가':(agentDisplay[agent]||agent)+' · 편집';
  document.querySelector('#profile-edit-form button[type=submit]').textContent=agent==='new'?'에이전트 추가':'프로필 사용';
  for(const field of ['provider','id','executable','input','sessions'])profileField(field).value=profile[field];
- profileField('quota-minutes').value=profile.minutes;profileField('args').value=JSON.stringify(profile.args);profileField('readonly-args').value=JSON.stringify(profile.readonlyArgs||[]);profileField('edit-error').textContent='';
+ profileField('callback-label').hidden=profile.provider!=='claude';profileField('callback').checked=profile.callback!==false;profileField('advanced').open=false;profileField('quota-minutes').value=profile.minutes;profileField('args').value=JSON.stringify(profile.args);profileField('readonly-args').value=JSON.stringify(profile.readonlyArgs||[]);profileField('edit-error').textContent='';
  const fallback=profileField('fallback');fallback.replaceChildren();
  [['','지정 안 함'],...Object.entries(agentDisplay).filter(([id])=>id!==agent)].forEach(([value,label])=>{const option=document.createElement('option');option.value=value;option.textContent=label;fallback.append(option);});
  fallback.value=profile.fallback;refreshProfileFallbackModels(profile.fallbackModel);syncSelectionButtons();profileDialog.showModal();profileField('executable').focus({preventScroll:true});
@@ -31,9 +31,11 @@ document.getElementById('profile-edit-form').onsubmit=event=>{
   if(![args,readonlyArgs].every(value=>Array.isArray(value)&&value.every(item=>typeof item==='string')))throw new Error('실행 인자는 문자열 JSON 배열이어야 합니다.');
   const id=profileField('id').value.trim(),executable=profileField('executable').value.trim();if(!id||!executable)throw new Error('에이전트 ID와 실행파일을 입력하세요.');
   const fallbackModel=profileField('fallback-model').value==='__custom'?profileField('custom-model').value.trim():profileField('fallback-model').value;
-  Object.assign(profileFixtures[editingProfile],{provider:profileField('provider').value,id,executable,args,readonlyArgs,input:profileField('input').value,sessions:Number(profileField('sessions').value),minutes:Number(profileField('quota-minutes').value),fallback:profileField('fallback').value,fallbackModel});profileDialog.close('apply');
+  Object.assign(profileFixtures[editingProfile],{callback:profileField('callback').checked,provider:profileField('provider').value,id,executable,args,readonlyArgs,input:profileField('input').value,sessions:Number(profileField('sessions').value),minutes:Number(profileField('quota-minutes').value),fallback:profileField('fallback').value,fallbackModel});profileDialog.close('apply');
  }catch(error){profileField('edit-error').textContent=error.message;}
 };
 profileDialog.addEventListener('close',()=>{closeSelectionMenu();document.body.append(selectionMenu);if(profileOpener?.isConnected)profileOpener.focus({preventScroll:true});});
 document.querySelectorAll('[data-profile-edit]').forEach(button=>button.onclick=()=>openProfileEditor(button.dataset.profileEdit));
 document.getElementById('profile-add').onclick=()=>openProfileEditor('new');
+
+profileField('provider').addEventListener('change',()=>{profileField('callback-label').hidden=profileField('provider').value!=='claude';});

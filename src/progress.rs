@@ -46,6 +46,15 @@ impl Reader {
         if let Some(profile) = &self.profile {
             crate::quota::observe_events(&mut self.store, profile, &events)?;
         }
+        if let Some(event) = events
+            .iter()
+            .find(|e| e.payload["code"] == "permission_mode_mismatch")
+        {
+            return Err(event.payload["message"]
+                .as_str()
+                .unwrap_or("Claude permission policy: effective mode mismatch")
+                .into());
+        }
         Ok(n > 0)
     }
 }

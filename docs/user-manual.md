@@ -97,7 +97,8 @@ An assignment to a missing agent is highlighted and prevents planning until corr
 Use **+ Add** for Claude, Codex, OpenCode or Custom. **Edit** uses a pencil; Remove uses a trash icon.
 - Executables are found asynchronously; **Browse…** selects a file when discovery fails.
 - Arguments are a JSON array. The CLI keeps its existing authentication.
-- Capabilities follow the executable and invocation rather than a permission dropdown. Standard Claude and Codex profiles run with full access by default, bypassing their native permission prompts.
+- Capabilities follow the executable and invocation rather than a permission dropdown. Standard Claude and Codex profiles request full access by default. Claude must confirm its effective permission mode before a worker receives its task; organization policy can reject bypass permissions. **Models** refreshes this evidence asynchronously without a generation request.
+- For Claude, **Advanced CLI permissions and read-only arguments** offers **Use native permission callbacks**. Enable it and save the profile to use reviewed tool approvals instead of bypass permissions. This never changes organization policy. Permission denials block completion even if the CLI exits successfully; partial files and local logs remain available for review or explicit reassignment.
   Changed/custom executables do not inherit that capability. Custom CLIs handle their own tool approval by default; explicitly read-only or external-sandbox profiles keep those restrictions.
 - Each profile supports up to three sessions and a quota group for a shared account.
 - Set a fallback and its model. Mutual fallbacks are allowed; the engine stops after trying each agent once.
@@ -213,7 +214,7 @@ The task Goal starts collapsed. **Expand** preserves authored line breaks in a b
 
 ### 1.7 Tool decisions and verification
 
-The following tool gates apply to guarded `native_callback` profiles. Standard full-access Claude/Codex profiles bypass native per-tool prompts; plan review and final candidate approval still apply.
+The following tool gates apply to guarded `native_callback` profiles. Confirmed full-access Claude/Codex profiles bypass native per-tool prompts; plan review and final candidate approval still apply.
 
 Routine guarded Claude reads, edits, searches, builds and tests confined to the permitted workspace can run immediately.
 Unsupported or unsafe requests are refused before evaluation.
