@@ -16,7 +16,7 @@ STATES = [
     ("09-result", 8), ("10-new-goal", 9),
 ]
 EXTRAS = ["inspector", "inspector-bottom", "goal-list", "delete-warning", "briefing", "chat",
-          "settings", "quota-healthy", "quota-error", "quota-unsupported", "left-collapsed", "fullscreen", "coordinator-picker", "role-picker", "fallback-picker", "fallback-model-picker", "profile-edit", "profile-edit-bottom", "close-confirmation", "sessions", "sessions-confirm", "result-file-diff", "goal-title-open", "result-next-phase", "mcp", "mcp-add", "raw-log-multiline", "plan-history", "messenger-saving", "messenger-error", "goal-source-tags", "source-review-running", "source-review-done", "source-limit", "run-failure", "scope-failure", "claude-permissions"]
+          "settings", "quota-healthy", "quota-error", "quota-unsupported", "left-collapsed", "fullscreen", "coordinator-picker", "role-picker", "fallback-picker", "fallback-model-picker", "profile-edit", "profile-edit-bottom", "close-confirmation", "sessions", "sessions-confirm", "result-file-diff", "goal-title-open", "result-next-phase", "mcp", "mcp-add", "raw-log-multiline", "plan-history", "messenger-saving", "messenger-error", "goal-source-tags", "source-review-running", "source-review-done", "source-limit", "run-failure", "scope-failure", "claude-permissions", "optimize", "optimize-answered"]
 
 
 

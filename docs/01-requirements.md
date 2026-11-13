@@ -900,4 +900,7 @@ R-210 / #927 (0.2.8): remove the run status banner in every state. Preserve diag
 R-190 / #928 / #929 (0.2.8): a planned test_command must fail when its task's deliverable is missing; checks that always pass (`git status`, `true`, `echo`, `ls`) are rejected. A test-first task whose tests are meant to fail until a later task implements the code only checks that its tests exist and load, so integration verification does not fail the run on intended red tests.
 
 R-122 / #931 (0.2.8): Claude full_access is a requested capability, not proof of effective access. Verify CLI-reported initialization permission mode; block mismatches/unknown mode before continuing. Nonempty result permission_denials cannot complete a task. Support an explicit native_callback selection through agent setup without bypassing organization policy.
+
+
+R-177 amendment (#935, #936, 0.2.8): optimization result lists use the dialog body scale. The operator can answer the confirmation list and request a new proposal without applying the old one.
 R-145 / #933 / #934 (0.2.8): the usage popup's retry after a failed query is the same icon-only control as refresh (labelled for assistive technology), and Claude usage that could not be read for lack of a project folder is queried automatically once a folder is set.

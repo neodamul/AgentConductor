@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Match optimizer result lists to the dialog text scale and let operators answer confirmation questions to request a fresh proposal without applying it automatically (#935, #936).
+
 - Verify Claude full-access permission before sending a task, block successful-looking permission denials, and offer explicit native callback selection without changing organization policy (#931).
 
 - Remove the run-status banner in every state; keep failure output, attention warnings and recovery actions inside the task card and existing review/composer controls (#927).

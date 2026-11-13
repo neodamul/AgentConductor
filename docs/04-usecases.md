@@ -906,4 +906,7 @@ UC-202 / #927: on a failed integration test, inspect the complete safe text outp
 UC-181 / #928 / #929: the coordinator returns a plan; a task whose test_command is `git status` fails validation and the planner retries once with the correction; a write-failing-tests task gets `node --check` (or similar) and the implementing task runs the tests.
 
 UC-112 / #931: register or refresh a Claude profile using the existing asynchronous initialization/catalog query. Observe current_permission_mode without a user-generation prompt. At each execution, check system/init (and mode updates), stop a mismatch, retain artifacts and require explicit configuration/reassignment. The operator may select the pinned native_callback mode; that selection survives future saves.
+
+
+UC-168 amendment (#935, #936): review a proposal, answer its confirmation questions, request re-optimization using the proposed goal and the answers, then review the new result. Failure preserves the current proposal and answers; Use this goal remains an explicit action.
 UC-135 / #933 / #934: the operator sets a project folder while Claude usage shows the folder hint; the next poll queries usage without a retry click. A failed query shows the ↻ icon labelled Retry usage query.

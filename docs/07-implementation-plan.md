@@ -4085,6 +4085,17 @@ Trace: R-122 / BG-77 / SF-109 / UC-112 / FR-107 / QAS-118 / DD-131.
 - [x] Completed: implementation, local diff review, wiki and verification evidence recorded; linked PR tracks merge/closure, completion signal and owned cleanup.
 
 Evidence: [ad-hoc matrix](evidence/931-permission-ad-hoc.md). Local checks: 68 focused Rust cases; 47 broader Workspace/Goal/workflow cases; 19 documentation/architecture/i18n cases; library and repeated Stop/fallback/workflow safety checks; all 103 root Node UI scripts; callback save/reopen in four theme/width combinations; eight focused parity entries; 183 reference interaction checks per theme/width; six refreshed reference captures; design manifest integrity, Clippy with warnings denied, changed-file formatting and 300-line limits. The installed Claude initialize-only probe confirmed mode metadata without a user-generation prompt. Physical Windows/company policy acceptance and release are not claimed.
+
+### Goal optimizer clarification review — GitHub #935 / #936 (0.2.8)
+
+Trace: R-177 / BG-132 / SF-165 / UC-168 / FR-163 / QAS-174 / DD-188.
+- [x] Plan: claim owner-codex and linked #936 branch; coordinate Claude #933/#934; trace request, worker, prompt and review dialog.
+- [x] Task: mock the result lists, answer field and re-optimize action in the house style.
+- [x] Task: TDD for typography and answer -> new proposal, including validation/failure preservation.
+- [x] Verify: local Rust/UI/parity checks, generated manuals, source bounds and cleanup.
+- [x] Completed: implementation, local review, manuals, wiki and evidence recorded; linked PR tracks merge/closure, memory/signal and cleanup.
+
+Evidence: [optimizer clarification checks](evidence/936-optimizer-clarifications.md). 33 focused Rust/docs tests, all 104 Node UI scripts, four actual browser theme/width workflows, 16 focused parity entries, 183 reference interactions per configuration, four new reference captures, manifest integrity, Clippy with warnings denied, formatting and changed-source 300-line checks passed locally. Authenticated provider rewriting quality and physical Windows acceptance are not claimed.
 ### Agent card usage retry and folder re-check — GitHub #933 / #934 (0.2.8)
 
 Trace: R-145 / BG-100 / SF-132 / UC-135 / FR-130 / QAS-141 / DD-154.

@@ -54,6 +54,8 @@ pub(super) enum Request {
     OptimizeGoal {
         revision: String,
         goal: String,
+        #[serde(default)]
+        answers: String,
     },
     McpApply {
         revision: String,

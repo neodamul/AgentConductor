@@ -5,7 +5,7 @@ const node = () => ({ children: [], hidden: false, disabled: false, value: '', t
   replaceChildren(...n) { this.children = n; }, showModal() { this.open = true; }, close() { this.open = false; } });
 const els = {}; // Like startup.js, q(id) looks up the element with id start-<id>.
 for (const id of ['goal', 'optimize-button', 'optimize-status', 'optimize', 'optimize-goal', 'optimize-changes', 'optimize-changes-title',
-  'optimize-questions', 'optimize-questions-title', 'optimize-use', 'optimize-keep']) els['start-' + id] = node();
+  'optimize-questions', 'optimize-questions-title', 'optimize-use', 'optimize-keep', 'optimize-answers-section', 'optimize-answers', 'optimize-again', 'optimize-dialog-status']) els['start-' + id] = node();
 const q = id => { if (!els['start-' + id]) throw new Error('no element start-' + id); return els['start-' + id]; };
 const calls = [], notices = [], applied = []; let current = { revision: 'rev', job: null, optimize: null }, busy = false, reply = { id: 'job-1' };
 const context = vm.createContext({ document: { createElement: node }, console,
@@ -41,6 +41,22 @@ vm.runInContext(elapsed + source + ';this.optimizeUi=optimizeUi;', context);
   assert.equal(q('optimize-questions').children[0].textContent, 'Which browser?');
   assert.equal(q('optimize-button').disabled, false);
   assert.equal(q('optimize-status').textContent, '');
+  assert.equal(q('optimize-answers-section').hidden, false);
+  assert.equal(q('optimize-again').disabled, true, 'empty answers do not consume a request');
+  q('optimize-answers').value='Windows';q('optimize-answers').oninput();
+  reply={id:'job-answer'};await q('optimize-again').onclick();
+  const retry=calls.at(-1);assert.equal(retry.goal,'Speed up checkout; verify with npm run bench');
+  assert.match(retry.answers,/Which browser/);assert.match(retry.answers,/Windows/);
+  assert.equal(q('goal').value,'make it faster','re-optimization never applies the proposal');
+  assert.equal(q('optimize-again').disabled,true,'prevent duplicate requests');
+  current={revision:'rev',job:{id:'job-answer',state:'failed',error:'retry later'},optimize:null};ui.update();
+  assert.equal(q('optimize-answers').value,'Windows','failed retry retains answers');
+  assert.equal(q('optimize-goal').textContent,'Speed up checkout; verify with npm run bench');
+  reply={id:'job-answer-2'};await q('optimize-again').onclick();
+  current={revision:'rev',job:{id:'job-answer-2',state:'completed'},optimize:{job:'job-answer-2',proposal:{optimized:'Checkout for Windows',changes:['used answers'],questions:[]}}};ui.update();
+  assert.equal(q('optimize-goal').textContent,'Checkout for Windows');
+  assert.equal(q('optimize-answers-section').hidden,true,'resolved confirmations disappear');
+  assert.deepEqual(applied,[],'new proposal still needs explicit acceptance');
   q('optimize-keep').onclick();
   assert.equal(q('optimize').open, false);
   assert.deepEqual(applied, [], 'keeping leaves the goal alone');
