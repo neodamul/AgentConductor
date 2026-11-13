@@ -1786,3 +1786,5 @@ DD-62 amendment (#943): Reuse read-only snapshot planning to re-plan the next Ph
 
 
 #948: Reuse the shared Plan row CSS and existing i18n title binding. Ellipsis applies only to summary metadata, leaving the editable command unchanged; no dependency or background work is added.
+
+DD amendment (#957): Step 6 reuses the result dialog's `.file-diff-toggle`/`.file-diff` rendering for its changed-file list instead of a second diff viewer.

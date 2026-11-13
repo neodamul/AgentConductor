@@ -933,3 +933,5 @@ QAS-141 / #933 / #934: tests/quota_folder_934.cjs (no folder: no query; folder s
 
 
 #948: Given a long verification command/path, Plan review remains a single-line summary at 840/1280px in Light/Dark; hover and expansion retain the complete value.
+
+#957: Given Step 6 with changed files, clicking a file row shows its hunks with added/removed lines below the row, keeps the +/- counts, and a second click folds it.
