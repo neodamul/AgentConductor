@@ -4196,3 +4196,10 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 - [x] Task: reproduce consent mismatch and silent success; carry exact opt-in only at reviewed automatic fallback sites, audit it and show blocked-job reasons.
 - [x] Verify: shared/worktree fallback, disabled/tampered consent, manual reassignment, changed/unchanged three-Phase chains, actual failed-worker Room snapshot and DOM notice; 32 focused Rust checks, Clippy/format passed.
 - [x] Completed: manuals/HTML/wiki and private-evidence findings recorded; linked branch committed/pushed for batch integration and CI.
+
+## #958 — Pending next-Phase re-plan
+
+- [x] Plan: import approved mock 9d6ff974; trace requirements through QAS/design.
+- [x] Task: reproduce stale Phase 1→2 heading during Phase 3 planning; bind pending target, clear old rows/tools, reset selected Phase for a new target.
+- [x] Verify: four actual DOM ready→pending→ready conditions; 14 approved entries ×4 theme/width cells (56 comparisons), zero differences; 752 mock interaction checks; 8 focused Rust checks, all-target Clippy and formatting passed.
+- [x] Completed: manuals/HTML/wiki updated; linked branch prepared for PR/merge and combined CI.
