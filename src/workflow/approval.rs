@@ -137,6 +137,14 @@ pub fn merge(dir: &Path) -> Result<(), String> {
     }
     let mut store = Store::open(dir.join("state.sqlite"))?;
     let approval = store.document("approval")?;
+    if dir.join("stop.request").exists()
+        || (approval["automatic"] == true
+            && dir
+                .parent()
+                .is_some_and(|p| p.join("phase-chain.stop").exists()))
+    {
+        return Err("Stop revoked merge approval".into());
+    }
     let fingerprint = binding(dir, &report)?;
     if approval["fingerprint"] != fingerprint {
         return Err("approval no longer matches candidate and evidence".into());

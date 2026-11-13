@@ -8,6 +8,7 @@ const saveMessenger="(async()=>{document.getElementById('start-app-menu').click(
 const mcp="(async()=>{document.getElementById('start-settings-button').click();document.getElementById('start-mcp-settings').click();await new Promise(r=>setTimeout(r,200));})()";
 module.exports=[
  ...require('./plan_review_spec.cjs'),
+ ...require('./phase_replan_spec.cjs'),
  ...require('./optimizer_spec.cjs'),
  ...require('./claude_permission_spec.cjs'),
  ...require('./run_recovery_spec.cjs'),

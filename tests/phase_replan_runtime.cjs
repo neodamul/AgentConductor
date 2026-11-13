@@ -1,0 +1,32 @@
+// #943: real assembled desktop DOM, edits and opt-in stay connected to native requests.
+const fs=require('fs'),path=require('path'),os=require('os'),{execFileSync}=require('child_process'),{pathToFileURL}=require('url');
+const {findChrome,launch}=require('./design_parity/cdp.cjs');
+const chrome=findChrome();if(!chrome)process.exit(77);
+const root=path.resolve(__dirname,'..'),dir=fs.mkdtempSync(path.join(os.tmpdir(),'ac-replan-ui-'));
+execFileSync('node',[path.join(root,'tests/ui_sim/build.cjs'),root,path.join(dir,'app.html')]);
+const setup=`SIM.home.proposal=SIM.proposal('ready');SIM.home.proposal.slug='g';SIM.home.proposal.slug_phase='p2';
+SIM.reply.save=p=>{SIM.home.config=p.config;return {saved:true};};
+const before=JSON.parse(JSON.stringify(SIM.plan.tasks));const current=SIM.home.proposal.plan.tasks;
+current[0].prompt+=' Changed from completed results';const gone=current.pop();const added=JSON.parse(JSON.stringify(gone));added.id='added-task';added.prompt='Add missing migration';added.paths=['migrations/new.sql'];current.push(added);
+SIM.home.proposal.replan={unchanged:false,completed_phases:[{phase:'p1'}],changes:[{id:current[0].id,kind:'changed',fields:['prompt']},{id:added.id,kind:'added',fields:[]},{id:gone.id,kind:'removed',fields:[],task:gone}]};
+SIM.home.slugs=[{slug:'g',goal:SIM.home.config.goal,active:true,plan:{phases:[{id:'p1',specs:[]},{id:'p2',specs:before}]},progress:{stage:'phase',current_phase:'p2',phases:[{id:'p1',name:'Done',stage:'completed',task:[],completed:[],verification:[]},{id:'p2',name:'Next',stage:'task',task:current.map(t=>t.id),completed:[],verification:[]}]}}];`;
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{try{const b=await launch(chrome,{width:Number(process.env.PARITY_WIDTH)||1280,height:960});try{
+const url=pathToFileURL(path.join(dir,'app.html')).href;await b.goto(url);await b.eval(`sessionStorage.setItem('SIM_PRESET',${JSON.stringify(setup)})`);await b.goto(url);await wait(900);await b.eval("document.getElementById('start-tab-review').click()");
+await b.eval('document.documentElement.dataset.theme='+JSON.stringify(process.env.PARITY_THEME||'light'));
+const check=async(label,code)=>{if(!await b.eval(code))throw Error(label);};
+await check('phase change header',"/Phase 1.*Phase 2/.test(document.querySelector('#start-panel-review .step-title').textContent)");
+await check('added changed removed tags and reasons',"['added','changed','removed'].every(kind=>document.querySelector('[data-change='+kind+'] .plan-change')&&document.querySelector('[data-change='+kind+'] .plan-change-reason'))");
+await check('removed task has no editable controls',"!document.querySelector('#start-plan-removed input,#start-plan-removed textarea,#start-plan-removed select')&&document.querySelectorAll('#start-tasks .startup-task').length===3");
+await check('automatic merge defaults off',"!document.getElementById('start-auto-merge').checked");
+await b.eval("document.getElementById('start-auto-merge').click()");await wait(400);
+await check('opt-in saved through native bridge',"SIM.log.some(p=>p.kind==='save'&&p.p.config.auto_merge===true)");
+await check('automatic merge safety note',"document.querySelector('#start-panel-review .startup-review-footer .note').textContent===acMessage('startup.auto_merge_note')");
+await b.eval("document.querySelector('#start-tasks .startup-task').open=true;const input=document.querySelector('#start-tasks textarea[data-key=prompt]');input.value+=' operator edit';input.dispatchEvent(new Event('input',{bubbles:true}));document.getElementById('start-edit').click()");await wait(400);
+await check('edit packet excludes removed task',"SIM.log.some(p=>p.kind==='edit'&&p.p.tasks.length===3&&p.p.tasks.some(t=>t.prompt.includes('operator edit'))&&!p.p.tasks.some(t=>t.id==='task-3'))");
+await b.eval("AC_I18N.set('en')");await check('translated change reasons',"document.querySelector('[data-change=changed] .plan-change-reason').textContent.includes('instructions')");
+await check('no unresolved messages',"![...document.querySelectorAll('#start-panel-review .plan-change,#start-panel-review .plan-change-reason')].some(n=>n.textContent.includes('startup.'))");
+await b.goto(url);await b.eval(`sessionStorage.setItem('SIM_PRESET',"SIM.home.run_available=true;SIM.home.run_state='running';SIM.room.phase_continuation={unchanged:true,number:2,total:3,previous:1};")`);await b.goto(url);await wait(1000);await b.eval("document.getElementById('start-tab-tasks').click()");await wait(500);
+await check('unchanged continuation is explained in run meta',"document.querySelector('#run-goal-info .goal-info-content').textContent===acMessage('room.phase_unchanged_started',{value1:2,value2:3,value3:1})");
+console.log('phase re-plan UI: changes, removal, native opt-in, edited tasks and translation passed');
+}finally{await b.close();}}finally{fs.rmSync(dir,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1;});

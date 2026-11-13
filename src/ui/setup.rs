@@ -31,6 +31,7 @@ pub use model::Config;
 pub(super) use model::{Proposal, Saved, StoredJob, defaults};
 
 mod launch;
+mod phase_flow;
 mod settle;
 mod storage;
 mod talk;
@@ -137,7 +138,11 @@ impl Startup {
     }
 
     pub(crate) fn poll_job(&self) -> Result<(), String> {
-        self.broker.poll()?;
+        let job = self.broker.poll()?;
+        if let Ok(mut saved) = self.saved.try_lock() {
+            self.settle(&mut saved, &job)?;
+            self.phase_tick(&mut saved, &job)?;
+        }
         self.chat_broker.poll()?;
         self.quota_broker.poll().map(|_| ())
     }

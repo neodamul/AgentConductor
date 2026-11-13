@@ -919,3 +919,6 @@ UC-135 / #933 / #934: the operator sets a project folder while Claude usage show
 
 
 #944: The operator opens Plan review, reads the Phase position/name in its heading, edits tasks once, and can select earlier/later Phases in the rail without losing unsaved edits.
+
+
+#943: On Phase merge, the coordinator reads completed diff/test/report evidence and proposes the next Phase. The operator reviews changed tasks; unchanged tasks can continue. Opt-in automatic merge applies only to an exact verified candidate; Stop, failed tests, pending permissions/scope/review or conflicts halt the chain.

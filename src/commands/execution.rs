@@ -105,6 +105,17 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                 if plan_digest(&plan)? != *approval {
                     return Err("explicit approval of the exact plan digest is required".into());
                 }
+                if Path::new(dir)
+                    .parent()
+                    .is_some_and(|p| p.join("phase-chain.stop").exists())
+                {
+                    return Err(
+                        "Phase chain is paused; explicit resume or approval is required".into(),
+                    );
+                }
+                if let [_, root, phase] = rest {
+                    agentconductor::phase_replan::adopt(Path::new(root), phase, &plan)?;
+                }
                 // DD-81: linked approvers may answer live tool requests from the messenger.
                 agentconductor::messenger::inbound::spawn(Path::new(dir).to_path_buf());
                 let runtime = tokio::runtime::Builder::new_multi_thread()

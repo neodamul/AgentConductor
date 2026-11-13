@@ -87,6 +87,8 @@ try{
   if(mode==='optimize'||mode==='optimize-answered')action="i=0;show();openOptimizePreview();"+(mode==='optimize-answered'?"document.getElementById('optimize-preview-answers').value='Windows';document.getElementById('optimize-preview-answers').dispatchEvent(new Event('input'));document.getElementById('optimize-preview-again').click();":'');
   if(mode==='mcp')action='openMcp()';
   if(mode==='mcp-add')action='openMcp();openMcpEditor(null)';
+  if(mode==='plan-replan-unchanged')action='workspaceGoals[0].nextPhase={number:2,total:2,unchanged:true};showGoalResult("rotation");document.getElementById("result-to-workspace").click()';
+  if(mode==='plan-replan'||mode==='plan-replan-auto')action='workspaceGoals[0].nextPhase={number:2,total:2};showGoalResult("rotation");document.getElementById("result-to-workspace").click()'+(mode==='plan-replan-auto'?';document.getElementById("auto-merge").click()':'');
   if(mode==='result-next-phase')action='workspaceGoals[0].nextPhase={number:2,total:2};showGoalResult("rotation")';
   if(mode.startsWith('quota-')){
    await call('Runtime.evaluate',{expression:'selectRail("agents");'+frameWait,awaitPromise:true});

@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## v0.2.8
 
+- Re-plan each next Phase from merged outcomes, show task changes, continue unchanged plans and support opt-in exact verified automatic merges with Stop and approval gates preserved (#943).
+
 - Show reviewing Phase context in the Plan heading and editable tasks only once; retain Phase history and unsaved task edits (#944).
 
 - Remove the postponed alternate Rust UI, its dedicated validation and unused dependencies; retain the supported desktop UI and shared Rust backend (#940).

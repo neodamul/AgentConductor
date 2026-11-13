@@ -839,3 +839,6 @@ FR-130 / #933 / #934: autoDiscover also queries a Claude profile whose indicator
 
 
 #944: Remove redundant reviewing-Phase summaries and task-ID-only briefs. Preserve meaningful historical briefs, task expansion, editing controls and approval state. No new requests or polling.
+
+
+#943: Preserve later Phase definitions, registered CLI profiles and all existing validation. Reuse asynchronous CLI subprocess jobs, with no new resident polling loop or dependency. Keep raw outcome evidence local and bounded. Record automatic plan continuation and exact candidate approval distinctly from human actions.
