@@ -6,6 +6,8 @@ the GitHub Release notes for its tag.
 
 ## Unreleased
 
+- Remove the postponed alternate Rust UI, its dedicated validation and unused dependencies; retain the supported desktop UI and shared Rust backend (#940).
+
 - Match optimizer result lists to the dialog text scale and let operators answer confirmation questions to request a fresh proposal without applying it automatically (#935, #936).
 
 - Verify Claude full-access permission before sending a task, block successful-looking permission denials, and offer explicit native callback selection without changing organization policy (#931).

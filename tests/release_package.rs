@@ -1,62 +1,10 @@
+#[path = "support/release_package.rs"]
+mod support;
 use agentconductor::release_package::assemble;
-use serde_json::{Value, json};
+use serde_json::json;
 use sha2::{Digest, Sha256};
-use std::{
-    fs,
-    path::{Path, PathBuf},
-    process::Command,
-    sync::atomic::{AtomicU64, Ordering},
-};
-
-fn fixture(root: &Path, target: &str) -> Value {
-    fs::create_dir_all(root.join("docs/assets")).unwrap();
-    fs::write(
-        root.join("README.md"),
-        "# Product\n![UI](docs/assets/live.jpg)\n",
-    )
-    .unwrap();
-    fs::write(root.join("docs/assets/live.jpg"), b"live").unwrap();
-    fs::write(root.join("docs/assets/mock.jpg"), b"unused").unwrap();
-    fs::write(root.join("Cargo.toml"), "[package]\nversion = \"0.1.0\"\n").unwrap();
-    fs::write(root.join("company-suffix.txt"), "").unwrap();
-    fs::write(root.join("Cargo.lock"), "locked fixture\n").unwrap();
-    fs::write(
-        root.join("LICENSE"),
-        "MIT License\n\nCopyright (c) fixture\n",
-    )
-    .unwrap();
-    let skill = root.join("third_party/prompt-optimizer");
-    fs::create_dir_all(&skill).unwrap();
-    fs::write(skill.join("LICENSE"), "Apache fixture\n").unwrap();
-    fs::write(skill.join("SOURCE.md"), "origin fixture\n").unwrap();
-    let marks = root.join("third_party/lobe-icons");
-    fs::create_dir_all(&marks).unwrap();
-    fs::write(marks.join("LICENSE"), "MIT icons fixture\n").unwrap();
-    fs::write(marks.join("SOURCE.md"), "icons origin fixture\n").unwrap();
-    let icon = root.join("src/ui/assets/ac.icns");
-    fs::create_dir_all(icon.parent().unwrap()).unwrap();
-    fs::copy(
-        Path::new(env!("CARGO_MANIFEST_DIR")).join("src/ui/assets/ac.icns"),
-        icon,
-    )
-    .unwrap();
-    let name = if target.contains("windows") {
-        "agentconductor.exe"
-    } else {
-        "agentconductor"
-    };
-    let binary = root.join("target/release").join(name);
-    fs::create_dir_all(binary.parent().unwrap()).unwrap();
-    fs::write(&binary, b"exact native binary").unwrap();
-    let source = root.join("dependency");
-    fs::create_dir_all(&source).unwrap();
-    fs::write(source.join("Cargo.toml"), "[package]\nname = \"dep\"\n").unwrap();
-    fs::write(source.join("LICENSE-MIT"), "MIT fixture license\n").unwrap();
-    json!({
-        "resolve":{"nodes":[{"id":"dependency-id"}]},
-        "packages":[{"id":"dependency-id","source":"registry+fixture","name":"dep","version":"1.0.0","license":"MIT","manifest_path":source.join("Cargo.toml")}]
-    })
-}
+use std::{fs, path::Path, process::Command};
+use support::{fixture, temp};
 
 #[test]
 fn refuses_to_package_a_company_suffixed_build() {
@@ -74,17 +22,6 @@ fn refuses_to_package_a_company_suffixed_build() {
     .unwrap_err();
     assert!(error.contains("company-suffix.txt"));
     assert!(!root.join("dist/package").exists());
-}
-
-fn temp() -> PathBuf {
-    static NEXT: AtomicU64 = AtomicU64::new(0);
-    let path = std::env::temp_dir().join(format!(
-        "ac-release-package-{}-{}",
-        std::process::id(),
-        NEXT.fetch_add(1, Ordering::Relaxed)
-    ));
-    fs::create_dir_all(&path).unwrap();
-    path
 }
 
 #[test]
@@ -240,72 +177,6 @@ fn requires_exact_upstream_license_revision_and_digest() {
     fs::write(license_dir.join("LICENSE"), b"altered\n").unwrap();
     assert!(assemble(&root, &destination, &metadata, target, &"b".repeat(40)).is_err());
     assert!(!destination.exists());
-    fs::remove_dir_all(root).unwrap();
-}
-
-#[test]
-fn packages_reviewed_permissive_native_ui_dependency_licenses() {
-    let root = temp();
-    let target = "x86_64-pc-windows-msvc";
-    let mut metadata = fixture(&root, target);
-    let package = metadata["packages"][0].as_object_mut().unwrap();
-    package.insert("name".into(), json!("clipboard-win"));
-    package.insert("version".into(), json!("5.4.1"));
-    package.insert("license".into(), json!("BSL-1.0"));
-    let isc_source = root.join("isc-dependency");
-    fs::create_dir_all(&isc_source).unwrap();
-    fs::write(
-        isc_source.join("Cargo.toml"),
-        "[package]\nname = \"libloading\"\n",
-    )
-    .unwrap();
-    fs::copy(
-        Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("licenses/upstream/f4ec9e702de2d0778bccff8525dc44e4cacac2d1/LICENSE"),
-        isc_source.join("LICENSE"),
-    )
-    .unwrap();
-    metadata["resolve"]["nodes"]
-        .as_array_mut()
-        .unwrap()
-        .push(json!({"id":"isc-dependency-id"}));
-    metadata["packages"].as_array_mut().unwrap().push(json!({
-        "id":"isc-dependency-id",
-        "source":"registry+fixture",
-        "name":"libloading",
-        "version":"0.8.9",
-        "license":"ISC",
-        "manifest_path":isc_source.join("Cargo.toml")
-    }));
-    let revision = "3b27cf2bfd1adcfa6e0264eb51c1025ddaf0f342";
-    let source = root.join("dependency");
-    fs::remove_file(source.join("LICENSE-MIT")).unwrap();
-    fs::write(
-        source.join(".cargo_vcs_info.json"),
-        json!({"git":{"sha1":revision}}).to_string(),
-    )
-    .unwrap();
-    let licenses = root.join("licenses/upstream");
-    fs::create_dir_all(licenses.join(revision)).unwrap();
-    fs::copy(
-        Path::new(env!("CARGO_MANIFEST_DIR")).join("licenses/upstream/sources.json"),
-        licenses.join("sources.json"),
-    )
-    .unwrap();
-    fs::copy(
-        Path::new(env!("CARGO_MANIFEST_DIR")).join(format!("licenses/upstream/{revision}/LICENSE")),
-        licenses.join(revision).join("LICENSE"),
-    )
-    .unwrap();
-
-    let destination = root.join("dist/package");
-    assemble(&root, &destination, &metadata, target, &"c".repeat(40)).unwrap();
-    let bundled =
-        fs::read_to_string(destination.join("licenses/clipboard-win-5.4.1/LICENSE")).unwrap();
-    assert!(bundled.starts_with("Boost Software License - Version 1.0"));
-    let bundled =
-        fs::read_to_string(destination.join("licenses/libloading-0.8.9/LICENSE")).unwrap();
-    assert!(bundled.contains("Permission to use, copy, modify, and/or distribute"));
     fs::remove_dir_all(root).unwrap();
 }
 

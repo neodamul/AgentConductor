@@ -1,5 +1,7 @@
 # Native Rust UI toolkit evaluation
 
+> Retired by #940 (0.2.9), 2026-11-13: the alternate Rust UI implementation, dedicated tests, feature and dependencies have been removed. The text below is historical evidence, not an active build or verification plan.
+
 ## Product constraint
 
 AgentConductor exists to reduce the resource cost of running several AI desktop

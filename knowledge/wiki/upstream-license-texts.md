@@ -54,3 +54,6 @@ Sources:
 - [tests/release_package.rs](../../tests/release_package.rs)
 - [licenses/upstream/sources.json](../../licenses/upstream/sources.json)
 - [.gitattributes](../../.gitattributes)
+
+
+Retirement (#940, 0.2.9): eframe and its UI-only dependency graph were removed. The unused clipboard-win and libloading upstream records/texts and their prototype-only license tests were deleted. Current WebView2 provenance and generic license/package verification remain required; generated notices and SBOM use only the retained Cargo resolution. The prototype audit above is historical.

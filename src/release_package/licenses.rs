@@ -10,8 +10,6 @@ use super::{required_string, sha256_file};
 
 const ALLOWED: &[&str] = &[
     "MIT",
-    "ISC",
-    "BSL-1.0",
     "MIT OR Apache-2.0",
     "Apache-2.0 OR MIT",
     "MIT/Apache-2.0",

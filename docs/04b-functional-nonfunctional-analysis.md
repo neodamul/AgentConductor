@@ -830,3 +830,6 @@ FR-107 / #931: validate observed rather than inferred permission capability; a z
 
 
 FR-163 amendment (#935, #936): send bounded answers and their question context with the current proposed goal. Keep the workflow read-only, asynchronous, and revision-checked. Do not mutate the saved goal until explicit acceptance; empty answers cannot trigger another generation.
+
+
+#940: remove only alternate-UI source/tests/features and unreachable open-source graph entries. Retain native platform window/transport and CLI permission/worker verification. Lockfile and license provenance must match remaining packages.

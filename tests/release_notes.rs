@@ -78,34 +78,19 @@ fn stable_release_contract_is_verified_in_rust() {
 }
 
 #[test]
-fn platform_validation_keeps_push_and_pr_triggers_and_tests_native_room_render() {
+fn platform_validation_keeps_supported_app_checks_and_triggers() {
     let validation = normalize_lines(include_str!("../.github/workflows/platform-validation.yml"));
     let triggers = &validation[..validation.find("\npermissions:").unwrap()];
-    assert!(triggers.contains("workflow_dispatch:"));
-    assert!(triggers.contains("workflow_call:"));
-    assert!(triggers.contains("\n  push:"));
-    assert!(triggers.contains("\n  pull_request:"));
-    let ui_tests = validation
-        .split("- name: Validate opt-in native Rust UI launch path")
-        .nth(1)
-        .and_then(|step| step.split("\n      - name:").next())
-        .unwrap_or("");
-    assert!(ui_tests.contains("run: |\n"));
-    for target in [
-        "native_ui_launch",
-        "native_ui_probe",
-        "native_room_render",
-        "native_ui_profiles",
-        "native_ui_roles",
-        "native_ui_tasks",
-        "native_ui_pending",
-        "native_ui_activity",
-        "native_ui_tool_dialog",
-        "native_ui_cache",
-        "native_ui_workspaces",
+    for trigger in [
+        "workflow_dispatch:",
+        "workflow_call:",
+        "\n  push:",
+        "\n  pull_request:",
     ] {
-        assert!(ui_tests.contains(&format!("--test {target}")), "{target}");
+        assert!(triggers.contains(trigger));
     }
+    assert!(validation.contains("cargo test --all-targets --locked --no-fail-fast"));
+    assert!(validation.contains("cargo clippy --all-targets --locked -- -D warnings"));
 }
 
 #[test]

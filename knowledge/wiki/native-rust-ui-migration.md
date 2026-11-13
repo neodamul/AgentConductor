@@ -1,5 +1,7 @@
 # Native Rust UI migration
 
+> Retired by #940 (0.2.9), 2026-11-13: the alternate Rust UI implementation, dedicated tests, feature and dependencies have been removed. The text below is historical evidence, not an active build or verification plan.
+
 Status: active migration; the shipped application still uses its existing WebView UI.
 
 ## Architecture boundary

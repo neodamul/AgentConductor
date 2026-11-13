@@ -93,8 +93,7 @@ Counts are text searches on `main` at `b7fa27a9` (`src/` about 36,500 lines, `te
 
 One check is added beyond the existing formatter, Clippy and layout guard (GitHub #172, extended
 by #176): a CI step on macOS and Windows that denies `clippy::undocumented_unsafe_blocks` for the
-library, binaries and integration tests (`cargo clippy --lib --bins --tests --features
-native-ui-probe -- -D clippy::undocumented_unsafe_blocks`), so rule 11 cannot regress anywhere in
+library, binaries and integration tests (`cargo clippy --lib --bins --tests -- -D clippy::undocumented_unsafe_blocks`), so rule 11 cannot regress anywhere in
 the repository. Tests change the process environment only through `tests/support/env.rs`, a lock
 that is held for the whole test and restores the originals on drop; it carries the single safety
 comment. Its documented limit is that it serializes mutating tests only, so full soundness needs

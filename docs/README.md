@@ -323,7 +323,7 @@ requirement changes it.
 | R-35 Maintainable source layout | BG-05 | SF-12 | — | NFR-07, C-04 | QAS-12 | DDR-04, DDR-06 | DD-41 | current |
 | R-65 Idle footprint within the resource budget | BG-10 | — | — | NFR-05 | QAS-58 | DDR-06 | DD-71 | current |
 | R-94 Bound and clear disposable caches | BG-49 | SF-81 | UC-84 | FR-79 | QAS-90 | — | DD-102 | current |
-| R-151 Rust-only application and release toolchain | BG-106 | SF-138 | UC-141 | FR-136 | QAS-147 | — | DD-160 | in progress (not on main) |
+| R-151 Rust-only application and release toolchain | BG-106 | SF-138 | UC-141 | FR-136 | QAS-147 | — | DD-160 | UI migration retired (#940) |
 | R-171 CI tests synchronize on observable readiness | BG-123 | SF-158 | UC-161 | FR-156, NFR-65 | QAS-167 | DDR-31 | DD-181 | current |
 | R-174 New Rust code follows a short, evidence-based review policy | BG-129 | SF-162 | UC-165 | FR-160, NFR-70, C-06 | QAS-171 | DDR-34 | DD-185 | current |
 | R-175 Every unsafe operation states why it is sound | BG-130 | SF-163 | UC-166 | FR-161, NFR-71 | QAS-172 | DDR-35 | DD-186 | current |

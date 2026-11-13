@@ -24,3 +24,6 @@ TDD reproduced the split renderer for a deferred receipt while another pending r
 ## Limits and revalidation
 
 These are deterministic egui/accessibility-tree and protocol tests, not a live authenticated tool call. Reverify the exact macOS/Windows native package journeys tracked by #348 before treating native tool-decision acceptance as complete. Revalidate after changes to receipt fields, tool actions, run revision semantics, or modal ownership.
+
+
+Status (#940): the alternate eframe implementation and its dedicated validation were removed. Tool decision behavior and verification for the current WebView desktop/shared backend remain active.

@@ -7,3 +7,6 @@ Task rows and the workspace planning indicator share the motion-aware status col
 This behavior verifies egui animation suppression. It does not prove that macOS or Windows reduced-motion preferences are detected or mapped into the egui style. Keep OS-level claims pending platform-specific verification.
 
 Trace: `R-17` → `NFR-10` → `QAS-21` → `DD-17`. GitHub #59.
+
+
+Status (#940): eframe-specific motion/rendering implementation and tests were removed with the retired alternate UI. Current WebView accessibility behavior remains supported.

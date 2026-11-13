@@ -799,3 +799,6 @@ SF-109 / #931: share effective-mode/result-denial interpretation across CLI meta
 
 
 SF-165 amendment (#935, #936): provide a bounded clarification answer field and asynchronous re-optimization; replace proposal, changes and remaining questions only after a successful response.
+
+
+#940: the production desktop has one supported WebView shell; the optional eframe UI and its launch/validation feature are removed.

@@ -1,5 +1,7 @@
 # Implementation plan and TDD
 
+> Current scope (#940): the postponed alternate Rust UI and its dedicated validation have been removed. Earlier migration checklists below are historical and must not be scheduled or executed.
+
 ## Stable release 0.1.30 checklist (2026-10-19)
 
 - [x] Plan: confirm the latest main commit and verify that `v0.1.30` is unused remotely.
@@ -4096,3 +4098,15 @@ Trace: R-177 / BG-132 / SF-165 / UC-168 / FR-163 / QAS-174 / DD-188.
 - [x] Completed: implementation, local review, manuals, wiki and evidence recorded; linked PR tracks merge/closure, memory/signal and cleanup.
 
 Evidence: [optimizer clarification checks](evidence/936-optimizer-clarifications.md). 33 focused Rust/docs tests, all 104 Node UI scripts, four actual browser theme/width workflows, 16 focused parity entries, 183 reference interactions per configuration, four new reference captures, manifest integrity, Clippy with warnings denied, formatting and changed-source 300-line checks passed locally. Authenticated provider rewriting quality and physical Windows acceptance are not claimed.
+
+### Retire the postponed Rust UI — GitHub #940 (0.2.9)
+
+Trace: R-151 / BG-106 / SF-138 / UC-141 / FR-136 / QAS-147 / DD-160 / DD-161.
+
+- [x] Plan: register/claim issue-linked branch; inventory callers, tests, CI, dependency graph and license provenance; document the superseding decision.
+- [x] Task: Red removal contract; delete alternate UI source, launch feature/binary and dedicated validation.
+- [x] Task: prune unreachable dependencies and unused OSS/license artifacts; preserve current desktop and backend.
+- [x] Verify: local retained build/tests, license/package validation, Clippy and unchanged retained dependency versions.
+- [x] Completed: implementation, local diff review, wiki and evidence recorded; linked PR tracks merge/closure, memory/signal and owned cleanup.
+
+Evidence: [retirement verification](evidence/940-rust-ui-retirement.md). Local all-target build and Clippy (warnings and undocumented unsafe blocks denied) passed; 61 retained Rust tests and 47 Python verification tests passed. The retained packaging fixture moved to support without behavior changes to keep modified files below 300 lines. No physical Windows desktop execution or release is claimed.

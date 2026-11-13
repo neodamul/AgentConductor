@@ -671,3 +671,6 @@ BG-77 / #931: prevent false completion and repeated paid requests when organizat
 
 
 BG-132 amendment (#935, #936): resolve ambiguous goals inside the existing review dialog while retaining operator control over applying the result.
+
+
+#940: reduce source, dependency and validation overhead by retiring the unshipped alternate UI while retaining the working desktop application.
