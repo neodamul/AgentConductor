@@ -28,8 +28,7 @@ fn lost_ownership_evidence_refuses_an_automatic_transfer() {
 
 #[test]
 fn a_restricted_first_role_with_a_due_fallback_moves_before_later_roles_start() {
-    // GitHub #687: before any task launches, t01's account (paid) is out until well past the five-hour horizon, so its reviewed
-    // fallback is due and t01 is transferred; t02 (company) is untouched, so the plan order t01 -> t02 holds.
+    // GitHub #687 / #925: transfer restricted t01 before later ready t02; reset distance must not delay the handoff.
     use serde_json::json;
     let root = std::env::temp_dir().join(format!(
         "ac-fallback-order-{}",
@@ -99,7 +98,7 @@ fn a_restricted_first_role_with_a_due_fallback_moves_before_later_roles_start() 
         report.tasks[0].status, "pending",
         "it is ready to run in plan order, not parked"
     );
-    // Inside the horizon the role keeps waiting for its own account.
+    // #925: even a short reset must transfer before later ready roles start.
     report.plan.tasks[0].agent = "paid".into();
     report.tasks[0].status = "pending".into();
     let soon =
@@ -108,10 +107,10 @@ fn a_restricted_first_role_with_a_due_fallback_moves_before_later_roles_start() 
         .account_restrictions
         .insert("paid".into(), serde_json::from_value(soon).unwrap());
     assert!(
-        !super::assignment::apply_fallbacks_at(&mut report, &run, &mut store, now + 60).unwrap()
+        super::assignment::apply_fallbacks_at(&mut report, &run, &mut store, now + 60).unwrap()
     );
-    assert_eq!(report.plan.tasks[0].agent, "paid");
-    assert_eq!(report.tasks[0].status, "waiting_availability");
+    assert_eq!(report.plan.tasks[0].agent, "company");
+    assert_eq!(report.tasks[0].status, "pending");
     drop(store);
     std::fs::remove_dir_all(root).unwrap();
     std::fs::remove_dir_all(run).unwrap();

@@ -108,7 +108,7 @@ requirement changes it.
 | R-85 Enterprise usage as a percentage | BG-40 | SF-72 | UC-75 | FR-70, NFR-41 | QAS-81 | — | DD-93 | current |
 | R-86 Claude capacity on Windows reports why it is unavailable | BG-41 | SF-73 | UC-76 | FR-71, NFR-42 | QAS-82 | — | DD-94 | current |
 | R-97 Usage query accepts the Claude folder-trust prompt | BG-52 | SF-84 | UC-87 | FR-82 | QAS-93 | — | DD-105 | current |
-| R-127 Durable quota resume and five-hour fallback | BG-82 | SF-114 | UC-117 | FR-112 | QAS-123 | — | DD-136 | current |
+| R-127 Durable quota resume and immediate reviewed fallback | BG-82 | SF-114 | UC-117 | FR-112 | QAS-123 | — | DD-136 | current |
 | R-130 Compact quota cards and readable step explanations | BG-85 | SF-117 | UC-120 | FR-115 | QAS-126 | — | DD-139 | current |
 | R-136 Approval readiness and Claude API usage limits | BG-91 | SF-123 | UC-126 | FR-121 | QAS-132 | — | DD-145 | current |
 | R-145 Saved-project Claude quota retry | BG-100 | SF-132 | UC-135 | FR-130 | QAS-141 | — | DD-154 | current |

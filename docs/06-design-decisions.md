@@ -1276,8 +1276,8 @@ src/update.rs queries https://api.github.com/repos/neodamul/AgentConductor/relea
 Trace: R-126 -> BG-81 -> SF-113 -> UC-116 -> FR-111 -> QAS-122 -> DD-135. Source: user request, 2026-10-14.
 
 
-### DD-136 Durable run-bound watcher and a five-hour fallback horizon
-Persist account availability deadlines and coordinator instructions in the run store. Parse an explicit Claude reset timezone, reflect the local resume time and countdown, and resume due work once under run ownership. A reviewed fallback is eligible if the reset exceeds five hours, or no reset is known and five hours elapsed since the original restriction. Reassignment removes the task reservation; Stop cancels automatic continuation; completed work never restarts. App exit does not own the watcher; reopening restores a missing watcher with an exclusive lease. Unknown zones, incomplete reset windows and profile/model changes never invent a deadline.
+### DD-136 Durable run-bound watcher and immediate reviewed fallback
+Persist account availability deadlines and coordinator instructions in the run store. Parse an explicit Claude reset timezone, reflect the local resume time and countdown, and resume due work once under run ownership. For usage restrictions, an available reviewed fallback is eligible immediately, even with a short or unknown reset (#925). Manual reservations and transient-capacity retries retain their own deadlines. Reassignment removes the task reservation; Stop cancels automatic continuation; completed work never restarts. App exit does not own the watcher; reopening restores a missing watcher with an exclusive lease. Unknown zones, incomplete reset windows and profile/model changes never invent a deadline.
 Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. Source: user, 2026-10-14.
 
 ## DD-137 Semantic color tokens with light and dark sets
@@ -1325,7 +1325,7 @@ Retrying plan generation clears the previous visible failure immediately, switch
 
 ### DD-145 Snapshot-based review readiness and typed Claude API errors
 
-Plans reverted to their saved values can be approved; actual workspace/plan edits and active jobs still block approval with localized reasons. Compare normalized editable task values against a saved snapshot, retaining null/default semantics and preserving the baseline across local task add/remove. Claude api_error usage_limit_reached / HTTP 429 is an Error even without type/is_error. Persist a quota restriction without inventing utilization or a reset from duration fields; explicit retry/reset timestamps bind the durable reservation and reviewed five-hour fallback. Show the usage-limit reason instead of an opaque telemetry JSON blob. Trace: R-136 → BG-91 → SF-123 → UC-126 → FR-121 → QAS-132 → DD-145. Source: user, 2026-10-14.
+Plans reverted to their saved values can be approved; actual workspace/plan edits and active jobs still block approval with localized reasons. Compare normalized editable task values against a saved snapshot, retaining null/default semantics and preserving the baseline across local task add/remove. Claude api_error usage_limit_reached / HTTP 429 is an Error even without type/is_error. Persist a quota restriction without inventing utilization or a reset from duration fields; explicit retry/reset timestamps bind the durable reservation and reviewed immediate quota fallback. Show the usage-limit reason instead of an opaque telemetry JSON blob. Trace: R-136 → BG-91 → SF-123 → UC-126 → FR-121 → QAS-132 → DD-145. Source: user, 2026-10-14.
 
 
 ### DD-146 / DD-147 Codex reconnect notices; bundled manual
@@ -1760,3 +1760,6 @@ DD-222 / #919 execution budget: tests/node_runtime.rs already discovers every ro
 DD-143 / #918: replace the two kind-preset buttons with `#start-reference`; no new dialog or state.
 
 DD-231 / #921: extend the bug-report request enum with ReleaseNotes and share repository normalization and browser launch.
+
+
+DD-136 / #925 supersedes the five-hour fallback horizon for usage restrictions. Reuse fallback_due for immediate eligibility, preserving transient_capacity/manual_schedule deadlines. Derive the first fallback from Task::fallback_for, then traverse reviewed profile fallbacks with cycle detection. The watcher chooses the earliest valid source reset or fallback wake; unknown exhausted chains have no immediate repeating timer. Keep all-worker quiescence before Git handoff/invalidating dependents.

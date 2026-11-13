@@ -1585,7 +1585,7 @@ Trace: amends R-92 (see docs/README.md, requirement areas).
 
 ### DD-136 Quota resume coordinator (workflow / TDD)
 
-Persist account availability deadlines and coordinator instructions in the run store. Parse an explicit Claude reset timezone, reflect the local resume time and countdown, and resume due work once under run ownership. A reviewed fallback is eligible if the reset exceeds five hours, or no reset is known and five hours elapsed since the original restriction. Reassignment removes the task reservation; Stop cancels automatic continuation; completed work never restarts. App exit does not own the watcher; reopening restores a missing watcher with an exclusive lease. Unknown zones, incomplete reset windows and profile/model changes never invent a deadline.
+Persist account availability deadlines and coordinator instructions in the run store. Parse an explicit Claude reset timezone, reflect the local resume time and countdown, and resume due work once under run ownership. For usage restrictions, an available reviewed fallback is eligible immediately, even with a short or unknown reset (#925). Manual reservations and transient-capacity retries retain their own deadlines. Reassignment removes the task reservation; Stop cancels automatic continuation; completed work never restarts. App exit does not own the watcher; reopening restores a missing watcher with an exclusive lease. Unknown zones, incomplete reset windows and profile/model changes never invent a deadline.
 Trace: R-127 → BG-82 → SF-114 → UC-117 → FR-112 → QAS-123 → DD-136. Source: user, 2026-10-14.
 
 - [x] Plan: trace requirements, durable coordinator design and cancellation boundaries.
@@ -1696,7 +1696,7 @@ Retrying plan generation clears the previous visible failure immediately, switch
 
 ### DD-145 Approval and API limit workflow
 
-Plans reverted to their saved values can be approved; actual workspace/plan edits and active jobs still block approval with localized reasons. Compare normalized editable task values against a saved snapshot, retaining null/default semantics and preserving the baseline across local task add/remove. Claude api_error usage_limit_reached / HTTP 429 is an Error even without type/is_error. Persist a quota restriction without inventing utilization or a reset from duration fields; explicit retry/reset timestamps bind the durable reservation and reviewed five-hour fallback. Show the usage-limit reason instead of an opaque telemetry JSON blob. Trace: R-136 → BG-91 → SF-123 → UC-126 → FR-121 → QAS-132 → DD-145. Source: user, 2026-10-14.
+Plans reverted to their saved values can be approved; actual workspace/plan edits and active jobs still block approval with localized reasons. Compare normalized editable task values against a saved snapshot, retaining null/default semantics and preserving the baseline across local task add/remove. Claude api_error usage_limit_reached / HTTP 429 is an Error even without type/is_error. Persist a quota restriction without inventing utilization or a reset from duration fields; explicit retry/reset timestamps bind the durable reservation and reviewed immediate quota fallback. Show the usage-limit reason instead of an opaque telemetry JSON blob. Trace: R-136 → BG-91 → SF-123 → UC-126 → FR-121 → QAS-132 → DD-145. Source: user, 2026-10-14.
 
 - [x] Plan / Red: untyped API JSON becomes Unknown; unchanged plan remains dirty.
 - [x] Implement: explicit restriction cache and normalized review snapshot comparison.
@@ -3668,7 +3668,7 @@ Trace: R-210 / UC-202 / DD-222.
 
 ### A restricted role moves to its due fallback before later roles start — GitHub #687
 
-- [x] Plan: the scheduler applies due reviewed fallbacks at the top of each iteration while nothing runs (so always before the first launch), keeping the transfer's quiescence rule; a role whose reset is inside the five-hour horizon still waits for its own account; later independent roles then run after it in plan order.
+- [x] Plan: the scheduler applies due reviewed fallbacks at the top of each iteration while nothing runs (so always before the first launch), keeping the transfer's quiescence rule; the original five-hour gate was later superseded by #925 so a short or unknown quota reset also uses reviewed alternative capacity.
 - [x] Verify: `a_restricted_first_role_with_a_due_fallback_moves_before_later_roles_start` (a real repository fixture: the first role moves, the second is untouched, a reset inside the horizon keeps waiting); lib tests and every fallback / availability integration test pass; the real run's audit trail named the cause (`handoff` recorded only after the other task finished).
 - [ ] Completed: merged on `main`; closes #687.
 
@@ -4045,3 +4045,14 @@ Trace: R-134 / R-216 / SF-121 / SF-204 / UC-124 / UC-208 / FR-119 / FR-210 / QAS
 - [x] Task: mock first (merged button, divider, Release notes item), then the app and native `release_notes` request.
 - [x] Verify: runtime tests in both themes, parity entries, mock interaction checks, Rust bug-report/i18n contracts.
 - [x] Completed: combined PR with #918 and #921; merge and cleanup tracked by the PR.
+
+### Immediate reviewed quota fallback — GitHub #925 (0.2.8)
+
+Trace: R-127 / BG-82 / SF-114 / UC-117 / FR-112 / QAS-123 / DD-136.
+- [x] Plan: claim owner-codex and issue-linked branch; inspect scheduler, timer, task overrides and ownership protections.
+- [x] Task: Red regressions for fresh unknown/short resets, first-task ordering and exhausted fallback recovery.
+- [x] Task: immediate reviewed fallback without changing manual/transient schedules or safety gates.
+- [x] Verify: focused local scheduler, fallback, watcher, architecture and source-layout checks; update both manuals/wiki.
+- [x] Completed: local implementation, diff review and evidence recorded; linked PR tracks merge/closure and owned artifact/branch cleanup.
+
+#925 evidence: Red reproduced four timer failures and the actual subprocess run stuck in waiting_availability. Green:87 local tests (37 focused availability/fallback,31 library,7 architecture,5 independent watcher,1 Claude API workflow,4 manual renderer,1 manual menu,1 source layout); Clippy with warnings denied and changed-file formatting pass. Shared/worktree partial work, dependency completion, Stop, missing ownership evidence, task override/disabled fallback, unavailable chains and merge approval remain covered. English/Korean HTML manuals regenerated with the existing Rust renderer. No physical Windows/provider-account validation or release performed.
