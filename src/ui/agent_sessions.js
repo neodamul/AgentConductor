@@ -5,7 +5,7 @@ window.acSessions=(()=>{
  const STATE={running:'sessions.state_running',waiting:'sessions.state_waiting',done:'sessions.state_done',failed:'sessions.state_failed',stale:'sessions.state_stale',stopped:'sessions.state_stopped'};
  const TAGS=[['running','sessions.tag_running',['running']],['waiting','sessions.tag_waiting',['waiting']],['failed','sessions.tag_failed',['failed','stale']],['done','sessions.tag_done',['done','stopped']]];
  const finished=s=>['done','failed','stale','stopped'].includes(s.state),active=s=>s.state==='running'||s.state==='waiting';
- let all={},agent=null,label=id=>id,request=null,pending=null,soon;
+ let all={},agent=null,label=id=>id,request=null,pending=null,soon,busy=false;
  const time=ms=>{const d=new Date(ms);return d.toDateString()===new Date().toDateString()?d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):d.toLocaleString([],{month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'});};
  function paintChips(){
   for(const button of document.querySelectorAll('[data-sessions]')){
@@ -44,10 +44,13 @@ window.acSessions=(()=>{
   $('confirm-text').textContent=list.length===1?acMessage('sessions.confirm_one'):acMessage('sessions.confirm_many',{value1:list.length});
   $('confirm').hidden=false;$('confirm-cancel').focus();
  }
+ // GitHub #962: one request at a time (a double click must not clean twice), and focus stays in the dialog.
  async function act(packet){
-  status('');
+  if(busy)return;busy=true;status('');
+  for(const b of dialog().querySelectorAll('button:not(#start-agent-sessions-close)'))b.disabled=true;
   try{all=await request(packet);}catch(e){status(String(e?.message||e));}
-  pending=null;$('confirm').hidden=true;paintChips();if(dialog().open)paint();
+  busy=false;pending=null;$('confirm').hidden=true;$('confirm-ok').disabled=$('confirm-cancel').disabled=false;paintChips();
+  if(dialog().open){paint();($('clean-finished').disabled?$('close'):$('clean-finished')).focus();}
  }
  async function refresh(){if(!request)return;try{all=await request({kind:'agent_sessions'});paintChips();if(dialog().open)paint();}catch{}}
  $('confirm-cancel').onclick=()=>{pending=null;$('confirm').hidden=true;$('clean-finished').focus();};

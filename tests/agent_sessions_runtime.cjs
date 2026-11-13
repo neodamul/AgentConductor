@@ -27,6 +27,8 @@ try{const file=path.join(dir,'app.html');execFileSync(process.execPath,['tests/u
   q('confirm-cancel').click();check('cancel keeps every session',q('confirm').hidden&&rows().length===3);
   rows()[1].querySelector('button').click();q('confirm-ok').click();await until(()=>rows().length===2,'cleaned');
   check('confirmed clean-up removes that session and updates the card',SIM.log.some(e=>e.kind==='clean_sessions'&&e.p.sessions.length===1)&&chip.querySelector('.session-count').textContent==='2');
+  // GitHub #962: a double click cleans once, focus stays in the dialog, and the confirm button is the danger button.
+  {const before=SIM.log.filter(e=>e.kind==='clean_sessions').length;SIM.hang.clean_sessions=true;q('clean-finished').click();const danger=getComputedStyle(q('confirm-ok')).backgroundColor!==getComputedStyle(q('confirm-cancel')).backgroundColor;q('confirm-ok').click();q('confirm-ok').click();await until(()=>SIM.waiters.clean_sessions?.length,'clean sent');const locked=q('confirm-ok').disabled&&q('clean-finished').disabled;delete SIM.hang.clean_sessions;SIM.waiters.clean_sessions.splice(0).forEach(go=>go());await until(()=>rows().length===1,'cleaned once');check('#962: confirming twice sends one clean-up, locks the dialog while it runs, keeps focus in the dialog, and shows a danger button',SIM.log.filter(e=>e.kind==='clean_sessions').length===before+1&&locked&&document.getElementById('start-agent-sessions').contains(document.activeElement)&&danger);}
   data={claude:[row('t9','done',{cleanable:false})]};await acSessions.refresh();
   check('a finished session in an active run cannot be cleaned yet',rows()[0].querySelector('button').disabled&&q('clean-finished').disabled);
   q('close').click();data={};await acSessions.refresh();chip.click();

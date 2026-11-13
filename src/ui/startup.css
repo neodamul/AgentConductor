@@ -269,6 +269,7 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 .sessions-confirm{margin-top:10px;padding:10px 12px;border:1px solid var(--err);border-radius:8px;background:var(--err-bg);font-size:12px}
 .sessions-confirm p{margin:0 0 8px;color:var(--ink)}
 .sessions-confirm-actions{display:flex;gap:8px;justify-content:flex-end}
+.sessions-confirm .danger{background:var(--err);border-color:var(--err);color:var(--attention-ink)}
 #start-agent-sessions .sessions-actions{justify-content:space-between}
 #start-agent-sessions{width:560px;max-width:calc(100vw - 32px)}
 /* GitHub #869/#870: role, work-state and info tags with thin same-hue borders and 4px corners; the coordinator card carries a role band; the models tag lists its models. */

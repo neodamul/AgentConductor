@@ -933,3 +933,5 @@ QAS-141 / #933 / #934: tests/quota_folder_934.cjs (no folder: no query; folder s
 
 
 #948: Given a long verification command/path, Plan review remains a single-line summary at 840/1280px in Light/Dark; hover and expansion retain the complete value.
+
+#962: Given one finished session, a double click on the clean-up confirm sends one `clean_sessions` request, the dialog's actions are disabled while it runs, focus lands on Clean finished or Close afterwards, and the confirm matches the mock danger colors in both themes.
