@@ -139,6 +139,10 @@ pub async fn generate_from(
             "\nRequired response JSON Schema (phases and tasks are arrays, never ID-keyed objects; return no additional fields):\n{}\n",
             serde_json::to_string(&contract).map_err(|e| e.to_string())?
         );
+    let prompt = format!(
+        "{prompt}\n\nRead-only planning execution context: the CLI runs inside a disposable exported snapshot, not the original project. Use current-directory relative paths for Glob, Grep and Read. Original absolute project paths in the goal are labels: translate them to snapshot-relative paths. Do not access the original directory or request broader permissions; inspect only snapshot files. Original project label: {}\n",
+        repo.display()
+    );
     let task_file = dir.join("prompt.txt");
     fs::write(&task_file, &prompt).map_err(|e| e.to_string())?;
     for arg in &mut args {

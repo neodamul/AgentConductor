@@ -4117,3 +4117,16 @@ Trace: R-151 / BG-106 / SF-138 / UC-141 / FR-136 / QAS-147 / DD-160 / DD-161.
 - [x] Completed: implementation, local diff review, wiki and evidence recorded; linked PR tracks merge/closure, memory/signal and owned cleanup.
 
 Evidence: [retirement verification](evidence/940-rust-ui-retirement.md). Local all-target build and Clippy (warnings and undocumented unsafe blocks denied) passed; 61 retained Rust tests and 47 Python verification tests passed. The retained packaging fixture moved to support without behavior changes to keep modified files below 300 lines. No physical Windows desktop execution or release is claimed.
+
+### Recover read-only planning after denied source probes — GitHub #942 (0.2.8)
+
+Trace: R-122 / BG-77 / SF-109 / UC-112 / FR-107 / QAS-118 / DD-131 / DD-33.
+- [x] Plan: confirm live failure and recovery evidence, cancel publication, alert Claude and register the release blocker.
+- [x] Task: Red captured-shape decoder/coordinator tests and actual planning subprocess fixture.
+- [x] Task: scope recovery to read-only coordinator evidence and clarify snapshot execution context.
+- [x] Verify: local regressions, private-log replay without generation, workspace/input preservation and exact release-fix handoff.
+- [x] Completed: implementation, local diff review, manuals/wiki and actual app acceptance recorded; linked PR tracks merge/closure and final handoff. Release stays blocked pending separate release acceptance.
+
+Evidence: [planning read recovery](evidence/942-planning-read-recovery.md). Source-only fix commit 8bac96c6 is isolated for release maintenance. Actual private replay recovered four phases/ten tasks with all planner validations, without generation or user workspace writes. Release cancellation and subsequent draft withdrawal are recorded separately; publication remains on hold.
+
+Final local acceptance: 45 focused plus 36 broader checks passed; source-only fix 8bac96c6, signed local app installed with the original Workspace restored. Actual Claude regeneration completed and four phases/task review with Approve and run enabled was observed. Execution approval was left to the operator. v0.2.8 remains draft after publish/cancel-race withdrawal; old published tag/assets are preserved.

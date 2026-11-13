@@ -66,12 +66,7 @@ pub fn read_profile_document(
     stdout: &Path,
     field: &str,
 ) -> Result<Value, String> {
-    // Coordinators use restricted argv even when their worker profile requests full access.
-    let mut execution = profile.clone();
-    if execution.parser == Provider::Claude && execution.permission_mode == "full_access" {
-        execution.permission_mode = "read_only".into();
-    }
-    read_document_inner(execution.parser, Some(&execution), stdout, field)
+    read_document_inner(profile.parser, Some(profile), stdout, field)
 }
 
 fn read_document_inner(
@@ -81,7 +76,7 @@ fn read_document_inner(
     field: &str,
 ) -> Result<Value, String> {
     let mut decoder = profile
-        .map(|profile| Decoder::for_profile(profile, 1024 * 1024))
+        .map(|profile| Decoder::for_coordinator(profile, 1024 * 1024))
         .unwrap_or_else(|| Decoder::new(provider, 1024 * 1024));
     let mut file = fs::File::open(stdout).map_err(|error| error.to_string())?;
     let mut bytes = [0; 8192];

@@ -906,3 +906,6 @@ R-177 amendment (#935, #936, 0.2.8): optimization result lists use the dialog bo
 R-145 / #933 / #934 (0.2.8): the usage popup's retry after a failed query is the same icon-only control as refresh (labelled for assistive technology), and Claude usage that could not be read for lack of a project folder is queried automatically once a folder is set.
 
 #940 (0.2.9) supersedes the postponed Rust UI migration: remove its implementation, optional launch target and dedicated validation, and remove dependencies used only by that UI. Keep the current desktop UI and shared Rust backend.
+
+
+#942 (release blocker, 0.2.8): read-only planning must not reject a valid result solely because denied source probes were followed by successful allowed reads. Unresolved/tool-write denials and worker permission failures remain errors.

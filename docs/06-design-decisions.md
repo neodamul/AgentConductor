@@ -1774,3 +1774,6 @@ DD-188 amendment (#935, #936): reuse the optimize job and existing read-only coo
 DD-154 / #933 / #934: key the automatic Claude query on the folder-hint indicator too, not only on the cleared refresh stamp, so any path that sets the folder triggers it; a one-minute guard prevents a loop. The retry keeps the refresh glyph and changes only its label, as the mock now does.
 
 #940 supersedes the alternate Rust UI migration decisions: delete native_ui_probe and its dedicated tests/CI. Resolve the existing lockfile without upgrading retained dependencies; prune unused upstream license records while preserving required attribution and generic package validation.
+
+
+#942 corrects DD-131: keep worker policy fail-closed, but add explicit read-only coordinator decoding. Bounded tool-call/result evidence can recognize a recovered denied read probe; only a successful final response with valid requested JSON is accepted. Guide planners to relative paths in the disposable snapshot rather than original absolute source paths.
