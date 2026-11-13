@@ -4,11 +4,15 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
-## v0.2.8
+## v0.2.9
 
 - Re-plan each next Phase from merged outcomes, show task changes, continue unchanged plans and support opt-in exact verified automatic merges with Stop and approval gates preserved (#943).
 
 - Show reviewing Phase context in the Plan heading and editable tasks only once; retain Phase history and unsaved task edits (#944).
+
+- Keep long verification commands and paths compact in Plan review, with complete tooltips and unchanged expanded editors (#948).
+
+## v0.2.8
 
 - Remove the postponed alternate Rust UI, its dedicated validation and unused dependencies; retain the supported desktop UI and shared Rust backend (#940).
 

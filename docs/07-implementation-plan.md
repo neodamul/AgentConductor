@@ -4154,3 +4154,10 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 - [x] Task: reproduce oversized collapsed rows; reuse ellipsis and translated tooltip binding.
 - [x] Verify: reproduced 1400px collapsed summary before fix; compact summaries, full tooltips and unmodified editor values passed at 840/1280px in Light/Dark.
 - [x] Completed: local acceptance passed; commit/push and issue-closing PR prepared. Combined release validation remains separate.
+
+## Stable 0.2.9 release
+
+- [x] Plan: close milestone issues #943 and #948; retain supported WebView UI and shared Rust backend.
+- [x] Task: synchronize version, reviewed release notes, README and bilingual manual sources.
+- [ ] Verify: refresh sample gallery and generated HTML; local exact-source package smoke; combined macOS/Windows Release workflow.
+- [ ] Completed: confirm published stable archives/checksums/manuals, record evidence and clean task-owned temporary files and merged branches.
