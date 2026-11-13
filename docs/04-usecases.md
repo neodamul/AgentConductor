@@ -893,3 +893,7 @@ UC-91 / #899: create a Workspace using the machine agent list; Workspace setting
 
 
 UC-124 / #916 / #917: collapse or expand the guide while sources load; keep that choice as progress completes. Review long source identifiers/titles without horizontal scrolling; required Jira sources remain checked and optional sources can be unchecked before Apply.
+
+UC-124 / #918: choose Jira / Confluence, pick the source in the dialog, enter the ID and add the reference.
+
+UC-208 / #921: select Help → Release notes; the default browser opens the release page of the running version on the configured repository.

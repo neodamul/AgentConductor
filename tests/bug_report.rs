@@ -127,3 +127,20 @@ fn opens_the_default_browser_on_an_operator_request() {
     println!("Opened configured report draft: {}", report["url"]);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn release_notes_open_the_running_version_on_the_update_repository() {
+    for (input, base) in [
+        ("", "https://github.com/neodamul/AgentConductor"),
+        (
+            "https://git.corp.example:8443/team/tool.git",
+            "https://git.corp.example:8443/team/tool",
+        ),
+    ] {
+        let notes = bug_report::release_notes(input).unwrap();
+        let version = env!("CARGO_PKG_VERSION");
+        assert_eq!(notes["version"], version);
+        assert_eq!(notes["url"], format!("{base}/releases/tag/v{version}"));
+    }
+    assert!(bug_report::release_notes("javascript:alert(1)").is_err());
+}

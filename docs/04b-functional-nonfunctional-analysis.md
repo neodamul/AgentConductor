@@ -814,3 +814,7 @@ FR-86 / #899: derive the default only at fresh Workspace initialization after ma
 
 
 FR-119 / #916 / #917: set the guide default in markup, never in periodic card rendering. Scope checkbox sizing/checked presentation to source headers, bound long reference text, retain real checkbox/disabled semantics and exact selected-source payloads.
+
+FR-119 / #918: reuse the existing reference dialog and limit state for the single button; the dialog keeps the last chosen source.
+
+FR-210 / #921: a release_notes request carries only its kind; the backend builds `<repository>/releases/tag/v<version>` from the validated updater repository and opens it like bug reports.

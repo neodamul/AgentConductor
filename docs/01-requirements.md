@@ -887,3 +887,7 @@ R-101 / #899 (0.2.6): a newly created Workspace with registered agents but no va
 
 
 R-134 / #916 / #917 (0.2.7): preserve the operator-controlled preview-guide disclosure across progress/result refreshes. Review card headers must fit the dialog, keep full reference/title available, and visibly match checked/required source state.
+
+R-134 / #918 (0.2.7): one "Jira / Confluence" Goal button opens the reference dialog, which selects the source; a divider separates it from Optimize prompt.
+
+R-216 / #921 (0.2.7): Help lists Release notes between Check for updates and Report a bug; it opens the running version's release page on the same configured repository.

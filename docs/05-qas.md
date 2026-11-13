@@ -901,3 +901,7 @@ QAS-130 / #916 / #917: both themes and840/1280px widths preserve manual disclosu
 
 
 QAS-209 / #919: UI regressions wait for the new document and observable completed saves before subsequent actions. Capture provenance covers every loaded reference script; artifact hashes come from the verified snapshot. Timeout diagnostics identify the unmet condition without hiding failures.
+
+QAS-130 / #918: the merged button, divider and over-limit disabled state match the approved mock in both themes (parity entries type-import-divider, type-import-button, reference-limit-add-disabled).
+
+QAS-215 / #921: the Help order and request payload are checked in both themes; the URL is derived only from a validated repository and the build version.

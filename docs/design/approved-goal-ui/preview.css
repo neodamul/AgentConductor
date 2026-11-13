@@ -457,6 +457,7 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 [aria-invalid="true"]{border-color:var(--err)!important}
 .source-status.over{color:var(--err)}
 .goal-import-actions button:disabled{opacity:.42}
+.import-divider{flex:none;width:1px;align-self:stretch;margin:3px 4px;background:var(--line)}
 
 /* #917: headers keep native checkbox semantics without inheriting text-input geometry. */
 .source-review .source-doc-head input[type=checkbox]{appearance:none;box-sizing:border-box;display:grid;place-content:center;flex:0 0 16px;width:16px;height:16px;margin:0;padding:0;border:1px solid var(--line-strong);border-radius:3px;background:var(--surface);opacity:1}

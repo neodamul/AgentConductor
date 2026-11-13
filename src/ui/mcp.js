@@ -40,7 +40,7 @@ function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,sh
   if(!await action({kind:'mcp_preview'})){previewing=false;q('mcp-loading').hidden=true;q('mcp-review').close();}};
  // GitHub #903: only the documents the last preview failed to read are fetched again.
  q('mcp-retry').onclick=async()=>{const kept=review;review=null;previewing=true;lastProgress=null;q('mcp-retry').hidden=true;q('mcp-apply').disabled=true;if(!await action({kind:'mcp_preview',retry:true})){previewing=false;showPreview(kept);}};
- for(const kind of ['jira','confluence'])q(kind+'-reference').onclick=()=>{q('source-kind').value=kind;q('source-id').value='';q('source-reference').showModal();};
+ q('reference').onclick=()=>{q('source-id').value='';q('source-reference').showModal();};
  q('source-add').onclick=()=>{const kind=q('source-kind').value,id=q('source-id').value.trim();if(sourceCount>=REFERENCE_LIMIT&&!sourceReferences.includes(kind+':'+id)){notice(()=>acMessage('mcp.reference_limit_reached',{limit:REFERENCE_LIMIT}),true);return;}const valid=kind==='jira'?/^[A-Z][A-Z0-9_]*-\d+$/.test(id):/^\d{1,32}$/.test(id);if(!valid){notice(()=>(acMessage("mcp.enter_a_jira_issue_key_or_numeric_confluence")),true);return;}q('goal').value=q('goal').value.trimEnd()+` [${kind==='jira'?'Jira':'Confluence'}:${id}]`;capture();mark();q('source-reference').close();};
  q('mcp-apply').onclick=async()=>{if(!review)return;const selected=[...q('mcp-records').querySelectorAll('input:checked')].map(n=>n.value);const r=await action({kind:'mcp_apply',preview_id:review.id,selected});if(r){q('mcp-review').close();notice(()=>(acMessage("mcp.selected_source_evidence_approved_locally_generate_a_plan")));}};
  // GitHub #903: one card per Goal reference with its step, elapsed time and live log (same structure as the approved mock).
@@ -115,7 +115,7 @@ function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,sh
   // GitHub #907: five references at most; adding stops at the limit and a longer Goal cannot be previewed.
   const over=sourceCount>REFERENCE_LIMIT,full=sourceCount>=REFERENCE_LIMIT;
   q('mcp-preview').disabled=job?.state==='running'||!sourceCount||over;
-  for(const kind of ['jira','confluence']){const b=q(kind+'-reference');b.disabled=full;b.title=full?acMessage('mcp.reference_limit_reached',{limit:REFERENCE_LIMIT}):'';}
+  {const b=q('reference');b.disabled=full;b.title=full?acMessage('mcp.reference_limit_reached',{limit:REFERENCE_LIMIT}):'';}
   for(const b of q('source-suggestions').querySelectorAll?.('button')||[])b.disabled=full;
   q('source-status').classList?.toggle('over',over&&!looking);
   // A lookup still running after the workspace reopened keeps its progress, so its window can show the result.

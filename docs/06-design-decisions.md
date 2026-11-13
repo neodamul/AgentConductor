@@ -1756,3 +1756,7 @@ DD-143 / #916 / #917: remove render-time details.open assignments and use a mark
 DD-222 / #919: replace evaluate-triggered reload with the existing CDP goto lifecycle barrier; wait for save completion feedback before the next mocked failure. Add the missing workspace reference script to capture inputs and assert coverage of all loaded scripts. Keep the existing manifest validation strict.
 
 DD-222 / #919 execution budget: tests/node_runtime.rs already discovers every root tests/*.cjs script. Remove only the duplicate Python wrappers for workspace_save_905.cjs and source_review_916.cjs; the same UI assertions still run once in the Node suite. The measured duplicate runs cost about21+32seconds per platform.
+
+DD-143 / #918: replace the two kind-preset buttons with `#start-reference`; no new dialog or state.
+
+DD-231 / #921: extend the bug-report request enum with ReleaseNotes and share repository normalization and browser launch.

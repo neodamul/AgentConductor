@@ -4037,3 +4037,11 @@ Trace: R-210 / QAS-209 / DD-222.
 - [x] Completed: local implementation/review and wiki/memory recorded; linked PR tracks merge/closure and cleanup.
 
 #919 full local Node run: all root .cjs scripts executed; only source_progress_903 failed because it still expected automatic guide collapse. Preserve failure/retry/focus assertions and explicitly collapse the guide before completion; targeted13checks per theme then pass. No claim of a fresh all-green aggregate invocation after that isolated test change.
+
+### One reference button and Help release notes — GitHub #918 / #921 (0.2.7)
+
+Trace: R-134 / R-216 / SF-121 / SF-204 / UC-124 / UC-208 / FR-119 / FR-210 / QAS-130 / QAS-215 / DD-143 / DD-231.
+- [x] Plan: claim owner-claude, inspect every caller of the reference buttons and the Help menu.
+- [x] Task: mock first (merged button, divider, Release notes item), then the app and native `release_notes` request.
+- [x] Verify: runtime tests in both themes, parity entries, mock interaction checks, Rust bug-report/i18n contracts.
+- [x] Completed: combined PR with #918 and #921; merge and cleanup tracked by the PR.

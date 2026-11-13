@@ -4,10 +4,13 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
-## Unreleased — 0.2.7
+## v0.2.7
 
-- Keep the document preview guide under user control during progress updates.
-- Keep review-card headers inside the dialog and show required/optional checkbox selection clearly.
+- Keep the document preview guide under user control during progress updates (#916).
+- Keep review-card headers inside the dialog and show required/optional checkbox selection clearly (#917).
+- One **Jira / Confluence** Goal button opens the reference dialog (choose the source there), separated from Optimize prompt by a divider (#918).
+- **Help → Release notes** opens the running version's release page on the configured repository (#921).
+- Stabilize navigation-save and capture-provenance tests (#919).
 
 ## v0.2.6
 

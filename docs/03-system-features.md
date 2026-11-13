@@ -783,3 +783,7 @@ SF-121 / #882 correction: server discovery feeds coordinator-selected document r
 SF-198 / SF-37 / SF-121 / #890: reference interactions cover historical task selection, readable log metadata, recoverable notification-save errors and MCP discovery status without manual bindings.
 
 SF-121 / #898: visible, editable bracketed source tags and efficient bounded MCP document summarization; existing read-only permissions and source review remain enforced.
+
+SF-121 / #918: a single reference entry point for both document sources beside a visible divider from prompt optimization.
+
+SF-204 / #921: release notes for the running version are reachable from Help.

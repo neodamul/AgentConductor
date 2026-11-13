@@ -76,7 +76,7 @@ const SOURCE_LIMIT=5;
 function sourceLimit(){
  const refs=new Set([...document.getElementById('goal-entry').value.matchAll(/\[(Jira|Confluence):([^\]]+)\]/g)].map(m=>m[1].toLowerCase()+':'+m[2]));
  const count=refs.size,full=count>=SOURCE_LIMIT,over=count>SOURCE_LIMIT,status=document.getElementById('source-status');
- for(const id of ['source-jira','source-confluence']){const b=document.getElementById(id);b.disabled=full;b.title=full?'Goal에는 참조 문서를 5개까지 넣을 수 있습니다.':'';}
+ {const b=document.getElementById('source-reference');b.disabled=full;b.title=full?'Goal에는 참조 문서를 5개까지 넣을 수 있습니다.':'';}
  sourcePreviewButton.disabled=!count||over;
  status.classList.toggle('over',over);
  status.textContent=over?'Goal에는 Jira·Confluence 문서를 5개까지 넣을 수 있습니다(현재 '+count+'개). 하나를 지우면 미리볼 수 있습니다.':count?'참조 '+count+'/'+SOURCE_LIMIT:'';
