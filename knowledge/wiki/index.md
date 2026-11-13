@@ -191,3 +191,5 @@
 - [Source review feedback](source-review-feedback.md) — operator disclosure, bounded headers and real checkbox selection.
 
 - [UI regression boundaries](ui-regression-boundaries.md) — navigation, complete-save barriers and full capture provenance.
+
+- [Claude effective permission policy](claude-permission-policy.md) — requested versus effective mode, denial handling and explicit callbacks (#931).

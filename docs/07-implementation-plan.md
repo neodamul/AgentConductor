@@ -4067,3 +4067,14 @@ Trace: R-210 / UC-202 / QAS-209 / DD-222.
 - [x] Completed: local implementation, diff review, wiki and verification evidence recorded; linked PR tracks merge/closure, completion signal and owned cleanup.
 
 #927 evidence: Red found the run-banner element in the actual failed-state page. Final local aggregate:102 Node UI scripts passed;108 related Rust cases passed (one additional installed-OpenCode integration ignored);6 Python manifest/tool-dialog checks passed;16 focused parity entries passed across light/dark and840/1280. The reference interaction checker passed183checks per theme/width and verified92capture states (88existing plus4failure/scope images); existing image noise was excluded from the diff. Clippy with warnings denied, rustfmt,300line checks and generated EN/KO manual consistency passed. Transcripts/task/tool/coordinator render blocks moved byte-for-byte; embedding and simulator share the same fragments. No physical Windows/live CLI validation or release performed.
+
+### Effective Claude permissions — GitHub #931 (0.2.8)
+
+Trace: R-122 / BG-77 / SF-109 / UC-112 / FR-107 / QAS-118 / DD-131.
+- [x] Plan: claim the issue-linked owner-codex branch, coordinate Claude #928/#929 and inspect decoder/profile/metadata/worker paths.
+- [x] Task: Red coverage for effective-mode mismatch, zero-exit permission denials, invalid callback argv, restricted coordinator invocation and quota-noise precedence.
+- [x] Task: verify permission before forwarding the user prompt; normalize denials; reuse asynchronous metadata evidence; offer explicit callback setup.
+- [x] Verify: local protocol/workflow/coordinator regressions, broad ad-hoc execution matrix, UI setup, docs/manuals and source bounds.
+- [x] Completed: implementation, local diff review, wiki and verification evidence recorded; linked PR tracks merge/closure, completion signal and owned cleanup.
+
+Evidence: [ad-hoc matrix](evidence/931-permission-ad-hoc.md). Local checks: 68 focused Rust cases; 47 broader Workspace/Goal/workflow cases; 19 documentation/architecture/i18n cases; library and repeated Stop/fallback/workflow safety checks; all 103 root Node UI scripts; callback save/reopen in four theme/width combinations; eight focused parity entries; 183 reference interaction checks per theme/width; six refreshed reference captures; design manifest integrity, Clippy with warnings denied, changed-file formatting and 300-line limits. The installed Claude initialize-only probe confirmed mode metadata without a user-generation prompt. Physical Windows/company policy acceptance and release are not claimed.

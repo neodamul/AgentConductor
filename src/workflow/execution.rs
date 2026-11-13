@@ -1,4 +1,5 @@
 use super::*;
+mod claude;
 mod permissions;
 mod worker;
 pub(crate) use permissions::validate_permissions;

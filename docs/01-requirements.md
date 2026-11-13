@@ -897,3 +897,6 @@ R-127 / #925 (0.2.8): a usage-limited task immediately uses an available reviewe
 
 
 R-210 / #927 (0.2.8): remove the run status banner in every state. Preserve diagnostics, interrupted/owned-file warnings, scope recovery and feedback repair in the task card/footer; keep status in the title pill, Resume in the composer and approval/next-result actions in existing review footers.
+
+
+R-122 / #931 (0.2.8): Claude full_access is a requested capability, not proof of effective access. Verify CLI-reported initialization permission mode; block mismatches/unknown mode before continuing. Nonempty result permission_denials cannot complete a task. Support an explicit native_callback selection through agent setup without bypassing organization policy.

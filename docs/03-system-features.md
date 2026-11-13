@@ -793,3 +793,6 @@ SF-114 / #925: share immediate quota fallback eligibility between scheduler and 
 
 
 SF-198 / #927: show run diagnostics within the card and recovery actions in its footer; never create a separate run-status banner.
+
+
+SF-109 / #931: share effective-mode/result-denial interpretation across CLI metadata verification and execution; retain mode evidence, diagnostic logs and partial files, and expose actionable configuration hints.

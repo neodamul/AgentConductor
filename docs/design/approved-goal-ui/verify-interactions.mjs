@@ -71,6 +71,7 @@ try{
   if(mode==='briefing')action='renderTeamBriefing();openSidePanel("team-brief-dialog")';
   if(mode==='chat')action='document.getElementById("coordinator-chat-button").click()';
   if(mode==='profile-edit'||mode==='profile-edit-bottom'){await call('Runtime.evaluate',{expression:'selectRail("agents");'+frameWait,awaitPromise:true});action='openProfileEditor("claude");'+(mode==='profile-edit-bottom'?'const fields=document.querySelector(".profile-editor-fields");fields.scrollTop=fields.scrollHeight;':'');}
+  if(mode==='claude-permissions')action="openProfileEditor('claude');profileField('advanced').open=true;profileField('callback').scrollIntoView({block:'center'})";
   if(mode==='close-confirmation')action='openClosePreview()';
   if(mode==='settings')action='document.getElementById("settings-button").click()';
   if(mode==='sessions'||mode==='sessions-confirm'){await call('Runtime.evaluate',{expression:'selectRail("agents");'+frameWait,awaitPromise:true});action='openSessions("claude")'+(mode==='sessions-confirm'?';document.getElementById("sessions-clean-finished").click()':'');}

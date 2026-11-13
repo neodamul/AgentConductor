@@ -84,7 +84,7 @@ pub(in crate::workflow) async fn worker(
             report.pending_tool=outcome.pending;
             report.session_established|=outcome.established;
             outcome.process?
-        }else{crate::progress::observe_profile(process::run_until(spec,Some(stop_file.clone())),&live_spool,&live_db,&task.id,report.attempt as u64,&agent).await??};
+        }else{crate::progress::observe_profile(async {if agent.parser==crate::protocol::Provider::Claude&&agent.permission_mode=="full_access" {super::claude::run(spec,stop_file.clone()).await}else{process::run_until(spec,Some(stop_file.clone())).await}},&live_spool,&live_db,&task.id,report.attempt as u64,&agent).await.and_then(|result|result).inspect_err(|error|{permission_denied=crate::protocol::claude_permissions::is_policy_error(error);})?};
         stopped=process.stopped;
         timed_out=process.timed_out;
         if timed_out {
@@ -131,7 +131,10 @@ pub(in crate::workflow) async fn worker(
         }
         let failed=process.exit_code!=Some(0)||process.timed_out||process.stopped||provider_error.is_some()||denied.is_some();
         if failed {
-            if report.restriction.is_none() && !process.timed_out && !process.stopped {
+            let claude_denied = agent.parser == crate::protocol::Provider::Claude && denied.is_some();
+            // An explicit policy denial wins over unrelated quota text in retained logs.
+            if claude_denied { report.restriction = None; }
+            if !claude_denied && report.restriction.is_none() && !process.timed_out && !process.stopped {
                 let mut message=String::new();
                 fs::File::open(&process.stderr).map_err(|e|e.to_string())?.take(1024*1024).read_to_string(&mut message).map_err(|e|e.to_string())?;
                 report.restriction=availability::detect(&serde_json::Value::Null,&message,(now()/1000) as i64);

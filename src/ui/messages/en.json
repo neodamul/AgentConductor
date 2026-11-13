@@ -1395,7 +1395,7 @@
   "startup.coordinator_badge": "Coordinator",
   "startup.coordinator_model": "Coordinator model",
   "startup.read_only_args": "JSON array: how this CLI runs without writing; needed for the coordinator chat of a custom CLI",
-  "startup.read_only_args_summary": "Read-only arguments (optional)",
+  "startup.read_only_args_summary": "Advanced CLI permissions and read-only arguments",
   "startup.coordinator_cannot_chat": "Chat with this coordinator is unavailable: {reason}",
   "startup.config_hint_badge": "Check configuration",
   "startup.auto_approve_unconfigured": "This agent is set to approve tools automatically, but nothing in its settings shows when the CLI refuses one. Add the CLI's approval flag to its arguments and declare a denial condition (denial_condition), so a refused tool is reported as \"permission denied\" instead of a parser error or a silent success.",
@@ -1587,5 +1587,9 @@
   "mcp.too_many_references": "A Goal can reference at most {limit} Jira/Confluence documents ({count} now). Remove one to preview.",
   "mcp.references_count": "References {count}/{limit}",
   "mcp.reference_limit_reached": "A Goal can reference at most {limit} documents.",
-  "room.recovery_footer_note": "Inspect the cause, then choose how to continue."
+  "room.recovery_footer_note": "Inspect the cause, then choose how to continue.",
+  "startup.claude_callback_choice": "Route Claude tool decisions through AgentConductor (native_callback)",
+  "startup.claude_full_access_requested": "Full access requested",
+  "startup.claude_permission_unverified": "Claude full access is requested, not yet verified. Refresh Models to observe the effective mode without generation; it is checked again at run startup. Use advanced CLI settings for native_callback.",
+  "startup.claude_permission_mismatch": "Organization or CLI policy did not grant the requested Claude full access. Review the retained metadata and select native_callback in advanced CLI settings; the app does not override organization policy."
 }

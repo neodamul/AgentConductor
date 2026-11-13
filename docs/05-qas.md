@@ -911,3 +911,6 @@ QAS-123 / #925: a fresh short or unknown usage reset with a reviewed available f
 
 
 QAS-209 / #927: in failed, scope-failed, running/stale, approval and completed states at narrow/wide widths in both themes, no run-banner element exists; failure output and safe recovery controls remain reachable and do not overflow.
+
+
+QAS-118 / #931: deterministic process fixtures vary effective mode, missing metadata, denial arrays, successful results, partial work and delayed writes. A mismatch cancels the owned process before later writes, never yields a candidate or auto-retry; stale observations do not grant access. Validate callback persistence, metadata no-generation behavior, resume and fallback boundaries in local ad-hoc runs.
