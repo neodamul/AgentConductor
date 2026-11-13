@@ -930,3 +930,6 @@ QAS-141 / #933 / #934: tests/quota_folder_934.cjs (no folder: no query; folder s
 
 
 #943: Given a merged Phase, the next planner input contains its merged diff, tests and task outcome. Invalid/stale output cannot start. A byte-equivalent effective task plan can continue; any changed task requires review. Auto-merge off preserves manual approval. Stop, failed verification, scope/tool/permission/review blockers and stale evidence prevent automatic merge or continuation.
+
+
+#948: Given a long verification command/path, Plan review remains a single-line summary at 840/1280px in Light/Dark; hover and expansion retain the complete value.

@@ -811,3 +811,6 @@ SF-132 / #933 / #934: icon-only usage retry; automatic Claude usage query after 
 
 
 #943: Outcome-grounded next-Phase planning, task change comparison, default-off automatic merge, durable audit and Stop-aware continuation.
+
+
+#948: Truncate collapsed task metadata with ellipses and expose full translated tooltip values.

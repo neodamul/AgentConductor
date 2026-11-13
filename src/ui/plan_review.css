@@ -25,6 +25,8 @@
 #start-panel-review summary .task-num{width:22px;height:22px;border-radius:5px;background:var(--fill);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
 #start-panel-review summary .task-oneline{grid-column:auto;font-size:13px;font-weight:600;color:var(--ink)}
 #start-panel-review summary :is(.task-owner,.task-check,.task-toggle){min-width:0;font-size:12px;color:var(--soft);overflow-wrap:anywhere}
+/* #948: keep collapsed metadata on one line; full text stays in tooltips and editors. */
+#start-panel-review summary :is(.task-owner,.task-check){overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #start-panel-review details.startup-task[open]>summary .task-expand,#start-panel-review details.startup-task:not([open])>summary .task-collapse{display:none}
 /* Adding tasks is an editing tool: it shows with an opened row or when there is no task yet. */
 #start-panel-review:has(.startup-task):not(:has(.startup-task[open])) #start-task-tools{display:none}

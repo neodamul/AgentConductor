@@ -4146,4 +4146,11 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 - [x] Task: failing outcome/change/gate tests, re-plan worker and Phase adoption.
 - [x] Task: default-off automatic merge, Stop-aware continuation, change-review UI and parity.
 - [x] Verify: local focused regressions and whole-application ad hoc checklist, including workspace/agents/MCP/goals/planning/execution/recovery/approval/merge/quota.
-- [ ] Completed: manuals/wiki, commit/push and Claude handoff for batched CI; close only after acceptance.
+- [x] Completed: manuals/wiki and evidence committed; PR #949 merged after local acceptance; issue closed. Batched release CI remains separate.
+
+## #948 — Compact Plan command metadata
+
+- [x] Plan: requirement → Goal → Feature → Use Case → QAS → design trace.
+- [x] Task: reproduce oversized collapsed rows; reuse ellipsis and translated tooltip binding.
+- [x] Verify: reproduced 1400px collapsed summary before fix; compact summaries, full tooltips and unmodified editor values passed at 840/1280px in Light/Dark.
+- [x] Completed: local acceptance passed; commit/push and issue-closing PR prepared. Combined release validation remains separate.
