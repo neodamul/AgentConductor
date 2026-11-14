@@ -118,6 +118,9 @@ fn expectation_is_strict_and_old_task_serialization_is_unchanged() {
             (Some(0), false, None, !expected),
             (Some(1), false, None, expected),
             (Some(7), false, None, expected),
+            (Some(126), false, None, false),
+            (Some(127), false, None, false),
+            (Some(9009), false, None, false),
             (None, false, None, false),
             (Some(-1), false, None, false),
             (Some(1), true, None, false),
@@ -190,4 +193,36 @@ async fn coordinator_accepts_verified_red_without_approving_merge() {
         "a coordinator never grants human merge approval"
     );
     fs::remove_dir_all(root).unwrap();
+}
+
+#[tokio::test]
+async fn a_red_worker_that_produces_no_owned_changes_cannot_pass() {
+    for mode in ["shared", "worktree"] {
+        let (root, mut plan) = support::setup(mode);
+        plan.tasks = vec![red(plan.tasks[0].clone())];
+        plan.tasks[0].test_command = vec![
+            support::fixture().to_string_lossy().into_owned(),
+            "fail".into(),
+        ];
+        plan.agents[0].args = vec!["control-final".into()];
+        let dir = root.join("empty-red");
+        let report = workflow::run(plan, &root.join("repo"), &dir, 20)
+            .await
+            .unwrap();
+        assert_eq!(
+            report.tasks[0].status, "completed",
+            "worker itself returned normally"
+        );
+        assert_eq!(
+            report.state, "failed",
+            "an empty patch is not a Red deliverable"
+        );
+        assert!(report.error.unwrap().contains("owned"));
+        assert!(
+            !report.tests.is_empty(),
+            "retain failure evidence for UI recovery"
+        );
+        assert!(workflow::approve(&dir, &report.candidate.unwrap().commit).is_err());
+        fs::remove_dir_all(root).unwrap();
+    }
 }

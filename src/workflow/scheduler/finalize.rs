@@ -168,18 +168,14 @@ pub(super) async fn finish(
                 stderr: process.stderr,
                 duration_ms: Some(started.elapsed().as_millis() as u64),
             };
-            let passed = task.test_passed(
-                evidence.exit_code,
-                evidence.timed_out,
-                evidence.termination_signal,
-            ) && !process.stopped;
+            let passed = report.test_passed(&evidence) && !process.stopped;
             report.tests.push(evidence);
             if !passed {
                 return Err(format!(
                     "integration test failed: {} (expected {})",
                     task.id,
                     if task.test_expect_failure {
-                        "failure"
+                        "failure from a runnable test with changed owned files"
                     } else {
                         "success"
                     }

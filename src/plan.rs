@@ -53,7 +53,7 @@ impl Task {
             && signal.is_none()
             && exit_code.is_some_and(|code| {
                 if self.test_expect_failure {
-                    code > 0
+                    code > 0 && !matches!(code, 126 | 127 | 9009)
                 } else {
                     code == 0
                 }

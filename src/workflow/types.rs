@@ -107,6 +107,14 @@ impl Report {
             .find(|task| task.id == test.task)
             .is_some_and(|task| {
                 task.test_passed(test.exit_code, test.timed_out, test.termination_signal)
+                    && (!task.test_expect_failure
+                        || self.candidate.as_ref().is_some_and(|candidate| {
+                            candidate.changed.iter().any(|path| {
+                                task.paths
+                                    .iter()
+                                    .any(|scope| crate::plan::overlaps(scope, path))
+                            })
+                        }))
             })
     }
 }
