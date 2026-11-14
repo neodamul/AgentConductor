@@ -31,10 +31,7 @@ pub(super) fn candidate_verified(report: &Report) -> bool {
         && report.candidate.is_some()
         && report.diff_hash.is_some()
         && report.tests.len() == report.plan.tasks.len()
-        && report
-            .tests
-            .iter()
-            .all(|t| t.exit_code == Some(0) && !t.timed_out)
+        && report.tests.iter().all(|t| report.test_passed(t))
         && report.tasks.iter().all(|t| t.status == "completed")
 }
 

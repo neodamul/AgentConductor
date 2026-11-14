@@ -44,7 +44,7 @@ pub(crate) fn safe_id(id: &str) -> Result<(), String> {
 
 pub(crate) fn task_markdown(phase: &PhaseSpec, task: &Task) -> String {
     format!(
-        "# {}\n\nPhase: {} ({})\nRole: {}\nAgent: {}{}\nOwned paths: {}\nDepends on: {}\nTest: {}\n\n{}\n",
+        "# {}\n\nPhase: {} ({})\nRole: {}\nAgent: {}{}\nOwned paths: {}\nDepends on: {}\nTest: {}\nExpected test outcome: {}\n\n{}\n",
         task.id,
         phase.name,
         phase.id,
@@ -60,6 +60,11 @@ pub(crate) fn task_markdown(phase: &PhaseSpec, task: &Task) -> String {
             task.depends_on.join(", ")
         },
         task.test_command.join(" "),
+        if task.test_expect_failure {
+            "failure (TDD Red)"
+        } else {
+            "success"
+        },
         task.prompt
     )
 }

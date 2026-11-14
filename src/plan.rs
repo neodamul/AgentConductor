@@ -19,6 +19,9 @@ pub struct Task {
     #[serde(default)]
     pub depends_on: Vec<String>,
     pub test_command: Vec<String>,
+    /// #992: only the verification command may fail; a worker must still succeed.
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub test_expect_failure: bool,
     #[serde(default)]
     pub model: Option<String>,
     /// #409: absent inherits profile policy; false explicitly disables fallback.
@@ -37,6 +40,29 @@ pub struct Task {
     /// GitHub #210: the kind of work, set by the coordinator; omitted when absent so older digests hold.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub task_type: Option<TaskType>,
+}
+
+impl Task {
+    pub fn test_passed(
+        &self,
+        exit_code: Option<i32>,
+        timed_out: bool,
+        signal: Option<i32>,
+    ) -> bool {
+        !timed_out
+            && signal.is_none()
+            && exit_code.is_some_and(|code| {
+                if self.test_expect_failure {
+                    code > 0
+                } else {
+                    code == 0
+                }
+            })
+    }
+}
+
+fn is_false(value: &bool) -> bool {
+    !value
 }
 
 /// A strict output schema cannot omit an option, so a coordinator states "none" as null.

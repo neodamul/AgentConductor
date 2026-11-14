@@ -26,7 +26,7 @@ pub fn for_plan(agents: &[String], roles: &[String], phased: bool) -> Value {
     // the one option the application applies, `effort`, and null means none.
     let options = object(json!({"effort":{"type":["string","null"]}}));
     let task = object(
-        json!({"id":{"type":"string"},"agent":{"type":"string","enum":agents},"prompt":{"type":"string"},"paths":at_least_one,"depends_on":strings,"test_command":at_least_one,"role":role,"model":{"type":["string","null"]},"execution_options":options,"task_type":{"type":["string","null"],"enum":["extract","summarize","analyze","code","agentic","creative",null]}}),
+        json!({"id":{"type":"string"},"agent":{"type":"string","enum":agents},"prompt":{"type":"string"},"paths":at_least_one,"depends_on":strings,"test_command":at_least_one,"test_expect_failure":{"type":"boolean"},"role":role,"model":{"type":["string","null"]},"execution_options":options,"task_type":{"type":["string","null"],"enum":["extract","summarize","analyze","code","agentic","creative",null]}}),
     );
     let tasks = json!({"type":"array","items":task});
     if phased {

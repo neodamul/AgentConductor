@@ -18,7 +18,7 @@ window.acResultView = (() => {
     }
     return list;
   }
-  function tests(outputs) { const list = outputs || []; return { passed: list.filter(t => t.exit_code === 0 && !t.timed_out).length, total: list.length }; }
+  function tests(outputs) { const list = outputs || []; return { passed: list.filter(t => (t.passed??((t.passed??(t.exit_code===0&&!t.timed_out))))).length, total: list.length }; }
   function phaseFiles(phases) { const map = new Map(); for (const phase of phases || []) for (const file of files(phase.evidence?.diff)) { const item = map.get(file.path) || { path: file.path, phases: [], lines: [] }; item.phases.push(phase.phase); item.lines.push(...file.lines); map.set(file.path, item); } return [...map.values()]; }
   function phaseTests(phases) { return (phases || []).flatMap(phase => (phase.evidence?.test_output || []).map(test => ({ ...test, task: `${phase.phase} · ${test.task}` }))); }
   function lessons(details) {
@@ -62,7 +62,7 @@ window.acResultView = (() => {
     AC_I18N.replace($('result-metrics'), metric(() => acMessage('room.result_metric_files'), changed.length), metric(() => acMessage('room.result_metric_tests'), `${summary.passed}/${summary.total}`), metric(() => acMessage('room.result_metric_lessons'), notes.length));
     // GitHub #826: each changed file is a button that unfolds its diff below it.
     AC_I18N.replace($('result-files'), ...changed.map(f=>fileRow(f)));
-    AC_I18N.replace($('result-tests'), ...outputs.map(t => row(t.task, () => acMessage(t.exit_code === 0 && !t.timed_out ? 'room.result_test_passed' : 'room.result_test_failed'))));
+    AC_I18N.replace($('result-tests'), ...outputs.map(t => row(t.task, () => acMessage((t.passed??((t.passed??(t.exit_code===0&&!t.timed_out)))) ? 'room.result_test_passed' : 'room.result_test_failed'))));
     AC_I18N.replace($('result-lessons'), ...(notes.length ? notes.map(l => node('li', l)) : [node('li', () => acMessage('room.result_no_lessons'), 'muted')]));
     // GitHub #821: the popup owns its buttons, so they work from the Goal list before the Room script has run.
     $('result-x').onclick = () => $('result-dialog').close();

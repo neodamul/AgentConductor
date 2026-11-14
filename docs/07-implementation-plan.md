@@ -4282,3 +4282,11 @@ Local verification includes a successful current-source build, all-target Clippy
 - [x] Task: bump Cargo/README/manuals/changelog to 0.2.11 and regenerate manual HTML and UI samples.
 - [ ] Verify: Platform validation on the release PR, then the tag Release Action and published assets.
 
+
+## #992 — Planned TDD Red verification
+
+- [x] Plan: issue-linked branch, scope and requirements → QAS → DD trace in [evidence](evidence/992-tdd-red-verification.md).
+- [x] Task / Red: reproduced phase failure and unexpected-pass acceptance.
+- [x] Task / Green: expected result reaches planner, verification, review, approval, phase continuation, briefing and UI.
+- [ ] Verify: targeted outcomes passed; complete batched local and platform regression.
+- [ ] Completed: merge, issue closure, memory and branch cleanup.

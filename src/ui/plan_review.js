@@ -3,10 +3,10 @@ const acPlanReview = (() => {
   const overlap = (a, b) => a.some(x => b.some(y => x === y || x.startsWith(y.endsWith('/') ? y : y + '/') || y.startsWith(x.endsWith('/') ? x : x + '/')));
   const changes={added:'startup.replan_added',changed:'startup.replan_changed',removed:'startup.replan_removed'};
   const reasons={added:'startup.replan_reason_added',changed:'startup.replan_reason_changed',removed:'startup.replan_reason_removed'};
-  const fields={order:'startup.replan_field_order',id:'startup.replan_field_id',agent:'startup.replan_field_agent',prompt:'startup.replan_field_prompt',paths:'startup.replan_field_paths',depends_on:'startup.replan_field_depends_on',test_command:'startup.replan_field_test_command',model:'startup.replan_field_model',fallback:'startup.replan_field_fallback',role:'startup.replan_field_role',execution_options:'startup.replan_field_execution_options',task_type:'startup.replan_field_task_type'};
+  const fields={order:'startup.replan_field_order',id:'startup.replan_field_id',agent:'startup.replan_field_agent',prompt:'startup.replan_field_prompt',paths:'startup.replan_field_paths',depends_on:'startup.replan_field_depends_on',test_command:'startup.replan_field_test_command',test_expect_failure:'startup.expected_test_failure',model:'startup.replan_field_model',fallback:'startup.replan_field_fallback',role:'startup.replan_field_role',execution_options:'startup.replan_field_execution_options',task_type:'startup.replan_field_task_type'};
   const conflicts = tasks => tasks.flatMap((t, i) => tasks.slice(i + 1).filter(o => overlap(t.paths || [], o.paths || [])).map(o => `${t.id} / ${o.id}`));
   function detail(task, title) {
-    const paths = (task.paths || []).join(', ') || '—', deps = (task.depends_on || []).join(', ') || null, test = (task.test_command || []).join(' ') || '—';
+    const paths = (task.paths || []).join(', ') || '—', deps = (task.depends_on || []).join(', ') || null, test = (task.test_expect_failure?acMessage('startup.expected_test_failure')+' · ':'')+((task.test_command || []).join(' ') || '—');
     return acMessage('startup.plan_detail', { value1: task.id, value2: title, value3: paths, value4: deps || acMessage('startup.plan_no_dependencies'), value5: test });
   }
   return {
