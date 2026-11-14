@@ -32,7 +32,8 @@ jobs:
         os: [macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     # Tests alone take ~15 min on macOS; 20 cancelled green runs during the lint step (#470).
-    timeout-minutes: 40
+    # macOS native tests now take ~25 min and whole runs ~40 min; 40 cancelled a green run in lint (#979).
+    timeout-minutes: 60
     env:
       CARGO_TERM_COLOR: never
       # R-70: UTF-8 on every runner (Windows defaults to cp1252).
