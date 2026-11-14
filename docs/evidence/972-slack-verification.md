@@ -15,6 +15,14 @@ Focused targets: `tests/messenger.rs`, `tests/messenger_settings.rs`, `tests/mes
 
 The ignored `live_delivery_through_the_system_curl` and `live_round_trip_through_the_system_curl` checks were explicitly enabled using `LIVE_MESSENGER_URL`, `LIVE_SLACK_DIR`, `AGENTCONDUCTOR_SLACK_API` and `CURL_CA_BUNDLE` targeting only the disposable loopback fixture. The receiver was stopped and its certificate/key/data were removed afterwards.
 
+## Live Slack delivery
+
+At 13:49 KST on 2026-11-14, the production Rust `messenger::test` implementation from the 0.2.10 release build successfully sent a notice through a real Slack Incoming Webhook. Slack displayed the notice as the installed notifications application in the operator-approved channel. This was an application Webhook post, not a browser-authenticated user message.
+
+A disposable Rust verifier linked the existing release library, saved the Webhook using `messenger::save_secret`, then called `messenger::test` without passing a URL, proving the saved local credential was used. The verifier exited zero; receipt was separately observed in the Slack channel. The existing 0.2.9 desktop window was busy, so its settings button was not used for this live check.
+
+The credential is stored outside the repository in the machine-local messenger secret store with Unix permissions `0600`. An exact-value check found no Webhook in Git-tracked files or the local macOS release archive. The archive also contains no messenger secret-store file. No credential or personal workspace content is included in this evidence. Temporary credential and verifier files were removed after verification.
+
 ## Limits
 
-The supplied workspace invitation grants no webhook/bot configuration. The user subsequently requested an actual Slack message. Opening the supplied invitation reached an email/identity-provider signup page, not an authenticated channel; login and target channel are pending user input. No real Slack account was joined and no real channel has yet received a message. Actual Slack installation, bot scopes/channel membership and service rate limits remain operator-specific checks. These localhost transport tests ran on macOS; Windows package/CI checks are tracked by the release workflow.
+Live outbound delivery is verified on macOS. Real inbound bot replies, service rate limits, Windows live delivery, and the desktop settings-button interaction were not exercised against Slack; deterministic authorization, transport, settings and UI regressions remain the evidence for those paths. Notification event preferences were not changed and no operator Goal was started.
