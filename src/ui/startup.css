@@ -288,4 +288,4 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 .startup-profile .fact.models:hover .model-list,.startup-profile .fact.models.open .model-list{display:block}
 
 #start-agent-sessions .sessions-confirm-actions button{font:400 13px Arial,sans-serif;padding:8px 13px}
-#start-agent-sessions-confirm-ok{background:var(--err);border-color:var(--err);color:#fff}
+#start-agent-sessions-confirm-ok{background:var(--err);border-color:var(--err);color:var(--attention-ink)}
