@@ -74,7 +74,12 @@ pub fn render(config: &Value, project: &Path, run: Option<(&Report, &str)>) -> S
             (Some(code), _) => format!("exit {code}"),
             _ => "no exit code".to_string(),
         };
-        let _ = writeln!(out, "- {}: {result}", test.task);
+        let _ = writeln!(
+            out,
+            "- {}: {result}, verification_passed={}",
+            test.task,
+            report.test_passed(test)
+        );
     }
     if let Some(candidate) = &report.candidate {
         let _ = writeln!(

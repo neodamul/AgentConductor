@@ -168,10 +168,18 @@ pub(super) async fn finish(
                 stderr: process.stderr,
                 duration_ms: Some(started.elapsed().as_millis() as u64),
             };
-            let passed = evidence.exit_code == Some(0) && !evidence.timed_out;
+            let passed = report.test_passed(&evidence) && !process.stopped;
             report.tests.push(evidence);
             if !passed {
-                return Err(format!("integration test failed: {}", task.id));
+                return Err(format!(
+                    "integration test failed: {} (expected {})",
+                    task.id,
+                    if task.test_expect_failure {
+                        "failure from a runnable test with changed owned files"
+                    } else {
+                        "success"
+                    }
+                ));
             }
         }
         let verification_git = Repository::open(&report.verification_cwd)?;

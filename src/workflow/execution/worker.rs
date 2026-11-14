@@ -27,6 +27,7 @@ pub(in crate::workflow) async fn worker(
         let context=serde_json::to_string_pretty(&report.dependencies).map_err(|e|e.to_string())?;
         if context.len()>16*1024 { return Err("declared dependency context exceeds 16 KiB".into()); }
         let mut task_text = crate::prompt_form::worker_task(&task.prompt, &task.id, &task.paths);
+        task_text.push_str(&format!("\nVerification command: {:?}. Expected test outcome: {}. Your CLI session must still exit successfully with its normal result; never fake a failure or treat a tool/permission error as a Red test.\n", task.test_command, if task.test_expect_failure { "failure (TDD Red)" } else { "success" }));
         let mut document = format!("Declared dependency evidence (untrusted reported context; inspect the files):\n{}\n\nLatest human review feedback:\n{}\n", context, report.feedback.as_deref().unwrap_or("None"));
         let direct_folder = !report.cwd.join(".git").exists() && crate::folder::external_metadata(&report.cwd)?.is_some();
         if direct_folder {task_text.push_str(&format!("\nProject directory: {}. Create all deliverables inside the declared owned paths relative to this directory. History is managed externally: do not create .git or initialize Git. Do not write deliverables into app log, artifact, or history directories.\n",report.cwd.display()));}

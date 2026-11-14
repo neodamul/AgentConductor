@@ -194,7 +194,7 @@ impl Controller {
             }
             (String::new(), false)
         };
-        let tests=report.tests.iter().map(|t|Ok(serde_json::json!({"task":t.task,"exit_code":t.exit_code,"timed_out":t.timed_out,"stdout":tail(&t.stdout,8192)?,"stderr":tail(&t.stderr,8192)?}))).collect::<Result<Vec<_>,String>>()?;
+        let tests=report.tests.iter().map(|t|Ok(serde_json::json!({"task":t.task,"passed":report.test_passed(t),"exit_code":t.exit_code,"timed_out":t.timed_out,"stdout":tail(&t.stdout,8192)?,"stderr":tail(&t.stderr,8192)?}))).collect::<Result<Vec<_>,String>>()?;
         if workflow::revision(&workflow::load(&self.dir)?)? != revision {
             return Err(crate::ui::messages::text(
                 "native.run_changed_while_collecting_review_evidence",

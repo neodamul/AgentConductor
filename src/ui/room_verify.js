@@ -1,7 +1,7 @@
 // GitHub #706: the integration verification card is the mock's step 5: the test rows and the coordinator's judgments, a footer with a note,
 // Stop and a disabled "wait for verification" button; no tabs, no direction field, no status pill inside the card.
 function isVerifying(r) { return r.state === 'running' && r.tasks.length > 0 && r.tasks.every(t => t.status === 'completed'); }
-function isFailedVerification(r) { return r.state==='failed'&&r.tasks.length>0&&r.tasks.every(t=>t.status==='completed')&&r.tests.some(t=>t.exit_code!==0||t.timed_out); }
+function isFailedVerification(r) { return r.state==='failed'&&r.tasks.length>0&&r.tasks.every(t=>t.status==='completed')&&r.tests.some(t=>!(t.passed??(t.exit_code===0&&!t.timed_out))); }
 function renderVerifyFooter(r) {
   const card = document.querySelector('#run-screen .room-card'), footer = $('verify-footer');
   const active = coordinatorView && isVerifying(r);

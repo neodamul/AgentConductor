@@ -176,7 +176,7 @@ pub fn briefing(root: &Path) -> Value {
                     json!({
                         "id": spec["id"], "agent": spec["agent"], "model": spec["model"],
                         "role": spec["role"], "paths": spec["paths"],
-                        "test_command": spec["test_command"], "depends_on": spec["depends_on"],
+                        "test_command": spec["test_command"], "test_expect_failure": spec["test_expect_failure"].as_bool().unwrap_or(false), "depends_on": spec["depends_on"],
                         "prompt": clip(spec["prompt"].as_str().unwrap_or_default(), 4000),
                     })
                 })

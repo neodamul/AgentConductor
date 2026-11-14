@@ -85,7 +85,7 @@ pub fn context(root: &Path, phase: &str) -> Result<Value, String> {
         let tests = report
             .tests
             .iter()
-            .map(test_evidence)
+            .map(|test| test_evidence(&report, test))
             .collect::<Result<Vec<_>, String>>()?;
         for task in &report.tasks {
             if receipt["result_hashes"][&task.id]
@@ -141,12 +141,15 @@ fn final_reports(path: &Path) -> Result<Vec<Value>, String> {
     Ok(out)
 }
 
-fn test_evidence(test: &crate::workflow::TestReport) -> Result<Value, String> {
-    if test.exit_code != Some(0) || test.timed_out {
+fn test_evidence(
+    report: &crate::workflow::Report,
+    test: &crate::workflow::TestReport,
+) -> Result<Value, String> {
+    if !report.test_passed(test) {
         return Err("completed Phase verification is not passing".into());
     }
     Ok(
-        json!({"task":test.task,"exit_code":test.exit_code,"timed_out":test.timed_out,"stdout":log_evidence(&test.stdout,&test.stdout_hash,2048)?,"stderr":log_evidence(&test.stderr,&test.stderr_hash,2048)?}),
+        json!({"task":test.task,"passed":report.test_passed(test),"exit_code":test.exit_code,"timed_out":test.timed_out,"stdout":log_evidence(&test.stdout,&test.stdout_hash,2048)?,"stderr":log_evidence(&test.stderr,&test.stderr_hash,2048)?}),
     )
 }
 fn log_evidence(path: &Path, expected: &str, limit: usize) -> Result<Value, String> {

@@ -42,7 +42,7 @@ function renderSnapshot() {
   {const job=snapshot.job?.state==='running'?snapshot.job.kind:null;if(typeof AC_PRESS!=='undefined')for(const[id,kinds]of[['resume',['resume','auto_resume']],['approve',['approve']],['merge',['merge']],['recover',['recover']],['reject',['reject']]])AC_PRESS.hold($(id),kinds.includes(job));}
   $('send-feedback').disabled=!feedbackEnabled(t);AC_I18N.bind($('feedback'),()=>(coordinatorView?acMessage("room.send_a_request_to_the_coordinator"):acMessage("room.request_a_change_point_out_an_edge_case")),"placeholder");
   AC_I18N.bind($('completion'),()=>(`${r.tasks.filter(t=>t.status==='completed').length} / ${r.tasks.length}`));
-  AC_I18N.bind($('candidate-sha'),()=>(r.candidate?.commit||acMessage("room.no_candidate")));AC_I18N.bind($('test-count'),()=>(r.tests.length?acMessage("room.passed", {value1:r.tests.filter(t=>t.exit_code===0&&!t.timed_out).length}):'—'));
+  AC_I18N.bind($('candidate-sha'),()=>(r.candidate?.commit||acMessage("room.no_candidate")));AC_I18N.bind($('test-count'),()=>(r.tests.length?acMessage("room.passed", {value1:r.tests.filter(t=>(t.passed??(t.exit_code===0&&!t.timed_out))).length}):'—'));
   const currentReview=review&&review.revision===snapshot.revision;
   $('review-stale').hidden=!review||review.revision===snapshot.revision;
   $('approve').disabled=!idle()||r.state!=='waiting_approval'||!currentReview;$('reject').disabled=!idle()||!r.candidate;
@@ -82,7 +82,7 @@ function transcript(e) {
 }
 // DD-113: the coordinator's final step (integration verification) is listed after the tasks.
 function finalStep(r) {
-  const failed=r.tests.filter(t=>t.exit_code!==0||t.timed_out),allDone=r.tasks.every(t=>t.status==='completed');
+  const failed=r.tests.filter(t=>!(t.passed??(t.exit_code===0&&!t.timed_out))),allDone=r.tasks.every(t=>t.status==='completed');
   const status=failed.length?'failed':r.tests.length&&allDone?'completed':allDone&&r.state==='running'?'running':'pending';
   return {status,detail:failed.length?acMessage("room.failed", {value1:failed.map(t=>t.task).join(', ')}):r.tests.length?acMessage("room.task_tests_passed", {value1:r.tests.length}):acMessage("room.runs_every_task_test_on_the_combined_result_96053d")};
 }
@@ -103,7 +103,7 @@ function renderCoordinator(data) {
   if(!coordinatorView)return;const r=snapshot.report;verifyRows(r);reviewSummary(r);if(reviewMode(r)&&r.candidate&&!review)loadReview(false);
   const timeline=[event(acMessage("room.coordinator"),acMessage("room.runs_every_task_test_on_the_combined_result"),'plan')];
   const judged=new Map((data.judgments||[]).map(j=>[j.seq,j]));timeline.push(boardNode(r));for(const h of shownHistory(data.history||[])){if(h.event==='tool_orchestrator_decision'){timeline.push(decisionEntry(h.payload));continue;}if(judged.has(h.seq)){timeline.push(judgmentEntry(judged.get(h.seq)));continue;}const bad=/fail|error|reject|interrupt/i.test(h.event+' '+h.summary);timeline.push(event(statusLabel(h.event),h.summary||'',bad?'error':'status',h.seq));}
-  for(const t of r.tests){const ok=t.exit_code===0&&!t.timed_out;timeline.push(event(ok?acMessage("room.integration_test_passed"):acMessage("room.integration_test_failed"),acMessage("room.exit_df653f", {value1:t.task,value2:t.exit_code??'?',value3:t.timed_out?acMessage("common.timed_out"):'',value4:t.output?'\n'+clipLines(t.output,12):''}),ok?'result':'error'));}
+  for(const t of r.tests){const ok=(t.passed??(t.exit_code===0&&!t.timed_out));timeline.push(event(ok?acMessage("room.integration_test_passed"):acMessage("room.integration_test_failed"),acMessage("room.exit_df653f", {value1:t.task,value2:t.exit_code??'?',value3:t.timed_out?acMessage("common.timed_out"):'',value4:t.output?'\n'+clipLines(t.output,12):''}),ok?'result':'error'));}
   if(r.error)timeline.push(event(acMessage("room.run_error"),r.error,'error'));
   const activity=$('activity'),nearBottom=activity.parentElement.scrollHeight-activity.parentElement.scrollTop-activity.parentElement.clientHeight<70;
   AC_I18N.replace(activity,...timeline);if(nearBottom)activity.parentElement.scrollTop=activity.parentElement.scrollHeight;

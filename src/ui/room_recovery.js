@@ -9,7 +9,7 @@ function renderRunContext() {
  $('run-diagnostics').hidden=$('run-context').hidden&&$('run-error').hidden;
 }
 function renderRunRecovery(r) {
- const broken=r.tests.find(x=>x.exit_code!==0||x.timed_out),failure=r.error||r.tasks.find(t=>t.status==='failed'&&t.error)?.error||'';
+ const broken=r.tests.find(x=>!(x.passed??(x.exit_code===0&&!x.timed_out))),failure=r.error||r.tasks.find(t=>t.status==='failed'&&t.error)?.error||'';
  const key=JSON.stringify([r.state,broken?.task,broken?.output]);if(key!==recoveryKey){recoveryKey=key;repairOpen=false;}
  document.querySelector('#run-screen .room-card').classList.toggle('repair-pending',coordinatorView&&!!broken&&!repairOpen);
  const why=broken?acMessage('room.integration_verification_failed_for',{value1:broken.task,value2:broken.output||acMessage('common.no_output')}):failure?acMessage('room.last_error')+String(failure):'';

@@ -1634,5 +1634,6 @@
   "startup.slack_guide_save": "Turn on Send notifications for this workspace, select events, then Save. Sending a test does not enable automatic notifications.",
   "startup.slack_guide_privacy": "Keep the Webhook private: never paste it into a Goal, chat, source code, shared settings, or screenshots. Leave Include the goal text off unless you want that content sent to Slack. Reply and coordinator-chat features require separate bot permissions.",
   "startup.sending_test_message": "Sending test message…",
-  "startup.workspace_creation_continues": "Workspace creation is already in progress and continues in the background."
+  "startup.workspace_creation_continues": "Workspace creation is already in progress and continues in the background.",
+  "startup.expected_test_failure": "Expected test failure (TDD Red)"
 }

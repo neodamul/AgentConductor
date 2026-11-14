@@ -166,6 +166,7 @@ pub(crate) fn validate_profiles(profiles: &[AgentProfile]) -> Result<(), String>
         agents: profiles.to_vec(),
         tasks: (0..3)
             .map(|i| Task {
+                test_expect_failure: false,
                 id: format!("registration-{i}"),
                 agent: profiles[0].id.clone(),
                 prompt: "validation only".into(),

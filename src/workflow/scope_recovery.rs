@@ -62,7 +62,7 @@ pub fn scope_failure(dir: &Path) -> Result<Value, String> {
     Ok(json!({
         "error": report.error,
         "offending": offending,
-        "tasks": report.plan.tasks.iter().map(|t| json!({"id": t.id, "paths": t.paths, "test_command": t.test_command})).collect::<Vec<_>>(),
+        "tasks": report.plan.tasks.iter().map(|t| json!({"id": t.id, "paths": t.paths, "test_command": t.test_command, "test_expect_failure": t.test_expect_failure})).collect::<Vec<_>>(),
         "stray": stray,
         "note": "Sending feedback never changes a task's owned paths. Approve a reviewed plan change to continue; moved files are kept in stray-files and restored only when you choose.",
     }))

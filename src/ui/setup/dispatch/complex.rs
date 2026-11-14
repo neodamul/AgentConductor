@@ -29,6 +29,7 @@ impl Startup {
             .map(|(i, role)| {
                 let ruled = config.roles.get(*role).and_then(|agents| agents.first());
                 Task {
+                    test_expect_failure: false,
                     id: format!("task-{}", i + 1),
                     agent: ruled.map_or(agent, |rule| &rule.agent).clone(),
                     prompt: String::new(),

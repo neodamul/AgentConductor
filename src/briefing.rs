@@ -179,7 +179,7 @@ pub fn collect(dir: &Path, now: u64) -> Result<Value, String> {
         approvals.push(json!({"kind":"merge","status":report.state,"candidate":report.candidate.as_ref().map(|c|&c.commit),"note":"Inspect exact diff/tests; merge remains a separate human action"}));
     }
     Ok(
-        json!({"goal":report.plan.goal,"state":report.state,"revision":workflow::revision(&report)?,"observed_at_ms":now,"source":"read-only SQLite snapshot; process probes are separately observed","sessions":sessions,"approvals":approvals,"account_restrictions":report.account_restrictions,"tests":report.tests.iter().map(|t|json!({"task":t.task,"exit_code":t.exit_code,"timed_out":t.timed_out})).collect::<Vec<_>>(),"unassigned_agents":report.plan.agents.iter().filter(|a|!report.plan.tasks.iter().any(|t|t.agent==a.id)).map(|a|&a.id).collect::<Vec<_>>(),"memory_channel":"Stored cooperative reports only; this query does not contact agentmemory or an LLM"}),
+        json!({"goal":report.plan.goal,"state":report.state,"revision":workflow::revision(&report)?,"observed_at_ms":now,"source":"read-only SQLite snapshot; process probes are separately observed","sessions":sessions,"approvals":approvals,"account_restrictions":report.account_restrictions,"tests":report.tests.iter().map(|t|json!({"task":t.task,"passed":report.test_passed(t),"exit_code":t.exit_code,"timed_out":t.timed_out})).collect::<Vec<_>>(),"unassigned_agents":report.plan.agents.iter().filter(|a|!report.plan.tasks.iter().any(|t|t.agent==a.id)).map(|a|&a.id).collect::<Vec<_>>(),"memory_channel":"Stored cooperative reports only; this query does not contact agentmemory or an LLM"}),
     )
 }
 

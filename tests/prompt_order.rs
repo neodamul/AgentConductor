@@ -91,10 +91,12 @@ fn the_planning_prompt_puts_source_documents_first_and_the_json_contract_last() 
             && format.contains("\"phases\"")
             && format.contains("Done when:")
     );
-    // GitHub #928/#929: no check that passes without the deliverable; red tests only load.
+    // #929/#992: verify the deliverable and require explicit Red expectations in separate phases.
     assert!(
         format.contains("never a check that passes without it, such as `git status`")
-            && format.contains("must not run those tests")
+            && format.contains("test_expect_failure=true")
+            && format.contains("an unexpected pass is a failure")
+            && format.contains("Keep Red and Green in separate phases")
     );
     for early in [document, task] {
         assert!(

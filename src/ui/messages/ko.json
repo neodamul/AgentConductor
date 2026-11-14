@@ -1634,5 +1634,6 @@
   "startup.slack_guide_save": "이 워크스페이스에 알림 보내기를 켜고 알림 항목을 선택한 뒤 저장하세요. 테스트 전송만으로 자동 알림이 켜지지는 않습니다.",
   "startup.slack_guide_privacy": "Webhook은 비밀값입니다. Goal·채팅·소스 코드·공유 설정·스크린샷에 넣지 마세요. 목표 내용을 Slack에 보낼 의도가 없다면 목표 텍스트 포함은 꺼 두세요. 응답·코디네이터 대화 기능에는 별도의 봇 권한이 필요합니다.",
   "startup.sending_test_message": "테스트 메시지를 보내는 중…",
-  "startup.workspace_creation_continues": "워크스페이스 생성이 이미 시작되어 백그라운드에서 계속 진행 중입니다."
+  "startup.workspace_creation_continues": "워크스페이스 생성이 이미 시작되어 백그라운드에서 계속 진행 중입니다.",
+  "startup.expected_test_failure": "실패 예상 테스트 (TDD Red)"
 }
