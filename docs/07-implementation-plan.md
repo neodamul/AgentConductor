@@ -4275,3 +4275,10 @@ Local verification includes a successful current-source build, all-target Clippy
 - [x] Task: use the existing attention-ink variable with identical computed foreground color; do not weaken the palette test.
 - [x] Verify: all six theme contracts and both destructive-control parity cells pass; the original full suite continues collecting remaining results.
 - [ ] Completed: merge the linked follow-up, then rerun combined platform validation before tagging.
+
+## 0.2.11 release preparation
+
+- [x] Plan: milestone 0.2.11 has no open issues (#979 SQLite freeze and footer, #980 Slack guide). User requested release.
+- [x] Task: bump Cargo/README/manuals/changelog to 0.2.11 and regenerate manual HTML and UI samples.
+- [ ] Verify: Platform validation on the release PR, then the tag Release Action and published assets.
+
