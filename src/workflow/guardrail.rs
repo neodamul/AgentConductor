@@ -192,7 +192,7 @@ pub fn charter(plan: &Plan) -> Value {
         "status": "recorded",
         "goal": plan.goal,
         "tasks": plan.tasks.iter().map(|t| json!({
-            "id": t.id, "paths": t.paths, "test_command": t.test_command, "depends_on": t.depends_on,
+            "id": t.id, "paths": t.paths, "test_command": t.test_command, "test_expect_failure": t.test_expect_failure, "depends_on": t.depends_on,
         })).collect::<Vec<_>>(),
     })
 }

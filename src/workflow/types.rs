@@ -98,3 +98,15 @@ pub struct Report {
     #[serde(default)]
     pub checkpoints: Vec<WorkspaceCheckpoint>,
 }
+
+impl Report {
+    pub fn test_passed(&self, test: &TestReport) -> bool {
+        self.plan
+            .tasks
+            .iter()
+            .find(|task| task.id == test.task)
+            .is_some_and(|task| {
+                task.test_passed(test.exit_code, test.timed_out, test.termination_signal)
+            })
+    }
+}

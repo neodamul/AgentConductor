@@ -300,3 +300,7 @@ takes stream-json input, five effort levels, `--json-schema` and `--permission-p
 profile is not full access, because the default profile bypasses prompts, DD-131); Codex `exec` is one-way, takes
 `--output-schema`, effort through `-c`, and is cancelled by signal; its two missing controls are one setting
 change when `app-server` leaves the experimental stage.
+
+### Planned TDD verification (#992)
+
+A plan task may set `test_expect_failure: true` only for a TDD Red phase. Its actual `test_command` must finish with a nonzero exit; zero is an unexpected pass and blocks approval. The default is false (success required). Keep Red and Green in separate phases: integration verifies every task against the combined phase candidate. The later Green phase runs the same check with success required. Worker CLI failures, launch errors, timeouts, stops and signal termination never count as Red success. Do not use unconditional failures or missing runners as test evidence. Existing plans omit the false marker and retain their serialized identity. UI and review evidence preserve the real exit code and publish the native `passed` verdict.

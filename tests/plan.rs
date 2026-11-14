@@ -39,6 +39,7 @@ fn plan() -> Plan {
             .into_iter()
             .enumerate()
             .map(|(i, path)| Task {
+                test_expect_failure: false,
                 model: None,
                 role: None,
                 execution_options: Default::default(),

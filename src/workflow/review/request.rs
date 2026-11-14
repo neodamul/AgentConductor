@@ -98,7 +98,7 @@ async fn review_with(
         }
         let id = format!("test:{}", test.task);
         evidence_ids.push(id.clone());
-        tests.push(serde_json::json!({"evidence_id":id,"exit_code":test.exit_code,"timed_out":test.timed_out,"stdout":evidence_excerpt(&test.stdout,4096)?,"stderr":evidence_excerpt(&test.stderr,4096)?}));
+        tests.push(serde_json::json!({"evidence_id":id,"passed":report.test_passed(test),"exit_code":test.exit_code,"timed_out":test.timed_out,"stdout":evidence_excerpt(&test.stdout,4096)?,"stderr":evidence_excerpt(&test.stderr,4096)?}));
     }
     let diff = if let Some(hash) = &report.diff_hash {
         let path = dir.join("diff.patch");

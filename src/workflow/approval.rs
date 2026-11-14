@@ -35,8 +35,7 @@ pub(super) fn binding(dir: &Path, report: &Report) -> Result<String, String> {
         return Err("diff evidence changed".into());
     }
     for test in &report.tests {
-        if test.exit_code != Some(0)
-            || test.timed_out
+        if !report.test_passed(test)
             || file_digest(&test.stdout)? != test.stdout_hash
             || file_digest(&test.stderr)? != test.stderr_hash
         {
