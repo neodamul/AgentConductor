@@ -15,7 +15,7 @@ const context={q,log,setTimeout,clearTimeout,Date,acMessage:key=>key,AC_I18N:{bi
   request:async packet=>{log.push(packet.kind);if(packet.kind==='quota')await held;return packet.kind==='snapshot'?{job:null,metadata_job:null}:{};},
   poll:async()=>{log.push('poll');await pollGate;}};
 vm.createContext(context);
-vm.runInContext(`var mutating=false,maintenance=false,creating=false,state={revision:1};function renderButtons(){log.push('render:'+mutating);${"q('new-create').disabled=creating;"}}`,context);
+vm.runInContext(`var mutating=false,maintenance=false,creating=false,creationCancelled=false,creationDispatched=false,state={revision:1};function renderButtons(){log.push('render:'+mutating);${"q('new-create').disabled=creating;"}}`,context);
 vm.runInContext([line('  async function action('),line('  async function waitForWorkspaceIdle('),line('  async function createWorkspace(')].join('\n'),context);
 const run=code=>vm.runInContext(code,context);
 const until=async(ok,what)=>{for(let i=0;i<300;i++){if(ok())return;await new Promise(r=>setTimeout(r,10));}assert.fail('timed out: '+what);};
