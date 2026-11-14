@@ -4288,5 +4288,5 @@ Local verification includes a successful current-source build, all-target Clippy
 - [x] Plan: issue-linked branch, scope and requirements → QAS → DD trace in [evidence](evidence/992-tdd-red-verification.md).
 - [x] Task / Red: reproduced phase failure and unexpected-pass acceptance.
 - [x] Task / Green: expected result reaches planner, verification, review, approval, phase continuation, briefing and UI.
-- [ ] Verify: targeted outcomes passed; complete batched local and platform regression.
+- [x] Verify (local): 996 native/aggregate checks, 120 UI scripts, four design cells, 47 Python checks and fmt/Clippy passed; platform results are tracked on PR #993.
 - [ ] Completed: merge, issue closure, memory and branch cleanup.
