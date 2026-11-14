@@ -41,7 +41,11 @@ assert.equal(call('runAttention', snap('stopped', { stopping: true, runner: null
 assert.equal(context.AC_STALE(now - 4000, now), '');
 assert.equal(context.AC_STALE(now - 5400, now), '', 'GitHub #285: an idle refresh (every 5 s plus its reply) is not reported as silence');
 assert.equal(context.AC_STALE(0, now), '', 'before the first snapshot nothing is claimed');
-assert.ok(context.AC_STALE(now - 41000, now).includes('41'));
+assert.ok(context.AC_STALE(now - 41000, now) === acMessage('common.no_new_state') && !context.AC_STALE(now - 41000, now).includes('41'), 'GitHub #979: no growing seconds count');
+// GitHub #979: the footer slot names the local connection state; the silence message goes to the banner only.
+assert.ok(room.includes(`AC_I18N.bind($('connection'), () => stale ? acMessage("room.local_connection_unavailable") : waiting)`) && !room.includes(`AC_I18N.bind($('connection'), () => stale || waiting)`), 'room footer never shows the silence message');
+assert.ok(startup.includes(`AC_I18N.bind(q('status'),()=>(stale?acMessage("room.local_connection_unavailable"):waiting||`), 'workspace footer never shows the silence message');
+assert.ok(room.includes("attention=runAttention(snapshot)||stale"), 'the banner still says the app stopped answering');
 
 // The start line counts from the start job's recorded start, else from the click.
 const line = call('startText', { kind: 'start', state: 'running', started_ms: now - 125000 }, now, now - 1000);

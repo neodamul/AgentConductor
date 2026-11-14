@@ -97,7 +97,8 @@ function renderLive() {
   AC_I18N.bind($('rail-elapsed'), () => railElapsed(r, now));
   const detail = $('final-detail'); if (detail && snapshot.verification) { const text = verificationText(snapshot.verification, now); if (detail.textContent !== text) detail.textContent = text; }
   const job = snapshot.job; if (AC_QUOTA_WAIT(job)) AC_I18N.bind($('quota-source'), () => AC_QUOTA_WAIT(snapshot.job)); AC_I18N.bind($('job-state'), () => (busy() && job.kind !== 'quota' ? pretty(job.kind) + acMessage("room.in_progress") + (job.started_ms ? ' · ' + formatAge(now - job.started_ms) : '') : job?.state === 'failed' && job.kind !== 'quota' ? acMessage("room.action_needs_attention") : ''));
-  const stale = AC_STALE(lastSnapshotAt, now), waiting = AC_WAIT.text(now); if (stale || waiting) AC_I18N.bind($('connection'), () => stale || waiting); else if (connectionWaited && !pollFailures) AC_I18N.bind($('connection'), () => acMessage("room.connected_local_run")); connectionWaited = !!waiting && !stale; $('connection').classList.toggle('stale', !!stale);
+  // GitHub #979: the footer slot shows only the local connection; silence goes to the attention banner.
+  const stale = AC_STALE(lastSnapshotAt, now), waiting = AC_WAIT.text(now); if (stale || waiting) AC_I18N.bind($('connection'), () => stale ? acMessage("room.local_connection_unavailable") : waiting); else if (connectionWaited && !pollFailures) AC_I18N.bind($('connection'), () => acMessage("room.connected_local_run")); connectionWaited = !!(stale || waiting); $('connection').classList.toggle('stale', !!stale);
   const box=$('run-attention'),attention=runAttention(snapshot)||stale;AC_I18N.text(box,attention);box.hidden=!attention;renderRunContext();
 }
 setInterval(() => { if (!document.hidden && !roomStopped) renderActivity(); }, 1000);

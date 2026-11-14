@@ -67,7 +67,8 @@ const AC_ELAPSED=(from,now=Date.now())=>{const s=Math.max(0,Math.floor((now-from
 const AC_QUOTA_WAIT=(job,now=Date.now())=>job?.state==='running'&&job.kind==='quota'?acMessage('startup.quota_querying')+' '+AC_ELAPSED(job.started_ms||now,now):'';
 // GitHub #273: how long the app has sent no new state, once that is over 6 s (0 = no snapshot yet);
 // GitHub #285: idle pages refresh every 5 s plus the reply, so 5 s would flag a normal refresh.
-const AC_STALE=(at,now=Date.now())=>at&&now-at>6000?acMessage('common.no_new_state',{value1:Math.floor((now-at)/1000)}):'';
+// GitHub #979: say the app stopped answering, not a growing seconds count.
+const AC_STALE=(at,now=Date.now())=>at&&now-at>6000?acMessage('common.no_new_state'):'';
 // A pressed button shows that its work is running (user request 2026-10-14): it keeps its own
 // colors with a moving bar and a progress cursor, so it never looks like a disabled button.
 // track() covers a request; hold() keeps the mark while a background job started by it runs.
