@@ -4260,3 +4260,11 @@ Local verification includes a successful current-source build, all-target Clippy
 - [x] Task: document invitation vs webhook setup; use existing tests and a disposable local TLS receiver.
 - [x] Verify: 22 focused native checks, 24 UI checks and both opt-in real-curl/local-TLS tests passed; four local notices include the decision acknowledgment.
 - [ ] Completed: evidence/manuals/wiki updated; actual Slack message now requested. Supplied invitation is at signup; user login and target channel are pending.
+
+## 0.2.10 release preparation
+
+- [x] Plan: original nine product issues are closed; current main includes PRs 973/974/975. User requested completion and stable release.
+- [x] Task: bump Cargo/README/manuals/changelog to 0.2.10; place new manual guidance in its relevant UI sections.
+- [ ] Verify: seven documented UI samples refreshed and 0.2.10 HTML regenerated; complete local checks and exact native package smoke pending.
+- [x] Gate: user moved #972 real Slack delivery to 0.2.11. No actual delivery is claimed; 0.2.10 original product issues are all closed.
+- [ ] Completed: merge frozen release source, verify macOS/Windows Release Action and published hashes/manuals; record completion separately.

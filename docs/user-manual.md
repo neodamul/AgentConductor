@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.2.9** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.2.10** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.2.9 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
+The app version is beside the title. Version 0.2.10 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
 
 ### 1.1a Application updates
 
@@ -119,6 +119,8 @@ Saving a custom CLI applies the mode in which the CLI approves its own tool use 
 
 A pressed button retains its working indicator until the request and its admitted background job finish, rather than appearing merely disabled.
 
+Session cleanup and stop actions accept one request at a time. While a request is pending, the dialog shows progress and disables its actions. After cleanup, focus returns to Clean up finished, or Close when no cleanable sessions remain. Failed operations retain the list and show an error for retry.
+
 ### 1.4 Goals, sources and roles
 
 Use one workspace per project folder. After finishing a goal, press **New goal**; the project, agents and roles remain, while the previous proposal, approval and applied source bindings are cleared. Enter and save the next goal, then generate or write a fresh plan. The goals card keeps prior slugs and progress; **Select goal** restores that goal and its recorded run for review. Finish or stop a nonterminal run before changing goals within the same project. Switching to another project workspace can keep its active sessions running.
@@ -183,6 +185,8 @@ The planner is told whether the project uses Git. For ordinary folders it propos
 
 On the Plan step, select a task from any Phase in **Phase·Task** to open its matching details. Earlier Phases are read-only; selecting the same history again keeps it expanded. Select a current Phase task to return to its editable proposal. This also works when reviewing a completed Goal.
 
+During next-Phase re-planning, Step 3 names the previous and target Phases and shows live planning progress. Previous task rows are hidden and approval stays disabled until the new plan is ready.
+
 ### 1.6 Agent Room and feedback
 
 The title status pill shows the run state; task/phase progress stays in the left outline. Failure output and attention, interruption or owned-file warnings appear inside the task card, with **Fix with feedback** or **Scope review** in its footer. Fix with feedback opens the failed task and drafts its direction; **Resume** stays in the composer. There is no separate run-status banner. After tests pass, use the existing review footer to inspect, approve and apply the exact candidate; its primary action stays disabled while merging. The completed footer opens the result and the Goal list path remains available.
@@ -217,6 +221,10 @@ When a task leaves its owned paths, the coordinator first decides it: it may add
 The task Goal starts collapsed. **Expand** preserves authored line breaks in a bounded scrolling area; changing Goals collapses it again. **Raw logs** retains event metadata and displays JSON message line breaks without changing the original local artifacts. Plain text remains plain text.
 
 
+Each newly opened run starts on Activity. Within the same run, periodic refresh keeps the tab you selected. Evidence returned for a previous run is not displayed in the new run.
+
+In Review and merge, selecting a task in the Steps/Tasks list shows that task without the integration summary. Select the integration row to return to its changed files, tests and decision controls.
+
 ### 1.7 Tool decisions and verification
 
 The following tool gates apply to guarded `native_callback` profiles. Confirmed full-access Claude/Codex profiles bypass native per-tool prompts; plan review and final candidate approval still apply.
@@ -241,6 +249,8 @@ Then use **Merge approved candidate** for Git, **Accept changes** for direct ord
 Any changed evidence revokes approval. Only the human approves final integration.
 
 When all tasks complete but integration verification fails, the recorded coordinator can review evidence, revise affected tasks and rerun them. Repair stops after three review rounds or an invalid response; then revise or reassign the work yourself.
+
+In Review and merge, click a changed file to expand its diff below the filename and added/deleted line counts. Click it again to collapse. Background refresh keeps an unchanged file open and preserves keyboard focus. This uses the same per-file view as the finished-result popup; approval and merge still use the captured evidence.
 
 ### 1.8 Quota and fallback
 
@@ -549,18 +559,3 @@ Standalone web search is optional. Follow your company's managed configuration w
 Workspace Settings selects Local Rust or agentmemory preferred. Installing an optional helper does not select a backend. Local Rust needs no agentmemory MCP tool or server; workers report through their normal CLI output. The app owns signal delivery and durable evidence. Registered checkpoint workers use the exact executable path supplied by the app and its local poll/ack/report commands; other CLI sessions must not invent checkpoint capabilities. A missing optional memory tool is not a task failure.
 
 Windows path selection uses the standard Common Item Dialog directly, with no PowerShell or C# startup. Cancel leaves the field unchanged; choosing a folder or file fills the field and saving validates it.
-
-
-During next-Phase re-planning, Step 3 names the previous and target Phases and shows live planning progress. Previous task rows are hidden and approval stays disabled until the new plan is ready.
-
-
-Each newly opened run starts on Activity. Within the same run, periodic refresh keeps the tab you selected. Evidence returned for a previous run is not displayed in the new run.
-
-
-In Review and merge, click a changed file to expand its diff below the filename and added/deleted line counts. Click it again to collapse. Background refresh keeps an unchanged file open and preserves keyboard focus. This uses the same per-file view as the finished-result popup; approval and merge still use the captured evidence.
-
-
-Session cleanup and stop actions accept one request at a time. While a request is pending, the dialog shows progress and disables its actions. After cleanup, focus returns to Clean up finished, or Close when no cleanable sessions remain. Failed operations retain the list and show an error for retry.
-
-
-In Review and merge, selecting a task in the Steps/Tasks list shows that task without the integration summary. Select the integration row to return to its changed files, tests and decision controls.
