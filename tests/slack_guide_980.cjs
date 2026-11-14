@@ -1,0 +1,13 @@
+// #980: generic Slack guide is localized, disclosure-only, and hidden for other channels.
+const fs=require("node:fs"),os=require("node:os"),path=require("node:path"),{execFileSync}=require("node:child_process"),{pathToFileURL}=require("node:url");
+const {findChrome,launch}=require("./design_parity/cdp.cjs");
+(async()=>{const dir=fs.mkdtempSync(path.join(os.tmpdir(),"ac-slack-guide-"));let browser;
+try{const file=path.join(dir,"app.html");execFileSync(process.execPath,["tests/ui_sim/build.cjs",process.cwd(),file]);browser=await launch(findChrome(),{width:840,height:900});
+for(const theme of ["light","dark"]){await browser.goto(pathToFileURL(file).href);
+console.log(theme,await browser.eval(`(async()=>{const q=id=>document.getElementById("start-"+id),pause=ms=>new Promise(r=>setTimeout(r,ms)),until=async f=>{for(let i=0;i<300;i++){if(f())return;await pause(20);}throw Error("UI did not settle");},check=(n,ok)=>{if(!ok)throw Error(n);};document.documentElement.dataset.theme="${theme}";await until(()=>q("name").value==="sim");
+SIM.reply.messenger=()=>({settings:{enabled:false,kind:"slack",events:[],approvers:[],talkers:[]},has_url:false});
+q("app-menu").click();await until(()=>!q("workspace-list").hidden);[...q("workspace-list").querySelectorAll("button")].find(b=>b.textContent===acMessage("startup.messenger")).click();await until(()=>q("messenger").open);
+const guide=q("messenger-slack-guide");check("Slack guide exists",guide&&!guide.hidden);check("guide collapsed by default",!guide.open);guide.querySelector("summary").click();check("guide expands",guide.open);check("guide has hand cursor",getComputedStyle(guide.querySelector("summary")).cursor==="pointer");check("six ordered steps",guide.querySelectorAll("ol > li").length===6);check("official setup address only",guide.querySelector("code").textContent==="https://api.slack.com/apps");
+for(const language of ["en","ko"]){AC_I18N.set(language);check("translated guide",guide.textContent.includes(language==="en"?"Connect Slack":"Slack 연결"));check("no unresolved keys",!guide.textContent.includes("startup.slack_guide"));check("no horizontal overflow",guide.scrollWidth<=guide.clientWidth+1);}
+q("messenger-kind").value="webhook";q("messenger-kind").dispatchEvent(new Event("change"));check("hidden for company webhook",guide.hidden);q("messenger-kind").value="slack";q("messenger-kind").dispatchEvent(new Event("change"));check("restored for Slack",!guide.hidden);check("guide sends no credentials or messages",!SIM.log.some(x=>["test_messenger","save_messenger"].includes(x.kind)));return "Slack guide checks passed";})()`));}
+}finally{if(browser)await browser.close();fs.rmSync(dir,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1;});

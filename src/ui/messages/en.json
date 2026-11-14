@@ -1624,5 +1624,13 @@
   "native.automatic_merge_paused_gate": "Automatic merge paused by an approval, permission, Stop or consent gate. Inspect task details and retained evidence before continuing.",
   "startup.replan_pending_title": "Re-planning Phase {value2} from Phase {value1} results",
   "startup.replan_pending_intro": "The coordinator is reviewing merged results, verification and remaining work to prepare the next Phase. Review and approval become available when the plan is ready.",
-  "sessions.updating": "Updating sessions…"
+  "sessions.updating": "Updating sessions…",
+  "startup.slack_guide_title": "Connect Slack — setup guide",
+  "startup.slack_guide_create": "Open the official Slack app settings in your browser, choose Create an App, name it, and select your workspace:",
+  "startup.slack_guide_permission": "Choose incoming-webhook as the only permission for notifications. No channel-reading permission or bot token is needed for outbound notices.",
+  "startup.slack_guide_channel": "Create and install the app, choose the channel that should receive notices, and approve posting. In Incoming Webhooks, copy the generated Webhook URL. A workspace invitation link will not work.",
+  "startup.slack_guide_paste": "Paste the Webhook URL into the masked Webhook URL field above. It is kept only on this computer, separately for this workspace.",
+  "startup.slack_guide_test": "Choose Send test message, then check that the notification app posted in your Slack channel. If it fails, check the URL and network connection.",
+  "startup.slack_guide_save": "Turn on Send notifications for this workspace, select events, then Save. Sending a test does not enable automatic notifications.",
+  "startup.slack_guide_privacy": "Keep the Webhook private: never paste it into a Goal, chat, source code, shared settings, or screenshots. Leave Include the goal text off unless you want that content sent to Slack. Reply and coordinator-chat features require separate bot permissions."
 }
