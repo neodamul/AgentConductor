@@ -4,6 +4,12 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.2.11
+
+- Fix a freeze where the app stopped answering for hours: the bundled SQLite (3.51.1) could deadlock between concurrent UI requests. It is now SQLite 3.54.1 (#979).
+- The footer shows only the local connection state; when the app stops answering, the attention banner says so instead of a growing seconds count (#979).
+- Add a collapsible Slack connection guide next to the webhook field in messenger settings (#980).
+
 ## v0.2.10
 
 - Show Merge automatically only on multi-Phase plans and save only that setting, preserving other unsaved edits (#954).
