@@ -73,10 +73,10 @@ module.exports = [
       for (const e of document.querySelectorAll('body *')) { const r = e.getBoundingClientRect(); if (!r.width || !r.height || !(e.matches('input:not([type=checkbox]),textarea,select') || [...e.childNodes].some(n => n.nodeType == 3 && n.textContent.trim()))) continue;
         const f = parseFloat(getComputedStyle(e).fontSize), narrowVersion = innerWidth <= 900 && e.matches('.app-version') && f === 9; if (!ok.has(f) && !narrowVersion) bad.push((e.id || e.className) + ':' + f); }
       window.__offScale = bad; return bad.length === 0; })()` })),
-  // Hover treatment (preview.css): the same fill / colour / border appears under the pointer.
+  // Compare hover treatment; the workspace title is static and has pointer-events:none.
   ...[['workspace-home', '#workspace-home', '#start-workspace-menu'], ['titlebar-icon', '#settings-button', '#start-settings-button'],
     ['goal-list-button', '#goal-picker', '#start-goal-list-open'], ['agent-remove', '.agent .tools button', '.profile-tools .remove-agent']
-  ].map(([name, mock, app]) => ({ name: 'hover-' + name, hover: true, props: ['backgroundColor', 'color', 'borderTopColor'], keys: name === 'agent-remove' ? ['backgroundColor', 'color', 'borderTopColor'] : ['backgroundColor', 'color'], pixel: false,
+  ].map(([name, mock, app]) => ({ name: 'hover-' + name, hover: name !== 'workspace-home', props: ['backgroundColor', 'color', 'borderTopColor'], keys: name === 'agent-remove' ? ['backgroundColor', 'color', 'borderTopColor'] : ['backgroundColor', 'color'], pixel: false,
     mock: { selector: mock, index: name === 'agent-remove' ? 1 : 0 }, app: { selector: app } })),
   // Keyboard focus ring (preview.css): 2px accent outline.
   ...[['titlebar-icon', '#settings-button', '#start-settings-button'], ['rail-tab', '#rail-agents-tab', '#rail-tab-agents']

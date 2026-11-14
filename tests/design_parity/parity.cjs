@@ -23,7 +23,7 @@ const ICON_MAP = `{claude:${JSON.stringify(icon('claude-code-color.svg'))},codex
 const PRESET = `SIM.home.icons=${ICON_MAP};SIM.room.icons=${ICON_MAP};`;
 
 // Nth visible match; `mark` is the logo inside the element (mock) or the content box of an <img> (app).
-const MEASURE = (sel, index, props, mark, rel) => `(() => { const e = [...document.querySelectorAll(${JSON.stringify(sel)})].filter(x => x.getBoundingClientRect().width > 0)[${index}]; if (!e) return null;
+const MEASURE = (sel, index, props, mark, rel, hover = false) => `(() => { const e = [...document.querySelectorAll(${JSON.stringify(sel)})].filter(x => x.getBoundingClientRect().width > 0)[${index}]; if (!e || (${hover} && !e.matches(':hover'))) return null;
   const r = e.getBoundingClientRect(), c = getComputedStyle(e), o = { x: r.left, y: r.top, width: r.width, height: r.height };
   for (const p of ${JSON.stringify(props)}) o[p] = c[p];
   const k = ${JSON.stringify(mark || null)} && e.querySelector(${JSON.stringify(mark || 'x')});
@@ -77,8 +77,14 @@ async function visit(browser, side, spec) {
       // GitHub #714: rows a fixture renders after a fetch appear late on slow runners; wait up to 5 s before calling the element missing.
       let m = null; for (let i = 0; i < 50 && !(m = await browser.eval(MEASURE(s.selector, s.index || 0, x.props || [], s.mark, s.rel))); i++) await new Promise(r => setTimeout(r, 100));
       // GitHub #720: a re-render (a quota poll redraws the agent cards) replaces the hovered element, and the new one is not hovered until the mouse moves again.
-      const hovered = `[...document.querySelectorAll(${JSON.stringify(s.selector)})].filter(x => x.getBoundingClientRect().width > 0)[${s.index || 0}]?.matches(':hover')`;
-      if (x.hover) for (let i = 0; i < 10 && m && !(await browser.eval(hovered)); i++) { await browser.hover(0, 0); await browser.hover(m.x + m.width / 2, m.y + m.height / 2); await new Promise(r => setTimeout(r, 150)); m = await browser.eval(MEASURE(s.selector, s.index || 0, x.props || [], s.mark, s.rel)); }
+      if (x.hover && m) for (let i = 0; i < 10; i++) {
+        await browser.hover(0, 0); await browser.hover(m.x + m.width / 2, m.y + m.height / 2);
+        const sample = await browser.eval(MEASURE(s.selector, s.index || 0, x.props || [], s.mark, s.rel, true));
+        if (sample) { m = sample; break; }
+        if (i === 9) throw new Error(`${x.name}: ${side} hover did not settle`);
+        m = await browser.eval(MEASURE(s.selector, s.index || 0, x.props || [], s.mark, s.rel));
+        if (!m) throw new Error(`${x.name}: ${side} hover target disappeared`);
+      }
       if (x.focus) await browser.eval('document.activeElement && document.activeElement.blur()');
       if (x.hover) await browser.hover(0, 0);
       got[x.name] = got[x.name] || { shots: {} }; got[x.name][side] = m;
