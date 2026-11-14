@@ -6,6 +6,7 @@
 //! process waits for the old one to end, then removes the `*.old` leftover.
 mod install;
 mod replace;
+mod restart;
 
 use install::install;
 pub use install::verify;
@@ -283,10 +284,10 @@ fn restart(exe: &Path) -> Result<(), String> {
     if let Ok(mut s) = state().lock() {
         s.phase = "restarting";
     }
-    std::process::Command::new(exe)
-        .args(std::env::args_os().skip(1))
-        .env(WAIT_PID, std::process::id().to_string())
-        .spawn()
-        .map_err(|e| format!("cannot restart: {e}"))?;
+    restart::launch(
+        exe,
+        &std::env::args_os().skip(1).collect::<Vec<_>>(),
+        std::process::id(),
+    )?;
     std::process::exit(0);
 }
