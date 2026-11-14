@@ -4,6 +4,19 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.2.10
+
+- Show Merge automatically only on multi-Phase plans and save only that setting, preserving other unsaved edits (#954).
+- Refresh agent session counts and state tags during execution without opening the session dialog (#955).
+- Expand each changed file's diff directly in Review and merge; keep open rows and keyboard focus during unchanged refreshes (#957).
+- Show the correct target Phase and live pending state while re-planning, with previous task rows hidden until the new plan is ready (#958).
+- Preserve exact automatic-merge consent across reviewed automatic fallback transitions; keep manual changes and review gates blocked, and show the reason when automatic merge pauses (#959).
+- Open each new run on Activity, preserve same-run tab selection and discard late evidence from another run (#960).
+- Accept read-only coordinator questions using current Goal context after completion, while retaining mutation revision guards (#961).
+- Prevent duplicate session cleanup/stop requests, retain errors for retry and restore dialog focus after completion; match destructive confirmation styling (#962).
+- Hide integration evidence when selecting a task and restore it when selecting integration again (#963).
+- Clarify Slack invitation versus Incoming Webhook setup and update bilingual offline manuals (#972).
+
 ## v0.2.9
 
 - Re-plan each next Phase from merged outcomes, show task changes, continue unchanged plans and support opt-in exact verified automatic merges with Stop and approval gates preserved (#943).
