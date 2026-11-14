@@ -4268,3 +4268,10 @@ Local verification includes a successful current-source build, all-target Clippy
 - [ ] Verify: seven documented UI samples refreshed and 0.2.10 HTML regenerated; complete local checks and exact native package smoke pending.
 - [x] Gate: user moved #972 real Slack delivery to 0.2.11. No actual delivery is claimed; 0.2.10 original product issues are all closed.
 - [ ] Completed: merge frozen release source, verify macOS/Windows Release Action and published hashes/manuals; record completion separately.
+
+### #962 — Release theme-token follow-up
+
+- [x] Plan/Red: complete local all-target validation caught interface_theme::colors_come_only_from_the_light_and_dark_token_sets rejecting the new literal white. The four full approved-reference cells passed.
+- [x] Task: use the existing attention-ink variable with identical computed foreground color; do not weaken the palette test.
+- [x] Verify: all six theme contracts and both destructive-control parity cells pass; the original full suite continues collecting remaining results.
+- [ ] Completed: merge the linked follow-up, then rerun combined platform validation before tagging.
