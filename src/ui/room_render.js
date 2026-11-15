@@ -22,7 +22,7 @@ function renderSnapshot() {
   AC_I18N.bind($('selected-agent'),()=>(taskLine(p?.prompt)||t?.id||agentName(a)));$('agent-symbol').replaceWith(Object.assign(avatar(a?.parser,agentName(a),'agent-symbol'),{id:'agent-symbol'}));AC_I18N.bind($('selected-task'),()=>([agentName(a),t?.id,p?.paths?.[0]].filter(Boolean).join(' · ')));AC_I18N.bind($('session-eyebrow'),()=>(acMessage("room.step_4_run_tasks_selected_task")));$('verify-rows').hidden=true;$('review-summary').hidden=true;renderNotice(t,a);AC_I18N.bind($('feedback-target'),()=>(agentName(a)+' / '+(t?.id||'')));AC_I18N.bind($('composer-note'),()=>acMessage("room.composer_note",{value1:agentName(a),value2:t?.id||''}));
   const toolWait=!!t&&(snapshot.tool_requests||[]).some(q=>q.status==='pending'&&q.context.task===t.id);AC_I18N.bind($('task-status'),()=>(toolWait?acMessage('room.tool_wait'):statusLabel(t?.status)));$('task-status').className='status-pill tone-'+(toolWait?'wait':statusTone(t?.status));
   AC_I18N.bind($('inspector-context'),()=>(t?agentName(a)+' · '+t.id+' · '+(p?.prompt||'').split('\n')[0]:acMessage("room.inspector_empty")));
-  AC_I18N.bind($('task-instruction'),()=>(p?.prompt||''));AC_I18N.bind($('task-dependency'),()=>(p?.depends_on?.length?p.depends_on.join(', '):acMessage("room.no_dependencies")));AC_I18N.bind($('task-test'),()=>(p?.test_command?.join(' ')||'—'));
+  AC_I18N.bind($('task-instruction'),()=>(p?.prompt||''));syncInstructionFold(p?.prompt||'');AC_I18N.bind($('task-dependency'),()=>(p?.depends_on?.length?p.depends_on.join(', '):acMessage("room.no_dependencies")));AC_I18N.bind($('task-test'),()=>(p?.test_command?.join(' ')||'—'));
   AC_I18N.bind($('paths'),()=>(p?.paths.join('\n')||'—'));AC_I18N.bind($('session-id'),()=>(t?.session_id?acMessage("room.session_168693")+t.session_id:acMessage("room.no_native_session_yet")));
   setOptions($('agent-select'),r.plan.agents.map(a=>({value:a.id,label:agentName(a)})),p.agent,t.id+p.agent+JSON.stringify(r.plan.agents.map(a=>a.id)));
   // GitHub #852: the model list follows the agent picked in the select, so Assign can set both at once.
@@ -168,3 +168,6 @@ function toolView(request) {
   const raw=node('details');raw.append(node('summary',()=>(acMessage("room.raw_input"))),node('pre',JSON.stringify(request.input,null,2)));
   view.append(node('strong',summary.action,'tool-action'),list,raw);return view;
 }
+
+// GitHub #1011: the inspector folds a long task instruction; another task folds again, and the toggle shows only when text is cut.
+function syncInstructionFold(text){const box=$('task-instruction'),toggle=$('task-instruction-toggle');if(box.dataset.text!==text){box.dataset.text=text;box.classList.add('folded');}const open=!box.classList.contains('folded');toggle.setAttribute('aria-expanded',String(open));toggle.hidden=!open&&box.scrollHeight<=box.clientHeight+1;AC_I18N.bind(toggle.firstElementChild,()=>acMessage(open?'room.goal_collapse':'room.goal_expand'));}
