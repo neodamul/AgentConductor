@@ -2,14 +2,15 @@
 function chatUi({q,request,state,notice,stale=()=>''}) {
  let turns=[],waiting=null,workingNode=null,statusNode=null,loading=null,ready=false,recall=-1,draft='',unsure=null;
  const box=()=>q('chat');
- function setOpen(open){box().hidden=!open;q('chat-button').setAttribute('aria-expanded',String(open));if(open)q('chat-input').focus();}
+ // GitHub #998: like the approved design, the panel names the Workspace and the current Goal under its heading.
+ function setOpen(open){box().hidden=!open;q('chat-button').setAttribute('aria-expanded',String(open));if(open){q('chat-context').textContent=acMessage('startup.chat_context',{value1:q('workspace-name').textContent.trim()});q('chat-input').focus();}}
  const node=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;};
  // Fenced code blocks keep their layout in <pre>; other text keeps its line breaks.
  function blocks(text){return text.split(/^```[^\n]*\n?/m).flatMap((part,i)=>part.trim()?[i%2?node('pre','chat-code',part.replace(/\n$/,'')):node('p','',part.trim())]:[]);}
- function turnNode(t){const d=node('div','chat-turn '+(t.error?'error':t.role));const h=node('strong','',t.role==='operator'?acMessage('startup.chat_you'):acMessage('startup.chat_coordinator'));d.append(h);if(t.role==='operator'){const p=node('p');p.append(node('span','chat-prompt','›'),t.text);d.append(p);}else d.append(...blocks(t.text));return d;}
+ function turnNode(t){const d=node('div','chat-turn '+(t.error?'error':t.role));d.append(node('strong','',t.role==='operator'?acMessage('startup.chat_you'):acMessage('startup.chat_coordinator')));if(t.role==='operator')d.append(node('p','',t.text));else d.append(...blocks(t.text));return d;}
  // GitHub #514: the working bubble carries the CLI's recent tool lines; the 1 s timer touches only its status label, and a reader who scrolled up is not pulled down.
  const atBottom=l=>l.scrollHeight-l.scrollTop-(l.clientHeight||0)<=24;
- function draw(follow=false){const log=q('chat-log'),stick=follow||atBottom(log),top=log.scrollTop;const nodes=turns.map(turnNode);workingNode=waiting?workingBubble():null;if(workingNode)nodes.push(workingNode);log.replaceChildren(...nodes);log.scrollTop=stick?log.scrollHeight:top;q('chat-send').disabled=!!waiting;q('chat-new').disabled=!!waiting||!turns.length;}
+ function draw(follow=false){const log=q('chat-log'),pane=box(),stick=follow||atBottom(pane),top=pane.scrollTop;const nodes=turns.map(turnNode);workingNode=waiting?workingBubble():null;if(workingNode)nodes.push(workingNode);log.replaceChildren(...nodes);pane.scrollTop=stick?pane.scrollHeight:top;q('chat-send').disabled=!!waiting;q('chat-new').disabled=!!waiting||!turns.length;}
  const job=()=>{const j=state()?.chat_job;return waiting?.job&&j?.id===waiting.job?j:null;};
  function workingBubble(){const d=node('div','chat-turn working');statusNode=node('span','chat-status',workingText());d.append(statusNode);for(const item of (job()?.progress||[]).slice(-8))d.append(node('div','chat-progress '+item.kind,(item.kind==='tool'?'▸ ':'')+item.text));return d;}
  const age=ms=>{const s=Math.max(0,Math.floor((Date.now()-ms)/1000));return s<60?s+'s':Math.floor(s/60)+'m '+String(s%60).padStart(2,'0')+'s';};
@@ -35,6 +36,8 @@ function chatUi({q,request,state,notice,stale=()=>''}) {
  q('chat-button').onclick=()=>setOpen(box().hidden);
  if(typeof MutationObserver!=='undefined')new MutationObserver(()=>{if(document.querySelector('dialog.slide-panel[open]'))setOpen(false);}).observe(document.body,{subtree:true,attributes:true,attributeFilter:['open']});
  q('chat-close').onclick=()=>setOpen(false);
+ // GitHub #998: a click on the dimmed content outside the slide-over closes it, as in the design.
+ if(typeof document!=='undefined'&&document.addEventListener)document.addEventListener('mousedown',e=>{if(!box().hidden&&!box().contains(e.target)&&!q('chat-button').contains(e.target))setOpen(false);});
  q('chat-new').onclick=async()=>{if(waiting)return;try{await request({kind:'chat_reset'});turns=[];recall=-1;draw();}catch(e){notice(e.message,true);}};
  q('chat-form').onsubmit=e=>{e.preventDefault();send();};
  // Enter sends and Shift+Enter breaks the line, like a terminal prompt; Up/Down recall earlier questions.
