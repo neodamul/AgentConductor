@@ -4,6 +4,13 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.2.12
+
+- After an in-app update on macOS, the app restarts through LaunchServices so its window appears normally (#985).
+- Canceling a queued New workspace no longer creates or switches to it; once creation is sent, the dialog says creation continues (#986).
+- Send test message in messenger settings allows one test at a time, clears an old error on retry and shows the result inside the dialog (#987, #988).
+- A plan can mark a TDD failing-tests (Red) task as expected to fail. Verification accepts its failure only when the task changed its owned files, and an unexpected pass fails, so later phases run (#992).
+
 ## v0.2.11
 
 - Fix a freeze where the app stopped answering for hours: the bundled SQLite (3.51.1) could deadlock between concurrent UI requests. It is now SQLite 3.54.1 (#979).
