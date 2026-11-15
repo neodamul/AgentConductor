@@ -4,7 +4,8 @@ fn blocked_report_error_reaches_the_task_card_without_a_run_banner() {
     assert!(!include_str!("../src/ui/room.html").contains("id=\"run-banner\""));
     assert!(
         RECOVERY
-            .contains("failure=r.error||r.tasks.find(t=>t.status==='failed'&&t.error)?.error||''")
+            // GitHub #1001: an active run keeps its previous error as history.
+            .contains("failure=active?'':r.error||r.tasks.find(t=>t.status==='failed'&&t.error)?.error||''")
     );
     assert!(RECOVERY.contains("AC_I18N.bind($('run-error'),()=>why);$('run-error').hidden=!why"));
 }
