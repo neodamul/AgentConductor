@@ -138,7 +138,8 @@ fn chat_submission_does_not_wait_for_repository_head() {
     );
     drop(room);
     drop(environment);
-    std::fs::remove_dir_all(root).unwrap();
+    // The chat job's coordinator process may still be writing; cleanup must not fail the timing check.
+    let _ = std::fs::remove_dir_all(root);
 }
 
 #[test]
