@@ -110,12 +110,18 @@ module.exports=[
     { name: 'inspector-section-title', props: ['fontSize', 'fontWeight', 'color', 'paddingTop', 'paddingBottom', 'borderBottomWidth'], keys: ['height', 'fontSize', 'fontWeight', 'color', 'paddingTop', 'paddingBottom', 'borderBottomWidth'], pixel: false, mock: '.task-inspector .task-detail-content>section>h3', app: '.inspector section .eyebrow' },
     { name: 'inspector-section', props: ['paddingBottom', 'marginBottom', 'borderBottomWidth'], keys: ['paddingBottom', 'marginBottom', 'borderBottomWidth'], pixel: false, mock: '.task-inspector .task-detail-content>section', app: '.inspector section' },
     { name: 'inspector-instruction', props: ['fontSize', 'lineHeight', 'marginTop'], keys: ['fontSize', 'lineHeight', 'marginTop'], pixel: false, mock: '.task-inspector [data-detail-field="instruction"]', app: '#task-instruction' },
+    // #1011: the long instruction folds to four lines with its line breaks, and the toggle is styled like the mock.
+    { name: 'inspector-instruction-fold', props: ['whiteSpace', 'webkitLineClamp', 'overflowY'], keys: ['whiteSpace', 'webkitLineClamp', 'overflowY'], pixel: false, mock: '.task-inspector [data-detail-field="instruction"]', app: '#task-instruction' },
     { name: 'inspector-facts', props: ['gridTemplateColumns', 'rowGap', 'fontSize'], keys: ['gridTemplateColumns', 'rowGap', 'fontSize'], pixel: false, mock: '.task-inspector dl', app: '.task-facts' },
     { name: 'inspector-fact-label', props: ['color', 'fontSize'], keys: ['color', 'fontSize'], pixel: false, mock: '.task-inspector dt', app: '.task-facts dt' },
     { name: 'inspector-context', props: ['fontSize', 'lineHeight', 'color'], keys: ['height', 'fontSize', 'lineHeight', 'color'], pixel: false, mock: '#task-inspector-context', app: '#inspector-context' },
   ].map(({ mock, app, ...rest }) => ({ ...rest,
     mock: { url: '?theme=light#3', run: "document.getElementById('right-panel-toggle').click()", selector: mock },
     app: { setup: STEPS_ENABLED, run: INSPECTOR_OPEN, selector: app } })),
+  // #1011: the instruction toggle (shown for a long instruction, like the mock's task-1) is styled like the mock.
+  { name: 'inspector-instruction-toggle', props: ['color', 'fontSize', 'backgroundColor', 'borderTopWidth', 'paddingTop', 'paddingLeft'], keys: ['color', 'fontSize', 'backgroundColor', 'borderTopWidth', 'paddingTop', 'paddingLeft'], pixel: false,
+    mock: { url: '?theme=light#3', run: "document.getElementById('right-panel-toggle').click()", selector: '.task-inspector .instruction-toggle' },
+    app: { setup: STEPS_ENABLED + "SIM.room.report.plan.tasks[0].prompt=Array.from({length:8},(_,i)=>'Step '+(i+1)+': keep the existing login flow and rotate the token once.').join('\\n');", run: INSPECTOR_OPEN, selector: '#task-instruction-toggle' } },
   // #563: dialogs of the approved design (mock id -> app id) share the mock's box and title.
   ...[['delete-goal-dialog', 'start-delete-goal', 'delete-goal'], ['close-run-dialog', 'start-close-dialog', 'close-run'], ['goal-result-dialog', 'result-dialog', 'goal-result'], ['profile-edit-dialog', 'start-agent-dialog', 'profile-edit']].flatMap(([mock, app, name]) => {
     const open = id => `document.getElementById('${id}').showModal()`, openApp = id => `document.getElementById('run-screen').hidden = false; ${open(id)}`;
