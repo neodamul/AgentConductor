@@ -1598,6 +1598,7 @@
   "startup.optimize_answers": "Answers to the confirmation questions",
   "startup.optimize_again": "Re-optimize with answers",
   "startup.auto_merge": "Merge automatically after verification passes",
+  "startup.auto_merge_busy": "Another action is still running, so Merge automatically was not saved. Select it again shortly.",
   "startup.auto_merge_note": "Verified phases merge automatically, then the next phase is re-planned. Failed tests, scope review and tool approvals stop the chain.",
   "startup.replan_title": "Re-planned Phase {value2} from Phase {value1} results",
   "startup.replan_intro": "The coordinator reviewed merged changes, verification and outcomes. Changed tasks show what differs from the original plan.",
