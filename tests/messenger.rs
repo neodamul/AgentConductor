@@ -31,6 +31,7 @@ fn event(state: &str) -> messenger::Event {
         goal: "Add \"export\"\nwith care".into(),
         completed: 3,
         total: 3,
+        detail: String::new(),
     }
 }
 

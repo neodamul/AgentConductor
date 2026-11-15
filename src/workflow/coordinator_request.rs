@@ -26,6 +26,7 @@ pub async fn coordinator_request(
     timeout: u64,
     message: &str,
 ) -> Result<crate::coordinator::ReviewProposal, String> {
+    ensure_goal_mutable(&load(dir)?)?;
     let message = message.trim();
     if message.is_empty() || message.len() > MAX_BYTES || message.contains('\0') {
         return Err("a coordinator request needs 1 byte to 8 KiB of text without NUL".into());

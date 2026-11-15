@@ -242,6 +242,7 @@ fn announcement(name: &str, text: String) -> super::Event {
         goal: text,
         completed: 0,
         total: 0,
+        detail: String::new(),
     }
 }
 

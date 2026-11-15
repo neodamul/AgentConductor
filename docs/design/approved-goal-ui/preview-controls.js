@@ -3,7 +3,7 @@ function renderTaskDetails(card){
  const task=outlineTasks[selectedOutlineTask],view=views[i][0],state=(agentStates[view]||idleState)[selectedOutlineTask];
  panel.querySelector('[data-detail-field="ownership"]').textContent=task.path;
  panel.querySelector('[data-detail-field="session"]').textContent=task.id+' · 세션: mock-'+task.agent+'-'+task.id;
- panel.querySelector('[data-detail-field="instruction"]').textContent=task.instruction;
+ {const box=panel.querySelector('[data-detail-field="instruction"]'),toggle=panel.querySelector('.instruction-toggle');if(box.dataset.text!==task.instruction){box.dataset.text=task.instruction;box.classList.add('folded');}box.textContent=task.instruction;const open=!box.classList.contains('folded');toggle.setAttribute('aria-expanded',String(open));toggle.textContent=open?'▾ 접기':'▸ 펼치기';toggle.hidden=task.instruction.split('\n').length<=4&&task.instruction.length<=240;toggle.onclick=()=>{box.classList.toggle('folded');renderTaskDetails(panel);};}
  panel.querySelector('[data-detail-field="dependency"]').textContent=task.dependency;
  panel.querySelector('[data-detail-field="test"]').textContent=task.test;
  panel.querySelector('[data-detail-field="restriction"]').textContent=state[0]==='error'?state[1]:'기록된 사용 제한이 없습니다.';
@@ -24,7 +24,7 @@ document.querySelectorAll('.main>.card[data-show="b"],.main>.card[data-show="g"]
  const body=card.querySelector('.card-body'),tabs=card.querySelector('.ttabs'),activity=document.createElement('div'),details=document.createElement('div');activity.className='task-activity-content';details.className='task-detail-content';details.hidden=true;
  [...body.children].filter(child=>child!==tabs).forEach(child=>activity.append(child));tabs.after(activity,details);
  details.innerHTML=`<p class="panel-note">선택한 작업의 상세정보</p>
- <section><h3>소유 경로와 작업</h3><code data-detail-field="ownership"></code><p class="detail-muted" data-detail-field="session"></p><p data-detail-field="instruction"></p><dl><dt>의존성</dt><dd data-detail-field="dependency"></dd><dt>검증 명령</dt><dd><code data-detail-field="test"></code></dd></dl></section>
+ <section><h3>소유 경로와 작업</h3><code data-detail-field="ownership"></code><p class="detail-muted" data-detail-field="session"></p><p class="detail-instruction folded" data-detail-field="instruction"></p><button type="button" class="instruction-toggle" aria-expanded="false" hidden>▸ 펼치기</button><dl><dt>의존성</dt><dd data-detail-field="dependency"></dd><dt>검증 명령</dt><dd><code data-detail-field="test"></code></dd></dl></section>
  <section><h3>담당과 모델</h3><label>에이전트<div class="detail-inline"><select data-detail-agent><option>claude</option><option>codex</option><option>custom-cli</option></select><button class="btn q" data-detail-assign>재배정</button></div></label><label>세션 모델<div class="detail-inline"><select><option>CLI 기본값</option></select><button class="btn q" data-detail-model-save>적용</button></div></label><p class="detail-muted">해당 에이전트가 제공하는 모델 목록을 사용합니다.</p></section>
  <section><h3>가용성과 재개 예약</h3><p data-detail-field="restriction"></p><label>재개 시각 · 로컬 시간<div class="detail-inline"><input type="datetime-local" data-detail-resume required><button class="btn q" data-detail-schedule>예약</button></div></label></section>
  <section><h3>검토 후보</h3><p class="detail-muted">검증을 마친 통합 후보의 diff와 테스트를 확인한 뒤 승인합니다.</p><div class="detail-inline"><button class="btn q" data-detail-review>검토·병합로 이동</button><button class="btn q" disabled>승인</button><button class="btn q" disabled>거절</button></div><p class="detail-muted">현재 작업 단계에서는 머지할 수 없습니다.</p></section>

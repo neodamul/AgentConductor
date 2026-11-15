@@ -1,0 +1,35 @@
+{
+  "issue": 997,
+  "retrieved_at": "2026-11-15",
+  "sources": [
+    {
+      "path": "src/ui/goal_readonly.js",
+      "sha256": "2170b6bb749015c03511f0331e591dcf50a7bd2478e9cd9f19c12236c116f5f3"
+    },
+    {
+      "path": "src/ui/setup/dispatch/readonly.rs",
+      "sha256": "c23c0aec92b3ff620873f0ccc05b8e792f1b971a8f84b2ba9c1ee7f5cf0d8c6a"
+    },
+    {
+      "path": "src/ui/controller/dispatch.rs",
+      "sha256": "0c2aa083dc3623bd0cf5e9f1e847431c641ab27633981ebb05aad46b67724d66"
+    },
+    {
+      "path": "src/workflow/coordinator_request.rs",
+      "sha256": "1f70d7f79fba191c3bfc0811163093315c972cd07eabbf09dedddf86258cb3d3"
+    },
+    {
+      "path": "tests/completed_goal.rs",
+      "sha256": "bd781b06ef8c2353d4cb673bd03a76a3bdc9ec1e0f43da041bb2eababa058938"
+    },
+    {
+      "path": "tests/completed_goal_runtime.cjs",
+      "sha256": "ef8f0e47059adac8076888a7c8031d72ac53615edd93f7927be6e05f3e5225fd"
+    }
+  ],
+  "finding": "UI and native mutation requests could still be accepted on completed Goals. Native Red confirmed Save acceptance, Room action launch and missing early coordinator-request refusal. A shared read-only presentation policy and pre-dispatch native report guards preserve saved views and read-only chat.",
+  "limits": [
+    "Physical Windows UI was not exercised locally.",
+    "The approved design fixture is not application execution evidence."
+  ]
+}

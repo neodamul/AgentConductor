@@ -129,6 +129,7 @@ function mcpUi({q,el,request,action,save,mark,capture,poll,state,draft,notice,sh
    if(result.tools){const server=result.server,config=state().config.mcp[server];if(config&&(!pendingDiscovery||pendingDiscovery.server===server&&pendingDiscovery.config===JSON.stringify(config))){catalogs.set(server,{tools:result.tools,config:JSON.stringify(config)});discoveryErrors.delete(server);}pendingDiscovery=null;render();}
    else showPreview(result);
   }
+  globalThis.acGoalReadOnly?.workspace(s);
  }
  return {update,referenceState:()=>({goal:suggestionsStamp,references:sourceReferences,ready:sourceReady}),wantsResult:job=>q('mcp-dialog').open||job?.kind==='mcp'&&job.state==='completed'&&job.id!==shown};
 }

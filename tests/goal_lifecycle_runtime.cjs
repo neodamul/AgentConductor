@@ -59,7 +59,7 @@ for(const width of [840,960,1280]){browser=await launch(chrome,{width});for(cons
  check('human approval and merge dispatched once each',SIM.log.filter(e=>e.kind==='action'&&e.p.action.kind==='approve').length===1&&SIM.log.filter(e=>e.kind==='action'&&e.p.action.kind==='merge').length===1);
 
  check('result includes actual diff and test rows',q('result-files').textContent.includes('src/a.rs')&&q('result-tests').textContent.includes('task-1'));q('result-close').click();
- q('startup-home').click();await until(()=>!document.body.classList.contains('on-run')&&!q('start-save').disabled,'return Workspace');
+ q('startup-home').click();await until(()=>!document.body.classList.contains('on-run')&&q('start-save').disabled&&q('start-goal').readOnly,'return completed Workspace read-only');
  q('start-goal-list-open').click();await until(()=>document.querySelector('.goal-result'),'historical Goal row');document.querySelector('.goal-result').click();await until(()=>q('result-dialog').open,'historical result');
  check('history result keeps current Goal context',SIM.log.some(e=>e.kind==='goal_result'&&e.p.slug==='first_goal')&&SIM.home.config.active_slug==='first_goal');q('result-close').click();
  document.querySelector('.goal-folder').click();await until(()=>SIM.log.some(e=>e.kind==='goal_folder'&&e.p.open),'folder action');

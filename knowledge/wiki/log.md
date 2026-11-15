@@ -704,3 +704,5 @@ Recorded actual regression paths and source fingerprints: shared standalone Goal
 - #916/#917: reproduced guide resets and full-width checkboxes, fixed shared UI/reference, and verified100source-review parity entries plus selected payloads.
 
 - #919: original failed CI evidence reviewed; replaced outgoing-page/early-save test races and added all-loaded-script provenance coverage.
+
+- 2026-11-15: #997 completed-Goal read-only policy, saved-stage navigation and native request defense documented; deterministic source observations retained.
