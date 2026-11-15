@@ -16,6 +16,7 @@ function workspaceUi({q,state,draft,sources,save,notice,showStep,busy}) {
   invalid('coordinator',!profile);invalid('coordinator-model',!profile);
   invalid('mcp-preview',pending());q('save-only').disabled=busy();
   q('workspace-source-reminder').hidden=!(savedGoal===config.goal&&pending());
+  globalThis.acGoalReadOnly?.workspace(state());
  }
  async function commit(advance){
   if(busy())return;

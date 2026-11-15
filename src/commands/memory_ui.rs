@@ -172,6 +172,9 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                 return Err("unsupported broker action".into());
             }
             workflow::expect_revision(Path::new(dir), revision)?;
+            if command != "quota-refresh" {
+                workflow::ensure_goal_mutable(&workflow::load(Path::new(dir))?)?;
+            }
             let mut forwarded = vec![command.clone(), dir.clone()];
             forwarded.extend_from_slice(rest);
             execute_args(&forwarded)

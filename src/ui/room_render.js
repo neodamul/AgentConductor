@@ -50,6 +50,7 @@ function renderSnapshot() {
   AC_I18N.bind($('merge'),()=>(r.direct_workspace?acMessage("room.accept_changes"):r.folder?acMessage("room.apply_changes"):acMessage("room.merge")));
   AC_I18N.bind($('candidate-note'),()=>(r.direct_workspace?(r.state==='completed'?acMessage("room.accepted_complete"):r.state==='approved'?acMessage("room.approved_accept_changes"):acMessage("room.review_diff_and_tests_before_approval")):r.folder?(r.state==='completed'?acMessage("room.changes_applied_this_run_is_complete"):r.state==='approved'?acMessage("room.approved_applying_changes_remains_a_separate_action"):acMessage("room.review_diff_and_tests_before_approval")):r.state==='completed'?acMessage("room.merged_this_run_is_complete"):r.state==='approved'?acMessage("room.approved_merging_remains_a_separate_action"):review&&!currentReview?acMessage("room.state_changed_inspect_the_latest_evidence"):acMessage("room.review_diff_and_tests_before_approval")));
   renderReviewFooter(r);renderVerifyFooter(r);renderGoalInfo(r);renderRunRecovery(r);renderQuota(a);renderTools();{const g=document.querySelector('.gates-nav');$('open-review').hidden=!['waiting_approval','approved','completed','rejected'].includes(r.state);$('open-tools').hidden=Number($('tool-count').textContent)===0;g.hidden=[...g.querySelectorAll('button')].every(b=>b.hidden);}acStatusRepository.render($('connection').parentElement,window.acRepositoryIdentity);AC_I18N.bind($('connection'),()=>((typeof AC_WAIT!=='undefined'&&AC_WAIT.text())||acMessage("room.connected_local_run")));
+  globalThis.acGoalReadOnly?.room(snapshot);
 }
 function toolLine(name,input){const i=input&&typeof input==='object'?input:{};const arg=i.command??i.file_path??i.filePath??i.path??i.pattern??i.url??i.query??'';return `● ${name}(${String(arg).split('\n')[0].slice(0,200)})`+(i.description&&i.command?`\n  ${i.description}`:'');}
 function transcript(e) {
@@ -109,6 +110,7 @@ function renderCoordinator(data) {
   AC_I18N.replace(activity,...timeline);if(nearBottom)activity.parentElement.scrollTop=activity.parentElement.scrollHeight;
   AC_I18N.bind($('stdout'),()=>(readableRawLog(data.stdout)||acMessage("room.no_verification_output_yet")));AC_I18N.bind($('stderr'),()=>(readableRawLog(data.stderr)||acMessage("room.no_errors_logged")));
   AC_I18N.replace($('lessons'),node('p',()=>(acMessage("room.lessons_belong_to_tasks_select_a_task_to")),'empty'));
+  globalThis.acGoalReadOnly?.room(snapshot);
 }
 function renderTask(data) {
   const t=task(),p=planTask();if(!t||data.task.id!==t.id)return;
@@ -124,6 +126,7 @@ function renderTask(data) {
   const notes=data.knowledge.filter(k=>k.task===t.id);const steps=(data.step_lessons||[]).map(l=>{const el=node('article',undefined,'lesson');el.append(node('h3',()=>(acMessage("room.step_lesson_for",{value1:l.task}))),node('p',l.cause,'small muted'),node('p',l.response));return el;});AC_I18N.replace($('lessons'),...steps,...(notes.length?notes.map(k=>{const el=node('article',undefined,'lesson');el.append(node('h3',k.lesson.context),node('span',()=>(acMessage("room.confidence", {value1:pretty(k.status),value2:k.lesson.confidence})),'status-pill'),node('p',k.lesson.response),node('pre',k.lesson.sources.map(s=>s.path+'\n'+s.sha256).join('\n')),node('p',()=>(acMessage("room.revalidate")+k.lesson.revalidate),'small muted'));return el;}):(steps.length?[]:[node('p',()=>(acMessage("room.no_reviewed_lessons_for_this_task_draft_observations")),'empty')])));
   const u=data.usage;AC_I18N.bind($('tokens'),()=>(u&&typeof u.input_tokens==='number'?acMessage("room.in_out", {value1:u.input_tokens.toLocaleString(),value2:(u.output_tokens||0).toLocaleString()}):acMessage("room.not_reported")));
   const duration=t.started_ms?(Number(t.finished_ms||Date.now())-Number(t.started_ms))/1000:null;AC_I18N.bind($('duration'),()=>(duration===null?'—':`${Math.max(0,duration).toFixed(1)}s`));
+  globalThis.acGoalReadOnly?.room(snapshot);
 }
 function renderTools() {
   const requests=snapshot.tool_requests||[];const pending=requests.filter(r=>['pending','approved'].includes(r.status));AC_I18N.bind($('tool-count'),()=>(pending.length));$('tool-count').classList.toggle('alert',pending.length>0);AC_I18N.bind($('request-count'),()=>(pending.length));
@@ -132,7 +135,7 @@ function renderTools() {
     const actions=node('div',undefined,'tool-actions');for(const [kind,label] of [['tool_approve',acMessage("room.review_allow")],['tool_reject',acMessage("room.deny")],['tool_refresh',acMessage("room.refresh")]]) {
       // A running worker can be paused on a pending request; deciding it is the only live action.
       const live=snapshot.report.state==='running'&&kind!=='tool_refresh';
-      const button=node('button',label);button.disabled=!(idle()||live)||(kind==='tool_refresh'?!['pending','approved'].includes(r.status):r.status!=='pending');
+      const button=node('button',label);button.dataset.goalWrite='true';button.disabled=!(idle()||live)||(kind==='tool_refresh'?!['pending','approved'].includes(r.status):r.status!=='pending');
       button.onclick=async()=>{const revision=snapshot.revision;const ok=await decision(label+acMessage("room.tool_request_suffix"),kind==='tool_approve'?acMessage("room.authorize_the_exact_current_input_once_for_300"):kind==='tool_refresh'?acMessage("room.revoke_the_old_request_and_create_a_fresh"):acMessage("room.deny_this_exact_request_rework_or_reassignment_is"),JSON.stringify(r,null,2),false,label);if(ok)await act({kind,sha:r.id},revision);};actions.append(button);
     }el.append(actions);return el;
   }):[node('span',()=>(acMessage("room.no_recorded_requests")),'small muted')]));

@@ -4296,3 +4296,11 @@ Local verification includes a successful current-source build, all-target Clippy
 - [x] Plan: milestone 0.2.12 has no open issues (#985 update restart, #986 workspace cancel, #987/#988 messenger test, #989 journey test, #992 TDD Red verification). User requested release.
 - [x] Task: bump Cargo/README/manuals/changelog to 0.2.12 and regenerate manual HTML and UI samples.
 - [ ] Verify: Platform validation on the release PR, then the tag Release Action and published assets.
+
+
+## #997 — Completed Goal read-only mode
+
+- [x] Plan: approved mock and [architecture trace](evidence/997-completed-goal.md).
+- [ ] Task: native and UI Red → Green.
+- [ ] Verify: local completed-Goal mutation matrix and actual stage-click regression.
+- [ ] Completed: reviewed PR, merge and issue closure.
