@@ -4290,3 +4290,9 @@ Local verification includes a successful current-source build, all-target Clippy
 - [x] Task / Green: expected result reaches planner, verification, review, approval, phase continuation, briefing and UI.
 - [x] Verify (local): baseline 996 native/aggregate checks, 120 UI scripts, four design cells and 47 Python checks passed; review follow-up passed 37 grouped native checks plus actual UI/result/fmt/Clippy checks. Final full platform results are tracked on PR #993.
 - [ ] Completed: merge, issue closure, memory and branch cleanup.
+
+## 0.2.12 release preparation
+
+- [x] Plan: milestone 0.2.12 has no open issues (#985 update restart, #986 workspace cancel, #987/#988 messenger test, #989 journey test, #992 TDD Red verification). User requested release.
+- [x] Task: bump Cargo/README/manuals/changelog to 0.2.12 and regenerate manual HTML and UI samples.
+- [ ] Verify: Platform validation on the release PR, then the tag Release Action and published assets.
