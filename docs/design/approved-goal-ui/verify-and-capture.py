@@ -16,7 +16,7 @@ STATES = [
     ("09-result", 8), ("10-new-goal", 9),
 ]
 EXTRAS = ["inspector", "inspector-bottom", "goal-list", "delete-warning", "briefing", "chat",
-          "settings", "quota-healthy", "quota-error", "quota-unsupported", "left-collapsed", "fullscreen", "coordinator-picker", "role-picker", "fallback-picker", "fallback-model-picker", "profile-edit", "profile-edit-bottom", "close-confirmation", "sessions", "sessions-confirm", "result-file-diff", "goal-title-open", "result-next-phase", "plan-replan", "plan-replan-auto", "plan-replan-unchanged", "plan-replan-pending", "review-file-diff", "mcp", "mcp-add", "raw-log-multiline", "plan-history", "messenger-saving", "messenger-error", "goal-source-tags", "source-review-running", "source-review-done", "source-limit", "run-failure", "scope-failure", "claude-permissions", "optimize", "optimize-answered"]
+          "settings", "quota-healthy", "quota-error", "quota-unsupported", "left-collapsed", "fullscreen", "coordinator-picker", "role-picker", "fallback-picker", "fallback-model-picker", "profile-edit", "profile-edit-bottom", "close-confirmation", "sessions", "sessions-confirm", "result-file-diff", "goal-title-open", "result-next-phase", "plan-replan", "plan-replan-auto", "plan-replan-unchanged", "plan-replan-pending", "review-file-diff", "mcp", "mcp-add", "raw-log-multiline", "plan-history", "messenger-saving", "messenger-error", "goal-source-tags", "source-review-running", "source-review-done", "source-limit", "run-failure", "scope-failure", "claude-permissions", "optimize", "optimize-answered", "completed-goal"]
 
 
 
@@ -63,18 +63,17 @@ def palette_checks():
 
 
 def main():
-    source_files=['preview.html','preview.css','preview-state.js','preview-workspace.js','preview-controls.js',
-                  'preview-tooltips.js','preview-selection.js','preview-assignment.js','preview-action-icons.js','preview-profile.js','preview-close.js','preview-evidence.js','preview-source-tags.js','preview-dialog-layout.js','preview-mcp.js','preview-sessions.js','preview-source-review.js','preview-optimize.js','preview-replan.js']
-    before={name:hashlib.sha256((ROOT/name).read_bytes()).hexdigest() for name in source_files}
+    source_files=['preview.html','preview.css']+re.findall(r'<script[^>]+src="([^"]+)"',(ROOT/'preview.html').read_text())
+    before={name:hashlib.sha256((ROOT/name.split('?')[0]).read_bytes()).hexdigest() for name in source_files}
     report={'kind':'design-reference-only','approved_date':'2026-11-04',
             'viewport':[1280,960],'contrast':palette_checks(),'source_sha256':before,'captures':[]}
-    jobs=[(name,view,'none') for name,view in STATES]+[(name,3,name) for name in EXTRAS]
+    jobs=[(name,view,'none') for name,view in STATES]+[(name,7 if name=='completed-goal' else 3,name) for name in EXTRAS]
     for theme in ['light','dark']:
         for name,view,mode in jobs:
             report['captures'].append({'file':'images/'+theme+'-'+name+'.png','theme':theme,'mode':mode,'view_index':view})
     (ROOT/'verification.json').write_text(json.dumps(report,separators=(',',':'))+'\n')
     subprocess.run(['rtk','proxy','node',str(ROOT/'verify-interactions.mjs')],check=True)
-    assert before=={name:hashlib.sha256((ROOT/name).read_bytes()).hexdigest() for name in source_files},'Preview changed during capture'
+    assert before=={name:hashlib.sha256((ROOT/name.split('?')[0]).read_bytes()).hexdigest() for name in source_files},'Preview changed during capture'
     # GitHub #849: the manifest records the bytes of the verified snapshot (every file but itself).
     manifest=json.loads((ROOT/'manifest.json').read_text())
     manifest['artifacts']={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest()

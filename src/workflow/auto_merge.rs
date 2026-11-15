@@ -2,6 +2,9 @@
 use super::*;
 
 pub fn set_auto_merge(dir: &Path, enabled: bool, plan: &Plan) -> Result<(), String> {
+    if dir.join("report.json").exists() {
+        ensure_goal_mutable(&load(dir)?)?;
+    }
     let value = serde_json::json!({"enabled":enabled,"plan_digest":digest(&serde_json::to_vec(plan).map_err(|e|e.to_string())?)});
     let path = dir.with_extension("auto-merge.json");
     let pending = path.with_extension(format!("{}.pending", crate::native_guard::session_id()?));

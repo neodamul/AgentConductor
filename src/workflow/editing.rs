@@ -1,6 +1,15 @@
 use super::*;
 
+/// Completed delivery evidence may only be changed through a new Goal.
+pub fn ensure_goal_mutable(report: &Report) -> Result<(), String> {
+    if report.state == "completed" {
+        return Err("completed Goal is read-only; add a new Goal to make changes".into());
+    }
+    Ok(())
+}
+
 pub(super) fn editable(report: &Report) -> Result<(), String> {
+    ensure_goal_mutable(report)?;
     if matches!(report.state.as_str(), "running" | "completed")
         || report.tasks.iter().any(|t| t.status == "running")
     {

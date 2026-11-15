@@ -5,7 +5,7 @@ const source = fs.readFileSync('src/ui/chat.js', 'utf8');
 const node = () => ({ children: [], hidden: false, disabled: false, value: '', textContent: '', className: '', scrollTop: 0, scrollHeight: 1000, clientHeight: 200, attrs: {}, handlers: {},
   append(...n) { this.children.push(...n); }, replaceChildren(...n) { this.children = n; }, setAttribute(k, v) { this.attrs[k] = v; },
   addEventListener(k, f) { this.handlers[k] = f; }, focus() {} });
-const els = {}; for (const id of ['chat', 'chat-button', 'chat-close', 'chat-new', 'chat-form', 'chat-input', 'chat-send', 'chat-log']) els['start-' + id] = node();
+const els = {}; for (const id of ['chat', 'chat-button', 'chat-close', 'chat-new', 'chat-form', 'chat-input', 'chat-send', 'chat-log', 'chat-context', 'workspace-name']) els['start-' + id] = node();
 const q = id => els['start-' + id];
 const messages = { 'startup.chat_working': 'working', 'startup.chat_last_output': 'last output {value1} ago', 'startup.chat_no_output': 'no output yet' };
 const acMessage = (id, v = {}) => (messages[id] || id).replace('{value1}', v.value1);
@@ -32,10 +32,12 @@ const now = Date.now();
   const lines = bubble().children.slice(1); ui.tick();
   assert.deepEqual(bubble().children.slice(1), lines, 'the timer keeps the progress nodes');
   // A reader who scrolled up stays where they are; one at the bottom follows.
-  log.scrollTop = 100; ui.update(); await tick();
-  assert.equal(log.scrollTop, 100, 'scrolled-up position is kept');
-  log.scrollTop = 790; ui.update(); await tick();
-  assert.equal(log.scrollTop, log.scrollHeight, 'a reader at the bottom follows');
+  // GitHub #998: the whole slide-over scrolls, as in the approved design.
+  const pane = q('chat');
+  pane.scrollTop = 100; ui.update(); await tick();
+  assert.equal(pane.scrollTop, 100, 'scrolled-up position is kept');
+  pane.scrollTop = 790; ui.update(); await tick();
+  assert.equal(pane.scrollTop, pane.scrollHeight, 'a reader at the bottom follows');
   // The answer replaces the bubble in the same redraw.
   current = { ...current, chat_job: { id: 'j1', kind: 'chat', state: 'completed' }, chat: { job: 'j1', answer: 'In dist/.' } };
   ui.update(); await tick();
