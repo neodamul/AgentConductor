@@ -4303,5 +4303,6 @@ Local verification includes a successful current-source build, all-target Clippy
 - [x] Plan: approved mock and [architecture trace](evidence/997-completed-goal.md).
 - [x] Task: native and UI Red → Green.
 - [x] Verify (focused): native mutation matrix, chat/auto-merge, actual DOM four cells, joined journey 228 checks, Python47, Clippy and local build.
-- [ ] Verify (batch): complete aggregate local run and coordinated platform checks.
+- [x] Verify (aggregate local): 998 passed / two failed / 17 ignored; both failures resolved or passed focused follow-ups, including the updated 228-check joined journey.
+- [ ] Verify (batch): coordinated macOS/Windows platform checks on PR #1002.
 - [ ] Completed: reviewed PR, merge and issue closure.

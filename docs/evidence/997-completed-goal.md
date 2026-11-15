@@ -37,3 +37,11 @@
 Final focused native follow-up: 15 tests passed across completed_goal, chat_state_drift and goal_row_actions. The one planning-cancellation revision failure in the loaded full run did not reproduce in this serial follow-up. Native completed/chat/automatic-merge follow-up also passed 10 tests across four suites.
 
 Joined journey follow-up: goal_lifecycle_runtime now expects a read-only completed Workspace rather than an enabled Save button. It passed 32 continuous intervention checks plus six restart/restore checks in each light/dark × 840/960/1280 cell (228 checks). This is an intentional #997 expectation change, not a relaxed assertion: the test now requires Goal.readOnly and disabled Save after completion.
+
+Aggregate results: the full local run completed with 998 passed, two failed and 17 ignored (321 suites). The failures were the planning-cancellation revision race and the old joined-journey expectation that completed Save stays enabled. Both passed focused follow-ups: goal_row_actions in the 15-test native follow-up and all 228 updated journey checks. The four design parity cells completed successfully. This is combined full-run/follow-up evidence, not a claim that the original aggregate command was green.
+
+Delivery: PR #1002, milestone 0.2.13. The implementation and follow-up commits are pushed. Remote platform CI is intentionally deferred for the coordinator batch; the issue must remain open until integration. No release or installed-app replacement was performed.
+
+The fresh local run excluding only the four already-running design parity cells completed with 996 passed, one failed and 17 ignored. Its only failure was the same joined-journey process that had loaded the old expectation before that test file was updated. The updated joined journey subsequently passed all six cells (228 checks); the planning-cancellation race did not recur in this fresh run. No aggregate green status is fabricated: retain the original failure logs plus the passing focused follow-ups.
+
+Final delivery is ready for review on PR #1002. Keep platform validation and merge as explicit unchecked batch steps. Stop after this issue; #998/#999 belong to Claude.
