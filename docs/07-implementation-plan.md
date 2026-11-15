@@ -4289,4 +4289,11 @@ Local verification includes a successful current-source build, all-target Clippy
 - [x] Task / Red: reproduced phase failure and unexpected-pass acceptance.
 - [x] Task / Green: expected result reaches planner, verification, review, approval, phase continuation, briefing and UI.
 - [x] Verify (local): baseline 996 native/aggregate checks, 120 UI scripts, four design cells and 47 Python checks passed; review follow-up passed 37 grouped native checks plus actual UI/result/fmt/Clippy checks. Final full platform results are tracked on PR #993.
-- [ ] Completed: merge, issue closure, memory and branch cleanup.
+- [x] Completed: PR #993 merged as 024276bb; #992 closed, main synchronized, branch cleaned and Claude notified; milestone had zero open product issues.
+
+## #994 — Stable 0.2.12 release preparation
+
+- [x] Plan: freeze merged 024276bb, confirm completed product issues and claim an issue-linked release branch.
+- [x] Task: synchronized 0.2.12 versions/changelog/README and bilingual manual sources/HTML using the existing Rust renderer. Trace: R-36 / DD-42 / QAS-28 (manual reference), R-200 / DD-212 (capture freshness).
+- [ ] Verify: local docs/package checks, screenshot freshness and exact source platform/package gates.
+- [ ] Completed: verify stable published assets, checksums, embedded manuals, memory and cleanup.

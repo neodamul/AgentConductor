@@ -23,7 +23,7 @@ The following application UI images use local sample data; no live agents or pro
 ![AgentConductor application UI · agent settings](docs/assets/ui-agent-settings-current.png)
 ![MCP server settings with saved discovery status](docs/assets/ui-mcp-current.png)
 
-> **Version:** 0.2.11 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **☰ → Help → User manual** opens the offline manual.
+> **Version:** 0.2.12 · macOS (Apple silicon) and Windows (x86_64). Korean and light/dark themes are in **⚙ Settings**; **☰ → Help → User manual** opens the offline manual.
 
 ## What it does
 
@@ -31,6 +31,7 @@ The following application UI images use local sample data; no live agents or pro
 - **Mix agents and custom CLIs** — Claude Code, Codex, OpenCode or company commands, described by workspace JSON profiles.
 - **Review stays in your hands** — approve changed plans and final merges by default; optional automatic merge accepts only exact verified candidates, preserving Stop and blocking gates.
 - **Plans adapt between Phases** — the coordinator re-plans the next Phase from merged outcomes, shows added/changed/removed tasks, and continues unchanged plans without a redundant stop.
+- **Test-first workflows** — verify planned Red failures, then require Green tests to pass; review the actual diff and test logs before merging.
 - **Live team view** — status lights, a live line per running task (tool, time since last output, process state), readable multiline logs, Phase-scoped task history, diffs and tests.
 - **Steer while it runs** — send feedback, reassign agents or models (even for tasks not started yet), stop and resume, or chat with the coordinator in a read-only chat (the chat-bubble button), and recover from an out-of-scope failure through a reviewed plan change.
 - **Imports and lessons** — Jira/Confluence goal sources through company MCP servers, with automatic read-tool selection by the coordinator and saved per-server tool catalogs ([guide](docs/mcp-sources.md)); reviewed lessons are reused in later tasks.

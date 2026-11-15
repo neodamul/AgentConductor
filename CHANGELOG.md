@@ -4,6 +4,13 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.2.12
+
+- Reopen the macOS application through the system application launcher after an update (#985).
+- Cancel queued workspace creation before dispatch; if an already-started creation is dismissed with repeated Escape, keep its background progress visible (#986).
+- Prevent duplicate notification tests and show pending, success and retry errors inside the messenger dialog, including overlapping settings saves (#987, #988).
+- Support explicit TDD Red verification before Green implementation. Red requires changed owned files and an expected normal failure; unexpected passes, missing runners, timeouts and worker failures remain blocked. Preserve the expectation when editing plans and reviewing phase results (#992).
+
 ## v0.2.11
 
 - Fix a freeze where the app stopped answering for hours: the bundled SQLite (3.51.1) could deadlock between concurrent UI requests. It is now SQLite 3.54.1 (#979).

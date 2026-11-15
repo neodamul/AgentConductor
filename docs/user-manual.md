@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.2.11** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.2.12** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.2.11 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
+The app version is beside the title. Version 0.2.12 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
 
 ### 1.1a Application updates
 
@@ -43,6 +43,8 @@ existing project folder with **Browse…** or type the path, then **Save workspa
 Git worktree isolation is optional; shared execution is the default.
 Choose **Save** to persist edits and stay on Workspace, or **Save and go to step 2** to save and open **Agent roles**. Empty or invalid required controls have a red border until corrected; a CLI default model is valid. When the Goal has unapplied Jira/Confluence references, saving succeeds and reminds you to preview, review and apply the documents before planning. Tab changes preserve drafts but do not save them.
 
+**New workspace…** may wait for an active save or metadata lookup. **Cancel** during that wait prevents creation. Once creation has started, Cancel is disabled; if repeated Escape closes the dialog, a persistent notice says creation continues in the background. Wait for its completion or error before trying again.
+
 The **☰** application menu groups everything in two levels: **Workspace** (recent workspaces to switch to, New workspace…, Open existing workspace…, Export workspace…, Import workspace…), **Plan rules…**, **Messenger…**, **Settings…** (MCP servers, cache, update channel, language, theme, signal transport), **Help** (Check for updates…, Release notes, Report a bug…, User manual, Agent tools guide, About) and **Close window…**. The Workspace name in the titlebar is a label; open the Workspace step to edit its settings. The same titlebar is available in Agent Room.
 A workspace with an existing run opens its work view when appropriate; returning to
 Workspace does not start a new plan. Unsaved changes require a choice before navigation.
@@ -70,6 +72,8 @@ Use **☰ → Help → User manual** for offline help in the current interface l
 - **Clear cache…**: review paths and sizes before permanently removing eligible disposable metadata.
 
 **☰ → Messenger…** saves notification preferences only after local persistence succeeds. While saving, the dialog remains open and prevents duplicate submission. Failure keeps your draft and shows an error inside the dialog; retry Save or Cancel. Already saved workspace preferences survive restart. Importing settings from another machine intentionally requires local notification setup. No notification is sent just by saving the settings.
+
+**Send test message** allows one request at a time and shows sending, success or error inside the open dialog. Its button remains disabled while the test is running, even if a settings save overlaps. Retry clears the previous error; closing and reopening the dialog restores the appropriate button state.
 
 Settings has **Agent tools guide…** for optional agentmemory, RTK, Ponytail, Graphify and CocoIndex installation instructions. These tools are not bundled or required by the app.
 
@@ -168,6 +172,8 @@ Review every proposed phase up front. Phase headings identify its order and stag
 expand folded task details to edit instructions, agent/model, owned files, dependencies and tests.
 Use **Save plan edits**, then **Approve plan & run** for the current phase. Before anything starts, a launch gate checks that every agent and every task's test command can be found (on PATH, as an absolute path, or inside the project); if not, the run is refused with each problem listed by code (`tool_missing`, `test_unrunnable`), the task and the missing name, so you can install the tool or fix the plan. A script that a task is asked to write inside its own paths is not counted as missing. A passed gate appears among the coordinator's judgments.
 Each task shows the kind of work the coordinator chose (classify or extract, summarize, analyze, code, long agent work, creative) and the effort it will run with: your choice first, then the agent's default for that kind, lowered with a warning when the selected model does not honor it. Hover a role's model to see the efforts it honors. Unfilled/overlapping tasks, a changed baseline or stale digest prevent approval. If the coordinator returns overlapping file scopes inside a generated phase, planning retries once with the exact validation feedback; overlap is still rejected if the corrected plan is invalid.
+
+**TDD Red and Green.** A planned Red task uses `test_expect_failure: true` and is labeled **Expected test failure (TDD Red)** when expanded. It must change files in its owned scope and its real test command must finish with a normal nonzero exit; zero is an unexpected pass and blocks verification. Exit codes 126, 127 and 9009, missing runners, timeouts, stops and failed agent sessions do not count as Red success. Keep Red and Green in separate Phases; the later Green task must make the same test command pass normally. Inspect the scoped diff and raw logs: exit 1 can also mean a syntax or permission error, not a valid failed assertion. Existing unmarked plans keep success-required behavior; regenerate an outdated plan instead of treating every failed test as Red.
 
 **Goals & progress** shows each goal's phase tags and description.
 After merging a Phase, the coordinator re-plans only the next Phase from the Goal, original analysis, remaining work and completed diff/test/final-report evidence. Added, changed and removed tasks show their differences from the first plan. Changed tasks or execution settings require review; an identical effective plan starts automatically and the run information line explains why. Later Phases remain unchanged until their turn.
