@@ -5,6 +5,7 @@ use std::path::{Path, PathBuf};
 
 pub mod channel;
 pub mod conversation;
+pub mod detail;
 pub mod events;
 pub mod inbound;
 mod secrets;
@@ -99,6 +100,8 @@ pub struct Event {
     pub goal: String,
     pub completed: usize,
     pub total: usize,
+    /// GitHub #1009: localized Phase, task and error lines under the headline.
+    pub detail: String,
 }
 
 /// The JSON body for one event: Slack `{"text":…}` or the company template.
@@ -112,7 +115,10 @@ pub fn payload(settings: &Settings, event: &Event) -> Result<serde_json::Value, 
         events::text(&event.state, korean).ok_or("not a messenger event")?
     };
     let mut text = format!("AgentConductor · {}: {what}", event.workspace);
-    if event.total > 0 && event.state != "plan_ready" {
+    if !event.detail.is_empty() {
+        text.push('\n');
+        text.push_str(&event.detail);
+    } else if event.total > 0 && event.state != "plan_ready" {
         text.push_str(&format!(" ({}/{})", event.completed, event.total));
     }
     let goal = if settings.include_goal && !decision {
@@ -163,6 +169,32 @@ pub fn link_run(
 /// Called on every report save; sends at most one message per new notifiable state.
 /// Never fails the workflow: problems go to `<run>.messenger.log`.
 pub fn notify_run(run: &Path, state: &str, completed: usize, total: usize) {
+    notify(run, state, completed, total, String::new);
+}
+
+/// GitHub #1009: a saved report notifies with its Phase, tasks and blocking cause.
+pub fn notify_report(run: &Path, report: &crate::workflow::Report) {
+    let completed = report
+        .tasks
+        .iter()
+        .filter(|t| t.status == "completed")
+        .count();
+    notify(run, &report.state, completed, report.tasks.len(), || {
+        detail::run_detail(
+            report,
+            phase_position(run).as_ref(),
+            crate::ui::language::load() == "ko",
+        )
+    });
+}
+
+fn notify(
+    run: &Path,
+    state: &str,
+    completed: usize,
+    total: usize,
+    detail: impl FnOnce() -> String,
+) {
     let Ok(text) = std::fs::read_to_string(link_path(run)) else {
         return;
     };
@@ -191,6 +223,7 @@ pub fn notify_run(run: &Path, state: &str, completed: usize, total: usize) {
         goal: link["goal"].as_str().unwrap_or_default().into(),
         completed,
         total,
+        detail: detail(),
     };
     deliver_later(
         &workspace,
@@ -198,6 +231,21 @@ pub fn notify_run(run: &Path, state: &str, completed: usize, total: usize) {
         &event,
         Some(sibling(run, "messenger.log")),
     );
+}
+
+/// The run's Phase in its Goal, when it is linked to one (DD-62).
+fn phase_position(run: &Path) -> Option<detail::PhasePosition> {
+    let status = crate::workflow::phase_status(run)?;
+    let phases = status["phases"].as_array()?;
+    let index = phases.iter().position(|p| p["id"] == status["phase"])?;
+    Some((
+        index + 1,
+        phases.len(),
+        phases[index]["name"]
+            .as_str()
+            .unwrap_or_default()
+            .to_owned(),
+    ))
 }
 
 /// Plan completion from the desktop (DD-79 event source 2).
@@ -209,6 +257,7 @@ pub fn notify_plan(workspace: &Path, settings: &Settings, name: &str, goal: &str
             goal: goal.into(),
             completed: 0,
             total: tasks,
+            detail: String::new(),
         };
         deliver_later(
             workspace,
@@ -256,6 +305,7 @@ fn deliver_later(workspace: &Path, settings: &Settings, event: &Event, log: Opti
             goal: text,
             completed: 0,
             total: 0,
+            detail: String::new(),
         };
         match payload(settings, &notice) {
             Ok(body) => send::spawn(url.clone(), body.to_string(), "folded".into(), log.clone()),
@@ -276,6 +326,7 @@ pub fn sample() -> Event {
         goal: "Goal \"quoted\"\nsecond line".into(),
         completed: 1,
         total: 1,
+        detail: String::new(),
     }
 }
 
@@ -299,6 +350,7 @@ pub fn test(
         goal: String::new(),
         completed: 0,
         total: 0,
+        detail: String::new(),
     };
     send::deliver(&url, &payload(settings, &event)?.to_string())
 }
