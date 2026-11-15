@@ -1637,5 +1637,7 @@
   "startup.slack_guide_privacy": "Webhook은 비밀값입니다. Goal·채팅·소스 코드·공유 설정·스크린샷에 넣지 마세요. 목표 내용을 Slack에 보낼 의도가 없다면 목표 텍스트 포함은 꺼 두세요. 응답·코디네이터 대화 기능에는 별도의 봇 권한이 필요합니다.",
   "startup.sending_test_message": "테스트 메시지를 보내는 중…",
   "startup.workspace_creation_continues": "워크스페이스 생성이 이미 시작되어 백그라운드에서 계속 진행 중입니다.",
-  "startup.expected_test_failure": "실패 예상 테스트 (TDD Red)"
+  "startup.expected_test_failure": "실패 예상 테스트 (TDD Red)",
+  "goal.readonly_reason": "완료된 Goal은 읽기 전용입니다. 변경하려면 새 Goal을 추가하세요.",
+  "goal.readonly_label": "✓ 완료 · 읽기 전용"
 }

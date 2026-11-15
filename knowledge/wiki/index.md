@@ -197,3 +197,5 @@
 - [Optimizer clarifications](optimizer-clarifications.md) — answer review questions and re-optimize without automatically applying the result (#935/#936).
 
 - [Alternate Rust UI retirement](rust-ui-retirement.md) — removed implementation, dedicated validation and unused dependency graph (#940).
+
+- [Completed Goal immutability](completed-goal-immutability.md) — #997 archive controls, native refusal and retained chat/views.

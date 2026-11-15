@@ -41,7 +41,7 @@ function updateAgentStates(view){
 
 let selectedOutlineTask=0;
 const outlineTasks=[
- {title:'토큰 회전 구현',agent:'claude',id:'task-1',path:'src/auth/',instruction:'리프레시 토큰을 회전하고 이전 토큰을 무효화합니다.',dependency:'없음 · 바로 시작',test:'cargo test auth'},
+ {title:'토큰 회전 구현',agent:'claude',id:'task-1',path:'src/auth/',instruction:'리프레시 토큰을 회전하고 이전 토큰을 무효화합니다.\n1. 발급할 때마다 새 리프레시 토큰을 만들고 이전 토큰은 즉시 폐기합니다.\n2. 폐기된 토큰이 다시 들어오면 같은 계열의 토큰을 모두 무효화합니다.\n3. 동시 요청이 겹쳐도 한 번만 회전하도록 저장소 갱신을 원자적으로 처리합니다.\n4. 기존 로그인 흐름과 응답 형식은 바꾸지 않습니다.\n5. 완료 조건: cargo test auth가 통과하고 재사용 탐지 테스트가 실패 없이 끝납니다.',dependency:'없음 · 바로 시작',test:'cargo test auth'},
  {title:'재사용 탐지 테스트',agent:'codex',id:'task-2',path:'tests/auth/',instruction:'재사용된 토큰 거부와 동시 요청의 경계 조건을 검증합니다.',dependency:'task-1 완료 후 시작',test:'cargo test rotation'},
  {title:'보안 정책 노트',agent:'custom-cli',id:'task-3',path:'docs/security.md',instruction:'토큰 회전 정책과 마이그레이션 안내를 문서화합니다.',dependency:'없음 · 병렬 실행',test:'문서 검토'}
 ];

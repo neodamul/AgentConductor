@@ -30,7 +30,9 @@ const I18N: &str = concat!(
     ",ko:",
     include_str!("ui/messages/ko.json"),
     "};\n",
-    include_str!("ui/i18n.js")
+    include_str!("ui/i18n.js"),
+    "\n",
+    include_str!("ui/goal_readonly.js")
 );
 mod cache;
 mod diff;

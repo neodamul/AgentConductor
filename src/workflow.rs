@@ -150,12 +150,7 @@ fn save(store: &mut Store, dir: &Path, report: &Report) -> Result<(), String> {
     )
     .map_err(|e| e.to_string())?;
     // DD-79: a linked run reports notifiable state changes; delivery never fails the run.
-    let done = report
-        .tasks
-        .iter()
-        .filter(|t| t.status == "completed")
-        .count();
-    crate::messenger::notify_run(dir, &report.state, done, report.tasks.len());
+    crate::messenger::notify_report(dir, report);
     let wiki = dir.join("knowledge");
     fs::create_dir_all(&wiki).map_err(|e| e.to_string())?;
     let mut log = fs::OpenOptions::new()

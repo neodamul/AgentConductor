@@ -1637,5 +1637,7 @@
   "startup.slack_guide_privacy": "Keep the Webhook private: never paste it into a Goal, chat, source code, shared settings, or screenshots. Leave Include the goal text off unless you want that content sent to Slack. Reply and coordinator-chat features require separate bot permissions.",
   "startup.sending_test_message": "Sending test message…",
   "startup.workspace_creation_continues": "Workspace creation is already in progress and continues in the background.",
-  "startup.expected_test_failure": "Expected test failure (TDD Red)"
+  "startup.expected_test_failure": "Expected test failure (TDD Red)",
+  "goal.readonly_reason": "This completed Goal is read-only. Add a new Goal to make changes.",
+  "goal.readonly_label": "✓ Completed · Read-only"
 }

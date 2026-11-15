@@ -265,3 +265,17 @@ The guide starts expanded and remains under operator control across progress, co
 ## Optimizer confirmation review (#935/#936)
 
 The optimization result uses 13px secondary lists with 1.6 line height. Confirmation questions reveal one labeled multiline answer field and a Re-optimize with answers action. Empty input disables that action. A request uses the visible proposed goal and the confirmation/answer context, retaining the original workspace goal until Use this goal. While work runs, show existing elapsed/busy feedback and prevent duplicate requests; failed work retains the result and answers. A successful reply replaces the goal proposal, changes and remaining questions; no remaining questions hides the answer section.
+
+
+## Completed Goal archive (#997)
+
+Open `preview.html?goal=completed#7` for the completed-Goal scenario. All six stage tabs remain navigable. The fixed information line reads “Completed · Read-only” and links to New Goal without adding a new banner above the tabs.
+
+- Goal text, coordinator/role/model/fallback choices, task assignment/model changes, scheduling, feedback, stop/recovery, plan regeneration, auto-merge and approval/merge actions are unavailable. Disabled controls explain that changes require a new Goal.
+- Plan/task expansion, logs, diffs, test results, final results, history, quota refresh, briefing, folder links and coordinator questions remain available. The task inspector follows the same rule.
+- Coordinator chat accepts questions and explains the new-Goal path for changes; it never changes the archived plan or results.
+- Goal deletion retains its existing explicit permanent-deletion confirmation. New Goal restores editable inputs without modifying the completed Goal.
+- This is an interactive reference fixture, not backend enforcement. Production must enforce the same rule on every mutating dispatch path, including coordinator review requests, while keeping chat/history/reset operational.
+- Global account/workspace configuration is distinct from the archived Goal. The fixture conservatively disables the combined workspace-save actions while that Goal is selected; the new-Goal path remains available.
+
+Completed-Goal stage tabs support direct click, Enter/Space, Left/Right and Home/End. Steps 1–3 expose the saved workspace/Goal configuration, role assignments and plan in read-only form; selecting a tab never restarts a stage.

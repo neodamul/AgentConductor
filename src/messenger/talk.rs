@@ -62,6 +62,7 @@ pub fn say(root: &Path, settings: &Settings, name: &str, text: &str) -> Result<(
         goal: text.into(),
         completed: 0,
         total: 0,
+        detail: String::new(),
     };
     payload(settings, &event).and_then(|body| send::deliver(&url, &body.to_string()))
 }
