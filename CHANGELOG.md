@@ -4,6 +4,16 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.2.13
+
+- Completed Goals are read-only: every control that would change them is disabled with a reason, while plans, tasks, logs, results, history and the coordinator chat stay available (#997).
+- The coordinator chat slide-over follows the approved design: full height with a dimmed backdrop, Workspace · current Goal line, opening card and the composer under the conversation (#998).
+- Resume stays off while a task of the run is running (#999), and a run resumed by automatic repair no longer shows its previous error as an action banner (#1001).
+- The pending replanning title names the finished and the next Phase correctly (#1003).
+- One click on Merge automatically sticks; a click while another request runs is saved after it (#1004).
+- Messenger notices name the Phase, each task with its state, and the error and blocking cause when a run cannot proceed (#1009).
+- The task inspector folds a long task instruction with an Expand/Collapse toggle (#1011).
+
 ## v0.2.12
 
 - After an in-app update on macOS, the app restarts through LaunchServices so its window appears normally (#985).

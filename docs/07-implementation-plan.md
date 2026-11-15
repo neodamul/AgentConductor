@@ -4306,3 +4306,9 @@ Local verification includes a successful current-source build, all-target Clippy
 - [x] Verify (aggregate local): 998 passed / two failed / 17 ignored; both failures resolved or passed focused follow-ups, including the updated 228-check joined journey.
 - [ ] Verify (batch): coordinated macOS/Windows platform checks on PR #1002.
 - [ ] Completed: reviewed PR, merge and issue closure.
+
+## 0.2.13 release preparation
+
+- [x] Plan: milestone 0.2.13 has no open issues (#997, #998, #999, #1001, #1003, #1004, #1009, #1011). User requested release.
+- [x] Task: bump Cargo/README/manuals/changelog to 0.2.13 and regenerate manual HTML and UI samples.
+- [ ] Verify: Platform validation on the release PR, then the tag Release Action and published assets.
