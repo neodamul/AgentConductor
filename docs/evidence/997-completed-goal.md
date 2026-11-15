@@ -35,3 +35,5 @@
 - Full local native/parity regression remains in progress; no Windows runtime acceptance or release is claimed.
 
 Final focused native follow-up: 15 tests passed across completed_goal, chat_state_drift and goal_row_actions. The one planning-cancellation revision failure in the loaded full run did not reproduce in this serial follow-up. Native completed/chat/automatic-merge follow-up also passed 10 tests across four suites.
+
+Joined journey follow-up: goal_lifecycle_runtime now expects a read-only completed Workspace rather than an enabled Save button. It passed 32 continuous intervention checks plus six restart/restore checks in each light/dark × 840/960/1280 cell (228 checks). This is an intentional #997 expectation change, not a relaxed assertion: the test now requires Goal.readOnly and disabled Save after completion.

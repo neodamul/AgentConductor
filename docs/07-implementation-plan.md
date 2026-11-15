@@ -4301,6 +4301,7 @@ Local verification includes a successful current-source build, all-target Clippy
 ## #997 — Completed Goal read-only mode
 
 - [x] Plan: approved mock and [architecture trace](evidence/997-completed-goal.md).
-- [ ] Task: native and UI Red → Green.
-- [ ] Verify: local completed-Goal mutation matrix and actual stage-click regression.
+- [x] Task: native and UI Red → Green.
+- [x] Verify (focused): native mutation matrix, chat/auto-merge, actual DOM four cells, joined journey 228 checks, Python47, Clippy and local build.
+- [ ] Verify (batch): complete aggregate local run and coordinated platform checks.
 - [ ] Completed: reviewed PR, merge and issue closure.
