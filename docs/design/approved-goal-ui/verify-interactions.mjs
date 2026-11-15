@@ -37,12 +37,13 @@ try{
   else if(listeners.has(message.method)){const resolve=listeners.get(message.method);listeners.delete(message.method);resolve(message.params);}
  });
  await call('Page.enable');
- const script=await readFile(join(root,'interaction-checks.js'),'utf8');
+ const completedOnly=process.argv.includes('--completed-only');
+ const script=await readFile(join(root,completedOnly?'interaction-completed-checks.js':'interaction-checks.js'),'utf8');
  const reports=[];
  for(const theme of ['light','dark'])for(const width of [840,1280]){
   await call('Emulation.setDeviceMetricsOverride',{width,height:900,deviceScaleFactor:1,mobile:false});
   const loaded=once('Page.loadEventFired');
-  await call('Page.navigate',{url:pathToFileURL(join(root,'preview.html')).href+'?theme='+theme+'&run='+width});await loaded;
+  await call('Page.navigate',{url:pathToFileURL(join(root,'preview.html')).href+'?theme='+theme+'&run='+width+(completedOnly?'&goal=completed':'')});await loaded;
   const evaluated=await call('Runtime.evaluate',{expression:script,awaitPromise:true,returnByValue:true});
   if(evaluated.exceptionDetails)throw new Error(JSON.stringify(evaluated.exceptionDetails));
   const raw=await call('Runtime.evaluate',{expression:'document.documentElement.dataset.interactionResult',returnByValue:true});
@@ -50,8 +51,13 @@ try{
   const report=JSON.parse(raw.result.value),failed=report.checks.filter(check=>!check.pass).map(check=>check.name);
   console.log(theme,width,report.checks.length,'checks; failures:',failed);
   if(failed.length)throw new Error('Design interaction checks failed');reports.push(report);
+  if(completedOnly&&width===1280){
+   await new Promise(resolve=>setTimeout(resolve,300));
+   const shot=await call('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
+   await writeFile(join(root,'images',theme+'-completed-goal.png'),Buffer.from(shot.data,'base64'));
+  }
  }
- await writeFile(join(root,'interactions.json'),JSON.stringify(reports)+'\n');
+ if(!completedOnly)await writeFile(join(root,'interactions.json'),JSON.stringify(reports)+'\n');
  if(!process.argv.includes('--check-only')){
  // One browser captures every state with an explicit viewport and measured frame.
  const captureReport=JSON.parse(await readFile(join(root,'verification.json'),'utf8'));
@@ -60,7 +66,7 @@ try{
   const wide=mode==='fullscreen',width=wide?1920:1280,height=wide?1080:960;
   await call('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});
   const loaded=once('Page.loadEventFired');
-  await call('Page.navigate',{url:pathToFileURL(join(root,'preview.html')).href+'?theme='+theme+'&capture='+name+(wide?'&fullscreen=1':'')+'#'+record.view_index});await loaded;
+  await call('Page.navigate',{url:pathToFileURL(join(root,'preview.html')).href+'?theme='+theme+'&capture='+name+(mode==='completed-goal'?'&goal=completed':'')+(wide?'&fullscreen=1':'')+'#'+record.view_index});await loaded;
   const frameWait='new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)))';
   await call('Runtime.evaluate',{expression:frameWait,awaitPromise:true});
   let action='void 0';

@@ -33,8 +33,7 @@ async fn restricted_profile_transfers_to_company_cli_and_retains_account_evidenc
     assert!(value["account_restrictions"]["paid-account"].is_object());
     assert_eq!(report.tests.len(), 3);
     assert!(agentconductor::workflow::merge(&run).is_err());
-    for i in 0..3 {
-        let task = &report.tasks[i];
+    for (i, task) in report.tasks.iter().enumerate() {
         assert!(
             run.join(format!("handoff-{i}-{}.md", task.attempt - 1))
                 .is_file()

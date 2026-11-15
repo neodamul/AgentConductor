@@ -2,6 +2,7 @@ use super::*;
 
 mod complex;
 mod operation;
+mod readonly;
 
 impl Startup {
     pub fn dispatch(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
@@ -15,6 +16,7 @@ impl Startup {
             .lock()
             .map_err(|_| crate::ui::messages::text("native.startup_settings_poisoned"))?;
         crate::ui::diagnostics::step("lock", waiting.elapsed());
+        self.guard_completed_request(&saved, &request)?;
         if matches!(request, Request::WorkspaceBriefing {}) {
             let view = saved.clone();
             drop(saved);

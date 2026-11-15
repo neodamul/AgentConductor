@@ -5,6 +5,9 @@ impl Controller {
         &self,
         request: ActionRequest,
     ) -> Result<serde_json::Value, String> {
+        if !matches!(request.action, Action::Quota { .. }) {
+            workflow::ensure_goal_mutable(&workflow::load(&self.dir)?)?;
+        }
         if let Action::Stop { reason } = &request.action {
             workflow::stop(&self.dir, reason)?;
             return Ok(
