@@ -75,6 +75,19 @@ module.exports=[
     { name: `panel-${name}`, props: ['paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], keys: ['width', 'paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], pixel: false,
       mock: { url: '?theme=light#0', run: `openSidePanel('${mock}')`, selector: `#${mock}` }, app: { run: `document.getElementById('run-screen').hidden = false; const el = document.getElementById('${app}'); el.showModal ? el.showModal() : (el.hidden = false)`, selector: `#${app}` } },
   ]),
+  // #998: the close glyph uses 18px, not the mock's 22px, because type-scale-chat allows only the mock's text scale; its box and color match.
+  // #998: inside the coordinator chat slide-over the heading divider, context line, opening card and composer follow the design.
+  ...[
+    ['heading', '.panel-heading', '.chat-head', ['borderBottomWidth', 'borderBottomColor', 'paddingBottom', 'marginBottom']],
+    ['title', '.panel-heading h3', '.chat-head h3', ['fontSize', 'fontWeight', 'color']],
+    ['close', '.panel-close', '#start-chat-close', ['color', 'borderTopWidth', 'borderTopLeftRadius', 'backgroundColor']],
+    ['context', '.panel-note', '#start-chat-context', ['fontSize', 'color', 'lineHeight']],
+    ['card', '#chat-preview', '.chat-card', ['borderTopWidth', 'borderTopColor', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'fontSize', 'lineHeight']],
+    ['input', '#chat-preview-input', '#start-chat-input', ['paddingTop', 'borderTopWidth', 'borderTopColor', 'borderTopLeftRadius', 'backgroundColor', 'fontSize']],
+    ['send', '#chat-preview-form .btn', '#start-chat-send', ['backgroundColor', 'color', 'borderTopLeftRadius', 'fontWeight']],
+  ].map(([name, mock, app, props]) => ({ name: `chat-${name}`, props, keys: props, pixel: false,
+    mock: { url: '?theme=light#0', run: "openSidePanel('coordinator-chat-panel')", selector: '#coordinator-chat-panel ' + mock },
+    app: { run: "document.getElementById('run-screen').hidden = false; document.getElementById('start-chat-button').click()", selector: app } })),
   // #563: the application menu popup (behavior.md: the mock's short menu is illustrative, so items differ; the box and rows match).
   ...[
     { name: 'app-menu-box', props: ['borderTopLeftRadius', 'paddingTop', 'borderTopWidth', 'backgroundColor'], keys: ['borderTopLeftRadius', 'paddingTop', 'borderTopWidth', 'backgroundColor'], mock: '#app-menu', app: '#start-workspace-list' },
