@@ -494,3 +494,6 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 .chat-msg.coordinator .chat-bubble{background:var(--fill);border:1px solid var(--line);border-top-left-radius:3px}
 .chat-msg.operator .chat-bubble{background:var(--accent-soft);color:var(--accent-text);border:1px solid transparent;border-top-right-radius:3px}
 .chat-msg.working .chat-bubble{color:var(--soft)}
+
+/* GitHub #1024: the models list names the agent's chosen default model and Effort first. */
+.agent .model-list .model-default{color:var(--ink);font-weight:600}.agent .model-list .model-default+b{margin-top:4px}

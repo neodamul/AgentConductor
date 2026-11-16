@@ -5,6 +5,8 @@
 #start-agent-dialog .agent-form-grid{gap:12px;margin-top:12px}
 #start-agent-dialog .agent-form-grid>label{margin:0}
 #start-agent-dialog input:not([type=checkbox]),#start-agent-dialog select{height:34px;min-height:0;margin:0}
+/* GitHub #1024: the dialog's choice controls share the 34px field height, like the mock. */
+#start-agent-dialog .ac-choice-trigger{height:34px}
 #start-agent-dialog label>input,#start-agent-dialog label>select,#start-agent-dialog label>textarea{flex:none}
 #start-agent-dialog textarea{margin:0}
 #start-agent-dialog .executable-row{margin:0;gap:8px;align-items:stretch}

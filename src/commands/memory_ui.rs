@@ -156,6 +156,7 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                 "revise",
                 "reassign",
                 "session-model",
+                "session-effort",
                 "schedule",
                 "tool-approve",
                 "tool-reject",

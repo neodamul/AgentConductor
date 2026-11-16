@@ -26,7 +26,7 @@ pub struct Resolved {
     pub warnings: Vec<Warning>,
 }
 
-const EFFORTS: [&str; 5] = ["low", "medium", "high", "xhigh", "max"];
+pub(crate) const EFFORTS: [&str; 5] = ["low", "medium", "high", "xhigh", "max"];
 
 fn name(kind: TaskType) -> String {
     serde_json::to_value(kind)
@@ -63,13 +63,24 @@ pub fn resolve(profile: &AgentProfile, task: &Task) -> Result<Resolved, String> 
         crate::agent_settings::settings_for(profile.parser, profile.agent_settings.as_ref())?;
     let capabilities = settings.as_ref().map(|s| &s.capabilities);
     let defaults = capabilities.map(|c| &c["task_defaults"][name(task_type)]);
-    let model = task.model.clone().or_else(|| {
-        let recommended = defaults?["model"].as_str()?;
-        profile
-            .validate_model(recommended)
-            .ok()
-            .map(|_| recommended.to_string())
-    });
+    // GitHub #1024: a task's own model first, then the agent's default, then the task type's recommendation.
+    let model = task
+        .model
+        .clone()
+        .or_else(|| {
+            let chosen = profile.default_model.as_deref()?;
+            profile
+                .validate_model(chosen)
+                .ok()
+                .map(|_| chosen.to_string())
+        })
+        .or_else(|| {
+            let recommended = defaults?["model"].as_str()?;
+            profile
+                .validate_model(recommended)
+                .ok()
+                .map(|_| recommended.to_string())
+        });
     let mut options = task.execution_options.clone();
     let mut warnings = vec![];
     if let Some(group) = profile
@@ -78,8 +89,10 @@ pub fn resolve(profile: &AgentProfile, task: &Task) -> Result<Resolved, String> 
         .find(|o| o.name == "effort")
         && !options.contains_key("effort")
     {
-        let asked = defaults
-            .and_then(|d| d["effort"].as_str())
+        let asked = profile
+            .default_effort
+            .as_deref()
+            .or_else(|| defaults.and_then(|d| d["effort"].as_str()))
             .unwrap_or(built_in(task_type))
             .to_string();
         // Without a chosen model a model-specific group says nothing yet, so nothing is applied.

@@ -61,6 +61,12 @@ pub struct AgentProfile {
     /// GitHub #326: how the operator runs this CLI read-only (for the coordinator chat); the app cannot verify a custom CLI itself.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub read_only_args: Option<Vec<String>>,
+    /// GitHub #1024: the model this agent's tasks run with unless a task names one; omitted follows the task type.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub default_model: Option<String>,
+    /// GitHub #1024: the effort (low..max) this agent's tasks run with unless a task sets one; omitted follows the task type.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub default_effort: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

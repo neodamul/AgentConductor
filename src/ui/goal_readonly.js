@@ -36,7 +36,7 @@ globalThis.acGoalReadOnly=(()=>{
  '#start-add','.profile-tools button[data-goal-write]','.profile-tools .move-agent',
  '#start-agent-apply','#start-import button[value=confirm]','#start-source-add','#start-optimize-again','#start-optimize-use','#start-optimize-answers'
  ].join(',');
- const roomSelectors=['send-feedback','feedback','reassign','agent-select','set-model','model-select','schedule','resume-at','resume','recover','stop','approve','reject','merge','review-revise','review-deny','tool-decision-allow','tool-decision-deny','scope-review','scope-preview','scope-approve','scope-task','scope-paths','scope-test','fix-integration'].map(id=>'#'+id).join(',');
+ const roomSelectors=['send-feedback','feedback','reassign','agent-select','set-model','model-select','set-effort','effort-select','schedule','resume-at','resume','recover','stop','approve','reject','merge','review-revise','review-deny','tool-decision-allow','tool-decision-deny','scope-review','scope-preview','scope-approve','scope-task','scope-paths','scope-test','fix-integration'].map(id=>'#'+id).join(',');
  return{
   completed,reason,
   blocks(s,packet){return completed(s)&&(packet.kind==='action'?packet.action?.kind!=='quota':startupWrites.has(packet.kind));},
