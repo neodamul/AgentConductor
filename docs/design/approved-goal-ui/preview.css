@@ -478,3 +478,13 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 #plan-rows .row.plan-pending{display:block;color:var(--soft);font-size:12.5px;cursor:default}#plan-rows .row.plan-pending::before{content:'';display:inline-block;width:8px;height:8px;margin-right:8px;border-radius:50%;background:var(--accent);animation:plan-pending 1.2s ease-in-out infinite}@keyframes plan-pending{50%{opacity:.3}}@media (prefers-reduced-motion:reduce){#plan-rows .row.plan-pending::before{animation:none}}.plan-pending-card .plan-selected-detail,.plan-pending-card .phase span:last-child{display:none}
 /* Task detail: a long instruction folds to four lines and keeps its line breaks. */
 .task-detail-content .detail-instruction{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.6;margin:7px 0}.task-detail-content .detail-instruction.folded{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}.task-detail-content .instruction-toggle{display:block;border:0;background:transparent;color:var(--accent-text);font:inherit;font-size:12px;cursor:pointer;padding:0;margin:-3px 0 7px}.task-detail-content .instruction-toggle:hover{text-decoration:underline}.task-detail-content .instruction-toggle[hidden]{display:none}
+
+/* GitHub #1020: coordinator chat speakers — the coordinator on the left in a neutral bubble, the operator on the right in an accent bubble, each with a name line. */
+.chat-log{display:flex;flex-direction:column;gap:12px;border:0;padding:0}
+.chat-msg{display:flex;flex-direction:column;gap:3px;max-width:86%}
+.chat-msg.coordinator{align-self:flex-start}.chat-msg.operator{align-self:flex-end;align-items:flex-end}
+.chat-who{font-size:11px;color:var(--soft);line-height:1.4}.chat-who b{font-weight:650;color:var(--ink)}
+.chat-bubble{padding:8px 12px;border-radius:10px;font-size:13px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.chat-msg.coordinator .chat-bubble{background:var(--fill);border:1px solid var(--line);border-top-left-radius:3px}
+.chat-msg.operator .chat-bubble{background:var(--accent-soft);color:var(--accent-text);border:1px solid transparent;border-top-right-radius:3px}
+.chat-msg.working .chat-bubble{color:var(--soft)}

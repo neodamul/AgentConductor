@@ -16,7 +16,8 @@ const context = vm.createContext({ document: { createElement: node }, Date, acMe
 const elapsed = fs.readFileSync('src/ui/i18n.js', 'utf8').split('\n').find(l => l.startsWith('const AC_ELAPSED='));
 assert.ok(elapsed, 'AC_ELAPSED exists (GitHub #279)');
 vm.runInContext(elapsed + source + ';this.chatUi=chatUi;', context);
-const plain = v => JSON.parse(JSON.stringify(v));
+// GitHub #1020: turns carry their time (`at`); compare the rest, and check the time separately.
+const plain = v => JSON.parse(JSON.stringify(v, (k, x) => (k === 'at' ? undefined : x)));
 const key = (q, init) => q('chat-input').handlers.keydown({ preventDefault() {}, isComposing: false, shiftKey: false, altKey: false, ...init });
 (async () => {
   const calls = [], notices = []; let current = { revision: 'rev', chat_revision: 'chat-rev', job: { id: 'plan-1', kind: 'plan', state: 'running' }, chat_job: null, chat: null }, stored = [], reply = { id: 'job-1' }, historyDown = false;
@@ -38,7 +39,7 @@ const key = (q, init) => q('chat-input').handlers.keydown({ preventDefault() {},
   current = { revision: 'rev', chat_revision: 'chat-rev', chat_job: { id: 'job-1', kind: 'chat', state: 'completed' }, chat: { job: 'job-1', answer: 'Run:\n```\nnpm start\n```\nDone.' } };
   ui.update();
   assert.equal(ui.turns().length, 4);
-  const answer = q('chat-log').children.at(-1).children;
+  const answer = q('chat-log').children.at(-1).children[1].children; // GitHub #1020: [name line, bubble]
   assert.ok(answer.some(c => c.className === 'chat-code' && c.textContent === 'npm start'), 'code fences keep their layout');
   ui.update();
   assert.equal(ui.turns().length, 4, 'an answer is shown once');
@@ -60,6 +61,7 @@ const key = (q, init) => q('chat-input').handlers.keydown({ preventDefault() {},
   assert.equal(q('chat-input').value, 'Busy?');
   // GitHub #261: the refusal is part of the conversation, where the operator is looking, not only a toast.
   assert.deepEqual(plain(ui.turns().at(-1)), { role: 'assistant', error: true, text: 'another operation is running' });
+  assert.equal(typeof ui.turns().at(-1).at, 'number', 'a new turn carries its time');
   assert.equal(notices.length, 0, 'no toast for a chat that is refused');
   // GitHub #197: a request that times out may still have started the job; the page asks the native side before rolling back.
   const savedHistory = stored; reply = new Error('timed out'); q('chat-input').value = 'Run the app';
@@ -114,7 +116,7 @@ const key = (q, init) => q('chat-input').handlers.keydown({ preventDefault() {},
   ui2.update(); await tick();
   assert.equal(q2('chat-send').disabled, true, 'a running chat is adopted');
   // GitHub #279: its time counts from the job's start, and the 1 s tick says when the app sends no new state.
-  const working = () => q2('chat-log').children.at(-1).children[0].textContent; // the status label of the working bubble (GitHub #514)
+  const working = () => q2('chat-log').children.at(-1).children[1].children[0].textContent; // the status label of the working bubble (GitHub #514)
   assert.match(working(), /2:0[0-1]$/, working());
   staleText = 'no new state for 9s'; ui2.tick();
   assert.match(working(), /2:0[0-1] · no new state for 9s$/, working());

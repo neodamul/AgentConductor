@@ -93,6 +93,7 @@ fn the_prompt_puts_the_section_between_manual_and_conversation_without_extra_blo
     let turns = [Turn {
         role: "operator".into(),
         text: "How do I run it?".into(),
+        at: None,
     }];
     let prompt = build_prompt_in(&turns, "English", &section).unwrap();
     let at = |needle: &str| prompt.find(needle).unwrap_or_else(|| panic!("{needle}"));

@@ -6,6 +6,7 @@ fn turn(role: &str, text: &str) -> Turn {
     Turn {
         role: role.into(),
         text: text.into(),
+        at: None,
     }
 }
 
