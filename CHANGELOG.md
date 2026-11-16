@@ -4,6 +4,19 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.2.15
+
+- Each agent can have a default model and Effort in its profile; a task can override Effort in the task inspector, and runs use task, then agent, then task-type defaults (#1024).
+- Help → Report a bug can zip recent log tails (version/OS, request diagnostics, messenger log, latest run errors) into Downloads with secrets masked, reveal the file and open a draft that says to drag it in (#1027).
+- Messenger notices name tasks by their first content line instead of a "Goal:" label and translate "blocked" (#1028).
+- The task inspector's apply buttons use the compact size of the design (#1029).
+- The tool check timeout is a Settings field (default 60 s, 5–600) instead of an environment variable (#1033).
+- With native_callback, a tool call denied by AgentConductor's guard no longer fails the whole task; task verification decides (#1034).
+- Glob and Grep with the workspace folder itself as the path are no longer denied as outside the workspace on Windows (#1035).
+- Slide panels close on a click outside them, and the coordinator chat has a Close button beside Send (#1038).
+- The main window no longer flickers: unchanged regions are not redrawn on refresh, a replaced Goal optimization stops pulsing, and completed-Goal locks no longer fight the refresh timer (#1039).
+- Agent cards can be added, edited, reordered and removed while a completed Goal is selected; the completed Goal itself stays read-only (#1040).
+
 ## v0.2.14
 
 - A tool-context verifier that times out denies only that tool call with a reason naming slow Git start-up, instead of terminating the task; plain folders skip redundant Git processes, and `AGENTCONDUCTOR_TOOL_VERIFIER_TIMEOUT_SECS` raises the limit (#1014).
