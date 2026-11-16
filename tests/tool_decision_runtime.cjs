@@ -24,5 +24,19 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms)),fail=m=>{throw Error(m);};
  await b.eval(`SIM.room.tool_requests=[${request('tr2')}]`);await until("!document.getElementById('tool-decision').hidden",'second request shown');
  await b.eval("document.getElementById('tool-decision-deny').click()");
  await until("SIM.log.some(x=>x.kind==='action'&&x.p.action.kind==='tool_reject'&&x.p.action.sha==='tr2')",'reject sent');
- console.log('tool decision: footer replaces the direction field; allow and deny send the request id; no modal');
+ // #1046: a slow decision (the tool check re-runs Git) is waited for as long as the tool check timeout allows, with both buttons
+ // locked; once that wait also runs out, the sent decision keeps them locked until its request is settled.
+ await b.eval(`SIM.room.tool_requests=[${request('tr3')}];SIM.room.verifier_timeout=5;SIM.hang.action=true;`);await until("!document.getElementById('tool-decision').hidden&&!document.getElementById('tool-decision-allow').disabled",'third request shown');
+ await b.eval("document.getElementById('tool-decision-allow').click()");
+ await until("SIM.log.some(x=>x.kind==='action'&&x.p.action.sha==='tr3')",'slow approve sent');
+ const locked="document.getElementById('tool-decision-allow').disabled&&document.getElementById('tool-decision-deny').disabled";
+ await wait(16500);
+ const mid=await b.eval(`({locked:${locked},timeout:SIM.log.some(x=>x.kind==='client_timeout')})`);
+ if(mid.timeout)fail('the decision timed out after 15 s although the tool check may take 20 s');if(!mid.locked)fail('the buttons are not locked while the decision runs');
+ await until("SIM.log.some(x=>x.kind==='client_timeout'&&x.p.of==='action')",'decision wait runs out after the tool check timeout');await wait(300);
+ if(!await b.eval(locked))fail('the buttons unlocked after the timeout although the decision was sent');
+ await b.eval("document.getElementById('tool-decision-allow').disabled=false;document.getElementById('tool-decision-allow').click()");await wait(300);
+ if(await b.eval("SIM.log.filter(x=>x.kind==='action'&&x.p.action.sha==='tr3').length")!==1)fail('a second decision was sent for the same request');
+ await b.eval("SIM.hang.action=false;SIM.release('action');SIM.room.tool_requests=[]");await until("document.getElementById('tool-decision').hidden",'footer gone after the slow decision settled');
+ console.log('tool decision: footer replaces the direction field; allow and deny send the request id; no modal; a slow decision waits for the tool check and stays locked');
 }finally{await b.close();}}finally{fs.rmSync(dir,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1;});
