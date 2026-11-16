@@ -82,12 +82,23 @@ module.exports=[
     ['title', '.panel-heading h3', '.chat-head h3', ['fontSize', 'fontWeight', 'color']],
     ['close', '.panel-close', '#start-chat-close', ['color', 'borderTopWidth', 'borderTopLeftRadius', 'backgroundColor']],
     ['context', '.panel-note', '#start-chat-context', ['fontSize', 'color', 'lineHeight']],
-    ['card', '#chat-preview', '.chat-card', ['borderTopWidth', 'borderTopColor', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft', 'fontSize', 'lineHeight']],
+    // GitHub #1020: speaker bubbles and name lines replace the single opening card.
+    ['thread', '#chat-preview', '.chat-thread', ['display', 'rowGap']],
+    ['coordinator-who', '#chat-preview .chat-msg.coordinator .chat-who', '.chat-intro .chat-who', ['fontSize', 'color', 'lineHeight']],
+    ['coordinator-name', '#chat-preview .chat-msg.coordinator .chat-who b', '.chat-intro .chat-who b', ['fontSize', 'fontWeight', 'color']],
+    ['coordinator-bubble', '#chat-preview .chat-msg.coordinator .chat-bubble', '.chat-intro .chat-bubble', ['paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopColor', 'borderTopLeftRadius', 'borderTopRightRadius', 'backgroundColor', 'fontSize', 'lineHeight']],
     ['input', '#chat-preview-input', '#start-chat-input', ['paddingTop', 'borderTopWidth', 'borderTopColor', 'borderTopLeftRadius', 'backgroundColor', 'fontSize']],
     ['send', '#chat-preview-form .btn', '#start-chat-send', ['backgroundColor', 'color', 'borderTopLeftRadius', 'fontWeight']],
   ].map(([name, mock, app, props]) => ({ name: `chat-${name}`, props, keys: props, pixel: false,
     mock: { url: '?theme=light#0', run: "openSidePanel('coordinator-chat-panel')", selector: '#coordinator-chat-panel ' + mock },
     app: { run: "document.getElementById('run-screen').hidden = false; document.getElementById('start-chat-button').click()", selector: app } })),
+  // GitHub #1020: the operator's own turn sits right in an accent bubble.
+  ...[
+    ['operator-msg', '.chat-msg.operator', ['alignSelf', 'alignItems']],
+    ['operator-bubble', '.chat-msg.operator .chat-bubble', ['paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopLeftRadius', 'borderTopRightRadius', 'backgroundColor', 'color', 'fontSize', 'lineHeight']],
+  ].map(([name, selector, props]) => ({ name: `chat-${name}`, props, keys: props, pixel: false,
+    mock: { url: '?theme=light#0', run: "openSidePanel('coordinator-chat-panel')", selector: '#coordinator-chat-panel #chat-preview ' + selector },
+    app: { setup: "SIM.reply.chat_history=()=>({turns:[{role:'operator',text:'현재 진행 상황을 알려줘',at:Date.now()}]});", run: "(async()=>{document.getElementById('run-screen').hidden=false;document.getElementById('start-chat-button').click();const end=Date.now()+5000;while(!document.querySelector('#start-chat-log .chat-msg.operator')&&Date.now()<end)await new Promise(r=>setTimeout(r,30));})()", selector: '#start-chat-log ' + selector } })),
   // #563: the application menu popup (behavior.md: the mock's short menu is illustrative, so items differ; the box and rows match).
   ...[
     { name: 'app-menu-box', props: ['borderTopLeftRadius', 'paddingTop', 'borderTopWidth', 'backgroundColor'], keys: ['borderTopLeftRadius', 'paddingTop', 'borderTopWidth', 'backgroundColor'], mock: '#app-menu', app: '#start-workspace-list' },

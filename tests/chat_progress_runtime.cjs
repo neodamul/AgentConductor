@@ -18,7 +18,7 @@ const now = Date.now();
   let current = { chat_revision: 'r', chat_job: { id: 'j1', kind: 'chat', state: 'running', started_ms: now - 5000, output: { bytes: 0, updated_ms: null }, progress: [] }, chat: null };
   const ui = context.chatUi({ q, request: async p => (p.kind === 'chat_history' ? { turns: [{ role: 'operator', text: 'Where?' }] } : { id: 'j1' }), state: () => current, notice() {} });
   ui.update(); await tick();
-  const log = q('chat-log'), bubble = () => log.children.at(-1);
+  const log = q('chat-log'), bubble = () => log.children.at(-1).children[1]; // GitHub #1020: [name line, bubble]
   assert.equal(log.children.length, 2, 'user turn and one working bubble');
   assert.equal(bubble().children[0].textContent.endsWith('no output yet'), true, bubble().children[0].textContent);
   // Tool lines and the last output age appear in the same bubble.

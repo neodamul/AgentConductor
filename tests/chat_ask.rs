@@ -26,6 +26,7 @@ async fn the_coordinator_answer_is_returned_and_the_prompt_reaches_it() {
     let turns = [Turn {
         role: "operator".into(),
         text: "How do I run it?".into(),
+        at: None,
     }];
     let answer = ask(
         &profile(&script),
