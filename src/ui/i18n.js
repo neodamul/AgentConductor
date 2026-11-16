@@ -21,11 +21,8 @@ const AC_I18N=(()=>{
     // Polls re-render regions with unchanged data; swapping identical nodes flickers, resets hover,
     // focus and scroll, so the region is kept when its markup is the same. Form controls carry
     // state (.value/.checked) that markup does not show, so they are always swapped.
-    if(node.nodeType===1&&children.length&&children.length===node.childNodes.length&&!node.querySelector('input,select,textarea')){
-      const box=document.createElement('div');box.append(...children);
-      if(!box.querySelector('input,select,textarea')&&typeof node.innerHTML==='string'&&box.innerHTML===node.innerHTML)return;
-      node.replaceChildren(...box.childNodes);return;
-    }
+    const form=n=>n.matches?.('input,select,textarea')||n.querySelector?.('input,select,textarea');
+    if(children.length&&children.length===node.childNodes?.length&&!form(node)&&children.every((c,k)=>typeof c.isEqualNode==='function'&&!form(c)&&c.isEqualNode(node.childNodes[k])))return;
     node.replaceChildren(...children);
   }
   function textNode(value){const node=document.createTextNode('');bind(node,value);return node;}
