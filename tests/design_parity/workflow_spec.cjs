@@ -75,6 +75,10 @@ module.exports=[
     { name: `panel-${name}`, props: ['paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], keys: ['width', 'paddingTop', 'paddingLeft', 'backgroundColor', 'borderLeftWidth'], pixel: false,
       mock: { url: '?theme=light#0', run: `openSidePanel('${mock}')`, selector: `#${mock}` }, app: { run: `document.getElementById('run-screen').hidden = false; const el = document.getElementById('${app}'); el.showModal ? el.showModal() : (el.hidden = false)`, selector: `#${app}` } },
   ]),
+  // GitHub #1033: the tool check timeout field and its hint in Settings.
+  ...[['verifier-timeout', '#mock-verifier-timeout', '#start-verifier-timeout', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopColor', 'borderTopLeftRadius', 'backgroundColor', 'color']],
+    ['verifier-timeout-label', 'label:has(#mock-verifier-timeout)', 'label:has(#start-verifier-timeout)', ['fontSize', 'color']]].map(([name, mock, app, props]) => ({ name: `settings-${name}`, props, keys: ['height', ...props], pixel: false,
+    mock: { url: '?theme=light#0', run: "openSidePanel('settings-panel')", selector: mock }, app: { run: "document.getElementById('start-settings-button').click()", selector: app } })),
   // #998: the close glyph uses 18px, not the mock's 22px, because type-scale-chat allows only the mock's text scale; its box and color match.
   // #998: inside the coordinator chat slide-over the heading divider, context line, opening card and composer follow the design.
   ...[
