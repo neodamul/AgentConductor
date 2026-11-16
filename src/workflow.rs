@@ -19,8 +19,19 @@ mod types;
 pub use types::*;
 
 fn workspace_checkpoint(cwd: &Path, index: &Path) -> Result<WorkspaceCheckpoint, String> {
-    let git = Repository::open(cwd)?;
-    let head = git.head()?;
+    repository_checkpoint(&Repository::open(cwd)?, None, index)
+}
+
+/// `head` skips a second `rev-parse HEAD` when the caller just read it (GitHub #1014).
+fn repository_checkpoint(
+    git: &Repository,
+    head: Option<String>,
+    index: &Path,
+) -> Result<WorkspaceCheckpoint, String> {
+    let head = match head {
+        Some(head) => head,
+        None => git.head()?,
+    };
     // One listing: a second listing could race with concurrent writers (live tool decisions).
     let tree = git.checkpoint(&head, index)?.tree;
     Ok(WorkspaceCheckpoint {

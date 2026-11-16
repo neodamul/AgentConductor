@@ -20,22 +20,25 @@ impl Repository {
             root: path.canonicalize().map_err(|e| e.to_string())?,
             history: None,
         };
-        let actual = repo.text(&["rev-parse", "--show-toplevel"]);
-        if actual.as_ref().is_ok_and(|p| {
-            Path::new(p)
-                .canonicalize()
-                .is_ok_and(|root| root == repo.root)
-        }) {
-            return Ok(repo);
-        }
+        // GitHub #1014: without `<root>/.git` the root cannot be its own toplevel, so a plain
+        // folder goes straight to its external history instead of starting a failing Git process.
         if std::fs::symlink_metadata(repo.root.join(".git")).is_ok() {
+            let actual = repo.text(&["rev-parse", "--show-toplevel"]);
+            if actual.as_ref().is_ok_and(|p| {
+                Path::new(p)
+                    .canonicalize()
+                    .is_ok_and(|root| root == repo.root)
+            }) {
+                return Ok(repo);
+            }
             return Err(actual
                 .err()
                 .unwrap_or_else(|| "repository path must be its root".into()));
         }
         repo.history = crate::folder::external_metadata(&repo.root)?;
         if repo.history.is_none() {
-            return Err(actual
+            return Err(repo
+                .text(&["rev-parse", "--show-toplevel"])
                 .err()
                 .unwrap_or_else(|| "repository path must be its root".into()));
         }

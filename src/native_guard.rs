@@ -162,30 +162,45 @@ pub async fn run(
                                     ),
                                 };
                                 let mut allowed = false;
+                                // GitHub #1014: a verifier that only ran out of time denies this
+                                // one call; the worker continues instead of being terminated.
+                                let timed_out =
+                                    |e: &String| e.starts_with(crate::workflow::VERIFIER_TIMED_OUT);
+                                let mut late = None;
                                 if let Some(approved) = &binding.approved
                                     && approved.request == request
                                 {
-                                    let context = crate::workflow::verify_tool_context(
+                                    match crate::workflow::verify_tool_context(
                                         &binding.dir,
                                         &binding.task,
                                         &request,
                                         &std::env::current_exe().map_err(|e| e.to_string())?,
                                     )
-                                    .await?;
-                                    if !stop.exists() && context == approved.context {
-                                        let now = std::time::SystemTime::now()
-                                            .duration_since(std::time::UNIX_EPOCH)
-                                            .unwrap_or_default()
-                                            .as_secs()
-                                            as i64;
-                                        allowed = crate::gates::Ledger::open(
-                                            &binding.dir.join("state.sqlite"),
-                                        )?
-                                        .consume(&approved.id, &context, &request, now)?
-                                            == crate::gates::Decision::Allowed;
+                                    .await
+                                    {
+                                        Err(e) if timed_out(&e) => {
+                                            late = Some(ToolDecision::deny(&e))
+                                        }
+                                        context => {
+                                            let context = context?;
+                                            if !stop.exists() && context == approved.context {
+                                                let now = std::time::SystemTime::now()
+                                                    .duration_since(std::time::UNIX_EPOCH)
+                                                    .unwrap_or_default()
+                                                    .as_secs()
+                                                    as i64;
+                                                allowed = crate::gates::Ledger::open(
+                                                    &binding.dir.join("state.sqlite"),
+                                                )?
+                                                .consume(&approved.id, &context, &request, now)?
+                                                    == crate::gates::Decision::Allowed;
+                                            }
+                                        }
                                     }
                                 }
-                                if allowed {
+                                if let Some(decision) = late {
+                                    decision
+                                } else if allowed {
                                     ToolDecision {
                                         allow: true,
                                         reason: "Exact current human approval consumed once".into(),
@@ -196,7 +211,10 @@ pub async fn run(
                                         coordinated_decision(&binding, &request, &expected, &stop)
                                             .await;
                                     paused.store(false, Ordering::Release);
-                                    decision?
+                                    match decision {
+                                        Err(e) if timed_out(&e) => Some(ToolDecision::deny(&e)),
+                                        other => other?,
+                                    }
                                 } {
                                     decision
                                 } else {
@@ -261,9 +279,9 @@ pub(crate) fn decision_wait() -> u64 {
 
 fn hook_timeout() -> u16 {
     match decision_wait() {
-        // A stored approval is re-verified (up to 30 s) before it is consumed.
-        0 => (ORCHESTRATOR_WAIT + 45) as u16,
+        // A stored approval is re-verified (up to the verifier timeout) before it is consumed.
+        0 => (ORCHESTRATOR_WAIT + crate::workflow::verifier_timeout() + 15) as u16,
         // Leave margin for context verification after the human decides.
-        wait => (ORCHESTRATOR_WAIT + wait + 60) as u16,
+        wait => (ORCHESTRATOR_WAIT + wait + crate::workflow::verifier_timeout() + 30) as u16,
     }
 }

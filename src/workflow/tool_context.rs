@@ -1,5 +1,20 @@
 use super::*;
 
+/// Prefix of a verifier error that only means it ran out of time (GitHub #1014): the native
+/// guard denies that one tool call with this reason instead of terminating the task.
+pub const VERIFIER_TIMED_OUT: &str = "tool context verifier timed out";
+
+/// About a dozen Git processes: on Windows each start costs ~0.3 s plus antivirus scanning, and
+/// a busy run exceeded 10 s. `AGENTCONDUCTOR_TOOL_VERIFIER_TIMEOUT_SECS` raises it for machines
+/// where Git starts slowly; the native hook timeout grows with it.
+pub fn verifier_timeout() -> u64 {
+    std::env::var("AGENTCONDUCTOR_TOOL_VERIFIER_TIMEOUT_SECS")
+        .ok()
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(30u64)
+        .clamp(5, 600)
+}
+
 /// Derives evidence only; this function cannot grant or consume permission.
 pub fn tool_context(
     dir: &Path,
@@ -20,20 +35,30 @@ pub fn tool_context(
         return Err("context verification is only for supported human-gated tools".into());
     }
     let target = Repository::open(&report.repo)?;
-    if target.head()? != report.base || target.branch()? != report.branch {
+    let target_head = target.head()?;
+    if target_head != report.base || target.branch()? != report.branch {
         return Err("target Git baseline changed before tool approval".into());
     }
-    let workspace = Repository::open(&task.cwd)?;
-    if workspace.head()? != task.base {
-        return Err("task Git baseline changed before tool approval".into());
-    }
-    let common = |git: &Repository| -> Result<PathBuf, String> {
-        PathBuf::from(git.text(&["rev-parse", "--path-format=absolute", "--git-common-dir"])?)
-            .canonicalize()
-            .map_err(|e| e.to_string())
+    // GitHub #1014: a shared workspace is the target folder itself; reopening it and comparing
+    // its HEAD and common dir again only costs Git processes (seconds each on a slow Windows run).
+    let shared = task.cwd.canonicalize().map_err(|e| e.to_string())? == target.root;
+    let (workspace, workspace_head) = if shared {
+        (target.clone(), target_head)
+    } else {
+        let workspace = Repository::open(&task.cwd)?;
+        let head = workspace.head()?;
+        let common = |git: &Repository| -> Result<PathBuf, String> {
+            PathBuf::from(git.text(&["rev-parse", "--path-format=absolute", "--git-common-dir"])?)
+                .canonicalize()
+                .map_err(|e| e.to_string())
+        };
+        if common(&workspace)? != common(&target)? {
+            return Err("task workspace does not belong to the target repository".into());
+        }
+        (workspace, head)
     };
-    if common(&workspace)? != common(&target)? {
-        return Err("task workspace does not belong to the target repository".into());
+    if workspace_head != task.base {
+        return Err("task Git baseline changed before tool approval".into());
     }
     // Inspect ignored sensitive targets without reading their contents or adding them to Git.
     let file_identity = match policy.file_target(&request.tool, &request.input)? {
@@ -68,7 +93,7 @@ pub fn tool_context(
         std::process::id(),
         now()
     ));
-    let checkpoint = workspace_checkpoint(&task.cwd, &temporary)?;
+    let checkpoint = repository_checkpoint(&workspace, Some(workspace_head), &temporary)?;
     Ok(crate::gates::Context {
         epoch: task.approval_epoch,
         task: task.id.clone(),
@@ -121,9 +146,7 @@ pub async fn verify_tool_context(
             cwd: task.cwd.clone(),
             input,
             log_dir: attempt.join("process"),
-            // About a dozen Git processes: on Windows each start costs ~0.3 s plus antivirus
-            // scanning, and a busy run exceeded 10 s. Stays inside the hook's 60 s margin.
-            timeout: Duration::from_secs(30),
+            timeout: Duration::from_secs(verifier_timeout()),
             signal_grace: Duration::from_millis(100),
             environment: Default::default(),
         },
@@ -134,6 +157,15 @@ pub async fn verify_tool_context(
         },
     )
     .await?;
+    if result.timed_out && !result.stopped {
+        return Err(format!(
+            "{VERIFIER_TIMED_OUT} after {} s, most likely because Git starts slowly on this \
+             machine; the tool call was denied and the task can continue. Raise \
+             AGENTCONDUCTOR_TOOL_VERIFIER_TIMEOUT_SECS if this repeats; inspect {}",
+            verifier_timeout(),
+            attempt.display()
+        ));
+    }
     if result.exit_code != Some(0) || result.timed_out || result.stopped {
         return Err(format!(
             "tool context verifier failed; inspect {}",
