@@ -8,6 +8,7 @@ impl Plan {
         let mut agents = HashSet::new();
         for agent in &self.agents {
             agent.validate_custom_configuration()?;
+            agent.validate_defaults()?;
             if agent.parser != crate::protocol::Provider::Custom
                 && (!agent.event_types.is_empty() || agent.session_id_pointer.is_some())
             {

@@ -23,6 +23,17 @@ impl AgentProfile {
         Ok(())
     }
 
+    /// GitHub #1024: an agent default effort is one of the known levels. The default model is not checked here: a
+    /// catalog refresh may drop it, and `task_profile::resolve` then falls back to the task type's model.
+    pub fn validate_defaults(&self) -> Result<(), String> {
+        if let Some(effort) = &self.default_effort
+            && !crate::task_profile::EFFORTS.contains(&effort.as_str())
+        {
+            return Err("default effort must be low, medium, high, xhigh or max".into());
+        }
+        Ok(())
+    }
+
     pub fn validate_custom_configuration(&self) -> Result<(), String> {
         let custom = self.parser == crate::protocol::Provider::Custom;
         let pointer = |value: &str| value.is_empty() || value.starts_with('/');

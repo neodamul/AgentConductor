@@ -28,6 +28,11 @@ module.exports=[
     mock: { url: '?theme=light#0', selector: '.main>.head' }, app: { selector: '.startup-heading' } },
   { name: 'run-heading-gap', props: ['columnGap'], keys: ['columnGap', 'height'], pixel: false,
     mock: { url: '?theme=light#3', selector: '.main>.head' }, app: { setup: STEPS_ENABLED, run: "document.getElementById('start-tab-tasks').click()", selector: '#run-screen .goal-bar' } },
+  // GitHub #1024: the default model and Effort row of the agent editor, opened on the Claude profile on both sides.
+  ...[['model', 'profile-model', 'start-default-model'], ['effort', 'profile-effort', 'start-default-effort']].map(([name, mock, app]) => ({
+    name: `agent-dialog-default-${name}`, props: [], keys: ['height', 'fontSize', 'color'], pixel: false,
+    mock: { url: '?theme=light#1', run: "openProfileEditor('claude')", selector: `#profile-edit-dialog label:has(#${mock})` },
+    app: { run: "document.querySelector('.startup-profile[data-agent=\"claude\"] .profile-tools button').click()", selector: `#start-agent-dialog label:has(#${app})` } })),
   // GitHub #892: status tags share the agent tag border, corners and padding.
   { name: 'heading-pill', props: ['borderTopWidth', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft'], keys: ['y', 'height', 'borderTopWidth', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft'], pixel: false,
     mock: { url: '?theme=light#0', selector: '.goal-info>.pill', rel: '.goal-info' }, app: { selector: '#start-goal-info>.status-pill', rel: '#start-goal-info' } },
@@ -114,6 +119,8 @@ module.exports=[
     { name: 'inspector-instruction-fold', props: ['whiteSpace', 'webkitLineClamp', 'overflowY'], keys: ['whiteSpace', 'webkitLineClamp', 'overflowY'], pixel: false, mock: '.task-inspector [data-detail-field="instruction"]', app: '#task-instruction' },
     { name: 'inspector-facts', props: ['gridTemplateColumns', 'rowGap', 'fontSize'], keys: ['gridTemplateColumns', 'rowGap', 'fontSize'], pixel: false, mock: '.task-inspector dl', app: '.task-facts' },
     { name: 'inspector-fact-label', props: ['color', 'fontSize'], keys: ['color', 'fontSize'], pixel: false, mock: '.task-inspector dt', app: '.task-facts dt' },
+    // GitHub #1024: the task's Effort choice follows the session model row.
+    { name: 'inspector-effort-choice', props: ['fontSize', 'borderTopWidth', 'borderTopLeftRadius', 'backgroundColor'], keys: ['height', 'fontSize', 'borderTopWidth', 'borderTopLeftRadius', 'backgroundColor'], pixel: false, mock: '.task-inspector .detail-inline:has([data-detail-effort]) .assignment-choice', app: '.inline-control:has(#effort-select) .ac-choice-trigger' },
     { name: 'inspector-context', props: ['fontSize', 'lineHeight', 'color'], keys: ['height', 'fontSize', 'lineHeight', 'color'], pixel: false, mock: '#task-inspector-context', app: '#inspector-context' },
   ].map(({ mock, app, ...rest }) => ({ ...rest,
     mock: { url: '?theme=light#3', run: "document.getElementById('right-panel-toggle').click()", selector: mock },

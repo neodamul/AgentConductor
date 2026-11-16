@@ -257,6 +257,11 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
         [command, dir, task, model, flag] if command == "session-model" && flag == "--register" => {
             Some(workflow::register_model(Path::new(dir), task, model))
         }
+        [command, dir, task, effort] if command == "session-effort" => Some(workflow::set_effort(
+            Path::new(dir),
+            task,
+            (effort != "default").then_some(effort.as_str()),
+        )),
         [command, dir, task, agent] if command == "reassign" => {
             Some(workflow::reassign(Path::new(dir), task, agent, None))
         }

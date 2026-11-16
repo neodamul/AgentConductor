@@ -75,6 +75,8 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                     session_id_pointer: None,
                     quota_command: None,
                     coordinator_model: None,
+                    default_model: None,
+                    default_effort: None,
                     read_only_args: None,
                     protocol: None,
                     agent_settings: None,

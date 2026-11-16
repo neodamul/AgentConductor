@@ -60,6 +60,37 @@ fn apply(dir: &Path, id: &str, model: &str, register: bool) -> Result<(), String
     save(&mut store, dir, &report)
 }
 
+/// GitHub #1024: sets (or with `None` clears, back to the agent default) a task's effort. Only an editable (stopped)
+/// run; the task must be verified again, as after a model change.
+pub fn set_effort(dir: &Path, id: &str, effort: Option<&str>) -> Result<(), String> {
+    if effort.is_some_and(|e| !crate::task_profile::EFFORTS.contains(&e)) {
+        return Err("effort must be low, medium, high, xhigh or max".into());
+    }
+    let _lock = Lock::acquire(dir)?;
+    let mut report = load(dir)?;
+    editable(&report)?;
+    let index = task_index(&report, id)?;
+    let options = &mut report.plan.tasks[index].execution_options;
+    match effort {
+        Some(effort) => options.insert("effort".into(), effort.into()),
+        None => options.remove("effort"),
+    };
+    report.plan.validate()?;
+    let mut store = Store::open(dir.join("state.sqlite"))?;
+    let previous_status = report.tasks[index].status.clone();
+    invalidate(&mut report, index, &mut store)?;
+    if previous_status == "waiting_availability" {
+        report.tasks[index].status = previous_status;
+        report.state = "waiting_availability".into();
+    }
+    store.record(
+        "session_effort",
+        &serde_json::json!({"task":id,"effort":effort}),
+        "Human changed session effort; work must be verified again",
+    )?;
+    save(&mut store, dir, &report)
+}
+
 fn now_seconds() -> i64 {
     std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)

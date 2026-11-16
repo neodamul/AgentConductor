@@ -38,6 +38,12 @@ pub(in crate::ui) enum Action {
         #[serde(default)]
         register: bool,
     },
+    /// GitHub #1024: a task's effort; `None` returns it to the agent default.
+    Effort {
+        task: String,
+        #[serde(default)]
+        effort: Option<String>,
+    },
     Schedule {
         task: String,
         at: String,
@@ -77,6 +83,7 @@ impl Action {
             Self::Revise { .. } => "revise",
             Self::Reassign { .. } => "reassign",
             Self::Model { .. } => "model",
+            Self::Effort { .. } => "effort",
             Self::Schedule { .. } => "schedule",
             Self::ToolApprove { .. } => "tool_approve",
             Self::ToolReject { .. } => "tool_reject",
@@ -133,6 +140,11 @@ impl Action {
                 }
                 args
             }
+            Self::Effort { task, effort } => vec![
+                "session-effort".into(),
+                task.clone(),
+                effort.clone().unwrap_or_else(|| "default".into()),
+            ],
             Self::Schedule { task, at } => vec!["schedule".into(), task.clone(), at.clone()],
             Self::ToolApprove { sha } => vec!["tool-approve".into(), sha.clone()],
             Self::ToolReject { sha } => vec!["tool-reject".into(), sha.clone()],
