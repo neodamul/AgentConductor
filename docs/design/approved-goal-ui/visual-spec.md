@@ -24,7 +24,7 @@ must reproduce the visual proportions with their own scale-factor handling, not 
 | Selected tab | Rounded upper corners, thin side outline, accent upper edge, open lower edge joining content |
 | Step card | Neutral surface, thin outline; fixed header/footer; flexible scrolling body |
 | Workspace / Goal section | 24px top padding; visible section division |
-| Agent card | 144px fixed reference height; 8px radius; compact facts/actions |
+| Agent card | height follows content (no fixed height, no blank space; GitHub #1016); 8px radius; compact facts/actions |
 | Agent avatar | 29px; 1.5px semantic status border |
 | Task avatar | 28px compact container with 20px colored brand mark; inline status tags keep title space, same 1.5px semantic border |
 | Quota hit box / graphic | 30px / 27px, two concentric rings |

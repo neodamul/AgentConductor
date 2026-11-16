@@ -60,7 +60,7 @@
 .usage-popover{position:fixed;z-index:30;width:274px;padding:17px;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 32px #0002;color:var(--ink);font-size:13px}.usage-popover[hidden]{display:none}.usage-popover .usage-heading{display:flex;align-items:center;gap:8px;margin-bottom:16px}.usage-heading strong{font-size:14px}.usage-close,.usage-refresh{border:0;background:transparent;color:var(--soft);cursor:pointer;border-radius:5px;padding:3px 6px;font-size:15px}.usage-close:hover,.usage-refresh:hover{background:var(--fill)}.usage-item+.usage-item{margin-top:17px}.usage-line{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}.usage-line b{font-size:14px;font-variant-numeric:tabular-nums}.usage-meter{height:5px;background:var(--fill);border-radius:3px;overflow:hidden;margin-bottom:6px}.usage-meter span{height:100%;display:block;background:var(--soft);border-radius:3px}.usage-reset,.usage-observed{font-size:11px;color:var(--soft)}.usage-observed{border-top:1px solid var(--line);padding-top:12px;margin-top:15px;display:flex;align-items:center;justify-content:space-between}.usage-unavailable{font-size:12px;color:var(--soft);line-height:1.6}
 .mock-note{font-size:12px;color:var(--soft)}
 
-.agent{min-height:144px;flex:none;position:relative}.agent .tools{margin-top:auto}
+.agent{flex:none;position:relative}.agent .tools{margin-top:auto}
 .status-icon{--state-color:var(--line-strong);border:1.5px solid var(--state-color);padding:0;flex:none;position:relative;font-family:inherit;color:var(--ink);cursor:pointer;width:29px;height:29px;background:var(--fill)}
 .status-icon[data-state="running"],.status-icon[data-state="completed"]{--state-color:var(--ok)}.status-icon[data-state="waiting"]{--state-color:var(--warn)}.status-icon[data-state="error"]{--state-color:var(--err)}.status-icon[data-state="running"]{animation:agent-status-pulse 1.8s ease-in-out infinite}.status-icon:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.status-icon[data-attention="true"]::after{content:'!';position:absolute;right:-5px;top:-5px;display:grid;place-items:center;width:12px;height:12px;border-radius:50%;background:var(--state-color);color:#fff;font-size:9px;font-weight:700;border:1px solid var(--surface)}
 @keyframes agent-status-pulse{0%,100%{border-color:var(--state-color)}50%{border-color:var(--line)}}
@@ -380,6 +380,8 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 @keyframes ac-busy{0%{transform:translateX(-100%)}100%{transform:translateX(250%)}}@media(prefers-reduced-motion:reduce){.btn.is-busy::after{animation:none;width:100%;opacity:.45}}
 /* GitHub #869/#870: role, work-state and info tags; thin same-hue borders, 4px corners; the coordinator card carries a role band. */
 .agent .facts{gap:4px}.agent .facts+.facts{margin-top:-2px}
+/* GitHub #1016: work and info tags flow as one wrapped group, so few tags take two compact lines without a forced row break. */
+.agent .fact-flow{display:flex;flex-wrap:wrap;gap:4px}.agent .fact-flow>.facts{display:contents}
 .agent .fact{padding:1px 7px;line-height:1.35;border:1px solid color-mix(in srgb,currentColor 32%,transparent);border-radius:4px}
 .agent .fact.info{background:var(--fill);color:var(--soft);border-color:var(--line-strong)}
 .agent .fact.role{background:var(--role-bg);color:var(--role);font-weight:650}
@@ -389,10 +391,10 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 .agent .fact .state-count,.agent .agent-sessions .session-count{font-weight:650;margin-left:3px}
 .agent .fact.state-running::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-right:4px;vertical-align:1px}
 .agent.coordinator{border-color:color-mix(in srgb,var(--role) 40%,var(--line));box-shadow:inset 3px 0 0 var(--role)}
-.agent .fact.models{position:relative;cursor:default}
+.agent .fact.models,.agent .fact.tasks{position:relative;cursor:default}
 .agent .model-list{display:none;position:absolute;left:0;top:calc(100% + 5px);z-index:20;min-width:160px;padding:6px 9px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);color:var(--ink);font-weight:400;line-height:1.6;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.12)}
 .agent .model-list b{display:block;font-weight:400;font-size:11px;color:var(--soft)}.agent .model-list span{display:block;font-size:12px}.agent .model-list .more{color:var(--soft)}
-.agent .fact.models:hover .model-list,.agent .fact.models.open .model-list{display:block}
+.agent .fact.models:hover .model-list,.agent .fact.models.open .model-list,.agent .fact.tasks:hover .model-list,.agent .fact.tasks.open .model-list{display:block}
 #mcp-advanced .mcp-import-format{margin:8px 0 0}
 
 /* #890: bounded raw evidence and read-only Phase history retain the existing design tokens. */
@@ -478,3 +480,8 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 #plan-rows .row.plan-pending{display:block;color:var(--soft);font-size:12.5px;cursor:default}#plan-rows .row.plan-pending::before{content:'';display:inline-block;width:8px;height:8px;margin-right:8px;border-radius:50%;background:var(--accent);animation:plan-pending 1.2s ease-in-out infinite}@keyframes plan-pending{50%{opacity:.3}}@media (prefers-reduced-motion:reduce){#plan-rows .row.plan-pending::before{animation:none}}.plan-pending-card .plan-selected-detail,.plan-pending-card .phase span:last-child{display:none}
 /* Task detail: a long instruction folds to four lines and keeps its line breaks. */
 .task-detail-content .detail-instruction{white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;line-height:1.6;margin:7px 0}.task-detail-content .detail-instruction.folded{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}.task-detail-content .instruction-toggle{display:block;border:0;background:transparent;color:var(--accent-text);font:inherit;font-size:12px;cursor:pointer;padding:0;margin:-3px 0 7px}.task-detail-content .instruction-toggle:hover{text-decoration:underline}.task-detail-content .instruction-toggle[hidden]{display:none}
+
+/* GitHub #1016: the Sessions tag shows only its count; hover or focus opens the state list (coloured dot, label, count) styled like the models list. */
+.agent .agent-sessions{position:relative}.agent .session-tally{text-align:left}.agent .agent-sessions:hover .session-tally,.agent .agent-sessions:focus-visible .session-tally{display:block}
+.agent .session-tally .tally-row{display:flex;align-items:center;gap:6px}.agent .session-tally .tally-row::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}.agent .session-tally .tally-row strong{margin-left:auto;padding-left:12px;font-weight:650;color:var(--ink)}
+.agent .session-tally .state-running{color:var(--info)}.agent .session-tally .state-waiting{color:var(--warn)}.agent .session-tally .state-failed{color:var(--err)}.agent .session-tally .state-done{color:var(--ok)}

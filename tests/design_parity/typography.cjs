@@ -3,6 +3,8 @@
 const T = ['fontSize', 'fontWeight', 'color', 'fontFamily'];
 // A control matches the mock when its whole box does: size, padding, line height, layout, border, radius, fill and text.
 const B = [...T, 'width', 'height', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'lineHeight', 'display', 'columnGap', 'borderTopLeftRadius', 'borderTopWidth', 'borderTopColor', 'backgroundColor'];
+const CODEX_TAGS = "SIM.home.proposal=SIM.proposal('ready');";
+const CODEX_SESSIONS = "(async()=>{const s=(state,task)=>({run:'run-a',task,label:task,goal:'g',state,started_ms:1,last_ms:1,note:null,cleanable:false,stoppable:false});SIM.reply.agent_sessions=()=>({codex:[s('waiting','task-1'),s('failed','task-3')]});document.getElementById('rail-tab-agents').click();await acSessions.refresh();})()";
 const e = (name, keys, mock, app) => ({ name: 'type-' + name, props: keys.filter(k => k !== 'height' && k !== 'width'), keys, pixel: false, mock: { selector: mock }, app: { selector: app } });
 module.exports = [
   e('brand', T, '.title-brand strong', '#start-titlebar .title-brand > strong'),
@@ -23,11 +25,12 @@ module.exports = [
   e('rail-add-box', B, '.railhead .add', '#start-add'),
   e('rail-sub-box', ['width', 'height'], '.agent-panel .sub', '#rail-pane-agents p.small'),
   // GitHub #869: compare the non-coordinator codex card; the first cards carry different work-state tags.
-  e('agent-card-box', B, '.agent:has([data-sessions="codex"])', '.startup-profile[data-agent="codex"]'),
+  // GitHub #1016: the card height follows its tags, so the app's codex card carries the mock's tags (waiting, failed, two sessions, assigned tasks).
+  { ...e('agent-card-box', B, '.agent:has([data-sessions="codex"])', '.startup-profile[data-agent="codex"]'), app: { setup: CODEX_TAGS, run: CODEX_SESSIONS, selector: '.startup-profile[data-agent="codex"]' } },
   // Names are operator data: compare the same registered ID to avoid a false narrow-screen wrap.
   { ...e('agent-top-box', ['width', 'height'], '.agent .top', '.startup-profile .profile-top'), mock:{selector:'.agent .top',run:"document.querySelector('.agent .name').textContent='claude';"} },
   { ...e('agent-name-box', ['width', 'height', 'fontSize'], '.agent .name', '.startup-profile .name-row'), mock:{selector:'.agent .name',run:"document.querySelector('.agent .name').textContent='claude';"} },
-  e('agent-facts-box', ['width', 'height', 'columnGap', 'rowGap'], '.agent:has([data-sessions="codex"]) .facts:not(.work-facts)', '.startup-profile[data-agent="codex"] .agent-facts:not(.work-facts)'),
+  { ...e('agent-facts-box', ['width', 'height', 'columnGap', 'rowGap'], '.agent:has([data-sessions="codex"]) .fact-flow', '.startup-profile[data-agent="codex"] .fact-flow'), app: { setup: CODEX_TAGS, run: CODEX_SESSIONS, selector: '.startup-profile[data-agent="codex"] .fact-flow' } },
   // GitHub #828/#869: the session chip has its own entry (agent-sessions-chip); this compares the models tag.
   e('agent-fact-box', B.filter(k => k !== 'width'), '.agent .fact.models', '.startup-profile .fact.models'),
   e('agent-tools-box', ['width', 'height', 'columnGap'], '.agent .tools', '.startup-profile .profile-tools'),

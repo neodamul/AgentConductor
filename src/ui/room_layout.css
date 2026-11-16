@@ -51,7 +51,7 @@
 #start-mcp-controls{align-items:normal;gap:6px;flex-wrap:nowrap}
 /* The mock declares the colour scheme, so native controls and text rendering follow the theme. */
 :root{color-scheme:light}:root[data-theme="dark"]{color-scheme:dark}
-/* #435 rail: section head, hint and agent cards follow the mock's box model (card fixed at 144px, one row of tools). */
+/* #435 rail: section head, hint and agent cards follow the mock's box model (height follows content since #1016, one row of tools). */
 #rail-tabs{margin-bottom:10px}
 #rail-pane-agents{display:flex;flex-direction:column;gap:10px;padding-top:10px}
 #rail-pane-agents .section-title{display:flex;align-items:flex-end;justify-content:space-between;margin:0}
@@ -59,7 +59,7 @@
 #start-add{box-sizing:border-box;height:auto;padding:4px 9px;font:inherit;font-size:12px;line-height:normal;border-radius:6px}
 #rail-pane-agents p.small{margin:0;line-height:normal}
 #start-profiles{display:flex;flex-direction:column;gap:10px}
-.startup-profile{box-sizing:border-box;min-height:144px;flex:none;display:flex;flex-direction:column;gap:6px;margin:0}
+.startup-profile{box-sizing:border-box;flex:none;display:flex;flex-direction:column;gap:6px;margin:0}
 .startup-profile .profile-top{gap:7px;padding:0}
 .startup-profile .name-row{font-size:14px}.startup-profile .profile-name strong{line-height:normal}
 .startup-profile .agent-facts{gap:4px;margin:0}.startup-profile .agent-facts .fact{border-radius:4px}
