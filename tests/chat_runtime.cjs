@@ -6,13 +6,13 @@ const node = () => ({ children: [], hidden: false, disabled: false, value: '', t
   addEventListener(k, f) { this.handlers[k] = f; }, focus() {} });
 const make = () => {
   const els = {}; // Like startup.js, q(id) looks up the element with id start-<id>.
-  for (const id of ['chat', 'chat-button', 'chat-close', 'chat-new', 'chat-form', 'chat-input', 'chat-send', 'chat-log', 'chat-context', 'workspace-name']) els['start-' + id] = node();
+  for (const id of ['chat', 'chat-button', 'chat-close', 'chat-close-bottom', 'chat-new', 'chat-form', 'chat-input', 'chat-send', 'chat-log', 'chat-context', 'workspace-name']) els['start-' + id] = node();
   els['start-chat'].hidden = true;
   // Strict: a missing element throws, as null.onclick does in the page.
   return id => { if (!els['start-' + id]) throw new Error('no element start-' + id); return els['start-' + id]; };
 };
 const tick = () => new Promise(r => setTimeout(r, 0));
-const context = vm.createContext({ document: { createElement: node }, Date, acMessage: (id, v = {}) => id + (v.value1 ? ':' + v.value1 : ''), console });
+const context = vm.createContext({ document: { createElement: node, addEventListener() {} }, Date, acMessage: (id, v = {}) => id + (v.value1 ? ':' + v.value1 : ''), console });
 const elapsed = fs.readFileSync('src/ui/i18n.js', 'utf8').split('\n').find(l => l.startsWith('const AC_ELAPSED='));
 assert.ok(elapsed, 'AC_ELAPSED exists (GitHub #279)');
 vm.runInContext(elapsed + source + ';this.chatUi=chatUi;', context);

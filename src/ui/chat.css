@@ -25,4 +25,4 @@
 .chat-code{margin:4px 0;padding:6px 8px;overflow:auto;border-radius:6px;background:var(--surface);font-family:Menlo,Consolas,monospace;font-size:12px;line-height:1.5;white-space:pre}
 .chat-form{display:flex;flex-direction:column;gap:10px;margin-top:20px}
 .chat-form textarea{width:100%;min-height:90px;resize:vertical;padding:10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);font:inherit}
-.chat-form button{align-self:flex-end}
+.chat-form button{align-self:flex-end}.chat-actions{display:flex;justify-content:flex-end;gap:8px}.chat-actions .small-button{padding:8px 13px}#start-chat-close-bottom{background:transparent}

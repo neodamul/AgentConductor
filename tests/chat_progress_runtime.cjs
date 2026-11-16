@@ -5,11 +5,11 @@ const source = fs.readFileSync('src/ui/chat.js', 'utf8');
 const node = () => ({ children: [], hidden: false, disabled: false, value: '', textContent: '', className: '', scrollTop: 0, scrollHeight: 1000, clientHeight: 200, attrs: {}, handlers: {},
   append(...n) { this.children.push(...n); }, replaceChildren(...n) { this.children = n; }, setAttribute(k, v) { this.attrs[k] = v; },
   addEventListener(k, f) { this.handlers[k] = f; }, focus() {} });
-const els = {}; for (const id of ['chat', 'chat-button', 'chat-close', 'chat-new', 'chat-form', 'chat-input', 'chat-send', 'chat-log', 'chat-context', 'workspace-name']) els['start-' + id] = node();
+const els = {}; for (const id of ['chat', 'chat-button', 'chat-close', 'chat-close-bottom', 'chat-new', 'chat-form', 'chat-input', 'chat-send', 'chat-log', 'chat-context', 'workspace-name']) els['start-' + id] = node();
 const q = id => els['start-' + id];
 const messages = { 'startup.chat_working': 'working', 'startup.chat_last_output': 'last output {value1} ago', 'startup.chat_no_output': 'no output yet' };
 const acMessage = (id, v = {}) => (messages[id] || id).replace('{value1}', v.value1);
-const context = vm.createContext({ document: { createElement: node }, Date, acMessage, console });
+const context = vm.createContext({ document: { createElement: node, addEventListener() {} }, Date, acMessage, console });
 const elapsed = fs.readFileSync('src/ui/i18n.js', 'utf8').split('\n').find(l => l.startsWith('const AC_ELAPSED='));
 vm.runInContext(elapsed + source + ';this.chatUi=chatUi;', context);
 const tick = () => new Promise(r => setTimeout(r, 0));

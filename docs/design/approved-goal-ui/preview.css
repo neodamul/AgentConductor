@@ -497,3 +497,6 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 
 /* GitHub #1024: the models list names the agent's chosen default model and Effort first. */
 .agent .model-list .model-default{color:var(--ink);font-weight:600}.agent .model-list .model-default+b{margin-top:4px}
+
+/* #1038: the coordinator chat closes from the bottom too, beside Send. */
+.chat-actions{display:flex;justify-content:flex-end;gap:8px}
