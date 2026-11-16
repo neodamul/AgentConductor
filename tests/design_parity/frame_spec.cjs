@@ -121,6 +121,9 @@ module.exports=[
     { name: 'inspector-fact-label', props: ['color', 'fontSize'], keys: ['color', 'fontSize'], pixel: false, mock: '.task-inspector dt', app: '.task-facts dt' },
     // GitHub #1024: the task's Effort choice follows the session model row.
     { name: 'inspector-effort-choice', props: ['fontSize', 'borderTopWidth', 'borderTopLeftRadius', 'backgroundColor'], keys: ['height', 'fontSize', 'borderTopWidth', 'borderTopLeftRadius', 'backgroundColor'], pixel: false, mock: '.task-inspector .detail-inline:has([data-detail-effort]) .assignment-choice', app: '.inline-control:has(#effort-select) .ac-choice-trigger' },
+    // GitHub #1029: the inline apply buttons (assign, model, effort, schedule) share the mock's compact size.
+    ...[['assign', 'button[data-detail-assign]', '#reassign'], ['model', 'button[data-detail-model-save]', '#set-model'], ['effort', 'button[data-detail-effort-save]', '#set-effort'], ['schedule', 'button[data-detail-schedule]', '#schedule']].map(([name, mock, app]) => (
+      { name: `inspector-apply-${name}`, props: ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'borderTopWidth', 'backgroundColor', 'color'], keys: ['height', 'fontSize', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'borderTopWidth', 'backgroundColor', 'color'], pixel: false, mock: `.task-inspector ${mock}`, app })),
     { name: 'inspector-context', props: ['fontSize', 'lineHeight', 'color'], keys: ['height', 'fontSize', 'lineHeight', 'color'], pixel: false, mock: '#task-inspector-context', app: '#inspector-context' },
   ].map(({ mock, app, ...rest }) => ({ ...rest,
     mock: { url: '?theme=light#3', run: "document.getElementById('right-panel-toggle').click()", selector: mock },
