@@ -103,7 +103,7 @@ details.startup-task>summary.task-summary{list-style:none;cursor:pointer;display
 /* Compact card metadata; explanation text uses the available panel width. */
 .startup-profile .quota-controls{gap:4px}.startup-profile .name-row{gap:4px}.step-intro{font-size:12px;line-height:1.55;color:var(--soft);margin:8px 0 0}.startup-actions>button{flex-shrink:0;white-space:nowrap}
 
-#start-settings{max-height:calc(100vh - 48px);overflow:auto}#start-settings form>label{display:flex;flex-direction:column;gap:8px;line-height:1.5;margin:18px 0 0}#start-settings select,#start-settings input{width:100%;min-height:36px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}#start-settings form>p{margin:10px 0 16px;line-height:1.6}
+#start-settings{max-height:calc(100vh - 48px);overflow:auto}#start-settings form>label{display:flex;flex-direction:column;gap:7px;line-height:normal;margin:18px 0 0}#start-settings select,#start-settings input{width:100%;min-height:36px;padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}#start-settings form>p{margin:10px 0 16px;line-height:1.6}
 
 /* Checkbox controls must not inherit the full-width text-input geometry. */
 #start-agent-dialog label.check-row{display:flex;align-items:flex-start;gap:8px}#start-agent-dialog input[type=checkbox]{width:16px;height:16px;flex:0 0 16px;margin:2px 0 0;padding:0}
@@ -302,3 +302,5 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 
 /* #1027: the Report a bug dialog lists the log tails it zips. */
 .bug-report-files{display:grid;gap:2px;margin:12px 0;padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}#start-bug-report .bug-report-file{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:8px;margin:0;padding:6px 8px;border-radius:6px;font-size:12px;line-height:inherit}.bug-report-file:hover{background:var(--surface)}.bug-report-file code{font-size:11px;color:var(--soft)}.bug-report-size{font-size:11px;color:var(--soft);min-width:48px;text-align:right}.bug-report-note{font-size:11.5px;line-height:1.6;color:var(--soft);margin:0 0 4px}#start-bug-report .dialog-actions{flex-wrap:wrap}
+/* #1033: Settings labels and text/number inputs follow the mock's utility panel. */
+#start-settings label{font-size:12px;color:var(--soft)}#start-settings label input[type=number],#start-settings label input[type=text]{font-size:12px;padding:10px;color:var(--ink)}

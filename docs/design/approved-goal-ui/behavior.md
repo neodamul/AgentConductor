@@ -236,6 +236,12 @@ Phase. Single-Phase plans without Phase metadata retain Phase 1/1.
 
 The Workspace group retains recent/New/Open/Export/Import actions. Workspace settings are opened through step 1. There is no Agents or View group: use Add in the Agents rail and the titlebar panel toggles. Plan rules, Messenger, Settings, Help and Close remain available. These changes remove duplicate navigation only.
 
+## Tool check timeout (#1033)
+
+Settings holds the tool check timeout in seconds (default 60, 5 to 600) with a one-line hint. It bounds
+the Git status check that runs before an agent's tool call is allowed; when it runs out only that tool
+call is denied and the denial points to this setting. It is saved with the other settings.
+
 ## Bug reports
 
 Help → Report a bug opens a prefilled issue composer in the default browser. The
