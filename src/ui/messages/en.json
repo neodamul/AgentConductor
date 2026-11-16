@@ -1530,6 +1530,8 @@
   "startup.bug_report_opened": "Opened a bug report for {value1} in your browser. Sign in to GitHub if needed, then review and submit.",
   "startup.models_listed": "Queried models",
   "startup.models_more": "+{value1} more",
+  "startup.assigned_tasks": "{value1} tasks",
+  "startup.assigned_tasks_listed": "Assigned tasks",
   "sessions.tag_running": "Running",
   "sessions.tag_waiting": "Waiting",
   "sessions.tag_failed": "Failed",

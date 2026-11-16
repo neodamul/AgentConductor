@@ -1530,6 +1530,8 @@
   "startup.bug_report_opened": "브라우저에서 {value1} 버그 신고를 열었습니다. 필요하면 GitHub에 로그인한 뒤 내용을 검토하고 등록하세요.",
   "startup.models_listed": "조회한 모델",
   "startup.models_more": "+{value1}개 더",
+  "startup.assigned_tasks": "작업 {value1}개",
+  "startup.assigned_tasks_listed": "할당된 작업",
   "sessions.tag_running": "실행 중",
   "sessions.tag_waiting": "대기",
   "sessions.tag_failed": "실패",
