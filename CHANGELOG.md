@@ -11,6 +11,7 @@ the GitHub Release notes for its tag.
 - Jira and Confluence references are stored in one form, `[Jira:KEY]` / `[Confluence:ID]`, whether added from the dialog, typed or rewritten by Goal optimization (#1018).
 - The coordinator chat tells speakers apart: the coordinator on the left in a neutral bubble, you on the right in an accent bubble, each with a name and time (#1020).
 - Expand/Collapse toggles for a long task instruction and Goal list rows sit above the text, so Collapse stays where Expand was (#1022).
+- Help → Release notes opens the release of a company build with its company-suffix.txt label (#1026).
 
 ## v0.2.13
 

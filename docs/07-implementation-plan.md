@@ -4309,7 +4309,7 @@ Local verification includes a successful current-source build, all-target Clippy
 
 ## 0.2.14 release preparation
 
-- [x] Plan: milestone 0.2.14 has no open issues (#1014, #1016, #1018, #1020, #1022). User requested release.
+- [x] Plan: milestone 0.2.14 has no open issues (#1014, #1016, #1018, #1020, #1022, #1026). User requested release.
 - [x] Task: bump Cargo/README/manuals/changelog to 0.2.14 and regenerate manual HTML and UI samples.
 - [ ] Verify: Platform validation on the release PR, then the tag Release Action and published assets.
 
