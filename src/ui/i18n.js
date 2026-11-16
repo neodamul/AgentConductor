@@ -76,6 +76,8 @@ const AC_QUOTA_WAIT=(job,now=Date.now())=>job?.state==='running'&&job.kind==='qu
 const AC_STALE=(at,now=Date.now())=>at&&now-at>6000?acMessage('common.no_new_state'):'';
 // A pressed button shows that its work is running (user request 2026-10-14): it keeps its own
 // colors with a moving bar and a progress cursor, so it never looks like a disabled button.
+// GitHub #1038: a click outside a slide-panel dialog (on its backdrop) closes it.
+document.addEventListener('click',e=>{const d=e.target;if(d?.tagName!=='DIALOG'||!d.open||!d.classList.contains('slide-panel'))return;const r=d.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)d.close('cancel');});
 // track() covers a request; hold() keeps the mark while a background job started by it runs.
 const AC_PRESS=(()=>{
   let last=null,lastAt=0;
@@ -105,3 +107,4 @@ function acAgentName(profile, profiles = []) {
   if (!base) return profile?.id || '';
   return profiles.filter(p => AC_AGENT_NAMES[p.parser] === base).length > 1 ? `${base} · ${profile.id}` : base;
 }
+

@@ -236,6 +236,11 @@ Phase. Single-Phase plans without Phase metadata retain Phase 1/1.
 
 The Workspace group retains recent/New/Open/Export/Import actions. Workspace settings are opened through step 1. There is no Agents or View group: use Add in the Agents rail and the titlebar panel toggles. Plan rules, Messenger, Settings, Help and Close remain available. These changes remove duplicate navigation only.
 
+## Slide panels close from outside (#1038)
+
+Every slide panel (coordinator chat, Settings, Goal list, team briefing) closes on a click outside it, without
+saving. The coordinator chat also has a Close button at the bottom, beside Send.
+
 ## Tool check timeout (#1033)
 
 Settings holds the tool check timeout in seconds (default 60, 5 to 600) with a one-line hint. It bounds

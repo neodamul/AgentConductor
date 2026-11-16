@@ -91,8 +91,10 @@ module.exports=[
     ['coordinator-who', '#chat-preview .chat-msg.coordinator .chat-who', '.chat-intro .chat-who', ['fontSize', 'color', 'lineHeight']],
     ['coordinator-name', '#chat-preview .chat-msg.coordinator .chat-who b', '.chat-intro .chat-who b', ['fontSize', 'fontWeight', 'color']],
     ['coordinator-bubble', '#chat-preview .chat-msg.coordinator .chat-bubble', '.chat-intro .chat-bubble', ['paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopColor', 'borderTopLeftRadius', 'borderTopRightRadius', 'backgroundColor', 'fontSize', 'lineHeight']],
+    // GitHub #1038: the bottom Close button beside Send.
+    ['close-bottom', '#chat-preview-close', '#start-chat-close-bottom', ['fontSize', 'paddingTop', 'paddingLeft', 'borderTopWidth', 'borderTopColor', 'borderTopLeftRadius', 'backgroundColor', 'color']],
     ['input', '#chat-preview-input', '#start-chat-input', ['paddingTop', 'borderTopWidth', 'borderTopColor', 'borderTopLeftRadius', 'backgroundColor', 'fontSize']],
-    ['send', '#chat-preview-form .btn', '#start-chat-send', ['backgroundColor', 'color', 'borderTopLeftRadius', 'fontWeight']],
+    ['send', '#chat-preview-form .btn[type=submit]', '#start-chat-send', ['backgroundColor', 'color', 'borderTopLeftRadius', 'fontWeight', 'paddingTop', 'paddingLeft', 'fontSize']],
   ].map(([name, mock, app, props]) => ({ name: `chat-${name}`, props, keys: props, pixel: false,
     mock: { url: '?theme=light#0', run: "openSidePanel('coordinator-chat-panel')", selector: '#coordinator-chat-panel ' + mock },
     app: { run: "document.getElementById('run-screen').hidden = false; document.getElementById('start-chat-button').click()", selector: app } })),

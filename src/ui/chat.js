@@ -38,7 +38,9 @@ function chatUi({q,request,state,notice,stale=()=>''}) {
  function step(dir){const h=sendable();if(!h.length)return;let i=(recall<0?h.length:recall)+dir;if(i<0)return;if(recall<0)draft=q('chat-input').value;if(i>=h.length){recall=-1;q('chat-input').value=draft;return;}recall=i;q('chat-input').value=h[i];}
  q('chat-button').onclick=()=>setOpen(box().hidden);
  if(typeof MutationObserver!=='undefined')new MutationObserver(()=>{if(document.querySelector('dialog.slide-panel[open]'))setOpen(false);}).observe(document.body,{subtree:true,attributes:true,attributeFilter:['open']});
- q('chat-close').onclick=()=>setOpen(false);
+ q('chat-close').onclick=()=>setOpen(false);q('chat-close-bottom').onclick=()=>setOpen(false);
+ // GitHub #1038: a press outside the chat closes it, like the other slide panels; modal dialogs keep it.
+ document.addEventListener('pointerdown',e=>{if(box().hidden||box().contains(e.target)||q('chat-button').contains(e.target)||e.target.closest?.('dialog[open]'))return;setOpen(false);},true);
  // GitHub #998: a click on the dimmed content outside the slide-over closes it, as in the design.
  if(typeof document!=='undefined'&&document.addEventListener)document.addEventListener('mousedown',e=>{if(!box().hidden&&!box().contains(e.target)&&!q('chat-button').contains(e.target))setOpen(false);});
  q('chat-new').onclick=async()=>{if(waiting)return;try{await request({kind:'chat_reset'});turns=[];recall=-1;draw();}catch(e){notice(e.message,true);}};
