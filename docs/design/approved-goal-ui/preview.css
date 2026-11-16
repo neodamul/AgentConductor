@@ -485,3 +485,6 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 .agent .agent-sessions{position:relative}.agent .session-tally{text-align:left}.agent .agent-sessions:hover .session-tally,.agent .agent-sessions:focus-visible .session-tally{display:block}
 .agent .session-tally .tally-row{display:flex;align-items:center;gap:6px}.agent .session-tally .tally-row::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}.agent .session-tally .tally-row strong{margin-left:auto;padding-left:12px;font-weight:650;color:var(--ink)}
 .agent .session-tally .state-running{color:var(--info)}.agent .session-tally .state-waiting{color:var(--warn)}.agent .session-tally .state-failed{color:var(--err)}.agent .session-tally .state-done{color:var(--ok)}
+
+/* GitHub #1024: the models list names the agent's chosen default model and Effort first. */
+.agent .model-list .model-default{color:var(--ink);font-weight:600}.agent .model-list .model-default+b{margin-top:4px}
