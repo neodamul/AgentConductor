@@ -16,7 +16,6 @@ impl Startup {
                 | Request::ReadPlan { .. }
                 | Request::Edit { .. }
                 | Request::Start { .. }
-                | Request::SaveProfiles { .. }
                 | Request::ImportSettings { .. }
                 | Request::OptimizeGoal { .. }
                 | Request::McpApply { .. }

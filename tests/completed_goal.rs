@@ -26,7 +26,6 @@ fn completed_startup_rejects_goal_writes_without_changing_saved_data() {
         json!({"kind":"read_plan","path":"not-read.json"}),
         json!({"kind":"edit","tasks":[],"workspace_mode":"shared"}),
         json!({"kind":"start","digest":"unused"}),
-        json!({"kind":"save_profiles","profiles":[]}),
         json!({"kind":"mcp_apply","preview_id":"unused","selected":[]}),
         json!({"kind":"optimize_goal","goal":"rewrite"}),
         json!({"kind":"import_settings","folder":f.root,"keep_verified":false}),
@@ -46,6 +45,27 @@ fn completed_startup_rejects_goal_writes_without_changing_saved_data() {
     assert!(f.call(json!({"kind":"chat_reset"})).is_ok());
     assert!(f.mutate(json!({"kind":"new_goal"})).is_ok());
     assert!(f.snapshot()["run_state"].is_null());
+}
+/// GitHub #1040: the agent registry is not part of a Goal; a completed Goal still allows profile saves
+/// and its recorded run stays byte-for-byte unchanged.
+#[test]
+fn completed_goal_keeps_the_agent_registry_editable() {
+    let (f, run) = fixture();
+    let report = fs::read(run.join("report.json")).unwrap();
+    let profile = json!({"id":"local-agent","parser":"custom","executable":"custom-cli","args":[],"input_mode":"stdin","permission_mode":"unverified","max_sessions":2});
+    f.mutate(json!({"kind":"save_profiles","profiles":[profile],"renames":{}}))
+        .expect("profile saves are allowed with a completed Goal selected");
+    let saved = f.snapshot()["config"]["profiles"].clone();
+    assert!(
+        saved
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|p| p["id"] == "local-agent" && p["max_sessions"] == 2),
+        "{saved}"
+    );
+    assert_eq!(fs::read(run.join("report.json")).unwrap(), report);
+    assert_eq!(workflow::load(&run).unwrap().state, "completed");
 }
 #[test]
 fn completed_room_refuses_every_mutating_action_before_launch() {

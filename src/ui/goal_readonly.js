@@ -1,6 +1,8 @@
 // #997: one policy for archived Goal writes; no observers or background work.
+// GitHub #1040: the reusable agent registry (cards, profile dialog, save_profiles) is not part of a
+// Goal, so it stays manageable; the completed Goal keeps its own recorded assignments.
 globalThis.acGoalReadOnly=(()=>{
- const startupWrites=new Set(['save','save_auto_merge','prepare','draft','read_plan','edit','start','save_profiles','import_settings','optimize_goal','mcp_apply','mcp_preview','create_slug','commit_baseline','ignore_os_files']);
+ const startupWrites=new Set(['save','save_auto_merge','prepare','draft','read_plan','edit','start','import_settings','optimize_goal','mcp_apply','mcp_preview','create_slug','commit_baseline','ignore_os_files']);
  const locks=new WeakMap(),infoNodes=new WeakMap();
  const completed=s=>s?.run_state==='completed'||s?.report?.state==='completed'||!!s?.slugs?.some(g=>g.active&&g.progress?.stage==='completed');
  const reason=()=>acMessage('goal.readonly_reason');
@@ -33,8 +35,7 @@ globalThis.acGoalReadOnly=(()=>{
  '#start-tasks input','#start-tasks textarea','#start-tasks select','#start-tasks .task-remove','#start-task-tools button',
  '#start-save-only','#start-save','#start-discard','#start-prepare','#start-regenerate','#start-draft','#start-read-plan','#start-edit','#start-run','#start-auto-merge',
  '#start-optimize-button','#start-reference','#start-source-suggestions button','#start-mcp-preview','#start-mcp-apply',
- '#start-add','.profile-tools button[data-goal-write]','.profile-tools .move-agent',
- '#start-agent-apply','#start-import button[value=confirm]','#start-source-add','#start-optimize-again','#start-optimize-use','#start-optimize-answers'
+ '#start-import button[value=confirm]','#start-source-add','#start-optimize-again','#start-optimize-use','#start-optimize-answers'
  ].join(',');
  const roomSelectors=['send-feedback','feedback','reassign','agent-select','set-model','model-select','set-effort','effort-select','schedule','resume-at','resume','recover','stop','approve','reject','merge','review-revise','review-deny','tool-decision-allow','tool-decision-deny','scope-review','scope-preview','scope-approve','scope-task','scope-paths','scope-test','fix-integration'].map(id=>'#'+id).join(',');
  return{
