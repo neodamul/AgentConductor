@@ -14,7 +14,7 @@ for(const width of [840,1280]){browser=await launch(chrome,{width});for(const th
  const pick=async choice=>{await until(()=>q('bug-report').open,'#1027 log dialog opens');q('bug-report').close(choice);};
  (await openHelp()).click();await until(()=>q('bug-report').open,'#1027 log dialog opens');const files=[...q('bug-report-files').querySelectorAll('[data-bug-file]')];
  check('#1027: the dialog lists the four logs, version info locked on, sizes in KB',files.length===4&&files[0].disabled&&files.every(f=>f.checked)&&q('bug-report-files').textContent.includes('42 KB')&&q('bug-report-files').textContent.includes(acMessage('startup.bug_report_file_run')));
- check('#1027: the dialog says where the zip goes',q('bug-report-detail').textContent.includes('Finder'));
+ check('#1027: the dialog says where the zip goes',q('bug-report-detail').textContent.includes(/Windows/.test(navigator.userAgent)?'Explorer':'Finder'));
  files[2].click();q('bug-report').close('zip');await until(()=>SIM.log.some(e=>e.kind==='report_bug'),'native report request');
  check('#1027: Zip sends only the chosen log ids, no paths or content',JSON.stringify(SIM.log.find(e=>e.kind==='report_bug').p)===JSON.stringify({kind:'report_bug',open:true,logs:['environment','requests','run']}));
  SIM.reply.report_bug=()=>({opened:true,repository:'team/internal',zip:'/home/u/Downloads/agentconductor-bug-report-1.zip'});(await openHelp()).click();await pick('zip');await until(()=>q('notice').textContent.includes('agentconductor-bug-report-1.zip'),'zip notice');check('#1027: the notice names the zip file only',!q('notice').textContent.includes('/home/u'));
