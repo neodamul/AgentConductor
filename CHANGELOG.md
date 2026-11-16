@@ -4,6 +4,15 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.2.14
+
+- A tool-context verifier that times out denies only that tool call with a reason naming slow Git start-up, instead of terminating the task; plain folders skip redundant Git processes, and `AGENTCONDUCTOR_TOOL_VERIFIER_TIMEOUT_SECS` raises the limit (#1014).
+- Agent cards show a "Tasks N" tag that lists the agent's assigned tasks on hover; the Sessions tag shows only its count and lists running, waiting, failed and done counts on hover; tags flow as one compact group (#1016).
+- Jira and Confluence references are stored in one form, `[Jira:KEY]` / `[Confluence:ID]`, whether added from the dialog, typed or rewritten by Goal optimization (#1018).
+- The coordinator chat tells speakers apart: the coordinator on the left in a neutral bubble, you on the right in an accent bubble, each with a name and time (#1020).
+- Expand/Collapse toggles for a long task instruction and Goal list rows sit above the text, so Collapse stays where Expand was (#1022).
+- Help → Release notes opens the release of a company build with its company-suffix.txt label (#1026).
+
 ## v0.2.13
 
 - Completed Goals are read-only: every control that would change them is disabled with a reason, while plans, tasks, logs, results, history and the coordinator chat stay available (#997).

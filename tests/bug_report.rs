@@ -138,7 +138,9 @@ fn release_notes_open_the_running_version_on_the_update_repository() {
         ),
     ] {
         let notes = bug_report::release_notes(input).unwrap();
-        let version = env!("CARGO_PKG_VERSION");
+        // A company build's tag carries its company-suffix.txt label (DD-165), so the link uses the full version.
+        let version = agentconductor::update::current();
+        assert!(version.starts_with(env!("CARGO_PKG_VERSION")));
         assert_eq!(notes["version"], version);
         assert_eq!(notes["url"], format!("{base}/releases/tag/v{version}"));
     }

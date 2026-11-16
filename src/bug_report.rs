@@ -46,7 +46,8 @@ fn base(repository: &str) -> Result<(String, String), String> {
 
 pub fn release_notes(repository: &str) -> Result<Value, String> {
     let (repository, base) = base(repository)?;
-    let version = env!("CARGO_PKG_VERSION");
+    // A company build is tagged with its company-suffix.txt label (DD-165), so its notes live under that tag.
+    let version = crate::update::current();
     let url = format!("{base}/releases/tag/v{version}");
     Ok(json!({"repository":repository,"version":version,"url":url,"opened":false}))
 }
