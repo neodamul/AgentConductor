@@ -4318,3 +4318,7 @@ Local verification includes a successful current-source build, all-target Clippy
 - [x] Plan: milestone 0.2.13 has no open issues (#997, #998, #999, #1001, #1003, #1004, #1009, #1011). User requested release.
 - [x] Task: bump Cargo/README/manuals/changelog to 0.2.13 and regenerate manual HTML and UI samples.
 - [ ] Verify: Platform validation on the release PR, then the tag Release Action and published assets.
+
+## 0.2.15 release preparation
+
+Version 0.2.15 ships #1024, #1027, #1028, #1029, #1033, #1034, #1035, #1038, #1039 and #1040 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe the bug report log zip and the tool check timeout setting.

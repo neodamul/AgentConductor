@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.2.14** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.2.15** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.2.14 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
+The app version is beside the title. Version 0.2.15 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
 
 ### 1.1a Application updates
 
@@ -28,7 +28,7 @@ The installer downloads the matching macOS/Windows archive and its `SHA256SUMS`,
 
 ### 1.1b Bug reports
 
-Choose **☰ → Help → Report a bug…**. The default browser opens the configured GitHub repository's issue editor with sections for the summary, reproduction steps, expected/actual behavior and version/OS/architecture. Sign in to GitHub if requested, finish the report and submit it there. Opening the editor does not create an issue. Paths, logs, Goals and agent conversations are not attached automatically. **☰ → Help → Release notes** opens the release page of the running version on the same repository.
+Choose **☰ → Help → Report a bug…**. The default browser opens the configured GitHub repository's issue editor with sections for the summary, reproduction steps, expected/actual behavior and version/OS/architecture. Sign in to GitHub if requested, finish the report and submit it there. Opening the editor does not create an issue. Before the browser opens, a dialog lists the logs that can be zipped: version and OS (always), request diagnostics, the messenger log and the latest run's error output. **Zip and open report** saves the chosen logs to your Downloads folder as one zip, keeping each log's last 256 KB with tokens, API keys and webhook URLs masked, shows it in Finder or Explorer, and opens a draft that says to drag that zip into the issue. Masking covers known token shapes only, so review the zip before attaching it. **Report without logs** opens the plain draft. Goals and agent conversations are never attached. **☰ → Help → Release notes** opens the release page of the running version on the same repository.
 
 The target uses **Settings → GitHub repository**, shared with application updates. Set `owner/name` or an Enterprise `https://host/owner/name` URL; leave it empty for the default repository.
 
@@ -68,6 +68,7 @@ Use **☰ → Help → User manual** for offline help in the current interface l
 - **MCP servers…**: add local commands or remote URLs with a guided form. Saving discovers tools and shows the server status/count. The workspace coordinator selects suitable read tools and arguments when you preview Goal sources; no manual tool mapping is required. Open Advanced for OpenCode JSON/JSONC import and export. Discovered tool catalogs are stored per server and restored when reopening Settings or restarting the app. Changing a server invalidates its old catalog and requires discovery again. The JSON import hint identifies the OpenCode MCP configuration format; it does not import unrelated OpenCode preferences. The add/edit form explains that API tokens belong in environment variables: use `{env:VARIABLE}` references for credentials. [MCP guide](mcp-sources.md).
 - **Signal transport**: Local Rust (default) or agentmemory preferred, with local fallback. The server port appears only for agentmemory; switching to Local Rust preserves its value.
 - **Clear cache…**: review paths and sizes before permanently removing eligible disposable metadata.
+- **Tool check timeout · seconds** (default 60, 5–600): how long the Git status check before an agent's tool call may take. When it runs out only that tool call is denied; raise it if the repository is large or Git starts slowly.
 
 **☰ → Messenger…** saves notification preferences only after local persistence succeeds. While saving, the dialog remains open and prevents duplicate submission. Failure keeps your draft and shows an error inside the dialog; retry Save or Cancel. Already saved workspace preferences survive restart. Importing settings from another machine intentionally requires local notification setup. No notification is sent just by saving the settings.
 
