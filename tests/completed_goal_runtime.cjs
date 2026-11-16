@@ -20,6 +20,11 @@ const{findChrome,launch}=require('./design_parity/cdp.cjs');
     await until(()=>q('start-save-only').disabled&&q('start-goal').readOnly);
     const startIds=['save-only','save','roles-save','prepare','regenerate','draft','read-plan','edit','run','auto-merge','coordinator','coordinator-model'];
     for(const id of startIds){const n=q('start-'+id);check('locked '+id,n.disabled||n.readOnly);check('reason '+id,!!n.title);}
+    // GitHub #1040: the reusable agent registry stays manageable with a completed Goal selected.
+    const cardButtons=[q('start-add'),...document.querySelectorAll('#start-profiles .profile-tools button')];
+    check('#1040 agent card controls stay usable',cardButtons.length>1&&cardButtons.every(b=>b.dataset.goalReadonly!=='true'&&(!b.disabled||b.matches('.move-agent'))));
+    check('#1040 the client guard lets profile saves through',!acGoalReadOnly.blocks(SIM.home,{kind:'save_profiles'}));
+    check('#1040 Goal writes stay blocked',acGoalReadOnly.blocks(SIM.home,{kind:'save'})&&acGoalReadOnly.blocks(SIM.home,{kind:'optimize_goal'}));
     for(const step of ['workspace','team','review']){q('start-tab-'+step).click();check('saved stage '+step,!q('start-panel-'+step).hidden);}
     const details=q('start-tasks').querySelector('details');check('plan can expand',!!details);details.querySelector('summary').click();check('plan expanded',details.open);
     check('goal retains text',q('start-goal').value===SIM.home.config.goal);
