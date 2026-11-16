@@ -26,10 +26,34 @@ fn status(state: &str, korean: bool) -> &str {
         ("stopped", true) => "중지",
         ("waiting_availability", true) => "사용량 대기",
         ("waiting_tool_approval", true) => "도구 승인 대기",
+        ("blocked", true) => "차단됨",
         ("waiting_availability", false) => "waiting for usage",
         ("waiting_tool_approval", false) => "waiting for tool approval",
         (other, _) => other,
     }
+}
+
+/// GitHub #1028: the first content line, skipping label lines (`Goal:`) and bare tags, as the
+/// Room's `taskLine()` does.
+fn task_line(prompt: &str) -> Option<&str> {
+    prompt
+        .lines()
+        .map(|l| {
+            let l = l.trim();
+            l.strip_prefix("- ")
+                .or_else(|| l.strip_prefix("* "))
+                .map_or(l, str::trim_start)
+        })
+        .find(|l| {
+            let name = l
+                .strip_prefix('<')
+                .and_then(|l| l.strip_suffix('>'))
+                .map(|l| l.trim_start_matches('/'));
+            let tag = name.is_some_and(|n| {
+                !n.is_empty() && n.chars().all(|c| c.is_alphanumeric() || "_-".contains(c))
+            });
+            !l.is_empty() && !l.ends_with(':') && !tag
+        })
 }
 
 /// The lines below the notice headline, already localized.
@@ -58,7 +82,7 @@ pub fn run_detail(report: &Report, phase: Option<&PhasePosition>, korean: bool) 
             .tasks
             .iter()
             .find(|p| p.id == task.id)
-            .and_then(|p| p.prompt.lines().map(str::trim).find(|l| !l.is_empty()))
+            .and_then(|p| task_line(&p.prompt))
             .map(|l| format!(" {}", clip(l, 60)))
             .unwrap_or_default();
         lines.push(format!(
