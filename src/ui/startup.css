@@ -273,6 +273,8 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 #start-agent-sessions{width:560px;max-width:calc(100vw - 32px)}
 /* GitHub #869/#870: role, work-state and info tags with thin same-hue borders and 4px corners; the coordinator card carries a role band; the models tag lists its models. */
 .startup-profile .agent-facts{gap:4px}.startup-profile .agent-facts+.agent-facts{margin-top:-2px}
+/* GitHub #1016: work and info tags flow as one wrapped group, so few tags take two compact lines without a forced row break. */
+.startup-profile .fact-flow{display:flex;flex-wrap:wrap;gap:4px}.startup-profile .fact-flow>.agent-facts{display:contents}
 .startup-profile .agent-facts .fact{padding:1px 7px;line-height:1.35;border:1px solid color-mix(in srgb,currentColor 32%,transparent);border-radius:4px}
 .startup-profile .agent-facts .fact.info{background:var(--fill);color:var(--soft);border-color:var(--line-strong)}
 .startup-profile .agent-facts .fact.role{background:var(--role-bg);color:var(--role);font-weight:650}.startup-profile .agent-facts .fact.role::before{content:"\265B";margin-right:4px}
