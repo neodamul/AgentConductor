@@ -16,6 +16,15 @@ const MAX_ANSWER_BYTES: usize = 32 * 1024;
 pub struct Turn {
     pub role: String,
     pub text: String,
+    /// GitHub #1020: when the turn was said (Unix ms), shown beside the speaker; absent on older turns.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub at: Option<u64>,
+}
+
+fn now_ms() -> u64 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map_or(0, |d| d.as_millis() as u64)
 }
 
 /// The stored conversation plus the operator's new question, limited to the recent turns.
@@ -27,6 +36,7 @@ pub fn next_turns(mut history: Vec<Turn>, text: &str) -> Result<Vec<Turn>, Strin
     history.push(Turn {
         role: "operator".into(),
         text: text.into(),
+        at: Some(now_ms()),
     });
     let skip = history.len().saturating_sub(MAX_STORED_TURNS);
     Ok(history.split_off(skip))
@@ -52,9 +62,16 @@ pub fn history(root: &Path, result: &str) -> Vec<Turn> {
     };
     let mut turns: Vec<Turn> = serde_json::from_value(input["turns"].clone()).unwrap_or_default();
     if let Some(answer) = read(result).and_then(|v| v["answer"].as_str().map(str::to_owned)) {
+        // The answer artifact is written once, when the answer arrives.
+        let at = std::fs::metadata(root.join("mcp").join(result))
+            .and_then(|m| m.modified())
+            .ok()
+            .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
+            .map(|d| d.as_millis() as u64);
         turns.push(Turn {
             role: "assistant".into(),
             text: answer,
+            at,
         });
     }
     turns

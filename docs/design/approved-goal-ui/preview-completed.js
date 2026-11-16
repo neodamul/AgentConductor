@@ -56,9 +56,7 @@ if(new URLSearchParams(location.search).get('goal')==='completed'){
  chatForm.onsubmit=event=>{
   if(document.querySelector('.win').dataset.goalReadonly!=='true')return oldChat(event);
   event.preventDefault();const input=document.getElementById('chat-preview-input');if(!input.value.trim())return;
-  const question=document.createElement('p'),answer=document.createElement('p');question.textContent=input.value.trim();
-  answer.textContent='코디네이터 · 완료된 Goal의 기록을 바탕으로 질문에 답할 수 있습니다. 변경 요청은 새 Goal로 진행하세요. 이 Goal의 계획과 결과는 수정하지 않습니다.';
-  document.getElementById('chat-preview').append(question,answer);input.value='';
+  document.getElementById('chat-preview').append(chatMessage('operator',input.value.trim()),chatMessage('coordinator','완료된 Goal의 기록을 바탕으로 질문에 답할 수 있습니다. 변경 요청은 새 Goal로 진행하세요. 이 Goal의 계획과 결과는 수정하지 않습니다.'));input.value='';
  };
  const stageViews=[0,1,2,3,6,7],stageTabs=[...document.querySelectorAll('.tabs [data-step]')];
  stageTabs.forEach((tab,index)=>{

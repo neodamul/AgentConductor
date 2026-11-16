@@ -176,7 +176,7 @@ the list restores the unchanged list without another sliding animation.
 Team briefing preserves snapshot/state/time, per-session current work, session/model/attempt,
 process/observation, last activity, memory report/source/freshness, restrictions/attention, next action,
 and approval summary. It is read-only and reflects recorded facts, not generated guesses.
-Chat and settings keep all existing functions even where the preview uses only sample controls.
+Chat and settings keep all existing functions even where the preview uses only sample controls. In the coordinator chat each turn names its speaker and time above a bubble: the coordinator on the left in a neutral bubble, the operator on the right in an accent bubble (GitHub #1020). Every Expand/Collapse toggle over folded text (task instruction, Goal list rows, plan tasks) sits above the text, so Collapse stays where Expand was and needs no scrolling (GitHub #1022).
 
 ## Statusbar and preview controls
 

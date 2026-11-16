@@ -120,6 +120,7 @@ fn the_section_is_bounded_and_cannot_add_blocks_to_the_prompt() {
     let turns = [Turn {
         role: "operator".into(),
         text: "Why is it slow?".into(),
+        at: None,
     }];
     let prompt = build_prompt_in(&turns, "English", &text).unwrap();
     assert_eq!(
