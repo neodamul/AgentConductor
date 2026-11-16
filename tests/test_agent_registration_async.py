@@ -12,7 +12,7 @@ class RegistrationAsyncTests(unittest.TestCase):
         script=r"""
 const assert=require('node:assert/strict'),controls=new Map();
 function q(id){if(!controls.has(id))controls.set(id,{value:'',dataset:{},replaceChildren(){},showModal(){this.open=true;}});return controls.get(id);}
-function el(){return {};}function fallbackModels(){}let agentIndex,providerChanged,release;
+function el(){return {};}function fallbackModels(){}function defaultChoices(){}let agentIndex,providerChanged,release;
 const draft={profiles:[{id:'claude',parser:'claude',executable:'claude',args:[]}]};
 const request=()=>new Promise(resolve=>{release=resolve;});
 """+form+resolve+r"""
