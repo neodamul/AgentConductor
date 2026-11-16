@@ -80,3 +80,23 @@ fn long_errors_are_clipped() {
     let line = text.lines().find(|l| l.starts_with("Error: ")).unwrap();
     assert!(line.chars().count() < 320, "{}", line.len());
 }
+
+/// GitHub #1028: planned prompts start with label lines; the notice shows the first content line,
+/// and a blocked task reads in Korean.
+#[test]
+fn notices_skip_label_lines_and_translate_blocked() {
+    let mut report = report("failed", None, None);
+    report.plan.tasks[0].prompt = "Goal:\n<task>\n- Write the requirements document\nmore".into();
+    report.tasks[2].status = "blocked".into();
+    let text = run_detail(&report, None, true);
+    assert!(
+        text.contains("· t01-docs Write the requirements document — 완료"),
+        "{text}"
+    );
+    assert!(
+        text.contains("· t03-ui Build the draw screen — 차단됨"),
+        "{text}"
+    );
+    assert!(!text.contains("Goal:"), "{text}");
+    assert!(run_detail(&report, None, false).contains("— blocked"));
+}
