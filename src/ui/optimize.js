@@ -8,7 +8,11 @@ function optimizeUi({q,request,state,notice,busy,applyGoal,save,capture,draft,sh
  function done(text){waiting=null;q('optimize-status').textContent=text||'';q('optimize-dialog-status').textContent=text||'';refresh();}
  // GitHub #680: the coordinator that rewrites the goal is the one saved for the workspace, so the unsaved draft is saved first (as the document preview does).
  async function start(again=false){if(waiting||busy()||!q('goal').value.trim()||again&&(!shown||!q('optimize-answers').value.trim()))return;const input={goal:again?shown.optimized:q('goal').value,...(again?{answers:JSON.stringify({questions:shown.questions,answers:q('optimize-answers').value.trim()})}:{})};capture();const c=draft();if(!c.coordinator||!c.profiles?.some(p=>p.id===c.coordinator)){notice(()=>acMessage('startup.optimize_coordinator_required'),true);showStep?.('workspace',true);q('coordinator')?.focus?.();return;}waiting={at:Date.now()};refresh();try{if(!await save()){done('');return;}const r=await request({kind:'optimize_goal',revision:state().revision,...input});waiting={job:r.id,at:waiting.at};}catch(e){done(e.message);notice(e.message,true);}}
- function update(){const s=state();if(!waiting&&s?.job?.kind==='optimize'&&s.job.state==='running')waiting={job:s.job.id,at:s.job.started_ms||Date.now()};refresh();if(!waiting?.job||!s?.job||s.job.id!==waiting.job)return;const job=s.job;
+ function update(){const s=state();if(!waiting&&s?.job?.kind==='optimize'&&s.job.state==='running')waiting={job:s.job.id,at:s.job.started_ms||Date.now()};refresh();if(!waiting?.job||!s)return;const job=s.job;
+  // The optimize job is gone or another job replaced it: stop showing it as running (it kept pulsing).
+  // A snapshot taken before the job was registered still shows the older job (or none), so only a newer
+  // job or a few seconds without any job end the wait.
+  if(!job||job.id!==waiting.job){if(s.optimize?.job===waiting.job){done('');show(s.optimize.proposal);}else if(job?(job.started_ms||0)>=waiting.at:Date.now()-waiting.at>5000)done('');return;}
   if(job.state==='completed'&&s.optimize?.job===job.id){done('');show(s.optimize.proposal);}
   else if(['failed','interrupted','stopped'].includes(job.state)){done(acMessage('startup.optimize_error',{value1:job.error||job.state}));notice(acMessage('startup.optimize_error',{value1:job.error||job.state}),true);}}
  q('optimize-button').onclick=()=>start();
