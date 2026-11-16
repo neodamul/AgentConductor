@@ -27,8 +27,8 @@ fn full_access_checks_the_effective_mode_and_refuses_unverified_success() {
     );
 }
 #[test]
-fn denied_results_never_become_success_for_any_claude_profile() {
-    for mode in ["full_access", "native_callback", "read_only"] {
+fn denied_results_never_become_success_outside_native_callback() {
+    for mode in ["full_access", "read_only"] {
         let mut d = Decoder::for_profile(&profile(mode), 1024 * 1024);
         decode(
             &mut d,
@@ -174,4 +174,17 @@ fn read_only_coordinator_does_not_claim_worker_full_access_but_still_rejects_den
         }
     }
     std::fs::remove_dir_all(root).unwrap();
+}
+
+/// GitHub #1034: native_callback denials are AgentConductor's own guard answers (policy refusals,
+/// verifier timeouts) already returned to the worker, so the result list does not fail the task.
+#[test]
+fn native_callback_guard_denials_leave_the_outcome_to_verification() {
+    let mut d = Decoder::for_profile(&profile("native_callback"), 1024 * 1024);
+    let e = decode(
+        &mut d,
+        json!({"type":"result","is_error":false,"result":"done","permission_denials":[{"tool_name":"Bash","tool_use_id":"t1","tool_input":{"command":"git status"}}]}),
+    );
+    assert_ne!(e.kind, EventKind::Error);
+    assert_ne!(e.payload["denied"], true);
 }

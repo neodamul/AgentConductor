@@ -48,6 +48,7 @@ impl Decoder {
     pub fn for_profile(profile: &crate::plan::AgentProfile, limit: usize) -> Self {
         let mut decoder = Self::new(profile.parser, limit);
         decoder.claude_permission.full_access = profile.permission_mode == "full_access";
+        decoder.claude_permission.native_callback = profile.permission_mode == "native_callback";
         decoder.acio = profile.protocol == Some(Protocol::Acio);
         if profile.parser == Provider::Custom {
             decoder.event_types.clone_from(&profile.event_types);

@@ -5,14 +5,28 @@ use super::*;
 pub const VERIFIER_TIMED_OUT: &str = "tool context verifier timed out";
 
 /// About a dozen Git processes: on Windows each start costs ~0.3 s plus antivirus scanning, and
-/// a busy run exceeded 10 s. `AGENTCONDUCTOR_TOOL_VERIFIER_TIMEOUT_SECS` raises it for machines
-/// where Git starts slowly; the native hook timeout grows with it.
+/// a busy run exceeded 10 s. Settings raises it (GitHub #1033) for machines where Git starts
+/// slowly; the native hook timeout grows with it.
+pub const VERIFIER_TIMEOUT_DEFAULT: u64 = 60;
+pub const VERIFIER_TIMEOUT_RANGE: std::ops::RangeInclusive<u64> = 5..=600;
+const VERIFIER_TIMEOUT_KEY: &str = "tool_verifier_timeout_secs";
+
 pub fn verifier_timeout() -> u64 {
-    std::env::var("AGENTCONDUCTOR_TOOL_VERIFIER_TIMEOUT_SECS")
-        .ok()
+    crate::ui::language::stored_text(VERIFIER_TIMEOUT_KEY)
         .and_then(|v| v.parse().ok())
-        .unwrap_or(30u64)
-        .clamp(5, 600)
+        .filter(|v| VERIFIER_TIMEOUT_RANGE.contains(v))
+        .unwrap_or(VERIFIER_TIMEOUT_DEFAULT)
+}
+
+/// Validates first so an out-of-range value saves nothing.
+pub fn save_verifier_timeout(seconds: u64) -> Result<(), String> {
+    if !VERIFIER_TIMEOUT_RANGE.contains(&seconds) {
+        return Err(crate::ui::messages::render(
+            "native.verifier_timeout_invalid",
+            &[("value", &seconds.to_string())],
+        ));
+    }
+    crate::ui::language::store(VERIFIER_TIMEOUT_KEY, &seconds.to_string())
 }
 
 /// Derives evidence only; this function cannot grant or consume permission.
@@ -161,7 +175,7 @@ pub async fn verify_tool_context(
         return Err(format!(
             "{VERIFIER_TIMED_OUT} after {} s, most likely because Git starts slowly on this \
              machine; the tool call was denied and the task can continue. Raise \
-             AGENTCONDUCTOR_TOOL_VERIFIER_TIMEOUT_SECS if this repeats; inspect {}",
+             the tool check timeout in Settings if this repeats; inspect {}",
             verifier_timeout(),
             attempt.display()
         ));

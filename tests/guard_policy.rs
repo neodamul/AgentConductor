@@ -275,6 +275,17 @@ fn search_inputs_cannot_hide_unsupported_fields_or_escape_the_workspace() {
             .unwrap(),
         Disposition::Automatic
     );
+    // GitHub #1035: the workspace root itself, also with a trailing separator, is inside.
+    let root = ws.0.to_str().unwrap();
+    for path in [root.to_owned(), format!("{root}/")] {
+        assert_eq!(
+            policy
+                .classify("Glob", &json!({"pattern":"**/*","path":path}))
+                .unwrap(),
+            Disposition::Automatic,
+            "{path}"
+        );
+    }
     for (tool, input) in [
         ("Grep", json!({"pattern":"token","glob":".env*"})),
         ("Glob", json!({"pattern":"**/.git/config"})),

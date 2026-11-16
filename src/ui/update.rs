@@ -21,8 +21,15 @@ impl Room {
             if let Some(channel) = request["channel"].as_str() {
                 crate::update_source::save_channel(channel)?;
             }
+            // GitHub #1033: the tool check timeout is saved with the rest of Settings.
+            if let Some(seconds) = request.get("verifier_timeout") {
+                let seconds = seconds.as_u64().unwrap_or(0);
+                crate::workflow::save_verifier_timeout(seconds)?;
+            }
         }
-        Ok(crate::update_source::settings())
+        let mut settings = crate::update_source::settings();
+        settings["verifier_timeout"] = crate::workflow::verifier_timeout().into();
+        Ok(settings)
     }
 
     /// GitHub #331: running work (workspace, kind, time) and failed checks are named apart; a run

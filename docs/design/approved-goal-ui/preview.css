@@ -242,7 +242,7 @@ button:not(:disabled),a[href],summary,[role="button"]:not([aria-disabled="true"]
 
 button[data-action-icon]{display:inline-flex;align-items:center;justify-content:center;gap:6px}button[data-action-icon]::before{content:"";display:block;width:13px;height:13px;flex:none;background:currentColor;mask-image:var(--action-icon);-webkit-mask-image:var(--action-icon);mask-size:contain;mask-repeat:no-repeat;mask-position:center}.assignment-choice[data-action-icon]{justify-content:flex-start}
 
-#goal-result-dialog,#delete-goal-dialog,#profile-edit-dialog,#close-run-dialog,#sessions-dialog,#mcp-dialog,#sessions-dialog{position:fixed;right:auto;bottom:auto;margin:0;transform:none;max-width:var(--reference-dialog-width,90vw);max-height:var(--reference-dialog-height,85vh)}.profile-editor-fields{max-height:min(58vh,calc(var(--reference-dialog-height,85vh) - 160px))}
+#goal-result-dialog,#delete-goal-dialog,#bug-report-dialog,#profile-edit-dialog,#close-run-dialog,#sessions-dialog,#mcp-dialog,#sessions-dialog{position:fixed;right:auto;bottom:auto;margin:0;transform:none;max-width:var(--reference-dialog-width,90vw);max-height:var(--reference-dialog-height,85vh)}.profile-editor-fields{max-height:min(58vh,calc(var(--reference-dialog-height,85vh) - 160px))}
 /* Reorder handle: a dotted grip, 20px (four dot rows) and centred beside the 30px quota ring. */
 .agent .grip{font-size:0;display:block;flex:none;width:10px;height:20px;margin-left:4px;background:radial-gradient(circle,var(--line-strong) 1.2px,transparent 1.6px) 0 0/5px 5px}
 
@@ -500,3 +500,7 @@ button.add{font-family:inherit;cursor:pointer;line-height:inherit}button.add:hov
 
 /* #1038: the coordinator chat closes from the bottom too, beside Send. */
 .chat-actions{display:flex;justify-content:flex-end;gap:8px}
+/* #1027: Report a bug zips the chosen log tails into Downloads before the issue draft opens. */
+#bug-report-dialog{width:560px;max-width:calc(100vw - 32px);padding:24px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:13px/1.6 -apple-system,BlinkMacSystemFont,sans-serif}#bug-report-dialog::backdrop{background:rgba(0,0,0,.3)}#bug-report-dialog h2{font-size:18px;margin:0 0 12px}.bug-report-files{display:grid;gap:2px;margin:12px 0;padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--bg)}.bug-report-file{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;font-size:12px}.bug-report-file:hover{background:var(--surface)}.bug-report-file code{font-size:11px;color:var(--soft)}.bug-report-size{font-size:11px;color:var(--soft);min-width:48px;text-align:right}.bug-report-note{font-size:11.5px;color:var(--soft);margin:0 0 4px}#bug-report-dialog .result-actions{flex-wrap:wrap}
+/* #1033: Settings holds the tool check timeout as a number field styled like the panel's selects. */
+.utility-panel input[type=number]{width:100%;padding:10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);font:inherit}.utility-panel label+.panel-note{margin:-10px 0 18px}
