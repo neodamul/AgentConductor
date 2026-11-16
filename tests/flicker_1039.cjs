@@ -22,5 +22,11 @@ const until=async(f,n)=>{const end=Date.now()+20000;while(!f()){if(Date.now()>en
 SIM.home.job={id:'opt-1',kind:'optimize',state:'running',started_ms:Date.now()};SIM.home.revision='opt';await until(()=>q('optimize-button').classList.contains('is-busy'),'optimize shows busy');
 SIM.home.job={id:'plan-2',kind:'plan',state:'completed',started_ms:Date.now()+1000};SIM.home.revision='plan';await until(()=>!q('optimize-button').classList.contains('is-busy'),'optimize busy ends after a newer job');
 return [check('a newer job ends the optimize wait and its timer',q('optimize-status').textContent==='')];})()`));
+await browser.eval(`sessionStorage.setItem('SIM_PRESET',"SIM.home.run_available=true;SIM.home.run_state='completed';SIM.home.config.goal='Add a login page';")`);await browser.goto(pathToFileURL(file).href);
+out.push(...await browser.eval(`(async()=>{const check=(n,ok)=>{if(!ok)throw Error(n);return n;},w=ms=>new Promise(r=>setTimeout(r,ms));const btn=document.getElementById('start-optimize-button');
+const until=async(f,n)=>{const end=Date.now()+15000;while(!f()){if(Date.now()>end)throw Error(n);await w(100);}};await until(()=>btn.dataset.goalReadonly==='true','completed Goal locks Optimize');
+const flips=[];new MutationObserver(m=>m.forEach(()=>flips.push(btn.disabled))).observe(btn,{attributes:true,attributeFilter:['disabled']});await w(5000);
+const r=[check('a completed Goal keeps Optimize disabled across timer and polls (flips: '+flips.length+')',btn.disabled&&flips.length===0)];
+SIM.home.run_state='running';SIM.home.revision='editable';await until(()=>btn.dataset.goalReadonly!=='true','unlock');r.push(check('an editable Goal restores Optimize',!btn.disabled));return r;})()`));
 console.log(out.length,'flicker checks passed');
 }finally{if(browser)await browser.close();fs.rmSync(dir,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1;});

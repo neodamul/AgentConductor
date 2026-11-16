@@ -4,13 +4,17 @@ globalThis.acGoalReadOnly=(()=>{
  const locks=new WeakMap(),infoNodes=new WeakMap();
  const completed=s=>s?.run_state==='completed'||s?.report?.state==='completed'||!!s?.slugs?.some(g=>g.active&&g.progress?.stage==='completed');
  const reason=()=>acMessage('goal.readonly_reason');
+ // GitHub #1039: other writers (timers, renders) keep assigning disabled/readOnly; while locked the
+ // property is pinned so their writes are remembered for unlock instead of flipping the control.
+ function native(node,key){for(let p=Object.getPrototypeOf(node);p;p=Object.getPrototypeOf(p)){const d=Object.getOwnPropertyDescriptor(p,key);if(d)return d;}}
+ function pin(node,key,old){const d=native(node,key);if(!d?.set||Object.hasOwn(node,key))return;d.set.call(node,true);Object.defineProperty(node,key,{configurable:true,get:()=>true,set:v=>{old[key]=v;}});}
  function block(node,on){
   if(on){
    if(!locks.has(node))locks.set(node,{disabled:node.disabled,readOnly:node.readOnly,title:node.title});
-   if(node.matches('textarea,input:not([type=checkbox]):not([type=radio])'))node.readOnly=true;else node.disabled=true;
+   pin(node,node.matches('textarea,input:not([type=checkbox]):not([type=radio])')?'readOnly':'disabled',locks.get(node));
    node.dataset.goalReadonly='true';AC_I18N.bind(node,reason,'title');
   }else if(locks.has(node)){
-   const old=locks.get(node);if(old.disabled!==undefined)node.disabled=old.disabled;if(old.readOnly!==undefined)node.readOnly=old.readOnly;
+   const old=locks.get(node);delete node.disabled;delete node.readOnly;if(old.disabled!==undefined)node.disabled=old.disabled;if(old.readOnly!==undefined)node.readOnly=old.readOnly;
    AC_I18N.bind(node,()=>old.title||'','title');delete node.dataset.goalReadonly;locks.delete(node);
   }
  }

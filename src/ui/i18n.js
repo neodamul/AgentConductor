@@ -23,7 +23,7 @@ const AC_I18N=(()=>{
     // state (.value/.checked) that markup does not show, so they are always swapped.
     if(node.nodeType===1&&children.length&&children.length===node.childNodes.length&&!node.querySelector('input,select,textarea')){
       const box=document.createElement('div');box.append(...children);
-      if(!box.querySelector('input,select,textarea')&&box.innerHTML===node.innerHTML)return;
+      if(!box.querySelector('input,select,textarea')&&typeof node.innerHTML==='string'&&box.innerHTML===node.innerHTML)return;
       node.replaceChildren(...box.childNodes);return;
     }
     node.replaceChildren(...children);
