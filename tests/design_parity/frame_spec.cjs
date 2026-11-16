@@ -133,7 +133,7 @@ module.exports=[
     mock: { url: '?theme=light#3', run: "document.getElementById('right-panel-toggle').click()", selector: '.task-inspector .instruction-toggle' },
     app: { setup: STEPS_ENABLED + "SIM.room.report.plan.tasks[0].prompt=Array.from({length:8},(_,i)=>'Step '+(i+1)+': keep the existing login flow and rotate the token once.').join('\\n');", run: INSPECTOR_OPEN, selector: '#task-instruction-toggle' } },
   // #563: dialogs of the approved design (mock id -> app id) share the mock's box and title.
-  ...[['delete-goal-dialog', 'start-delete-goal', 'delete-goal'], ['close-run-dialog', 'start-close-dialog', 'close-run'], ['goal-result-dialog', 'result-dialog', 'goal-result'], ['profile-edit-dialog', 'start-agent-dialog', 'profile-edit']].flatMap(([mock, app, name]) => {
+  ...[['delete-goal-dialog', 'start-delete-goal', 'delete-goal'], ['close-run-dialog', 'start-close-dialog', 'close-run'], ['goal-result-dialog', 'result-dialog', 'goal-result'], ['profile-edit-dialog', 'start-agent-dialog', 'profile-edit'], ['bug-report-dialog', 'start-bug-report', 'bug-report']].flatMap(([mock, app, name]) => {
     const open = id => `document.getElementById('${id}').showModal()`, openApp = id => `document.getElementById('run-screen').hidden = false; ${open(id)}`;
     const mockSide = (selector) => ({ url: '?theme=light#0', setup: 'referenceDialogResize.disconnect();referenceDialogOpen.disconnect();', run: open(mock), selector });
     return [
@@ -143,6 +143,14 @@ module.exports=[
         mock: mockSide(`#${mock} h2`), app: { run: openApp(app), selector: `#${app} h2` } }]),
     ];
   }),
+  // #1027: the Report a bug dialog's log list (app side opened from Help, mock side shown directly).
+  ...[['bug-report-files', '.bug-report-files', ['paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'borderTopWidth', 'backgroundColor']],
+    ['bug-report-file', '.bug-report-file:nth-child(2)', ['fontSize', 'paddingTop', 'paddingLeft', 'columnGap', 'color']],
+    ['bug-report-size', '.bug-report-file:nth-child(2) .bug-report-size', ['fontSize', 'color', 'textAlign']],
+    ['bug-report-name', '.bug-report-file:nth-child(2) code', ['fontSize', 'color']],
+    ['bug-report-note', '.bug-report-note', ['fontSize', 'color', 'marginBottom']]].map(([name, selector, props]) => ({ name, props, keys: ['height', ...props], pixel: false,
+    mock: { url: '?theme=light#0', setup: 'referenceDialogResize.disconnect();referenceDialogOpen.disconnect();', run: "document.getElementById('bug-report-dialog').showModal()", selector: `#bug-report-dialog ${selector}` },
+    app: { run: "{document.getElementById('start-app-menu').click();const g=[...document.querySelectorAll('#start-workspace-list .menu-parent')].find(b=>b.textContent.trim()===acMessage('startup.menu_help'));g.click();[...g.nextElementSibling.querySelectorAll('button')].find(b=>b.textContent.trim()===acMessage('startup.report_bug')).click()}", selector: `#start-bug-report ${selector}` } })),
   // #563: the Roles and Plan views' card chrome matches the mock's card of that view (hash #N = mock view, tab = app step).
   ...[[1, 'i', 1, 'roles'], [2, 'a', 2, 'plan']].flatMap(([hash, show, tab, name]) => [
     { name: `view-card-${name}`, props: ['paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'boxShadow'], keys: ['width', 'paddingTop', 'paddingLeft', 'borderTopLeftRadius', 'backgroundColor', 'boxShadow'], pixel: false,

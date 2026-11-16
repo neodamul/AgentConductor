@@ -243,6 +243,14 @@ application target shares the updater repository preference, including Enterpris
 HTTPS hosts. GitHub handles login and final submission; automatic context is limited
 to version, OS and architecture. The preview demonstrates the same Help action.
 
+#1027: before the browser opens, a dialog lists the logs that can be zipped: version and
+OS (always included), request diagnostics, the messenger log and the latest run's error
+output, each with its size; missing logs are unchecked and disabled. Zip and open report
+writes the chosen logs to the Downloads folder as one zip, keeping only each log's last
+256 KB with tokens, API keys and webhook URLs masked, reveals it in Finder or Explorer, and
+opens the draft with a Logs section that says to drag that zip in. Report without logs opens
+the plain draft; Cancel sends nothing.
+
 ## MCP registration and automatic tool selection (#882)
 
 Normal MCP settings lists registered servers, discovery status and errors, and the add/edit form. It has no Jira/Confluence tool-binding selectors, argument form or duplicate text catalog. The workspace coordinator chooses tools and schema-valid arguments for Goal source preview; compatible legacy binding data remains internal and round-trippable through advanced JSON.
