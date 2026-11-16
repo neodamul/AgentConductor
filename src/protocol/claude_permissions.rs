@@ -7,6 +7,8 @@ pub(super) struct Policy {
     pub full_access: bool,
     verified: bool,
     pub read_only_coordinator: bool,
+    /// GitHub #1034: with native_callback every denial is AgentConductor's own guard answer.
+    pub native_callback: bool,
     pending_reads: BTreeMap<String, String>,
     denied_reads: BTreeMap<String, String>,
     recovered_reads: BTreeSet<String>,
@@ -97,7 +99,10 @@ impl Policy {
             && matches!(payload["subtype"].as_str(), Some("init" | "status"));
         let actual = payload["permissionMode"].as_str();
         let result = payload["type"] == "result";
+        // GitHub #1034: native_callback denials were answered to the worker by AgentConductor's
+        // guard (policy, verifier timeout); task verification decides the outcome, not the list.
         let denial = result
+            && !(self.native_callback && !self.read_only_coordinator)
             && !(self.read_only_coordinator && self.reads_recovered(&payload))
             && payload
                 .get("permission_denials")

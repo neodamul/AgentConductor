@@ -159,6 +159,23 @@ fn workspace_commands_and_searches_run_and_outside_requests_ask() {
         policy.classify("Glob", &json!({"pattern":"**/*.rs"})),
         Ok(Disposition::Automatic)
     );
+    // GitHub #1035: the workspace root in the spellings Claude uses on Windows is inside.
+    let plain = ws.plain();
+    let mut lower = plain.clone();
+    lower[..1].make_ascii_lowercase();
+    for path in [
+        plain.clone(),
+        format!("{plain}\\"),
+        plain.replace('\\', "/"),
+        lower,
+        ws.0.to_str().unwrap().to_owned(),
+    ] {
+        assert_eq!(
+            policy.classify("Glob", &json!({"pattern":"**/*","path":path})),
+            Ok(Disposition::Automatic),
+            "{path}"
+        );
+    }
     assert_eq!(
         policy.classify("Grep", &json!({"pattern":"KEY","glob":".env*"})),
         Ok(Disposition::Human)

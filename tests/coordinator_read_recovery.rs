@@ -92,7 +92,8 @@ fn recovery_never_accepts_invalid_output_or_relaxes_worker_completion() {
     let p = path(&events);
     assert!(coordinator::read_profile_document(&profile("full_access"), &p, "phases").is_err());
     fs::remove_file(p).unwrap();
-    for mode in ["full_access", "native_callback", "read_only"] {
+    // GitHub #1034: native_callback denials are AgentConductor's own answers, so only these stay strict.
+    for mode in ["full_access", "read_only"] {
         let mut d = Decoder::for_profile(&profile(mode), 1024 * 1024);
         d.push(
             format!(
