@@ -16,10 +16,12 @@ for(const theme of ['light','dark']){
  assert.equal(await b.eval(`${q('task-instruction-toggle')}.hidden`),false,'toggle shown for long text');
  assert.equal(await b.eval(`getComputedStyle(${q('task-instruction')}).whiteSpace`),'pre-wrap','line breaks kept');
  const folded=await b.eval(`${q('task-instruction')}.getBoundingClientRect().height`);
+ const toggleTop=()=>b.eval(`${q('task-instruction-toggle')}.getBoundingClientRect().top`),before=await toggleTop();
  await b.eval(`${q('task-instruction-toggle')}.click()`);await new Promise(r=>setTimeout(r,200));
  const open=await b.eval(`${q('task-instruction')}.getBoundingClientRect().height`);
  assert.ok(open>folded*2,`expanded height ${open} vs folded ${folded}`);
  assert.equal(await b.eval(`${q('task-instruction-toggle')}.getAttribute('aria-expanded')`),'true');
+ assert.equal(await toggleTop(),before,'GitHub #1022: Collapse stays where Expand was');
  await b.eval(`${q('task-instruction-toggle')}.click()`);await new Promise(r=>setTimeout(r,200));
  assert.equal(await b.eval(`${q('task-instruction')}.classList.contains('folded')`),true,'collapse folds again');
  // A short instruction has nothing to expand.

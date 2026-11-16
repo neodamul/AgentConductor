@@ -8,11 +8,12 @@ const preset=`SIM.home.slugs=[{slug:'g',goal:'First line of the goal.\\nSecond l
 (async()=>{try{const b=await launch(chrome,{width:1280,height:900});try{
  const url=pathToFileURL(path.join(dir,'app.html')).href;await b.goto(url);await b.eval(`sessionStorage.setItem('SIM_PRESET',${JSON.stringify(preset)})`);await b.goto(url);await wait(1500);
  await b.eval("document.getElementById('start-goal-list-open').click()");await wait(800);
- const m=()=>b.eval("(()=>{const t=document.querySelector('.goal-row-text'),g=document.querySelector('.goal-row-toggle');if(!t||!g)return null;return {h:Math.round(t.getBoundingClientRect().height),open:t.classList.contains('open'),exp:g.getAttribute('aria-expanded'),label:g.textContent,ws:getComputedStyle(t).whiteSpace}})()");
+ const m=()=>b.eval("(()=>{const t=document.querySelector('.goal-row-text'),g=document.querySelector('.goal-row-toggle');if(!t||!g)return null;return {top:Math.round(g.getBoundingClientRect().top),h:Math.round(t.getBoundingClientRect().height),open:t.classList.contains('open'),exp:g.getAttribute('aria-expanded'),label:g.textContent,ws:getComputedStyle(t).whiteSpace}})()");
  const closed=await m();if(!closed)fail('the Goal row needs its text block and toggle');
  if(closed.open||closed.exp!=='false'||!/펼치기|Expand/.test(closed.label)||closed.ws!=='pre-wrap')fail('collapsed state: '+JSON.stringify(closed));
  await b.eval("document.querySelector('.goal-row-toggle').click()");const open=await m();
  if(!open.open||open.exp!=='true'||!/접기|Collapse/.test(open.label)||open.h<=closed.h*1.5)fail('expanded state: '+JSON.stringify({closed,open}));
+ if(open.top!==closed.top)fail('GitHub #1022: Collapse must stay where Expand was: '+JSON.stringify({closed,open}));
  await b.eval("document.querySelector('.goal-row-toggle').click()");const again=await m();
  if(again.open||again.h!==closed.h)fail('collapsing again: '+JSON.stringify(again));
  console.log('goal row text: collapsed to two lines with line breaks, expands and collapses');

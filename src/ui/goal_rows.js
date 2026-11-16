@@ -57,7 +57,7 @@ window.acGoalRows = (() => {
       const label = () => acMessage(toggle.getAttribute('aria-expanded') === 'true' ? 'startup.goal_row_collapse' : 'startup.goal_row_expand');
       text.classList.add('goal-row-text'); AC_I18N.bind(toggle, label);
       toggle.onclick = () => { const open = toggle.getAttribute('aria-expanded') !== 'true'; toggle.setAttribute('aria-expanded', String(open)); text.classList.toggle('open', open); AC_I18N.bind(toggle, label); };
-      text.after(toggle);
+      text.before(toggle); // GitHub #1022: above the text, so Collapse stays where Expand was.
     }
     const actions = document.createElement('div'); actions.className = 'goal-row-actions';
     const folder = iconButton('goal-folder', FOLDER, 'startup.goal_row_folder', s.slug, () => ctx.request({ kind: 'goal_folder', slug: s.slug, open: true }).catch(e => ctx.notice(e.message, true)));
