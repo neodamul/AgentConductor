@@ -276,7 +276,7 @@ impl Policy {
     }
 
     /// The workspace folder itself, in any spelling an agent uses for it.
-    fn is_root(&self, word: &str) -> bool {
+    pub(super) fn is_root(&self, word: &str) -> bool {
         let plain = |path: &Path| {
             let text = path.to_string_lossy();
             let text = text

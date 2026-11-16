@@ -5,7 +5,6 @@ use super::{
     spelling::{keys, metadata, sensitive, string},
 };
 use serde_json::Value;
-use std::path::Path;
 
 impl Policy {
     pub(super) fn search(&self, tool: &str, input: &Value) -> Result<Disposition, String> {
@@ -58,10 +57,8 @@ impl Policy {
         }
         if input.get("path").is_some() {
             let path = string(input, "path", true)?;
-            if path != "."
-                && Path::new(path) != self.workspace
-                && Path::new(path) != self.configured
-            {
+            // GitHub #1035: the root in any spelling (`\\?\`, drive case, trailing separator).
+            if path != "." && !self.is_root(path) {
                 let relative = self.relative(path)?;
                 self.inspect(&relative, false, true)?;
                 if sensitive(&relative) {
