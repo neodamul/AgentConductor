@@ -21,7 +21,7 @@ const JOBS = [
   { kinds: ['discover'], file: 'startup.js', text: 'kind===`catalog:${p.id}`' },
   { kinds: ['apply_update'], file: 'startup.js', text: "updateSince('installing')" },
   // Room actions run as controller jobs shown in the card/composer; the usage refresh marks its button (and counts its time once #297 lands).
-  { kinds: ['approve', 'merge', 'reject', 'revise', 'recover', 'resume', 'reassign', 'schedule', 'model', 'stop', 'coordinator_request', 'scope_recovery'], file: 'room.js', text: 'room.in_progress' },
+  { kinds: ['approve', 'merge', 'reject', 'revise', 'recover', 'resume', 'reassign', 'schedule', 'model', 'effort', 'stop', 'coordinator_request', 'scope_recovery'], file: 'room.js', text: 'room.in_progress' },
   { kinds: ['quota'], file: 'startup.js', text: "metadataBusy('quota',p.id)" },
 ];
 // A job that has its own progress line is also kept out of the generic waiting line.
