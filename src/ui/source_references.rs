@@ -34,8 +34,36 @@ fn explicit_references(goal: &str) -> Vec<String> {
 
 pub(crate) fn reference_ranges(goal: &str) -> Vec<(String, usize, usize)> {
     explicit_ranges(goal)
+        .into_iter()
+        .map(|(reference, start, end)| {
+            (
+                reference,
+                goal[..start].encode_utf16().count(),
+                goal[..end].encode_utf16().count(),
+            )
+        })
+        .collect()
 }
 
+/// GitHub #1018: every explicit reference written the one way the reference dialog writes it,
+/// `[Jira:KEY-1]` / `[Confluence:123]`, whether it was typed or rewritten as `jira:KEY-1`.
+pub(crate) fn canonical(goal: &str) -> String {
+    let mut out = String::with_capacity(goal.len());
+    let mut last = 0;
+    for (reference, start, end) in explicit_ranges(goal) {
+        let (kind, id) = reference.split_once(':').unwrap_or_default();
+        out.push_str(&goal[last..start]);
+        out.push_str(&format!(
+            "[{}:{id}]",
+            if kind == "jira" { "Jira" } else { "Confluence" }
+        ));
+        last = end;
+    }
+    out.push_str(&goal[last..]);
+    out
+}
+
+/// Explicit references with their byte display range (brackets included when present).
 fn explicit_ranges(goal: &str) -> Vec<(String, usize, usize)> {
     let mut references = Vec::new();
     let lower = goal.to_ascii_lowercase();
@@ -61,12 +89,7 @@ fn explicit_ranges(goal: &str) -> Vec<(String, usize, usize)> {
                     } else {
                         (index, end)
                     };
-                references.push((
-                    index,
-                    format!("{kind}:{id}"),
-                    goal[..display_start].encode_utf16().count(),
-                    goal[..display_end].encode_utf16().count(),
-                ));
+                references.push((index, format!("{kind}:{id}"), display_start, display_end));
             }
         }
     }
@@ -201,3 +224,7 @@ fn valid_page(id: &str) -> bool {
 fn word(byte: u8) -> bool {
     byte.is_ascii_alphanumeric() || byte == b'_'
 }
+
+#[cfg(test)]
+#[path = "../../tests/unit/source_references.rs"]
+mod tests;

@@ -74,6 +74,7 @@ Rules:\n\
 Inspect the project folder only to inventory the files that govern the goal, such as \
 AGENTS.md or docs, and name them by repo-relative path.\n\
 - Incorporate the operator clarification answers when present; ask only about unresolved ambiguity.\n\
+- Keep document references exactly as written, such as [Jira:KEY-123] and [Confluence:123456].\n\
 - Keep the operator's intent, scope and wording of names, commands and paths. Do not invent \
 requirements; when something is missing, ask in `questions` instead.\n\
 - Apply the skill once. No eval cases can be run here, so do not claim measured results; \
@@ -120,7 +121,8 @@ pub fn proposal_from(reply: &Value) -> Result<Proposal, String> {
         .filter(|t| !t.is_empty())
         .ok_or("the coordinator reply has no optimized goal")?;
     Ok(Proposal {
-        optimized: clip(optimized, MAX_OPTIMIZED_BYTES).to_owned(),
+        // GitHub #1018: a rewrite that drops the brackets keeps the reference format the dialog writes.
+        optimized: crate::ui::source_references::canonical(clip(optimized, MAX_OPTIMIZED_BYTES)),
         changes: notes(&reply["changes"], MAX_CHANGES),
         questions: notes(&reply["questions"], MAX_QUESTIONS),
     })

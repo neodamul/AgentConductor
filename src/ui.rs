@@ -45,7 +45,7 @@ pub mod picker;
 mod public_report;
 pub mod setup;
 use public_report::public_report;
-mod source_references;
+pub(crate) mod source_references;
 pub mod update_guard;
 pub mod workspaces;
 
