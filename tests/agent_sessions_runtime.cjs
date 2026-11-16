@@ -16,7 +16,7 @@ try{const file=path.join(dir,'app.html');execFileSync(process.execPath,['tests/u
   await until(()=>document.querySelector('[data-sessions="claude"]'),'chip');await acSessions.refresh();
   await until(()=>document.querySelector('[data-sessions="claude"] .session-count')?.textContent==='3','chip count');
   const chip=document.querySelector('[data-sessions="claude"]');
-  check('the agent card counts its sessions and shows its work states (#869)',chip.textContent.startsWith(acMessage('sessions.chip'))&&[...chip.parentElement.querySelectorAll('[data-state-tag]')].map(t=>t.dataset.stateTag+t.querySelector('.state-count').textContent).join()==='running1,failed1,done1'&&chip.previousElementSibling.dataset.stateTag==='done');
+  check('the agent card counts its sessions and lists its work states on hover (#869/#1016)',chip.textContent.startsWith(acMessage('sessions.chip'))&&[...chip.querySelectorAll('.session-tally .tally-row')].map(t=>t.className.split('state-')[1]+t.querySelector('strong').textContent).join()==='running1,failed1,done1'&&!chip.parentElement.querySelector('[data-state-tag]')&&chip.getAttribute('aria-describedby')===chip.querySelector('.session-tally').id);
   chip.click();await until(()=>document.getElementById('start-agent-sessions').open&&q('list').children.length===3,'dialog');
   const rows=()=>[...q('list').querySelectorAll('.session-row')];
   check('rows show state, task and Goal',rows()[0].querySelector('.session-state.running')&&rows()[0].textContent.includes('Rotate tokens'));

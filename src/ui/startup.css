@@ -273,6 +273,8 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 #start-agent-sessions{width:560px;max-width:calc(100vw - 32px)}
 /* GitHub #869/#870: role, work-state and info tags with thin same-hue borders and 4px corners; the coordinator card carries a role band; the models tag lists its models. */
 .startup-profile .agent-facts{gap:4px}.startup-profile .agent-facts+.agent-facts{margin-top:-2px}
+/* GitHub #1016: work and info tags flow as one wrapped group, so few tags take two compact lines without a forced row break. */
+.startup-profile .fact-flow{display:flex;flex-wrap:wrap;gap:4px}.startup-profile .fact-flow>.agent-facts{display:contents}
 .startup-profile .agent-facts .fact{padding:1px 7px;line-height:1.35;border:1px solid color-mix(in srgb,currentColor 32%,transparent);border-radius:4px}
 .startup-profile .agent-facts .fact.info{background:var(--fill);color:var(--soft);border-color:var(--line-strong)}
 .startup-profile .agent-facts .fact.role{background:var(--role-bg);color:var(--role);font-weight:650}.startup-profile .agent-facts .fact.role::before{content:"\265B";margin-right:4px}
@@ -282,10 +284,14 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 .startup-profile .agent-facts .fact .state-count,.startup-profile .agent-sessions .session-count{font-weight:650;margin-left:3px}
 .startup-profile .agent-facts .fact.state-running::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:currentColor;margin-right:4px;vertical-align:1px}
 .startup-profile.coordinator{border-color:color-mix(in srgb,var(--role) 40%,var(--line));box-shadow:inset 3px 0 0 var(--role)}
-.startup-profile .fact.models{position:relative;cursor:default}
+.startup-profile .fact.models,.startup-profile .fact.tasks{position:relative;cursor:default}
 .startup-profile .model-list{display:none;position:absolute;left:0;top:calc(100% + 5px);z-index:20;min-width:160px;padding:6px 9px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);color:var(--ink);font-weight:400;line-height:1.6;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.12)}
 .startup-profile .model-list b{display:block;font-weight:400;font-size:11px;color:var(--soft)}.startup-profile .model-list span{display:block;font-size:12px}.startup-profile .model-list .more{color:var(--soft)}
-.startup-profile .fact.models:hover .model-list,.startup-profile .fact.models.open .model-list{display:block}
+.startup-profile .fact.models:hover .model-list,.startup-profile .fact.models.open .model-list,.startup-profile .fact.tasks:hover .model-list,.startup-profile .fact.tasks.open .model-list{display:block}
+/* GitHub #1016: the Sessions chip shows only its count; hover or focus opens its state list (coloured dot, label, count) like the models list. */
+.startup-profile .agent-sessions{position:relative}.startup-profile .session-tally{text-align:left}.startup-profile .agent-sessions:hover .session-tally,.startup-profile .agent-sessions:focus-visible .session-tally{display:block}
+.startup-profile .session-tally .tally-row{display:flex;align-items:center;gap:6px}.startup-profile .session-tally .tally-row::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}.startup-profile .session-tally .tally-row strong{margin-left:auto;padding-left:12px;font-weight:650;color:var(--ink)}
+.startup-profile .session-tally .state-running{color:var(--info)}.startup-profile .session-tally .state-waiting{color:var(--warn)}.startup-profile .session-tally .state-failed{color:var(--err)}.startup-profile .session-tally .state-done{color:var(--ok)}
 
 #start-agent-sessions .sessions-confirm-actions button{font:400 13px Arial,sans-serif;padding:8px 13px}
 #start-agent-sessions-confirm-ok{background:var(--err);border-color:var(--err);color:var(--attention-ink)}

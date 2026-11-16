@@ -52,6 +52,8 @@ impl Startup {
                 }
                 validate_name(&config.name)?;
                 crate::roles::validate(&config.roles, &config.profiles)?;
+                // GitHub #1018: typed `jira:KEY` and dialog `[Jira:KEY]` references are stored one way.
+                config.goal = crate::ui::source_references::canonical(&config.goal);
                 if config.goal.len() > 16 * 1024 {
                     return Err(crate::ui::messages::text("native.goal_exceeds_16_kib").into());
                 }
