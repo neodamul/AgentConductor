@@ -42,7 +42,7 @@ Tabs appear as **Agents** then **Phases & tasks**. Steps 1–2 initially select 
 planning, execution, verification, and review initially select the task view.
 
 Agent cards preserve Add, edit, model catalog/reload, delete, permissions, fallback/coordinator facts,
-model count, drag reordering, and up/down ordering. The work and info tags flow as one wrapped group (no forced row break, no blank space), and include a "Tasks N" tag when the current plan assigns tasks to the agent; hover or keyboard focus lists them as `T<n> <first prompt line>` (GitHub #1016). Agent removal uses the same red 18px trash
+model count, drag reordering, and up/down ordering. The work and info tags flow as one wrapped group (no forced row break, no blank space), the Sessions tag shows only its count and lists running/waiting/failed/done counts with coloured dots on hover or focus (a click still opens session management), and they include a "Tasks N" tag when the current plan assigns tasks to the agent; hover or keyboard focus lists them as `T<n> <first prompt line>` (GitHub #1016). Agent removal uses the same red 18px trash
 SVG as Goal removal, not the platform emoji. Executable paths remain editable in profile settings
 but are not printed on cards. Do not show a fixed session-count capacity as current activity.
 

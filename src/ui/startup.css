@@ -288,6 +288,10 @@ header.titlebar{border-bottom:1px solid var(--bar-line)}
 .startup-profile .model-list{display:none;position:absolute;left:0;top:calc(100% + 5px);z-index:20;min-width:160px;padding:6px 9px;border:1px solid var(--line-strong);border-radius:8px;background:var(--surface);color:var(--ink);font-weight:400;line-height:1.6;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.12)}
 .startup-profile .model-list b{display:block;font-weight:400;font-size:11px;color:var(--soft)}.startup-profile .model-list span{display:block;font-size:12px}.startup-profile .model-list .more{color:var(--soft)}
 .startup-profile .fact.models:hover .model-list,.startup-profile .fact.models.open .model-list,.startup-profile .fact.tasks:hover .model-list,.startup-profile .fact.tasks.open .model-list{display:block}
+/* GitHub #1016: the Sessions chip shows only its count; hover or focus opens its state list (coloured dot, label, count) like the models list. */
+.startup-profile .agent-sessions{position:relative}.startup-profile .session-tally{text-align:left}.startup-profile .agent-sessions:hover .session-tally,.startup-profile .agent-sessions:focus-visible .session-tally{display:block}
+.startup-profile .session-tally .tally-row{display:flex;align-items:center;gap:6px}.startup-profile .session-tally .tally-row::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}.startup-profile .session-tally .tally-row strong{margin-left:auto;padding-left:12px;font-weight:650;color:var(--ink)}
+.startup-profile .session-tally .state-running{color:var(--info)}.startup-profile .session-tally .state-waiting{color:var(--warn)}.startup-profile .session-tally .state-failed{color:var(--err)}.startup-profile .session-tally .state-done{color:var(--ok)}
 
 #start-agent-sessions .sessions-confirm-actions button{font:400 13px Arial,sans-serif;padding:8px 13px}
 #start-agent-sessions-confirm-ok{background:var(--err);border-color:var(--err);color:var(--attention-ink)}

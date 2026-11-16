@@ -12,9 +12,9 @@ window.acSessions=(()=>{
    const list=all[button.dataset.sessions]||[],running=list.filter(active).length,count=document.createElement('span');
    count.className='session-count';count.textContent=String(list.length);
    button.replaceChildren(acMessage('sessions.chip'),count);
-   // GitHub #869: work-state tags with counts sit before the Sessions tag; a state with none is hidden.
-   button.parentElement?.querySelectorAll('[data-state-tag]').forEach(tag=>tag.remove());
-   for(const [state,key,members] of TAGS){const n=list.filter(s=>members.includes(s.state)).length;if(!n)continue;const tag=document.createElement('span'),num=document.createElement('span');tag.className='fact state-'+state;tag.dataset.stateTag=state;num.className='state-count';num.textContent=String(n);tag.append(acMessage(key),num);button.before(tag);}
+   // GitHub #869/#1016: the chip shows only the count; hover or focus lists the states with coloured dots and counts.
+   const rows=TAGS.map(([state,key,members])=>[state,key,list.filter(s=>members.includes(s.state)).length]).filter(r=>r[2]);
+   if(rows.length){const tip=document.createElement('span'),title=document.createElement('b');tip.className='model-list session-tally';tip.id='session-tally-'+button.dataset.sessions;tip.setAttribute('role','tooltip');title.textContent=acMessage('sessions.tally_title');tip.append(title,...rows.map(([state,key,n])=>{const row=document.createElement('span'),num=document.createElement('strong');row.className='tally-row state-'+state;num.textContent=String(n);row.append(acMessage(key),num);return row;}));button.append(tip);button.setAttribute('aria-describedby',tip.id);}else button.removeAttribute('aria-describedby');
    button.setAttribute('aria-label',acMessage('sessions.chip_label',{value1:label(button.dataset.sessions),value2:list.length,value3:running}));
   }
  }
