@@ -126,8 +126,14 @@ async fn a_merged_run_drops_its_sessions_and_older_merged_runs_are_swept() {
     let cleaned = |t: &agentconductor::workflow::TaskReport| {
         t.artifacts.join(workflow::SESSION_CLEANED).is_file()
     };
-    assert!(report.tasks.iter().all(cleaned), "merge marks every session");
-    assert!(report.tasks.iter().all(|t| t.artifacts.is_dir()), "logs stay");
+    assert!(
+        report.tasks.iter().all(cleaned),
+        "merge marks every session"
+    );
+    assert!(
+        report.tasks.iter().all(|t| t.artifacts.is_dir()),
+        "logs stay"
+    );
 
     // A run merged before this clean-up existed is swept when the workspace opens.
     for t in &report.tasks {
