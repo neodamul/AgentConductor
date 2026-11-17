@@ -178,6 +178,7 @@ pub fn merge(dir: &Path) -> Result<(), String> {
         }
     }
     release_worktrees(&git, dir, &mut store);
+    mark_completed_sessions(&report);
     // DD-62: the merge is final; a failed tree update is reported, not rolled back.
     sync_phase(dir).map_err(|e| format!("merged, but the slug tree update failed: {e}"))
 }

@@ -142,34 +142,49 @@ pub(super) fn apply_fallbacks(
 ) -> Result<bool, String> {
     apply_fallbacks_at(report, dir, store, (now() / 1000) as i64)
 }
+/// GitHub #1059: restricted roles whose reviewed fallback is due and has an unrestricted target,
+/// so the scheduler moves them
+/// without waiting for other workers to finish.
+pub(super) fn movable_roles(report: &Report, current: i64) -> Vec<usize> {
+    (0..report.tasks.len())
+        .filter(|&index| {
+            let task = &report.tasks[index];
+            matches!(task.status.as_str(), "pending" | "waiting_availability")
+                && report
+                    .plan
+                    .agents
+                    .iter()
+                    .find(|agent| agent.id == report.plan.tasks[index].agent)
+                    .is_some_and(|agent| {
+                        report.plan.tasks[index]
+                            .fallback_for(&report.plan.agents)
+                            .ok()
+                            .flatten()
+                            .is_some()
+                            && report
+                                .account_restrictions
+                                .get(agent.quota_key())
+                                .is_some_and(|r| {
+                                    super::availability_timer::fallback_due(r, current)
+                                })
+                    })
+                // A due fallback whose targets are all restricted too waits; nothing moves.
+                && unrestricted_fallback(report, index).ok().flatten().is_some()
+        })
+        .collect()
+}
+
 pub(super) fn apply_fallbacks_at(
     report: &mut Report,
     dir: &Path,
     store: &mut Store,
     current: i64,
 ) -> Result<bool, String> {
-    let may_transfer = report.tasks.iter().enumerate().any(|(index, task)| {
-        matches!(task.status.as_str(), "pending" | "waiting_availability")
-            && report
-                .plan
-                .agents
-                .iter()
-                .find(|agent| agent.id == report.plan.tasks[index].agent)
-                .is_some_and(|agent| {
-                    report.plan.tasks[index]
-                        .fallback_for(&report.plan.agents)
-                        .ok()
-                        .flatten()
-                        .is_some()
-                        && report
-                            .account_restrictions
-                            .get(agent.quota_key())
-                            .is_some_and(|r| super::availability_timer::fallback_due(r, current))
-                })
-    });
-    if may_transfer {
+    // GitHub #1059: only the roles that move must have no surviving worker; other tasks keep running.
+    let moving = movable_roles(report, current);
+    if !moving.is_empty() {
         // A completed leader is insufficient: surviving descendants must also be absent.
-        for task in &report.tasks {
+        for task in moving.iter().map(|&i| &report.tasks[i]) {
             let path = task.artifacts.join("process/owner.json");
             if !path.exists() && task.attempt > 0 {
                 return Err("missing worker ownership evidence; fallback refused".into());

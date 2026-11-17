@@ -70,7 +70,11 @@ pub(super) fn queue(
         .iter()
         .position(|t| t.id == task)
         .ok_or("unknown task/session ID")?;
-    if report.tasks[index].status != "pending" {
+    // GitHub #1054: a task waiting for its account's usage limit has not run this attempt either.
+    if !matches!(
+        report.tasks[index].status.as_str(),
+        "pending" | "waiting_availability"
+    ) {
         return Err(
             "only a task that has not started can be changed while the run is active".into(),
         );
@@ -104,11 +108,28 @@ pub(super) fn queue(
     Ok(true)
 }
 
-/// Applies queued edits to tasks that are still pending; the scheduler calls this before
+/// Whether an edit waits to be applied, so the scheduler applies it without waiting for a worker.
+pub(super) fn queued(store: &Store) -> Result<bool, String> {
+    store
+        .0
+        .query_row(
+            "SELECT EXISTS(SELECT 1 FROM documents WHERE key LIKE 'pending_edit/%')",
+            [],
+            |r| r.get(0),
+        )
+        .map_err(|e| e.to_string())
+}
+
+/// Applies queued edits to tasks that have not started; the scheduler calls this before
 /// deciding what to launch. An edit that is no longer valid is dropped and recorded.
-pub(super) fn apply(store: &mut Store, report: &mut Report) -> Result<(), String> {
+/// GitHub #1054: a new agent is recorded as a handoff, so the task's activity shows it; a task that
+/// already ran or waits for its account's usage limit hands its work over like a reassignment.
+pub(super) fn apply(store: &mut Store, report: &mut Report, dir: &Path) -> Result<(), String> {
     for index in 0..report.tasks.len() {
-        if report.tasks[index].status != "pending" {
+        if !matches!(
+            report.tasks[index].status.as_str(),
+            "pending" | "waiting_availability"
+        ) {
             continue;
         }
         let key = format!("{KEY}/{}", report.tasks[index].id);
@@ -122,14 +143,36 @@ pub(super) fn apply(store: &mut Store, report: &mut Report) -> Result<(), String
         let Some(edit) = value.and_then(|v| serde_json::from_str::<Edit>(&v).ok()) else {
             continue;
         };
-        let applied = candidate(report, index, &edit);
-        if let Ok(plan) = &applied {
-            report.plan = plan.clone();
-        }
+        let from = report.plan.tasks[index].agent.clone();
+        let mut applied = candidate(report, index, &edit).map(|_| ());
         store
             .0
             .execute("DELETE FROM documents WHERE key=?1", [&key])
             .map_err(|e| e.to_string())?;
+        let moved = edit.agent.as_ref().filter(|agent| **agent != from);
+        if let (Ok(()), Some(agent)) = (&applied, moved) {
+            let task = &report.tasks[index];
+            if task.status == "waiting_availability" || task.attempt > 0 {
+                applied = super::assignment::transfer_role(
+                    report,
+                    dir,
+                    index,
+                    agent,
+                    edit.model.as_deref(),
+                    store,
+                    "Operator reassigned a waiting role; target uses a new provider session",
+                );
+            } else {
+                report.plan = candidate(report, index, &edit)?;
+                store.record(
+                    "handoff",
+                    &serde_json::json!({"task":task.id,"from":from,"to":agent,"queued":true}),
+                    "Queued reassignment applied before the task started",
+                )?;
+            }
+        } else if let Ok(()) = &applied {
+            report.plan = candidate(report, index, &edit)?;
+        }
         store.record(
             "pending_edit_applied",
             &serde_json::json!({"task":report.tasks[index].id,"agent":edit.agent,"model":edit.model,"error":applied.err()}),
