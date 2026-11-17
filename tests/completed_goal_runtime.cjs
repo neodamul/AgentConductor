@@ -53,6 +53,10 @@ const{findChrome,launch}=require('./design_parity/cdp.cjs');
     SIM.reply.new_goal=()=>{SIM.home.run_available=false;SIM.home.run_state=null;SIM.home.proposal=null;SIM.home.slugs=[];SIM.home.config.goal='';return {changed:true};};
     q('start-new-goal').click();await until(()=>SIM.log.some(e=>e.kind==='new_goal')&&!q('start-goal').readOnly&&!q('start-save-only').disabled);
     check('new Goal is editable',!q('start-save-only').disabled);
+    // GitHub #1064: the role assignments locked for the completed Goal open again for the new one.
+    await until(()=>!document.querySelector('#start-panel-team tr[data-role] select')?.disabled);
+    const roleAgents=[...document.querySelectorAll('#start-panel-team tr[data-role]')].map(tr=>tr.querySelector('select'));
+    check('#1064 role agent choices unlock for the new Goal',roleAgents.length>0&&roleAgents.every(s=>!s.disabled&&!s.dataset.goalReadonly&&!s.dataset.goalChanging));
     const writes=SIM.log.filter(e=>e.kind==='action'&&e.p.action.kind!=='quota');check('no mutating Room dispatch',writes.length===0);
     return 'completed Goal: stage clicks, saved views, write locks, quota and New Goal passed';
    })()`));
