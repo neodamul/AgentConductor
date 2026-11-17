@@ -31,7 +31,6 @@ window.acResultView = (() => {
     summary.setAttribute('aria-expanded', String(section.open));
     AC_I18N.bind(toggle, () => acMessage(section.open ? 'room.result_collapse' : 'room.result_expand'));
   }
-<<<<<<< Updated upstream
   function fileRow(f, tag='li') {
     const item = node(tag, undefined, tag==='li'?'file-row':'file-diff-row'), button = node('button', undefined, 'file-diff-toggle'), pre = node('pre', undefined, 'file-diff');
     button.type = 'button'; button.setAttribute('aria-expanded', 'false'); pre.hidden = true;
@@ -42,8 +41,6 @@ window.acResultView = (() => {
     button.onclick = () => { const open = pre.hidden; pre.hidden = !open; button.setAttribute('aria-expanded', String(open)); };
     item.append(button, pre); return item;
   }
-=======
->>>>>>> Stashed changes
   // data: { goal, branch, repo, commit, diff, tests (test_output list), details (per-task data) }
   function show(data) {
     const changed = data.phaseResults?.length ? phaseFiles(data.phaseResults) : files(data.diff), outputs = data.phaseResults?.length ? phaseTests(data.phaseResults) : data.tests || [], summary = tests(outputs), notes = lessons(data.details);
@@ -67,7 +64,6 @@ window.acResultView = (() => {
     AC_I18N.replace($('result-files'), ...changed.map(f=>fileRow(f)));
     AC_I18N.replace($('result-tests'), ...outputs.map(t => row(t.task, () => acMessage((t.passed??(t.exit_code===0&&!t.timed_out)) ? 'room.result_test_passed' : 'room.result_test_failed'))));
     AC_I18N.replace($('result-lessons'), ...(notes.length ? notes.map(l => node('li', l)) : [node('li', () => acMessage('room.result_no_lessons'), 'muted')]));
-<<<<<<< Updated upstream
     // GitHub #821: the popup owns its buttons, so they work from the Goal list before the Room script has run.
     $('result-x').onclick = () => $('result-dialog').close();
     $('result-close').onclick = () => {
@@ -75,8 +71,6 @@ window.acResultView = (() => {
       if (next) window.acNextPhase?.plan();
       else if (!document.getElementById('start-goals')?.open) document.getElementById('start-goal-list-open')?.click();
     };
-=======
->>>>>>> Stashed changes
     const sections = [...$('result-dialog').querySelectorAll('details.result-section')];
     sections.forEach((section, index) => {
       section.querySelector('.result-section-count').textContent = ` · ${[changed.length, outputs.length, notes.length][index]}`;
