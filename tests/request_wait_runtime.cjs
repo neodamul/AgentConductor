@@ -34,7 +34,7 @@ const button = () => { const classes = new Set(); return { dataset: {}, closest(
   assert.equal(ctx.AC_WAIT.text(now + 9000), '');
   // Both pages route their requests through it and show the line.
   assert.match(startup, /async function request\(packet,limit=15000,watched\)\{[^\n]*if\(!watched&&typeof AC_WAIT!=='undefined'\)return AC_WAIT\.watch\(packet\.kind,request\(packet,limit,true\)\);/);
-  assert.match(room, /async function request\(packet, watched\) \{\n[^\n]*if \(!watched && typeof AC_WAIT !== 'undefined'\) return AC_WAIT\.watch\(packet\.kind === 'action' \? packet\.action\.kind : packet\.kind, request\(packet, true\)\);/);
+  assert.match(room, /async function request\(packet, watched, wait=15000\) \{\n[^\n]*if \(!watched && typeof AC_WAIT !== 'undefined'\) return AC_WAIT\.watch\(packet\.kind === 'action' \? packet\.action\.kind : packet\.kind, request\(packet, true, wait\)\);/);
   assert.ok(startup.includes('AC_WAIT.text()') && room.includes('AC_WAIT.text(now)'), 'the status line and the room connection show it');
   assert.ok(room.includes("(typeof AC_WAIT!=='undefined'&&AC_WAIT.text())||acMessage(\"room.connected_local_run\")"), 'a refresh of the room keeps the waiting line instead of writing connected over it');
   console.log('request wait: pressed button, 1 s line, silent refreshes and both pages');
