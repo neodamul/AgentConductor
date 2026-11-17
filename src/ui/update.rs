@@ -35,7 +35,7 @@ impl Room {
     /// GitHub #331: running work (workspace, kind, time) and failed checks are named apart; a run
     /// whose coordinator is gone does not count.
     fn ensure_update_idle(&self) -> Result<(), String> {
-        use crate::ui::update_guard::{Blocker, job_label, message, run_blocker};
+        use crate::ui::update_guard::{Blocker, blocks_update, job_label, message, run_blocker};
         let language = crate::ui::language::load();
         let mut blockers = Vec::new();
         match self.surface() {
@@ -50,15 +50,20 @@ impl Room {
             Ok(slot) => {
                 if let Some(controller) = slot.clone() {
                     match controller.poll() {
-                        Ok(job) if job["state"] == "running" => blockers.push(Blocker::Active {
-                            workspace: controller
-                                .dir
-                                .parent()
-                                .and_then(|p| p.file_name())
-                                .map_or_else(String::new, |n| n.to_string_lossy().into_owned()),
-                            what: job_label(&language, job["kind"].as_str().unwrap_or("")),
-                            elapsed_ms: None,
-                        }),
+                        Ok(job)
+                            if job["state"] == "running"
+                                && blocks_update(job["kind"].as_str().unwrap_or("")) =>
+                        {
+                            blockers.push(Blocker::Active {
+                                workspace: controller
+                                    .dir
+                                    .parent()
+                                    .and_then(|p| p.file_name())
+                                    .map_or_else(String::new, |n| n.to_string_lossy().into_owned()),
+                                what: job_label(&language, job["kind"].as_str().unwrap_or("")),
+                                elapsed_ms: None,
+                            })
+                        }
                         Ok(_) => {}
                         Err(error) => blockers.push(Blocker::Unknown {
                             what: "run job".into(),
