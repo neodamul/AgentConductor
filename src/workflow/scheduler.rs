@@ -18,6 +18,8 @@ pub(super) async fn drive(
     // GitHub #273: the run screen probes this PID to tell a lost run process from a quiet one.
     fs::write(dir.join("runner.pid"), std::process::id().to_string()).map_err(|e| e.to_string())?;
     repository_lease.claim()?;
+    // DD-81 / GitHub #1048: every executing process lets linked approvers answer live tool requests.
+    crate::messenger::inbound::spawn(dir.to_path_buf());
     let mut jobs = tokio::task::JoinSet::new();
     loop {
         super::availability_timer::sync_availability(
