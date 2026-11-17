@@ -249,13 +249,14 @@ async function loadReview(activate=true) {
 // GitHub #684: a live tool request is decided in the task card's footer (as in the mock), not in a modal; the card's notice shows the
 // exact input. A request brings its task forward once; the direction field is replaced by the decision while one is pending.
 // GitHub #1046: deciding re-runs the tool check (Git can be slow), so the click waits as long as that check may take; a decision
-// that still timed out stays sent, so its request keeps the buttons locked until it is settled.
-let toolBusy=false;const seenTools=new Set(),sentTools=new Set();
+// that still timed out stays sent, so its request keeps the buttons locked and the pressed one's progress bar until it is settled.
+let toolBusy=false;const seenTools=new Set(),sentTools=new Map();
 function pendingTool(){const t=task();return t?(snapshot.tool_requests||[]).find(r=>r.status==='pending'&&r.context.task===t.id):null;}
 function syncToolDialog() {
   const requests=snapshot.tool_requests||[],fresh=requests.find(r=>r.status==='pending'&&!seenTools.has(r.id));
   if(fresh){seenTools.add(fresh.id);const index=snapshot.report.tasks.findIndex(t=>t.id===fresh.context.task);if(index>=0&&index!==selected&&!coordinatorView)selectTask(index);}
   const waiting=coordinatorView?null:pendingTool(),box=$('tool-decision'),composer=document.querySelector('#run-screen .composer');
+  for(const [id,b] of sentTools)if(!requests.some(r=>r.id===id&&r.status==='pending')){AC_PRESS.hold(b,false);sentTools.delete(id);}
   const denied=renderDeniedFooter(waiting);box.hidden=!waiting;if(composer)composer.hidden=!!waiting||denied;
   if(!waiting)return;
   AC_I18N.bind($('tool-decision-note'),()=>acMessage("room.tool_decision_note"));
@@ -263,7 +264,7 @@ function syncToolDialog() {
   const live=snapshot.report.state==='running';
   for(const id of ['tool-decision-allow','tool-decision-deny'])$(id).disabled=!(idle()||live)||toolBusy||sentTools.has(waiting.id);
 }
-async function decideTool(kind) {const waiting=pendingTool();if(!waiting||toolBusy||sentTools.has(waiting.id))return;toolBusy=true;syncToolDialog();const idleRun=snapshot.report.state!=='running';try{if(await act({kind,sha:waiting.id},undefined,((snapshot.verifier_timeout||60)+15)*1000,()=>sentTools.add(waiting.id))&&kind==='tool_approve'&&idleRun)resumeAfter='tool_approve';}finally{toolBusy=false;}syncToolDialog();}
+async function decideTool(kind) {const waiting=pendingTool();if(!waiting||toolBusy||sentTools.has(waiting.id))return;toolBusy=true;syncToolDialog();const idleRun=snapshot.report.state!=='running';try{if(await act({kind,sha:waiting.id},undefined,((snapshot.verifier_timeout||60)+15)*1000,()=>{const b=$(kind==='tool_approve'?'tool-decision-allow':'tool-decision-deny');sentTools.set(waiting.id,b);AC_PRESS.hold(b,true);})&&kind==='tool_approve'&&idleRun)resumeAfter='tool_approve';}finally{toolBusy=false;}syncToolDialog();}
 wireReviewFooter();wireVerifyFooter();wireDeniedFooter();$('tool-decision-allow').onclick=()=>decideTool('tool_approve');$('tool-decision-deny').onclick=()=>decideTool('tool_reject');
 function autoQuotaRefresh(){if(roomStopped||!snapshot||busy()||snapshot.report.state==='running')return;const agent=snapshot.report.plan.agents.find(a=>['claude','codex'].includes(a.parser)&&snapshot.quota_refresh_due?.[a.id]);if(agent)refreshQuota(agent.id);}
 let pollFailures=0;function pollFailed(e,background){if(!e.transport||!background||++pollFailures>=3){AC_I18N.bind($('connection'),()=>(acMessage("room.local_connection_unavailable")));notice(e.message,true);}}function pollSucceeded(){pollFailures=0;lastSnapshotAt=Date.now();}
