@@ -7,7 +7,7 @@ use super::*;
 pub(super) fn unrestricted_fallback(
     report: &Report,
     index: usize,
-) -> Result<Option<(String, Option<String>)>, String> {
+) -> Result<Option<crate::plan::Fallback>, String> {
     let task = &report.plan.tasks[index];
     let mut profile = report
         .plan
@@ -28,7 +28,10 @@ pub(super) fn unrestricted_fallback(
             return Ok(None);
         }
         if !report.account_restrictions.contains_key(target.quota_key()) {
-            return Ok(Some((target.id.clone(), policy.model.clone())));
+            return Ok(Some(crate::plan::Fallback {
+                agent: target.id.clone(),
+                ..policy.clone()
+            }));
         }
         profile = target;
         next = profile.fallback.as_ref();

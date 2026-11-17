@@ -33,6 +33,7 @@
  document.getElementById('sidebar-toggle').click();
  selectedOutlineTask=1;renderOutlineSelection('b');
  check('selection updates open dock',inspector.querySelector('[data-detail-field="ownership"]').textContent==='tests/auth/');
+ {const was=i;i=5;show();selectedOutlineTask=1;renderOutlineSelection('h');const a=inspector.querySelector('[data-detail-assign]');check('usage-limited task leads with Reassign',a.classList.contains('p')&&a.closest('.detail-inline').classList.contains('needs-agent')&&!inspector.querySelector('[data-detail-guide]').hidden);selectedOutlineTask=0;renderOutlineSelection('h');check('other task keeps a quiet Reassign',inspector.querySelector('[data-detail-assign]').classList.contains('q')&&inspector.querySelector('[data-detail-guide]').hidden);i=was;show();selectedOutlineTask=1;renderOutlineSelection('b');}
  document.getElementById('right-panel-toggle').click();
  check('toggle restores center width',inspector.hidden&&main.getBoundingClientRect().width===fullWidth);
  selectRail('agents');await wait();
@@ -87,6 +88,7 @@
  document.querySelector('#assignment-options [data-value="__custom"]').click();
  const manual=document.getElementById('assignment-manual-model');check('manual requires value',!document.getElementById('assignment-manual-form').checkValidity());manual.value='team-fallback-example';document.getElementById('assignment-manual-form').requestSubmit();
  check('fallback model saved',roleAssignments[1].fallbackModel==='team-fallback-example'&&selectionMenu.hidden);
+ openAssignmentPicker('role-1','effort');check('effort offers the agent default and five levels',document.querySelectorAll('#assignment-options button').length===6);document.querySelector('#assignment-options [data-value="high"]').click();check('role effort applies',roleAssignments[1].effort==='high'&&document.querySelector('[data-assignment-target="role-1"][data-assignment-field="effort"]').textContent.includes('high'));openAssignmentPicker('role-1','fallbackEffort');document.querySelector('#assignment-options [data-value="medium"]').click();check('fallback effort applies',roleAssignments[1].fallbackEffort==='medium');
  openAssignmentPicker('role-1','fallback');document.querySelector('#assignment-options [data-value=""]').click();check('no fallback disables its model',document.querySelector('[data-assignment-target="role-1"][data-assignment-field="fallbackModel"]').disabled);
  {const saved=roleAssignments.map(item=>({...item})),coordinator={...workspaceCoordinator};document.querySelector('[data-role-defaults]').click();check('apply agent role defaults assigns every role',roleAssignments.every(item=>item.agent&&item.fallback&&item.agent!==item.fallback&&!item.model)&&roleAssignments[1].agent==='codex'&&document.querySelector('[data-assignment-target="role-1"][data-assignment-field="agent"] span').textContent==='Codex');saved.forEach((item,k)=>Object.assign(roleAssignments[k],item));Object.assign(workspaceCoordinator,coordinator);refreshAssignmentChoices();}
  openSidePanel('settings-panel');await wait();

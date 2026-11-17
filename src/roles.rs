@@ -12,6 +12,9 @@ pub struct RoleAgent {
     pub model: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub fallback: Option<crate::plan::FallbackRule>,
+    /// GitHub #1066: the role's Effort; empty uses the agent default, then the task type (#1024).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub effort: Option<String>,
 }
 
 /// Earlier rules stored plain agent IDs; both forms are accepted.
@@ -25,6 +28,8 @@ enum Entry {
         model: Option<String>,
         #[serde(default)]
         fallback: Option<crate::plan::FallbackRule>,
+        #[serde(default)]
+        effort: Option<String>,
     },
 }
 
@@ -35,15 +40,18 @@ impl From<Entry> for RoleAgent {
                 agent,
                 model: None,
                 fallback: None,
+                effort: None,
             },
             Entry::Full {
                 agent,
                 model,
                 fallback,
+                effort,
             } => Self {
                 agent,
                 model: model.filter(|m| !m.is_empty()),
                 fallback,
+                effort: effort.filter(|e| !e.is_empty()),
             },
         }
     }
@@ -83,6 +91,13 @@ pub fn validate(rules: &RoleRules, profiles: &[AgentProfile]) -> Result<(), Stri
                 profile
                     .validate_model(model)
                     .map_err(|e| format!("role {role}: {e}"))?;
+            }
+            if let Some(effort) = &entry.effort
+                && !crate::task_profile::EFFORTS.contains(&effort.as_str())
+            {
+                return Err(format!(
+                    "role {role}: effort must be low, medium, high, xhigh or max"
+                ));
             }
         }
     }
@@ -146,8 +161,17 @@ pub fn apply(rules: &RoleRules, tasks: &mut [Task]) -> Result<(), String> {
         if entry.model.is_some() {
             task.model = entry.model.clone();
         }
+        role_effort(task, entry);
     }
     Ok(())
+}
+
+/// GitHub #1066: a role with an Effort sets it on its tasks; without one the task keeps its own.
+fn role_effort(task: &mut Task, entry: &RoleAgent) {
+    if let Some(effort) = &entry.effort {
+        task.execution_options
+            .insert("effort".into(), effort.clone());
+    }
 }
 
 /// GitHub #564: moves tasks whose agent left their role (deleted agent, changed rule) to the role's first agent.
@@ -180,11 +204,13 @@ pub fn reassign(
                 if entry.model.is_some() {
                     task.model = entry.model.clone();
                 }
+                role_effort(task, entry);
             }
             None => {
                 task.agent = entries[0].agent.clone();
                 task.model = entries[0].model.clone();
                 task.fallback = entries[0].fallback.clone();
+                role_effort(task, &entries[0]);
             }
         }
     }

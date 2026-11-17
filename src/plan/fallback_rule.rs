@@ -31,6 +31,11 @@ fn validate_policy(
     if source.id == target.id || source.quota_key() == target.quota_key() {
         return Err("fallback must use a different agent and account quota group".into());
     }
+    if let Some(effort) = &policy.effort
+        && !crate::task_profile::EFFORTS.contains(&effort.as_str())
+    {
+        return Err("fallback effort must be low, medium, high, xhigh or max".into());
+    }
     if let Some(model) = &policy.model {
         target.validate_model(model)?;
     }

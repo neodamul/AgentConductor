@@ -18,6 +18,7 @@ async fn claude_api_error_keeps_durable_restriction_and_uses_reviewed_fallback_i
     plan.agents[0].fallback = Some(agentconductor::plan::Fallback {
         agent: "backup".into(),
         model: None,
+        effort: None,
     });
     plan.agents.push(backup);
     let quota_key = plan.agents[0].quota_key().to_string();

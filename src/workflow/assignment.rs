@@ -126,6 +126,15 @@ pub(super) fn transfer_role(
     Ok(())
 }
 
+/// GitHub #1066: a fallback that names an Effort sets it on the moved role; none keeps the task's.
+fn fallback_effort(report: &mut Report, index: usize, effort: Option<String>) {
+    if let Some(effort) = effort {
+        report.plan.tasks[index]
+            .execution_options
+            .insert("effort".into(), effort);
+    }
+}
+
 pub(super) fn apply_fallbacks(
     report: &mut Report,
     dir: &Path,
@@ -213,17 +222,18 @@ pub(super) fn apply_fallbacks_at(
         ) {
             continue;
         }
-        if let Some((agent, model)) = unrestricted_fallback(report, index)? {
+        if let Some(target) = unrestricted_fallback(report, index)? {
             let previous = report.plan.clone();
             transfer_role(
                 report,
                 dir,
                 index,
-                &agent,
-                model.as_deref(),
+                &target.agent,
+                target.model.as_deref(),
                 store,
                 "Reviewed fallback transferred a restricted role; target uses a new provider session",
             )?;
+            fallback_effort(report, index, target.effort);
             super::auto_merge::carry_fallback_consent(dir, &previous, &report.plan, store)?;
             changed = true;
         }
@@ -261,17 +271,18 @@ pub(super) fn apply_handoffs(
         if !quiescent || dir.join("stop.request").exists() {
             continue;
         }
-        if let Some((agent, model)) = unrestricted_fallback(report, index)? {
+        if let Some(target) = unrestricted_fallback(report, index)? {
             let previous = report.plan.clone();
             transfer_role(
                 report,
                 dir,
                 index,
-                &agent,
-                model.as_deref(),
+                &target.agent,
+                target.model.as_deref(),
                 store,
                 "Completed checkpoint handoff transferred to the reviewed fallback; target uses a new provider session",
             )?;
+            fallback_effort(report, index, target.effort);
             super::auto_merge::carry_fallback_consent(dir, &previous, &report.plan, store)?;
             changed = true;
         }
