@@ -22,7 +22,7 @@ const agentStates={j:idleState,i:idleState,e:idleState,
 a:[['waiting','대기 중 — 계획 승인을 기다립니다'],['waiting','대기 중 — 계획 승인을 기다립니다'],['completed','계획 작성 완료 — 사람의 승인을 기다립니다']],
 b:[['running','실행 1 — 토큰 회전 구현 중 · 마지막 출력 8초 전'],['waiting','대기 1 — 구현 작업이 끝나면 테스트를 시작합니다'],['completed','보안 정책 노트 작성 완료']],
 g:[['waiting','승인 필요 — 패키지 설치 도구 요청 대기',true],['waiting','대기 1 — 구현 완료를 기다립니다'],['completed','보안 정책 노트 작성 완료']],
-h:[['completed','토큰 회전 구현 완료'],['waiting','대기 중 — 후속 검증을 기다립니다'],['error','권한 거부 — bash 실행이 CLI 정책에 의해 거부됨',true]],
+h:[['completed','토큰 회전 구현 완료'],['waiting','사용 한도 대기 — codex 계정 한도 · 18:30 재개 예정',false,'limited'],['error','권한 거부 — bash 실행이 CLI 정책에 의해 거부됨',true]],
 f:[['completed','구현 완료 — 통합 검증 중'],['completed','테스트 작성 완료 — 통합 검증 중'],['running','실행 1 — 합쳐진 결과를 검증 중']],
 c:[['completed','작업 완료 — 사람의 검토를 기다립니다'],['completed','작업 완료 — 통합 테스트 통과'],['running','실행 1 — 검토 결과 정리 중']],
 d:[['completed','작업 완료 — main에 반영됨'],['completed','작업 완료 — 통합 테스트 통과'],['completed','작업 완료 — 교훈 2개 기록']]};
