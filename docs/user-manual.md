@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.2.15** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.2.16** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.2.15 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
+The app version is beside the title. Version 0.2.16 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
 
 ### 1.1a Application updates
 
@@ -120,7 +120,7 @@ Saving a custom CLI applies the mode in which the CLI approves its own tool use 
 
 A pressed button retains its working indicator until the request and its admitted background job finish, rather than appearing merely disabled.
 
-Session cleanup and stop actions accept one request at a time. While a request is pending, the dialog shows progress and disables its actions. After cleanup, focus returns to Clean up finished, or Close when no cleanable sessions remain. Failed operations retain the list and show an error for retry.
+Session cleanup and stop actions accept one request at a time. While a request is pending, the dialog shows progress and disables its actions. After cleanup, focus returns to Clean up finished, or Close when no cleanable sessions remain. Failed operations retain the list and show an error for retry. Sessions of a merged Goal leave the list on their own after the merge (and when the workspace opens); their logs and results stay viewable. Stopped and failed runs keep their sessions because they can still resume. Finished sessions are never reused: a new task starts its own session, and only a retry or resume of the same task continues it.
 
 ### 1.4 Goals, sources and roles
 
@@ -136,7 +136,7 @@ Preview and apply selected documents before planning. Large sources are saved as
 Saving a server form discovers its tools; it does not retrieve documents. Document reads occur only when you request a source preview.
 
 Roles include verification, development, documentation, knowledge assetization and testing.
-Choose agents and optional models/alternates. **Apply agent role defaults** (in the footer) assigns the registered team to every role by default (Claude Code verifies, Codex develops and documents, OpenCode or a custom CLI tests, each with a fallback); **Save and go to step 3** saves and opens the plan, generating one when none exists. **Read plan…** and **Write plan manually** are under the task list of step 3, and **Regenerate plan** repeats the generation.
+Choose agents and optional models, Effort, alternates, alternate models and alternate Effort. A role's Effort applies to its tasks and its Fallback Effort applies when the fallback takes the role over; empty uses the agent default, then the task type. **Apply agent role defaults** (in the footer) assigns the registered team to every role by default (Claude Code verifies, Codex develops and documents, OpenCode or a custom CLI tests, each with a fallback); **Save and go to step 3** saves and opens the plan, generating one when none exists. **Read plan…** and **Write plan manually** are under the task list of step 3, and **Regenerate plan** repeats the generation.
 The coordinator proposes scoped work following these assignments; the Rust engine owns execution and state.
 
 Each goal has a short English slug, such as `ladder_game`, translated from the goal rather than romanized.
@@ -203,7 +203,7 @@ The coordinator is a selectable entry after tasks, showing integration steps, de
 
 - **Send feedback** (⌘/Ctrl+Enter) revises one task. An idle run continues after feedback is recorded. While a task is running, Send feedback is enabled for that task and queues the message for its next attempt.
 - **Fix with feedback** selects a failed task and drafts feedback from its failure output.
-- Reassign agents or change observed models through the task inspector; existing work/logs remain. A task that has not started yet can be changed while other tasks run; the change is queued and applied just before the task starts.
+- Reassign agents or change observed models through the task inspector; existing work/logs remain. A task that has not started yet, or is waiting for its account's usage limit, can be changed while other tasks run; the change is applied within a second and shows in the activity as a reassignment. A waiting task leads with **Reassign** and an outlined agent choice: a fallback takes over automatically (also while other tasks run) when one is set; otherwise choose another agent and reassign. A newly registered agent falls back to Claude Code (or the first agent), and that agent falls back to it when it had none.
 - **Resume at** schedules an unavailable session. **Stop run**, **Resume** and **Recover** manage owned work.
 - **Brief team** summarizes assigned work, latest activity, freshness, restrictions and next actions.
 - **Ask the coordinator** (the chat-bubble button in the title bar) opens a side chat on the workspace screen. Ask how to run or use what was built, where results are, or how to use the screen; the coordinator reads the project folder and this manual, and every question also carries the workspace goal, the latest run's tasks, test results, changed files and diff (cut when long), so it can describe the results and tell you how to run them from that. If no run has started it says so. It answers with commands for you to run. It is read-only: it never changes files or runs commands, it needs a registered coordinator, and it has its own slot, so you can ask while a plan is being made or a run is starting. While a job runs, the coordinator is also told which one, how long it has run, how much output its process has written and when it last wrote, so you can ask why a plan takes so long. One question is answered at a time; if a question cannot be accepted, the reason appears in the conversation and your text stays in the input. The conversation is kept with the workspace and shown again when you reopen it; press Enter to send, Shift+Enter for a new line, Up to recall an earlier question, and **New conversation** to start over.
