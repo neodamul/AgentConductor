@@ -392,6 +392,7 @@
   "room.merge_in_progress": "Merging approved changes",
   "room.applying_approved_candidate_to_workspace": "Applying the approved candidate to the workspace. The run will complete automatically.",
   "room.assign": "Assign",
+  "room.reassign_guide": "This agent is waiting for its usage limit or is unavailable. A fallback takes over automatically when one is set; if none does, choose another agent and reassign.",
   "room.assigned_task": "Assigned task",
   "room.assignment": "AGENT AND MODEL",
   "room.authorize_the_exact_current_input_once_for_300": "Authorize the exact current input once for 300 seconds. It does not authorize merge.",
