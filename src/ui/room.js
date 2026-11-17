@@ -20,14 +20,14 @@ function notice(message,error=false) { AC_I18N.text($('notice'),message);$('noti
 // DD-40: installed application icons for built-in agents; custom agents keep letters.
 let iconCache={},iconKinds='';const ICONS=()=>iconCache;
 function avatar(parser,label,cls){const url=parser&&parser!=='custom'?ICONS()[parser]:null;if(url){const brand=window.acBrandAvatar?.(parser,cls);if(brand)return brand;const img=document.createElement('img');img.src=url;img.alt='';img.className=cls+' app-icon';img.setAttribute('aria-hidden','true');return img;}const span=document.createElement('span');span.className=cls;AC_I18N.bind(span,()=>((label||'?').slice(0,1).toUpperCase()));return span;}
-async function request(packet, watched) {
-  if (!watched && typeof AC_WAIT !== 'undefined') return AC_WAIT.watch(packet.kind === 'action' ? packet.action.kind : packet.kind, request(packet, true));
+async function request(packet, watched, wait=15000) {
+  if (!watched && typeof AC_WAIT !== 'undefined') return AC_WAIT.watch(packet.kind === 'action' ? packet.action.kind : packet.kind, request(packet, true, wait));
   const bridge=window.webkit?.messageHandlers?.agentconductor??(window.__acRequest?{postMessage:window.__acRequest}:null);
   if(!bridge)throw Error(acMessage("startup.native_bridge_unavailable"));
   // A timed-out mutation remains accepted. Never automatically retry it.
-  let timer,visibility,remaining=15000,started=0;const began=Date.now();
+  let timer,visibility,remaining=wait,started=0;const began=Date.now();
   // Agent Room requests are marked so the workspace page can stay open beside the room.
-  try {return JSON.parse(await Promise.race([bridge.postMessage(JSON.stringify({...packet,room:true})),new Promise((_,reject)=>{const resume=()=>{if(timer||document.hidden)return;started=performance.now();const deadline=started+remaining,grace=3750;timer=setTimeout(()=>{timer=null;if(document.hidden||performance.now()-deadline>grace){remaining=15000;resume();return;}try{Promise.resolve(bridge.postMessage(JSON.stringify({kind:'client_timeout',of:packet.kind,waited:Date.now()-began,hidden:document.hidden,room:true}))).catch(()=>{});}catch(_){}reject(Object.assign(Error(acMessage("startup.native_response_timed_out_refresh_before_retrying",{value1:packet.kind})),{transport:true}));},remaining);};const pause=()=>{if(!timer)return;clearTimeout(timer);timer=null;remaining=Math.max(1,remaining-(performance.now()-started));};visibility=()=>document.hidden?pause():resume();document.addEventListener('visibilitychange',visibility);resume();})]));}
+  try {return JSON.parse(await Promise.race([bridge.postMessage(JSON.stringify({...packet,room:true})),new Promise((_,reject)=>{const resume=()=>{if(timer||document.hidden)return;started=performance.now();const deadline=started+remaining,grace=3750;timer=setTimeout(()=>{timer=null;if(document.hidden||performance.now()-deadline>grace){remaining=wait;resume();return;}try{Promise.resolve(bridge.postMessage(JSON.stringify({kind:'client_timeout',of:packet.kind,waited:Date.now()-began,hidden:document.hidden,room:true}))).catch(()=>{});}catch(_){}reject(Object.assign(Error(acMessage("startup.native_response_timed_out_refresh_before_retrying",{value1:packet.kind})),{transport:true}));},remaining);};const pause=()=>{if(!timer)return;clearTimeout(timer);timer=null;remaining=Math.max(1,remaining-(performance.now()-started));};visibility=()=>document.hidden?pause():resume();document.addEventListener('visibilitychange',visibility);resume();})]));}
   finally {clearTimeout(timer);if(visibility)document.removeEventListener('visibilitychange',visibility);}
 }
 function busy() { return snapshot?.job?.state==='running'; }
@@ -228,9 +228,9 @@ function event(label,text,cls='',seq) {
   const el=node('article',undefined,'event '+cls);el.append(node('code',seq===undefined?'':/^\d\d:\d\d$/.test(seq)?seq:'#'+seq,'event-seq'));const body=node('div',undefined,'event-body');const head=node('div',undefined,'event-head');head.append(node('span',label));body.append(head,node('p',text,'event-text'));el.append(body);return el;
 }
 async function loadTask() {if(!snapshot||roomStopped)return;if(coordinatorView){try{const data=await request({kind:'coordinator'});if(!roomStopped)renderCoordinator(data);}catch(e){notice(e.message,true);}return;}const index=selected;try{const data=await request({kind:'task',index});if(!roomStopped&&index===selected)renderTask(data);}catch(e){notice(e.message,true);}}
-async function act(action,revision=snapshot?.revision) {
+async function act(action,revision=snapshot?.revision,wait,onTimeout) {
   if(roomStopped)return false;
-  if(globalThis.acGoalReadOnly?.blocks(snapshot,{kind:'action',action})){notice(globalThis.acGoalReadOnly.reason,true);return false;}try{const accepted=await request({kind:'action',revision,action});if(action.kind!=='quota')notice(()=>(accepted.message||acMessage("room.accepted_waiting_for_the_coordinator", {value1:pretty(accepted.kind)})));await poll();return true;}catch(e){if(action.kind!=='quota')notice(e.message,true);await poll();return false;}
+  if(globalThis.acGoalReadOnly?.blocks(snapshot,{kind:'action',action})){notice(globalThis.acGoalReadOnly.reason,true);return false;}try{const accepted=await request({kind:'action',revision,action},false,wait);if(action.kind!=='quota')notice(()=>(accepted.message||acMessage("room.accepted_waiting_for_the_coordinator", {value1:pretty(accepted.kind)})));await poll();return true;}catch(e){if(e.transport)onTimeout?.();if(action.kind!=='quota')notice(e.message,true);await poll();return false;}
 }
 async function decision(title,description,evidence,needsReason=false,confirm=acMessage("room.confirm")) {
   const dialog=$('decision-dialog');AC_I18N.bind($('dialog-title'),()=>(title));AC_I18N.bind($('dialog-description'),()=>(description));AC_I18N.bind($('dialog-evidence'),()=>(evidence));
@@ -248,20 +248,23 @@ async function loadReview(activate=true) {
 }
 // GitHub #684: a live tool request is decided in the task card's footer (as in the mock), not in a modal; the card's notice shows the
 // exact input. A request brings its task forward once; the direction field is replaced by the decision while one is pending.
-let toolBusy=false;const seenTools=new Set();
+// GitHub #1046: deciding re-runs the tool check (Git can be slow), so the click waits as long as that check may take; a decision
+// that still timed out stays sent, so its request keeps the buttons locked and the pressed one's progress bar until it is settled.
+let toolBusy=false;const seenTools=new Set(),sentTools=new Map();
 function pendingTool(){const t=task();return t?(snapshot.tool_requests||[]).find(r=>r.status==='pending'&&r.context.task===t.id):null;}
 function syncToolDialog() {
   const requests=snapshot.tool_requests||[],fresh=requests.find(r=>r.status==='pending'&&!seenTools.has(r.id));
   if(fresh){seenTools.add(fresh.id);const index=snapshot.report.tasks.findIndex(t=>t.id===fresh.context.task);if(index>=0&&index!==selected&&!coordinatorView)selectTask(index);}
   const waiting=coordinatorView?null:pendingTool(),box=$('tool-decision'),composer=document.querySelector('#run-screen .composer');
+  for(const [id,b] of sentTools)if(!requests.some(r=>r.id===id&&r.status==='pending')){AC_PRESS.hold(b,false);sentTools.delete(id);}
   const denied=renderDeniedFooter(waiting);box.hidden=!waiting;if(composer)composer.hidden=!!waiting||denied;
   if(!waiting)return;
   AC_I18N.bind($('tool-decision-note'),()=>acMessage("room.tool_decision_note"));
   // The paused worker belongs to the running job, so deciding is the live action that must stay available while that job runs.
   const live=snapshot.report.state==='running';
-  for(const id of ['tool-decision-allow','tool-decision-deny'])$(id).disabled=!(idle()||live)||toolBusy;
+  for(const id of ['tool-decision-allow','tool-decision-deny'])$(id).disabled=!(idle()||live)||toolBusy||sentTools.has(waiting.id);
 }
-async function decideTool(kind) {const waiting=pendingTool();if(!waiting||toolBusy)return;toolBusy=true;syncToolDialog();const idleRun=snapshot.report.state!=='running';try{if(await act({kind,sha:waiting.id})&&kind==='tool_approve'&&idleRun)resumeAfter='tool_approve';}finally{toolBusy=false;}syncToolDialog();}
+async function decideTool(kind) {const waiting=pendingTool();if(!waiting||toolBusy||sentTools.has(waiting.id))return;toolBusy=true;syncToolDialog();const idleRun=snapshot.report.state!=='running';try{if(await act({kind,sha:waiting.id},undefined,((snapshot.verifier_timeout||60)+15)*1000,()=>{const b=$(kind==='tool_approve'?'tool-decision-allow':'tool-decision-deny');sentTools.set(waiting.id,b);AC_PRESS.hold(b,true);})&&kind==='tool_approve'&&idleRun)resumeAfter='tool_approve';}finally{toolBusy=false;}syncToolDialog();}
 wireReviewFooter();wireVerifyFooter();wireDeniedFooter();$('tool-decision-allow').onclick=()=>decideTool('tool_approve');$('tool-decision-deny').onclick=()=>decideTool('tool_reject');
 function autoQuotaRefresh(){if(roomStopped||!snapshot||busy()||snapshot.report.state==='running')return;const agent=snapshot.report.plan.agents.find(a=>['claude','codex'].includes(a.parser)&&snapshot.quota_refresh_due?.[a.id]);if(agent)refreshQuota(agent.id);}
 let pollFailures=0;function pollFailed(e,background){if(!e.transport||!background||++pollFailures>=3){AC_I18N.bind($('connection'),()=>(acMessage("room.local_connection_unavailable")));notice(e.message,true);}}function pollSucceeded(){pollFailures=0;lastSnapshotAt=Date.now();}
