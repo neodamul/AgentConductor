@@ -19,6 +19,7 @@ async fn fresh_unknown_limit_continues_on_fallback_with_independent_and_dependen
         plan.agents[0].fallback = Some(Fallback {
             agent: "company".into(),
             model: None,
+            effort: None,
         });
         plan.agents.extend([backup, later]);
         plan.tasks[1].agent = "later".into();
