@@ -170,8 +170,8 @@ q('read-plan').onclick=async()=>{if(busy())return;let picked;try{picked=await re
   function goalFields(){return document.querySelectorAll('#startup-screen input,#startup-screen textarea,#startup-screen select,#startup-screen button');}
   // GitHub #1064: a Goal change marks the controls it disables and gives back only those. A completed Goal's locks belong to
   // acGoalReadOnly; writing disabled into a locked control was kept and restored on unlock, so the new Goal's role
-  // assignments stayed disabled.
-  function holdGoalFields(){for(const node of goalFields())if(!node.disabled&&!node.dataset.goalReadonly){node.disabled=true;node.dataset.goalChanging='true';}}
+  // assignments stayed disabled. The agent registry is not Goal data (#1040), so its cards stay usable during the change.
+  function holdGoalFields(){for(const node of goalFields())if(!node.disabled&&!node.dataset.goalReadonly&&!node.closest('#start-profiles')){node.disabled=true;node.dataset.goalChanging='true';}}
   async function changeGoal(slug){
    if(goalChanging)return;goalChanging=true;
    holdGoalFields();

@@ -56,6 +56,7 @@ const{findChrome,launch}=require('./design_parity/cdp.cjs');
     // GitHub #1064: the role assignments locked for the completed Goal open again for the new one.
     await until(()=>!document.querySelector('#start-panel-team tr[data-role] select')?.disabled);
     const roleAgents=[...document.querySelectorAll('#start-panel-team tr[data-role]')].map(tr=>tr.querySelector('select'));
+    check('#1064 agent card tools stay usable',[...document.querySelectorAll('#start-profiles .profile-tools button')].filter(x=>!x.classList.contains('move-agent')).every(x=>!x.disabled&&!x.dataset.goalChanging));
     check('#1064 role agent choices unlock for the new Goal',roleAgents.length>0&&roleAgents.every(s=>!s.disabled&&!s.dataset.goalReadonly&&!s.dataset.goalChanging));
     const writes=SIM.log.filter(e=>e.kind==='action'&&e.p.action.kind!=='quota');check('no mutating Room dispatch',writes.length===0);
     return 'completed Goal: stage clicks, saved views, write locks, quota and New Goal passed';
