@@ -9,6 +9,7 @@ const gate = (state, status, job) => {
   return vm.runInContext(`canEditTask(${JSON.stringify({ status })})`, context);
 };
 assert.equal(gate('running', 'pending'), true, 'a waiting task can be edited during a run');
+assert.equal(gate('running', 'waiting_availability'), true, '#1054: a task waiting for its usage limit can be reassigned during a run');
 assert.equal(gate('running', 'running'), false, 'a running task cannot');
 assert.equal(gate('running', 'completed'), false, 'a finished task cannot');
 assert.equal(gate('running', 'pending', { state: 'running' }), false, 'a busy UI job blocks it');

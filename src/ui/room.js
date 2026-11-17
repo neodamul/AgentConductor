@@ -33,7 +33,8 @@ async function request(packet, watched, wait=15000) {
 function busy() { return snapshot?.job?.state==='running'; }
 function idle() { return snapshot && !busy() && !['running','completed'].includes(snapshot.report.state); }
 // A task that has not started can change agent or model while others run; the backend queues the change (#103).
-function canEditTask(t) { return idle() || (snapshot?.report.state === 'running' && !busy() && t?.status === 'pending'); }
+// #1054: a task waiting for its account's usage limit has not run this attempt, so it can change too.
+function canEditTask(t) { return idle() || (snapshot?.report.state === 'running' && !busy() && ['pending', 'waiting_availability'].includes(t?.status)); }
 // A running task takes feedback that the backend queues for its next attempt (#95); otherwise the run must be idle.
 // #165: the coordinator has its own draft and request; it needs a recorded coordinator and a run that is not executing.
 const COORDINATOR_DRAFT = '__coordinator__';
