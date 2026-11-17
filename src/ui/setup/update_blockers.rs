@@ -1,6 +1,6 @@
 //! GitHub #331: what in this workspace stops an app update, as named work and not as one refusal.
 use super::*;
-use crate::ui::update_guard::{Blocker, job_label};
+use crate::ui::update_guard::{Blocker, blocks_update, job_label};
 
 impl Startup {
     pub(crate) fn update_blockers(&self) -> Vec<Blocker> {
@@ -29,11 +29,16 @@ impl Startup {
             (self.chat_job(&saved), "chat"),
         ] {
             match job {
-                Ok(job) if job["state"] == "running" => out.push(Blocker::Active {
-                    workspace: workspace.clone(),
-                    what: job_label(&language, job["kind"].as_str().unwrap_or(default_kind)),
-                    elapsed_ms: job["started_ms"].as_u64().map(|at| now.saturating_sub(at)),
-                }),
+                Ok(job)
+                    if job["state"] == "running"
+                        && blocks_update(job["kind"].as_str().unwrap_or(default_kind)) =>
+                {
+                    out.push(Blocker::Active {
+                        workspace: workspace.clone(),
+                        what: job_label(&language, job["kind"].as_str().unwrap_or(default_kind)),
+                        elapsed_ms: job["started_ms"].as_u64().map(|at| now.saturating_sub(at)),
+                    })
+                }
                 Ok(_) => {}
                 Err(error) => out.push(Blocker::Unknown {
                     what: format!("{workspace}: {}", job_label(&language, default_kind)),

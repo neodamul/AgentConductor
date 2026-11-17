@@ -87,3 +87,15 @@ async fn a_run_marked_running_blocks_only_while_its_coordinator_holds_the_lock()
         other => panic!("a live coordinator must block: {:?}", other.is_some()),
     }
 }
+
+#[test]
+fn a_usage_query_never_holds_an_update_back() {
+    // #1050: a quota query is read-only and is asked again after the restart.
+    use agentconductor::ui::update_guard::blocks_update;
+    for kind in ["quota", "quota:claude", "quota:codex"] {
+        assert!(!blocks_update(kind), "{kind}");
+    }
+    for kind in ["plan", "start", "chat", "catalog", "resume", "quotas", ""] {
+        assert!(blocks_update(kind), "{kind}");
+    }
+}

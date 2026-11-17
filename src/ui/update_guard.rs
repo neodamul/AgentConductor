@@ -64,6 +64,12 @@ pub fn message(language: &str, blockers: &[Blocker]) -> String {
     parts.join("\n")
 }
 
+/// GitHub #1050: a usage query only reads quotas and is asked again after a restart, so it never
+/// holds an update back; every other job kind ends with the app and does.
+pub fn blocks_update(kind: &str) -> bool {
+    kind != "quota" && !kind.starts_with("quota:")
+}
+
 /// A job kind (`quota:claude`, `plan`, ...) as the work it is.
 pub fn job_label(language: &str, kind: &str) -> String {
     let text = |id| in_language(language, id);
