@@ -125,6 +125,7 @@ impl Startup {
         if let Ok(saved) = startup.saved.lock() {
             let _ = startup.clear_cache(&saved, None, 8);
             let _ = startup.prune_history(&saved);
+            startup.clean_completed_sessions();
         }
         startup.recover_last_run()?;
         Ok(startup)

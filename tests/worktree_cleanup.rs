@@ -109,3 +109,35 @@ async fn cleaning_a_session_removes_only_its_worktree_once_the_run_is_finished()
     );
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[tokio::test]
+async fn a_merged_run_drops_its_sessions_and_older_merged_runs_are_swept() {
+    // #1056: a completed run cannot resume, so its sessions leave the agents' lists.
+    let (root, plan) = support::setup("worktree");
+    let (repo, run) = (root.join("repo"), root.join("run"));
+    let report = workflow::run(plan, &repo, &run, 10).await.unwrap();
+    assert_eq!(
+        workflow::clean_completed_sessions(&run).unwrap(),
+        0,
+        "a run waiting for approval keeps its sessions"
+    );
+    workflow::approve(&run, &report.candidate.as_ref().unwrap().commit).unwrap();
+    workflow::merge(&run).unwrap();
+    let cleaned = |t: &agentconductor::workflow::TaskReport| {
+        t.artifacts.join(workflow::SESSION_CLEANED).is_file()
+    };
+    assert!(report.tasks.iter().all(cleaned), "merge marks every session");
+    assert!(report.tasks.iter().all(|t| t.artifacts.is_dir()), "logs stay");
+
+    // A run merged before this clean-up existed is swept when the workspace opens.
+    for t in &report.tasks {
+        std::fs::remove_file(t.artifacts.join(workflow::SESSION_CLEANED)).unwrap();
+    }
+    assert_eq!(
+        workflow::clean_completed_sessions(&run).unwrap(),
+        report.tasks.len()
+    );
+    assert!(report.tasks.iter().all(cleaned));
+    assert_eq!(workflow::clean_completed_sessions(&run).unwrap(), 0);
+    std::fs::remove_dir_all(root).unwrap();
+}

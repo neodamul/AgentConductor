@@ -117,6 +117,21 @@ impl Startup {
         Ok(serde_json::Value::Object(agents))
     }
 
+    /// GitHub #1056: when the workspace opens, completed runs drop their sessions from the lists.
+    /// Best effort: a run that cannot be read or cleaned now is tried again next time.
+    pub(super) fn clean_completed_sessions(&self) {
+        let Ok(entries) = fs::read_dir(&self.broker.dir) else {
+            return;
+        };
+        for item in entries.flatten() {
+            if item.file_name().to_string_lossy().starts_with("run-")
+                && item.path().join("report.json").is_file()
+            {
+                let _ = workflow::clean_completed_sessions(&item.path());
+            }
+        }
+    }
+
     pub(super) fn stop_session(&self, run: &str) -> Result<serde_json::Value, String> {
         workflow::stop(
             &self.session_run(run)?,
