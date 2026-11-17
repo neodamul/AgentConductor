@@ -28,11 +28,11 @@ pub(super) async fn drive(
             store,
             (now() / 1000) as i64,
         )?;
-        super::pending_edit::apply(store, &mut report)?;
+        super::pending_edit::apply(store, &mut report, dir)?;
         // GitHub #687 / #925: transfer a quota-limited role before later ready work starts.
         // Git handoff and dependent invalidation require all workers to be absent.
-        if jobs.is_empty()
-            && !dir.join("stop.request").exists()
+        // GitHub #1059: a due fallback moves its role while other workers keep running.
+        if !dir.join("stop.request").exists()
             && !report.tasks.iter().any(|t| t.status == "stopped")
             && apply_fallbacks(&mut report, dir, store)?
         {
@@ -216,7 +216,21 @@ pub(super) async fn drive(
             );
         }
         save(store, dir, &report)?;
-        match jobs.join_next().await {
+        // GitHub #1054: an operator change queued while workers run is applied at once, not when one ends.
+        let next = loop {
+            tokio::select! {
+                next = jobs.join_next() => break Some(next),
+                _ = tokio::time::sleep(Duration::from_secs(1)), if !jobs.is_empty() => {
+                    if super::pending_edit::queued(store)?
+                        || !super::assignment::movable_roles(&report, (now() / 1000) as i64).is_empty()
+                    {
+                        break None;
+                    }
+                }
+            }
+        };
+        let Some(next) = next else { continue };
+        match next {
             Some(result) => {
                 let (i, task) = result.map_err(|e| e.to_string())?;
                 if let Some(restriction) = &task.restriction {

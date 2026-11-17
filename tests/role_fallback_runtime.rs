@@ -132,3 +132,68 @@ fn queued_agent_change_drops_the_old_first_hop_without_editing_the_running_repor
     drop(store);
     std::fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn a_task_waiting_for_its_usage_limit_can_be_reassigned_during_a_run() {
+    // #1054: the change used to be refused because the task was not "pending".
+    let (root, mut plan) = support::setup("shared");
+    let mut target = plan.agents[0].clone();
+    target.id = "company".into();
+    target.quota_group = Some("company".into());
+    plan.agents.push(target);
+    let run = root.join("run");
+    std::fs::create_dir(&run).unwrap();
+    let task = serde_json::json!({"id":plan.tasks[0].id,"status":"waiting_availability","cwd":root.join("repo"),"started_ms":null,"finished_ms":null,"session_id":null,"error":null,"base":"base","snapshot":null,"artifacts":run.join("task-0")});
+    let report = serde_json::json!({"schema_version":1,"state":"running","repo":root.join("repo"),"base":"base","branch":"main","plan":plan,"tasks":[task],"candidate":null,"tests":[],"diff_hash":null,"error":null,"verification_cwd":root.join("repo")});
+    let mut store = agentconductor::state::Store::open(run.join("state.sqlite")).unwrap();
+    store.record("workflow", &report, "fixture").unwrap();
+    workflow::reassign(&run, &plan.tasks[0].id, "company", None).unwrap();
+    assert_eq!(
+        store
+            .document(&format!("pending_edit/{}", plan.tasks[0].id))
+            .unwrap()["agent"],
+        "company"
+    );
+    drop(store);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[tokio::test]
+async fn a_due_fallback_moves_the_role_while_other_workers_still_run() {
+    // #1059: the fallback used to wait until every other worker had finished.
+    let (root, mut plan) = support::setup("shared");
+    let mut slow = plan.agents[0].clone();
+    slow.id = "slow".into();
+    slow.args = vec!["task-slow".into()];
+    slow.quota_group = Some("slow-account".into());
+    let mut spare = plan.agents[0].clone();
+    spare.id = "spare".into();
+    spare.quota_group = Some("spare-account".into());
+    plan.agents[0].args = vec!["quota-long".into()];
+    plan.agents[0].quota_group = Some("paid-account".into());
+    plan.agents[0].fallback = Some(Fallback {
+        agent: "spare".into(),
+        model: None,
+    });
+    plan.agents.extend([slow, spare]);
+    for task in &mut plan.tasks[1..] {
+        task.agent = "slow".into();
+    }
+    let run = root.join("run");
+    let report = workflow::run(plan, &root.join("repo"), &run, 10)
+        .await
+        .unwrap();
+    assert_eq!(report.state, "waiting_approval", "{:?}", report.error);
+    assert_eq!(report.plan.tasks[0].agent, "spare");
+    let moved = report.tasks[0].started_ms.unwrap();
+    let slow_done = report.tasks[1..]
+        .iter()
+        .map(|t| t.finished_ms.unwrap())
+        .min()
+        .unwrap();
+    assert!(
+        moved < slow_done,
+        "the role moved at {moved}, after the other workers finished at {slow_done}"
+    );
+    std::fs::remove_dir_all(root).unwrap();
+}
