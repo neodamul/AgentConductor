@@ -246,7 +246,15 @@ fn announcement(name: &str, text: String) -> super::Event {
     }
 }
 
-/// Started by `startup-run` for a linked run; ends with the run process.
+static STARTED: std::sync::Mutex<Vec<PathBuf>> = std::sync::Mutex::new(Vec::new());
+
+/// Whether this process polls messenger decisions for `run`.
+pub fn active(run: &Path) -> bool {
+    STARTED.lock().is_ok_and(|s| s.iter().any(|r| r == run))
+}
+
+/// GitHub #1048: started whenever a process executes a linked run (start, resume, due resume),
+/// once per run; ends with the run process.
 pub fn spawn(run: PathBuf) {
     let decisions = std::fs::read_to_string(link_path(&run))
         .ok()
@@ -254,6 +262,15 @@ pub fn spawn(run: PathBuf) {
         .is_some_and(|link| link["settings"]["decisions"] == true);
     if !decisions {
         return;
+    }
+    {
+        let Ok(mut started) = STARTED.lock() else {
+            return;
+        };
+        if started.contains(&run) {
+            return;
+        }
+        started.push(run.clone());
     }
     std::thread::spawn(move || {
         let exe = std::env::current_exe().ok();

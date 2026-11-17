@@ -118,8 +118,6 @@ pub(super) fn execute(args: &[String]) -> Option<Result<(), String>> {
                 if let [_, root, phase] = rest {
                     agentconductor::phase_replan::adopt(Path::new(root), phase, &plan)?;
                 }
-                // DD-81: linked approvers may answer live tool requests from the messenger.
-                agentconductor::messenger::inbound::spawn(Path::new(dir).to_path_buf());
                 let runtime = tokio::runtime::Builder::new_multi_thread()
                     .worker_threads(2)
                     .enable_all()
