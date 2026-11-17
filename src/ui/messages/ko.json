@@ -392,6 +392,7 @@
   "room.merge_in_progress": "승인된 변경 병합 중",
   "room.applying_approved_candidate_to_workspace": "승인된 후보를 워크스페이스에 반영하고 있습니다. 완료되면 이 실행이 자동으로 끝납니다.",
   "room.assign": "배정",
+  "room.reassign_guide": "사용 한도로 기다리는 중입니다. Fallback이 있으면 자동으로 넘어가고, 없거나 넘어가지 않으면 다른 에이전트를 골라 재배정하세요.",
   "room.assigned_task": "배정된 작업",
   "room.assignment": "담당과 모델",
   "room.authorize_the_exact_current_input_once_for_300": "현재 입력 그대로 300초 동안 한 번만 허용합니다. 병합은 허용하지 않습니다.",

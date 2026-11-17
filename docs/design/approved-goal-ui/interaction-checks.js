@@ -33,6 +33,7 @@
  document.getElementById('sidebar-toggle').click();
  selectedOutlineTask=1;renderOutlineSelection('b');
  check('selection updates open dock',inspector.querySelector('[data-detail-field="ownership"]').textContent==='tests/auth/');
+ {const was=i;i=5;show();selectedOutlineTask=1;renderOutlineSelection('h');const a=inspector.querySelector('[data-detail-assign]');check('usage-limited task leads with Reassign',a.classList.contains('p')&&a.closest('.detail-inline').classList.contains('needs-agent')&&!inspector.querySelector('[data-detail-guide]').hidden);selectedOutlineTask=0;renderOutlineSelection('h');check('other task keeps a quiet Reassign',inspector.querySelector('[data-detail-assign]').classList.contains('q')&&inspector.querySelector('[data-detail-guide]').hidden);i=was;show();selectedOutlineTask=1;renderOutlineSelection('b');}
  document.getElementById('right-panel-toggle').click();
  check('toggle restores center width',inspector.hidden&&main.getBoundingClientRect().width===fullWidth);
  selectRail('agents');await wait();

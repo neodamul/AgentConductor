@@ -128,6 +128,14 @@ module.exports=[
   ].map(({ mock, app, ...rest }) => ({ ...rest,
     mock: { url: '?theme=light#3', run: "document.getElementById('right-panel-toggle').click()", selector: mock },
     app: { setup: STEPS_ENABLED, run: INSPECTOR_OPEN, selector: app } })),
+  // GitHub #1068: a usage-limited task's assignment against the mock's limited task (blocked view, task 2).
+  ...[
+    { name: 'limited-reassign', props: ['backgroundColor', 'color', 'borderTopColor', 'fontWeight'], mock: 'button[data-detail-assign]', app: '#reassign' },
+    { name: 'limited-agent-outline', props: ['borderTopColor', 'boxShadow'], mock: '.detail-inline.needs-agent .assignment-choice', app: '.inline-control.needs-agent .ac-choice-trigger' },
+    { name: 'limited-guide', props: ['fontSize', 'lineHeight', 'color', 'marginTop'], mock: '[data-detail-guide]', app: '#reassign-guide' },
+  ].map(({ name, props, mock, app }) => ({ name, props, keys: props, pixel: false,
+    mock: { url: '?theme=light#5', run: "document.getElementById('right-panel-toggle').click();selectedOutlineTask=1;renderOutlineSelection('h');", selector: '.task-inspector ' + mock },
+    app: { setup: STEPS_ENABLED + "SIM.room.report.tasks[1].status='waiting_availability';SIM.room.report.tasks[1].restriction={source:'usage_limit',observed_at:1};", run: "(async()=>{" + "document.querySelectorAll('#start-step-tabs [role=tab]')[3].click();await new Promise(r=>setTimeout(r,900));document.querySelector('.inspector-switch').click();document.querySelectorAll('.outline-task')[1].click();await new Promise(r=>setTimeout(r,600));})()", selector: app } })),
   // #1011: the instruction toggle (shown for a long instruction, like the mock's task-1) is styled like the mock.
   { name: 'inspector-instruction-toggle', props: ['color', 'fontSize', 'backgroundColor', 'borderTopWidth', 'paddingTop', 'paddingLeft'], keys: ['color', 'fontSize', 'backgroundColor', 'borderTopWidth', 'paddingTop', 'paddingLeft'], pixel: false,
     mock: { url: '?theme=light#3', run: "document.getElementById('right-panel-toggle').click()", selector: '.task-inspector .instruction-toggle' },
