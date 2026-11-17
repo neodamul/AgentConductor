@@ -20,11 +20,13 @@ async fn one_role_override_does_not_reassign_other_roles_or_mutate_profile_defau
     plan.agents[0].fallback = Some(Fallback {
         agent: "inherited".into(),
         model: None,
+        effort: None,
     });
     plan.agents.extend([inherited, specific]);
     plan.tasks[0].fallback = Some(FallbackRule::Agent(Fallback {
         agent: "specific".into(),
         model: None,
+        effort: None,
     }));
     let run = root.join("run");
     let report = workflow::run(plan, &root.join("repo"), &run, 5)
@@ -57,6 +59,7 @@ async fn explicit_none_waits_instead_of_using_the_profile_policy() {
     plan.agents[0].fallback = Some(Fallback {
         agent: "company".into(),
         model: None,
+        effort: None,
     });
     plan.agents.push(target);
     plan.tasks.truncate(1);
@@ -80,12 +83,14 @@ async fn an_exhausted_mutual_chain_stops_after_the_reviewed_first_hop() {
     target.fallback = Some(Fallback {
         agent: "mock".into(),
         model: None,
+        effort: None,
     });
     plan.agents.push(target);
     plan.tasks.truncate(1);
     plan.tasks[0].fallback = Some(FallbackRule::Agent(Fallback {
         agent: "company".into(),
         model: None,
+        effort: None,
     }));
     let report = workflow::run(plan, &root.join("repo"), &root.join("run"), 5)
         .await
@@ -111,6 +116,7 @@ fn queued_agent_change_drops_the_old_first_hop_without_editing_the_running_repor
     plan.tasks[0].fallback = Some(FallbackRule::Agent(Fallback {
         agent: "company".into(),
         model: None,
+        effort: None,
     }));
     let run = root.join("run");
     std::fs::create_dir(&run).unwrap();
@@ -130,5 +136,33 @@ fn queued_agent_change_drops_the_old_first_hop_without_editing_the_running_repor
         "mock"
     );
     drop(store);
+    std::fs::remove_dir_all(root).unwrap();
+}
+
+#[tokio::test]
+async fn a_fallback_effort_is_set_on_the_moved_role() {
+    // #1066: the role's Fallback Effort applies when the fallback takes the role over.
+    let (root, mut plan) = support::setup("shared");
+    let mut spare = plan.agents[0].clone();
+    spare.id = "spare".into();
+    spare.quota_group = Some("spare-account".into());
+    plan.agents[0].args = vec!["quota-long".into()];
+    plan.agents[0].quota_group = Some("paid-account".into());
+    plan.agents.push(spare);
+    plan.tasks[0].fallback = Some(FallbackRule::Agent(Fallback {
+        agent: "spare".into(),
+        model: None,
+        effort: Some("high".into()),
+    }));
+    for task in &mut plan.tasks[1..] {
+        task.agent = "spare".into();
+    }
+    let run = root.join("run");
+    let report = workflow::run(plan, &root.join("repo"), &run, 5)
+        .await
+        .unwrap();
+    assert_eq!(report.state, "waiting_approval", "{:?}", report.error);
+    assert_eq!(report.plan.tasks[0].agent, "spare");
+    assert_eq!(report.plan.tasks[0].execution_options["effort"], "high");
     std::fs::remove_dir_all(root).unwrap();
 }

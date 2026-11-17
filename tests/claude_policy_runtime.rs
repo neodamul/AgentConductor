@@ -131,6 +131,7 @@ async fn permission_denial_waits_for_human_reassignment_and_preserves_partial_fi
         paid.fallback = Some(agentconductor::plan::Fallback {
             agent: "backup".into(),
             model: None,
+            effort: None,
         });
         plan.tasks.truncate(1);
         plan.tasks[0].agent = paid.id.clone();

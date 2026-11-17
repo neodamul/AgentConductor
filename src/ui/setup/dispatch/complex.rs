@@ -38,7 +38,11 @@ impl Startup {
                     test_command: vec![],
                     model: ruled.and_then(|rule| rule.model.clone()),
                     role: ruled.map(|_| (*role).to_string()),
-                    execution_options: Default::default(),
+                    // GitHub #1066: a drafted task starts with its role's Effort.
+                    execution_options: ruled
+                        .and_then(|rule| rule.effort.clone())
+                        .map(|effort| [("effort".to_string(), effort)].into())
+                        .unwrap_or_default(),
                     task_type: None,
                     fallback: None,
                 }

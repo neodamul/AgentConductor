@@ -20,6 +20,7 @@ fn fallback(mode: &str) -> (PathBuf, Plan) {
     plan.agents[0].fallback = Some(Fallback {
         agent: "company".into(),
         model: None,
+        effort: None,
     });
     plan.agents.extend([backup, later]);
     plan.tasks[1].agent = "later".into();

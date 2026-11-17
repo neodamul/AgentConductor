@@ -3,6 +3,7 @@
   let context=null,stamp='';
   const node=(tag,value)=>{const e=document.createElement(tag);if(typeof value==='function')AC_I18N.bind(e,value);else if(value!==undefined)e.textContent=value;return e;};
   const message=id=>acMessage(id);
+  const EFFORTS=['low','medium','high','xhigh','max'];
   const profiles=()=>context.getProfiles();
   const profile=id=>profiles().find(p=>p.id===id);
   function options(select,items,value){
@@ -39,41 +40,46 @@
   function row(role,entries){
     const tr=node('tr');tr.dataset.role=role;
     const title=node('td',()=>context.labels[role]);AC_I18N.bind(title,()=>context.labels[role],'title');tr.append(title);
-    const a=node('select'),m=node('select'),f=node('select'),fm=node('select');
-    const fields=[['agent',a,'room.agent'],['model',m,'startup.model'],['fallback',f,'choices.fallback'],['fallback-model',fm,'startup.model']];
+    const a=node('select'),m=node('select'),e=node('select'),f=node('select'),fm=node('select'),fe=node('select');
+    const fields=[['agent',a,'room.agent'],['model',m,'startup.model'],['effort',e,'room.effort'],['fallback',f,'choices.fallback'],['fallback-model',fm,'startup.model'],['fallback-effort',fe,'room.effort']];
     for(const [name,s,label] of fields){s.dataset.roleField=name;s.id='start-role-'+role+'-'+name;AC_I18N.bind(s,()=>context.labels[role]+' · '+message(label),'aria-label');}
     a.dataset.choiceIcon='person';const primary=entries[0]?.agent||'',missing=!!primary&&!profile(primary);options(a,[['','—'],...profiles().map(p=>[p.id,acAgentName(p,profiles())]),...(missing?[[primary,primary+' ⚠']]:[])],primary);a.classList.toggle('missing',missing);
     models(m,a.value,entries[0]?.model||'');
+    // GitHub #1066: the role's Effort; empty uses the agent default, then the task type.
+    options(e,[['',()=>message('choices.agent_default_effort')],...EFFORTS.map(v=>[v,v])],entries[0]?.effort||'');e.dataset.choiceIcon='sliders';
     const policy=entries[0]?.fallback,legacy=entries[1];
     const fallback=policy===false?'':policy?.agent||legacy?.agent||context.inheritToken;
     fallbackAgents(f,a.value,fallback);
     const effective=()=>f.value===context.inheritToken?profile(a.value)?.fallback?.agent||'':f.value;
     models(fm,effective(),policy?.model||legacy?.model||(fallback===context.inheritToken?profile(a.value)?.fallback?.model:'')||'');
+    options(fe,[['',()=>message('choices.agent_default_effort')],...EFFORTS.map(v=>[v,v])],policy?.effort||'');fe.dataset.choiceIcon='sliders';
+    const fallbackEffortState=()=>{fe.disabled=!effective();if(fe.disabled)fe.value='';};fallbackEffortState();
     const changed=()=>{context.onChange();stamp=JSON.stringify(context.getRules());};
     a.onchange=()=>{
       a.classList.remove('missing');models(m,a.value,'');const before=f.value;
       fallbackAgents(f,a.value,before);
-      models(fm,effective(),f.value===context.inheritToken?profile(a.value)?.fallback?.model||'':'');changed();
+      models(fm,effective(),f.value===context.inheritToken?profile(a.value)?.fallback?.model||'':'');fallbackEffortState();changed();
     };
-    m.onchange=changed;
-    f.onchange=()=>{models(fm,effective(),f.value===context.inheritToken?profile(a.value)?.fallback?.model||'':'');changed();};
+    m.onchange=changed;e.onchange=changed;
+    f.onchange=()=>{models(fm,effective(),f.value===context.inheritToken?profile(a.value)?.fallback?.model||'':'');fallbackEffortState();changed();};
+    fe.onchange=()=>{if(f.value===context.inheritToken&&effective())f.value=effective();changed();};
     fm.onchange=()=>{if(f.value===context.inheritToken&&effective())f.value=effective();changed();};
-    for(const s of [a,m]){const td=node('td');td.append(s);tr.append(td);}
+    for(const s of [a,m,e]){const td=node('td');td.append(s);tr.append(td);}
     const arrow=node('td');arrow.className='role-fallback-arrow';arrow.setAttribute('aria-hidden','true');arrow.innerHTML='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M14 6l6 6-6 6"/></svg>';tr.append(arrow);
-    for(const s of [f,fm]){const td=node('td');td.append(s);tr.append(td);}
+    for(const s of [f,fm,fe]){const td=node('td');td.append(s);tr.append(td);}
     return tr;
   }
   function render(ctx){
     context=ctx;context.inheritToken='__inherit';while(profiles().some(p=>p.id===context.inheritToken))context.inheritToken+='_';const body=ctx.table.tBodies[0];
-    const head=ctx.table.tHead.rows[0];if(head.cells.length===5){const arrow=node('th');arrow.setAttribute('aria-hidden','true');head.insertBefore(arrow,head.cells[3]);}
+    const head=ctx.table.tHead.rows[0];if(head.cells.length===7){const arrow=node('th');arrow.setAttribute('aria-hidden','true');head.insertBefore(arrow,head.cells[4]);}
     body.replaceChildren(...Object.keys(ctx.labels).map(role=>row(role,ctx.getRules()[role]||[])));
     stamp=JSON.stringify(ctx.getRules());
   }
   function read(table){
     const rules={};for(const tr of table.tBodies[0].querySelectorAll('tr[data-role]')){
-      const field=name=>tr.querySelector('[data-role-field="'+name+'"]'),a=field('agent'),m=field('model'),f=field('fallback'),fm=field('fallback-model');
-      if(!a?.value)continue;const entry={agent:a.value};if(m.value)entry.model=m.value;
-      if(f.value==='')entry.fallback=false;else if(f.value!==context.inheritToken)entry.fallback={agent:f.value,...(fm.value?{model:fm.value}:{})};
+      const field=name=>tr.querySelector('[data-role-field="'+name+'"]'),a=field('agent'),m=field('model'),e=field('effort'),f=field('fallback'),fm=field('fallback-model'),fe=field('fallback-effort');
+      if(!a?.value)continue;const entry={agent:a.value};if(m.value)entry.model=m.value;if(e?.value)entry.effort=e.value;
+      if(f.value==='')entry.fallback=false;else if(f.value!==context.inheritToken)entry.fallback={agent:f.value,...(fm.value?{model:fm.value}:{}),...(fe?.value?{effort:fe.value}:{})};
       rules[tr.dataset.role]=[entry];
     }return rules;
   }
@@ -81,7 +87,7 @@
     if(!context)return;
     if(stamp!==JSON.stringify(context.getRules()))return render(context);
     for(const tr of context.table.tBodies[0].querySelectorAll('tr[data-role]')){
-      const [a,m,f,fm]=tr.querySelectorAll('select');
+      const field=name=>tr.querySelector('[data-role-field="'+name+'"]'),a=field('agent'),m=field('model'),f=field('fallback'),fm=field('fallback-model');
       if(activeElement!==m&&activeElement!==window.acChoices?.buttonFor(m))models(m,a.value,m.value);
       fallbackAgents(f,a.value,f.value);
       const target=f.value===context.inheritToken?profile(a.value)?.fallback?.agent||'':f.value;

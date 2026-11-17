@@ -233,6 +233,9 @@ pub struct Fallback {
     pub agent: String,
     #[serde(default)]
     pub model: Option<String>,
+    /// GitHub #1066: the Effort the role continues with on the fallback agent; empty keeps the task's.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub effort: Option<String>,
 }
 
 fn five_minutes() -> u16 {

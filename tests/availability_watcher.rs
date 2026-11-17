@@ -227,6 +227,7 @@ fn the_independent_coordinator_immediately_uses_an_unknown_reset_fallback() {
     report.plan.agents[0].fallback = Some(agentconductor::plan::Fallback {
         agent: "backup".into(),
         model: None,
+        effort: None,
     });
     report
         .account_restrictions

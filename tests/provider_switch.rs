@@ -84,6 +84,7 @@ fn renamed_agent_keeps_coordinator_roles_and_fallbacks() {
     helper.fallback = Some(agentconductor::plan::Fallback {
         agent: "company".into(),
         model: None,
+        effort: None,
     });
     mutate(&startup, serde_json::json!({"kind":"save","config":{"profiles":[company.clone(), helper.clone()],"repository":"","goal":"","coordinator":"company","workspace_mode":"shared","roles":{"testing":["company","helper"],"development":[{"agent":"company"}]}}})).unwrap();
 

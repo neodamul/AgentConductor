@@ -317,11 +317,13 @@ fn deleted_or_removed_agents_hand_their_tasks_to_the_roles_first_agent() {
                 agent: second.id.clone(),
                 model: None,
                 fallback: None,
+                effort: None,
             },
             RoleAgent {
                 agent: first.id.clone(),
                 model: None,
                 fallback: None,
+                effort: None,
             },
         ],
     );
@@ -343,4 +345,40 @@ fn deleted_or_removed_agents_hand_their_tasks_to_the_roles_first_agent() {
         reassign(&rules, &profiles, &mut [task]).is_err(),
         "a task without a role cannot follow the rules"
     );
+}
+
+#[test]
+fn a_role_effort_is_validated_and_set_on_its_tasks() {
+    // #1066: the Agent roles step sets an Effort per role.
+    let (_root, plan) = support::setup("shared");
+    let profiles = plan.agents.clone();
+    let rules: agentconductor::roles::RoleRules = serde_json::from_value(serde_json::json!({
+        "development": [{"agent": profiles[0].id, "effort": "high"}],
+        "testing": [{"agent": profiles[0].id}]
+    }))
+    .unwrap();
+    agentconductor::roles::validate(&rules, &profiles).unwrap();
+    let mut tasks = plan.tasks.clone();
+    tasks[0].role = Some("development".into());
+    tasks[1].role = Some("testing".into());
+    tasks[1]
+        .execution_options
+        .insert("effort".into(), "low".into());
+    tasks.truncate(2);
+    agentconductor::roles::apply(&rules, &mut tasks).unwrap();
+    assert_eq!(tasks[0].execution_options["effort"], "high");
+    assert_eq!(
+        tasks[1].execution_options["effort"], "low",
+        "no role effort keeps the task's own"
+    );
+    assert_eq!(
+        serde_json::to_value(&rules["testing"][0]).unwrap(),
+        serde_json::json!({"agent": profiles[0].id}),
+        "an empty effort is not stored"
+    );
+    let bad: agentconductor::roles::RoleRules = serde_json::from_value(serde_json::json!({
+        "development": [{"agent": profiles[0].id, "effort": "turbo"}]
+    }))
+    .unwrap();
+    assert!(agentconductor::roles::validate(&bad, &profiles).is_err());
 }
