@@ -1,6 +1,6 @@
 [package]
 name = "agentconductor"
-version = "0.2.15"
+version = "0.2.16"
 default-run = "agentconductor"
 edition = "2024"
 license = "MIT"

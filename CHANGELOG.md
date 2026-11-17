@@ -4,6 +4,21 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.2.16
+
+- Allow/Deny on a tool request waits as long as the tool check may take, keeps both buttons locked with the progress bar while the decision is applied, and never sends a second decision (#1046).
+- Resumed runs announce live tool requests to the messenger and apply allow/deny replies, as first starts do (#1048).
+- A running usage query no longer blocks an app update (#1050).
+- A newly registered agent falls back to Claude Code (or the first agent), and that agent falls back to it when it had none, so the cards show the Alternate tag (#1052).
+- A waiting task's status pill uses the task rail's amber colour (#1053).
+- A task waiting for its account's usage limit can be reassigned during a run; the change applies within a second and shows in the activity (#1054).
+- Sessions of a merged Goal leave the agents' session lists automatically; stopped and failed runs keep theirs (#1056).
+- A due fallback moves a usage-limited role while other workers keep running (#1059).
+- The review summary and its changed-files list no longer flicker on background refreshes (#1062).
+- A new Goal after a completed one unlocks the role assignments, coordinator and other workspace controls (#1064).
+- The Agent roles step sets Effort and Fallback Effort per role (#1066).
+- A usage-limited or unavailable agent's task detail leads with Reassign, outlines the agent choice and explains what to do when no fallback takes over (#1068).
+
 ## v0.2.15
 
 - Each agent can have a default model and Effort in its profile; a task can override Effort in the task inspector, and runs use task, then agent, then task-type defaults (#1024).
