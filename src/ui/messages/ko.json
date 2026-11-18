@@ -704,6 +704,8 @@
   "startup.add_task": "+ 작업 추가",
   "startup.adds_them_to_this_repository_s_local_exclude": "이 저장소의 로컬 제외 목록에 추가합니다 (",
   "startup.agent_id": "에이전트 ID",
+  "startup.agent_display_name": "표시 이름",
+  "startup.agent_display_name_placeholder": "비워 두면 에이전트 ID로 표시",
   "startup.agent_list_saved": "에이전트 목록을 저장했습니다.",
   "startup.agent_profiles": "에이전트 프로필",
   "startup.agent_roles": "에이전트 역할",

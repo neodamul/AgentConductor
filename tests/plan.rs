@@ -32,6 +32,7 @@ fn plan() -> Plan {
                 coordinator_model: None,
                 default_model: None,
                 default_effort: None,
+                name: None,
                 read_only_args: None,
                 protocol: None,
                 agent_settings: None,
