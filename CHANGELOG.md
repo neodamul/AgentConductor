@@ -4,6 +4,10 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.2.17
+
+- A custom CLI profile can carry a display name, shown on its card and in the role and fallback pickers instead of its id (#1071).
+
 ## v0.2.16
 
 - Allow/Deny on a tool request waits as long as the tool check may take, keeps both buttons locked with the progress bar while the decision is applied, and never sends a second decision (#1046).

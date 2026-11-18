@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.2.16** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.2.17** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.2.16 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
+The app version is beside the title. Version 0.2.17 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
 
 ### 1.1a Application updates
 
@@ -107,7 +107,7 @@ Use **+ Add** for Claude, Codex, OpenCode or Custom. **Edit** uses a pencil; Rem
   A company CLI without discovery uses operator-configured model IDs; `{model}` must map to its actual argv option.
 - Quota refresh defaults to **5 minutes**, configurable independently from **1–60** in Edit.
 
-Custom CLI profiles can configure a manual model catalog or an explicit discovery command with JSON Pointer mappings. Declarative argument groups support allowed values, optional defaults, model-specific restrictions, and per-task overrides; an unset group is omitted from argv. Result JSON Pointers and pointer/value error conditions normalize custom result events. These fields are editable in the Rust agent profile dialog and are retained by workspace export/import. Existing built-in CLI adapters keep their established behavior. Custom profiles can also map JSONL event names and session IDs or configure a direct-argv quota command. See [custom CLI profiles](../knowledge/wiki/custom-cli-profiles.md) for configuration examples and limits.
+A custom CLI profile can have a **Display name**; the cards and role pickers show it instead of the agent ID, which stays the key in plans and stored state. Custom CLI profiles can configure a manual model catalog or an explicit discovery command with JSON Pointer mappings. Declarative argument groups support allowed values, optional defaults, model-specific restrictions, and per-task overrides; an unset group is omitted from argv. Result JSON Pointers and pointer/value error conditions normalize custom result events. These fields are editable in the Rust agent profile dialog and are retained by workspace export/import. Existing built-in CLI adapters keep their established behavior. Custom profiles can also map JSONL event names and session IDs or configure a direct-argv quota command. See [custom CLI profiles](../knowledge/wiki/custom-cli-profiles.md) for configuration examples and limits.
 
 Saving **Use profile** is asynchronous and closes after success; validation errors stay in the dialog.
 Changing execution settings requires reviewing a plan again. Metadata-only refresh does not invalidate it.
