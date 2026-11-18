@@ -4326,3 +4326,7 @@ Version 0.2.15 ships #1024, #1027, #1028, #1029, #1033, #1034, #1035, #1038, #10
 ## 0.2.16 release preparation
 
 Version 0.2.16 ships #1046, #1048, #1050, #1052, #1053, #1054, #1056, #1059, #1062, #1064, #1066 and #1068 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe automatic session cleanup, role Effort and Fallback Effort, and reassigning usage-limited tasks.
+
+## 0.2.17 release preparation
+
+Version 0.2.17 ships #1071 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe the custom CLI display name.
