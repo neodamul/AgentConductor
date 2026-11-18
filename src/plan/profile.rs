@@ -67,6 +67,9 @@ pub struct AgentProfile {
     /// GitHub #1024: the effort (low..max) this agent's tasks run with unless a task sets one; omitted follows the task type.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub default_effort: Option<String>,
+    /// GitHub #1071: the name shown for a custom CLI instead of its id; the id stays the stable key.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -704,6 +704,8 @@
   "startup.add_task": "+ Add task",
   "startup.adds_them_to_this_repository_s_local_exclude": "adds them to this repository's local exclude list (",
   "startup.agent_id": "Agent ID",
+  "startup.agent_display_name": "Display name",
+  "startup.agent_display_name_placeholder": "Leave empty to show the agent ID",
   "startup.agent_list_saved": "Agent list saved.",
   "startup.agent_profiles": "agent profiles",
   "startup.agent_roles": "Agent roles",

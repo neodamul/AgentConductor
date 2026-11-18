@@ -33,6 +33,12 @@ module.exports=[
     name: `agent-dialog-default-${name}`, props: [], keys: ['height', 'fontSize', 'color'], pixel: false,
     mock: { url: '?theme=light#1', run: "openProfileEditor('claude')", selector: `#profile-edit-dialog label:has(#${mock})` },
     app: { run: "document.querySelector('.startup-profile[data-agent=\"claude\"] .profile-tools button').click()", selector: `#start-agent-dialog label:has(#${app})` } })),
+  // GitHub #1071: a custom CLI's display name field sits under the provider and ID row, opened on a new agent on both sides.
+  ...[['agent-dialog-display-name', ['height', 'fontSize', 'color'], 'label:has(#profile-name)', 'label:has(#start-agent-name)'],
+    ['agent-dialog-display-name-input', ['height', 'borderTopLeftRadius'], '#profile-name', '#start-agent-name'],
+    ['agent-dialog-display-name-gap', ['y'], '#profile-name', '#start-agent-name', '#profile-id', '#start-agent-id']].map(([name, keys, mock, app, mockRel, appRel]) => ({ name, props: [], keys, pixel: false,
+    mock: { url: '?theme=light#1', run: "openProfileEditor('new')", selector: '#profile-edit-dialog ' + mock, ...(mockRel ? { rel: mockRel } : {}) },
+    app: { run: "document.getElementById('start-add').click()", selector: '#start-agent-dialog ' + app, ...(appRel ? { rel: appRel } : {}) } })),
   // GitHub #892: status tags share the agent tag border, corners and padding.
   { name: 'heading-pill', props: ['borderTopWidth', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft'], keys: ['y', 'height', 'borderTopWidth', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft'], pixel: false,
     mock: { url: '?theme=light#0', selector: '.goal-info>.pill', rel: '.goal-info' }, app: { selector: '#start-goal-info>.status-pill', rel: '#start-goal-info' } },

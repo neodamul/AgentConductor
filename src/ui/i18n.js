@@ -102,9 +102,11 @@ const AC_WAIT=(()=>{
 // GitHub #654 (approved design): the UI shows "Claude Code", "Codex" and "OpenCode"; the profile id (`claude`) stays the internal name.
 // Two profiles of one CLI stay apart as "Claude Code · work".
 const AC_AGENT_NAMES = { claude: 'Claude Code', codex: 'Codex', opencode: 'OpenCode' };
+// GitHub #1071: a profile's own display name wins over the provider name.
+const acAgentBase = p => p?.name?.trim() || AC_AGENT_NAMES[p?.parser] || '';
 function acAgentName(profile, profiles = []) {
-  const base = AC_AGENT_NAMES[profile?.parser];
+  const base = acAgentBase(profile);
   if (!base) return profile?.id || '';
-  return profiles.filter(p => AC_AGENT_NAMES[p.parser] === base).length > 1 ? `${base} · ${profile.id}` : base;
+  return profiles.filter(p => acAgentBase(p) === base).length > 1 ? `${base} · ${profile.id}` : base;
 }
 
