@@ -60,17 +60,21 @@ pub fn current() -> String {
     current_with_suffix(env!("CARGO_PKG_VERSION"), COMPANY_SUFFIX)
 }
 
-fn current_with_suffix(version: &str, suffix: &str) -> String {
+/// The company label this build carries, when it is a valid local label.
+fn company_suffix(suffix: &str) -> Option<&str> {
     let suffix = suffix.trim();
-    if !suffix.is_empty()
+    (!suffix.is_empty()
         && suffix.len() <= 64
         && suffix
             .bytes()
-            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'_' | b'-' | b'.'))
-    {
-        format!("{version}.{suffix}")
-    } else {
-        version.to_owned()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'_' | b'-' | b'.')))
+    .then_some(suffix)
+}
+
+fn current_with_suffix(version: &str, suffix: &str) -> String {
+    match company_suffix(suffix) {
+        Some(suffix) => format!("{version}.{suffix}"),
+        None => version.to_owned(),
     }
 }
 
@@ -91,11 +95,21 @@ pub fn target() -> Option<&'static str> {
 
 /// x.y.z, an optional fourth patch number (GitHub #1076: `0.2.17.1`), and an optional `-Beta1`
 /// style prerelease. The key orders a prerelease below its release, and `Beta2` above `Beta1` and
-/// `Beta10` above `Beta9`. A local `.suffix` that is not a number is ignored.
+/// `Beta10` above `Beta9`. Another local `.suffix` that is not a number is ignored.
 type Version = (u64, u64, u64, u64, bool, String, u64);
 
 fn version(tag: &str) -> Option<Version> {
-    let mut parts = tag.trim().trim_start_matches('v').split('.');
+    version_for(tag, COMPANY_SUFFIX)
+}
+
+/// GitHub #1076: a company build first drops its own `.suffix` (matched exactly, so a numeric
+/// label is never read as a patch number); then 3 or 4 numbers are compared either way.
+fn version_for(tag: &str, suffix: &str) -> Option<Version> {
+    let tag = tag.trim().trim_start_matches('v');
+    let tag = company_suffix(suffix)
+        .and_then(|suffix| tag.strip_suffix(suffix)?.strip_suffix('.'))
+        .unwrap_or(tag);
+    let mut parts = tag.split('.');
     let mut next = || parts.next()?.parse::<u64>().ok();
     let (major, minor) = (next()?, next()?);
     // A number part with an optional `-prerelease` tail.

@@ -1,4 +1,4 @@
-use super::{current_with_suffix, version};
+use super::{current_with_suffix, version, version_for};
 
 #[test]
 fn company_suffix_is_added_only_for_a_valid_local_label() {
@@ -53,4 +53,32 @@ fn a_fourth_patch_number_ranks_above_its_base_version() {
         version("0.2.17.1").is_some_and(|v| v.4),
         "a patch release is stable"
     );
+}
+
+#[test]
+fn a_company_build_drops_its_own_suffix_before_comparing() {
+    // With a suffix the label is removed exactly; without one, 3 and 4 numbers compare directly.
+    for suffix in ["acme", "7", "co.2"] {
+        let key = |tag: &str| version_for(tag, suffix);
+        assert_eq!(key(&format!("0.2.17.{suffix}")), version_for("0.2.17", ""));
+        assert_eq!(
+            key(&format!("0.2.17.1.{suffix}")),
+            version_for("0.2.17.1", "")
+        );
+        assert!(
+            key(&format!("0.2.17.{suffix}")) < key(&format!("0.2.17.1.{suffix}")),
+            "{suffix}"
+        );
+        assert!(
+            key(&format!("0.2.17.1.{suffix}")) < key("0.2.18"),
+            "{suffix}"
+        );
+        assert!(
+            key("0.2.17") < key(&format!("0.2.17.1.{suffix}")),
+            "{suffix}"
+        );
+    }
+    // A numeric label is not a patch number for its own build, but is one for a build without it.
+    assert_eq!(version_for("0.2.17.7", "7"), version_for("0.2.17", ""));
+    assert!(version_for("0.2.17.7", "") > version_for("0.2.17", ""));
 }
