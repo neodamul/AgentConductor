@@ -19,15 +19,31 @@ fn json_reply(text: &str, field: &str) -> Option<Value> {
     let mut rest = text;
     while let Some(open) = rest.find("```") {
         let after = &rest[open + 3..];
-        let body_start = after.find('\n')? + 1;
+        let Some(body_start) = after.find('\n').map(|i| i + 1) else {
+            break;
+        };
         let body = &after[body_start..];
-        let close = body.find("```")?;
+        let Some(close) = body.find("```") else { break };
         if let Ok(json) = serde_json::from_str::<Value>(body[..close].trim())
             && has(&json)
         {
             return Some(json);
         }
         rest = body;
+    }
+    // GitHub #1074: a block-level object (a `{` opening its line) after a prose line; inline JSON in prose stays rejected.
+    let mut start = 0;
+    for line in text.split_inclusive('\n') {
+        let offset = start + line.len() - line.trim_start().len();
+        start += line.len();
+        if line.trim_start().starts_with('{')
+            && let Some(Ok(json)) = serde_json::Deserializer::from_str(&text[offset..])
+                .into_iter::<Value>()
+                .next()
+            && has(&json)
+        {
+            return Some(json);
+        }
     }
     None
 }
