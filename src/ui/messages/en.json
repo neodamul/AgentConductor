@@ -813,6 +813,8 @@
   "startup.quota_error_title": "Usage query failed",
   "startup.quota_error_message": "The CLI sent no usage response, or it did not arrive within the time limit.",
   "startup.quota_needs_folder": "Usage is read once a project folder is chosen for this workspace.",
+  "startup.quota_signed_out_title": "Sign-in needed",
+  "startup.quota_signed_out": "Claude Code is signed out. Run claude in a terminal, sign in with /login, then refresh.",
   "startup.quota_unsupported": "This CLI does not report usage. Values are not estimated.",
   "startup.quota_stale": "The last check is too old, so no values are shown.",
   "startup.quota_retry": "Retry usage query",

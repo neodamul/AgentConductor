@@ -4,9 +4,12 @@ mod parse;
 mod screens;
 mod session_env;
 pub use parse::parse_claude_usage;
+pub(crate) use screens::SIGNED_OUT;
 #[cfg_attr(not(any(target_os = "macos", windows)), allow(unused_imports))]
 use screens::{TRUST_ANSWERS, TRUST_REFUSED, plain};
-pub use screens::{claude_blocker, claude_trust_answer, claude_trust_prompt, claude_usage_ready};
+pub use screens::{
+    claude_blocker, claude_signed_out, claude_trust_answer, claude_trust_prompt, claude_usage_ready,
+};
 
 /// GitHub #297 / #315: the whole Claude query (start, trust screen, prompt, `/usage` answer) is given up
 /// after this long. A company PC with scanning, managed settings or a proxy needed more than 20 s and
@@ -50,7 +53,50 @@ pub async fn query_claude(
     dir: &std::path::Path,
     cwd: &std::path::Path,
 ) -> Result<Snapshot, String> {
+    if auth_signed_out(profile).await {
+        return Err(SIGNED_OUT.into());
+    }
     query_claude_within(profile, dir, cwd, CLAUDE_WAIT).await
+}
+
+/// GitHub #1079: a sub-second pre-flight; a failed, slow or unreadable status falls back to the screen check.
+/// The status process tree is contained and reaped, so nothing it started outlives the query.
+async fn auth_signed_out(profile: &crate::plan::AgentProfile) -> bool {
+    use tokio::io::AsyncReadExt;
+    let executable = crate::executable::resolve(&profile.executable)
+        .unwrap_or_else(|| profile.executable.clone().into());
+    let mut command = tokio::process::Command::from(crate::subprocess::command(executable));
+    for (name, _) in std::env::vars().filter(|(name, _)| session_env::is_session_marker(name)) {
+        command.env_remove(name);
+    }
+    command
+        .args(["auth", "status", "--json"])
+        .envs(&profile.environment)
+        .env_remove("ANTHROPIC_API_KEY")
+        .stdin(std::process::Stdio::null())
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::null())
+        .kill_on_drop(true);
+    crate::process::ProcessGroup::prepare(&mut command);
+    let Ok(mut child) = command.spawn() else {
+        return false;
+    };
+    let Ok(group) = crate::process::ProcessGroup::adopt(&child) else {
+        let _ = child.kill().await;
+        return false;
+    };
+    let mut stdout = child.stdout.take();
+    let read = async {
+        let mut out = Vec::new();
+        if let Some(pipe) = stdout.as_mut() {
+            let _ = pipe.read_to_end(&mut out).await;
+        }
+        out
+    };
+    let out = tokio::time::timeout(std::time::Duration::from_secs(5), read).await;
+    group.kill();
+    let _ = child.wait().await;
+    out.is_ok_and(|out| claude_signed_out(&out))
 }
 /// GitHub #679: the usage popup recognises this text and shows a hint instead of a failure.
 pub(crate) const NO_PROJECT_FOLDER: &str = "Choose a project folder for this workspace first; Claude reports usage only inside a trusted project folder";

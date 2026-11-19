@@ -200,3 +200,17 @@ fn screen_reader_reset_does_not_guess_unknown_timezones() {
     .unwrap();
     assert_eq!(value.windows[0].resets_at, None);
 }
+#[test]
+fn auth_status_names_only_an_explicit_signed_out_cli() {
+    // GitHub #1079: `claude auth status --json` pre-flight; anything unclear falls back to the screen check.
+    assert!(quota::claude_signed_out(
+        br#"{"loggedIn":false,"authMethod":"none","loginExpiresAt":null}"#
+    ));
+    assert!(quota::claude_signed_out(b"  {\"loggedIn\":false}\r\n"));
+    assert!(!quota::claude_signed_out(
+        br#"{"loggedIn":true,"authMethod":"claude.ai"}"#
+    ));
+    assert!(!quota::claude_signed_out(b"{}"));
+    assert!(!quota::claude_signed_out(b"error: unknown command 'auth'"));
+    assert!(!quota::claude_signed_out(b""));
+}

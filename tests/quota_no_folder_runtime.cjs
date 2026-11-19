@@ -21,6 +21,10 @@ const wait=ms=>new Promise(r=>setTimeout(r,ms));
  const folder=await show({...base,error:'Choose a project folder for this workspace first; Claude reports usage only inside a trusted project folder',error_code:'no_project_folder'},s=>!s.alert&&/작업 디렉터리|project folder/.test(s.text));
  if(/CLI가 사용량 응답|did not send a usage response/.test(folder.text))throw Error('no-folder state still says the CLI did not answer: '+folder.text);
  await b.eval("document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}))");await wait(200);
+ // GitHub #1079: a signed-out CLI shows the localized sign-in step, not the raw English error.
+ const out=await show({...base,error:'Claude is not signed in or the login expired; run claude in a terminal, sign in with /login, then refresh',error_code:'claude_signed_out'},s=>s.alert&&/로그인 필요|Sign-in needed/.test(s.text));
+ if(/login expired/.test(out.text))throw Error('signed-out state still shows the raw error: '+out.text);
+ await b.eval("document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true}))");await wait(200);
  await show({...base,error:'something else broke'},s=>s.alert);
- console.log('no-folder usage state explained; other errors keep the failure box');
+ console.log('no-folder and signed-out usage states explained; other errors keep the failure box');
 }finally{await b.close();}}finally{fs.rmSync(dir,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1;});
