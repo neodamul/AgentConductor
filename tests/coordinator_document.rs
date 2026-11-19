@@ -55,3 +55,24 @@ fn the_reply_limit_is_256_kib() {
     let error = read(&padded(257 * 1024)).unwrap_err();
     assert!(error.contains("256 KiB"), "{error}");
 }
+
+#[test]
+fn a_document_after_a_prose_line_is_read() {
+    // GitHub #1074: Claude Code opened with one sentence, then printed the requested document.
+    let reply = format!("I'll start by analyzing the snapshot codebase.\n\n{GOOD}\n");
+    assert_eq!(read(&reply).unwrap()["slug"], "demo");
+    let pretty = serde_json::to_string_pretty(
+        &json!({"slug":"nested","note":"a } and a \\\" { in text","phases":[{"tasks":[{"x":{}}]}]}),
+    )
+    .unwrap();
+    let reply = format!("Here is the plan.\n{pretty}\nDone.");
+    assert_eq!(read(&reply).unwrap()["slug"], "nested");
+}
+
+#[test]
+fn inline_json_inside_prose_is_still_rejected() {
+    let error = read("Here is the plan: {\"phases\":[]} as requested.").unwrap_err();
+    assert!(error.contains("contains no valid JSON"), "{error}");
+    let error = read("Intro\n{\"note\":1}\nmore").unwrap_err();
+    assert!(error.contains("contains no valid JSON"), "{error}");
+}
