@@ -4330,3 +4330,7 @@ Version 0.2.16 ships #1046, #1048, #1050, #1052, #1053, #1054, #1056, #1059, #10
 ## 0.2.17 release preparation
 
 Version 0.2.17 ships #1071 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe the custom CLI display name.
+
+## 0.2.18 release preparation
+
+Version 0.2.18 ships #1074 and #1076 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs.
