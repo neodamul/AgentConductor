@@ -60,17 +60,21 @@ pub fn current() -> String {
     current_with_suffix(env!("CARGO_PKG_VERSION"), COMPANY_SUFFIX)
 }
 
-fn current_with_suffix(version: &str, suffix: &str) -> String {
+/// The company label this build carries, when it is a valid local label.
+fn company_suffix(suffix: &str) -> Option<&str> {
     let suffix = suffix.trim();
-    if !suffix.is_empty()
+    (!suffix.is_empty()
         && suffix.len() <= 64
         && suffix
             .bytes()
-            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'_' | b'-' | b'.'))
-    {
-        format!("{version}.{suffix}")
-    } else {
-        version.to_owned()
+            .all(|byte| byte.is_ascii_alphanumeric() || matches!(byte, b'_' | b'-' | b'.')))
+    .then_some(suffix)
+}
+
+fn current_with_suffix(version: &str, suffix: &str) -> String {
+    match company_suffix(suffix) {
+        Some(suffix) => format!("{version}.{suffix}"),
+        None => version.to_owned(),
     }
 }
 
@@ -89,20 +93,40 @@ pub fn target() -> Option<&'static str> {
     }
 }
 
-/// x.y.z plus an optional `-Beta1` style prerelease. The key orders a prerelease below its
-/// release, and `Beta2` above `Beta1` and `Beta10` above `Beta9`. A local `.suffix` is ignored.
-type Version = (u64, u64, u64, bool, String, u64);
+/// x.y.z or x.y.z.w (GitHub #1076: `0.2.17.1`) with an optional `-Beta1` style prerelease. The key
+/// orders a prerelease below its release, and `Beta2` above `Beta1` and `Beta10` above `Beta9`.
+type Version = (u64, u64, u64, u64, bool, String, u64);
 
 fn version(tag: &str) -> Option<Version> {
-    let mut parts = tag.trim().trim_start_matches('v').split('.');
-    let mut next = || parts.next()?.parse::<u64>().ok();
-    let (major, minor) = (next()?, next()?);
-    let third = parts.next()?;
-    let digits = third.len() - third.trim_start_matches(|c: char| c.is_ascii_digit()).len();
-    let patch = third[..digits].parse().ok()?;
-    let rest = &third[digits..];
+    version_for(tag, COMPANY_SUFFIX)
+}
+
+/// GitHub #1076: versions are compared only within one kind. A company build reads only tags that
+/// end in its own `.suffix` (removed exactly); a build without one reads only plain tags. Anything
+/// else (`0.2.18` for an `acme` build, `0.2.18.1.acme` for a plain one) is not comparable.
+fn version_for(tag: &str, suffix: &str) -> Option<Version> {
+    let tag = tag.trim().trim_start_matches('v');
+    let tag = match company_suffix(suffix) {
+        Some(suffix) => tag.strip_suffix(suffix)?.strip_suffix('.')?,
+        None => tag,
+    };
+    let parts: Vec<&str> = tag.split('.').collect();
+    let (last, numbers) = parts.split_last()?;
+    if !(3..=4).contains(&parts.len()) {
+        return None;
+    }
+    let digits = last.len() - last.trim_start_matches(|c: char| c.is_ascii_digit()).len();
+    let (last, rest) = last.split_at(digits);
+    let mut core = [0u64; 4];
+    for (slot, part) in core.iter_mut().zip(numbers.iter().chain([&last])) {
+        if part.is_empty() || !part.bytes().all(|b| b.is_ascii_digit()) {
+            return None;
+        }
+        *slot = part.parse().ok()?;
+    }
+    let [major, minor, patch, hotfix] = core;
     if rest.is_empty() {
-        return Some((major, minor, patch, true, String::new(), 0));
+        return Some((major, minor, patch, hotfix, true, String::new(), 0));
     }
     let pre = rest
         .strip_prefix('-')
@@ -110,7 +134,15 @@ fn version(tag: &str) -> Option<Version> {
         .to_ascii_lowercase();
     let split = pre.find(|c: char| c.is_ascii_digit()).unwrap_or(pre.len());
     let number = pre[split..].parse().unwrap_or(0);
-    Some((major, minor, patch, false, pre[..split].to_owned(), number))
+    Some((
+        major,
+        minor,
+        patch,
+        hotfix,
+        false,
+        pre[..split].to_owned(),
+        number,
+    ))
 }
 
 /// True when `tag` is a strictly newer version than this build (a release outranks its betas).
