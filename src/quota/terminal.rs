@@ -60,7 +60,9 @@ pub async fn query_claude(
 }
 
 /// GitHub #1079: a sub-second pre-flight; a failed, slow or unreadable status falls back to the screen check.
+/// The status process tree is contained and reaped, so nothing it started outlives the query.
 async fn auth_signed_out(profile: &crate::plan::AgentProfile) -> bool {
+    use tokio::io::AsyncReadExt;
     let executable = crate::executable::resolve(&profile.executable)
         .unwrap_or_else(|| profile.executable.clone().into());
     let mut command = tokio::process::Command::from(crate::subprocess::command(executable));
@@ -72,12 +74,29 @@ async fn auth_signed_out(profile: &crate::plan::AgentProfile) -> bool {
         .envs(&profile.environment)
         .env_remove("ANTHROPIC_API_KEY")
         .stdin(std::process::Stdio::null())
+        .stdout(std::process::Stdio::piped())
         .stderr(std::process::Stdio::null())
         .kill_on_drop(true);
-    matches!(
-        tokio::time::timeout(std::time::Duration::from_secs(5), command.output()).await,
-        Ok(Ok(out)) if claude_signed_out(&out.stdout)
-    )
+    crate::process::ProcessGroup::prepare(&mut command);
+    let Ok(mut child) = command.spawn() else {
+        return false;
+    };
+    let Ok(group) = crate::process::ProcessGroup::adopt(&child) else {
+        let _ = child.kill().await;
+        return false;
+    };
+    let mut stdout = child.stdout.take();
+    let read = async {
+        let mut out = Vec::new();
+        if let Some(pipe) = stdout.as_mut() {
+            let _ = pipe.read_to_end(&mut out).await;
+        }
+        out
+    };
+    let out = tokio::time::timeout(std::time::Duration::from_secs(5), read).await;
+    group.kill();
+    let _ = child.wait().await;
+    out.is_ok_and(|out| claude_signed_out(&out))
 }
 /// GitHub #679: the usage popup recognises this text and shows a hint instead of a failure.
 pub(crate) const NO_PROJECT_FOLDER: &str = "Choose a project folder for this workspace first; Claude reports usage only inside a trusted project folder";
