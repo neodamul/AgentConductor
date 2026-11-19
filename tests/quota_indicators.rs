@@ -164,3 +164,11 @@ fn a_workspace_without_a_project_folder_reports_a_code_not_a_failed_lookup() {
     let other = indicator(json!({"status":"unavailable","error":"quota query timed out"}));
     assert!(other["error_code"].is_null());
 }
+#[test]
+fn a_signed_out_claude_reports_its_own_code() {
+    // GitHub #1079: the popup words this state itself instead of the raw English sentence.
+    let text = "Claude is not signed in or the login expired; run claude in a terminal, sign in with /login, then refresh";
+    let v = indicator(json!({"status":"unavailable","error":text}));
+    assert_eq!(v["error_code"], "claude_signed_out");
+    assert_eq!(v["error"], text);
+}

@@ -50,7 +50,10 @@ window.acQuotaRing = (() => {
     body.replaceChildren();
     if (error) {
       const box = text('div', '', 'usage-error'); box.setAttribute('role', 'alert');
-      box.append(text('strong', acMessage('startup.quota_error_title')), text('p', acMessage('startup.quota_error_message')), text('p', String(indicator.error)));
+      // #1079: a signed-out CLI gets a localized next step instead of the generic failure and raw English text.
+      const signedOut = indicator.error_code === 'claude_signed_out';
+      box.append(text('strong', acMessage(signedOut ? 'startup.quota_signed_out_title' : 'startup.quota_error_title')), text('p', acMessage(signedOut ? 'startup.quota_signed_out' : 'startup.quota_error_message')));
+      if (!signedOut) box.append(text('p', String(indicator.error)));
       body.append(box);
     } else if (indicator?.error_code === 'no_project_folder') {
       body.append(text('p', acMessage('startup.quota_needs_folder'), 'usage-unavailable'));

@@ -103,8 +103,15 @@ pub fn claude_blocker(text: &str) -> Option<&'static str> {
     None
 }
 
+/// GitHub #1079: `claude auth status --json` names a signed-out CLI without driving the TUI;
+/// anything but an explicit `loggedIn: false` leaves the decision to the screen check.
+pub fn claude_signed_out(status: &[u8]) -> bool {
+    serde_json::from_slice::<serde_json::Value>(status.trim_ascii())
+        .is_ok_and(|v| v["loggedIn"] == false)
+}
+
 /// GitHub #317: a login that expired and one never made are told the same way.
-const SIGNED_OUT: &str = "Claude is not signed in or the login expired; run claude in a terminal, sign in with /login, then refresh";
+pub(crate) const SIGNED_OUT: &str = "Claude is not signed in or the login expired; run claude in a terminal, sign in with /login, then refresh";
 
 /// Version-sensitive screen-reader metadata; unrelated statistics never count as capacity.
 pub fn claude_usage_ready(text: &str) -> bool {
