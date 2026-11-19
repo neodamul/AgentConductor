@@ -89,20 +89,29 @@ pub fn target() -> Option<&'static str> {
     }
 }
 
-/// x.y.z plus an optional `-Beta1` style prerelease. The key orders a prerelease below its
-/// release, and `Beta2` above `Beta1` and `Beta10` above `Beta9`. A local `.suffix` is ignored.
-type Version = (u64, u64, u64, bool, String, u64);
+/// x.y.z, an optional fourth patch number (GitHub #1076: `0.2.17.1`), and an optional `-Beta1`
+/// style prerelease. The key orders a prerelease below its release, and `Beta2` above `Beta1` and
+/// `Beta10` above `Beta9`. A local `.suffix` that is not a number is ignored.
+type Version = (u64, u64, u64, u64, bool, String, u64);
 
 fn version(tag: &str) -> Option<Version> {
     let mut parts = tag.trim().trim_start_matches('v').split('.');
     let mut next = || parts.next()?.parse::<u64>().ok();
     let (major, minor) = (next()?, next()?);
-    let third = parts.next()?;
-    let digits = third.len() - third.trim_start_matches(|c: char| c.is_ascii_digit()).len();
-    let patch = third[..digits].parse().ok()?;
-    let rest = &third[digits..];
+    // A number part with an optional `-prerelease` tail.
+    fn split(part: &str) -> Option<(u64, &str)> {
+        let digits = part.len() - part.trim_start_matches(|c: char| c.is_ascii_digit()).len();
+        Some((part[..digits].parse().ok()?, &part[digits..]))
+    }
+    let (patch, mut rest) = split(parts.next()?)?;
+    let mut hotfix = 0;
+    if rest.is_empty()
+        && let Some((number, tail)) = parts.next().and_then(split)
+    {
+        (hotfix, rest) = (number, tail);
+    }
     if rest.is_empty() {
-        return Some((major, minor, patch, true, String::new(), 0));
+        return Some((major, minor, patch, hotfix, true, String::new(), 0));
     }
     let pre = rest
         .strip_prefix('-')
@@ -110,7 +119,15 @@ fn version(tag: &str) -> Option<Version> {
         .to_ascii_lowercase();
     let split = pre.find(|c: char| c.is_ascii_digit()).unwrap_or(pre.len());
     let number = pre[split..].parse().unwrap_or(0);
-    Some((major, minor, patch, false, pre[..split].to_owned(), number))
+    Some((
+        major,
+        minor,
+        patch,
+        hotfix,
+        false,
+        pre[..split].to_owned(),
+        number,
+    ))
 }
 
 /// True when `tag` is a strictly newer version than this build (a release outranks its betas).

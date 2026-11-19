@@ -34,3 +34,23 @@ fn a_release_outranks_its_betas_and_betas_rank_by_number() {
     assert_eq!(version("0.2.0-Beta1.acme"), version("0.2.0-Beta1"));
     assert!(version("0.2.0-").is_none() && version("0.2.x").is_none() && version("0.2").is_none());
 }
+
+#[test]
+fn a_fourth_patch_number_ranks_above_its_base_version() {
+    // GitHub #1076: `0.2.17.1` and `0.2.17.1.suffix` are patch releases of 0.2.17.
+    for (lower, higher) in [
+        ("0.2.17", "0.2.17.1"),
+        ("0.2.17.1", "0.2.17.2"),
+        ("0.2.17.9", "0.2.17.10"),
+        ("0.2.17.1", "0.2.18"),
+        ("0.2.17.1-beta1", "0.2.17.1"),
+    ] {
+        assert!(version(lower) < version(higher), "{lower} < {higher}");
+    }
+    assert_eq!(version("v0.2.17.1.acme"), version("0.2.17.1"));
+    assert_eq!(version("0.2.17.acme"), version("0.2.17"));
+    assert!(
+        version("0.2.17.1").is_some_and(|v| v.4),
+        "a patch release is stable"
+    );
+}
