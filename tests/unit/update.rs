@@ -30,8 +30,14 @@ fn a_release_outranks_its_betas_and_betas_rank_by_number() {
     }
     assert_eq!(version("v0.2.0-Beta1"), version("0.2.0-beta1"));
     // A company suffix on the running build changes neither the core nor the prerelease.
-    assert_eq!(version("0.2.0.acme-co"), version("0.2.0"));
-    assert_eq!(version("0.2.0-Beta1.acme"), version("0.2.0-Beta1"));
+    assert_eq!(
+        version_for("0.2.0.acme-co", "acme-co"),
+        version_for("0.2.0", "")
+    );
+    assert_eq!(
+        version_for("0.2.0-Beta1.acme", "acme"),
+        version_for("0.2.0-Beta1", "")
+    );
     assert!(version("0.2.0-").is_none() && version("0.2.x").is_none() && version("0.2").is_none());
 }
 
@@ -47,8 +53,7 @@ fn a_fourth_patch_number_ranks_above_its_base_version() {
     ] {
         assert!(version(lower) < version(higher), "{lower} < {higher}");
     }
-    assert_eq!(version("v0.2.17.1.acme"), version("0.2.17.1"));
-    assert_eq!(version("0.2.17.acme"), version("0.2.17"));
+    assert_eq!(version_for("v0.2.17.1.acme", "acme"), version("0.2.17.1"));
     assert!(
         version("0.2.17.1").is_some_and(|v| v.4),
         "a patch release is stable"
@@ -56,8 +61,8 @@ fn a_fourth_patch_number_ranks_above_its_base_version() {
 }
 
 #[test]
-fn a_company_build_drops_its_own_suffix_before_comparing() {
-    // With a suffix the label is removed exactly; without one, 3 and 4 numbers compare directly.
+fn versions_compare_only_within_their_kind() {
+    // GitHub #1076: a company build compares suffixed tags; a plain build compares plain tags.
     for suffix in ["acme", "7", "co.2"] {
         let key = |tag: &str| version_for(tag, suffix);
         assert_eq!(key(&format!("0.2.17.{suffix}")), version_for("0.2.17", ""));
@@ -70,15 +75,19 @@ fn a_company_build_drops_its_own_suffix_before_comparing() {
             "{suffix}"
         );
         assert!(
-            key(&format!("0.2.17.1.{suffix}")) < key("0.2.18"),
+            key(&format!("0.2.17.1.{suffix}")) < key(&format!("0.2.18.{suffix}")),
             "{suffix}"
         );
         assert!(
-            key("0.2.17") < key(&format!("0.2.17.1.{suffix}")),
-            "{suffix}"
+            key("0.2.18").is_none() && key("0.2.18.1").is_none(),
+            "{suffix}: a plain tag"
+        );
+        assert!(
+            version_for(&format!("0.2.18.1.{suffix}"), "").is_none(),
+            "{suffix}: plain build"
         );
     }
-    // A numeric label is not a patch number for its own build, but is one for a build without it.
-    assert_eq!(version_for("0.2.17.7", "7"), version_for("0.2.17", ""));
-    assert!(version_for("0.2.17.7", "") > version_for("0.2.17", ""));
+    assert!(version_for("0.2.18.1.acme", "").is_none());
+    assert!(version_for("0.2.18.1.acme", "other").is_none());
+    assert!(version_for("0.2.17.1.2", "").is_none(), "five numbers");
 }
