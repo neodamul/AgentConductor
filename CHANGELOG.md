@@ -4,6 +4,11 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.2.18
+
+- A coordinator reply that opens with a prose line before its JSON document is read instead of failing the plan (#1074).
+- The update check compares 3- and 4-number versions (`0.2.17.1`), and a company build compares only versions with its own suffix (#1076).
+
 ## v0.2.17
 
 - A custom CLI profile can carry a display name, shown on its card and in the role and fallback pickers instead of its id (#1071).
