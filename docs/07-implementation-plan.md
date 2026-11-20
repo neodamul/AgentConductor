@@ -4334,3 +4334,7 @@ Version 0.2.17 ships #1071 (see CHANGELOG). The current application UI sample re
 ## 0.2.18 release preparation
 
 Version 0.2.18 ships #1074 and #1076 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs.
+
+## 0.2.19 release preparation
+
+Version 0.2.19 ships #1079 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe the signed-out Claude usage state.

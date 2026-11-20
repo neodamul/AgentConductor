@@ -1,3 +1,4 @@
+Recaptured 2026-11-20 for 0.2.19: seven current application UI sample renders refreshed with scripts/capture_docs.cjs, including the 0.2.19 version. Deterministic browser renders, not authenticated native-session evidence.
 Recaptured 2026-11-19 for 0.2.18: seven current application UI sample renders refreshed with scripts/capture_docs.cjs, including the 0.2.18 version. Deterministic browser renders, not authenticated native-session evidence.
 Recaptured 2026-11-18 for 0.2.17: seven current application UI sample renders refreshed with scripts/capture_docs.cjs, including the 0.2.17 version. Deterministic browser renders, not authenticated native-session evidence.
 Recaptured 2026-11-17 for 0.2.16: seven current application UI sample renders refreshed with scripts/capture_docs.cjs, including the 0.2.16 version and the role Effort and Fallback Effort columns. Deterministic browser renders, not authenticated native-session evidence.
