@@ -255,7 +255,9 @@ In Review and merge, click a changed file to expand its diff below the filename 
 
 ### 1.8 Quota and fallback
 
-Paid CLI cards display reported remaining capacity, for example `64%/100% ↻`.
+Select an agent card’s usage ring to open the usage popup. For supported accounts, it shows the reported remaining capacity, the reset time when available, and a **↻** refresh button.
+
+If Claude Code shows **Sign-in needed**, run `claude` in a terminal and sign in with `/login`. Return to the Claude Code usage popup and select **↻** to retry. If the popup asks for a project folder, save one in Workspace settings first.
 Automatic Claude usage queries wait until you save a project folder. Saving the first folder or changing the saved folder resets Claude’s refresh schedule for a fresh background query, even after a previous empty-folder failure; saving the same path does not reset it. Codex keeps its account refresh schedule. Folder selection alone does not grant trust or execution permissions.
 Enterprise metadata uses remaining/allocated percentages; rolling windows use the provider's labels
 (5h/weekly, daily/weekly, etc.). Hover for raw amounts, reset time, source and freshness.
@@ -473,7 +475,7 @@ Previously exercised CLI contracts: Claude Code 2.1.287; Codex 0.162.0 tasks/res
 Installed provider versions may differ. Unknown output stays unavailable or fails safely.
 
 - **Missing executable / Windows error 193**: use the actual native or npm `.cmd` launcher; Edit → Browse can override discovery.
-- **Quota unavailable**: inspect the tooltip, finish CLI theme/login setup and refresh. A signed-out Claude Code shows **Sign-in needed**: run `claude` in a terminal, sign in with `/login`, then refresh. No allocation means no invented percentage.
+- **Quota unavailable** — open the agent’s usage popup for the next step. See Section 1.8, **Quota and fallback**, for Claude Code sign-in and project folder setup.
 - **Missing role agent**: select a registered agent for every highlighted assignment.
 - **Dirty baseline**: inspect listed files before committing, stashing or choosing Stop.
 - **Blocked/failed run**: inspect the cause and test output; Fix with feedback, correct configuration and Resume.

@@ -47,7 +47,9 @@ Set **Agent roles** per workspace (for example Claude for planning, Codex for de
 
 ## When an account hits its usage limit
 
-Agents sharing one subscription form a quota group. Work moves to a fallback agent you set, keeping partial files, or waits and resumes at the reset time the CLI reported. Remaining capacity is shown per agent; results need your approval again after any move.
+Agents sharing one subscription form a quota group. Work moves to a fallback agent you set, keeping partial files, or waits and resumes at the reset time the CLI reported. Results need your approval again after any move.
+
+Select an agent card’s usage ring to view remaining capacity. If Claude Code shows **Sign-in needed**, run `claude` in a terminal, sign in with `/login`, and select **↻** in the usage popup.
 
 ## What you need
 

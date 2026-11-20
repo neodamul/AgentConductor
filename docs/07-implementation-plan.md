@@ -4338,3 +4338,8 @@ Version 0.2.18 ships #1074 and #1076 (see CHANGELOG). The current application UI
 ## 0.2.19 release preparation
 
 Version 0.2.19 ships #1079 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe the signed-out Claude usage state.
+
+- [x] Plan: Match the public quota instructions to the #1079 usage popup.
+- [x] Task: Update the README and both manual sources.
+- [x] Verify: Regenerate both offline manuals and pass the public docs, release docs, manual renderer, manual menu, release package, and screenshot freshness checks.
+- [x] Complete: Preserve the verified documentation changes for the 0.2.19 release branch.
