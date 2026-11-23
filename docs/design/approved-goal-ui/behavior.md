@@ -241,6 +241,8 @@ The Workspace group retains recent/New/Open/Export/Import actions. Workspace set
 Every slide panel (coordinator chat, Settings, Goal list, team briefing) closes on a click outside it, without
 saving. The coordinator chat also has a Close button at the bottom, beside Send.
 
+Coordinator Markdown replies render inside the existing reply bubble. Wide tables and code scroll within the bubble.
+
 ## Tool check timeout (#1033)
 
 Settings holds the tool check timeout in seconds (default 60, 5 to 600) with a one-line hint. It bounds
@@ -293,7 +295,6 @@ Open `preview.html?goal=completed#7` for the completed-Goal scenario. All six st
 - Goal text, coordinator/role/model/fallback choices, task assignment/model changes, scheduling, feedback, stop/recovery, plan regeneration, auto-merge and approval/merge actions are unavailable. Disabled controls explain that changes require a new Goal.
 - Plan/task expansion, logs, diffs, test results, final results, history, quota refresh, briefing, folder links and coordinator questions remain available. The task inspector follows the same rule.
 - Coordinator chat accepts questions and explains the new-Goal path for changes; it never changes the archived plan or results.
-- Coordinator Markdown replies render inside the existing reply bubble. Wide tables and code scroll within the bubble.
 - Goal deletion retains its existing explicit permanent-deletion confirmation. New Goal restores editable inputs without modifying the completed Goal.
 - This is an interactive reference fixture, not backend enforcement. Production must enforce the same rule on every mutating dispatch path, including coordinator review requests, while keeping chat/history/reset operational.
 - Global account/workspace configuration is distinct from the archived Goal. The fixture conservatively disables the combined workspace-save actions while that Goal is selected; the new-Goal path remains available.
