@@ -6,7 +6,7 @@
 // console and read the screen with PROBE() / ROOM().
 const fs = require('fs'), path = require('path');
 const [repo, out] = process.argv.slice(2), ui = f => fs.readFileSync(path.join(repo, 'src/ui', f), 'utf8');
-const i18n = 'const AC_MESSAGES={en:' + ui('messages/en.json') + ',ko:' + ui('messages/ko.json') + '};\n' + ui('i18n.js') + '\n' + ui('goal_readonly.js');
+const i18n = 'const AC_MESSAGES={en:' + ui('messages/en.json') + ',ko:' + ui('messages/ko.json') + '};\n' + ui('i18n.js') + '\n' + ui('placeholder_suggestion.js') + '\n' + ui('goal_readonly.js');
 const brands = [['claude','claude-code-color.svg'],['codex','codex-color.svg'],['opencode','opencode.svg']].map(([id,file])=>'<template id="ac-brand-'+id+'">'+fs.readFileSync(path.join(repo,'third_party/lobe-icons',file),'utf8')+'</template>').join('');
 const home = brands + ui('startup.html') + ui('mcp.html') + ui('chat.html') + ui('optimize.html') + ui('about.html');
 const style = [ui('room.css'), ui('startup.css'), ui('room_layout.css'), ui('forms.css'), ui('mcp.css'), ui('chat.css'), ui('optimize.css'),ui('anchored_select.css'),ui('role_choices.css'),ui('about.css'),ui('titlebar.css'), ui('run_screen.css'), ui('run_cards.css'), ui('plan_review.css')].join('\n');

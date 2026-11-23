@@ -123,3 +123,5 @@ dialog.quiet-focus :focus-visible{outline:none}
 /* GitHub #914: step panels take focus (tabindex, dialogs returning focus) but draw no WebKit focus ring; the mock has none. */
 [role="tabpanel"]:focus{outline:none}
 #run-context p{margin:0 0 4px}#run-error{white-space:pre-wrap;overflow-wrap:anywhere;max-height:160px;overflow:auto;font-family:Menlo,Consolas,monospace}
+
+[data-placeholder-dismissed]::placeholder { color: transparent; }
