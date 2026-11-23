@@ -164,7 +164,7 @@ fn launch_error(error: impl std::fmt::Display) -> String {
 }
 
 #[cfg(windows)]
-fn open_browser(url: &str) -> Result<(), String> {
+pub(crate) fn open_browser(url: &str) -> Result<(), String> {
     use windows::Win32::System::Com::{
         COINIT_APARTMENTTHREADED, COINIT_DISABLE_OLE1DDE, CoInitializeEx, CoUninitialize,
     };
@@ -196,7 +196,7 @@ fn open_browser(url: &str) -> Result<(), String> {
 }
 
 #[cfg(not(windows))]
-fn open_browser(url: &str) -> Result<(), String> {
+pub(crate) fn open_browser(url: &str) -> Result<(), String> {
     #[cfg(target_os = "macos")]
     let mut command = crate::subprocess::command("/usr/bin/open");
     #[cfg(not(target_os = "macos"))]

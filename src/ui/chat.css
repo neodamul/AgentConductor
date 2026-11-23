@@ -26,3 +26,17 @@
 .chat-form{display:flex;flex-direction:column;gap:10px;margin-top:20px}
 .chat-form textarea{width:100%;min-height:90px;resize:vertical;padding:10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);font:inherit}
 .chat-form button{align-self:flex-end}.chat-actions{display:flex;justify-content:flex-end;gap:8px}.chat-actions .small-button{padding:8px 13px}#start-chat-close-bottom{background:transparent}
+
+.chat-msg,.chat-markdown{min-width:0}
+.chat-markdown{max-inline-size:100%}
+.chat-markdown > :first-child{margin-top:0}
+.chat-markdown > :last-child{margin-bottom:0}
+.chat-markdown > * + *{margin-top:.65em}
+.chat-markdown :is(h1,h2,h3,h4,h5,h6){font-size:1em;line-height:1.4}
+.chat-markdown :is(ul,ol){padding-inline-start:1.5em}
+.chat-markdown blockquote{margin-inline:0;padding-inline-start:10px;border-inline-start:2px solid var(--line)}
+.chat-markdown :is(pre,.manual-table){overflow:auto}
+.chat-markdown pre{padding:6px 8px;background:var(--surface);border-radius:6px;white-space:pre}
+.chat-markdown table{border-collapse:collapse}
+.chat-markdown :is(th,td){padding:4px 8px;border:1px solid var(--line);text-align:start;white-space:nowrap}
+.chat-markdown a{color:var(--accent);text-decoration:underline}

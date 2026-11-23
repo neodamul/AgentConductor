@@ -147,3 +147,34 @@ async fn changed_completed_evidence_is_not_used_for_replanning() {
     drop(ui);
     fs::remove_dir_all(root).unwrap();
 }
+#[tokio::test]
+async fn a_finished_phase_run_does_not_lock_the_next_phase() {
+    // GitHub #1085: the native Start guard used the last run report (the finished Phase 1 run) as Goal completion.
+    let (root, ui, slug, _) = prepare(true, false, false).await;
+    drop(ui);
+    let path = root.join("workspace/startup.json");
+    let mut saved: Value = serde_json::from_slice(&fs::read(&path).unwrap()).unwrap();
+    saved["last_run"] = json!(root.join("workspace/run-first"));
+    fs::write(&path, saved.to_string()).unwrap();
+    let ui = agentconductor::ui::setup::Startup::open(
+        &root.join("workspace"),
+        std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+    )
+    .unwrap();
+    action(&ui, "next_phase");
+    let ready = settled(&ui);
+    assert_eq!(ready["proposal"]["phase"], "ready", "{ready}");
+    assert_ne!(
+        agentconductor::slug_progress::progress(&slug)["stage"],
+        "completed"
+    );
+    let started = ui.dispatch(
+        json!({"kind":"start","revision":ready["revision"],"digest":ready["proposal"]["digest"]})
+            .to_string()
+            .as_bytes(),
+    );
+    assert!(started.is_ok(), "{started:?}");
+    let _ = settled(&ui);
+    drop(ui);
+    fs::remove_dir_all(root).unwrap();
+}

@@ -4334,3 +4334,14 @@ Version 0.2.17 ships #1071 (see CHANGELOG). The current application UI sample re
 ## 0.2.18 release preparation
 
 Version 0.2.18 ships #1074 and #1076 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs.
+
+## Coordinator chat Markdown replies (#1088)
+
+- [x] Plan: Extend UC-151 and DD-171 for safe message rendering and saved history.
+- [x] Task: Reuse the offline renderer and wire the coordinator chat.
+- [x] Verify: Pass 16 focused Rust tests, the chat script test and both browser themes. Check unchanged offline manuals and pass Clippy.
+- [x] Complete: Prepare the verified issue branch for the coordinated 0.2.19 batch.
+
+## 0.2.19 release preparation
+
+Version 0.2.19 ships #1079, #1082, #1084, #1085, #1086 and #1088 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe the signed-out Claude usage state and Markdown replies in the coordinator chat.

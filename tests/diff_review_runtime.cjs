@@ -1,7 +1,7 @@
 const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
 const source=(fs.readFileSync('src/ui/room.js','utf8') + fs.readFileSync('src/ui/room_render.js', 'utf8'));const buttons=new Map([['approve',{}]]),calls=[];
 const review={revision:'exact',truncated:true,report:{candidate:{commit:'verified-candidate'},diff_hash:'complete-patch-hash',tests:[{}]}};
-const context=vm.createContext({review,snapshot:{revision:'exact'},$:id=>buttons.get(id),acMessage:id=>id,decision:async()=>true,act:async(...args)=>calls.push(args)});
+const context=vm.createContext({review,snapshot:{revision:'exact'},$:id=>buttons.get(id),acMessage:id=>id,decision:async()=>true,act:async(...args)=>{calls.push(args);args[4]?.({id:'job'});return true;},renderSnapshot:()=>{},roomStopped:false,approvalPending:null});
 const gate=source.slice(source.indexOf('const currentReview='),source.indexOf(';',source.indexOf('const currentReview=')));
 assert.equal(vm.runInContext(gate+';currentReview',context),true,'preview truncation must not disable a current review');
 const start=source.indexOf("$('approve').onclick="),end=source.indexOf("\n",start);vm.runInContext(source.slice(start,end),context);

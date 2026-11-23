@@ -99,6 +99,8 @@ Action explanations may wrap within the footer; do not silently cut a warning or
 | 5 Verify | Integration tests with outcomes/exit codes, coordinator judgments, failure feedback/rework; success → 6 |
 | 6 Review and merge | Review changes (변경 검토), exact candidate, changed files, tests, human review/approve/reject/revise, then merge/accept |
 
+During approval, the review footer keeps the primary action in place with the existing busy treatment. It shows Approving and a status message, disables all three actions, then restores Approve on failure or displays Accept changes on success.
+
 Do not introduce steps 7–10 because the reference has ten scenarios. Scenario numbers are preview tooling.
 A completed merge opens the result popup while preserving the step-6 context. If phases remain,
 continue the same Goal through its next phase instead of treating a phase as a new Workspace.
@@ -241,6 +243,8 @@ The Workspace group retains recent/New/Open/Export/Import actions. Workspace set
 Every slide panel (coordinator chat, Settings, Goal list, team briefing) closes on a click outside it, without
 saving. The coordinator chat also has a Close button at the bottom, beside Send.
 
+Coordinator Markdown replies render inside the existing reply bubble. Wide tables and code scroll within the bubble.
+
 ## Tool check timeout (#1033)
 
 Settings holds the tool check timeout in seconds (default 60, 5 to 600) with a one-line hint. It bounds
@@ -293,6 +297,7 @@ Open `preview.html?goal=completed#7` for the completed-Goal scenario. All six st
 - Goal text, coordinator/role/model/fallback choices, task assignment/model changes, scheduling, feedback, stop/recovery, plan regeneration, auto-merge and approval/merge actions are unavailable. Disabled controls explain that changes require a new Goal.
 - Plan/task expansion, logs, diffs, test results, final results, history, quota refresh, briefing, folder links and coordinator questions remain available. The task inspector follows the same rule.
 - Coordinator chat accepts questions and explains the new-Goal path for changes; it never changes the archived plan or results.
+- On an empty suggestion-enabled field, Tab or Right Arrow inserts the visible suggestion without submitting it. Typing dismisses it until focus returns. Shift+Tab and Tab in a filled field retain normal keyboard navigation.
 - Goal deletion retains its existing explicit permanent-deletion confirmation. New Goal restores editable inputs without modifying the completed Goal.
 - This is an interactive reference fixture, not backend enforcement. Production must enforce the same rule on every mutating dispatch path, including coordinator review requests, while keeping chat/history/reset operational.
 - Global account/workspace configuration is distinct from the archived Goal. The fixture conservatively disables the combined workspace-save actions while that Goal is selected; the new-Goal path remains available.

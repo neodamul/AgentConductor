@@ -50,6 +50,9 @@ pub(super) enum Request {
         text: String,
     },
     ChatHistory {},
+    OpenChatLink {
+        url: String,
+    },
     ChatReset {},
     OptimizeGoal {
         revision: String,

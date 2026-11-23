@@ -4,6 +4,15 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.2.19
+
+- When Claude Code is signed out, the usage popup says **Sign-in needed** with the next step in the app language instead of a generic failure; the app checks `claude auth status` before reading `/usage` (#1079).
+- Plan review: **Save plan edits** turns primary once there are edits, a saved agent change shows in the left Phase·Task outline, and a task model outside the agent catalog stays shown (#1082).
+- After **Approve**, the review footer shows that the approval is being applied and keeps its actions locked until **Accept changes** is available (#1084).
+- A multi-phase Goal stays editable after a Phase run completes, so the next Phase's plan can be approved and run (#1085).
+- In an empty field, Tab or Right Arrow accepts the shown suggestion (such as the coordinator chat prompt) as text (#1086).
+- Coordinator chat replies render Markdown (headings, lists, tables, code, safe links) without running HTML or loading remote content (#1088).
+
 ## v0.2.18
 
 - A coordinator reply that opens with a prose line before its JSON document is read instead of failing the plan (#1074).

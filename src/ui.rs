@@ -32,6 +32,8 @@ const I18N: &str = concat!(
     "};\n",
     include_str!("ui/i18n.js"),
     "\n",
+    include_str!("ui/placeholder_suggestion.js"),
+    "\n",
     include_str!("ui/goal_readonly.js")
 );
 mod cache;

@@ -4,7 +4,9 @@
 globalThis.acGoalReadOnly=(()=>{
  const startupWrites=new Set(['save','save_auto_merge','prepare','draft','read_plan','edit','start','import_settings','optimize_goal','mcp_apply','mcp_preview','create_slug','commit_baseline','ignore_os_files']);
  const locks=new WeakMap(),infoNodes=new WeakMap();
- const completed=s=>s?.run_state==='completed'||s?.report?.state==='completed'||!!s?.slugs?.some(g=>g.active&&g.progress?.stage==='completed');
+ // GitHub #1085: an active Goal with phase progress is complete only when its progress says so; the last
+ // run report is just the finished Phase of a multi-phase Goal.
+ const completed=s=>{const stage=s?.slugs?.find(g=>g.active)?.progress?.stage;return stage==='completed'||stage!=='phase'&&(s?.run_state==='completed'||s?.report?.state==='completed');};
  const reason=()=>acMessage('goal.readonly_reason');
  // GitHub #1039: other writers (timers, renders) keep assigning disabled/readOnly; while locked the
  // property is pinned so their writes are remembered for unlock instead of flipping the control.

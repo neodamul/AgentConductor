@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.2.18** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.2.19** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.2.18 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
+The app version is beside the title. Version 0.2.19 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
 
 ### 1.1a Application updates
 
@@ -324,7 +324,7 @@ Long command and agent/path summaries are truncated to keep Plan rows compact. H
 
 Session counts and work-state tags update automatically when task sessions change, including in the Agent Room; opening the sessions dialog is not required.
 
-Coordinator chat answers from the current Workspace context even if a Goal finished since the last displayed snapshot. Read-only questions do not require a manual refresh; reviewed changes and execution approvals retain their existing revision checks.
+Coordinator chat answers from the current Workspace context even if a Goal finished since the last displayed snapshot. Read-only questions do not require a manual refresh; reviewed changes and execution approvals retain their existing revision checks. Replies render Markdown (headings, lists, tables, code and links) without running HTML or loading remote content. In an empty chat box, Tab or Right Arrow puts the shown suggestion in as text so you can keep typing.
 
 ## Part 2 — Command-line reference
 
@@ -473,7 +473,7 @@ Previously exercised CLI contracts: Claude Code 2.1.287; Codex 0.162.0 tasks/res
 Installed provider versions may differ. Unknown output stays unavailable or fails safely.
 
 - **Missing executable / Windows error 193**: use the actual native or npm `.cmd` launcher; Edit → Browse can override discovery.
-- **Quota unavailable**: inspect the tooltip, finish CLI theme/login setup and refresh. No allocation means no invented percentage.
+- **Quota unavailable**: inspect the tooltip, finish CLI theme/login setup and refresh. A signed-out Claude Code shows **Sign-in needed**: run `claude` in a terminal, sign in with `/login`, then refresh. No allocation means no invented percentage.
 - **Missing role agent**: select a registered agent for every highlighted assignment.
 - **Dirty baseline**: inspect listed files before committing, stashing or choosing Stop.
 - **Blocked/failed run**: inspect the cause and test output; Fix with feedback, correct configuration and Resume.
