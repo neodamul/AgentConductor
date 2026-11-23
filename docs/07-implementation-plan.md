@@ -4190,6 +4190,13 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 - [x] Verify: 18 local Rust checks including current-context CLI answer, one-chat slot, stale-write rejection, slow-Git independence, chat history/async behavior, docs and source layout; all-target Clippy/format passed.
 - [x] Completed: manuals/HTML/wiki and evidence limitations recorded, merged in PR 965; #961 closed. Remote CI remains batched.
 
+## #1092 — Deterministic chat concurrency fixture
+
+- [x] Plan: Compare the Windows failures with the completed-Goal concurrency fixture.
+- [x] Task: Replace the mock worker's fixed sleep with a bounded release signal.
+- [x] Verify: Reproduce the assertion failure under controlled delay, pass the same case with the fix, and pass eight focused tests plus eight repeat runs locally.
+- [x] Complete: Publish the linked branch for the 0.2.20 batch. Windows CI verification remains pending.
+
 ## #959 — Automatic merge after reviewed fallback
 
 - [x] Plan: confirm consent mismatch and reviewed fallback in private run evidence; trace requirements through QAS/design.
