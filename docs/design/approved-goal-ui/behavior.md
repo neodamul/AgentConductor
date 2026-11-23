@@ -243,6 +243,8 @@ The Workspace group retains recent/New/Open/Export/Import actions. Workspace set
 Every slide panel (coordinator chat, Settings, Goal list, team briefing) closes on a click outside it, without
 saving. The coordinator chat also has a Close button at the bottom, beside Send.
 
+Coordinator Markdown replies render inside the existing reply bubble. Wide tables and code scroll within the bubble.
+
 ## Tool check timeout (#1033)
 
 Settings holds the tool check timeout in seconds (default 60, 5 to 600) with a one-line hint. It bounds

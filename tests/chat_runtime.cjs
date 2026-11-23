@@ -121,10 +121,17 @@ const key = (q, init) => q('chat-input').handlers.keydown({ preventDefault() {},
   staleText = 'no new state for 9s'; ui2.tick();
   assert.match(working(), /2:0[0-1] · no new state for 9s$/, working());
   staleText = '';
-  current = { revision: 'rev', chat_revision: 'chat-rev', chat_job: { id: 'job-9', kind: 'chat', state: 'completed' }, chat: { job: 'job-9', answer: 'In dist/.' } };
+  current = { revision: 'rev', chat_revision: 'chat-rev', chat_job: { id: 'job-9', kind: 'chat', state: 'completed' }, chat: { job: 'job-9', answer: '**In dist/.**', html: '<p><strong>In dist/.</strong></p>' } };
   ui2.update();
-  assert.deepEqual(plain(ui2.turns().at(-1)), { role: 'assistant', text: 'In dist/.' });
+  assert.deepEqual(plain(ui2.turns().at(-1)), { role: 'assistant', text: '**In dist/.**', html: '<p><strong>In dist/.</strong></p>' });
   assert.equal(q2('chat-send').disabled, false);
+  const liveBubble = q2('chat-log').children.at(-1).children[1];
+  assert.match(liveBubble.className, /chat-markdown/);
+  assert.equal(liveBubble.innerHTML, '<p><strong>In dist/.</strong></p>');
+  stored = [{ role: 'assistant', text: '# Restored', html: '<h1>Restored</h1>' }];
+  ui2.reset(); ui2.update(); await tick();
+  const restored = q2('chat-log').children.at(-1).children[1];
+  assert.equal(restored.innerHTML, '<h1>Restored</h1>');
   // Another workspace starts with its own conversation.
   stored = []; ui2.reset(); assert.equal(ui2.turns().length, 0);
   console.log('chat runtime ok');
