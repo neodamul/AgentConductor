@@ -99,6 +99,8 @@ Action explanations may wrap within the footer; do not silently cut a warning or
 | 5 Verify | Integration tests with outcomes/exit codes, coordinator judgments, failure feedback/rework; success → 6 |
 | 6 Review and merge | Review changes (변경 검토), exact candidate, changed files, tests, human review/approve/reject/revise, then merge/accept |
 
+During approval, the review footer keeps the primary action in place with the existing busy treatment. It shows Approving and a status message, disables all three actions, then restores Approve on failure or displays Accept changes on success.
+
 Do not introduce steps 7–10 because the reference has ten scenarios. Scenario numbers are preview tooling.
 A completed merge opens the result popup while preserving the step-6 context. If phases remain,
 continue the same Goal through its next phase instead of treating a phase as a new Workspace.

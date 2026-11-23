@@ -380,6 +380,8 @@
   "room.apply_changes": "Apply changes",
   "room.apply_the_exact_verified_changes_to_the_original": "Apply the exact verified changes to the original folder. Concurrent edits cause refusal; backups and a local receipt are retained.",
   "room.approve": "Approve",
+  "room.approving": "Approving…",
+  "room.approval_pending_note": "Approval is in progress. No action is needed.",
   "room.approve_exactly_the_diff_and_test_evidence_shown": "Approve this verified candidate and its complete diff hash. The preview may be shortened; inspect the full patch in the CLI if needed.",
   "room.approve_verified_candidate": "Approve verified candidate",
   "room.approved": "Approved",
