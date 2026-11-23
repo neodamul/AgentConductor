@@ -18,6 +18,7 @@ impl Startup {
             | Request::CleanSessions { .. }
             | Request::Chat { .. }
             | Request::ChatHistory {}
+            | Request::OpenChatLink { .. }
             | Request::ChatReset {}
             | Request::CacheClear { .. } => unreachable!(),
             Request::McpSave { settings, .. } => self.save_mcp(saved, &settings),

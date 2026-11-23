@@ -579,6 +579,9 @@ Derive, per running task, the last observed output time and kind, the current to
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
 
 ### SF-148 Read-only coordinator chat as a bounded worker job
+
+**GitHub #1088.** Present coordinator replies through the local Markdown viewer using the same rendering for live replies and restored conversations.
+
 Run each question as a worker job of the existing job slot: the coordinator profile runs in the project folder with its read-only tools, receives the recent conversation and the manual, and returns one JSON answer that the page shows when the job completes.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
 

@@ -1464,6 +1464,9 @@ Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → 
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
 
 ### DD-171 Implement chat as a `chat` worker job with an artifact answer
+
+**GitHub #1088.** Render the reply through the offline Markdown renderer with an untrusted-chat mode. Escape source markup, suppress images, and validate external HTTP(S) destinations before opening them. The chat artifact and prompt history retain only the original text.
+
 `Request::Chat` validates the turns (`src/chat.rs`), writes the conversation to a private artifact and launches `agentconductor chat` through the existing job slot, like MCP preview. The worker calls `coordinator::run_json_within` with a prompt holding the embedded manual and recent turns, stores the answer artifact, and the snapshot returns it once with its job ID. The page (`chat.js`) keeps the conversation in memory.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
 

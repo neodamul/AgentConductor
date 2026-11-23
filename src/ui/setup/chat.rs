@@ -59,7 +59,17 @@ impl Startup {
             .as_deref()
             .map(|name| crate::chat::history(&self.broker.dir, name))
             .unwrap_or_default();
-        serde_json::json!({"turns": turns})
+        let rendered: Vec<_> = turns
+            .into_iter()
+            .map(|turn| {
+                let mut value = serde_json::json!(turn);
+                if turn.role == "assistant" {
+                    value["html"] = crate::manual::render_chat(&turn.text).into();
+                }
+                value
+            })
+            .collect();
+        serde_json::json!({"turns": rendered})
     }
 
     /// Starts a new conversation; the old artifacts stay in the private folder.
@@ -83,9 +93,9 @@ impl Startup {
         crate::mcp::load(&self.broker.dir.join("mcp").join(name))
             .ok()
             .and_then(|data| serde_json::from_slice::<serde_json::Value>(&data).ok())
-            .map_or(
-                serde_json::Value::Null,
-                |v| serde_json::json!({"job": job["id"], "answer": v["answer"]}),
-            )
+            .map_or(serde_json::Value::Null, |v| {
+                let html = v["answer"].as_str().map(crate::manual::render_chat);
+                serde_json::json!({"job": job["id"], "answer": v["answer"], "html": html})
+            })
     }
 }

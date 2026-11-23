@@ -56,7 +56,9 @@ fn a_slow_coordinator_answers_later_and_the_conversation_continues() {
         mutate(&startup, json!({"kind":"chat","text":"too soon"})).is_err(),
         "a second question waits for the first"
     );
-    assert_eq!(wait_for_answer(&startup)["chat"]["answer"], "Answer-1");
+    let live = wait_for_answer(&startup);
+    assert_eq!(live["chat"]["answer"], "Answer-1");
+    assert_eq!(live["chat"]["html"], "<p>Answer-1</p>");
     // GitHub #243: the coordinator is told the workspace (goal, mode, project folder) with every question.
     let seen = std::fs::read_dir(&root)
         .unwrap()
@@ -73,6 +75,13 @@ fn a_slow_coordinator_answers_later_and_the_conversation_continues() {
     mutate(&startup, json!({"kind":"chat","text":"second question"})).unwrap();
     assert_eq!(wait_for_answer(&startup)["chat"]["answer"], "Answer-2");
     let turns = startup.dispatch(br#"{"kind":"chat_history"}"#).unwrap()["turns"].clone();
+    assert!(turns[0].get("html").is_none());
+    assert_eq!(turns[1]["html"], live["chat"]["html"]);
+    assert_eq!(turns[3]["html"], "<p>Answer-2</p>");
+    for url in ["file:///etc/hosts", "javascript:alert", "//example.test"] {
+        let packet = json!({"kind":"open_chat_link","url":url});
+        assert!(startup.dispatch(packet.to_string().as_bytes()).is_err());
+    }
     let text: Vec<_> = turns
         .as_array()
         .unwrap()

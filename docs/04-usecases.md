@@ -674,6 +674,9 @@ An operator opens a running task that has printed nothing for minutes. The task 
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
 
 ### UC-151 Ask how to run what the team built
+
+**GitHub #1088.** A Markdown reply renders within the coordinator conversation. The same formatting appears when the operator reopens saved history. External links open only on an operator click.
+
 Status: Amended by UC-170, UC-172, UC-178, UC-179, UC-183 (R-179, R-181, R-187, R-188, R-192).
 An operator returns to the workspace after a completed run, opens the chat from the title bar, asks how to run the result, and receives the project-specific commands. Another question about the current screen is answered from the manual. Closing the panel keeps the conversation for the session.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.

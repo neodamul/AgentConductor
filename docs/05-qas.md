@@ -682,6 +682,9 @@ Given a running task whose last event was a tool start 3 minutes ago and which h
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
 
 ### QAS-157 A question yields an answer or a visible error, never a file change
+
+**GitHub #1088.** A live or restored Markdown reply renders headings, lists, emphasis, quotes, links, tables and code. Plain replies preserve line breaks. Untrusted HTML and image references do not produce active elements, unsafe links are rejected, and wide blocks scroll inside the reply bubble.
+
 Status: Amended by QAS-177, QAS-179, QAS-185, QAS-186, QAS-190 (R-179, R-181, R-187, R-188, R-192).
 Given a coordinator that answers `{"answer": ...}`, the chat shows that answer once; given a failing coordinator it shows the error and keeps the conversation usable; invalid conversations (empty, ending with the assistant, over-long, unknown role) are refused before any job starts; the prompt stays under the coordinator limit.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
