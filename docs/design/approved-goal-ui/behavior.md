@@ -293,6 +293,7 @@ Open `preview.html?goal=completed#7` for the completed-Goal scenario. All six st
 - Goal text, coordinator/role/model/fallback choices, task assignment/model changes, scheduling, feedback, stop/recovery, plan regeneration, auto-merge and approval/merge actions are unavailable. Disabled controls explain that changes require a new Goal.
 - Plan/task expansion, logs, diffs, test results, final results, history, quota refresh, briefing, folder links and coordinator questions remain available. The task inspector follows the same rule.
 - Coordinator chat accepts questions and explains the new-Goal path for changes; it never changes the archived plan or results.
+- On an empty suggestion-enabled field, Tab or Right Arrow inserts the visible suggestion without submitting it. Typing dismisses it until focus returns. Shift+Tab and Tab in a filled field retain normal keyboard navigation.
 - Goal deletion retains its existing explicit permanent-deletion confirmation. New Goal restores editable inputs without modifying the completed Goal.
 - This is an interactive reference fixture, not backend enforcement. Production must enforce the same rule on every mutating dispatch path, including coordinator review requests, while keeping chat/history/reset operational.
 - Global account/workspace configuration is distinct from the archived Goal. The fixture conservatively disables the combined workspace-save actions while that Goal is selected; the new-Goal path remains available.
