@@ -4352,3 +4352,10 @@ Version 0.2.18 ships #1074 and #1076 (see CHANGELOG). The current application UI
 ## 0.2.19 release preparation
 
 Version 0.2.19 ships #1079, #1082, #1084, #1085, #1086 and #1088 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe the signed-out Claude usage state and Markdown replies in the coordinator chat.
+
+## #1093 — Coordinator-only profile changes
+
+- [x] Plan: Trace DD-58 from profile save through reviewed execution.
+- [x] Task: Keep coordinator-only read-only arguments out of the task execution comparison.
+- [x] Verify: Reproduce proposal loss before the fix and pass 17 local tests, including exact consent and the worker execution guards.
+- [x] Complete: Prepare the verified issue branch for the 0.2.20 batch.

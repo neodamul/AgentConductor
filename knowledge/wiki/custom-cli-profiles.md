@@ -1,5 +1,7 @@
 # Declarative custom CLI event and quota behavior
 
+**Plan approval (#1093).** A coordinator can update its read-only argument list without invalidating the exact reviewed plan. Normal worker arguments, executable and permission mode still bind task consent. The run starts from the reviewed plan and records the current coordinator profile separately. Revalidate when profile fields are shared between coordinator and worker invocations.
+
 GitHub #12 found that custom profiles already accept arbitrary executables, arguments,
 environment and parser selection. The remaining provider-specific branches were the
 custom JSONL event vocabulary and quota eligibility/query path. Built-in Claude, Codex

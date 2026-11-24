@@ -764,8 +764,9 @@ operator-observed catalog.
 Trace: R-49/R-50/R-51 -> BG-10/BG-17 -> SF-41/SF-42 -> UC-40/UC-41 -> FR-34/FR-35/FR-36 -> QAS-42/QAS-43 -> DDR-13.
 
 `save` keeps the proposal when goal, repository, workspace mode and every agent's
-execution view (profile without `catalog`) are unchanged; the same execution view is what
-consent compares. Automatic discovery runs only for built-in agents added in the current
+execution view are unchanged. Consent compares the same view, which excludes the observed
+catalog, quota refresh interval, and coordinator-only `read_only_args` (#1093). The worker
+executes the reviewed plan and the run records the current coordinator profile separately. Automatic discovery runs only for built-in agents added in the current
 page session (from the `save_profiles` result); **Models** triggers a refresh explicitly.
 The role table is rebuilt only when the set of agent IDs changes; catalog arrivals update
 model `<option>` lists in place, keep selected values, and skip the element that has focus.
