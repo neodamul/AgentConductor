@@ -4,6 +4,11 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.2.20
+
+- Adding or changing only a coordinator profile's read-only arguments after a plan is reviewed no longer blocks **Approve and run**; changes to worker executable, arguments or permission still require a new review (#1093).
+- Windows CI: the read-only chat state test waits for the first chat to stay active before checking that a second chat is refused (#1092).
+
 ## v0.2.19
 
 - When Claude Code is signed out, the usage popup says **Sign-in needed** with the next step in the app language instead of a generic failure; the app checks `claude auth status` before reading `/usage` (#1079).

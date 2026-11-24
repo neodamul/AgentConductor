@@ -4359,3 +4359,7 @@ Version 0.2.19 ships #1079, #1082, #1084, #1085, #1086 and #1088 (see CHANGELOG)
 - [x] Task: Keep coordinator-only read-only arguments out of the task execution comparison.
 - [x] Verify: Reproduce proposal loss before the fix and pass 17 local tests, including exact consent and the worker execution guards.
 - [x] Complete: Prepare the verified issue branch for the 0.2.20 batch.
+
+## 0.2.20 release preparation
+
+Version 0.2.20 ships #1092 and #1093 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs.
