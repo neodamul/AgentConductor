@@ -25,7 +25,19 @@ fn completed_goal_chat_survives_bookkeeping_drift_and_uses_current_context() {
     );
     let capture = f.root.join("captured-prompt");
     let run = f.report("completed");
-    f.edit_saved(|s|{s["last_run"]=json!(run);s["config"]["profiles"]=json!([{"id":"coordinator","executable":worker,"args":[],"parser":"claude","permission_mode":"read_only","environment":{"AC_CHAT_CAPTURE":capture}}]);s["config"]["coordinator"]=json!("coordinator");});
+    let release = f.root.join("release-chat");
+    f.edit_saved(|s| {
+        s["last_run"] = json!(run);
+        s["config"]["profiles"] = json!([{
+            "id": "coordinator",
+            "executable": worker,
+            "args": [],
+            "parser": "claude",
+            "permission_mode": "read_only",
+            "environment": {"AC_CHAT_CAPTURE": capture, "AC_CHAT_RELEASE": release}
+        }]);
+        s["config"]["coordinator"] = json!("coordinator");
+    });
     let old = f.snapshot();
     f.edit_saved(|s| {
         s["chat_result"] = json!("chat-previous.json");
@@ -36,9 +48,20 @@ fn completed_goal_chat_survives_bookkeeping_drift_and_uses_current_context() {
         .call(json!({"kind":"chat","revision":old["chat_revision"],"text":"What finished?"}))
         .expect("read-only chat must not require a manual refresh");
     assert_eq!(accepted["kind"], "chat");
-    assert!(
-        f.call(json!({"kind":"chat","revision":old["chat_revision"],"text":"duplicate"}))
-            .is_err(),
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(15);
+    while !capture.exists() {
+        assert!(
+            std::time::Instant::now() < deadline,
+            "chat worker did not capture the prompt"
+        );
+        std::thread::sleep(std::time::Duration::from_millis(25));
+    }
+    let duplicate =
+        f.call(json!({"kind":"chat","revision":old["chat_revision"],"text":"duplicate"}));
+    std::fs::write(&release, []).unwrap();
+    assert_eq!(
+        duplicate.unwrap_err(),
+        agentconductor::ui::messages::text("native.chat_still_answering"),
         "one chat at a time"
     );
     let end = std::time::Instant::now() + std::time::Duration::from_secs(15);

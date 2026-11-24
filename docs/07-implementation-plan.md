@@ -4190,6 +4190,13 @@ Final local acceptance: 45 focused plus 36 broader checks passed; source-only fi
 - [x] Verify: 18 local Rust checks including current-context CLI answer, one-chat slot, stale-write rejection, slow-Git independence, chat history/async behavior, docs and source layout; all-target Clippy/format passed.
 - [x] Completed: manuals/HTML/wiki and evidence limitations recorded, merged in PR 965; #961 closed. Remote CI remains batched.
 
+## #1092 — Deterministic chat concurrency fixture
+
+- [x] Plan: Compare the Windows failures with the completed-Goal concurrency fixture.
+- [x] Task: Replace the mock worker's fixed sleep with a bounded release signal.
+- [x] Verify: Reproduce the assertion failure under controlled delay, pass the same case with the fix, and pass eight focused tests plus eight repeat runs locally.
+- [x] Complete: Publish the linked branch for the 0.2.20 batch. Windows CI verification remains pending.
+
 ## #959 — Automatic merge after reviewed fallback
 
 - [x] Plan: confirm consent mismatch and reviewed fallback in private run evidence; trace requirements through QAS/design.
@@ -4345,3 +4352,14 @@ Version 0.2.18 ships #1074 and #1076 (see CHANGELOG). The current application UI
 ## 0.2.19 release preparation
 
 Version 0.2.19 ships #1079, #1082, #1084, #1085, #1086 and #1088 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe the signed-out Claude usage state and Markdown replies in the coordinator chat.
+
+## #1093 — Coordinator-only profile changes
+
+- [x] Plan: Trace DD-58 from profile save through reviewed execution.
+- [x] Task: Keep coordinator-only read-only arguments out of the task execution comparison.
+- [x] Verify: Reproduce proposal loss before the fix and pass 17 local tests, including exact consent and the worker execution guards.
+- [x] Complete: Prepare the verified issue branch for the 0.2.20 batch.
+
+## 0.2.20 release preparation
+
+Version 0.2.20 ships #1092 and #1093 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs.

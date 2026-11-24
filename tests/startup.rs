@@ -99,17 +99,29 @@ fn read_only_planning_is_reviewed_and_exact_consent_starts_only_registered_profi
     let review = std::path::PathBuf::from(ready["proposal"]["directory"].as_str().unwrap())
         .join("review.json");
     let original = std::fs::read(&review).unwrap();
-    let mut changed: agentconductor::plan::Plan = serde_json::from_slice(&original).unwrap();
-    changed.agents[0].executable = "unregistered-executable".into();
-    std::fs::write(&review, serde_json::to_vec_pretty(&changed).unwrap()).unwrap();
-    let altered = snapshot(&startup);
-    assert!(
-        mutate(
+    for (field, replacement) in [
+        ("executable", serde_json::json!("unregistered-executable")),
+        ("args", serde_json::json!(["altered-worker-args"])),
+        ("permission_mode", serde_json::json!("read_only")),
+    ] {
+        let mut changed: serde_json::Value = serde_json::from_slice(&original).unwrap();
+        assert_ne!(changed["agents"][0][field], replacement, "{field}");
+        changed["agents"][0][field] = replacement;
+        std::fs::write(&review, serde_json::to_vec_pretty(&changed).unwrap()).unwrap();
+        let altered = snapshot(&startup);
+        let error = mutate(
             &startup,
-            serde_json::json!({"kind":"start","digest":altered["proposal"]["digest"]})
+            serde_json::json!({"kind":"start","digest":altered["proposal"]["digest"]}),
         )
-        .is_err()
-    );
+        .unwrap_err();
+        assert_eq!(
+            error,
+            agentconductor::ui::messages::text(
+                "native.reviewed_plan_changed_the_registered_profiles_or_goal"
+            ),
+            "{field}"
+        );
+    }
     std::fs::write(&review, original).unwrap();
     let tasks = ready["proposal"]["plan"]["tasks"].clone();
     mutate(
@@ -125,11 +137,38 @@ fn read_only_planning_is_reviewed_and_exact_consent_starts_only_registered_profi
         .is_err()
     );
     let reviewed = snapshot(&startup);
+    let mut profiles = reviewed["config"]["profiles"].clone();
+    let planner = profiles
+        .as_array_mut()
+        .unwrap()
+        .iter_mut()
+        .find(|p| p["id"] == "planner")
+        .unwrap();
+    planner["read_only_args"] = serde_json::json!(["plan", "--readonly"]);
+    mutate(
+        &startup,
+        serde_json::json!({"kind":"save_profiles","profiles":profiles}),
+    )
+    .unwrap();
+    let after_profile_save = snapshot(&startup);
+    assert_eq!(
+        after_profile_save["proposal"]["digest"], reviewed["proposal"]["digest"],
+        "coordinator-only args preserve the exact reviewed plan"
+    );
     let accepted = mutate(
         &startup,
         serde_json::json!({"kind":"start","digest":reviewed["proposal"]["digest"]}),
     )
     .unwrap();
+    let run_path = std::path::Path::new(accepted["run"].as_str().unwrap());
+    let coordinator: agentconductor::plan::AgentProfile = serde_json::from_slice(
+        &std::fs::read(agentconductor::native_guard::orchestrator_path(run_path)).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(
+        coordinator.read_only_args,
+        Some(vec!["plan".into(), "--readonly".into()])
+    );
     let completed = wait(&startup);
     assert_eq!(completed["job"]["state"], "completed");
     let report =
