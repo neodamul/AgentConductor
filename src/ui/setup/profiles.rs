@@ -142,12 +142,13 @@ pub(super) fn carry_over(profiles: &mut [AgentProfile], stored: &[AgentProfile])
     }
 }
 
-/// What a plan was reviewed against: every agent setting except its observed catalog.
+/// Agent settings that bind task execution consent. Quota refresh and coordinator-only args can change independently.
 pub(super) fn execution_view(agents: &[AgentProfile]) -> Result<Vec<u8>, String> {
     let mut agents = agents.to_vec();
     agents.iter_mut().for_each(|a| {
         a.catalog = None;
         a.quota_refresh_minutes = 5;
+        a.read_only_args = None;
     });
     serde_json::to_vec(&agents).map_err(|e| e.to_string())
 }
