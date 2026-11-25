@@ -406,6 +406,7 @@ Trace: R-104 -> BG-59 -> SF-91 -> UC-94 -> FR-89 -> QAS-100 -> DD-112. Source: u
 
 ### R-105 Coordinator final step in the task list
 The Agent Room task list shows the step the coordinator runs after the tasks, integration verification of the combined result, as its own entry with its status (pending, running, completed, failed) and which task tests failed, so a run that fails after every task completed shows why without opening other views.
+For a planned Red test that exits zero after checking the expected failure, the coordinator can accept sufficient test evidence before the operator approves delivery.
 Trace: R-105 -> BG-60 -> SF-92 -> UC-95 -> FR-90 -> QAS-101 -> DD-113. Source: user request, 2026-10-13.
 
 ### R-106 Decide a live tool request from its window

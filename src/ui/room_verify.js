@@ -2,6 +2,13 @@
 // Stop and a disabled "wait for verification" button; no tabs, no direction field, no status pill inside the card.
 function isVerifying(r) { return r.state === 'running' && r.tasks.length > 0 && r.tasks.every(t => t.status === 'completed'); }
 function isFailedVerification(r) { return r.state==='failed'&&r.tasks.length>0&&r.tasks.every(t=>t.status==='completed')&&r.tests.some(t=>!(t.passed??(t.exit_code===0&&!t.timed_out))); }
+// The Room shows verification failures without changing the worker status used for recovery.
+function roomTaskStatus(r, task) {
+  if (task.status === 'completed' && r.tests.some(test => test.task === task.id && test.passed === false)) return 'verification_failed';
+  return task.status;
+}
+function taskStatusLabel(status) { return status === 'verification_failed' ? acMessage('room.task_verification_failed') : statusLabel(status); }
+function taskStatusTone(status) { return statusTone(status === 'verification_failed' ? 'failed' : status); }
 function renderVerifyFooter(r) {
   const card = document.querySelector('#run-screen .room-card'), footer = $('verify-footer');
   const active = coordinatorView && isVerifying(r);

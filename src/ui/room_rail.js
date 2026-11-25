@@ -8,7 +8,7 @@ function chevron() {
   path.setAttribute('d', 'M9 5l7 7-7 7'); svg.append(path); return svg;
 }
 function renderRail(r, selected) {
-  const ph = snapshot.phase, list = ph?.phases || [], pi = list.findIndex(x => x.id === ph?.phase), finished = r.tasks.filter(t => t.status === 'completed').length;
+  const ph = snapshot.phase, list = ph?.phases || [], pi = list.findIndex(x => x.id === ph?.phase), finished = r.tasks.filter(t => roomTaskStatus(r,t) === 'completed').length;
   AC_I18N.bind($('rail-current'), () => acMessage("room.rail_current", { value1: pi < 0 ? 1 : pi + 1, value2: pi < 0 ? 1 : list.length, value3: Math.min(r.tasks.length, selected + 1), value4: r.tasks.length }));
   AC_I18N.bind($('rail-done'), () => acMessage("room.rail_done", { value1: finished, value2: r.tasks.length }));
   AC_I18N.bind($('rail-phase-name'), () => (pi < 0 ? '1. ' + taskLine(r.plan.goal) : (pi + 1) + '. ' + (list[pi].name || ph.phase)));

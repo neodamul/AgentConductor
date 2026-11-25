@@ -4363,3 +4363,17 @@ Version 0.2.19 ships #1079, #1082, #1084, #1085, #1086 and #1088 (see CHANGELOG)
 ## 0.2.20 release preparation
 
 Version 0.2.20 ships #1092 and #1093 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs.
+
+## #1095 — Task verification verdicts
+
+- [x] Plan: Trace UC-95 and DD-113 from workflow verification to the Room snapshot, task rail and details.
+- [x] Task: Display the failed verification on the corresponding task.
+- [x] Verify: Reproduce the discrepancy in Chromium, then pass light and dark rendering checks plus 16 native workflow tests for verification and recovery.
+- [x] Complete: Prepare the verified issue branch for the 0.2.21 batch.
+
+### #1095 — Coordinator review of zero-exit Red evidence
+
+- [x] Plan: Amend UC-95, QAS-101 and DD-113 to permit evidence-based Red review with the existing merge gate.
+- [x] Task: Route eligible zero-exit Red tests to the coordinator and bind acceptance to run evidence.
+- [x] Verify: Reproduced the original acceptance rejection. Passed 30 local Rust checks covering automatic and saved reviews, incomplete or changed evidence, the public Room verdict and the human merge gate.
+- [x] Complete: Prepare the follow-up commit for the 0.2.21 batch.

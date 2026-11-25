@@ -26,8 +26,9 @@ pub(super) fn public_report(report: &Report) -> Result<serde_json::Value, String
     // DD-113: why the orchestrator's integration verification failed, readable in the room.
     if let Some(tests) = value.get_mut("tests").and_then(|t| t.as_array_mut()) {
         for (test, source) in tests.iter_mut().zip(&report.tests) {
-            test["passed"] = serde_json::json!(report.test_passed(source));
-            if !report.test_passed(source) {
+            let passed = report.test_passed(source);
+            test["passed"] = serde_json::json!(passed);
+            if !passed {
                 let read = |path| tail(path, 2048).unwrap_or_default();
                 let output =
                     failure_output::failure_output(&read(&source.stderr), &read(&source.stdout));

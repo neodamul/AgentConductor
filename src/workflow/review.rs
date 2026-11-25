@@ -35,6 +35,42 @@ pub(super) fn candidate_verified(report: &Report) -> bool {
         && report.tasks.iter().all(|t| t.status == "completed")
 }
 
+pub(super) const PENDING_RED_REVIEW: &str =
+    "integration verification requires coordinator review for zero-exit Red tests";
+
+fn pending_red_review(report: &Report) -> bool {
+    report.state == "failed" && report.error.as_deref() == Some(PENDING_RED_REVIEW)
+}
+
+fn validate_red_acceptance(
+    report: &Report,
+    proposal: &crate::coordinator::ReviewProposal,
+) -> Result<(), String> {
+    if pending_red_review(report) && proposal.verdict == crate::coordinator::Verdict::Accept {
+        for test in report
+            .tests
+            .iter()
+            .filter(|test| report.zero_exit_red(test))
+        {
+            if !proposal.evidence.contains(&format!("test:{}", test.task)) {
+                return Err(format!(
+                    "acceptance must cite test evidence for {}",
+                    test.task
+                ));
+            }
+            if fs::metadata(&test.stdout).map_err(|e| e.to_string())?.len() == 0
+                && fs::metadata(&test.stderr).map_err(|e| e.to_string())?.len() == 0
+            {
+                return Err(format!(
+                    "zero-exit Red test produced no evidence for {}",
+                    test.task
+                ));
+            }
+        }
+    }
+    Ok(())
+}
+
 pub(super) fn known_review_evidence(report: &Report) -> Vec<String> {
     let mut ids = report
         .tasks
@@ -74,14 +110,29 @@ pub(super) fn collect_review_sources(
 }
 
 pub(super) fn evidence_excerpt(path: &Path, limit: usize) -> Result<serde_json::Value, String> {
+    log_excerpt(path, limit, false)
+}
+
+fn log_excerpt(path: &Path, limit: usize, include_tail: bool) -> Result<serde_json::Value, String> {
+    use std::io::{Seek, SeekFrom};
+    let mut file = fs::File::open(path).map_err(|e| e.to_string())?;
     let mut bytes = vec![];
-    fs::File::open(path)
-        .map_err(|e| e.to_string())?
+    (&mut file)
         .take((limit + 1) as u64)
         .read_to_end(&mut bytes)
         .map_err(|e| e.to_string())?;
     let truncated = bytes.len() > limit;
     bytes.truncate(limit);
+    if truncated && include_tail {
+        let tail = limit / 2;
+        bytes.truncate(limit - tail);
+        bytes.extend_from_slice(b"\n[... omitted ...]\n");
+        file.seek(SeekFrom::End(-(tail as i64)))
+            .map_err(|e| e.to_string())?;
+        file.take(tail as u64)
+            .read_to_end(&mut bytes)
+            .map_err(|e| e.to_string())?;
+    }
     Ok(
         serde_json::json!({"path":path,"sha256":file_digest(path)?,"text":String::from_utf8_lossy(&bytes),"truncated":truncated}),
     )
