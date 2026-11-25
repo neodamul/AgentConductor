@@ -4349,6 +4349,13 @@ Version 0.2.18 ships #1074 and #1076 (see CHANGELOG). The current application UI
 - [x] Verify: Pass 16 focused Rust tests, the chat script test and both browser themes. Check unchanged offline manuals and pass Clippy.
 - [x] Complete: Prepare the verified issue branch for the coordinated 0.2.19 batch.
 
+## #1096 — Attach the Room stepper to its card
+
+- [x] Plan: Trace UC-202, QAS-209 and DD-222 to the stepper moved into the Room.
+- [x] Task: Remove the Room-only bottom margin.
+- [x] Verify: Reproduce the 10px gap and confirm zero gap at 840px and 1280px in both themes. Room tab navigation regression also passes.
+- [x] Complete: Prepare the verified issue branch for the 0.2.21 batch.
+
 ## 0.2.19 release preparation
 
 Version 0.2.19 ships #1079, #1082, #1084, #1085, #1086 and #1088 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe the signed-out Claude usage state and Markdown replies in the coordinator chat.
