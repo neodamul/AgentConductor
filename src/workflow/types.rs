@@ -60,6 +60,9 @@ pub struct TestReport {
     /// GitHub #730: how long the integration test ran, shown on the verify card.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub duration_ms: Option<u64>,
+    /// SHA-256 of the evidence-bound coordinator acceptance for a zero-exit Red wrapper.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub red_review_sha256: Option<String>,
 }
 #[derive(Clone, Serialize, Deserialize)]
 pub struct WorkspaceCheckpoint {
@@ -106,15 +109,31 @@ impl Report {
             .iter()
             .find(|task| task.id == test.task)
             .is_some_and(|task| {
-                task.test_passed(test.exit_code, test.timed_out, test.termination_signal)
-                    && (!task.test_expect_failure
-                        || self.candidate.as_ref().is_some_and(|candidate| {
-                            candidate.changed.iter().any(|path| {
-                                task.paths
-                                    .iter()
-                                    .any(|scope| crate::plan::overlaps(scope, path))
-                            })
-                        }))
+                (task.test_passed(test.exit_code, test.timed_out, test.termination_signal)
+                    && (!task.test_expect_failure || self.test_has_owned_changes(task)))
+                    || (test.red_review_sha256.is_some() && self.zero_exit_red(test))
             })
+    }
+
+    pub(super) fn zero_exit_red(&self, test: &TestReport) -> bool {
+        test.exit_code == Some(0)
+            && !test.timed_out
+            && test.termination_signal.is_none()
+            && test.duration_ms.is_some()
+            && self.plan.tasks.iter().any(|task| {
+                task.id == test.task
+                    && task.test_expect_failure
+                    && self.test_has_owned_changes(task)
+            })
+    }
+
+    fn test_has_owned_changes(&self, task: &crate::plan::Task) -> bool {
+        self.candidate.as_ref().is_some_and(|candidate| {
+            candidate.changed.iter().any(|path| {
+                task.paths
+                    .iter()
+                    .any(|scope| crate::plan::overlaps(scope, path))
+            })
+        })
     }
 }

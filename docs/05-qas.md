@@ -411,7 +411,8 @@ Measure: Claude stream-json, Codex JSONL and OpenCode events render as text, "鈼
 ### QAS-101 Coordinator final step in the task list
 The Agent Room task list shows the step the coordinator runs after the tasks, integration verification of the combined result, as its own entry with its status (pending, running, completed, failed) and which task tests failed, so a run that fails after every task completed shows why without opening other views.
 Trace: R-105 -> BG-60 -> SF-92 -> UC-95 -> FR-90 -> QAS-101 -> DD-113. Source: user request, 2026-10-13.
-Measure: With all tasks completed and t01's test failing on the combined result, the list ends with Coordinator 路 Integration verification 路 Failed: t01-requirements-doc in red; selecting it opens Changes & tests; with all tests passing it shows Completed.
+Measure: With all tasks completed and t01's test failing on the combined result, the list ends with Coordinator 路 Integration verification 路 Failed: t01-requirements-doc in red; selecting it opens Changes & tests; with all tests passing it shows Completed. In #1095, both an unexpected zero exit and an ordinary nonzero failure mark the corresponding task as Verification failed in the rail and task detail.
+An eligible Red wrapper with a zero exit reaches human approval only after coordinator acceptance citing its test evidence. Ordinary failures, stopped or timed-out tests, missing owned changes and stale test evidence remain blocked.
 
 ### QAS-102 Decide a live tool request from its window
 When a tool request window opens while the run is working, Allow once and Deny are available at once, without closing the window with Decide later and deciding again from the Tool requests list.
@@ -513,6 +514,7 @@ Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Sourc
 ### QAS-209 One goal screen with a single six-step stepper
 Stimulus: the operator opens a run from the Workspace screen and uses tabs 1 to 6. Response: one stepper is visible on both screens, the current step is selected, and tabs 4-6 are disabled while no run exists. Measure: no second step strip exists in the page and the selected tab always matches the run stage.
 Amendment #439 (2026-11-04): Given an OpenCode profile without its desktop application, native snapshots and both avatar factories use the pinned SVG locally. Verify source revision/SHA-256, a valid inline mark in light/dark at 840/1280px, bounded data URLs and unchanged custom fallback.
+For #1096, the Room stepper bottom and card top share a boundary in light and dark themes at 840px and 1280px.
 Trace: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. Source: user, approved design #387, 2026-11-04.
 
 ### QAS-121 Documentation language and release consistency

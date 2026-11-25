@@ -15,9 +15,20 @@ for(const theme of ['light','dark']){
  await until("!document.getElementById('start-tab-tasks').disabled");
  await b.eval("document.getElementById('start-tab-tasks').click()");
  await until("!!document.querySelector('#review-summary .ok')");
+ assert.equal(await b.eval("document.querySelector('#sessions .session:not(.final-step) .outline-state-badge').dataset.state"),'completed');
  assert.equal(await b.eval("document.getElementById('run-error').hidden"),true);
  await b.eval("SIM.room.report.state='failed';SIM.room.report.tests[0].passed=false;SIM.room.report.tests[0].exit_code=0;SIM.room.report.error='integration test failed: expected failure';SIM.room.revision='unexpected';");
  await until("!!document.querySelector('.verify-fail')&&!document.getElementById('run-error').hidden");
+ for(const [expectFailure,exitCode] of [[true,0],[false,7]]){
+   await b.eval(`SIM.room.report.plan.tasks[0].test_expect_failure=${expectFailure};SIM.room.report.tests[0].exit_code=${exitCode};SIM.room.revision='failed-${exitCode}';`);
+   await until("!!document.querySelector('#sessions .session:not(.final-step) .outline-state-badge')");
+   assert.equal(await b.eval("document.querySelector('#sessions .session:not(.final-step) .outline-state-badge').dataset.state"),'error');
+   assert.equal(await b.eval("document.querySelector('#sessions .session:not(.final-step) .outline-state-badge').textContent"),await b.eval("acMessage('room.task_verification_failed')"));
+   assert.equal(await b.eval("document.getElementById('rail-done').textContent"),await b.eval("acMessage('room.rail_done',{value1:0,value2:1})"));
+   await b.eval("document.querySelector('#sessions .session:not(.final-step) button').click()");
+   await until("document.getElementById('task-status').textContent===acMessage('room.task_verification_failed')");
+ }
+
 
  await b.goto(pathToFileURL(file).href);
  await b.eval("SIM.home.proposal=SIM.proposal('ready');SIM.home.proposal.plan.tasks[0].test_expect_failure=true;");
@@ -26,6 +37,6 @@ for(const theme of ['light','dark']){
  await b.eval("document.getElementById('start-tab-review').click();const p=document.querySelector('#start-tasks [data-key=prompt]');p.value+=' reviewed';p.dispatchEvent(new Event('input',{bubbles:true}));document.getElementById('start-edit').click();");
  await until("SIM.log.some(e=>e.kind==='edit')");
  assert.equal(await b.eval("SIM.log.find(e=>e.kind==='edit').p.tasks[0].test_expect_failure"),true,'plan editing preserves the expected-failure marker');
- console.log(theme,'Red pass renders as success; unexpected pass exposes failure and recovery');
+ console.log(theme,'Expected Red passes; unexpected zero and ordinary nonzero exits expose task verification failure');
 }
 }finally{if(b)await b.close();fs.rmSync(dir,{recursive:true,force:true});}})().catch(e=>{console.error(e);process.exitCode=1;});

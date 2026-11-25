@@ -417,7 +417,9 @@ Trace: R-104 -> BG-59 -> SF-91 -> UC-94 -> FR-89 -> QAS-100 -> DD-112. Source: u
 
 ### UC-95 Coordinator final step in the task list
 The Agent Room task list shows the step the coordinator runs after the tasks, integration verification of the combined result, as its own entry with its status (pending, running, completed, failed) and which task tests failed, so a run that fails after every task completed shows why without opening other views.
+A task whose worker completed but whose integration test failed shows a distinct verification failure in its row and task detail. The coordinator still owns the integration result and recovery.
 Trace: R-105 -> BG-60 -> SF-92 -> UC-95 -> FR-90 -> QAS-101 -> DD-113. Source: user request, 2026-10-13.
+For a planned Red check whose wrapper exits zero, the coordinator can accept the frozen test evidence before any human merge approval.
 
 ### UC-96 Decide a live tool request from its window
 When a tool request window opens while the run is working, Allow once and Deny are available at once, without closing the window with Decide later and deciding again from the Tool requests list.
@@ -503,6 +505,7 @@ Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Sourc
 ### UC-202 One goal screen with a single six-step stepper
 The operator prepares a goal in steps 1-3, starts the run, and sees steps 4-6 advance in the same stepper; from the Room, a step 1-3 tab returns to that Workspace panel, and a step 4-6 tab is available only while a run exists.
 Amendment #439 (2026-11-04): After registering OpenCode, the operator recognizes its brand in agent, task and selected-agent surfaces in either theme, even without its desktop app. Custom registrations retain their current initials.
+In the Room, the numbered tabs meet the task card directly.
 Trace: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. Source: user, approved design #387, 2026-11-04.
 
 Agent action strip: edit, models, remove and reorder remain distinct, readable targets at both reference widths. Reducing button padding must preserve tooltips, focus, disabled states and the icon content (GitHub #424).

@@ -98,7 +98,27 @@ async fn review_with(
         }
         let id = format!("test:{}", test.task);
         evidence_ids.push(id.clone());
-        tests.push(serde_json::json!({"evidence_id":id,"passed":report.test_passed(test),"exit_code":test.exit_code,"timed_out":test.timed_out,"stdout":evidence_excerpt(&test.stdout,4096)?,"stderr":evidence_excerpt(&test.stderr,4096)?}));
+        let zero_exit_red = pending_red_review(&report) && report.zero_exit_red(test);
+        let mut evidence = serde_json::json!({
+            "evidence_id": id,
+            "passed": report.test_passed(test),
+            "exit_code": test.exit_code,
+            "timed_out": test.timed_out,
+            "stdout": log_excerpt(&test.stdout, 4096, zero_exit_red)?,
+            "stderr": log_excerpt(&test.stderr, 4096, zero_exit_red)?,
+        });
+        if zero_exit_red {
+            evidence["zero_exit_red"] = true.into();
+            evidence["test_command"] = serde_json::json!(
+                report
+                    .plan
+                    .tasks
+                    .iter()
+                    .find(|task| task.id == test.task)
+                    .map(|task| &task.test_command)
+            );
+        }
+        tests.push(evidence);
     }
     let diff = if let Some(hash) = &report.diff_hash {
         let path = dir.join("diff.patch");
@@ -125,7 +145,7 @@ async fn review_with(
         return Err("review context exceeds 128 KiB; reduce excerpts/scopes".into());
     }
     let previous_state = report.state.clone();
-    let verified = candidate_verified(&report);
+    let verified = candidate_verified(&report) || pending_red_review(&report);
     let task_ids = report
         .tasks
         .iter()
@@ -200,7 +220,10 @@ async fn review_with(
             "Stopped coordinator review revoked approval",
         )?;
     }
-    match result {
+    match result.and_then(|proposal| {
+        validate_red_acceptance(&report, &proposal)?;
+        Ok(proposal)
+    }) {
         Ok(proposal) => {
             fs::write(
                 artifacts.join("proposal.json"),
@@ -212,7 +235,14 @@ async fn review_with(
             store.record("review_receipt",&serde_json::json!({"round":round,"coordinator":coordinator,"proposal":proposal,"proposal_sha256":proposal_hash,"binding":source_binding,"sources":sources}),"Saved review is bound to original task state and exact evidence hashes")?;
             store.record("coordinator_review",&serde_json::json!({"coordinator":coordinator,"round":round,"proposal":proposal,"artifacts":artifacts,"apply":apply}),"Validated coordinator quality opinion; no human approval created")?;
             if apply && report.state != "stopped" {
-                apply_typed_review(dir, &mut report, &proposal, &mut store)?;
+                let accepting_red = pending_red_review(&report)
+                    && proposal.verdict == crate::coordinator::Verdict::Accept;
+                let applied = apply_typed_review(dir, &mut report, &proposal, &mut store);
+                if accepting_red && let Err(error) = &applied {
+                    report.review_error = Some(error.clone());
+                    save(&mut store, dir, &report)?;
+                }
+                applied?;
                 store.record(
                     "review_applied",
                     &serde_json::json!({"round":round,"proposal_sha256":proposal_hash}),

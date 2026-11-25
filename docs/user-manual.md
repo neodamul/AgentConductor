@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.2.20** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.2.21** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.2.20 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
+The app version is beside the title. Version 0.2.21 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
 
 ### 1.1a Application updates
 
@@ -249,7 +249,9 @@ When the run waits for approval, the task list moves to **Integration verificati
 Then use **Merge approved candidate** for Git, **Accept changes** for direct ordinary-folder execution, or **Apply changes** for legacy private-copy runs. Rejecting a direct-folder candidate restores owned files to their recorded baseline only when later manual edits would not be overwritten.
 Any changed evidence revokes approval. Only the human approves final integration.
 
-When all tasks complete but integration verification fails, the recorded coordinator can review evidence, revise affected tasks and rerun them. Repair stops after three review rounds or an invalid response; then revise or reassign the work yourself.
+When all tasks complete but integration verification fails, the recorded coordinator can review evidence, revise affected tasks and rerun them. Repair stops after three review rounds or an invalid response; then revise or reassign the work yourself. A task that finished but whose test failed on the combined result shows **Verification failed** in the task list and task detail.
+
+A task planned as a failing (Red) test passes on a nonzero exit. If its command exits 0, for example a wrapper that checks the failure itself, the run stays failed until the coordinator reviews the output and accepts it with that test cited as evidence. Other failing tests cannot be accepted this way, changed logs invalidate the acceptance, and you still approve the merge yourself even when automatic merge is on.
 
 In Review and merge, click a changed file to expand its diff below the filename and added/deleted line counts. Click it again to collapse. Background refresh keeps an unchanged file open and preserves keyboard focus. This uses the same per-file view as the finished-result popup; approval and merge still use the captured evidence.
 

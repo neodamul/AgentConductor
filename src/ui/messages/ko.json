@@ -666,6 +666,7 @@
   "room.targeted_revision_previous_evidence_is_retained": "수정 요청 · 이전 증거는 보존됨",
   "room.task_duration": "작업 시간",
   "room.task_inspector": "작업 상세",
+  "room.task_verification_failed": "검증 실패",
   "room.task_tests_passed": "작업 테스트 {value1}개 통과",
   "room.tasks_completed": "완료한 작업: {value1}/{value2}",
   "room.tasks_completed_7fe264": "완료된 작업",

@@ -167,10 +167,12 @@ pub(super) async fn finish(
                 stdout: process.stdout,
                 stderr: process.stderr,
                 duration_ms: Some(started.elapsed().as_millis() as u64),
+                red_review_sha256: None,
             };
-            let passed = report.test_passed(&evidence) && !process.stopped;
+            let can_continue = !process.stopped
+                && (report.test_passed(&evidence) || report.zero_exit_red(&evidence));
             report.tests.push(evidence);
-            if !passed {
+            if !can_continue {
                 return Err(format!(
                     "integration test failed: {} (expected {})",
                     task.id,
@@ -242,10 +244,14 @@ pub(super) async fn finish(
                 stdout,
                 stderr,
                 duration_ms: None,
+                red_review_sha256: None,
             });
             return Err(format!(
                 "integration verification failed: {path} records a blocking issue for {owner}"
             ));
+        }
+        if report.tests.iter().any(|test| report.zero_exit_red(test)) {
+            return Err(super::super::review::PENDING_RED_REVIEW.into());
         }
         Ok::<_, String>(())
     }

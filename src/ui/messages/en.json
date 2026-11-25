@@ -666,6 +666,7 @@
   "room.targeted_revision_previous_evidence_is_retained": "Targeted revision · previous evidence is retained",
   "room.task_duration": "Task duration",
   "room.task_inspector": "Task inspector",
+  "room.task_verification_failed": "Verification failed",
   "room.task_tests_passed": "{value1} task tests passed",
   "room.tasks_completed": "Tasks completed: {value1}/{value2}",
   "room.tasks_completed_7fe264": "Tasks completed",

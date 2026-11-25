@@ -1,3 +1,4 @@
+Recaptured 2026-11-25 for 0.2.21: seven current application UI sample renders refreshed with scripts/capture_docs.cjs, including the 0.2.21 version. Deterministic browser renders, not authenticated native-session evidence.
 Recaptured 2026-11-24 for 0.2.20: seven current application UI sample renders refreshed with scripts/capture_docs.cjs, including the 0.2.20 version. Deterministic browser renders, not authenticated native-session evidence.
 Recaptured 2026-11-23 for 0.2.19: seven current application UI sample renders refreshed with scripts/capture_docs.cjs, including the 0.2.19 version. Deterministic browser renders, not authenticated native-session evidence.
 Recaptured 2026-11-19 for 0.2.18: seven current application UI sample renders refreshed with scripts/capture_docs.cjs, including the 0.2.18 version. Deterministic browser renders, not authenticated native-session evidence.

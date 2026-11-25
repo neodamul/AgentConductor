@@ -163,6 +163,7 @@
 
 - [Goal planning confirmation](goal-planning-confirmation.md) — inherited defaults, explicit planner evidence and stale-context rejection (#429).
 
+- [Task verification verdicts](task-verification-verdicts.md): native test outcomes and separate worker and verification statuses in the Room.
 - [Milestone release verification](release-verification.md) — truthful evidence, responsive matrix, Goal safety and non-publishing release gate (#420).
 - [Workspace scroll clearance](workspace-scroll-741.md): Windows fractional-pixel footer overlap, clearance assertion, and minimal scroll padding fix (#741).
 - [Application menu and Goal list](application-menu-and-goal-list.md): grouped navigation, keyboard behavior, expandable Goal text and plan-source visibility (#750–#753).
