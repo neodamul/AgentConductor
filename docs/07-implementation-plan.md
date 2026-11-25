@@ -4384,3 +4384,7 @@ Version 0.2.20 ships #1092 and #1093 (see CHANGELOG). The current application UI
 - [x] Task: Route eligible zero-exit Red tests to the coordinator and bind acceptance to run evidence.
 - [x] Verify: Reproduced the original acceptance rejection. Passed 30 local Rust checks covering automatic and saved reviews, incomplete or changed evidence, the public Room verdict and the human merge gate.
 - [x] Complete: Prepare the follow-up commit for the 0.2.21 batch.
+
+## 0.2.21 release preparation
+
+Version 0.2.21 ships #1095 and #1096 (see CHANGELOG). The batch keeps the original reviewer instruction for ordinary integration failures. The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe failed task verification and coordinator review of zero-exit Red tests.

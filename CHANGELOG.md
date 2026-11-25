@@ -4,6 +4,12 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.2.21
+
+- A task whose worker finished but whose test failed on the combined result shows **Verification failed** in the task list, task detail and coordinator board, and the test list uses the native verdict, including for planned Red tests (#1095).
+- A planned Red test whose command exits 0 can pass after the coordinator reviews its output and cites it as evidence. Ordinary failures cannot be accepted this way, changed logs invalidate the acceptance, and a person still approves the merge (#1095).
+- The numbered steps in the Agent Room sit directly on the card again, without the gap (#1096).
+
 ## v0.2.20
 
 - Adding or changing only a coordinator profile's read-only arguments after a plan is reviewed no longer blocks **Approve and run**; changes to worker executable, arguments or permission still require a new review (#1093).
