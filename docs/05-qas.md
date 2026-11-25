@@ -513,6 +513,7 @@ Trace: R-209 -> BG-164 -> SF-197 -> UC-201 -> FR-203 -> QAS-208 -> DD-221. Sourc
 ### QAS-209 One goal screen with a single six-step stepper
 Stimulus: the operator opens a run from the Workspace screen and uses tabs 1 to 6. Response: one stepper is visible on both screens, the current step is selected, and tabs 4-6 are disabled while no run exists. Measure: no second step strip exists in the page and the selected tab always matches the run stage.
 Amendment #439 (2026-11-04): Given an OpenCode profile without its desktop application, native snapshots and both avatar factories use the pinned SVG locally. Verify source revision/SHA-256, a valid inline mark in light/dark at 840/1280px, bounded data URLs and unchanged custom fallback.
+For #1096, the Room stepper bottom and card top share a boundary in light and dark themes at 840px and 1280px.
 Trace: R-210 -> BG-165 -> SF-198 -> UC-202 -> FR-204 -> QAS-209 -> DD-222. Source: user, approved design #387, 2026-11-04.
 
 ### QAS-121 Documentation language and release consistency
