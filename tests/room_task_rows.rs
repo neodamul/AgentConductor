@@ -35,9 +35,9 @@ fn brand_marks_sit_in_a_bordered_container_with_the_specified_mark_size() {
 #[test]
 fn the_avatar_border_carries_the_task_status() {
     // GitHub #400: the avatar carries the status as a 1.5px border and only a running one pulses.
-    assert!(
-        ROOM.contains("symbol.classList.add('outline-agent','st-'+statusLight(session.status))")
-    );
+    // #1095: a failed verification turns the border red although the worker completed.
+    assert!(ROOM.contains("light=status==='verification_failed'?'red':statusLight(status)"));
+    assert!(ROOM.contains("symbol.classList.add('outline-agent','st-'+light)"));
     assert!(ROOM.contains("if(session.status==='running')symbol.classList.add('running')"));
     assert!(!ROOM.contains("agent-light"), "the separate dot is gone");
     assert!(!CSS.contains("agent-light"), "and so are its rules");
