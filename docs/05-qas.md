@@ -412,6 +412,7 @@ Measure: Claude stream-json, Codex JSONL and OpenCode events render as text, "�
 The Agent Room task list shows the step the coordinator runs after the tasks, integration verification of the combined result, as its own entry with its status (pending, running, completed, failed) and which task tests failed, so a run that fails after every task completed shows why without opening other views.
 Trace: R-105 -> BG-60 -> SF-92 -> UC-95 -> FR-90 -> QAS-101 -> DD-113. Source: user request, 2026-10-13.
 Measure: With all tasks completed and t01's test failing on the combined result, the list ends with Coordinator · Integration verification · Failed: t01-requirements-doc in red; selecting it opens Changes & tests; with all tests passing it shows Completed. In #1095, both an unexpected zero exit and an ordinary nonzero failure mark the corresponding task as Verification failed in the rail and task detail.
+An eligible Red wrapper with a zero exit reaches human approval only after coordinator acceptance citing its test evidence. Ordinary failures, stopped or timed-out tests, missing owned changes and stale test evidence remain blocked.
 
 ### QAS-102 Decide a live tool request from its window
 When a tool request window opens while the run is working, Allow once and Deny are available at once, without closing the window with Decide later and deciding again from the Tool requests list.

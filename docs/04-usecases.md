@@ -419,6 +419,7 @@ Trace: R-104 -> BG-59 -> SF-91 -> UC-94 -> FR-89 -> QAS-100 -> DD-112. Source: u
 The Agent Room task list shows the step the coordinator runs after the tasks, integration verification of the combined result, as its own entry with its status (pending, running, completed, failed) and which task tests failed, so a run that fails after every task completed shows why without opening other views.
 A task whose worker completed but whose integration test failed shows a distinct verification failure in its row and task detail. The coordinator still owns the integration result and recovery.
 Trace: R-105 -> BG-60 -> SF-92 -> UC-95 -> FR-90 -> QAS-101 -> DD-113. Source: user request, 2026-10-13.
+For a planned Red check whose wrapper exits zero, the coordinator can accept the frozen test evidence before any human merge approval.
 
 ### UC-96 Decide a live tool request from its window
 When a tool request window opens while the run is working, Allow once and Deny are available at once, without closing the window with Decide later and deciding again from the Tool requests list.

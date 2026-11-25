@@ -4370,3 +4370,10 @@ Version 0.2.20 ships #1092 and #1093 (see CHANGELOG). The current application UI
 - [x] Task: Display the failed verification on the corresponding task.
 - [x] Verify: Reproduce the discrepancy in Chromium, then pass light and dark rendering checks plus 16 native workflow tests for verification and recovery.
 - [x] Complete: Prepare the verified issue branch for the 0.2.21 batch.
+
+### #1095 — Coordinator review of zero-exit Red evidence
+
+- [x] Plan: Amend UC-95, QAS-101 and DD-113 to permit evidence-based Red review with the existing merge gate.
+- [x] Task: Route eligible zero-exit Red tests to the coordinator and bind acceptance to run evidence.
+- [x] Verify: Reproduced the original acceptance rejection. Passed 30 local Rust checks covering automatic and saved reviews, incomplete or changed evidence, the public Room verdict and the human merge gate.
+- [x] Complete: Prepare the follow-up commit for the 0.2.21 batch.

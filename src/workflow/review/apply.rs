@@ -65,6 +65,32 @@ pub(in crate::workflow) fn apply_typed_review(
                 "Blocked quality review requires human intervention",
             )?;
         }
+        crate::coordinator::Verdict::Accept if pending_red_review(report) => {
+            let hash = digest(&serde_json::to_vec(proposal).map_err(|e| e.to_string())?);
+            let mut accepted = report.clone();
+            let mut tasks = vec![];
+            for index in 0..report.tests.len() {
+                if report.zero_exit_red(&report.tests[index]) {
+                    tasks.push(&report.tests[index].task);
+                    accepted.tests[index].red_review_sha256 = Some(hash.clone());
+                }
+            }
+            accepted.state = "waiting_approval".into();
+            accepted.error = None;
+            if tasks.is_empty() || !candidate_verified(&accepted) {
+                return Err("coordinator Red acceptance requires a complete candidate".into());
+            }
+            let fingerprint = super::super::approval::binding(dir, &accepted)?;
+            if dir.join("stop.request").exists() {
+                return Err("run stopped before coordinator Red acceptance".into());
+            }
+            store.record(
+                "red_verification_accepted",
+                &serde_json::json!({"tests": tasks, "proposal_sha256": hash, "fingerprint": fingerprint}),
+                "Coordinator accepted frozen zero-exit Red test evidence",
+            )?;
+            *report = accepted;
+        }
         crate::coordinator::Verdict::Accept => {}
     }
     if stopped {
@@ -113,8 +139,9 @@ pub fn apply_review(dir: &Path, expected: &str) -> Result<(), String> {
             .map(|t| t.id.clone())
             .collect::<Vec<_>>(),
         &known_review_evidence(&report),
-        candidate_verified(&report),
+        candidate_verified(&report) || pending_red_review(&report),
     )?;
+    validate_red_acceptance(&report, &proposal)?;
     apply_typed_review(dir, &mut report, &proposal, &mut store)?;
     store.record(
         "review_applied",
