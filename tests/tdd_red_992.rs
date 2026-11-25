@@ -83,16 +83,37 @@ async fn red_phase_can_be_approved_and_merged_before_the_same_check_turns_green(
 
 #[tokio::test]
 async fn unexpected_red_pass_blocks_approval_and_worker_failure_is_not_red() {
-    let (root, mut plan) = support::setup("shared");
-    plan.tasks[0] = red(plan.tasks[0].clone());
-    let dir = root.join("unexpected-pass");
-    let report = workflow::run(plan.clone(), &root.join("repo"), &dir, 20)
-        .await
-        .unwrap();
-    assert_eq!(report.state, "failed");
-    assert!(report.error.unwrap().contains("expected failure"));
-    assert!(workflow::approve(&dir, &report.candidate.unwrap().commit).is_err());
-    fs::remove_dir_all(root).unwrap();
+    for (expect_failure, exit) in [(true, 0), (false, 7)] {
+        let (root, mut plan) = support::setup("shared");
+        plan.tasks.truncate(1);
+        plan.tasks[0].test_expect_failure = expect_failure;
+        if expect_failure {
+            plan.tasks[0].test_command = vec!["git".into(), "--version".into()];
+        } else {
+            plan.tasks[0].test_command[1] = "fail".into();
+        }
+        let dir = root.join("verify-failure");
+        let report = workflow::run(plan, &root.join("repo"), &dir, 20)
+            .await
+            .unwrap();
+        assert_eq!(report.state, "failed", "{:?}", report.error);
+        assert_eq!(report.tasks[0].status, "completed");
+        assert_eq!(report.tests[0].exit_code, Some(exit));
+        assert!(workflow::approve(&dir, &report.candidate.unwrap().commit).is_err());
+        {
+            let room = agentconductor::ui::Room::open(
+                &dir,
+                std::path::Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+            )
+            .unwrap();
+            let snapshot = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+            assert_eq!(snapshot["report"]["tests"][0]["passed"], false);
+            assert_eq!(snapshot["report"]["tasks"][0]["status"], "completed");
+            let evidence = room.dispatch(br#"{"kind":"evidence"}"#).unwrap();
+            assert_eq!(evidence["test_output"][0]["passed"], false);
+        }
+        fs::remove_dir_all(root).unwrap();
+    }
 
     let (root, mut plan) = support::setup("shared");
     plan.tasks = vec![red(plan.tasks[0].clone())];

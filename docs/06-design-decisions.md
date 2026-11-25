@@ -1175,6 +1175,7 @@ Trace: R-104 -> BG-59 -> SF-91 -> UC-94 -> FR-89 -> QAS-100 -> DD-112. Source: u
 
 ### DD-113 Coordinator final step in the task list
 The room derives the final step from the run report (task statuses, integration test results, run state) and renders it after the task rows with the shared status tones; selecting it loads the candidate review. No new engine state is needed.
+For #1095, the room derives a display-only task status from the native per-test verdict. Keep worker completion available to recovery and verification-stage detection. The task rail, detail and board display a failed verification separately from a failed worker.
 Trace: R-105 -> BG-60 -> SF-92 -> UC-95 -> FR-90 -> QAS-101 -> DD-113. Source: user request, 2026-10-13.
 
 ### DD-114 Decide a live tool request from its window
