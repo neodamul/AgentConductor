@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.2.22** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.2.23** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.2.22 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
+The app version is beside the title. Version 0.2.23 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
 
 ### 1.1a Application updates
 
@@ -81,7 +81,7 @@ Settings has **Agent tools guide…** for optional agentmemory, RTK, Ponytail, G
 ### 1.2a The goal screen
 One screen serves the whole job. A single stepper with six steps — **Workspace**, **Agent roles**, **Plan**, **Tasks**, **Verify** and **Review and merge** — is grouped as Prepare, Run and Finish; the first three open the workspace settings and the last three open the Agent Room while a run exists, and the Room marks the step the run is in. The left panel has two tabs, **Agents** and **Phase·Task**, and the panel icon at the left of the title bar hides or restores it. Task details open in a column on the right with the icon at the right of the title bar; it starts closed every time and never opens by itself.
 
-**Goal list** (next to the goal title) opens the workspace's goals in a panel that slides in from the right, on the workspace screen and in the Agent Room. Each goal row has a red trash button (permanent deletion), a folder button that opens the goal's folder in Finder or Explorer and, for a completed goal, **Result**. The goal text of a row keeps its line breaks, shows two lines and expands with **▸ Expand** (**▾ Collapse** closes it). Deleting asks first: the confirmation names the goal and its exact folder, warns that the whole folder is deleted without backup and without going to the Trash, and **Cancel** is the default. Running work of that goal is stopped before anything is removed; only that goal's own folder is deleted, never the project folder, and a folder that is not owned by the app is refused.
+**Goal list** (next to the goal title) opens the workspace's goals in a panel that slides in from the right, on the workspace screen and in the Agent Room. Each goal row has a red trash button (permanent deletion), a folder button that opens the goal's folder in Finder or Explorer and, for a completed goal, **Result**. The goal text of a row keeps its line breaks, shows two lines and expands with **▸ Expand** (**▾ Collapse** closes it). Deleting asks first: the confirmation names the goal and its exact folder, warns that the whole folder is deleted without backup and without going to the Trash, and **Cancel** is the default. Running work of that goal is stopped before anything is removed; only that goal's own folder is deleted, never the project folder, and a folder that is not owned by the app is refused. Above the rows, search matches goal text, folder names and Jira or Confluence references (for example `jira: ABC-12`). The sort menu orders by creation date (newest first by default) or by Jira key or Confluence page ID, and longer lists show ten goals per page. A new goal with saved Jira or Confluence references includes those IDs in its folder name; when many are attached, the first IDs are kept and the rest are summarized so the name stays short.
 
 When a goal completes, one popup shows where the changes were merged, the changed files, the verification results and the lessons; **Result** in the Goal list or in the Agent Room opens the same popup. The team briefing, the chat with the coordinator and Settings also slide in from the right, one at a time. Claude Code and Codex show their own marks; the border of an agent's icon shows its state (green running or completed, yellow waiting, red failed or blocked).
 
