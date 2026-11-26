@@ -1826,3 +1826,7 @@ DD amendment (#957): Step 6 reuses the result dialog's `.file-diff-toggle`/`.fil
 
 
 #997: Completed Goals are immutable while saved-stage views, read-only coordinator chat and New Goal remain available. Architecture trace and acceptance: [completed Goal contract](evidence/997-completed-goal.md).
+
+## #1102 Reference-aware Goal history
+
+Extend DD-61, DD-92, DD-159 and DD-222: append a reference suffix to new Goal slugs and preserve it during English-name adoption and collision handling. Keep existing folders as-is and derive reference metadata from saved Goal text. Filter and sort the local snapshot in the shared Goal list, ten rows per page.

@@ -854,3 +854,7 @@ SF-132 / #933 / #934: icon-only usage retry; automatic Claude usage query after 
 
 
 #997: Completed Goals are immutable while saved-stage views, read-only coordinator chat and New Goal remain available. Architecture trace and acceptance: [completed Goal contract](evidence/997-completed-goal.md).
+
+## #1102 Reference-aware Goal history
+
+Extend SF-137: reference-aware Goal folder names and a searchable, sortable, paginated Goal list within the current workspace.

@@ -25,3 +25,10 @@
 /* #906: validation keeps the existing focus outline and theme error token. */
 #start-panel-workspace [aria-invalid="true"]{border-color:var(--err)!important}
 #start-save-only{display:flex;align-items:center;gap:6px;padding:8px 13px}
+
+.goal-list-controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.goal-list-controls input{flex:1 1 160px;min-width:0;width:auto}
+.goal-list-controls select{flex:0 1 auto;width:auto;max-width:100%}
+.goal-pagination:not([hidden]){display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px}
+.goal-row-info strong,.goal-reference-ids{overflow-wrap:anywhere}
+.goal-reference-ids{display:block;margin-top:4px}

@@ -883,3 +883,7 @@ FR-130 / #933 / #934: autoDiscover also queries a Claude profile whose indicator
 
 
 #997: Completed Goals are immutable while saved-stage views, read-only coordinator chat and New Goal remain available. Architecture trace and acceptance: [completed Goal contract](evidence/997-completed-goal.md).
+
+## #1102 Reference-aware Goal history
+
+Extend FR-135: identify saved references with the existing MCP parser. The list works offline using the local snapshot, retains existing Goal actions, and includes older Goals without a data migration.

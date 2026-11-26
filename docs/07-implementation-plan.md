@@ -4421,3 +4421,11 @@ Version 0.2.21 ships #1095 and #1096 (see CHANGELOG). The batch keeps the origin
 ## 0.2.22 release preparation
 
 Version 0.2.22 ships #1098, #1099 and #1101 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe Markdown formatting in the Agent Room.
+
+## #1102 Reference-aware Goal history
+
+- [x] Plan: trace reference naming and Goal history through requirements, use case, and design.
+- [x] Task: reproduce missing slug references and list behavior in regressions, then implement naming, reference order, search and paging.
+- [x] Verify: pass local Goal naming, row actions and ordinary-folder planning tests, plus Chrome search, sort, paging, light/dark and Goal lifecycle checks.
+- [x] Complete: record evidence in the wiki and publish the issue-linked branch for the 0.2.23 batch.
+- [ ] Release integration: merge through the grouped macOS and Windows CI run, then close #1102.

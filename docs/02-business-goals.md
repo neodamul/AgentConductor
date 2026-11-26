@@ -723,3 +723,7 @@ BG-132 amendment (#935, #936): resolve ambiguous goals inside the existing revie
 
 
 #997: Completed Goals are immutable while saved-stage views, read-only coordinator chat and New Goal remain available. Architecture trace and acceptance: [completed Goal contract](evidence/997-completed-goal.md).
+
+## #1102 Reference-aware Goal history
+
+Extend BG-105: let operators identify and find saved Goals from the Jira issue keys and Confluence page IDs they already have.

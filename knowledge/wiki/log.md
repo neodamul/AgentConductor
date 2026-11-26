@@ -706,3 +706,5 @@ Recorded actual regression paths and source fingerprints: shared standalone Goal
 - #919: original failed CI evidence reviewed; replaced outgoing-page/early-save test races and added all-loaded-script provenance coverage.
 
 - 2026-11-15: #997 completed-Goal read-only policy, saved-stage navigation and native request defense documented; deterministic source observations retained.
+
+- #1102: saved Goal references now survive folder slug naming and identify historical Goals in the paginated list. See goal-row-actions.md.

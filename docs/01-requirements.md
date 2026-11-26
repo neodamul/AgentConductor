@@ -953,3 +953,9 @@ R-145 / #933 / #934 (0.2.8): the usage popup's retry after a failed query is the
 
 
 #997: Completed Goals are immutable while saved-stage views, read-only coordinator chat and New Goal remain available. Architecture trace and acceptance: [completed Goal contract](evidence/997-completed-goal.md).
+
+## #1102 Reference-aware Goal history
+
+Trace: R-150 → BG-105 → SF-137 → UC-140 → FR-135 → QAS-146 → DD-159, with DD-61, DD-92 and DD-222.
+
+New Goal folders include the explicit Jira and Confluence references in the saved Goal. Goal history supports searching and sorting by reference and browsing one page at a time.

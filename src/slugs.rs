@@ -7,6 +7,8 @@ use std::{
 
 pub const STAGES: [&str; 5] = ["plan", "phase", "task", "verification", "completed"];
 const MAX: usize = 48;
+const MAX_WITH_REFS: usize = 220;
+const REF_SEPARATOR: &str = "__refs_";
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Slug {
@@ -76,14 +78,15 @@ fn date(epoch_secs: u64) -> String {
     format!("{year:04}{month:02}{day:02}")
 }
 
-/// DD-92: `goal_<yyyymmdd>` with an optional `_<n>` suffix, awaiting an English name.
 pub fn is_placeholder(slug: &str) -> bool {
-    let Some(rest) = slug.strip_prefix("goal_") else {
+    let (base, _) = split_references(slug);
+    let Some(rest) = base.strip_prefix("goal_") else {
         return false;
     };
-    let (date, suffix) = rest.split_at(rest.len().min(8));
-    date.len() == 8
-        && date.bytes().all(|b| b.is_ascii_digit())
+    let Some((date, suffix)) = rest.split_at_checked(8) else {
+        return false;
+    };
+    date.bytes().all(|b| b.is_ascii_digit())
         && (suffix.is_empty()
             || suffix
                 .strip_prefix('_')
@@ -94,30 +97,82 @@ pub fn unique(base: &str, existing: &[String]) -> String {
     if !existing.iter().any(|s| s == base) {
         return base.into();
     }
+    let (name, refs) = split_references(base);
+    let limit = if refs.is_empty() {
+        MAX
+    } else {
+        MAX_WITH_REFS - refs.len()
+    };
     (2..)
         .map(|n| {
             let suffix = format!("_{n}");
-            format!("{}{suffix}", &base[..base.len().min(MAX - suffix.len())])
+            format!(
+                "{}{suffix}{refs}",
+                &name[..name.len().min(limit - suffix.len())]
+            )
         })
         .find(|candidate| !existing.contains(candidate))
         .expect("an unused suffix exists")
 }
 
+fn split_references(slug: &str) -> (&str, &str) {
+    slug.find(REF_SEPARATOR)
+        .map_or((slug, ""), |index| slug.split_at(index))
+}
+
+pub(crate) fn with_references(
+    base: &str,
+    refs: &[crate::mcp::Reference],
+) -> Result<String, String> {
+    if refs.is_empty() {
+        return Ok(base.into());
+    }
+    let mut names = Vec::new();
+    for kind in ["jira", "confluence"] {
+        let mut ids = refs.iter().filter(|r| r.kind == kind).peekable();
+        if ids.peek().is_some() {
+            names.push(kind.to_string());
+            names.extend(ids.map(|r| r.id.to_ascii_lowercase().replace('-', "_")));
+        }
+    }
+    let suffix = format!("{REF_SEPARATOR}{}", names.join("_"));
+    // Leave space for the full date placeholder and a collision counter. Never cut an ID.
+    if suffix.len() > MAX_WITH_REFS - 24 {
+        return Err(crate::ui::messages::text("native.goal_slug_references_too_long").into());
+    }
+    Ok(with_suffix(base, &suffix))
+}
+
+fn with_suffix(base: &str, suffix: &str) -> String {
+    let end = base.len().min(MAX_WITH_REFS - suffix.len());
+    format!("{}{suffix}", &base[..end])
+}
+
+pub(crate) fn renamed(old: &str, name: &str) -> String {
+    let (_, suffix) = split_references(old);
+    with_suffix(name, suffix)
+}
+
+pub(crate) fn validate_base(slug: &str) -> Result<(), String> {
+    if slug.len() <= MAX && !slug.contains(REF_SEPARATOR) {
+        return validate(slug);
+    }
+    Err("invalid Goal folder base: expected up to 48 characters without __refs_".into())
+}
+
 pub fn validate(slug: &str) -> Result<(), String> {
+    let (base, refs) = split_references(slug);
     let ok = !slug.is_empty()
-        && slug.len() <= MAX
+        && (slug.len() <= MAX
+            || (!base.is_empty()
+                && refs.len() > REF_SEPARATOR.len()
+                && slug.len() <= MAX_WITH_REFS))
         && slug.starts_with(|c: char| c.is_ascii_lowercase() || c.is_ascii_digit())
         && slug
             .bytes()
             .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'_');
-    if ok {
-        Ok(())
-    } else {
-        Err(
-            "slug must be 1-48 characters of a-z, 0-9 and _, starting with a letter or digit"
-                .into(),
-        )
-    }
+    ok.then_some(())
+        .ok_or_else(|| "invalid Goal folder name".into())
 }
 
 /// `<repository>/<slug>` (user decision 2026-10-13: the project folder holds each goal
@@ -239,3 +294,7 @@ pub fn exclude_from_git(repo: &crate::git::Repository, slug: &str) -> Result<(),
     }
     Ok(())
 }
+
+#[cfg(test)]
+#[path = "../tests/unit/slug_references.rs"]
+mod reference_tests;

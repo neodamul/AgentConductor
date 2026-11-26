@@ -147,7 +147,7 @@
 
 - [Quota indicator contract](quota-indicator-contract.md): cached ring/popup rows and conservative capacity (#404).
 
-- [Goal row actions](goal-row-actions.md): ownership, context preservation and nonblocking deletion (#402).
+- [Goal row actions](goal-row-actions.md): ownership, nonblocking deletion, and reference search, order, and paging (#402, #1102).
 - [Approved Goal UI](approved-goal-ui.md): unified flow, docked/overlay boundaries, anchored Fallback/model choices and both-theme reference evidence (#387).
 
 - [Anchored choice controls](anchored-choice-controls.md): native state, modal focus and isolated visual parity (#409).

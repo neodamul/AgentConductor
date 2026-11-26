@@ -289,7 +289,8 @@ impl Startup {
                 let active = saved.config.active_slug.as_deref() == Some(s.slug.as_str());
                 // DD-125: the active goal carries its whole phase plan for review.
                 let plan = if active { crate::slug_progress::briefing(&root) } else { serde_json::Value::Null };
-                serde_json::json!({"slug":s.slug,"goal":s.goal,"active":active,"progress":crate::slug_progress::progress(&root),"plan":plan})
+                let references = crate::mcp::references(&s.goal).unwrap_or_default();
+                serde_json::json!({"slug":s.slug,"goal":s.goal,"active":active,"progress":crate::slug_progress::progress(&root),"plan":plan,"references":references})
             })
             .collect()
     }

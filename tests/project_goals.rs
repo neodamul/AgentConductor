@@ -188,3 +188,41 @@ fn completed_project_accepts_new_goals_restores_history_and_refuses_duplicate_bi
     drop(room);
     fs::remove_dir_all(root).unwrap();
 }
+
+#[test]
+fn goal_slug_and_snapshot_include_saved_source_references() {
+    let (root, _) = support::setup("shared");
+    let mut env = test_env::lock();
+    env.set("HOME", &root.join("home"));
+    let repo = root.join("repo");
+    let room = Room::startup(
+        &root.join("workspace"),
+        Path::new(env!("CARGO_BIN_EXE_agentconductor")),
+    )
+    .unwrap();
+    let goal =
+        "Implement authentication [Jira:EMM-1102] [Confluence:23456789012345678901234567890123]";
+    for _ in 0..2 {
+        save(&room, &repo, goal).unwrap();
+        call(&room, serde_json::json!({"kind":"create_slug"}))
+            .unwrap_or_else(|e| panic!("creating Goal with references should succeed: {e}"));
+        call(&room, serde_json::json!({"kind":"new_goal"})).unwrap();
+    }
+    let snapshot = room.dispatch(br#"{"kind":"snapshot"}"#).unwrap();
+    let slugs = snapshot["slugs"].as_array().unwrap();
+    assert_eq!(slugs.len(), 2);
+    for (row, slug) in slugs.iter().zip([
+        "implement_authentication__refs_jira_emm_1102_confluence_23456789012345678901234567890123",
+        "implement_authentication_2__refs_jira_emm_1102_confluence_23456789012345678901234567890123",
+    ]) {
+        assert_eq!(row["slug"], slug);
+        assert!(repo.join(slug).is_dir());
+        assert_eq!(
+            row["references"],
+            serde_json::json!([
+                {"kind":"jira","id":"EMM-1102"},
+                {"kind":"confluence","id":"23456789012345678901234567890123"}
+            ])
+        );
+    }
+}

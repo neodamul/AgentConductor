@@ -63,6 +63,18 @@ pub(crate) fn canonical(goal: &str) -> String {
     out
 }
 
+pub(crate) fn without_explicit(goal: &str) -> String {
+    let mut title = String::new();
+    let mut last = 0;
+    for (_, start, end) in explicit_ranges(goal) {
+        title.push_str(&goal[last..start]);
+        title.push(' ');
+        last = end;
+    }
+    title.push_str(&goal[last..]);
+    title
+}
+
 /// Explicit references with their byte display range (brackets included when present).
 fn explicit_ranges(goal: &str) -> Vec<(String, usize, usize)> {
     let mut references = Vec::new();
