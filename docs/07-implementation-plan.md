@@ -4410,3 +4410,7 @@ Version 0.2.21 ships #1095 and #1096 (see CHANGELOG). The batch keeps the origin
 - [x] Task: Document how to isolate and remove disposable release artifacts and preserve evidence.
 - [x] Verify: Check the documentation link, completion checklist and local release skill metadata.
 - [x] Complete: Prepare the shared procedure for the 0.2.22 batch.
+
+## 0.2.22 release preparation
+
+Version 0.2.22 ships #1098 and #1099 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe Markdown formatting in the Agent Room.

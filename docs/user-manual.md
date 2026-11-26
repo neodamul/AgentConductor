@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.2.21** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.2.22** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.2.21 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
+The app version is beside the title. Version 0.2.22 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
 
 ### 1.1a Application updates
 
@@ -326,7 +326,7 @@ Long command and agent/path summaries are truncated to keep Plan rows compact. H
 
 Session counts and work-state tags update automatically when task sessions change, including in the Agent Room; opening the sessions dialog is not required.
 
-Coordinator chat answers from the current Workspace context even if a Goal finished since the last displayed snapshot. Read-only questions do not require a manual refresh; reviewed changes and execution approvals retain their existing revision checks. Replies render Markdown (headings, lists, tables, code and links) without running HTML or loading remote content. In an empty chat box, Tab or Right Arrow puts the shown suggestion in as text so you can keep typing.
+Coordinator chat answers from the current Workspace context even if a Goal finished since the last displayed snapshot. Read-only questions do not require a manual refresh; reviewed changes and execution approvals retain their existing revision checks. Replies render Markdown (headings, lists, tables, code and links) without running HTML or loading remote content. In an empty chat box, Tab or Right Arrow puts the shown suggestion in as text so you can keep typing. The Agent Room formats plan analysis, phase briefs, task prompts, activity messages, lessons and the result summary the same way and keeps their line breaks; editable fields, raw logs, test output and diffs stay as plain text.
 
 ## Part 2 — Command-line reference
 
