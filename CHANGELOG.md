@@ -4,6 +4,12 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.2.22
+
+- The Agent Room shows Markdown and line breaks in plan analysis, phase briefs, task prompts, activity messages, lessons and the result summary, using the same offline renderer as coordinator chat. Editable fields, raw logs, test output and diffs stay literal, and task titles no longer show Markdown markers (#1099).
+- **Approve and run** starts a Goal in a workspace whose source is an ordinary folder without `.git` instead of stopping with "a clean repository baseline is required" (#1101).
+- The release checklist now ends with a disk cleanup pass (#1098).
+
 ## v0.2.21
 
 - A task whose worker finished but whose test failed on the combined result shows **Verification failed** in the task list, task detail and coordinator board, and the test list uses the native verdict, including for planned Red tests (#1095).

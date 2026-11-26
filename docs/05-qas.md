@@ -505,6 +505,7 @@ Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source
 
 ### QAS-120 Selected-folder outputs and baseline restoration
 Given an ordinary project with existing files and no Git metadata, start shared execution. Verify outputs appear only in the selected project, `.git` remains absent, and baseline evidence precedes task launch. Accept preserves outputs; Reject restores modified/deleted files and removes newly created owned files. Manual edits after the worker checkpoint produce a warning and refuse automatic restoration without overwriting those edits. Confirm existing Git and legacy private-folder runs still work.
+**GitHub #1101.** Verify Approve and run in shared and worktree modes with a plain folder containing nested mixed-case environment files and a marked Goal directory. Preserve those entries and the reviewed source baseline.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.
 
 ### QAS-208 Deleting workspaces needs no replacement name
@@ -684,6 +685,8 @@ Given a running task whose last event was a tool start 3 minutes ago and which h
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
 
 ### QAS-157 A question yields an answer or a visible error, never a file change
+
+**GitHub #1099.** Verify that Room plan and activity views preserve soft line breaks, emphasis and lists, refuse hostile markup and unsafe link destinations, and preserve literal logs and editable prompt values.
 
 **GitHub #1088.** A live or restored Markdown reply renders headings, lists, emphasis, quotes, links, tables and code. Plain replies preserve line breaks. Untrusted HTML and image references do not produce active elements, unsafe links are rejected, and wide blocks scroll inside the reply bubble.
 

@@ -55,7 +55,7 @@ window.acResultView = (() => {
     AC_I18N.bind($('result-close-label'), () => next ? acMessage('room.result_next_phase', { value1: next.number, value2: next.total }) : acMessage('room.result_to_goals'));
     AC_I18N.bind($('result-title'), () => next ? acMessage('room.result_title_phase', { value1: goalLine, value2: next.number - 1 }) : acMessage('room.result_title', { value1: goalLine }));
     $('result-title').title = goalLine;
-    $('result-summary').textContent = data.phaseResults?.length ? acMessage('room.result_all_phases', { value1: data.phaseResults.length, value2: data.summary || '' }) : data.summary || ''; $('result-summary').hidden = !data.phaseResults?.length && !data.summary;
+    window.acMarkdown.set($('result-summary'), data.phaseResults?.length ? acMessage('room.result_all_phases', { value1: data.phaseResults.length, value2: data.summary || '' }) : data.summary || ''); $('result-summary').hidden = !data.phaseResults?.length && !data.summary;
     AC_I18N.bind($('result-target'), () => acMessage('room.result_target', { value1: data.branch, value2: (data.commit || '').slice(0, 12) }));
     AC_I18N.bind($('result-location'), () => acMessage('room.result_location', { value1: data.repo }));
     const metric = (label, value) => { const el = node('div', undefined, 'result-metric'); el.append(node('span', label), node('strong', String(value))); return el; };
@@ -63,7 +63,7 @@ window.acResultView = (() => {
     // GitHub #826: each changed file is a button that unfolds its diff below it.
     AC_I18N.replace($('result-files'), ...changed.map(f=>fileRow(f)));
     AC_I18N.replace($('result-tests'), ...outputs.map(t => row(t.task, () => acMessage((t.passed??(t.exit_code===0&&!t.timed_out)) ? 'room.result_test_passed' : 'room.result_test_failed'))));
-    AC_I18N.replace($('result-lessons'), ...(notes.length ? notes.map(l => node('li', l)) : [node('li', () => acMessage('room.result_no_lessons'), 'muted')]));
+    AC_I18N.replace($('result-lessons'), ...(notes.length ? notes.map(l => window.acMarkdown.set(node('li'), l)) : [node('li', () => acMessage('room.result_no_lessons'), 'muted')]));
     // GitHub #821: the popup owns its buttons, so they work from the Goal list before the Room script has run.
     $('result-x').onclick = () => $('result-dialog').close();
     $('result-close').onclick = () => {

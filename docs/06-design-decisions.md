@@ -1256,6 +1256,7 @@ Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source
 
 ### DD-133 Direct folder execution with external project history
 Supersede DD-88 execution copies for new ordinary-folder runs; retain its read-only planning snapshots and legacy application compatibility. Clone the reviewed baseline without checkout into external project-history keyed by canonical source identity. Repository operations pass explicit Git metadata and work-tree paths; never add `.git` to the user folder. Codex invocations in direct folders and read-only exported snapshots add `--skip-git-repo-check`, preserving permission/model/session flags and the coordinator read-only sandbox. Persist the baseline commit before worker launch. Shared tasks write to the selected source root. Accept advances only external history; Reject journals an inverse application of the baseline after exact candidate-file validation, preserving concurrent edits. Completed-worker checkpoints and an active-owned-path notice warn about external edits without pretending to identify the writer. Explicit worktree mode retains isolation, and existing Git repositories retain their prior flow. No provider API or new dependency is introduced.
+**GitHub #1101.** Derive exact external Git exclusions from the same recursive folder inventory used for the reviewed snapshot. Apply the exclusions to new or reused external history and retain the clean Git and exact-source checks.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.
 
 ### DD-221 Deleting workspaces needs no replacement name
@@ -1468,6 +1469,8 @@ Trace: R-158 → BG-113 → SF-145 → UC-148 → FR-143/NFR-53 → QAS-154 → 
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
 
 ### DD-171 Implement chat as a `chat` worker job with an artifact answer
+
+**GitHub #1099.** Use the native chat safety mode for Room narratives. Batch and cache render requests on the page, keep a literal fallback, and open only validated HTTP(S) links through the existing native route. Derive compact task labels from a single plain-text summary without rewriting the saved prompt.
 
 **GitHub #1088.** Render the reply through the offline Markdown renderer with an untrusted-chat mode. Escape source markup, suppress images, and validate external HTTP(S) destinations before opening them. The chat artifact and prompt history retain only the original text.
 

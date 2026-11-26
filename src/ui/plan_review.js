@@ -28,7 +28,7 @@ const acPlanReview = (() => {
         const reason=document.createElement('span');reason.className='plan-change-reason';
         AC_I18N.bind(reason,()=>acMessage(reasons[change.kind],{value1:(change.fields||[]).map(field=>fields[field]?acMessage(fields[field]):field).join(', ')}));
         row.querySelector('summary').append(reason);
-        if(change.kind==='removed'){const detail=document.createElement('p');detail.className='task-prompt';detail.textContent=change.task.prompt;row.append(detail);}
+        if(change.kind==='removed'){const detail=document.createElement('div');detail.className='task-prompt';row.append(window.acMarkdown.set(detail,change.task.prompt));}
       }
     },
     meaningfulBrief(spec) {

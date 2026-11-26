@@ -484,6 +484,7 @@ Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source
 
 ### R-124 Execute in the selected project without adding Git metadata
 Ordinary-folder shared executions create task files and results directly in the selected project. No `.git` directory or link is created there. Record an immutable baseline before tasks start; Accept finalizes the verified result and Reject restores owned files to that baseline. Warn about manual edits to owned files while tasks run and refuse to overwrite later edits. Existing Git repositories retain their current behavior; legacy runs retain their original bindings.
+**GitHub #1101.** Starting a reviewed ordinary-folder plan must tolerate source entries excluded from planning without creating Git metadata in the selected folder.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.
 
 ### R-209 Deleting workspaces needs no replacement name
@@ -663,6 +664,8 @@ While a task runs, the Agent Room shall show what is observable without reading 
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
 
 ### R-161 Chat with the coordinator from the workspace screen
+
+**GitHub #1099.** Present readable Room plan, task and result narratives with the Markdown and line breaks used in coordinator chat.
 
 **GitHub #1088.** The coordinator chat displays Markdown replies as formatted content and preserves the original text in local conversation history.
 

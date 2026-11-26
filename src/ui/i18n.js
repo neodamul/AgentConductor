@@ -92,7 +92,7 @@ const AC_PRESS=(()=>{
 // GitHub #285: a request the operator started (not a refresh) marks the pressed button and, once it
 // has waited 1 s, is named with its time on the status line, so no press goes unanswered.
 const AC_WAIT=(()=>{
-  const quiet=new Set(['snapshot','client_timeout','update_status','check_update','mcp_source_suggestions','chat_history','workspaces','task','coordinator','quota']);
+  const quiet=new Set(['render_markdown','snapshot','client_timeout','update_status','check_update','mcp_source_suggestions','chat_history','workspaces','task','coordinator','quota']);
   const open=new Map();let next=0;
   function watch(kind,promise){if(quiet.has(kind))return promise;const id=++next;open.set(id,{kind,at:Date.now()});return AC_PRESS.track(Promise.resolve(promise).finally(()=>open.delete(id)));}
   function text(now=Date.now()){let first=null;for(const w of open.values())if(!first||w.at<first.at)first=w;return first&&now-first.at>=1000?acMessage('common.waiting_reply',{value1:first.kind.replaceAll('_',' '),value2:AC_ELAPSED(first.at,now)}):'';}

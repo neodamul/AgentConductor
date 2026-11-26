@@ -52,29 +52,26 @@ pub(crate) fn external_metadata(project: &Path) -> Result<Option<PathBuf>, Strin
     Ok(Some(metadata))
 }
 
-fn exclusions(project: &Path) -> Result<String, String> {
+fn exclusions(project: &Path, reviewed: Option<&Source>) -> Result<String, String> {
     let mut text = String::from(
         "# AgentConductor local runtime exclusions\n.agentconductor/\nnode_modules/\ntarget/\n.venv/\nvenv/\n__pycache__/\n.ssh/\n.aws/\n.env\n.env.*\n.DS_Store\nThumbs.db\ndesktop.ini\n._*\n",
     );
-    for entry in fs::read_dir(project).map_err(|e| e.to_string())? {
-        let entry = entry.map_err(|e| e.to_string())?;
-        let name = entry
-            .file_name()
-            .into_string()
-            .map_err(|_| "project paths must be UTF-8")?;
-        if excluded(&name) || entry.path().join(crate::slugs::MARKER).is_file() {
-            let escaped = name
-                .chars()
-                .flat_map(|c| {
-                    if matches!(c, '*' | '?' | '[' | ']' | '\\') {
-                        vec!['\\', c]
-                    } else {
-                        vec![c]
-                    }
-                })
-                .collect::<String>();
-            text.push_str(&format!("/{escaped}\n"));
+    let files = scan_with_ignored(project, |path| {
+        // A line-based Git exclude cannot represent a name containing a newline.
+        if path.contains(['\r', '\n']) {
+            return;
         }
+        text.push('/');
+        for ch in path.chars() {
+            if matches!(ch, '*' | '?' | '[' | ']' | '\\' | ' ') {
+                text.push('\\');
+            }
+            text.push(ch);
+        }
+        text.push('\n');
+    })?;
+    if let Some(source) = reviewed {
+        source.validate_files(&files)?;
     }
     Ok(text)
 }
@@ -101,6 +98,13 @@ pub fn activate(repo: &Repository, selected: &Path) -> Result<Repository, String
     }
     if let Ok(existing) = Repository::open(&selected) {
         if existing.is_external() && existing.head()? == source.base {
+            let metadata = external_metadata(&selected)?.ok_or("external history unavailable")?;
+            fs::write(
+                metadata.join("info/exclude"),
+                exclusions(&selected, Some(&source))?,
+            )
+            .map_err(|e| e.to_string())?;
+            existing.clean()?;
             return Ok(existing);
         }
         return Err(crate::ui::messages::text("folder.workspace_binding_changed").into());
@@ -144,8 +148,6 @@ pub fn activate(repo: &Repository, selected: &Path) -> Result<Repository, String
         "core.worktree",
         selected.to_str().ok_or("non-UTF8 project path")?,
     ])?;
-    fs::write(staging.join(".git/info/exclude"), exclusions(&selected)?)
-        .map_err(|e| e.to_string())?;
     fs::write(
         staging.join("binding.json"),
         serde_json::to_vec(&serde_json::json!({"project":selected,"schema":1}))
@@ -157,7 +159,11 @@ pub fn activate(repo: &Repository, selected: &Path) -> Result<Repository, String
         .open(staging.join("binding.json"))
         .and_then(|f| f.sync_all())
         .map_err(|e| e.to_string())?;
-    source.validate()?;
+    fs::write(
+        staging.join(".git/info/exclude"),
+        exclusions(&selected, Some(&source))?,
+    )
+    .map_err(|e| e.to_string())?;
     if fs::symlink_metadata(&history).is_ok() {
         return Err(crate::ui::messages::text("folder.workspace_binding_changed").into());
     }
@@ -175,9 +181,9 @@ pub(super) fn baseline(repo: Repository, history: &Path) -> Result<Repository, S
         return Ok(repo);
     }
     let _lease = crate::leases::WorkspaceLease::acquire(&repo.root, &history.join("planning"))?;
-    scan(&repo.root)?;
     let metadata = external_metadata(&repo.root)?.ok_or("external history unavailable")?;
-    fs::write(metadata.join("info/exclude"), exclusions(&repo.root)?).map_err(|e| e.to_string())?;
+    fs::write(metadata.join("info/exclude"), exclusions(&repo.root, None)?)
+        .map_err(|e| e.to_string())?;
     if !repo.changed(&repo.head()?)?.is_empty() {
         let base = repo.head()?;
         let snapshot = repo.checkpoint(

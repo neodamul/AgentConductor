@@ -335,6 +335,7 @@ Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source
 
 ### FR-109 Selected-folder execution with conflict-safe restoration
 Resolve ordinary-folder Git operations through an external project binding, capture the baseline before launch, keep provider cwd and test cwd at the selected root in shared mode, and recheck exact files before Accept or Reject. Add persistent completed-worker fingerprints and an active-owned-path warning. Treat process attribution as unknown: fingerprints indicate a changed checkpoint, not who edited it.
+**GitHub #1101.** Exclude only entries identified by the folder inventory, preserve the selected source check, and clean-check the external metadata against the reviewed baseline.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.
 
 ### FR-203 Deleting workspaces needs no replacement name
@@ -512,6 +513,8 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 
 ### FR-146 Answer operator questions from project files and the manual
 Accept 1..8192-byte operator turns, send at most the 12 most recent turns, require the conversation to end with an operator turn, and return one bounded Markdown answer (32 KiB). Show failures as an error turn that is not sent back.
+
+**GitHub #1099.** Render Room narrative text through the bounded local renderer. Editable prompts, raw logs, diff and test evidence remain literal.
 
 ### NFR-55 Keep the chat read-only and bounded
 The coordinator runs only through its verified read-only template, never changes files or runs commands, shares the single job slot (a running operation refuses a new question), and times out after five minutes. The page renders answers as plain text.

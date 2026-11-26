@@ -409,6 +409,7 @@ Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source
 
 ### SF-111 Direct ordinary-folder execution and external baseline history
 Keep ordinary-project Git objects and indexes in app-managed external history. Bind every run to its selected source root and recorded baseline. Expose Accept, baseline-restoring Reject, and owned-file edit warnings.
+**GitHub #1101.** Use matching source exclusions in the folder snapshot and the external Git worktree.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.
 
 ### SF-197 Deleting workspaces needs no replacement name
@@ -580,6 +581,8 @@ Derive, per running task, the last observed output time and kind, the current to
 Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → DDR-20 → DD-169. GitHub #100, user, 2026-10-21.
 
 ### SF-148 Read-only coordinator chat as a bounded worker job
+
+**GitHub #1099.** Reuse the offline Markdown viewer for display-only Room narratives and provide a preview next to the editable task prompt.
 
 **GitHub #1088.** Present coordinator replies through the local Markdown viewer using the same rendering for live replies and restored conversations.
 

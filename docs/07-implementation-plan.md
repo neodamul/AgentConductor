@@ -4360,6 +4360,13 @@ Version 0.2.18 ships #1074 and #1076 (see CHANGELOG). The current application UI
 
 Version 0.2.19 ships #1079, #1082, #1084, #1085, #1086 and #1088 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe the signed-out Claude usage state and Markdown replies in the coordinator chat.
 
+## #1101 — Approve and run in a plain project folder
+
+- [x] Plan: Reproduce the folder baseline error and trace UC-114, QAS-120 and DD-133.
+- [x] Task: Align external Git exclusions with the reviewed inventory.
+- [x] Verify: Confirm the original failure and pass 27 Rust checks, including shared and worktree startup and stale external history recovery. Existing Git baseline and exact approval checks pass.
+- [x] Complete: Prepare the 0.2.22 issue branch.
+
 ## #1093 — Coordinator-only profile changes
 
 - [x] Plan: Trace DD-58 from profile save through reviewed execution.
@@ -4385,6 +4392,32 @@ Version 0.2.20 ships #1092 and #1093 (see CHANGELOG). The current application UI
 - [x] Verify: Reproduced the original acceptance rejection. Passed 30 local Rust checks covering automatic and saved reviews, incomplete or changed evidence, the public Room verdict and the human merge gate.
 - [x] Complete: Prepare the follow-up commit for the 0.2.21 batch.
 
+## #1099 — Markdown in Room plans and activity
+
+- [x] Plan: Extend the existing chat rendering contract to display-only Room narratives.
+- [x] Task: Format plan, activity and related prose with the native renderer.
+- [x] Verify: Reproduce the missing native route. Check plan history and preview, activity, lessons and results in Chromium, including raw evidence and safe links. Pass the focused Rust and Python checks.
+- [x] Complete: Prepare the change for the 0.2.22 batch.
+
+### #1099 — Plain-text task summaries
+
+- [x] Plan: Reproduce Markdown markers in the plan row, task rail and inspector heading.
+- [x] Task: Use the same one-line summary for all three surfaces.
+- [x] Verify: Reproduce the marker leak. Pass light and dark Chromium checks and 12 native tests. Run the real Rust bridge against a disposable repository from draft through integration and confirm the human approval gate.
+- [x] Complete: Hand off the updated 0.2.22 issue branch.
+
 ## 0.2.21 release preparation
 
 Version 0.2.21 ships #1095 and #1096 (see CHANGELOG). The batch keeps the original reviewer instruction for ordinary integration failures. The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe failed task verification and coordinator review of zero-exit Red tests.
+
+
+## #1098 — Release disk cleanup
+
+- [x] Plan: Add a recurring disk-space check to the existing release workflow.
+- [x] Task: Document how to isolate and remove disposable release artifacts and preserve evidence.
+- [x] Verify: Check the documentation link, completion checklist and local release skill metadata.
+- [x] Complete: Prepare the shared procedure for the 0.2.22 batch.
+
+## 0.2.22 release preparation
+
+Version 0.2.22 ships #1098, #1099 and #1101 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe Markdown formatting in the Agent Room.

@@ -315,6 +315,7 @@ Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source
 
 ### BG-79 Make the selected project the visible source of work
 Keep deliverables where the operator selected and make acceptance or restoration predictable, while preserving existing project history and manual edits.
+**GitHub #1101.** Keep ordinary-folder execution available when legitimate local artifacts are present outside the reviewed source set.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.
 
 ### BG-164 Deleting workspaces needs no replacement name
@@ -488,6 +489,8 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### BG-116 Operators can get guidance without opening every output
 After a run returns to the workspace, an operator learns how to use the result and the screen by asking, not by inspecting every generated file.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.
+
+**GitHub #1099.** Make plans, agent activity and lessons readable in place while retaining original execution evidence.
 
 ### BG-115 Make the run state and the visible activity agree
 Operators can tell what a waiting approval refers to because the activity panel shows the part of the run that is current.

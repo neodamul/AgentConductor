@@ -1,5 +1,6 @@
 'use strict';
 const $ = id => document.getElementById(id);
+const {taskLine} = window.acMarkdown;
 function resetReviewEvidence(){for(const id of ['review-summary','verify-rows','review-stale'])$(id).hidden=true;$('review-summary').replaceChildren();$('verify-rows').replaceChildren();$('test-results').replaceChildren();$('diff').replaceChildren(node('span',()=>acMessage('room.no_candidate_has_been_loaded')));$('diff').classList.add('empty');AC_I18N.bind($('review-caption'),()=>(acMessage('room.load_a_candidate_to_review_its_exact_evidence')));$('approve').disabled=true;$('merge').disabled=true;}
 resetReviewEvidence();
 let snapshot = null, selected = 0, review = null, polling = false, activeTab = 'activity', lastJob = null;
@@ -105,8 +106,6 @@ setInterval(() => { if (!document.hidden && !roomStopped) renderActivity(); }, 1
 function planTask() { return snapshot?.report.plan.tasks[selected]; }
 function profile() { return snapshot?.report.plan.agents.find(a=>a.id===planTask()?.agent); }
 function agentName(agent) {return agent?acAgentName(agent,snapshot?.report?.plan?.agents||[]):acMessage("room.agent");}
-// The plan review's one-line task summary: the first line that says what the task does.
-function taskLine(prompt){const line=String(prompt||'').split('\n').map(l=>l.trim().replace(/^[-*]\s+/,'')).find(l=>l&&!/:$/.test(l)&&!/^<\/?[\w-]+>$/.test(l))||'';return line.length>160?line.slice(0,160)+'…':line;}
 // Task rows lead with the reviewed summary; the task ID stays visible as a small label.
 function taskHeading(id,prompt){const heading=node('span',undefined,'session-task'),summary=taskLine(prompt);heading.append(node('span',id,'task-id'));if(summary)heading.append(node('span',summary,'task-summary'));AC_I18N.bind(heading,()=>(summary?id+' · '+summary:id),"title");return heading;}
 function refreshQuota(agent){quotaActive=agent;quotaRefreshed.set(agent,Date.now());return act({kind:'quota',agent});}
@@ -207,26 +206,6 @@ function judgmentLabel(j) {
   if (j.kind === 'recovery') return acMessage("room.judgment_recovery", { value1: j.judgment });
   const label = JUDGMENT_LABELS[j.kind + ':' + j.judgment];
   return label ? label() : acMessage("room.judgment_other", { value1: j.kind, value2: j.judgment });
-}
-function judgmentEntry(j) {
-  const el = event(judgmentLabel(j), (j.task ? j.task + ' · ' : '') + j.detail, ['deny', 'blocked', 'undecided', 'revise', 'escalated'].includes(j.judgment) ? 'warning' : 'status', j.seq);
-  // An applied amendment can be undone once; the run stops for an explicit Resume.
-  if (j.kind === 'amendment' && j.judgment === 'applied' && !j.undone) {
-    const undo = node('button', () => acMessage("room.amendment_undo"), 'small-button');
-    undo.dataset.goalWrite='true';undo.onclick = async () => { try { await request({ kind: 'undo_amendment', id: j.id }); notice(() => acMessage("room.amendment_undone")); await poll(); } catch (e) { notice(e.message, true); } };
-    el.querySelector('.event-body').append(undo);
-  }
-  return el;
-}
-function decisionEntry(d) {
-  let input={};try{input=JSON.parse(d.input);}catch{}
-  const label=d.allow===true?acMessage("room.coordinator_allowed"):d.allow===false?acMessage("room.coordinator_denied"):acMessage("room.coordinator_could_not_decide");
-  const when=d.decided_ms?new Date(d.decided_ms).toLocaleTimeString()+' · ':'';
-  return event(label,`${when}${toolLine(d.tool,input)}\n${d.reason||d.error||''}`,d.allow===true?'status':'warning');
-}
-function event(label,text,cls='',seq) {
-  // GitHub #607: like the mock's `.ev` row: the number (or range) column first, then the title and its detail.
-  const el=node('article',undefined,'event '+cls);el.append(node('code',seq===undefined?'':/^\d\d:\d\d$/.test(seq)?seq:'#'+seq,'event-seq'));const body=node('div',undefined,'event-body');const head=node('div',undefined,'event-head');head.append(node('span',label));body.append(head,node('p',text,'event-text'));el.append(body);return el;
 }
 async function loadTask() {if(!snapshot||roomStopped)return;if(coordinatorView){try{const data=await request({kind:'coordinator'});if(!roomStopped)renderCoordinator(data);}catch(e){notice(e.message,true);}return;}const index=selected;try{const data=await request({kind:'task',index});if(!roomStopped&&index===selected)renderTask(data);}catch(e){notice(e.message,true);}}
 async function act(action,revision=snapshot?.revision,wait,onTimeout,onAccepted) {
