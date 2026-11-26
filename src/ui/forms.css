@@ -32,3 +32,4 @@
 .goal-pagination:not([hidden]){display:flex;align-items:center;justify-content:center;gap:10px;margin-top:12px}
 .goal-row-info strong,.goal-reference-ids{overflow-wrap:anywhere}
 .goal-reference-ids{display:block;margin-top:4px}
+.goal-created{display:block;margin-top:4px}

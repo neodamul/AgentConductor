@@ -130,7 +130,7 @@ function closeSidePanel(id){
 }
 
 const workspaceGoals=[
- {id:'rotation',description:'리프레시 토큰을 쓸 때마다 새로 발급한다.\n재사용된 토큰을 탐지하면 세션을 끊는다.\n기존 로그인 흐름과 테스트 명령은 유지한다.\n결과는 변경 파일 목록과 함께 보고한다.',name:'리프레시 토큰 회전을 추가한다',slug:'refresh_token_rotation__refs_jira_auth_1102_confluence_9876543210',references:[['jira','AUTH-1102'],['confluence','9876543210']],state:'running',step:3,position:'Phase 1/1 · Task 1/3',summary:'작업 1/3 완료 · 토큰 회전 구현 중',tests:'통합 테스트 3/3 통과',commit:'3f9a1c2',lesson:'교훈 2개 · 토큰 회전 정책과 테스트 명령 기록'},
+ {id:'rotation',createdMs:Date.UTC(2026,10,26,12),description:'리프레시 토큰을 쓸 때마다 새로 발급한다.\n재사용된 토큰을 탐지하면 세션을 끊는다.\n기존 로그인 흐름과 테스트 명령은 유지한다.\n결과는 변경 파일 목록과 함께 보고한다.',name:'리프레시 토큰 회전을 추가한다',slug:'refresh_token_rotation__refs_jira_auth_1102_confluence_9876543210',references:[['jira','AUTH-1102'],['confluence','9876543210']],state:'running',step:3,position:'Phase 1/1 · Task 1/3',summary:'작업 1/3 완료 · 토큰 회전 구현 중',tests:'통합 테스트 3/3 통과',commit:'3f9a1c2',lesson:'교훈 2개 · 토큰 회전 정책과 테스트 명령 기록'},
 ];
 if(initialOverview)workspaceGoals.push(...previewGoalHistoryFixtures());
 let pendingGoalDelete=null;
@@ -144,6 +144,7 @@ function renderWorkspaceGoals(){
   const row=document.createElement('div');row.className='goal-list-row';row.setAttribute('role','listitem');
   const info=document.createElement('div'),name=document.createElement('strong'),slug=document.createElement('code'),summary=document.createElement('p');
   name.textContent=goal.name;slug.textContent=goal.slug;summary.textContent=goal.summary;name.title=goal.name;info.append(name,summary);
+  if(goal.createdMs){const date=new Date(goal.createdMs),time=document.createElement('time');time.className='goal-history-date';time.dateTime=date.toISOString();time.textContent=date.toLocaleDateString('ko');info.append(time);}
   if(goal.references?.length){const refs=document.createElement('small');refs.className='goal-history-refs';refs.textContent=goal.references.map(([kind,id])=>(kind==='jira'?'Jira':'Confluence')+': '+id).join(' · ');info.append(refs,slug);}
   // GitHub #753: the goal text keeps its line breaks, shows collapsed and expands on demand.
   if(goal.description){const text=document.createElement('p'),toggle=document.createElement('button'),label=open=>(open?'▾ 접기':'▸ 펼치기');text.className='goal-row-text';text.textContent=goal.description;toggle.type='button';toggle.className='goal-row-toggle';toggle.textContent=label(false);toggle.setAttribute('aria-expanded','false');toggle.onclick=()=>{const open=toggle.getAttribute('aria-expanded')!=='true';toggle.setAttribute('aria-expanded',String(open));text.classList.toggle('open',open);toggle.textContent=label(open);};info.append(toggle,text);}/* GitHub #1022: the toggle stays above the text, so Collapse is where Expand was. */

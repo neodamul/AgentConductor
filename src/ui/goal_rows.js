@@ -65,6 +65,14 @@ window.acGoalRows = (() => {
       refs.textContent = s.references.map(r => (r.kind === 'jira' ? 'Jira' : 'Confluence') + ': ' + r.id).join(' · ');
       info.firstElementChild.after(refs);
     }
+    if (createdMs(s) !== undefined) {
+      const date = new Date(s.created_ms);
+      const time = document.createElement('time');
+      time.className = 'small muted goal-created';
+      time.dateTime = date.toISOString();
+      AC_I18N.bind(time, () => date.toLocaleDateString(AC_I18N.current()));
+      info.firstElementChild.after(time);
+    }
     const actions = document.createElement('div'); actions.className = 'goal-row-actions';
     const folder = iconButton('goal-folder', FOLDER, 'startup.goal_row_folder', s.slug, () => ctx.request({ kind: 'goal_folder', slug: s.slug, open: true }).catch(e => ctx.notice(e.message, true)));
     actions.append(folder);
@@ -79,26 +87,31 @@ window.acGoalRows = (() => {
   }
   const pageSize = 10;
   const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
-  function listPage(entries, query, sort, page) {
+  function createdMs(row) {
+    const ms = row.created_ms;
+    return Number.isFinite(ms) && ms > 0 && ms <= 8.64e15 ? ms : undefined;
+  }
+  function listPage(entries, query, sort = 'created-desc', page = 1) {
     const terms = query.trim().toLowerCase().replace(/:\s+/g, ':').split(/\s+/).filter(Boolean);
     const rows = entries.filter(row => {
       if (!terms.length) return true;
       const fields = [row.goal, row.slug, ...(row.references || []).map(r => r.kind + ':' + r.id)];
       return terms.every(term => fields.some(field => field.toLowerCase().includes(term)));
     });
-    if (sort !== 'saved') {
-      const [kind, order] = sort.split('-');
-      const direction = order === 'desc' ? -1 : 1;
-      const compare = (a, b) => direction * collator.compare(a, b);
-      const keys = new Map(rows.map(row => [
-        row, (row.references || []).filter(ref => ref.kind === kind).map(ref => ref.id).sort(compare)[0]
-      ]));
-      rows.sort((a, b) => {
-        const left = keys.get(a), right = keys.get(b);
-        if (left === undefined || right === undefined) return Number(left === undefined) - Number(right === undefined);
-        return compare(left, right);
-      });
-    }
+    const [kind, order] = sort.split('-');
+    const direction = order === 'desc' ? -1 : 1;
+    const compare = kind === 'created'
+      ? (a, b) => direction * (a - b)
+      : (a, b) => direction * collator.compare(a, b);
+    const keys = new Map(rows.map(row => [
+      row, kind === 'created' ? createdMs(row)
+        : (row.references || []).filter(ref => ref.kind === kind).map(ref => ref.id).sort(compare)[0]
+    ]));
+    rows.sort((a, b) => {
+      const left = keys.get(a), right = keys.get(b);
+      if (left === undefined || right === undefined) return Number(left === undefined) - Number(right === undefined);
+      return compare(left, right);
+    });
     const pages = Math.max(1, Math.ceil(rows.length / pageSize));
     page = Math.max(1, Math.min(page, pages));
     return { rows: rows.slice((page - 1) * pageSize, page * pageSize), page, pages, total: rows.length };
@@ -106,7 +119,7 @@ window.acGoalRows = (() => {
   let historyPage = 1;
   function resetList() {
     $('start-goal-search').value = '';
-    $('start-goal-sort').value = 'saved';
+    $('start-goal-sort').value = 'created-desc';
     historyPage = 1;
   }
   function renderList(entries, row, empty) {

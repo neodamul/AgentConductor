@@ -107,6 +107,11 @@
    const extra=previewGoalHistoryFixtures();
    workspaceGoals.push(...extra);renderWorkspaceGoals();
    check('#1102: one page shows ten rows',rows().length===10);
+   check('#1102: list uses creation time by default',sort.value==='created-desc'&&rows()[0].querySelector('time').dateTime.startsWith('2026-11-26')&&rows()[1].textContent.includes('AUTH-22'));
+   sort.value='created-asc';sort.dispatchEvent(new Event('change'));
+   check('#1102: creation date can be sorted oldest first',rows()[0].textContent.includes('Jira: AUTH-2 ·'));
+   sort.value='created-desc';sort.dispatchEvent(new Event('change'));
+
    document.getElementById('workspace-goal-next').click();
    check('#1102: page two shows the remaining rows',rows().length===2);
    query('jira: auth-1102');
@@ -119,7 +124,7 @@
    check('#1102: Jira order is numeric',firstRef(rows()[0])==='Jira: AUTH-2'&&firstRef(rows()[1])==='Jira: AUTH-4');
    sort.value='confluence-desc';sort.dispatchEvent(new Event('change'));
    check('#1102: Confluence order is numeric',rows()[0].textContent.includes('Confluence: 9876543230'));
-   sort.value='saved';sort.dispatchEvent(new Event('change'));workspaceGoals.splice(1,extra.length);renderWorkspaceGoals();
+   sort.value='created-desc';sort.dispatchEvent(new Event('change'));workspaceGoals.splice(1,extra.length);renderWorkspaceGoals();
   }
  }
  const resultButton=document.querySelector('.goal-row-actions button');resultButton.click();

@@ -114,7 +114,7 @@ function saveWorkspacePreview(advance=true){
  if(workspaceGoals.some(goal=>goal.slug===slug&&goal.id!==selectedGoalId)){document.getElementById('goal-slug-entry').setCustomValidity('이미 사용 중인 slug입니다.');document.getElementById('goal-slug-entry').reportValidity();return;}
  document.getElementById('goal-slug-entry').setCustomValidity('');
  let goal=workspaceGoals.find(item=>item.id===selectedGoalId);
- if(!goal){goal={id:'draft-'+workspaceGoals.length,name:value,slug,state:'draft',step:1,position:'역할 확인 전',summary:'목표 저장 · 역할 확인 필요'};workspaceGoals.push(goal);selectedGoalId=goal.id;}
+ if(!goal){goal={id:'draft-'+workspaceGoals.length,name:value,slug,createdMs:Date.now(),state:'draft',step:1,position:'역할 확인 전',summary:'목표 저장 · 역할 확인 필요'};workspaceGoals.push(goal);selectedGoalId=goal.id;}
  goal.name=value;goal.description=value;goal.slug=slug;goal.step=1;
  document.getElementById('saved-goal-title').textContent=value;
  if(advance){i=1;show();}

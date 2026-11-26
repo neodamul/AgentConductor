@@ -12,12 +12,12 @@ const root = path.resolve(__dirname, '..');
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ac-goal-reference-list-'));
 const page = path.join(dir, 'app.html');
 const preset = `SIM.home.slugs=Array.from({length:12}, (_, i)=>({
-  slug:'goal_'+(i+1), goal:'Fixture '+(i+1), active:i===0,
+  slug:'goal_'+(i+1), goal:'Fixture '+(i+1), active:i===0, created_ms:Date.UTC(2026,10,26-i),
   progress:{stage:i===0?'completed':'no_plan'}, references:[
     {kind:'jira',id:'EMM-'+(i+1)},
     {kind:'confluence',id:'123456789012345678901234567890'+String(i+1).padStart(2,'0')}
   ]
-}));`;
+})).reverse();`;
 const get = id => "document.getElementById(" + JSON.stringify('start-' + id) + ")";
 async function waitFor(browser, condition) {
   for (let i = 0; i < 100; i++) {
@@ -43,6 +43,11 @@ async function main() {
     await waitFor(browser, get('goal-count') + '.textContent==="12"');
     await click('goal-list-open');
     assert.equal((await evalJs(rows)).length, 10);
+    assert.deepEqual((await evalJs(rows)).slice(0,2), ['goal_1','goal_2']);
+    assert.ok(await evalJs("!!document.querySelector('#start-goal-list time[datetime]')"));
+    await input('goal-sort', 'created-asc', 'change');
+    assert.deepEqual((await evalJs(rows)).slice(0,2), ['goal_12','goal_11']);
+    await input('goal-sort', 'created-desc', 'change');
     assert.equal(await evalJs("document.querySelectorAll('.goal-folder').length"), 10);
     assert.equal(await evalJs("document.querySelectorAll('.goal-trash').length"), 10);
     assert.ok(await evalJs("!!document.querySelector('.goal-result')"));

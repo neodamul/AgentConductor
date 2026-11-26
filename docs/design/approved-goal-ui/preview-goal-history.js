@@ -8,7 +8,7 @@ function previewGoalHistoryFixtures() {
   return {
    id:'history-'+number,name,slug:'auth_goal_'+number+'__refs_jira_auth_'+number+
     (references[1]?'_confluence_'+references[1][1]:''),
-   references,state:'draft',step:1,position:'계획 전',summary:'역할 확인 대기'
+   references,createdMs:Date.UTC(2026,10,15+index,12),state:'draft',step:1,position:'계획 전',summary:'역할 확인 대기'
   };
  });
 }
@@ -31,16 +31,15 @@ function previewGoalHistory(goals) {
   const fields=[goal.name,goal.slug,goal.description||'',...(goal.references||[]).map(ref=>ref.join(':'))];
   return terms.every(term=>fields.some(field=>field.toLowerCase().includes(term)));
  });
- if(sort.value!=='saved'){
-  const [kind,order]=sort.value.split('-');
-  const compare=(a,b)=>(order==='desc'?-1:1)*previewGoalOrder.compare(a,b);
-  const ids=new Map(matches.map(goal=>[goal,(goal.references||[]).filter(ref=>ref[0]===kind).map(ref=>ref[1]).sort(compare)[0]]));
-  matches.sort((a,b)=>{
-   const left=ids.get(a),right=ids.get(b);
-   if(left===undefined||right===undefined)return Number(left===undefined)-Number(right===undefined);
-   return compare(left,right);
-  });
- }
+ const [kind,order]=sort.value.split('-'),direction=order==='desc'?-1:1;
+ const compare=kind==='created'?(a,b)=>direction*(a-b):(a,b)=>direction*previewGoalOrder.compare(a,b);
+ const ids=new Map(matches.map(goal=>[goal,kind==='created'?goal.createdMs:
+  (goal.references||[]).filter(ref=>ref[0]===kind).map(ref=>ref[1]).sort(compare)[0]]));
+ matches.sort((a,b)=>{
+  const left=ids.get(a),right=ids.get(b);
+  if(left===undefined||right===undefined)return Number(left===undefined)-Number(right===undefined);
+  return compare(left,right);
+ });
  const pageSize=10,pages=Math.max(1,Math.ceil(matches.length/pageSize));
  previewGoalPage=Math.max(1,Math.min(previewGoalPage,pages));
  nav.hidden=pages===1;

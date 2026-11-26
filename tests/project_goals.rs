@@ -216,6 +216,7 @@ fn goal_slug_and_snapshot_include_saved_source_references() {
         "implement_authentication_2__refs_jira_emm_1102_confluence_23456789012345678901234567890123",
     ]) {
         assert_eq!(row["slug"], slug);
+        assert!(row["created_ms"].as_u64().is_some_and(|ms| ms > 0));
         assert!(repo.join(slug).is_dir());
         assert_eq!(
             row["references"],

@@ -30,7 +30,8 @@ The Goal List indexes the explicit Jira and Confluence tags in the saved Goal te
 the existing MCP grammar. The references are available even for folders created before
 reference-aware names. Suggested tags become references when accepted in the Goal editor.
 The history list sorts and filters the local snapshot without querying Jira or Confluence.
-It shows ten rows at a time and keeps the existing Goal, Result, folder, and deletion actions.
+The default sorts by stored Goal creation time, newest first. It shows ten rows at a time and
+keeps the existing Goal, Result, folder, and deletion actions.
 
 The naming code appends the reference IDs to new Goal folders. It uses a separate suffix
 so English-name adoption and collision handling preserve the IDs. A path component that

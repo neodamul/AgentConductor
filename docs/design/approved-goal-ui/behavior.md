@@ -307,6 +307,6 @@ Completed-Goal stage tabs support direct click, Enter/Space, Left/Right and Home
 ## Goal history by reference (#1102)
 
 The Goal List shows saved Jira keys and Confluence page IDs. Search by Goal text, folder
-name, or reference. Sort each reference type in numeric order, with unreferenced Goals
-last. Pages contain up to ten Goals. The `preview.html#workspace` entry opens the list
+name, or reference. The list starts with the newest Goal creation date and offers oldest
+first. Reference sorts use numeric order, with unreferenced Goals last. Pages contain up to ten Goals. The `preview.html#workspace` entry opens the list
 with twelve sample Goals so both pages can be explored.
