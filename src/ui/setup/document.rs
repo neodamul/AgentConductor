@@ -32,7 +32,9 @@ pub(crate) fn document() -> Result<String, String> {
         include_str!("../agent_sessions.js"),
         include_str!("../about.js"),
         "\n",
-        include_str!("../manual.js")
+        include_str!("../manual.js"),
+        "\n",
+        include_str!("../update_ui.js")
     );
     let script = include_str!("../role_choices.js").to_string()
         + &format!(

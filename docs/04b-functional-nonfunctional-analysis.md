@@ -513,6 +513,8 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 ### FR-146 Answer operator questions from project files and the manual
 Accept 1..8192-byte operator turns, send at most the 12 most recent turns, require the conversation to end with an operator turn, and return one bounded Markdown answer (32 KiB). Show failures as an error turn that is not sent back.
 
+**GitHub #1099.** Render Room narrative text through the bounded local renderer. Editable prompts, raw logs, diff and test evidence remain literal.
+
 ### NFR-55 Keep the chat read-only and bounded
 The coordinator runs only through its verified read-only template, never changes files or runs commands, shares the single job slot (a running operation refuses a new question), and times out after five minutes. The page renders answers as plain text.
 Trace: R-161 → BG-116 → SF-148 → UC-151 → FR-146/NFR-55 → QAS-157 → DDR-22 → DD-171. GitHub #115, user, 2026-10-21.

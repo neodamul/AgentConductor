@@ -6,12 +6,12 @@
 //   direct  everything else; AC_WAIT marks the pressed button and names the request after 1 s
 const fs = require('node:fs'), assert = require('node:assert/strict');
 const read = f => fs.readFileSync(`src/ui/${f}`, 'utf8').replace(/\r\n/g, '\n');
-const pages = ['startup.js', 'room.js', 'room_render.js', 'room_recovery.js', 'mcp.js', 'chat.js', 'optimize.js', 'manual.js', 'team_briefing.js'];
+const pages = ['startup.js', 'room.js', 'room_render.js', 'room_recovery.js', 'mcp.js', 'chat.js', 'optimize.js', 'manual.js', 'team_briefing.js', 'markdown.js', 'update_ui.js'];
 const found = new Set();
 for (const page of pages) for (const m of read(page).matchAll(/\bkind:\s*'([a-z_]+)'/g)) found.add(m[1]);
 
 const ENVELOPE = ['action']; // the room wraps its actions as { kind: 'action', action: { kind } }
-const REFRESH = ['snapshot', 'client_timeout', 'task', 'coordinator', 'chat_history', 'workspaces', 'mcp_source_suggestions'];
+const REFRESH = ['snapshot', 'client_timeout', 'task', 'coordinator', 'chat_history', 'workspaces', 'mcp_source_suggestions', 'render_markdown'];
 const JOBS = [
   { kinds: ['prepare'], file: 'startup.js', text: "kind==='plan'" },
   { kinds: ['start'], file: 'startup.js', text: "kind==='start'" },
@@ -19,7 +19,7 @@ const JOBS = [
   { kinds: ['mcp_preview', 'mcp_discover'], file: 'mcp.js', text: "kind==='mcp'" },
   { kinds: ['chat'], file: 'chat.js', text: 'chat_job' },
   { kinds: ['discover'], file: 'startup.js', text: 'kind===`catalog:${p.id}`' },
-  { kinds: ['apply_update'], file: 'startup.js', text: "updateSince('installing')" },
+  { kinds: ['apply_update'], file: 'update_ui.js', text: "updateSince('installing')" },
   // Room actions run as controller jobs shown in the card/composer; the usage refresh marks its button (and counts its time once #297 lands).
   { kinds: ['approve', 'merge', 'reject', 'revise', 'recover', 'resume', 'reassign', 'schedule', 'model', 'effort', 'stop', 'coordinator_request', 'scope_recovery'], file: 'room.js', text: 'room.in_progress' },
   { kinds: ['quota'], file: 'startup.js', text: "metadataBusy('quota',p.id)" },

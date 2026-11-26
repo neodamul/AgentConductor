@@ -898,6 +898,7 @@
   "startup.mb": ": {value1} · {value2} MB",
   "startup.mb_ba3891": ": {value1} · {value2} MB · ",
   "startup.mcp_servers": "MCP 서버 등록…",
+  "startup.markdown_preview": "Markdown 미리보기",
   "startup.message_body_json": "메시지 본문 · JSON",
   "startup.messenger": "메신저…",
   "startup.messenger_51f1e6": "메신저",

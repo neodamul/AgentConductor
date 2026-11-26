@@ -581,6 +581,8 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 
 ### SF-148 Read-only coordinator chat as a bounded worker job
 
+**GitHub #1099.** Reuse the offline Markdown viewer for display-only Room narratives and provide a preview next to the editable task prompt.
+
 **GitHub #1088.** Present coordinator replies through the local Markdown viewer using the same rendering for live replies and restored conversations.
 
 Run each question as a worker job of the existing job slot: the coordinator profile runs in the project folder with its read-only tools, receives the recent conversation and the manual, and returns one JSON answer that the page shows when the job completes.

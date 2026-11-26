@@ -1469,6 +1469,8 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 
 ### DD-171 Implement chat as a `chat` worker job with an artifact answer
 
+**GitHub #1099.** Use the native chat safety mode for Room narratives. Batch and cache render requests on the page, keep a literal fallback, and open only validated HTTP(S) links through the existing native route. Derive compact task labels from a single plain-text summary without rewriting the saved prompt.
+
 **GitHub #1088.** Render the reply through the offline Markdown renderer with an untrusted-chat mode. Escape source markup, suppress images, and validate external HTTP(S) destinations before opening them. The chat artifact and prompt history retain only the original text.
 
 `Request::Chat` validates the turns (`src/chat.rs`), writes the conversation to a private artifact and launches `agentconductor chat` through the existing job slot, like MCP preview. The worker calls `coordinator::run_json_within` with a prompt holding the embedded manual and recent turns, stores the answer artifact, and the snapshot returns it once with its job ID. The page (`chat.js`) keeps the conversation in memory.

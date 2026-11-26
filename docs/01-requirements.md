@@ -664,6 +664,8 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 
 ### R-161 Chat with the coordinator from the workspace screen
 
+**GitHub #1099.** Present readable Room plan, task and result narratives with the Markdown and line breaks used in coordinator chat.
+
 **GitHub #1088.** The coordinator chat displays Markdown replies as formatted content and preserves the original text in local conversation history.
 
 Status: Amended by R-179, R-181, R-187, R-188, R-192: the chat is a persistent terminal-style transcript, survives slow or unconfirmed sends, carries workspace and run context, and works while a plan is made.
