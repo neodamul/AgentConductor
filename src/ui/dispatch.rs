@@ -1,6 +1,8 @@
 //! Keep native request routing separate from window/surface lifetime.
 use super::*;
+mod navigation;
 mod run;
+use navigation::Navigation;
 impl Room {
     pub fn dispatch(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
         let kind = diagnostics::kind(bytes);
@@ -20,49 +22,20 @@ impl Room {
         if bytes.len() > 64 * 1024 {
             return Err(crate::ui::messages::text("native.native_request_exceeds_64_kib").into());
         }
-        use crate::cooperative::route::Preference;
-        #[derive(Deserialize)]
-        #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
-        enum Navigation {
-            OpenRun {},
-            Home {},
-            PickFolder {},
-            PickFile {},
-            PickExecutable {},
-            ResolveExecutable {
-                executable: String,
-            },
-            Workspaces {},
-            SwitchWorkspace {
-                path: PathBuf,
-            },
-            CreateWorkspace {
-                name: String,
-            },
-            ForgetWorkspace {
-                path: PathBuf,
-            },
-            DeleteWorkspace {
-                path: PathBuf,
-                name: String,
-                replacement: Option<String>,
-            },
-            SavedWorkspaces {},
-            OpenWorkspace {
-                path: PathBuf,
-            },
-            SetLanguage {
-                language: String,
-            },
-            SetTheme {
-                theme: String,
-            },
-            SignalTransport {},
-            SetSignalTransport {
-                preference: Preference,
-            },
-        }
         let kind: serde_json::Value = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
+        if kind["kind"] == "render_markdown" {
+            let texts: Vec<String> =
+                serde_json::from_value(kind["texts"].clone()).map_err(|e| e.to_string())?;
+            if !(1..=16).contains(&texts.len()) {
+                return Err("Markdown batches must contain 1..16 text values".into());
+            }
+            return Ok(serde_json::json!({
+                "html": texts.iter().map(|text| crate::manual::render_chat(text)).collect::<Vec<_>>()
+            }));
+        }
+        if kind["kind"] == "open_chat_link" {
+            return super::open_content_link(kind["url"].as_str().unwrap_or_default());
+        }
         if kind["kind"] == "mcp_source_suggestions" {
             let goal = kind["goal"]
                 .as_str()

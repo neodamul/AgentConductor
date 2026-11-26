@@ -1,9 +1,10 @@
 // Shared run/task evidence rendering. Loaded in the same startRoom closure as room.js.
+let goalNarrative;
 function renderSnapshot() {
   if(!snapshot)return;syncInspector();watchResult(snapshot);const r=snapshot.report;if(selected>=r.tasks.length)selected=0;
   const t=task(),p=planTask(),a=profile();
 
-  AC_I18N.bind($('goal'),()=>(taskLine(r.plan.goal)||r.plan.goal));/* GitHub #827: the heading shows one line; the toggle unfolds the whole Goal. */const fullGoal=$('goal-full'),goalText=r.plan.goal||'';if(fullGoal.textContent!==goalText){fullGoal.hidden=true;$('goal-toggle').setAttribute('aria-expanded','false');AC_I18N.bind($('goal-toggle').firstElementChild,()=>acMessage('room.goal_expand'));}if(fullGoal.textContent!==goalText)fullGoal.textContent=goalText;const project=(r.folder?.original||r.repo).replace(/^\\\\\?\\/,'');AC_I18N.bind($('repository'),()=>(project.split(/[\\/]/).filter(Boolean).pop()||project));AC_I18N.bind($('repository'),()=>(project),"title");
+  AC_I18N.bind($('goal'),()=>(taskLine(r.plan.goal)||r.plan.goal));/* GitHub #827: the heading shows one line; the toggle unfolds the whole Goal. */const fullGoal=$('goal-full'),goalText=r.plan.goal||'';if(goalNarrative!==goalText){goalNarrative=goalText;fullGoal.hidden=true;$('goal-toggle').setAttribute('aria-expanded','false');AC_I18N.bind($('goal-toggle').firstElementChild,()=>acMessage('room.goal_expand'));window.acMarkdown.set(fullGoal,goalText);}const project=(r.folder?.original||r.repo).replace(/^\\\\\?\\/,'');AC_I18N.bind($('repository'),()=>(project.split(/[\\/]/).filter(Boolean).pop()||project));AC_I18N.bind($('repository'),()=>(project),"title");
   AC_I18N.bind($('run-state'),()=>(statusLabel(r.state)));$('run-state').className='state-label tone-'+statusTone(r.state);
   renderRail(r,selected);
   const mergeRunning=snapshot.job?.state==='running'&&snapshot.job.kind==='merge';const asking=(snapshot.tool_requests||[]).some(q=>q.status==='pending'),stuck=r.tasks.some(x=>x.status==='permission_denied');AC_I18N.bind($('run-pill'),()=>(mergeRunning?acMessage("room.merge_in_progress"):asking?acMessage('room.decision_needed'):stuck?acMessage('room.blocked'):isVerifying(r)?acMessage('room.state_verifying'):statusLabel(r.state)));$('run-pill').className='status-pill tone-'+(mergeRunning?'run':asking?'wait':stuck?'bad':statusTone(r.state));
@@ -22,7 +23,7 @@ function renderSnapshot() {
   AC_I18N.bind($('selected-agent'),()=>(taskLine(p?.prompt)||t?.id||agentName(a)));{const next=Object.assign(avatar(a?.parser,agentName(a),'agent-symbol'),{id:'agent-symbol'});if(next.outerHTML!==$('agent-symbol').outerHTML)$('agent-symbol').replaceWith(next);}AC_I18N.bind($('selected-task'),()=>([agentName(a),t?.id,p?.paths?.[0]].filter(Boolean).join(' · ')));AC_I18N.bind($('session-eyebrow'),()=>(acMessage("room.step_4_run_tasks_selected_task")));/* #1062: the coordinator view owns these (renderCoordinator); hiding them on every poll flickered until its reply came back. */if(!coordinatorView){$('verify-rows').hidden=true;$('review-summary').hidden=true;}renderNotice(t,a);AC_I18N.bind($('feedback-target'),()=>(agentName(a)+' / '+(t?.id||'')));AC_I18N.bind($('composer-note'),()=>acMessage("room.composer_note",{value1:agentName(a),value2:t?.id||''}));
   const status=statuses[selected],toolWait=!!t&&(snapshot.tool_requests||[]).some(q=>q.status==='pending'&&q.context.task===t.id);AC_I18N.bind($('task-status'),()=>(toolWait?acMessage('room.tool_wait'):taskStatusLabel(status)));$('task-status').className='status-pill tone-'+(toolWait?'wait':taskStatusTone(status));
   AC_I18N.bind($('inspector-context'),()=>(t?agentName(a)+' · '+t.id+' · '+(p?.prompt||'').split('\n')[0]:acMessage("room.inspector_empty")));
-  AC_I18N.bind($('task-instruction'),()=>(p?.prompt||''));syncInstructionFold(p?.prompt||'');AC_I18N.bind($('task-dependency'),()=>(p?.depends_on?.length?p.depends_on.join(', '):acMessage("room.no_dependencies")));AC_I18N.bind($('task-test'),()=>(p?.test_command?.join(' ')||'—'));
+  const instruction=p?.prompt||'';window.acMarkdown.set($('task-instruction'),instruction,()=>syncInstructionFold(instruction));syncInstructionFold(instruction);AC_I18N.bind($('task-dependency'),()=>(p?.depends_on?.length?p.depends_on.join(', '):acMessage("room.no_dependencies")));AC_I18N.bind($('task-test'),()=>(p?.test_command?.join(' ')||'—'));
   AC_I18N.bind($('paths'),()=>(p?.paths.join('\n')||'—'));AC_I18N.bind($('session-id'),()=>(t?.session_id?acMessage("room.session_168693")+t.session_id:acMessage("room.no_native_session_yet")));
   setOptions($('agent-select'),r.plan.agents.map(a=>({value:a.id,label:agentName(a)})),p.agent,t.id+p.agent+JSON.stringify(r.plan.agents.map(a=>a.id)));
   // GitHub #852: the model list follows the agent picked in the select, so Assign can set both at once.
@@ -60,18 +61,18 @@ function renderSnapshot() {
 }
 function toolLine(name,input){const i=input&&typeof input==='object'?input:{};const arg=i.command??i.file_path??i.filePath??i.path??i.pattern??i.url??i.query??'';return `● ${name}(${String(arg).split('\n')[0].slice(0,200)})`+(i.description&&i.command?`\n  ${i.description}`:'');}
 function transcript(e) {
-  const raw=e.payload&&typeof e.payload==='object'?e.payload:{},out=[],add=(label,text,cls='')=>out.push({label,text:String(text??''),cls});
+  const raw=e.payload&&typeof e.payload==='object'?e.payload:{},out=[],add=(label,text,cls='',markdown=false)=>out.push({label,text:String(text??''),cls,markdown});
   const it=raw.item||{},done=raw.type==='item.completed';
   switch(raw.type){
     case 'system':add(acMessage("room.session"),raw.subtype==='init'?acMessage("startup.started")+(raw.model?' · '+raw.model:''):statusLabel(raw.subtype),'status');break;
-    case 'assistant':for(const c of raw.message?.content||[]){if(c.type==='text'&&c.text?.trim())add(acMessage("room.agent"),c.text);else if(c.type==='tool_use')add(acMessage("room.tool"),toolLine(c.name,c.input),'tool');else if(c.type==='thinking'&&c.thinking)add(acMessage("room.thinking"),clipLines(c.thinking,4),'muted');}break;
+    case 'assistant':for(const c of raw.message?.content||[]){if(c.type==='text'&&c.text?.trim())add(acMessage("room.agent"),c.text,'',true);else if(c.type==='tool_use')add(acMessage("room.tool"),toolLine(c.name,c.input),'tool');else if(c.type==='thinking'&&c.thinking)add(acMessage("room.thinking"),clipLines(c.thinking,4),'muted');}break;
     case 'user':for(const c of raw.message?.content||[])if(c.type==='tool_result')add(c.is_error?acMessage("room.tool_error"):acMessage("room.result"),clipLines(resultText(c.content))||acMessage("common.no_output"),c.is_error?'error':'result');break;
-    case 'result':add(raw.is_error?acMessage("room.failed_031a8f"):acMessage("room.finished"),typeof raw.result==='string'?raw.result:raw.subtype?statusLabel(raw.subtype):'',raw.is_error?'error':'status');break;
+    case 'result':add(raw.is_error?acMessage("room.failed_031a8f"):acMessage("room.finished"),typeof raw.result==='string'?raw.result:raw.subtype?statusLabel(raw.subtype):'',raw.is_error?'error':'status',!raw.is_error&&typeof raw.result==='string');break;
     case 'thread.started':add(acMessage("room.session"),acMessage("startup.started"),'status');break;
     case 'turn.completed':if(raw.usage)add(acMessage("room.usage"),acMessage("room.in_out", {value1:raw.usage.input_tokens??0,value2:raw.usage.output_tokens??0}),'muted');break;
     case 'turn.failed':case 'error':add(acMessage("room.error"),raw.error?.message||raw.message||acMessage("room.error"),'error');break;
     case 'item.started':case 'item.updated':case 'item.completed':
-      if(it.type==='agent_message'&&done)add(acMessage("room.agent"),it.text);
+      if(it.type==='agent_message'&&done)add(acMessage("room.agent"),it.text,'',true);
       else if(it.type==='reasoning'&&done&&it.text)add(acMessage("room.thinking"),clipLines(it.text,4),'muted');
       else if(it.type==='command_execution'){if(raw.type==='item.started')add(acMessage("room.tool"),`● $ ${it.command}`,'tool');else if(done)add(it.exit_code===0?acMessage("room.result"):acMessage("room.tool_error"),acMessage("room.exit_e1fe73", {value1:it.exit_code??'?'})+(it.aggregated_output?'\n'+clipLines(it.aggregated_output):''),it.exit_code===0?'result':'error');}
       else if(it.type==='file_change'&&done)add(acMessage("startup.edit"),(it.changes||[]).map(c=>`● ${statusLabel(c.kind)} ${c.path}`).join('\n'),'tool');
@@ -80,7 +81,7 @@ function transcript(e) {
       else if(it.type==='todo_list')add(acMessage("room.plan"),(it.items||[]).map(x=>(x.completed?'☑ ':'☐ ')+x.text).join('\n'),'muted');
       else if(it.type==='error')add(acMessage("room.error"),it.message,'error');
       break;
-    case 'text':if(raw.part?.text)add(acMessage("room.agent"),raw.part.text);break;
+    case 'text':if(raw.part?.text)add(acMessage("room.agent"),raw.part.text,'',true);break;
     case 'tool_use':{const st=raw.part?.state||{};add(acMessage("room.tool"),toolLine(raw.part?.tool||'tool',st.input),'tool');if(st.output)add(acMessage("room.result"),clipLines(st.output),'result');break;}
     case 'step_start':case 'step_finish':case 'turn.started':case 'rate_limit_event':break;
     default:{const text=raw.payload?.summary??raw.summary??raw.text??raw.message;add(statusLabel(raw.type||e.kind),typeof text==='string'?text:'',e.kind==='error'?'error':'muted');}
@@ -120,8 +121,8 @@ function renderCoordinator(data) {
 }
 function renderTask(data) {
   const t=task(),p=planTask();if(!t||data.task.id!==t.id)return;
-  const started=Number.isFinite(t.started_ms)&&t.started_ms>0?new Date(t.started_ms).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",hour12:false}):undefined;const timeline=[event(acMessage("room.assigned_task"),p.prompt,'plan',started)];if(t.feedback)timeline.push(event(acMessage("room.you_latest_review"),t.feedback));
-  for(const x of collapseThinking(data.events)){if(x.thinking){const t=x.thinking;timeline.push(event(acMessage("room.thinking_updates",{value1:t.count}),acMessage("room.thinking_quiet"),'muted',t.first===t.last?t.first:`${t.first}–${t.last}`));}else for(const y of transcript(x.event))timeline.push(event(y.label,y.text,y.cls,x.event.at?new Date(x.event.at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false}):x.event.seq));}
+  const started=Number.isFinite(t.started_ms)&&t.started_ms>0?new Date(t.started_ms).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",hour12:false}):undefined;const timeline=[event(acMessage("room.assigned_task"),p.prompt,'plan',started,true)];if(t.feedback)timeline.push(event(acMessage("room.you_latest_review"),t.feedback,'',undefined,true));
+  for(const x of collapseThinking(data.events)){if(x.thinking){const t=x.thinking;timeline.push(event(acMessage("room.thinking_updates",{value1:t.count}),acMessage("room.thinking_quiet"),'muted',t.first===t.last?t.first:`${t.first}–${t.last}`));}else for(const y of transcript(x.event))timeline.push(event(y.label,y.text,y.cls,x.event.at?new Date(x.event.at).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',hour12:false}):x.event.seq,y.markdown));}
   for(const d of data.decisions||[])timeline.push(decisionEntry(d));
   for(const d of data.coordinator_decisions||[])if(d.kind!=='tool')timeline.push(judgmentEntry(d));
   if(t.error)timeline.push(event(acMessage("room.coordinator_report"),t.error,'error'));
@@ -129,7 +130,7 @@ function renderTask(data) {
   const activity=$('activity'),nearBottom=activity.parentElement.scrollHeight-activity.parentElement.scrollTop-activity.parentElement.clientHeight<70;
   AC_I18N.replace(activity,...timeline);if(nearBottom)activity.parentElement.scrollTop=activity.parentElement.scrollHeight;
   AC_I18N.bind($('stdout'),()=>(readableRawLog(data.stdout)||acMessage("room.no_output_yet")));AC_I18N.bind($('stderr'),()=>(readableRawLog(data.stderr)||acMessage("room.no_errors_logged")));
-  const notes=data.knowledge.filter(k=>k.task===t.id);const steps=(data.step_lessons||[]).map(l=>{const el=node('article',undefined,'lesson');el.append(node('h3',()=>(acMessage("room.step_lesson_for",{value1:l.task}))),node('p',l.cause,'small muted'),node('p',l.response));return el;});AC_I18N.replace($('lessons'),...steps,...(notes.length?notes.map(k=>{const el=node('article',undefined,'lesson');el.append(node('h3',k.lesson.context),node('span',()=>(acMessage("room.confidence", {value1:pretty(k.status),value2:k.lesson.confidence})),'status-pill'),node('p',k.lesson.response),node('pre',k.lesson.sources.map(s=>s.path+'\n'+s.sha256).join('\n')),node('p',()=>(acMessage("room.revalidate")+k.lesson.revalidate),'small muted'));return el;}):(steps.length?[]:[node('p',()=>(acMessage("room.no_reviewed_lessons_for_this_task_draft_observations")),'empty')])));
+  const notes=data.knowledge.filter(k=>k.task===t.id);const steps=(data.step_lessons||[]).map(l=>{const el=node('article',undefined,'lesson');el.append(node('h3',()=>(acMessage("room.step_lesson_for",{value1:l.task}))),narrative(l.cause,'small muted'),narrative(l.response));return el;});AC_I18N.replace($('lessons'),...steps,...(notes.length?notes.map(k=>{const el=node('article',undefined,'lesson');el.append(node('h3',k.lesson.context),node('span',()=>(acMessage("room.confidence", {value1:pretty(k.status),value2:k.lesson.confidence})),'status-pill'),narrative(k.lesson.response),node('pre',k.lesson.sources.map(s=>s.path+'\n'+s.sha256).join('\n')),node('p',()=>(acMessage("room.revalidate")+k.lesson.revalidate),'small muted'));return el;}):(steps.length?[]:[node('p',()=>(acMessage("room.no_reviewed_lessons_for_this_task_draft_observations")),'empty')])));
   const u=data.usage;AC_I18N.bind($('tokens'),()=>(u&&typeof u.input_tokens==='number'?acMessage("room.in_out", {value1:u.input_tokens.toLocaleString(),value2:(u.output_tokens||0).toLocaleString()}):acMessage("room.not_reported")));
   const duration=t.started_ms?(Number(t.finished_ms||Date.now())-Number(t.started_ms))/1000:null;AC_I18N.bind($('duration'),()=>(duration===null?'—':`${Math.max(0,duration).toFixed(1)}s`));
   globalThis.acGoalReadOnly?.room(snapshot);
@@ -176,3 +177,25 @@ function toolView(request) {
 
 // GitHub #1011: the inspector folds a long task instruction; another task folds again, and the toggle shows only when text is cut.
 function syncInstructionFold(text){const box=$('task-instruction'),toggle=$('task-instruction-toggle');if(box.dataset.text!==text){box.dataset.text=text;box.classList.add('folded');}const open=!box.classList.contains('folded');toggle.setAttribute('aria-expanded',String(open));toggle.hidden=!open&&box.scrollHeight<=box.clientHeight+1;AC_I18N.bind(toggle.firstElementChild,()=>acMessage(open?'room.goal_collapse':'room.goal_expand'));}
+
+function judgmentEntry(j) {
+  const el = event(judgmentLabel(j), (j.task ? j.task + ' · ' : '') + j.detail, ['deny', 'blocked', 'undecided', 'revise', 'escalated'].includes(j.judgment) ? 'warning' : 'status', j.seq, true);
+  // An applied amendment can be undone once; the run stops for an explicit Resume.
+  if (j.kind === 'amendment' && j.judgment === 'applied' && !j.undone) {
+    const undo = node('button', () => acMessage("room.amendment_undo"), 'small-button');
+    undo.dataset.goalWrite='true';undo.onclick = async () => { try { await request({ kind: 'undo_amendment', id: j.id }); notice(() => acMessage("room.amendment_undone")); await poll(); } catch (e) { notice(e.message, true); } };
+    el.querySelector('.event-body').append(undo);
+  }
+  return el;
+}
+function decisionEntry(d) {
+  let input={};try{input=JSON.parse(d.input);}catch{}
+  const label=d.allow===true?acMessage("room.coordinator_allowed"):d.allow===false?acMessage("room.coordinator_denied"):acMessage("room.coordinator_could_not_decide");
+  const when=d.decided_ms?new Date(d.decided_ms).toLocaleTimeString()+' · ':'';
+  return event(label,`${when}${toolLine(d.tool,input)}\n${d.reason||d.error||''}`,d.allow===true?'status':'warning');
+}
+function narrative(text, cls='') { return window.acMarkdown.set(node('div', undefined, cls), text); }
+function event(label,text,cls='',seq,markdown=false) {
+  // GitHub #607: like the mock's `.ev` row: the number (or range) column first, then the title and its detail.
+  const el=node('article',undefined,'event '+cls);el.append(node('code',seq===undefined?'':/^\d\d:\d\d$/.test(seq)?seq:'#'+seq,'event-seq'));const body=node('div',undefined,'event-body');const head=node('div',undefined,'event-head');head.append(node('span',label));body.append(head,markdown?narrative(text,'event-text'):node('p',text,'event-text'));el.append(body);return el;
+}

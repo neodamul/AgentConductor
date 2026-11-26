@@ -11,12 +11,7 @@ impl Startup {
         }
         let request: Request = serde_json::from_slice(bytes).map_err(|e| e.to_string())?;
         if let Request::OpenChatLink { url } = &request {
-            if !crate::manual::chat_link(url) {
-                return Err(messages::text("startup.chat_invalid_link").into());
-            }
-            crate::bug_report::open_browser(url)
-                .map_err(|_| messages::text("startup.chat_open_link_failed"))?;
-            return Ok(serde_json::json!({"opened": true}));
+            return super::super::open_content_link(url);
         }
         let waiting = std::time::Instant::now();
         let mut saved = self

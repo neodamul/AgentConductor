@@ -6,7 +6,7 @@ fn remote_release_notes_are_literal_scrollable_text() {
         !Path::new("tests/test_update_notes.py").exists(),
         "the Python contract must be retired after its Rust replacement exists"
     );
-    let script = include_str!("../src/ui/startup.js");
+    let script = include_str!("../src/ui/update_ui.js");
     let render = script
         .split("function renderUpdate(){")
         .nth(1)

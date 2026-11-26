@@ -56,8 +56,8 @@ assert.ok(call('startText', null, now, now - 7000).includes('0:07'));
 vm.runInContext(grab(i18n, 'const AC_ELAPSED=') + 'this.AC_ELAPSED=AC_ELAPSED;', context);
 assert.equal(context.AC_ELAPSED(now - 65000, now), '1:05');
 assert.equal(context.AC_ELAPSED(now + 3000, now), '0:00', 'a clock behind the start is not negative');
-for (const phase of ["'checking'", "'installing'"]) assert.ok(startup.includes('updateSince(' + phase), `the update dialog counts the ${phase} time`);
-assert.ok(/setInterval\(\(\)=>\{[^\n]*chat\.tick\(\)[^\n]*optimize\.update\(\)[^\n]*sources\.update\(\)[^\n]*renderUpdate\(\)/.test(startup), 'the 1 s timer redraws chat, rewrite, lookup and update');
+for (const phase of ["'checking'", "'installing'"]) assert.ok(fs.readFileSync('src/ui/update_ui.js','utf8').includes('updateSince(' + phase), `the update dialog counts the ${phase} time`);
+assert.ok(/setInterval\(\(\)=>\{[^\n]*chat\.tick\(\)[^\n]*optimize\.update\(\)[^\n]*sources\.update\(\)[^\n]*updateUi\.refresh\(\)/.test(startup), 'the 1 s timer redraws chat, rewrite, lookup and update');
 
 // GitHub #297 / #321: the run screen counts a running usage query; the agent cards say nothing (the refresh icon is enough).
 vm.runInContext(grab(i18n, 'const AC_QUOTA_WAIT=') + 'this.AC_QUOTA_WAIT=AC_QUOTA_WAIT;', context);

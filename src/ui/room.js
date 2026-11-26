@@ -208,26 +208,6 @@ function judgmentLabel(j) {
   const label = JUDGMENT_LABELS[j.kind + ':' + j.judgment];
   return label ? label() : acMessage("room.judgment_other", { value1: j.kind, value2: j.judgment });
 }
-function judgmentEntry(j) {
-  const el = event(judgmentLabel(j), (j.task ? j.task + ' · ' : '') + j.detail, ['deny', 'blocked', 'undecided', 'revise', 'escalated'].includes(j.judgment) ? 'warning' : 'status', j.seq);
-  // An applied amendment can be undone once; the run stops for an explicit Resume.
-  if (j.kind === 'amendment' && j.judgment === 'applied' && !j.undone) {
-    const undo = node('button', () => acMessage("room.amendment_undo"), 'small-button');
-    undo.dataset.goalWrite='true';undo.onclick = async () => { try { await request({ kind: 'undo_amendment', id: j.id }); notice(() => acMessage("room.amendment_undone")); await poll(); } catch (e) { notice(e.message, true); } };
-    el.querySelector('.event-body').append(undo);
-  }
-  return el;
-}
-function decisionEntry(d) {
-  let input={};try{input=JSON.parse(d.input);}catch{}
-  const label=d.allow===true?acMessage("room.coordinator_allowed"):d.allow===false?acMessage("room.coordinator_denied"):acMessage("room.coordinator_could_not_decide");
-  const when=d.decided_ms?new Date(d.decided_ms).toLocaleTimeString()+' · ':'';
-  return event(label,`${when}${toolLine(d.tool,input)}\n${d.reason||d.error||''}`,d.allow===true?'status':'warning');
-}
-function event(label,text,cls='',seq) {
-  // GitHub #607: like the mock's `.ev` row: the number (or range) column first, then the title and its detail.
-  const el=node('article',undefined,'event '+cls);el.append(node('code',seq===undefined?'':/^\d\d:\d\d$/.test(seq)?seq:'#'+seq,'event-seq'));const body=node('div',undefined,'event-body');const head=node('div',undefined,'event-head');head.append(node('span',label));body.append(head,node('p',text,'event-text'));el.append(body);return el;
-}
 async function loadTask() {if(!snapshot||roomStopped)return;if(coordinatorView){try{const data=await request({kind:'coordinator'});if(!roomStopped)renderCoordinator(data);}catch(e){notice(e.message,true);}return;}const index=selected;try{const data=await request({kind:'task',index});if(!roomStopped&&index===selected)renderTask(data);}catch(e){notice(e.message,true);}}
 async function act(action,revision=snapshot?.revision,wait,onTimeout,onAccepted) {
   if(roomStopped)return false;

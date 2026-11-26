@@ -685,6 +685,8 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 
 ### QAS-157 A question yields an answer or a visible error, never a file change
 
+**GitHub #1099.** Verify that Room plan and activity views preserve soft line breaks, emphasis and lists, refuse hostile markup and unsafe link destinations, and preserve literal logs and editable prompt values.
+
 **GitHub #1088.** A live or restored Markdown reply renders headings, lists, emphasis, quotes, links, tables and code. Plain replies preserve line breaks. Untrusted HTML and image references do not produce active elements, unsafe links are rejected, and wide blocks scroll inside the reply bubble.
 
 Status: Amended by QAS-177, QAS-179, QAS-185, QAS-186, QAS-190 (R-179, R-181, R-187, R-188, R-192).

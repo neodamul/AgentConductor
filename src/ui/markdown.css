@@ -1,0 +1,19 @@
+:is(.chat-markdown,.room-markdown){min-width:0}
+:is(.chat-markdown,.room-markdown){max-inline-size:100%}
+:is(.chat-markdown,.room-markdown) > :first-child{margin-top:0}
+:is(.chat-markdown,.room-markdown) > :last-child{margin-bottom:0}
+:is(.chat-markdown,.room-markdown) > * + *{margin-top:.65em}
+:is(.chat-markdown,.room-markdown) :is(h1,h2,h3,h4,h5,h6){font-size:1em;line-height:1.4}
+:is(.chat-markdown,.room-markdown) :is(ul,ol){padding-inline-start:1.5em}
+:is(.chat-markdown,.room-markdown) blockquote{margin-inline:0;padding-inline-start:10px;border-inline-start:2px solid var(--line)}
+:is(.chat-markdown,.room-markdown) :is(pre,.manual-table){overflow:auto}
+:is(.chat-markdown,.room-markdown) pre{padding:6px 8px;background:var(--surface);border-radius:6px;white-space:pre}
+:is(.chat-markdown,.room-markdown) table{border-collapse:collapse}
+:is(.chat-markdown,.room-markdown) :is(th,td){padding:4px 8px;border:1px solid var(--line);text-align:start;white-space:nowrap}
+:is(.chat-markdown,.room-markdown) a{color:var(--accent);text-decoration:underline}
+.room-markdown{white-space:pre-wrap;overflow-wrap:anywhere}
+.room-markdown[data-rendered]{white-space:normal}
+.room-markdown[data-rendered] :is(p,li,blockquote){white-space:pre-wrap}
+.room-markdown :is(ul,ol){margin-inline-start:0}
+.plan-markdown-preview{margin-block:4px 10px}
+.plan-markdown-preview>summary{cursor:pointer}

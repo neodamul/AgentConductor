@@ -12,7 +12,11 @@ use std::{
     sync::{Arc, Mutex},
 };
 const HTML: &str = include_str!("ui/room.html");
-const CSS: &str = include_str!("ui/room.css");
+const CSS: &str = concat!(
+    include_str!("ui/room.css"),
+    "\n",
+    include_str!("ui/markdown.css")
+);
 const JS: &str = concat!(
     include_str!("ui/room_activity.js"),
     include_str!("ui/room_result.js"),
@@ -34,8 +38,19 @@ const I18N: &str = concat!(
     "\n",
     include_str!("ui/placeholder_suggestion.js"),
     "\n",
-    include_str!("ui/goal_readonly.js")
+    include_str!("ui/goal_readonly.js"),
+    "\n",
+    include_str!("ui/markdown.js")
 );
+fn open_content_link(url: &str) -> Result<serde_json::Value, String> {
+    if !crate::manual::chat_link(url) {
+        return Err(messages::text("startup.chat_invalid_link").into());
+    }
+    crate::bug_report::open_browser(url)
+        .map_err(|_| messages::text("startup.chat_open_link_failed"))?;
+    Ok(serde_json::json!({"opened": true}))
+}
+
 mod cache;
 mod diff;
 mod document;

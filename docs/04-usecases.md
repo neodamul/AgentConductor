@@ -678,6 +678,8 @@ Trace: R-159 → BG-114 → SF-146 → UC-149 → FR-144/NFR-54 → QAS-155 → 
 
 ### UC-151 Ask how to run what the team built
 
+**GitHub #1099.** In the Room, the operator can read formatted plan analysis, historical task instructions, agent responses, lessons and result summaries. The plan editor exposes a Markdown preview that follows the draft.
+
 **GitHub #1088.** A Markdown reply renders within the coordinator conversation. The same formatting appears when the operator reopens saved history. External links open only on an operator click.
 
 Status: Amended by UC-170, UC-172, UC-178, UC-179, UC-183 (R-179, R-181, R-187, R-188, R-192).

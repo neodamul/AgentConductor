@@ -4385,6 +4385,13 @@ Version 0.2.20 ships #1092 and #1093 (see CHANGELOG). The current application UI
 - [x] Verify: Reproduced the original acceptance rejection. Passed 30 local Rust checks covering automatic and saved reviews, incomplete or changed evidence, the public Room verdict and the human merge gate.
 - [x] Complete: Prepare the follow-up commit for the 0.2.21 batch.
 
+## #1099 — Markdown in Room plans and activity
+
+- [x] Plan: Extend the existing chat rendering contract to display-only Room narratives.
+- [x] Task: Format plan, activity and related prose with the native renderer.
+- [x] Verify: Reproduce the missing native route. Check plan history and preview, activity, lessons and results in Chromium, including raw evidence and safe links. Pass the focused Rust and Python checks.
+- [x] Complete: Prepare the change for the 0.2.22 batch.
+
 ## 0.2.21 release preparation
 
 Version 0.2.21 ships #1095 and #1096 (see CHANGELOG). The batch keeps the original reviewer instruction for ordinary integration failures. The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe failed task verification and coordinator review of zero-exit Red tests.
