@@ -34,8 +34,8 @@ The default sorts by stored Goal creation time, newest first. It shows ten rows 
 keeps the existing Goal, Result, folder, and deletion actions.
 
 The naming code appends the reference IDs to new Goal folders. It uses a separate suffix
-so English-name adoption and collision handling preserve the IDs. A path component that
-cannot hold the complete set of IDs produces an explicit error instead of losing a reference.
+so English-name adoption and collision handling preserve the IDs. New folder names use at most 96 ASCII characters. Long reference sets keep complete IDs that
+fit plus a deterministic fingerprint. Goal history still indexes all saved references.
 Existing registered paths remain bound to their original Goals.
 
 Regression coverage: `tests/project_goals.rs`, `tests/unit/slug_references.rs`, and

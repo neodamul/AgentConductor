@@ -193,7 +193,7 @@ fn completed_project_accepts_new_goals_restores_history_and_refuses_duplicate_bi
 fn goal_slug_and_snapshot_include_saved_source_references() {
     let (root, _) = support::setup("shared");
     let mut env = test_env::lock();
-    env.set("HOME", &root.join("home"));
+    env.set("HOME", root.join("home"));
     let repo = root.join("repo");
     let room = Room::startup(
         &root.join("workspace"),

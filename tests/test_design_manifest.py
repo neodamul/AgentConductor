@@ -2,12 +2,13 @@ import hashlib, json, re, unittest
 from pathlib import Path
 ROOT = Path("docs/design/approved-goal-ui")
 class DesignManifest(unittest.TestCase):
-    def test_every_loaded_script_is_in_capture_provenance(self):
-        scripts = set(re.findall(r'<script[^>]+src="([^"]+)"',
-                                 (ROOT / "preview.html").read_text(encoding="utf-8")))
+    def test_every_loaded_script_and_stylesheet_is_in_capture_provenance(self):
+        preview = (ROOT / "preview.html").read_text(encoding="utf-8")
+        sources = set(re.findall(r'<script[^>]+src="([^"]+)"', preview))
+        sources.update(re.findall(r'<link rel="stylesheet" href="([^"]+)"', preview))
         recorded = json.loads((ROOT / "verification.json").read_text(encoding="utf-8"))["source_sha256"]
-        self.assertEqual(sorted(scripts - recorded.keys()), [],
-                         "Every loaded reference script must be pinned during capture")
+        self.assertEqual(sorted(sources - recorded.keys()), [],
+                         "Every loaded reference script and stylesheet must be pinned during capture")
 
     # GitHub #849: verify-and-capture.py refreshes these hashes after a passing capture.
     def test_manifest_matches_every_design_file(self):

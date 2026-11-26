@@ -26,7 +26,7 @@ impl Startup {
         let slug = match requested {
             Some(slug) => {
                 crate::slugs::validate_base(&slug)?;
-                let slug = crate::slugs::with_references(&slug, &refs)?;
+                let slug = crate::slugs::with_references(&slug, &refs);
                 if existing.contains(&slug) {
                     return Err(crate::ui::messages::render(
                         "native.slug_already_exists_in_this_workspace",
@@ -42,7 +42,7 @@ impl Startup {
                 } else {
                     crate::ui::source_references::without_explicit(&goal)
                 };
-                let base = crate::slugs::with_references(&crate::slugs::suggest(&title), &refs)?;
+                let base = crate::slugs::with_references(&crate::slugs::suggest(&title), &refs);
                 let mut taken = existing;
                 loop {
                     let slug = crate::slugs::unique(&base, &taken);

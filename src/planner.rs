@@ -231,7 +231,7 @@ pub async fn generate_from(
     if let Some(slug) = crate::coordinator::read_profile_document(profile, &output, "slug")
         .ok()
         .and_then(|d| d["slug"].as_str().map(str::to_owned))
-        .filter(|s| crate::slugs::validate(s).is_ok())
+        .filter(|s| crate::slugs::validate_base(s).is_ok())
     {
         fs::write(dir.join("slug.txt"), slug).map_err(|e| e.to_string())?;
     }

@@ -1829,4 +1829,4 @@ DD amendment (#957): Step 6 reuses the result dialog's `.file-diff-toggle`/`.fil
 
 ## #1102 Reference-aware Goal history
 
-Extend DD-61, DD-92, DD-159 and DD-222: append a reference suffix to new Goal slugs and preserve it during English-name adoption and collision handling. Keep existing folders as-is and derive reference metadata from saved Goal text. Filter and sort the local snapshot in the shared Goal list, ten rows per page.
+Extend DD-61, DD-92, DD-159 and DD-222: append a reference suffix to new Goal slugs and preserve it during English-name adoption and collision handling. Cap new folder names at 96 ASCII characters. For longer reference sets, keep complete IDs that fit plus a stable fingerprint, and retain the full reference set in Goal history. Keep existing folders as-is and derive reference metadata from saved Goal text. Filter and sort the local snapshot in the shared Goal list, ten rows per page.

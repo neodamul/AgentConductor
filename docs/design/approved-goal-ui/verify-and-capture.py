@@ -63,7 +63,10 @@ def palette_checks():
 
 
 def main():
-    source_files=['preview.html','preview.css']+re.findall(r'<script[^>]+src="([^"]+)"',(ROOT/'preview.html').read_text())
+    preview=(ROOT/'preview.html').read_text()
+    styles=re.findall(r'<link rel="stylesheet" href="([^"]+)"',preview)
+    scripts=re.findall(r'<script[^>]+src="([^"]+)"',preview)
+    source_files=['preview.html',*styles,*scripts]
     before={name:hashlib.sha256((ROOT/name.split('?')[0]).read_bytes()).hexdigest() for name in source_files}
     report={'kind':'design-reference-only','approved_date':'2026-11-04',
             'viewport':[1280,960],'contrast':palette_checks(),'source_sha256':before,'captures':[]}
