@@ -4392,6 +4392,13 @@ Version 0.2.20 ships #1092 and #1093 (see CHANGELOG). The current application UI
 - [x] Verify: Reproduce the missing native route. Check plan history and preview, activity, lessons and results in Chromium, including raw evidence and safe links. Pass the focused Rust and Python checks.
 - [x] Complete: Prepare the change for the 0.2.22 batch.
 
+### #1099 — Plain-text task summaries
+
+- [x] Plan: Reproduce Markdown markers in the plan row, task rail and inspector heading.
+- [x] Task: Use the same one-line summary for all three surfaces.
+- [x] Verify: Reproduce the marker leak. Pass light and dark Chromium checks and 12 native tests. Run the real Rust bridge against a disposable repository from draft through integration and confirm the human approval gate.
+- [x] Complete: Hand off the updated 0.2.22 issue branch.
+
 ## 0.2.21 release preparation
 
 Version 0.2.21 ships #1095 and #1096 (see CHANGELOG). The batch keeps the original reviewer instruction for ordinary integration failures. The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe failed task verification and coordinator review of zero-exit Red tests.

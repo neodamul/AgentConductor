@@ -1,6 +1,7 @@
 (()=>{
  'use strict';
  const q=id=>document.getElementById('start-'+id), el=(tag,text,cls)=>{const n=document.createElement(tag);if(['input','textarea'].includes(tag)){n.setAttribute('autocorrect','off');n.setAttribute('autocapitalize','off');n.spellcheck=false;}if(text!==undefined)AC_I18N.label(n,text);if(cls)n.className=cls;return n;};
+ const {taskLine} = window.acMarkdown;
  const stepNames=['workspace','team','review'];let lastStep='workspace';
  function showStep(name,focus=false){if(!stepNames.includes(name))return;lastStep=name;if(typeof planHeading==='function')planHeading();pageTitle();if(typeof acRail!=='undefined')acRail.forStep(name);for(const step of stepNames){const selected=step===name,tab=q('tab-'+step);tab.classList.toggle('done',stepNames.indexOf(step)<stepNames.indexOf(name));tab.setAttribute('aria-selected',String(selected));tab.tabIndex=selected?0:-1;q('panel-'+step).hidden=!selected;}{const footer=q('panel-'+name).querySelector('.startup-actions,.startup-review-footer'),note=footer?.querySelector('.note,.step-save-note');if(note)note.after(q('discard'));else footer?.prepend(q('discard'));}if(focus)q('tab-'+name).focus();mirrorProgress();if(typeof placeGoalList==='function')placeGoalList(false);}
  for(const name of stepNames){const tab=q('tab-'+name);tab.onclick=()=>showStep(name);tab.onkeydown=e=>{let index=stepNames.indexOf(name);if(e.key==='ArrowRight')index=(index+1)%stepNames.length;else if(e.key==='ArrowLeft')index=(index+stepNames.length-1)%stepNames.length;else if(e.key==='Home')index=0;else if(e.key==='End')index=stepNames.length-1;else return;e.preventDefault();showStep(stepNames[index],true);};}
@@ -174,7 +175,6 @@ q('read-plan').onclick=async()=>{if(busy())return;let picked;try{picked=await re
   // A started plan shows its run's actual state (running, waiting for approval, completed …),
   // not "Started" forever; before the run reports a state it is still "Started".
   function runPhaseLabel(runState){const id='state.'+runState;return runState&&acMessage(id)!==id?acMessage(id):acMessage("startup.started");}
-  function taskLine(prompt){const line=String(prompt||'').split('\n').map(l=>l.trim().replace(/^[-*]\s+/,'')).find(l=>l&&!/:$/.test(l)&&!/^<\/?[\w-]+>$/.test(l))||'';return line.length>160?line.slice(0,160)+'…':line;}
   function goalFields(){return document.querySelectorAll('#startup-screen input,#startup-screen textarea,#startup-screen select,#startup-screen button');}
   // GitHub #1064: a Goal change marks the controls it disables and gives back only those. A completed Goal's locks belong to
   // acGoalReadOnly; writing disabled into a locked control was kept and restored on unlock, so the new Goal's role

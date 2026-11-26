@@ -1,5 +1,6 @@
 'use strict';
 const $ = id => document.getElementById(id);
+const {taskLine} = window.acMarkdown;
 function resetReviewEvidence(){for(const id of ['review-summary','verify-rows','review-stale'])$(id).hidden=true;$('review-summary').replaceChildren();$('verify-rows').replaceChildren();$('test-results').replaceChildren();$('diff').replaceChildren(node('span',()=>acMessage('room.no_candidate_has_been_loaded')));$('diff').classList.add('empty');AC_I18N.bind($('review-caption'),()=>(acMessage('room.load_a_candidate_to_review_its_exact_evidence')));$('approve').disabled=true;$('merge').disabled=true;}
 resetReviewEvidence();
 let snapshot = null, selected = 0, review = null, polling = false, activeTab = 'activity', lastJob = null;
@@ -105,8 +106,6 @@ setInterval(() => { if (!document.hidden && !roomStopped) renderActivity(); }, 1
 function planTask() { return snapshot?.report.plan.tasks[selected]; }
 function profile() { return snapshot?.report.plan.agents.find(a=>a.id===planTask()?.agent); }
 function agentName(agent) {return agent?acAgentName(agent,snapshot?.report?.plan?.agents||[]):acMessage("room.agent");}
-// The plan review's one-line task summary: the first line that says what the task does.
-function taskLine(prompt){const line=String(prompt||'').split('\n').map(l=>l.trim().replace(/^[-*]\s+/,'')).find(l=>l&&!/:$/.test(l)&&!/^<\/?[\w-]+>$/.test(l))||'';return line.length>160?line.slice(0,160)+'…':line;}
 // Task rows lead with the reviewed summary; the task ID stays visible as a small label.
 function taskHeading(id,prompt){const heading=node('span',undefined,'session-task'),summary=taskLine(prompt);heading.append(node('span',id,'task-id'));if(summary)heading.append(node('span',summary,'task-summary'));AC_I18N.bind(heading,()=>(summary?id+' · '+summary:id),"title");return heading;}
 function refreshQuota(agent){quotaActive=agent;quotaRefreshed.set(agent,Date.now());return act({kind:'quota',agent});}

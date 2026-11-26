@@ -76,11 +76,26 @@
     return node;
   }
 
+  function inlineSummary(text) {
+    return text.replace(/(`{1,3})([^`]+)\1|(\*\*|__)(\S(?:.*?\S)?)\3/g,
+      (_, ticks, code, _emphasis, body) => ticks ? code : inlineSummary(body));
+  }
+
+  function taskLine(prompt) {
+    for (const raw of String(prompt ?? '').split('\n')) {
+      const unmarked = raw.trim().replace(/^(?:#{1,6}\s+|>\s*|[-*+]\s+|\d+[.)]\s+)+/, '');
+      const line = inlineSummary(unmarked).trim();
+      if (!line || /:$/.test(line) || /^<\/?[\w-]+>$/.test(line)) continue;
+      return line.length > 160 ? line.slice(0, 160) + '…' : line;
+    }
+    return '';
+  }
+
   document.addEventListener('click', event => {
     const link = event.target.closest?.('.room-markdown a');
     if (!link) return;
     event.preventDefault();
     send({kind:'open_chat_link', url:link.getAttribute('href')}).catch(() => {});
   });
-  window.acMarkdown = {set};
+  window.acMarkdown = {set, taskLine};
 })();

@@ -6,8 +6,23 @@ const {execFileSync} = require('node:child_process');
 const {pathToFileURL} = require('node:url');
 const {findChrome, launch} = require('./design_parity/cdp.cjs');
 
+const vm = require('node:vm');
+const context = {window:{}, document:{addEventListener() {}}, TextEncoder};
+vm.runInNewContext(fs.readFileSync('src/ui/markdown.js','utf8'),context);
+const taskLine = context.window.acMarkdown.taskLine;
+for (const [source,text] of [
+  ['# Plan','Plan'],['> Quote','Quote'],['1. Inspect','Inspect'],
+  ['> 2. **Change** the `API`','Change the API'],
+  ['**Goal:**\n<scope>\n- __Update__ the parser','Update the parser'],
+  ['**Use `a__b`** with C# and snake_case','Use a__b with C# and snake_case'],
+  ['**__Nested__** and unfinished **text','Nested and unfinished **text'],
+  ['42 tasks and #123','42 tasks and #123'],
+  ['x'.repeat(164),'x'.repeat(160)+'…'],
+  ['`'.repeat(16000),'`'.repeat(160)+'…']
+]) assert.equal(taskLine(source),text);
+
 const samples = {
-  plan: '# Plan heading\n\n**Check**\nline two',
+  plan: '# **Plan heading**\n\n**Check**\nline two',
   edited: '**Updated**\nkeep draft',
   activity: '**Message**\nsecond line\n\n[Docs](https://example.test/docs) <img src=x>',
   lesson: '- **Lesson**\n- Another'
@@ -36,6 +51,8 @@ const native = `const md=${JSON.stringify(html)}; SIM.reply.render_markdown=p=>(
     const until = expr => browser.eval(`(async()=>{for(let i=0;i<180;i++){if(${expr})return true;await wait(40);}throw Error('Room Markdown did not settle: '+${JSON.stringify(expr)});})()`);
     await preset(`SIM.home.proposal=SIM.proposal('ready');SIM.plan.tasks[0].prompt=${JSON.stringify(samples.plan)};`);
     await until("!!document.querySelector('#start-tasks textarea[data-key=prompt]')");
+    assert.equal(await browser.eval("document.querySelector('#start-tasks .task-oneline').textContent"),'Plan heading');
+
     await browser.eval("const row=document.querySelector('#start-tasks details');row.open=true;row.querySelector('.plan-markdown-preview').open=true");
     await until("!!document.querySelector('.plan-markdown-preview h1')");
     assert.equal(await browser.eval("document.querySelector('.plan-markdown-preview p').textContent"),'Check\nline two');
@@ -60,6 +77,10 @@ const native = `const md=${JSON.stringify(html)}; SIM.reply.render_markdown=p=>(
         SIM.reply.task=p=>({task:SIM.room.report.tasks[p.index],events:[{seq:1,payload:{type:'assistant',message:{content:[{type:'text',text:${JSON.stringify(samples.activity)}}]}}},{seq:2,payload:{type:'item.completed',item:{type:'command_execution',exit_code:0,aggregated_output:${JSON.stringify(raw)}}}}],stdout:${JSON.stringify(raw)},stderr:'',knowledge:[],step_lessons:[{task:'task-1',cause:'Reason',response:${JSON.stringify(samples.lesson)}}]});`);
       await browser.eval(`document.documentElement.dataset.theme='${theme}'`);
       await until("!!document.querySelector('#activity .event-text h1')&&!!document.querySelector('#activity .room-markdown a')&&!!document.querySelector('#lessons li strong')");
+      assert.equal(await browser.eval("document.getElementById('selected-agent').textContent"),'Plan heading');
+      assert.match(await browser.eval("document.getElementById('inspector-context').textContent"),/ · Plan heading$/);
+      assert.equal(await browser.eval("document.querySelector('.outline-task-heading strong').textContent"),'T1 Plan heading');
+
       assert.equal(await browser.eval("document.querySelector('#activity .room-markdown a').parentElement.previousElementSibling.textContent"),'Message\nsecond line');
       assert.equal(await browser.eval("getComputedStyle(document.querySelector('#activity .room-markdown p')).whiteSpace"),'pre-wrap');
       assert.equal(await browser.eval("!!document.querySelector('#activity img, #activity .event.result strong, #stdout strong')"),false);
