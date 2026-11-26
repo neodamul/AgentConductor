@@ -4388,3 +4388,11 @@ Version 0.2.20 ships #1092 and #1093 (see CHANGELOG). The current application UI
 ## 0.2.21 release preparation
 
 Version 0.2.21 ships #1095 and #1096 (see CHANGELOG). The batch keeps the original reviewer instruction for ordinary integration failures. The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe failed task verification and coordinator review of zero-exit Red tests.
+
+
+## #1098 — Release disk cleanup
+
+- [x] Plan: Add a recurring disk-space check to the existing release workflow.
+- [x] Task: Document how to isolate and remove disposable release artifacts and preserve evidence.
+- [x] Verify: Check the documentation link, completion checklist and local release skill metadata.
+- [x] Complete: Prepare the shared procedure for the 0.2.22 batch.
