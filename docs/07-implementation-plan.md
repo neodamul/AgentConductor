@@ -4360,6 +4360,13 @@ Version 0.2.18 ships #1074 and #1076 (see CHANGELOG). The current application UI
 
 Version 0.2.19 ships #1079, #1082, #1084, #1085, #1086 and #1088 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe the signed-out Claude usage state and Markdown replies in the coordinator chat.
 
+## #1101 — Approve and run in a plain project folder
+
+- [x] Plan: Reproduce the folder baseline error and trace UC-114, QAS-120 and DD-133.
+- [x] Task: Align external Git exclusions with the reviewed inventory.
+- [x] Verify: Confirm the original failure and pass 27 Rust checks, including shared and worktree startup and stale external history recovery. Existing Git baseline and exact approval checks pass.
+- [x] Complete: Prepare the 0.2.22 issue branch.
+
 ## #1093 — Coordinator-only profile changes
 
 - [x] Plan: Trace DD-58 from profile save through reviewed execution.

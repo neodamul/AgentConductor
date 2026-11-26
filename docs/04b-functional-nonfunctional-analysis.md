@@ -335,6 +335,7 @@ Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source
 
 ### FR-109 Selected-folder execution with conflict-safe restoration
 Resolve ordinary-folder Git operations through an external project binding, capture the baseline before launch, keep provider cwd and test cwd at the selected root in shared mode, and recheck exact files before Accept or Reject. Add persistent completed-worker fingerprints and an active-owned-path warning. Treat process attribution as unknown: fingerprints indicate a changed checkpoint, not who edited it.
+**GitHub #1101.** Exclude only entries identified by the folder inventory, preserve the selected source check, and clean-check the external metadata against the reviewed baseline.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.
 
 ### FR-203 Deleting workspaces needs no replacement name

@@ -496,6 +496,7 @@ Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source
 
 ### UC-114 Execute, accept or restore a selected folder
 Choose a project, review a plan, and start. Files appear in the selected project without `.git`. Review evidence and Accept the exact result, or Reject to restore owned files. If files changed after verification, show the conflict and preserve the manual edit. Existing private-copy runs continue with their previous Apply flow.
+**GitHub #1101.** A folder-source plan starts without initializing Git in the selected directory. Excluded files and other Goal directories do not cause a false dirty-baseline error.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.
 
 ### UC-201 Deleting workspaces needs no replacement name
