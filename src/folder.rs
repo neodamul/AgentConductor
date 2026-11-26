@@ -92,63 +92,10 @@ pub(super) fn state(path: &Path) -> Result<Option<FileState>, String> {
         bytes: data.len() as u64,
     }))
 }
-pub fn scan(root: &Path) -> Result<BTreeMap<String, FileState>, String> {
-    let metadata = fs::symlink_metadata(root).map_err(|e| e.to_string())?;
-    if !ordinary(&metadata) || !metadata.is_dir() {
-        return Err("original folder alias is unsupported".into());
-    }
-    fn walk(
-        root: &Path,
-        path: &Path,
-        files: &mut BTreeMap<String, FileState>,
-        total: &mut u64,
-    ) -> Result<(), String> {
-        for entry in fs::read_dir(path).map_err(|e| e.to_string())? {
-            let entry = entry.map_err(|e| e.to_string())?;
-            let name = entry
-                .file_name()
-                .into_string()
-                .map_err(|_| "folder paths must be UTF-8")?;
-            if excluded(&name) {
-                continue;
-            }
-            let path = entry.path();
-            let metadata = fs::symlink_metadata(&path).map_err(|e| e.to_string())?;
-            if !ordinary(&metadata) {
-                return Err(format!(
-                    "folder aliases are unsupported: {}",
-                    path.display()
-                ));
-            }
-            // A workspace's goal folder (marked by slugs::create_tree) is not project source.
-            if metadata.is_dir() && path.join(crate::slugs::MARKER).is_file() {
-                continue;
-            }
-            if metadata.is_dir() {
-                walk(root, &path, files, total)?;
-            } else {
-                let value = state(&path)?.ok_or("folder file vanished during snapshot")?;
-                *total += value.bytes;
-                if files.len() >= MAX_FILES || *total > MAX_TOTAL {
-                    return Err(
-                        "folder snapshot exceeds 10,000 files or 256 MiB; use a Git project".into(),
-                    );
-                }
-                let relative = path
-                    .strip_prefix(root)
-                    .map_err(|e| e.to_string())?
-                    .to_str()
-                    .ok_or("folder paths must be UTF-8")?
-                    .replace('\\', "/");
-                files.insert(relative, value);
-            }
-        }
-        Ok(())
-    }
-    let mut files = BTreeMap::new();
-    walk(root, root, &mut files, &mut 0)?;
-    Ok(files)
-}
+mod inventory;
+pub use inventory::scan;
+use inventory::scan_with_ignored;
+
 pub fn prepare(original: &Path, parent: &Path) -> Result<PathBuf, String> {
     let original = original.canonicalize().map_err(|e| e.to_string())?;
     if !original.is_dir() {
@@ -229,7 +176,11 @@ pub fn load(workspace: &Path) -> Result<Option<Source>, String> {
 }
 impl Source {
     pub fn validate(&self) -> Result<(), String> {
-        if scan(&self.original)? != self.files {
+        self.validate_files(&scan(&self.original)?)
+    }
+
+    fn validate_files(&self, files: &BTreeMap<String, FileState>) -> Result<(), String> {
+        if files != &self.files {
             return Err(
                 "original folder changed; generate a new plan before applying changes".into(),
             );

@@ -11,3 +11,7 @@ Trace: R-80, DD-88, QAS-75. Evidence: tests/folder_workflow.rs, tests/workspace_
 Windows private paths plus retained Git refs can exceed MAX_PATH. Git invocations enable core.longpaths locally to each command; no global Git configuration is changed. Evidence: Windows CI 38196650126 folder_workflow failure.
 
 Superseded unstarted snapshots and safe orphans are pruned. Completed runs retain Git objects and audit/test/diff/backup evidence while private working files are discarded. Unknown or active ownership prevents cleanup. Completed knowledge inspection uses the original applied files.
+
+## Match folder inventory and external Git exclusions
+
+[GitHub #1101](https://github.com/neodamul/AgentConductor/issues/1101) reproduced a false dirty-baseline error at **Approve and run**. Folder planning already excluded case-insensitive environment/cache names and directories marked as Goals at any depth. The external Git history now uses exact exclusions from that same inventory, including when a previous activation left the history in place. The snapshot, clean check and approval digest still protect the actual source.

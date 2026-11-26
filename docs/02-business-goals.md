@@ -315,6 +315,7 @@ Trace: R-123 -> BG-78 -> SF-110 -> UC-113 -> FR-108 -> QAS-119 -> DD-132. Source
 
 ### BG-79 Make the selected project the visible source of work
 Keep deliverables where the operator selected and make acceptance or restoration predictable, while preserving existing project history and manual edits.
+**GitHub #1101.** Keep ordinary-folder execution available when legitimate local artifacts are present outside the reviewed source set.
 Trace: R-124 -> BG-79 -> SF-111 -> UC-114 -> FR-109 -> QAS-120 -> DD-133. Source: user workspace-path requirement and Claude review, 2026-10-13.
 
 ### BG-164 Deleting workspaces needs no replacement name

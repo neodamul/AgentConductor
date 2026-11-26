@@ -20,6 +20,13 @@ fn reviewed_folder_history_activates_only_the_selected_project() {
     assert_eq!(actual.head().unwrap(), base);
     assert!(!project.join(".git").exists());
     assert!(actual.is_external());
+    // An interrupted activation can leave the same reviewed baseline with stale rules.
+    let history = folder::history_directory(&project).unwrap();
+    std::fs::write(history.join(".git/info/exclude"), "").unwrap();
+    assert!(actual.clean().is_err());
+    let actual = folder::activate(&planned, &project).unwrap();
+    actual.clean().unwrap();
+
     assert_eq!(std::fs::read(project.join(".env")).unwrap(), b"private");
     assert_eq!(std::fs::read(goal.join("plan.md")).unwrap(), b"plan");
     std::fs::create_dir(project.join("node_modules")).unwrap();
