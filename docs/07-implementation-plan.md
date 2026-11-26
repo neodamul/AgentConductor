@@ -4429,3 +4429,7 @@ Version 0.2.22 ships #1098, #1099 and #1101 (see CHANGELOG). The current applica
 - [x] Verify: pass local Goal naming, row actions and ordinary-folder planning tests, plus Chrome search, sort, paging, light/dark and Goal lifecycle checks.
 - [x] Complete: record evidence in the wiki and publish the issue-linked branch for the 0.2.23 batch.
 - [ ] Release integration: merge through the grouped macOS and Windows CI run, then close #1102.
+
+## 0.2.23 release preparation
+
+Version 0.2.23 ships #1102 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe Goal list search, sorting, paging and reference-aware Goal folder names.
