@@ -37,6 +37,10 @@ the unready candidate. #428 owns deferred screenshots/release preparation and
 #472 tracks the unenforced 300-line rule; neither can be silently waived by a
 coverage table.
 
+## Disk usage at release completion
+
+Each release records free space before building and reclaimed space after verification. Follow the [shared release cleanup procedure](../../docs/10-cross-platform-development.md#disk-cleanup-at-each-release).
+
 ## Joined UI boundary checks — #420
 
 Run `node tests/goal_lifecycle_runtime.cjs` and
