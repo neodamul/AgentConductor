@@ -4420,4 +4420,4 @@ Version 0.2.21 ships #1095 and #1096 (see CHANGELOG). The batch keeps the origin
 
 ## 0.2.22 release preparation
 
-Version 0.2.22 ships #1098 and #1099 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe Markdown formatting in the Agent Room.
+Version 0.2.22 ships #1098, #1099 and #1101 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe Markdown formatting in the Agent Room.

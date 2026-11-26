@@ -7,6 +7,7 @@ the GitHub Release notes for its tag.
 ## v0.2.22
 
 - The Agent Room shows Markdown and line breaks in plan analysis, phase briefs, task prompts, activity messages, lessons and the result summary, using the same offline renderer as coordinator chat. Editable fields, raw logs, test output and diffs stay literal, and task titles no longer show Markdown markers (#1099).
+- **Approve and run** starts a Goal in a workspace whose source is an ordinary folder without `.git` instead of stopping with "a clean repository baseline is required" (#1101).
 - The release checklist now ends with a disk cleanup pass (#1098).
 
 ## v0.2.21
