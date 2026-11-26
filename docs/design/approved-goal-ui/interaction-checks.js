@@ -97,6 +97,36 @@
  const bounds=selectionMenu.getBoundingClientRect(),anchor=themeButton.getBoundingClientRect();check('choice menu anchored',Math.abs(bounds.left-anchor.left)<2&&Math.abs(bounds.top-anchor.bottom-6)<2);
  closeSelectionMenu();closeSidePanel('settings-panel');await wait();
  i=7;show();showGoalResult('rotation');document.getElementById('goal-result-dialog').close();openWorkspace();await wait();
+ {
+  const search=document.getElementById('workspace-goal-search'),sort=document.getElementById('workspace-goal-sort');
+  check('#1102: Goal history has search and sort',search&&sort);
+  if(search&&sort){
+   const list=document.getElementById('workspace-goal-list');
+   const rows=()=>Array.from(list.querySelectorAll('.goal-list-row'));
+   const query=value=>{search.value=value;search.dispatchEvent(new Event('input'));};
+   const extra=previewGoalHistoryFixtures();
+   workspaceGoals.push(...extra);renderWorkspaceGoals();
+   check('#1102: one page shows ten rows',rows().length===10);
+   check('#1102: list uses creation time by default',sort.value==='created-desc'&&rows()[0].querySelector('time').dateTime.startsWith('2026-11-26')&&rows()[1].textContent.includes('AUTH-22'));
+   sort.value='created-asc';sort.dispatchEvent(new Event('change'));
+   check('#1102: creation date can be sorted oldest first',rows()[0].textContent.includes('Jira: AUTH-2 ·'));
+   sort.value='created-desc';sort.dispatchEvent(new Event('change'));
+
+   document.getElementById('workspace-goal-next').click();
+   check('#1102: page two shows the remaining rows',rows().length===2);
+   query('jira: auth-1102');
+   check('#1102: Jira search resets the page',rows().length===1&&/AUTH-1102/.test(rows()[0].textContent));
+   query('9876543210');
+   check('#1102: Confluence number is visible and searchable',rows().length===1&&/Confluence: 9876543210/.test(rows()[0].textContent));
+   query('no matching record');check('#1102: no results are explained',rows().length===0&&/검색/.test(list.textContent));
+   query('');sort.value='jira-asc';sort.dispatchEvent(new Event('change'));
+   const firstRef=row=>row.querySelector('.goal-history-refs').textContent.split(' · ')[0];
+   check('#1102: Jira order is numeric',firstRef(rows()[0])==='Jira: AUTH-2'&&firstRef(rows()[1])==='Jira: AUTH-4');
+   sort.value='confluence-desc';sort.dispatchEvent(new Event('change'));
+   check('#1102: Confluence order is numeric',rows()[0].textContent.includes('Confluence: 9876543230'));
+   sort.value='created-desc';sort.dispatchEvent(new Event('change'));workspaceGoals.splice(1,extra.length);renderWorkspaceGoals();
+  }
+ }
  const resultButton=document.querySelector('.goal-row-actions button');resultButton.click();
  check('list uses shared result popup',document.getElementById('goal-result-dialog').open);
  {const sections=[...document.querySelectorAll('#result-detail details.result-section')];check('result sections start collapsed',sections.length===3&&sections.every(d=>!d.open));sections[0].querySelector('summary').click();check('a result section expands on click',sections[0].open&&sections[0].querySelector('li').offsetHeight>0);sections[0].querySelector('summary').click();check('a result section collapses again',!sections[0].open);}

@@ -59,6 +59,20 @@ window.acGoalRows = (() => {
       toggle.onclick = () => { const open = toggle.getAttribute('aria-expanded') !== 'true'; toggle.setAttribute('aria-expanded', String(open)); text.classList.toggle('open', open); AC_I18N.bind(toggle, label); };
       text.before(toggle); // GitHub #1022: above the text, so Collapse stays where Expand was.
     }
+    if (s.references?.length) {
+      const refs = document.createElement('span');
+      refs.className = 'small muted goal-reference-ids';
+      refs.textContent = s.references.map(r => (r.kind === 'jira' ? 'Jira' : 'Confluence') + ': ' + r.id).join(' · ');
+      info.firstElementChild.after(refs);
+    }
+    if (createdMs(s) !== undefined) {
+      const date = new Date(s.created_ms);
+      const time = document.createElement('time');
+      time.className = 'small muted goal-created';
+      time.dateTime = date.toISOString();
+      AC_I18N.bind(time, () => date.toLocaleDateString(AC_I18N.current()));
+      info.firstElementChild.after(time);
+    }
     const actions = document.createElement('div'); actions.className = 'goal-row-actions';
     const folder = iconButton('goal-folder', FOLDER, 'startup.goal_row_folder', s.slug, () => ctx.request({ kind: 'goal_folder', slug: s.slug, open: true }).catch(e => ctx.notice(e.message, true)));
     actions.append(folder);
@@ -71,5 +85,73 @@ window.acGoalRows = (() => {
     trash.disabled = ctx.busy(); folder.disabled = ctx.busy();
     item.classList.add('goal-list-row'); item.replaceChildren(trash, info, actions);
   }
-  return { confirmDelete, decorate };
+  const pageSize = 10;
+  const collator = new Intl.Collator('en', { numeric: true, sensitivity: 'base' });
+  function createdMs(row) {
+    const ms = row.created_ms;
+    return Number.isFinite(ms) && ms > 0 && ms <= 8.64e15 ? ms : undefined;
+  }
+  function listPage(entries, query, sort = 'created-desc', page = 1) {
+    const terms = query.trim().toLowerCase().replace(/:\s+/g, ':').split(/\s+/).filter(Boolean);
+    const rows = entries.filter(row => {
+      if (!terms.length) return true;
+      const fields = [row.goal, row.slug, ...(row.references || []).map(r => r.kind + ':' + r.id)];
+      return terms.every(term => fields.some(field => field.toLowerCase().includes(term)));
+    });
+    const [kind, order] = sort.split('-');
+    const direction = order === 'desc' ? -1 : 1;
+    const compare = kind === 'created'
+      ? (a, b) => direction * (a - b)
+      : (a, b) => direction * collator.compare(a, b);
+    const keys = new Map(rows.map(row => [
+      row, kind === 'created' ? createdMs(row)
+        : (row.references || []).filter(ref => ref.kind === kind).map(ref => ref.id).sort(compare)[0]
+    ]));
+    rows.sort((a, b) => {
+      const left = keys.get(a), right = keys.get(b);
+      if (left === undefined || right === undefined) return Number(left === undefined) - Number(right === undefined);
+      return compare(left, right);
+    });
+    const pages = Math.max(1, Math.ceil(rows.length / pageSize));
+    page = Math.max(1, Math.min(page, pages));
+    return { rows: rows.slice((page - 1) * pageSize, page * pageSize), page, pages, total: rows.length };
+  }
+  let historyPage = 1;
+  function resetList() {
+    $('start-goal-search').value = '';
+    $('start-goal-sort').value = 'created-desc';
+    historyPage = 1;
+  }
+  function renderList(entries, row, empty) {
+    const search = $('start-goal-search'), sort = $('start-goal-sort');
+    const prev = $('start-goal-prev'), next = $('start-goal-next');
+    function update() {
+      const view = listPage(entries, search.value, sort.value, historyPage);
+      historyPage = view.page;
+      const children = view.rows.map(goal => {
+        const item = row(goal);
+        item.setAttribute('role', 'listitem');
+        return item;
+      });
+      if (!view.total) {
+        const msg = entries.length ? document.createElement('p') : empty();
+        msg.setAttribute('role', 'listitem');
+        if (entries.length) {
+          msg.className = 'small muted';
+          AC_I18N.bind(msg, () => acMessage('startup.goal_search_empty'));
+        }
+        children.push(msg);
+      }
+      AC_I18N.replace($('start-goal-list'), ...children);
+      $('start-goal-pagination').hidden = view.pages <= 1;
+      prev.disabled = view.page <= 1;
+      next.disabled = view.page >= view.pages;
+      AC_I18N.bind($('start-goal-page'), () => acMessage('startup.goal_page_count', view));
+    }
+    search.oninput = sort.onchange = () => { historyPage = 1; update(); };
+    prev.onclick = () => { historyPage--; update(); };
+    next.onclick = () => { historyPage++; update(); };
+    update();
+  }
+  return { confirmDelete, decorate, listPage, renderList, resetList };
 })();

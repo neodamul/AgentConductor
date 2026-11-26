@@ -967,3 +967,7 @@ UC-135 / #933 / #934: the operator sets a project folder while Claude usage show
 
 
 #997: Completed Goals are immutable while saved-stage views, read-only coordinator chat and New Goal remain available. Architecture trace and acceptance: [completed Goal contract](evidence/997-completed-goal.md).
+
+## #1102 Reference-aware Goal history
+
+Extend UC-140: add explicit Jira or Confluence references to a Goal, save it, and open Goal List. Search by Goal, slug, Jira key, or Confluence ID. Choose reference order, browse pages, then open the desired Goal or one of its existing row actions.

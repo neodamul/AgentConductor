@@ -218,3 +218,7 @@ DD-136 / #925 driver: provider capacity and reviewed alternatives determine elig
 
 
 #997: Completed Goals are immutable while saved-stage views, read-only coordinator chat and New Goal remain available. Architecture trace and acceptance: [completed Goal contract](evidence/997-completed-goal.md).
+
+## #1102 Reference-aware Goal history
+
+Extend the Goal history design driver: preserve existing directory ownership and use the local saved Goal text to index references even when a legacy folder name lacks them.

@@ -303,3 +303,10 @@ Open `preview.html?goal=completed#7` for the completed-Goal scenario. All six st
 - Global account/workspace configuration is distinct from the archived Goal. The fixture conservatively disables the combined workspace-save actions while that Goal is selected; the new-Goal path remains available.
 
 Completed-Goal stage tabs support direct click, Enter/Space, Left/Right and Home/End. Steps 1–3 expose the saved workspace/Goal configuration, role assignments and plan in read-only form; selecting a tab never restarts a stage.
+
+## Goal history by reference (#1102)
+
+The Goal List shows saved Jira keys and Confluence page IDs. Search by Goal text, folder
+name, or reference. The list starts with the newest Goal creation date and offers oldest
+first. Reference sorts use numeric order, with unreferenced Goals last. Pages contain up to ten Goals. The `preview.html#workspace` entry opens the list
+with twelve sample Goals so both pages can be explored.

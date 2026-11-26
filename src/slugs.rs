@@ -6,7 +6,10 @@ use std::{
 };
 
 pub const STAGES: [&str; 5] = ["plan", "phase", "task", "verification", "completed"];
-const MAX: usize = 48;
+mod names;
+use names::MAX;
+pub use names::{is_placeholder, unique, validate};
+pub(crate) use names::{renamed, validate_base, with_references};
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Slug {
@@ -74,50 +77,6 @@ fn date(epoch_secs: u64) -> String {
     let month = if mp < 10 { mp + 3 } else { mp - 9 };
     let year = yoe + era * 400 + i64::from(month <= 2);
     format!("{year:04}{month:02}{day:02}")
-}
-
-/// DD-92: `goal_<yyyymmdd>` with an optional `_<n>` suffix, awaiting an English name.
-pub fn is_placeholder(slug: &str) -> bool {
-    let Some(rest) = slug.strip_prefix("goal_") else {
-        return false;
-    };
-    let (date, suffix) = rest.split_at(rest.len().min(8));
-    date.len() == 8
-        && date.bytes().all(|b| b.is_ascii_digit())
-        && (suffix.is_empty()
-            || suffix
-                .strip_prefix('_')
-                .is_some_and(|n| !n.is_empty() && n.bytes().all(|b| b.is_ascii_digit())))
-}
-
-pub fn unique(base: &str, existing: &[String]) -> String {
-    if !existing.iter().any(|s| s == base) {
-        return base.into();
-    }
-    (2..)
-        .map(|n| {
-            let suffix = format!("_{n}");
-            format!("{}{suffix}", &base[..base.len().min(MAX - suffix.len())])
-        })
-        .find(|candidate| !existing.contains(candidate))
-        .expect("an unused suffix exists")
-}
-
-pub fn validate(slug: &str) -> Result<(), String> {
-    let ok = !slug.is_empty()
-        && slug.len() <= MAX
-        && slug.starts_with(|c: char| c.is_ascii_lowercase() || c.is_ascii_digit())
-        && slug
-            .bytes()
-            .all(|b| b.is_ascii_lowercase() || b.is_ascii_digit() || b == b'_');
-    if ok {
-        Ok(())
-    } else {
-        Err(
-            "slug must be 1-48 characters of a-z, 0-9 and _, starting with a letter or digit"
-                .into(),
-        )
-    }
 }
 
 /// `<repository>/<slug>` (user decision 2026-10-13: the project folder holds each goal
@@ -239,3 +198,7 @@ pub fn exclude_from_git(repo: &crate::git::Repository, slug: &str) -> Result<(),
     }
     Ok(())
 }
+
+#[cfg(test)]
+#[path = "../tests/unit/slug_references.rs"]
+mod reference_tests;

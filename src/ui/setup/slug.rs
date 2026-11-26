@@ -21,9 +21,12 @@ impl Startup {
                 saved.config.repository.join(slug)
             }
         };
+        // Drafts remain archivable. Planning already validates references before creating its slug.
+        let refs = crate::mcp::references(&goal).unwrap_or_default();
         let slug = match requested {
             Some(slug) => {
-                crate::slugs::validate(&slug)?;
+                crate::slugs::validate_base(&slug)?;
+                let slug = crate::slugs::with_references(&slug, &refs);
                 if existing.contains(&slug) {
                     return Err(crate::ui::messages::render(
                         "native.slug_already_exists_in_this_workspace",
@@ -34,9 +37,15 @@ impl Startup {
             }
             None => {
                 // R-74 / DD-82: also avoid folders already on disk (for example after an import).
-                let mut taken = existing.clone();
+                let title = if refs.is_empty() {
+                    goal.clone()
+                } else {
+                    crate::ui::source_references::without_explicit(&goal)
+                };
+                let base = crate::slugs::with_references(&crate::slugs::suggest(&title), &refs);
+                let mut taken = existing;
                 loop {
-                    let slug = crate::slugs::unique(&crate::slugs::suggest(&goal), &taken);
+                    let slug = crate::slugs::unique(&base, &taken);
                     match fs::symlink_metadata(root_for(&slug)) {
                         Err(e) if e.kind() == std::io::ErrorKind::NotFound => break slug,
                         Err(e) => return Err(e.to_string()),
@@ -84,17 +93,19 @@ pub(super) fn adopt_planned_slug(
     let Ok(name) = fs::read_to_string(p.directory.join("slug.txt")) else {
         return Ok(());
     };
-    if crate::slugs::validate(name.trim()).is_err() {
+    if crate::slugs::validate_base(name.trim()).is_err() {
         return Ok(());
     }
     let root = |v: &str| crate::slugs::root(&config.repository, broker, &config.name, v);
     let mut taken: Vec<String> = config.slugs.iter().map(|v| v.slug.clone()).collect();
+    let base = crate::slugs::renamed(&old, name.trim());
     let new = loop {
-        let candidate = crate::slugs::unique(name.trim(), &taken);
-        if !root(&candidate).exists() {
-            break candidate;
+        let candidate = crate::slugs::unique(&base, &taken);
+        match fs::symlink_metadata(root(&candidate)) {
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => break candidate,
+            Err(_) => return Ok(()),
+            Ok(_) => taken.push(candidate),
         }
-        taken.push(candidate);
     };
     // A failed rename (for example a locked folder) keeps the placeholder; settle must not fail.
     if fs::rename(root(&old), root(&new)).is_err() {

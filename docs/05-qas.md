@@ -969,3 +969,7 @@ QAS-141 / #933 / #934: tests/quota_folder_934.cjs (no folder: no query; folder s
 
 
 #997: Completed Goals are immutable while saved-stage views, read-only coordinator chat and New Goal remain available. Architecture trace and acceptance: [completed Goal contract](evidence/997-completed-goal.md).
+
+## #1102 Reference-aware Goal history
+
+Extend QAS-146: with more than ten saved Goals including legacy records, a query matches Jira and Confluence IDs without case sensitivity, numeric identifiers sort naturally, and paging works without another backend request or MCP call.

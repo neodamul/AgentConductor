@@ -23,3 +23,20 @@ revision; changed confirmation content requires review. A historical Result repl
 Local evidence: tests/goal_row_actions.rs, tests/unit/goal_deletion.rs. Native Finder/Explorer,
 Windows reparse points and complete webview acceptance require package testing; the backend
 unit does not establish those outcomes.
+
+## Reference-aware history (#1102)
+
+The Goal List indexes the explicit Jira and Confluence tags in the saved Goal text using
+the existing MCP grammar. The references are available even for folders created before
+reference-aware names. Suggested tags become references when accepted in the Goal editor.
+The history list sorts and filters the local snapshot without querying Jira or Confluence.
+The default sorts by stored Goal creation time, newest first. It shows ten rows at a time and
+keeps the existing Goal, Result, folder, and deletion actions.
+
+The naming code appends the reference IDs to new Goal folders. It uses a separate suffix
+so English-name adoption and collision handling preserve the IDs. New folder names use at most 96 ASCII characters. Long reference sets keep complete IDs that
+fit plus a deterministic fingerprint. Goal history still indexes all saved references.
+Existing registered paths remain bound to their original Goals.
+
+Regression coverage: `tests/project_goals.rs`, `tests/unit/slug_references.rs`, and
+`tests/test_goal_reference_list.py`.
