@@ -9,6 +9,7 @@ the GitHub Release notes for its tag.
 - The Agent Room header starts compact: the goal title, Goal list, team button and status tag share one line with the tabs right below, and the expand button restores the full header (#1105).
 - Activity entries use tighter spacing between the divider, the time and the message (#1105).
 - Raw logs format Markdown text with its line breaks while structured JSON stays as recorded (#1105).
+- Planning, Approve, Merge and quota refresh no longer start while another action still holds the project; their buttons are disabled with "Another action is still finishing in this project" instead of failing with "lease is held" (#1107).
 
 ## v0.2.23
 

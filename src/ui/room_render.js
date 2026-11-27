@@ -60,10 +60,12 @@ function renderSnapshot() {
   AC_I18N.bind($('candidate-sha'),()=>(r.candidate?.commit||acMessage("room.no_candidate")));AC_I18N.bind($('test-count'),()=>(r.tests.length?acMessage("room.passed", {value1:r.tests.filter(t=>(t.passed??(t.exit_code===0&&!t.timed_out))).length}):'—'));
   const currentReview=review&&review.revision===snapshot.revision;
   $('review-stale').hidden=!review||review.revision===snapshot.revision;
-  $('approve').disabled=!idle()||r.state!=='waiting_approval'||!currentReview;$('reject').disabled=!idle()||!r.candidate;
-  $('merge').disabled=!idle()||r.state!=='approved'||!currentReview;
+  const locking = !!(snapshot.coordinator_busy||snapshot.repository_busy);
+  $('approve').disabled=locking||!idle()||r.state!=='waiting_approval'||!currentReview;$('reject').disabled=!idle()||!r.candidate;
+  $('merge').disabled=locking||!idle()||r.state!=='approved'||!currentReview;
   AC_I18N.bind($('merge'),()=>(r.direct_workspace?acMessage("room.accept_changes"):r.folder?acMessage("room.apply_changes"):acMessage("room.merge")));
   AC_I18N.bind($('candidate-note'),()=>(r.direct_workspace?(r.state==='completed'?acMessage("room.accepted_complete"):r.state==='approved'?acMessage("room.approved_accept_changes"):acMessage("room.review_diff_and_tests_before_approval")):r.folder?(r.state==='completed'?acMessage("room.changes_applied_this_run_is_complete"):r.state==='approved'?acMessage("room.approved_applying_changes_remains_a_separate_action"):acMessage("room.review_diff_and_tests_before_approval")):r.state==='completed'?acMessage("room.merged_this_run_is_complete"):r.state==='approved'?acMessage("room.approved_merging_remains_a_separate_action"):review&&!currentReview?acMessage("room.state_changed_inspect_the_latest_evidence"):acMessage("room.review_diff_and_tests_before_approval")));
+  for(const id of ['approve','merge'])AC_I18N.bind($(id),()=>locking?acMessage('native.repository_action_finishing'):'','title');
   renderReviewFooter(r);renderVerifyFooter(r);renderGoalInfo(r);renderRunRecovery(r);renderQuota(a);renderTools();{const g=document.querySelector('.gates-nav');$('open-review').hidden=!['waiting_approval','approved','completed','rejected'].includes(r.state);$('open-tools').hidden=Number($('tool-count').textContent)===0;g.hidden=[...g.querySelectorAll('button')].every(b=>b.hidden);}acStatusRepository.render($('connection').parentElement,window.acRepositoryIdentity);AC_I18N.bind($('connection'),()=>((typeof AC_WAIT!=='undefined'&&AC_WAIT.text())||acMessage("room.connected_local_run")));
   globalThis.acGoalReadOnly?.room(snapshot);
 }

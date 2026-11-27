@@ -20,7 +20,7 @@ function renderReviewFooter(r) {
   const approving = approvalInProgress(r);
   AC_PRESS.hold($('review-primary'), active && approving);
   if (!active) return;
-  AC_I18N.bind(footer.querySelector('.note span'), () => acMessage(approving ? 'room.approval_pending_note' : 'room.review_footer_note'));
+  AC_I18N.bind(footer.querySelector('.note span'), () => acMessage(approving ? 'room.approval_pending_note' : snapshot.coordinator_busy || snapshot.repository_busy ? 'native.repository_action_finishing' : 'room.review_footer_note'));
   $('review-revise').disabled = approving;
   $('review-deny').hidden = approved || done; $('review-revise').hidden = approved;
   // GitHub #728: a finished run is the mock's: Request changes and View the finished result, in place of the title-bar button.
