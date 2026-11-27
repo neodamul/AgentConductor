@@ -4441,3 +4441,7 @@ Version 0.2.23 ships #1102 (see CHANGELOG). The current application UI sample re
 - [x] Verify: pass the Room browser regressions, five affected design comparisons, native Markdown tests, and packaging contracts.
 - [x] Complete: publish the issue-linked branch and send its verification for the 0.2.24 integration batch.
 - [ ] Release integration: run cross-platform CI and close #1105 after merge.
+
+## 0.2.24 release preparation
+
+Version 0.2.24 ships #1105 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe the compact Room header and Markdown in Raw logs.

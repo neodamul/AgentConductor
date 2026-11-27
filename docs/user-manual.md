@@ -1,6 +1,6 @@
 # AgentConductor User Manual
 
-Version **0.2.23** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
+Version **0.2.24** · [한국어](user-manual.ko.md) · [Short introduction](../README.md)
 
 ## Part 1 — Desktop application
 
@@ -14,7 +14,7 @@ There is no model API key registration or local UI web server.
 Download your platform archive and `SHA256SUMS` from GitHub Releases. Verify the archive,
 extract it and open `AgentConductor.app` or `agentconductor.exe`.
 Packages include the standalone executable, both manuals, screenshots, dependency licenses and SBOM.
-The app version is beside the title. Version 0.2.23 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
+The app version is beside the title. Version 0.2.24 uses one six-step stepper for Workspace settings and the Agent Room, a two-tab left panel (Agents, Phase·Task), quota rings, slide-overs for the Goal list, the team briefing, the coordinator chat and Settings, a centered result popup when a goal completes, and status borders on agent icons. The approved design previews below show the intended workflow with sample data; they are not screenshots of a running session.
 
 ### 1.1a Application updates
 
@@ -190,7 +190,7 @@ During next-Phase re-planning, Step 3 names the previous and target Phases and s
 
 ### 1.6 Agent Room and feedback
 
-The title status pill shows the run state; task/phase progress stays in the left outline. Failure output and attention, interruption or owned-file warnings appear inside the task card, with **Fix with feedback** or **Scope review** in its footer. Fix with feedback opens the failed task and drafts its direction; **Resume** stays in the composer. There is no separate run-status banner. After tests pass, use the existing review footer to inspect, approve and apply the exact candidate; its primary action stays disabled while merging. The completed footer opens the result and the Goal list path remains available.
+The Room header starts compact: the goal title, **Goal list**, the team button and the status pill sit on one line with the tabs right below, and the expand button restores the full header. The title status pill shows the run state; task/phase progress stays in the left outline. Failure output and attention, interruption or owned-file warnings appear inside the task card, with **Fix with feedback** or **Scope review** in its footer. Fix with feedback opens the failed task and drafts its direction; **Resume** stays in the composer. There is no separate run-status banner. After tests pass, use the existing review footer to inspect, approve and apply the exact candidate; its primary action stays disabled while merging. The completed footer opens the result and the Goal list path remains available.
 Session rows show the reviewed task summary and task ID first, followed by the small agent icon, agent name and status tag. Long or translated statuses wrap within the rail. The left list uses green/yellow/red lights; running lights pulse and
 tasks awaiting a decision blink. Reduced-motion settings suppress animation.
 Usage badges stay in workspace agent cards, so the task list remains compact. The Account capacity inspector also shows Enterprise allocations as a remaining percentage. An outline identifies the selected task.
@@ -326,7 +326,7 @@ Long command and agent/path summaries are truncated to keep Plan rows compact. H
 
 Session counts and work-state tags update automatically when task sessions change, including in the Agent Room; opening the sessions dialog is not required.
 
-Coordinator chat answers from the current Workspace context even if a Goal finished since the last displayed snapshot. Read-only questions do not require a manual refresh; reviewed changes and execution approvals retain their existing revision checks. Replies render Markdown (headings, lists, tables, code and links) without running HTML or loading remote content. In an empty chat box, Tab or Right Arrow puts the shown suggestion in as text so you can keep typing. The Agent Room formats plan analysis, phase briefs, task prompts, activity messages, lessons and the result summary the same way and keeps their line breaks; editable fields, raw logs, test output and diffs stay as plain text.
+Coordinator chat answers from the current Workspace context even if a Goal finished since the last displayed snapshot. Read-only questions do not require a manual refresh; reviewed changes and execution approvals retain their existing revision checks. Replies render Markdown (headings, lists, tables, code and links) without running HTML or loading remote content. In an empty chat box, Tab or Right Arrow puts the shown suggestion in as text so you can keep typing. The Agent Room formats plan analysis, phase briefs, task prompts, activity messages, lessons and the result summary the same way and keeps their line breaks; **Raw logs** also formats Markdown text while keeping line breaks and structured JSON as-is, and editable fields, test output and diffs stay as plain text.
 
 ## Part 2 — Command-line reference
 
