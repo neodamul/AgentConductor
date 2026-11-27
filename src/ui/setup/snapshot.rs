@@ -100,6 +100,10 @@ impl Startup {
             .zip(report.as_ref())
             .map(|(run, report)| super::sessions::session_revision(run, report));
         let mut snapshot = serde_json::json!({"revision":self.revision(saved)?,"chat_revision":self.chat_revision(saved)?,"config":config,"proposal":proposal,"job":job,"quota_job":if metadata_job["kind"].as_str().is_some_and(|k|k.starts_with("quota:")){metadata_job.clone()}else{serde_json::Value::Null},"metadata_job":metadata_job,"metadata_queue":saved.metadata_queue,"root":self.broker.dir,"templates":defaults()?.profiles,"run_available":saved.proposal.as_ref().is_some_and(|p|p.phase=="starting" && p.run.join("report.json").exists()) || last_run.is_some(),"run_state":report.as_ref().map(|report|&report.state),"session_revision":session_revision,"quotas":quotas,"quota_badges":quota_badges,"quota_indicators":quota_indicators,"chat_blockers":chat_blockers,"config_hints":config_hints,"quota_refresh_due":quota_refresh_due,"slugs":self.slug_snapshot(saved),"repository_identity":identity,"plan_rules_global":crate::plan_rules::current(None),"language":language,"mcp_result":if mcp_result {self.mcp_result(saved,job)?}else{serde_json::Value::Null},"mcp_catalogs":if mcp_result {self.mcp_catalogs(saved)}else{serde_json::Value::Null},"mcp_progress":self.mcp_progress(saved,job),"imports":saved.imports,"source_notes":self.source_notes(saved),"workspace_blank":crate::ui::workspaces::is_blank(&saved.config.name,&saved.config.goal,&saved.config.repository,saved.proposal.is_some()||saved.last_run.is_some())});
+        snapshot["repository_busy"] = self
+            .repository_busy(saved, report.as_ref())
+            .unwrap_or(false)
+            .into();
         if snapshot["job"]["kind"] == "plan"
             && let Some(p) = &saved.proposal
         {

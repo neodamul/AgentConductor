@@ -3,6 +3,11 @@ use std::{
     path::{Path, PathBuf},
 };
 
+mod file;
+
+/// Only an actual lock conflict is eligible for the operator's retry prompt.
+pub const CONTENTION: &str = "lease is held: another owner holds the lock";
+
 /// A kernel-owned exclusive lease. Keep the inode in place after release so
 /// another owner cannot accidentally lock a different file at the same path.
 pub struct Lease {
@@ -17,52 +22,30 @@ impl Lease {
         Self::scoped("project-binding", canonical.as_os_str().as_encoded_bytes())
     }
 
-    #[cfg(unix)]
     pub fn repository(repo: &Path) -> Result<Self, String> {
-        let canonical = repo.canonicalize().map_err(|e| e.to_string())?;
-        Self::scoped("repository", canonical.as_os_str().as_encoded_bytes())
+        Self::acquire(&file::repository_path(repo, true)?)
     }
 
-    #[cfg(unix)]
-    fn scoped(namespace: &str, value: &[u8]) -> Result<Self, String> {
-        use sha2::{Digest, Sha256};
-        use std::os::unix::fs::{DirBuilderExt, MetadataExt};
-        // SAFETY: geteuid takes no arguments, touches no memory and cannot fail.
-        let uid = unsafe { libc::geteuid() };
-        let root = std::env::temp_dir().join(format!("agentconductor-leases-{uid}"));
-        match std::fs::DirBuilder::new().mode(0o700).create(&root) {
-            Ok(()) => {}
-            Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {}
+    /// Reports a conflicting kernel lock without writing owner metadata or creating a lock file.
+    pub fn repository_held(repo: &Path) -> Result<bool, String> {
+        Self::held(&file::repository_path(repo, false)?)
+    }
+
+    pub fn held(path: &Path) -> Result<bool, String> {
+        let file = match file::open(path, false) {
+            Ok(file) => file,
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(false),
             Err(error) => return Err(error.to_string()),
+        };
+        match file.try_lock() {
+            Ok(()) => file.unlock().map(|_| false).map_err(|e| e.to_string()),
+            Err(std::fs::TryLockError::WouldBlock) => Ok(true),
+            Err(std::fs::TryLockError::Error(error)) => Err(error.to_string()),
         }
-        let metadata = std::fs::symlink_metadata(&root).map_err(|e| e.to_string())?;
-        if !metadata.is_dir() || metadata.uid() != uid || metadata.mode() & 0o077 != 0 {
-            return Err(
-                "repository lease directory must be private and owned by the current user".into(),
-            );
-        }
-        let key = format!("{:x}", Sha256::digest(value));
-        Self::acquire(&root.join(format!("{namespace}-{key}.lock")))
     }
 
-    #[cfg(not(unix))]
-    pub fn repository(repo: &Path) -> Result<Self, String> {
-        let canonical = repo.canonicalize().map_err(|e| e.to_string())?;
-        Self::scoped("repository", canonical.as_os_str().as_encoded_bytes())
-    }
-
-    /// The per-user temporary directory is private to the signed-in profile on Windows.
-    #[cfg(not(unix))]
     fn scoped(namespace: &str, value: &[u8]) -> Result<Self, String> {
-        use sha2::{Digest, Sha256};
-        let root = std::env::temp_dir().join("agentconductor-leases");
-        std::fs::create_dir_all(&root).map_err(|e| e.to_string())?;
-        let metadata = std::fs::symlink_metadata(&root).map_err(|e| e.to_string())?;
-        if !metadata.is_dir() || metadata.file_type().is_symlink() {
-            return Err("repository lease directory must be a real directory".into());
-        }
-        let key = format!("{:x}", Sha256::digest(value));
-        Self::acquire(&root.join(format!("{namespace}-{key}.lock")))
+        Self::acquire(&file::scoped_path(namespace, value, true)?)
     }
 
     /// A stable lock outside a workspace serializes opening against archived deletion.
@@ -76,38 +59,13 @@ impl Lease {
 
     pub fn acquire(path: &Path) -> Result<Self, String> {
         use std::io::Write;
-        let mut options = std::fs::OpenOptions::new();
-        options.read(true).write(true).create(true).truncate(false);
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::OpenOptionsExt;
-            options.custom_flags(libc::O_NOFOLLOW | libc::O_CLOEXEC);
-        }
-        #[cfg(windows)]
-        {
-            use std::os::windows::fs::OpenOptionsExt;
-            // Open a reparse point itself instead of following it.
-            options.custom_flags(FILE_FLAG_OPEN_REPARSE_POINT);
-        }
-        let mut file = options
-            .open(path)
-            .map_err(|e| format!("open coordinator lease: {e}"))?;
-        let metadata = file.metadata().map_err(|e| e.to_string())?;
-        #[cfg(windows)]
-        {
-            use std::os::windows::fs::MetadataExt;
-            if metadata.file_attributes() & FILE_ATTRIBUTE_REPARSE_POINT != 0 {
-                return Err("lease must be a regular file".into());
-            }
-        }
-        if !metadata.is_file() {
-            return Err("lease must be a regular file".into());
-        }
+        let mut file =
+            file::open(path, true).map_err(|e| format!("open coordinator lease: {e}"))?;
         // The kernel releases this lock when the handle closes, including after a kill.
         match file.try_lock() {
             Ok(()) => {}
             Err(std::fs::TryLockError::WouldBlock) => {
-                return Err("lease is held: another owner holds the lock".into());
+                return Err(CONTENTION.into());
             }
             Err(std::fs::TryLockError::Error(e)) => return Err(format!("lease is held: {e}")),
         }
@@ -264,8 +222,3 @@ impl Drop for Lease {
         let _ = self._file.unlock();
     }
 }
-
-#[cfg(windows)]
-const FILE_FLAG_OPEN_REPARSE_POINT: u32 = 0x0020_0000;
-#[cfg(windows)]
-const FILE_ATTRIBUTE_REPARSE_POINT: u32 = 0x0000_0400;

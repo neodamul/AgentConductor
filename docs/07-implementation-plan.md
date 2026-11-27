@@ -4433,3 +4433,11 @@ Version 0.2.22 ships #1098, #1099 and #1101 (see CHANGELOG). The current applica
 ## 0.2.23 release preparation
 
 Version 0.2.23 ships #1102 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe Goal list search, sorting, paging and reference-aware Goal folder names.
+
+## #1107 Repository and coordinator contention
+
+- [x] Plan (DD-61, DD-62, DD-32): prevent conflicting plan, approval, merge, and Room quota jobs while reporting the blocking state through the existing snapshots.
+- [x] Task: reproduce both contention paths with real kernel leases. Add nonblocking probes and handle a race at the worker boundary.
+- [x] Verify: pass real-lock regressions, browser busy/released checks, local packaging contracts, and Clippy.
+- [x] Complete: publish the issue-linked branch to the 0.2.24 integration batch.
+- [ ] Release integration: run grouped CI and close #1107 after merge.

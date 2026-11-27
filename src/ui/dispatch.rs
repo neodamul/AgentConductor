@@ -16,7 +16,13 @@ impl Room {
         let started = std::time::Instant::now();
         let result = self.route(bytes);
         diagnostics::done(&kind, started.elapsed(), result.as_ref().err());
-        result
+        result.map_err(|error| {
+            if error == crate::leases::CONTENTION {
+                crate::ui::messages::text("native.repository_action_finishing").into()
+            } else {
+                error
+            }
+        })
     }
     fn route(&self, bytes: &[u8]) -> Result<serde_json::Value, String> {
         if bytes.len() > 64 * 1024 {

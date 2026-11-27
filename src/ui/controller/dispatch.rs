@@ -45,6 +45,16 @@ impl Controller {
             )
             .into());
         }
+        let approval = matches!(
+            request.action,
+            Action::Approve { .. } | Action::Merge { .. }
+        );
+        if (approval || matches!(request.action, Action::Quota { .. }))
+            && (crate::leases::Lease::held(&self.dir.join("coordinator.lock"))?
+                || approval && Self::repository_busy(&report)?)
+        {
+            return Err(crate::ui::messages::text("native.repository_action_finishing").into());
+        }
         let args = request.action.args(&report, &self.dir)?;
         if matches!(request.action, Action::Resume {})
             && let Some(parent) = self.dir.parent()
@@ -66,5 +76,14 @@ impl Controller {
             &request.revision,
             &mut slot,
         )
+    }
+    pub(super) fn repository_busy(report: &Report) -> Result<bool, String> {
+        if crate::leases::Lease::repository_held(&report.repo)? {
+            return Ok(true);
+        }
+        match &report.folder {
+            Some(source) => crate::leases::Lease::repository_held(&source.original),
+            None => Ok(false),
+        }
     }
 }

@@ -241,6 +241,21 @@ impl Startup {
             )
             .into());
         }
+        if matches!(
+            request,
+            Request::Prepare { .. }
+                | Request::Draft { .. }
+                | Request::ReadPlan { .. }
+                | Request::NextPhase { .. }
+                | Request::Start { .. }
+        ) {
+            let report = self
+                .last_run(&saved)
+                .and_then(|run| workflow::load(&run).ok());
+            if self.repository_busy(&saved, report.as_ref())? {
+                return Err(messages::text("native.repository_action_finishing").into());
+            }
+        }
         self.dispatch_operation(request, &mut saved)
     }
 }
