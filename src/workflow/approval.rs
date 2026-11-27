@@ -76,6 +76,7 @@ pub fn approve(dir: &Path, candidate: &str) -> Result<(), String> {
     if report.candidate.as_ref().map(|c| c.commit.as_str()) != Some(candidate) {
         return Err("approval requires the exact candidate SHA".into());
     }
+    let _repository_lease = crate::leases::WorkspaceLease::acquire(&report.repo, dir)?;
     let fingerprint = binding(dir, &report)?;
     let mut store = Store::open(dir.join("state.sqlite"))?;
     store.record(

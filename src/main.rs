@@ -51,7 +51,12 @@ fn main() -> std::process::ExitCode {
     match result {
         Ok(()) => std::process::ExitCode::SUCCESS,
         Err(error) => {
-            eprintln!("agentconductor: {error}");
+            let display = if error == agentconductor::leases::CONTENTION {
+                agentconductor::ui::messages::text("native.repository_action_finishing")
+            } else {
+                &error
+            };
+            eprintln!("agentconductor: {display}");
             std::process::ExitCode::FAILURE
         }
     }

@@ -1,15 +1,56 @@
-// #879: pretty-print records and decode only JSON string line breaks; literal path escapes stay intact.
-function readableRawLog(raw){
- return String(raw||'').split('\n').map(line=>{
-  if(line.length>65536)return line;
-  try{
-   const value=JSON.parse(line);if(!value||typeof value!=='object')return line;
-   const pretty=JSON.stringify(value,null,2);if(pretty.length>262144)return line;
-   return pretty.replace(/"(?:[^"\\]|\\.)*"/g,token=>{
-    const text=JSON.parse(token);return text.includes('\n')?'"'+text.split('\n').map(part=>JSON.stringify(part).slice(1,-1)).join('\n')+'"':token;
-   });
-  }catch{return line;}
- }).join('\n');
+// #879: decode JSON string line breaks without interpreting literal paths or structured records as Markdown.
+function prettyLogRecord(line) {
+  if (line.length > 65536 || !/^\s*[\[{]/.test(line)) return null;
+  try {
+    const pretty = JSON.stringify(JSON.parse(line), null, 2);
+    if (pretty.length > 262144) return null;
+    return pretty.replace(/"(?:[^"\\]|\\.)*"/g, token => {
+      const text = JSON.parse(token);
+      return text.includes('\n') ? '"' + text.split('\n').map(part => JSON.stringify(part).slice(1, -1)).join('\n') + '"' : token;
+    });
+  } catch { return null; }
+}
+
+function rawLogSections(raw) {
+  const sections = [], lines = String(raw || '').split('\n');
+  let fence;
+  for (const [index, line] of lines.entries()) {
+    const marker = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line);
+    let record = null;
+    if (fence) {
+      if (marker && marker[1][0] === fence[0] && marker[1].length >= fence.length && !marker[2].trim()) fence = undefined;
+    } else if (marker) {
+      fence = marker[1];
+    } else {
+      record = prettyLogRecord(line);
+    }
+    const structured = record !== null;
+    const text = (record ?? line) + (index + 1 < lines.length ? '\n' : '');
+    const last = sections.at(-1);
+    if (last?.structured === structured) last.text += text;
+    else if (text) sections.push({ structured, text });
+  }
+  return sections;
+}
+
+const rawLogState = new WeakMap();
+function renderRawLog(view, raw, emptyKey) {
+  const previous = rawLogState.get(view);
+  if (previous && previous.raw === raw && previous.emptyKey === emptyKey) return;
+  rawLogState.set(view, { raw, emptyKey });
+  if (!raw) { AC_I18N.bind(view, () => acMessage(emptyKey)); return; }
+  AC_I18N.replace(view, ...rawLogSections(raw).map(({ structured, text }) => {
+    const entry = document.createElement(structured ? 'pre' : 'div');
+    entry.className = structured ? 'raw-log-records' : 'raw-log-text';
+    entry.textContent = text;
+    return entry;
+  }));
+  if (activeTab === 'logs') formatRawLog(view);
+}
+function formatRawLog(view) {
+  for (const entry of view.querySelectorAll('.raw-log-text:not(.room-markdown)')) {
+    window.acMarkdown.set(entry, entry.textContent);
+  }
 }
 // R-120 / DD-129: consecutive thinking updates read as one line; events carry no time, so the line names their range.
 const thinkingUpdate=e=>{const r=e?.payload||{};return r.type==='thinking_tokens'||(r.type==='system'&&r.subtype==='thinking_tokens');};

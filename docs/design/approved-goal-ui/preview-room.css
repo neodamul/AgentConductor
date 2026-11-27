@@ -1,0 +1,8 @@
+.main > .head.compact-room-head{margin-bottom:4px}
+.compact-room-head > .pill{flex:none;margin:0;padding:1px 7px;font-size:11px}
+#preview-goal-info[hidden]{display:none}
+.task-activity-content .ev{padding:6px 0}
+.task-activity-content .ev b{margin-bottom:1px}
+.raw-log p,.raw-log pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.raw-log > * + *{margin-top:.65em}
+.raw-log pre{font:inherit}

@@ -2,7 +2,7 @@
 const readableLogExample='{\n  "type": "assistant",\n  "session_id": "local-demo",\n  "message": "리프레시 토큰\n이전 토큰 무효화"\n}';
 const runningCard=document.querySelector('.card[data-show="b"]'),rawTab=[...runningCard.querySelectorAll('.ttabs>*')].find(tab=>tab.textContent==='원본 로그');
 const rawView=document.createElement('section');rawView.id='preview-raw-logs';rawView.hidden=true;
-rawView.innerHTML='<div class="log-heading">stdout · 최근 로컬 출력</div><pre id="preview-stdout" class="raw-log"></pre><div class="log-heading">stderr · 최근 로컬 출력</div><pre class="raw-log">첫 번째 진단\n두 번째 진단</pre>';
+rawView.innerHTML='<div class="log-heading">stdout · 최근 로컬 출력</div><div id="preview-stdout" class="raw-log"><p><strong>토큰 회전 검증</strong><br>이전 토큰을 무효화했습니다.</p><pre></pre></div><div class="log-heading">stderr · 최근 로컬 출력</div><div class="raw-log"><p><strong>진단</strong><br>첫 번째 진단<br>두 번째 진단</p></div>';
 rawView.querySelector('pre').textContent=readableLogExample;runningCard.querySelector('.card-body').append(rawView);
 function openRawLogs(){runningCard.querySelector('.task-activity-content').hidden=true;rawView.hidden=false;runningCard.querySelectorAll('.ttabs>*').forEach(tab=>{tab.classList.toggle('on',tab===rawTab);tab.setAttribute('aria-selected',String(tab===rawTab));});}
 rawTab.onclick=openRawLogs;rawTab.setAttribute('role','tab');rawTab.tabIndex=0;rawTab.onkeydown=e=>{if(['Enter',' '].includes(e.key)){e.preventDefault();openRawLogs();}};

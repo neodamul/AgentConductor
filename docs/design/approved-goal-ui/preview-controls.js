@@ -206,12 +206,21 @@ document.getElementById('menu-report-bug').onclick=()=>{closeAppMenu();document.
 // #1027: zip the chosen log tails, reveal the file, then open the draft that says to drag it in.
 document.getElementById('bug-report-dialog').addEventListener('close',event=>{const choice=event.target.returnValue;if(choice!=='zip'&&choice!=='plain')return;const name='agentconductor-bug-report-20261116-1030.zip';const logs=choice==='zip'?'## Logs\nDrag '+name+' from your Downloads folder into this issue.\n':'';const body='## Summary\nDescribe the bug.\n\n## Steps to reproduce\n1. \n2. \n\n## Expected behavior\n\n## Actual behavior\n\n'+logs+'\n## Environment\n- AgentConductor: design preview\n';window.open('https://github.com/neodamul/AgentConductor/issues/new?body='+encodeURIComponent(body),'_blank','noopener');});
 ['menu-new-workspace','menu-open-workspace','menu-rules','menu-messenger','menu-export','menu-import','menu-manual','menu-tools'].forEach(id=>{document.getElementById(id).onclick=closeAppMenu;});
-// The Goal heading of the run steps is folded to one line; the toggle shows the whole Goal and folds it again.
+// The Room starts with a compact Goal/status row and reveals all details on demand.
+const previewGoalTitle=document.getElementById('goal-title-toggle');
+const previewGoalInfo=document.getElementById('preview-goal-info');
+const previewStatusPills=[...previewGoalInfo.querySelectorAll(':scope > .pill')];
 function syncGoalTitle(open){
- const toggle=document.getElementById('goal-title-toggle'),text=document.getElementById('goal-title-text'),goal=selectedGoal();
- text.textContent=goal.description||goal.name;text.hidden=!open;toggle.setAttribute('aria-expanded',String(open));toggle.textContent=open?'▾ 접기':'▸ 펼치기';
+ const head=previewGoalTitle.closest('.head'),text=document.getElementById('goal-title-text'),goal=selectedGoal();
+ const room=previewGoalTitle.style.display!=='none',expanded=room&&open;
+ head.classList.toggle('compact-room-head',room&&!expanded);
+ previewGoalInfo.hidden=room&&!expanded;
+ const destination=room&&!expanded?head:previewGoalInfo;
+ if(previewStatusPills[0].parentElement!==destination)destination.append(...previewStatusPills);
+ text.textContent=goal.description||goal.name;text.hidden=!expanded;
+ previewGoalTitle.setAttribute('aria-expanded',String(expanded));previewGoalTitle.textContent=expanded?'▾ 접기':'▸ 펼치기';
 }
-document.getElementById('goal-title-toggle').onclick=()=>syncGoalTitle(document.getElementById('goal-title-toggle').getAttribute('aria-expanded')!=='true');
+previewGoalTitle.onclick=()=>syncGoalTitle(previewGoalTitle.getAttribute('aria-expanded')!=='true');
 syncGoalTitle(false);
 // GitHub #856: a pressed action keeps its colors and shows a moving bar along its bottom edge while its work runs.
 // Buttons that only open, add a row, cancel or close do no work, so they show no bar.

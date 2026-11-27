@@ -310,3 +310,11 @@ The Goal List shows saved Jira keys and Confluence page IDs. Search by Goal text
 name, or reference. The list starts with the newest Goal creation date and offers oldest
 first. Reference sorts use numeric order, with unreferenced Goals last. Pages contain up to ten Goals. The `preview.html#workspace` entry opens the list
 with twelve sample Goals so both pages can be explored.
+
+## Compact Room header and log rendering (#1105)
+
+The Room opens with the Goal title, Goal List, Team Briefing, and run status on one
+row. The step tabs follow immediately. Expand to reveal the full Goal and the
+secondary run details. Collapse to reclaim that space without affecting selection.
+Activity rows use less padding above their timestamps and messages. The Raw Logs
+tab renders Markdown with hard line breaks and keeps structured records readable.

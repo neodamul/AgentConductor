@@ -43,6 +43,35 @@ pub(super) fn setup_needed(path: &Path) -> Result<Option<&'static str>, String> 
 }
 
 impl Startup {
+    /// A folder-backed Room has a private Git history as well as its original project.
+    pub(super) fn repository_busy(
+        &self,
+        saved: &Saved,
+        report: Option<&workflow::Report>,
+    ) -> Result<bool, String> {
+        let path = &saved.config.repository;
+        if !path.is_dir() {
+            return Ok(false);
+        }
+        if crate::leases::Lease::repository_held(path)? {
+            return Ok(true);
+        }
+        if let Some(report) = report
+            && report.folder.as_ref().is_some_and(|source| {
+                source
+                    .original
+                    .canonicalize()
+                    .ok()
+                    .zip(path.canonicalize().ok())
+                    .is_some_and(|(source, project)| source == project)
+            })
+            && report.repo.is_dir()
+        {
+            return crate::leases::Lease::repository_held(&report.repo);
+        }
+        Ok(false)
+    }
+
     pub(super) fn execution_repository(&self, saved: &Saved) -> Result<Repository, String> {
         let path = &saved.config.repository;
         self.prune_history(saved)?;

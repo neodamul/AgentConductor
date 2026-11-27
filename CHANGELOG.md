@@ -4,6 +4,13 @@ Releases for macOS (Apple silicon) and Windows (x86_64). Stable versions start a
 0.1.0 and continue with 0.1.1. Historical preview entries are retained. Each section is published as
 the GitHub Release notes for its tag.
 
+## v0.2.24
+
+- The Agent Room header starts compact: the goal title, Goal list, team button and status tag share one line with the tabs right below, and the expand button restores the full header (#1105).
+- Activity entries use tighter spacing between the divider, the time and the message (#1105).
+- Raw logs format Markdown text with its line breaks while structured JSON stays as recorded (#1105).
+- Planning, Approve, Merge and quota refresh no longer start while another action still holds the project; their buttons are disabled with "Another action is still finishing in this project" instead of failing with "lease is held" (#1107).
+
 ## v0.2.23
 
 - The Goal list can be searched by goal text, folder name or Jira and Confluence references, sorted by creation date, Jira key or Confluence page ID, and shows ten goals per page (#1102).
