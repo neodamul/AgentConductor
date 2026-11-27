@@ -229,6 +229,7 @@ function show(){const popupResult=views[i][0]==='d';const v=popupResult?'c':view
  document.getElementById('current-goal-slug').textContent=selectedGoalId==='draft'?'새 목표 · slug는 저장 시 확정':selectedGoal().slug;
  if(v==='j')document.getElementById('goal-slug-entry').value=selectedGoal().slug;
  refreshWorkspaceGoalSection();renderMergedState();if(v==='j'||v==='e')document.getElementById('goal-entry').value=goalDrafts[v];if(v==='g')selectedOutlineTask=0;if(v==='h')selectedOutlineTask=2;document.querySelectorAll('[data-show]').forEach(e=>e.style.display=e.dataset.show.split(' ').includes(v)?'':'none');
+if(typeof syncGoalTitle==='function')syncGoalTitle(document.getElementById('goal-title-toggle').getAttribute('aria-expanded')==='true');
 document.querySelectorAll('[data-cls]').forEach(e=>{e.className='tab';const m=e.dataset.cls.split(' ').map(x=>x.split(':')).find(x=>x[0]===v);if(m)e.classList.add(m[1]);const n=e.querySelector('[data-num]');n.textContent=e.classList.contains('done')?'✓':n.dataset.num;});
 document.querySelectorAll('.agent').forEach(e=>e.classList.toggle('sel',(e.dataset.v||'').split(' ').includes(v)));
 updateAgentStates(v);
@@ -267,5 +268,5 @@ function previewRunFailure(kind='test') {
  const note=document.createElement('span');note.className='note';note.textContent='원인을 확인하고 다시 진행합니다.';
  const button=document.createElement('button');button.className='btn p';button.textContent=kind==='scope'?'범위 검토':'피드백으로 수정';button.dataset.recovery=kind;button.dataset.actionIcon=kind==='scope'?'list':'edit';
  button.onclick=()=>{button.dataset.opened='true';};actions.append(note,button);
- const pill=document.querySelector('.head .pill');if(pill){pill.textContent='실패';pill.style.background='var(--err-bg)';pill.style.color='var(--err)';}
+ const pill=document.querySelector('.pill[data-show="f"]');if(pill){pill.textContent='실패';pill.style.background='var(--err-bg)';pill.style.color='var(--err)';}
 }

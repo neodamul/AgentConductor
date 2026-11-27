@@ -134,6 +134,7 @@ function selectCoordinator() {
 function changeTab(tab) {
   activeTab=tab;for(const el of document.querySelectorAll('[data-tab]')){const active=el.dataset.tab===tab;el.classList.toggle('active',active);el.setAttribute('aria-selected',String(active));}
   for(const name of ['activity','review','logs','knowledge'])$(name+'-view').hidden=name!==tab;
+  if(tab==='logs'){formatRawLog($('stdout'));formatRawLog($('stderr'));}
 }
 function setOptions(select,values,current,stamp) {
   if(select.dataset.stamp===stamp)return;const chosen=document.activeElement===select?select.value:current;
@@ -262,7 +263,7 @@ async function poll(background=false) {
   }catch(e){if(roomStopped)return;pollFailed(e,background);}finally{polling=false;}
 }
 for(const el of document.querySelectorAll('[data-tab]'))el.onclick=()=>el.dataset.tab==='review'?loadReview():changeTab(el.dataset.tab);
-$('brief-team').onclick=briefTeam;$('quota-agent').onchange=()=>{quotaAgent=$('quota-agent').value;renderQuota(profile());};$('quota-refresh').onclick=()=>refreshQuota($('quota-agent').value);$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('goal-toggle').onclick=()=>{const open=$('goal-full').hidden;$('goal-full').hidden=!open;$('goal-toggle').setAttribute('aria-expanded',String(open));AC_I18N.bind($('goal-toggle').firstElementChild,()=>acMessage(open?'room.goal_collapse':'room.goal_expand'));};$('task-instruction-toggle').onclick=()=>{$('task-instruction').classList.toggle('folded');syncInstructionFold($('task-instruction').dataset.text||'');};$('show-result').onclick=()=>openResult().catch(e=>notice(e.message,true));$('open-tools').onclick=()=>{const waiting=(snapshot?.tool_requests||[]).find(r=>r.status==='pending'),index=waiting?snapshot.report.tasks.findIndex(t=>t.id===waiting.context.task):-1;if(index>=0&&(index!==selected||coordinatorView))selectTask(index);(waiting?$('tool-decision'):$('tool-requests')).scrollIntoView({behavior:'smooth',block:'center'});};
+$('brief-team').onclick=briefTeam;$('quota-agent').onchange=()=>{quotaAgent=$('quota-agent').value;renderQuota(profile());};$('quota-refresh').onclick=()=>refreshQuota($('quota-agent').value);$('review-latest').onclick=loadReview;$('open-review').onclick=loadReview;$('goal-toggle').onclick=()=>setRoomHeaderExpanded($('goal-full').hidden);$('task-instruction-toggle').onclick=()=>{$('task-instruction').classList.toggle('folded');syncInstructionFold($('task-instruction').dataset.text||'');};$('show-result').onclick=()=>openResult().catch(e=>notice(e.message,true));$('open-tools').onclick=()=>{const waiting=(snapshot?.tool_requests||[]).find(r=>r.status==='pending'),index=waiting?snapshot.report.tasks.findIndex(t=>t.id===waiting.context.task):-1;if(index>=0&&(index!==selected||coordinatorView))selectTask(index);(waiting?$('tool-decision'):$('tool-requests')).scrollIntoView({behavior:'smooth',block:'center'});};
 // Input-method composition (e.g. Korean) must finish before text is replaced or sent.
 let composing=false;document.addEventListener('compositionstart',()=>{composing=true;});document.addEventListener('compositionend',()=>{composing=false;});
 $('feedback').oninput=()=>{const key=coordinatorView?COORDINATOR_DRAFT:task()?.id;if(key)drafts.set(key,$('feedback').value);};

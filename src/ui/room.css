@@ -125,3 +125,7 @@ dialog.quiet-focus :focus-visible{outline:none}
 #run-context p{margin:0 0 4px}#run-error{white-space:pre-wrap;overflow-wrap:anywhere;max-height:160px;overflow:auto;font-family:Menlo,Consolas,monospace}
 
 [data-placeholder-dismissed]::placeholder { color: transparent; }
+
+#run-goal-info[hidden]{display:none}
+.raw-log-records{margin:0;padding:0;border:0;background:none;white-space:pre-wrap;overflow-wrap:anywhere;font:inherit}
+.raw-log > * + *{margin-top:.65em}

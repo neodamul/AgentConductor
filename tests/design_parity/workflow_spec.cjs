@@ -40,7 +40,8 @@ module.exports=[
     ].map(([name, mock, app, props, keys]) => ({ name: `review-footer-${name}`, props, keys, pixel: false,
       mock: { url: '?theme=light#7', selector: card + mock }, app: { setup, run, selector: app } }))
       .concat([{ name: 'review-heading-info', props: ['fontSize', 'color'], keys: ['height', 'fontSize', 'color'], pixel: false,
-        mock: { url: '?theme=light#7', selector: '.runmeta[data-show="c"] span' }, app: { setup, run, selector: '#run-goal-info .goal-info-content' } },
+        mock: { url: '?theme=light#7', run: "document.getElementById('goal-title-toggle').click()", selector: '.runmeta[data-show="c"] span' },
+        app: { setup, run: run.replace("})()", "document.getElementById('goal-toggle').click();})()"), selector: '#run-goal-info .goal-info-content' } },
       { name: 'review-card-has-no-tabs', assert: "(() => { const c = document.querySelector('#run-screen .room-card'); return c.classList.contains('review-only') && getComputedStyle(c.querySelector('.view-tabs')).display === 'none' && !document.getElementById('review-footer').hidden; })()", app: { setup, run } }]);
   })(),
   // #599: the task card's stop reason (mock views #5 "g" = tool request wait, #6 "h" = permission denied).

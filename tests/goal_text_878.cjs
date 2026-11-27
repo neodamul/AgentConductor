@@ -8,7 +8,15 @@ for(const width of [840,1280])for(const theme of ['light','dark']){
  const sharedCss=fs.readFileSync('src/ui/room.css','utf8');
  const checks=await browser.eval(`(async()=>{const q=id=>document.getElementById(id),out=[],check=(n,ok)=>{if(!ok)throw Error(n);out.push(n);};const until=async f=>{const end=Date.now()+10000;while(!f()){if(Date.now()>end)throw Error('UI did not settle');await new Promise(r=>setTimeout(r,30));}};
  document.documentElement.dataset.theme='${theme}';SIM.home.run_available=true;SIM.home.run_state='running';SIM.room.report.plan.goal='First Goal line\\n\\nSecond Goal line\\nThird <b>literal</b> line';await until(()=>!q('start-tab-tasks').disabled);q('start-tab-tasks').click();await until(()=>document.body.classList.contains('on-run')&&q('goal-full').textContent===SIM.room.report.plan.goal);
- const full=q('goal-full'),toggle=q('goal-toggle');check('Goal starts collapsed',full.hidden&&toggle.getAttribute('aria-expanded')==='false');toggle.click();
+ const full=q('goal-full'),toggle=q('goal-toggle'),info=q('run-goal-info'),bar=toggle.closest('.goal-bar'),tabs=q('start-step-tabs'),pill=q('run-pill');
+ const compactTop=tabs.getBoundingClientRect().top;
+ check('Goal starts collapsed',full.hidden&&toggle.getAttribute('aria-expanded')==='false');
+ check('#1105: compact header keeps list, briefing, and status in one row',info.hidden&&bar.contains(pill)&&bar.contains(q('start-goal-list-open'))&&bar.contains(q('brief-team'))&&compactTop-bar.getBoundingClientRect().bottom<=6);toggle.click();
+ check('#1105: expanded Room restores its details',!info.hidden&&info.contains(pill)&&tabs.getBoundingClientRect().top>compactTop+24);
+ await until(()=>!!document.querySelector("#activity .event"));
+
+ const activity=document.querySelector('#activity .event');
+ check('#1105: compact activity rows',parseFloat(getComputedStyle(activity).paddingTop)<=6&&parseFloat(getComputedStyle(activity.querySelector('.event-head')).marginBottom)<=1);
  check('expanded Goal preserves authored text',!full.hidden&&full.textContent===SIM.room.report.plan.goal&&!full.querySelector('b'));
  check('expanded Goal wraps and scrolls within its bound',getComputedStyle(full).whiteSpace==='pre-wrap'&&getComputedStyle(full).overflowY==='auto'&&getComputedStyle(full).maxHeight==='160px');
  const text=full.firstChild,range=document.createRange();range.setStart(text,0);range.setEnd(text,5);const first=range.getBoundingClientRect().top;const index=text.textContent.indexOf('Second');range.setStart(text,index);range.setEnd(text,index+6);check('second authored line is visibly lower',range.getBoundingClientRect().top>first+20);

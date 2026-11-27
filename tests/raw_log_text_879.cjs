@@ -1,6 +1,7 @@
 // #879: decode JSON string newlines for display, never literal path escapes or source artifacts.
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-const format=vm.runInNewContext(fs.readFileSync('src/ui/room_activity.js','utf8')+'\nreadableRawLog;',{});
+const sections=vm.runInNewContext(fs.readFileSync('src/ui/room_activity.js','utf8')+'\nrawLogSections;',{});
+const format=raw=>sections(raw).map(part=>part.text).join('');
 const record={type:'assistant',message:{content:[{type:'text',text:'first line\nsecond line\n<b>literal</b>',path:'C:\\new\\test',literal:'\\n stays literal'}]},usage:{input_tokens:12}};
 const source=JSON.stringify(record)+'\n'+JSON.stringify({type:'result',result:'done\nnext'})+'\n';
 const shown=format(source);
@@ -13,4 +14,8 @@ assert.equal(source,JSON.stringify(record)+'\n'+JSON.stringify({type:'result',re
 for(const plain of ['plain first\nplain second\n','partial {"text":\n','42\nnull\n','error C:\\new\\test\\n',''])assert.equal(format(plain),plain);
 const clipped='tail fragment\n'+JSON.stringify({message:'visible\nline'})+'\nmalformed {';
 assert(format(clipped).startsWith('tail fragment\n')&&format(clipped).endsWith('\nmalformed {'));
+const markdown='Heading\n~~~json\n{"example":true}\n~~~\n';
+assert.equal(sections(markdown).length,1);
+assert.equal(sections(markdown)[0].structured,false);
+assert.equal(format(markdown),markdown);
 console.log('raw log text: nested records, newlines, metadata, literal escapes, plain/malformed tails passed');
