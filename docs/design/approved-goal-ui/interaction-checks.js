@@ -206,8 +206,16 @@
   Object.keys(agentSessions).forEach(k=>agentSessions[k]=saved[k]);renderSessionButtons();check('sessions close',!sessionsDialog.open);}
  {const view=i;i=3;show();const toggle=document.getElementById('goal-title-toggle'),text=document.getElementById('goal-title-text');
   check('the task step shows the Goal folded with an Expand toggle',getComputedStyle(toggle).display!=='none'&&toggle.textContent==='▸ 펼치기'&&text.hidden&&getComputedStyle(document.getElementById('saved-goal-title')).whiteSpace==='nowrap');
+  const head=toggle.closest('.head'),info=document.querySelector('.goal-info'),tabs=document.querySelector('.main>.tabs');
+  const top=tabs.getBoundingClientRect().top;
+  check('#1105: folded header seats status with Goal List and briefing',info.hidden&&!!head.querySelector('.pill[data-show="b"]')&&tabs.getBoundingClientRect().top-head.getBoundingClientRect().bottom<=6);
   toggle.click();check('Expand shows the whole Goal',!text.hidden&&text.textContent===(selectedGoal().description||selectedGoal().name)&&text.textContent.length>0&&toggle.textContent==='▾ 접기'&&toggle.getAttribute('aria-expanded')==='true');
+  check('#1105: expanding restores Goal metadata and moves the stepper down',!info.hidden&&!!info.querySelector('.pill[data-show="b"]')&&tabs.getBoundingClientRect().top>top+24);
   toggle.click();check('Collapse folds it again',text.hidden&&toggle.textContent==='▸ 펼치기');
+  const row=document.querySelector('.card[data-show="b"] .ev');
+  check('#1105: activity reduces separator padding',row&&parseFloat(getComputedStyle(row).paddingTop)<=6&&parseFloat(getComputedStyle(row.querySelector('b')).marginBottom)<=1);
+  openRawLogs();check('#1105: logs show Markdown and preserved line breaks',document.querySelector('#preview-stdout strong')&&document.querySelector('#preview-stdout br')&&document.querySelector('#preview-stdout pre').textContent.includes('이전 토큰'));
+  document.querySelector('.card[data-show="b"] .ttabs button').click();
   i=0;show();check('the Workspace step has no Goal toggle',getComputedStyle(toggle).display==='none'&&getComputedStyle(text).display==='none');i=view;show();}
  {const view=i;i=7;show();showGoalResult('rotation');const files=document.querySelector('#result-detail .result-section');files.open=true;const row=files.querySelector('.file-diff-toggle'),pre=files.querySelector('.file-diff');
   check('changed file rows are buttons with a folded diff',!!row&&row.getAttribute('aria-expanded')==='false'&&pre.hidden&&row.textContent.length>0);

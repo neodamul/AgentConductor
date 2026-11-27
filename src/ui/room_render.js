@@ -1,10 +1,18 @@
 // Shared run/task evidence rendering. Loaded in the same startRoom closure as room.js.
 let goalNarrative;
+function setRoomHeaderExpanded(open) {
+  const toggle = $('goal-toggle'), info = $('run-goal-info'), pill = $('run-pill');
+  const destination = open ? info : toggle.closest('.goal-bar');
+  if (pill.parentElement !== destination) destination.append(pill);
+  $('goal-full').hidden = info.hidden = !open;
+  toggle.setAttribute('aria-expanded', String(open));
+  AC_I18N.bind(toggle.firstElementChild, () => acMessage(open ? 'room.goal_collapse' : 'room.goal_expand'));
+}
 function renderSnapshot() {
   if(!snapshot)return;syncInspector();watchResult(snapshot);const r=snapshot.report;if(selected>=r.tasks.length)selected=0;
   const t=task(),p=planTask(),a=profile();
 
-  AC_I18N.bind($('goal'),()=>(taskLine(r.plan.goal)||r.plan.goal));/* GitHub #827: the heading shows one line; the toggle unfolds the whole Goal. */const fullGoal=$('goal-full'),goalText=r.plan.goal||'';if(goalNarrative!==goalText){goalNarrative=goalText;fullGoal.hidden=true;$('goal-toggle').setAttribute('aria-expanded','false');AC_I18N.bind($('goal-toggle').firstElementChild,()=>acMessage('room.goal_expand'));window.acMarkdown.set(fullGoal,goalText);}const project=(r.folder?.original||r.repo).replace(/^\\\\\?\\/,'');AC_I18N.bind($('repository'),()=>(project.split(/[\\/]/).filter(Boolean).pop()||project));AC_I18N.bind($('repository'),()=>(project),"title");
+  AC_I18N.bind($('goal'),()=>(taskLine(r.plan.goal)||r.plan.goal));const fullGoal=$('goal-full'),goalText=r.plan.goal||'';if(goalNarrative!==goalText){goalNarrative=goalText;setRoomHeaderExpanded(false);window.acMarkdown.set(fullGoal,goalText);}const project=(r.folder?.original||r.repo).replace(/^\\\\\?\\/,'');AC_I18N.bind($('repository'),()=>(project.split(/[\\/]/).filter(Boolean).pop()||project));AC_I18N.bind($('repository'),()=>(project),"title");
   AC_I18N.bind($('run-state'),()=>(statusLabel(r.state)));$('run-state').className='state-label tone-'+statusTone(r.state);
   renderRail(r,selected);
   const mergeRunning=snapshot.job?.state==='running'&&snapshot.job.kind==='merge';const asking=(snapshot.tool_requests||[]).some(q=>q.status==='pending'),stuck=r.tasks.some(x=>x.status==='permission_denied');AC_I18N.bind($('run-pill'),()=>(mergeRunning?acMessage("room.merge_in_progress"):asking?acMessage('room.decision_needed'):stuck?acMessage('room.blocked'):isVerifying(r)?acMessage('room.state_verifying'):statusLabel(r.state)));$('run-pill').className='status-pill tone-'+(mergeRunning?'run':asking?'wait':stuck?'bad':statusTone(r.state));
@@ -115,7 +123,7 @@ function renderCoordinator(data) {
   if(r.error)timeline.push(event(acMessage("room.run_error"),r.error,'error'));
   const activity=$('activity'),nearBottom=activity.parentElement.scrollHeight-activity.parentElement.scrollTop-activity.parentElement.clientHeight<70;
   AC_I18N.replace(activity,...timeline);if(nearBottom)activity.parentElement.scrollTop=activity.parentElement.scrollHeight;
-  AC_I18N.bind($('stdout'),()=>(readableRawLog(data.stdout)||acMessage("room.no_verification_output_yet")));AC_I18N.bind($('stderr'),()=>(readableRawLog(data.stderr)||acMessage("room.no_errors_logged")));
+  renderRawLog($('stdout'),data.stdout,'room.no_verification_output_yet');renderRawLog($('stderr'),data.stderr,'room.no_errors_logged');
   AC_I18N.replace($('lessons'),node('p',()=>(acMessage("room.lessons_belong_to_tasks_select_a_task_to")),'empty'));
   globalThis.acGoalReadOnly?.room(snapshot);
 }
@@ -129,7 +137,7 @@ function renderTask(data) {
   if(!data.events.length)timeline.push(node('p',()=>(acMessage("room.no_provider_events_have_been_reported_yet")),'empty'));
   const activity=$('activity'),nearBottom=activity.parentElement.scrollHeight-activity.parentElement.scrollTop-activity.parentElement.clientHeight<70;
   AC_I18N.replace(activity,...timeline);if(nearBottom)activity.parentElement.scrollTop=activity.parentElement.scrollHeight;
-  AC_I18N.bind($('stdout'),()=>(readableRawLog(data.stdout)||acMessage("room.no_output_yet")));AC_I18N.bind($('stderr'),()=>(readableRawLog(data.stderr)||acMessage("room.no_errors_logged")));
+  renderRawLog($('stdout'),data.stdout,'room.no_output_yet');renderRawLog($('stderr'),data.stderr,'room.no_errors_logged');
   const notes=data.knowledge.filter(k=>k.task===t.id);const steps=(data.step_lessons||[]).map(l=>{const el=node('article',undefined,'lesson');el.append(node('h3',()=>(acMessage("room.step_lesson_for",{value1:l.task}))),narrative(l.cause,'small muted'),narrative(l.response));return el;});AC_I18N.replace($('lessons'),...steps,...(notes.length?notes.map(k=>{const el=node('article',undefined,'lesson');el.append(node('h3',k.lesson.context),node('span',()=>(acMessage("room.confidence", {value1:pretty(k.status),value2:k.lesson.confidence})),'status-pill'),narrative(k.lesson.response),node('pre',k.lesson.sources.map(s=>s.path+'\n'+s.sha256).join('\n')),node('p',()=>(acMessage("room.revalidate")+k.lesson.revalidate),'small muted'));return el;}):(steps.length?[]:[node('p',()=>(acMessage("room.no_reviewed_lessons_for_this_task_draft_observations")),'empty')])));
   const u=data.usage;AC_I18N.bind($('tokens'),()=>(u&&typeof u.input_tokens==='number'?acMessage("room.in_out", {value1:u.input_tokens.toLocaleString(),value2:(u.output_tokens||0).toLocaleString()}):acMessage("room.not_reported")));
   const duration=t.started_ms?(Number(t.finished_ms||Date.now())-Number(t.started_ms))/1000:null;AC_I18N.bind($('duration'),()=>(duration===null?'—':`${Math.max(0,duration).toFixed(1)}s`));

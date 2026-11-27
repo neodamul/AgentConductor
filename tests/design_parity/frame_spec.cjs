@@ -43,7 +43,7 @@ module.exports=[
   { name: 'heading-pill', props: ['borderTopWidth', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft'], keys: ['y', 'height', 'borderTopWidth', 'borderTopLeftRadius', 'paddingTop', 'paddingLeft'], pixel: false,
     mock: { url: '?theme=light#0', selector: '.goal-info>.pill', rel: '.goal-info' }, app: { selector: '#start-goal-info>.status-pill', rel: '#start-goal-info' } },
   { name: 'run-heading-pill', props: [], keys: ['y', 'height'], pixel: false,
-    mock: { url: '?theme=light#3', selector: '.goal-info>.pill', rel: '.goal-info' }, app: { setup: STEPS_ENABLED, run: "document.getElementById('start-tab-tasks').click()", selector: '#run-goal-info>.status-pill', rel: '#run-goal-info' } },
+    mock: { url: '?theme=light#3', selector: '.head>.pill[data-show=b]', rel: '.head' }, app: { setup: STEPS_ENABLED, run: "document.getElementById('start-tab-tasks').click()", selector: '.goal-bar>#run-pill', rel: '.goal-bar' } },
   // GitHub #750: the agent dialog uses one label gap, one field gap and one single-line control height.
   ...[
     ['agent-dialog-id-input', ['height', 'borderTopLeftRadius'], '#profile-id', '#start-agent-id', null, null],

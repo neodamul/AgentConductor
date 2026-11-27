@@ -34,6 +34,7 @@ const html = {
   [samples.lesson]: '<ul><li><strong>Lesson</strong></li><li>Another</li></ul>'
 };
 const raw = 'literal **raw**\nnext';
+html[raw] = '<p>literal <strong>raw</strong>\nnext</p>';
 const native = `const md=${JSON.stringify(html)}; SIM.reply.render_markdown=p=>({html:p.texts.map(t=>md[t]??null)});`;
 (async () => {
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'ac-room-markdown-'));
@@ -86,6 +87,10 @@ const native = `const md=${JSON.stringify(html)}; SIM.reply.render_markdown=p=>(
       assert.equal(await browser.eval("!!document.querySelector('#activity img, #activity .event.result strong, #stdout strong')"),false);
       assert.equal(await browser.eval("document.getElementById('stdout').textContent"),raw);
       assert.match(await browser.eval("document.querySelector('#activity .event.result .event-text').textContent"),/literal \*\*raw\*\*/);
+      await browser.eval("document.querySelector('[data-tab=logs]').click()");
+      await until("document.querySelector('#stdout strong')?.textContent==='raw'");
+      assert.equal(await browser.eval("document.querySelector('#stdout p').textContent"),'literal raw\nnext');
+      await browser.eval("document.querySelector('[data-tab=activity]').click()");
       await browser.eval("document.querySelector('#activity .room-markdown a').click()");
       await until("SIM.log.some(x=>x.kind==='open_chat_link'&&x.p.url==='https://example.test/docs')");
       await browser.eval(`SIM.reply.evidence=()=>({report:SIM.room.report,test_output:[{task:'task-1',exit_code:0,stdout:${JSON.stringify(raw)},stderr:''}],diff:'+literal **diff**',truncated:false});document.querySelector('[data-tab="review"]').click();`);
