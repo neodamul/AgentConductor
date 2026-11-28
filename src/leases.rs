@@ -7,6 +7,8 @@ mod file;
 
 /// Only an actual lock conflict is eligible for the operator's retry prompt.
 pub const CONTENTION: &str = "lease is held: another owner holds the lock";
+/// Lock conflicts retried 20 ms apart before contention is reported (about 100 ms in all).
+const PROBE_RETRIES: u32 = 5;
 
 /// A kernel-owned exclusive lease. Keep the inode in place after release so
 /// another owner cannot accidentally lock a different file at the same path.
@@ -62,12 +64,19 @@ impl Lease {
         let mut file =
             file::open(path, true).map_err(|e| format!("open coordinator lease: {e}"))?;
         // The kernel releases this lock when the handle closes, including after a kill.
-        match file.try_lock() {
-            Ok(()) => {}
-            Err(std::fs::TryLockError::WouldBlock) => {
-                return Err(CONTENTION.into());
+        // GitHub #1108: `held` probes take the lock for microseconds, so a conflict is retried
+        // briefly; only an owner that keeps the lock past the window is reported as contention.
+        let mut attempts = 0;
+        loop {
+            match file.try_lock() {
+                Ok(()) => break,
+                Err(std::fs::TryLockError::WouldBlock) if attempts < PROBE_RETRIES => {
+                    attempts += 1;
+                    std::thread::sleep(std::time::Duration::from_millis(20));
+                }
+                Err(std::fs::TryLockError::WouldBlock) => return Err(CONTENTION.into()),
+                Err(std::fs::TryLockError::Error(e)) => return Err(format!("lease is held: {e}")),
             }
-            Err(std::fs::TryLockError::Error(e)) => return Err(format!("lease is held: {e}")),
         }
         file.set_len(0).map_err(|e| e.to_string())?;
         writeln!(file, "{}", std::process::id()).map_err(|e| e.to_string())?;

@@ -10,7 +10,7 @@ fn read(path: &str) -> String {
 
 #[test]
 fn readme_and_manual_sentences_name_the_package_version() {
-    let version = env!("CARGO_PKG_VERSION");
+    let version = agentconductor::update::release();
     for (path, needle) in [
         ("README.md", format!("**Version:** {version} ")),
         (

@@ -1,4 +1,4 @@
-Recaptured 2026-11-28 for 0.2.24: seven current application UI sample renders refreshed with scripts/capture_docs.cjs, including the 0.2.24 version and the compact Room header. Deterministic browser renders, not authenticated native-session evidence.
+Recaptured 2026-11-28 for 0.2.24.1: seven current application UI sample renders refreshed with scripts/capture_docs.cjs, including the 0.2.24.1 version and the compact Room header. Deterministic browser renders, not authenticated native-session evidence.
 Recaptured 2026-11-26 for 0.2.22: seven current application UI sample renders refreshed with scripts/capture_docs.cjs, including the 0.2.22 version. Deterministic browser renders, not authenticated native-session evidence.
 Recaptured 2026-11-25 for 0.2.21: seven current application UI sample renders refreshed with scripts/capture_docs.cjs, including the 0.2.21 version. Deterministic browser renders, not authenticated native-session evidence.
 Recaptured 2026-11-24 for 0.2.20: seven current application UI sample renders refreshed with scripts/capture_docs.cjs, including the 0.2.20 version. Deterministic browser renders, not authenticated native-session evidence.

@@ -4453,3 +4453,13 @@ Version 0.2.23 ships #1102 (see CHANGELOG). The current application UI sample re
 ## 0.2.24 release preparation
 
 Version 0.2.24 ships #1105 and #1107 (see CHANGELOG). The current application UI sample renders were recaptured with scripts/capture_docs.cjs, and the user manuals describe the compact Room header, Markdown in Raw logs and the repository-busy message.
+
+## #1108 Busy probe must not fail a real lease owner
+
+- [x] Plan: `Lease::held` takes the exclusive lock for an instant, so `Lease::acquire` retries a conflict for about 100 ms before reporting contention. Hotfix versions add a fourth part through `update::release()`.
+- [x] Task: bounded retry in `Lease::acquire`; `update::HOTFIX` feeds every version display, the update check and packaging.
+- [x] Verify: a probe-length holder is waited out and a lasting owner is still reported (tests/repository_busy.rs).
+
+## 0.2.24.1 release preparation
+
+Hotfix 0.2.24.1 ships #1108 (see CHANGELOG). Cargo.toml stays at 0.2.24 and `update::HOTFIX` supplies the fourth part. The current application UI sample renders were recaptured with scripts/capture_docs.cjs.
