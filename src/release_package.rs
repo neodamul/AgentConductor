@@ -64,7 +64,7 @@ pub fn assemble(
     validate_company_suffix(
         &suffix,
         &crate::update::current(),
-        env!("CARGO_PKG_VERSION"),
+        &crate::update::release(),
     )?;
     let name = binary_name(target);
     let binary = root.join("target/release").join(name);

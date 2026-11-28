@@ -126,3 +126,24 @@ fn reading_lock_state_does_not_create_or_rewrite_the_lock_file() {
     assert!(!Lease::held(&file).unwrap());
     assert_eq!(std::fs::read(file).unwrap(), b"unchanged");
 }
+
+/// GitHub #1108: a busy probe holds the lock only for an instant and must not fail a real owner.
+#[test]
+fn a_brief_lock_holder_does_not_fail_acquire_but_a_lasting_one_does() {
+    let path = std::env::temp_dir().join(format!("ac-1108-{}.lock", std::process::id()));
+    let brief = Lease::acquire(&path).unwrap();
+    let release = std::thread::spawn(move || {
+        std::thread::sleep(std::time::Duration::from_millis(30));
+        drop(brief);
+    });
+    let owner = Lease::acquire(&path).expect("a probe-length holder is waited out");
+    release.join().unwrap();
+    assert!(Lease::held(&path).unwrap());
+    assert_eq!(
+        Lease::acquire(&path).err().as_deref(),
+        Some(agentconductor::leases::CONTENTION)
+    );
+    drop(owner);
+    assert!(!Lease::held(&path).unwrap());
+    let _ = std::fs::remove_file(path);
+}

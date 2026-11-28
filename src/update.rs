@@ -56,8 +56,20 @@ fn now_ms() -> u64 {
         .map_or(0, |d| d.as_millis() as u64)
 }
 
+/// Fourth version part of a hotfix release (0.2.24.1); Cargo versions have only three parts.
+/// Reset to "" when Cargo.toml moves to the next patch version.
+const HOTFIX: &str = "1";
+
+/// The published release version without a company suffix, for example `0.2.24.1`.
+pub fn release() -> String {
+    match HOTFIX {
+        "" => env!("CARGO_PKG_VERSION").to_owned(),
+        hotfix => format!("{}.{hotfix}", env!("CARGO_PKG_VERSION")),
+    }
+}
+
 pub fn current() -> String {
-    current_with_suffix(env!("CARGO_PKG_VERSION"), COMPANY_SUFFIX)
+    current_with_suffix(&release(), COMPANY_SUFFIX)
 }
 
 /// The company label this build carries, when it is a valid local label.

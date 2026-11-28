@@ -80,7 +80,7 @@ fn milestone_020_release_gate() {
             "--repo",
             "neodamul/AgentConductor",
             "--milestone",
-            env!("CARGO_PKG_VERSION"),
+            &agentconductor::update::release(),
             "--state",
             "open",
             "--limit",
@@ -120,7 +120,7 @@ fn milestone_020_release_gate() {
             String::from_utf8_lossy(&checked.stderr)
         ))
     };
-    let evidence = readiness::collect(root, env!("CARGO_PKG_VERSION"), open, screenshots);
+    let evidence = readiness::collect(root, &agentconductor::update::release(), open, screenshots);
     let reasons = failures(&evidence);
     assert!(
         reasons.is_empty(),
